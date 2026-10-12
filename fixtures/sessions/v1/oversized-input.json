@@ -1,0 +1,6 @@
+{
+  "character": "c1",
+  "context": {"build": {"edition": "wow_forever", "build": "SYNTHETIC", "interface": "SYNTHETIC"}, "namespace": "demo"},
+  "config": {"max_observed_span_ms": 60000, "clock_tolerance_ms": 1000},
+  "generate": {"count": 1025, "session": "s1", "step_ms": 10, "kind": {"type": "quest_turn_in", "quest": "q1"}}
+}

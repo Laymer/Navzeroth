@@ -1,0 +1,121 @@
+{
+  "description": "Synthetic M3.5 coverage report fixtures. Not game data. expect: pass (decodes, no errors), fail (decodes, errors listed), decode_failed (error_code). gaps lists finding codes that must appear.",
+  "schema_version": 1,
+  "fixtures": [
+    {
+      "file": "any-prerequisite-possible-cycle.json",
+      "expect": "pass",
+      "gaps": [
+        "possible_quest_prerequisite_cycle"
+      ],
+      "note": "The cycle exists only if the any branch through B is taken"
+    },
+    {
+      "file": "broken-reference.json",
+      "expect": "decode_failed",
+      "error_code": "DATASET_INCOMPLETE",
+      "note": "An acquisition names an undeclared item"
+    },
+    {
+      "file": "coverage-baseline.json",
+      "expect": "pass",
+      "gaps": [
+        "record_without_evidence",
+        "unverified_evidence",
+        "unknown_map_transform",
+        "uncalibrated_image",
+        "unprojectable_position"
+      ],
+      "note": "Mixed statuses, conflicts, unknown licence, records without evidence, an uncalibrated image and a map without imagery"
+    },
+    {
+      "file": "double-negated-prerequisite-cycle.json",
+      "expect": "fail",
+      "errors": [
+        "quest_prerequisite_cycle"
+      ],
+      "note": "Two nots cancel, so the dependency is positive"
+    },
+    {
+      "file": "empty-dataset.json",
+      "expect": "pass",
+      "note": "Every collection is empty; all counts are zero"
+    },
+    {
+      "file": "invalid-coordinate.json",
+      "expect": "decode_failed",
+      "error_code": "INVALID_INPUT",
+      "note": "x outside [0,1] is rejected at decode"
+    },
+    {
+      "file": "negated-prerequisite-not-cycle.json",
+      "expect": "pass",
+      "note": "Dependencies only under not, or requiring a quest to be absent, are not prerequisite cycles"
+    },
+    {
+      "file": "predicate-dangling-item.json",
+      "expect": "fail",
+      "errors": [
+        "dangling_predicate_item"
+      ]
+    },
+    {
+      "file": "predicate-dangling-objective.json",
+      "expect": "fail",
+      "errors": [
+        "dangling_predicate_objective"
+      ]
+    },
+    {
+      "file": "predicate-dangling-quest.json",
+      "expect": "fail",
+      "errors": [
+        "dangling_predicate_quest"
+      ]
+    },
+    {
+      "file": "predicate-objective-resolves-stage-and-id.json",
+      "expect": "pass",
+      "note": "A quest stage and an Objective.id both resolve a predicate objective reference"
+    },
+    {
+      "file": "predicate-undeclared-area-map.json",
+      "expect": "fail",
+      "errors": [
+        "undeclared_predicate_area_map"
+      ]
+    },
+    {
+      "file": "quest-prerequisite-cycle.json",
+      "expect": "fail",
+      "errors": [
+        "quest_prerequisite_cycle"
+      ],
+      "note": "A requires B turned in and B requires A turned in"
+    },
+    {
+      "file": "quest-self-prerequisite.json",
+      "expect": "fail",
+      "errors": [
+        "quest_prerequisite_cycle"
+      ],
+      "note": "A requires itself"
+    },
+    {
+      "file": "quest-three-cycle-with-tail.json",
+      "expect": "fail",
+      "errors": [
+        "quest_prerequisite_cycle"
+      ],
+      "note": "A cycle of three; D depends on it but is not part of it"
+    },
+    {
+      "file": "unknown-transform.json",
+      "expect": "pass",
+      "gaps": [
+        "unknown_map_transform"
+      ],
+      "note": "A coordinate gap, not an error"
+    }
+  ]
+}

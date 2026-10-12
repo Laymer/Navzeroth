@@ -1,0 +1,14 @@
+{
+  "character": "c1",
+  "context": {"build": {"edition": "wow_forever", "build": "SYNTHETIC", "interface": "SYNTHETIC"}, "namespace": "demo"},
+  "config": {"max_observed_span_ms": 60000, "clock_tolerance_ms": 1000},
+  "events": [
+    {"session": "s1", "sequence": 1, "elapsed_ms": 0, "utc": 1000000, "clock_trust": "trusted", "kind": {"type": "session_start"}},
+    {"session": "s1", "sequence": 2, "elapsed_ms": 10000, "utc": 1010000, "clock_trust": "trusted", "kind": {"type": "level", "level": {"status": "known", "value": 10}}},
+    {"session": "s1", "sequence": 3, "elapsed_ms": 30000, "utc": 1030000, "clock_trust": "trusted", "kind": {"type": "quest_turn_in", "quest": "q1"}},
+    {"session": "s1", "sequence": 4, "elapsed_ms": 30000, "utc": 1030000, "clock_trust": "trusted", "kind": {"type": "logout"}},
+    {"session": "s1", "sequence": 5, "elapsed_ms": 3600000, "utc": 4630000, "clock_trust": "trusted", "kind": {"type": "quest_turn_in", "quest": "q2"}},
+    {"session": "s2", "sequence": 1, "elapsed_ms": 0, "utc": 90000000, "clock_trust": "trusted", "kind": {"type": "session_start"}},
+    {"session": "s2", "sequence": 2, "elapsed_ms": 12000, "utc": 90012000, "clock_trust": "trusted", "kind": {"type": "level", "level": {"status": "known", "value": 11}}}
+  ]
+}

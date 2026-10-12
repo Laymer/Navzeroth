@@ -1,0 +1,242 @@
+{
+  "description": "Synthetic M2.2/M2.3 transport fixtures built from fixtures/contracts/v1 snapshots. Not game data. No file here was written by a game client; the SavedVariables layout is an UNVERIFIED engineering assumption pending M0.5. expect: valid (accepted by the import service) or invalid (rejected with error_code). Oversize inputs are generated in tests, and CRLF variants are built in memory.",
+  "schema_version": 1,
+  "saved_variables": {
+    "global": "AzerothNavigatorDB",
+    "key": "export",
+    "status": "UNVERIFIED pending M0.5"
+  },
+  "fixtures": [
+    {
+      "file": "anav1-bom.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "A byte order mark before the prefix is rejected"
+    },
+    {
+      "file": "anav1-character-padded.txt",
+      "format": "anav1_text",
+      "expect": "valid",
+      "kind": "character_snapshot",
+      "note": "Leading and trailing ASCII whitespace is tolerated"
+    },
+    {
+      "file": "anav1-character-snapshot.txt",
+      "format": "anav1_text",
+      "expect": "valid",
+      "kind": "character_snapshot",
+      "note": "Compact character snapshot document behind the prefix, one trailing LF"
+    },
+    {
+      "file": "anav1-duplicated-prefix.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Prefix repeated"
+    },
+    {
+      "file": "anav1-json-depth-33.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "JSON nesting of 33 exceeds the limit of 32"
+    },
+    {
+      "file": "anav1-lowercase-prefix.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "The prefix is case sensitive"
+    },
+    {
+      "file": "anav1-missing-prefix.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Bare JSON without the prefix"
+    },
+    {
+      "file": "anav1-party-snapshot.txt",
+      "format": "anav1_text",
+      "expect": "valid",
+      "kind": "party_snapshot",
+      "note": "Party snapshot; participants keep their own capture metadata"
+    },
+    {
+      "file": "anav1-route-plan-not-accepted.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "A valid route plan, but this transport accepts snapshots only"
+    },
+    {
+      "file": "anav1-space-after-prefix.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "No whitespace between prefix and JSON"
+    },
+    {
+      "file": "anav1-trailing-garbage.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Text after the JSON document"
+    },
+    {
+      "file": "anav1-truncated.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Document cut in half (CASE-008, parser half)"
+    },
+    {
+      "file": "anav1-two-documents.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "A second document after the first"
+    },
+    {
+      "file": "anav1-wrong-prefix.txt",
+      "format": "anav1_text",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Unknown version prefix"
+    },
+    {
+      "file": "savedvars-bad-escape.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Unknown escape sequence"
+    },
+    {
+      "file": "savedvars-bom.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Byte order mark rejected"
+    },
+    {
+      "file": "savedvars-deep-nesting.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "33 nested tables exceed the limit of 32"
+    },
+    {
+      "file": "savedvars-duplicate-key.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Duplicate table key"
+    },
+    {
+      "file": "savedvars-export-not-anav1.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Export string without the ANAV1 prefix"
+    },
+    {
+      "file": "savedvars-export-truncated.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Well-formed Lua holding a truncated ANAV1 document"
+    },
+    {
+      "file": "savedvars-invalid-utf8.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Decimal escape decodes to a non UTF-8 byte; not converted lossily"
+    },
+    {
+      "file": "savedvars-malicious-arithmetic.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Arithmetic expression"
+    },
+    {
+      "file": "savedvars-malicious-concat.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "String concatenation"
+    },
+    {
+      "file": "savedvars-malicious-function.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Function body with os.execute and io.open of a sentinel path; never run"
+    },
+    {
+      "file": "savedvars-malicious-global.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Global reference as a value"
+    },
+    {
+      "file": "savedvars-malicious-loadstring.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "loadstring call; never run"
+    },
+    {
+      "file": "savedvars-malicious-long-comment.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Long comment"
+    },
+    {
+      "file": "savedvars-malicious-long-string.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Long string"
+    },
+    {
+      "file": "savedvars-malicious-statement.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Top-level call statement before the assignment"
+    },
+    {
+      "file": "savedvars-missing-export.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Valid literal file without the export key"
+    },
+    {
+      "file": "savedvars-truncated.lua",
+      "format": "saved_variables",
+      "expect": "invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "File cut inside the export string (CASE-008, parser half)"
+    },
+    {
+      "file": "savedvars-valid-escapes.lua",
+      "format": "saved_variables",
+      "expect": "valid",
+      "kind": "character_snapshot",
+      "note": "Export built from \\z, \\xXX and decimal \\ddd escapes"
+    },
+    {
+      "file": "savedvars-valid.lua",
+      "format": "saved_variables",
+      "expect": "valid",
+      "kind": "character_snapshot",
+      "note": "Unrelated table plus an export string with quote and backslash escapes"
+    }
+  ]
+}

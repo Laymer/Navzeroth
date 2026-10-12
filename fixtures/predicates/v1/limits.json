@@ -1,0 +1,190 @@
+{
+  "description": "Rule depth counts the root as 1. Generated trees avoid depending on the decoder's JSON nesting limit.",
+  "schema_version": 1,
+  "snapshots": {
+    "populated": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}}
+  },
+  "parties": {},
+  "cases": [
+    {
+      "id": "limit-steps-exact",
+      "note": "level_at_least charges node, field and usable",
+      "predicate": {"op":"level_at_least","level":22},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":3},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "limit-steps-one-short",
+      "note": "Error, not unknown",
+      "predicate": {"op":"level_at_least","level":22},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":2},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-steps-conjunction-exact",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":22},{"op":"level_at_least","level":22}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":7},
+      "expected": {"reasons":[],"steps":7,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "limit-steps-conjunction-short",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":22},{"op":"level_at_least","level":22}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":6},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-steps-equipment-exact",
+      "note": "node, slot lookup, slot usable, variant usable, modifiers usable, one per modifier key",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{"strength":0}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":6},
+      "expected": {"reasons":[],"steps":6,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "limit-steps-equipment-short",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{"strength":0}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":5},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-depth-32-accepted",
+      "note": "31 wrappers plus the leaf is rule depth 32; the result flips 31 times",
+      "predicate": {"generate":{"kind":"nest","wrapper":"not","wrappers":31,"leaf":{"op":"level_at_least","level":22}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":34,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "limit-depth-33-rejected",
+      "note": "Rule depth 33 fails validation when the predicate is decoded",
+      "predicate": {"generate":{"kind":"nest","wrapper":"not","wrappers":32,"leaf":{"op":"level_at_least","level":22}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"rejected":true}
+    },
+    {
+      "id": "limit-depth-context-accepted",
+      "predicate": {"generate":{"kind":"nest","wrapper":"not","wrappers":2,"leaf":{"op":"level_at_least","level":23}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":3,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":5,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "limit-depth-context-exceeded",
+      "note": "Evaluation limits are stricter than decode limits",
+      "predicate": {"generate":{"kind":"nest","wrapper":"not","wrappers":3,"leaf":{"op":"level_at_least","level":23}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":3,"nodes":1024,"steps":1024},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-nodes-1024-steps-exact",
+      "note": "1024 nodes at the node limit; 1024 steps at the step limit",
+      "predicate": {"generate":{"kind":"wide","op":"all","count":1023,"leaf":{"op":"all","predicates":[]}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":1024,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "limit-nodes-1024-steps-short",
+      "predicate": {"generate":{"kind":"wide","op":"all","count":1023,"leaf":{"op":"all","predicates":[]}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1023},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-nodes-1025-rejected",
+      "note": "1025 nodes fails validation when the predicate is decoded",
+      "predicate": {"generate":{"kind":"wide","op":"all","count":1024,"leaf":{"op":"all","predicates":[]}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"rejected":true}
+    },
+    {
+      "id": "limit-wide-exceeds-steps",
+      "note": "Valid shape, but evaluation needs more than 1024 steps",
+      "predicate": {"generate":{"kind":"wide","op":"all","count":1023,"leaf":{"op":"level_at_least","level":22}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-nodes-context-accepted",
+      "predicate": {"op":"all","predicates":[{"op":"all","predicates":[]},{"op":"all","predicates":[]}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":3,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "limit-nodes-context-exceeded",
+      "note": "The all/any pre-check counts children before pushing them",
+      "predicate": {"op":"all","predicates":[{"op":"all","predicates":[]},{"op":"all","predicates":[]},{"op":"all","predicates":[]}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":3,"steps":1024},
+      "expected": {"error":"INVALID_INPUT"}
+    },
+    {
+      "id": "limit-nodes-context-nested-exceeded",
+      "predicate": {"op":"not","predicate":{"op":"not","predicate":{"op":"all","predicates":[]}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":2,"steps":1024},
+      "expected": {"error":"INVALID_INPUT"}
+    }
+  ]
+}
