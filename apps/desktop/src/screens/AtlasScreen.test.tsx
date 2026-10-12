@@ -216,7 +216,8 @@ describe("dense reference search", () => {
     const template = image.pins[0];
     if (!template) throw new Error("Missing demo pin");
     const dense: AtlasView = { ...original, images: [{ ...image, pins: Array.from({ length: 200 }, (_, i) => ({ ...template, kind: i % 2 === 0 ? template.kind : { kind: "landmark" }, id: `dense-${i}`, label: `Reference ${String(i).padStart(3, "0")}`, pixel: { x: i % image.width_px, y: i % image.height_px } })) }] };
-    renderAtlas(adapterWith({ query_atlas: () => dense }));
+    let queries = 0;
+    renderAtlas(adapterWith({ query_atlas: () => ({ ...dense, revision: ++queries === 1 ? "dense-original" : "dense-refreshed" }) }));
     const last = await screen.findByRole("button", { name: "Show Reference 199 on the map" });
     fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "landmark" } });
     expect(screen.getByText("100 of 200 reference pins shown.")).toBeInTheDocument();
@@ -226,16 +227,69 @@ describe("dense reference search", () => {
     last.focus();
     fireEvent.keyDown(last, { key: "Home" });
     expect(screen.getByRole("button", { name: "Show Reference 000 on the map" })).toHaveFocus();
+    fireEvent.keyDown(screen.getByRole("button", { name: "Show Reference 000 on the map" }), { key: "ArrowUp" });
+    expect(last).toHaveFocus();
+    fireEvent.keyDown(last, { key: "ArrowDown" });
+    expect(screen.getByRole("button", { name: "Show Reference 000 on the map" })).toHaveFocus();
     fireEvent.keyDown(screen.getByRole("button", { name: "Show Reference 000 on the map" }), { key: "End" });
     expect(last).toHaveFocus();
     fireEvent.change(screen.getByLabelText("Search reference pins"), { target: { value: "Reference 199" } });
     expect(screen.getAllByRole("button", { name: /^Show Reference/ })).toHaveLength(1);
     expect(document.querySelectorAll(".pin")).toHaveLength(1);
     fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
-    expect(await screen.findByRole("button", { name: "Show Reference 199 on the map" })).toHaveAttribute("aria-pressed", "true");
+    expect(await screen.findByText(/Dataset dense-refreshed/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Show Reference 199 on the map" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByLabelText("Search reference pins")).toHaveValue("Reference 199");
     fireEvent.change(screen.getByLabelText("Search reference pins"), { target: { value: "missing" } });
     expect(screen.getByText("No reference pins match these filters.")).toBeInTheDocument();
     expect(screen.getByText("The selected pin is hidden by the current filters.")).toBeInTheDocument();
   });
+});
+
+
+it("keeps pin, search, point type and layers through a failed refresh and successful retry", async () => {
+  const original = await demoAdapter.invoke("query_atlas", { image: null });
+  let queries = 0;
+  renderAtlas(adapterWith({ query_atlas: () => {
+    queries += 1;
+    if (queries === 2) return Promise.reject({ code: "PROVIDER_UNAVAILABLE", message: "Temporary atlas read failure", retryable: true });
+    return { ...original, revision: queries === 1 ? "before-error" : "after-retry" };
+  } }));
+  const image = original.images[0];
+  const pin = image?.pins[0];
+  if (!pin) throw new Error("Missing demo pin");
+  const button = await screen.findByRole("button", { name: `Show ${pin.label} on the map` });
+  fireEvent.click(button);
+  fireEvent.change(screen.getByLabelText("Search reference pins"), { target: { value: pin.id } });
+  fireEvent.change(screen.getByLabelText("Point type"), { target: { value: pin.kind.kind } });
+  fireEvent.click(screen.getByLabelText(/Flight network/));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("The previous atlas remains displayed");
+  expect(screen.getByText(/Dataset before-error/)).toBeInTheDocument();
+  expect(button).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByLabelText("Search reference pins")).toHaveValue(pin.id);
+  expect(screen.getByLabelText("Point type")).toHaveValue(pin.kind.kind);
+  expect(screen.getByLabelText(/Flight network/)).toBeChecked();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
+  expect(await screen.findByText(/Dataset after-retry/)).toBeInTheDocument();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: `Show ${pin.label} on the map` })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByLabelText("Search reference pins")).toHaveValue(pin.id);
+  expect(screen.getByLabelText("Point type")).toHaveValue(pin.kind.kind);
+  expect(screen.getByLabelText(/Flight network/)).toBeChecked();
+});
+
+it("distinguishes a removed selected pin from a filter-hidden selection", async () => {
+  const original = await demoAdapter.invoke("query_atlas", { image: null });
+  let queries = 0;
+  renderAtlas(adapterWith({ query_atlas: () => ++queries === 1 ? original : {
+    ...original, revision: "pin-removed", images: original.images.map((image) => ({ ...image, pins: [] })),
+  } }));
+  const pin = original.images[0]?.pins[0];
+  if (!pin) throw new Error("Missing demo pin");
+  fireEvent.click(await screen.findByRole("button", { name: `Show ${pin.label} on the map` }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
+  expect(await screen.findByText(/Dataset pin-removed/)).toBeInTheDocument();
+  expect(screen.getByText("The selected pin is no longer present in this atlas revision.")).toBeInTheDocument();
+  expect(screen.queryByText("The selected pin is hidden by the current filters.")).not.toBeInTheDocument();
 });

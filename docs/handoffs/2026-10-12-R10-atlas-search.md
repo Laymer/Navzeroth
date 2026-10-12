@@ -19,3 +19,28 @@ ignored generator); contracts:types/check passed for 73 fixtures, no schema drif
 git diff --check passed. Initial strict TS errors fixed (PinKind tagged shape and
 bounded indexes). Native keyboard/window and live WoW remain unverified.
 Hosted CI pending draft PR. Next: R12 browser navigation checks.
+
+## Correction claim
+Ownership transferred to Codex worker B by coordinator on 2026-10-12.
+Correction baseline: cf0a381, feature/wave2-r10. Scope: retain ready atlas after
+refresh errors, prove completed refresh, keyboard wrap checks, and distinguish
+removed selections from filtering. No manifests, dependencies or shared docs.
+
+## Focused correction delivered
+A refresh failure now displays a separate recoverable error while retaining
+the previous ready atlas and its component state. Search, point type, selected
+pin and layer toggles survive both the failure and retry. A selected pin removed
+from a refreshed dataset is explicitly distinguished from a filtered-out pin.
+The dense fixture test awaits a changed displayed dataset revision before
+asserting selection/search persistence and covers ArrowUp/Down wrapping in
+addition to Home/End. New tests cover failed-refresh/retry preservation and
+removed-selection wording.
+
+Actual correction checks: desktop typecheck/lint/build passed; seven unit-test
+files, 59 tests passed; `cargo fmt --all --check` and `git diff --check` passed.
+No Rust implementation, contract, dependency or lockfile changed in this
+correction, so the existing package's Rust/contract checks were not repeated.
+Initial implementation cf0a381 hosted run passed all seven jobs on PR 29.
+Updated-head hosted verification follows below when complete. Native interaction
+and live client remain unverified. Next: merge the R3 refreshKey dependency into
+the integration branch, then R12 browser refresh/failure checks.
