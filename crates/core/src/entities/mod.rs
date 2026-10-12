@@ -22,3 +22,5 @@ pub(crate) fn unique<T: Ord>(values: impl IntoIterator<Item = T>) -> Result<()> 
     }
     Ok(())
 }
+pub mod character;
+pub use character::*;
