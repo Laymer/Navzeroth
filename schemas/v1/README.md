@@ -16,8 +16,9 @@ generators and commit the results. CI fails on drift: `cargo test` compares the
 committed schema byte for byte, and the pnpm jobs regenerate `exchange.ts` and
 run `git diff --exit-code`. `.gitattributes` pins LF endings for these files.
 
-The transport grammar (the `ANAV1` text prefix, plan section 7.1) belongs to M2
-and is not defined here.
+The `ANAV1` text transport (plan section 7.1) is defined in
+[ANAV1 text transport](#anav1-text-transport) below. Its SavedVariables carrier
+is documented there and is not a contract.
 
 ## Envelope
 
@@ -119,6 +120,74 @@ requires evidence; its confidence is read from those evidence records
 (`inferred` draws an approximate marker, `limited_sample` needs in-game control
 points, `verified_on_build` needs a client record). Digests are declared, not
 computed, in the contract.
+
+## ANAV1 text transport
+
+`azeroth-ingest` (`crates/ingest`) is normative for this grammar. The addon
+encoder and the desktop importer must both follow it; the addon never defines a
+second one. The envelope above is unchanged: the transport only frames it.
+
+```text
+transport = ws* "ANAV1:" document ws*
+ws        = SP | HT | LF | CR
+document  = one JSON exchange envelope object
+```
+
+- Encoding is UTF-8 with no byte order mark. A byte order mark, any other
+  leading or trailing character (including NBSP and form feed), a second
+  prefix, a lowercase or differently versioned prefix, or whitespace between the
+  prefix and the JSON is rejected with `INVALID_INPUT`. CRLF and LF are both
+  tolerated around the document; the encoder emits neither.
+- There is exactly one encoding: the prefix directly followed by the compact
+  JSON (`encode_text` writes the canonical serialization). No base64,
+  compression, chunking or alternate variants exist in version 1.
+- Limits are applied before any JSON is parsed: raw text at most 4 MiB plus
+  1 KiB of framing slack and the document at most 4 MiB (`IMPORT_TOO_LARGE`
+  above that), JSON bracket nesting at most 32 (`INVALID_INPUT`). The 4 MiB
+  ceiling holds for every kind, including reference datasets, which the contract
+  decoder alone would allow to reach 16 MiB. After that the document goes through
+  `decode_any`, so anything after the closing brace is rejected by the JSON
+  parser.
+- A transport accepts a caller-chosen set of kinds. The default import options
+  accept character and party snapshots only; any other known kind fails with
+  `INVALID_INPUT` before its payload is decoded.
+- Text, a file holding the text, and a SavedVariables string all reach one
+  validation function, `import::normalize`, and produce the same result. The
+  result surfaces `fixture`, `namespace`, build and producer facts so production
+  callers can reject synthetic and demo data, and per-snapshot freshness computed
+  from a clock the caller supplies. Without a trusted clock freshness is
+  `uncertain`. Imported state is never labelled live. No identity hash, ordering
+  or storage is decided here.
+- Error messages are static: they never include imported content, paths or
+  excerpts.
+- The desktop reads text only from an explicit user action or an explicitly
+  chosen file; it never polls the clipboard.
+
+### SavedVariables carrier (layout UNVERIFIED)
+
+The addon cannot write files; the client writes its SavedVariables file. The
+parser reads that file as data and never evaluates it: no Lua engine, no `load`,
+no `dofile`. It accepts top-level `Name = value` assignments whose values are
+tables, strings, decimal numbers and booleans, and rejects everything that would
+need evaluation: functions, calls, name references, `nil`, `..`, operators
+(other than a minus attached to a number), long strings and comments, hexadecimal
+numbers, duplicate keys and names, Lua keywords as names, and trailing garbage.
+String escapes `\\ \" \' \a \b \f \n \r \t \v \ddd \xXX \z \u{X}` are
+decoded; an invalid escape, a raw line break in a string, or a decoded string
+that is not valid UTF-8 is rejected, never converted lossily. `--` line comments
+are skipped. Limits: 8 MiB per file, 32 nested tables, strings up to 4 MiB plus
+1 KiB, 262,144 values and 64 top-level assignments.
+
+The extractor takes the global name and key as parameters. The assumed layout
+`AzerothNavigatorDB = { ["export"] = "ANAV1:{...}" }` is an engineering
+assumption owned by the addon (`docs/compatibility/ADDON_SAVEDVARIABLES.md`,
+when it lands). The real serialization (escape style, key order, number formats
+such as `1e+15`, comments, line endings) is UNVERIFIED until a live client run
+at M0.5, and the accepted subset may need widening then.
+
+Synthetic cases live in `../../fixtures/transport/` with their own
+`manifest.json`; `cargo run --locked -p azeroth-cli -- validate-fixtures` checks
+it and the contract fixtures against their declared outcomes.
 
 ## Decoding and errors
 

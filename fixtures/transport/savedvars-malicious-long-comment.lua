@@ -1,0 +1,5 @@
+--[[ hidden
+]]
+AzerothNavigatorDB = {
+	["export"] = "x",
+}
