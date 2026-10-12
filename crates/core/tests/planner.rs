@@ -35,6 +35,22 @@ fn replay(
     budget: u64,
     excluded: &BTreeSet<ObjectiveId>,
 ) -> PlannerResult {
+    replay_graph(
+        candidates,
+        budget,
+        excluded,
+        &[edge("ab", "a", "b", 10), edge("ba", "b", "a", 20)],
+        8,
+    )
+    .unwrap()
+}
+fn replay_graph(
+    candidates: &[Candidate<'_>],
+    budget: u64,
+    excluded: &BTreeSet<ObjectiveId>,
+    edges: &[TravelEdge],
+    max_steps: usize,
+) -> azeroth_core::error::Result<PlannerResult> {
     let snapshot: CharacterSnapshot = from_value(common::snapshot()).unwrap();
     let freshness = FreshnessContext {
         now_utc_ms: None,
@@ -50,22 +66,20 @@ fn replay(
         limits: RuleLimits::default(),
     };
     let nodes = vec![node("a"), node("b")];
-    let edges = vec![edge("ab", "a", "b", 10), edge("ba", "b", "a", 20)];
     plan(&PlannerInput {
         goal_profile: SourceId::new("synthetic-goal-v1").unwrap(),
         candidates,
         excluded,
         nodes: &nodes,
-        edges: &edges,
+        edges,
         origin: NodeId::new("a").unwrap(),
         stopping_node: NodeId::new("a").unwrap(),
         stopping_service_ms: ms(5),
         budget_ms: ms(budget),
-        max_steps: 8,
+        max_steps,
         context: &context,
         travel_options: &RouteOptions::default(),
     })
-    .unwrap()
 }
 fn always() -> Predicate {
     from_value(json!({"op":"all","predicates":[]})).unwrap()
@@ -197,4 +211,115 @@ fn existing_quest_eligibility_unknown_history_remains_uncertain() {
         result.trace[0].eligibility,
         Some(EligibilityEvidence::Quest { .. })
     ));
+}
+
+fn stateful_edge(id: &str, from: &str, to: &str, time: u64) -> TravelEdge {
+    let mut value = serde_json::to_value(edge(id, from, to, time)).unwrap();
+    value["mode"] = json!("return");
+    value["consumes_resource"] = json!({"status":"known","value":false});
+    value["cooldown_ms"] = json!({"status":"known","value":0});
+    from_value(value).unwrap()
+}
+
+#[test]
+fn stateful_inbound_action_is_rejected_but_final_stopping_action_is_reserved() {
+    let yes = always();
+    let candidates = [candidate("objective", &yes, 10, 10, 0)];
+    let inbound = [stateful_edge("ab", "a", "b", 10), edge("ba", "b", "a", 20)];
+    let blocked = replay_graph(&candidates, 100, &BTreeSet::new(), &inbound, 8).unwrap();
+    assert!(blocked.selected.is_empty());
+    assert_eq!(blocked.trace[0].decision, Decision::StatefulIntermediate);
+    let RouteOutcome::Complete { route } = &blocked.trace[0].travel.as_ref().unwrap().outcome
+    else {
+        panic!("supported stateful inbound route");
+    };
+    assert!(route.hops.last().unwrap().stateful);
+    assert_eq!(blocked.expected_total_ms, ms(5));
+    let final_stop = [edge("ab", "a", "b", 10), stateful_edge("ba", "b", "a", 20)];
+    let allowed = replay_graph(&candidates, 45, &BTreeSet::new(), &final_stop, 8).unwrap();
+    assert_eq!(allowed.selected.len(), 1);
+    assert!(
+        allowed.selected[0]
+            .travel
+            .hops
+            .iter()
+            .all(|hop| !hop.stateful)
+    );
+    assert!(allowed.stopping.hops.last().unwrap().stateful);
+    assert_eq!(allowed.expected_total_ms, ms(45));
+}
+
+#[test]
+fn reachable_candidate_with_disconnected_stop_is_never_selected() {
+    let yes = always();
+    let candidates = [candidate("objective", &yes, u32::MAX, 0, 0)];
+    let edges = [edge("ab", "a", "b", 10)];
+    let result = replay_graph(&candidates, 100, &BTreeSet::new(), &edges, 8).unwrap();
+    assert!(result.selected.is_empty());
+    assert_eq!(result.termination, Termination::NoFeasibleCandidate);
+    assert_eq!(result.trace[0].decision, Decision::Unreachable);
+    assert!(matches!(
+        result.trace[0].travel.as_ref().unwrap().outcome,
+        RouteOutcome::Complete { .. }
+    ));
+    assert!(matches!(
+        result.trace[0].stopping.as_ref().unwrap().outcome,
+        RouteOutcome::Incomplete { .. }
+    ));
+    assert_eq!(result.expected_total_ms, ms(5));
+}
+
+#[test]
+fn invalid_steps_duplicate_ids_and_oversized_inputs_fail_before_planning() {
+    use azeroth_core::error::ErrorCode;
+    let yes = always();
+    let candidates = [candidate("objective", &yes, 1, 0, 0)];
+    let edges = [edge("ab", "a", "b", 10), edge("ba", "b", "a", 20)];
+    let excluded = BTreeSet::new();
+    for steps in [0, 65] {
+        assert_eq!(
+            replay_graph(&candidates, 100, &excluded, &edges, steps)
+                .unwrap_err()
+                .code,
+            ErrorCode::InvalidInput
+        );
+    }
+    let duplicate = [
+        candidate("same", &yes, 1, 0, 0),
+        candidate("same", &yes, 2, 0, 0),
+    ];
+    assert_eq!(
+        replay_graph(&duplicate, 100, &excluded, &edges, 8)
+            .unwrap_err()
+            .code,
+        ErrorCode::InvalidInput
+    );
+    let mut oversized: Vec<_> = (0..1025)
+        .map(|i| candidate(&format!("c{i}"), &yes, 1, 0, 0))
+        .collect();
+    assert_eq!(
+        replay_graph(&oversized, 100, &excluded, &edges, 8)
+            .unwrap_err()
+            .code,
+        ErrorCode::InvalidInput
+    );
+    oversized.truncate(1);
+    oversized[0].rewards = (0..1025)
+        .map(|i| SourceId::new(format!("r{i}")).unwrap())
+        .collect();
+    assert_eq!(
+        replay_graph(&oversized, 100, &excluded, &edges, 8)
+            .unwrap_err()
+            .code,
+        ErrorCode::InvalidInput
+    );
+    let excluded = (0..1025)
+        .map(|i| ObjectiveId::new(format!("c{i}")).unwrap())
+        .collect();
+    assert_eq!(
+        replay_graph(&candidates, 100, &excluded, &edges, 8)
+            .unwrap_err()
+            .code,
+        ErrorCode::InvalidInput
+    );
 }
