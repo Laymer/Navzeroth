@@ -32,3 +32,13 @@ pub fn exchange_schema() -> Value {
         "$defs": defs,
     })
 }
+
+/// File name of the committed schema within `schemas/v1/`.
+pub const SCHEMA_FILE: &str = "exchange.schema.json";
+
+/// The exact committed text: two-space pretty JSON with a trailing newline.
+pub fn exchange_schema_text() -> String {
+    let mut text = serde_json::to_string_pretty(&exchange_schema()).expect("schema serializes");
+    text.push('\n');
+    text
+}

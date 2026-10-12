@@ -1,22 +1,50 @@
 //! Development and diagnostic CLI for Azeroth Navigator.
 //!
-//! The no-argument banner identifies the current capability. Real subcommands
-//! (doctor, validate-fixtures, ...; plan section 19.3) land in later milestones.
-//! Unsupported arguments fail explicitly.
+//! The no-argument banner identifies the current capability. `export-schemas`
+//! writes the generated exchange schema. The remaining plan section 19.3
+//! commands land in later milestones. Unsupported arguments fail explicitly.
+use azeroth_core::contract::schema::{SCHEMA_FILE, exchange_schema_text};
+use std::{path::Path, process::ExitCode};
 
-fn main() -> std::process::ExitCode {
-    if std::env::args_os().nth(1).is_some() {
-        eprintln!("No subcommands or options are implemented yet. See README.md.");
-        return std::process::ExitCode::from(2);
+fn export_schemas(output: &Path) -> ExitCode {
+    let path = output.join(SCHEMA_FILE);
+    match std::fs::create_dir_all(output)
+        .and_then(|()| std::fs::write(&path, exchange_schema_text()))
+    {
+        Ok(()) => {
+            println!("Wrote {}", path.display());
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            eprintln!("Could not write the schema file: {}", error.kind());
+            ExitCode::FAILURE
+        }
     }
-    println!(
-        "{} {} - domain foundation available; no CLI commands implemented",
-        env!("CARGO_PKG_NAME"),
-        env!("CARGO_PKG_VERSION")
-    );
-    println!(
-        "No subcommands are implemented yet. Planned commands are listed in \
-         README.md and plan section 19.3."
-    );
-    std::process::ExitCode::SUCCESS
+}
+
+fn main() -> ExitCode {
+    let args: Vec<_> = std::env::args_os().skip(1).collect();
+    match args.as_slice() {
+        [] => {
+            println!(
+                "{} {} - domain and exchange contracts available",
+                env!("CARGO_PKG_NAME"),
+                env!("CARGO_PKG_VERSION")
+            );
+            println!(
+                "Implemented subcommand: export-schemas --output <dir>. Other commands \
+                 are planned; see README.md and plan section 19.3."
+            );
+            ExitCode::SUCCESS
+        }
+        [command, flag, dir] if command == "export-schemas" && flag == "--output" => {
+            export_schemas(Path::new(dir))
+        }
+        _ => {
+            eprintln!(
+                "Unsupported command or options. Only export-schemas --output <dir> is implemented. See README.md."
+            );
+            ExitCode::from(2)
+        }
+    }
 }
