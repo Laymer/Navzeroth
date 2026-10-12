@@ -27,6 +27,11 @@ export function App({ client }: { client: CommandClient }) {
   const watchedImport = useRef("");
   const changed = useCallback(() => setRevision((value) => value + 1), []);
   useEffect(() => {
+    // Requery backend freshness as imported observations age; no local age math.
+    const timer = window.setInterval(changed, 60_000);
+    return () => window.clearInterval(timer);
+  }, [changed]);
+  useEffect(() => {
     let live = true;
     void (async () => {
       const status = await client.getAppStatus();

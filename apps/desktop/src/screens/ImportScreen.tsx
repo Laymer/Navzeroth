@@ -147,6 +147,6 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     <h3>Recent snapshot history</h3>
     <p>Showing up to 32 recent snapshots.</p>
     {history.length === 0 ? <p>No stored snapshot history.</p> : <ul>{history.map((entry) => <li key={entry.snapshot_id}>{entry.snapshot_id}{entry.is_current ? " (current)" : " (history only)"}: {describeAge(entry.freshness)}</li>)}</ul>}
-    <button type="button" disabled={busy} onClick={() => { setError(null); void refresh(); }}>Refresh stored state</button>
+    <button type="button" disabled={busy} onClick={() => { setError(null); void refresh().then(onChanged); }}>Refresh stored state</button>
   </section>;
 }
