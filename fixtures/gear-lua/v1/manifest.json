@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "files": [
+    {
+      "file": "cases.json",
+      "cases": 10
+    },
+    {
+      "file": "arithmetic.json",
+      "to_fixed": 13,
+      "fixed_mul": 144
+    }
+  ]
+}
