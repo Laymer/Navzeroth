@@ -1,0 +1,351 @@
+{
+  "template_version": 1,
+  "kind": "capability_observations_template",
+  "note": "Machine-readable companion of docs/compatibility/BUILD_CAPABILITIES.md (plan sections 3.3 and 22.4). Every row is untested: nothing here was observed in a client. Capability ids match the diagnostic addon probe (addons/AzerothNavigator/Core/Capabilities.lua). Copy this file, fill one copy per client session, and change a status only with recorded conditions and evidence.",
+  "status_vocabulary": [
+    "verified available",
+    "verified unavailable",
+    "restricted",
+    "failed",
+    "untested"
+  ],
+  "header": {
+    "date": null,
+    "operator": null,
+    "game": {
+      "edition": "wow_forever",
+      "build": "1.60.1.70205",
+      "interface": "16001",
+      "basis": "assumed from docs/compatibility/BUILD_CAPABILITIES.md; not verified"
+    },
+    "os_locale": null,
+    "addon_revision": null,
+    "application_revision": null
+  },
+  "capabilities": [
+    {
+      "id": "addon_party_messages",
+      "capability": "Addon party messages",
+      "api_names": [
+        "C_ChatInfo.RegisterAddonMessagePrefix",
+        "C_ChatInfo.SendAddonMessage"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.5",
+        "M7.4"
+      ],
+      "fallback": "Import both snapshots or coordinate manually"
+    },
+    {
+      "id": "build_identification",
+      "capability": "Build identification",
+      "api_names": [
+        "GetBuildInfo"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1",
+        "M6.5"
+      ],
+      "fallback": "Manual build entry; unverified-client label"
+    },
+    {
+      "id": "character_level",
+      "capability": "Level and character identity",
+      "api_names": [
+        "UnitLevel"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1"
+      ],
+      "fallback": "Manual profile; do not merge unrelated characters"
+    },
+    {
+      "id": "combat_log_availability",
+      "capability": "Combat-log availability and semantics",
+      "api_names": [
+        "CombatLogGetCurrentEventInfo"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M8.5"
+      ],
+      "fallback": "Session summaries from addon observations only"
+    },
+    {
+      "id": "equipment_item_links",
+      "capability": "Equipment links",
+      "api_names": [
+        "GetInventoryItemLink"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1",
+        "M5.2"
+      ],
+      "fallback": "Manual item entry or last snapshot"
+    },
+    {
+      "id": "event_frame_support",
+      "capability": "Event frame creation",
+      "api_names": [
+        "CreateFrame"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1"
+      ],
+      "fallback": "Slash command only; no event-driven updates"
+    },
+    {
+      "id": "flight_path_unlocks",
+      "capability": "Flight-path unlocks",
+      "api_names": [
+        "C_TaxiMap.GetAllTaxiNodes"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1",
+        "M4.1"
+      ],
+      "fallback": "User-confirmed unlocks; separate unknown from unavailable"
+    },
+    {
+      "id": "item_data",
+      "capability": "Item data loading",
+      "api_names": [
+        "C_Item.GetItemInfo"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1",
+        "M5.2"
+      ],
+      "fallback": "Manual item entry or last snapshot; wait for item data to load"
+    },
+    {
+      "id": "map_position",
+      "capability": "Zone, map and position",
+      "api_names": [
+        "C_Map.GetBestMapForUnit",
+        "C_Map.GetPlayerMapPosition"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1",
+        "M6.5"
+      ],
+      "fallback": "Manual route origin; no moving desktop marker"
+    },
+    {
+      "id": "map_zone_rectangle",
+      "capability": "Zone rectangle inside the continent map",
+      "api_names": [
+        "C_Map.GetMapRectOnMap"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M6.5"
+      ],
+      "fallback": "Marker not placed; schematic position only"
+    },
+    {
+      "id": "money_bags_durability",
+      "capability": "Money, bag space and durability",
+      "api_names": [
+        "C_Container.GetContainerNumFreeSlots",
+        "GetInventoryItemDurability",
+        "GetMoney"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M7.2"
+      ],
+      "fallback": "Disable only dependent reminders"
+    },
+    {
+      "id": "quest_completion_history",
+      "capability": "Quest completion history",
+      "api_names": [
+        "C_QuestLog.IsQuestFlaggedCompleted"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1"
+      ],
+      "fallback": "Unknown prerequisite state; never infer incomplete from absence"
+    },
+    {
+      "id": "quest_log",
+      "capability": "Quest log and objective updates",
+      "api_names": [
+        "C_QuestLog.GetInfo",
+        "C_QuestLog.GetNumQuestLogEntries"
+      ],
+      "documentation_source": "none: API names are unverified mainline-style assumptions (plan section 3.2); no authoritative Forever documentation has been checked",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M2.1"
+      ],
+      "fallback": "Manual checklist and last imported quest state"
+    },
+    {
+      "id": "saved_variables_persistence",
+      "capability": "SavedVariables write and load behavior",
+      "api_names": [],
+      "documentation_source": "none: no API name is known for this capability; it must be observed in the client",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.5",
+        "M2.3"
+      ],
+      "fallback": "Explicit text export and local desktop persistence"
+    },
+    {
+      "id": "talents",
+      "capability": "Talents",
+      "api_names": [],
+      "documentation_source": "none: no API name is known for this capability; it must be observed in the client",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.4",
+        "M5.1"
+      ],
+      "fallback": "User-selected role profile with explicit assumptions"
+    },
+    {
+      "id": "text_import_capacity",
+      "capability": "Addon text import capacity",
+      "api_names": [],
+      "documentation_source": "none: no API name is known for this capability; it must be observed in the client",
+      "conditions_tested": [],
+      "observed_result": null,
+      "readable_and_serializable": null,
+      "restricted_contexts": [],
+      "reproduction_steps": [],
+      "sanitized_evidence": [],
+      "status": "untested",
+      "affected_tasks": [
+        "M0.5",
+        "M2.2"
+      ],
+      "fallback": "Smaller plan or data-file import; no hidden bridge"
+    }
+  ]
+}

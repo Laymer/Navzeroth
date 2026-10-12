@@ -46,11 +46,57 @@ fn the_crate_has_no_lua_engine_dependency() {
         .map(|l| l.trim().trim_matches(|c| c == '"' || c == ',').to_owned())
         .collect();
     assert_eq!(locked, ["azeroth-core", "serde", "serde_json"]);
-    // No Lua engine exists anywhere in the workspace lock file.
-    for name in lock.lines().filter_map(|l| l.strip_prefix("name = \"")) {
-        let name = name.to_ascii_lowercase();
-        assert!(!name.contains("lua"), "unexpected package {name}");
+    // No Lua engine is reachable from this crate, directly or transitively.
+    // The dev-only `azeroth-lua-harness` crate (ADR 0003) may lock a Lua
+    // engine for addon tests; it must never enter the import path.
+    let reachable = lock_closure(&lock, "azeroth-ingest");
+    assert!(
+        reachable.contains("serde_json"),
+        "closure walks dependencies"
+    );
+    for name in &reachable {
+        assert!(
+            !name.to_ascii_lowercase().contains("lua"),
+            "azeroth-ingest reaches {name}"
+        );
     }
+}
+
+/// Package names reachable from `root` through the lock file's dependency
+/// lists. Entries may carry a version (`name 1.2.3`) when several versions
+/// are locked; reachability is tracked by name, which over-approximates.
+fn lock_closure(lock: &str, root: &str) -> std::collections::BTreeSet<String> {
+    let mut deps: std::collections::BTreeMap<String, Vec<String>> = Default::default();
+    for block in lock.split("[[package]]") {
+        let Some(name) = block
+            .lines()
+            .find_map(|l| l.strip_prefix("name = \""))
+            .map(|n| n.trim_end_matches('"').to_owned())
+        else {
+            continue;
+        };
+        let listed = block
+            .lines()
+            .skip_while(|l| !l.starts_with("dependencies"))
+            .skip(1)
+            .take_while(|l| l.starts_with(' '))
+            .filter_map(|l| {
+                l.trim()
+                    .trim_matches(|c| c == '"' || c == ',')
+                    .split(' ')
+                    .next()
+                    .map(str::to_owned)
+            });
+        deps.entry(name).or_default().extend(listed);
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    let mut stack = vec![root.to_owned()];
+    while let Some(name) = stack.pop() {
+        if seen.insert(name.clone()) {
+            stack.extend(deps.get(&name).into_iter().flatten().cloned());
+        }
+    }
+    seen
 }
 
 fn code_lines(dir: &Path) -> Vec<(PathBuf, String)> {
