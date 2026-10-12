@@ -35,9 +35,11 @@ Fixture and real documents cannot be interchanged at this boundary.
 new model, passes it to
 `render(model)` and returns it. Models distinguish `no_plan`, invalid
 observations/context, uncertain clock, expiry, evaluation errors, unknown,
-blocked, ready and complete. Fixture labels, stable step IDs, explanations,
-alternatives and predicate diagnostics are retained. Only a definite true
-invalidation skips a step; unknown prerequisite/invalidation suppresses ready.
+blocked, ready, invalidated and no applicable steps. Fixture labels, stable step IDs, explanations,
+alternatives and predicate diagnostics are retained. True invalidation retains the step as invalidated and requests revalidation; it
+does not prove completion. Unknown prerequisite/invalidation suppresses ready.
+For PlanStep gates, not_applicable declares no prerequisite/no invalidation, so
+it yields true/false respectively; all other unavailable statuses stay unknown.
 Alternatives are displayed in declared order; automatic alternative selection,
 revalidation event dispatch, stateful advancement and client rendering belong
 to later milestones.

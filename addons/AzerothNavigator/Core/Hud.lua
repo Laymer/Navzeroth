@@ -3,9 +3,10 @@
 local _, ns = ...
 local D, P, Hud = ns.Decode, ns.Predicate, {}
 local V = P.validation
-local function gate(observation, context)
+local function gate(observation, context, notApplicable)
   if observation.status ~= 'known' then
-    return {truth='unknown', reasons={}, warnings={}, steps=0}
+    return {truth=observation.status == 'not_applicable' and notApplicable or 'unknown',
+      observation_status=observation.status, reasons={}, warnings={}, steps=0}
   end
   return P.evaluate(observation.value, context)
 end
@@ -37,27 +38,26 @@ function Hud.new(plans, observe, render)
         for _, input in ipairs(plan.inputs) do
           if input.character == context.snapshot.character then participant = true end
         end
-        model.status = participant and 'complete' or 'participant_missing'
+        model.status = participant and 'no_steps' or 'participant_missing'
         for _, step in ipairs(plan.steps) do
           local applicable = false
           for _, id in ipairs(step.participants) do
             if id == context.snapshot.character then applicable = true end
           end
           if applicable then
-            local invalidation = gate(step.invalidation, context)
-            if invalidation.error then model.status = 'evaluation_error'; break end
-            if invalidation.truth ~= 'true' then
-              local prerequisite = gate(step.prerequisite, context)
-              model.step_id, model.objective = step.id, step.objective
-              model.explanation, model.alternatives = step.explanation, step.alternatives
-              model.prerequisite, model.invalidation = prerequisite, invalidation
-              if prerequisite.error then model.status = 'evaluation_error'
-              elseif invalidation.truth == 'unknown' or prerequisite.truth == 'unknown' then
-                model.status = 'uncertain'
-              elseif prerequisite.truth == 'true' then model.status = 'ready'
-              else model.status = 'blocked' end
-              break
-            end
+            local invalidation = gate(step.invalidation, context, 'false')
+            local prerequisite = gate(step.prerequisite, context, 'true')
+            model.step_id, model.objective = step.id, step.objective
+            model.explanation, model.alternatives = step.explanation, step.alternatives
+            model.prerequisite, model.invalidation = prerequisite, invalidation
+            if invalidation.error or prerequisite.error then model.status = 'evaluation_error'
+            elseif invalidation.truth == 'true' then model.status = 'invalidated'
+            elseif invalidation.truth == 'unknown' or prerequisite.truth == 'unknown' then
+              model.status = 'uncertain'
+            elseif prerequisite.truth == 'true' then model.status = 'ready'
+            else model.status = 'blocked' end
+            -- Invalidation means advice must be revalidated, never objective completion.
+            break
           end
         end
       end

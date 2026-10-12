@@ -26,8 +26,9 @@ Status: IN_PROGRESS.
   decoder budget; import failure retains current state; queries return copies.
 - `Core/Hud.lua`: observation and rendering callbacks, fresh model per refresh,
   fixture label, declared alternatives, step/explanation and evaluation diagnostics.
-  Definite true invalidation skips a step; unknown invalidation or prerequisite
-  suppresses ready. No live APIs, client frames, event registrations or I/O.
+  Definite true invalidation retains advice as invalidated; unknown invalidation
+  or prerequisite suppresses ready. NA gates explicitly mean no requirement or
+  invalidation (true/false respectively). No live APIs, client frames, event registrations or I/O.
 - TOC follows existing namespace registration/load conventions. Core README
   documents the interfaces and explicitly leaves client import UI, automatic
   alternative selection and revalidation/advancement bindings for later work.
@@ -41,7 +42,7 @@ Status: IN_PROGRESS.
 - `cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings`: passed.
 - `cargo test --locked --workspace --exclude azeroth-desktop`: all binaries passed.
   After final addon/fixture-label refinements, affected harness tests and locked
-  workspace Clippy passed again. Lua harness has 73 passing tests, including the
+  workspace Clippy passed again. Lua harness has 63 passing tests, including the
   new 2 decoder, 3 plan/HUD and 1 corpus tests.
 - `cargo test --locked -p azeroth-lua-harness --test predicate_parity -- --nocapture`:
   192 cases passed, 3 Lua-only cases included (none skipped).
@@ -77,3 +78,23 @@ Next dependency-ready task: R11 bounded synthetic gear inputs and Rust/Lua
 fixed-point scoring parity, stacked from feature/wave2-r4. R12 CI owner can use
 the existing harness tests; normal workspace Rust CI already executes them.
 Hosted PR and CI evidence: pending below.
+
+## Coordinating review follow-up
+
+The initial HUD incorrectly treated true invalidation as completion/advance.
+Plan section 6.5 defines per-step invalidation conditions; it supplies no
+completion predicate. Corrected the HUD to retain the same step with
+`invalidated` status and no completion claim. The no-applicable-step case is
+`no_steps`. Focused regression keeps the invalidated step ID visible.
+
+PlanStep HUD gate decision: `not_applicable` means no prerequisite (true) or no
+invalidation (false), consistent with travel requirement NA semantics. Unknown,
+unsupported and restricted remain unknown, retaining their observation status.
+Quest-definition eligibility currently uses a conservative different missing-
+requirement policy; this decision is local to explicit PlanStep gates. Focused
+HUD tests cover both gates and all unavailable statuses.
+
+Draft PR: https://github.com/Laymer/Navzeroth/pull/31.
+Hosted run: https://github.com/Laymer/Navzeroth/actions/runs/38307428332 at
+98e6a61: format, Lua static checks and pnpm Linux passed; Rust Linux/Windows,
+pnpm Windows and desktop Windows were still pending at first inspection.

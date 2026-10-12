@@ -118,7 +118,7 @@ fn context_fixture_expiry_and_alias_boundaries_are_enforced() {
 }
 
 #[test]
-fn injected_hud_keeps_unknown_blocked_ready_complete_and_expired_distinct() {
+fn injected_hud_keeps_unknown_blocked_ready_invalidated_and_expired_distinct() {
     let sandbox = setup();
     let corpus: Value = serde_json::from_str(
         &std::fs::read_to_string(common::path("fixtures/predicates/v1/operators.json")).unwrap(),
@@ -174,7 +174,28 @@ fn injected_hud_keeps_unknown_blocked_ready_complete_and_expired_distinct() {
       snapshot.level = {status='restricted'}
       assert(hud:refresh().status == 'uncertain')
       snapshot.quests['demo-quest-1'].turned_in.value = true
-      assert(hud:refresh().status == 'complete')
+      assert(hud:refresh().status == 'invalidated')
+      assert(rendered.step_id == 'demo-step-1')
+      -- NA is no prerequisite/no invalidation. It does not mean unknown.
+      local noGates = ns.plans:get()
+      noGates.payload.steps[1].prerequisite = {status='not_applicable'}
+      noGates.payload.steps[1].invalidation = {status='not_applicable'}
+      local original = ns.plans.get
+      ns.plans.get = function() return noGates end
+      assert(hud:refresh().status == 'ready')
+      assert(rendered.prerequisite.observation_status == 'not_applicable')
+      for _, status in ipairs({'unknown', 'unsupported', 'restricted'}) do
+        noGates.payload.steps[1].prerequisite = {status=status}
+        assert(hud:refresh().status == 'uncertain')
+        assert(rendered.prerequisite.observation_status == status)
+      end
+      noGates.payload.steps[1].prerequisite = {status='not_applicable'}
+      for _, status in ipairs({'unknown', 'unsupported', 'restricted'}) do
+        noGates.payload.steps[1].invalidation = {status=status}
+        assert(hud:refresh().status == 'uncertain')
+        assert(rendered.invalidation.observation_status == status)
+      end
+      ns.plans.get = original
       context.freshness.now_utc_ms = 1791878400000
       assert(hud:refresh().status == 'expired')
       context.freshness.clock_trust = 'uncertain'
@@ -186,7 +207,7 @@ fn injected_hud_keeps_unknown_blocked_ready_complete_and_expired_distinct() {
       assert(hud:refresh().status == 'observations_invalid')
       ns.plans:clear()
       assert(hud:refresh().status == 'no_plan')
-      assert(renders == 10)
+      assert(renders == 17)
     "#,
         )
         .unwrap();
