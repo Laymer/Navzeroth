@@ -41,3 +41,8 @@ Live WoW, native window interaction and packaging remain UNVERIFIED. Hosted CI
 pending this task's draft PR/workflow dispatch; final integration record will
 supply checked code head/run and all task PR links. Next: real client evidence,
 party snapshot persistence and planner/export UI integration.
+
+Merge follow-up 2026-10-13: local merge of protected main68aae9d resolved the
+combined branch ancestry cleanly, retaining the PR33 UTC range correction.
+Affected desktop typecheck/lint/build, 65 unit tests, four Chromium workflows,
+Rust formatting and diff checks passed. Fresh hosted CI follows before merge.
