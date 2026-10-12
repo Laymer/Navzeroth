@@ -28,3 +28,13 @@ pub mod spatial;
 pub use spatial::*;
 pub mod planning;
 pub use planning::*;
+
+fn requirement_context(
+    requirement: &crate::observation::Observation<crate::predicate::Predicate>,
+    context: &crate::types::DataContext,
+) -> Result<()> {
+    if let Some(predicate) = requirement.value() {
+        predicate.validate_in_context(context)?;
+    }
+    Ok(())
+}

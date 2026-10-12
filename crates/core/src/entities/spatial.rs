@@ -1,4 +1,4 @@
-use super::{bounded, unique};
+use super::{bounded, requirement_context, unique};
 use crate::{
     error::{Result, Validate, Validated, invalid},
     observation::Observation,
@@ -117,6 +117,7 @@ pub struct TravelEdgeData {
 pub type TravelEdge = Validated<TravelEdgeData>;
 impl Validate for TravelEdgeData {
     fn validate(&self) -> Result<()> {
+        requirement_context(&self.requirements, &self.context)?;
         self.context.ensure_compatible(&self.from.map.context)?;
         self.context.ensure_compatible(&self.to.map.context)?;
         unique(self.evidence.iter())?;
@@ -151,6 +152,7 @@ pub struct ObjectiveData {
 pub type Objective = Validated<ObjectiveData>;
 impl Validate for ObjectiveData {
     fn validate(&self) -> Result<()> {
+        requirement_context(&self.requirements, &self.context)?;
         unique(self.participants.iter())?;
         unique(self.evidence.iter())?;
         bounded(self.targets.len())?;

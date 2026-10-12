@@ -46,3 +46,13 @@ fn reference_records_round_trip_and_reject_semantic_errors() {
     bad["completed"] = json!({"status":"known"});
     check::<QuestProgress>(progress, bad);
 }
+
+#[test]
+fn nested_requirements_cannot_mix_namespaces() {
+    let context = json!({"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"});
+    let mut other = context.clone();
+    other["namespace"] = json!("reference");
+    let predicate = json!({"status":"known","value":{"op":"equipment_matches","slot":"main_hand","item":{"context":other,"item_id":"1","variant":"base"},"modifiers":{}}});
+    let source = json!({"id":"a1","context":context,"kind":"vendor","items":[{"context":context,"item_id":"1","variant":"base"}],"conditions":predicate,"cost":{"status":"unknown"},"probability":{"status":"unknown"},"evidence":[]});
+    assert!(serde_json::from_value::<AcquisitionSource>(source).is_err());
+}

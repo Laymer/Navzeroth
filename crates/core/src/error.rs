@@ -67,3 +67,8 @@ impl<'de, T: Deserialize<'de> + Validate> Deserialize<'de> for Validated<T> {
         Self::try_new(T::deserialize(deserializer)?).map_err(serde::de::Error::custom)
     }
 }
+impl<T: Validate> Validate for Validated<T> {
+    fn validate(&self) -> Result<()> {
+        self.0.validate()
+    }
+}

@@ -1,4 +1,4 @@
-use super::{bounded, unique};
+use super::{bounded, requirement_context, unique};
 use crate::{
     error::{Result, Validate, Validated, invalid},
     observation::*,
@@ -107,6 +107,14 @@ impl Validate for ProviderCapabilityData {
     fn validate(&self) -> Result<()> {
         unique(self.datasets.iter())?;
         bounded(self.endpoints.len())?;
+        unique(self.endpoints.iter().map(Text::as_str))?;
+        if self
+            .endpoints
+            .iter()
+            .any(|endpoint| endpoint.as_str().trim().is_empty())
+        {
+            return Err(invalid("Provider endpoint labels must not be empty"));
+        }
         unique(self.evidence.iter())?;
         self.freshness.validate()?;
         if self.status == ProviderStatus::Available
@@ -133,6 +141,8 @@ pub struct ItemDefinitionData {
 pub type ItemDefinition = Validated<ItemDefinitionData>;
 impl Validate for ItemDefinitionData {
     fn validate(&self) -> Result<()> {
+        requirement_context(&self.requirements, &self.key.context)?;
+
         unique(self.slots.iter())?;
         unique(self.evidence.iter())?;
         if self.slots.is_empty() {
@@ -187,6 +197,8 @@ pub struct AcquisitionSourceData {
 pub type AcquisitionSource = Validated<AcquisitionSourceData>;
 impl Validate for AcquisitionSourceData {
     fn validate(&self) -> Result<()> {
+        requirement_context(&self.conditions, &self.context)?;
+
         unique(self.items.iter())?;
         unique(self.evidence.iter())?;
         if self.items.is_empty() {
@@ -221,6 +233,9 @@ pub struct QuestDefinitionData {
 pub type QuestDefinition = Validated<QuestDefinitionData>;
 impl Validate for QuestDefinitionData {
     fn validate(&self) -> Result<()> {
+        requirement_context(&self.eligibility, &self.context)?;
+        requirement_context(&self.prerequisites, &self.context)?;
+
         unique(self.stages.iter())?;
         unique(self.evidence.iter())?;
         if self.stages.is_empty() {

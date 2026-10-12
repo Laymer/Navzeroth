@@ -145,8 +145,10 @@ impl FiniteNumber {
 impl TryFrom<f64> for FiniteNumber {
     type Error = AppError;
     fn try_from(n: f64) -> Result<Self> {
-        if !n.is_finite() {
-            return Err(invalid("Number must be finite"));
+        if !n.is_finite() || n.abs() > MAX_SAFE_INTEGER as f64 {
+            return Err(invalid(
+                "Number must be finite and within the safe numeric range",
+            ));
         }
         Ok(Self(n))
     }

@@ -174,3 +174,25 @@ impl PredicateNode {
         Ok(())
     }
 }
+
+impl PredicateNode {
+    /// Check every branch, including branches evaluation could short-circuit.
+    pub fn validate_in_context(&self, context: &DataContext) -> Result<()> {
+        self.validate_with(RuleLimits::default())?;
+        let mut stack = vec![self];
+        while let Some(node) = stack.pop() {
+            match node {
+                Self::All { predicates } | Self::Any { predicates } => stack.extend(predicates),
+                Self::Not { predicate } | Self::ParticipantState { predicate, .. } => {
+                    stack.push(predicate)
+                }
+                Self::EquipmentMatches { item, .. } => context.ensure_compatible(&item.context)?,
+                Self::LocationInSupportedArea { area } => {
+                    context.ensure_compatible(&area.map.context)?
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+}

@@ -73,3 +73,35 @@ fn freshness_obeys_clock_trust_session_and_threshold() {
         Freshness::Uncertain { .. }
     ));
 }
+
+#[test]
+fn elapsed_reversal_and_unrepresentable_age_remain_uncertain() {
+    let mut metadata = ObservationMetadata {
+        session_id: Some(SessionId::new("one").unwrap()),
+        session_elapsed_ms: Some(Millis::new(20).unwrap()),
+        ..Default::default()
+    };
+    let mut context = FreshnessContext {
+        now_utc_ms: None,
+        clock_trust: ClockTrust::Uncertain,
+        session: Some((SessionId::new("one").unwrap(), Millis::new(19).unwrap())),
+        max_age_ms: Millis::new(100).unwrap(),
+    };
+    assert_eq!(
+        freshness(&metadata, &context),
+        Freshness::Uncertain {
+            reason: ClockUncertainty::ClockReversed
+        }
+    );
+    context.session = None;
+    context.clock_trust = ClockTrust::Trusted;
+    context.now_utc_ms = Some(UtcMillis::new(MAX_SAFE_INTEGER as i64).unwrap());
+    metadata.clock_trust = ClockTrust::Trusted;
+    metadata.observed_at_utc_ms = Some(UtcMillis::new(-(MAX_SAFE_INTEGER as i64)).unwrap());
+    assert_eq!(
+        freshness(&metadata, &context),
+        Freshness::Uncertain {
+            reason: ClockUncertainty::AgeOutOfRange
+        }
+    );
+}

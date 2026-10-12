@@ -66,3 +66,11 @@ fn duplicate_json_keys_do_not_silently_overwrite_observations() {
         .is_err()
     );
 }
+
+#[test]
+fn numeric_and_map_limits_reject_excess_before_use() {
+    assert!(from_str::<FiniteNumber>("9007199254740993").is_err());
+    assert!(FiniteNumber::new(f64::MAX).is_err());
+    let entries = (0..1025).map(|n| (PreferenceId::new(n.to_string()).unwrap(), true));
+    assert!(RecordMap::new(entries).is_err());
+}

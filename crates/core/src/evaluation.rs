@@ -393,24 +393,7 @@ fn validate_context(predicate: &PredicateNode, context: &EvaluationContext<'_>) 
             ));
         }
     }
-    let mut stack = vec![predicate];
-    while let Some(node) = stack.pop() {
-        match node {
-            PredicateNode::All { predicates } | PredicateNode::Any { predicates } => {
-                stack.extend(predicates)
-            }
-            PredicateNode::Not { predicate }
-            | PredicateNode::ParticipantState { predicate, .. } => stack.push(predicate),
-            PredicateNode::EquipmentMatches { item, .. } => {
-                context.snapshot.context.ensure_compatible(&item.context)?
-            }
-            PredicateNode::LocationInSupportedArea { area } => context
-                .snapshot
-                .context
-                .ensure_compatible(&area.map.context)?,
-            _ => {}
-        }
-    }
+    predicate.validate_in_context(&context.snapshot.context)?;
     Ok(())
 }
 pub fn evaluate(

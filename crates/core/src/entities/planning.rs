@@ -1,4 +1,4 @@
-use super::{NodeRef, bounded, unique};
+use super::{NodeRef, bounded, requirement_context, unique};
 use crate::{
     error::{Result, Validate, Validated, invalid},
     observation::Observation,
@@ -66,6 +66,8 @@ impl Validate for RoutePlanData {
         bounded(self.manual_assumptions.len())?;
         bounded(self.travel.len())?;
         for step in &self.steps {
+            requirement_context(&step.prerequisite, &self.context)?;
+            requirement_context(&step.invalidation, &self.context)?;
             unique(step.participants.iter())?;
             unique(step.alternatives.iter())?;
             bounded(step.required_fields.len())?;
@@ -207,6 +209,7 @@ pub struct ContextRuleData {
 pub type ContextRule = Validated<ContextRuleData>;
 impl Validate for ContextRuleData {
     fn validate(&self) -> Result<()> {
+        self.predicate.validate_in_context(&self.context)?;
         unique(self.evidence.iter())?;
         if self.result_template.as_str().trim().is_empty() {
             return Err(invalid("Rule result template must not be empty"));

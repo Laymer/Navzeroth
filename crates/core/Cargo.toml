@@ -1,6 +1,6 @@
 [package]
 name = "azeroth-core"
-description = "Azeroth Navigator domain types and planning logic (placeholder; populated starting in task M1.2)"
+description = "Azeroth Navigator validated domain models, observations, and pure rule evaluation"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

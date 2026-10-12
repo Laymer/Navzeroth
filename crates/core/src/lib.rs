@@ -3,6 +3,7 @@
 pub mod entities;
 pub mod error;
 pub mod evaluation;
+pub mod json;
 pub mod observation;
 pub mod predicate;
 pub mod types;

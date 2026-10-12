@@ -1,9 +1,8 @@
 //! Development and diagnostic CLI for Azeroth Navigator.
 //!
-//! Placeholder created by task M1.1 to prove azeroth-cli links against
-//! azeroth-core inside the Cargo workspace. Real subcommands (doctor,
-//! validate-fixtures, ...; plan section 19.3) land in later milestones.
-//! Do not report any subcommand as implemented until it actually exists.
+//! The no-argument banner identifies the current capability. Real subcommands
+//! (doctor, validate-fixtures, ...; plan section 19.3) land in later milestones.
+//! Unsupported arguments fail explicitly.
 
 fn main() -> std::process::ExitCode {
     if std::env::args_os().nth(1).is_some() {
