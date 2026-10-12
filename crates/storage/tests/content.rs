@@ -518,3 +518,18 @@ fn self_conflicts_and_empty_disagreements_fail_but_single_relabel_is_preserved()
         }
     }
 }
+
+#[test]
+fn exact_revision_reads_reject_mismatched_index_identity() {
+    let db = TempDb::new("content-index-identity");
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let input = revision("r1");
+    store.stage_content_revision(&input).unwrap();
+    raw(&db.path).execute_batch("DROP TRIGGER dataset_revisions_no_update; UPDATE dataset_revisions SET revision='impostor';").unwrap();
+    let mut key = input.key();
+    key.revision = azeroth_core::types::DatasetRevision::new("impostor").unwrap();
+    assert_eq!(
+        store.content_revision(&key).unwrap_err().code,
+        ErrorCode::StorageError
+    );
+}
