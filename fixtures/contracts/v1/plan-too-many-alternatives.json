@@ -1,0 +1,203 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "route_plan",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "UNVERIFIED_DEMO",
+    "interface": "UNVERIFIED_DEMO",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "dependencies": {
+    "dataset_revision": "demo-r1",
+    "ruleset_version": "demo-rules-1",
+    "score_model_version": "demo-score-1",
+    "snapshots": [
+      {
+        "id": "demo-snapshot-001",
+        "character": "demo-character-paladin",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        }
+      }
+    ]
+  },
+  "payload": {
+    "schema_version": 1,
+    "id": "demo-plan-001",
+    "context": {
+      "build": {
+        "edition": "wow_forever",
+        "build": "UNVERIFIED_DEMO",
+        "interface": "UNVERIFIED_DEMO"
+      },
+      "namespace": "demo"
+    },
+    "generated_at_utc_ms": 1791792000000,
+    "inputs": [
+      {
+        "id": "demo-snapshot-001",
+        "character": "demo-character-paladin",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        }
+      }
+    ],
+    "dataset_revision": "demo-r1",
+    "ruleset_version": "demo-rules-1",
+    "score_model_version": "demo-score-1",
+    "capability_assumptions": {
+      "quest_log": "untested"
+    },
+    "goal": "Synthetic goal: reach the demo camp",
+    "time_budget_ms": 3600000,
+    "exclusions": [
+      "demo-objective-excluded"
+    ],
+    "manual_assumptions": [
+      "Synthetic assumption"
+    ],
+    "steps": [
+      {
+        "id": "demo-step-1",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [
+          "demo-alt-0",
+          "demo-alt-1",
+          "demo-alt-2",
+          "demo-alt-3",
+          "demo-alt-4",
+          "demo-alt-5",
+          "demo-alt-6",
+          "demo-alt-7",
+          "demo-alt-8"
+        ],
+        "prerequisite": {
+          "status": "known",
+          "value": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "level_at_least",
+                "level": 20
+              },
+              {
+                "op": "quest_state",
+                "quest": "demo-quest-1",
+                "state": "accepted",
+                "value": true
+              }
+            ]
+          }
+        },
+        "required_fields": [
+          "level",
+          "quests"
+        ],
+        "invalidation": {
+          "status": "known",
+          "value": {
+            "op": "quest_state",
+            "quest": "demo-quest-1",
+            "state": "turned_in",
+            "value": true
+          }
+        },
+        "expected_ms": {
+          "status": "known",
+          "value": 60000
+        },
+        "estimate": {
+          "status": "known",
+          "value": {
+            "min_ms": 30000,
+            "max_ms": 120000
+          }
+        },
+        "explanation": "Synthetic explanation",
+        "evidence": [
+          "demo-evidence-1"
+        ]
+      }
+    ],
+    "travel": [
+      {
+        "from": {
+          "id": "demo-node-1",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "UNVERIFIED_DEMO",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "demo-map-1",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "to": {
+          "id": "demo-node-2",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "UNVERIFIED_DEMO",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "demo-map-1",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "expected_ms": {
+          "status": "known",
+          "value": 30000
+        },
+        "range": {
+          "status": "known",
+          "value": {
+            "min_ms": 20000,
+            "max_ms": 45000
+          }
+        }
+      }
+    ],
+    "evidence": [
+      "demo-evidence-1"
+    ],
+    "expires_at_utc_ms": 1791878400000,
+    "revalidation": [
+      "dataset_revision_changed",
+      "snapshot_superseded"
+    ]
+  }
+}

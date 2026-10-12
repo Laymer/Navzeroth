@@ -11,10 +11,24 @@ fn planning_records_validate_inputs_exclusions_and_missing_evidence() {
     let c = json!({"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"});
     let u = json!({"status":"unknown"});
     let snap = json!({"id":"snap1","character":"c1","context":c});
-    let plan = json!({"schema_version":1,"id":"plan1","context":c,"generated_at_utc_ms":100,"inputs":[snap],"dataset_revision":"demo-r1","ruleset_version":"rules1","score_model_version":"scores1","goal":"synthetic","time_budget_ms":1000,"exclusions":[],"manual_assumptions":[],"steps":[{"id":"step1","objective":"o1","participants":["c1"],"alternatives":[],"prerequisite":u,"required_fields":[],"invalidation":u,"explanation":"synthetic"}],"travel":[],"evidence":[],"expires_at_utc_ms":200});
+    let plan = json!({"schema_version":1,"id":"plan1","context":c,"generated_at_utc_ms":100,"inputs":[snap],"dataset_revision":"demo-r1","ruleset_version":"rules1","score_model_version":"scores1","capability_assumptions":{"quest_log":"untested"},"goal":"synthetic","time_budget_ms":1000,"exclusions":[],"manual_assumptions":[],"steps":[{"id":"step1","objective":"o1","participants":["c1"],"alternatives":[],"prerequisite":u,"required_fields":[],"invalidation":u,"expected_ms":{"status":"known","value":30},"estimate":{"status":"known","value":{"min_ms":20,"max_ms":40}},"explanation":"synthetic","evidence":["e1"]}],"travel":[],"evidence":["e1"],"expires_at_utc_ms":200,"revalidation":["dataset_revision_changed"]});
     let mut bad = plan.clone();
     bad["exclusions"] = json!(["o1"]);
-    check::<RoutePlan>(plan, bad);
+    check::<RoutePlan>(plan.clone(), bad);
+    let mut bad = plan.clone();
+    bad["steps"][0]["evidence"] = json!(["e2"]);
+    assert!(serde_json::from_value::<RoutePlan>(bad).is_err());
+    let mut bad = plan.clone();
+    bad["steps"][0]["expected_ms"] = json!({"status":"known","value":41});
+    assert!(serde_json::from_value::<RoutePlan>(bad).is_err());
+    let mut bad = plan.clone();
+    bad["revalidation"] = json!(["build_changed", "build_changed"]);
+    assert!(serde_json::from_value::<RoutePlan>(bad).is_err());
+    let node =
+        |id: &str| json!({"id":id,"map":{"context":c,"map_id":"m1","floor":"0","instance":null}});
+    let mut bad = plan;
+    bad["travel"] = json!([{"from":node("n1"),"to":node("n2"),"expected_ms":{"status":"known","value":5},"range":{"status":"known","value":{"min_ms":10,"max_ms":20}}}]);
+    assert!(serde_json::from_value::<RoutePlan>(bad).is_err());
     let gear = json!({"context":c,"snapshot":snap,"dataset_revision":"demo-r1","score_model_version":"scores1","scenario":"test","ranking":"theoretical","baseline":{},"proposed":{},"eligibility":u,"baseline_score":u,"proposed_score":u,"acquisitions":[],"assumptions":[],"unmodeled_effects":["unknown"],"explanation":"synthetic","evidence":[]});
     let mut bad = gear.clone();
     bad["ranking"] = json!("obtainable");

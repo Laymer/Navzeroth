@@ -1,0 +1,117 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "evidence_bundle",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "UNVERIFIED_DEMO",
+    "interface": "UNVERIFIED_DEMO",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "payload": {
+    "game_build": {
+      "key": {
+        "edition": "wow_forever",
+        "build": "UNVERIFIED_DEMO",
+        "interface": "UNVERIFIED_DEMO"
+      },
+      "locale": "enGB",
+      "capabilities": {
+        "status": "known",
+        "value": {
+          "quest_log": {
+            "status": "verified_available",
+            "evidence": [
+              "demo-evidence-1"
+            ]
+          },
+          "secret_values": {
+            "status": "restricted",
+            "evidence": []
+          }
+        }
+      }
+    },
+    "evidence": [
+      {
+        "id": "demo-evidence-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "source": "demo-source-1",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791700000000
+        },
+        "confidence": "limited_sample",
+        "conflicts": [],
+        "notes": "Synthetic evidence"
+      },
+      {
+        "id": "demo-evidence-2",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "source": "demo-source-1",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791700000000
+        },
+        "confidence": "limited_sample",
+        "conflicts": [
+          "demo-evidence-1"
+        ],
+        "notes": "Synthetic evidence"
+      }
+    ],
+    "providers": [
+      {
+        "provider": "demo-provider",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "status": "unverified",
+        "datasets": [
+          "demo-r1"
+        ],
+        "endpoints": [],
+        "freshness": {},
+        "evidence": [
+          "demo-evidence-2"
+        ]
+      }
+    ]
+  }
+}

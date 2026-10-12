@@ -1,0 +1,6281 @@
+{
+  "$defs": {
+    "AcquisitionId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "AcquisitionKind": {
+      "enum": [
+        "quest",
+        "vendor",
+        "dungeon",
+        "crafting",
+        "other"
+      ],
+      "type": "string"
+    },
+    "AcquisitionSource": {
+      "properties": {
+        "conditions": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "cost": {
+          "$ref": "#/$defs/Observation_Copper"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/AcquisitionId"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ItemKey"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/AcquisitionKind"
+        },
+        "probability": {
+          "$ref": "#/$defs/Observation_Normalized"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "kind",
+        "items",
+        "conditions",
+        "cost",
+        "probability",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "AttributeId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "Bounds": {
+      "properties": {
+        "max_x": {
+          "$ref": "#/$defs/Normalized"
+        },
+        "max_y": {
+          "$ref": "#/$defs/Normalized"
+        },
+        "min_x": {
+          "$ref": "#/$defs/Normalized"
+        },
+        "min_y": {
+          "$ref": "#/$defs/Normalized"
+        }
+      },
+      "required": [
+        "min_x",
+        "min_y",
+        "max_x",
+        "max_y"
+      ],
+      "type": "object"
+    },
+    "BuildId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "BuildKey": {
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/BuildId"
+        },
+        "edition": {
+          "$ref": "#/$defs/EditionId"
+        },
+        "interface": {
+          "$ref": "#/$defs/InterfaceId"
+        }
+      },
+      "required": [
+        "edition",
+        "build",
+        "interface"
+      ],
+      "type": "object"
+    },
+    "CapabilityCheck": {
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CapabilityStatus"
+        }
+      },
+      "required": [
+        "status",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "CapabilityId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "CapabilityStatus": {
+      "enum": [
+        "verified_available",
+        "verified_unavailable",
+        "restricted",
+        "failed",
+        "untested"
+      ],
+      "type": "string"
+    },
+    "CharacterId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "CharacterSnapshot": {
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/ObservationMetadata"
+        },
+        "character": {
+          "$ref": "#/$defs/CharacterId"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "equipment": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Observation_EquipmentSlot"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/SlotId"
+          },
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/SnapshotId"
+        },
+        "level": {
+          "$ref": "#/$defs/Observation_Level"
+        },
+        "location": {
+          "$ref": "#/$defs/Observation_Position"
+        },
+        "objectives": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Observation_boolean"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/ObjectiveId"
+          },
+          "type": "object"
+        },
+        "preferences": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Observation_boolean"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/PreferenceId"
+          },
+          "type": "object"
+        },
+        "quests": {
+          "additionalProperties": {
+            "$ref": "#/$defs/QuestProgress"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/QuestId"
+          },
+          "type": "object"
+        },
+        "role": {
+          "$ref": "#/$defs/Observation_RoleId"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "source_revision": {
+          "$ref": "#/$defs/DatasetRevision"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "character",
+        "context",
+        "capture",
+        "source_revision",
+        "level",
+        "role",
+        "location",
+        "preferences",
+        "equipment",
+        "quests",
+        "objectives"
+      ],
+      "type": "object"
+    },
+    "CharacterSnapshotEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/$defs/Dependencies"
+        },
+        "fixture": {
+          "description": "True for synthetic engineering data. Production planning rejects it.",
+          "type": "boolean"
+        },
+        "format": {
+          "const": "azeroth-navigator",
+          "type": "string"
+        },
+        "game": {
+          "$ref": "#/$defs/GameContext"
+        },
+        "kind": {
+          "const": "character_snapshot",
+          "type": "string"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        },
+        "payload": {
+          "$ref": "#/$defs/CharacterSnapshot"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        }
+      },
+      "required": [
+        "format",
+        "kind",
+        "schema_version",
+        "fixture",
+        "producer",
+        "game",
+        "namespace",
+        "provenance",
+        "payload"
+      ],
+      "type": "object"
+    },
+    "ClockTrust": {
+      "enum": [
+        "trusted",
+        "uncertain"
+      ],
+      "type": "string"
+    },
+    "CompletionSemantics": {
+      "enum": [
+        "unrepeatable",
+        "repeatable",
+        "reset_bound"
+      ],
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "verified_on_build",
+        "publisher_documented",
+        "limited_sample",
+        "cross_edition_unverified",
+        "inferred",
+        "disputed_or_stale"
+      ],
+      "type": "string"
+    },
+    "ConfigurationItem": {
+      "properties": {
+        "item": {
+          "$ref": "#/$defs/ItemKey"
+        },
+        "occupied_slots": {
+          "items": {
+            "$ref": "#/$defs/SlotId"
+          },
+          "type": "array"
+        },
+        "unique_group": {
+          "$ref": "#/$defs/Observation_Text"
+        }
+      },
+      "required": [
+        "item",
+        "occupied_slots",
+        "unique_group"
+      ],
+      "type": "object"
+    },
+    "ContextRule": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "cooldown_ms": {
+          "$ref": "#/$defs/Millis"
+        },
+        "deduplication_key": {
+          "$ref": "#/$defs/RuleId"
+        },
+        "dismissal": {
+          "$ref": "#/$defs/DismissalPolicy"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "expires_at_utc_ms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcMillis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/RuleId"
+        },
+        "predicate": {
+          "$ref": "#/$defs/Predicate"
+        },
+        "priority": {
+          "maximum": 32767,
+          "minimum": -32768,
+          "type": "integer"
+        },
+        "result_template": {
+          "$ref": "#/$defs/Text"
+        },
+        "trigger": {
+          "$ref": "#/$defs/RuleTrigger"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "trigger",
+        "predicate",
+        "result_template",
+        "priority",
+        "deduplication_key",
+        "cooldown_ms",
+        "dismissal",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "CoordinateTransform": {
+      "properties": {
+        "offset_x": {
+          "$ref": "#/$defs/FiniteNumber"
+        },
+        "offset_y": {
+          "$ref": "#/$defs/FiniteNumber"
+        },
+        "scale_x": {
+          "$ref": "#/$defs/FiniteNumber"
+        },
+        "scale_y": {
+          "$ref": "#/$defs/FiniteNumber"
+        },
+        "units": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "units",
+        "scale_x",
+        "scale_y",
+        "offset_x",
+        "offset_y"
+      ],
+      "type": "object"
+    },
+    "Copper": {
+      "description": "Unsigned integer copper as a canonical base-10 string (Rust also rejects values above u64)",
+      "pattern": "^(?:0|[1-9][0-9]{0,19})$",
+      "type": "string"
+    },
+    "DataContext": {
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/BuildKey"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        }
+      },
+      "required": [
+        "build",
+        "namespace"
+      ],
+      "type": "object"
+    },
+    "DatasetNamespace": {
+      "enum": [
+        "demo",
+        "reference"
+      ],
+      "type": "string"
+    },
+    "DatasetRevision": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "Dependencies": {
+      "description": "Versions and inputs the payload was produced from. Absent fields and an\nempty snapshot list mean \"no such dependency\"; each kind fixes which apply.",
+      "properties": {
+        "dataset_revision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatasetRevision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ruleset_version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RulesetVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "score_model_version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreModelVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "snapshots": {
+          "items": {
+            "$ref": "#/$defs/SnapshotRef"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "DismissalPolicy": {
+      "enum": [
+        "session",
+        "until_ruleset_changes",
+        "permanent"
+      ],
+      "type": "string"
+    },
+    "DurationRange": {
+      "properties": {
+        "max_ms": {
+          "$ref": "#/$defs/Millis"
+        },
+        "min_ms": {
+          "$ref": "#/$defs/Millis"
+        }
+      },
+      "required": [
+        "min_ms",
+        "max_ms"
+      ],
+      "type": "object"
+    },
+    "EdgeId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "EdgeStatus": {
+      "enum": [
+        "verified",
+        "estimated",
+        "temporarily_unavailable",
+        "unverified"
+      ],
+      "type": "string"
+    },
+    "EditionId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "EquipmentSlot": {
+      "oneOf": [
+        {
+          "properties": {
+            "state": {
+              "const": "empty",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "item": {
+              "$ref": "#/$defs/EquippedItem"
+            },
+            "state": {
+              "const": "item",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state",
+            "item"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "EquippedItem": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "instance": {
+          "$ref": "#/$defs/Observation_InstanceId"
+        },
+        "item_id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "modifiers": {
+          "$ref": "#/$defs/Observation_RecordMap_AttributeId_FiniteNumber"
+        },
+        "variant": {
+          "$ref": "#/$defs/Observation_VariantId"
+        }
+      },
+      "required": [
+        "context",
+        "item_id",
+        "variant",
+        "instance",
+        "modifiers"
+      ],
+      "type": "object"
+    },
+    "EvidenceBundle": {
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRecord"
+          },
+          "type": "array"
+        },
+        "game_build": {
+          "$ref": "#/$defs/GameBuild"
+        },
+        "providers": {
+          "items": {
+            "$ref": "#/$defs/ProviderCapability"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "game_build",
+        "evidence",
+        "providers"
+      ],
+      "type": "object"
+    },
+    "EvidenceBundleEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/$defs/Dependencies"
+        },
+        "fixture": {
+          "description": "True for synthetic engineering data. Production planning rejects it.",
+          "type": "boolean"
+        },
+        "format": {
+          "const": "azeroth-navigator",
+          "type": "string"
+        },
+        "game": {
+          "$ref": "#/$defs/GameContext"
+        },
+        "kind": {
+          "const": "evidence_bundle",
+          "type": "string"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        },
+        "payload": {
+          "$ref": "#/$defs/EvidenceBundle"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        }
+      },
+      "required": [
+        "format",
+        "kind",
+        "schema_version",
+        "fixture",
+        "producer",
+        "game",
+        "namespace",
+        "provenance",
+        "payload"
+      ],
+      "type": "object"
+    },
+    "EvidenceId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "EvidenceRecord": {
+      "properties": {
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "conflicts": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "id": {
+          "$ref": "#/$defs/EvidenceId"
+        },
+        "license": {
+          "$ref": "#/$defs/Observation_Text"
+        },
+        "notes": {
+          "$ref": "#/$defs/Text"
+        },
+        "observed_at_utc_ms": {
+          "$ref": "#/$defs/Observation_UtcMillis"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceId"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "source",
+        "license",
+        "observed_at_utc_ms",
+        "confidence",
+        "conflicts",
+        "notes"
+      ],
+      "type": "object"
+    },
+    "Field": {
+      "oneOf": [
+        {
+          "properties": {
+            "field": {
+              "const": "level",
+              "type": "string"
+            }
+          },
+          "required": [
+            "field"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "const": "role",
+              "type": "string"
+            }
+          },
+          "required": [
+            "field"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "const": "preference",
+              "type": "string"
+            },
+            "key": {
+              "$ref": "#/$defs/PreferenceId"
+            }
+          },
+          "required": [
+            "field",
+            "key"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "const": "quest",
+              "type": "string"
+            },
+            "quest": {
+              "$ref": "#/$defs/QuestId"
+            },
+            "state": {
+              "$ref": "#/$defs/QuestState"
+            }
+          },
+          "required": [
+            "field",
+            "quest",
+            "state"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "const": "objective",
+              "type": "string"
+            },
+            "objective": {
+              "$ref": "#/$defs/ObjectiveId"
+            }
+          },
+          "required": [
+            "field",
+            "objective"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "FiniteNumber": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "number"
+    },
+    "FloorId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "GameBuild": {
+      "properties": {
+        "capabilities": {
+          "$ref": "#/$defs/Observation_RecordMap_CapabilityId_CapabilityCheck"
+        },
+        "key": {
+          "$ref": "#/$defs/BuildKey"
+        },
+        "locale": {
+          "$ref": "#/$defs/Locale"
+        }
+      },
+      "required": [
+        "key",
+        "locale",
+        "capabilities"
+      ],
+      "type": "object"
+    },
+    "GameContext": {
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/BuildId"
+        },
+        "edition": {
+          "$ref": "#/$defs/EditionId"
+        },
+        "interface": {
+          "$ref": "#/$defs/InterfaceId"
+        },
+        "locale": {
+          "$ref": "#/$defs/Locale"
+        }
+      },
+      "required": [
+        "edition",
+        "build",
+        "interface",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "GearRecommendation": {
+      "properties": {
+        "acquisitions": {
+          "items": {
+            "$ref": "#/$defs/AcquisitionId"
+          },
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "type": "array"
+        },
+        "baseline": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ConfigurationItem"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/SlotId"
+          },
+          "type": "object"
+        },
+        "baseline_score": {
+          "$ref": "#/$defs/Observation_FiniteNumber"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "dataset_revision": {
+          "$ref": "#/$defs/DatasetRevision"
+        },
+        "eligibility": {
+          "$ref": "#/$defs/Observation_boolean"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "explanation": {
+          "$ref": "#/$defs/Text"
+        },
+        "proposed": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ConfigurationItem"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/SlotId"
+          },
+          "type": "object"
+        },
+        "proposed_score": {
+          "$ref": "#/$defs/Observation_FiniteNumber"
+        },
+        "ranking": {
+          "$ref": "#/$defs/Ranking"
+        },
+        "scenario": {
+          "$ref": "#/$defs/RoleId"
+        },
+        "score_model_version": {
+          "$ref": "#/$defs/ScoreModelVersion"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/SnapshotRef"
+        },
+        "unmodeled_effects": {
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "context",
+        "snapshot",
+        "dataset_revision",
+        "score_model_version",
+        "scenario",
+        "ranking",
+        "baseline",
+        "proposed",
+        "eligibility",
+        "baseline_score",
+        "proposed_score",
+        "acquisitions",
+        "assumptions",
+        "unmodeled_effects",
+        "explanation",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "GearRecommendationSet": {
+      "properties": {
+        "dataset_revision": {
+          "$ref": "#/$defs/DatasetRevision"
+        },
+        "recommendations": {
+          "description": "Empty means no recommendation was produced, not that none exists.",
+          "items": {
+            "$ref": "#/$defs/GearRecommendation"
+          },
+          "type": "array"
+        },
+        "score_model_version": {
+          "$ref": "#/$defs/ScoreModelVersion"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/SnapshotRef"
+        }
+      },
+      "required": [
+        "snapshot",
+        "dataset_revision",
+        "score_model_version",
+        "recommendations"
+      ],
+      "type": "object"
+    },
+    "GearRecommendationSetEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/$defs/Dependencies"
+        },
+        "fixture": {
+          "description": "True for synthetic engineering data. Production planning rejects it.",
+          "type": "boolean"
+        },
+        "format": {
+          "const": "azeroth-navigator",
+          "type": "string"
+        },
+        "game": {
+          "$ref": "#/$defs/GameContext"
+        },
+        "kind": {
+          "const": "gear_recommendations",
+          "type": "string"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        },
+        "payload": {
+          "$ref": "#/$defs/GearRecommendationSet"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        }
+      },
+      "required": [
+        "format",
+        "kind",
+        "schema_version",
+        "fixture",
+        "producer",
+        "game",
+        "namespace",
+        "provenance",
+        "payload"
+      ],
+      "type": "object"
+    },
+    "InstanceId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "InterfaceId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "ItemDefinition": {
+      "properties": {
+        "attributes": {
+          "$ref": "#/$defs/Observation_RecordMap_AttributeId_FiniteNumber"
+        },
+        "effects": {
+          "$ref": "#/$defs/Observation_Array_of_Text"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "key": {
+          "$ref": "#/$defs/ItemKey"
+        },
+        "requirements": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "slots": {
+          "items": {
+            "$ref": "#/$defs/SlotId"
+          },
+          "type": "array"
+        },
+        "two_handed": {
+          "$ref": "#/$defs/Observation_boolean"
+        },
+        "unique_group": {
+          "$ref": "#/$defs/Observation_Text"
+        }
+      },
+      "required": [
+        "key",
+        "slots",
+        "two_handed",
+        "unique_group",
+        "attributes",
+        "requirements",
+        "effects",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "ItemId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "ItemKey": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "item_id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "variant": {
+          "$ref": "#/$defs/VariantId"
+        }
+      },
+      "required": [
+        "context",
+        "item_id",
+        "variant"
+      ],
+      "type": "object"
+    },
+    "Level": {
+      "maximum": 65535,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "Locale": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "MapId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "MapKey": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "floor": {
+          "$ref": "#/$defs/FloorId"
+        },
+        "instance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InstanceId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "map_id": {
+          "$ref": "#/$defs/MapId"
+        }
+      },
+      "required": [
+        "context",
+        "map_id",
+        "floor"
+      ],
+      "type": "object"
+    },
+    "MapSpace": {
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "key": {
+          "$ref": "#/$defs/MapKey"
+        },
+        "transform": {
+          "$ref": "#/$defs/Observation_CoordinateTransform"
+        }
+      },
+      "required": [
+        "key",
+        "transform",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "Millis": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "NodeId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "NodeRef": {
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/NodeId"
+        },
+        "map": {
+          "$ref": "#/$defs/MapKey"
+        }
+      },
+      "required": [
+        "id",
+        "map"
+      ],
+      "type": "object"
+    },
+    "Normalized": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "Objective": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "expected_ms": {
+          "$ref": "#/$defs/Observation_Millis"
+        },
+        "id": {
+          "$ref": "#/$defs/ObjectiveId"
+        },
+        "participants": {
+          "items": {
+            "$ref": "#/$defs/CharacterId"
+          },
+          "type": "array"
+        },
+        "requirements": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/$defs/ObjectiveTarget"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "participants",
+        "targets",
+        "requirements",
+        "expected_ms",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "ObjectiveId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "ObjectiveTarget": {
+      "oneOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "quest_stage",
+              "type": "string"
+            },
+            "quest": {
+              "$ref": "#/$defs/QuestId"
+            },
+            "stage": {
+              "$ref": "#/$defs/ObjectiveId"
+            }
+          },
+          "required": [
+            "kind",
+            "quest",
+            "stage"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "acquisition",
+              "type": "string"
+            },
+            "source": {
+              "$ref": "#/$defs/AcquisitionId"
+            }
+          },
+          "required": [
+            "kind",
+            "source"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "service",
+              "type": "string"
+            },
+            "node": {
+              "$ref": "#/$defs/NodeRef"
+            }
+          },
+          "required": [
+            "kind",
+            "node"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "ObservationMetadata": {
+      "properties": {
+        "clock_trust": {
+          "$ref": "#/$defs/ClockTrust",
+          "default": "uncertain"
+        },
+        "observed_at_utc_ms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcMillis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "received_at_utc_ms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcMillis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sequence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_elapsed_ms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Millis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/StateSource",
+          "default": "unrecorded"
+        }
+      },
+      "type": "object"
+    },
+    "Observation_Array_of_ItemKey": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "items": {
+                "$ref": "#/$defs/ItemKey"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Array_of_Position": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "items": {
+                "$ref": "#/$defs/Position"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Array_of_Text": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "items": {
+                "$ref": "#/$defs/Text"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_CompletionSemantics": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/CompletionSemantics"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_CoordinateTransform": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/CoordinateTransform"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Copper": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Copper"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_DurationRange": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/DurationRange"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_EquipmentSlot": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/EquipmentSlot"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_FiniteNumber": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/FiniteNumber"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_InstanceId": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/InstanceId"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Level": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Level"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Millis": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Millis"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Normalized": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Normalized"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Position": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Predicate": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Predicate"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_RecordMap_AttributeId_FiniteNumber": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "additionalProperties": {
+                "$ref": "#/$defs/FiniteNumber"
+              },
+              "maxProperties": 1024,
+              "propertyNames": {
+                "$ref": "#/$defs/AttributeId"
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_RecordMap_CapabilityId_CapabilityCheck": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "additionalProperties": {
+                "$ref": "#/$defs/CapabilityCheck"
+              },
+              "maxProperties": 1024,
+              "propertyNames": {
+                "$ref": "#/$defs/CapabilityId"
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_RoleId": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/RoleId"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_ServiceKind": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/ServiceKind"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Text": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/Text"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_UtcMillis": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/UtcMillis"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_VariantId": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/VariantId"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_boolean": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "PartyId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "PartySnapshot": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "id": {
+          "$ref": "#/$defs/PartyId"
+        },
+        "participants": {
+          "items": {
+            "$ref": "#/$defs/CharacterSnapshot"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "participants"
+      ],
+      "type": "object"
+    },
+    "PartySnapshotEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/$defs/Dependencies"
+        },
+        "fixture": {
+          "description": "True for synthetic engineering data. Production planning rejects it.",
+          "type": "boolean"
+        },
+        "format": {
+          "const": "azeroth-navigator",
+          "type": "string"
+        },
+        "game": {
+          "$ref": "#/$defs/GameContext"
+        },
+        "kind": {
+          "const": "party_snapshot",
+          "type": "string"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        },
+        "payload": {
+          "$ref": "#/$defs/PartySnapshot"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        }
+      },
+      "required": [
+        "format",
+        "kind",
+        "schema_version",
+        "fixture",
+        "producer",
+        "game",
+        "namespace",
+        "provenance",
+        "payload"
+      ],
+      "type": "object"
+    },
+    "PlanId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "PlanStep": {
+      "properties": {
+        "alternatives": {
+          "items": {
+            "$ref": "#/$defs/ObjectiveId"
+          },
+          "type": "array"
+        },
+        "estimate": {
+          "$ref": "#/$defs/Observation_DurationRange"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "expected_ms": {
+          "$ref": "#/$defs/Observation_Millis"
+        },
+        "explanation": {
+          "$ref": "#/$defs/Text"
+        },
+        "id": {
+          "$ref": "#/$defs/StepId"
+        },
+        "invalidation": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "objective": {
+          "$ref": "#/$defs/ObjectiveId"
+        },
+        "participants": {
+          "items": {
+            "$ref": "#/$defs/CharacterId"
+          },
+          "type": "array"
+        },
+        "prerequisite": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "required_fields": {
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "objective",
+        "participants",
+        "alternatives",
+        "prerequisite",
+        "required_fields",
+        "invalidation",
+        "expected_ms",
+        "estimate",
+        "explanation",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "Position": {
+      "properties": {
+        "map": {
+          "$ref": "#/$defs/MapKey"
+        },
+        "x": {
+          "$ref": "#/$defs/Normalized"
+        },
+        "y": {
+          "$ref": "#/$defs/Normalized"
+        }
+      },
+      "required": [
+        "map",
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "Predicate": {
+      "oneOf": [
+        {
+          "properties": {
+            "op": {
+              "const": "all",
+              "type": "string"
+            },
+            "predicates": {
+              "items": {
+                "$ref": "#/$defs/Predicate"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "predicates"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "op": {
+              "const": "any",
+              "type": "string"
+            },
+            "predicates": {
+              "items": {
+                "$ref": "#/$defs/Predicate"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "predicates"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "op": {
+              "const": "not",
+              "type": "string"
+            },
+            "predicate": {
+              "$ref": "#/$defs/Predicate"
+            }
+          },
+          "required": [
+            "op",
+            "predicate"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/Field"
+            },
+            "op": {
+              "const": "known",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "field"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/Field"
+            },
+            "op": {
+              "const": "equals",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/Scalar"
+            }
+          },
+          "required": [
+            "op",
+            "field",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/Field"
+            },
+            "op": {
+              "const": "greater_than_or_equal",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/Scalar"
+            }
+          },
+          "required": [
+            "op",
+            "field",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "op": {
+              "const": "quest_state",
+              "type": "string"
+            },
+            "quest": {
+              "$ref": "#/$defs/QuestId"
+            },
+            "state": {
+              "$ref": "#/$defs/QuestState"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "op",
+            "quest",
+            "state",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "completed": {
+              "type": "boolean"
+            },
+            "objective": {
+              "$ref": "#/$defs/ObjectiveId"
+            },
+            "op": {
+              "const": "objective_state",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "objective",
+            "completed"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "level": {
+              "$ref": "#/$defs/Level"
+            },
+            "op": {
+              "const": "level_at_least",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "level"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "item": {
+              "$ref": "#/$defs/ItemKey"
+            },
+            "modifiers": {
+              "additionalProperties": {
+                "$ref": "#/$defs/FiniteNumber"
+              },
+              "maxProperties": 1024,
+              "propertyNames": {
+                "$ref": "#/$defs/AttributeId"
+              },
+              "type": "object"
+            },
+            "op": {
+              "const": "equipment_matches",
+              "type": "string"
+            },
+            "slot": {
+              "$ref": "#/$defs/SlotId"
+            }
+          },
+          "required": [
+            "op",
+            "slot",
+            "item",
+            "modifiers"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "op": {
+              "const": "role_is",
+              "type": "string"
+            },
+            "role": {
+              "$ref": "#/$defs/RoleId"
+            }
+          },
+          "required": [
+            "op",
+            "role"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "area": {
+              "$ref": "#/$defs/SupportedArea"
+            },
+            "op": {
+              "const": "location_in_supported_area",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "area"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/PreferenceId"
+            },
+            "op": {
+              "const": "user_preference",
+              "type": "string"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "op",
+            "key",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "op": {
+              "const": "participant_state",
+              "type": "string"
+            },
+            "participant": {
+              "$ref": "#/$defs/CharacterId"
+            },
+            "predicate": {
+              "$ref": "#/$defs/Predicate"
+            }
+          },
+          "required": [
+            "op",
+            "participant",
+            "predicate"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "PreferenceId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "Producer": {
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/ProducerComponent"
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sequence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version": {
+          "$ref": "#/$defs/Text",
+          "description": "Producer application version; independent of schema and dataset versions."
+        }
+      },
+      "required": [
+        "component",
+        "version"
+      ],
+      "type": "object"
+    },
+    "ProducerComponent": {
+      "enum": [
+        "addon",
+        "desktop",
+        "cli",
+        "test_fixture"
+      ],
+      "type": "string"
+    },
+    "Provenance": {
+      "properties": {
+        "clock_trust": {
+          "$ref": "#/$defs/ClockTrust"
+        },
+        "created_at_utc_ms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcMillis"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Absent means the producer recorded no creation time."
+        },
+        "source": {
+          "$ref": "#/$defs/StateSource"
+        }
+      },
+      "required": [
+        "source",
+        "clock_trust"
+      ],
+      "type": "object"
+    },
+    "ProviderCapability": {
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/DatasetRevision"
+          },
+          "type": "array"
+        },
+        "endpoints": {
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "freshness": {
+          "$ref": "#/$defs/ObservationMetadata"
+        },
+        "provider": {
+          "$ref": "#/$defs/ProviderId"
+        },
+        "status": {
+          "$ref": "#/$defs/ProviderStatus"
+        }
+      },
+      "required": [
+        "provider",
+        "context",
+        "status",
+        "datasets",
+        "endpoints",
+        "freshness",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "ProviderId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "ProviderStatus": {
+      "enum": [
+        "available",
+        "unavailable",
+        "unverified",
+        "restricted"
+      ],
+      "type": "string"
+    },
+    "QuestDefinition": {
+      "properties": {
+        "completion": {
+          "$ref": "#/$defs/Observation_CompletionSemantics"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "eligibility": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/QuestId"
+        },
+        "locations": {
+          "$ref": "#/$defs/Observation_Array_of_Position"
+        },
+        "prerequisites": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "rewards": {
+          "$ref": "#/$defs/Observation_Array_of_ItemKey"
+        },
+        "shared_progress": {
+          "$ref": "#/$defs/Observation_boolean"
+        },
+        "stages": {
+          "items": {
+            "$ref": "#/$defs/ObjectiveId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "eligibility",
+        "prerequisites",
+        "stages",
+        "locations",
+        "rewards",
+        "completion",
+        "shared_progress",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "QuestId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "QuestProgress": {
+      "properties": {
+        "accepted": {
+          "$ref": "#/$defs/Observation_boolean"
+        },
+        "completed": {
+          "$ref": "#/$defs/Observation_boolean"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "objectives": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Observation_boolean"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/ObjectiveId"
+          },
+          "type": "object"
+        },
+        "quest": {
+          "$ref": "#/$defs/QuestId"
+        },
+        "turned_in": {
+          "$ref": "#/$defs/Observation_boolean"
+        }
+      },
+      "required": [
+        "quest",
+        "context",
+        "accepted",
+        "completed",
+        "turned_in",
+        "objectives"
+      ],
+      "type": "object"
+    },
+    "QuestState": {
+      "enum": [
+        "accepted",
+        "completed",
+        "turned_in"
+      ],
+      "type": "string"
+    },
+    "Ranking": {
+      "enum": [
+        "theoretical",
+        "obtainable",
+        "practical"
+      ],
+      "type": "string"
+    },
+    "ReferenceDataset": {
+      "properties": {
+        "acquisitions": {
+          "items": {
+            "$ref": "#/$defs/AcquisitionSource"
+          },
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/TravelEdge"
+          },
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRecord"
+          },
+          "type": "array"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ItemDefinition"
+          },
+          "type": "array"
+        },
+        "map_spaces": {
+          "items": {
+            "$ref": "#/$defs/MapSpace"
+          },
+          "type": "array"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/TravelNode"
+          },
+          "type": "array"
+        },
+        "objectives": {
+          "items": {
+            "$ref": "#/$defs/Objective"
+          },
+          "type": "array"
+        },
+        "quests": {
+          "items": {
+            "$ref": "#/$defs/QuestDefinition"
+          },
+          "type": "array"
+        },
+        "revision": {
+          "$ref": "#/$defs/DatasetRevision"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/ContextRule"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "revision",
+        "evidence",
+        "items",
+        "acquisitions",
+        "quests",
+        "map_spaces",
+        "nodes",
+        "edges",
+        "objectives",
+        "rules"
+      ],
+      "type": "object"
+    },
+    "ReferenceDatasetEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/$defs/Dependencies"
+        },
+        "fixture": {
+          "description": "True for synthetic engineering data. Production planning rejects it.",
+          "type": "boolean"
+        },
+        "format": {
+          "const": "azeroth-navigator",
+          "type": "string"
+        },
+        "game": {
+          "$ref": "#/$defs/GameContext"
+        },
+        "kind": {
+          "const": "reference_dataset",
+          "type": "string"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        },
+        "payload": {
+          "$ref": "#/$defs/ReferenceDataset"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        }
+      },
+      "required": [
+        "format",
+        "kind",
+        "schema_version",
+        "fixture",
+        "producer",
+        "game",
+        "namespace",
+        "provenance",
+        "payload"
+      ],
+      "type": "object"
+    },
+    "RevalidationTrigger": {
+      "description": "Events after which a plan must be revalidated. Expiry and these triggers\nnever prove that the underlying game state changed.",
+      "enum": [
+        "dataset_revision_changed",
+        "build_changed",
+        "snapshot_superseded",
+        "ruleset_changed"
+      ],
+      "type": "string"
+    },
+    "RoleId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "RoutePlan": {
+      "properties": {
+        "capability_assumptions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/CapabilityStatus"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "$ref": "#/$defs/CapabilityId"
+          },
+          "type": "object"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "dataset_revision": {
+          "$ref": "#/$defs/DatasetRevision"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "exclusions": {
+          "items": {
+            "$ref": "#/$defs/ObjectiveId"
+          },
+          "type": "array"
+        },
+        "expires_at_utc_ms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcMillis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generated_at_utc_ms": {
+          "$ref": "#/$defs/UtcMillis"
+        },
+        "goal": {
+          "$ref": "#/$defs/Text"
+        },
+        "id": {
+          "$ref": "#/$defs/PlanId"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/SnapshotRef"
+          },
+          "type": "array"
+        },
+        "manual_assumptions": {
+          "items": {
+            "$ref": "#/$defs/Text"
+          },
+          "type": "array"
+        },
+        "revalidation": {
+          "items": {
+            "$ref": "#/$defs/RevalidationTrigger"
+          },
+          "type": "array"
+        },
+        "ruleset_version": {
+          "$ref": "#/$defs/RulesetVersion"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "score_model_version": {
+          "$ref": "#/$defs/ScoreModelVersion"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PlanStep"
+          },
+          "type": "array"
+        },
+        "time_budget_ms": {
+          "$ref": "#/$defs/Millis"
+        },
+        "travel": {
+          "items": {
+            "$ref": "#/$defs/TravelSegment"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "context",
+        "generated_at_utc_ms",
+        "inputs",
+        "dataset_revision",
+        "ruleset_version",
+        "score_model_version",
+        "capability_assumptions",
+        "goal",
+        "time_budget_ms",
+        "exclusions",
+        "manual_assumptions",
+        "steps",
+        "travel",
+        "evidence",
+        "revalidation"
+      ],
+      "type": "object"
+    },
+    "RoutePlanEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/$defs/Dependencies"
+        },
+        "fixture": {
+          "description": "True for synthetic engineering data. Production planning rejects it.",
+          "type": "boolean"
+        },
+        "format": {
+          "const": "azeroth-navigator",
+          "type": "string"
+        },
+        "game": {
+          "$ref": "#/$defs/GameContext"
+        },
+        "kind": {
+          "const": "route_plan",
+          "type": "string"
+        },
+        "namespace": {
+          "$ref": "#/$defs/DatasetNamespace"
+        },
+        "payload": {
+          "$ref": "#/$defs/RoutePlan"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        }
+      },
+      "required": [
+        "format",
+        "kind",
+        "schema_version",
+        "fixture",
+        "producer",
+        "game",
+        "namespace",
+        "provenance",
+        "payload"
+      ],
+      "type": "object"
+    },
+    "RuleId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "RuleTrigger": {
+      "enum": [
+        "snapshot_changed",
+        "level_changed",
+        "equipment_changed",
+        "location_changed",
+        "preference_changed",
+        "manual"
+      ],
+      "type": "string"
+    },
+    "RulesetVersion": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "SafeInteger": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer"
+    },
+    "Scalar": {
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "bool",
+              "type": "string"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "integer",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/SafeInteger"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "number",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/FiniteNumber"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "copper",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/Copper"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "text",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/Text"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SchemaVersion": {
+      "const": 1,
+      "type": "integer"
+    },
+    "ScoreModelVersion": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "Sequence": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "ServiceKind": {
+      "enum": [
+        "junction",
+        "vendor",
+        "repair",
+        "trainer",
+        "flight",
+        "transport",
+        "dungeon",
+        "other"
+      ],
+      "type": "string"
+    },
+    "SessionId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "SlotId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "SnapshotId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "SnapshotRef": {
+      "properties": {
+        "character": {
+          "$ref": "#/$defs/CharacterId"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "id": {
+          "$ref": "#/$defs/SnapshotId"
+        }
+      },
+      "required": [
+        "id",
+        "character",
+        "context"
+      ],
+      "type": "object"
+    },
+    "SourceId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "StateSource": {
+      "enum": [
+        "unrecorded",
+        "addon_snapshot",
+        "manual_entry",
+        "official_api",
+        "reference_data",
+        "synthetic_fixture"
+      ],
+      "type": "string"
+    },
+    "StepId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "SupportedArea": {
+      "properties": {
+        "bounds": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Bounds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "map": {
+          "$ref": "#/$defs/MapKey"
+        }
+      },
+      "required": [
+        "map"
+      ],
+      "type": "object"
+    },
+    "Text": {
+      "maxLength": 4096,
+      "pattern": "^(?:[^\\p{Cc}]|[\\t\\n])*$",
+      "type": "string"
+    },
+    "TravelEdge": {
+      "properties": {
+        "consumes_resource": {
+          "$ref": "#/$defs/Observation_boolean"
+        },
+        "context": {
+          "$ref": "#/$defs/DataContext"
+        },
+        "cooldown_ms": {
+          "$ref": "#/$defs/Observation_Millis"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "expected_ms": {
+          "$ref": "#/$defs/Observation_Millis"
+        },
+        "from": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "id": {
+          "$ref": "#/$defs/EdgeId"
+        },
+        "mode": {
+          "$ref": "#/$defs/TravelMode"
+        },
+        "requirements": {
+          "$ref": "#/$defs/Observation_Predicate"
+        },
+        "status": {
+          "$ref": "#/$defs/EdgeStatus"
+        },
+        "to": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "uncertainty": {
+          "$ref": "#/$defs/Observation_DurationRange"
+        },
+        "wait_ms": {
+          "$ref": "#/$defs/Observation_Millis"
+        }
+      },
+      "required": [
+        "id",
+        "context",
+        "from",
+        "to",
+        "mode",
+        "requirements",
+        "expected_ms",
+        "wait_ms",
+        "uncertainty",
+        "status",
+        "evidence",
+        "consumes_resource",
+        "cooldown_ms"
+      ],
+      "type": "object"
+    },
+    "TravelMode": {
+      "enum": [
+        "walking",
+        "flight",
+        "boat",
+        "tram",
+        "teleport",
+        "return"
+      ],
+      "type": "string"
+    },
+    "TravelNode": {
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/NodeId"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "service": {
+          "$ref": "#/$defs/Observation_ServiceKind"
+        }
+      },
+      "required": [
+        "id",
+        "position",
+        "service"
+      ],
+      "type": "object"
+    },
+    "TravelSegment": {
+      "properties": {
+        "expected_ms": {
+          "$ref": "#/$defs/Observation_Millis"
+        },
+        "from": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "range": {
+          "$ref": "#/$defs/Observation_DurationRange"
+        },
+        "to": {
+          "$ref": "#/$defs/NodeRef"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "expected_ms",
+        "range"
+      ],
+      "type": "object"
+    },
+    "UtcMillis": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer"
+    },
+    "VariantId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/Laymer/Navzeroth/schemas/v1/exchange.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Azeroth Navigator exchange envelopes, schema version 1. Structural only: Rust validation enforces semantic invariants, and structural validity never establishes in-game truth.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CharacterSnapshotEnvelope"
+    },
+    {
+      "$ref": "#/$defs/PartySnapshotEnvelope"
+    },
+    {
+      "$ref": "#/$defs/RoutePlanEnvelope"
+    },
+    {
+      "$ref": "#/$defs/EvidenceBundleEnvelope"
+    },
+    {
+      "$ref": "#/$defs/ReferenceDatasetEnvelope"
+    },
+    {
+      "$ref": "#/$defs/GearRecommendationSetEnvelope"
+    }
+  ],
+  "title": "AzerothNavigatorExchangeV1"
+}

@@ -1,19 +1,20 @@
-use super::{NodeRef, bounded, requirement_context, unique};
+use super::{CapabilityStatus, DurationRange, NodeRef, bounded, requirement_context, unique};
 use crate::{
     error::{Result, Validate, Validated, invalid},
     observation::Observation,
     predicate::Predicate,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct SnapshotRef {
     pub id: SnapshotId,
     pub character: CharacterId,
     pub context: DataContext,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct PlanStep {
     pub id: StepId,
     pub objective: ObjectiveId,
@@ -22,15 +23,40 @@ pub struct PlanStep {
     pub prerequisite: Observation<Predicate>,
     pub required_fields: Vec<Text>,
     pub invalidation: Observation<Predicate>,
+    pub expected_ms: Observation<Millis>,
+    pub estimate: Observation<DurationRange>,
     pub explanation: Text,
+    pub evidence: Vec<EvidenceId>,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct TravelSegment {
     pub from: NodeRef,
     pub to: NodeRef,
     pub expected_ms: Observation<Millis>,
+    pub range: Observation<DurationRange>,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+/// Events after which a plan must be revalidated. Expiry and these triggers
+/// never prove that the underlying game state changed.
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum RevalidationTrigger {
+    DatasetRevisionChanged,
+    BuildChanged,
+    SnapshotSuperseded,
+    RulesetChanged,
+}
+fn within_range(expected: &Observation<Millis>, range: &Observation<DurationRange>) -> Result<()> {
+    if let (Some(expected), Some(range)) = (expected.value(), range.value())
+        && (*expected < range.min_ms || *expected > range.max_ms)
+    {
+        return Err(invalid("Expected duration lies outside its estimate range"));
+    }
+    Ok(())
+}
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "RoutePlan")]
 pub struct RoutePlanData {
     pub schema_version: SchemaVersion,
     pub id: PlanId,
@@ -40,6 +66,7 @@ pub struct RoutePlanData {
     pub dataset_revision: DatasetRevision,
     pub ruleset_version: RulesetVersion,
     pub score_model_version: ScoreModelVersion,
+    pub capability_assumptions: RecordMap<CapabilityId, CapabilityStatus>,
     pub goal: Text,
     pub time_budget_ms: Millis,
     pub exclusions: Vec<ObjectiveId>,
@@ -48,6 +75,7 @@ pub struct RoutePlanData {
     pub travel: Vec<TravelSegment>,
     pub evidence: Vec<EvidenceId>,
     pub expires_at_utc_ms: Option<UtcMillis>,
+    pub revalidation: Vec<RevalidationTrigger>,
 }
 pub type RoutePlan = Validated<RoutePlanData>;
 impl Validate for RoutePlanData {
@@ -65,7 +93,17 @@ impl Validate for RoutePlanData {
         unique(self.evidence.iter())?;
         bounded(self.manual_assumptions.len())?;
         bounded(self.travel.len())?;
+        unique(self.revalidation.iter())?;
+        let evidence: BTreeSet<_> = self.evidence.iter().collect();
         for step in &self.steps {
+            unique(step.evidence.iter())?;
+            if step.alternatives.contains(&step.objective) {
+                return Err(invalid("Plan step alternative repeats its objective"));
+            }
+            if step.evidence.iter().any(|e| !evidence.contains(e)) {
+                return Err(invalid("Plan step evidence is not listed in plan evidence"));
+            }
+            within_range(&step.expected_ms, &step.estimate)?;
             requirement_context(&step.prerequisite, &self.context)?;
             requirement_context(&step.invalidation, &self.context)?;
             unique(step.participants.iter())?;
@@ -89,6 +127,7 @@ impl Validate for RoutePlanData {
             }
         }
         for segment in &self.travel {
+            within_range(&segment.expected_ms, &segment.range)?;
             self.context.ensure_compatible(&segment.from.map.context)?;
             self.context.ensure_compatible(&segment.to.map.context)?;
         }
@@ -106,20 +145,21 @@ impl Validate for RoutePlanData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ConfigurationItem {
     pub item: ItemKey,
     pub occupied_slots: Vec<SlotId>,
     pub unique_group: Observation<Text>,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Ranking {
     Theoretical,
     Obtainable,
     Practical,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "GearRecommendation")]
 pub struct GearRecommendationData {
     pub context: DataContext,
     pub snapshot: SnapshotRef,
@@ -175,7 +215,7 @@ impl Validate for GearRecommendationData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum RuleTrigger {
     SnapshotChanged,
@@ -185,14 +225,15 @@ pub enum RuleTrigger {
     PreferenceChanged,
     Manual,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum DismissalPolicy {
     Session,
     UntilRulesetChanges,
     Permanent,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "ContextRule")]
 pub struct ContextRuleData {
     pub id: RuleId,
     pub context: DataContext,
@@ -217,27 +258,28 @@ impl Validate for ContextRuleData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum MeasurementQuality {
     Observed,
     Estimated,
     Unclassified,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct SessionInterval {
     pub start_ms: Millis,
     pub end_ms: Millis,
     pub quality: MeasurementQuality,
     pub label: Text,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct SessionGap {
     pub start_ms: Millis,
     pub end_ms: Millis,
     pub reason: Text,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "SessionSummary")]
 pub struct SessionSummaryData {
     pub session: SessionId,
     pub character: CharacterId,

@@ -1,0 +1,3 @@
+# Contract artifacts are compared byte for byte across Linux and Windows.
+schemas/** text eol=lf
+fixtures/** text eol=lf

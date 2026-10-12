@@ -1,0 +1,325 @@
+{
+  "description": "Synthetic M1.3 exchange contract fixtures. Not game data. expect: valid (Rust and schema accept), schema_invalid (both reject), semantic_invalid (schema accepts; Rust rejects).",
+  "schema_version": 1,
+  "fixtures": [
+    {
+      "file": "character-snapshot.json",
+      "kind": "character_snapshot",
+      "expect": "valid",
+      "note": "Known false/zero/empty, unknown, unsupported, restricted, not_applicable; per-field provenance; extension"
+    },
+    {
+      "file": "party-snapshot.json",
+      "kind": "party_snapshot",
+      "expect": "valid",
+      "note": "Participants keep separate sessions and timestamps"
+    },
+    {
+      "file": "route-plan.json",
+      "kind": "route_plan",
+      "expect": "valid"
+    },
+    {
+      "file": "route-plan-max-depth.json",
+      "kind": "route_plan",
+      "expect": "valid",
+      "note": "Rule depth 12 with the deepest leaf fits JSON depth 32"
+    },
+    {
+      "file": "evidence-bundle.json",
+      "kind": "evidence_bundle",
+      "expect": "valid"
+    },
+    {
+      "file": "reference-dataset.json",
+      "kind": "reference_dataset",
+      "expect": "valid",
+      "note": "Copper above 2^53 stays a canonical string"
+    },
+    {
+      "file": "gear-recommendations.json",
+      "kind": "gear_recommendations",
+      "expect": "valid",
+      "note": "Known zero score; unknown eligibility with theoretical ranking"
+    },
+    {
+      "file": "reference-namespace-fixture.json",
+      "kind": "character_snapshot",
+      "expect": "valid",
+      "note": "Synthetic data may exercise the reference namespace; it stays marked as a fixture"
+    },
+    {
+      "file": "identifier-edge-feff.json",
+      "kind": "character_snapshot",
+      "expect": "valid",
+      "note": "U+FEFF is not Unicode White_Space; Rust and the schema both accept it at an edge"
+    },
+    {
+      "file": "unsupported-schema-version.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "UNSUPPORTED_SCHEMA"
+    },
+    {
+      "file": "wrong-format.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "kind-payload-mismatch.json",
+      "kind": "route_plan",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "known-without-value.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "unknown-with-value.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "restricted-with-null.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "invalid-observation-status.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "unknown-operator.json",
+      "kind": "route_plan",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "level-zero.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "coordinate-out-of-range.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "unsafe-integer.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "noncanonical-copper.json",
+      "kind": "reference_dataset",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "numeric-copper.json",
+      "kind": "reference_dataset",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "identifier-edge-whitespace.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "identifier-control.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "invalid-namespace-enum.json",
+      "kind": "character_snapshot",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "demo-without-fixture.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "fixture-provenance-mismatch.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "demo-record-in-reference-envelope.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "BUILD_MISMATCH",
+      "note": "CASE-015: demo record cannot enter a reference context"
+    },
+    {
+      "file": "build-mismatch.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "BUILD_MISMATCH"
+    },
+    {
+      "file": "producer-capture-sequence-mismatch.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "fractional-integer-encoding.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "JSON Schema integers accept 22.0; Rust integer decoding rejects it"
+    },
+    {
+      "file": "identifier-byte-length.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "200 code points but 400 UTF-8 bytes; schema maxLength counts code points"
+    },
+    {
+      "file": "json-depth-exceeded.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "plan-dependency-mismatch.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "plan-missing-dependencies.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "plan-too-many-steps.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "plan-too-many-alternatives.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "plan-rule-depth-13.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "plan-step-evidence-unlisted.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "evidence-unresolved.json",
+      "kind": "evidence_bundle",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE"
+    },
+    {
+      "file": "fixture-claims-verification.json",
+      "kind": "evidence_bundle",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "fixture-reference-claims-verification.json",
+      "kind": "evidence_bundle",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Synthetic data in the reference namespace still cannot claim live build verification"
+    },
+    {
+      "file": "dataset-unresolved-edge.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE"
+    },
+    {
+      "file": "dataset-unresolved-quest-stage.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE"
+    },
+    {
+      "file": "dataset-duplicate-item.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "gear-snapshot-mismatch.json",
+      "kind": "gear_recommendations",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "live-document-with-synthetic-fields.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Non-fixture documents cannot contain synthetic_fixture observations"
+    },
+    {
+      "file": "fixture-claims-addon-capture.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Fixture observations cannot claim addon, manual or official capture"
+    },
+    {
+      "file": "plan-alternative-repeats-objective.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "extension-too-large.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Extension values are limited to 16 KiB of JSON text"
+    },
+    {
+      "file": "extension-unsafe-number.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Extension numbers must stay within the safe integer magnitude"
+    },
+    {
+      "file": "duplicate-record-key.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "JSON.parse keeps the last duplicate; Rust rejects duplicate keys"
+    }
+  ]
+}

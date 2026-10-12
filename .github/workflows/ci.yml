@@ -77,3 +77,9 @@ jobs:
           key: pnpm-${{ runner.os }}-${{ hashFiles('.node-version', 'package.json', 'pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile
       - run: git diff --exit-code
+      - name: Regenerate TypeScript contracts
+        run: pnpm contracts:types
+      - name: Check generated contracts are committed
+        run: git diff --exit-code
+      - name: Contract fixtures, JSON Schema and TypeScript checks
+        run: pnpm contracts:check

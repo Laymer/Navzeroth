@@ -67,6 +67,21 @@ impl<'de, T: Deserialize<'de> + Validate> Deserialize<'de> for Validated<T> {
         Self::try_new(T::deserialize(deserializer)?).map_err(serde::de::Error::custom)
     }
 }
+/// A validated record has its draft's JSON shape; semantic checks stay in Rust.
+impl<T: schemars::JsonSchema> schemars::JsonSchema for Validated<T> {
+    fn inline_schema() -> bool {
+        T::inline_schema()
+    }
+    fn schema_name() -> std::borrow::Cow<'static, str> {
+        T::schema_name()
+    }
+    fn schema_id() -> std::borrow::Cow<'static, str> {
+        T::schema_id()
+    }
+    fn json_schema(generator: &mut schemars::SchemaGenerator) -> schemars::Schema {
+        T::json_schema(generator)
+    }
+}
 impl<T: Validate> Validate for Validated<T> {
     fn validate(&self) -> Result<()> {
         self.0.validate()
