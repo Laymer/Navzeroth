@@ -1038,6 +1038,10 @@ export type Observation_FiniteNumber =
     };
 export type Ranking = "theoretical" | "obtainable" | "practical";
 
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
 export interface CharacterSnapshotEnvelope {
   dependencies?: Dependencies;
   /**
@@ -1166,6 +1170,10 @@ export interface Provenance {
   created_at_utc_ms?: UtcMillis | null;
   source: StateSource;
 }
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
 export interface PartySnapshotEnvelope {
   dependencies?: Dependencies;
   /**
@@ -1186,6 +1194,10 @@ export interface PartySnapshot {
   id: PartyId;
   participants: CharacterSnapshot[];
 }
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
 export interface RoutePlanEnvelope {
   dependencies?: Dependencies;
   /**
@@ -1265,6 +1277,10 @@ export interface NodeRef {
   id: NodeId;
   map: MapKey;
 }
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
 export interface EvidenceBundleEnvelope {
   dependencies?: Dependencies;
   /**
@@ -1313,6 +1329,10 @@ export interface ProviderCapability {
   provider: ProviderId;
   status: ProviderStatus;
 }
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
 export interface ReferenceDatasetEnvelope {
   dependencies?: Dependencies;
   /**
@@ -1426,6 +1446,10 @@ export interface ContextRule {
   result_template: Text;
   trigger: RuleTrigger;
 }
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
 export interface GearRecommendationSetEnvelope {
   dependencies?: Dependencies;
   /**

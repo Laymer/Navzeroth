@@ -3,7 +3,7 @@
     "AcquisitionId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "AcquisitionKind": {
@@ -64,7 +64,7 @@
     "AttributeId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "Bounds": {
@@ -93,7 +93,7 @@
     "BuildId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "BuildKey": {
@@ -136,7 +136,7 @@
     "CapabilityId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "CapabilityStatus": {
@@ -152,7 +152,7 @@
     "CharacterId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "CharacterSnapshot": {
@@ -243,6 +243,7 @@
       "type": "object"
     },
     "CharacterSnapshotEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
       "properties": {
         "dependencies": {
           "$ref": "#/$defs/Dependencies"
@@ -376,7 +377,6 @@
           "$ref": "#/$defs/Predicate"
         },
         "priority": {
-          "format": "int16",
           "maximum": 32767,
           "minimum": -32768,
           "type": "integer"
@@ -459,7 +459,7 @@
     "DatasetRevision": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "Dependencies": {
@@ -530,7 +530,7 @@
     "EdgeId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "EdgeStatus": {
@@ -545,7 +545,7 @@
     "EditionId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "EquipmentSlot": {
@@ -633,6 +633,7 @@
       "type": "object"
     },
     "EvidenceBundleEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
       "properties": {
         "dependencies": {
           "$ref": "#/$defs/Dependencies"
@@ -684,7 +685,7 @@
     "EvidenceId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "EvidenceRecord": {
@@ -817,7 +818,7 @@
     "FloorId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "GameBuild": {
@@ -987,6 +988,7 @@
       "type": "object"
     },
     "GearRecommendationSetEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
       "properties": {
         "dependencies": {
           "$ref": "#/$defs/Dependencies"
@@ -1038,13 +1040,13 @@
     "InstanceId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "InterfaceId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "ItemDefinition": {
@@ -1095,7 +1097,7 @@
     "ItemId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "ItemKey": {
@@ -1125,13 +1127,13 @@
     "Locale": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "MapId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "MapKey": {
@@ -1193,7 +1195,7 @@
     "NodeId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "NodeRef": {
@@ -1263,7 +1265,7 @@
     "ObjectiveId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "ObjectiveTarget": {
@@ -4907,7 +4909,7 @@
     "PartyId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "PartySnapshot": {
@@ -4933,6 +4935,7 @@
       "type": "object"
     },
     "PartySnapshotEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
       "properties": {
         "dependencies": {
           "$ref": "#/$defs/Dependencies"
@@ -4984,7 +4987,7 @@
     "PlanId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "PlanStep": {
@@ -5349,7 +5352,7 @@
     "PreferenceId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "Producer": {
@@ -5470,7 +5473,7 @@
     "ProviderId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "ProviderStatus": {
@@ -5538,7 +5541,7 @@
     "QuestId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "QuestProgress": {
@@ -5670,6 +5673,7 @@
       "type": "object"
     },
     "ReferenceDatasetEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
       "properties": {
         "dependencies": {
           "$ref": "#/$defs/Dependencies"
@@ -5731,7 +5735,7 @@
     "RoleId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "RoutePlan": {
@@ -5848,6 +5852,7 @@
       "type": "object"
     },
     "RoutePlanEnvelope": {
+      "description": "Deserialization is hand-written (see below) so unknown members are size\nchecked as raw text before parsing, instead of buffering the whole envelope.",
       "properties": {
         "dependencies": {
           "$ref": "#/$defs/Dependencies"
@@ -5899,7 +5904,7 @@
     "RuleId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "RuleTrigger": {
@@ -5916,7 +5921,7 @@
     "RulesetVersion": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "SafeInteger": {
@@ -6015,7 +6020,7 @@
     "ScoreModelVersion": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "Sequence": {
@@ -6039,19 +6044,19 @@
     "SessionId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "SlotId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "SnapshotId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "SnapshotRef": {
@@ -6076,7 +6081,7 @@
     "SourceId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "StateSource": {
@@ -6093,7 +6098,7 @@
     "StepId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
     "SupportedArea": {
@@ -6245,7 +6250,7 @@
     "VariantId": {
       "maxLength": 256,
       "minLength": 1,
-      "pattern": "^[^\\p{Cc}\\s](?:[^\\p{Cc}]*[^\\p{Cc}\\s])?$",
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     }
   },

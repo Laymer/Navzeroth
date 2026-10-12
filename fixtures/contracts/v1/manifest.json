@@ -49,6 +49,12 @@
       "note": "Synthetic data may exercise the reference namespace; it stays marked as a fixture"
     },
     {
+      "file": "identifier-edge-feff.json",
+      "kind": "character_snapshot",
+      "expect": "valid",
+      "note": "U+FEFF is not Unicode White_Space; Rust and the schema both accept it at an edge"
+    },
+    {
       "file": "unsupported-schema-version.json",
       "kind": "character_snapshot",
       "expect": "schema_invalid",
@@ -273,6 +279,40 @@
       "kind": "gear_recommendations",
       "expect": "semantic_invalid",
       "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "live-document-with-synthetic-fields.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Non-fixture documents cannot contain synthetic_fixture observations"
+    },
+    {
+      "file": "fixture-claims-addon-capture.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Fixture observations cannot claim addon, manual or official capture"
+    },
+    {
+      "file": "plan-alternative-repeats-objective.json",
+      "kind": "route_plan",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "file": "extension-too-large.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Extension values are limited to 16 KiB of JSON text"
+    },
+    {
+      "file": "extension-unsafe-number.json",
+      "kind": "character_snapshot",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Extension numbers must stay within the safe integer magnitude"
     },
     {
       "file": "duplicate-record-key.json",

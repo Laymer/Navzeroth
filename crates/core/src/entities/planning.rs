@@ -94,9 +94,13 @@ impl Validate for RoutePlanData {
         bounded(self.manual_assumptions.len())?;
         bounded(self.travel.len())?;
         unique(self.revalidation.iter())?;
+        let evidence: BTreeSet<_> = self.evidence.iter().collect();
         for step in &self.steps {
             unique(step.evidence.iter())?;
-            if step.evidence.iter().any(|e| !self.evidence.contains(e)) {
+            if step.alternatives.contains(&step.objective) {
+                return Err(invalid("Plan step alternative repeats its objective"));
+            }
+            if step.evidence.iter().any(|e| !evidence.contains(e)) {
                 return Err(invalid("Plan step evidence is not listed in plan evidence"));
             }
             within_range(&step.expected_ms, &step.estimate)?;

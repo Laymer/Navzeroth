@@ -192,8 +192,6 @@ export function compileTimeChecks(): void {
 // ---- Run --------------------------------------------------------------------
 const schema = readJson("schemas/v1/exchange.schema.json") as { $id: string };
 const ajv = new Ajv2020({ allErrors: false, strict: true });
-// schemars annotates i16 fields with format "int16"; minimum/maximum already bound them.
-ajv.addFormat("int16", { type: "number", validate: (n: number) => Number.isInteger(n) && n >= -32768 && n <= 32767 });
 ajv.addSchema(schema);
 const rootValidator = ajv.getSchema(schema.$id);
 check(rootValidator !== undefined, "root schema compiles");

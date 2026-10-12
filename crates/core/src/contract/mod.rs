@@ -225,15 +225,21 @@ impl<P: Payload> JsonSchema for KindTag<P> {
 }
 
 /// Unknown top-level envelope members, retained and re-serialized in key order.
-/// Nested domain records ignore unknown members instead.
+/// Nested domain records ignore unknown members instead. Each value is bounded
+/// before it is parsed, and numbers must be within the safe integer magnitude.
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[serde(transparent)]
 pub struct Extensions(BTreeMap<String, serde_json::Value>);
 impl Extensions {
     pub fn new(entries: impl IntoIterator<Item = (String, serde_json::Value)>) -> Result<Self> {
         let mut map = BTreeMap::new();
+        let mut total = 0;
         for (key, value) in entries {
             check_extension_key(&key)?;
+            let text = serde_json::to_string(&value)
+                .map_err(|_| invalid("Extension value cannot be serialized"))?;
+            total += text.len();
+            check_extension_value(&value, text.len(), total)?;
             if map.len() >= MAX_EXTENSIONS || map.insert(key, value).is_some() {
                 return Err(invalid("Duplicate extension or extension limit exceeded"));
             }
@@ -250,42 +256,52 @@ impl Extensions {
         self.0.is_empty()
     }
 }
+pub const MAX_EXTENSION_VALUE_BYTES: usize = 16 * 1024;
+pub const MAX_EXTENSIONS_TOTAL_BYTES: usize = 64 * 1024;
+/// Envelope member names; extensions can never shadow them.
+pub const RESERVED_MEMBERS: [&str; 10] = [
+    "format",
+    "kind",
+    "schema_version",
+    "fixture",
+    "producer",
+    "game",
+    "namespace",
+    "provenance",
+    "dependencies",
+    "payload",
+];
 fn check_extension_key(key: &str) -> Result<()> {
     if key.is_empty() || key.len() > 256 || key.chars().any(char::is_control) {
         return Err(invalid(
             "Extension key must contain 1..256 bytes without controls",
         ));
     }
+    if RESERVED_MEMBERS.contains(&key) {
+        return Err(invalid("Extension key shadows an envelope member"));
+    }
     Ok(())
 }
-impl<'de> Deserialize<'de> for Extensions {
-    fn deserialize<D: Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
-        struct Visitor;
-        impl<'de> serde::de::Visitor<'de> for Visitor {
-            type Value = Extensions;
-            fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                f.write_str("bounded unique extension members")
-            }
-            fn visit_map<A: serde::de::MapAccess<'de>>(
-                self,
-                mut a: A,
-            ) -> std::result::Result<Extensions, A::Error> {
-                let mut map = BTreeMap::new();
-                while let Some(key) = a.next_key::<String>()? {
-                    check_extension_key(&key).map_err(serde::de::Error::custom)?;
-                    if map.len() >= MAX_EXTENSIONS || map.contains_key(&key) {
-                        return Err(serde::de::Error::custom(
-                            "Duplicate extension or extension limit exceeded",
-                        ));
-                    }
-                    let value = a.next_value()?;
-                    map.insert(key, value);
-                }
-                Ok(Extensions(map))
-            }
-        }
-        d.deserialize_map(Visitor)
+fn safe_numbers(value: &serde_json::Value) -> bool {
+    match value {
+        serde_json::Value::Number(n) => n
+            .as_f64()
+            .is_some_and(|f| f.abs() <= MAX_SAFE_INTEGER as f64),
+        serde_json::Value::Array(a) => a.iter().all(safe_numbers),
+        serde_json::Value::Object(o) => o.values().all(safe_numbers),
+        _ => true,
     }
+}
+fn check_extension_value(value: &serde_json::Value, bytes: usize, total: usize) -> Result<()> {
+    if bytes > MAX_EXTENSION_VALUE_BYTES || total > MAX_EXTENSIONS_TOTAL_BYTES {
+        return Err(invalid("Extension value exceeds its size limit"));
+    }
+    if !safe_numbers(value) {
+        return Err(invalid(
+            "Extension numbers must be within the safe integer magnitude",
+        ));
+    }
+    Ok(())
 }
 
 /// Header facts every payload is checked against.
@@ -301,8 +317,9 @@ pub trait Payload: Serialize + DeserializeOwned + JsonSchema + Sized {
     fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()>;
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(bound(deserialize = "P: Payload"))]
+/// Deserialization is hand-written (see below) so unknown members are size
+/// checked as raw text before parsing, instead of buffering the whole envelope.
+#[derive(Clone, Debug, PartialEq, Serialize, JsonSchema)]
 #[schemars(rename = "{P}Envelope", bound = "P: Payload")]
 pub struct EnvelopeData<P: Payload> {
     pub format: FormatTag,
@@ -330,6 +347,89 @@ impl<P: Payload> EnvelopeData<P> {
         }
     }
 }
+impl<'de, P: Payload> Deserialize<'de> for EnvelopeData<P> {
+    fn deserialize<D: Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
+        struct Visitor<P>(PhantomData<fn() -> P>);
+        impl<'de, P: Payload> serde::de::Visitor<'de> for Visitor<P> {
+            type Value = EnvelopeData<P>;
+            fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.write_str("an Azeroth Navigator exchange envelope")
+            }
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                mut a: A,
+            ) -> std::result::Result<EnvelopeData<P>, A::Error> {
+                use serde::de::Error;
+                fn set<T, E: Error>(slot: &mut Option<T>, value: T) -> std::result::Result<(), E> {
+                    match slot.replace(value) {
+                        Some(_) => Err(E::custom("Duplicate envelope member")),
+                        None => Ok(()),
+                    }
+                }
+                let (mut format, mut kind, mut schema_version, mut fixture) =
+                    (None, None, None, None);
+                let (mut producer, mut game, mut namespace, mut provenance) =
+                    (None, None, None, None);
+                let (mut dependencies, mut payload) = (None, None);
+                let (mut extensions, mut total) = (BTreeMap::new(), 0);
+                while let Some(key) = a.next_key::<String>()? {
+                    match key.as_str() {
+                        "format" => set(&mut format, a.next_value::<FormatTag>()?)?,
+                        "kind" => set(&mut kind, a.next_value::<KindTag<P>>()?)?,
+                        "schema_version" => {
+                            set(&mut schema_version, a.next_value::<SchemaVersion>()?)?
+                        }
+                        "fixture" => set(&mut fixture, a.next_value::<bool>()?)?,
+                        "producer" => set(&mut producer, a.next_value::<Producer>()?)?,
+                        "game" => set(&mut game, a.next_value::<GameContext>()?)?,
+                        "namespace" => set(&mut namespace, a.next_value::<DatasetNamespace>()?)?,
+                        "provenance" => set(&mut provenance, a.next_value::<Provenance>()?)?,
+                        "dependencies" => set(&mut dependencies, a.next_value::<Dependencies>()?)?,
+                        "payload" => set(&mut payload, a.next_value::<P>()?)?,
+                        _ => {
+                            check_extension_key(&key).map_err(A::Error::custom)?;
+                            if extensions.len() >= MAX_EXTENSIONS || extensions.contains_key(&key) {
+                                return Err(A::Error::custom(
+                                    "Duplicate extension or extension limit exceeded",
+                                ));
+                            }
+                            let raw = a.next_value::<Box<serde_json::value::RawValue>>()?;
+                            let bytes = raw.get().len();
+                            total += bytes;
+                            if bytes > MAX_EXTENSION_VALUE_BYTES
+                                || total > MAX_EXTENSIONS_TOTAL_BYTES
+                            {
+                                return Err(A::Error::custom(
+                                    "Extension value exceeds its size limit",
+                                ));
+                            }
+                            let value: serde_json::Value =
+                                serde_json::from_str(raw.get()).map_err(A::Error::custom)?;
+                            check_extension_value(&value, bytes, total)
+                                .map_err(A::Error::custom)?;
+                            extensions.insert(key, value);
+                        }
+                    }
+                }
+                let missing = |name| A::Error::missing_field(name);
+                Ok(EnvelopeData {
+                    format: format.ok_or_else(|| missing("format"))?,
+                    kind: kind.ok_or_else(|| missing("kind"))?,
+                    schema_version: schema_version.ok_or_else(|| missing("schema_version"))?,
+                    fixture: fixture.ok_or_else(|| missing("fixture"))?,
+                    producer: producer.ok_or_else(|| missing("producer"))?,
+                    game: game.ok_or_else(|| missing("game"))?,
+                    namespace: namespace.ok_or_else(|| missing("namespace"))?,
+                    provenance: provenance.ok_or_else(|| missing("provenance"))?,
+                    dependencies: dependencies.unwrap_or_default(),
+                    payload: payload.ok_or_else(|| missing("payload"))?,
+                    extensions: Extensions(extensions),
+                })
+            }
+        }
+        d.deserialize_map(Visitor(PhantomData))
+    }
+}
 impl<P: Payload> Validate for EnvelopeData<P> {
     fn validate(&self) -> Result<()> {
         if self.producer.sequence.is_some() && self.producer.session_id.is_none() {
@@ -355,7 +455,39 @@ impl<P: Payload> Validate for EnvelopeData<P> {
             fixture: self.fixture,
             producer: &self.producer,
             dependencies: &self.dependencies,
-        })
+        })?;
+        let payload = serde_json::to_value(&self.payload)
+            .map_err(|_| invalid("Exchange payload cannot be serialized"))?;
+        if !nested_sources_agree(&payload, self.fixture) {
+            return Err(invalid(
+                "Nested observation sources disagree with the fixture flag",
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// Serialized `ObservationMetadata` always carries `source` and `clock_trust`;
+/// no other payload record has both. Non-fixture documents cannot contain
+/// synthetic observations, and fixtures cannot claim live or official capture.
+fn nested_sources_agree(value: &serde_json::Value, fixture: bool) -> bool {
+    match value {
+        serde_json::Value::Object(o) => {
+            let source_ok = match (o.get("source"), o.contains_key("clock_trust")) {
+                (Some(serde_json::Value::String(source)), true) => {
+                    let synthetic = source == "synthetic_fixture";
+                    let claims_capture = matches!(
+                        source.as_str(),
+                        "addon_snapshot" | "manual_entry" | "official_api"
+                    );
+                    if fixture { !claims_capture } else { !synthetic }
+                }
+                _ => true,
+            };
+            source_ok && o.values().all(|v| nested_sources_agree(v, fixture))
+        }
+        serde_json::Value::Array(a) => a.iter().all(|v| nested_sources_agree(v, fixture)),
+        _ => true,
     }
 }
 

@@ -7,7 +7,9 @@ use std::borrow::Cow;
 pub const MAX_SAFE_INTEGER: u64 = 9_007_199_254_740_991;
 /// Structural approximation of identifier rules for JSON Schema consumers.
 /// Rust remains authoritative: it counts UTF-8 bytes, not code points.
-pub const IDENTIFIER_PATTERN: &str = r"^[^\p{Cc}\s](?:[^\p{Cc}]*[^\p{Cc}\s])?$";
+/// `\p{White_Space}` matches Rust's `trim`; JavaScript's `\s` would also match U+FEFF.
+pub const IDENTIFIER_PATTERN: &str =
+    r"^[^\p{Cc}\p{White_Space}](?:[^\p{Cc}]*[^\p{Cc}\p{White_Space}])?$";
 pub const TEXT_PATTERN: &str = r"^(?:[^\p{Cc}]|[\t\n])*$";
 pub const COPPER_PATTERN: &str = "^(?:0|[1-9][0-9]{0,19})$";
 

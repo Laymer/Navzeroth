@@ -244,3 +244,37 @@ fn large_copper_and_observation_states_survive_round_trips() {
     assert!(p["equipment"]["off_hand"].get("value").is_none());
     assert_eq!(p["level"]["session_id"], "demo-session-001");
 }
+
+#[test]
+fn extensions_cannot_shadow_envelope_members() {
+    for key in RESERVED_MEMBERS {
+        assert!(
+            Extensions::new([(key.to_owned(), json!({}))]).is_err(),
+            "{key}"
+        );
+    }
+    assert!(Extensions::new([("x_ok".to_owned(), json!({"n": 1}))]).is_ok());
+    assert!(Extensions::new([("x_n".to_owned(), json!(1e300))]).is_err());
+    let big = "x".repeat(MAX_EXTENSION_VALUE_BYTES / 2);
+    let many = (0..9).map(|i| (format!("x_{i}"), json!(big.clone())));
+    assert!(
+        Extensions::new(many).is_err(),
+        "total extension size is bounded"
+    );
+}
+
+#[test]
+fn non_fixture_documents_require_non_synthetic_sources() {
+    // In-memory test of the production path: the same synthetic structure,
+    // relabeled as an addon export in the reference namespace, is accepted.
+    let text =
+        read("reference-namespace-fixture.json").replace("synthetic_fixture", "addon_snapshot");
+    let mut doc: Value = serde_json::from_str(&text).unwrap();
+    doc["fixture"] = json!(false);
+    doc["producer"]["component"] = json!("addon");
+    let exchange = decode_envelope::<CharacterSnapshot>(&doc.to_string()).unwrap();
+    assert!(!exchange.fixture);
+    // A single synthetic observation is enough to reject it.
+    doc["payload"]["role"]["source"] = json!("synthetic_fixture");
+    assert!(decode_envelope::<CharacterSnapshot>(&doc.to_string()).is_err());
+}
