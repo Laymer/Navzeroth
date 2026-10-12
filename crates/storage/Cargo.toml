@@ -1,0 +1,17 @@
+[package]
+name = "azeroth-storage"
+description = "Azeroth Navigator SQLite snapshot store: migrations, content-hash idempotency and snapshot ordering"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[dependencies]
+azeroth-core = { path = "../core" }
+# Bundled SQLite keeps the library identical on Linux and Windows (plan section 8.2).
+rusqlite = { version = "=0.40.2", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "=0.10.9"

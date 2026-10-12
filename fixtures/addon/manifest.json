@@ -1,0 +1,33 @@
+{
+  "manifest_version": 1,
+  "package": "M0.3 diagnostic addon",
+  "synthetic": true,
+  "fixture": true,
+  "note": "Every file is synthetic. Exports come from the azeroth-lua-harness stub client (edition wow_forever, build SYNTHETIC, interface 99999); none was observed in a real client. They are golden outputs of Core/Capabilities.lua and Core/Export.lua, compared byte for byte by crates/lua-harness/tests/template_and_fixtures.rs. This manifest is not part of fixtures/contracts/v1/manifest.json.",
+  "files": [
+    {
+      "file": "export-synthetic-all-present.json",
+      "kind": "positive",
+      "format": "anav-diagnostic",
+      "description": "Probe of a stub client in which every probed API exists and GetBuildInfo returns synthetic values."
+    },
+    {
+      "file": "export-synthetic-empty-environment.json",
+      "kind": "negative",
+      "format": "anav-diagnostic",
+      "description": "Probe of an environment with no client API tables: every API capability reports api_missing and stays untested (CASE-010 analogue, synthetic only)."
+    },
+    {
+      "file": "export-synthetic-build-call-failed.json",
+      "kind": "negative",
+      "format": "anav-diagnostic",
+      "description": "GetBuildInfo raises: build_identification is failed with a redacted bounded detail; all other capabilities are unaffected."
+    },
+    {
+      "file": "savedvariables-sample.synthetic.lua",
+      "kind": "layout-sample",
+      "format": "savedvariables-literal",
+      "description": "Hand-shaped sample of the SavedVariables file around the all-present export. Data for parser tests; never executed. The layout is UNVERIFIED until M0.5."
+    }
+  ]
+}
