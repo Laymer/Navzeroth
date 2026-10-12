@@ -5,6 +5,7 @@ import type {
   HistoryEntry,
   ImportReceipt,
   StoredSnapshot,
+  StoredParty,
   WatchState,
   AtlasView,
   CommandAdapter,
@@ -51,6 +52,10 @@ export function createClient(adapter: CommandAdapter) {
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>
       run(() => adapter.invoke("list_profiles", undefined)),
+    listParties: (): Promise<Result<string[]>> => run(() => adapter.invoke("list_parties", undefined)),
+    getParty: (partyId: string): Promise<Result<StoredParty | null>> => run(() => adapter.invoke("get_party", { party_id: partyId })),
+    saveParty: (partyId: string, profileIds: string[]): Promise<Result<null>> => run(() => adapter.invoke("save_party", { party_id: partyId, profile_ids: profileIds })),
+    deleteParty: (partyId: string): Promise<Result<boolean>> => run(() => adapter.invoke("delete_party", { party_id: partyId })),
     getCharacterSnapshot: (profileId: string): Promise<Result<CharacterSnapshotEnvelope>> =>
       run(() => adapter.invoke("get_character_snapshot", { profile_id: profileId })),
     importText: (text: string): Promise<Result<ImportReceipt>> =>

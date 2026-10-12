@@ -73,6 +73,15 @@ export interface StoredSnapshot {
   freshness: Freshness;
   data_mode: DataMode;
 }
+export interface StoredParty {
+  id: string;
+  data_mode: DataMode;
+  participants: {
+    profile_id: string;
+    character: string;
+    snapshot: StoredSnapshot | null;
+  }[];
+}
 export interface HistoryEntry {
   snapshot_id: string;
   is_current: boolean;
@@ -185,6 +194,10 @@ export interface SnapshotMarker {
 export interface CommandMap {
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
+  list_parties: { input: undefined; output: string[] };
+  get_party: { input: { party_id: string }; output: StoredParty | null };
+  save_party: { input: { party_id: string; profile_ids: string[] }; output: null };
+  delete_party: { input: { party_id: string }; output: boolean };
   get_character_snapshot: {
     input: { profile_id: string };
     output: CharacterSnapshotEnvelope;
