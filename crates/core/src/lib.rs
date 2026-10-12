@@ -7,6 +7,7 @@ pub mod eligibility;
 pub mod entities;
 pub mod error;
 pub mod evaluation;
+pub mod gear;
 pub mod json;
 pub mod observation;
 pub mod predicate;

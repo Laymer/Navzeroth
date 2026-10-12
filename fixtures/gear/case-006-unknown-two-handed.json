@@ -1,0 +1,180 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC fixture: fictional identifiers and an engineering-assumption weight, not game data.",
+  "case": "CASE-006",
+  "description": "two_handed is unknown for the strongest weapon: pairing it with an off-hand item is uncertain, never assumed one-handed.",
+  "layout": {
+    "slots": [
+      "synthetic-main",
+      "synthetic-off"
+    ],
+    "hands": {
+      "main_hand": "synthetic-main",
+      "off_hand": "synthetic-off"
+    }
+  },
+  "profile": {
+    "role": "synthetic-role",
+    "version": "gear-model-v1",
+    "weight_source": {
+      "type": "synthetic_test"
+    },
+    "weights": {
+      "synthetic-power": 1000
+    },
+    "known_unmodeled": []
+  },
+  "candidates": [
+    {
+      "item": {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "item_id": "synthetic-mystery-sword",
+          "variant": "base"
+        },
+        "slots": [
+          "synthetic-main"
+        ],
+        "two_handed": {
+          "status": "unknown"
+        },
+        "unique_group": {
+          "status": "not_applicable"
+        },
+        "attributes": {
+          "status": "known",
+          "value": {
+            "synthetic-power": 10
+          }
+        },
+        "requirements": {
+          "status": "known",
+          "value": {
+            "op": "all",
+            "predicates": []
+          }
+        },
+        "effects": {
+          "status": "known",
+          "value": []
+        },
+        "evidence": []
+      },
+      "category": {
+        "status": "not_applicable"
+      }
+    },
+    {
+      "item": {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "item_id": "synthetic-1h-sword",
+          "variant": "base"
+        },
+        "slots": [
+          "synthetic-main"
+        ],
+        "two_handed": {
+          "status": "known",
+          "value": false
+        },
+        "unique_group": {
+          "status": "not_applicable"
+        },
+        "attributes": {
+          "status": "known",
+          "value": {
+            "synthetic-power": 4
+          }
+        },
+        "requirements": {
+          "status": "known",
+          "value": {
+            "op": "all",
+            "predicates": []
+          }
+        },
+        "effects": {
+          "status": "known",
+          "value": []
+        },
+        "evidence": []
+      },
+      "category": {
+        "status": "not_applicable"
+      }
+    },
+    {
+      "item": {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "item_id": "synthetic-shield",
+          "variant": "base"
+        },
+        "slots": [
+          "synthetic-off"
+        ],
+        "two_handed": {
+          "status": "known",
+          "value": false
+        },
+        "unique_group": {
+          "status": "not_applicable"
+        },
+        "attributes": {
+          "status": "known",
+          "value": {
+            "synthetic-power": 8
+          }
+        },
+        "requirements": {
+          "status": "known",
+          "value": {
+            "op": "all",
+            "predicates": []
+          }
+        },
+        "effects": {
+          "status": "known",
+          "value": []
+        },
+        "evidence": []
+      },
+      "category": {
+        "status": "not_applicable"
+      }
+    }
+  ],
+  "expected": {
+    "uncertain_items": [
+      "synthetic-mystery-sword",
+      "synthetic-shield"
+    ],
+    "best_valid_items": [
+      "synthetic-1h-sword",
+      "synthetic-shield"
+    ],
+    "best_valid_total": 12000
+  }
+}
