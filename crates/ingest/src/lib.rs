@@ -10,7 +10,7 @@
 //!
 //! [`fixtures`] is the fixture importer stub behind `azeroth-cli validate-fixtures`.
 //!
-//! Nothing here reads a clock, watches files, persists data or computes a
+//! The optional [`watcher`] polls one explicitly selected file. Nothing here persists data or computes a
 //! storage identity. Imported state is never labelled live. Errors are
 //! `AppError`s with static messages; they never contain imported content, paths
 //! or excerpts.
@@ -18,5 +18,6 @@ pub mod anav1;
 pub mod fixtures;
 pub mod import;
 pub mod savedvars;
+pub mod watcher;
 
 mod error;

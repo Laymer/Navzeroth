@@ -1,0 +1,283 @@
+use azeroth_app::{
+    DataMode,
+    snapshots::{FileInputFormat, HistoryDisposition, ImportDisposition, SnapshotApplication},
+};
+use azeroth_core::{error::ErrorCode, observation::Freshness};
+use serde_json::{Value, json};
+const FIXTURE: &str = include_str!("../../../fixtures/contracts/v1/character-snapshot.json");
+fn doc(id: &str, seq: u64) -> Value {
+    let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+    value["payload"]["id"] = json!(id);
+    value["producer"]["sequence"] = json!(seq);
+    value["payload"]["capture"]["sequence"] = json!(seq);
+    value
+}
+fn text(doc: &Value) -> String {
+    format!("ANAV1:{}", serde_json::to_string(doc).unwrap())
+}
+
+#[test]
+fn text_duplicate_older_same_position_and_bad_input_preserve_current() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    assert!(app.status().unwrap().active_profile.is_none());
+    assert!(app.markers(None).unwrap().is_empty());
+    let first = app.import_text(&text(&doc("current", 20)), None).unwrap();
+    assert!(matches!(
+        first.disposition,
+        ImportDisposition::Stored {
+            previous_current: None
+        }
+    ));
+    assert!(first.fixture);
+    assert!(matches!(first.freshness, Freshness::Uncertain { .. }));
+    assert_eq!(first.data_mode, DataMode::Stored);
+    assert!(matches!(
+        app.import_text(&text(&doc("current", 20)), None)
+            .unwrap()
+            .disposition,
+        ImportDisposition::Duplicate
+    ));
+    assert!(matches!(
+        app.import_text(&text(&doc("old", 19)), None)
+            .unwrap()
+            .disposition,
+        ImportDisposition::HistoryOnly {
+            reason: HistoryDisposition::Older
+        }
+    ));
+    assert!(matches!(
+        app.import_text(&text(&doc("same", 20)), None)
+            .unwrap()
+            .disposition,
+        ImportDisposition::HistoryOnly {
+            reason: HistoryDisposition::SamePosition
+        }
+    ));
+    assert!(app.import_text("ANAV1:{", None).is_err());
+    assert_eq!(
+        app.current(&first.profile_id, None)
+            .unwrap()
+            .unwrap()
+            .envelope
+            .payload
+            .id
+            .as_str(),
+        "current"
+    );
+    assert_eq!(app.history(&first.profile_id, 32, None).unwrap().len(), 3);
+    assert_eq!(
+        app.history(&first.profile_id, 0, None).unwrap_err().code,
+        ErrorCode::InvalidInput
+    );
+    let newer = app.import_text(&text(&doc("new", 21)), None).unwrap();
+    assert!(matches!(
+        newer.disposition,
+        ImportDisposition::Stored {
+            previous_current: Some(_)
+        }
+    ));
+    let marker = &app.markers(None).unwrap()[0];
+    assert_eq!(marker.profile_id, first.profile_id);
+    assert_eq!(marker.snapshot_id.as_str(), "new");
+    assert_eq!(marker.data_mode, DataMode::Stored);
+}
+
+#[test]
+fn incomparable_import_stays_in_history() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let original = app.import_text(&text(&doc("current", 20)), None).unwrap();
+    let mut other = doc("other-session", 1);
+    other["producer"]["session_id"] = json!("different-session");
+    other["payload"]["capture"]["session_id"] = json!("different-session");
+    other["payload"]["capture"]["clock_trust"] = json!("uncertain");
+    assert!(matches!(
+        app.import_text(&text(&other), None).unwrap().disposition,
+        ImportDisposition::HistoryOnly {
+            reason: HistoryDisposition::Incomparable
+        }
+    ));
+    assert_eq!(
+        app.current(&original.profile_id, None)
+            .unwrap()
+            .unwrap()
+            .envelope
+            .payload
+            .id
+            .as_str(),
+        "current"
+    );
+}
+
+#[test]
+fn profile_ids_resolve_full_context_and_never_a_character_only() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let demo = app.import_text(&text(&doc("demo", 12)), None).unwrap();
+    let reference: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v1/reference-namespace-fixture.json"
+    ))
+    .unwrap();
+    let synthetic = app.import_text(&text(&reference), None).unwrap();
+    let mut real = reference.clone();
+    fn real_sources(v: &mut Value) {
+        match v {
+            Value::Object(map) => {
+                if map.get("source") == Some(&json!("synthetic_fixture")) {
+                    map.insert("source".into(), json!("addon_snapshot"));
+                }
+                map.values_mut().for_each(real_sources);
+            }
+            Value::Array(values) => values.iter_mut().for_each(real_sources),
+            _ => {}
+        }
+    }
+    real_sources(&mut real);
+    real["fixture"] = json!(false);
+    real["producer"]["component"] = json!("addon");
+    let production = app.import_text(&text(&real), None).unwrap();
+    assert_ne!(demo.profile_id, synthetic.profile_id);
+    assert_ne!(synthetic.profile_id, production.profile_id);
+    let mut another_build = reference.clone();
+    fn change_build(v: &mut Value) {
+        match v {
+            Value::Object(map) => {
+                if map.contains_key("edition")
+                    && map.contains_key("build")
+                    && map.contains_key("interface")
+                {
+                    map.insert("edition".into(), json!("wow_classic"));
+                    map.insert("build".into(), json!("OTHER_BUILD"));
+                    map.insert("interface".into(), json!("OTHER_INTERFACE"));
+                }
+                map.values_mut().for_each(change_build);
+            }
+            Value::Array(values) => values.iter_mut().for_each(change_build),
+            _ => {}
+        }
+    }
+    change_build(&mut another_build);
+    let distinct_build = app.import_text(&text(&another_build), None).unwrap();
+    assert_ne!(distinct_build.profile_id, synthetic.profile_id);
+    assert_eq!(app.profiles().unwrap().len(), 4);
+    app.select_profile(&demo.profile_id).unwrap();
+    assert_eq!(
+        app.status().unwrap().active_profile.as_deref(),
+        Some(demo.profile_id.as_str())
+    );
+    assert!(app.select_profile("demo-character-paladin").is_err());
+    assert!(
+        app.select_profile("../../private-export")
+            .unwrap_err()
+            .to_string()
+            .contains("No such profile")
+    );
+    assert_eq!(
+        app.status().unwrap().active_profile.as_deref(),
+        Some(demo.profile_id.as_str())
+    );
+}
+
+#[test]
+fn file_import_converges_with_text_and_watcher_can_stop_when_file_missing() {
+    let path = std::env::temp_dir().join(format!("anav-app-{}.txt", std::process::id()));
+    let contents = text(&doc("file-test", 12));
+    std::fs::write(&path, &contents).unwrap();
+    let app = SnapshotApplication::in_memory().unwrap();
+    let imported = app
+        .import_file(&path, &FileInputFormat::Anav1Text, None)
+        .unwrap();
+    let second = app.import_text(&contents, None).unwrap();
+    assert_eq!(imported.profile_id, second.profile_id);
+    assert!(matches!(second.disposition, ImportDisposition::Duplicate));
+    std::fs::remove_file(&path).unwrap();
+    assert!(
+        app.start_watch(&path, &FileInputFormat::Anav1Text)
+            .unwrap()
+            .active
+    );
+    assert!(!app.stop_watch().unwrap().active);
+    assert!(app.watch_status().unwrap().last_import.is_none());
+    assert!(app.current(&imported.profile_id, None).unwrap().is_some());
+}
+
+#[test]
+fn savedvariables_and_anav1_share_storage_and_survive_reopen() {
+    let path = std::env::temp_dir().join(format!("anav-app-{}.sqlite", std::process::id()));
+    let export = std::env::temp_dir().join(format!("anav-app-{}.lua", std::process::id()));
+    let contents = text(&doc("saved-vars", 12));
+    std::fs::write(
+        &export,
+        format!(
+            "TestDB = {{ export = {} }}",
+            serde_json::to_string(&contents).unwrap()
+        ),
+    )
+    .unwrap();
+    let id = {
+        let app = SnapshotApplication::open(&path).unwrap();
+        let imported = app
+            .import_file(
+                &export,
+                &FileInputFormat::SavedVariables {
+                    global: "TestDB".into(),
+                    key: "export".into(),
+                },
+                None,
+            )
+            .unwrap();
+        assert!(matches!(
+            app.import_text(&contents, None).unwrap().disposition,
+            ImportDisposition::Duplicate
+        ));
+        imported.profile_id
+    };
+    let reopened = SnapshotApplication::open(&path).unwrap();
+    assert!(reopened.current(&id, None).unwrap().is_some());
+    drop(reopened);
+    std::fs::remove_file(path).unwrap();
+    std::fs::remove_file(export).unwrap();
+}
+
+#[test]
+fn watcher_imports_on_its_worker_and_preserves_a_different_selected_profile() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let one = app
+        .import_text(&text(&doc("one-current", 20)), None)
+        .unwrap();
+    let mut two = doc("two-current", 20);
+    two["payload"]["character"] = json!("other-character");
+    let two = app.import_text(&text(&two), None).unwrap();
+    let path = std::env::temp_dir().join(format!("anav-app-{}.watch", std::process::id()));
+    std::fs::write(&path, text(&doc("watched-new", 21))).unwrap();
+    app.start_watch(&path, &FileInputFormat::Anav1Text).unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    loop {
+        if app.watch_status().unwrap().last_import.is_some() {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "watcher did not deliver a stable import"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    let state = app.stop_watch().unwrap();
+    assert_eq!(
+        state.last_import.unwrap().snapshot_id.as_str(),
+        "watched-new"
+    );
+    assert_eq!(
+        app.status().unwrap().active_profile.as_deref(),
+        Some(two.profile_id.as_str())
+    );
+    assert_eq!(
+        app.current(&one.profile_id, None)
+            .unwrap()
+            .unwrap()
+            .envelope
+            .payload
+            .id
+            .as_str(),
+        "watched-new"
+    );
+    std::fs::remove_file(path).unwrap();
+}
