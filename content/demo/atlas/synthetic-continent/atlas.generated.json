@@ -1,0 +1,79 @@
+{
+  "generator": "azeroth-cli 0.1.0",
+  "atlas_manifest_version": 1,
+  "image_id": "demo-image-1",
+  "manifest_sha256": "311670eca10b144686a291ae30183391f5942e3d2d0e13ccce3bec8e6ae63b10",
+  "source": {
+    "file": "atlas/synthetic-continent/source/synthetic-poster.png",
+    "sha256": "c117b766f617a43274ff9c1d0f0015d75f330406383b7f6042ed0efabfbb5640",
+    "size_bytes": 5948,
+    "width_px": 160,
+    "height_px": 120
+  },
+  "frame": {
+    "width_px": 64,
+    "height_px": 96
+  },
+  "layers": [
+    {
+      "id": "roads",
+      "kind": "roads_traced",
+      "file": "atlas/synthetic-continent/layers/roads.png",
+      "width_px": 64,
+      "height_px": 96,
+      "frame_divisor": 1,
+      "size_bytes": 4421,
+      "sha256": "c68f4a42b82fe53fc683af5d48eabc6602526b21f22debf2dd1c7db45f017677",
+      "registration_offset_px": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "flight",
+      "kind": "flight_reference",
+      "file": "atlas/synthetic-continent/layers/flight.png",
+      "width_px": 64,
+      "height_px": 96,
+      "frame_divisor": 1,
+      "size_bytes": 4464,
+      "sha256": "0b7052ff08ba62d030deb1de26b9f49ffd08ff6af857a8b33ac87bf10faa7204",
+      "registration_offset_px": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "overview",
+      "kind": "overview",
+      "file": "atlas/synthetic-continent/layers/overview.png",
+      "width_px": 32,
+      "height_px": 48,
+      "frame_divisor": 2,
+      "size_bytes": 2250,
+      "sha256": "981c642698c8bb2a63ecfedd6d330e8f193a5c4018ed661273c34c162b5c56e6",
+      "registration_offset_px": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "alignment": [
+    {
+      "layer": "roads",
+      "offset_px": {
+        "x": 0,
+        "y": 0
+      },
+      "residual": 0.0
+    },
+    {
+      "layer": "flight",
+      "offset_px": {
+        "x": 0,
+        "y": 0
+      },
+      "residual": 3.09375
+    }
+  ]
+}

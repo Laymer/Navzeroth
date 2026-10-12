@@ -33,6 +33,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false # imagery stays a pointer; CI never downloads LFS objects
       - run: rustup show
       - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
@@ -43,6 +45,19 @@ jobs:
           key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
       - run: cargo clippy --locked --workspace --all-targets -- -D warnings
       - run: cargo test --locked --workspace
+      - name: Atlas content pointer checks (declared imagery, no LFS download)
+        run: cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/forever/atlas/eastern-kingdoms/atlas.manifest.json --content-root content/forever --check-pointer
+      - name: Every LFS-attributed tracked file is a pointer blob
+        shell: bash
+        run: |
+          status=0
+          while IFS= read -r -d '' path; do
+            if [ "$(git cat-file blob "HEAD:$path" | head -c 42)" != "version https://git-lfs.github.com/spec/v1" ]; then
+              echo "::error::$path is tracked with filter=lfs but is not an LFS pointer"
+              status=1
+            fi
+          done < <(git ls-files -z | git check-attr --stdin -z filter | awk 'BEGIN{RS="\0"; ORS="\0"} NR%3==1{p=$0} NR%3==0 && $0=="lfs"{print p}')
+          exit $status
       - run: git diff --exit-code
   pnpm:
     name: pnpm ${{ matrix.platform }}

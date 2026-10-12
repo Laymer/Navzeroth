@@ -1,7 +1,9 @@
 //! A reference dataset revision for one build and namespace. Local references
 //! resolve inside the dataset. Not resolved here (M3 content work): quest or
 //! objective IDs used only inside predicates, travel-graph cycles (legitimate),
-//! and references to other datasets. Validated as part of its envelope.
+//! image source registry IDs, and references to other datasets. Validated as
+//! part of its envelope. `map_images` and `map_embeddings` are additive version 1
+//! members (ADR 0002); absent means no imagery or embeddings are recorded.
 use super::{ContractKind, EnvelopeHeader, Payload, no_dependencies, same_context, unresolved};
 use crate::{entities::*, error::Result, types::*};
 use schemars::JsonSchema;
@@ -20,6 +22,10 @@ pub struct ReferenceDataset {
     pub edges: Vec<TravelEdge>,
     pub objectives: Vec<Objective>,
     pub rules: Vec<ContextRule>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub map_images: Vec<MapImage>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub map_embeddings: Vec<MapEmbedding>,
 }
 impl ReferenceDataset {
     fn contexts(&self) -> impl Iterator<Item = &DataContext> {
@@ -32,6 +38,11 @@ impl ReferenceDataset {
         let g = self.edges.iter().map(|r| &r.context);
         let o = self.objectives.iter().map(|r| &r.context);
         let r = self.rules.iter().map(|r| &r.context);
+        let im = self.map_images.iter().map(|r| &r.map.context);
+        let em = self
+            .map_embeddings
+            .iter()
+            .flat_map(|r| [&r.child.context, &r.parent.context]);
         e.chain(i)
             .chain(a)
             .chain(q)
@@ -40,6 +51,8 @@ impl ReferenceDataset {
             .chain(g)
             .chain(o)
             .chain(r)
+            .chain(im)
+            .chain(em)
     }
     fn evidence_refs(&self) -> impl Iterator<Item = &EvidenceId> {
         let e = self.evidence.iter().flat_map(|r| &r.conflicts);
@@ -50,6 +63,14 @@ impl ReferenceDataset {
         let g = self.edges.iter().flat_map(|r| &r.evidence);
         let o = self.objectives.iter().flat_map(|r| &r.evidence);
         let r = self.rules.iter().flat_map(|r| &r.evidence);
+        let im = self.map_images.iter().flat_map(|r| {
+            r.evidence
+                .iter()
+                .chain(&r.calibration_evidence)
+                .chain(r.pins.iter().flat_map(|p| &p.evidence))
+                .chain(r.applicable_builds.iter().flat_map(|b| &b.evidence))
+        });
+        let em = self.map_embeddings.iter().flat_map(|r| &r.evidence);
         e.chain(i)
             .chain(a)
             .chain(q)
@@ -57,6 +78,8 @@ impl ReferenceDataset {
             .chain(g)
             .chain(o)
             .chain(r)
+            .chain(im)
+            .chain(em)
     }
 }
 
@@ -72,6 +95,8 @@ impl ReferenceDataset {
             self.edges.len(),
             self.objectives.len(),
             self.rules.len(),
+            self.map_images.len(),
+            self.map_embeddings.len(),
         ] {
             bounded(len)?;
         }
@@ -84,6 +109,8 @@ impl ReferenceDataset {
         unique(self.edges.iter().map(|r| &r.id))?;
         unique(self.objectives.iter().map(|r| &r.id))?;
         unique(self.rules.iter().map(|r| &r.id))?;
+        unique(self.map_images.iter().map(|r| &r.id))?;
+        unique(self.map_embeddings.iter().map(|r| &r.child))?;
 
         let evidence: BTreeSet<_> = self.evidence.iter().map(|r| &r.id).collect();
         let items: BTreeSet<_> = self.items.iter().map(|r| &r.key).collect();
@@ -133,6 +160,80 @@ impl ReferenceDataset {
                 });
         if !resolved {
             return Err(unresolved("Dataset reference does not resolve"));
+        }
+        self.validate_imagery(&maps, &nodes)
+    }
+
+    /// Image maps, control points and embeddings resolve locally; embeddings form
+    /// acyclic chains no deeper than `MAX_EMBEDDING_DEPTH`; declared residuals
+    /// agree with the calibration.
+    fn validate_imagery(
+        &self,
+        maps: &BTreeSet<&MapKey>,
+        nodes: &BTreeMap<&NodeId, &MapKey>,
+    ) -> Result<()> {
+        let positions: BTreeMap<_, _> = self.nodes.iter().map(|n| (&n.id, &n.position)).collect();
+        for image in &self.map_images {
+            if !maps.contains(&image.map) {
+                return Err(unresolved("Map image references an undeclared map space"));
+            }
+            for point in &image.control_points {
+                if nodes.get(&point.node) != Some(&&image.map) {
+                    return Err(unresolved(
+                        "Control point references a node outside the image map",
+                    ));
+                }
+                if let (Some(residual), Some(transform)) =
+                    (point.residual_px.value(), image.calibration.value())
+                {
+                    let pin = image
+                        .pins
+                        .iter()
+                        .find(|p| p.id == point.pin)
+                        .expect("validated: control point pin exists");
+                    let position = positions[&point.node];
+                    let (x, y) = transform.apply(position.x, position.y);
+                    let distance =
+                        ((x - pin.pixel.x.get()).powi(2) + (y - pin.pixel.y.get()).powi(2)).sqrt();
+                    if (distance - residual.get()).abs() > RESIDUAL_TOLERANCE_PX {
+                        return Err(crate::error::invalid(
+                            "Control-point residual disagrees with the calibration",
+                        ));
+                    }
+                }
+            }
+        }
+        let parents: BTreeMap<_, _> = self
+            .map_embeddings
+            .iter()
+            .map(|e| (&e.child, &e.parent))
+            .collect();
+        for embedding in &self.map_embeddings {
+            if !maps.contains(&embedding.child) || !maps.contains(&embedding.parent) {
+                return Err(unresolved(
+                    "Map embedding references an undeclared map space",
+                ));
+            }
+            // One parent per child: any repeated key is a cycle and every walk
+            // ends within `parents.len()` steps; depth is judged afterwards.
+            let mut visited: BTreeSet<&MapKey> = BTreeSet::from([&embedding.child]);
+            let mut current = &embedding.parent;
+            let mut depth = 1;
+            loop {
+                if !visited.insert(current) {
+                    return Err(crate::error::invalid("Map embeddings form a cycle"));
+                }
+                match parents.get(current) {
+                    Some(next) => {
+                        depth += 1;
+                        current = next;
+                    }
+                    None => break,
+                }
+            }
+            if depth > MAX_EMBEDDING_DEPTH {
+                return Err(crate::error::invalid("Map embedding chain is too deep"));
+            }
         }
         Ok(())
     }

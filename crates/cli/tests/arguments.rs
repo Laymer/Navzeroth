@@ -8,11 +8,8 @@ fn cli() -> Command {
 fn no_arguments_reports_current_capabilities() {
     let output = cli().output().unwrap();
     assert!(output.status.success());
-    assert!(
-        String::from_utf8(output.stdout)
-            .unwrap()
-            .contains("export-schemas")
-    );
+    let banner = String::from_utf8(output.stdout).unwrap();
+    assert!(banner.contains("export-schemas") && banner.contains("prepare-atlas"));
 }
 
 #[test]
@@ -25,6 +22,42 @@ fn unsupported_commands_and_options_fail_without_echoing_input() {
         &["export-schemas"],
         &["export-schemas", "--private-input-sentinel", "dir"],
         &["export-schemas", "--output", "dir", "extra-sentinel"],
+        &["prepare-atlas"],
+        &["prepare-atlas", "--manifest"],
+        &[
+            "prepare-atlas",
+            "--manifest",
+            "m-sentinel",
+            "--content-root",
+        ],
+        &[
+            "prepare-atlas",
+            "--manifest",
+            "m",
+            "--content-root",
+            "c",
+            "positional-sentinel",
+        ],
+        &[
+            "prepare-atlas",
+            "--manifest",
+            "m",
+            "--content-root",
+            "c",
+            "--output",
+            "o",
+            "--check-pointer",
+        ],
+        &[
+            "prepare-atlas",
+            "--manifest",
+            "m",
+            "--manifest",
+            "n",
+            "--content-root",
+            "c",
+        ],
+        &["prepare-atlas", "--manifest", "--content-root", "c"],
     ] {
         let output = cli().args(args).output().unwrap();
         assert_eq!(output.status.code(), Some(2));

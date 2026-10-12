@@ -7,6 +7,11 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+/// Per-axis affine transform from normalized map coordinates (see `Position`)
+/// into a named target space: `target = scale * normalized + offset` for each
+/// axis. `MapSpace.transform` targets world units such as `"yards"`;
+/// `MapImage.calibration` targets `"pixel"` (full image frame). Negative scales
+/// express axis flips; rotation and shear are not representable.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "CoordinateTransform")]
 pub struct CoordinateTransformData {
@@ -17,6 +22,15 @@ pub struct CoordinateTransformData {
     pub offset_y: FiniteNumber,
 }
 pub type CoordinateTransform = Validated<CoordinateTransformData>;
+impl CoordinateTransformData {
+    /// Apply the transform to a normalized point: `(scale_x * x + offset_x, scale_y * y + offset_y)`.
+    pub fn apply(&self, x: Normalized, y: Normalized) -> (f64, f64) {
+        (
+            self.scale_x.get() * x.get() + self.offset_x.get(),
+            self.scale_y.get() * y.get() + self.offset_y.get(),
+        )
+    }
+}
 impl Validate for CoordinateTransformData {
     fn validate(&self) -> Result<()> {
         if self.units.as_str().is_empty() || self.scale_x.get() == 0. || self.scale_y.get() == 0. {

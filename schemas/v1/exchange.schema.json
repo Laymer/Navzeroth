@@ -61,6 +61,31 @@
       ],
       "type": "object"
     },
+    "ApplicableBuild": {
+      "description": "A build this imagery may be reused for. The image's own build needs no\nevidence; every other build requires evidence that the imagery still applies.",
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/BuildKey"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "build",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "AssetPath": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?(?:/[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?)*$",
+      "type": "string"
+    },
     "AttributeId": {
       "maxLength": 256,
       "minLength": 1,
@@ -402,7 +427,29 @@
       ],
       "type": "object"
     },
+    "ControlPoint": {
+      "description": "A pin paired with a travel node whose measured normalized position supplies\nthe other side of a calibration pair.",
+      "properties": {
+        "node": {
+          "$ref": "#/$defs/NodeId"
+        },
+        "pin": {
+          "$ref": "#/$defs/PinId"
+        },
+        "residual_px": {
+          "$ref": "#/$defs/Observation_FiniteNumber",
+          "description": "Distance in pixels between the pin and the node projected through the\ncalibration; requires a known calibration."
+        }
+      },
+      "required": [
+        "pin",
+        "node",
+        "residual_px"
+      ],
+      "type": "object"
+    },
     "CoordinateTransform": {
+      "description": "Per-axis affine transform from normalized map coordinates (see `Position`)\ninto a named target space: `target = scale * normalized + offset` for each\naxis. `MapSpace.transform` targets world units such as `\"yards\"`;\n`MapImage.calibration` targets `\"pixel\"` (full image frame). Negative scales\nexpress axis flips; rotation and shear are not representable.",
       "properties": {
         "offset_x": {
           "$ref": "#/$defs/FiniteNumber"
@@ -815,6 +862,14 @@
       "minimum": -9007199254740991,
       "type": "number"
     },
+    "FlightAccess": {
+      "enum": [
+        "alliance",
+        "horde",
+        "tower_route"
+      ],
+      "type": "string"
+    },
     "FloorId": {
       "maxLength": 256,
       "minLength": 1,
@@ -1037,6 +1092,115 @@
       ],
       "type": "object"
     },
+    "ImageId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "ImageLayer": {
+      "description": "One raster file of a `MapImage`. Pixel coordinates in pins and calibration\nalways refer to the full frame; a layer with `frame_divisor` 2 is half size.\n`registration_offset_px` is the offset applied to the layer's source crop so\nit registers with the frame (zero once the panels are aligned).",
+      "properties": {
+        "file": {
+          "$ref": "#/$defs/AssetPath",
+          "description": "Relative to the content root of the dataset's namespace."
+        },
+        "frame_divisor": {
+          "$ref": "#/$defs/PixelExtent"
+        },
+        "height_px": {
+          "$ref": "#/$defs/PixelExtent"
+        },
+        "id": {
+          "$ref": "#/$defs/LayerId"
+        },
+        "kind": {
+          "$ref": "#/$defs/ImageLayerKind"
+        },
+        "registration_offset_px": {
+          "$ref": "#/$defs/PixelPoint"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "width_px": {
+          "$ref": "#/$defs/PixelExtent"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "file",
+        "sha256",
+        "width_px",
+        "height_px",
+        "frame_divisor",
+        "registration_offset_px"
+      ],
+      "type": "object"
+    },
+    "ImageLayerKind": {
+      "oneOf": [
+        {
+          "enum": [
+            "terrain",
+            "other"
+          ],
+          "type": "string"
+        },
+        {
+          "const": "roads_traced",
+          "description": "Terrain with a manually traced road overlay baked in; not verified edges.",
+          "type": "string"
+        },
+        {
+          "const": "flight_reference",
+          "description": "Terrain with a reference flight network baked in; not a character's unlocks.",
+          "type": "string"
+        },
+        {
+          "const": "overview",
+          "description": "Downscaled copy of another layer for small views.",
+          "type": "string"
+        }
+      ]
+    },
+    "ImagePin": {
+      "description": "A labelled point measured on the image, in full-frame pixels. Reference\ngeography, not an unlock.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/PinId"
+        },
+        "kind": {
+          "$ref": "#/$defs/PinKind"
+        },
+        "label": {
+          "$ref": "#/$defs/Text"
+        },
+        "measured_on": {
+          "$ref": "#/$defs/LayerId",
+          "description": "The layer the pixel was measured on."
+        },
+        "pixel": {
+          "$ref": "#/$defs/PixelPoint"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "kind",
+        "pixel",
+        "measured_on",
+        "evidence"
+      ],
+      "type": "object"
+    },
     "InstanceId": {
       "maxLength": 256,
       "minLength": 1,
@@ -1119,6 +1283,12 @@
       ],
       "type": "object"
     },
+    "LayerId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
     "Level": {
       "maximum": 65535,
       "minimum": 1,
@@ -1130,11 +1300,118 @@
       "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
+    "MapEmbedding": {
+      "description": "The child map's rectangle inside its parent map, in the parent's normalized\nspace (GetMapRectOnMap style). Both keys share one exact context.",
+      "properties": {
+        "bounds": {
+          "$ref": "#/$defs/Bounds"
+        },
+        "child": {
+          "$ref": "#/$defs/MapKey"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "parent": {
+          "$ref": "#/$defs/MapKey"
+        }
+      },
+      "required": [
+        "child",
+        "parent",
+        "bounds",
+        "evidence"
+      ],
+      "type": "object"
+    },
     "MapId": {
       "maxLength": 256,
       "minLength": 1,
       "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
+    },
+    "MapImage": {
+      "properties": {
+        "applicable_builds": {
+          "items": {
+            "$ref": "#/$defs/ApplicableBuild"
+          },
+          "type": "array"
+        },
+        "calibration": {
+          "$ref": "#/$defs/Observation_CoordinateTransform",
+          "description": "Normalized map coordinate -> full-frame pixel; units must be `pixel`."
+        },
+        "calibration_evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "control_points": {
+          "items": {
+            "$ref": "#/$defs/ControlPoint"
+          },
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "gaps": {
+          "$ref": "#/$defs/Text",
+          "description": "What the imagery does not show or verify (plan section 12.3)."
+        },
+        "height_px": {
+          "$ref": "#/$defs/PixelExtent"
+        },
+        "id": {
+          "$ref": "#/$defs/ImageId"
+        },
+        "layers": {
+          "items": {
+            "$ref": "#/$defs/ImageLayer"
+          },
+          "type": "array"
+        },
+        "map": {
+          "$ref": "#/$defs/MapKey"
+        },
+        "pins": {
+          "items": {
+            "$ref": "#/$defs/ImagePin"
+          },
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceId",
+          "description": "Registry ID in docs/data/SOURCES.md; not resolved inside a dataset."
+        },
+        "width_px": {
+          "$ref": "#/$defs/PixelExtent"
+        }
+      },
+      "required": [
+        "id",
+        "map",
+        "source",
+        "evidence",
+        "applicable_builds",
+        "width_px",
+        "height_px",
+        "layers",
+        "pins",
+        "calibration",
+        "calibration_evidence",
+        "control_points",
+        "gaps"
+      ],
+      "type": "object"
     },
     "MapKey": {
       "properties": {
@@ -4984,6 +5261,80 @@
       ],
       "type": "object"
     },
+    "PinId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "PinKind": {
+      "oneOf": [
+        {
+          "properties": {
+            "access": {
+              "items": {
+                "$ref": "#/$defs/FlightAccess"
+              },
+              "type": "array"
+            },
+            "kind": {
+              "const": "flight_master",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "access"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "settlement",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "landmark",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "PixelExtent": {
+      "maximum": 16384,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "PixelPoint": {
+      "description": "A point in an image frame, in full-frame pixels. The origin is the frame's\ntop-left corner; x grows rightward and y downward.",
+      "properties": {
+        "x": {
+          "$ref": "#/$defs/FiniteNumber"
+        },
+        "y": {
+          "$ref": "#/$defs/FiniteNumber"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
     "PlanId": {
       "maxLength": 256,
       "minLength": 1,
@@ -5054,6 +5405,7 @@
       "type": "object"
     },
     "Position": {
+      "description": "A normalized position on one named map/floor/instance space. The origin is\nthe map's top-left corner; x grows eastward (right) and y southward (down),\nboth in [0,1], matching the C_Map map-position convention. This orientation\nis a documented convention, unverified on the Forever client until the M0.4\nchecks exist. Positions on different `MapKey`s are never comparable. `map_id`\nvalues follow the addon-exported uiMapID as a decimal string (ADR 0002).",
       "properties": {
         "map": {
           "$ref": "#/$defs/MapKey"
@@ -5624,6 +5976,18 @@
           },
           "type": "array"
         },
+        "map_embeddings": {
+          "items": {
+            "$ref": "#/$defs/MapEmbedding"
+          },
+          "type": "array"
+        },
+        "map_images": {
+          "items": {
+            "$ref": "#/$defs/MapImage"
+          },
+          "type": "array"
+        },
         "map_spaces": {
           "items": {
             "$ref": "#/$defs/MapSpace"
@@ -6045,6 +6409,10 @@
       "maxLength": 256,
       "minLength": 1,
       "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "Sha256Hex": {
+      "pattern": "^[0-9a-f]{64}$",
       "type": "string"
     },
     "SlotId": {

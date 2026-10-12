@@ -68,7 +68,7 @@ section 6.4, so the domain and Lua keep one time format.
 | `party_snapshot` | `PartySnapshot` | none | Participants keep their own capture metadata and timestamps; they may come from different producers. |
 | `route_plan` | `RoutePlan` | `dataset_revision`, `ruleset_version`, `score_model_version` and `snapshots` must equal the plan's own values and inputs | At most 100 steps, 8 alternatives per step and prerequisite/invalidation rule depth 12 (plan section 7.1). |
 | `evidence_bundle` | `{game_build, evidence, providers}` | none | `game_build` key and locale equal `game`. Evidence and provider IDs are unique. Capability, provider and conflict evidence references resolve inside the bundle. |
-| `reference_dataset` | `{revision, evidence, items, acquisitions, quests, map_spaces, nodes, edges, objectives, rules}` | none | See [Reference resolution](#reference-resolution). |
+| `reference_dataset` | `{revision, evidence, items, acquisitions, quests, map_spaces, nodes, edges, objectives, rules, map_images?, map_embeddings?}` | none | See [Reference resolution](#reference-resolution) and [Coordinates and imagery](#coordinates-and-imagery). |
 | `gear_recommendations` | `{snapshot, dataset_revision, score_model_version, recommendations}` | `dataset_revision`, `score_model_version` and `snapshots: [snapshot]`; no ruleset | Every recommendation uses the set's snapshot, revision and score model. An empty list means none were produced. |
 
 A step's alternatives are distinct objectives other than the step's own.
@@ -94,9 +94,31 @@ with `DATASET_INCOMPLETE`:
 - objective targets: a quest plus one of that quest's stages, an acquisition
   source, or a service node.
 
+- map images, against map spaces; control points, against a node on the
+  image's map; embeddings, against both map spaces. Embedding cycles and chains
+  deeper than 4 are `INVALID_INPUT`.
+
 Not resolved here (later content work, M3): quest, objective or item references
 that appear only inside predicates; objective participants; travel-graph cycles,
-which are legitimate; and references to other datasets or bundles.
+which are legitimate; image `source` registry IDs (docs/data/SOURCES.md); and
+references to other datasets or bundles.
+
+### Coordinates and imagery
+
+`map_images` and `map_embeddings` are additive version 1 members (ADR 0002);
+absent or empty means no imagery or embeddings are recorded, and the canonical
+encoding omits them when empty. A `Position` has its origin at the map's
+top-left corner with x east and y south in [0,1]; `map_id` is the uiMapID as a
+decimal string. A `CoordinateTransform` applies `target = scale * normalized +
+offset` per axis; image calibrations use units `pixel` and target the full
+image frame. Layer `file` values are `AssetPath`s (relative, lowercase,
+traversal-free) resolved only against the content root of the dataset's
+namespace: `content/forever` for `reference`, `content/demo` for `demo`.
+Consumers must still refuse symlinks that escape that root. A known calibration
+requires evidence; its confidence is read from those evidence records
+(`inferred` draws an approximate marker, `limited_sample` needs in-game control
+points, `verified_on_build` needs a client record). Digests are declared, not
+computed, in the contract.
 
 ## Decoding and errors
 

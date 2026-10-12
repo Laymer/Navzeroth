@@ -1,0 +1,79 @@
+{
+  "generator": "azeroth-cli 0.1.0",
+  "atlas_manifest_version": 1,
+  "image_id": "atlas-ek-2026-10-07",
+  "manifest_sha256": "9e7470bf88fa8b464f66197b7101250fa5a1febee445b104533e5feada5249e8",
+  "source": {
+    "file": "atlas/eastern-kingdoms/source/eastern-kingdoms-travel-atlas.png",
+    "sha256": "48ad4c6a36ca13343420d63328fc55d45c2733b06e95968ab983700690313228",
+    "size_bytes": 17511553,
+    "width_px": 4492,
+    "height_px": 5385
+  },
+  "frame": {
+    "width_px": 2091,
+    "height_px": 3825
+  },
+  "layers": [
+    {
+      "id": "roads",
+      "kind": "roads_traced",
+      "file": "atlas/eastern-kingdoms/layers/roads.png",
+      "width_px": 2091,
+      "height_px": 3825,
+      "frame_divisor": 1,
+      "size_bytes": 9153623,
+      "sha256": "47aca6c038d02e785806db325836e45e0cde9046e4a326f487a5a0f6e2286764",
+      "registration_offset_px": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "flight",
+      "kind": "flight_reference",
+      "file": "atlas/eastern-kingdoms/layers/flight.png",
+      "width_px": 2091,
+      "height_px": 3825,
+      "frame_divisor": 1,
+      "size_bytes": 8469674,
+      "sha256": "68dfcc0c33a4c39b5d7cc52bbfde946e6d71dbcdebb70d00c9f3b007abb0e3f3",
+      "registration_offset_px": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "overview",
+      "kind": "overview",
+      "file": "atlas/eastern-kingdoms/layers/overview.png",
+      "width_px": 1046,
+      "height_px": 1913,
+      "frame_divisor": 2,
+      "size_bytes": 2615584,
+      "sha256": "ee3fc32fc2d87a11502603078e990b071c284b20b27b1bf00bb4ff83c161750c",
+      "registration_offset_px": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "alignment": [
+    {
+      "layer": "roads",
+      "offset_px": {
+        "x": 0,
+        "y": 0
+      },
+      "residual": 0.0
+    },
+    {
+      "layer": "flight",
+      "offset_px": {
+        "x": 0,
+        "y": 0
+      },
+      "residual": 21.551411177867376
+    }
+  ]
+}

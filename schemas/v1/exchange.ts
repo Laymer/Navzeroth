@@ -800,6 +800,25 @@ export type Observation_ArrayOf_Text =
       status: "unknown" | "unsupported" | "restricted" | "not_applicable";
       value?: never;
     };
+export type PinId = string;
+export type PixelExtent = number;
+export type ImageId = string;
+export type LayerId = string;
+export type ImageLayerKind =
+  ("terrain" | "other") | "roads_traced" | "flight_reference" | "overview";
+export type Sha256Hex = string;
+export type PinKind =
+  | {
+      access: FlightAccess[];
+      kind: "flight_master";
+    }
+  | {
+      kind: "settlement";
+    }
+  | {
+      kind: "landmark";
+    };
+export type FlightAccess = "alliance" | "horde" | "tower_route";
 export type Observation_CoordinateTransform =
   | {
       clock_trust?: "trusted" | "uncertain";
@@ -1132,6 +1151,14 @@ export interface EquippedItem {
   modifiers: Observation_RecordMap_AttributeId_FiniteNumber;
   variant: Observation_VariantId;
 }
+/**
+ * A normalized position on one named map/floor/instance space. The origin is
+ * the map's top-left corner; x grows eastward (right) and y southward (down),
+ * both in [0,1], matching the C_Map map-position convention. This orientation
+ * is a documented convention, unverified on the Forever client until the M0.4
+ * checks exist. Positions on different `MapKey`s are never comparable. `map_id`
+ * values follow the addon-exported uiMapID as a decimal string (ADR 0002).
+ */
 export interface Position {
   map: MapKey;
   x: Normalized;
@@ -1353,6 +1380,8 @@ export interface ReferenceDataset {
   edges: TravelEdge[];
   evidence: EvidenceRecord[];
   items: ItemDefinition[];
+  map_embeddings?: MapEmbedding[];
+  map_images?: MapImage[];
   map_spaces: MapSpace[];
   nodes: TravelNode[];
   objectives: Objective[];
@@ -1395,17 +1424,189 @@ export interface ItemDefinition {
   two_handed: ObservationBoolean;
   unique_group: Observation_Text;
 }
-export interface MapSpace {
+/**
+ * The child map's rectangle inside its parent map, in the parent's normalized
+ * space (GetMapRectOnMap style). Both keys share one exact context.
+ */
+export interface MapEmbedding {
+  bounds: Bounds;
+  child: MapKey;
   evidence: EvidenceId[];
-  key: MapKey;
-  transform: Observation_CoordinateTransform;
+  parent: MapKey;
 }
+export interface MapImage {
+  applicable_builds: ApplicableBuild[];
+  /**
+   * Normalized map coordinate -> full-frame pixel; units must be `pixel`.
+   */
+  calibration:
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "known";
+        value: CoordinateTransform;
+      }
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+        value?: never;
+      };
+  calibration_evidence: EvidenceId[];
+  control_points: ControlPoint[];
+  evidence: EvidenceId[];
+  /**
+   * What the imagery does not show or verify (plan section 12.3).
+   */
+  gaps: string;
+  height_px: PixelExtent;
+  id: ImageId;
+  layers: ImageLayer[];
+  map: MapKey;
+  pins: ImagePin[];
+  /**
+   * Registry ID in docs/data/SOURCES.md; not resolved inside a dataset.
+   */
+  source: string;
+  width_px: PixelExtent;
+}
+/**
+ * A build this imagery may be reused for. The image's own build needs no
+ * evidence; every other build requires evidence that the imagery still applies.
+ */
+export interface ApplicableBuild {
+  build: BuildKey;
+  evidence: EvidenceId[];
+}
+/**
+ * Per-axis affine transform from normalized map coordinates (see `Position`)
+ * into a named target space: `target = scale * normalized + offset` for each
+ * axis. `MapSpace.transform` targets world units such as `"yards"`;
+ * `MapImage.calibration` targets `"pixel"` (full image frame). Negative scales
+ * express axis flips; rotation and shear are not representable.
+ */
 export interface CoordinateTransform {
   offset_x: FiniteNumber;
   offset_y: FiniteNumber;
   scale_x: FiniteNumber;
   scale_y: FiniteNumber;
   units: Text;
+}
+/**
+ * A pin paired with a travel node whose measured normalized position supplies
+ * the other side of a calibration pair.
+ */
+export interface ControlPoint {
+  node: NodeId;
+  pin: PinId;
+  /**
+   * Distance in pixels between the pin and the node projected through the
+   * calibration; requires a known calibration.
+   */
+  residual_px:
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "known";
+        value: FiniteNumber;
+      }
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+        value?: never;
+      };
+}
+/**
+ * One raster file of a `MapImage`. Pixel coordinates in pins and calibration
+ * always refer to the full frame; a layer with `frame_divisor` 2 is half size.
+ * `registration_offset_px` is the offset applied to the layer's source crop so
+ * it registers with the frame (zero once the panels are aligned).
+ */
+export interface ImageLayer {
+  /**
+   * Relative to the content root of the dataset's namespace.
+   */
+  file: string;
+  frame_divisor: PixelExtent;
+  height_px: PixelExtent;
+  id: LayerId;
+  kind: ImageLayerKind;
+  registration_offset_px: PixelPoint;
+  sha256: Sha256Hex;
+  width_px: PixelExtent;
+}
+/**
+ * A point in an image frame, in full-frame pixels. The origin is the frame's
+ * top-left corner; x grows rightward and y downward.
+ */
+export interface PixelPoint {
+  x: FiniteNumber;
+  y: FiniteNumber;
+}
+/**
+ * A labelled point measured on the image, in full-frame pixels. Reference
+ * geography, not an unlock.
+ */
+export interface ImagePin {
+  evidence: EvidenceId[];
+  id: PinId;
+  kind: PinKind;
+  label: Text;
+  /**
+   * The layer the pixel was measured on.
+   */
+  measured_on: string;
+  pixel: PixelPoint;
+}
+export interface MapSpace {
+  evidence: EvidenceId[];
+  key: MapKey;
+  transform: Observation_CoordinateTransform;
 }
 export interface TravelNode {
   id: NodeId;
