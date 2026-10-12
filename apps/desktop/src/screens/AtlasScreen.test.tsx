@@ -288,8 +288,11 @@ it("distinguishes a removed selected pin from a filter-hidden selection", async 
   const pin = original.images[0]?.pins[0];
   if (!pin) throw new Error("Missing demo pin");
   fireEvent.click(await screen.findByRole("button", { name: `Show ${pin.label} on the map` }));
+  fireEvent.change(screen.getByLabelText("Point type"), { target: { value: pin.kind.kind } });
   fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
   expect(await screen.findByText(/Dataset pin-removed/)).toBeInTheDocument();
+  expect(screen.getByLabelText("Point type")).toHaveValue(pin.kind.kind);
+  expect(screen.getByRole("option", { name: /absent in this revision/ })).toBeInTheDocument();
   expect(screen.getByText("The selected pin is no longer present in this atlas revision.")).toBeInTheDocument();
   expect(screen.queryByText("The selected pin is hidden by the current filters.")).not.toBeInTheDocument();
 });

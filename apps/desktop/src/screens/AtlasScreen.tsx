@@ -173,6 +173,8 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
         <label>Search reference pins <input value={search} maxLength={256} onChange={(event) => setSearch(event.target.value)} /></label>
         <label>Point type <select value={kind} onChange={(event) => setKind(event.target.value)}>
           <option value="all">All types</option>
+          {kind !== "all" && !image.pins.some((pin) => pin.kind.kind === kind) &&
+            <option value={kind}>{kind.replace(/_/g, " ")} (absent in this revision)</option>}
           {[...new Set(image.pins.map((pin) => pin.kind.kind))].sort().map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
         </select></label>
         <p role="status">{pins.length} of {image.pins.length} reference pins shown.</p>

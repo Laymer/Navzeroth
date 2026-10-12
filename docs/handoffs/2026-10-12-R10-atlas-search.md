@@ -44,3 +44,6 @@ Initial implementation cf0a381 hosted run passed all seven jobs on PR 29.
 Updated-head hosted verification follows below when complete. Native interaction
 and live client remain unverified. Next: merge the R3 refreshKey dependency into
 the integration branch, then R12 browser refresh/failure checks.
+
+Coordinator follow-up: preserve a visible absent-kind option after refresh removes all pins of that type, so the control matches the retained filter. Existing removed-pin regression extended; desktop checks recorded below.
+Follow-up desktop typecheck/lint/build and all 59 unit tests passed.
