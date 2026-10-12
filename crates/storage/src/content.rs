@@ -351,9 +351,14 @@ impl SqliteStore {
         Ok(StageOutcome::Inserted)
     }
     pub fn content_revision(&self, key: &ContentRevisionKey) -> Result<Option<ContentRevision>> {
-        find(&self.conn, key)?
-            .map(|id| load(&self.conn, id))
-            .transpose()
+        let Some(id) = find(&self.conn, key)? else {
+            return Ok(None);
+        };
+        let revision = load(&self.conn, id)?;
+        if revision.key() != *key {
+            return Err(storage("Stored content identity disagrees"));
+        }
+        Ok(Some(revision))
     }
     /// Revalidate the stored candidate under an immediate transaction before
     /// moving the full-context pointer. Failure preserves the previous pointer.
