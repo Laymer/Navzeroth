@@ -31,3 +31,11 @@ four committed pointer blobs passed. Development corrections were type fixtures
 Native/live checks unverified. Hosted CI pending draft PR.
 Next: connect acquisition assessment to explicitly valued planner opportunities;
 practical ranking is not claimed by this standalone assessment.
+
+Review follow-up: distinguish an explicit caller spending budget from captured
+money using BalanceBasis. ObservedBalance must have fresh clock evidence under
+Reject; AllowStale may calculate capacity but remains uncertain. CallerBudget is
+an explicitly authoritative ceiling, not an imported live-balance assertion.
+Seventh regression rejects stale observed money and nonzero unaffordable cost;
+known fresh balance permits the declared conditional guarantee. All seven tests
+and locked workspace Clippy pass after this correction.

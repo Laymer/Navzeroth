@@ -4,7 +4,7 @@ use crate::{
     entities::AcquisitionSource,
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationResult, Truth, evaluate},
-    observation::{Observation, ObservationStatus},
+    observation::{Freshness, Observation, ObservationStatus, freshness},
     types::{Copper, ItemKey, Millis},
 };
 use serde::Serialize;
@@ -20,6 +20,14 @@ pub enum ProbabilityModel {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
+pub enum BalanceBasis {
+    /// Explicit caller spending ceiling, not an imported observation of live money.
+    CallerBudget,
+    /// Captured balance: freshness must support its use under the evaluator policy.
+    ObservedBalance,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum CostSchedule {
     Once,
     PerAttempt,
@@ -31,6 +39,7 @@ pub struct AcquisitionEffort {
     pub attempt_ms: Observation<Millis>,
     pub stopping_ms: Observation<Millis>,
     pub available_copper: Observation<Copper>,
+    pub balance_basis: BalanceBasis,
     pub session_budget_ms: Millis,
     pub max_attempts: u32,
     pub probability_model: ProbabilityModel,
@@ -64,6 +73,9 @@ pub enum AcquisitionReason {
     FieldUnavailable {
         field: EffortField,
         status: ObservationStatus,
+    },
+    BalanceNotFresh {
+        freshness: Freshness,
     },
     SessionTooShort,
     InsufficientCopper,
@@ -231,18 +243,40 @@ pub fn assess_acquisition(
             let affordable = if cost == 0 {
                 Some(time_count)
             } else if let Some(balance) = effort.available_copper.value() {
-                Some(match effort.cost_schedule {
-                    CostSchedule::Once => {
-                        if balance.get() >= cost {
-                            time_count
-                        } else {
-                            0
+                let usable = if effort.balance_basis == BalanceBasis::CallerBudget {
+                    true
+                } else {
+                    let state = freshness(effort.available_copper.metadata(), context.freshness);
+                    match state {
+                        Freshness::Fresh { .. } => true,
+                        Freshness::Stale { .. } => {
+                            out.reasons
+                                .push(AcquisitionReason::BalanceNotFresh { freshness: state });
+                            context.stale_policy == crate::evaluation::StalePolicy::AllowStale
+                        }
+                        Freshness::Uncertain { .. } => {
+                            out.reasons
+                                .push(AcquisitionReason::BalanceNotFresh { freshness: state });
+                            false
                         }
                     }
-                    CostSchedule::PerAttempt => {
-                        (balance.get() / cost).min(u64::from(time_count)) as u32
-                    }
-                })
+                };
+                if !usable {
+                    None
+                } else {
+                    Some(match effort.cost_schedule {
+                        CostSchedule::Once => {
+                            if balance.get() >= cost {
+                                time_count
+                            } else {
+                                0
+                            }
+                        }
+                        CostSchedule::PerAttempt => {
+                            (balance.get() / cost).min(u64::from(time_count)) as u32
+                        }
+                    })
+                }
             } else {
                 out.reasons.push(AcquisitionReason::FieldUnavailable {
                     field: EffortField::AvailableCopper,
