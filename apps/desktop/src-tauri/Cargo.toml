@@ -1,0 +1,21 @@
+[package]
+name = "azeroth-desktop"
+description = "Azeroth Navigator Tauri shell: registers the typed command handlers from azeroth-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[lib]
+name = "azeroth_desktop_lib"
+path = "src/lib.rs"
+
+[build-dependencies]
+tauri-build = { version = "=2.7.2", features = [] }
+
+[dependencies]
+azeroth-app = { path = "../../../crates/app" }
+azeroth-core = { path = "../../../crates/core" }
+tauri = { version = "=2.12.3", features = [] }

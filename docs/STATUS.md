@@ -2,9 +2,9 @@
 
 Plan version: 1.0 plus accepted ADRs 0001 and 0002
 Current milestone: M1
-Current task: M6.5 early atlas imagery slice (ADR 0002), IMPLEMENTED_UNVERIFIED for PR-A on feature/M6.5-atlas-imagery ([draft PR 7](https://github.com/Laymer/Navzeroth/pull/7), hosted CI passed)
-Task owner: Claude Code (Fable 5.1), single writer
-Base revision: 0c90c25d2b8f21bd83f87436ba7eaaae9d7fda9d (origin/main after PR 6)
+Current task: M1.4 minimal Tauri/React shell with explicit demo mode and typed command wrappers, IMPLEMENTED_UNVERIFIED (native window not launched; hosted Windows build passed) on feature/M1.4-desktop-shell (M6.5 PR-A merged as PR 7)
+Task owner: Claude Code (Sonnet 5.5), single writer
+Base revision: 03f5091a101ec583b1e701056547933e8dbb9b7f (origin/main after PR 7)
 Last updated: 2026-10-12
 Overall state: M1.1 reviewed/corrected; M1.6 CI, expanded M1.2 and M1.3 contracts merged and verified for their scopes; M1.4, M1.5 and M1.7 remain
 
@@ -108,8 +108,11 @@ No unresolved blocker for the completed scopes. See the
 [M1.3 review](reviews/2026-10-12-M1.3.md). Lua parity (M2), cross-dataset
 reference resolution (M3) remain open.
 
+## M1.4 delivery
+React/Vite shell with DEMO label, typed command wrappers, azeroth-app handlers, Tauri 2 shell with empty capabilities and a Windows CI job. Hosted [run 38261091221](https://github.com/Laymer/Navzeroth/actions/runs/38261091221) passed six jobs; no window launched. See the [M1.4 handoff](handoffs/2026-10-12-M1.4-desktop-shell.md).
+
 ## Next dependency-ready work
-M1.4 (prerequisite for the atlas screen) and M1.7 are dependency-ready and unclaimed; M1.5 extends the M1.3 fixture
+M1.7 and the atlas screen (M6.1) are dependency-ready; M1.5 extends the M1.3 fixture
 manifest. M1.4/M1.5 add their real CI targets when implemented. Lua parity for
 the contracts follows the addon in M2. M0.3-M0.6 live checks remain blocked on
 a user-operated client. [PR 5](https://github.com/Laymer/Navzeroth/pull/5) merged M1.3 as 2c8628b; earlier handoffs describe

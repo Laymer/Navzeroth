@@ -83,14 +83,39 @@ pnpm contracts:types   # regenerate schemas/v1/exchange.ts from the schema
 pnpm contracts:check   # tsc type check, then Ajv + TypeScript fixture checks
 ```
 
-No application package exists under `apps/` yet. `apps/desktop` and its
-`typecheck`/`lint`/`test:unit`/`test:e2e`/`build`/`tauri dev` scripts
-(plan section 19.2) are planned for task M1.4.
+### Desktop shell (apps/desktop)
+
+React + Vite + strict TypeScript UI, a Tauri 2 shell and framework-free command
+handlers in `crates/app`. Until storage exists (M1.7) the app shows only the
+synthetic fixture, always under a visible DEMO label.
+
+```bash
+pnpm --dir apps/desktop typecheck
+pnpm --dir apps/desktop lint
+pnpm --dir apps/desktop test:unit
+pnpm --dir apps/desktop build
+pnpm --dir apps/desktop dev          # browser demo adapter at http://localhost:1420
+pnpm --dir apps/desktop tauri dev    # native shell (needs Tauri prerequisites)
+```
+
+The native shell needs the [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/)
+(on Windows: MSVC C++ build tools and WebView2). On Linux/WSL it additionally
+needs the webkit2gtk and GTK development packages; without them, exclude it from
+workspace Rust commands:
+
+```bash
+cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings
+cargo test --locked --workspace --exclude azeroth-desktop
+```
+
+`test:e2e` (browser tests against a mocked command adapter) is not implemented
+yet. The Windows CI job compiles and lints the native crate; it does not launch
+the window or package an installer.
 
 ### Not yet available
 
-- Tauri desktop build/dev commands (M1.4).
 - SQLite migrations/storage adapter (M1.7).
+- Browser e2e tests, installer packaging, atlas screen (M6.1).
 
 ## Content and imagery
 

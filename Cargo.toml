@@ -1,8 +1,10 @@
 [workspace]
 resolver = "3"
 members = [
+    "crates/app",
     "crates/core",
     "crates/cli",
+    "apps/desktop/src-tauri",
 ]
 
 [workspace.package]

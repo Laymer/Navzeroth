@@ -1,0 +1,14 @@
+[package]
+name = "azeroth-app"
+description = "Azeroth Navigator application command handlers, free of any UI framework"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[dependencies]
+azeroth-core = { path = "../core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

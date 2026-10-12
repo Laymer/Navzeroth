@@ -43,8 +43,8 @@ jobs:
             ~/.cargo/git
             target
           key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
-      - run: cargo clippy --locked --workspace --all-targets -- -D warnings
-      - run: cargo test --locked --workspace
+      - run: cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings
+      - run: cargo test --locked --workspace --exclude azeroth-desktop
       - name: Atlas content pointer checks (declared imagery, no LFS download)
         run: cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/forever/atlas/eastern-kingdoms/atlas.manifest.json --content-root content/forever --check-pointer
       - name: Every LFS-attributed tracked file is a pointer blob
@@ -98,3 +98,31 @@ jobs:
         run: git diff --exit-code
       - name: Contract fixtures, JSON Schema and TypeScript checks
         run: pnpm contracts:check
+  desktop:
+    name: Desktop shell Windows
+    runs-on: windows-2025
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      - run: rustup show
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir apps/desktop typecheck
+      - run: pnpm --dir apps/desktop lint
+      - run: pnpm --dir apps/desktop test:unit
+      - run: pnpm --dir apps/desktop build
+      - name: Compile and test the native shell (build evidence only; no UI interaction)
+        run: |
+          cargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings
+          cargo test --locked -p azeroth-desktop
+      - run: git diff --exit-code
