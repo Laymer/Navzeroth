@@ -2,18 +2,18 @@
 
 Plan version: 1.0
 Current milestone: M1
-Current task: M1.1 review and corrections (IN_PROGRESS)
+Current task: M1.6 CI (IN_PROGRESS)
 Task owner: ChatGPT/Codex
-Base revision: d89613fd96af8b586dda7091155f763b432f05bf
+Base revision: fe20269 (review corrections complete)
 Last updated: 2026-10-12
-Overall state: M0.1 repository intake complete; M1.1 workspace/toolchain initialization complete (IMPLEMENTED_UNVERIFIED pending CI); M1.2-M1.7 remain
+Overall state: M1.1 reviewed and VERIFIED for local workspace acceptance; M1.6 claimed; expanded M1.2 follows
 
 ## Milestones
 
 | Milestone | Status | Evidence / blockers |
 | --- | --- | --- |
-| M0 | IN_PROGRESS | M0.1 repository/instructions/toolchain/license/CI inspection complete. M0.2 status/decision/handoff records already exist from the prior session. M0.3-M0.6 need a user-operated Forever client, unavailable in this development environment (CLAUDE.md, section Environments). |
-| M1 | IN_PROGRESS | M1.1 complete: Cargo workspace (azeroth-core, azeroth-cli) and pnpm workspace initialized, Rust 1.99.0 and pnpm 12.11.2 pinned, local commands verified and documented. See [the M1.1 handoff](handoffs/2026-10-12-M1.1-workspace-init.md). Status is IMPLEMENTED_UNVERIFIED, not VERIFIED, because no CI exists yet (that is M1.6) - only local manual runs back this. M1.2-M1.7 remain. |
+| M0 | IN_PROGRESS | M0.1 repository/instructions/toolchain/license/CI inspection complete. M0.2 status/handoff records exist; initial decisions and sources are embedded in the implementation plan. M0.3-M0.6 need a user-operated Forever client, unavailable in this development environment (CLAUDE.md, section Environments). |
+| M1 | IN_PROGRESS | M1.1 reviewed; M1.6 CI in progress. Domain, UI, schemas and storage remain. |
 | M2 | TODO | |
 | M3 | TODO | |
 | M4 | TODO | |
@@ -27,20 +27,29 @@ Overall state: M0.1 repository intake complete; M1.1 workspace/toolchain initial
 | M12 | TODO | Expansion after focused release |
 
 ## Current task acceptance
-Review 20e3acd..d89613f, correct setup/CLI/documentation defects, and record revision-linked findings. Expected changes: shared instructions, README, CLI and regression tests, review/status/handoff records. Acceptance: formatting, locked Clippy/tests, frozen pnpm install, and accurate records. User-approved sequence: review corrections, M1.6 Linux/Windows CI, then expanded M1.2 domain models and predicate evaluation. One writer and one draft PR; commits authored as Laymer <i.kopest@gmail.com>.
+M1.6 owner: ChatGPT/Codex. Files: GitHub Actions workflow, README setup/CI
+instructions and evidence records. Acceptance: Rust format, Clippy/tests and
+frozen pnpm installation on Linux/Windows; stable required checks on main.
+No UI, schema, Lua or packaging jobs are claimed before those targets exist.
 
 ## Completed behavior
-Prepared the implementation plan, shared AGENTS.md instructions, CLAUDE.md entry point, project status, and initial handoff (prior session). M0.1 repository/toolchain/license/CI inspection is complete: working tree was clean, license is BSD-3-Clause, no live Forever client is reachable from this environment.
-
-M1.1 added: `rust-toolchain.toml` pinning Rust 1.99.0 (rustfmt, clippy); a virtual Cargo workspace with two dependency-free placeholder crates, `azeroth-core` (lib) and `azeroth-cli` (bin, links against core); a pnpm workspace (`pnpm-workspace.yaml` matching `apps/*`, currently empty - `apps/desktop` is M1.4's job) with the package manager pinned to pnpm 12.11.2 via `corepack use`; a "Development setup" section in README listing only commands that were actually run; `.gitignore` extended for Node/pnpm tooling. No domain types, contracts, UI, or storage exist yet - those are M1.2-M1.7.
+Cargo/pnpm workspace setup and M1.1 corrections are complete. CLI rejects
+unsupported arguments. Shared instructions permit routine feature-branch pushes
+and draft PRs. See [review](reviews/2026-10-12-M1.1.md),
+[handoff](handoffs/2026-10-12-M1.1-review.md), and
+[ADR 0001](decisions/0001-foundation-sequence.md).
 
 ## Verification
-Local manual runs only, this session, against rustc/cargo 1.99.0 and pnpm 12.11.2 (both installed fresh on this host - see handoff "Validation" for exact commands and the corepack version-skew issue hit and resolved along the way): `cargo fmt --all --check`, `cargo clippy --locked --workspace --all-targets -- -D warnings`, and `cargo test --locked --workspace` all exit 0 (1 real unit test passes); `pnpm install` exits 0 against the zero-package workspace and produces a committed lockfile.
-
-No CI exists yet (M1.6), so this is IMPLEMENTED_UNVERIFIED by an automated gate, not VERIFIED. Mocked UI, native Windows, and live WoW checks: not applicable - no UI or addon code exists yet.
+WSL/Linux: Rust 1.99.0 formatting, locked Clippy and tests pass (two CLI tests,
+one placeholder smoke test); frozen offline pnpm 12.11.2 install passes with
+Node 24.15.0 and Corepack 0.36.0. Windows evidence is pending M1.6.
+M1.1 local acceptance does not require future CI. Native UI and live WoW checks
+are unavailable; no such behavior is claimed.
 
 ## Open findings
-No implementation review findings or ADRs yet. Forever build capabilities and official API availability remain unverified as described in the plan. This dev host needed rustup and a corepack upgrade (0.24.0 to 0.36.0, to resolve pnpm 12.11.2's binary layout) installed from scratch; neither is a repository change, both are recorded in the M1.1 handoff.
+No unresolved M1.1 blocker. The placeholder smoke test is replaced by M1.2.
+See the review for resolved findings and historical record corrections.
 
 ## Next dependency-ready work
-M1.2: create the core domain types, observation semantics, schema versioning, and application errors in `crates/core` ([plan section 6](../AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#6-contracts-and-domain-model)). M1.6 (CI) is a reasonable alternative if the next owner prefers automated enforcement before more logic lands, but M1.2 is a harder prerequisite for M1.3/M1.4/M1.7. M0.3-M0.6 remain blocked pending a user-operated Forever client. Follow the starter prompt in [plan section 23.2](../AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#232-prompt-to-start-claude-code).
+M1.6 is active. Then expanded M1.2 per ADR 0001. M0.3-M0.6 live checks remain
+blocked on a user-operated client; independent foundation work continues.
