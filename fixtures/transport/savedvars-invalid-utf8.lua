@@ -1,0 +1,3 @@
+AzerothNavigatorDB = {
+	["export"] = "\255",
+}

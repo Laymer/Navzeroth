@@ -4,6 +4,7 @@ members = [
     "crates/app",
     "crates/core",
     "crates/cli",
+    "crates/ingest",
     "apps/desktop/src-tauri",
 ]
 
