@@ -1,0 +1,190 @@
+{
+  "description": "Each non-known observation status is a distinct reason and never becomes false, zero or a match.",
+  "schema_version": 1,
+  "snapshots": {
+    "populated": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "level_unknown": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"unknown"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "level_restricted": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"restricted"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "level_unsupported": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"unsupported"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "level_not_applicable": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"not_applicable"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "mixed": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"restricted"},"location":{"status":"unsupported"},"preferences":{"tips":{"status":"not_applicable"}},"equipment":{"main_hand":{"status":"restricted"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"unsupported"},"completed":{"status":"unknown"},"turned_in":{"status":"not_applicable"},"objectives":{}}},"objectives":{"o1":{"status":"restricted"}}}
+  },
+  "parties": {},
+  "cases": [
+    {
+      "id": "unavailable-unknown-level-at-least",
+      "note": "A unknown level never satisfies or fails a level requirement",
+      "case_ref": "CASE-010",
+      "predicate": {"op":"level_at_least","level":1},
+      "snapshot": "level_unknown",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"unknown"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-unknown-level-known",
+      "note": "Known is false, which is not the same as a zero level",
+      "predicate": {"op":"known","field":{"field":"level"}},
+      "snapshot": "level_unknown",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"unknown"}}],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "unavailable-restricted-level-at-least",
+      "note": "A restricted level never satisfies or fails a level requirement",
+      "case_ref": "CASE-010",
+      "predicate": {"op":"level_at_least","level":1},
+      "snapshot": "level_restricted",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"restricted"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-restricted-level-known",
+      "note": "Known is false, which is not the same as a zero level",
+      "predicate": {"op":"known","field":{"field":"level"}},
+      "snapshot": "level_restricted",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"restricted"}}],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "unavailable-unsupported-level-at-least",
+      "note": "A unsupported level never satisfies or fails a level requirement",
+      "case_ref": "CASE-010",
+      "predicate": {"op":"level_at_least","level":1},
+      "snapshot": "level_unsupported",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"unsupported"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-unsupported-level-known",
+      "note": "Known is false, which is not the same as a zero level",
+      "predicate": {"op":"known","field":{"field":"level"}},
+      "snapshot": "level_unsupported",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"unsupported"}}],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "unavailable-not_applicable-level-at-least",
+      "note": "A not_applicable level never satisfies or fails a level requirement",
+      "case_ref": "CASE-010",
+      "predicate": {"op":"level_at_least","level":1},
+      "snapshot": "level_not_applicable",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"not_applicable"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-not_applicable-level-known",
+      "note": "Known is false, which is not the same as a zero level",
+      "predicate": {"op":"known","field":{"field":"level"}},
+      "snapshot": "level_not_applicable",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"level"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"not_applicable"}}],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "unavailable-role-is-restricted",
+      "note": "Dependent advice is disabled; evaluation continues",
+      "case_ref": "CASE-010",
+      "predicate": {"op":"role_is","role":"tank"},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"role"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"restricted"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-restricted-blocks-conjunction",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":22},{"op":"role_is","role":"tank"}]},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"role"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"restricted"}}],"steps":7,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-location-unsupported",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1}}},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"input":"location"},"participant":"char1","reason":{"reason":"unavailable","status":"unsupported"}}],"steps":2,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-preference-not-applicable",
+      "predicate": {"op":"user_preference","key":"tips","value":true},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"preference","key":"tips"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"not_applicable"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-objective-restricted",
+      "predicate": {"op":"objective_state","objective":"o1","completed":false},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"objective","objective":"o1"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"restricted"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-quest-unsupported",
+      "predicate": {"op":"quest_state","quest":"q1","state":"accepted","value":true},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q1","state":"accepted"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"unsupported"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-equipment-restricted",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{}},
+      "snapshot": "mixed",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"input":"equipment","slot":"main_hand"},"participant":"char1","reason":{"reason":"unavailable","status":"restricted"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "unavailable-false-and-zero-stay-known",
+      "note": "Known false is distinct from every unavailable status",
+      "predicate": {"op":"all","predicates":[{"op":"known","field":{"field":"objective","objective":"o1"}},{"op":"objective_state","objective":"o1","completed":false}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":7,"truth":"true","warnings":[]}
+    }
+  ]
+}
