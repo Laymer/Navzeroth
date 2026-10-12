@@ -3,6 +3,7 @@
 pub mod atlas;
 pub mod contract;
 pub mod coverage;
+pub mod eligibility;
 pub mod entities;
 pub mod error;
 pub mod evaluation;
