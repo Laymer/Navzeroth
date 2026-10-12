@@ -25,11 +25,18 @@ const CREATE_MIGRATIONS_TABLE: &str = "CREATE TABLE IF NOT EXISTS schema_migrati
 )";
 
 /// Every migration this build knows, in ascending contiguous order from 1.
-pub const MIGRATIONS: &[Migration] = &[Migration {
-    version: 1,
-    name: "character snapshot store",
-    sql: include_str!("schema_v1.sql"),
-}];
+pub const MIGRATIONS: &[Migration] = &[
+    Migration {
+        version: 1,
+        name: "character snapshot store",
+        sql: include_str!("schema_v1.sql"),
+    },
+    Migration {
+        version: 2,
+        name: "immutable reference content revisions",
+        sql: include_str!("schema_v2.sql"),
+    },
+];
 
 /// The newest version in `MIGRATIONS`.
 pub fn latest_version() -> u32 {

@@ -10,12 +10,12 @@ use common::{TempDb, count, raw};
 use rusqlite::Connection;
 
 const ADD_NOTE: Migration = Migration {
-    version: 2,
+    version: 3,
     name: "test: profile note",
     sql: "ALTER TABLE profiles ADD COLUMN note TEXT;",
 };
 const BROKEN: Migration = Migration {
-    version: 2,
+    version: 3,
     name: "test: fails partway",
     sql: "CREATE TABLE half_done (x INTEGER);
           INSERT INTO profiles (character_id) VALUES ('violates not null');",
@@ -39,7 +39,7 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 1);
+    assert_eq!(latest_version(), 2);
 }
 
 #[test]
@@ -48,9 +48,9 @@ fn reopening_a_migrated_file_is_a_no_op() {
     drop(SqliteStore::open(&db.path).unwrap());
     seed_profile(&db.path);
     let rows = count(&db.path, "SELECT COUNT(*) FROM schema_migrations");
-    assert_eq!(rows, 1);
+    assert_eq!(rows, i64::from(latest_version()));
     let store = SqliteStore::open(&db.path).unwrap();
-    assert_eq!(store.schema_version().unwrap(), 1);
+    assert_eq!(store.schema_version().unwrap(), latest_version());
     assert_eq!(
         count(&db.path, "SELECT COUNT(*) FROM schema_migrations"),
         rows
@@ -65,7 +65,7 @@ fn empty_version_zero_database_migrates() {
     let mut conn = Connection::open(&db.path).unwrap();
     assert_eq!(current_version(&conn).unwrap(), 0);
     migrate(&mut conn).unwrap();
-    assert_eq!(current_version(&conn).unwrap(), 1);
+    assert_eq!(current_version(&conn).unwrap(), latest_version());
 }
 
 #[test]
@@ -75,7 +75,7 @@ fn populated_previous_version_migrates_and_keeps_rows() {
     seed_profile(&db.path);
     let mut conn = Connection::open(&db.path).unwrap();
     migrate_with(&mut conn, &with_next(ADD_NOTE)).unwrap();
-    assert_eq!(current_version(&conn).unwrap(), 2);
+    assert_eq!(current_version(&conn).unwrap(), latest_version() + 1);
     let kept: String = conn
         .query_row(
             "SELECT character_id FROM profiles WHERE note IS NULL",
@@ -86,7 +86,10 @@ fn populated_previous_version_migrates_and_keeps_rows() {
     assert_eq!(kept, "kept");
     // Running again is a no-op.
     migrate_with(&mut conn, &with_next(ADD_NOTE)).unwrap();
-    assert_eq!(count(&db.path, "SELECT COUNT(*) FROM schema_migrations"), 2);
+    assert_eq!(
+        count(&db.path, "SELECT COUNT(*) FROM schema_migrations"),
+        i64::from(latest_version() + 1)
+    );
 }
 
 #[test]
@@ -113,7 +116,10 @@ fn newer_database_is_refused_and_left_unmodified() {
         before,
         "file must be byte-identical"
     );
-    assert_eq!(count(&db.path, "SELECT COUNT(*) FROM schema_migrations"), 2);
+    assert_eq!(
+        count(&db.path, "SELECT COUNT(*) FROM schema_migrations"),
+        i64::from(latest_version() + 1)
+    );
 }
 
 #[test]
@@ -124,7 +130,7 @@ fn failed_migration_rolls_back_and_keeps_prior_version_and_data() {
     let mut conn = Connection::open(&db.path).unwrap();
     let error = migrate_with(&mut conn, &with_next(BROKEN)).unwrap_err();
     assert_eq!(error.code, ErrorCode::StorageError);
-    assert_eq!(current_version(&conn).unwrap(), 1);
+    assert_eq!(current_version(&conn).unwrap(), latest_version());
     assert_eq!(count(&db.path, "SELECT COUNT(*) FROM profiles"), 1);
     assert_eq!(
         count(
@@ -141,7 +147,7 @@ fn failed_migration_rolls_back_and_keeps_prior_version_and_data() {
             .unwrap()
             .schema_version()
             .unwrap(),
-        1
+        latest_version()
     );
 }
 
