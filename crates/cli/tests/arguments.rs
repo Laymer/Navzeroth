@@ -10,13 +10,16 @@ fn no_arguments_reports_current_capabilities() {
     assert!(output.status.success());
     let banner = String::from_utf8(output.stdout).unwrap();
     assert!(banner.contains("export-schemas") && banner.contains("prepare-atlas"));
+    assert!(banner.contains("validate-fixtures"));
 }
 
 #[test]
 fn unsupported_commands_and_options_fail_without_echoing_input() {
     for args in [
         &["doctor"][..],
-        &["validate-fixtures"],
+        &["validate-fixtures", "extra-sentinel"],
+        &["validate-fixtures", "--output", "dir-sentinel"],
+        &["validate-fixtures", ""],
         &["--help"],
         &["private-input-sentinel"],
         &["export-schemas"],

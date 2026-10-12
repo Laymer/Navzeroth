@@ -2,14 +2,77 @@
 //!
 //! The no-argument banner identifies the current capability. `export-schemas`
 //! writes the generated exchange schema; `prepare-atlas` prepares map imagery
-//! (ADR 0002). The remaining plan section 19.3 commands land in later
+//! (ADR 0002); `validate-fixtures` checks the contract and transport fixture
+//! manifests. The remaining plan section 19.3 commands land in later
 //! milestones. Unsupported arguments fail explicitly without echoing input.
 use azeroth_cli::atlas::{self, Paths};
 use azeroth_core::contract::schema::{SCHEMA_FILE, exchange_schema_text};
-use std::{ffi::OsString, path::Path, process::ExitCode};
+use azeroth_ingest::fixtures::{self, ManifestReport, Mismatch};
+use std::{
+    ffi::OsString,
+    path::{Path, PathBuf},
+    process::ExitCode,
+};
 
 const USAGE: &str = "Unsupported command or options. Implemented: export-schemas --output <dir>; \
-    prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]. See README.md.";
+    prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
+    validate-fixtures. See README.md.";
+
+/// Fixture directories checked by `validate-fixtures`, relative to the repository root.
+/// This list is explicit on purpose: the command never globs `fixtures/**`.
+const CONTRACT_FIXTURES: &str = "fixtures/contracts/v1";
+const TRANSPORT_FIXTURES: &str = "fixtures/transport";
+/// Overrides the repository root for `validate-fixtures` (tests, relocated binaries).
+const ROOT_ENV: &str = "AZEROTH_REPO_ROOT";
+
+/// The repository root: `AZEROTH_REPO_ROOT` when set, otherwise the checkout this
+/// binary was built from (`CARGO_MANIFEST_DIR/../..`, resolved at compile time).
+fn repository_root() -> PathBuf {
+    std::env::var_os(ROOT_ENV)
+        .map(PathBuf::from)
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+}
+
+fn report_manifest(label: &str, outcome: Result<ManifestReport, Vec<Mismatch>>) -> bool {
+    match outcome {
+        Ok(report) => {
+            println!(
+                "{label}: {} fixtures checked ({} valid, {} rejected as declared)",
+                report.checked, report.valid, report.rejected
+            );
+            true
+        }
+        Err(problems) => {
+            for problem in problems {
+                if problem.file.is_empty() {
+                    eprintln!("{label}: {}", problem.problem.message());
+                } else {
+                    eprintln!("{label}: {}: {}", problem.file, problem.problem.message());
+                }
+            }
+            false
+        }
+    }
+}
+
+/// Checks exactly the two fixture manifests; fixture content is never printed.
+fn validate_fixtures() -> ExitCode {
+    let root = repository_root();
+    let contracts = report_manifest(
+        CONTRACT_FIXTURES,
+        fixtures::check_contract_fixtures(&root.join(CONTRACT_FIXTURES)),
+    );
+    let transport = report_manifest(
+        TRANSPORT_FIXTURES,
+        fixtures::check_transport_fixtures(&root.join(TRANSPORT_FIXTURES)),
+    );
+    if contracts && transport {
+        ExitCode::SUCCESS
+    } else {
+        eprintln!("validate-fixtures failed");
+        ExitCode::FAILURE
+    }
+}
 
 fn export_schemas(output: &Path) -> ExitCode {
     let path = output.join(SCHEMA_FILE);
@@ -134,14 +197,15 @@ fn main() -> ExitCode {
             );
             println!(
                 "Implemented subcommands: export-schemas --output <dir>; prepare-atlas --manifest \
-                 <file> --content-root <dir> [--output <dir> | --check-pointer]. Other commands \
-                 are planned; see README.md and plan section 19.3."
+                 <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures. \
+                 Other commands are planned; see README.md and plan section 19.3."
             );
             ExitCode::SUCCESS
         }
         [command, flag, dir] if command == "export-schemas" && flag == "--output" => {
             export_schemas(Path::new(dir))
         }
+        [command] if command == "validate-fixtures" => validate_fixtures(),
         [command, rest @ ..] if command == "prepare-atlas" => match parse_atlas_args(rest) {
             Some(parsed) => prepare_atlas(&parsed),
             None => {
