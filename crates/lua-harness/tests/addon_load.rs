@@ -80,6 +80,10 @@ fn every_toc_file_loads_in_order_into_a_fresh_state() {
         [
             "Version",
             "Json",
+            "Decode",
+            "Predicate",
+            "Plan",
+            "Hud",
             "Capabilities",
             "Export",
             "Settings",
