@@ -11,10 +11,9 @@ fn main() -> std::process::ExitCode {
         return std::process::ExitCode::from(2);
     }
     println!(
-        "{} {} - {}",
+        "{} {} - domain foundation available; no CLI commands implemented",
         env!("CARGO_PKG_NAME"),
-        env!("CARGO_PKG_VERSION"),
-        azeroth_core::placeholder()
+        env!("CARGO_PKG_VERSION")
     );
     println!(
         "No subcommands are implemented yet. Planned commands are listed in \
