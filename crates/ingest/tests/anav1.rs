@@ -104,7 +104,7 @@ fn size_ceiling_is_enforced_before_any_json_parsing() {
     );
     assert_eq!(MAX_DOCUMENT_BYTES, MAX_ENVELOPE_BYTES);
     // The transport ceiling is 4 MiB even for kinds the contract lets grow to 16 MiB.
-    assert!(MAX_TEXT_BYTES < 16 * 1024 * 1024);
+    const { assert!(MAX_TEXT_BYTES < 16 * 1024 * 1024) };
 }
 
 #[test]

@@ -225,7 +225,7 @@ fn the_four_mib_ceiling_applies_even_to_kinds_the_contract_allows_more() {
     // The same ceiling holds for an export read out of a SavedVariables string.
     let sv = format!(
         "AzerothNavigatorDB = {{ [\"export\"] = '{}' }}",
-        &padded(MAX_DOCUMENT_BYTES + 1)
+        padded(MAX_DOCUMENT_BYTES + 1)
     );
     assert_eq!(
         import_saved_variables(&sv, &location(), &options)
