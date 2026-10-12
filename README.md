@@ -70,10 +70,25 @@ No application package exists under `apps/` yet. `apps/desktop` and its
 ### Not yet available
 
 - Tauri desktop build/dev commands (M1.4).
-- CI (M1.6): the commands above are currently run locally only, not
-  automatically enforced.
 - SQLite migrations/storage adapter (M1.7).
 
 ## Collaboration records
 
 The [initial handoff](docs/handoffs/2026-10-12-project-setup.md) records the documentation setup and the next task. Contributors maintain status, task ownership, decisions, and handoffs in Git as described in the plan.
+
+## Continuous integration
+
+The CI workflow runs Rust formatting on Ubuntu 24.04 and locked Clippy/tests
+plus frozen pnpm installation on Ubuntu 24.04 and Windows 2025. Tool versions
+come from the repository pins; Corepack is 0.36.0. All five checks run on draft
+and ready PRs targeting main and on main pushes. Cache hits never skip checks.
+
+Windows Rust uses `x86_64-pc-windows-msvc` and Visual Studio C++ build tools
+with the Windows SDK (provided by the hosted runner). For a future local native
+Tauri build, also install the WebView2 runtime following
+[the current Tauri prerequisites](https://v2.tauri.app/start/prerequisites/).
+No desktop package exists yet; these Windows jobs validate Rust and pnpm only.
+
+M1.3/M1.5 add schema, fixture and parity checks; M1.4 adds TypeScript/UI and
+native desktop build jobs; data and packaging jobs follow their implementations.
+See STATUS and the M1.6 handoff for actual run evidence and main protection.
