@@ -14,6 +14,7 @@ import {
   describePin,
   describePinAccess,
   describeUncertainty,
+  describeUtc,
 } from "../atlas/describe";
 import { chooseLayer, type LayerToggles } from "../atlas/layers";
 import { MARKER_STATE_LABELS, markerState, placementOf } from "../atlas/markerState";
@@ -253,7 +254,7 @@ function MarkerPanel({ marker }: { marker: SnapshotMarker | null }) {
           </p>
         ))}
       {marker !== null && marker.observed_at_utc_ms !== null && (
-        <p>Captured (UTC): {new Date(marker.observed_at_utc_ms).toISOString()}</p>
+        <p>Captured (UTC): {describeUtc(marker.observed_at_utc_ms)}</p>
       )}
     </section>
   );
