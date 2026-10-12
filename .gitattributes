@@ -4,5 +4,8 @@ fixtures/** text eol=lf
 
 # Binary imagery; owner-supplied files under content/forever are LFS-tracked (see content/forever/atlas/NOTICE).
 # Synthetic demo imagery under content/demo stays a plain blob so CI can decode it.
+# Content records are hashed byte for byte; keep LF on every platform.
+content/**/*.json text eol=lf
+content/**/NOTICE text eol=lf
 *.png binary
 content/forever/**/*.png filter=lfs diff=lfs merge=lfs -text

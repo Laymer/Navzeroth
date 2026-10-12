@@ -347,3 +347,130 @@ fn symlinked_assets_are_refused() {
         };
     }
 }
+
+#[test]
+fn committed_demo_atlas_matches_the_generator_end_to_end() {
+    let out = temp("demo-drift");
+    let manifest = repo().join("content/demo/atlas/synthetic-continent/atlas.manifest.json");
+    let root = repo().join("content/demo");
+    atlas::prepare(&Paths {
+        manifest: &manifest,
+        content_root: &root,
+        output: Some(&out),
+    })
+    .expect("committed demo manifest prepares");
+    for rel in [
+        "atlas/synthetic-continent/layers/roads.png",
+        "atlas/synthetic-continent/layers/flight.png",
+        "atlas/synthetic-continent/layers/overview.png",
+        "atlas/synthetic-continent/atlas.generated.json",
+    ] {
+        assert_eq!(
+            fs::read(out.join(rel)).unwrap(),
+            fs::read(root.join(rel)).unwrap(),
+            "{rel} drifted from the generator; rerun prepare-atlas on the demo manifest"
+        );
+    }
+}
+
+#[test]
+fn check_mode_rejects_stale_records_and_mismatched_layer_pointers() {
+    let poster = atlas::synthetic_poster_png();
+    let pointer = |sha: &str, size: u64| {
+        format!("version https://git-lfs.github.com/spec/v1\noid sha256:{sha}\nsize {size}\n")
+    };
+    let (root, manifest) = content_root("stale", &poster, |_| {});
+    assert!(run(&root, &manifest, &[]).status.success());
+    let generated: Value = serde_json::from_str(
+        &fs::read_to_string(
+            root.join("atlas/synthetic-continent")
+                .join(atlas::GENERATED_FILE),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    fs::write(
+        root.join("atlas/synthetic-continent/source/synthetic-poster.png"),
+        pointer(&hex(&poster), poster.len() as u64),
+    )
+    .unwrap();
+    for layer in generated["layers"].as_array().unwrap() {
+        fs::write(
+            root.join(layer["file"].as_str().unwrap()),
+            pointer(
+                layer["sha256"].as_str().unwrap(),
+                layer["size_bytes"].as_u64().unwrap(),
+            ),
+        )
+        .unwrap();
+    }
+    assert!(run(&root, &manifest, &["--check-pointer"]).status.success());
+    // One layer pointer with another oid.
+    let first = generated["layers"][0]["file"].as_str().unwrap();
+    fs::write(root.join(first), pointer(&"2".repeat(64), 1)).unwrap();
+    let output = run(&root, &manifest, &["--check-pointer"]);
+    assert_eq!(output.status.code(), Some(1));
+    assert!(stderr(&output).contains("does not match"));
+    fs::write(
+        root.join(first),
+        pointer(
+            generated["layers"][0]["sha256"].as_str().unwrap(),
+            generated["layers"][0]["size_bytes"].as_u64().unwrap(),
+        ),
+    )
+    .unwrap();
+    // An edited manifest no longer matches the generated record.
+    let mut text = fs::read_to_string(&manifest).unwrap();
+    text.push('\n');
+    fs::write(&manifest, text).unwrap();
+    let output = run(&root, &manifest, &["--check-pointer"]);
+    assert_eq!(output.status.code(), Some(1));
+    assert!(stderr(&output).contains("different manifest"));
+}
+
+#[test]
+fn outputs_cannot_overwrite_inputs_and_crlf_manifests_are_refused() {
+    let poster = atlas::synthetic_poster_png();
+    let (root, manifest) = content_root("overwrite", &poster, |m| {
+        m["layers"][0]["output"] = json!("atlas/synthetic-continent/source/synthetic-poster.png");
+    });
+    let output = run(&root, &manifest, &[]);
+    assert_eq!(output.status.code(), Some(1));
+    assert!(stderr(&output).contains("must not overwrite"));
+    let (root, manifest) = content_root("generated-name", &poster, |m| {
+        m["layers"][0]["output"] = json!("atlas/synthetic-continent/atlas.generated.json");
+    });
+    assert_eq!(run(&root, &manifest, &[]).status.code(), Some(1));
+    let (root, manifest) = content_root("crlf", &poster, |_| {});
+    let text = fs::read_to_string(&manifest).unwrap().replace('\n', "\r\n");
+    fs::write(&manifest, text).unwrap();
+    let output = run(&root, &manifest, &[]);
+    assert_eq!(output.status.code(), Some(1));
+    assert!(stderr(&output).contains("CRLF"));
+}
+
+#[test]
+fn output_mode_accepts_relative_and_dot_prefixed_paths() {
+    let poster = atlas::synthetic_poster_png();
+    let (root, _) = content_root("relative", &poster, |_| {});
+    let out = temp("relative-out");
+    let output = cli()
+        .current_dir(&root)
+        .args([
+            "prepare-atlas",
+            "--manifest",
+            "./atlas/synthetic-continent/atlas.manifest.json",
+            "--content-root",
+            ".",
+            "--output",
+        ])
+        .arg(&out)
+        .output()
+        .unwrap();
+    assert!(output.status.success(), "{}", stderr(&output));
+    assert!(
+        out.join("atlas/synthetic-continent")
+            .join(atlas::GENERATED_FILE)
+            .exists()
+    );
+}

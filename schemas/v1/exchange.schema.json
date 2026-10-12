@@ -1099,7 +1099,7 @@
       "type": "string"
     },
     "ImageLayer": {
-      "description": "One raster file of a `MapImage`. Pixel coordinates in pins and calibration\nalways refer to the full frame; a layer with `frame_divisor` 2 is half size.",
+      "description": "One raster file of a `MapImage`. Pixel coordinates in pins and calibration\nalways refer to the full frame; a layer with `frame_divisor` 2 is half size.\n`registration_offset_px` is the offset applied to the layer's source crop so\nit registers with the frame (zero once the panels are aligned).",
       "properties": {
         "file": {
           "$ref": "#/$defs/AssetPath",
@@ -1118,8 +1118,7 @@
           "$ref": "#/$defs/ImageLayerKind"
         },
         "registration_offset_px": {
-          "$ref": "#/$defs/PixelPoint",
-          "description": "Offset applied to this layer's source crop so it registers with the frame."
+          "$ref": "#/$defs/PixelPoint"
         },
         "sha256": {
           "$ref": "#/$defs/Sha256Hex"
@@ -1167,7 +1166,7 @@
       ]
     },
     "ImagePin": {
-      "description": "A labelled point measured on the image. Reference geography, not an unlock.",
+      "description": "A labelled point measured on the image, in full-frame pixels. Reference\ngeography, not an unlock.",
       "properties": {
         "evidence": {
           "items": {
@@ -1189,8 +1188,7 @@
           "description": "The layer the pixel was measured on."
         },
         "pixel": {
-          "$ref": "#/$defs/PixelPoint",
-          "description": "Full-frame pixels."
+          "$ref": "#/$defs/PixelPoint"
         }
       },
       "required": [

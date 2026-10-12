@@ -452,6 +452,20 @@
       "expect": "schema_invalid",
       "error_code": "INVALID_INPUT",
       "note": "Asset paths are lowercase"
+    },
+    {
+      "file": "dataset-map-image-residual-negative.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Residuals cannot be negative"
+    },
+    {
+      "file": "dataset-embedding-chain-into-cycle.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "A chain that leads into a two-map cycle is a cycle regardless of record order"
     }
   ]
 }

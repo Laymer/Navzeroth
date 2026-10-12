@@ -238,6 +238,10 @@ check(
   summaries.some((s) => s.startsWith("route-plan-max-depth.json") && s.endsWith("rule depth 12")),
   "max-depth plan reaches rule depth 12",
 );
+check(
+  summaries.some((s) => s.startsWith("reference-dataset-imagery.json") && s.endsWith("1 images, 1 embeddings")),
+  "imagery fixture exercises map_images and map_embeddings",
+);
 summaries.forEach((s) => console.log(s));
 if (failures > 0) {
   console.error(`${failures} fixture expectation(s) failed`);

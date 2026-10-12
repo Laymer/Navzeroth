@@ -1,6 +1,6 @@
 # Eastern Kingdoms travel atlas: rights and source record
 
-Asset: `content/forever/atlas/eastern-kingdoms/source/Eastern-Kingdoms-Travel-Atlas.png`
+Asset: `content/forever/atlas/eastern-kingdoms/source/eastern-kingdoms-travel-atlas.png`
 SHA-256: `48ad4c6a36ca13343420d63328fc55d45c2733b06e95968ab983700690313228`
 Size: 17,511,553 bytes, 4492 x 5385 pixels, 8-bit RGB PNG
 Registry: `src-owner-ek-composite-2026-10-07` in [SOURCES.md](SOURCES.md)

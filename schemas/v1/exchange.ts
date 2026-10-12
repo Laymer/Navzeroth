@@ -1564,6 +1564,8 @@ export interface ControlPoint {
 /**
  * One raster file of a `MapImage`. Pixel coordinates in pins and calibration
  * always refer to the full frame; a layer with `frame_divisor` 2 is half size.
+ * `registration_offset_px` is the offset applied to the layer's source crop so
+ * it registers with the frame (zero once the panels are aligned).
  */
 export interface ImageLayer {
   /**
@@ -1579,14 +1581,16 @@ export interface ImageLayer {
   width_px: PixelExtent;
 }
 /**
- * Offset applied to this layer's source crop so it registers with the frame.
+ * A point in an image frame, in full-frame pixels. The origin is the frame's
+ * top-left corner; x grows rightward and y downward.
  */
 export interface PixelPoint {
   x: FiniteNumber;
   y: FiniteNumber;
 }
 /**
- * A labelled point measured on the image. Reference geography, not an unlock.
+ * A labelled point measured on the image, in full-frame pixels. Reference
+ * geography, not an unlock.
  */
 export interface ImagePin {
   evidence: EvidenceId[];
@@ -1597,14 +1601,7 @@ export interface ImagePin {
    * The layer the pixel was measured on.
    */
   measured_on: string;
-  pixel: PixelPoint1;
-}
-/**
- * Full-frame pixels.
- */
-export interface PixelPoint1 {
-  x: FiniteNumber;
-  y: FiniteNumber;
+  pixel: PixelPoint;
 }
 export interface MapSpace {
   evidence: EvidenceId[];

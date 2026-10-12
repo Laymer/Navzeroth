@@ -16,7 +16,7 @@ use serde::Serialize;
 pub enum ProjectionGap {
     /// The position's namespace differs from the dataset's (demo vs reference).
     NamespaceMismatch,
-    /// No image and no embedding chain exists for the map.
+    /// Neither the map nor the end of its embedding chain has an image.
     NoImageForMap { map: MapKey },
     /// The position lies inside an instance; instance maps have no imagery here.
     InInstance { map: MapKey },
@@ -101,6 +101,7 @@ pub fn project_position(
     let mut current = position.map.clone();
     let (mut x, mut y) = (position.x, position.y);
     let mut via = Vec::new();
+    let mut origin_floors = Vec::new();
     for _ in 0..=MAX_EMBEDDING_DEPTH {
         let mut floors = Vec::new();
         let mut build_mismatch = None;
@@ -132,6 +133,9 @@ pub fn project_position(
         let embedding = dataset.map_embeddings.iter().find(|e| e.child == current);
         match embedding {
             Some(embedding) => {
+                if via.is_empty() {
+                    origin_floors = floors;
+                }
                 let (nx, ny) = embedding
                     .to_parent(x, y)
                     .expect("validated bounds keep normalized points in range");
@@ -159,6 +163,12 @@ pub fn project_position(
                     return Err(ProjectionGap::DifferentFloor {
                         map: current,
                         available_floors: floors,
+                    });
+                }
+                if !origin_floors.is_empty() {
+                    return Err(ProjectionGap::DifferentFloor {
+                        map: position.map.clone(),
+                        available_floors: origin_floors,
                     });
                 }
                 return Err(ProjectionGap::NoImageForMap { map: current });

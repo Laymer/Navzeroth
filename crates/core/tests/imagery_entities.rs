@@ -128,3 +128,15 @@ fn map_embeddings_require_distinct_maps_one_context_and_positive_area() {
         .unwrap();
     assert!((x.get() - 0.3).abs() < 1e-12 && (y.get() - 0.6).abs() < 1e-12);
 }
+
+#[test]
+fn control_point_residuals_cannot_be_negative() {
+    let mut good = image();
+    good["calibration"] = json!({"status":"known","value":{"units":"pixel","scale_x":100,"scale_y":51,"offset_x":0,"offset_y":0}});
+    good["calibration_evidence"] = json!(["e1"]);
+    good["control_points"] =
+        json!([{"pin":"p1","node":"n1","residual_px":{"status":"known","value":0.25}}]);
+    let mut bad = good.clone();
+    bad["control_points"][0]["residual_px"]["value"] = json!(-0.4);
+    check::<MapImage>(good, bad);
+}

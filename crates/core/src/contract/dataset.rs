@@ -214,17 +214,25 @@ impl ReferenceDataset {
                     "Map embedding references an undeclared map space",
                 ));
             }
+            // One parent per child: any repeated key is a cycle and every walk
+            // ends within `parents.len()` steps; depth is judged afterwards.
+            let mut visited: BTreeSet<&MapKey> = BTreeSet::from([&embedding.child]);
             let mut current = &embedding.parent;
             let mut depth = 1;
-            while let Some(next) = parents.get(current) {
-                depth += 1;
-                if *next == &embedding.child || current == &embedding.child {
+            loop {
+                if !visited.insert(current) {
                     return Err(crate::error::invalid("Map embeddings form a cycle"));
                 }
-                if depth > MAX_EMBEDDING_DEPTH {
-                    return Err(crate::error::invalid("Map embedding chain is too deep"));
+                match parents.get(current) {
+                    Some(next) => {
+                        depth += 1;
+                        current = next;
+                    }
+                    None => break,
                 }
-                current = next;
+            }
+            if depth > MAX_EMBEDDING_DEPTH {
+                return Err(crate::error::invalid("Map embedding chain is too deep"));
             }
         }
         Ok(())

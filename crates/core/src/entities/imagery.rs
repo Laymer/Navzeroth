@@ -35,6 +35,8 @@ pub enum ImageLayerKind {
 
 /// One raster file of a `MapImage`. Pixel coordinates in pins and calibration
 /// always refer to the full frame; a layer with `frame_divisor` 2 is half size.
+/// `registration_offset_px` is the offset applied to the layer's source crop so
+/// it registers with the frame (zero once the panels are aligned).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ImageLayer {
     pub id: LayerId,
@@ -45,7 +47,6 @@ pub struct ImageLayer {
     pub width_px: PixelExtent,
     pub height_px: PixelExtent,
     pub frame_divisor: PixelExtent,
-    /// Offset applied to this layer's source crop so it registers with the frame.
     pub registration_offset_px: PixelPoint,
 }
 
@@ -66,13 +67,13 @@ pub enum PinKind {
     Landmark,
 }
 
-/// A labelled point measured on the image. Reference geography, not an unlock.
+/// A labelled point measured on the image, in full-frame pixels. Reference
+/// geography, not an unlock.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ImagePin {
     pub id: PinId,
     pub label: Text,
     pub kind: PinKind,
-    /// Full-frame pixels.
     pub pixel: PixelPoint,
     /// The layer the pixel was measured on.
     pub measured_on: LayerId,
@@ -171,6 +172,9 @@ impl Validate for MapImageData {
                 return Err(invalid(
                     "Control-point residual requires a known calibration",
                 ));
+            }
+            if point.residual_px.value().is_some_and(|r| r.get() < 0.) {
+                return Err(invalid("Control-point residual cannot be negative"));
             }
         }
         let own = &self.map.context.build;

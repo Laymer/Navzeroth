@@ -222,6 +222,9 @@ fn is_lfs_pointer(bytes: &[u8]) -> bool {
 
 pub fn read_manifest(path: &Path) -> Res<(AtlasManifest, Sha256Hex)> {
     let bytes = read_bounded(path, MAX_MANIFEST_BYTES, "manifest")?;
+    if bytes.contains(&b'\r') {
+        return fail("manifest has CRLF line endings; check .gitattributes (content JSON is LF)");
+    }
     let manifest: AtlasManifest = match serde_json::from_slice(&bytes) {
         Ok(m) => m,
         Err(_) => {
@@ -255,6 +258,17 @@ pub fn read_manifest(path: &Path) -> Res<(AtlasManifest, Sha256Hex)> {
         list.sort_unstable();
         if list.windows(2).any(|w| w[0] == w[1]) {
             return fail("layer ids and output paths must be unique");
+        }
+    }
+    for output in &outputs {
+        let name = output.rsplit('/').next().unwrap_or(output);
+        if *output == manifest.source.file.as_str()
+            || name == GENERATED_FILE
+            || name.ends_with(".manifest.json")
+        {
+            return fail(
+                "layer outputs must not overwrite the source, the manifest or the generated record",
+            );
         }
     }
     if let Some(a) = &manifest.alignment
@@ -394,10 +408,24 @@ fn generated_path(paths: &Paths) -> Res<PathBuf> {
     let manifest_dir = paths.manifest.parent().unwrap_or(Path::new("."));
     match paths.output {
         None => Ok(manifest_dir.join(GENERATED_FILE)),
-        Some(output) => match manifest_dir.strip_prefix(paths.content_root) {
-            Ok(relative) => Ok(output.join(relative).join(GENERATED_FILE)),
-            Err(_) => fail("the manifest must live under the content root when --output is used"),
-        },
+        Some(output) => {
+            // Lexical normalization only; symlinks are refused separately.
+            let (dir, root) = match (
+                std::path::absolute(manifest_dir),
+                std::path::absolute(paths.content_root),
+            ) {
+                (Ok(d), Ok(r)) => (d, r),
+                _ => return fail("manifest or content root path cannot be made absolute"),
+            };
+            match dir.strip_prefix(&root) {
+                Ok(relative) => Ok(output.join(relative).join(GENERATED_FILE)),
+                Err(_) => fail(format!(
+                    "manifest directory {} is not under content root {}; --output requires that",
+                    dir.display(),
+                    root.display()
+                )),
+            }
+        }
     }
 }
 

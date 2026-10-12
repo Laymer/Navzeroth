@@ -301,3 +301,93 @@ fn solver_recovers_transforms_and_reports_residuals() {
         CalibrationError::DegenerateSpread
     );
 }
+
+fn chain_doc(levels: usize) -> Value {
+    let mut doc = fixture();
+    let spaces = doc["payload"]["map_spaces"].as_array_mut().unwrap();
+    let template = spaces[0].clone();
+    for i in 2..=levels + 1 {
+        let mut space = template.clone();
+        space["key"]["map_id"] = json!(format!("demo-level-{i}"));
+        spaces.push(space);
+    }
+    let embeddings = doc["payload"]["map_embeddings"].as_array_mut().unwrap();
+    let key = |id: &str| {
+        let mut k = embeddings[0]["child"].clone();
+        k["map_id"] = json!(id);
+        k
+    };
+    let mut names: Vec<String> = (2..=levels + 1)
+        .rev()
+        .map(|i| format!("demo-level-{i}"))
+        .collect();
+    names.push("demo-map-1".to_owned());
+    let chain: Vec<_> = names
+        .windows(2)
+        .map(|w| json!({"child":key(&w[0]),"parent":key(&w[1]),"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1},"evidence":[]}))
+        .collect();
+    assert_eq!(chain.len(), levels);
+    embeddings.extend(chain);
+    doc
+}
+
+#[test]
+fn chains_at_the_depth_limit_project_and_deeper_ones_are_a_guarded_gap() {
+    let doc = chain_doc(MAX_EMBEDDING_DEPTH);
+    let (context, data) = dataset(&doc);
+    let top = format!("demo-level-{}", MAX_EMBEDDING_DEPTH + 1);
+    let projection = project_position(&demo(&top, 0.5, 0.5), &context, &data).unwrap();
+    assert_eq!(pixel(&projection), (32., 48.));
+    match &projection.notices[0] {
+        ProjectionNotice::EmbeddingFallback { via } => assert_eq!(via.len(), MAX_EMBEDDING_DEPTH),
+        other => panic!("{other:?}"),
+    }
+    // One level deeper is rejected by the dataset; if such records reached the
+    // projection anyway, the runtime guard reports the chain instead of looping.
+    let deeper = chain_doc(MAX_EMBEDDING_DEPTH + 1);
+    assert!(decode_envelope::<ReferenceDataset>(&deeper.to_string()).is_err());
+    let (context, mut data) = dataset(&doc);
+    let extra: MapEmbedding =
+        serde_json::from_value(deeper["payload"]["map_embeddings"][1].clone()).unwrap();
+    data.map_embeddings.push(extra);
+    let deepest = format!("demo-level-{}", MAX_EMBEDDING_DEPTH + 2);
+    match project_position(&demo(&deepest, 0.5, 0.5), &context, &data).unwrap_err() {
+        ProjectionGap::EmbeddingChainTooDeep { via } => {
+            assert_eq!(via.len(), MAX_EMBEDDING_DEPTH + 1)
+        }
+        other => panic!("{other:?}"),
+    }
+}
+
+#[test]
+fn other_floor_imagery_is_reported_even_when_an_embedding_leads_nowhere() {
+    let mut doc = fixture();
+    let spaces = doc["payload"]["map_spaces"].as_array_mut().unwrap();
+    let mut floor1 = spaces[0].clone();
+    floor1["key"]["floor"] = json!("1");
+    let mut elsewhere = spaces[0].clone();
+    elsewhere["key"]["map_id"] = json!("demo-map-9");
+    spaces.push(floor1.clone());
+    spaces.push(elsewhere.clone());
+    doc["payload"]["map_embeddings"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"child":floor1["key"],"parent":elsewhere["key"],"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1},"evidence":[]}));
+    let (context, data) = dataset(&doc);
+    match project_position(
+        &position("demo-map-1", "1", None, "UNVERIFIED_DEMO", 0.5, 0.5),
+        &context,
+        &data,
+    )
+    .unwrap_err()
+    {
+        ProjectionGap::DifferentFloor {
+            map,
+            available_floors,
+        } => {
+            assert_eq!(map.floor.as_str(), "1");
+            assert_eq!(available_floors[0].as_str(), "0");
+        }
+        other => panic!("{other:?}"),
+    }
+}
