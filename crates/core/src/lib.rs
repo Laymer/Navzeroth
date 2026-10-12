@@ -10,6 +10,7 @@ pub mod evaluation;
 pub mod gear;
 pub mod json;
 pub mod observation;
+pub mod planner;
 pub mod predicate;
 pub mod reminders;
 pub mod sessions;

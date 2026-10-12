@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { AppError, AtlasView, CommandClient, SnapshotMarker } from "../commands";
 import type { AtlasImage } from "../commands/contract";
 import { MapView } from "../atlas/MapView";
@@ -25,25 +25,34 @@ type Load =
   | { phase: "ready"; view: AtlasView; markers: SnapshotMarker[] };
 
 export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient; refreshKey?: number }) {
+  const [refresh, setRefresh] = useState(0);
   const [load, setLoad] = useState<Load>({ phase: "loading" });
+  const [refreshError, setRefreshError] = useState<AppError | null>(null);
 
   useEffect(() => {
     let live = true;
     void (async () => {
       const [view, markers] = await Promise.all([client.queryAtlas(null), client.getSnapshotMarkers()]);
       if (!live) return;
-      if (!view.ok) return setLoad({ phase: "error", error: view.error });
-      if (!markers.ok) return setLoad({ phase: "error", error: markers.error });
+      const error = !view.ok ? view.error : !markers.ok ? markers.error : null;
+      if (error !== null) {
+        setRefreshError(error);
+        setLoad((previous) => previous.phase === "ready" ? previous : { phase: "error", error });
+        return;
+      }
+      if (!view.ok || !markers.ok) return;
+      setRefreshError(null);
       setLoad({ phase: "ready", view: view.value, markers: markers.value });
     })();
     return () => {
       live = false;
     };
-  }, [client, refreshKey]);
+  }, [client, refreshKey, refresh]);
 
   return (
     <section aria-labelledby="atlas-heading" className="atlas">
       <h2 id="atlas-heading">Atlas</h2>
+      <button type="button" onClick={() => setRefresh((n) => n + 1)}>Refresh atlas</button>
       {load.phase === "loading" && <p role="status">Loading the atlas…</p>}
       {load.phase === "error" && (
         <p role="alert">
@@ -51,6 +60,9 @@ export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient;
           {load.error.retryable ? " (you can retry)" : ""}
         </p>
       )}
+      {load.phase === "ready" && refreshError !== null && <p role="alert">
+        Atlas refresh error {refreshError.code}: {refreshError.message} The previous atlas remains displayed. Refresh again to retry.
+      </p>}
       {load.phase === "ready" && <AtlasReady view={load.view} markers={load.markers} />}
     </section>
   );
@@ -99,6 +111,14 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
   const [selectedPin, setSelectedPin] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ point: Point; nonce: number } | null>(null);
 
+  const [search, setSearch] = useState("");
+  const [kind, setKind] = useState("all");
+  const pinButtons = useRef(new Map<string, HTMLButtonElement>());
+  const pins = image.pins.filter((pin) =>
+    (kind === "all" || pin.kind.kind === kind) &&
+    `${pin.label} ${pin.id}`.toLowerCase().includes(search.trim().toLowerCase()),
+  );
+  const filteredImage = { ...image, pins };
   const layer = useMemo(() => chooseLayer(image, toggles, failed), [image, toggles, failed]);
   const placement = placementOf(marker);
   const drawn = placement !== null && placement.image === image.id ? placement : null;
@@ -139,7 +159,7 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
           ))}
       </fieldset>
       <MapView
-        image={image}
+        image={filteredImage}
         layer={layer}
         onLayerError={(id) => setFailed((previous) => new Set(previous).add(id))}
         marker={drawn}
@@ -149,16 +169,36 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
       />
       <section aria-labelledby="pins-heading">
         <h3 id="pins-heading">Reference pins</h3>
-        {image.pins.length === 0 ? (
-          <p>This image has no pins.</p>
+        <p>Reference geography; these pins do not indicate player unlocks.</p>
+        <label>Search reference pins <input value={search} maxLength={256} onChange={(event) => setSearch(event.target.value)} /></label>
+        <label>Point type <select value={kind} onChange={(event) => setKind(event.target.value)}>
+          <option value="all">All types</option>
+          {kind !== "all" && !image.pins.some((pin) => pin.kind.kind === kind) &&
+            <option value={kind}>{kind.replace(/_/g, " ")} (absent in this revision)</option>}
+          {[...new Set(image.pins.map((pin) => pin.kind.kind))].sort().map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
+        </select></label>
+        <p role="status">{pins.length} of {image.pins.length} reference pins shown.</p>
+        {selectedPin !== null && !image.pins.some((pin) => pin.id === selectedPin)
+          ? <p role="note">The selected pin is no longer present in this atlas revision.</p>
+          : selectedPin !== null && !pins.some((pin) => pin.id === selectedPin)
+            ? <p role="note">The selected pin is hidden by the current filters.</p> : null}
+        {pins.length === 0 ? (
+          <p>{image.pins.length === 0 ? "This image has no pins." : "No reference pins match these filters."}</p>
         ) : (
           <ul className="pins">
-            {image.pins.map((pin) => (
+            {pins.map((pin, index) => (
               <li key={pin.id}>
                 <strong>{pin.label}</strong>. {describePin(pin)}.
                 {describePinAccess(pin) !== null && <> {describePinAccess(pin)}.</>}{" "}
                 <button
                   type="button"
+                  ref={(node) => { if (node) pinButtons.current.set(pin.id, node); else pinButtons.current.delete(pin.id); }}
+                  onKeyDown={(event) => {
+                    const target = event.key === "ArrowDown" ? (index + 1) % pins.length
+                      : event.key === "ArrowUp" ? (index + pins.length - 1) % pins.length
+                      : event.key === "Home" ? 0 : event.key === "End" ? pins.length - 1 : null;
+                    if (target !== null) { event.preventDefault(); const pin = pins[target]; if (pin) pinButtons.current.get(pin.id)?.focus(); }
+                  }}
                   aria-pressed={selectedPin === pin.id}
                   onClick={() => {
                     setSelectedPin(pin.id);

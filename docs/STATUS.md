@@ -1,12 +1,20 @@
 # Project status
 
 Plan version: 1.0 plus accepted ADRs 0001, 0002 and 0003
-Current milestone: M1
-Current task: wave-1 parallel delegation per [ADR 0003](decisions/0003-wave1-parallel-delegation.md); twelve packages claimed below (M1.4 merged as PR 8)
-Task owner: Claude Code (Fable 5.1) orchestrating one Sonnet 5.5 writer per package
-Base revision: 8cca94d (origin/main after PR 8)
+Current milestone: Wave 2 foundations
+Current task: wave-2 coordination and dependency-ready R1/R2/R4
+Task owner: Codex root coordinating three isolated writers
+Base revision: 08f6daa (origin/main confirmed 2026-10-12)
 Last updated: 2026-10-12
-Overall state: M1.1 reviewed/corrected; M1.6 CI, expanded M1.2 and M1.3 contracts merged and verified for their scopes; M1.4, M1.5 and M1.7 remain
+Overall state: wave-1 packages merged; implementation and verification evidence
+remain scoped to their individual handoffs. Wave 2 follows ADR 0004.
+
+Wave-1 delivered storage, bounded ingest/fixture CLI, travel, eligibility,
+synthetic gear scoring, reminders, session intervals, source registry, coverage,
+atlas UI, diagnostic addon and predicate corpus. Older milestone prose below
+is historical; it does not establish missing live or native verification.
+
+See [ADR 0004](decisions/0004-wave2.md) for ownership and frozen interfaces.
 
 ## Milestones
 
