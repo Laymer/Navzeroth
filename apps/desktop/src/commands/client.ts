@@ -4,7 +4,7 @@ import type { CharacterSnapshotEnvelope } from "../../../../schemas/v1/exchange"
 const CODES: ReadonlySet<string> = new Set([
   "INVALID_INPUT", "UNSUPPORTED_SCHEMA", "BUILD_MISMATCH", "SNAPSHOT_OUTDATED",
   "MISSING_REQUIRED_OBSERVATION", "DATASET_INCOMPLETE", "PROVIDER_UNAVAILABLE",
-  "IMPORT_TOO_LARGE", "OPERATION_CANCELED", "STORAGE_ERROR", "NOT_FOUND", "INTERNAL",
+  "IMPORT_TOO_LARGE", "OPERATION_CANCELED", "STORAGE_ERROR", "INTERNAL",
 ]);
 
 /** Normalizes anything thrown across the boundary into a safe AppError. */

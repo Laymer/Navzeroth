@@ -17,7 +17,7 @@ describe("demo mode", () => {
 
   it("rejects an unknown profile with a structured error", async () => {
     const r = await createClient(demoAdapter).getCharacterSnapshot("nope");
-    expect(r).toEqual({ ok: false, error: { code: "NOT_FOUND", message: "No such profile.", retryable: false } });
+    expect(r).toEqual({ ok: false, error: { code: "INVALID_INPUT", message: "No such profile.", retryable: false } });
   });
 });
 

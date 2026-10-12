@@ -23,7 +23,7 @@ export const demoAdapter: CommandAdapter = {
         case "get_character_snapshot": {
           const { profile_id } = input as CommandMap["get_character_snapshot"]["input"];
           if (profile_id !== DEMO_PROFILE_ID) {
-            const err: AppError = { code: "NOT_FOUND", message: "No such profile.", retryable: false };
+            const err: AppError = { code: "INVALID_INPUT", message: "No such profile.", retryable: false };
             throw err;
           }
           return snapshot;

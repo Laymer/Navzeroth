@@ -16,8 +16,7 @@ export type AppErrorCode =
   | "IMPORT_TOO_LARGE"
   | "OPERATION_CANCELED"
   | "STORAGE_ERROR"
-  | "NOT_FOUND"
-  | "INTERNAL";
+  | "INTERNAL"; // client-only: any failure that is not a well-formed backend error
 
 export interface AppError {
   code: AppErrorCode;
