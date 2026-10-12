@@ -19,8 +19,9 @@ planning, gear/acquisition, reminder and session analytics libraries; immutable
 context-qualified content revisions with activation/rollback/backup; Lua data
 decoding, predicate evaluation, injected HUD and synthetic gear scoring parity.
 
-Wave-2 work is delivered as separate draft PRs, with a combined feature branch for
-integration checks. See [the integration handoff](docs/handoffs/2026-10-12-wave2-integration.md).
+Wave-2 work was delivered as separate PRs and merged in dependency order after
+protected CI. See [the integration handoff](docs/handoffs/2026-10-12-wave2-integration.md)
+and [merge audit](docs/handoffs/2026-10-12-wave2-merge.md).
 Neither live client behavior nor native window interaction/packaging is verified.
 Party snapshot persistence and integrated planner/gear/session UI remain future work.
 

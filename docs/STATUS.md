@@ -1,11 +1,12 @@
 # Project status
 
-Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-12.
-Current task: wave-2 integration documentation and hosted verification.
-Owner: Codex root; three isolated implementation workers (see ADR 0004).
+Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
+Current task: final wave-2 merge documentation; next implementation task unclaimed.
+Owner: Codex root (merge coordination); implementation owners are in ADR 0004.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
-All work is in feature branches/draft PRs; main and original .claude/ are preserved.
+Task PRs through #36 are merged into protected main f2f64a3 after fresh CI.
+PR #37 supplies the final documentation. The original worktree and .claude/ remain preserved.
 
 ## Milestones
 
@@ -30,7 +31,7 @@ All work is in feature branches/draft PRs; main and original .claude/ are preser
 See [integration handoff](handoffs/2026-10-12-wave2-integration.md) for all twelve
 PR links, checked commits, CI runs, actual reviews, limitations and next tasks.
 [ADR 0004](decisions/0004-wave2.md) records ownership and frozen interfaces.
-Each task also has a claim/handoff on its feature branch. Review remains open;
+Each task also has a claim/handoff. The user authorized ready-and-merge after CI;
 implemented synthetic foundations do not establish live gameplay verification.
 
 Combined local checks: locked Rust fmt/Clippy and workspace tests excluding the
@@ -63,8 +64,10 @@ access was added. Remaining watcher/platform/model limitations are in the handof
 
 ## Next dependency-ready work
 
-Review the draft PRs and their prerequisite stacks. Integrate party persistence,
+The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Integrate party persistence,
 planner/export UI and analytical display using existing explicit DTO boundaries;
 author permitted real content and explicit goal/gear models. Live client checks
 need sanitized evidence from the recorded build. Releases and PR/main merges need
 separate applicable authorization.
+
+Merge follow-up: schema-valid UTC values outside JavaScript Date range now display numeric epoch milliseconds, with positive/negative safe-limit and zero regressions. Corrected desktop checks: 65 unit tests and four Chromium workflows passed; synchronized integration hosted CI passed all eight jobs.

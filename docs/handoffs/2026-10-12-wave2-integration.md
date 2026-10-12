@@ -6,7 +6,9 @@ Final documentation branch: docs/wave2-integration, base feature/wave2-r12.
 Combined code checked locally and hosted: a08f5d7. R12 head 6f7fbb6 adds only
 coordination documentation; no code difference from the checked implementation.
 Original worktree stays at 08f6daa with only its pre-existing untracked .claude/.
-No PR/main merge, force push, release, packaging or live gameplay action occurred.
+The initial implementation delivery made no PR/main merge. The later user-authorized
+merge sequence is in the [merge handoff](2026-10-12-wave2-merge.md). No force push,
+release, packaging or live gameplay action occurred.
 
 ## Delivered review units
 
@@ -26,7 +28,9 @@ No PR/main merge, force push, release, packaging or live gameplay action occurre
 | R11 Lua gear scoring | [35](https://github.com/Laymer/Navzeroth/pull/35), base R4 | f91f3cc | [38308970271](https://github.com/Laymer/Navzeroth/actions/runs/38308970271), seven passed |
 | R12 integration CI/browser | [36](https://github.com/Laymer/Navzeroth/pull/36), base integration/wave2-foundations | a08f5d7 code; 6f7fbb6 docs prerequisite | [38310280809](https://github.com/Laymer/Navzeroth/actions/runs/38310280809), eight passed |
 
-All PRs remain draft/reviewable. The integration prerequisite is a feature branch
+The PRs began as draft/reviewable changes and were then marked ready and merged
+after user authorization and fresh CI. PR #37 supplies the final record. The
+integration prerequisite was a feature branch
 combining the task histories; it does not replace the individual PRs. Its sole
 implementation merge conflict was AtlasScreen: retain R3 external refreshKey and
 R10 manual refresh. R12 adds only its CI/browser files against this prerequisite.
@@ -108,9 +112,11 @@ and covered monotonic time; it has no combat metrics or personalized calibration
 
 Live Forever build observations, quest transitions, native window interaction and
 packaging remain UNVERIFIED. No forbidden game access or live socket bridge exists.
-Next dependency-ready work: review these PRs/stacks; party snapshot persistence;
+Next dependency-ready work: party snapshot persistence;
 planner-to-export/UI and analytics/gear screens; permitted real quest/acquisition
 content and explicit model profiles. Client checks require sanitized evidence from
 the recorded build. PR/main merges and releases require separate authorization.
 
 Final hosted outcome: combined run 38310280809 completed SUCCESS with all eight jobs, including native Windows compilation/tests and mocked Chromium. Documentation-only prerequisite/final changes do not change the checked source.
+
+Merge verification supersedes the initial publication state: integration run 38318614268 passed all eight jobs on synchronized head 7e90dc1, merged as f2f64a3. Desktop UTC-boundary recovery added one regression, bringing unit tests to 65; four Chromium workflows passed again. Exact merge-time heads and runs are in the merge audit.

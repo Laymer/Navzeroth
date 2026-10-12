@@ -48,3 +48,5 @@ Merge follow-up 2026-10-13: local merge of protected main 68aae9d resolved the
 combined branch ancestry cleanly, retaining the PR #33 UTC range correction.
 Affected desktop typecheck/lint/build, 65 unit tests, four Chromium workflows,
 Rust formatting and diff checks passed. Fresh hosted CI follows before merge.
+
+Merge gate verified: synchronized 7e90dc1 passed [run 38318614268](https://github.com/Laymer/Navzeroth/actions/runs/38318614268), all eight jobs, before main merge f2f64a3.
