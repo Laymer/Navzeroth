@@ -1,0 +1,878 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "reference_dataset",
+  "schema_version": 1,
+  "fixture": false,
+  "producer": {
+    "component": "cli",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "1.60.1.70205",
+    "interface": "16001",
+    "locale": "enGB"
+  },
+  "namespace": "reference",
+  "provenance": {
+    "source": "reference_data",
+    "clock_trust": "uncertain"
+  },
+  "payload": {
+    "revision": "forever-atlas-r1",
+    "evidence": [
+      {
+        "id": "ev-ek-terrain-2026-10-07",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70205",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "source": "src-wowforevermap-ek-terrain-2026-10-07",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791331200000
+        },
+        "confidence": "limited_sample",
+        "conflicts": [],
+        "notes": "Terrain and zone boundaries as drawn in the composite poster; third-party render of beta build 1.60.1.70205. Publisher licence not recorded (docs/data/SOURCES.md)."
+      },
+      {
+        "id": "ev-ek-flight-2026-10-07",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70205",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "source": "src-endgametools-ek-flight-2026-10-07",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791331200000
+        },
+        "confidence": "limited_sample",
+        "conflicts": [],
+        "notes": "Flight-master index (31 locations, 34 faction records) and drawn flight routes from the composite poster. Reference geography, not a character's unlocks. Publisher licence not recorded."
+      },
+      {
+        "id": "ev-ek-roads-traced-2026-10-07",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70205",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "source": "src-owner-ek-composite-2026-10-07",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791331200000
+        },
+        "confidence": "inferred",
+        "conflicts": [],
+        "notes": "Walking corridors and the Deeprun Tram line were manually traced on the poster; they simplify main roads and are not level-safe routes or verified travel edges."
+      },
+      {
+        "id": "ev-ek-build-2026-10-07",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70205",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "source": "src-owner-ek-composite-2026-10-07",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791331200000
+        },
+        "confidence": "limited_sample",
+        "conflicts": [],
+        "notes": "Build 1.60.1.70205 from the poster footer; interface 16001 from community exports (plan section 3.2). Untested on a client: docs/compatibility/BUILD_CAPABILITIES.md. Map id 1415 is a Classic-era placeholder."
+      },
+      {
+        "id": "ev-ek-pins-measured-2026-10-12",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70205",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "source": "src-owner-ek-composite-2026-10-07",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791763200000
+        },
+        "confidence": "inferred",
+        "conflicts": [],
+        "notes": "Pin centres measured on the flight layer by detecting the 35 px disc of each numbered marker (frame pixels, about 2 px accuracy). Labels and faction access copied from the poster index."
+      },
+      {
+        "id": "ev-ek-calibration-provisional-2026-10-12",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70205",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "source": "src-owner-ek-composite-2026-10-07",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791763200000
+        },
+        "confidence": "inferred",
+        "conflicts": [],
+        "notes": "Provisional calibration assuming the image frame equals the continent map bounds (normalized 0..1 maps to 0..2091 x 0..3825). No in-game control point exists; aspect and margins are unverified, so markers are approximate until at least three control points replace this transform."
+      }
+    ],
+    "items": [],
+    "acquisitions": [],
+    "quests": [],
+    "map_spaces": [
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "1.60.1.70205",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "map_id": "1415",
+          "floor": "0",
+          "instance": null
+        },
+        "transform": {
+          "status": "unknown"
+        },
+        "evidence": [
+          "ev-ek-build-2026-10-07"
+        ]
+      }
+    ],
+    "nodes": [],
+    "edges": [],
+    "objectives": [],
+    "rules": [],
+    "map_images": [
+      {
+        "id": "atlas-ek-2026-10-07",
+        "map": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "1.60.1.70205",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "map_id": "1415",
+          "floor": "0",
+          "instance": null
+        },
+        "source": "src-owner-ek-composite-2026-10-07",
+        "evidence": [
+          "ev-ek-terrain-2026-10-07",
+          "ev-ek-flight-2026-10-07",
+          "ev-ek-roads-traced-2026-10-07",
+          "ev-ek-build-2026-10-07"
+        ],
+        "applicable_builds": [
+          {
+            "build": {
+              "edition": "wow_forever",
+              "build": "1.60.1.70205",
+              "interface": "16001"
+            },
+            "evidence": []
+          }
+        ],
+        "width_px": 2091,
+        "height_px": 3825,
+        "layers": [
+          {
+            "id": "roads",
+            "kind": "roads_traced",
+            "file": "atlas/eastern-kingdoms/layers/roads.png",
+            "sha256": "47aca6c038d02e785806db325836e45e0cde9046e4a326f487a5a0f6e2286764",
+            "width_px": 2091,
+            "height_px": 3825,
+            "frame_divisor": 1,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "id": "flight",
+            "kind": "flight_reference",
+            "file": "atlas/eastern-kingdoms/layers/flight.png",
+            "sha256": "68dfcc0c33a4c39b5d7cc52bbfde946e6d71dbcdebb70d00c9f3b007abb0e3f3",
+            "width_px": 2091,
+            "height_px": 3825,
+            "frame_divisor": 1,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "id": "overview",
+            "kind": "overview",
+            "file": "atlas/eastern-kingdoms/layers/overview.png",
+            "sha256": "ee3fc32fc2d87a11502603078e990b071c284b20b27b1bf00bb4ff83c161750c",
+            "width_px": 1046,
+            "height_px": 1913,
+            "frame_divisor": 2,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ],
+        "pins": [
+          {
+            "id": "fm-01-northpass-tower",
+            "label": "1 Northpass Tower",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "tower_route"
+              ]
+            },
+            "pixel": {
+              "x": 1554.0,
+              "y": 96.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-02-plaguewood-tower",
+            "label": "2 Plaguewood Tower",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "tower_route"
+              ]
+            },
+            "pixel": {
+              "x": 1302.0,
+              "y": 119.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-03-eastwall-tower",
+            "label": "3 Eastwall Tower",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "tower_route"
+              ]
+            },
+            "pixel": {
+              "x": 1647.0,
+              "y": 221.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-04-light-s-hope-chapel",
+            "label": "4 Light's Hope Chapel",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance",
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1764.0,
+              "y": 261.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-05-crown-guard-tower",
+            "label": "5 Crown Guard Tower",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "tower_route"
+              ]
+            },
+            "pixel": {
+              "x": 1426.0,
+              "y": 352.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-06-undercity",
+            "label": "6 Undercity",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 625.0,
+              "y": 411.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-07-chillwind-camp",
+            "label": "7 Chillwind Camp",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 971.0,
+              "y": 541.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-08-the-sepulcher",
+            "label": "8 The Sepulcher",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 366.0,
+              "y": 633.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-09-aerie-peak",
+            "label": "9 Aerie Peak",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1088.0,
+              "y": 673.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-10-tarren-mill",
+            "label": "10 Tarren Mill",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 855.0,
+              "y": 731.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-11-revantusk-village",
+            "label": "11 Revantusk Village",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1642.0,
+              "y": 860.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-12-southshore",
+            "label": "12 Southshore",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 785.0,
+              "y": 876.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-13-hammerfall",
+            "label": "13 Hammerfall",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1393.0,
+              "y": 917.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-14-refuge-pointe",
+            "label": "14 Refuge Pointe",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1193.0,
+              "y": 984.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-15-menethil-harbor",
+            "label": "15 Menethil Harbor",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 839.0,
+              "y": 1504.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-16-ironforge",
+            "label": "16 Ironforge",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 915.0,
+              "y": 1714.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-17-thelsamar",
+            "label": "17 Thelsamar",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1277.0,
+              "y": 1837.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-18-thorium-point",
+            "label": "18 Thorium Point",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance",
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 911.0,
+              "y": 2067.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-19-kargath",
+            "label": "19 Kargath",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1124.0,
+              "y": 2084.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-20-flame-crest",
+            "label": "20 Flame Crest",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1126.5,
+              "y": 2261.5
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-21-rog-mar",
+            "label": "21 Rog'mar",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1655.0,
+              "y": 2347.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-22-morgan-s-vigil",
+            "label": "22 Morgan's Vigil",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1238.0,
+              "y": 2437.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-23-stormwind",
+            "label": "23 Stormwind",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 581.0,
+              "y": 2534.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-24-farholde-keep",
+            "label": "24 Farholde Keep",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1666.0,
+              "y": 2588.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-25-lakeshire",
+            "label": "25 Lakeshire",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1136.0,
+              "y": 2654.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-26-stonard",
+            "label": "26 Stonard",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 1348.0,
+              "y": 2864.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-27-darkshire",
+            "label": "27 Darkshire",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 938.0,
+              "y": 2876.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-28-sentinel-hill",
+            "label": "28 Sentinel Hill",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 468.0,
+              "y": 2899.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-29-nethergarde-keep",
+            "label": "29 Nethergarde Keep",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 1380.0,
+              "y": 2997.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-30-grom-gol",
+            "label": "30 Grom'gol",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 651.0,
+              "y": 3263.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          },
+          {
+            "id": "fm-31-booty-bay",
+            "label": "31 Booty Bay",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance",
+                "horde"
+              ]
+            },
+            "pixel": {
+              "x": 580.0,
+              "y": 3680.0
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "ev-ek-flight-2026-10-07",
+              "ev-ek-pins-measured-2026-10-12"
+            ]
+          }
+        ],
+        "calibration": {
+          "status": "known",
+          "value": {
+            "units": "pixel",
+            "scale_x": 2091,
+            "scale_y": 3825,
+            "offset_x": 0,
+            "offset_y": 0
+          },
+          "source": "reference_data",
+          "clock_trust": "uncertain"
+        },
+        "calibration_evidence": [
+          "ev-ek-calibration-provisional-2026-10-12"
+        ],
+        "control_points": [],
+        "gaps": "Calibration is a provisional full-frame assumption (inferred), not measured: markers are approximate. Map id 1415, build 1.60.1.70205 and interface 16001 are unverified placeholders pending M0.4. Roads are schematic tracings, not verified edges. Flight routes and masters are reference geography, not unlocks. Riverglades, city interiors and dungeon floors are not covered. Supported coverage (plan 2.3) is Westfall, Redridge Mountains, Duskwood and Wetlands only. Panel 02 registers to panel 01 with offset 0 and mean truncated grey residual 21.55 (brightness differs)."
+      }
+    ],
+    "map_embeddings": []
+  }
+}

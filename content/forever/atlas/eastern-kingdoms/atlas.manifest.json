@@ -1,0 +1,54 @@
+{
+  "atlas_manifest_version": 1,
+  "image_id": "atlas-ek-2026-10-07",
+  "source": {
+    "file": "atlas/eastern-kingdoms/source/eastern-kingdoms-travel-atlas.png",
+    "sha256": "48ad4c6a36ca13343420d63328fc55d45c2733b06e95968ab983700690313228",
+    "size_bytes": 17511553,
+    "width_px": 4492,
+    "height_px": 5385,
+    "registry_source_id": "src-owner-ek-composite-2026-10-07"
+  },
+  "frame": {
+    "width_px": 2091,
+    "height_px": 3825
+  },
+  "layers": [
+    {
+      "id": "roads",
+      "kind": "roads_traced",
+      "crop": {
+        "x": 100,
+        "y": 390,
+        "width": 2091,
+        "height": 3825
+      },
+      "output": "atlas/eastern-kingdoms/layers/roads.png"
+    },
+    {
+      "id": "flight",
+      "kind": "flight_reference",
+      "crop": {
+        "x": 2301,
+        "y": 390,
+        "width": 2091,
+        "height": 3825
+      },
+      "output": "atlas/eastern-kingdoms/layers/flight.png"
+    }
+  ],
+  "overview": {
+    "id": "overview",
+    "from_layer": "roads",
+    "divisor": 2,
+    "output": "atlas/eastern-kingdoms/layers/overview.png"
+  },
+  "alignment": {
+    "reference_layer": "roads",
+    "max_residual": 24
+  },
+  "limits": {
+    "max_source_bytes": 33554432,
+    "max_dimension_px": 8192
+  }
+}
