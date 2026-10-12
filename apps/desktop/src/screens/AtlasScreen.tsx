@@ -27,14 +27,21 @@ type Load =
 export function AtlasScreen({ client }: { client: CommandClient }) {
   const [refresh, setRefresh] = useState(0);
   const [load, setLoad] = useState<Load>({ phase: "loading" });
+  const [refreshError, setRefreshError] = useState<AppError | null>(null);
 
   useEffect(() => {
     let live = true;
     void (async () => {
       const [view, markers] = await Promise.all([client.queryAtlas(null), client.getSnapshotMarkers()]);
       if (!live) return;
-      if (!view.ok) return setLoad({ phase: "error", error: view.error });
-      if (!markers.ok) return setLoad({ phase: "error", error: markers.error });
+      const error = !view.ok ? view.error : !markers.ok ? markers.error : null;
+      if (error !== null) {
+        setRefreshError(error);
+        setLoad((previous) => previous.phase === "ready" ? previous : { phase: "error", error });
+        return;
+      }
+      if (!view.ok || !markers.ok) return;
+      setRefreshError(null);
       setLoad({ phase: "ready", view: view.value, markers: markers.value });
     })();
     return () => {
@@ -53,6 +60,9 @@ export function AtlasScreen({ client }: { client: CommandClient }) {
           {load.error.retryable ? " (you can retry)" : ""}
         </p>
       )}
+      {load.phase === "ready" && refreshError !== null && <p role="alert">
+        Atlas refresh error {refreshError.code}: {refreshError.message} The previous atlas remains displayed. Refresh again to retry.
+      </p>}
       {load.phase === "ready" && <AtlasReady view={load.view} markers={load.markers} />}
     </section>
   );
@@ -166,7 +176,10 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
           {[...new Set(image.pins.map((pin) => pin.kind.kind))].sort().map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
         </select></label>
         <p role="status">{pins.length} of {image.pins.length} reference pins shown.</p>
-        {selectedPin !== null && !pins.some((pin) => pin.id === selectedPin) && <p role="note">The selected pin is hidden by the current filters.</p>}
+        {selectedPin !== null && !image.pins.some((pin) => pin.id === selectedPin)
+          ? <p role="note">The selected pin is no longer present in this atlas revision.</p>
+          : selectedPin !== null && !pins.some((pin) => pin.id === selectedPin)
+            ? <p role="note">The selected pin is hidden by the current filters.</p> : null}
         {pins.length === 0 ? (
           <p>{image.pins.length === 0 ? "This image has no pins." : "No reference pins match these filters."}</p>
         ) : (
