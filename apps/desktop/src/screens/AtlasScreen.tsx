@@ -24,7 +24,7 @@ type Load =
   | { phase: "error"; error: AppError }
   | { phase: "ready"; view: AtlasView; markers: SnapshotMarker[] };
 
-export function AtlasScreen({ client }: { client: CommandClient }) {
+export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient; refreshKey?: number }) {
   const [load, setLoad] = useState<Load>({ phase: "loading" });
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function AtlasScreen({ client }: { client: CommandClient }) {
     return () => {
       live = false;
     };
-  }, [client]);
+  }, [client, refreshKey]);
 
   return (
     <section aria-labelledby="atlas-heading" className="atlas">

@@ -1,41 +1,66 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { AppError, AppStatus, CommandClient } from "./commands";
 import type { CharacterSnapshotEnvelope } from "../../../schemas/v1/exchange";
 import { describeObservation } from "./observation";
+import { ImportScreen } from "./screens/ImportScreen";
+import { describeAge } from "./atlas/describe";
+import type { Freshness } from "./commands/contract";
 import { AtlasScreen } from "./screens/AtlasScreen";
 
-type Screen = "today" | "atlas";
+type Screen = "today" | "atlas" | "imports";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "atlas", label: "Atlas" },
+  { id: "imports", label: "Imports" },
 ];
 
 type Load =
   | { phase: "loading" }
   | { phase: "error"; error: AppError }
-  | { phase: "ready"; status: AppStatus; snapshot: CharacterSnapshotEnvelope | null };
+  | { phase: "ready"; status: AppStatus; snapshot: CharacterSnapshotEnvelope | null; freshness: Freshness | null };
 
 export function App({ client }: { client: CommandClient }) {
   const [load, setLoad] = useState<Load>({ phase: "loading" });
   const [screen, setScreen] = useState<Screen>("today");
 
+  const [revision, setRevision] = useState(0);
+  const watchedImport = useRef("");
+  const changed = useCallback(() => setRevision((value) => value + 1), []);
   useEffect(() => {
     let live = true;
     void (async () => {
       const status = await client.getAppStatus();
       if (!status.ok) return live && setLoad({ phase: "error", error: status.error });
       let snapshot: CharacterSnapshotEnvelope | null = null;
-      if (status.value.active_profile !== null) {
+      let freshness: Freshness | null = null;
+      if (status.value.data_mode === "stored" && status.value.active_profile !== null) {
+        const stored = await client.getStoredSnapshot(status.value.active_profile);
+        if (!stored.ok) return live && setLoad({ phase: "error", error: stored.error });
+        snapshot = stored.value?.envelope ?? null;
+        freshness = stored.value?.freshness ?? null;
+      } else if (status.value.active_profile !== null) {
         const snap = await client.getCharacterSnapshot(status.value.active_profile);
         if (!snap.ok) return live && setLoad({ phase: "error", error: snap.error });
         snapshot = snap.value;
       }
-      if (live) setLoad({ phase: "ready", status: status.value, snapshot });
+      if (live) setLoad({ phase: "ready", status: status.value, snapshot, freshness });
     })();
     return () => {
       live = false;
     };
-  }, [client]);
+  }, [client, revision]);
+
+  useEffect(() => {
+    let live = true;
+    const timer = window.setInterval(() => {
+      void client.getWatch().then((result) => {
+        if (!live || !result.ok || result.value.last_import === null) return;
+        const key = JSON.stringify(result.value.last_import);
+        if (key !== watchedImport.current) { watchedImport.current = key; changed(); }
+      });
+    }, 1000);
+    return () => { live = false; window.clearInterval(timer); };
+  }, [client, changed]);
 
   return (
     <main>
@@ -47,6 +72,7 @@ export function App({ client }: { client: CommandClient }) {
           {load.error.retryable ? " (you can retry)" : ""}
         </p>
       )}
+      {load.phase === "error" && <button type="button" onClick={changed}>Retry loading</button>}
       {load.phase === "ready" && (
         <nav aria-label="Primary">
           {SCREENS.map(({ id, label }) => (
@@ -61,13 +87,14 @@ export function App({ client }: { client: CommandClient }) {
           ))}
         </nav>
       )}
-      {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} />}
-      {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} />}
+      {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} freshness={load.freshness} />}
+      {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
+      {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
     </main>
   );
 }
 
-function Today({ status, snapshot }: { status: AppStatus; snapshot: CharacterSnapshotEnvelope | null }) {
+function Today({ status, snapshot, freshness }: { status: AppStatus; snapshot: CharacterSnapshotEnvelope | null; freshness: Freshness | null }) {
   return (
     <section aria-labelledby="today">
       {status.data_mode === "demo" && (
@@ -75,7 +102,11 @@ function Today({ status, snapshot }: { status: AppStatus; snapshot: CharacterSna
           DEMO — synthetic data, not from your game
         </p>
       )}
+      {status.data_mode === "stored" && snapshot !== null && (snapshot.fixture || snapshot.namespace === "demo") && (
+        <p className="demo-label" role="note">SYNTHETIC — fixture or demo data, not from your game</p>
+      )}
       <h2 id="today">Today</h2>
+      {freshness !== null && <p>Last imported: {describeAge(freshness)}</p>}
       {snapshot === null ? (
         <p>No character snapshot has been imported.</p>
       ) : (

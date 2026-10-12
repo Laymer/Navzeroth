@@ -57,3 +57,19 @@ describe("helpers", () => {
     });
   });
 });
+
+it("labels stored synthetic snapshots and uncertain age explicitly", async () => {
+  const snapshot = (await createClient(demoAdapter).getCharacterSnapshot("demo-character-paladin"));
+  if (!snapshot.ok) throw new Error("Expected demo fixture");
+  const adapter: CommandAdapter = {
+    invoke: (command) => {
+      if (command === "get_app_status") return Promise.resolve({ version: "0.1.0", data_mode: "stored", active_profile: "stored-full-context", capabilities: {} } as never);
+      if (command === "get_stored_snapshot") return Promise.resolve({ envelope: snapshot.value, profile_id: "stored-full-context", data_mode: "stored", freshness: { status: "uncertain", reason: "missing_or_untrusted_time" } } as never);
+      return Promise.reject(new Error("Unexpected command"));
+    },
+  };
+  render(<App client={createClient(adapter)} />);
+  expect(await screen.findByText(/SYNTHETIC — fixture or demo data/)).toBeInTheDocument();
+  expect(screen.getByText(/Last imported:.*uncertain/)).toBeInTheDocument();
+  expect(screen.getByText("demo-snapshot-001")).toBeInTheDocument();
+});
