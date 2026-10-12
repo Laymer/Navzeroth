@@ -2,7 +2,7 @@
 
 Plan version: 1.0 plus accepted ADRs 0001 and 0002
 Current milestone: M1
-Current task: M6.5 early atlas imagery slice (ADR 0002), IN_PROGRESS on feature/M6.5-atlas-imagery
+Current task: M6.5 early atlas imagery slice (ADR 0002), IMPLEMENTED_UNVERIFIED for PR-A on feature/M6.5-atlas-imagery ([draft PR 7](https://github.com/Laymer/Navzeroth/pull/7), hosted CI passed)
 Task owner: Claude Code (Fable 5.1), single writer
 Base revision: 0c90c25d2b8f21bd83f87436ba7eaaae9d7fda9d (origin/main after PR 6)
 Last updated: 2026-10-12
@@ -80,8 +80,10 @@ main pushes, merges and releases retain separate authorization requirements.
 M6.5 slice local: fmt, locked Clippy and tests passed (66 tests: 50 core, 16
 CLI); schema/TypeScript regeneration deterministic; `pnpm contracts:check`
 passed for 73 fixtures; `prepare-atlas` deterministic on the real poster;
-`--check-pointer` passed on a pointer-only worktree. Hosted CI for the branch:
-to be recorded after the push. Desktop, overlay and live-client behaviour
+`--check-pointer` passed on a pointer-only worktree. Hosted
+[run 38259693876](https://github.com/Laymer/Navzeroth/actions/runs/38259693876)
+on [draft PR 7](https://github.com/Laymer/Navzeroth/pull/7) passed all five
+checks at 5442c74, including the Windows pointer checks. Desktop, overlay and live-client behaviour
 remain unimplemented or unverified; calibration is provisional.
 [PR 5](https://github.com/Laymer/Navzeroth/pull/5) was merged into main on 2026-10-12 at 12:22:58 UTC as 2c8628b; [main run 38248682966](https://github.com/Laymer/Navzeroth/actions/runs/38248682966)
 passed all five checks on the merge revision.
