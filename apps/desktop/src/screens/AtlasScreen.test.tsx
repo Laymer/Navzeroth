@@ -296,3 +296,18 @@ it("distinguishes a removed selected pin from a filter-hidden selection", async 
   expect(screen.getByText("The selected pin is no longer present in this atlas revision.")).toBeInTheDocument();
   expect(screen.queryByText("The selected pin is hidden by the current filters.")).not.toBeInTheDocument();
 });
+
+
+it("renders schema-valid UTC limits without throwing and preserves a zero timestamp", async () => {
+  const marker = (fresh as unknown as SnapshotMarker[])[0];
+  if (!marker) throw new Error("Missing synthetic marker");
+  for (const timestamp of [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, 0]) {
+    const instance = renderAtlas(adapterWith({ get_snapshot_markers: () => [{ ...marker, observed_at_utc_ms: timestamp }] }));
+    const captured = await screen.findByText(/^Captured \(UTC\):/);
+    expect(captured).toHaveTextContent(timestamp === 0
+      ? "1970-01-01T00:00:00.000Z"
+      : `${timestamp} ms since epoch (outside date display range)`);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    instance.unmount();
+  }
+});
