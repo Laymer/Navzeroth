@@ -286,7 +286,7 @@ impl Parser<'_> {
                     continue;
                 }
                 Some(c) if is_ident_start(c) => {}
-                Some(_) => return Err(self.unexpected()),
+                Some(_) => return Err(Rejection::Syntax),
             }
             let name = self.ident().to_owned();
             if KEYWORDS.contains(&name.as_str()) {
