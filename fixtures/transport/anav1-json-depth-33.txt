@@ -1,0 +1,1 @@
+ANAV1:{"format":"azeroth-navigator","kind":"character_snapshot","schema_version":1,"x":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}

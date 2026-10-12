@@ -14,7 +14,7 @@
       { "title": "Azeroth Navigator", "width": 1100, "height": 760, "minWidth": 640, "minHeight": 480 }
     ],
     "security": {
-      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost"
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' atlas: http://atlas.localhost; connect-src 'self' ipc: http://ipc.localhost"
     }
   },
   "bundle": {

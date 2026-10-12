@@ -1,0 +1,17 @@
+{
+  "character": "c1",
+  "context": {"build": {"edition": "wow_forever", "build": "SYNTHETIC", "interface": "SYNTHETIC"}, "namespace": "demo"},
+  "config": {"max_observed_span_ms": 60000, "clock_tolerance_ms": 1000},
+  "events": [
+    {"session": "s1", "sequence": 5, "elapsed_ms": 40000, "kind": {"type": "level", "level": {"status": "known", "value": 11}}},
+    {"session": "s1", "sequence": 5, "elapsed_ms": 40000, "kind": {"type": "level", "level": {"status": "known", "value": 11}}},
+    {"session": "s1", "sequence": 4, "elapsed_ms": 25000, "kind": {"type": "equipment_changed", "item": {"context": {"build": {"edition": "wow_forever", "build": "SYNTHETIC", "interface": "SYNTHETIC"}, "namespace": "demo"}, "item_id": "i1", "variant": "base"}}},
+    {"session": "s1", "sequence": 4, "elapsed_ms": 25000, "kind": {"type": "equipment_changed", "item": {"context": {"build": {"edition": "wow_forever", "build": "SYNTHETIC", "interface": "SYNTHETIC"}, "namespace": "demo"}, "item_id": "i1", "variant": "base"}}},
+    {"session": "s1", "sequence": 3, "elapsed_ms": 20000, "kind": {"type": "quest_turn_in", "quest": "q1"}},
+    {"session": "s1", "sequence": 3, "elapsed_ms": 20000, "kind": {"type": "quest_turn_in", "quest": "q1"}},
+    {"session": "s1", "sequence": 2, "elapsed_ms": 10000, "kind": {"type": "level", "level": {"status": "known", "value": 10}}},
+    {"session": "s1", "sequence": 2, "elapsed_ms": 10000, "kind": {"type": "level", "level": {"status": "known", "value": 10}}},
+    {"session": "s1", "sequence": 1, "elapsed_ms": 0, "kind": {"type": "session_start"}},
+    {"session": "s1", "sequence": 1, "elapsed_ms": 0, "kind": {"type": "session_start"}}
+  ]
+}

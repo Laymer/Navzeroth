@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC fixture: fictional identifiers and an engineering-assumption weight, not game data.",
+  "fixtures": [
+    {
+      "name": "case-006-two-hand-shield.json",
+      "case": "CASE-006",
+      "expected": "2H + shield rejected with a reason; best valid is 1H + shield"
+    },
+    {
+      "name": "case-006-unknown-two-handed.json",
+      "case": "CASE-006",
+      "expected": "unknown two_handed pairing with an off-hand item is uncertain and excluded from known-valid results"
+    },
+    {
+      "name": "case-005-context-isolation.json",
+      "case": "CASE-005",
+      "expected": "same item_id stays distinct across variants; another build is a BuildMismatch"
+    }
+  ]
+}

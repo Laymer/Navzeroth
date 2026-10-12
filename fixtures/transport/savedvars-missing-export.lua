@@ -1,0 +1,3 @@
+AzerothNavigatorDB = {
+	["schema"] = 1,
+}

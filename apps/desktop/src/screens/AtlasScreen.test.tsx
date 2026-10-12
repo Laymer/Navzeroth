@@ -1,0 +1,209 @@
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { App } from "../App";
+import { createClient, type CommandAdapter } from "../commands";
+import { demoAdapter } from "../commands/demoAdapter";
+import type { AppError, AtlasView, CommandMap, CommandName, SnapshotMarker } from "../commands/contract";
+import fresh from "../../../../fixtures/desktop/atlas/snapshot-markers-fresh.json";
+import stale from "../../../../fixtures/desktop/atlas/snapshot-markers-stale.json";
+import restricted from "../../../../fixtures/desktop/atlas/snapshot-markers-location-restricted.json";
+import otherFloor from "../../../../fixtures/desktop/atlas/snapshot-markers-gap-different-floor.json";
+import { AtlasScreen } from "./AtlasScreen";
+
+type Overrides = Partial<{ [C in CommandName]: () => CommandMap[C]["output"] | Promise<CommandMap[C]["output"]> }>;
+
+/** The demo adapter with selected commands replaced by fixed answers. */
+function adapterWith(overrides: Overrides): CommandAdapter {
+  return {
+    invoke: (command, input) => {
+      const override = overrides[command];
+      if (override !== undefined) return Promise.resolve(override()) as never;
+      return demoAdapter.invoke(command, input);
+    },
+  };
+}
+const renderAtlas = (adapter: CommandAdapter) => render(<AtlasScreen client={createClient(adapter)} />);
+const markers = (golden: unknown) => () => golden as SnapshotMarker[];
+const noLive = () => expect(document.body.textContent).not.toMatch(/\blive\b/i);
+
+describe("Atlas screen over the demo atlas", () => {
+  it("loads from bundled demo data with no network, and keeps the DEMO label", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    renderAtlas(demoAdapter);
+    expect(screen.getByText("Loading the atlas…")).toBeInTheDocument();
+    expect(await screen.findByText(/DEMO — synthetic data/)).toBeInTheDocument();
+    expect(screen.getByText(/Dataset demo-imagery-r1 \(demo namespace, fixture\)/)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText(/Flight network/));
+    expect(screen.getByText(/DEMO — synthetic data/)).toBeInTheDocument();
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
+  it("labels the snapshot as last imported, never live, with approximate calibration shown", async () => {
+    renderAtlas(demoAdapter);
+    const badge = await screen.findByText(/^Last imported:/);
+    expect(badge).toHaveTextContent("Last imported: age uncertain");
+    expect(screen.getByText("Last imported position, age uncertain: approximate, uncalibrated")).toBeInTheDocument();
+    expect(screen.getAllByText("approximate, uncalibrated").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("uncertainty-ring")).toBeInTheDocument();
+    noLive();
+  });
+
+  it("states the age of a fresh and a stale import and flags staleness in words", async () => {
+    const view = renderAtlas(adapterWith({ get_snapshot_markers: markers(fresh) }));
+    expect(await screen.findByText("Last imported: captured 1 min ago")).toBeInTheDocument();
+    expect(screen.queryByText(/^Stale:/)).not.toBeInTheDocument();
+    view.unmount();
+
+    renderAtlas(adapterWith({ get_snapshot_markers: markers(stale) }));
+    expect(await screen.findByText("Last imported: captured 31 min ago (stale)")).toBeInTheDocument();
+    expect(screen.getByText(/^Stale: this position is older than 30 minutes/)).toBeInTheDocument();
+    noLive();
+  });
+
+  it("labels reference pins and layers as reference knowledge, not unlocks", async () => {
+    renderAtlas(demoAdapter);
+    const pins = await screen.findByRole("list");
+    expect(within(pins).getByText(/Reference flight master\. Not your unlocks/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Roads (traced, unverified)")).toBeChecked();
+    expect(screen.getByLabelText("Flight network (reference, not your unlocks)")).not.toBeChecked();
+  });
+
+  it("switches layers with the toggles", async () => {
+    renderAtlas(demoAdapter);
+    expect(await screen.findByText(/Showing layer: roads/)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText(/Flight network/));
+    expect(screen.getByText(/Showing layer: flight/)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText(/Flight network/));
+    fireEvent.click(screen.getByLabelText(/Roads/));
+    expect(screen.getByText(/Showing layer: overview/)).toBeInTheDocument();
+  });
+
+  it("explains a gap in words and draws no marker for it", async () => {
+    const { container } = renderAtlas(adapterWith({ get_snapshot_markers: markers(otherFloor) }));
+    expect(await screen.findByText(/^Not drawn: the position is on floor 1 of map demo-map-1/)).toBeInTheDocument();
+    expect(screen.getByText("Not drawn: position is on another floor")).toBeInTheDocument();
+    expect(container.querySelector("g.marker")).toBeNull();
+  });
+
+  it("never draws a guessed marker for a restricted location", async () => {
+    const { container } = renderAtlas(adapterWith({ get_snapshot_markers: markers(restricted) }));
+    expect(await screen.findByText("Location restricted by the game")).toBeInTheDocument();
+    expect(container.querySelector("g.marker")).toBeNull();
+    expect(screen.getByText("Last imported: captured 1 min ago")).toBeInTheDocument();
+  });
+});
+
+describe("schematic fallback", () => {
+  const withoutUrls = (view: AtlasView): AtlasView => ({
+    ...view,
+    images: view.images.map((i) => ({ ...i, layers: i.layers.map((l) => ({ ...l, url: null })) })),
+  });
+  it("renders when no layer URL exists, with pins and marker still placed", async () => {
+    const base = await demoAdapter.invoke("query_atlas", { image: null });
+    const { container } = renderAtlas(adapterWith({ query_atlas: () => withoutUrls(base) }));
+    expect(await screen.findByTestId("schematic")).toBeInTheDocument();
+    expect(screen.getByText(/Schematic view: no imagery could be shown/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing: schematic frame \(no imagery\)\./)).toBeInTheDocument();
+    expect(container.querySelector("img")).toBeNull();
+    expect(container.querySelector("g.marker")).not.toBeNull();
+    expect(container.querySelectorAll("g.pin").length).toBe(1);
+  });
+
+  it("renders when the images fail to load", async () => {
+    const { container } = renderAtlas(demoAdapter);
+    await screen.findByText(/Showing layer: roads/);
+    expect(screen.queryByTestId("schematic")).not.toBeInTheDocument();
+    // roads fails, then the overview base layer fails, leaving nothing to draw
+    for (let i = 0; i < 2; i += 1) {
+      const img = container.querySelector("img");
+      if (img !== null) fireEvent.error(img);
+    }
+    expect(await screen.findByTestId("schematic")).toBeInTheDocument();
+    expect(screen.getAllByText(/the image failed to load/).length).toBe(2);
+  });
+
+  it("shows why a refused layer is not drawn", async () => {
+    const base = await demoAdapter.invoke("query_atlas", { image: null });
+    const refused: AtlasView = {
+      ...base,
+      images: base.images.map((i) => ({
+        ...i,
+        layers: i.layers.map((l) => ({ ...l, url: null, availability: "integrity_mismatch" as const })),
+      })),
+    };
+    renderAtlas(adapterWith({ query_atlas: () => refused }));
+    expect((await screen.findAllByText(/refused, the file does not match its declared digest/)).length).toBe(3);
+    expect(screen.getByTestId("schematic")).toBeInTheDocument();
+  });
+});
+
+describe("loading, empty, error and stale states are distinct", () => {
+  it("loading", () => {
+    renderAtlas({ invoke: () => new Promise(() => undefined) });
+    expect(screen.getByRole("status")).toHaveTextContent("Loading the atlas…");
+  });
+
+  it("error shows the code and the safe message", async () => {
+    const error: AppError = { code: "DATASET_INCOMPLETE", message: "Atlas dataset is incomplete", retryable: false };
+    renderAtlas({ invoke: () => Promise.reject(error) });
+    expect(await screen.findByRole("alert")).toHaveTextContent("Atlas error DATASET_INCOMPLETE: Atlas dataset is incomplete");
+  });
+
+  it("empty: no dataset", async () => {
+    const base = await demoAdapter.invoke("query_atlas", { image: null });
+    renderAtlas(adapterWith({ query_atlas: () => ({ ...base, images: [] }) }));
+    expect(await screen.findByText("No atlas dataset is installed, so there is no map to show.")).toBeInTheDocument();
+    expect(screen.getByText(/DEMO — synthetic data/)).toBeInTheDocument();
+  });
+
+  it("empty: no snapshot, but the map is still usable", async () => {
+    renderAtlas(adapterWith({ get_snapshot_markers: () => [] }));
+    expect(await screen.findByText("No snapshot imported")).toBeInTheDocument();
+    expect(screen.getByText("No imported snapshot: no position to show")).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: /Atlas map of demo-image-1/ })).toBeInTheDocument();
+  });
+
+  it("the state texts differ from one another", async () => {
+    const texts = new Set<string>();
+    const a = renderAtlas({ invoke: () => new Promise(() => undefined) });
+    texts.add(screen.getByRole("status").textContent ?? "");
+    a.unmount();
+    const b = renderAtlas(adapterWith({ get_snapshot_markers: markers(stale) }));
+    texts.add((await screen.findByText(/^Stale:/)).textContent ?? "");
+    b.unmount();
+    const c = renderAtlas(adapterWith({ get_snapshot_markers: () => [] }));
+    texts.add((await screen.findByText("No snapshot imported")).textContent ?? "");
+    c.unmount();
+    expect(texts.size).toBe(3);
+  });
+});
+
+describe("keyboard", () => {
+  it("handles map keys only when the map region has focus", async () => {
+    renderAtlas(demoAdapter);
+    const region = await screen.findByRole("group", { name: /Atlas map of demo-image-1/ });
+    expect(region).toHaveAttribute("tabindex", "0");
+    expect(region).toHaveAccessibleDescription(/arrow keys pan/);
+    const layer = region.querySelector<HTMLElement>(".map-layer");
+    const before = layer?.style.transform;
+    fireEvent.keyDown(region, { key: "+" });
+    expect(layer?.style.transform).not.toBe(before);
+    fireEvent.keyDown(region, { key: "0" });
+    expect(layer?.style.transform).toBe(before);
+  });
+});
+
+describe("navigation", () => {
+  it("switches between Today and Atlas and keeps the DEMO label on both", async () => {
+    render(<App client={createClient(demoAdapter)} />);
+    expect(await screen.findByText("demo-snapshot-001")).toBeInTheDocument();
+    const nav = screen.getByRole("navigation", { name: "Primary" });
+    expect(within(nav).getByRole("button", { name: "Today" })).toHaveAttribute("aria-current", "page");
+    fireEvent.click(within(nav).getByRole("button", { name: "Atlas" }));
+    expect(await screen.findByRole("heading", { name: "Atlas" })).toBeInTheDocument();
+    expect(await screen.findByText(/DEMO — synthetic data/)).toBeInTheDocument();
+    expect(within(nav).getByRole("button", { name: "Atlas" })).toHaveAttribute("aria-current", "page");
+    fireEvent.click(within(nav).getByRole("button", { name: "Today" }));
+    expect(await screen.findByText("demo-snapshot-001")).toBeInTheDocument();
+  });
+});
