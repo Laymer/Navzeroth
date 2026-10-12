@@ -157,3 +157,7 @@ reads, participant scans and modifier comparisons. Limit exhaustion is an error,
 not False or a partially successful evaluation. Rule expiry uses trusted current
 UTC; missing trust yields Unknown and reaching expiry yields False. Cooldown,
 dismissal, trigger dispatch and UI behavior remain the caller's responsibility.
+
+## Wave-1 foundations and wave-2 boundary
+
+Merged library modules include travel, eligibility, gear, reminders, sessions, sources and coverage. SQLite snapshot ordering and bounded ANAV1/SavedVariables parsing live in separate storage/ingest crates. These are synthetic or imported-state foundations, not verified live integrations. Wave 2 retains exchange schemas and uses explicit desktop DTOs; see ADR 0004.

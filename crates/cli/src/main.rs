@@ -16,7 +16,7 @@ use std::{
 
 const USAGE: &str = "Unsupported command or options. Implemented: export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
-    validate-fixtures. See README.md.";
+    validate-fixtures; validate-content --input <file-or-dir> [--json]. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
 /// This list is explicit on purpose: the command never globs `fixtures/**`.
@@ -206,6 +206,33 @@ fn main() -> ExitCode {
             export_schemas(Path::new(dir))
         }
         [command] if command == "validate-fixtures" => validate_fixtures(),
+        [command, flag, input, rest @ ..]
+            if command == "validate-content"
+                && flag == "--input"
+                && (rest.is_empty() || rest == [OsString::from("--json")]) =>
+        {
+            match azeroth_cli::content::reports(Path::new(input)) {
+                Ok(reports) => {
+                    if rest.is_empty() {
+                        print!("{}", azeroth_cli::content::human(&reports));
+                    } else {
+                        println!(
+                            "{}",
+                            serde_json::to_string_pretty(&reports).expect("report serialization")
+                        );
+                    }
+                    if reports.iter().all(|report| report.passes) {
+                        ExitCode::SUCCESS
+                    } else {
+                        ExitCode::FAILURE
+                    }
+                }
+                Err(message) => {
+                    eprintln!("validate-content: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
         [command, rest @ ..] if command == "prepare-atlas" => match parse_atlas_args(rest) {
             Some(parsed) => prepare_atlas(&parsed),
             None => {
