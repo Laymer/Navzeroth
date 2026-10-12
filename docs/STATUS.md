@@ -1,10 +1,10 @@
 # Project status
 
-Plan version: 1.0 plus accepted ADRs 0001 and 0002
+Plan version: 1.0 plus accepted ADRs 0001, 0002 and 0003
 Current milestone: M1
-Current task: M1.4 minimal Tauri/React shell with explicit demo mode and typed command wrappers, IMPLEMENTED_UNVERIFIED (native window not launched; hosted Windows build passed) on feature/M1.4-desktop-shell (M6.5 PR-A merged as PR 7)
-Task owner: Claude Code (Sonnet 5.5), single writer
-Base revision: 03f5091a101ec583b1e701056547933e8dbb9b7f (origin/main after PR 7)
+Current task: wave-1 parallel delegation per [ADR 0003](decisions/0003-wave1-parallel-delegation.md); twelve packages claimed below (M1.4 merged as PR 8)
+Task owner: Claude Code (Fable 5.1) orchestrating one Sonnet 5.5 writer per package
+Base revision: 8cca94d (origin/main after PR 8)
 Last updated: 2026-10-12
 Overall state: M1.1 reviewed/corrected; M1.6 CI, expanded M1.2 and M1.3 contracts merged and verified for their scopes; M1.4, M1.5 and M1.7 remain
 
@@ -110,6 +110,32 @@ reference resolution (M3) remain open.
 
 ## M1.4 delivery
 React/Vite shell with DEMO label, typed command wrappers, azeroth-app handlers, Tauri 2 shell with empty capabilities and a Windows CI job. Hosted [run 38261091221](https://github.com/Laymer/Navzeroth/actions/runs/38261091221) passed six jobs; no window launched. See the [M1.4 handoff](handoffs/2026-10-12-M1.4-desktop-shell.md).
+
+## Wave-1 parallel claims (2026-10-12, base 8cca94d)
+Owner for every row: Claude Code (Sonnet 5.5), one writer per package, one
+clone per writer; see [ADR 0003](decisions/0003-wave1-parallel-delegation.md)
+for the frozen files, single owners and interface decisions. Acceptance for
+every row: fmt, locked Clippy and tests (`--exclude azeroth-desktop`),
+`prepare-atlas --check-pointer`, `pnpm contracts:types` with no diff,
+`pnpm contracts:check`, hosted CI on the draft PR; each row also lists its
+own checks. Each package records its claim and handoff in
+`docs/handoffs/2026-10-12-<task>.md`. PR numbers are added by the
+integration docs PR.
+
+| Package | Tasks | Branch | Expected files | Package-specific acceptance |
+| --- | --- | --- | --- | --- |
+| P1 | M1.7 (+M2.4 rules) | feature/M1.7-storage | crates/storage/**, Cargo.toml member, Cargo.lock | migration test against the previous schema; CASE-007/008/009/015 |
+| P2 | M2.2, M2.3 parser, M1.5 stub | feature/M2.2-ingest | crates/ingest/**, fixtures/transport/**, crates/cli/**, schemas/v1/README.md (ANAV1), Cargo.toml member, Cargo.lock | malicious SavedVariables sample never executes; `validate-fixtures` runs the two manifests |
+| P3 | M4.1 | feature/M4.1-travel-graph | crates/core/src/travel.rs, lib.rs line, tests/travel.rs | CASE-004; disconnected graph reports an incomplete route |
+| P4 | M4.2 | feature/M4.2-eligibility | crates/core/src/eligibility.rs, lib.rs line, tests/eligibility.rs | CASE-001/002 |
+| P5 | M5.1-M5.3 (structure, synthetic weights) | feature/M5.1-gear-core | crates/core/src/gear/**, lib.rs line, gear tests, fixtures/gear/**, docs/data/ROLE_PROFILES.md | CASE-005/006/015 |
+| P6 | M7.1 | feature/M7.1-reminders | crates/core/src/reminders.rs, lib.rs line, tests/reminders.rs | unchanged state repeats no advice; unknown suppression is conservative |
+| P7 | M8.3 (pure slice) | feature/M8.3-session-intervals | crates/core/src/sessions.rs, lib.rs line, tests/sessions.rs, fixtures/sessions/v1/** | CASE-007; reload/clock-change gaps; offline never Observed |
+| P8 | M3.2 | feature/M3.2-provider-registry | crates/core/src/sources.rs, lib.rs line, tests/sources.rs | CASE-005/015; precedence never discards evidence |
+| P9 | M3.5 (library) | feature/M3.5-coverage-report | crates/core/src/coverage.rs, lib.rs line, tests/coverage.rs, fixtures/coverage/v1/** | prerequisite cycles and dangling references fail validation |
+| P10 | M6.1 (ADR 0002 PR-B) | feature/M6.1-atlas-screen | crates/app/**, apps/desktop/**, apps/desktop/src-tauri/**, fixtures/desktop/atlas/** | desktop typecheck/lint/test:unit/build; Desktop shell Windows job; IMPLEMENTED_UNVERIFIED |
+| P11 | M0.3 (skeleton, unverifiable) | feature/M0.3-diagnostic-addon | addons/**, .luacheckrc, crates/lua-harness/**, fixtures/addon/**, docs/compatibility/ADDON_*.md and LUA_RUNTIME_DIFFERENCES.md, ci.yml (one job), Cargo.toml member, Cargo.lock | harness tests; Lua static checks job; IMPLEMENTED_UNVERIFIED |
+| P12a | M2.5 (Rust-side corpus) | feature/M2.5-predicate-parity-corpus | fixtures/predicates/v1/**, crates/core/tests/predicate_parity.rs | every manifest case consumed; expected values produced by Rust |
 
 ## Next dependency-ready work
 M1.7 and the atlas screen (M6.1) are dependency-ready; M1.5 extends the M1.3 fixture

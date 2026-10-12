@@ -1,0 +1,149 @@
+{
+  "description": "Every branch is checked against the snapshot's DataContext before evaluation; a mismatch is an error, never false or unknown.",
+  "schema_version": 1,
+  "snapshots": {
+    "populated": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "bad_equipment_context": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},
+    "bad_location_context": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}}
+  },
+  "parties": {},
+  "cases": [
+    {
+      "id": "ctx-item-reference-namespace",
+      "note": "Same item_id in a reference key must not match a demo item",
+      "case_ref": "CASE-005",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"item_id":"item1","variant":"base"},"modifiers":{}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-item-reference-in-skipped-any",
+      "note": "any short-circuits on the first operand; validation still fails",
+      "case_ref": "CASE-005",
+      "predicate": {"op":"any","predicates":[{"op":"all","predicates":[]},{"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"item_id":"item1","variant":"base"},"modifiers":{}}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-item-reference-in-skipped-all",
+      "note": "all short-circuits on false; validation still fails",
+      "case_ref": "CASE-015",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":23},{"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"item_id":"item1","variant":"base"},"modifiers":{}}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-item-other-build",
+      "note": "A rule for another build is not silently applied",
+      "case_ref": "CASE-011",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC-2","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-item-other-edition",
+      "case_ref": "CASE-011",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"other_edition","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-location-reference-namespace",
+      "case_ref": "CASE-015",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"map_id":"map1","floor":"ground","instance":null},"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-location-reference-in-skipped-all",
+      "case_ref": "CASE-015",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":23},{"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"map_id":"map1","floor":"ground","instance":null},"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1}}}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-mismatch-behind-absent-participant",
+      "note": "A participant that is never scanned is still validated",
+      "case_ref": "CASE-011",
+      "predicate": {"op":"participant_state","participant":"char9","predicate":{"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC-2","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-mismatch-under-not",
+      "predicate": {"op":"not","predicate":{"op":"not","predicate":{"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"reference"},"item_id":"item1","variant":"base"},"modifiers":{}}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"error":"BUILD_MISMATCH"}
+    },
+    {
+      "id": "ctx-matching-context-other-item",
+      "note": "Control: compatible context, different item is false",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item2","variant":"base"},"modifiers":{}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "ctx-snapshot-reference-item",
+      "note": "A snapshot mixing namespaces is rejected when decoded",
+      "case_ref": "CASE-015",
+      "predicate": {"op":"level_at_least","level":22},
+      "snapshot": "bad_equipment_context",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"rejected":true}
+    },
+    {
+      "id": "ctx-snapshot-reference-location",
+      "case_ref": "CASE-015",
+      "predicate": {"op":"level_at_least","level":22},
+      "snapshot": "bad_location_context",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"rejected":true}
+    }
+  ]
+}
