@@ -1,3 +1,7 @@
 # Contract artifacts are compared byte for byte across Linux and Windows.
 schemas/** text eol=lf
 fixtures/** text eol=lf
+
+# Binary imagery; LFS-tracked under content/ (see content/forever/atlas/NOTICE).
+*.png binary
+content/**/*.png filter=lfs diff=lfs merge=lfs -text

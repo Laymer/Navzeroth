@@ -1,0 +1,17 @@
+The files under content/forever/atlas/ are NOT covered by the repository's
+BSD-3-Clause licence.
+
+Eastern Kingdoms travel atlas (eastern-kingdoms/): composite poster supplied
+by the repository owner, who states redistribution rights for this composite
+(see docs/data/atlas-eastern-kingdoms.md). Attribution from the poster footer,
+kept verbatim:
+
+  Terrain and zone boundaries: WoWForeverMap.com
+  Flight records and paths: EndgameTools.com
+  Reference data: beta build 1.60.1.70205. Routes and access may change during beta.
+  Map artwork (c) Blizzard Entertainment.
+  Main-road overlay manually traced from terrain and map artwork.
+  Use the in-game map for exact local junctions.
+
+No licence is recorded for WoWForeverMap.com, EndgameTools.com or Blizzard
+Entertainment material. Derived crops and overviews carry the same notice.

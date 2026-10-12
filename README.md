@@ -82,6 +82,14 @@ No application package exists under `apps/` yet. `apps/desktop` and its
 - Tauri desktop build/dev commands (M1.4).
 - SQLite migrations/storage adapter (M1.7).
 
+## Content and imagery
+
+`content/forever/atlas/` holds owner-supplied map imagery under Git LFS. Those
+files are **not** covered by the BSD-3-Clause licence of this repository; see
+`content/forever/atlas/NOTICE` and [docs/data](docs/data/SOURCES.md). Install
+Git LFS (`git lfs install`) before cloning or pulling to materialize them; CI
+never downloads them.
+
 ## Collaboration records
 
 Use [STATUS](docs/STATUS.md) and the latest linked handoff for current ownership,

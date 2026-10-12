@@ -28,3 +28,6 @@ node_modules/
 dist/
 .pnpm-store/
 *.log
+
+# Windows download markers copied through WSL
+*:Zone.Identifier
