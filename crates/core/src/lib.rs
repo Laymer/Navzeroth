@@ -11,4 +11,5 @@ pub mod gear;
 pub mod json;
 pub mod observation;
 pub mod predicate;
+pub mod reminders;
 pub mod types;
