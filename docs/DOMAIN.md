@@ -161,3 +161,38 @@ dismissal, trigger dispatch and UI behavior remain the caller's responsibility.
 ## Wave-1 foundations and wave-2 boundary
 
 Merged library modules include travel, eligibility, gear, reminders, sessions, sources and coverage. SQLite snapshot ordering and bounded ANAV1/SavedVariables parsing live in separate storage/ingest crates. These are synthetic or imported-state foundations, not verified live integrations. Wave 2 retains exchange schemas and uses explicit desktop DTOs; see ADR 0004.
+
+## Wave-2 services and independent library foundations
+
+`planner` applies exclusions and three-valued predicate/quest eligibility before
+exact utility/time comparisons. Utilities and versioned goal profiles are caller
+inputs; completion, service and stopping time count toward expected feasibility.
+Routes retain their declared uncertainty. Intermediate stateful travel is excluded
+rather than assuming cooldown resets. The baseline does not simulate future quest
+unlocks or invent party fairness weights.
+
+`gear::acquisition` separates guaranteed, uncertain and unavailable opportunities.
+Probability estimates require an explicit independent player-acquisition model;
+finite trial capacity differs from infinite-horizon expected attempts. Caller
+spending budgets differ from observed balances, whose freshness must support use.
+Full reward identities avoid duplicate credits. No currency/time conversion exists.
+`gear::lua` compiles bounded synthetic scoring DTOs; Lua agrees with Rust fixed-point
+components/rounding/ties. Neither compilation nor scoring establishes equip legality.
+
+`analytics` consumes validated session builds, checks public timing totals and
+clock fields, and preserves original identity/context/observation metadata. Observed
+level change, unique turn-ins and equipment-change counts do not invent XP, loot or
+combat data. Observed/estimated/unclassified/gap/uncovered time remains separate.
+Covered monotonic time is not wall-clock duration.
+
+`azeroth-app::snapshots` provides explicit import/query/profile/watch DTOs over
+bounded normalization and existing SQLite storage on blocking workers. Opaque
+profile IDs resolve the complete key; receipt freshness and fixture flags survive
+storage outcomes. Desktop imports are character-only for this wave. Lua plan state
+is transactionally replaced only on validated import; invalidation is not completion.
+
+Storage schema v2 adds immutable, bounded reference revisions, source/conflict
+records and context/fixture-qualified active pointers. Staging/activation revalidate
+coverage, sources and identity; failure preserves the old active revision. Rollback
+and supported online SQLite backup retain existing snapshot hash behavior. These
+storage tables are separate from the unchanged v1 exchange schema.
