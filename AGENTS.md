@@ -26,5 +26,7 @@ Live WoW checks require evidence from the recorded client build.
 Mark missing environment checks unverified and continue independent work.
 
 Do not expose secrets or commit personal exports.
-Do not push, merge, publish, purchase, or create external accounts without
-applicable user authorization. Routine reversible repository work may proceed.
+Routine feature-branch pushes and draft pull requests are authorized by default.
+Main-branch pushes, merges, releases, purchases, and external account creation
+require applicable user authorization. Never force-push main.
+Routine reversible repository work may proceed. Preserve published history.

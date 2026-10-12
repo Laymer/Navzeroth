@@ -26,8 +26,9 @@ Check the existing worktree and claim a dependency-ready task before editing.
 - Cloud sessions cannot reach that checkout: the link to the owner's computer
   refuses `\\wsl.localhost` paths. Work on a clone of Laymer/Navzeroth and
   exchange changes through GitHub; after a push, the owner runs `git pull` in WSL.
-- Neither WSL nor a cloud session can verify Windows packaging, native dialogs,
-  WoW paths, or live-client behavior
+- Linux/WSL checks cannot verify native Windows packaging, dialogs, selected
+  WoW paths, or live-client behavior. A Windows runner can provide build evidence;
+  interactive and live-client checks still require their actual environments
   ([plan §5.2](AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#52-windows-and-wsl-development)).
   Record those checks as unverified.
 
@@ -36,8 +37,9 @@ Check the existing worktree and claim a dependency-ready task before editing.
 - Follow [plan §21.4](AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#214-branch-and-commit-convention):
   prefix the subject with the task ID (`M1.2: …`), or `docs:` for changes that
   belong to no task.
-- Author commits as `Igor K <i.kopest@gmail.com>` and keep the Co-Authored-By and
-  session trailers the session supplies.
-- By default, push a branch and open a pull request. Push directly to `main` only
-  when the owner asks for that for the change at hand. Never force-push `main`.
-- Before pushing, fetch `origin/main` and rebase onto it.
+- Use the configured Git author unless the owner specifies another identity.
+  Keep genuine Co-Authored-By and session trailers the session supplies.
+- Follow AGENTS.md for publication authorization: routine feature-branch pushes
+  and draft PRs are authorized; main pushes, merges, and releases are separate.
+- Before pushing, fetch `origin/main`. Rebase unpublished work; incorporate later
+  main changes without rewriting published history.

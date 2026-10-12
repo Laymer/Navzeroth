@@ -1920,7 +1920,7 @@ Use the existing repository convention if one exists. Otherwise:
 - Preserve unrelated uncommitted changes.
 - Never use reset/clean/force-push to remove another contributor's work.
 - Do not commit account data, tokens, game directory copies, or personal exports.
-- Keep local and remote actions distinct; push/merge/publish only within the user's authorization.
+- Routine feature-branch pushes and draft PRs are authorized by default under AGENTS.md. Main pushes, merges, and releases require applicable user authorization. Preserve published history.
 
 A local implementation can be reviewed as a commit or as a patch. Do not claim a remote PR exists unless one was actually created.
 
@@ -2043,8 +2043,10 @@ Live WoW checks require evidence from the recorded client build.
 Mark missing environment checks unverified and continue independent work.
 
 Do not expose secrets or commit personal exports.
-Do not push, merge, publish, purchase, or create external accounts without
-applicable user authorization. Routine reversible repository work may proceed.
+Routine feature-branch pushes and draft pull requests are authorized by default.
+Main-branch pushes, merges, releases, purchases, and external account creation
+require applicable user authorization. Never force-push main.
+Routine reversible repository work may proceed. Preserve published history.
 ~~~
 
 ### 22.2 Suggested CLAUDE.md
