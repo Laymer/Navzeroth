@@ -8,4 +8,5 @@ pub mod evaluation;
 pub mod json;
 pub mod observation;
 pub mod predicate;
+pub mod sessions;
 pub mod types;
