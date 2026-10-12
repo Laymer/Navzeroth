@@ -59,6 +59,20 @@ jobs:
           done < <(git ls-files -z | git check-attr --stdin -z filter | awk 'BEGIN{RS="\0"; ORS="\0"} NR%3==1{p=$0} NR%3==0 && $0=="lfs"{print p}')
           exit $status
       - run: git diff --exit-code
+  lua:
+    name: Lua static checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      # Runs the pinned luacheck 0.26.1 image against the committed .luacheckrc. The
+      # Lua functional tests run in the Rust jobs (crates/lua-harness).
+      - uses: lunarmodules/luacheck@2445a9dd3859655646bd6eb848459f2b46b4a3e3 # v0.26.1
+        with:
+          args: --no-color addons/AzerothNavigator
+      - run: git diff --exit-code
   pnpm:
     name: pnpm ${{ matrix.platform }}
     strategy:
