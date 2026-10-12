@@ -1,8 +1,10 @@
 //! Command handlers behind the Tauri boundary (plan section 13). They are plain
 //! functions so they are tested without a webview; the desktop shell only
-//! registers them. Until the storage adapter exists (M1.7), the only data is
-//! the synthetic demo fixture, and every response says so.
+//! registers them. [`snapshots`] assembles bounded ingest and SQLite for the
+//! desktop workflow. The free functions below remain explicit synthetic-demo
+//! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
+pub mod snapshots;
 
 use azeroth_core::contract::decode_envelope;
 use azeroth_core::entities::CharacterSnapshot;
@@ -11,12 +13,11 @@ use serde::Serialize;
 
 const DEMO_SNAPSHOT: &str = include_str!("../../../fixtures/contracts/v1/character-snapshot.json");
 
-/// Where displayed data comes from. `Stored` is reserved for M1.7 and later.
+/// Where displayed data comes from. Fixture status is independent of storage.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum DataMode {
     Demo,
-    #[allow(dead_code)]
     Stored,
 }
 

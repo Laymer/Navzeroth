@@ -5,6 +5,7 @@ import type {
   CharacterSnapshotEnvelope,
   Confidence,
   DatasetNamespace,
+  DataContext,
   ImageLayerKind,
   ImagePin,
   MapKey,
@@ -47,6 +48,44 @@ export interface ProfileSummary {
   id: string;
   display_name: string;
   data_mode: DataMode;
+  context?: DataContext;
+  fixture?: boolean;
+  snapshot_count?: number;
+}
+
+export type FileInputFormat = { kind: "anav1_text" } | { kind: "saved_variables"; global: string; key: string };
+export type ImportDisposition =
+  | { outcome: "stored"; previous_current: string | null }
+  | { outcome: "duplicate" }
+  | { outcome: "history_only"; reason: "older" | "same_position" | "incomparable" };
+export interface ImportReceipt {
+  profile_id: string;
+  snapshot_id: string;
+  disposition: ImportDisposition;
+  fixture: boolean;
+  namespace: DatasetNamespace;
+  freshness: Freshness;
+  data_mode: DataMode;
+}
+export interface StoredSnapshot {
+  envelope: CharacterSnapshotEnvelope;
+  profile_id: string;
+  freshness: Freshness;
+  data_mode: DataMode;
+}
+export interface HistoryEntry {
+  snapshot_id: string;
+  is_current: boolean;
+  freshness: Freshness;
+  observed_at_utc_ms: number | null;
+  received_at_utc_ms: number | null;
+}
+export type WatchStatus = "waiting_for_stable_file" | "imported" | "missing" | "unreadable" | "invalid_file" | "retry_pending" | "retry_exhausted" | "cancelled";
+export interface WatchState {
+  active: boolean;
+  status: WatchStatus | null;
+  last_import: ImportReceipt | null;
+  error: AppError | null;
 }
 
 // --- Atlas DTOs ------------------------------------------------------------
@@ -150,6 +189,14 @@ export interface CommandMap {
     input: { profile_id: string };
     output: CharacterSnapshotEnvelope;
   };
+  import_snapshot_text: { input: { text: string }; output: ImportReceipt };
+  import_snapshot_file: { input: { path: string; format: FileInputFormat }; output: ImportReceipt };
+  start_snapshot_watch: { input: { path: string; format: FileInputFormat }; output: WatchState };
+  stop_snapshot_watch: { input: undefined; output: WatchState };
+  get_snapshot_watch: { input: undefined; output: WatchState };
+  select_profile: { input: { profile_id: string }; output: null };
+  get_stored_snapshot: { input: { profile_id: string }; output: StoredSnapshot | null };
+  get_snapshot_history: { input: { profile_id: string; limit: number }; output: HistoryEntry[] };
   query_atlas: { input: { image: string | null }; output: AtlasView };
   /** One to 64 positions. */
   project_positions: { input: { positions: Position[] }; output: ProjectedPosition[] };

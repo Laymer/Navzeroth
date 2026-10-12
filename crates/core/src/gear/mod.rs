@@ -10,8 +10,9 @@
 //! truth, and nothing here claims Classic behaviour holds for Forever.
 //!
 //! Wave-1 types are internal library types: they are not registered in the
-//! contract schema. Practical ranking and acquisition value (M5.4) are not
-//! implemented and nothing in this module is ever labelled `Ranking::Practical`.
+//! contract schema. Finite-session acquisition assessment is available separately from ranking;
+//! nothing in this module is ever labelled `Ranking::Practical`.
+pub mod acquisition;
 pub mod configuration;
 pub mod eligibility;
 pub mod inputs;
@@ -19,6 +20,7 @@ pub mod lua;
 pub mod profile;
 pub mod score;
 
+pub use acquisition::*;
 pub use configuration::*;
 pub use eligibility::*;
 pub use inputs::*;

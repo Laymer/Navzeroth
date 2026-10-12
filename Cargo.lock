@@ -87,6 +87,8 @@ name = "azeroth-app"
 version = "0.1.0"
 dependencies = [
  "azeroth-core",
+ "azeroth-ingest",
+ "azeroth-storage",
  "serde",
  "serde_json",
  "sha2",
