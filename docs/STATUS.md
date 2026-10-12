@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: final wave-2 merge documentation; next implementation task unclaimed.
-Owner: Codex root (merge coordination); implementation owners are in ADR 0004.
+Current task: M7.3 local party persistence foundation delivered locally; Party UI/eligibility integration next.
+Owner: Codex root, sole writer; claimed 2026-10-13 at baseline c357bf1.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
 Task PRs through #36 are merged into protected main f2f64a3 after fresh CI.
@@ -19,7 +19,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Caller supplies clusters/goal utilities; planner UI/export integration remains. |
 | M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
-| M7 | IN_PROGRESS | Pure reminder foundations; integrated party/preparation workflows remain. |
+| M7 | IN_PROGRESS | Pure reminders and bounded local party configuration with per-participant snapshot/freshness DTOs; Party UI/planner and preparation workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
 | M9 | IN_PROGRESS | Today/Imports/Atlas workflow and browser tests; remaining planning/gear/session screens and packaging remain. |
 | M10 | TODO | Optional native reference overlay. |
@@ -64,8 +64,10 @@ access was added. Remaining watcher/platform/model limitations are in the handof
 
 ## Next dependency-ready work
 
-The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Integrate party persistence,
-planner/export UI and analytical display using existing explicit DTO boundaries;
+The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Local party persistence is delivered;
+see the [M7.3 handoff](handoffs/2026-10-13-M7.3-party-persistence.md).
+Integrate the Party screen and per-participant eligibility, planner/export UI
+and analytical display using existing explicit DTO boundaries;
 author permitted real content and explicit goal/gear models. Live client checks
 need sanitized evidence from the recorded build. Releases and PR/main merges need
 separate applicable authorization.

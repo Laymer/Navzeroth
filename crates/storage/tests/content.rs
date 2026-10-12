@@ -338,7 +338,10 @@ fn v1_snapshot_database_upgrades_without_changing_snapshot_hash_or_state() {
     drop(conn);
     let before = dump_state(&db.path);
     let store = SqliteStore::open(&db.path).unwrap();
-    assert_eq!(store.schema_version().unwrap(), 2);
+    assert_eq!(
+        store.schema_version().unwrap(),
+        azeroth_storage::migrations::latest_version()
+    );
     assert_eq!(dump_state(&db.path), before);
     let key = ProfileKey::of(&snapshot);
     assert_eq!(

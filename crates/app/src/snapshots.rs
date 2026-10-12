@@ -6,7 +6,7 @@ use azeroth_core::{
     entities::CharacterSnapshot,
     error::{AppError, ErrorCode, Result},
     observation::{ClockTrust, Freshness, FreshnessContext, freshness},
-    types::{DataContext, DatasetNamespace, Millis, SnapshotId, UtcMillis},
+    types::{DataContext, DatasetNamespace, Millis, PartyId, SnapshotId, UtcMillis},
 };
 use azeroth_ingest::{
     import::{ExportLocation, FileFormat, ImportOptions, ImportResult, import_file, import_text},
@@ -67,6 +67,19 @@ pub struct StoredSnapshot {
     pub profile_id: String,
     pub freshness: Freshness,
     pub data_mode: DataMode,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct StoredParty {
+    pub id: PartyId,
+    pub data_mode: DataMode,
+    pub participants: Vec<PartyParticipant>,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct PartyParticipant {
+    pub profile_id: String,
+    pub character: azeroth_core::types::CharacterId,
+    /// None means no imported current snapshot, including a deleted profile.
+    pub snapshot: Option<StoredSnapshot>,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct HistoryEntry {
@@ -283,6 +296,62 @@ impl SnapshotApplication {
         resolve(&state.store, id)?;
         state.selected = Some(id.to_owned());
         Ok(())
+    }
+    /// Explicit local configuration; never imports or alters participant state.
+    pub fn save_party(&self, id: &PartyId, profile_ids: &[String]) -> Result<()> {
+        if profile_ids.is_empty() || profile_ids.len() > azeroth_storage::party::MAX_PARTICIPANTS {
+            return Err(invalid("Party participant count is out of range"));
+        }
+        let mut state = self.lock()?;
+        let participants = profile_ids
+            .iter()
+            .map(|id| resolve(&state.store, id))
+            .collect::<Result<Vec<_>>>()?;
+        state
+            .store
+            .save_party(&azeroth_storage::party::PartyProfile {
+                id: id.clone(),
+                participants,
+            })
+    }
+    pub fn party_ids(&self) -> Result<Vec<PartyId>> {
+        self.lock()?.store.party_ids()
+    }
+    pub fn delete_party(&self, id: &PartyId) -> Result<bool> {
+        self.lock()?.store.delete_party(id)
+    }
+    /// One consistent service view; freshness is computed separately per capture.
+    pub fn party(&self, id: &PartyId, now: Option<UtcMillis>) -> Result<Option<StoredParty>> {
+        let state = self.lock()?;
+        let Some(party) = state.store.party(id)? else {
+            return Ok(None);
+        };
+        let participants = party
+            .participants
+            .into_iter()
+            .map(|key| {
+                let id = profile_id(&key)?;
+                let snapshot = state
+                    .store
+                    .current_snapshot(&key)?
+                    .map(|envelope| StoredSnapshot {
+                        freshness: freshness(&envelope.payload.capture, &context(now)),
+                        envelope,
+                        profile_id: id.clone(),
+                        data_mode: DataMode::Stored,
+                    });
+                Ok(PartyParticipant {
+                    profile_id: id,
+                    character: key.character,
+                    snapshot,
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(Some(StoredParty {
+            id: party.id,
+            data_mode: DataMode::Stored,
+            participants,
+        }))
     }
     pub fn current(&self, id: &str, now: Option<UtcMillis>) -> Result<Option<StoredSnapshot>> {
         let state = self.lock()?;
