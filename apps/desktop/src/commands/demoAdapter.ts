@@ -2,10 +2,62 @@
 // unit tests and the explicit demo mode; it can never report stored data.
 import type { CharacterSnapshotEnvelope } from "../../../../schemas/v1/exchange";
 import fixture from "../../../../fixtures/contracts/v1/character-snapshot.json";
-import type { AppError, CommandAdapter, CommandMap, CommandName } from "./contract";
+import atlasGolden from "../../../../fixtures/desktop/atlas/query-atlas.json";
+import projectionGolden from "../../../../fixtures/desktop/atlas/project-positions.json";
+import markersGolden from "../../../../fixtures/desktop/atlas/snapshot-markers-uncertain.json";
+import overviewPng from "../../../../content/demo/atlas/synthetic-continent/layers/overview.png";
+import roadsPng from "../../../../content/demo/atlas/synthetic-continent/layers/roads.png";
+import flightPng from "../../../../content/demo/atlas/synthetic-continent/layers/flight.png";
+import type {
+  AppError,
+  AtlasView,
+  CommandAdapter,
+  CommandMap,
+  CommandName,
+  ProjectedPosition,
+  SnapshotMarker,
+} from "./contract";
 
 const snapshot = fixture as unknown as CharacterSnapshotEnvelope;
 export const DEMO_PROFILE_ID = snapshot.payload.character;
+
+/** Browser demo only: there is no atlas scheme, so layers come from bundled demo PNGs. */
+const DEMO_LAYER_URLS: Record<string, string> = {
+  overview: overviewPng,
+  roads: roadsPng,
+  flight: flightPng,
+};
+const demoAtlas = atlasGolden as unknown as AtlasView;
+const sampleResults = projectionGolden.results as unknown as ProjectedPosition[];
+/** A plain browser has no trusted clock, so the demo reports the age as uncertain. */
+const demoMarkers = markersGolden as unknown as SnapshotMarker[];
+const MAX_POSITIONS = 64;
+
+function invalid(message: string): AppError {
+  return { code: "INVALID_INPUT", message, retryable: false };
+}
+
+function queryAtlas(image: string | null): AtlasView {
+  const images = demoAtlas.images
+    .filter((candidate) => image === null || candidate.id === image)
+    .map((candidate) => ({
+      ...candidate,
+      layers: candidate.layers.map((layer) => ({ ...layer, url: DEMO_LAYER_URLS[layer.id] ?? null })),
+    }));
+  if (image !== null && images.length === 0) throw invalid("No such atlas image");
+  return { ...demoAtlas, images };
+}
+
+function projectPositions(positions: unknown[]): ProjectedPosition[] {
+  if (positions.length < 1 || positions.length > MAX_POSITIONS) {
+    throw invalid("Provide between 1 and 64 positions");
+  }
+  // The demo adapter has no projection engine; it answers only the golden sample list.
+  if (JSON.stringify(positions) !== JSON.stringify(projectionGolden.positions)) {
+    throw invalid("The demo adapter only answers its sample position list.");
+  }
+  return sampleResults;
+}
 
 export const demoAdapter: CommandAdapter = {
   invoke<C extends CommandName>(command: C, input: CommandMap[C]["input"]) {
@@ -28,6 +80,12 @@ export const demoAdapter: CommandAdapter = {
           }
           return snapshot;
         }
+        case "query_atlas":
+          return queryAtlas((input as CommandMap["query_atlas"]["input"]).image);
+        case "project_positions":
+          return projectPositions((input as CommandMap["project_positions"]["input"]).positions);
+        case "get_snapshot_markers":
+          return demoMarkers;
         default:
           throw { code: "INVALID_INPUT", message: "Unknown command.", retryable: false } satisfies AppError;
       }

@@ -6,3 +6,43 @@ main { max-width: 48rem; margin: 0 auto; padding: 1rem; }
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+
+nav[aria-label="Primary"] { display: flex; gap: 0.5rem; margin: 0.5rem 0 1rem; }
+nav[aria-label="Primary"] button { padding: 0.35rem 0.9rem; font: inherit; border: 2px solid currentColor; background: transparent; color: inherit; cursor: pointer; }
+nav[aria-label="Primary"] button[aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 0.25em; }
+
+.badge { display: inline-block; border: 1px solid currentColor; padding: 0.25rem 0.6rem; font-weight: 600; }
+.stale-note { border-left: 4px solid currentColor; padding-left: 0.6rem; font-weight: 600; }
+.layers { border: 1px solid currentColor; margin: 1rem 0; }
+.layers label { display: block; }
+.layer-note, .map-help, .map-note, .dataset-line { font-size: 0.9rem; }
+.map-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
+.map-toolbar button, .pins button { font: inherit; padding: 0.25rem 0.7rem; cursor: pointer; }
+.map-region { position: relative; width: 100%; height: 30rem; overflow: hidden; border: 2px solid currentColor; touch-action: none; cursor: grab; user-select: none; background: Canvas; }
+.map-region:focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
+.map-layer { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.map-layer img { display: block; width: 100%; height: 100%; image-rendering: pixelated; pointer-events: none; }
+.map-overlay { position: absolute; left: 0; top: 0; pointer-events: none; }
+.map-overlay .frame { fill: none; stroke: currentColor; stroke-width: 2; }
+.map-overlay .frame-schematic { stroke-dasharray: 8 4; }
+.map-overlay .schematic-fill { fill: color-mix(in srgb, currentColor 6%, transparent); }
+.map-overlay .schematic-grid { stroke: currentColor; stroke-opacity: 0.25; stroke-width: 1; }
+.map-overlay .pin polygon { fill: Canvas; stroke: currentColor; stroke-width: 2; }
+.map-overlay .pin-selected { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 2 2; }
+.map-overlay .uncertainty-ring { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 4 3; }
+.map-overlay .marker-dot { fill: currentColor; stroke: Canvas; stroke-width: 2; }
+.map-overlay .marker-dot-stale { fill: Canvas; stroke: currentColor; }
+.map-overlay .marker-cross { stroke: currentColor; stroke-width: 2; fill: none; }
+.map-overlay .marker-text { fill: currentColor; font-size: 12px; font-weight: 700; paint-order: stroke; stroke: Canvas; stroke-width: 3px; }
+
+@media (forced-colors: active) {
+  .map-region { border-color: CanvasText; background: Canvas; }
+  .map-region:focus-visible { outline-color: Highlight; }
+  .map-overlay .frame, .map-overlay .schematic-grid, .map-overlay .pin polygon,
+  .map-overlay .pin-selected, .map-overlay .uncertainty-ring, .map-overlay .marker-cross,
+  .map-overlay .marker-dot-stale { stroke: CanvasText; }
+  .map-overlay .marker-dot { fill: Highlight; stroke: CanvasText; }
+  .map-overlay .marker-text { fill: CanvasText; stroke: Canvas; }
+  .map-overlay .schematic-fill { fill: Canvas; }
+  .badge, .layers, .demo-label { border-color: CanvasText; }
+}
