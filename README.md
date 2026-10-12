@@ -61,7 +61,7 @@ aligned layers, writes a half-resolution overview and a deterministic
 digest matches, so a raw blob committed without the LFS filter fails. Decoding
 and hashing live in the CLI; the core only carries declared digests.
 
-`doctor`, `validate-fixtures`, and the other subcommands in plan section 19.3
+`doctor` and the other subcommands in plan section 19.3
 are planned, not implemented — do not run or report them as working.
 
 ### pnpm workspace
@@ -86,8 +86,8 @@ pnpm contracts:check   # tsc type check, then Ajv + TypeScript fixture checks
 ### Desktop shell (apps/desktop)
 
 React + Vite + strict TypeScript UI, a Tauri 2 shell and framework-free command
-handlers in `crates/app`. Until storage exists (M1.7) the app shows only the
-synthetic fixture, always under a visible DEMO label.
+handlers in `crates/app`. SQLite snapshot storage and bounded ingest are implemented; desktop import
+wiring is wave-2 work. The current UI uses a visibly labelled synthetic DEMO.
 
 ```bash
 pnpm --dir apps/desktop typecheck
@@ -147,3 +147,5 @@ No desktop package exists yet; these Windows jobs validate Rust and pnpm only.
 M1.3 added schema/fixture checks; M1.5 extends fixtures and M2 adds Lua parity;
 M1.4 adds TypeScript/UI and native desktop build jobs; data and packaging jobs follow their implementations.
 See STATUS and the M1.6 handoff for actual run evidence and main protection.
+
+`cargo run --locked -p azeroth-cli -- validate-fixtures` checks the contract and transport manifests. Wave-1 pure travel, eligibility, gear, session, source and coverage foundations are documented in their handoffs.
