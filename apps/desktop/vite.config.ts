@@ -8,6 +8,7 @@ export default defineConfig({
   server: { port: 1420, strictPort: true },
   build: { target: "es2024" },
   test: {
+    include: ["src/**/*.test.{ts,tsx}"],
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test-setup.ts"],

@@ -45,6 +45,12 @@ jobs:
           key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
       - run: cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings
       - run: cargo test --locked --workspace --exclude azeroth-desktop
+      - name: Contract and transport fixture validation
+        run: cargo run --locked -p azeroth-cli -- validate-fixtures
+      - name: Reference content validation and explicit coverage gaps
+        run: cargo run --locked -p azeroth-cli -- validate-content --input content/forever --json
+      - name: Lua predicate and gear parity
+        run: cargo test --locked -p azeroth-lua-harness --test predicate_parity --test gear_parity
       - name: Atlas content pointer checks (declared imagery, no LFS download)
         run: cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/forever/atlas/eastern-kingdoms/atlas.manifest.json --content-root content/forever --check-pointer
       - name: Every LFS-attributed tracked file is a pointer blob
@@ -139,4 +145,31 @@ jobs:
         run: |
           cargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings
           cargo test --locked -p azeroth-desktop
+      - run: git diff --exit-code
+
+  browser:
+    name: Mocked desktop Chromium
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir apps/desktop typecheck
+      - run: pnpm --dir apps/desktop lint
+      - run: pnpm --dir apps/desktop test:unit
+      - run: pnpm --dir apps/desktop build
+      - name: Install browser and system libraries
+        run: pnpm --dir apps/desktop exec playwright install --with-deps chromium
+      - run: pnpm --dir apps/desktop test:e2e
       - run: git diff --exit-code
