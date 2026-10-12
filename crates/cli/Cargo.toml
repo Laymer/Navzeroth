@@ -1,6 +1,6 @@
 [package]
 name = "azeroth-cli"
-description = "Azeroth Navigator development and diagnostic CLI (placeholder; subcommands land in later milestones)"
+description = "Azeroth Navigator development and diagnostic CLI: schema export and atlas imagery preparation"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -10,3 +10,15 @@ publish.workspace = true
 
 [dependencies]
 azeroth-core = { path = "../core" }
+# Image decoding and hashing live here, never in core (plan section 4.3).
+image = { version = "=0.25.10", default-features = false, features = ["png"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "=0.10.9"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "azeroth-cli"
+path = "src/main.rs"

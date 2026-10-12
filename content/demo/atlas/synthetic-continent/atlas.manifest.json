@@ -1,0 +1,54 @@
+{
+  "atlas_manifest_version": 1,
+  "image_id": "demo-image-1",
+  "source": {
+    "file": "atlas/synthetic-continent/source/synthetic-poster.png",
+    "sha256": "c117b766f617a43274ff9c1d0f0015d75f330406383b7f6042ed0efabfbb5640",
+    "size_bytes": 5948,
+    "width_px": 160,
+    "height_px": 120,
+    "registry_source_id": "demo-source-1"
+  },
+  "frame": {
+    "width_px": 64,
+    "height_px": 96
+  },
+  "layers": [
+    {
+      "id": "roads",
+      "kind": "roads_traced",
+      "crop": {
+        "x": 8,
+        "y": 12,
+        "width": 64,
+        "height": 96
+      },
+      "output": "atlas/synthetic-continent/layers/roads.png"
+    },
+    {
+      "id": "flight",
+      "kind": "flight_reference",
+      "crop": {
+        "x": 88,
+        "y": 12,
+        "width": 64,
+        "height": 96
+      },
+      "output": "atlas/synthetic-continent/layers/flight.png"
+    }
+  ],
+  "overview": {
+    "id": "overview",
+    "from_layer": "roads",
+    "divisor": 2,
+    "output": "atlas/synthetic-continent/layers/overview.png"
+  },
+  "alignment": {
+    "reference_layer": "roads",
+    "max_residual": 8
+  },
+  "limits": {
+    "max_source_bytes": 1048576,
+    "max_dimension_px": 512
+  }
+}

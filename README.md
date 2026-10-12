@@ -45,11 +45,21 @@ cargo test --locked --workspace
 ```
 
 `azeroth-cli` prints a capability banner with no arguments and rejects unsupported
-arguments with exit code 2. Its only subcommand regenerates the exchange schema:
+arguments with exit code 2. Two subcommands exist: one regenerates the exchange
+schema, the other prepares map imagery from an owner-supplied poster (ADR 0002):
 
 ```bash
 cargo run --locked -p azeroth-cli -- export-schemas --output schemas/v1
+cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/demo/atlas/synthetic-continent/atlas.manifest.json --content-root content/demo
+cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/forever/atlas/eastern-kingdoms/atlas.manifest.json --content-root content/forever --check-pointer
 ```
+
+`prepare-atlas` verifies the source digest, crops the declared panels into
+aligned layers, writes a half-resolution overview and a deterministic
+`atlas.generated.json`, and refuses unmaterialized Git LFS pointers.
+`--check-pointer` is the CI mode: every declared PNG must be an LFS pointer whose
+digest matches, so a raw blob committed without the LFS filter fails. Decoding
+and hashing live in the CLI; the core only carries declared digests.
 
 `doctor`, `validate-fixtures`, and the other subcommands in plan section 19.3
 are planned, not implemented — do not run or report them as working.

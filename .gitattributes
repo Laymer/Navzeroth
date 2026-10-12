@@ -2,6 +2,7 @@
 schemas/** text eol=lf
 fixtures/** text eol=lf
 
-# Binary imagery; LFS-tracked under content/ (see content/forever/atlas/NOTICE).
+# Binary imagery; owner-supplied files under content/forever are LFS-tracked (see content/forever/atlas/NOTICE).
+# Synthetic demo imagery under content/demo stays a plain blob so CI can decode it.
 *.png binary
-content/**/*.png filter=lfs diff=lfs merge=lfs -text
+content/forever/**/*.png filter=lfs diff=lfs merge=lfs -text
