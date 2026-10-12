@@ -28,6 +28,8 @@ pub mod spatial;
 pub use spatial::*;
 pub mod planning;
 pub use planning::*;
+pub mod imagery;
+pub use imagery::*;
 
 fn requirement_context(
     requirement: &crate::observation::Observation<crate::predicate::Predicate>,

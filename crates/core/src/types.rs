@@ -81,7 +81,10 @@ ids!(
     AttributeId,
     SourceId,
     StepId,
-    CapabilityId
+    CapabilityId,
+    ImageId,
+    LayerId,
+    PinId
 );
 
 macro_rules! integer {
@@ -148,6 +151,116 @@ integer!(
     MAX_SAFE_INTEGER
 );
 integer!(Level, u16, "u16", |n: u16| n > 0, 1, u16::MAX);
+// Image width, height or frame divisor in pixels: 1..=16384 (engineering limit).
+integer!(
+    PixelExtent,
+    u32,
+    "u32",
+    |n: u32| (1..=16_384).contains(&n),
+    1,
+    16_384
+);
+pub const MAX_PIXEL_EXTENT: u32 = 16_384;
+
+/// Lowercase hexadecimal SHA-256 digest. Core never hashes; it carries declared digests.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(try_from = "String", into = "String")]
+pub struct Sha256Hex(String);
+impl Sha256Hex {
+    pub fn new(value: impl Into<String>) -> Result<Self> {
+        Self::try_from(value.into())
+    }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+impl TryFrom<String> for Sha256Hex {
+    type Error = AppError;
+    fn try_from(value: String) -> Result<Self> {
+        if value.len() != 64
+            || !value
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+        {
+            return Err(invalid(
+                "Digest must be 64 lowercase hexadecimal characters",
+            ));
+        }
+        Ok(Self(value))
+    }
+}
+impl From<Sha256Hex> for String {
+    fn from(value: Sha256Hex) -> Self {
+        value.0
+    }
+}
+fixed_schema!(Sha256Hex, {"type": "string", "pattern": "^[0-9a-f]{64}$"});
+
+pub const ASSET_PATH_PATTERN: &str =
+    "^[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?(?:/[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?)*$";
+const WINDOWS_DEVICE_NAMES: [&str; 22] = [
+    "con", "prn", "aux", "nul", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8",
+    "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
+];
+/// Relative, traversal-free content path (plan sections 8.7 and 16.4): lowercase
+/// segments of `[a-z0-9._-]` that start and end with `[a-z0-9_-]`, joined by `/`,
+/// at most 256 bytes. `.`/`..` segments, absolute paths, backslashes, colons and
+/// Windows device names are rejected. It is resolved only against a declared
+/// content root; the resolver must still refuse symlinks that escape that root.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(try_from = "String", into = "String")]
+pub struct AssetPath(String);
+impl AssetPath {
+    pub fn new(value: impl Into<String>) -> Result<Self> {
+        Self::try_from(value.into())
+    }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+    pub fn segments(&self) -> impl Iterator<Item = &str> {
+        self.0.split('/')
+    }
+}
+impl TryFrom<String> for AssetPath {
+    type Error = AppError;
+    fn try_from(value: String) -> Result<Self> {
+        const ERROR: &str = "Asset path must be a relative, lowercase, traversal-free path";
+        if value.is_empty() || value.len() > 256 {
+            return Err(invalid(ERROR));
+        }
+        for segment in value.split('/') {
+            let bytes = segment.as_bytes();
+            let edge =
+                |b: u8| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_' || b == b'-';
+            if bytes.is_empty()
+                || !edge(bytes[0])
+                || !edge(bytes[bytes.len() - 1])
+                || !bytes.iter().all(|&b| edge(b) || b == b'.')
+            {
+                return Err(invalid(ERROR));
+            }
+            let stem = segment.split('.').next().unwrap_or(segment);
+            if WINDOWS_DEVICE_NAMES.contains(&stem) {
+                return Err(invalid(ERROR));
+            }
+        }
+        Ok(Self(value))
+    }
+}
+impl From<AssetPath> for String {
+    fn from(value: AssetPath) -> Self {
+        value.0
+    }
+}
+fixed_schema!(AssetPath, {"type": "string", "minLength": 1, "maxLength": 256, "pattern": ASSET_PATH_PATTERN});
+
+/// A point in an image frame, in full-frame pixels. The origin is the frame's
+/// top-left corner; x grows rightward and y downward.
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct PixelPoint {
+    pub x: FiniteNumber,
+    pub y: FiniteNumber,
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
@@ -345,6 +458,12 @@ impl From<Text> for String {
     }
 }
 
+/// A normalized position on one named map/floor/instance space. The origin is
+/// the map's top-left corner; x grows eastward (right) and y southward (down),
+/// both in [0,1], matching the C_Map map-position convention. This orientation
+/// is a documented convention, unverified on the Forever client until the M0.4
+/// checks exist. Positions on different `MapKey`s are never comparable. `map_id`
+/// values follow the addon-exported uiMapID as a decimal string (ADR 0002).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Position {
     pub map: MapKey,
