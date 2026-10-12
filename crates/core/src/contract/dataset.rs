@@ -1,20 +1,15 @@
 //! A reference dataset revision for one build and namespace. Local references
 //! resolve inside the dataset. Not resolved here (M3 content work): quest or
 //! objective IDs used only inside predicates, travel-graph cycles (legitimate),
-//! and references to other datasets.
+//! and references to other datasets. Validated as part of its envelope.
 use super::{ContractKind, EnvelopeHeader, Payload, no_dependencies, same_context, unresolved};
-use crate::{
-    entities::*,
-    error::{Result, Validate, Validated},
-    types::*,
-};
+use crate::{entities::*, error::Result, types::*};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[schemars(rename = "ReferenceDataset")]
-pub struct ReferenceDatasetData {
+pub struct ReferenceDataset {
     pub revision: DatasetRevision,
     pub evidence: Vec<EvidenceRecord>,
     pub items: Vec<ItemDefinition>,
@@ -26,9 +21,7 @@ pub struct ReferenceDatasetData {
     pub objectives: Vec<Objective>,
     pub rules: Vec<ContextRule>,
 }
-pub type ReferenceDataset = Validated<ReferenceDatasetData>;
-
-impl ReferenceDatasetData {
+impl ReferenceDataset {
     fn contexts(&self) -> impl Iterator<Item = &DataContext> {
         let e = self.evidence.iter().map(|r| &r.context);
         let i = self.items.iter().map(|r| &r.key.context);
@@ -67,8 +60,8 @@ impl ReferenceDatasetData {
     }
 }
 
-impl Validate for ReferenceDatasetData {
-    fn validate(&self) -> Result<()> {
+impl ReferenceDataset {
+    fn validate_local(&self) -> Result<()> {
         for len in [
             self.evidence.len(),
             self.items.len(),
@@ -148,6 +141,7 @@ impl Payload for ReferenceDataset {
     const KIND: ContractKind = ContractKind::ReferenceDataset;
     fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()> {
         no_dependencies(header)?;
+        self.validate_local()?;
         for context in self.contexts() {
             same_context(header, context)?;
         }

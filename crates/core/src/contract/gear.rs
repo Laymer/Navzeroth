@@ -1,25 +1,24 @@
 //! A set of gear comparisons for one snapshot, dataset revision and score model.
+//! Validated as part of its envelope.
 use super::{ContractKind, EnvelopeHeader, Payload, same_context};
 use crate::{
     entities::{GearRecommendation, SnapshotRef, bounded},
-    error::{Result, Validate, Validated, invalid},
+    error::{Result, invalid},
     types::*,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[schemars(rename = "GearRecommendationSet")]
-pub struct GearRecommendationSetData {
+pub struct GearRecommendationSet {
     pub snapshot: SnapshotRef,
     pub dataset_revision: DatasetRevision,
     pub score_model_version: ScoreModelVersion,
     /// Empty means no recommendation was produced, not that none exists.
     pub recommendations: Vec<GearRecommendation>,
 }
-pub type GearRecommendationSet = Validated<GearRecommendationSetData>;
-impl Validate for GearRecommendationSetData {
-    fn validate(&self) -> Result<()> {
+impl GearRecommendationSet {
+    fn validate_local(&self) -> Result<()> {
         bounded(self.recommendations.len())?;
         for r in &self.recommendations {
             if r.snapshot != self.snapshot
@@ -37,6 +36,7 @@ impl Validate for GearRecommendationSetData {
 impl Payload for GearRecommendationSet {
     const KIND: ContractKind = ContractKind::GearRecommendations;
     fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()> {
+        self.validate_local()?;
         same_context(header, &self.snapshot.context)?;
         for r in &self.recommendations {
             same_context(header, &r.context)?;

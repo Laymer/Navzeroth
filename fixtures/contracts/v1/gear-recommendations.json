@@ -1,0 +1,150 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "gear_recommendations",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "UNVERIFIED_DEMO",
+    "interface": "UNVERIFIED_DEMO",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "dependencies": {
+    "dataset_revision": "demo-r1",
+    "score_model_version": "demo-score-1",
+    "snapshots": [
+      {
+        "id": "demo-snapshot-001",
+        "character": "demo-character-paladin",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        }
+      }
+    ]
+  },
+  "payload": {
+    "snapshot": {
+      "id": "demo-snapshot-001",
+      "character": "demo-character-paladin",
+      "context": {
+        "build": {
+          "edition": "wow_forever",
+          "build": "UNVERIFIED_DEMO",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      }
+    },
+    "dataset_revision": "demo-r1",
+    "score_model_version": "demo-score-1",
+    "recommendations": [
+      {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "snapshot": {
+          "id": "demo-snapshot-001",
+          "character": "demo-character-paladin",
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          }
+        },
+        "dataset_revision": "demo-r1",
+        "score_model_version": "demo-score-1",
+        "scenario": "demo-role-tank",
+        "ranking": "theoretical",
+        "baseline": {
+          "main_hand": {
+            "item": {
+              "context": {
+                "build": {
+                  "edition": "wow_forever",
+                  "build": "UNVERIFIED_DEMO",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "demo-item-1",
+              "variant": "base"
+            },
+            "occupied_slots": [
+              "main_hand"
+            ],
+            "unique_group": {
+              "status": "unknown"
+            }
+          }
+        },
+        "proposed": {
+          "main_hand": {
+            "item": {
+              "context": {
+                "build": {
+                  "edition": "wow_forever",
+                  "build": "UNVERIFIED_DEMO",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "demo-item-2",
+              "variant": "base"
+            },
+            "occupied_slots": [
+              "main_hand"
+            ],
+            "unique_group": {
+              "status": "unknown"
+            }
+          }
+        },
+        "eligibility": {
+          "status": "unknown"
+        },
+        "baseline_score": {
+          "status": "known",
+          "value": 0
+        },
+        "proposed_score": {
+          "status": "known",
+          "value": 1.5
+        },
+        "acquisitions": [
+          "demo-acq-1"
+        ],
+        "assumptions": [
+          "Synthetic scenario"
+        ],
+        "unmodeled_effects": [
+          "Unknown proc effect"
+        ],
+        "explanation": "Synthetic comparison",
+        "evidence": []
+      }
+    ]
+  }
+}

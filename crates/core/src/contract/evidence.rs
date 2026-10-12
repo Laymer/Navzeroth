@@ -1,12 +1,13 @@
 //! Build capability profile, evidence and provider capabilities for one build.
 //! Every evidence reference resolves inside the bundle; references across
-//! bundles or datasets are content-pipeline work (M3).
+//! bundles or datasets are content-pipeline work (M3). The bundle is validated
+//! as part of its envelope, which preserves specific error codes.
 use super::{
     ContractKind, EnvelopeHeader, Payload, mismatch, no_dependencies, same_context, unresolved,
 };
 use crate::{
     entities::{Confidence, EvidenceRecord, GameBuild, ProviderCapability, bounded, unique},
-    error::{Result, Validate, Validated, invalid},
+    error::{Result, invalid},
     types::EvidenceId,
 };
 use schemars::JsonSchema;
@@ -14,15 +15,13 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[schemars(rename = "EvidenceBundle")]
-pub struct EvidenceBundleData {
+pub struct EvidenceBundle {
     pub game_build: GameBuild,
     pub evidence: Vec<EvidenceRecord>,
     pub providers: Vec<ProviderCapability>,
 }
-pub type EvidenceBundle = Validated<EvidenceBundleData>;
-impl Validate for EvidenceBundleData {
-    fn validate(&self) -> Result<()> {
+impl EvidenceBundle {
+    fn validate_local(&self) -> Result<()> {
         bounded(self.evidence.len())?;
         bounded(self.providers.len())?;
         unique(self.evidence.iter().map(|e| &e.id))?;
@@ -49,6 +48,7 @@ impl Payload for EvidenceBundle {
     const KIND: ContractKind = ContractKind::EvidenceBundle;
     fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()> {
         no_dependencies(header)?;
+        self.validate_local()?;
         if self.game_build.key != header.context.build
             || self.game_build.locale != header.game.locale
         {

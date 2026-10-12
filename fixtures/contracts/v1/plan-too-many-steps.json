@@ -1,0 +1,2462 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "route_plan",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "UNVERIFIED_DEMO",
+    "interface": "UNVERIFIED_DEMO",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "dependencies": {
+    "dataset_revision": "demo-r1",
+    "ruleset_version": "demo-rules-1",
+    "score_model_version": "demo-score-1",
+    "snapshots": [
+      {
+        "id": "demo-snapshot-001",
+        "character": "demo-character-paladin",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        }
+      }
+    ]
+  },
+  "payload": {
+    "schema_version": 1,
+    "id": "demo-plan-001",
+    "context": {
+      "build": {
+        "edition": "wow_forever",
+        "build": "UNVERIFIED_DEMO",
+        "interface": "UNVERIFIED_DEMO"
+      },
+      "namespace": "demo"
+    },
+    "generated_at_utc_ms": 1791792000000,
+    "inputs": [
+      {
+        "id": "demo-snapshot-001",
+        "character": "demo-character-paladin",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        }
+      }
+    ],
+    "dataset_revision": "demo-r1",
+    "ruleset_version": "demo-rules-1",
+    "score_model_version": "demo-score-1",
+    "capability_assumptions": {
+      "quest_log": "untested"
+    },
+    "goal": "Synthetic goal: reach the demo camp",
+    "time_budget_ms": 3600000,
+    "exclusions": [
+      "demo-objective-excluded"
+    ],
+    "manual_assumptions": [
+      "Synthetic assumption"
+    ],
+    "steps": [
+      {
+        "id": "demo-step-0",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-1",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-2",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-3",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-4",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-5",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-6",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-7",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-8",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-9",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-10",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-11",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-12",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-13",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-14",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-15",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-16",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-17",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-18",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-19",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-20",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-21",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-22",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-23",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-24",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-25",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-26",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-27",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-28",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-29",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-30",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-31",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-32",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-33",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-34",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-35",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-36",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-37",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-38",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-39",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-40",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-41",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-42",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-43",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-44",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-45",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-46",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-47",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-48",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-49",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-50",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-51",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-52",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-53",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-54",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-55",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-56",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-57",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-58",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-59",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-60",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-61",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-62",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-63",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-64",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-65",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-66",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-67",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-68",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-69",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-70",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-71",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-72",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-73",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-74",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-75",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-76",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-77",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-78",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-79",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-80",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-81",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-82",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-83",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-84",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-85",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-86",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-87",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-88",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-89",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-90",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-91",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-92",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-93",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-94",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-95",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-96",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-97",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-98",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-99",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      },
+      {
+        "id": "demo-step-100",
+        "objective": "demo-objective-1",
+        "participants": [
+          "demo-character-paladin"
+        ],
+        "alternatives": [],
+        "prerequisite": {
+          "status": "unknown"
+        },
+        "required_fields": [],
+        "invalidation": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "estimate": {
+          "status": "unknown"
+        },
+        "explanation": "",
+        "evidence": []
+      }
+    ],
+    "travel": [
+      {
+        "from": {
+          "id": "demo-node-1",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "UNVERIFIED_DEMO",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "demo-map-1",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "to": {
+          "id": "demo-node-2",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "UNVERIFIED_DEMO",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "demo-map-1",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "expected_ms": {
+          "status": "known",
+          "value": 30000
+        },
+        "range": {
+          "status": "known",
+          "value": {
+            "min_ms": 20000,
+            "max_ms": 45000
+          }
+        }
+      }
+    ],
+    "evidence": [
+      "demo-evidence-1"
+    ],
+    "expires_at_utc_ms": 1791878400000,
+    "revalidation": [
+      "dataset_revision_changed",
+      "snapshot_superseded"
+    ]
+  }
+}
