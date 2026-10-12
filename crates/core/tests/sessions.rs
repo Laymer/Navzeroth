@@ -641,3 +641,49 @@ fn gap_reasons_have_stable_codes_and_the_entity_still_rejects_overlaps() {
     json["gaps"][0]["start_ms"] = json!(1_000_000);
     assert!(serde_json::from_value::<SessionSummary>(json).is_err());
 }
+
+fn captured_level(sequence: Option<u64>, elapsed: Option<u64>) -> Value {
+    let mut level = json!({"status":"known","value":7,"session_id":"s1"});
+    if let Some(sequence) = sequence {
+        level["sequence"] = json!(sequence);
+    }
+    if let Some(elapsed) = elapsed {
+        level["session_elapsed_ms"] = json!(elapsed);
+    }
+    json!({"type":"level","level":level})
+}
+
+#[test]
+fn level_capture_rejects_future_sequence_and_conflicting_same_capture_time() {
+    for kind in [
+        captured_level(Some(3), Some(20)),
+        captured_level(Some(2), Some(9)),
+    ] {
+        let batch = inline(vec![event("s1", 2, 10, kind)]);
+        assert_eq!(
+            build_sessions(&batch, &cfg()).unwrap_err().code,
+            ErrorCode::InvalidInput
+        );
+    }
+}
+
+#[test]
+fn level_capture_preserves_earlier_missing_and_same_event_metadata() {
+    for kind in [
+        captured_level(Some(1), Some(5)),
+        // Earlier captures can have larger elapsed values across a reset.
+        captured_level(Some(1), Some(100)),
+        captured_level(Some(2), Some(10)),
+        captured_level(None, Some(100)),
+        captured_level(Some(1), None),
+    ] {
+        let batch = inline(vec![event("s1", 2, 10, kind)]);
+        let captured = match &batch.events[0].kind {
+            SessionEventKind::Level { level } => level,
+            _ => unreachable!(),
+        };
+        let built = build_sessions(&batch, &cfg()).unwrap();
+        assert_eq!(&built[&sid("s1")].summary.starting_level, captured);
+        assert_eq!(&built[&sid("s1")].summary.ending_level, captured);
+    }
+}

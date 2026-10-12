@@ -25,7 +25,7 @@ const BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 /// A single-connection SQLite store. Foreign keys are enforced on the
 /// connection and verified when it opens.
 pub struct SqliteStore {
-    conn: Connection,
+    pub(crate) conn: Connection,
 }
 
 impl SqliteStore {
@@ -737,6 +737,40 @@ impl SnapshotStore for SqliteStore {
             .db()?;
         tx.commit().db()?;
         Ok(true)
+    }
+}
+
+impl SqliteStore {
+    /// Transaction-consistent SQLite backup, including committed WAL pages.
+    /// The destination must be new; existing files are never overwritten.
+    /// Run on a blocking worker. Busy backups return retryable StorageError.
+    pub fn backup_to(&self, path: &Path) -> Result<()> {
+        use rusqlite::backup::{Backup, StepResult};
+        let file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)
+            .map_err(|_| storage("Backup destination cannot be created"))?;
+        drop(file);
+        let result = (|| {
+            let mut destination = Connection::open(path).db()?;
+            let backup = Backup::new(&self.conn, &mut destination).db()?;
+            match backup.step(-1).db()? {
+                StepResult::Done => Ok(()),
+                StepResult::Busy | StepResult::Locked => Err(AppError::new(
+                    azeroth_core::error::ErrorCode::StorageError,
+                    "Database is busy",
+                    true,
+                )),
+                _ => Err(storage("Backup did not complete")),
+            }
+        })();
+        if result.is_err() {
+            // We created this file exclusively; an incomplete backup is not a
+            // usable artifact. The source database was never written.
+            let _ = std::fs::remove_file(path);
+        }
+        result
     }
 }
 
