@@ -2,9 +2,9 @@
 
 Plan version: 1.0 plus accepted ADR 0001
 Current milestone: M1
-Current task: M1.3 (dependency-ready)
-Task owner: unassigned
-Base revision: 514d4b01cab34b4d85e8a9e05e5d5de926d6e4f1 (PR 3 merged into main)
+Current task: M1.3 (IN_PROGRESS on feature/M1.3-contracts)
+Task owner: Claude Code (Opus 5.5), single writer
+Base revision: bc386c23394ba8ff115e8c8595068f98d25ea5ea (origin/main after PR 4; PR 3 merged as 514d4b0)
 Last updated: 2026-10-12
 Overall state: M1.1 reviewed/corrected; M1.6 CI and expanded M1.2 merged and verified for their scopes; M1.3-M1.5 and M1.7 remain
 
@@ -28,8 +28,15 @@ Overall state: M1.1 reviewed/corrected; M1.6 CI and expanded M1.2 merged and ver
 
 ## Current task acceptance
 M1.3: define snapshot, plan, evidence, dataset and gear exchange contracts;
-finalize versioned schemas/types and drift checks. Claim a fresh baseline before
-implementation. Use existing validated domain models and the [domain reference](DOMAIN.md).
+finalize versioned schemas/types and drift checks. Claimed by Claude Code on
+2026-10-12 from bc386c2. Expected files: crates/core/src/contract/, RoutePlan
+completion in crates/core/src/entities/planning.rs, JSON Schema derivations,
+schemas/v1/, fixtures/contracts/v1/, tests/contract/, root package.json/lockfile,
+an azeroth-cli export-schemas command, CI contract steps and documentation.
+Acceptance: unsupported versions, invalid observation states, unknown operators
+and incompatible build/namespace contexts are rejected; fixtures pass Rust,
+JSON Schema and TypeScript checks as declared; committed schemas/types cannot
+drift silently in Linux/Windows CI; fmt, Clippy and workspace tests pass. Use existing validated domain models and the [domain reference](DOMAIN.md).
 The [continuation handoff](handoffs/2026-10-12-M1.3-continuation.md) records the
 merged baseline; the [Claude Code prompt](prompts/claude-M1.3-contracts.md) defines
 the next session's scope and acceptance checks. Contract fixtures needed to verify
