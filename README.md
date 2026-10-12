@@ -23,8 +23,9 @@ For a ChatGPT/Codex review, use [section 23.3](AZEROTH_NAVIGATOR_IMPLEMENTATION_
 
 ## Development setup
 
-Application code does not exist yet beyond the M1.1 workspace skeleton. The
-commands below are the ones that actually run today; see
+The core provides validated domain records, observations/freshness, and bounded
+three-valued rule evaluation. See [the domain reference](docs/DOMAIN.md). The
+commands below run today; see
 [plan section 19](AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#19-development-commands-and-ci-contract)
 for the full target command surface and which milestone adds each remaining
 command.
@@ -42,7 +43,8 @@ cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace
 ```
 
-`azeroth-cli` currently prints a placeholder banner; it has no subcommands.
+`azeroth-cli` prints a capability banner with no arguments and rejects unsupported
+arguments with exit code 2. It has no subcommands.
 `doctor`, `validate-fixtures`, and the other subcommands in plan section 19.3
 are planned, not implemented — do not run or report them as working.
 
@@ -74,7 +76,8 @@ No application package exists under `apps/` yet. `apps/desktop` and its
 
 ## Collaboration records
 
-The [initial handoff](docs/handoffs/2026-10-12-project-setup.md) records the documentation setup and the next task. Contributors maintain status, task ownership, decisions, and handoffs in Git as described in the plan.
+Use [STATUS](docs/STATUS.md) and the latest linked handoff for current ownership,
+verification and next work. Historical handoffs remain available in docs/handoffs/.
 
 ## Continuous integration
 
