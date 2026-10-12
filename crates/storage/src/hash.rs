@@ -49,7 +49,7 @@ fn strip_receipt_times(value: &mut Value) {
     }
 }
 
-fn write_canonical(value: &Value, out: &mut Vec<u8>) -> Result<()> {
+pub(crate) fn write_canonical(value: &Value, out: &mut Vec<u8>) -> Result<()> {
     let fail = |_| storage("Snapshot cannot be serialized");
     match value {
         Value::Object(map) => {

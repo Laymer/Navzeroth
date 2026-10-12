@@ -1,10 +1,12 @@
-//! SQLite persistence for Azeroth Navigator character snapshots (M1.7) with
-//! the M2.4 idempotency and ordering rules. Core stays free of I/O; this crate
-//! is the only place that touches the database.
+//! SQLite persistence for character snapshots and immutable reference content.
+//! Snapshot identity/order rules remain unchanged; content revisions use
+//! context-qualified activation and supported consistent backup. Core stays
+//! free of I/O; this crate owns database access.
 //!
 //! The API is synchronous. Callers (`crates/app`, wired in wave 2) must run it
 //! on a blocking worker, never on an async or UI thread (plan section 8.2).
-//! WAL mode and online backup are out of scope until packaging is verified.
+//! SQLite backup uses its transaction-consistent online backup API. WAL mode
+//! is not enabled automatically; native packaging remains unverified.
 //!
 //! Rules this crate enforces:
 //! - A snapshot is identified by a content hash (`snapshot_content_hash`) scoped
@@ -17,6 +19,7 @@
 //! - Imports run in one transaction; a failure leaves earlier state untouched,
 //!   and the audit row keeps only an error code and a static message (CASE-008).
 //! - Stored documents are re-validated through `decode_envelope` on every read.
+pub mod content;
 mod error;
 pub mod hash;
 #[doc(hidden)]
