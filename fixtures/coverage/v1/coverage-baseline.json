@@ -1,0 +1,768 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "reference_dataset",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "SYNTHETIC",
+    "interface": "SYNTHETIC",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "payload": {
+    "revision": "synth-coverage-r1",
+    "evidence": [
+      {
+        "id": "synth-ev-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "source": "synth-source-1",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "unknown"
+        },
+        "confidence": "limited_sample",
+        "conflicts": [],
+        "notes": "Synthetic evidence"
+      },
+      {
+        "id": "synth-ev-2",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "source": "synth-source-1",
+        "license": {
+          "status": "known",
+          "value": "Synthetic licence text"
+        },
+        "observed_at_utc_ms": {
+          "status": "unknown"
+        },
+        "confidence": "inferred",
+        "conflicts": [
+          "synth-ev-3"
+        ],
+        "notes": "Synthetic evidence"
+      },
+      {
+        "id": "synth-ev-3",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "source": "synth-source-1",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "unknown"
+        },
+        "confidence": "disputed_or_stale",
+        "conflicts": [
+          "synth-ev-2"
+        ],
+        "notes": "Synthetic evidence"
+      }
+    ],
+    "items": [
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "item_id": "synth-item-1",
+          "variant": "base"
+        },
+        "slots": [
+          "main_hand"
+        ],
+        "two_handed": {
+          "status": "known",
+          "value": false
+        },
+        "unique_group": {
+          "status": "unknown"
+        },
+        "attributes": {
+          "status": "known",
+          "value": {}
+        },
+        "requirements": {
+          "status": "known",
+          "value": {
+            "op": "quest_state",
+            "quest": "synth-quest-b",
+            "state": "turned_in",
+            "value": true
+          }
+        },
+        "effects": {
+          "status": "known",
+          "value": []
+        },
+        "evidence": [
+          "synth-ev-1"
+        ]
+      },
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "item_id": "synth-item-2",
+          "variant": "base"
+        },
+        "slots": [
+          "main_hand"
+        ],
+        "two_handed": {
+          "status": "known",
+          "value": false
+        },
+        "unique_group": {
+          "status": "unknown"
+        },
+        "attributes": {
+          "status": "known",
+          "value": {}
+        },
+        "requirements": {
+          "status": "unknown"
+        },
+        "effects": {
+          "status": "known",
+          "value": []
+        },
+        "evidence": []
+      }
+    ],
+    "acquisitions": [
+      {
+        "id": "synth-acq-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "kind": "vendor",
+        "items": [
+          {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "item_id": "synth-item-1",
+            "variant": "base"
+          }
+        ],
+        "conditions": {
+          "status": "unsupported"
+        },
+        "cost": {
+          "status": "unknown"
+        },
+        "probability": {
+          "status": "restricted"
+        },
+        "evidence": []
+      }
+    ],
+    "quests": [
+      {
+        "id": "synth-quest-a",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "eligibility": {
+          "status": "unknown"
+        },
+        "prerequisites": {
+          "status": "known",
+          "value": {
+            "op": "quest_state",
+            "quest": "synth-quest-b",
+            "state": "turned_in",
+            "value": true
+          }
+        },
+        "stages": [
+          "synth-quest-a-stage"
+        ],
+        "locations": {
+          "status": "known",
+          "value": [
+            {
+              "map": {
+                "context": {
+                  "build": {
+                    "edition": "wow_forever",
+                    "build": "SYNTHETIC",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "map_id": "synth-map-1",
+                "floor": "0",
+                "instance": null
+              },
+              "x": 0.25,
+              "y": 0.75
+            }
+          ]
+        },
+        "rewards": {
+          "status": "unknown"
+        },
+        "completion": {
+          "status": "known",
+          "value": "unrepeatable"
+        },
+        "shared_progress": {
+          "status": "unknown"
+        },
+        "evidence": [
+          "synth-ev-1"
+        ]
+      },
+      {
+        "id": "synth-quest-b",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "eligibility": {
+          "status": "unknown"
+        },
+        "prerequisites": {
+          "status": "unknown"
+        },
+        "stages": [
+          "synth-quest-b-stage"
+        ],
+        "locations": {
+          "status": "known",
+          "value": [
+            {
+              "map": {
+                "context": {
+                  "build": {
+                    "edition": "wow_forever",
+                    "build": "SYNTHETIC",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "map_id": "synth-map-2",
+                "floor": "0",
+                "instance": null
+              },
+              "x": 0.25,
+              "y": 0.75
+            }
+          ]
+        },
+        "rewards": {
+          "status": "unknown"
+        },
+        "completion": {
+          "status": "known",
+          "value": "unrepeatable"
+        },
+        "shared_progress": {
+          "status": "unknown"
+        },
+        "evidence": [
+          "synth-ev-2"
+        ]
+      },
+      {
+        "id": "synth-quest-c",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "eligibility": {
+          "status": "known",
+          "value": {
+            "op": "level_at_least",
+            "level": 5
+          }
+        },
+        "prerequisites": {
+          "status": "not_applicable"
+        },
+        "stages": [
+          "synth-quest-c-stage"
+        ],
+        "locations": {
+          "status": "unknown"
+        },
+        "rewards": {
+          "status": "restricted"
+        },
+        "completion": {
+          "status": "known",
+          "value": "unrepeatable"
+        },
+        "shared_progress": {
+          "status": "unknown"
+        },
+        "evidence": [
+          "synth-ev-1",
+          "synth-ev-2"
+        ]
+      }
+    ],
+    "map_spaces": [
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "synth-map-1",
+          "floor": "0",
+          "instance": null
+        },
+        "transform": {
+          "status": "known",
+          "value": {
+            "units": "yards",
+            "scale_x": 1000,
+            "scale_y": 1000,
+            "offset_x": 0,
+            "offset_y": 0
+          }
+        },
+        "evidence": [
+          "synth-ev-1"
+        ]
+      },
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "synth-map-2",
+          "floor": "0",
+          "instance": null
+        },
+        "transform": {
+          "status": "unknown"
+        },
+        "evidence": []
+      }
+    ],
+    "nodes": [
+      {
+        "id": "synth-node-1",
+        "position": {
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "synth-map-1",
+            "floor": "0",
+            "instance": null
+          },
+          "x": 0.5,
+          "y": 0.5
+        },
+        "service": {
+          "status": "unknown"
+        }
+      },
+      {
+        "id": "synth-node-2",
+        "position": {
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "synth-map-2",
+            "floor": "0",
+            "instance": null
+          },
+          "x": 0.5,
+          "y": 0.5
+        },
+        "service": {
+          "status": "unknown"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "synth-edge-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "from": {
+          "id": "synth-node-1",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "synth-map-1",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "to": {
+          "id": "synth-node-2",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "synth-map-2",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "mode": "walking",
+        "requirements": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "known",
+          "value": 30000
+        },
+        "wait_ms": {
+          "status": "known",
+          "value": 0
+        },
+        "uncertainty": {
+          "status": "unknown"
+        },
+        "status": "estimated",
+        "evidence": [
+          "synth-ev-1"
+        ],
+        "consumes_resource": {
+          "status": "known",
+          "value": false
+        },
+        "cooldown_ms": {
+          "status": "unknown"
+        }
+      },
+      {
+        "id": "synth-edge-2",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "from": {
+          "id": "synth-node-1",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "synth-map-1",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "to": {
+          "id": "synth-node-2",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "SYNTHETIC",
+                "interface": "SYNTHETIC"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "synth-map-2",
+            "floor": "0",
+            "instance": null
+          }
+        },
+        "mode": "walking",
+        "requirements": {
+          "status": "unknown"
+        },
+        "expected_ms": {
+          "status": "known",
+          "value": 30000
+        },
+        "wait_ms": {
+          "status": "known",
+          "value": 0
+        },
+        "uncertainty": {
+          "status": "unknown"
+        },
+        "status": "unverified",
+        "evidence": [],
+        "consumes_resource": {
+          "status": "known",
+          "value": false
+        },
+        "cooldown_ms": {
+          "status": "unknown"
+        }
+      }
+    ],
+    "objectives": [
+      {
+        "id": "synth-objective-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "participants": [
+          "synth-character-1"
+        ],
+        "targets": [
+          {
+            "kind": "quest_stage",
+            "quest": "synth-quest-a",
+            "stage": "synth-quest-a-stage"
+          }
+        ],
+        "requirements": {
+          "status": "known",
+          "value": {
+            "op": "objective_state",
+            "objective": "synth-quest-b-stage",
+            "completed": true
+          }
+        },
+        "expected_ms": {
+          "status": "unknown"
+        },
+        "evidence": []
+      }
+    ],
+    "rules": [
+      {
+        "id": "synth-rule-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "SYNTHETIC",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "trigger": "level_changed",
+        "predicate": {
+          "op": "all",
+          "predicates": [
+            {
+              "op": "quest_state",
+              "quest": "synth-quest-a",
+              "state": "accepted",
+              "value": true
+            },
+            {
+              "op": "location_in_supported_area",
+              "area": {
+                "map": {
+                  "context": {
+                    "build": {
+                      "edition": "wow_forever",
+                      "build": "SYNTHETIC",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "map_id": "synth-map-1",
+                  "floor": "0",
+                  "instance": null
+                },
+                "bounds": null
+              }
+            },
+            {
+              "op": "equipment_matches",
+              "slot": "main_hand",
+              "item": {
+                "context": {
+                  "build": {
+                    "edition": "wow_forever",
+                    "build": "SYNTHETIC",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synth-item-1",
+                "variant": "base"
+              },
+              "modifiers": {}
+            }
+          ]
+        },
+        "result_template": "Synthetic tip",
+        "priority": 0,
+        "deduplication_key": "synth-rule-1",
+        "cooldown_ms": 60000,
+        "dismissal": "session",
+        "expires_at_utc_ms": null,
+        "evidence": [
+          "synth-ev-1"
+        ]
+      }
+    ],
+    "map_images": [
+      {
+        "id": "synth-image-1",
+        "map": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "synth-map-1",
+          "floor": "0",
+          "instance": null
+        },
+        "source": "synth-source-1",
+        "evidence": [],
+        "applicable_builds": [
+          {
+            "build": {
+              "edition": "wow_forever",
+              "build": "SYNTHETIC",
+              "interface": "SYNTHETIC"
+            },
+            "evidence": []
+          }
+        ],
+        "width_px": 64,
+        "height_px": 96,
+        "layers": [
+          {
+            "id": "terrain",
+            "kind": "terrain",
+            "file": "atlas/synthetic/layers/terrain.png",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "width_px": 64,
+            "height_px": 96,
+            "frame_divisor": 1,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ],
+        "pins": [],
+        "calibration": {
+          "status": "unknown"
+        },
+        "calibration_evidence": [],
+        "control_points": [],
+        "gaps": "Synthetic image"
+      }
+    ]
+  }
+}
