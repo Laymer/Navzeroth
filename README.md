@@ -2,7 +2,7 @@
 
 Azeroth Navigator — a planned Rust-based companion for World of Warcraft: Forever.
 
-The repository currently contains the implementation specification and collaboration documents. Application development has not started.
+The Rust and pnpm workspaces are initialized. Follow the current status record for implemented behavior and verification evidence.
 
 ## Start here
 
@@ -23,8 +23,9 @@ For a ChatGPT/Codex review, use [section 23.3](AZEROTH_NAVIGATOR_IMPLEMENTATION_
 
 ## Development setup
 
-Application code does not exist yet beyond the M1.1 workspace skeleton. The
-commands below are the ones that actually run today; see
+The core provides validated domain records, observations/freshness, and bounded
+three-valued rule evaluation. See [the domain reference](docs/DOMAIN.md). The
+commands below run today; see
 [plan section 19](AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#19-development-commands-and-ci-contract)
 for the full target command surface and which milestone adds each remaining
 command.
@@ -33,7 +34,8 @@ command.
 
 Prerequisites: the Rust toolchain pinned in [rust-toolchain.toml](rust-toolchain.toml),
 installed via [rustup](https://rustup.rs). `rustup` picks up the pin
-automatically inside this repository.
+automatically inside this repository. On Linux/WSL, open a new terminal after
+installation or run `. "$HOME/.cargo/env"` to put Cargo on PATH.
 
 ```bash
 cargo fmt --all --check
@@ -41,18 +43,26 @@ cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace
 ```
 
-`azeroth-cli` currently prints a placeholder banner; it has no subcommands.
+`azeroth-cli` prints a capability banner with no arguments and rejects unsupported
+arguments with exit code 2. It has no subcommands.
 `doctor`, `validate-fixtures`, and the other subcommands in plan section 19.3
 are planned, not implemented — do not run or report them as working.
 
 ### pnpm workspace
 
-Prerequisites: Node.js and [Corepack](https://nodejs.org/api/corepack.html)
-(`corepack enable`), which installs the pnpm version pinned in this
-repository's `package.json` `packageManager` field.
+Tested setup: Node.js 24.15.0 (also pinned in `.node-version`) and
+[Corepack](https://github.com/nodejs/corepack) 0.36.0. Use
+`npm install --global corepack@0.36.0` followed by `corepack enable`.
+Corepack reads the exact pnpm version and integrity from `package.json`.
+Older Corepack 0.24.0 cannot launch this pnpm 12 binary layout.
+
+On Linux/WSL without a writable global npm prefix, install with
+`npm install --global corepack@0.36.0 --prefix "$HOME/.npm-global"`, put
+`$HOME/.npm-global/bin` first on PATH, then run `corepack enable`.
+Verify `node --version`, `corepack --version`, and `pnpm --version` before use.
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 No application package exists under `apps/` yet. `apps/desktop` and its
@@ -62,10 +72,26 @@ No application package exists under `apps/` yet. `apps/desktop` and its
 ### Not yet available
 
 - Tauri desktop build/dev commands (M1.4).
-- CI (M1.6): the commands above are currently run locally only, not
-  automatically enforced.
 - SQLite migrations/storage adapter (M1.7).
 
 ## Collaboration records
 
-The [initial handoff](docs/handoffs/2026-10-12-project-setup.md) records the documentation setup and the next task. Contributors maintain status, task ownership, decisions, and handoffs in Git as described in the plan.
+Use [STATUS](docs/STATUS.md) and the latest linked handoff for current ownership,
+verification and next work. Historical handoffs remain available in docs/handoffs/.
+
+## Continuous integration
+
+The CI workflow runs Rust formatting on Ubuntu 24.04 and locked Clippy/tests
+plus frozen pnpm installation on Ubuntu 24.04 and Windows 2025. Tool versions
+come from the repository pins; Corepack is 0.36.0. All five checks run on draft
+and ready PRs targeting main and on main pushes. Cache hits never skip checks.
+
+Windows Rust uses `x86_64-pc-windows-msvc` and Visual Studio C++ build tools
+with the Windows SDK (provided by the hosted runner). For a future local native
+Tauri build, also install the WebView2 runtime following
+[the current Tauri prerequisites](https://v2.tauri.app/start/prerequisites/).
+No desktop package exists yet; these Windows jobs validate Rust and pnpm only.
+
+M1.3/M1.5 add schema, fixture and parity checks; M1.4 adds TypeScript/UI and
+native desktop build jobs; data and packaging jobs follow their implementations.
+See STATUS and the M1.6 handoff for actual run evidence and main protection.
