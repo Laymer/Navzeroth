@@ -13,4 +13,5 @@ pub mod observation;
 pub mod predicate;
 pub mod reminders;
 pub mod sessions;
+pub mod sources;
 pub mod types;
