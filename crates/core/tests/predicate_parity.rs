@@ -134,11 +134,18 @@ fn expand(id: &str, node: &Value) -> Value {
     let Some(spec) = node.as_object().and_then(|o| o.get("generate")) else {
         return node.clone();
     };
-    assert_eq!(node.as_object().map(Map::len), Some(1), "{id}: generate is the only member");
+    assert_eq!(
+        node.as_object().map(Map::len),
+        Some(1),
+        "{id}: generate is the only member"
+    );
     let leaf = spec["leaf"].clone();
     match spec["kind"].as_str() {
         Some("nest") => {
-            assert_eq!(spec["wrapper"], "not", "{id}: only the not wrapper is generated");
+            assert_eq!(
+                spec["wrapper"], "not",
+                "{id}: only the not wrapper is generated"
+            );
             let mut tree = leaf;
             for _ in 0..spec["wrappers"].as_u64().expect("wrappers is a count") {
                 tree = json!({"op": "not", "predicate": tree});
@@ -188,7 +195,10 @@ fn outcome(file: &CaseFile, case: &Case) -> Value {
     let predicate = match (&case.predicate, &case.predicate_json) {
         (Some(value), None) => from_value::<Predicate>(expand(&case.id, value)),
         (None, Some(text)) => from_str::<Predicate>(text),
-        _ => panic!("{}: exactly one of predicate and predicate_json is required", case.id),
+        _ => panic!(
+            "{}: exactly one of predicate and predicate_json is required",
+            case.id
+        ),
     };
     let Ok(predicate) = predicate else {
         return rejected;
@@ -262,10 +272,20 @@ fn corpus_matches_the_rust_evaluator() {
 
     // Every JSON file in the directory must be declared; nothing is skipped silently.
     let declared: BTreeSet<String> = manifest.files.iter().map(|f| f.file.clone()).collect();
-    assert_eq!(declared.len(), manifest.files.len(), "manifest lists a file twice");
+    assert_eq!(
+        declared.len(),
+        manifest.files.len(),
+        "manifest lists a file twice"
+    );
     let on_disk: BTreeSet<String> = std::fs::read_dir(corpus_dir())
         .expect("corpus directory is readable")
-        .map(|entry| entry.expect("directory entry").file_name().to_string_lossy().into_owned())
+        .map(|entry| {
+            entry
+                .expect("directory entry")
+                .file_name()
+                .to_string_lossy()
+                .into_owned()
+        })
         .filter(|name| name.ends_with(".json") && name != "manifest.json")
         .collect();
     assert_eq!(declared, on_disk, "manifest and corpus directory disagree");
@@ -282,12 +302,25 @@ fn corpus_matches_the_rust_evaluator() {
     for entry in &manifest.files {
         let file: CaseFile = read_json(&entry.file);
         assert_eq!(file.schema_version, 1, "{}", entry.file);
-        assert_eq!(file.cases.len(), entry.cases, "{}: declared case count", entry.file);
+        assert_eq!(
+            file.cases.len(),
+            entry.cases,
+            "{}: declared case count",
+            entry.file
+        );
         let lua_only = file.cases.iter().filter(|c| c.lua_only).count();
-        assert_eq!(lua_only, entry.lua_only, "{}: declared lua_only count", entry.file);
+        assert_eq!(
+            lua_only, entry.lua_only,
+            "{}: declared lua_only count",
+            entry.file
+        );
         for case in &file.cases {
             assert!(ids.insert(case.id.clone()), "duplicate case id {}", case.id);
-            assert!(expected_is_well_formed(case), "{}: malformed expected", case.id);
+            assert!(
+                expected_is_well_formed(case),
+                "{}: malformed expected",
+                case.id
+            );
             if let Some(reference) = &case.case_ref {
                 refs.insert(reference.clone());
             }
@@ -335,20 +368,50 @@ fn corpus_matches_the_rust_evaluator() {
         let text = serde_json::to_string_pretty(&Value::Object(dump)).expect("dump serializes");
         std::fs::write(path, text).expect("dump path is writable");
     }
-    assert!(failures.is_empty(), "parity mismatches:\n{}", failures.join("\n"));
+    assert!(
+        failures.is_empty(),
+        "parity mismatches:\n{}",
+        failures.join("\n")
+    );
 
     // The manifest totals describe exactly what was consumed.
     assert_eq!(run + skipped, manifest.total_cases, "total case count");
     assert_eq!(skipped, manifest.total_lua_only, "total lua_only count");
-    assert!(run > 0 && skipped > 0, "both executed and skipped cases exist");
+    assert!(
+        run > 0 && skipped > 0,
+        "both executed and skipped cases exist"
+    );
     println!("predicate parity: {run} executed, {skipped} lua_only skipped");
 
     // Coverage the corpus must keep.
-    let want = |names: &[&str]| names.iter().map(|s| (*s).to_owned()).collect::<BTreeSet<_>>();
-    assert_eq!(ops, want(&OPERATORS), "every operator is evaluated at least once");
-    assert_eq!(statuses, want(&UNAVAILABLE_STATUSES), "all four unavailable statuses");
-    assert!(refs.is_superset(&want(&NAMED_CASES)), "named CASE references: {refs:?}");
-    assert_eq!(truths, want(&["true", "false", "unknown"]), "all three truth values");
-    assert!(errors.is_superset(&want(&["BUILD_MISMATCH", "INVALID_INPUT"])), "{errors:?}");
+    let want = |names: &[&str]| {
+        names
+            .iter()
+            .map(|s| (*s).to_owned())
+            .collect::<BTreeSet<_>>()
+    };
+    assert_eq!(
+        ops,
+        want(&OPERATORS),
+        "every operator is evaluated at least once"
+    );
+    assert_eq!(
+        statuses,
+        want(&UNAVAILABLE_STATUSES),
+        "all four unavailable statuses"
+    );
+    assert!(
+        refs.is_superset(&want(&NAMED_CASES)),
+        "named CASE references: {refs:?}"
+    );
+    assert_eq!(
+        truths,
+        want(&["true", "false", "unknown"]),
+        "all three truth values"
+    );
+    assert!(
+        errors.is_superset(&want(&["BUILD_MISMATCH", "INVALID_INPUT"])),
+        "{errors:?}"
+    );
     assert!(rejected_seen, "rejected inputs are covered");
 }
