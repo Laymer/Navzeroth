@@ -1,8 +1,9 @@
 # Core domain reference (M1.2)
 
 The core contains all 19 entities from plan section 6.1. It performs no I/O and
-reads no clocks. These are domain records, not the final addon exchange envelopes.
-M1.3 defines complete versioned envelopes and generated schemas/TypeScript types.
+reads no clocks. These are domain records; exchange documents wrap them in the
+versioned envelopes described in [the contract reference](../schemas/v1/README.md)
+(M1.3), with generated JSON Schema and TypeScript types.
 No live-client fact is established by deserializing a record.
 
 ## Construction and JSON
@@ -13,7 +14,8 @@ access. `into_inner` consumes the wrapper for editing followed by revalidation.
 Serde deserialization performs the same semantic checks. Fields are snake_case;
 closed enums reject unknown variants. Additional metadata fields are ignored.
 
-Use `json::decode_json::<Entity>(input)` at a domain JSON boundary. It rejects
+Use `contract::decode_envelope`/`decode_any` for exchange documents and
+`json::decode_json::<Entity>(input)` at a bare domain JSON boundary. It rejects
 input over 1 MiB before parsing, retains serde_json's recursion limit, checks any
 declared schema version, and returns safe application errors. M1.3/M2 must also
 bound transport/file reads before allocating this string. Raw `*Data` are drafts
@@ -76,8 +78,11 @@ observations and timestamps.
   directed edges; normalized rectangles include their boundaries. Transform
   scale must be nonzero; durations and ranges cannot be negative or inverted.
 - Objective and RoutePlan validate participant references, exclusions, travel
-  continuity, revisions and expiry. An empty plan is allowed to represent no
-  feasible steps; its inputs still identify what was considered.
+  continuity, revisions and expiry. Plans also carry capability assumptions,
+  revalidation triggers, per-step evidence (a subset of plan evidence) and
+  duration estimates; expected durations must lie inside declared ranges.
+  An empty plan is allowed to represent no feasible steps; its inputs still
+  identify what was considered.
 - GearRecommendation separates theoretical/obtainable/practical results. Known
   occupied-slot or unique-group conflicts are rejected. Obtainable/practical
   require explicit known eligibility. Core does not infer missing equip rules,
@@ -88,9 +93,11 @@ observations and timestamps.
   intervals cannot overlap or exceed the named producer session duration.
 
 Requirements embedded in records are checked against the owning build/namespace,
-including predicate branches that could later be short-circuited. External
-reference resolution, graph cycles and dataset-wide validation belong to later
-contract/content work; local record validity does not establish a complete dataset.
+including predicate branches that could later be short-circuited. Reference
+datasets and evidence bundles resolve their local references inside the
+envelope (see the contract reference); cross-dataset resolution, predicate-only
+references and graph analysis remain later content work. Local record validity
+does not establish a complete dataset.
 
 ## Pure rules
 

@@ -23,9 +23,10 @@ For a ChatGPT/Codex review, use [section 23.3](AZEROTH_NAVIGATOR_IMPLEMENTATION_
 
 ## Development setup
 
-The core provides validated domain records, observations/freshness, and bounded
-three-valued rule evaluation. See [the domain reference](docs/DOMAIN.md). The
-commands below run today; see
+The core provides validated domain records, observations/freshness, bounded
+three-valued rule evaluation and versioned exchange contracts. See
+[the domain reference](docs/DOMAIN.md) and
+[the contract reference](schemas/v1/README.md). The commands below run today; see
 [plan section 19](AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#19-development-commands-and-ci-contract)
 for the full target command surface and which milestone adds each remaining
 command.
@@ -44,7 +45,12 @@ cargo test --locked --workspace
 ```
 
 `azeroth-cli` prints a capability banner with no arguments and rejects unsupported
-arguments with exit code 2. It has no subcommands.
+arguments with exit code 2. Its only subcommand regenerates the exchange schema:
+
+```bash
+cargo run --locked -p azeroth-cli -- export-schemas --output schemas/v1
+```
+
 `doctor`, `validate-fixtures`, and the other subcommands in plan section 19.3
 are planned, not implemented — do not run or report them as working.
 
@@ -63,6 +69,8 @@ Verify `node --version`, `corepack --version`, and `pnpm --version` before use.
 
 ```bash
 pnpm install --frozen-lockfile
+pnpm contracts:types   # regenerate schemas/v1/exchange.ts from the schema
+pnpm contracts:check   # tsc type check, then Ajv + TypeScript fixture checks
 ```
 
 No application package exists under `apps/` yet. `apps/desktop` and its
@@ -82,8 +90,9 @@ verification and next work. Historical handoffs remain available in docs/handoff
 ## Continuous integration
 
 The CI workflow runs Rust formatting on Ubuntu 24.04 and locked Clippy/tests
-plus frozen pnpm installation on Ubuntu 24.04 and Windows 2025. Tool versions
-come from the repository pins; Corepack is 0.36.0. All five checks run on draft
+plus frozen pnpm installation and contract checks on Ubuntu 24.04 and Windows
+2025. Contract drift fails the Rust test jobs (committed schema) and the pnpm
+jobs (regenerated TypeScript). Tool versions come from the repository pins; Corepack is 0.36.0. All five checks run on draft
 and ready PRs targeting main and on main pushes. Cache hits never skip checks.
 
 Windows Rust uses `x86_64-pc-windows-msvc` and Visual Studio C++ build tools
@@ -92,6 +101,6 @@ Tauri build, also install the WebView2 runtime following
 [the current Tauri prerequisites](https://v2.tauri.app/start/prerequisites/).
 No desktop package exists yet; these Windows jobs validate Rust and pnpm only.
 
-M1.3/M1.5 add schema, fixture and parity checks; M1.4 adds TypeScript/UI and
-native desktop build jobs; data and packaging jobs follow their implementations.
+M1.3 added schema/fixture checks; M1.5 extends fixtures and M2 adds Lua parity;
+M1.4 adds TypeScript/UI and native desktop build jobs; data and packaging jobs follow their implementations.
 See STATUS and the M1.6 handoff for actual run evidence and main protection.
