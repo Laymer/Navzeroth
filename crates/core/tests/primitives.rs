@@ -54,3 +54,15 @@ fn build_variant_and_namespace_are_part_of_identity() {
     b.context.namespace = DatasetNamespace::Reference;
     assert!(a.context.ensure_compatible(&b.context).is_err());
 }
+
+#[test]
+fn duplicate_json_keys_do_not_silently_overwrite_observations() {
+    assert!(from_str::<RecordMap<PreferenceId, bool>>(r#"{"one":true,"one":false}"#).is_err());
+    assert!(
+        RecordMap::new([
+            (PreferenceId::new("one").unwrap(), true),
+            (PreferenceId::new("one").unwrap(), false)
+        ])
+        .is_err()
+    );
+}

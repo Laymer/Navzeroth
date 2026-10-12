@@ -68,7 +68,7 @@ pub enum PredicateNode {
     EquipmentMatches {
         slot: SlotId,
         item: ItemKey,
-        modifiers: std::collections::BTreeMap<AttributeId, FiniteNumber>,
+        modifiers: RecordMap<AttributeId, FiniteNumber>,
     },
     RoleIs {
         role: RoleId,

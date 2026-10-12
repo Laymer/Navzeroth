@@ -319,3 +319,59 @@ impl SupportedArea {
             }))
     }
 }
+
+/// Bounded, deterministic maps reject duplicate JSON keys instead of losing data.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(transparent)]
+pub struct RecordMap<K: Ord, V>(std::collections::BTreeMap<K, V>);
+impl<K: Ord, V> Default for RecordMap<K, V> {
+    fn default() -> Self {
+        Self(std::collections::BTreeMap::new())
+    }
+}
+impl<K: Ord, V> RecordMap<K, V> {
+    pub fn new(entries: impl IntoIterator<Item = (K, V)>) -> Result<Self> {
+        let mut map = std::collections::BTreeMap::new();
+        for (k, v) in entries {
+            if map.len() >= 1024 || map.insert(k, v).is_some() {
+                return Err(invalid("Duplicate key or record map limit exceeded"));
+            }
+        }
+        Ok(Self(map))
+    }
+}
+impl<K: Ord, V> std::ops::Deref for RecordMap<K, V> {
+    type Target = std::collections::BTreeMap<K, V>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<'de, K: Ord + Deserialize<'de>, V: Deserialize<'de>> Deserialize<'de> for RecordMap<K, V> {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
+        struct Visitor<K, V>(std::marker::PhantomData<(K, V)>);
+        impl<'de, K: Ord + Deserialize<'de>, V: Deserialize<'de>> serde::de::Visitor<'de>
+            for Visitor<K, V>
+        {
+            type Value = RecordMap<K, V>;
+            fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.write_str("a bounded map with unique keys")
+            }
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                mut a: A,
+            ) -> std::result::Result<Self::Value, A::Error> {
+                let mut map = std::collections::BTreeMap::new();
+                while let Some(key) = a.next_key::<K>()? {
+                    if map.len() >= 1024 || map.contains_key(&key) {
+                        return Err(serde::de::Error::custom(
+                            "Duplicate key or record map limit exceeded",
+                        ));
+                    }
+                    map.insert(key, a.next_value()?);
+                }
+                Ok(RecordMap(map))
+            }
+        }
+        d.deserialize_map(Visitor(std::marker::PhantomData))
+    }
+}
