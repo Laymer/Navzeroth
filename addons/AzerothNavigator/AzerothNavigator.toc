@@ -13,6 +13,10 @@
 Core\Bootstrap.lua
 Core\Version.lua
 Core\Json.lua
+Core\Decode.lua
+Core\Predicate.lua
+Core\Plan.lua
+Core\Hud.lua
 Core\Capabilities.lua
 Core\Export.lua
 Core\Settings.lua

@@ -75,7 +75,12 @@ impl GapReason {
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SessionEventKind {
     SessionStart,
-    /// A level observation. Its status is preserved (unknown, restricted, ...).
+    /// A level observation. Its status and original capture metadata are preserved.
+    /// Earlier captures may be carried forward. Capture sequence cannot exceed
+    /// the enclosing event's sequence; equal sequences identify the same capture
+    /// and require equal monotonic times when present. Earlier elapsed times are
+    /// not compared because a session may have a monotonic reset. UTC is not an
+    /// ordering constraint because clocks can change. Missing metadata stays missing.
     Level {
         level: Observation<Level>,
     },
@@ -258,6 +263,21 @@ fn validate_event(event: &SessionEvent, context: &DataContext) -> Result<()> {
                 .is_some_and(|id| *id != event.session)
             {
                 return Err(invalid("Level observation belongs to another session"));
+            }
+            if let Some(sequence) = level.metadata().sequence {
+                if sequence > event.sequence {
+                    return Err(invalid("Level observation capture follows its event"));
+                }
+                if sequence == event.sequence
+                    && level
+                        .metadata()
+                        .session_elapsed_ms
+                        .is_some_and(|elapsed| elapsed != event.elapsed_ms)
+                {
+                    return Err(invalid(
+                        "Level observation and event disagree on capture time",
+                    ));
+                }
             }
         }
         SessionEventKind::EquipmentChanged { item } => context.ensure_compatible(&item.context)?,
