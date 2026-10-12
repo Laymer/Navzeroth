@@ -1,0 +1,298 @@
+{
+  "description": "Operator semantics on a fully populated, fresh snapshot (anchored to crates/core/tests/evaluation.rs).",
+  "schema_version": 1,
+  "snapshots": {
+    "populated": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}}
+  },
+  "parties": {},
+  "cases": [
+    {
+      "id": "op-all-empty",
+      "note": "Empty conjunction is true",
+      "predicate": {"op":"all","predicates":[]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":1,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-any-empty",
+      "note": "Empty disjunction is false",
+      "predicate": {"op":"any","predicates":[]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":1,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-all-true",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":22},{"op":"role_is","role":"tank"}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":7,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-any-false",
+      "predicate": {"op":"any","predicates":[{"op":"level_at_least","level":23},{"op":"role_is","role":"mage"}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":7,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-not-true",
+      "predicate": {"op":"not","predicate":{"op":"level_at_least","level":22}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":4,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-not-false",
+      "predicate": {"op":"not","predicate":{"op":"level_at_least","level":23}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":4,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-known-level",
+      "predicate": {"op":"known","field":{"field":"level"}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-known-preference-absent",
+      "note": "A missing record is not known",
+      "predicate": {"op":"known","field":{"field":"preference","key":"absent"}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"preference","key":"absent"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":2,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-known-quest-field",
+      "predicate": {"op":"known","field":{"field":"quest","quest":"q1","state":"accepted"}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-equals-level-true",
+      "predicate": {"op":"equals","field":{"field":"level"},"value":{"type":"integer","value":22}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-equals-level-false",
+      "predicate": {"op":"equals","field":{"field":"level"},"value":{"type":"integer","value":23}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-equals-role-true",
+      "predicate": {"op":"equals","field":{"field":"role"},"value":{"type":"text","value":"tank"}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-equals-preference-true",
+      "predicate": {"op":"equals","field":{"field":"preference","key":"tips"},"value":{"type":"bool","value":true}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-gte-level-boundary",
+      "note": "Inclusive lower bound",
+      "predicate": {"op":"greater_than_or_equal","field":{"field":"level"},"value":{"type":"integer","value":22}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-gte-level-false",
+      "predicate": {"op":"greater_than_or_equal","field":{"field":"level"},"value":{"type":"integer","value":23}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-quest-state-true",
+      "predicate": {"op":"quest_state","quest":"q1","state":"accepted","value":true},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-quest-state-false",
+      "predicate": {"op":"quest_state","quest":"q1","state":"completed","value":true},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-objective-state-true",
+      "note": "Known false is a real value, not unknown",
+      "predicate": {"op":"objective_state","objective":"o1","completed":false},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-level-at-least-max",
+      "predicate": {"op":"level_at_least","level":65535},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-equipment-matches",
+      "predicate": {"op":"equipment_matches","slot":"main_hand","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":"base"},"modifiers":{"strength":0}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":6,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-role-is-false",
+      "predicate": {"op":"role_is","role":"mage"},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-location-inside",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":2,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-location-outside",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"bounds":{"min_x":0.6,"min_y":0.6,"max_x":1,"max_y":1}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":2,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-location-whole-map",
+      "note": "Null bounds cover the whole map",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"bounds":null}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":2,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-location-edge-inclusive",
+      "note": "Bounds are inclusive",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"bounds":{"min_x":0.5,"min_y":0.5,"max_x":0.5,"max_y":0.5}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":2,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "op-location-other-floor",
+      "predicate": {"op":"location_in_supported_area","area":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"upstairs","instance":null},"bounds":{"min_x":0,"min_y":0,"max_x":1,"max_y":1}}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":2,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-user-preference-false",
+      "predicate": {"op":"user_preference","key":"tips","value":false},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":3,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "op-participant-self",
+      "note": "The current character is evaluated without scanning a party",
+      "predicate": {"op":"participant_state","participant":"char1","predicate":{"op":"level_at_least","level":22}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":4,"truth":"true","warnings":[]}
+    }
+  ]
+}

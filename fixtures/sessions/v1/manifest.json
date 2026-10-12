@@ -1,0 +1,44 @@
+{
+  "description": "Synthetic M8.3 session interval fixtures. Not game data. expect: built (batch builds; the Rust tests assert the fixture-specific outcome) or error (build fails with error_code). A 'generate' member (oversized-input.json) is expanded by the test into that many events.",
+  "schema_version": 1,
+  "fixtures": [
+    {
+      "file": "case-007-duplicate-summary.json",
+      "expect": "built",
+      "case": "CASE-007",
+      "note": "Every event appears twice and in reverse order; the summary equals the single listing and merging it again is Unchanged"
+    },
+    {
+      "file": "clock-change.json",
+      "expect": "built",
+      "note": "UTC goes backward and disagrees with the monotonic delta; durations stay monotonic and UTC is flagged uncertain"
+    },
+    {
+      "file": "duplicate-sequence-conflict.json",
+      "expect": "error",
+      "error_code": "INVALID_INPUT",
+      "note": "Two different events share one session and sequence"
+    },
+    {
+      "file": "offline-between-sessions.json",
+      "expect": "built",
+      "note": "Logout, a later event with the same session ID, and a second session a day later; offline time is never counted"
+    },
+    {
+      "file": "oversized-input.json",
+      "expect": "error",
+      "error_code": "IMPORT_TOO_LARGE",
+      "note": "1025 events in one session exceed the 1024 bound"
+    },
+    {
+      "file": "reload-gap.json",
+      "expect": "built",
+      "note": "Monotonic reset inside a session ID, a recorder restart event and a second session ID"
+    },
+    {
+      "file": "unclassified-span.json",
+      "expect": "built",
+      "note": "Spans over max_observed_span_ms are unclassified; estimated activity; paused recording is a gap"
+    }
+  ]
+}
