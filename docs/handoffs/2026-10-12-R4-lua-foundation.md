@@ -7,7 +7,7 @@ lockfiles, CI and status are owned by the coordinator and remain outside this ta
 Acceptance: bounded decoder, all 192 predicate corpus cases, validated loaded-plan
 state and injected HUD callbacks; affected and workspace locked checks, contract
 checks, draft PR and hosted evidence. Live client bindings remain unverified.
-Status: IN_PROGRESS.
+Status: IMPLEMENTED for the pure synthetic scope; client behavior UNVERIFIED.
 
 ## Implementation
 
@@ -77,7 +77,7 @@ revalidation event dispatch are outside R4 (M4.6).
 Next dependency-ready task: R11 bounded synthetic gear inputs and Rust/Lua
 fixed-point scoring parity, stacked from feature/wave2-r4. R12 CI owner can use
 the existing harness tests; normal workspace Rust CI already executes them.
-Hosted PR and CI evidence: pending below.
+Hosted PR and CI evidence: recorded below.
 
 ## Coordinating review follow-up
 
@@ -98,3 +98,11 @@ Draft PR: https://github.com/Laymer/Navzeroth/pull/31.
 Hosted run: https://github.com/Laymer/Navzeroth/actions/runs/38307428332 at
 98e6a61: format, Lua static checks and pnpm Linux passed; Rust Linux/Windows,
 pnpm Windows and desktop Windows were still pending at first inspection.
+
+Hosted CI after the coordinating review correction: all seven checks passed at
+117096c on [run 38307699996](https://github.com/Laymer/Navzeroth/actions/runs/38307699996):
+Rust format, Rust Linux, Rust Windows, Lua static checks, pnpm Linux, pnpm
+Windows and Desktop shell Windows. Desktop CI compiles/tests the shell; it does
+not verify native UI interaction. Local post-review affected HUD tests,
+formatting, harness Clippy and zero-warning luacheck also passed. Final follow-up
+commit records this evidence only; executable sources are the checked revision.
