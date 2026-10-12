@@ -43,6 +43,20 @@ PNG blob under the LFS pattern; fmt, Clippy and workspace tests pass. The slice
 is IMPLEMENTED_UNVERIFIED for anything needing the Windows desktop or the live
 client. M1.4 remains the next task for UI work (PR-B in the plan).
 
+## M6.5 early slice delivery (feature/M6.5-atlas-imagery, PR-A)
+Additive `map_images`/`map_embeddings` dataset members, image-space pins,
+explicit cross-build applicability, pure projection with explicit gaps and a
+calibration solver, the `prepare-atlas` CLI with Git LFS pointer checks, the
+synthetic demo atlas, the Eastern Kingdoms poster and layers as LFS pointers,
+the reference dataset `forever-atlas-r1` (provisional `inferred` calibration,
+31 measured flight-master pins) and CI pointer checks. See the
+[M6.5 handoff](handoffs/2026-10-12-M6.5-atlas-imagery.md),
+[ADR 0002](decisions/0002-early-atlas-imagery-slice.md),
+[docs/data](data/atlas-eastern-kingdoms.md) and
+[docs/compatibility](compatibility/BUILD_CAPABILITIES.md) and the
+[M6.5 review](reviews/2026-10-12-M6.5.md). The Atlas screen and overlay wait
+for M1.4.
+
 ## M1.3 delivery
 Six versioned exchange envelope kinds with bounded semantic validation,
 generated schemas/v1 JSON Schema and TypeScript, 52 synthetic fixtures with a
@@ -63,6 +77,12 @@ scope. Shared policy authorizes routine feature-branch pushes and draft PRs;
 main pushes, merges and releases retain separate authorization requirements.
 
 ## Verification
+M6.5 slice local: fmt, locked Clippy and tests passed (66 tests: 50 core, 16
+CLI); schema/TypeScript regeneration deterministic; `pnpm contracts:check`
+passed for 73 fixtures; `prepare-atlas` deterministic on the real poster;
+`--check-pointer` passed on a pointer-only worktree. Hosted CI for the branch:
+to be recorded after the push. Desktop, overlay and live-client behaviour
+remain unimplemented or unverified; calibration is provisional.
 [PR 5](https://github.com/Laymer/Navzeroth/pull/5) was merged into main on 2026-10-12 at 12:22:58 UTC as 2c8628b; [main run 38248682966](https://github.com/Laymer/Navzeroth/actions/runs/38248682966)
 passed all five checks on the merge revision.
 M1.3 local: fmt, locked Clippy and tests passed (41 tests: 38 core, 3 CLI);
