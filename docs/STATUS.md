@@ -2,9 +2,9 @@
 
 Plan version: 1.0
 Current milestone: M1
-Current task: M1.2 (dependency-ready; M1.1 complete)
-Task owner: unassigned
-Base revision: fc8ebc3535e63e04341e815c152cc030ff757abb (M1.1 complete)
+Current task: M1.1 review and corrections (IN_PROGRESS)
+Task owner: ChatGPT/Codex
+Base revision: d89613fd96af8b586dda7091155f763b432f05bf
 Last updated: 2026-10-12
 Overall state: M0.1 repository intake complete; M1.1 workspace/toolchain initialization complete (IMPLEMENTED_UNVERIFIED pending CI); M1.2-M1.7 remain
 
@@ -27,7 +27,7 @@ Overall state: M0.1 repository intake complete; M1.1 workspace/toolchain initial
 | M12 | TODO | Expansion after focused release |
 
 ## Current task acceptance
-M1.1 is complete; see the checklist in [the M1.1 handoff](handoffs/2026-10-12-M1.1-workspace-init.md). M1.2 ("create the core domain types, observation semantics, schema versioning, and application errors," [plan section 17](../AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md#17-implementation-milestones-and-task-backlog)) is the next dependency-ready task; no owner has claimed it yet.
+Review 20e3acd..d89613f, correct setup/CLI/documentation defects, and record revision-linked findings. Expected changes: shared instructions, README, CLI and regression tests, review/status/handoff records. Acceptance: formatting, locked Clippy/tests, frozen pnpm install, and accurate records. User-approved sequence: review corrections, M1.6 Linux/Windows CI, then expanded M1.2 domain models and predicate evaluation. One writer and one draft PR; commits authored as Laymer <i.kopest@gmail.com>.
 
 ## Completed behavior
 Prepared the implementation plan, shared AGENTS.md instructions, CLAUDE.md entry point, project status, and initial handoff (prior session). M0.1 repository/toolchain/license/CI inspection is complete: working tree was clean, license is BSD-3-Clause, no live Forever client is reachable from this environment.
