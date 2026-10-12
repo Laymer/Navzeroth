@@ -14,9 +14,11 @@
 //! implemented and nothing in this module is ever labelled `Ranking::Practical`.
 pub mod inputs;
 pub mod profile;
+pub mod score;
 
 pub use inputs::*;
 pub use profile::*;
+pub use score::*;
 
 /// Hard cap on enumerated slot assignments per scenario (search space bound).
 pub const MAX_CONFIGURATIONS: usize = 4096;
