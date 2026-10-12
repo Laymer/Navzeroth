@@ -2,7 +2,7 @@
 
 Azeroth Navigator — a planned Rust-based companion for World of Warcraft: Forever.
 
-The repository currently contains the implementation specification and collaboration documents. Application development has not started.
+The Rust and pnpm workspaces are initialized. Follow the current status record for implemented behavior and verification evidence.
 
 ## Start here
 
@@ -33,7 +33,8 @@ command.
 
 Prerequisites: the Rust toolchain pinned in [rust-toolchain.toml](rust-toolchain.toml),
 installed via [rustup](https://rustup.rs). `rustup` picks up the pin
-automatically inside this repository.
+automatically inside this repository. On Linux/WSL, open a new terminal after
+installation or run `. "$HOME/.cargo/env"` to put Cargo on PATH.
 
 ```bash
 cargo fmt --all --check
@@ -47,12 +48,19 @@ are planned, not implemented — do not run or report them as working.
 
 ### pnpm workspace
 
-Prerequisites: Node.js and [Corepack](https://nodejs.org/api/corepack.html)
-(`corepack enable`), which installs the pnpm version pinned in this
-repository's `package.json` `packageManager` field.
+Tested setup: Node.js 24.15.0 (also pinned in `.node-version`) and
+[Corepack](https://github.com/nodejs/corepack) 0.36.0. Use
+`npm install --global corepack@0.36.0` followed by `corepack enable`.
+Corepack reads the exact pnpm version and integrity from `package.json`.
+Older Corepack 0.24.0 cannot launch this pnpm 12 binary layout.
+
+On Linux/WSL without a writable global npm prefix, install with
+`npm install --global corepack@0.36.0 --prefix "$HOME/.npm-global"`, put
+`$HOME/.npm-global/bin` first on PATH, then run `corepack enable`.
+Verify `node --version`, `corepack --version`, and `pnpm --version` before use.
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 No application package exists under `apps/` yet. `apps/desktop` and its
