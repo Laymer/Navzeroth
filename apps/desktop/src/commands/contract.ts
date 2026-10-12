@@ -1,6 +1,16 @@
 // Typed application command boundary (plan section 13). Mirrors the Rust
 // DTOs in crates/app; wire names are snake_case, exactly as serialized.
-import type { CharacterSnapshotEnvelope } from "../../../../schemas/v1/exchange";
+import type {
+  BuildKey,
+  CharacterSnapshotEnvelope,
+  Confidence,
+  DatasetNamespace,
+  ImageLayerKind,
+  ImagePin,
+  MapKey,
+  PixelPoint,
+  Position,
+} from "../../../../schemas/v1/exchange";
 
 /** Where displayed data comes from. `demo` data is synthetic and always labelled. */
 export type DataMode = "demo" | "stored";
@@ -39,6 +49,99 @@ export interface ProfileSummary {
   data_mode: DataMode;
 }
 
+// --- Atlas DTOs ------------------------------------------------------------
+// Hand-written mirrors of crates/app/src/atlas.rs (these are not part of the
+// generated exchange schema). fixtures/desktop/atlas/*.json are written by a
+// Rust test and parsed against these types in atlas/golden.test.ts, so a
+// drifting field fails a test instead of silently breaking the screen.
+
+export type ObservationStatus = "known" | "unknown" | "unsupported" | "restricted" | "not_applicable";
+
+export type LayerAvailability = "available" | "not_embedded" | "integrity_mismatch" | "unservable_id";
+
+export interface AtlasLayer {
+  id: string;
+  kind: ImageLayerKind;
+  /** Present only when the layer is available; images are fetched through the atlas scheme. */
+  url: string | null;
+  availability: LayerAvailability;
+  sha256: string;
+  width_px: number;
+  height_px: number;
+  frame_divisor: number;
+}
+
+/** Image pins are reference geography; `reference_only` is always true. */
+export type AtlasPin = ImagePin & { reference_only: true };
+
+export interface AtlasImage {
+  id: string;
+  map: MapKey;
+  width_px: number;
+  height_px: number;
+  layers: AtlasLayer[];
+  pins: AtlasPin[];
+  calibration_status: ObservationStatus;
+  calibration_confidence: Confidence | null;
+  /** True unless calibration is verified or sampled from enough control points. */
+  approximate: boolean;
+  gaps: string;
+  attribution: string;
+}
+
+export interface AtlasView {
+  data_mode: DataMode;
+  fixture: boolean;
+  revision: string;
+  namespace: DatasetNamespace;
+  images: AtlasImage[];
+}
+
+export type ProjectionNotice =
+  | { notice: "cross_build_reuse"; image_build: BuildKey }
+  | { notice: "embedding_fallback"; via: MapKey[] };
+
+export interface Projection {
+  image: string;
+  /** Full-frame pixels. */
+  pixel: PixelPoint;
+  notices: ProjectionNotice[];
+  calibration_evidence: string[];
+  calibration_confidence: Confidence | null;
+}
+
+export type ProjectionGap =
+  | { gap: "namespace_mismatch" }
+  | { gap: "no_image_for_map"; map: MapKey }
+  | { gap: "in_instance"; map: MapKey }
+  | { gap: "different_floor"; map: MapKey; available_floors: string[] }
+  | { gap: "build_mismatch"; position_build: BuildKey; image: string | null; applicable_builds: BuildKey[] }
+  | { gap: "embedding_chain_too_deep"; via: MapKey[] }
+  | { gap: "uncalibrated_image"; image: string; status: ObservationStatus }
+  | { gap: "out_of_bounds"; image: string; pixel: PixelPoint };
+
+export type ProjectedPosition = ({ outcome: "placed" } & Projection) | ({ outcome: "gap" } & ProjectionGap);
+
+export type Freshness =
+  | { status: "fresh"; age_ms: number }
+  | { status: "stale"; age_ms: number }
+  | { status: "uncertain"; reason: "missing_or_untrusted_time" | "clock_reversed" | "age_out_of_range" };
+
+export interface SnapshotMarker {
+  profile_id: string;
+  snapshot_id: string;
+  location_status: ObservationStatus;
+  observed_at_utc_ms: number | null;
+  received_at_utc_ms: number | null;
+  freshness: Freshness;
+  /** Null unless the location is known. */
+  projection: ProjectedPosition | null;
+  /** Null unless the marker is placed. */
+  approximate: boolean | null;
+  fixture: boolean;
+  data_mode: DataMode;
+}
+
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
   get_app_status: { input: undefined; output: AppStatus };
@@ -47,6 +150,10 @@ export interface CommandMap {
     input: { profile_id: string };
     output: CharacterSnapshotEnvelope;
   };
+  query_atlas: { input: { image: string | null }; output: AtlasView };
+  /** One to 64 positions. */
+  project_positions: { input: { positions: Position[] }; output: ProjectedPosition[] };
+  get_snapshot_markers: { input: undefined; output: SnapshotMarker[] };
 }
 
 export type CommandName = keyof CommandMap;

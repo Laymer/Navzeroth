@@ -1,0 +1,17 @@
+[
+  {
+    "profile_id": "demo-character-paladin",
+    "snapshot_id": "demo-snapshot-001",
+    "location_status": "restricted",
+    "observed_at_utc_ms": 1791791990000,
+    "received_at_utc_ms": 1791792005000,
+    "freshness": {
+      "status": "fresh",
+      "age_ms": 60000
+    },
+    "projection": null,
+    "approximate": null,
+    "fixture": true,
+    "data_mode": "demo"
+  }
+]

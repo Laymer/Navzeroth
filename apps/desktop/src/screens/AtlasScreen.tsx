@@ -1,0 +1,220 @@
+import { useEffect, useMemo, useState } from "react";
+import type { AppError, AtlasView, CommandClient, SnapshotMarker } from "../commands";
+import type { AtlasImage } from "../commands/contract";
+import { MapView } from "../atlas/MapView";
+import {
+  APPROXIMATE_LABEL,
+  DEMO_LABEL,
+  FLIGHT_TOGGLE_LABEL,
+  ROADS_TOGGLE_LABEL,
+  describeAge,
+  describeGap,
+  describeLayerAvailability,
+  describeNotice,
+  describePin,
+  describePinAccess,
+  describeUncertainty,
+} from "../atlas/describe";
+import { chooseLayer, type LayerToggles } from "../atlas/layers";
+import { MARKER_STATE_LABELS, markerState, placementOf } from "../atlas/markerState";
+import type { Point } from "../atlas/viewport";
+
+type Load =
+  | { phase: "loading" }
+  | { phase: "error"; error: AppError }
+  | { phase: "ready"; view: AtlasView; markers: SnapshotMarker[] };
+
+export function AtlasScreen({ client }: { client: CommandClient }) {
+  const [load, setLoad] = useState<Load>({ phase: "loading" });
+
+  useEffect(() => {
+    let live = true;
+    void (async () => {
+      const [view, markers] = await Promise.all([client.queryAtlas(null), client.getSnapshotMarkers()]);
+      if (!live) return;
+      if (!view.ok) return setLoad({ phase: "error", error: view.error });
+      if (!markers.ok) return setLoad({ phase: "error", error: markers.error });
+      setLoad({ phase: "ready", view: view.value, markers: markers.value });
+    })();
+    return () => {
+      live = false;
+    };
+  }, [client]);
+
+  return (
+    <section aria-labelledby="atlas-heading" className="atlas">
+      <h2 id="atlas-heading">Atlas</h2>
+      {load.phase === "loading" && <p role="status">Loading the atlas…</p>}
+      {load.phase === "error" && (
+        <p role="alert">
+          Atlas error {load.error.code}: {load.error.message}
+          {load.error.retryable ? " (you can retry)" : ""}
+        </p>
+      )}
+      {load.phase === "ready" && <AtlasReady view={load.view} markers={load.markers} />}
+    </section>
+  );
+}
+
+function AtlasReady({ view, markers }: { view: AtlasView; markers: SnapshotMarker[] }) {
+  const [imageId, setImageId] = useState<string | null>(null);
+  const image = view.images.find((i) => i.id === imageId) ?? view.images[0] ?? null;
+  const marker = markers[0] ?? null;
+
+  return (
+    <>
+      {view.data_mode === "demo" && (
+        <p className="demo-label" role="note">
+          {DEMO_LABEL}
+        </p>
+      )}
+      <p className="dataset-line">
+        Dataset {view.revision} ({view.namespace} namespace{view.fixture ? ", fixture" : ""})
+      </p>
+      {view.images.length > 1 && (
+        <label>
+          Image{" "}
+          <select value={image?.id ?? ""} onChange={(event) => setImageId(event.target.value)}>
+            {view.images.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.id}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      <MarkerPanel marker={marker} />
+      {image === null ? (
+        <p role="status">No atlas dataset is installed, so there is no map to show.</p>
+      ) : (
+        <ImageSection key={image.id} image={image} marker={marker} />
+      )}
+    </>
+  );
+}
+
+function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMarker | null }) {
+  const [toggles, setToggles] = useState<LayerToggles>({ roads: true, flight: false });
+  const [failed, setFailed] = useState<ReadonlySet<string>>(new Set());
+  const [selectedPin, setSelectedPin] = useState<string | null>(null);
+  const [focus, setFocus] = useState<{ point: Point; nonce: number } | null>(null);
+
+  const layer = useMemo(() => chooseLayer(image, toggles, failed), [image, toggles, failed]);
+  const placement = placementOf(marker);
+  const drawn = placement !== null && placement.image === image.id ? placement : null;
+  const stale = marker !== null && marker.freshness.status === "stale";
+
+  return (
+    <>
+      <fieldset className="layers">
+        <legend>Layers</legend>
+        <label>
+          <input
+            type="checkbox"
+            checked={toggles.roads}
+            onChange={(event) => setToggles({ ...toggles, roads: event.target.checked })}
+          />{" "}
+          {ROADS_TOGGLE_LABEL}
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={toggles.flight}
+            onChange={(event) => setToggles({ ...toggles, flight: event.target.checked })}
+          />{" "}
+          {FLIGHT_TOGGLE_LABEL}
+        </label>
+        <p className="layer-note">
+          {layer === null
+            ? "Showing: schematic frame (no imagery)."
+            : `Showing layer: ${layer.id} (${layer.kind.replace(/_/g, " ")}).`}{" "}
+          Each layer is a full image; the flight network replaces the roads layer when both are on.
+        </p>
+        {image.layers
+          .filter((l) => l.availability !== "available" || failed.has(l.id))
+          .map((l) => (
+            <p key={l.id} className="layer-note" role="note">
+              Layer {l.id}: {l.availability !== "available" ? describeLayerAvailability(l) : "the image failed to load"}.
+            </p>
+          ))}
+      </fieldset>
+      <MapView
+        image={image}
+        layer={layer}
+        onLayerError={(id) => setFailed((previous) => new Set(previous).add(id))}
+        marker={drawn}
+        markerStale={stale}
+        selectedPin={selectedPin}
+        focus={focus}
+      />
+      <section aria-labelledby="pins-heading">
+        <h3 id="pins-heading">Reference pins</h3>
+        {image.pins.length === 0 ? (
+          <p>This image has no pins.</p>
+        ) : (
+          <ul className="pins">
+            {image.pins.map((pin) => (
+              <li key={pin.id}>
+                <strong>{pin.label}</strong>. {describePin(pin)}.
+                {describePinAccess(pin) !== null && <> {describePinAccess(pin)}.</>}{" "}
+                <button
+                  type="button"
+                  aria-pressed={selectedPin === pin.id}
+                  onClick={() => {
+                    setSelectedPin(pin.id);
+                    setFocus({ point: pin.pixel, nonce: (focus?.nonce ?? 0) + 1 });
+                  }}
+                >
+                  Show {pin.label} on the map
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <section aria-labelledby="coverage-heading">
+        <h3 id="coverage-heading">Coverage and sources</h3>
+        <p>
+          Calibration: {image.calibration_status}
+          {image.calibration_confidence === null ? "" : `, confidence ${image.calibration_confidence.replace(/_/g, " ")}`}
+          {image.approximate ? ` (${APPROXIMATE_LABEL})` : ""}.
+        </p>
+        <p>Not verified or not shown: {image.gaps}</p>
+        <p>{image.attribution}</p>
+      </section>
+    </>
+  );
+}
+
+function MarkerPanel({ marker }: { marker: SnapshotMarker | null }) {
+  const state = markerState(marker);
+  const projection = marker?.projection ?? null;
+  return (
+    <section aria-labelledby="marker-heading" className="marker-panel">
+      <h3 id="marker-heading">Snapshot position</h3>
+      <p className="badge" role="status">
+        {marker === null ? "No snapshot imported" : `Last imported: ${describeAge(marker.freshness)}`}
+      </p>
+      <p>{MARKER_STATE_LABELS[state]}</p>
+      {marker !== null && marker.freshness.status === "stale" && (
+        <p role="note" className="stale-note">
+          Stale: this position is older than 30 minutes and may no longer be where the character is.
+        </p>
+      )}
+      {marker !== null && marker.freshness.status === "uncertain" && (
+        <p role="note">{describeUncertainty(marker.freshness.reason)}</p>
+      )}
+      {projection !== null && projection.outcome === "gap" && <p role="note">{describeGap(projection)}</p>}
+      {projection !== null &&
+        projection.outcome === "placed" &&
+        projection.notices.map((notice) => (
+          <p key={notice.notice} role="note">
+            {describeNotice(notice)}
+          </p>
+        ))}
+      {marker !== null && marker.observed_at_utc_ms !== null && (
+        <p>Captured (UTC): {new Date(marker.observed_at_utc_ms).toISOString()}</p>
+      )}
+    </section>
+  );
+}

@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import type { AppError, AppStatus, CommandClient } from "./commands";
 import type { CharacterSnapshotEnvelope } from "../../../schemas/v1/exchange";
 import { describeObservation } from "./observation";
+import { AtlasScreen } from "./screens/AtlasScreen";
+
+type Screen = "today" | "atlas";
+const SCREENS: { id: Screen; label: string }[] = [
+  { id: "today", label: "Today" },
+  { id: "atlas", label: "Atlas" },
+];
 
 type Load =
   | { phase: "loading" }
@@ -10,6 +17,7 @@ type Load =
 
 export function App({ client }: { client: CommandClient }) {
   const [load, setLoad] = useState<Load>({ phase: "loading" });
+  const [screen, setScreen] = useState<Screen>("today");
 
   useEffect(() => {
     let live = true;
@@ -39,7 +47,22 @@ export function App({ client }: { client: CommandClient }) {
           {load.error.retryable ? " (you can retry)" : ""}
         </p>
       )}
-      {load.phase === "ready" && <Today status={load.status} snapshot={load.snapshot} />}
+      {load.phase === "ready" && (
+        <nav aria-label="Primary">
+          {SCREENS.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              aria-current={screen === id ? "page" : undefined}
+              onClick={() => setScreen(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+      )}
+      {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} />}
+      {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} />}
     </main>
   );
 }
