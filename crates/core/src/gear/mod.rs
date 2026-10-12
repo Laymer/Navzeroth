@@ -12,10 +12,14 @@
 //! Wave-1 types are internal library types: they are not registered in the
 //! contract schema. Practical ranking and acquisition value (M5.4) are not
 //! implemented and nothing in this module is ever labelled `Ranking::Practical`.
+pub mod configuration;
+pub mod eligibility;
 pub mod inputs;
 pub mod profile;
 pub mod score;
 
+pub use configuration::*;
+pub use eligibility::*;
 pub use inputs::*;
 pub use profile::*;
 pub use score::*;
