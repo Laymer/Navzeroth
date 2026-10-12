@@ -24,3 +24,5 @@ pub(crate) fn unique<T: Ord>(values: impl IntoIterator<Item = T>) -> Result<()> 
 }
 pub mod character;
 pub use character::*;
+pub mod spatial;
+pub use spatial::*;
