@@ -1,0 +1,68 @@
+{
+  "description": "Synthetic M2.5 evaluator parity corpus (Rust-anchored). Not game data. Each case file holds shared snapshots and parties plus cases with expected normalized evaluator output. Expected values were produced by the Rust evaluator and reviewed. Cases marked lua_only exercise the addon's stricter JSON decoder and are counted and skipped by the Rust test.",
+  "schema_version": 1,
+  "total_cases": 192,
+  "total_lua_only": 3,
+  "files": [
+    {
+      "file": "operators.json",
+      "cases": 28,
+      "lua_only": 0,
+      "note": "All 14 operators with their basic true/false outcomes on the shared populated snapshot"
+    },
+    {
+      "file": "truth-tables.json",
+      "cases": 9,
+      "lua_only": 0,
+      "note": "Three-valued all/any/not combinations with exact short-circuit step counts"
+    },
+    {
+      "file": "unavailable.json",
+      "cases": 16,
+      "lua_only": 0,
+      "note": "unknown/restricted/unsupported/not_applicable inputs give Unknown and known=false (CASE-010)"
+    },
+    {
+      "file": "missing-history.json",
+      "cases": 7,
+      "lua_only": 0,
+      "note": "Missing quest history yields Unknown, never False (CASE-001)"
+    },
+    {
+      "file": "party.json",
+      "cases": 13,
+      "lua_only": 0,
+      "note": "Party participants evaluated with their own observations; absent, stale and diverging peers (CASE-002)"
+    },
+    {
+      "file": "freshness.json",
+      "cases": 18,
+      "lua_only": 0,
+      "note": "Stale reject vs allow_stale, clock uncertainty, reversed clocks and same-session elapsed paths"
+    },
+    {
+      "file": "limits.json",
+      "cases": 17,
+      "lua_only": 0,
+      "note": "Exact step, depth and node boundaries including generated deep and wide trees"
+    },
+    {
+      "file": "context-mismatch.json",
+      "cases": 12,
+      "lua_only": 0,
+      "note": "Reference/demo, other-build and other-edition keys error with BUILD_MISMATCH even in short-circuited branches (CASE-005/011/015)"
+    },
+    {
+      "file": "equipment.json",
+      "cases": 17,
+      "lua_only": 0,
+      "note": "Equipment slots, variants and modifiers: empty, missing, unknown, mismatch and bytewise key order"
+    },
+    {
+      "file": "inputs.json",
+      "cases": 55,
+      "lua_only": 3,
+      "note": "Rejected and ignored inputs: operand type matrix, identifiers, numbers, decoder strictness"
+    }
+  ]
+}

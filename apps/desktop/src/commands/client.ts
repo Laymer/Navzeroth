@@ -1,5 +1,14 @@
-import type { AppError, AppStatus, CommandAdapter, ProfileSummary, Result } from "./contract";
-import type { CharacterSnapshotEnvelope } from "../../../../schemas/v1/exchange";
+import type {
+  AppError,
+  AppStatus,
+  AtlasView,
+  CommandAdapter,
+  ProfileSummary,
+  ProjectedPosition,
+  Result,
+  SnapshotMarker,
+} from "./contract";
+import type { CharacterSnapshotEnvelope, Position } from "../../../../schemas/v1/exchange";
 
 const CODES: ReadonlySet<string> = new Set([
   "INVALID_INPUT", "UNSUPPORTED_SCHEMA", "BUILD_MISMATCH", "SNAPSHOT_OUTDATED",
@@ -39,6 +48,12 @@ export function createClient(adapter: CommandAdapter) {
       run(() => adapter.invoke("list_profiles", undefined)),
     getCharacterSnapshot: (profileId: string): Promise<Result<CharacterSnapshotEnvelope>> =>
       run(() => adapter.invoke("get_character_snapshot", { profile_id: profileId })),
+    queryAtlas: (image: string | null = null): Promise<Result<AtlasView>> =>
+      run(() => adapter.invoke("query_atlas", { image })),
+    projectPositions: (positions: Position[]): Promise<Result<ProjectedPosition[]>> =>
+      run(() => adapter.invoke("project_positions", { positions })),
+    getSnapshotMarkers: (): Promise<Result<SnapshotMarker[]>> =>
+      run(() => adapter.invoke("get_snapshot_markers", undefined)),
   };
 }
 

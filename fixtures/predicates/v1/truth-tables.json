@@ -1,0 +1,104 @@
+{
+  "description": "Kleene combinations. All and any short-circuit only on false and true respectively; unknown never short-circuits.",
+  "schema_version": 1,
+  "snapshots": {
+    "populated": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"completed":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}}
+  },
+  "parties": {},
+  "cases": [
+    {
+      "id": "tt-all-true-unknown",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":22},{"op":"quest_state","quest":"absent","state":"completed","value":true}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":6,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "tt-all-unknown-false",
+      "note": "False after unknown still decides the conjunction",
+      "predicate": {"op":"all","predicates":[{"op":"quest_state","quest":"absent","state":"completed","value":true},{"op":"level_at_least","level":23}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":6,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "tt-all-false-unknown",
+      "note": "Short circuit: the unknown operand is never evaluated",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":23},{"op":"quest_state","quest":"absent","state":"completed","value":true}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":4,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "tt-all-unknown-true",
+      "predicate": {"op":"all","predicates":[{"op":"quest_state","quest":"absent","state":"completed","value":true},{"op":"level_at_least","level":22}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":6,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "tt-any-unknown-true",
+      "predicate": {"op":"any","predicates":[{"op":"quest_state","quest":"absent","state":"completed","value":true},{"op":"level_at_least","level":22}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":6,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "tt-any-true-unknown",
+      "note": "Short circuit on true",
+      "predicate": {"op":"any","predicates":[{"op":"level_at_least","level":22},{"op":"quest_state","quest":"absent","state":"completed","value":true}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[],"steps":4,"truth":"true","warnings":[]}
+    },
+    {
+      "id": "tt-any-unknown-false",
+      "predicate": {"op":"any","predicates":[{"op":"quest_state","quest":"absent","state":"completed","value":true},{"op":"level_at_least","level":23}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":6,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "tt-not-unknown",
+      "note": "Negation keeps unknown",
+      "predicate": {"op":"not","predicate":{"op":"quest_state","quest":"absent","state":"completed","value":true}},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "tt-nested",
+      "predicate": {"op":"any","predicates":[{"op":"all","predicates":[{"op":"quest_state","quest":"absent","state":"completed","value":true},{"op":"level_at_least","level":22}]},{"op":"not","predicate":{"op":"level_at_least","level":23}}]},
+      "snapshot": "populated",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"absent","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":11,"truth":"true","warnings":[]}
+    }
+  ]
+}

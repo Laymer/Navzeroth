@@ -2,6 +2,8 @@
 //! functions so they are tested without a webview; the desktop shell only
 //! registers them. Until the storage adapter exists (M1.7), the only data is
 //! the synthetic demo fixture, and every response says so.
+pub mod atlas;
+
 use azeroth_core::contract::decode_envelope;
 use azeroth_core::entities::CharacterSnapshot;
 use azeroth_core::error::{AppError, ErrorCode};
@@ -40,7 +42,8 @@ pub struct ProfileSummary {
     pub data_mode: DataMode,
 }
 
-fn demo_snapshot() -> Result<azeroth_core::contract::Envelope<CharacterSnapshot>, AppError> {
+pub(crate) fn demo_snapshot()
+-> Result<azeroth_core::contract::Envelope<CharacterSnapshot>, AppError> {
     decode_envelope(DEMO_SNAPSHOT)
 }
 

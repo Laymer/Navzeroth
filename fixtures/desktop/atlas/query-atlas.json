@@ -1,0 +1,84 @@
+{
+  "data_mode": "demo",
+  "fixture": true,
+  "revision": "demo-imagery-r1",
+  "namespace": "demo",
+  "images": [
+    {
+      "id": "demo-image-1",
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-map-1",
+        "floor": "0",
+        "instance": null
+      },
+      "width_px": 64,
+      "height_px": 96,
+      "layers": [
+        {
+          "id": "roads",
+          "kind": "roads_traced",
+          "url": "atlas://localhost/demo-image-1/roads",
+          "availability": "available",
+          "sha256": "c68f4a42b82fe53fc683af5d48eabc6602526b21f22debf2dd1c7db45f017677",
+          "width_px": 64,
+          "height_px": 96,
+          "frame_divisor": 1
+        },
+        {
+          "id": "flight",
+          "kind": "flight_reference",
+          "url": "atlas://localhost/demo-image-1/flight",
+          "availability": "available",
+          "sha256": "0b7052ff08ba62d030deb1de26b9f49ffd08ff6af857a8b33ac87bf10faa7204",
+          "width_px": 64,
+          "height_px": 96,
+          "frame_divisor": 1
+        },
+        {
+          "id": "overview",
+          "kind": "overview",
+          "url": "atlas://localhost/demo-image-1/overview",
+          "availability": "available",
+          "sha256": "981c642698c8bb2a63ecfedd6d330e8f193a5c4018ed661273c34c162b5c56e6",
+          "width_px": 32,
+          "height_px": 48,
+          "frame_divisor": 2
+        }
+      ],
+      "pins": [
+        {
+          "id": "pin-1",
+          "label": "Demo flight master",
+          "kind": {
+            "kind": "flight_master",
+            "access": [
+              "alliance"
+            ]
+          },
+          "pixel": {
+            "x": 6.4,
+            "y": 9.6
+          },
+          "measured_on": "flight",
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "reference_only": true
+        }
+      ],
+      "calibration_status": "known",
+      "calibration_confidence": "inferred",
+      "approximate": true,
+      "gaps": "Synthetic image; identity calibration by construction; no roads or flight paths are verified",
+      "attribution": "Synthetic demo imagery, not game data. Source: demo-source-1. Licence: not recorded in this view."
+    }
+  ]
+}

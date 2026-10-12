@@ -1,0 +1,15 @@
+{
+  "character": "c1",
+  "context": {"build": {"edition": "wow_forever", "build": "SYNTHETIC", "interface": "SYNTHETIC"}, "namespace": "demo"},
+  "config": {"max_observed_span_ms": 60000, "clock_tolerance_ms": 1000},
+  "events": [
+    {"session": "s1", "sequence": 1, "elapsed_ms": 0, "kind": {"type": "session_start"}},
+    {"session": "s1", "sequence": 2, "elapsed_ms": 30000, "kind": {"type": "quest_turn_in", "quest": "q1"}},
+    {"session": "s1", "sequence": 3, "elapsed_ms": 600000, "kind": {"type": "quest_turn_in", "quest": "q2"}},
+    {"session": "s1", "sequence": 4, "elapsed_ms": 630000, "kind": {"type": "activity", "label": "travel", "quality": "estimated"}},
+    {"session": "s1", "sequence": 5, "elapsed_ms": 1000000, "kind": {"type": "activity", "label": "grind", "quality": "observed"}},
+    {"session": "s1", "sequence": 6, "elapsed_ms": 1010000, "kind": {"type": "recording_paused"}},
+    {"session": "s1", "sequence": 7, "elapsed_ms": 1050000, "kind": {"type": "recording_resumed"}},
+    {"session": "s1", "sequence": 8, "elapsed_ms": 1060000, "kind": {"type": "quest_turn_in", "quest": "q3"}}
+  ]
+}

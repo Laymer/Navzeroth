@@ -1,0 +1,29 @@
+[
+  {
+    "profile_id": "demo-character-paladin",
+    "snapshot_id": "demo-snapshot-001",
+    "location_status": "known",
+    "observed_at_utc_ms": 1791791990000,
+    "received_at_utc_ms": 1791792005000,
+    "freshness": {
+      "status": "fresh",
+      "age_ms": 60000
+    },
+    "projection": {
+      "outcome": "placed",
+      "image": "demo-image-1",
+      "pixel": {
+        "x": 16.0,
+        "y": 96.0
+      },
+      "notices": [],
+      "calibration_evidence": [
+        "demo-evidence-calibration"
+      ],
+      "calibration_confidence": "inferred"
+    },
+    "approximate": true,
+    "fixture": true,
+    "data_mode": "demo"
+  }
+]

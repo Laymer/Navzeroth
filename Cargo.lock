@@ -89,6 +89,7 @@ dependencies = [
  "azeroth-core",
  "serde",
  "serde_json",
+ "sha2",
 ]
 
 [[package]]
@@ -96,6 +97,7 @@ name = "azeroth-cli"
 version = "0.1.0"
 dependencies = [
  "azeroth-core",
+ "azeroth-ingest",
  "image",
  "serde",
  "serde_json",
@@ -120,6 +122,15 @@ dependencies = [
  "azeroth-core",
  "tauri",
  "tauri-build",
+]
+
+[[package]]
+name = "azeroth-ingest"
+version = "0.1.0"
+dependencies = [
+ "azeroth-core",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
