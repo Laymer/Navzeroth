@@ -1,0 +1,36 @@
+[
+  {
+    "profile_id": "demo-character-paladin",
+    "snapshot_id": "demo-snapshot-001",
+    "location_status": "known",
+    "observed_at_utc_ms": 1791791990000,
+    "received_at_utc_ms": 1791792005000,
+    "freshness": {
+      "status": "fresh",
+      "age_ms": 60000
+    },
+    "projection": {
+      "outcome": "gap",
+      "gap": "different_floor",
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-map-1",
+        "floor": "1",
+        "instance": null
+      },
+      "available_floors": [
+        "0"
+      ]
+    },
+    "approximate": null,
+    "fixture": true,
+    "data_mode": "demo"
+  }
+]

@@ -1,0 +1,184 @@
+{
+  "cases": [
+    "placed",
+    "embedding_fallback",
+    "namespace_mismatch",
+    "different_floor",
+    "build_mismatch"
+  ],
+  "positions": [
+    {
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-map-1",
+        "floor": "0",
+        "instance": null
+      },
+      "x": 0.25,
+      "y": 1.0
+    },
+    {
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-zone-1",
+        "floor": "0",
+        "instance": null
+      },
+      "x": 0.0,
+      "y": 1.0
+    },
+    {
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "reference"
+        },
+        "map_id": "demo-map-1",
+        "floor": "0",
+        "instance": null
+      },
+      "x": 0.5,
+      "y": 0.5
+    },
+    {
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-map-1",
+        "floor": "1",
+        "instance": null
+      },
+      "x": 0.5,
+      "y": 0.5
+    },
+    {
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "OTHER_BUILD",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-map-1",
+        "floor": "0",
+        "instance": null
+      },
+      "x": 0.5,
+      "y": 0.5
+    }
+  ],
+  "results": [
+    {
+      "outcome": "placed",
+      "image": "demo-image-1",
+      "pixel": {
+        "x": 16.0,
+        "y": 96.0
+      },
+      "notices": [],
+      "calibration_evidence": [
+        "demo-evidence-calibration"
+      ],
+      "calibration_confidence": "inferred"
+    },
+    {
+      "outcome": "placed",
+      "image": "demo-image-1",
+      "pixel": {
+        "x": 16.0,
+        "y": 48.0
+      },
+      "notices": [
+        {
+          "notice": "embedding_fallback",
+          "via": [
+            {
+              "context": {
+                "build": {
+                  "edition": "wow_forever",
+                  "build": "UNVERIFIED_DEMO",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "map_id": "demo-zone-1",
+              "floor": "0",
+              "instance": null
+            }
+          ]
+        }
+      ],
+      "calibration_evidence": [
+        "demo-evidence-calibration"
+      ],
+      "calibration_confidence": "inferred"
+    },
+    {
+      "outcome": "gap",
+      "gap": "namespace_mismatch"
+    },
+    {
+      "outcome": "gap",
+      "gap": "different_floor",
+      "map": {
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "map_id": "demo-map-1",
+        "floor": "1",
+        "instance": null
+      },
+      "available_floors": [
+        "0"
+      ]
+    },
+    {
+      "outcome": "gap",
+      "gap": "build_mismatch",
+      "position_build": {
+        "edition": "wow_forever",
+        "build": "OTHER_BUILD",
+        "interface": "UNVERIFIED_DEMO"
+      },
+      "image": "demo-image-1",
+      "applicable_builds": [
+        {
+          "edition": "wow_forever",
+          "build": "UNVERIFIED_DEMO",
+          "interface": "UNVERIFIED_DEMO"
+        }
+      ]
+    }
+  ]
+}
