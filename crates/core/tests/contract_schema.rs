@@ -69,4 +69,18 @@ fn schema_encodes_key_contract_constraints() {
         serde_json::json!(["status", "value"])
     );
     assert_eq!(branches[1]["properties"]["value"], Value::Bool(false));
+    // Additive imagery members (ADR 0002) stay optional with documented defaults.
+    let dataset = &defs["ReferenceDataset"];
+    let required: Vec<_> = dataset["required"].as_array().unwrap().iter().collect();
+    assert!(!required.contains(&&Value::from("map_images")));
+    assert!(!required.contains(&&Value::from("map_embeddings")));
+    assert!(
+        defs["MapImage"]["properties"]["calibration"]["$ref"]
+            .as_str()
+            .unwrap()
+            .ends_with("Observation_CoordinateTransform")
+    );
+    assert_eq!(defs["Sha256Hex"]["pattern"], "^[0-9a-f]{64}$");
+    assert_eq!(defs["AssetPath"]["maxLength"], 256);
+    assert_eq!(defs["PixelExtent"]["maximum"], 16_384);
 }

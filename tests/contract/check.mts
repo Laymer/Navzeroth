@@ -12,6 +12,7 @@ import type {
   CharacterSnapshot,
   CharacterSnapshotEnvelope,
   Copper,
+  MapImage,
   Observation_Level,
   Predicate,
 } from "../../schemas/v1/exchange.ts";
@@ -163,7 +164,19 @@ function summarize(doc: Exchange): string {
       for (const a of doc.payload.acquisitions) {
         if (a.cost.status === "known") check(copperIsCanonical(a.cost.value), "copper stays a canonical string");
       }
-      return `${label} dataset ${doc.payload.revision}`;
+      // Additive version 1 members: absent means no imagery or embeddings recorded.
+      const images = doc.payload.map_images ?? [];
+      for (const image of images) {
+        check(image.layers.length > 0, "map image declares at least one layer");
+        for (const layer of image.layers) check(/^[0-9a-f]{64}$/.test(layer.sha256), "layer digest is lowercase hex");
+        for (const pin of image.pins) {
+          check(pin.pixel.x >= 0 && pin.pixel.x <= image.width_px && pin.pixel.y >= 0 && pin.pixel.y <= image.height_px, "pin inside frame");
+          check(image.layers.some((l) => l.id === pin.measured_on), "pin measured on a declared layer");
+        }
+        if (image.calibration.status === "known") check(image.calibration.value.units === "pixel", "calibration units are pixel");
+      }
+      const embeddings = doc.payload.map_embeddings ?? [];
+      return `${label} dataset ${doc.payload.revision}, ${images.length} images, ${embeddings.length} embeddings`;
     }
     case "gear_recommendations": {
       const scores = doc.payload.recommendations.flatMap((r) => [category(r.baseline_score), category(r.proposed_score)]);
@@ -186,7 +199,9 @@ export function compileTimeChecks(): void {
   const kind: CharacterSnapshotEnvelope["kind"] = "route_plan";
   // @ts-expect-error unknown predicate operators are not representable
   const op: Predicate = { op: "eval", code: "return true" };
-  void [missing, leaked, cost, kind, op];
+  // @ts-expect-error image calibration is an observation, never a bare transform
+  const calibration: MapImage["calibration"] = { units: "pixel", scale_x: 1, scale_y: 1, offset_x: 0, offset_y: 0 };
+  void [missing, leaked, cost, kind, op, calibration];
 }
 
 // ---- Run --------------------------------------------------------------------

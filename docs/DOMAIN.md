@@ -77,6 +77,19 @@ observations and timestamps.
 - MapSpace, TravelNode and TravelEdge use named map/floor/instance spaces and
   directed edges; normalized rectangles include their boundaries. Transform
   scale must be nonzero; durations and ranges cannot be negative or inverted.
+  A Position's origin is the map's top-left corner, x east and y south in [0,1]
+  (C_Map convention, unverified on the client until M0.4); `map_id` is the
+  addon-exported uiMapID as a decimal string. A CoordinateTransform applies
+  `target = scale * normalized + offset` per axis.
+- MapImage (ADR 0002) records raster layers (relative lowercase asset paths,
+  declared SHA-256 digests, sizes equal to ceil(frame / divisor)), image-space
+  pins measured on a declared layer, an optional pixel calibration observation
+  that requires evidence, control points whose declared residuals must agree
+  with that calibration, and an explicit same-edition `applicable_builds` list
+  (the image's own build plus evidence-backed others). MapEmbedding places a
+  child map's rectangle inside its parent with one exact context; datasets
+  reject cycles and chains deeper than 4. Core carries digests; it never hashes
+  or decodes files.
 - Objective and RoutePlan validate participant references, exclusions, travel
   continuity, revisions and expiry. Plans also carry capability assumptions,
   revalidation triggers, per-step evidence (a subset of plan evidence) and
@@ -98,6 +111,19 @@ datasets and evidence bundles resolve their local references inside the
 envelope (see the contract reference); cross-dataset resolution, predicate-only
 references and graph analysis remain later content work. Local record validity
 does not establish a complete dataset.
+
+## Pure projection
+
+`atlas::project_position(position, context, dataset)` places a position on the
+first applicable image in dataset order, walking embeddings (exact context)
+with the position's build carried unchanged and checked against
+`applicable_builds`. It returns a `Projection` (full-frame pixel, notices for
+cross-build reuse and embedding fallback, the weakest calibration confidence)
+or an explicit `ProjectionGap` (namespace mismatch, no image, instance,
+different floor, build mismatch, uncalibrated, out of bounds). A gap is an
+outcome to explain, never a guessed marker. `solve_axis_aligned_calibration`
+fits a per-axis least-squares transform from at least three spread pairs and
+reports residuals; rotation and shear are not modelled.
 
 ## Pure rules
 

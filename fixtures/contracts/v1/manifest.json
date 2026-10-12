@@ -1,5 +1,5 @@
 {
-  "description": "Synthetic M1.3 exchange contract fixtures. Not game data. expect: valid (Rust and schema accept), schema_invalid (both reject), semantic_invalid (schema accepts; Rust rejects).",
+  "description": "Synthetic M1.3 (and M6.5 imagery) exchange contract fixtures. Not game data. expect: valid (Rust and schema accept), schema_invalid (both reject), semantic_invalid (schema accepts; Rust rejects).",
   "schema_version": 1,
   "fixtures": [
     {
@@ -320,6 +320,138 @@
       "expect": "semantic_invalid",
       "error_code": "INVALID_INPUT",
       "note": "JSON.parse keeps the last duplicate; Rust rejects duplicate keys"
+    },
+    {
+      "file": "reference-dataset-imagery.json",
+      "kind": "reference_dataset",
+      "expect": "valid",
+      "note": "Imagery, pins, known calibration with evidence, control point and a zone embedding (ADR 0002)"
+    },
+    {
+      "file": "dataset-map-image-unresolved-map.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE",
+      "note": "Map image references an undeclared map space"
+    },
+    {
+      "file": "dataset-map-image-unresolved-evidence.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE",
+      "note": "Pin evidence does not resolve"
+    },
+    {
+      "file": "dataset-control-point-unresolved-node.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE",
+      "note": "Control point node is undeclared"
+    },
+    {
+      "file": "dataset-control-point-undeclared-pin.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Control point names a pin the image does not declare"
+    },
+    {
+      "file": "dataset-embedding-unresolved-parent.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "DATASET_INCOMPLETE",
+      "note": "Embedding parent is an undeclared map space"
+    },
+    {
+      "file": "dataset-embedding-self-parent.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "A map cannot embed itself"
+    },
+    {
+      "file": "dataset-embedding-cycle.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Two embeddings form a cycle"
+    },
+    {
+      "file": "dataset-map-image-zero-scale-calibration.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Calibration scale must be nonzero"
+    },
+    {
+      "file": "dataset-map-image-calibration-units-yards.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Image calibration units must be pixel"
+    },
+    {
+      "file": "dataset-map-image-calibration-without-evidence.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Known calibration requires evidence"
+    },
+    {
+      "file": "dataset-map-image-cross-edition-build.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Imagery cannot be reused across editions"
+    },
+    {
+      "file": "dataset-map-image-foreign-build-without-evidence.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Reusing imagery for another build requires evidence"
+    },
+    {
+      "file": "dataset-map-image-pin-outside-frame.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Pin pixel beyond the frame width"
+    },
+    {
+      "file": "dataset-map-image-residual-disagrees.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Declared residual contradicts the calibration"
+    },
+    {
+      "file": "dataset-map-image-layer-size-mismatch.json",
+      "kind": "reference_dataset",
+      "expect": "semantic_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Overview size must equal ceil(frame / divisor)"
+    },
+    {
+      "file": "dataset-map-image-bad-sha256.json",
+      "kind": "reference_dataset",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Digest must be 64 lowercase hex characters"
+    },
+    {
+      "file": "dataset-map-image-traversal-path.json",
+      "kind": "reference_dataset",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Asset paths cannot traverse upward"
+    },
+    {
+      "file": "dataset-map-image-uppercase-path.json",
+      "kind": "reference_dataset",
+      "expect": "schema_invalid",
+      "error_code": "INVALID_INPUT",
+      "note": "Asset paths are lowercase"
     }
   ]
 }

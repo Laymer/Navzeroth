@@ -1,0 +1,312 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "reference_dataset",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0"
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "UNVERIFIED_DEMO",
+    "interface": "UNVERIFIED_DEMO",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "payload": {
+    "revision": "demo-imagery-r1",
+    "evidence": [
+      {
+        "id": "demo-evidence-1",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "source": "demo-source-1",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791700000000
+        },
+        "confidence": "limited_sample",
+        "conflicts": [],
+        "notes": "Synthetic evidence"
+      },
+      {
+        "id": "demo-evidence-calibration",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "source": "demo-source-1",
+        "license": {
+          "status": "unknown"
+        },
+        "observed_at_utc_ms": {
+          "status": "known",
+          "value": 1791700000000
+        },
+        "confidence": "inferred",
+        "conflicts": [],
+        "notes": "Synthetic image; identity calibration by construction"
+      }
+    ],
+    "items": [],
+    "acquisitions": [],
+    "quests": [],
+    "map_spaces": [
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "demo-map-1",
+          "floor": "0",
+          "instance": null
+        },
+        "transform": {
+          "status": "unknown"
+        },
+        "evidence": []
+      },
+      {
+        "key": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "demo-zone-1",
+          "floor": "0",
+          "instance": null
+        },
+        "transform": {
+          "status": "unknown"
+        },
+        "evidence": []
+      }
+    ],
+    "nodes": [
+      {
+        "id": "demo-node-1",
+        "position": {
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "UNVERIFIED_DEMO",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "map_id": "demo-map-1",
+            "floor": "0",
+            "instance": null
+          },
+          "x": 0.1,
+          "y": 0.1
+        },
+        "service": {
+          "status": "known",
+          "value": "flight"
+        }
+      }
+    ],
+    "edges": [],
+    "objectives": [],
+    "rules": [],
+    "map_images": [
+      {
+        "id": "demo-image-1",
+        "map": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "demo-map-1",
+          "floor": "0",
+          "instance": null
+        },
+        "source": "demo-source-1",
+        "evidence": [
+          "demo-evidence-1"
+        ],
+        "applicable_builds": [
+          {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "evidence": []
+          },
+          {
+            "build": {
+              "edition": "wow_classic",
+              "build": "1.0",
+              "interface": "1"
+            },
+            "evidence": [
+              "demo-evidence-1"
+            ]
+          }
+        ],
+        "width_px": 64,
+        "height_px": 96,
+        "layers": [
+          {
+            "id": "roads",
+            "kind": "roads_traced",
+            "file": "atlas/synthetic-continent/layers/roads.png",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "width_px": 64,
+            "height_px": 96,
+            "frame_divisor": 1,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "id": "flight",
+            "kind": "flight_reference",
+            "file": "atlas/synthetic-continent/layers/flight.png",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "width_px": 64,
+            "height_px": 96,
+            "frame_divisor": 1,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "id": "overview",
+            "kind": "overview",
+            "file": "atlas/synthetic-continent/layers/overview.png",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "width_px": 32,
+            "height_px": 48,
+            "frame_divisor": 2,
+            "registration_offset_px": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ],
+        "pins": [
+          {
+            "id": "pin-1",
+            "label": "Demo flight master",
+            "kind": {
+              "kind": "flight_master",
+              "access": [
+                "alliance"
+              ]
+            },
+            "pixel": {
+              "x": 6.4,
+              "y": 9.6
+            },
+            "measured_on": "flight",
+            "evidence": [
+              "demo-evidence-1"
+            ]
+          }
+        ],
+        "calibration": {
+          "status": "known",
+          "value": {
+            "units": "pixel",
+            "scale_x": 64,
+            "scale_y": 96,
+            "offset_x": 0,
+            "offset_y": 0
+          },
+          "source": "synthetic_fixture"
+        },
+        "calibration_evidence": [
+          "demo-evidence-calibration"
+        ],
+        "control_points": [
+          {
+            "pin": "pin-1",
+            "node": "demo-node-1",
+            "residual_px": {
+              "status": "known",
+              "value": 0
+            }
+          }
+        ],
+        "gaps": "Synthetic image; identity calibration by construction; no roads or flight paths are verified"
+      }
+    ],
+    "map_embeddings": [
+      {
+        "child": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "demo-zone-1",
+          "floor": "0",
+          "instance": null
+        },
+        "parent": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "demo-map-1",
+          "floor": "0",
+          "instance": null
+        },
+        "bounds": {
+          "min_x": 0.25,
+          "min_y": 0.25,
+          "max_x": 0.5,
+          "max_y": 0.5
+        },
+        "evidence": [
+          "demo-evidence-1"
+        ]
+      }
+    ]
+  }
+}
