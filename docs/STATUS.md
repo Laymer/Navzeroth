@@ -2,7 +2,7 @@
 
 Plan version: 1.0 plus accepted ADR 0001
 Current milestone: M1
-Current task: M1.3 (VERIFIED locally on feature/M1.3-contracts; draft PR, hosted CI pending)
+Current task: M1.3 (VERIFIED on feature/M1.3-contracts; draft PR 5, hosted CI passed)
 Task owner: Claude Code (Opus 5.5), single writer
 Base revision: bc386c23394ba8ff115e8c8595068f98d25ea5ea (origin/main after PR 4; PR 3 merged as 514d4b0)
 Last updated: 2026-10-12
@@ -13,7 +13,7 @@ Overall state: M1.1 reviewed/corrected; M1.6 CI and expanded M1.2 merged and ver
 | Milestone | Status | Evidence / blockers |
 | --- | --- | --- |
 | M0 | IN_PROGRESS | M0.1 repository/instructions/toolchain/license/CI inspection complete. M0.2 status/handoff records exist; initial decisions and sources are embedded in the implementation plan. M0.3-M0.6 need a user-operated Forever client, unavailable in this development environment (CLAUDE.md, section Environments). |
-| M1 | IN_PROGRESS | M1.1 review/corrections, M1.6 workspace CI and expanded M1.2 VERIFIED and merged in PR 3. M1.3 contracts VERIFIED locally (draft PR). M1.4, M1.5 and M1.7 remain. |
+| M1 | IN_PROGRESS | M1.1 review/corrections, M1.6 workspace CI and expanded M1.2 VERIFIED and merged in PR 3. M1.3 contracts VERIFIED (draft PR 5, CI passed). M1.4, M1.5 and M1.7 remain. |
 | M2 | TODO | |
 | M3 | TODO | |
 | M4 | TODO | |
@@ -64,7 +64,8 @@ main pushes, merges and releases retain separate authorization requirements.
 ## Verification
 M1.3 local: fmt, locked Clippy and tests passed (41 tests: 38 core, 3 CLI);
 schema/TypeScript regeneration deterministic with no drift; pnpm contracts:check
-passed for 52 fixtures. Hosted CI for M1.3 is pending on its draft PR.
+passed for 52 fixtures. Hosted [run 38247973096](https://github.com/Laymer/Navzeroth/actions/runs/38247973096) passed all five checks at 827be4b+docs
+(9c0b6a2), including Windows schema drift and contract checks.
 M1.2 local formatting, locked Clippy/tests: passed (27 tests: 25 core, 2 CLI).
 Rust 1.99.0, Node 24.15.0, Corepack 0.36.0, pnpm 12.11.2.
 [Hosted main run 38241935794](https://github.com/Laymer/Navzeroth/actions/runs/38241935794)
@@ -80,8 +81,7 @@ No unresolved blocker for the completed scopes. See the
 [M1.1 review](reviews/2026-10-12-M1.1.md),
 [M1.2 self-review](reviews/2026-10-12-M1.2.md) and
 [M1.3 review](reviews/2026-10-12-M1.3.md). Lua parity (M2), cross-dataset
-reference resolution (M3) and hosted Windows evidence for the new contract
-steps remain open.
+reference resolution (M3) remain open.
 
 ## Next dependency-ready work
 After M1.3 review/merge: M1.4 (desktop shell with demo mode) and M1.7 (snapshot
