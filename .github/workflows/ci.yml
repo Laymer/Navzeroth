@@ -62,8 +62,11 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
-      - run: npm install --global corepack@0.36.0
-      - run: corepack enable
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
       - run: pnpm --version
       - id: store
         shell: bash
