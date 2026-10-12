@@ -207,3 +207,35 @@ describe("navigation", () => {
     expect(await screen.findByText("demo-snapshot-001")).toBeInTheDocument();
   });
 });
+
+describe("dense reference search", () => {
+  it("filters pins on the map and list, navigates by keyboard, and preserves selection on refresh", async () => {
+    const original = await demoAdapter.invoke("query_atlas", { image: null });
+    const image = original.images[0];
+    if (!image) throw new Error("Missing demo image");
+    const template = image.pins[0];
+    if (!template) throw new Error("Missing demo pin");
+    const dense: AtlasView = { ...original, images: [{ ...image, pins: Array.from({ length: 200 }, (_, i) => ({ ...template, kind: i % 2 === 0 ? template.kind : { kind: "landmark" }, id: `dense-${i}`, label: `Reference ${String(i).padStart(3, "0")}`, pixel: { x: i % image.width_px, y: i % image.height_px } })) }] };
+    renderAtlas(adapterWith({ query_atlas: () => dense }));
+    const last = await screen.findByRole("button", { name: "Show Reference 199 on the map" });
+    fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "landmark" } });
+    expect(screen.getByText("100 of 200 reference pins shown.")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "all" } });
+    fireEvent.click(last);
+    expect(last).toHaveAttribute("aria-pressed", "true");
+    last.focus();
+    fireEvent.keyDown(last, { key: "Home" });
+    expect(screen.getByRole("button", { name: "Show Reference 000 on the map" })).toHaveFocus();
+    fireEvent.keyDown(screen.getByRole("button", { name: "Show Reference 000 on the map" }), { key: "End" });
+    expect(last).toHaveFocus();
+    fireEvent.change(screen.getByLabelText("Search reference pins"), { target: { value: "Reference 199" } });
+    expect(screen.getAllByRole("button", { name: /^Show Reference/ })).toHaveLength(1);
+    expect(document.querySelectorAll(".pin")).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
+    expect(await screen.findByRole("button", { name: "Show Reference 199 on the map" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByLabelText("Search reference pins")).toHaveValue("Reference 199");
+    fireEvent.change(screen.getByLabelText("Search reference pins"), { target: { value: "missing" } });
+    expect(screen.getByText("No reference pins match these filters.")).toBeInTheDocument();
+    expect(screen.getByText("The selected pin is hidden by the current filters.")).toBeInTheDocument();
+  });
+});
