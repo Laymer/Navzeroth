@@ -1,0 +1,15 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/core",
+    "crates/cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+license = "BSD-3-Clause"
+authors = ["Igor K <i.kopest@gmail.com>"]
+repository = "https://github.com/Laymer/Navzeroth"
+publish = false
