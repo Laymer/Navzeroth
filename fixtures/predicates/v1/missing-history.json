@@ -1,0 +1,88 @@
+{
+  "description": "A level-22 synthetic character without quest history: absence of a record is uncertainty, not a negative fact.",
+  "schema_version": 1,
+  "snapshots": {
+    "history": {"schema_version":1,"id":"snap1","character":"char1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"capture":{},"source_revision":"demo-r1","level":{"status":"known","value":22,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"role":{"status":"known","value":"tank","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"location":{"status":"known","value":{"map":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"map_id":"map1","floor":"ground","instance":null},"x":0.5,"y":0.5},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"preferences":{"tips":{"status":"known","value":true,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"equipment":{"main_hand":{"status":"known","value":{"state":"item","item":{"context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"item_id":"item1","variant":{"status":"known","value":"base","observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"},"instance":{"status":"unknown"},"modifiers":{"status":"known","value":{"strength":0},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}},"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}},"quests":{"q1":{"quest":"q1","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"accepted":{"status":"unknown"},"completed":{"status":"unknown"},"turned_in":{"status":"unknown"},"objectives":{}}},"objectives":{"o1":{"status":"known","value":false,"observed_at_utc_ms":100,"clock_trust":"trusted","source":"synthetic_fixture"}}}
+  },
+  "parties": {},
+  "cases": [
+    {
+      "id": "history-absent-quest-completed",
+      "note": "No record for q99: unknown, reason missing_record",
+      "case_ref": "CASE-001",
+      "predicate": {"op":"quest_state","quest":"q99","state":"completed","value":true},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q99","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":2,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "history-absent-quest-false-value",
+      "note": "Asking for completed=false must not turn absence into true",
+      "case_ref": "CASE-001",
+      "predicate": {"op":"quest_state","quest":"q99","state":"completed","value":false},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q99","state":"completed"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":2,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "history-absent-quest-negated",
+      "case_ref": "CASE-001",
+      "predicate": {"op":"not","predicate":{"op":"quest_state","quest":"q99","state":"turned_in","value":true}},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q99","state":"turned_in"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "history-prerequisite-conjunction",
+      "note": "Prerequisites are not asserted absent",
+      "case_ref": "CASE-001",
+      "predicate": {"op":"all","predicates":[{"op":"level_at_least","level":22},{"op":"quest_state","quest":"q99","state":"turned_in","value":true}]},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q99","state":"turned_in"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":6,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "history-unknown-quest-progress",
+      "note": "A recorded quest with unknown progress is unavailable, not missing",
+      "predicate": {"op":"quest_state","quest":"q1","state":"accepted","value":true},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q1","state":"accepted"},"input":"field"},"participant":"char1","reason":{"reason":"unavailable","status":"unknown"}}],"steps":3,"truth":"unknown","warnings":[]}
+    },
+    {
+      "id": "history-absent-quest-known",
+      "predicate": {"op":"known","field":{"field":"quest","quest":"q99","state":"accepted"}},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"quest","quest":"q99","state":"accepted"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":2,"truth":"false","warnings":[]}
+    },
+    {
+      "id": "history-absent-objective",
+      "predicate": {"op":"objective_state","objective":"absent","completed":true},
+      "snapshot": "history",
+      "party": null,
+      "freshness": {"now_utc_ms":150,"clock_trust":"trusted","session":null,"max_age_ms":100},
+      "stale_policy": "reject",
+      "limits": {"depth":32,"nodes":1024,"steps":1024},
+      "expected": {"reasons":[{"input":{"field":{"field":"objective","objective":"absent"},"input":"field"},"participant":"char1","reason":{"reason":"missing_record"}}],"steps":2,"truth":"unknown","warnings":[]}
+    }
+  ]
+}
