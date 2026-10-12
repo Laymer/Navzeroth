@@ -18,6 +18,7 @@ fn effort() -> AcquisitionEffort {
         formation_ms: known(json!(5)),
         attempt_ms: known(json!(20)),
         stopping_ms: known(json!(5)),
+        balance_basis: BalanceBasis::CallerBudget,
         available_copper: known(json!("100")),
         session_budget_ms: ms(100),
         max_attempts: 10,
@@ -32,8 +33,8 @@ fn assess(
 ) -> AcquisitionAssessment {
     let snapshot: CharacterSnapshot = from_value(common::snapshot()).unwrap();
     let freshness = FreshnessContext {
-        now_utc_ms: None,
-        clock_trust: ClockTrust::Uncertain,
+        now_utc_ms: Some(UtcMillis::new(150).unwrap()),
+        clock_trust: ClockTrust::Trusted,
         session: None,
         max_age_ms: ms(100),
     };
@@ -156,4 +157,47 @@ fn one_time_cost_and_known_false_requirements_are_explicit() {
     assert_eq!(blocked.status, AcquisitionStatus::Unavailable);
     assert!(blocked.credited_reward.is_none());
     assert_eq!(blocked.reasons, vec![AcquisitionReason::RequirementsNotMet]);
+}
+
+#[test]
+fn captured_money_requires_freshness_and_insufficient_funds_are_unavailable() {
+    let s = source(
+        json!({"status":"known","value":1}),
+        json!({"status":"known","value":"30"}),
+    );
+    let mut e = effort();
+    e.balance_basis = BalanceBasis::ObservedBalance;
+    e.available_copper = from_value(
+        json!({"status":"known","value":"100","observed_at_utc_ms":1,"clock_trust":"trusted"}),
+    )
+    .unwrap();
+    let stale = assess(&s, &e, &BTreeSet::new());
+    assert_eq!(stale.status, AcquisitionStatus::Uncertain);
+    assert_eq!(stale.feasible_attempts, None);
+    assert!(stale.reasons.iter().any(|r| matches!(
+        r,
+        AcquisitionReason::BalanceNotFresh {
+            freshness: Freshness::Stale { .. }
+        }
+    )));
+    e.available_copper = from_value(
+        json!({"status":"known","value":"100","observed_at_utc_ms":100,"clock_trust":"trusted"}),
+    )
+    .unwrap();
+    assert_eq!(
+        assess(&s, &e, &BTreeSet::new()).status,
+        AcquisitionStatus::Guaranteed
+    );
+    e.available_copper = from_value(
+        json!({"status":"known","value":"10","observed_at_utc_ms":100,"clock_trust":"trusted"}),
+    )
+    .unwrap();
+    let poor = assess(&s, &e, &BTreeSet::new());
+    assert_eq!(poor.status, AcquisitionStatus::Unavailable);
+    assert_eq!(poor.feasible_attempts, Some(0));
+    assert!(poor.credited_reward.is_none());
+    assert!(
+        poor.reasons
+            .contains(&AcquisitionReason::InsufficientCopper)
+    );
 }
