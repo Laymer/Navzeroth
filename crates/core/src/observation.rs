@@ -3,9 +3,11 @@ use crate::{
     error::{Result, Validate, invalid},
     types::*,
 };
+use schemars::{JsonSchema, Schema, SchemaGenerator, json_schema};
 use serde::{Deserialize, Deserializer, Serialize};
+use std::borrow::Cow;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ObservationStatus {
     Known,
@@ -14,7 +16,7 @@ pub enum ObservationStatus {
     Restricted,
     NotApplicable,
 }
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum StateSource {
     #[default]
@@ -25,7 +27,7 @@ pub enum StateSource {
     ReferenceData,
     SyntheticFixture,
 }
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ClockTrust {
     Trusted,
@@ -33,7 +35,7 @@ pub enum ClockTrust {
     Uncertain,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ObservationMetadata {
     #[serde(default)]
     pub source: StateSource,
@@ -114,6 +116,42 @@ impl<T: Serialize> Observation<T> {
             value: Some(value),
             metadata,
         })
+    }
+}
+
+/// Known requires a non-null value; every other status forbids `value`,
+/// including explicit null. Metadata members are optional with documented defaults.
+impl<T: JsonSchema> JsonSchema for Observation<T> {
+    fn schema_name() -> Cow<'static, str> {
+        format!("Observation_{}", T::schema_name()).into()
+    }
+    fn schema_id() -> Cow<'static, str> {
+        format!("Observation<{}>", T::schema_id()).into()
+    }
+    fn json_schema(generator: &mut SchemaGenerator) -> Schema {
+        let metadata = ObservationMetadata::json_schema(generator);
+        let metadata = metadata
+            .get("properties")
+            .and_then(serde_json::Value::as_object)
+            .cloned()
+            .unwrap_or_default();
+        let branch = |status: serde_json::Value, value: serde_json::Value, required: &[&str]| {
+            let mut properties = metadata.clone();
+            properties.insert("status".into(), status);
+            properties.insert("value".into(), value);
+            serde_json::json!({"type": "object", "properties": properties, "required": required})
+        };
+        let known = branch(
+            serde_json::json!({"const": "known"}),
+            generator.subschema_for::<T>().to_value(),
+            &["status", "value"],
+        );
+        let unavailable = branch(
+            serde_json::json!({"enum": ["unknown", "unsupported", "restricted", "not_applicable"]}),
+            serde_json::Value::Bool(false),
+            &["status"],
+        );
+        json_schema!({"oneOf": [known, unavailable]})
     }
 }
 

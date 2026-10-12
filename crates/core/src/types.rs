@@ -1,8 +1,29 @@
 //! Edition-scoped identities and checked units. No IDs or clocks are generated here.
 use crate::error::{AppError, ErrorCode, Result, invalid};
+use schemars::{JsonSchema, Schema, SchemaGenerator, json_schema};
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 
 pub const MAX_SAFE_INTEGER: u64 = 9_007_199_254_740_991;
+/// Structural approximation of identifier rules for JSON Schema consumers.
+/// Rust remains authoritative: it counts UTF-8 bytes, not code points.
+pub const IDENTIFIER_PATTERN: &str = r"^[^\p{Cc}\s](?:[^\p{Cc}]*[^\p{Cc}\s])?$";
+pub const TEXT_PATTERN: &str = r"^(?:[^\p{Cc}]|[\t\n])*$";
+pub const COPPER_PATTERN: &str = "^(?:0|[1-9][0-9]{0,19})$";
+
+/// Implements `JsonSchema` with a fixed, named schema.
+macro_rules! fixed_schema {
+    ($name:ident, $schema:tt) => {
+        impl JsonSchema for $name {
+            fn schema_name() -> Cow<'static, str> {
+                stringify!($name).into()
+            }
+            fn json_schema(_: &mut SchemaGenerator) -> Schema {
+                json_schema!($schema)
+            }
+        }
+    };
+}
 
 macro_rules! ids {
     ($($name:ident),+ $(,)?) => { $(
@@ -23,6 +44,7 @@ macro_rules! ids {
             }
         }
         impl From<$name> for String { fn from(value: $name) -> Self { value.0 } }
+        fixed_schema!($name, {"type": "string", "minLength": 1, "maxLength": 256, "pattern": IDENTIFIER_PATTERN});
     )+ };
 }
 ids!(
@@ -61,7 +83,8 @@ ids!(
 );
 
 macro_rules! integer {
-    ($name:ident, $base:ty, $wire:literal, $valid:expr) => {
+    ($name:ident, $base:ty, $wire:literal, $valid:expr, $min:expr, $max:expr) => {
+        fixed_schema!($name, {"type": "integer", "minimum": $min, "maximum": $max});
         #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
         #[serde(try_from = $wire, into = $wire)]
         pub struct $name($base);
@@ -89,13 +112,40 @@ macro_rules! integer {
         }
     };
 }
-integer!(Millis, u64, "u64", |n: u64| n <= MAX_SAFE_INTEGER);
-integer!(Sequence, u64, "u64", |n: u64| n <= MAX_SAFE_INTEGER);
-integer!(UtcMillis, i64, "i64", |n: i64| n.unsigned_abs()
-    <= MAX_SAFE_INTEGER);
-integer!(SafeInteger, i64, "i64", |n: i64| n.unsigned_abs()
-    <= MAX_SAFE_INTEGER);
-integer!(Level, u16, "u16", |n: u16| n > 0);
+const NEG_SAFE: i64 = -(MAX_SAFE_INTEGER as i64);
+integer!(
+    Millis,
+    u64,
+    "u64",
+    |n: u64| n <= MAX_SAFE_INTEGER,
+    0,
+    MAX_SAFE_INTEGER
+);
+integer!(
+    Sequence,
+    u64,
+    "u64",
+    |n: u64| n <= MAX_SAFE_INTEGER,
+    0,
+    MAX_SAFE_INTEGER
+);
+integer!(
+    UtcMillis,
+    i64,
+    "i64",
+    |n: i64| n.unsigned_abs() <= MAX_SAFE_INTEGER,
+    NEG_SAFE,
+    MAX_SAFE_INTEGER
+);
+integer!(
+    SafeInteger,
+    i64,
+    "i64",
+    |n: i64| n.unsigned_abs() <= MAX_SAFE_INTEGER,
+    NEG_SAFE,
+    MAX_SAFE_INTEGER
+);
+integer!(Level, u16, "u16", |n: u16| n > 0, 1, u16::MAX);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
@@ -125,6 +175,11 @@ impl TryFrom<String> for Copper {
             .map_err(|_| invalid("Currency overflow"))
     }
 }
+fixed_schema!(Copper, {
+    "description": "Unsigned integer copper as a canonical base-10 string (Rust also rejects values above u64)",
+    "type": "string",
+    "pattern": COPPER_PATTERN
+});
 impl From<Copper> for String {
     fn from(n: Copper) -> Self {
         n.0.to_string()
@@ -153,6 +208,7 @@ impl TryFrom<f64> for FiniteNumber {
         Ok(Self(n))
     }
 }
+fixed_schema!(FiniteNumber, {"type": "number", "minimum": NEG_SAFE, "maximum": MAX_SAFE_INTEGER});
 impl From<FiniteNumber> for f64 {
     fn from(n: FiniteNumber) -> Self {
         n.0
@@ -179,6 +235,7 @@ impl TryFrom<f64> for Normalized {
         Ok(Self(n))
     }
 }
+fixed_schema!(Normalized, {"type": "number", "minimum": 0, "maximum": 1});
 impl From<Normalized> for f64 {
     fn from(n: Normalized) -> Self {
         n.0
@@ -205,25 +262,28 @@ impl TryFrom<u32> for SchemaVersion {
         }
     }
 }
+fixed_schema!(SchemaVersion, {"type": "integer", "const": 1});
 impl From<SchemaVersion> for u32 {
     fn from(_: SchemaVersion) -> Self {
         1
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
 pub struct BuildKey {
     pub edition: EditionId,
     pub build: BuildId,
     pub interface: InterfaceId,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum DatasetNamespace {
     Demo,
     Reference,
 }
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
 pub struct DataContext {
     pub build: BuildKey,
     pub namespace: DatasetNamespace,
@@ -240,13 +300,13 @@ impl DataContext {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
 pub struct ItemKey {
     pub context: DataContext,
     pub item_id: ItemId,
     pub variant: VariantId,
 }
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
 pub struct MapKey {
     pub context: DataContext,
     pub map_id: MapId,
@@ -276,19 +336,21 @@ impl TryFrom<String> for Text {
         Ok(Self(s))
     }
 }
+fixed_schema!(Text, {"type": "string", "maxLength": 4096, "pattern": TEXT_PATTERN});
 impl From<Text> for String {
     fn from(t: Text) -> Self {
         t.0
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Position {
     pub map: MapKey,
     pub x: Normalized,
     pub y: Normalized,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "Bounds")]
 pub struct BoundsData {
     pub min_x: Normalized,
     pub min_y: Normalized,
@@ -304,7 +366,7 @@ impl crate::error::Validate for BoundsData {
     }
 }
 pub type Bounds = crate::error::Validated<BoundsData>;
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct SupportedArea {
     pub map: MapKey,
     pub bounds: Option<Bounds>,
@@ -346,6 +408,25 @@ impl<K: Ord, V> std::ops::Deref for RecordMap<K, V> {
     type Target = std::collections::BTreeMap<K, V>;
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+impl<K: Ord + JsonSchema, V: JsonSchema> JsonSchema for RecordMap<K, V> {
+    fn inline_schema() -> bool {
+        true
+    }
+    fn schema_name() -> Cow<'static, str> {
+        format!("RecordMap_{}_{}", K::schema_name(), V::schema_name()).into()
+    }
+    fn schema_id() -> Cow<'static, str> {
+        format!("RecordMap<{},{}>", K::schema_id(), V::schema_id()).into()
+    }
+    fn json_schema(generator: &mut SchemaGenerator) -> Schema {
+        json_schema!({
+            "type": "object",
+            "propertyNames": generator.subschema_for::<K>(),
+            "additionalProperties": generator.subschema_for::<V>(),
+            "maxProperties": 1024
+        })
     }
 }
 impl<'de, K: Ord + Deserialize<'de>, V: Deserialize<'de>> Deserialize<'de> for RecordMap<K, V> {

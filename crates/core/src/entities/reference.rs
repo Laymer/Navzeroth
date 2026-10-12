@@ -5,9 +5,10 @@ use crate::{
     predicate::Predicate,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum CapabilityStatus {
     VerifiedAvailable,
@@ -16,12 +17,13 @@ pub enum CapabilityStatus {
     Failed,
     Untested,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct CapabilityCheck {
     pub status: CapabilityStatus,
     pub evidence: Vec<EvidenceId>,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "GameBuild")]
 pub struct GameBuildData {
     pub key: BuildKey,
     pub locale: Locale,
@@ -46,7 +48,7 @@ impl Validate for GameBuildData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Confidence {
     VerifiedOnBuild,
@@ -56,7 +58,8 @@ pub enum Confidence {
     Inferred,
     DisputedOrStale,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "EvidenceRecord")]
 pub struct EvidenceRecordData {
     pub id: EvidenceId,
     pub context: DataContext,
@@ -84,7 +87,7 @@ impl Validate for EvidenceRecordData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ProviderStatus {
     Available,
@@ -92,7 +95,8 @@ pub enum ProviderStatus {
     Unverified,
     Restricted,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "ProviderCapability")]
 pub struct ProviderCapabilityData {
     pub provider: ProviderId,
     pub context: DataContext,
@@ -127,7 +131,8 @@ impl Validate for ProviderCapabilityData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "ItemDefinition")]
 pub struct ItemDefinitionData {
     pub key: ItemKey,
     pub slots: Vec<SlotId>,
@@ -157,7 +162,8 @@ impl Validate for ItemDefinitionData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "EquippedItem")]
 pub struct EquippedItemData {
     pub context: DataContext,
     pub item_id: ItemId,
@@ -174,7 +180,7 @@ impl Validate for EquippedItemData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum AcquisitionKind {
     Quest,
@@ -183,7 +189,8 @@ pub enum AcquisitionKind {
     Crafting,
     Other,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "AcquisitionSource")]
 pub struct AcquisitionSourceData {
     pub id: AcquisitionId,
     pub context: DataContext,
@@ -210,14 +217,15 @@ impl Validate for AcquisitionSourceData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum CompletionSemantics {
     Unrepeatable,
     Repeatable,
     ResetBound,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "QuestDefinition")]
 pub struct QuestDefinitionData {
     pub id: QuestId,
     pub context: DataContext,
@@ -256,7 +264,8 @@ impl Validate for QuestDefinitionData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "QuestProgress")]
 pub struct QuestProgressData {
     pub quest: QuestId,
     pub context: DataContext,

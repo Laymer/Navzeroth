@@ -5,15 +5,16 @@ use crate::{
     predicate::Predicate,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct SnapshotRef {
     pub id: SnapshotId,
     pub character: CharacterId,
     pub context: DataContext,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct PlanStep {
     pub id: StepId,
     pub objective: ObjectiveId,
@@ -27,7 +28,7 @@ pub struct PlanStep {
     pub explanation: Text,
     pub evidence: Vec<EvidenceId>,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct TravelSegment {
     pub from: NodeRef,
     pub to: NodeRef,
@@ -36,7 +37,9 @@ pub struct TravelSegment {
 }
 /// Events after which a plan must be revalidated. Expiry and these triggers
 /// never prove that the underlying game state changed.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum RevalidationTrigger {
     DatasetRevisionChanged,
@@ -52,7 +55,8 @@ fn within_range(expected: &Observation<Millis>, range: &Observation<DurationRang
     }
     Ok(())
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "RoutePlan")]
 pub struct RoutePlanData {
     pub schema_version: SchemaVersion,
     pub id: PlanId,
@@ -137,20 +141,21 @@ impl Validate for RoutePlanData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ConfigurationItem {
     pub item: ItemKey,
     pub occupied_slots: Vec<SlotId>,
     pub unique_group: Observation<Text>,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Ranking {
     Theoretical,
     Obtainable,
     Practical,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "GearRecommendation")]
 pub struct GearRecommendationData {
     pub context: DataContext,
     pub snapshot: SnapshotRef,
@@ -206,7 +211,7 @@ impl Validate for GearRecommendationData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum RuleTrigger {
     SnapshotChanged,
@@ -216,14 +221,15 @@ pub enum RuleTrigger {
     PreferenceChanged,
     Manual,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum DismissalPolicy {
     Session,
     UntilRulesetChanges,
     Permanent,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "ContextRule")]
 pub struct ContextRuleData {
     pub id: RuleId,
     pub context: DataContext,
@@ -248,27 +254,28 @@ impl Validate for ContextRuleData {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum MeasurementQuality {
     Observed,
     Estimated,
     Unclassified,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct SessionInterval {
     pub start_ms: Millis,
     pub end_ms: Millis,
     pub quality: MeasurementQuality,
     pub label: Text,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct SessionGap {
     pub start_ms: Millis,
     pub end_ms: Millis,
     pub reason: Text,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "SessionSummary")]
 pub struct SessionSummaryData {
     pub session: SessionId,
     pub character: CharacterId,

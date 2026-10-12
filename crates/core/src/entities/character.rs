@@ -4,9 +4,11 @@ use crate::{
     observation::*,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "CharacterProfile")]
 pub struct CharacterProfileData {
     pub id: CharacterId,
     pub context: DataContext,
@@ -25,13 +27,14 @@ impl Validate for CharacterProfileData {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "state", content = "item", rename_all = "snake_case")]
 pub enum EquipmentSlot {
     Empty,
     Item(Box<EquippedItem>),
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "CharacterSnapshot")]
 pub struct CharacterSnapshotData {
     pub schema_version: SchemaVersion,
     pub id: SnapshotId,
@@ -68,7 +71,8 @@ impl Validate for CharacterSnapshotData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "PartySnapshot")]
 pub struct PartySnapshotData {
     pub id: PartyId,
     pub context: DataContext,

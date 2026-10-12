@@ -5,8 +5,10 @@ use crate::{
     predicate::Predicate,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "CoordinateTransform")]
 pub struct CoordinateTransformData {
     pub units: Text,
     pub scale_x: FiniteNumber,
@@ -25,7 +27,8 @@ impl Validate for CoordinateTransformData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "MapSpace")]
 pub struct MapSpaceData {
     pub key: MapKey,
     pub transform: Observation<CoordinateTransform>,
@@ -37,7 +40,7 @@ impl Validate for MapSpaceData {
         unique(self.evidence.iter())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ServiceKind {
     Junction,
@@ -49,7 +52,8 @@ pub enum ServiceKind {
     Dungeon,
     Other,
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "TravelNode")]
 pub struct TravelNodeData {
     pub id: NodeId,
     pub position: Position,
@@ -61,12 +65,12 @@ impl Validate for TravelNodeData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct NodeRef {
     pub id: NodeId,
     pub map: MapKey,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum TravelMode {
     Walking,
@@ -76,7 +80,7 @@ pub enum TravelMode {
     Teleport,
     Return,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum EdgeStatus {
     Verified,
@@ -84,7 +88,8 @@ pub enum EdgeStatus {
     TemporarilyUnavailable,
     Unverified,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "DurationRange")]
 pub struct DurationRangeData {
     pub min_ms: Millis,
     pub max_ms: Millis,
@@ -98,7 +103,8 @@ impl Validate for DurationRangeData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "TravelEdge")]
 pub struct TravelEdgeData {
     pub id: EdgeId,
     pub context: DataContext,
@@ -132,14 +138,15 @@ impl Validate for TravelEdgeData {
         Ok(())
     }
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum ObjectiveTarget {
     QuestStage { quest: QuestId, stage: ObjectiveId },
     Acquisition { source: AcquisitionId },
     Service { node: NodeRef },
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "Objective")]
 pub struct ObjectiveData {
     pub id: ObjectiveId,
     pub context: DataContext,

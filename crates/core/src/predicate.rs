@@ -3,9 +3,10 @@ use crate::{
     error::{Result, Validate, Validated, invalid},
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", content = "value", rename_all = "snake_case")]
 pub enum Scalar {
     Bool(bool),
@@ -14,14 +15,14 @@ pub enum Scalar {
     Copper(Copper),
     Text(Text),
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QuestState {
     Accepted,
     Completed,
     TurnedIn,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "field", rename_all = "snake_case")]
 pub enum Field {
     Level,
@@ -30,8 +31,9 @@ pub enum Field {
     Quest { quest: QuestId, state: QuestState },
     Objective { objective: ObjectiveId },
 }
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "op", rename_all = "snake_case")]
+#[schemars(rename = "Predicate")]
 pub enum PredicateNode {
     All {
         predicates: Vec<Self>,
