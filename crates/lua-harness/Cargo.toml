@@ -1,0 +1,20 @@
+[package]
+name = "azeroth-lua-harness"
+description = "Dev-only harness that runs this repository's own addon Lua sources under a vendored Lua 5.1 for tests"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[dependencies]
+# Vendored Lua 5.1 matches the WoW runtime family. Exact pin: the harness is
+# test tooling and must not drift. Never a dependency of core, app, cli or desktop.
+mlua = { version = "=0.12.2", features = ["lua51", "vendored"] }
+
+[dev-dependencies]
+serde_json = "1"
+
+[lib]
+path = "src/lib.rs"

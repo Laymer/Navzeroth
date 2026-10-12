@@ -1,0 +1,19 @@
+## Interface: 16001
+# UNVERIFIED: 16001 comes from community client exports of the Forever beta (plan
+# section 3.2), not from a client check. A wrong number makes the client mark the
+# addon out of date; the fix is a measured value, never a workaround.
+## X-Interface-Status: UNVERIFIED
+## Title: Azeroth Navigator Diagnostics
+## Notes: Records build and capability probe results for development. Collects no personal data.
+## Version: 0.1.0
+## Author: Igor K
+## SavedVariables: AzerothNavigatorDB
+# The SavedVariables directive name and the file load order are unverified for Forever.
+# Core files stay pure; only Diagnostics.lua binds to the client environment.
+Core\Bootstrap.lua
+Core\Version.lua
+Core\Json.lua
+Core\Capabilities.lua
+Core\Export.lua
+Core\Settings.lua
+Diagnostics.lua
