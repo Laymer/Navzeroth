@@ -251,3 +251,71 @@ pub struct MapKey {
     pub floor: FloorId,
     pub instance: Option<InstanceId>,
 }
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(try_from = "String", into = "String")]
+pub struct Text(String);
+impl Text {
+    pub fn new(s: impl Into<String>) -> Result<Self> {
+        Self::try_from(s.into())
+    }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+impl TryFrom<String> for Text {
+    type Error = AppError;
+    fn try_from(s: String) -> Result<Self> {
+        if s.len() > 4096 || s.chars().any(|c| c.is_control() && c != '\n' && c != '\t') {
+            return Err(invalid(
+                "Text exceeds limits or contains unsupported controls",
+            ));
+        }
+        Ok(Self(s))
+    }
+}
+impl From<Text> for String {
+    fn from(t: Text) -> Self {
+        t.0
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Position {
+    pub map: MapKey,
+    pub x: Normalized,
+    pub y: Normalized,
+}
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct BoundsData {
+    pub min_x: Normalized,
+    pub min_y: Normalized,
+    pub max_x: Normalized,
+    pub max_y: Normalized,
+}
+impl crate::error::Validate for BoundsData {
+    fn validate(&self) -> Result<()> {
+        if self.min_x.get() > self.max_x.get() || self.min_y.get() > self.max_y.get() {
+            return Err(invalid("Area bounds are inverted"));
+        }
+        Ok(())
+    }
+}
+pub type Bounds = crate::error::Validated<BoundsData>;
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct SupportedArea {
+    pub map: MapKey,
+    pub bounds: Option<Bounds>,
+}
+impl SupportedArea {
+    pub fn contains(&self, point: &Position) -> Result<bool> {
+        self.map.context.ensure_compatible(&point.map.context)?;
+        Ok(self.map == point.map
+            && self.bounds.as_ref().is_none_or(|b| {
+                point.x.get() >= b.min_x.get()
+                    && point.x.get() <= b.max_x.get()
+                    && point.y.get() >= b.min_y.get()
+                    && point.y.get() <= b.max_y.get()
+            }))
+    }
+}
