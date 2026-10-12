@@ -4,16 +4,16 @@ Plan version: 1.0 plus accepted ADR 0001
 Current milestone: M1
 Current task: M1.3 (dependency-ready)
 Task owner: unassigned
-Base revision: e408848 (verified domain implementation; later documentation commit records handoff)
+Base revision: 514d4b01cab34b4d85e8a9e05e5d5de926d6e4f1 (PR 3 merged into main)
 Last updated: 2026-10-12
-Overall state: M1.1 reviewed/corrected; M1.6 CI and expanded M1.2 verified for their scopes; M1.3-M1.5 and M1.7 remain
+Overall state: M1.1 reviewed/corrected; M1.6 CI and expanded M1.2 merged and verified for their scopes; M1.3-M1.5 and M1.7 remain
 
 ## Milestones
 
 | Milestone | Status | Evidence / blockers |
 | --- | --- | --- |
 | M0 | IN_PROGRESS | M0.1 repository/instructions/toolchain/license/CI inspection complete. M0.2 status/handoff records exist; initial decisions and sources are embedded in the implementation plan. M0.3-M0.6 need a user-operated Forever client, unavailable in this development environment (CLAUDE.md, section Environments). |
-| M1 | IN_PROGRESS | M1.1 reviewed; M1.1 review, M1.6 workspace CI and expanded M1.2 VERIFIED. M1.3 next; UI, shared schemas and storage remain. |
+| M1 | IN_PROGRESS | M1.1 review/corrections, M1.6 workspace CI and expanded M1.2 VERIFIED and merged in PR 3. M1.3 next; UI, shared schemas and storage remain. |
 | M2 | TODO | |
 | M3 | TODO | |
 | M4 | TODO | |
@@ -30,6 +30,10 @@ Overall state: M1.1 reviewed/corrected; M1.6 CI and expanded M1.2 verified for t
 M1.3: define snapshot, plan, evidence, dataset and gear exchange contracts;
 finalize versioned schemas/types and drift checks. Claim a fresh baseline before
 implementation. Use existing validated domain models and the [domain reference](DOMAIN.md).
+The [continuation handoff](handoffs/2026-10-12-M1.3-continuation.md) records the
+merged baseline; the [Claude Code prompt](prompts/claude-M1.3-contracts.md) defines
+the next session's scope and acceptance checks. Contract fixtures needed to verify
+M1.3 belong with that change; the broader M1.5 fixture/demo work remains separate.
 
 ## Completed behavior
 All 19 section 6.1 entities, validated JSON and numeric/identifier types,
@@ -43,10 +47,11 @@ scope. Shared policy authorizes routine feature-branch pushes and draft PRs;
 main pushes, merges and releases retain separate authorization requirements.
 
 ## Verification
-Local formatting, locked Clippy/tests: passed (27 tests: 25 core, 2 CLI).
+M1.2 local formatting, locked Clippy/tests: passed (27 tests: 25 core, 2 CLI).
 Rust 1.99.0, Node 24.15.0, Corepack 0.36.0, pnpm 12.11.2.
-[Hosted run 38241081691](https://github.com/Laymer/Navzeroth/actions/runs/38241081691)
-passed all five Linux/Windows checks for e408848. See the
+[Hosted main run 38241935794](https://github.com/Laymer/Navzeroth/actions/runs/38241935794)
+passed all five checks at merge revision 514d4b0: Rust format, Rust Linux,
+Rust Windows, pnpm Linux and pnpm Windows. See the
 [M1.6 handoff](handoffs/2026-10-12-M1.6-ci.md) and
 [M1.2 handoff](handoffs/2026-10-12-M1.2-domain.md) for exact checks and limitations.
 Native desktop packaging, UI, Lua parity and live WoW behavior remain unverified
@@ -61,5 +66,7 @@ dataset-wide reference resolution and cross-runtime compatibility are M1.3+ work
 ## Next dependency-ready work
 M1.3 is unclaimed. M1.4/M1.5 add their real CI targets when implemented.
 M0.3-M0.6 live checks remain blocked on a user-operated client.
-[Draft PR 3](https://github.com/Laymer/Navzeroth/pull/3) contains the current work;
-no merge or release has been performed.
+[PR 3](https://github.com/Laymer/Navzeroth/pull/3) was merged into main on
+2026-10-12 at 11:19:41 UTC as 514d4b0. Earlier handoffs describe their pre-merge
+delivery state; the continuation handoff supersedes that state. This documentation
+update does not claim M1.3 or establish a release.
