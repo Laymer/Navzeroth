@@ -1,4 +1,4 @@
-use super::{NodeRef, bounded, requirement_context, unique};
+use super::{CapabilityStatus, DurationRange, NodeRef, bounded, requirement_context, unique};
 use crate::{
     error::{Result, Validate, Validated, invalid},
     observation::Observation,
@@ -22,13 +22,35 @@ pub struct PlanStep {
     pub prerequisite: Observation<Predicate>,
     pub required_fields: Vec<Text>,
     pub invalidation: Observation<Predicate>,
+    pub expected_ms: Observation<Millis>,
+    pub estimate: Observation<DurationRange>,
     pub explanation: Text,
+    pub evidence: Vec<EvidenceId>,
 }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TravelSegment {
     pub from: NodeRef,
     pub to: NodeRef,
     pub expected_ms: Observation<Millis>,
+    pub range: Observation<DurationRange>,
+}
+/// Events after which a plan must be revalidated. Expiry and these triggers
+/// never prove that the underlying game state changed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RevalidationTrigger {
+    DatasetRevisionChanged,
+    BuildChanged,
+    SnapshotSuperseded,
+    RulesetChanged,
+}
+fn within_range(expected: &Observation<Millis>, range: &Observation<DurationRange>) -> Result<()> {
+    if let (Some(expected), Some(range)) = (expected.value(), range.value())
+        && (*expected < range.min_ms || *expected > range.max_ms)
+    {
+        return Err(invalid("Expected duration lies outside its estimate range"));
+    }
+    Ok(())
 }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RoutePlanData {
@@ -40,6 +62,7 @@ pub struct RoutePlanData {
     pub dataset_revision: DatasetRevision,
     pub ruleset_version: RulesetVersion,
     pub score_model_version: ScoreModelVersion,
+    pub capability_assumptions: RecordMap<CapabilityId, CapabilityStatus>,
     pub goal: Text,
     pub time_budget_ms: Millis,
     pub exclusions: Vec<ObjectiveId>,
@@ -48,6 +71,7 @@ pub struct RoutePlanData {
     pub travel: Vec<TravelSegment>,
     pub evidence: Vec<EvidenceId>,
     pub expires_at_utc_ms: Option<UtcMillis>,
+    pub revalidation: Vec<RevalidationTrigger>,
 }
 pub type RoutePlan = Validated<RoutePlanData>;
 impl Validate for RoutePlanData {
@@ -65,7 +89,13 @@ impl Validate for RoutePlanData {
         unique(self.evidence.iter())?;
         bounded(self.manual_assumptions.len())?;
         bounded(self.travel.len())?;
+        unique(self.revalidation.iter())?;
         for step in &self.steps {
+            unique(step.evidence.iter())?;
+            if step.evidence.iter().any(|e| !self.evidence.contains(e)) {
+                return Err(invalid("Plan step evidence is not listed in plan evidence"));
+            }
+            within_range(&step.expected_ms, &step.estimate)?;
             requirement_context(&step.prerequisite, &self.context)?;
             requirement_context(&step.invalidation, &self.context)?;
             unique(step.participants.iter())?;
@@ -89,6 +119,7 @@ impl Validate for RoutePlanData {
             }
         }
         for segment in &self.travel {
+            within_range(&segment.expected_ms, &segment.range)?;
             self.context.ensure_compatible(&segment.from.map.context)?;
             self.context.ensure_compatible(&segment.to.map.context)?;
         }
