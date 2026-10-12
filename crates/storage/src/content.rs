@@ -10,7 +10,7 @@ use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
     coverage::content_report,
     error::{AppError, ErrorCode, Result},
-    sources::{RecordKey, SourceConflict, SourceRecord, SourceRegistry},
+    sources::{ConflictKind, RecordKey, SourceConflict, SourceRecord, SourceRegistry},
     types::{DataContext, DatasetRevision, Sha256Hex},
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
@@ -177,6 +177,13 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
         }
         if conflict.others.len() > MAX_CONTENT_RECORDS {
             return Err(too_large());
+        }
+        if conflict.others.contains(&conflict.preferred)
+            || (conflict.others.is_empty() && conflict.kind != ConflictKind::CrossEditionRelabel)
+        {
+            return Err(invalid(
+                "Conflict must identify distinct competing evidence",
+            ));
         }
         let unique: BTreeSet<_> = conflict.others.iter().collect();
         if unique.len() != conflict.others.len() {

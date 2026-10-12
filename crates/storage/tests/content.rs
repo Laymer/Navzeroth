@@ -479,3 +479,42 @@ fn source_order_is_canonical_and_declared_edition_exclusions_are_preserved() {
         ErrorCode::BuildMismatch
     );
 }
+
+#[test]
+fn self_conflicts_and_empty_disagreements_fail_but_single_relabel_is_preserved() {
+    let mut store = SqliteStore::open_in_memory().unwrap();
+    for kind in [
+        ConflictKind::ValueDisagreement,
+        ConflictKind::CategoryDowngrade,
+        ConflictKind::CrossEditionRelabel,
+    ] {
+        let mut input = conflict_revision("self-conflict");
+        input.conflicts[0].kind = kind;
+        input.conflicts[0].others = vec![input.conflicts[0].preferred.clone()];
+        assert_eq!(
+            store.stage_content_revision(&input).unwrap_err().code,
+            ErrorCode::InvalidInput
+        );
+        input.conflicts[0].others.clear();
+        if kind == ConflictKind::CrossEditionRelabel {
+            assert_eq!(
+                store.stage_content_revision(&input).unwrap(),
+                StageOutcome::Inserted
+            );
+            assert!(
+                store
+                    .content_revision(&input.key())
+                    .unwrap()
+                    .unwrap()
+                    .conflicts[0]
+                    .others
+                    .is_empty()
+            );
+        } else {
+            assert_eq!(
+                store.stage_content_revision(&input).unwrap_err().code,
+                ErrorCode::InvalidInput
+            );
+        }
+    }
+}
