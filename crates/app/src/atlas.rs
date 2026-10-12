@@ -16,8 +16,8 @@ use azeroth_core::observation::{
     ClockTrust, Freshness, FreshnessContext, Observation, ObservationStatus, freshness,
 };
 use azeroth_core::types::{
-    AssetPath, CharacterId, DataContext, DatasetNamespace, DatasetRevision, ImageId, LayerId,
-    MapKey, Millis, PixelExtent, Position, Sha256Hex, SnapshotId, Text, UtcMillis,
+    AssetPath, DataContext, DatasetNamespace, DatasetRevision, ImageId, LayerId, MapKey, Millis,
+    PixelExtent, Position, Sha256Hex, SnapshotId, Text, UtcMillis,
 };
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -397,7 +397,7 @@ pub enum ProjectedPosition {
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 pub struct SnapshotMarker {
-    pub profile_id: CharacterId,
+    pub profile_id: String,
     pub snapshot_id: SnapshotId,
     pub location_status: ObservationStatus,
     pub observed_at_utc_ms: Option<UtcMillis>,
@@ -605,7 +605,7 @@ fn marker_for(
         _ => None,
     };
     Ok(SnapshotMarker {
-        profile_id: payload.character.clone(),
+        profile_id: payload.character.as_str().to_owned(),
         snapshot_id: payload.id.clone(),
         location_status: location.status(),
         observed_at_utc_ms: metadata.observed_at_utc_ms,

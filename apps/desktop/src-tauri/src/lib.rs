@@ -1,54 +1,147 @@
-//! Thin Tauri shell. Each command is registered by name and delegates to a
-//! framework-free handler in `azeroth-app`; there is no generic dispatcher,
-//! shell access or filesystem command (plan section 13).
+//! Explicit command DTOs; snapshot normalization and SQLite execute on blocking
+//! workers. No live addon bridge or generic filesystem command is exposed.
 mod atlas_protocol;
-
+use azeroth_app::AppStatus;
 use azeroth_app::atlas::{AtlasView, ProjectedPosition, SnapshotMarker};
-use azeroth_app::{AppStatus, ProfileSummary};
-use azeroth_core::contract::Envelope;
-use azeroth_core::entities::CharacterSnapshot;
-use azeroth_core::error::AppError;
-use azeroth_core::types::{Position, UtcMillis};
-
-#[tauri::command]
-fn get_app_status() -> Result<AppStatus, AppError> {
-    azeroth_app::get_app_status()
+use azeroth_app::snapshots::{
+    FileInputFormat, HistoryEntry, ImportReceipt, ProfileDto, SnapshotApplication, StoredSnapshot,
+    WatchState, system_now,
+};
+use azeroth_core::{
+    contract::Envelope,
+    entities::CharacterSnapshot,
+    error::{AppError, ErrorCode},
+    types::Position,
+};
+use std::sync::Arc;
+use tauri::{Manager, State};
+type Application = Arc<SnapshotApplication>;
+async fn blocking<T: Send + 'static>(
+    state: State<'_, Application>,
+    call: impl FnOnce(Application) -> Result<T, AppError> + Send + 'static,
+) -> Result<T, AppError> {
+    let app = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || call(app))
+        .await
+        .map_err(|_| {
+            AppError::new(
+                ErrorCode::ProviderUnavailable,
+                "Snapshot worker is unavailable",
+                false,
+            )
+        })?
 }
-
 #[tauri::command]
-fn list_profiles() -> Result<Vec<ProfileSummary>, AppError> {
-    azeroth_app::list_profiles()
+async fn get_app_status(state: State<'_, Application>) -> Result<AppStatus, AppError> {
+    blocking(state, |app| app.status()).await
 }
-
 #[tauri::command]
-fn get_character_snapshot(profile_id: String) -> Result<Envelope<CharacterSnapshot>, AppError> {
-    azeroth_app::get_character_snapshot(&profile_id)
+async fn list_profiles(state: State<'_, Application>) -> Result<Vec<ProfileDto>, AppError> {
+    blocking(state, |app| app.profiles()).await
 }
-
+#[tauri::command(rename_all = "snake_case")]
+async fn get_character_snapshot(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<Envelope<CharacterSnapshot>, AppError> {
+    blocking(state, move |app| {
+        app.current(&profile_id, system_now())?
+            .map(|s| s.envelope)
+            .ok_or_else(|| {
+                AppError::new(
+                    ErrorCode::InvalidInput,
+                    "Profile has no current snapshot",
+                    false,
+                )
+            })
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_stored_snapshot(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<Option<StoredSnapshot>, AppError> {
+    blocking(state, move |app| app.current(&profile_id, system_now())).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_snapshot_history(
+    state: State<'_, Application>,
+    profile_id: String,
+    limit: usize,
+) -> Result<Vec<HistoryEntry>, AppError> {
+    blocking(state, move |app| {
+        app.history(&profile_id, limit, system_now())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn select_profile(state: State<'_, Application>, profile_id: String) -> Result<(), AppError> {
+    blocking(state, move |app| app.select_profile(&profile_id)).await
+}
+#[tauri::command]
+async fn import_snapshot_text(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<ImportReceipt, AppError> {
+    blocking(state, move |app| app.import_text(&text, system_now())).await
+}
+#[tauri::command]
+async fn import_snapshot_file(
+    state: State<'_, Application>,
+    path: String,
+    format: FileInputFormat,
+) -> Result<ImportReceipt, AppError> {
+    blocking(state, move |app| {
+        app.import_file(std::path::Path::new(&path), &format, system_now())
+    })
+    .await
+}
+#[tauri::command]
+async fn start_snapshot_watch(
+    state: State<'_, Application>,
+    path: String,
+    format: FileInputFormat,
+) -> Result<WatchState, AppError> {
+    blocking(state, move |app| {
+        app.start_watch(std::path::Path::new(&path), &format)
+    })
+    .await
+}
+#[tauri::command]
+async fn stop_snapshot_watch(state: State<'_, Application>) -> Result<WatchState, AppError> {
+    blocking(state, |app| app.stop_watch()).await
+}
+#[tauri::command]
+async fn get_snapshot_watch(state: State<'_, Application>) -> Result<WatchState, AppError> {
+    blocking(state, |app| app.watch_status()).await
+}
 #[tauri::command]
 fn query_atlas(image: Option<String>) -> Result<AtlasView, AppError> {
     azeroth_app::atlas::query_atlas(image.as_deref())
 }
-
 #[tauri::command]
 fn project_positions(positions: Vec<Position>) -> Result<Vec<ProjectedPosition>, AppError> {
     azeroth_app::atlas::project_positions(&positions)
 }
-
-/// The only place the clock is read: once per call, as milliseconds since the
-/// Unix epoch. An unreadable or out-of-range clock means "no trusted time".
 #[tauri::command]
-fn get_snapshot_markers() -> Result<Vec<SnapshotMarker>, AppError> {
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .ok()
-        .and_then(|d| i64::try_from(d.as_millis()).ok())
-        .and_then(|ms| UtcMillis::new(ms).ok());
-    azeroth_app::atlas::get_snapshot_markers(now)
+async fn get_snapshot_markers(
+    state: State<'_, Application>,
+) -> Result<Vec<SnapshotMarker>, AppError> {
+    blocking(state, |app| app.markers(system_now())).await
 }
-
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            let directory = app.path().app_data_dir()?;
+            std::fs::create_dir_all(&directory)?;
+            let database = directory.join("snapshots.sqlite3");
+            let service = std::thread::spawn(move || SnapshotApplication::open(&database))
+                .join()
+                .map_err(|_| std::io::Error::other("Snapshot initialization worker failed"))??;
+            app.manage(Arc::new(service));
+            Ok(())
+        })
         .register_uri_scheme_protocol(atlas_protocol::SCHEME, |_ctx, request| {
             atlas_protocol::respond(&request)
         })
@@ -56,6 +149,14 @@ pub fn run() {
             get_app_status,
             list_profiles,
             get_character_snapshot,
+            get_stored_snapshot,
+            get_snapshot_history,
+            select_profile,
+            import_snapshot_text,
+            import_snapshot_file,
+            start_snapshot_watch,
+            stop_snapshot_watch,
+            get_snapshot_watch,
             query_atlas,
             project_positions,
             get_snapshot_markers

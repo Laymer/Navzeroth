@@ -14,6 +14,7 @@ import {
   describePin,
   describePinAccess,
   describeUncertainty,
+  describeUtc,
 } from "../atlas/describe";
 import { chooseLayer, type LayerToggles } from "../atlas/layers";
 import { MARKER_STATE_LABELS, markerState, placementOf } from "../atlas/markerState";
@@ -24,7 +25,7 @@ type Load =
   | { phase: "error"; error: AppError }
   | { phase: "ready"; view: AtlasView; markers: SnapshotMarker[] };
 
-export function AtlasScreen({ client }: { client: CommandClient }) {
+export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient; refreshKey?: number }) {
   const [refresh, setRefresh] = useState(0);
   const [load, setLoad] = useState<Load>({ phase: "loading" });
   const [refreshError, setRefreshError] = useState<AppError | null>(null);
@@ -47,7 +48,7 @@ export function AtlasScreen({ client }: { client: CommandClient }) {
     return () => {
       live = false;
     };
-  }, [client, refresh]);
+  }, [client, refreshKey, refresh]);
 
   return (
     <section aria-labelledby="atlas-heading" className="atlas">
@@ -253,7 +254,7 @@ function MarkerPanel({ marker }: { marker: SnapshotMarker | null }) {
           </p>
         ))}
       {marker !== null && marker.observed_at_utc_ms !== null && (
-        <p>Captured (UTC): {new Date(marker.observed_at_utc_ms).toISOString()}</p>
+        <p>Captured (UTC): {describeUtc(marker.observed_at_utc_ms)}</p>
       )}
     </section>
   );

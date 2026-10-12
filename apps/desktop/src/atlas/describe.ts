@@ -104,3 +104,11 @@ export function describeLayerAvailability(layer: AtlasLayer): string {
       return "cannot be requested";
   }
 }
+
+/** The contract's safe-integer UTC range is wider than JavaScript Date's range. */
+export function describeUtc(timestamp: number): string {
+  const date = new Date(timestamp);
+  return Number.isNaN(date.getTime())
+    ? `${timestamp} ms since epoch (outside date display range)`
+    : date.toISOString();
+}

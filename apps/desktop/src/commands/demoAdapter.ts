@@ -80,6 +80,25 @@ export const demoAdapter: CommandAdapter = {
           }
           return snapshot;
         }
+        case "get_snapshot_watch":
+        case "stop_snapshot_watch":
+          return { active: false, status: null, last_import: null, error: null };
+        case "select_profile": {
+          const { profile_id } = input as CommandMap["select_profile"]["input"];
+          if (profile_id !== DEMO_PROFILE_ID) throw invalid("No such profile.");
+          return null;
+        }
+        case "get_stored_snapshot": {
+          const { profile_id } = input as CommandMap["get_stored_snapshot"]["input"];
+          if (profile_id !== DEMO_PROFILE_ID) throw invalid("No such profile.");
+          return { envelope: snapshot, profile_id, data_mode: "demo", freshness: { status: "uncertain", reason: "missing_or_untrusted_time" } };
+        }
+        case "get_snapshot_history":
+          return [];
+        case "import_snapshot_text":
+        case "import_snapshot_file":
+        case "start_snapshot_watch":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "Imports and file watching require the desktop application.", retryable: false } satisfies AppError;
         case "query_atlas":
           return queryAtlas((input as CommandMap["query_atlas"]["input"]).image);
         case "project_positions":

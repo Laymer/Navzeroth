@@ -46,3 +46,9 @@ nav[aria-label="Primary"] button[aria-current="page"] { font-weight: 700; text-d
   .map-overlay .schematic-fill { fill: Canvas; }
   .badge, .layers, .demo-label { border-color: CanvasText; }
 }
+
+.snapshot-import label { display: block; margin: 0.75rem 0; }
+.snapshot-import textarea { display: block; width: min(100%, 50rem); resize: vertical; }
+.snapshot-import input { margin-left: 0.5rem; max-width: 100%; }
+.snapshot-import fieldset { margin: 1rem 0; }
+.snapshot-import button { margin: 0.25rem 0.5rem 0.25rem 0; }
