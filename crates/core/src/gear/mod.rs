@@ -15,6 +15,7 @@
 pub mod configuration;
 pub mod eligibility;
 pub mod inputs;
+pub mod lua;
 pub mod profile;
 pub mod score;
 

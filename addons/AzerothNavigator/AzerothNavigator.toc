@@ -17,6 +17,7 @@ Core\Decode.lua
 Core\Predicate.lua
 Core\Plan.lua
 Core\Hud.lua
+Core\Gear.lua
 Core\Capabilities.lua
 Core\Export.lua
 Core\Settings.lua
