@@ -5,7 +5,11 @@
 //! validate-fixtures, ...; plan section 19.3) land in later milestones.
 //! Do not report any subcommand as implemented until it actually exists.
 
-fn main() {
+fn main() -> std::process::ExitCode {
+    if std::env::args_os().nth(1).is_some() {
+        eprintln!("No subcommands or options are implemented yet. See README.md.");
+        return std::process::ExitCode::from(2);
+    }
     println!(
         "{} {} - {}",
         env!("CARGO_PKG_NAME"),
@@ -16,4 +20,5 @@ fn main() {
         "No subcommands are implemented yet. Planned commands are listed in \
          README.md and plan section 19.3."
     );
+    std::process::ExitCode::SUCCESS
 }
