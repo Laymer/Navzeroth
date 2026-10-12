@@ -1,0 +1,5195 @@
+{
+  "cases": [
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-haste": 2.5,
+                "synthetic-power": 10
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-haste": 2500,
+                "synthetic-power": 10000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-haste": -1000,
+            "synthetic-power": 1500,
+            "synthetic-unused": 2000
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "components-positive-negative-zero",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-haste": -1000,
+          "synthetic-power": 1500,
+          "synthetic-unused": 2000
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-haste",
+                "contribution": -2500,
+                "value": 2500,
+                "weight": -1000
+              },
+              {
+                "attribute": "synthetic-power",
+                "contribution": 15000,
+                "value": 10000,
+                "weight": 1500
+              },
+              {
+                "attribute": "synthetic-unused",
+                "contribution": 0,
+                "value": 0,
+                "weight": 2000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 12500,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-haste",
+                "contribution": 0,
+                "value": 0,
+                "weight": -1000
+              },
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1500
+              },
+              {
+                "attribute": "synthetic-unused",
+                "contribution": 0,
+                "value": 0,
+                "weight": 2000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-haste",
+              "contribution": -2500,
+              "value": 2500,
+              "weight": -1000
+            },
+            {
+              "attribute": "synthetic-power",
+              "contribution": 15000,
+              "value": 10000,
+              "weight": 1500
+            },
+            {
+              "attribute": "synthetic-unused",
+              "contribution": 0,
+              "value": 0,
+              "weight": 2000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 12500,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-haste",
+              "contribution": 0,
+              "value": 0,
+              "weight": -1000
+            },
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1500
+            },
+            {
+              "attribute": "synthetic-unused",
+              "contribution": 0,
+              "value": 0,
+              "weight": 2000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          1
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 0.0625
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 0.0625
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": -0.0625
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-negative",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 63
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 63
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": -63
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-negative",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 500
+          }
+        }
+      },
+      "configurations": [
+        [
+          0,
+          1
+        ],
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "per-item-halves",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 500
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            },
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 64,
+                "value": 126,
+                "weight": 500
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 64,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 32,
+                "value": 63,
+                "weight": 500
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 32,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 32,
+                "value": 63,
+                "weight": 500
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 32,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 500
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-negative",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": -32,
+                "value": -63,
+                "weight": 500
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": -32,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 64,
+              "value": 126,
+              "weight": 500
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 64,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 32,
+              "value": 63,
+              "weight": 500
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 32,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 32,
+              "value": 63,
+              "weight": 500
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 32,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": -32,
+              "value": -63,
+              "weight": 500
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": -32,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 500
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          2,
+          1
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        [
+          3
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-same",
+              "variant": "z"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-same",
+              "variant": "a"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-A",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-é",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-😀",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-A",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-same",
+              "variant": "a"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-same",
+              "variant": "z"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-é",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-😀",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 1000
+          }
+        }
+      },
+      "configurations": [
+        [
+          4
+        ],
+        [
+          0
+        ],
+        [
+          3
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "full-key-variant-ties",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 1000
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-A",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-same",
+              "variant": "a"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-same",
+              "variant": "z"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-é",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-😀",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          5
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1,
+                "synthetic-unweighted": 5
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": [
+                "synthetic proc"
+              ]
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "unknown"
+            },
+            "effects": {
+              "status": "unsupported"
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "restricted"
+            },
+            "effects": {
+              "status": "restricted"
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-c",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "unsupported"
+            },
+            "effects": {
+              "status": "unknown"
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-d",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "not_applicable"
+            },
+            "effects": {
+              "status": "not_applicable"
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-e",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 0
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-f",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000,
+                "synthetic-unweighted": 5000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": [
+                "synthetic proc"
+              ]
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unsupported"
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "restricted"
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "restricted"
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-c",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unsupported"
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-d",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "not_applicable"
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "not_applicable"
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-e",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 0
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-f",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 1000
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          0,
+          1
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "unknown-attributes-effects-and-unweighted",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 1000
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "reduced",
+            "certainty_reasons": [
+              {
+                "attribute": "synthetic-unweighted",
+                "code": "unweighted_attribute",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a",
+                  "variant": "base"
+                }
+              },
+              {
+                "code": "unmodeled_effects_listed",
+                "count": 1,
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a",
+                  "variant": "base"
+                }
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [
+              {
+                "code": "listed",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a",
+                  "variant": "base"
+                },
+                "text": "synthetic proc"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            },
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "low",
+            "certainty_reasons": [
+              {
+                "attribute": "synthetic-unweighted",
+                "code": "unweighted_attribute",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a",
+                  "variant": "base"
+                }
+              },
+              {
+                "code": "unmodeled_effects_listed",
+                "count": 1,
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a",
+                  "variant": "base"
+                }
+              },
+              {
+                "code": "attributes_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              },
+              {
+                "code": "effects_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b",
+                  "variant": "base"
+                },
+                "status": "unsupported"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 1000,
+                "value": 1000,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 1000,
+            "unmodeled_effects": [
+              {
+                "code": "listed",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a",
+                  "variant": "base"
+                },
+                "text": "synthetic proc"
+              },
+              {
+                "code": "unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b",
+                  "variant": "base"
+                },
+                "status": "unsupported"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-f",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "low",
+            "certainty_reasons": [
+              {
+                "code": "attributes_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              },
+              {
+                "code": "effects_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b",
+                  "variant": "base"
+                },
+                "status": "unsupported"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [
+              {
+                "code": "unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b",
+                  "variant": "base"
+                },
+                "status": "unsupported"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-c",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "low",
+            "certainty_reasons": [
+              {
+                "code": "attributes_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-c",
+                  "variant": "base"
+                },
+                "status": "restricted"
+              },
+              {
+                "code": "effects_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-c",
+                  "variant": "base"
+                },
+                "status": "restricted"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [
+              {
+                "code": "unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-c",
+                  "variant": "base"
+                },
+                "status": "restricted"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-d",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "low",
+            "certainty_reasons": [
+              {
+                "code": "attributes_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-d",
+                  "variant": "base"
+                },
+                "status": "unsupported"
+              },
+              {
+                "code": "effects_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-d",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [
+              {
+                "code": "unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-d",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-e",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "low",
+            "certainty_reasons": [
+              {
+                "code": "attributes_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-e",
+                  "variant": "base"
+                },
+                "status": "not_applicable"
+              },
+              {
+                "code": "effects_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-e",
+                  "variant": "base"
+                },
+                "status": "not_applicable"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [
+              {
+                "code": "unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-e",
+                  "variant": "base"
+                },
+                "status": "not_applicable"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "reduced",
+          "certainty_reasons": [
+            {
+              "attribute": "synthetic-unweighted",
+              "code": "unweighted_attribute",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a",
+                "variant": "base"
+              }
+            },
+            {
+              "code": "unmodeled_effects_listed",
+              "count": 1,
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a",
+                "variant": "base"
+              }
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [
+            {
+              "code": "listed",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a",
+                "variant": "base"
+              },
+              "text": "synthetic proc"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "low",
+          "certainty_reasons": [
+            {
+              "code": "attributes_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b",
+                "variant": "base"
+              },
+              "status": "unknown"
+            },
+            {
+              "code": "effects_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b",
+                "variant": "base"
+              },
+              "status": "unsupported"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [
+            {
+              "code": "unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b",
+                "variant": "base"
+              },
+              "status": "unsupported"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "low",
+          "certainty_reasons": [
+            {
+              "code": "attributes_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-c",
+                "variant": "base"
+              },
+              "status": "restricted"
+            },
+            {
+              "code": "effects_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-c",
+                "variant": "base"
+              },
+              "status": "restricted"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [
+            {
+              "code": "unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-c",
+                "variant": "base"
+              },
+              "status": "restricted"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "low",
+          "certainty_reasons": [
+            {
+              "code": "attributes_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-d",
+                "variant": "base"
+              },
+              "status": "unsupported"
+            },
+            {
+              "code": "effects_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-d",
+                "variant": "base"
+              },
+              "status": "unknown"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [
+            {
+              "code": "unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-d",
+                "variant": "base"
+              },
+              "status": "unknown"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "low",
+          "certainty_reasons": [
+            {
+              "code": "attributes_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-e",
+                "variant": "base"
+              },
+              "status": "not_applicable"
+            },
+            {
+              "code": "effects_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-e",
+                "variant": "base"
+              },
+              "status": "not_applicable"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [
+            {
+              "code": "unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-e",
+                "variant": "base"
+              },
+              "status": "not_applicable"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "low",
+          "certainty_reasons": [
+            {
+              "attribute": "synthetic-unweighted",
+              "code": "unweighted_attribute",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a",
+                "variant": "base"
+              }
+            },
+            {
+              "code": "unmodeled_effects_listed",
+              "count": 1,
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a",
+                "variant": "base"
+              }
+            },
+            {
+              "code": "attributes_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b",
+                "variant": "base"
+              },
+              "status": "unknown"
+            },
+            {
+              "code": "effects_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b",
+                "variant": "base"
+              },
+              "status": "unsupported"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 1000,
+              "value": 1000,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 1000,
+          "unmodeled_effects": [
+            {
+              "code": "listed",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a",
+                "variant": "base"
+              },
+              "text": "synthetic proc"
+            },
+            {
+              "code": "unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b",
+                "variant": "base"
+              },
+              "status": "unsupported"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          1,
+          2
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 0
+              }
+            },
+            "effects": {
+              "status": "unknown"
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a-reduced",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "unknown"
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b-low",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 0
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-z-complete",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 0
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a-reduced",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b-low",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 0
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-z-complete",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 1000
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "certainty-before-key-tie",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 1000
+        }
+      },
+      "ranking": [
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-z-complete",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a-reduced",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "reduced",
+            "certainty_reasons": [
+              {
+                "code": "effects_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a-reduced",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [
+              {
+                "code": "unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-a-reduced",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              }
+            ],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b-low",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "low",
+            "certainty_reasons": [
+              {
+                "code": "attributes_unavailable",
+                "item": {
+                  "context": {
+                    "build": {
+                      "build": "SYNTHETIC",
+                      "edition": "wow_forever",
+                      "interface": "SYNTHETIC"
+                    },
+                    "namespace": "demo"
+                  },
+                  "item_id": "synthetic-b-low",
+                  "variant": "base"
+                },
+                "status": "unknown"
+              }
+            ],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "reduced",
+          "certainty_reasons": [
+            {
+              "code": "effects_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a-reduced",
+                "variant": "base"
+              },
+              "status": "unknown"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [
+            {
+              "code": "unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-a-reduced",
+                "variant": "base"
+              },
+              "status": "unknown"
+            }
+          ],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "low",
+          "certainty_reasons": [
+            {
+              "code": "attributes_unavailable",
+              "item": {
+                "context": {
+                  "build": {
+                    "build": "SYNTHETIC",
+                    "edition": "wow_forever",
+                    "interface": "SYNTHETIC"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "synthetic-b-low",
+                "variant": "base"
+              },
+              "status": "unknown"
+            }
+          ],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 9007199254740.99
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-large",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 9007199254740990
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-large",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 1000
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "large-exact-product",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 1000
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-large",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 9007199254740990,
+                "value": 9007199254740990,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 9007199254740990,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 1000
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 9007199254740990,
+              "value": 9007199254740990,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 9007199254740990,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 1000
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          1
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 0.001
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-large-weight",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-large-weight",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 9007199254740991
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ],
+        []
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "large-weight-small-value",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 9007199254740991
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-large-weight",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 9007199254741,
+                "value": 1,
+                "weight": 9007199254740991
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 9007199254741,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        },
+        {
+          "keys": [],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 0,
+                "value": 0,
+                "weight": 9007199254740991
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 0,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 9007199254741,
+              "value": 1,
+              "weight": 9007199254740991
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 9007199254741,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        },
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 0,
+              "value": 0,
+              "weight": 9007199254740991
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 0,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          1
+        ],
+        []
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 1
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-overflow",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 1000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-overflow",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 9007199254740991
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ]
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "overflow-product",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 9007199254740991
+        }
+      },
+      "ranking": [
+        {
+          "keys": [
+            {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-overflow",
+              "variant": "base"
+            }
+          ],
+          "score": {
+            "certainty": "complete",
+            "certainty_reasons": [],
+            "contributions": [
+              {
+                "attribute": "synthetic-power",
+                "contribution": 9007199254740991,
+                "value": 1000,
+                "weight": 9007199254740991
+              }
+            ],
+            "label": "model score",
+            "model_version": "gear-model-v1",
+            "profile_unmodeled": [
+              "synthetic set bonuses"
+            ],
+            "role": "synthetic-role",
+            "total": 9007199254740991,
+            "unmodeled_effects": [],
+            "weight_source": {
+              "type": "synthetic_test"
+            }
+          }
+        }
+      ],
+      "scores": [
+        {
+          "certainty": "complete",
+          "certainty_reasons": [],
+          "contributions": [
+            {
+              "attribute": "synthetic-power",
+              "contribution": 9007199254740991,
+              "value": 1000,
+              "weight": 9007199254740991
+            }
+          ],
+          "label": "model score",
+          "model_version": "gear-model-v1",
+          "profile_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "total": 9007199254740991,
+          "unmodeled_effects": [],
+          "weight_source": {
+            "type": "synthetic_test"
+          }
+        }
+      ],
+      "selections": [
+        [
+          1
+        ]
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 5000000000000
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        },
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-power": 5000000000000
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 5000000000000000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-a",
+              "variant": "base"
+            }
+          },
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-power": 5000000000000000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-b",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-power": 0
+          }
+        }
+      },
+      "configurations": [
+        [
+          0,
+          1
+        ]
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "overflow-attribute-sum",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 0
+        }
+      },
+      "ranking": {
+        "error": "INVALID_INPUT"
+      },
+      "scores": [
+        {
+          "error": "INVALID_INPUT"
+        }
+      ],
+      "selections": [
+        [
+          1,
+          2
+        ]
+      ],
+      "synthetic": true
+    },
+    {
+      "candidates": [
+        {
+          "category": {
+            "status": "not_applicable"
+          },
+          "item": {
+            "attributes": {
+              "status": "known",
+              "value": {
+                "synthetic-a": 5000000000000,
+                "synthetic-b": 5000000000000
+              }
+            },
+            "effects": {
+              "status": "known",
+              "value": []
+            },
+            "evidence": [],
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-overflow",
+              "variant": "base"
+            },
+            "requirements": {
+              "status": "known",
+              "value": {
+                "op": "all",
+                "predicates": []
+              }
+            },
+            "slots": [
+              "synthetic-slot"
+            ],
+            "two_handed": {
+              "status": "not_applicable"
+            },
+            "unique_group": {
+              "status": "not_applicable"
+            }
+          }
+        }
+      ],
+      "compiled": {
+        "candidates": [
+          {
+            "attributes_milli": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "synthetic-a": 5000000000000000,
+                "synthetic-b": 5000000000000000
+              }
+            },
+            "effects": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": []
+            },
+            "key": {
+              "context": {
+                "build": {
+                  "build": "SYNTHETIC",
+                  "edition": "wow_forever",
+                  "interface": "SYNTHETIC"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "synthetic-overflow",
+              "variant": "base"
+            }
+          }
+        ],
+        "context": {
+          "build": {
+            "build": "SYNTHETIC",
+            "edition": "wow_forever",
+            "interface": "SYNTHETIC"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true,
+        "format": "lua-gear-input-v1",
+        "profile": {
+          "known_unmodeled": [
+            "synthetic set bonuses"
+          ],
+          "role": "synthetic-role",
+          "version": "gear-model-v1",
+          "weight_source": {
+            "type": "synthetic_test"
+          },
+          "weights": {
+            "synthetic-a": 1000,
+            "synthetic-b": 1000
+          }
+        }
+      },
+      "configurations": [
+        [
+          0
+        ]
+      ],
+      "context": {
+        "build": {
+          "build": "SYNTHETIC",
+          "edition": "wow_forever",
+          "interface": "SYNTHETIC"
+        },
+        "namespace": "demo"
+      },
+      "id": "overflow-total",
+      "profile": {
+        "known_unmodeled": [
+          "synthetic set bonuses"
+        ],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-a": 1000,
+          "synthetic-b": 1000
+        }
+      },
+      "ranking": {
+        "error": "INVALID_INPUT"
+      },
+      "scores": [
+        {
+          "error": "INVALID_INPUT"
+        }
+      ],
+      "selections": [
+        [
+          1
+        ]
+      ],
+      "synthetic": true
+    }
+  ],
+  "schema_version": 1,
+  "synthetic": true
+}

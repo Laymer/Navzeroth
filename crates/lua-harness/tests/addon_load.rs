@@ -84,6 +84,7 @@ fn every_toc_file_loads_in_order_into_a_fresh_state() {
             "Predicate",
             "Plan",
             "Hud",
+            "Gear",
             "Capabilities",
             "Export",
             "Settings",
