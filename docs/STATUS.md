@@ -2,9 +2,9 @@
 
 Plan version: 1.0 plus accepted ADRs 0001 and 0002
 Current milestone: M1
-Current task: M6.5 early atlas imagery slice (ADR 0002), IMPLEMENTED_UNVERIFIED for PR-A on feature/M6.5-atlas-imagery ([draft PR 7](https://github.com/Laymer/Navzeroth/pull/7), hosted CI passed)
-Task owner: Claude Code (Fable 5.1), single writer
-Base revision: 0c90c25d2b8f21bd83f87436ba7eaaae9d7fda9d (origin/main after PR 6)
+Current task: M1.4 minimal Tauri/React shell with explicit demo mode and typed command wrappers, IN_PROGRESS on feature/M1.4-desktop-shell (M6.5 PR-A merged as PR 7)
+Task owner: Claude Code (Sonnet 5.5), single writer
+Base revision: 03f5091a101ec583b1e701056547933e8dbb9b7f (origin/main after PR 7)
 Last updated: 2026-10-12
 Overall state: M1.1 reviewed/corrected; M1.6 CI, expanded M1.2 and M1.3 contracts merged and verified for their scopes; M1.4, M1.5 and M1.7 remain
 
