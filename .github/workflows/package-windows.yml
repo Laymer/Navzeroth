@@ -90,14 +90,20 @@ jobs:
           if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent install replaced the game addon' }
           foreach ($file in @($exe, (Join-Path $installDir 'uninstall.exe'),
                   (Join-Path $installDir 'addon\Install-AzerothNavigatorAddon.ps1'),
-                  (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc')) + $shortcuts) {
+                  (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc'),
+                  (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')) + $shortcuts) {
             if (-not (Test-Path -LiteralPath $file)) { throw "Missing after install: $file" }
             "installed: $file"
           }
           $key = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
             Where-Object { (Get-ItemProperty $_.PSPath).DisplayName -eq 'Azeroth Navigator' }
           if (-not $key) { throw 'No Apps & features entry' }
-          "Apps & features: $((Get-ItemProperty $key.PSPath).DisplayVersion)"
+          $displayVersion = (Get-ItemProperty $key.PSPath).DisplayVersion
+          $sourceVersion = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          if ($displayVersion -ne $sourceVersion) { throw "Installed version $displayVersion does not match source $sourceVersion" }
+          "Apps & features: $displayVersion"
+          $bundledLicense = Get-Content -Raw -LiteralPath (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')
+          if ($bundledLicense -ne (Get-Content -Raw addons/AzerothNavigator/LICENSE)) { throw 'Bundled addon license differs from source' }
 
           # First start: the process must stay up and create its SQLite store.
           $app = Start-Process -FilePath $exe -PassThru
