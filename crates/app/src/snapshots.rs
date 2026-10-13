@@ -142,7 +142,7 @@ fn error(code: ErrorCode, message: &'static str) -> AppError {
 fn invalid(message: &'static str) -> AppError {
     error(ErrorCode::InvalidInput, message)
 }
-fn context(now: Option<UtcMillis>) -> FreshnessContext {
+pub(crate) fn context(now: Option<UtcMillis>) -> FreshnessContext {
     FreshnessContext {
         now_utc_ms: now,
         clock_trust: if now.is_some() {
@@ -369,7 +369,7 @@ impl SnapshotApplication {
             crate::plan_export::compile(&report, snapshot, content, clock)
         })
     }
-    fn with_planning<T>(
+    pub(crate) fn with_planning<T>(
         &self,
         text: &str,
         now: Option<UtcMillis>,

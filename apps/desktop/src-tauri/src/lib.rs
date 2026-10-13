@@ -76,6 +76,16 @@ async fn export_plan(
     blocking(state, move |app| app.export_plan(&text, system_now())).await
 }
 #[tauri::command]
+async fn inspect_plan_route(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::routes::RouteInspection, AppError> {
+    blocking(state, move |app| {
+        app.inspect_plan_route(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
 async fn plan_session(
     state: State<'_, Application>,
     text: String,
@@ -307,6 +317,20 @@ async fn delete_session(
     })
     .await
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn get_gear_catalog(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::gear::GearCatalog, AppError> {
+    blocking(state, move |app| app.gear_catalog(&profile_id)).await
+}
+#[tauri::command]
+async fn compare_gear(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::gear::GearReport, AppError> {
+    blocking(state, move |app| app.compare_gear(&text, system_now())).await
+}
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
@@ -328,10 +352,13 @@ pub fn run() {
             list_sessions,
             get_session_detail,
             delete_session,
+            get_gear_catalog,
+            compare_gear,
             get_historical_snapshot,
             promote_snapshot,
             get_planning_catalog,
             plan_session,
+            inspect_plan_route,
             export_plan,
             get_app_status,
             list_profiles,

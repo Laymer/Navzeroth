@@ -156,6 +156,8 @@ fn export_enforces_compiled_predicate_depth_and_size_without_truncation() {
         }
         content["envelope"]["payload"]["objectives"][0]["requirements"] =
             json!({"status":"known","value":predicate});
+        let _: azeroth_storage::content::ContentRevision =
+            serde_json::from_value(content.clone()).unwrap();
         app.stage_content(&content.to_string()).unwrap();
         app.activate_content(
             request["profile_id"].as_str().unwrap(),
@@ -250,5 +252,97 @@ fn quest_stage_planning_and_export_preserve_unknown_false_and_completed_states()
         if status != "pending" {
             assert_eq!(report.filtered.len(), 1);
         }
+    }
+}
+
+#[test]
+fn route_inspection_orders_selected_then_stopping_and_reports_projection_gaps() {
+    let (app, request, now) = setup();
+    let inspection = app
+        .inspect_plan_route(&request.to_string(), Some(now))
+        .unwrap();
+    assert_eq!(inspection.hops.len(), 2);
+    assert!(!inspection.hops[0].stopping);
+    assert!(inspection.hops[1].stopping);
+    assert_eq!(inspection.hops[0].hop.to, inspection.hops[1].hop.from);
+    assert_eq!(
+        inspection
+            .hops
+            .iter()
+            .map(|h| h.hop.cost_ms.get())
+            .sum::<u64>(),
+        60000
+    );
+    // This planning fixture declares no imagery; demo imagery must never be substituted.
+    assert!(inspection.frames.is_empty());
+    assert!(
+        inspection
+            .hops
+            .iter()
+            .all(|h| !h.schematic_connection && h.geometry_gap.is_some())
+    );
+    let mut replaced = request.clone();
+    replaced["snapshot_id"] = json!("replaced");
+    assert!(
+        app.inspect_plan_route(&replaced.to_string(), Some(now))
+            .is_err()
+    );
+    replaced = request.clone();
+    replaced["revision"] = json!("replaced");
+    assert!(
+        app.inspect_plan_route(&replaced.to_string(), Some(now))
+            .is_err()
+    );
+    assert!(app.inspect_plan_route(&request.to_string(), None).is_err());
+}
+
+#[test]
+fn route_projection_uses_active_images_and_never_connects_different_floors() {
+    for different_floor in [false, true] {
+        let (app, mut request, now) = setup();
+        let mut content: Value = serde_json::from_str(BUNDLE).unwrap();
+        let imagery: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/contracts/v1/reference-dataset-imagery.json"
+        ))
+        .unwrap();
+        content["envelope"]["payload"]["revision"] = json!("imagery-route");
+        let dataset = &mut content["envelope"]["payload"];
+        dataset["evidence"] = imagery["payload"]["evidence"].clone();
+        dataset["map_images"] = imagery["payload"]["map_images"].clone();
+        if different_floor {
+            dataset["nodes"][1]["position"]["map"]["floor"] = json!("1");
+            dataset["edges"][0]["to"]["map"]["floor"] = json!("1");
+            dataset["edges"][1]["from"]["map"]["floor"] = json!("1");
+            dataset["objectives"][0]["targets"][0]["node"]["map"]["floor"] = json!("1");
+            let mut floor = dataset["map_spaces"][0].clone();
+            floor["key"]["floor"] = json!("1");
+            dataset["map_spaces"].as_array_mut().unwrap().push(floor);
+        }
+        let _: azeroth_storage::content::ContentRevision =
+            serde_json::from_value(content.clone()).unwrap();
+        app.stage_content(&content.to_string()).unwrap();
+        app.activate_content(
+            request["profile_id"].as_str().unwrap(),
+            &DatasetRevision::new("imagery-route").unwrap(),
+        )
+        .unwrap();
+        request["revision"] = json!("imagery-route");
+        let route = app
+            .inspect_plan_route(&request.to_string(), Some(now))
+            .unwrap();
+        assert_eq!(route.frames.len(), 1);
+        assert_eq!(route.hops.len(), 2);
+        assert!(
+            route
+                .hops
+                .iter()
+                .all(|h| h.schematic_connection != different_floor)
+        );
+        assert!(
+            route
+                .hops
+                .iter()
+                .all(|h| h.geometry_gap.is_some() == different_floor)
+        );
     }
 }

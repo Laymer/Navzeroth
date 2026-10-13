@@ -5,9 +5,11 @@
 //! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
 pub mod content;
+pub mod gear;
 pub mod party;
 pub mod plan_export;
 pub mod planning;
+pub mod routes;
 pub mod snapshots;
 
 use azeroth_core::contract::decode_envelope;
