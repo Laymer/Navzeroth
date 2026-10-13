@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: PR #39 Windows packaging review and integration; next implementation is M4.6.
-Owner: Codex root, sole writer; claimed at PR head 1273c57 / main d7ee6d5.
+Current task: v0.1.0 developer-preview release preparation and publication; next implementation is M4.6.
+Owner: Codex root, sole writer; release baseline main 6231d79.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -22,7 +22,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging is under PR #39 review (see the PR39 handoff). |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging merged in PR #39; v0.1.0 preview preparation is in progress. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
@@ -156,3 +156,11 @@ Review and integration authorized by the user; see
 [review handoff](handoffs/2026-10-13-PR39-review.md). Original hosted packaging
 evidence remains in [M9.4 handoff](handoffs/2026-10-13-M9.4-windows-packaging.md).
 Current main status and historical review records were preserved during conflict resolution.
+
+## v0.1.0 preview publication
+
+User requested preparation and GitHub publication on 2026-10-13.
+See [release notes](releases/0.1.0.md) and [release handoff](handoffs/2026-10-13-v0.1.0-release.md).
+PR #39 merged as 6231d79; all eight post-merge CI jobs passed (38375740810).
+Full live-game release gates remain unverified; the 0.x developer preview is marked
+as a prerelease under the existing workflow convention.
