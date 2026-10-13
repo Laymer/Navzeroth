@@ -142,7 +142,7 @@ fn error(code: ErrorCode, message: &'static str) -> AppError {
 fn invalid(message: &'static str) -> AppError {
     error(ErrorCode::InvalidInput, message)
 }
-fn context(now: Option<UtcMillis>) -> FreshnessContext {
+pub(crate) fn context(now: Option<UtcMillis>) -> FreshnessContext {
     FreshnessContext {
         now_utc_ms: now,
         clock_trust: if now.is_some() {
@@ -317,6 +317,15 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub(crate) fn with_profile_store_mut<T>(
+        &self,
+        id: &str,
+        call: impl FnOnce(&mut SqliteStore, &ProfileKey) -> Result<T>,
+    ) -> Result<T> {
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, id)?;
+        call(&mut state.store, &key)
+    }
     pub fn planning_catalog(&self, profile_id: &str) -> Result<crate::planning::PlanningCatalog> {
         let state = self.lock()?;
         let key = resolve(&state.store, profile_id)?;
@@ -360,7 +369,7 @@ impl SnapshotApplication {
             crate::plan_export::compile(&report, snapshot, content, clock)
         })
     }
-    fn with_planning<T>(
+    pub(crate) fn with_planning<T>(
         &self,
         text: &str,
         now: Option<UtcMillis>,

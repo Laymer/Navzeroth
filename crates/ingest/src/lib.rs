@@ -21,3 +21,5 @@ pub mod savedvars;
 pub mod watcher;
 
 mod error;
+
+pub mod session;
