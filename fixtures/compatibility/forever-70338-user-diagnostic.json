@@ -19,7 +19,7 @@
   "observations": {
     "GetBuildInfo": "call_returned_values; reported values serialized in persisted diagnostic JSON",
     "SavedVariables": "one diagnostic_export string retrieved; general persistence behavior remains unverified",
-    "UnitLevel": "function present; readable return value and restricted contexts untested",
+    "UnitLevel": "User reports the imported preview snapshot displays the correct level (12); one manual capture/import sample, restrictions and other conditions untested",
     "GetInventoryItemLink": "function present; item links untested",
     "C_Item.GetItemInfo": "function present; item loading untested",
     "C_Map.GetBestMapForUnit": "function present; map identity untested",
@@ -30,6 +30,27 @@
     "C_QuestLog.IsQuestFlaggedCompleted": "function present; completion history untested",
     "CombatLogGetCurrentEventInfo": "function missing; no fallback or workaround attempted"
   },
-  "privacy": "Sanitized build/API evidence only; no account paths, character names, GUIDs or personal exports",
-  "limits": "Does not verify snapshot capture, client restrictions, coordinates, timing or plan UI"
+  "privacy": "Sanitized build/API evidence and one anonymous level result only; no account paths, character names, GUIDs or personal exports",
+  "limits": "One user-reported level capture/import result; does not verify clocks, restrictions, other fields or plan UI",
+  "manual_snapshot_validation": {
+    "reported_on": "2026-10-13",
+    "source": "user_report",
+    "result": "Imported snapshot displays the correct level",
+    "displayed_level": 12,
+    "sample_count": 1,
+    "preview_head": "6477f26d3bd0e2d3cc4572d6b6cec8eff238a3d5",
+    "artifact_run": 38387827829,
+    "revision_basis": "Preview instructions supplied in this session; installed files not independently inspected",
+    "conditions": "User confirmed correct level after preview capture/import instructions; combat state, zone and exact reload/logout transition not supplied",
+    "scope": "Level capture, serialization/persistence and desktop import/display in this reported manual flow",
+    "not_verified": [
+      "clock/freshness",
+      "locale code",
+      "equipment",
+      "quests",
+      "position",
+      "restricted contexts",
+      "plan execution"
+    ]
+  }
 }
