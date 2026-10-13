@@ -1,7 +1,7 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: reconciliation, review fixes and M4.4; M4.5 follows separately.
+Current task: M4.5 export verification and protected integration.
 Owner: Codex root, sole writer; claimed at origin/main 6bb2649.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
@@ -17,7 +17,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
 | M2 | IN_PROGRESS | Bounded character imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party transport imports and verified live bindings remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded export follows. |
+| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded manual ANAV1 export implemented; automatic step advancement remains. |
 | M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
@@ -83,8 +83,9 @@ The historical table above describes c357bf1 and remains unchanged as evidence.
 The reconciliation branch fixes its open blocker and important domain findings,
 adds audited v4 snapshot promotion and finishes M4.4. See the
 [reconciliation handoff](handoffs/2026-10-13-reconciliation.md) for regression
-coverage and actual checks. Hosted CI and protected merge are pending. M4.5
-bounded manual export follows on a separate branch/PR. Native interaction and
+coverage and actual checks. PR #40 merged at 301dc60 after all eight hosted jobs passed. M4.5
+bounded manual export is implemented on a separate branch; see the
+[export handoff](handoffs/2026-10-13-M4.5-plan-export.md). Native interaction and
 live client behavior remain unverified. Optional findings and the external GTK
 limitation remain recorded separately in the original review.
 

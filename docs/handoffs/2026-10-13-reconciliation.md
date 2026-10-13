@@ -61,3 +61,35 @@ Lua parity/functional suites passed in workspace tests. Local luacheck is unavai
 its hosted job is required for this delivery. Native Linux command compilation remains
 limited by development libraries; hosted Windows compilation will be checked.
 No native interaction or live WoW claims. Next: first PR CI/merge, then M4.5.
+
+
+## First protected merge and inventory audit
+
+PR #40 merged b816477 as main 301dc606c8323fa4f5115e7f408fcd647fecf193.
+All eight jobs passed on final PR revision in run 38364972389, including native
+Windows compilation and Lua static checks. Reviewed transactions, command key
+bindings, exact profile/revision guards, unknown-state paths and UI response
+invalidation before merging. A full-SHA match guarded the merge.
+
+Every initial ref below with outstanding commits is an ancestor of 301dc60;
+original histories remain reachable. The preserved planner checkpoint f6b26d1
+is also an ancestor. Other initially inventoried tips already belonged to main.
+
+| Initial outstanding ref | Tip | Reachable from main 301dc60 |
+| --- | --- | --- |
+| feature/M3.6-content-controls | 6e562f3907ad | yes |
+| feature/M4.4-planner-workflow | 6e562f3907ad | yes |
+| feature/M7.3-party-eligibility | ccb275192e7a | yes |
+| feature/M7.3-party-persistence | 29c31885633d | yes |
+| feature/M7.3-party-screen | 2b96b03bc442 | yes |
+| origin/feature/M2.2-ingest | bd78d29e1b2e | yes |
+| origin/feature/M3.6-content-controls | 6e562f3907ad | yes |
+| origin/feature/M6.1-atlas-screen | fde5da41c8ba | yes |
+| origin/feature/M7.3-party-eligibility | ccb275192e7a | yes |
+| origin/feature/M7.3-party-persistence | 29c31885633d | yes |
+| origin/feature/M7.3-party-screen | 2b96b03bc442 | yes |
+
+Refresh discovered origin/feature/M9.4-windows-packaging, created after the initial
+inventory. This concurrent work is outside the reconciliation scope and remains
+untouched. All original branches/worktrees are retained; no stash or history was
+rewritten. M4.5 continues on a separate feature branch from b816477.

@@ -69,6 +69,13 @@ async fn get_planning_catalog(
     blocking(state, move |app| app.planning_catalog(&profile_id)).await
 }
 #[tauri::command]
+async fn export_plan(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::plan_export::PlanExport, AppError> {
+    blocking(state, move |app| app.export_plan(&text, system_now())).await
+}
+#[tauri::command]
 async fn plan_session(
     state: State<'_, Application>,
     text: String,
@@ -268,6 +275,7 @@ pub fn run() {
             promote_snapshot,
             get_planning_catalog,
             plan_session,
+            export_plan,
             get_app_status,
             list_profiles,
             stage_content,

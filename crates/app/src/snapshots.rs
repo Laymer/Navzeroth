@@ -348,6 +348,29 @@ impl SnapshotApplication {
         text: &str,
         now: Option<UtcMillis>,
     ) -> Result<crate::planning::PlanningReport> {
+        self.with_planning(text, now, crate::planning::calculate)
+    }
+    pub fn export_plan(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::plan_export::PlanExport> {
+        self.with_planning(text, now, |request, snapshot, content, clock| {
+            let report = crate::planning::calculate(request, snapshot, content, clock)?;
+            crate::plan_export::compile(&report, snapshot, content, clock)
+        })
+    }
+    fn with_planning<T>(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+        calculate: impl FnOnce(
+            crate::planning::PlanningRequest,
+            &Envelope<CharacterSnapshot>,
+            &azeroth_storage::content::ContentRevision,
+            &FreshnessContext,
+        ) -> Result<T>,
+    ) -> Result<T> {
         if text.len() > crate::planning::MAX_REQUEST_BYTES {
             return Err(error(
                 ErrorCode::ImportTooLarge,
@@ -389,7 +412,7 @@ impl SnapshotApplication {
         if content.envelope.payload.revision != request.revision {
             return Err(invalid("Active content changed; refresh planning inputs"));
         }
-        crate::planning::calculate(request, &snapshot, &content, &context(now))
+        calculate(request, &snapshot, &content, &context(now))
     }
     pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
         if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
