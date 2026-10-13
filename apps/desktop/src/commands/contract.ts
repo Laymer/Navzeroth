@@ -260,6 +260,7 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  inspect_plan_route: { input: { text: string }; output: import("./routes").RouteInspection };
   import_session_text: { input: { profile_id: string; text: string }; output: import("./sessions").SessionImportReceipt };
   import_session_file: { input: { profile_id: string; path: string; format: FileInputFormat }; output: import("./sessions").SessionImportReceipt };
   list_sessions: { input: { profile_id: string }; output: import("./sessions").SessionListEntry[] };
