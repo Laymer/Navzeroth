@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { AppError, ContentInspection, ProfileSummary } from "../commands/contract";
 import { describeObservation } from "../observation";
+import planningExample from "../../../../fixtures/desktop/planning/synthetic-revision.json";
 import example from "../../../../fixtures/desktop/content/demo-revision.json";
 
 export function ContentScreen({ client, onChanged, refreshKey }: { client: CommandClient; onChanged: () => void; refreshKey: number }) {
@@ -75,6 +76,7 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     <form onSubmit={(event) => { event.preventDefault(); void mutate("stage"); }}>
       <label>Content revision JSON <textarea value={text} onChange={(event) => { setText(event.target.value); setStaged(null); }} rows={8} disabled={busy} /></label>
       <button type="button" disabled={busy} onClick={() => { setText(JSON.stringify(example, null, 2)); setStaged(null); }}>Load synthetic example</button>
+      <button type="button" disabled={busy} onClick={() => setText(JSON.stringify(planningExample, null, 2))}>Load synthetic planning example</button>
       <button type="submit" disabled={!native || busy || !text.trim()}>Validate and stage content</button>
     </form>
     {staged && <><h3>Staged revision</h3><Inspection value={staged} />

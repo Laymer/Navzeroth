@@ -31,6 +31,50 @@ async fn blocking<T: Send + 'static>(
             )
         })?
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn get_historical_snapshot(
+    state: State<'_, Application>,
+    profile_id: String,
+    snapshot_id: azeroth_core::types::SnapshotId,
+) -> Result<Option<StoredSnapshot>, AppError> {
+    blocking(state, move |app| {
+        app.historical(&profile_id, &snapshot_id, system_now())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn promote_snapshot(
+    state: State<'_, Application>,
+    profile_id: String,
+    snapshot_id: azeroth_core::types::SnapshotId,
+    expected_current: azeroth_core::types::SnapshotId,
+    reason: String,
+) -> Result<(), AppError> {
+    blocking(state, move |app| {
+        app.promote(
+            &profile_id,
+            &snapshot_id,
+            &expected_current,
+            &reason,
+            system_now(),
+        )
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_planning_catalog(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::planning::PlanningCatalog, AppError> {
+    blocking(state, move |app| app.planning_catalog(&profile_id)).await
+}
+#[tauri::command]
+async fn plan_session(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::planning::PlanningReport, AppError> {
+    blocking(state, move |app| app.plan_session(&text, system_now())).await
+}
 #[tauri::command]
 async fn get_app_status(state: State<'_, Application>) -> Result<AppStatus, AppError> {
     blocking(state, |app| app.status()).await
@@ -220,6 +264,10 @@ pub fn run() {
             atlas_protocol::respond(&request)
         })
         .invoke_handler(tauri::generate_handler![
+            get_historical_snapshot,
+            promote_snapshot,
+            get_planning_catalog,
+            plan_session,
             get_app_status,
             list_profiles,
             stage_content,

@@ -1,18 +1,17 @@
 use azeroth_core::{
     contract::Envelope,
-    eligibility::{AcceptanceOutcome, EligibilityInputs, evaluate_participant},
     entities::{CharacterSnapshot, Objective, ObjectiveTarget, TravelNode},
     error::{AppError, ErrorCode, Result},
-    evaluation::{EvaluationContext, StalePolicy},
+    evaluation::{EvaluationContext, StalePolicy, Truth, evaluate},
     observation::{FreshnessContext, ObservationStatus},
     planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan},
-    predicate::RuleLimits,
+    predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     travel::RouteOptions,
     types::*,
 };
 use azeroth_storage::content::ContentRevision;
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
 #[derive(Clone, Debug, Serialize)]
 pub struct PlanningCatalog {
@@ -63,7 +62,7 @@ fn invalid(message: &'static str) -> AppError {
     AppError::new(ErrorCode::InvalidInput, message, false)
 }
 pub(crate) fn calculate(
-    request: PlanningRequest,
+    mut request: PlanningRequest,
     snapshot: &Envelope<CharacterSnapshot>,
     content: &ContentRevision,
     clock: &FreshnessContext,
@@ -73,7 +72,17 @@ pub(crate) fn calculate(
             "Planning input exceeds 128 candidates or exclusions",
         ));
     }
+    request
+        .candidates
+        .sort_by(|a, b| a.objective.cmp(&b.objective));
     let dataset = &content.envelope.payload;
+    if request
+        .excluded
+        .iter()
+        .any(|id| !dataset.objectives.iter().any(|o| &o.id == id))
+    {
+        return Err(invalid("Excluded objective is absent from active content"));
+    }
     let context = EvaluationContext {
         snapshot: &snapshot.payload,
         party: None,
@@ -81,7 +90,6 @@ pub(crate) fn calculate(
         stale_policy: StalePolicy::Reject,
         limits: RuleLimits::default(),
     };
-    let facts = BTreeMap::new();
     let mut candidates = Vec::new();
     let mut filtered = Vec::new();
     let mut seen = BTreeSet::new();
@@ -103,27 +111,50 @@ pub(crate) fn calculate(
         }
         for target in &objective.targets {
             match target {
-                ObjectiveTarget::QuestStage { quest, .. } => {
+                ObjectiveTarget::QuestStage { quest, stage } => {
                     let definition = dataset
                         .quests
                         .iter()
                         .find(|q| &q.id == quest)
                         .ok_or_else(|| invalid("Quest target is absent from active content"))?;
-                    let inputs = EligibilityInputs {
-                        definition,
-                        access: None,
-                        exclusive_groups: &[],
-                        facts: &facts,
-                        freshness: clock,
-                        stale_policy: StalePolicy::Reject,
-                        limits: RuleLimits::default(),
-                    };
-                    let outcome = evaluate_participant(&inputs, &snapshot.payload, None)?;
-                    if outcome.acceptance != AcceptanceOutcome::Eligible {
-                        reason = Some("Quest acceptance prerequisites are unmet or unknown");
+                    if !definition.stages.contains(stage) {
+                        return Err(invalid("Stage is not declared by its quest"));
+                    }
+                    let ready = Predicate::try_new(PredicateNode::All {
+                        predicates: vec![
+                            PredicateNode::QuestState {
+                                quest: quest.clone(),
+                                state: QuestState::Accepted,
+                                value: true,
+                            },
+                            PredicateNode::QuestState {
+                                quest: quest.clone(),
+                                state: QuestState::Completed,
+                                value: false,
+                            },
+                            PredicateNode::QuestState {
+                                quest: quest.clone(),
+                                state: QuestState::TurnedIn,
+                                value: false,
+                            },
+                            PredicateNode::ObjectiveState {
+                                objective: stage.clone(),
+                                completed: false,
+                            },
+                        ],
+                    })?;
+                    if evaluate(&ready, &context)?.truth != Truth::True {
+                        reason =
+                            Some("Quest stage is completed, not accepted, or readiness is unknown");
                     }
                 }
-                ObjectiveTarget::Service { node } if node.id != estimate.node => {
+                ObjectiveTarget::Service { node }
+                    if node.id != estimate.node
+                        || !dataset
+                            .nodes
+                            .iter()
+                            .any(|n| n.id == node.id && n.position.map == node.map) =>
+                {
                     reason = Some("Service objective must use its declared node");
                 }
                 ObjectiveTarget::Acquisition { .. } => {

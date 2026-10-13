@@ -653,6 +653,39 @@ impl SnapshotApplication {
                 data_mode: DataMode::Stored,
             }))
     }
+    pub fn historical(
+        &self,
+        id: &str,
+        selected: &SnapshotId,
+        now: Option<UtcMillis>,
+    ) -> Result<Option<StoredSnapshot>> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, id)?;
+        Ok(state
+            .store
+            .historical_snapshot(&key, selected)?
+            .map(|envelope| StoredSnapshot {
+                freshness: freshness(&envelope.payload.capture, &context(now)),
+                envelope,
+                profile_id: id.to_owned(),
+                data_mode: DataMode::Stored,
+            }))
+    }
+    pub fn promote(
+        &self,
+        id: &str,
+        selected: &SnapshotId,
+        expected: &SnapshotId,
+        reason: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<()> {
+        let now = now.ok_or_else(|| invalid("Operation time unavailable"))?;
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, id)?;
+        state
+            .store
+            .promote_snapshot(&key, selected, expected, reason, now)
+    }
     pub fn history(
         &self,
         id: &str,

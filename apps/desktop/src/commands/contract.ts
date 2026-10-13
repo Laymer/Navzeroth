@@ -11,6 +11,8 @@ import type {
   MapKey,
   PixelPoint,
   Position,
+  TravelNode,
+  Objective,
 } from "../../../../schemas/v1/exchange";
 
 /** Where displayed data comes from. `demo` data is synthetic and always labelled. */
@@ -236,8 +238,33 @@ export interface SnapshotMarker {
   data_mode: DataMode;
 }
 
+export interface PlanningCatalog {
+  snapshot_id: string | null; revision: string | null; fixture: boolean;
+  nodes: TravelNode[]; objectives: Objective[];
+}
+export interface PlanningRequest {
+  profile_id: string; snapshot_id: string; revision: string; goal_profile: string;
+  origin: string; stopping_node: string; budget_ms: number; stopping_service_ms: number;
+  candidates: { objective: string; node: string; utility: number; completion_ms: number; service_ms: number }[];
+  excluded: string[];
+}
+export interface PlanningReport {
+  request: PlanningRequest; context: DataContext; fixture: boolean; assumptions: string[];
+  filtered: { objective: string; reason: string }[];
+  result: {
+    selected: { candidate: string; utility: number; incremental_ms: number; completion_ms: number; service_ms: number; travel: { total_ms: number }; expected_session_ms: number }[];
+    stopping: { total_ms: number }; expected_total_ms: number; estimated: boolean;
+    alternatives: unknown[]; trace: unknown[]; termination: string;
+  };
+}
+
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_planning_catalog: { input: { profile_id: string }; output: PlanningCatalog };
+  plan_session: { input: { text: string }; output: PlanningReport };
+  get_historical_snapshot: { input: { profile_id: string; snapshot_id: string }; output: StoredSnapshot | null };
+  promote_snapshot: { input: { profile_id: string; snapshot_id: string; expected_current: string; reason: string }; output: null };
+
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
   stage_content: { input: { text: string }; output: ContentInspection };
