@@ -138,18 +138,26 @@ function Diagnostics.attach(env)
     local level, code = ns.Snapshot.readLevel(getter, metadata)
     local context = {namespace='reference', build={edition=Version.edition,
       build=build.version .. '.' .. build.build, interface=build.interface}}
+    local questApi = type(env.C_QuestLog) == 'table' and env.C_QuestLog or {}
+    local quests, questDiagnostics = ns.Snapshot.readQuests(questApi.GetNumQuestLogEntries,
+      questApi.GetInfo, context, metadata)
+    if not quests then say('snapshot failed: ' .. questDiagnostics); return end
     local spec = {id='snapshot-' .. profile .. '-' .. string.format('%.0f', sequence),
       character=profile, context=context, fixture=false, locale='unknown',
       capture=metadata, source_revision='addon-observations-v1',
       capabilities={level={context=context, status=level.status == 'known' and
         'verified_available' or level.status == 'unsupported' and
-        'verified_unavailable' or 'untested'}}}
-    local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end})
+        'verified_unavailable' or 'untested'},
+        quests={context=context, status='verified_available'}}}
+    local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end,
+      quests=function() return quests end})
     if not captured then say('snapshot failed: ' .. errorCode); return end
     local text, storeCode = ns.Snapshot.store(state.db, captured,
       {fixture=false, locale=spec.locale})
     if not text then say('snapshot failed: ' .. storeCode); return end
     state.db.snapshot_sequence = sequence
+    state.db.snapshot_quest_diagnostics = questDiagnostics
+    state.last_snapshot = captured
     say('snapshot stored (' .. #text .. ' bytes). /reload or logout, then import ' ..
       'AzerothNavigatorDB / snapshot_export from the selected SavedVariables file.')
     if code then say('level remains unavailable (' .. code .. ')') end
