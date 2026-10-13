@@ -92,3 +92,14 @@ plain-copy now omits optional null fields, preserving their SessionBatch None
 semantics while false/zero remain values. Six recorder tests, all-target Clippy,
 fmt, 16-file Lua static checks (zero warnings/errors) and diff-check pass. The
 shared diagnostic JSON encoder and schemas are unchanged.
+
+Candidate CI follow-up at owning baseline4cf332f: hosted Linux/Windows unit runs
+could not find "Session deleted." The test observed file-command invocation and
+clicked Delete before the async import response enabled it. Deterministically
+reproduced the same failure using a deferred file import. Product mutation guard
+correctly prevented the overlapping delete; no product change was necessary.
+The regression now verifies Delete disabled/no delete invocation while pending,
+resolves the file import, awaits its receipt and an enabled Delete, then deletes.
+Focused2Sessions tests and complete87desktop unit tests pass; typecheck/lint pass;
+isolated mocked Chromium Sessions flow passes. No shared wiring changed. Hosted
+current-head reruns remain coordinator-owned and are not claimed as local evidence.
