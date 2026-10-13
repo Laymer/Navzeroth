@@ -67,3 +67,27 @@ it("disables synthetic assumptions for real data and surfaces backend input inva
   fireEvent.click(screen.getByRole("button", {name:"Compare gear"}));
   expect(await screen.findByRole("alert")).toHaveTextContent("Active content changed; refresh gear inputs");
 });
+it("retains model edits while pruning removed candidate and hand references", async () => {
+  let currentCatalog = catalog;
+  const client = createClient({ invoke: vi.fn((command) => {
+    if (command === "list_profiles") return Promise.resolve([{id:"p",display_name:"Synthetic",fixture:true}] as never);
+    if (command === "get_gear_catalog") return Promise.resolve(currentCatalog as never);
+    return Promise.reject(new Error("unexpected"));
+  }) });
+  const view = render(<GearScreen client={client} refreshKey={0} />);
+  await screen.findByText(/Snapshot: s; revision: r/);
+  fireEvent.click(screen.getByRole("button", {name:"Load labelled synthetic example"}));
+  fireEvent.change(screen.getByLabelText("Main-hand slot"), {target:{value:"main_hand"}});
+  const savedWeights = (screen.getByLabelText("Attribute weights (JSON, integer thousandths)") as HTMLTextAreaElement).value;
+  fireEvent.change(screen.getByLabelText("Acquisition source for demo-item-1"), {target:{value:"demo-acq-1"}});
+  currentCatalog = {...catalog, revision:"no-sources", acquisitions:[]};
+  view.rerender(<GearScreen client={client} refreshKey={1} />);
+  await screen.findByText(/revision: no-sources/);
+  expect(screen.getByLabelText("Acquisition source for demo-item-1")).toHaveValue("");
+  currentCatalog = {...catalog, revision:"replaced", items:[],equipment:{},acquisitions:[]};
+  view.rerender(<GearScreen client={client} refreshKey={2} />);
+  await screen.findByText(/revision: replaced/);
+  expect(screen.getByLabelText("Attribute weights (JSON, integer thousandths)")).toHaveValue(savedWeights);
+  expect(screen.getByLabelText("Main-hand slot")).toHaveValue("");
+  expect(screen.queryAllByLabelText(/^Compare demo-item/)).toHaveLength(0);
+});

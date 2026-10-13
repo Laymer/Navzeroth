@@ -30,13 +30,13 @@ and ignores late responses. Coordinator review reproduced that the application
 refreshes views every minute and the initial implementation erased manual edits.
 The corrected same-profile refresh clears results and refetches content while
 preserving weights/proficiency/effort/candidate controls; it prunes removed item
-keys and missing/mismatched source IDs. A profile/client change resets assumptions
+keys, missing/mismatched source IDs and missing hand-slot identifiers. A profile/client change resets assumptions
 so a synthetic model cannot silently carry into a real profile.
 
 ## Actual checks
 
 - Desktop typecheck/lint/build: passed.
-- Desktop unit tests: 82 passed, zero failures (three Gear UI flows plus a Rust
+- Desktop unit tests: 83 passed, zero failures (four Gear UI flows plus a Rust
   DTO golden reader added). Manual validation, synthetic labels, real-data gating,
   backend replaced-input errors, superseded responses and preservation of editing
   across routine refresh are covered.
@@ -57,3 +57,7 @@ were corrected and checks rerun. No manifest, exchange schema or version changed
 Next: coordinator integration/review and task10 candidate packaging. Real item
 catalogs, source/proficiency tables, validated role models, captured modifier models
 and joint acquisition scheduling remain absent; this screen does not claim them.
+
+Follow-up: removed-source and missing-hand/candidate references now have a two-stage
+refresh regression; manual weights remain intact. Typecheck/lint and83 unit tests
+passed after that change.

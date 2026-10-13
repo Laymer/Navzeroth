@@ -56,6 +56,8 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
       setCatalog(result.value); setError("");
+      const availableSlots = new Set([...result.value.items.flatMap((item) => item.slots), ...Object.keys(result.value.equipment)]);
+      setMainHand((old) => availableSlots.has(old) ? old : ""); setOffHand((old) => availableSlots.has(old) ? old : "");
       setInputs((old) => old.filter((input) => result.value.items.some((item) => JSON.stringify(item.key) === JSON.stringify(input.item))).map((input) => ({
         ...input, acquisition: input.acquisition && result.value.acquisitions.some((source) => source.id === input.acquisition?.source && source.items.some((item) => JSON.stringify(item) === JSON.stringify(input.item))) ? input.acquisition : null,
       })));
