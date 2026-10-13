@@ -7,6 +7,7 @@ on:
   pull_request:
     branches: [main]
   push:
+    branches: [main]
     tags: ['v[0-9]*']
   workflow_dispatch:
 permissions:
@@ -20,6 +21,9 @@ jobs:
     runs-on: windows-2025
     timeout-minutes: 50
     steps:
+      - name: Preserve committed source bytes in packages
+        shell: bash
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           lfs: false # the application embeds demo imagery only; LFS imagery is never packaged
@@ -45,6 +49,7 @@ jobs:
             ~/.cargo/git
             target
           key: cargo-release-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
+          restore-keys: cargo-release-${{ runner.os }}-
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .node-version
@@ -63,7 +68,7 @@ jobs:
           # Unset means an unsigned installer (SmartScreen warns).
           NAVZEROTH_SIGN_COMMAND: ${{ secrets.NAVZEROTH_SIGN_COMMAND }}
         run: |
-          $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { '' }
+          $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { 'v' + (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version }
           ./scripts/windows/Build-Windows.ps1 -SkipTests -ExpectedVersion $expected
       - name: Silent install, first start and uninstall
         shell: pwsh
@@ -88,14 +93,20 @@ jobs:
           if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent install replaced the game addon' }
           foreach ($file in @($exe, (Join-Path $installDir 'uninstall.exe'),
                   (Join-Path $installDir 'addon\Install-AzerothNavigatorAddon.ps1'),
-                  (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc')) + $shortcuts) {
+                  (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc'),
+                  (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')) + $shortcuts) {
             if (-not (Test-Path -LiteralPath $file)) { throw "Missing after install: $file" }
             "installed: $file"
           }
           $key = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
             Where-Object { (Get-ItemProperty $_.PSPath).DisplayName -eq 'Azeroth Navigator' }
           if (-not $key) { throw 'No Apps & features entry' }
-          "Apps & features: $((Get-ItemProperty $key.PSPath).DisplayVersion)"
+          $displayVersion = (Get-ItemProperty $key.PSPath).DisplayVersion
+          $sourceVersion = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          if ($displayVersion -ne $sourceVersion) { throw "Installed version $displayVersion does not match source $sourceVersion" }
+          "Apps & features: $displayVersion"
+          $bundledLicense = Get-Content -Raw -LiteralPath (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')
+          if ($bundledLicense -ne (Get-Content -Raw addons/AzerothNavigator/LICENSE)) { throw 'Bundled addon license differs from source' }
 
           # First start: the process must stay up and create its SQLite store.
           $app = Start-Process -FilePath $exe -PassThru

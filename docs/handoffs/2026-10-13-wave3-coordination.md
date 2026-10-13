@@ -9,7 +9,7 @@ request. No release publication or tag creation is authorized or included.
 ## Inventory and ownership
 
 Refreshed origin/main equals baseline; root working tree clean; no open PRs.
-All existing branches and 23 worktrees are preserved. Worker A (/root/addon)
+All existing branches and 24 worktrees are preserved. Worker A (/root/addon)
 owns tasks 2,6,9; Worker B (/root/gear) owns 3,7; Worker C (/root/sessions)
 owns 4,8 and exclusively migration v5. Coordinator owns tasks 1,5,10 and
 shared manifests, lockfiles, exports, command registration, navigation,

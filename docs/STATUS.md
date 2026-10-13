@@ -1,7 +1,7 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: parallel delivery wave toward 0.3.0-rc.1 candidate artifacts.
+Current task: reviewed integration and 0.3.0-rc.1 candidate artifacts.
 Owner: Codex /root coordinator; baseline main 449a726.
 See [wave-3 coordination](handoffs/2026-10-13-wave3-coordination.md) for ownership,
 frozen boundaries and evidence scope. v0.2.0 is published; no new tag/release
@@ -16,16 +16,16 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 
 | Milestone | State | Delivered scope / remaining work |
 | --- | --- | --- |
-| M0 | IN_PROGRESS | Diagnostic addon and harness exist; recorded Forever client checks remain unverified. |
+| M0 | IN_PROGRESS | Diagnostic addon/harness and limited 70338 diagnostic, level and clock-age reports exist; consolidated live checks remain unverified. |
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
-| M2 | IN_PROGRESS | Bounded character imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party transport imports and verified live bindings remain. |
+| M2 | IN_PROGRESS | Bounded character imports/storage/watcher, guarded manual 70338 quest/equipment capture, runtime plan paste/HUD and local session transport implemented. Party transport and consolidated live acceptance remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded manual ANAV1 export implemented; pure Lua advancement/stable alternatives implemented on the M4.6 branch; live bindings remain. |
-| M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
-| M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
+| M4 | IN_PROGRESS | Travel/eligibility/greedy Planner with manual assumptions, ANAV1 export, selected/stopping route inspection and conservative Lua advancement/HUD implemented. Real quest-stage mappings, joint planning and live acceptance remain. |
+| M5 | IN_PROGRESS | Fixed-point gear/acquisition services, current/theoretical/eligible/acquisition/practical comparisons, editable Gear screen and synthetic Rust/Lua parity implemented. Real weights/catalogs and live validation remain. |
+| M6 | IN_PROGRESS | Demo atlas/markers/layers/pin search and keyboard navigation; exact-dataset schematic route inspection with ordered geometry gaps implemented. Reference geography stays distinct from unlocks; verified road geometry remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
-| M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging merged in PR #39; v0.1.0 developer preview published. |
+| M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Calibration and consolidated live checks remain. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner/Gear/Sessions workflows and mocked browser tests; revision-scoped Windows packaging and 0.3.0-rc.1 CI candidate. v0.2.0 remains latest published preview; native interaction/live acceptance remains. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
@@ -230,3 +230,36 @@ reload on the recorded 70338 client. This is limited user-reported evidence; ins
 revision, raw export, exact age and restricted-context checks were not supplied.
 Quest/equipment/position bindings, addon plan UI and session workflows remain
 experimental until the consolidated live checklist is evidenced.
+
+## 0.3.0-rc.1 delivery wave
+
+See [integration audit](handoffs/2026-10-13-wave3-integration.md),
+[candidate notes](releases/0.3.0-rc.1.md) and the
+[consolidated live checklist](compatibility/RC1_LIVE_CHECKLIST.md).
+Quest capture, runtime plan paste/HUD, conservative equipment identities and position
+readability diagnostics remain explicitly manual and experimental on 70338. Cached
+captures after reload are labelled and retain original timestamps; runtime plans
+clear on reload. Missing authored completion mappings never advance steps.
+
+Gear services/screens expose current, theoretical, equip-eligible, guaranteed
+individual acquisition and conditional practical comparisons. Models, categories,
+proficiencies, hand relationships and effort assumptions are explicitly supplied;
+unknown critical baseline/acquisition inputs block practical advice. No real tables
+are invented. Same-profile refresh preserves manual model and planning edits while
+invalidating results; removed catalog references are cleared safely.
+
+Sessions use separate bounded ANAVSESSION1 local transport and migration v5 immutable
+context/fixture-scoped history, duplicate idempotence, atomic conflict/capacity
+refusal and explicit deletion. Manual recorder never samples in background or
+resumes across reload. Unclassified intervals, gaps, progression and UTC uncertainty
+remain distinct; calibration remains deferred.
+
+Planner route inspection recomputes current request, selected travel and stopping
+route; exact dataset projection permits labelled schematic endpoint links only.
+Geometry/image gaps and incompatible spaces keep ordered travel inspectable.
+
+Versions agree at 0.3.0-rc.1; CI produces installer/addon/checksums/notes/source commit
+artifacts without tag creation or GitHub publication. Published releases remain
+unchanged. Actual current-head reviews/checks, ordered merges and downloaded artifact
+verification are recorded in the integration audit; no live results are inferred
+from mocked browser flows or hosted packaging.
