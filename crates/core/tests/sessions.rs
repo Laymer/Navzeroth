@@ -710,3 +710,24 @@ fn summary_contexts_do_not_conflict() {
     assert_eq!(merge_summary(&mut store, summary), MergeOutcome::Unchanged);
     assert_eq!(store.len(), 2);
 }
+
+#[test]
+fn lost_clock_trust_or_missing_later_utc_revokes_mapping() {
+    for later in [
+        json!({"session":"s1","sequence":2,"elapsed_ms":10000,"utc":90000,"clock_trust":"uncertain","kind":{"type":"activity","label":"sample","quality":"unclassified"}}),
+        json!({"session":"s1","sequence":2,"elapsed_ms":10000,"clock_trust":"trusted","kind":{"type":"activity","label":"sample","quality":"unclassified"}}),
+    ] {
+        let batch = inline(vec![
+            json!({"session":"s1","sequence":1,"elapsed_ms":0,"utc":5000,"clock_trust":"trusted","kind":{"type":"session_start"}}),
+            later,
+        ]);
+        let build = build_sessions(&batch, &cfg()).unwrap();
+        assert!(matches!(
+            build[&sid("s1")].utc,
+            SessionUtc::Uncertain {
+                reason: SessionUtcUncertainty::MissingOrUntrustedTime
+            }
+        ));
+        assert_eq!(build[&sid("s1")].summary.elapsed_ms.get(), 10000);
+    }
+}

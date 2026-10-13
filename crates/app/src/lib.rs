@@ -5,6 +5,7 @@
 //! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
 pub mod content;
+pub mod gear;
 pub mod party;
 pub mod plan_export;
 pub mod planning;
@@ -126,3 +127,5 @@ mod tests {
         assert!(!err.to_string().contains("passwd"));
     }
 }
+
+pub mod sessions;
