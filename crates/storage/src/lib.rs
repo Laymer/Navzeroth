@@ -26,6 +26,7 @@ pub mod hash;
 pub mod migrations;
 mod model;
 pub mod ordering;
+pub mod party;
 mod sqlite;
 
 pub use hash::snapshot_content_hash;

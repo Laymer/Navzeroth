@@ -162,6 +162,14 @@ function Plan.new(expected)
     text = candidate
     return {id=result.id, fixture=envelope.fixture, steps=#result.steps}
   end
+  -- Manual ANAV1 framing. Raw-JSON callers keep importText; replacement stays atomic.
+  state.importTransport = function(_, candidate)
+    if type(candidate) ~= 'string' or #candidate > 32768 then return nil, 'transport_bytes' end
+    local document = candidate:match('^[ \t\r\n]*ANAV1:(.*)$')
+    if not document or document:sub(1, 1) ~= '{' then return nil, 'transport_invalid' end
+    document = document:gsub('[ \t\r\n]+$', '')
+    return state:importText(document)
+  end
   -- Every query returns an independent decoded copy; no external mutable plan alias.
   state.get = function(_)
     if not text then return nil end

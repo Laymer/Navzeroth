@@ -554,7 +554,7 @@ fn build_one(
 }
 
 /// Identity of a stored summary.
-pub type SessionKey = (CharacterId, SessionId);
+pub type SessionKey = (DataContext, CharacterId, SessionId);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -567,7 +567,11 @@ pub enum MergeOutcome {
 }
 
 pub fn summary_key(summary: &SessionSummary) -> SessionKey {
-    (summary.character.clone(), summary.session.clone())
+    (
+        summary.context.clone(),
+        summary.character.clone(),
+        summary.session.clone(),
+    )
 }
 
 /// What `merge_summary` would do, without changing the store.

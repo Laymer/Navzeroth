@@ -5,6 +5,7 @@ import type {
   HistoryEntry,
   ImportReceipt,
   StoredSnapshot,
+  StoredParty,
   WatchState,
   AtlasView,
   CommandAdapter,
@@ -47,10 +48,25 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getHistoricalSnapshot: (profileId: string, snapshotId: string) => run(() => adapter.invoke("get_historical_snapshot", { profile_id: profileId, snapshot_id: snapshotId })),
+    promoteSnapshot: (profileId: string, snapshotId: string, expectedCurrent: string, reason: string) => run(() => adapter.invoke("promote_snapshot", { profile_id: profileId, snapshot_id: snapshotId, expected_current: expectedCurrent, reason })),
+    getPlanningCatalog: (profileId: string) => run(() => adapter.invoke("get_planning_catalog", { profile_id: profileId })),
+    exportPlan: (text: string) => run(() => adapter.invoke("export_plan", { text })),
+    planSession: (text: string) => run(() => adapter.invoke("plan_session", { text })),
     getAppStatus: (): Promise<Result<AppStatus>> =>
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>
       run(() => adapter.invoke("list_profiles", undefined)),
+    stageContent: (text: string) => run(() => adapter.invoke("stage_content", { text })),
+    getActiveContent: (profileId: string) => run(() => adapter.invoke("get_active_content", { profile_id: profileId })),
+    activateContent: (profileId: string, revision: string) => run(() => adapter.invoke("activate_content", { profile_id: profileId, revision })),
+    rollbackContent: (profileId: string) => run(() => adapter.invoke("rollback_content", { profile_id: profileId })),
+    listParties: (): Promise<Result<string[]>> => run(() => adapter.invoke("list_parties", undefined)),
+    getPartyQuests: (partyId: string) => run(() => adapter.invoke("get_party_quests", { party_id: partyId })),
+    getPartyEligibility: (partyId: string, revision: string, questId: string) => run(() => adapter.invoke("get_party_eligibility", { party_id: partyId, revision, quest_id: questId })),
+    getParty: (partyId: string): Promise<Result<StoredParty | null>> => run(() => adapter.invoke("get_party", { party_id: partyId })),
+    saveParty: (partyId: string, profileIds: string[]): Promise<Result<null>> => run(() => adapter.invoke("save_party", { party_id: partyId, profile_ids: profileIds })),
+    deleteParty: (partyId: string): Promise<Result<boolean>> => run(() => adapter.invoke("delete_party", { party_id: partyId })),
     getCharacterSnapshot: (profileId: string): Promise<Result<CharacterSnapshotEnvelope>> =>
       run(() => adapter.invoke("get_character_snapshot", { profile_id: profileId })),
     importText: (text: string): Promise<Result<ImportReceipt>> =>

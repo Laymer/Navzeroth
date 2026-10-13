@@ -36,6 +36,16 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "immutable reference content revisions",
         sql: include_str!("schema_v2.sql"),
     },
+    Migration {
+        version: 3,
+        name: "manual party profiles",
+        sql: include_str!("schema_v3.sql"),
+    },
+    Migration {
+        version: 4,
+        name: "audited snapshot promotion",
+        sql: include_str!("schema_v4.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.

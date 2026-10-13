@@ -94,7 +94,21 @@ export const demoAdapter: CommandAdapter = {
           return { envelope: snapshot, profile_id, data_mode: "demo", freshness: { status: "uncertain", reason: "missing_or_untrusted_time" } };
         }
         case "get_snapshot_history":
+        case "list_parties":
           return [];
+        case "get_active_content":
+          return null;
+        case "stage_content":
+        case "activate_content":
+        case "rollback_content":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "Content changes require the desktop application.", retryable: false } satisfies AppError;
+        case "get_party":
+          return null;
+        case "save_party":
+        case "get_party_quests":
+        case "get_party_eligibility":
+        case "delete_party":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "Local parties require the desktop application.", retryable: false } satisfies AppError;
         case "import_snapshot_text":
         case "import_snapshot_file":
         case "start_snapshot_watch":

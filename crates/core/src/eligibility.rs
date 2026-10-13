@@ -47,6 +47,8 @@ impl Validate for AccessRequirementsData {
 /// Class and race come from `CharacterProfile`; the faction is caller-supplied.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ParticipantFacts {
+    pub context: DataContext,
+    pub character: CharacterId,
     pub class: Observation<SourceId>,
     pub race: Observation<SourceId>,
     pub faction: Observation<SourceId>,
@@ -54,6 +56,8 @@ pub struct ParticipantFacts {
 impl ParticipantFacts {
     pub fn from_profile(profile: &CharacterProfile, faction: Observation<SourceId>) -> Self {
         Self {
+            context: profile.context.clone(),
+            character: profile.id.clone(),
             class: profile.class.clone(),
             race: profile.race.clone(),
             faction,
@@ -198,6 +202,7 @@ pub enum QuestEligibilityCode {
         status: Option<ObservationStatus>,
     },
     AlreadyTurnedIn,
+    ResetStateUnknown,
     RepeatabilityUnknown {
         status: ObservationStatus,
     },
@@ -495,6 +500,23 @@ impl<'a> Run<'a> {
             }
         }
     }
+    fn has_unknown(&self, node: &PredicateNode) -> Result<bool> {
+        if self.truth_of(node)? == Truth::Unknown {
+            return Ok(true);
+        }
+        match node {
+            PredicateNode::All { predicates } | PredicateNode::Any { predicates } => {
+                for child in predicates {
+                    if self.has_unknown(child)? {
+                        return Ok(true);
+                    }
+                }
+                Ok(false)
+            }
+            PredicateNode::Not { predicate } => self.has_unknown(predicate),
+            _ => Ok(false),
+        }
+    }
     /// The unmet part of a predicate that evaluated to false.
     fn unmet(&self, node: &PredicateNode) -> Result<Unmet> {
         Ok(match node {
@@ -568,7 +590,11 @@ impl<'a> Run<'a> {
             }
         }
         Ok(Component {
-            truth: result.truth,
+            truth: if result.truth == Truth::False && self.has_unknown(predicate)? {
+                Truth::Unknown
+            } else {
+                result.truth
+            },
         })
     }
     fn access(&mut self) -> Component {
@@ -688,6 +714,13 @@ impl<'a> Run<'a> {
                 truth: Truth::Unknown,
             };
         };
+        if *semantics == CompletionSemantics::ResetBound && turned_in.truth != Truth::False {
+            self.absorb(Phase::Acceptance, turned_in);
+            self.note(Phase::Acceptance, QuestEligibilityCode::ResetStateUnknown);
+            return Component {
+                truth: Truth::Unknown,
+            };
+        }
         if *semantics != CompletionSemantics::Unrepeatable {
             return Component { truth: Truth::True };
         }
@@ -742,6 +775,14 @@ fn run_participant(
     if let Some(party) = party {
         definition.context.ensure_compatible(&party.context)?;
     }
+    if let Some(facts) = inputs.facts.get(&snapshot.character) {
+        facts.context.ensure_compatible(&snapshot.context)?;
+        if facts.character != snapshot.character {
+            return Err(invalid(
+                "Participant facts identity does not match snapshot",
+            ));
+        }
+    }
     let mut run = Run {
         inputs,
         snapshot,
@@ -756,21 +797,30 @@ fn run_participant(
     let completed = run.evaluate(&node_predicate(&quest_node(quest, QuestState::Completed))?)?;
     let turned_in = run.evaluate(&node_predicate(&quest_node(quest, QuestState::TurnedIn))?)?;
     // Acceptance: every component is evaluated so that all reasons are reported.
-    let mut truth = Truth::True;
-    truth = truth.and(
+    let components = [
         run.requirement(DefinitionField::Eligibility, &definition.eligibility)?
             .truth,
-    );
-    truth = truth.and(
         run.requirement(DefinitionField::Prerequisites, &definition.prerequisites)?
             .truth,
-    );
-    truth = truth.and(run.access().truth);
-    truth = truth.and(run.exclusive()?.truth);
-    truth = truth.and(run.repeatability(&turned_in).truth);
+        run.access().truth,
+        run.exclusive()?.truth,
+        run.repeatability(&turned_in).truth,
+    ];
+    let unresolved = components.contains(&Truth::Unknown)
+        || run.reasons.iter().any(|r| {
+            r.phase == Phase::Acceptance
+                && matches!(
+                    r.code,
+                    QuestEligibilityCode::QuestHistoryUnknown { .. }
+                        | QuestEligibilityCode::ObservationStale { .. }
+                        | QuestEligibilityCode::ClockUncertain { .. }
+                )
+        });
+    let truth = components.into_iter().fold(Truth::True, Truth::and);
     let acceptance = match truth {
         Truth::True => AcceptanceOutcome::Eligible,
         Truth::Unknown => AcceptanceOutcome::Unknown,
+        Truth::False if run.blockers.is_empty() && unresolved => AcceptanceOutcome::Unknown,
         Truth::False if run.blockers.is_empty() => AcceptanceOutcome::Behind,
         Truth::False => AcceptanceOutcome::Blocked,
     };
@@ -778,8 +828,10 @@ fn run_participant(
         .then(|| all_of(std::mem::take(&mut run.catch_ups)));
     let progress = match (completed.truth, turned_in.truth, accepted.truth) {
         (Truth::True, _, _) | (_, Truth::True, _) => ProgressOutcome::AllStagesDone,
-        (_, _, Truth::False) => ProgressOutcome::NotStarted,
-        (_, _, Truth::Unknown) => {
+        (Truth::False, Truth::False, Truth::False) => ProgressOutcome::NotStarted,
+        (_, _, Truth::Unknown | Truth::False) => {
+            run.absorb(Phase::Progress, &completed);
+            run.absorb(Phase::Progress, &turned_in);
             run.absorb(Phase::Progress, &accepted);
             ProgressOutcome::Unknown
         }
@@ -800,7 +852,7 @@ fn run_participant(
     let turn_in = match (completed.truth, turned_in.truth) {
         (_, Truth::True) => TurnInOutcome::AlreadyTurnedIn,
         (Truth::True, Truth::False) => TurnInOutcome::Ready,
-        (Truth::False, _) => TurnInOutcome::NotReady,
+        (Truth::False, Truth::False) => TurnInOutcome::NotReady,
         _ => TurnInOutcome::Unknown,
     };
     Ok(ParticipantEligibility {

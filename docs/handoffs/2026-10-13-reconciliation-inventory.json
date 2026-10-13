@@ -1,0 +1,495 @@
+{
+  "baseline": "6bb264930cb1fc46840c4c520206510b69a330da",
+  "refs": [
+    {
+      "ref": "docs/M1.3-continuation",
+      "sha": "7a5573ac6595b07f36f81a6fc450a50e49acca28",
+      "outstanding": []
+    },
+    {
+      "ref": "docs/M1.3-merged",
+      "sha": "ad884af75d9ce323768879e62ef307a88011dc83",
+      "outstanding": []
+    },
+    {
+      "ref": "docs/wave2-coordination",
+      "sha": "6630ad01901a0dee45161896bf74bac3387954a6",
+      "outstanding": []
+    },
+    {
+      "ref": "docs/wave2-integration",
+      "sha": "055c6e7c04423a52bd746d7b8a2dea25c39027dc",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/M1-review-ci-domain",
+      "sha": "17c226a05feb09497e9c6c011d2d5ddbbadc1392",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/M1.1-workspace-init",
+      "sha": "d24586ccdde70d2cc069559e80dad0404e0406a1",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/M1.3-contracts",
+      "sha": "d65d16c7ded770218dd45294994c1440d381c368",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/M1.4-desktop-shell",
+      "sha": "3779b2aedf9938f6f603e0f8b57a23cc7d611141",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/M3.6-content-controls",
+      "sha": "6e562f3907adc9a9b95d778279d3fc1b83d8fc10",
+      "outstanding": [
+        "6e562f3907adc9a9b95d778279d3fc1b83d8fc10",
+        "ccb275192e7ad7303861b76871f4842b25d3192f",
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "feature/M4.4-planner-workflow",
+      "sha": "6e562f3907adc9a9b95d778279d3fc1b83d8fc10",
+      "outstanding": [
+        "6e562f3907adc9a9b95d778279d3fc1b83d8fc10",
+        "ccb275192e7ad7303861b76871f4842b25d3192f",
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "feature/M6.5-atlas-imagery",
+      "sha": "df4acc3f8874402c8dc385bc3f7e96ae76de35da",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/M7.3-party-eligibility",
+      "sha": "ccb275192e7ad7303861b76871f4842b25d3192f",
+      "outstanding": [
+        "ccb275192e7ad7303861b76871f4842b25d3192f",
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "feature/M7.3-party-persistence",
+      "sha": "29c31885633d23905057dcf7c1c09028aaea3f16",
+      "outstanding": [
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "feature/M7.3-party-screen",
+      "sha": "2b96b03bc4422f666d88982295aa6c880d0982f1",
+      "outstanding": [
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "feature/wave2-r1",
+      "sha": "2a9abf3e6b4b872f7bbeb51cf49be5db8ffce57b",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r10",
+      "sha": "d6d93230588fe7cc8d803f9399e9a141c61536e2",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r11",
+      "sha": "f91f3ccabdd3fde9f03971a1160737d80c54eabc",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r12",
+      "sha": "7e90dc16509601bc607edc2c6387394abee90a39",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r2",
+      "sha": "d3daf4c98a8c760aae746e94d211c1c11af56112",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r3",
+      "sha": "aced51d2b5d87a39211f2b5fba7943ec7a0f066c",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r4",
+      "sha": "94760c122cdd29fc43e0d7181c8073d412e8949b",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r5",
+      "sha": "4683ac5acc84371e9e91308310d8b2f6bc625518",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r6",
+      "sha": "2da2a01a186534b4184f29b27cc70aef281130a5",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r7",
+      "sha": "f0eb9ffefcee65cb7d8e512c93257953c0206f70",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r8",
+      "sha": "505dee7ddd4f3a05b71ae38419ebcc31da2a62b6",
+      "outstanding": []
+    },
+    {
+      "ref": "feature/wave2-r9",
+      "sha": "7135203d66e87945b3b9597e6f12f6ea70bc466b",
+      "outstanding": []
+    },
+    {
+      "ref": "integration/pr10",
+      "sha": "2f33ab881849e072e6b8f7ab1ffb93a595d5d304",
+      "outstanding": []
+    },
+    {
+      "ref": "integration/pr11",
+      "sha": "d968aa2e1a0373d1c31f520946a46ea3636d861b",
+      "outstanding": []
+    },
+    {
+      "ref": "integration/pr13",
+      "sha": "663924a57a79c3066a95c53689f8c24e1eba373c",
+      "outstanding": []
+    },
+    {
+      "ref": "integration/pr14",
+      "sha": "cae4c57e3b36bb7d9d128eb84812cc80a0890463",
+      "outstanding": []
+    },
+    {
+      "ref": "integration/pr17",
+      "sha": "08f6daaa3ac40e2501183f64cf3cc9ca23ae5af0",
+      "outstanding": []
+    },
+    {
+      "ref": "integration/wave2-foundations",
+      "sha": "106c56d63dcab6685e0cba6eeb72ccc598f01882",
+      "outstanding": []
+    },
+    {
+      "ref": "main",
+      "sha": "c357bf1e60a4ce5d863743a6979cd9edeaf08b83",
+      "outstanding": []
+    },
+    {
+      "ref": "origin",
+      "sha": "6bb264930cb1fc46840c4c520206510b69a330da",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/M1.3-continuation",
+      "sha": "7a5573ac6595b07f36f81a6fc450a50e49acca28",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/M1.3-merged",
+      "sha": "ad884af75d9ce323768879e62ef307a88011dc83",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/correct-M8.3-review-record",
+      "sha": "4553a8fba6ab195e3f8d4dc04addc2cd65cb8c06",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/project-setup",
+      "sha": "d5feda13633f01d5a6b9da9d9878b7c552ade428",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/wave1-coordination",
+      "sha": "918a75f86a6dff7c64e2d8f98d43ead794508a01",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/wave1-review-status",
+      "sha": "4fbd77b4e1e1bb93394b573d25df4565a1bf2582",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/wave2-coordination",
+      "sha": "9e29a9e218bd59fcac460dbd24f12c3e7ce9954f",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/docs/wave2-integration",
+      "sha": "055c6e7c04423a52bd746d7b8a2dea25c39027dc",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M0.3-diagnostic-addon",
+      "sha": "4a831d005a62701e7be6a8b52235c998263606bb",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M1-review-ci-domain",
+      "sha": "17c226a05feb09497e9c6c011d2d5ddbbadc1392",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M1.1-workspace-init",
+      "sha": "d24586ccdde70d2cc069559e80dad0404e0406a1",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M1.3-contracts",
+      "sha": "d65d16c7ded770218dd45294994c1440d381c368",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M1.4-desktop-shell",
+      "sha": "3779b2aedf9938f6f603e0f8b57a23cc7d611141",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M1.7-storage",
+      "sha": "00f63360adf69cc548addc6590b8dcc15cbda209",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M2.2-ingest",
+      "sha": "bd78d29e1b2e70ba7ab0dd752475e20754a2a44a",
+      "outstanding": [
+        "bd78d29e1b2e70ba7ab0dd752475e20754a2a44a"
+      ]
+    },
+    {
+      "ref": "origin/feature/M2.5-predicate-parity-corpus",
+      "sha": "6f47cf5d578657dd9414cd91dfed334f11b0e3a8",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M3.2-provider-registry",
+      "sha": "d968aa2e1a0373d1c31f520946a46ea3636d861b",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M3.5-coverage-report",
+      "sha": "5a2d6fc58032953c7c329136d399e6b1281f7838",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M3.6-content-controls",
+      "sha": "6e562f3907adc9a9b95d778279d3fc1b83d8fc10",
+      "outstanding": [
+        "6e562f3907adc9a9b95d778279d3fc1b83d8fc10",
+        "ccb275192e7ad7303861b76871f4842b25d3192f",
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "origin/feature/M4.1-travel-graph",
+      "sha": "f370d93e953939a5e098a1e48d737579b108405a",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M4.2-eligibility",
+      "sha": "cae4c57e3b36bb7d9d128eb84812cc80a0890463",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M5.1-gear-core",
+      "sha": "a61fa3381075839146e76d21304547e3c3022f78",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M6.1-atlas-screen",
+      "sha": "fde5da41c8baa8b52b4a97d12cc353954e5a893a",
+      "outstanding": [
+        "fde5da41c8baa8b52b4a97d12cc353954e5a893a",
+        "5457e9e1716202799755631a76b99885d2f0b658"
+      ]
+    },
+    {
+      "ref": "origin/feature/M6.5-atlas-imagery",
+      "sha": "df4acc3f8874402c8dc385bc3f7e96ae76de35da",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M7.1-reminders",
+      "sha": "7d78f29d2d575b35a3e857b95eae4236d8636c4e",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/M7.3-party-eligibility",
+      "sha": "ccb275192e7ad7303861b76871f4842b25d3192f",
+      "outstanding": [
+        "ccb275192e7ad7303861b76871f4842b25d3192f",
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "origin/feature/M7.3-party-persistence",
+      "sha": "29c31885633d23905057dcf7c1c09028aaea3f16",
+      "outstanding": [
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "origin/feature/M7.3-party-screen",
+      "sha": "2b96b03bc4422f666d88982295aa6c880d0982f1",
+      "outstanding": [
+        "2b96b03bc4422f666d88982295aa6c880d0982f1",
+        "29c31885633d23905057dcf7c1c09028aaea3f16"
+      ]
+    },
+    {
+      "ref": "origin/feature/M8.3-session-intervals",
+      "sha": "663924a57a79c3066a95c53689f8c24e1eba373c",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r1",
+      "sha": "fea55ebd988ce8fa6564c1da75f01883d6b6353f",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r10",
+      "sha": "7a90adb09cc526df18894bc0ca9c9992b8540714",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r11",
+      "sha": "df9d1e22660452bcc72ece884382d3aa764c0c8b",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r12",
+      "sha": "7e90dc16509601bc607edc2c6387394abee90a39",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r2",
+      "sha": "23021ac011b70b8c7dd9dc2d7b996069ec2f6290",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r3",
+      "sha": "aced51d2b5d87a39211f2b5fba7943ec7a0f066c",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r4",
+      "sha": "56fac23d24e19bed17520eecd193bb4e7817251c",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r5",
+      "sha": "d7e70d06f3dad39519ea99bf34b06eac2911313b",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r6",
+      "sha": "b269fd9cb3d6ce3df26e7e43daee7c9443a038ad",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r7",
+      "sha": "132466141f182c1db4c27be58b2c05a3f790e529",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r8",
+      "sha": "f6dca5a404fcfbcb3a842bae675fc6aa049f1d4d",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/feature/wave2-r9",
+      "sha": "ad24da725084303fc2e86bd58a57b6203eabd852",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/integration/wave2-foundations",
+      "sha": "106c56d63dcab6685e0cba6eeb72ccc598f01882",
+      "outstanding": []
+    },
+    {
+      "ref": "origin/main",
+      "sha": "6bb264930cb1fc46840c4c520206510b69a330da",
+      "outstanding": []
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "/home/laymer/Devel/repos/Navzeroth",
+      "status": " M crates/app/src/lib.rs\n M crates/app/src/snapshots.rs\n M docs/STATUS.md\n?? crates/app/src/planning.rs\n?? docs/handoffs/2026-10-13-M4.4-planner-workflow.md\n"
+    },
+    {
+      "path": "/tmp/navzeroth-r1",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r10",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r11",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r12",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r2",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r3",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r4",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r5",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r6",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r7",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r8",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-r9",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-wave2-coordination",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-wave2-final",
+      "status": ""
+    },
+    {
+      "path": "/tmp/navzeroth-wave2-integration",
+      "status": ""
+    }
+  ],
+  "stashes": ""
+}

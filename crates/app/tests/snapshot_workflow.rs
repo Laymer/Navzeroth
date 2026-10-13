@@ -17,6 +17,112 @@ fn text(doc: &Value) -> String {
 }
 
 #[test]
+fn manual_party_keeps_individual_freshness_progress_and_ordering() {
+    use azeroth_core::types::{PartyId, UtcMillis};
+    let app = SnapshotApplication::in_memory().unwrap();
+    let mut one = doc("one", 20);
+    one["payload"]["capture"]["observed_at_utc_ms"] = json!(1791790000000i64);
+    one["payload"]["level"]["value"] = json!(22);
+    let first = app.import_text(&text(&one), None).unwrap();
+    let mut two = doc("two", 20);
+    two["payload"]["character"] = json!("other-character");
+    two["payload"]["level"]["value"] = json!(23);
+    let second = app.import_text(&text(&two), None).unwrap();
+    let id = PartyId::new("manual-duo").unwrap();
+    app.save_party(&id, &[first.profile_id.clone(), second.profile_id.clone()])
+        .unwrap();
+    let party = app
+        .party(&id, Some(UtcMillis::new(1791792000000).unwrap()))
+        .unwrap()
+        .unwrap();
+    assert_eq!(party.data_mode, DataMode::Stored);
+    let a = party.participants[0].snapshot.as_ref().unwrap();
+    let b = party.participants[1].snapshot.as_ref().unwrap();
+    assert!(matches!(a.freshness, Freshness::Stale { .. }));
+    assert!(matches!(b.freshness, Freshness::Fresh { .. }));
+    assert_ne!(a.envelope.payload.level, b.envelope.payload.level);
+    one["payload"]["id"] = json!("older");
+    one["payload"]["capture"]["sequence"] = json!(19);
+    one["producer"]["sequence"] = json!(19);
+    app.import_text(&text(&one), None).unwrap();
+    assert_eq!(
+        app.party(&id, None).unwrap().unwrap().participants[0]
+            .snapshot
+            .as_ref()
+            .unwrap()
+            .envelope
+            .payload
+            .id
+            .as_str(),
+        "one"
+    );
+    assert!(
+        app.save_party(&id, &[first.profile_id.clone(), "missing".into()])
+            .is_err()
+    );
+    assert!(
+        app.save_party(&id, &[first.profile_id.clone(), first.profile_id])
+            .is_err()
+    );
+    assert_eq!(app.party_ids().unwrap(), vec![id.clone()]);
+    assert!(app.delete_party(&id).unwrap());
+    assert_eq!(app.profiles().unwrap().len(), 2);
+    assert!(app.party(&id, None).unwrap().is_none());
+}
+
+#[test]
+fn manual_party_reports_missing_snapshots_after_reopen_and_profile_deletion() {
+    use azeroth_core::{
+        contract::decode_envelope,
+        entities::CharacterSnapshot,
+        observation::Observation,
+        types::{PartyId, PreferenceId},
+    };
+    use azeroth_storage::{ProfileKey, SnapshotStore, SqliteStore};
+    let path = std::env::temp_dir().join(format!("anav-party-{}.sqlite", std::process::id()));
+    let envelope = decode_envelope::<CharacterSnapshot>(FIXTURE).unwrap();
+    let key = ProfileKey::of(&envelope);
+    {
+        let mut store = SqliteStore::open(&path).unwrap();
+        store
+            .set_preference(
+                &key,
+                &PreferenceId::new("manual").unwrap(),
+                &Observation::known(false, envelope.payload.capture.clone()).unwrap(),
+            )
+            .unwrap();
+    }
+    let id = PartyId::new("missing-duo").unwrap();
+    {
+        let app = SnapshotApplication::open(&path).unwrap();
+        let profile = app.profiles().unwrap()[0].id.clone();
+        app.save_party(&id, &[profile]).unwrap();
+        assert!(
+            app.party(&id, None).unwrap().unwrap().participants[0]
+                .snapshot
+                .is_none()
+        );
+        app.import_text(&text(&doc("captured", 20)), None).unwrap();
+        assert!(
+            app.party(&id, None).unwrap().unwrap().participants[0]
+                .snapshot
+                .is_some()
+        );
+    }
+    {
+        let mut store = SqliteStore::open(&path).unwrap();
+        store.delete_profile(&key).unwrap();
+    }
+    let app = SnapshotApplication::open(&path).unwrap();
+    let party = app.party(&id, None).unwrap().unwrap();
+    assert_eq!(party.participants[0].character, key.character);
+    assert!(party.participants[0].snapshot.is_none());
+    assert!(serde_json::to_value(&party).unwrap()["participants"][0]["snapshot"].is_null());
+    drop(app);
+    std::fs::remove_file(path).unwrap();
+}
+
+#[test]
 fn text_duplicate_older_same_position_and_bad_input_preserve_current() {
     let app = SnapshotApplication::in_memory().unwrap();
     assert!(app.status().unwrap().active_profile.is_none());

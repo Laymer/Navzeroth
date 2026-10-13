@@ -95,6 +95,8 @@ fn facts_map(setup: &Setup) -> BTreeMap<CharacterId, ParticipantFacts> {
             (
                 CharacterId::new(*who).unwrap(),
                 ParticipantFacts {
+                    context: from_value(common::context()).unwrap(),
+                    character: CharacterId::new(*who).unwrap(),
                     class: from_value(class.clone()).unwrap(),
                     race: from_value(race.clone()).unwrap(),
                     faction: from_value(faction.clone()).unwrap(),
@@ -395,7 +397,7 @@ fn alternative_prerequisites_follow_three_valued_or() {
 }
 
 #[test]
-fn required_chain_false_dominates_unknown() {
+fn required_chain_unknown_siblings_prevent_definite_catch_up() {
     let def = chain_b(all(&[turned_in("q_alt_x"), turned_in("q_chain_a")]));
     let outcome = |x: Value, a: Value| {
         let records = vec![
@@ -406,14 +408,11 @@ fn required_chain_false_dominates_unknown() {
         solo(&def, &character("paladin", known(json!(22)), records))
     };
     let one_false = outcome(no(), unknown());
-    assert_eq!(one_false.acceptance, AcceptanceOutcome::Behind);
-    assert_eq!(
-        one_false.catch_up,
-        Some(quest_unmet("q_alt_x", QuestState::TurnedIn))
-    );
+    assert_eq!(one_false.acceptance, AcceptanceOutcome::Unknown);
+    assert_eq!(one_false.catch_up, None);
     assert_eq!(
         outcome(unknown(), no()).acceptance,
-        AcceptanceOutcome::Behind
+        AcceptanceOutcome::Unknown
     );
     assert_eq!(
         outcome(yes(), unknown()).acceptance,
@@ -665,7 +664,15 @@ fn repeatability_semantics() {
     let snap = character("paladin", known(json!(22)), vec![done("q_chain_b")]);
     for semantics in ["repeatable", "reset_bound"] {
         let r = solo(&with(known(json!(semantics))), &snap);
-        assert_eq!(r.acceptance, AcceptanceOutcome::Eligible, "{semantics}");
+        assert_eq!(
+            r.acceptance,
+            if semantics == "reset_bound" {
+                AcceptanceOutcome::Unknown
+            } else {
+                AcceptanceOutcome::Eligible
+            },
+            "{semantics}"
+        );
         assert_eq!(r.turn_in, TurnInOutcome::AlreadyTurnedIn);
     }
     for hidden in [
@@ -952,7 +959,10 @@ fn unknown_required_inputs_never_become_a_definite_affirmative() {
         if any_unknown && !any_false {
             assert_eq!(result.acceptance, AcceptanceOutcome::Unknown, "{inputs:?}");
         }
-        if any_false {
+        if any_unknown {
+            assert_ne!(result.acceptance, AcceptanceOutcome::Behind);
+        }
+        if any_false && !any_unknown {
             assert!(
                 matches!(
                     result.acceptance,
@@ -1043,4 +1053,49 @@ fn reason_serialization_is_a_closed_snake_case_shape() {
         json!({"participant":"mage","quest":"q_chain_b","phase":"acceptance","code":"catch_up_required",
             "unmet":{"kind":"single","requirement":{"kind":"quest","quest":"q_chain_a","state":"turned_in"}}})
     );
+}
+
+#[test]
+fn partial_quest_records_do_not_prove_not_started_or_not_ready() {
+    let def = chain_b(all(&[]));
+    for rec in [
+        record("q_chain_b", no(), unknown(), no()),
+        record("q_chain_b", no(), no(), unknown()),
+    ] {
+        let result = solo(&def, &character("paladin", known(json!(22)), vec![rec]));
+        assert_eq!(result.progress, ProgressOutcome::Unknown);
+        assert_eq!(result.turn_in, TurnInOutcome::Unknown);
+    }
+}
+#[test]
+fn participant_facts_require_exact_context_and_character() {
+    let def = chain_b(all(&[]));
+    let snapshot: CharacterSnapshot = from_value(character(
+        "paladin",
+        known(json!(22)),
+        vec![untouched("q_chain_b")],
+    ))
+    .unwrap();
+    with_inputs(&def, &Setup::default(), |inputs| {
+        for mismatch in ["context", "character"] {
+            let mut fact = ParticipantFacts {
+                context: snapshot.context.clone(),
+                character: snapshot.character.clone(),
+                class: Observation::unknown(),
+                race: Observation::unknown(),
+                faction: Observation::unknown(),
+            };
+            if mismatch == "context" {
+                fact.context.namespace = DatasetNamespace::Reference;
+            } else {
+                fact.character = CharacterId::new("other").unwrap();
+            }
+            let facts = BTreeMap::from([(snapshot.character.clone(), fact)]);
+            let inputs = EligibilityInputs {
+                facts: &facts,
+                ..*inputs
+            };
+            assert!(evaluate_participant(&inputs, &snapshot, None).is_err());
+        }
+    });
 }
