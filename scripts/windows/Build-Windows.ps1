@@ -73,11 +73,13 @@ function Write-Step([string] $Message) { Write-Host "==> $Message" -ForegroundCo
 
 function Invoke-Native {
     # Runs a native command; fails on a nonzero exit code. Native stderr (cargo
-    # progress, warnings) is not an error, also on Windows PowerShell 5.1.
+    # progress, warnings) is not an error, also on Windows PowerShell 5.1. Output
+    # goes to the console, never into the pipeline: a function that calls this
+    # returns only the values it means to return.
     param([Parameter(Mandatory)] [string] $Command, [string[]] $Arguments = @())
     $saved = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
-    try { & $Command @Arguments }
+    try { & $Command @Arguments | Out-Host }
     finally { $ErrorActionPreference = $saved }
     if ($LASTEXITCODE -ne 0) { throw "$Command $($Arguments -join ' ') failed with exit code $LASTEXITCODE" }
 }
@@ -267,6 +269,9 @@ function New-AddonZip([string] $Version) {
 }
 
 function Write-Checksums([string[]] $Paths) {
+    foreach ($path in $Paths) {
+        if (-not $path -or -not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Not a release file: '$path'" }
+    }
     $lines = foreach ($path in ($Paths | Sort-Object)) {
         $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
         "$hash  $(Split-Path -Leaf $path)"
