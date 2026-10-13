@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M4.4/M4.5 delivery (PRs #40–41); next implementation is M4.6.
-Owner: Codex root, sole writer; claimed at origin/main 6bb2649.
+Current task: PR #39 Windows packaging review and integration; next implementation is M4.6.
+Owner: Codex root, sole writer; claimed at PR head 1273c57 / main d7ee6d5.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -22,7 +22,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens and packaging remain. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging is under PR #39 review (see the PR39 handoff). |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
@@ -123,8 +123,9 @@ namespace/build/floor gap instead of inventing a placement. Planner consumes exa
 gameplay coverage remains missing. Acquisition remains a library foundation.
 Lua plan invalidation does not imply completion. Lua gear accepts synthetic inputs.
 
-Live WoW observations/transitions, native window interaction and packaging remain
-UNVERIFIED. No socket bridge, input automation, hidden telemetry or forbidden game
+Live WoW observations/transitions and interactive native window behavior remain
+UNVERIFIED. Hosted Windows packaging smoke evidence is revision-scoped in the M9.4
+and PR39 handoffs. No socket bridge, input automation, hidden telemetry or forbidden game
 access was added. Remaining watcher/platform/model limitations are in the handoffs.
 
 ## Next dependency-ready work
@@ -133,17 +134,25 @@ M4.6: explicit Lua advancement and stable alternative/invalidation policy, with
 replay fixtures. Manual bounded export is delivered in PR #41; automatic advancement
 and a live addon import UI remain later tasks. Continue analytical/gear views and
 permitted real-content authoring when their inputs are available. Live client
-checks need sanitized evidence from the recorded build. The concurrent M9.4 Windows
-packaging branch was created after this task's inventory and remains separate.
+checks need sanitized evidence from the recorded build. PR #39 integrates the Windows
+packaging branch after the planner/export reconciliation.
 
 Latest local checks: 495 Rust tests, zero failures, one existing ignored generator;
 78 desktop unit tests and seven Chromium workflows; locked fmt/Clippy,
 typecheck/lint/build, schema/type drift, contract/transport/content and Lua parity.
-PR #40 and resulting main 301dc60 passed all eight hosted jobs. PR #41 requires
-all eight on its final revision; GitHub is the authoritative merge/check record.
+PRs #40 and #41 and resulting main d7ee6d5 passed all eight hosted jobs;
+GitHub is the authoritative merge/check record.
 Native interaction/live checks remain unverified. Releases still need separate
 authorization. The branch inventory and ancestry audit are in the reconciliation
 handoff; every initially outstanding tip and the preserved planner draft reached
 main through PR #40 without rewriting or deleting branches/worktrees.
 
 Merge follow-up: schema-valid UTC values outside JavaScript Date range now display numeric epoch milliseconds, with positive/negative safe-limit and zero regressions. Corrected desktop checks: 65 unit tests and four Chromium workflows passed; synchronized integration hosted CI passed all eight jobs.
+
+## PR #39 packaging review
+
+Owner: Codex /root (sole writer), baseline 1273c57 against main d7ee6d5.
+Review and integration authorized by the user; see
+[review handoff](handoffs/2026-10-13-PR39-review.md). Original hosted packaging
+evidence remains in [M9.4 handoff](handoffs/2026-10-13-M9.4-windows-packaging.md).
+Current main status and historical review records were preserved during conflict resolution.

@@ -36,6 +36,16 @@ desktop application.
 3. Start the client and open the AddOns list on the character screen. The entry is
    named "Azeroth Navigator Diagnostics".
 
+### Install with the Windows helper
+
+The Windows installer ships a helper that performs the steps above with checks: it
+refuses a folder not named `AddOns`, a running game, an incomplete addon copy and a
+different addon that uses the folder name `AzerothNavigator`, and it swaps the new copy
+in only after verifying every file. Start menu > *Azeroth Navigator - WoW addon*, or
+[`scripts/windows/Install-AzerothNavigatorAddon.ps1`](../../scripts/windows/Install-AzerothNavigatorAddon.ps1)
+from a checkout. Details: [WINDOWS_INSTALL.md](WINDOWS_INSTALL.md#install-the-addon).
+The AddOns location stays the user's choice; the helper does not verify it either.
+
 ### Out-of-date marking
 
 The TOC declares `## Interface: 16001`. That number comes from community client
@@ -71,6 +81,10 @@ writing works at all is checked in M0.5, not assumed.
 3. Delete the addon's own SavedVariables file `AzerothNavigator.lua` (and a backup
    copy of the same name, if the client keeps one) from the account's
    `SavedVariables` directory.
+
+The Windows helper does steps 2 and 3 with `-Action Uninstall -RemoveSavedVariables`
+(only files named `AzerothNavigator.lua` and `AzerothNavigator.lua.bak`), and the
+application's uninstaller offers step 2 for the folder the helper recorded.
 
 Nothing else is touched: no other addon, no client file, no executable, no registry
 entry, no network configuration. The addon starts no process, opens no socket, reads

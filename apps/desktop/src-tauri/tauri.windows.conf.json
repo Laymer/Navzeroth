@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "Igor K",
+    "copyright": "Copyright (c) 2026, Igor K",
+    "license": "BSD-3-Clause",
+    "licenseFile": "../../../LICENSE",
+    "homepage": "https://github.com/Laymer/Navzeroth",
+    "category": "Utility",
+    "shortDescription": "Azeroth Navigator desktop companion",
+    "longDescription": "Desktop companion for World of Warcraft Forever: imported snapshots, atlas and planning. Works offline; never reads game memory.",
+    "resources": {
+      "../../../addons/AzerothNavigator/": "addon/AzerothNavigator/",
+      "../../../scripts/windows/Install-AzerothNavigatorAddon.ps1": "addon/Install-AzerothNavigatorAddon.ps1"
+    },
+    "windows": {
+      "allowDowngrades": false,
+      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": true },
+      "nsis": {
+        "installMode": "currentUser",
+        "installerHooks": "windows/installer-hooks.nsh",
+        "compression": "lzma"
+      }
+    }
+  }
+}

@@ -5,6 +5,9 @@ use azeroth_core::{
 };
 use azeroth_storage::{SqliteStore, content::ContentRevision};
 use serde_json::{Value, json};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+static NEXT_DATABASE: AtomicU64 = AtomicU64::new(0);
 const NOW: i64 = 1791792000000;
 
 struct AppDb {
@@ -18,12 +21,13 @@ impl Drop for AppDb {
 }
 fn setup(content: bool) -> AppDb {
     let path = std::env::temp_dir().join(format!(
-        "anav-eligibility-{}-{}.sqlite",
+        "anav-eligibility-{}-{}-{}.sqlite",
         std::process::id(),
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
-            .as_nanos()
+            .as_nanos(),
+        NEXT_DATABASE.fetch_add(1, Ordering::Relaxed)
     ));
     let mut store = SqliteStore::open(&path).unwrap();
     if content {
