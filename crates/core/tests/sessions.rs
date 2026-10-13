@@ -687,3 +687,26 @@ fn level_capture_preserves_earlier_missing_and_same_event_metadata() {
         assert_eq!(&built[&sid("s1")].summary.ending_level, captured);
     }
 }
+
+#[test]
+fn summary_contexts_do_not_conflict() {
+    let (batch, config) = load("case-007-duplicate-summary.json");
+    let summary = build_sessions(&batch, &config).unwrap()[&sid("s1")]
+        .summary
+        .clone();
+    let mut other = serde_json::to_value(&summary).unwrap();
+    other = serde_json::from_str(&other.to_string().replace("\"demo\"", "\"reference\"")).unwrap();
+    let other: SessionSummary = serde_json::from_value(other).unwrap();
+    let mut store = BTreeMap::new();
+    assert_eq!(
+        merge_summary(&mut store, summary.clone()),
+        MergeOutcome::Inserted
+    );
+    assert_eq!(
+        merge_summary(&mut store, other.clone()),
+        MergeOutcome::Inserted
+    );
+    assert_eq!(merge_summary(&mut store, other), MergeOutcome::Unchanged);
+    assert_eq!(merge_summary(&mut store, summary), MergeOutcome::Unchanged);
+    assert_eq!(store.len(), 2);
+}

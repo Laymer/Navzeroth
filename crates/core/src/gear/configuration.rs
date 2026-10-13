@@ -227,14 +227,17 @@ fn classify(placed: &BTreeMap<&SlotId, &GearCandidate>, hands: Option<&HandSlots
     }
     let mut uncertainties = Vec::new();
     let mut validity = ConfigurationValidity::Valid;
-    if let Some(hands) = hands
-        && let (Some(main), Some(_)) = (placed.get(&hands.main_hand), placed.get(&hands.off_hand))
-        && unavailable(&main.item.two_handed)
-    {
-        validity = ConfigurationValidity::Uncertain;
-        uncertainties.push(CertaintyReason::UnknownTwoHanded {
-            item: main.key().clone(),
-        });
+    if let Some(hands) = hands {
+        for (slot, candidate) in placed {
+            if (**slot == hands.main_hand || **slot == hands.off_hand)
+                && unavailable(&candidate.item.two_handed)
+            {
+                validity = ConfigurationValidity::Uncertain;
+                uncertainties.push(CertaintyReason::UnknownTwoHanded {
+                    item: candidate.key().clone(),
+                });
+            }
+        }
     }
     if placed.len() >= 2 {
         for candidate in placed.values() {
@@ -681,7 +684,7 @@ pub fn recommendation_data(
                 .ok_or_else(|| invalid("Baseline item is not in the catalog"))?;
             baseline_items.insert(slot.clone(), placed_item(candidate, slot, hands));
         }
-        if resolution.is_complete() {
+        if resolution.is_complete() && score.certainty == Certainty::Complete {
             baseline_score = Observation::known(
                 FiniteNumber::new(score.total as f64 / 1000.0)?,
                 ObservationMetadata::default(),
@@ -725,10 +728,14 @@ pub fn recommendation_data(
         proposed: RecordMap::new(top.configuration.items.clone())?,
         eligibility,
         baseline_score,
-        proposed_score: Observation::known(
-            FiniteNumber::new(top.score.total as f64 / 1000.0)?,
-            ObservationMetadata::default(),
-        )?,
+        proposed_score: if top.score.certainty == Certainty::Complete {
+            Observation::known(
+                FiniteNumber::new(top.score.total as f64 / 1000.0)?,
+                ObservationMetadata::default(),
+            )?
+        } else {
+            Observation::unknown()
+        },
         acquisitions: Vec::new(),
         assumptions,
         unmodeled_effects,

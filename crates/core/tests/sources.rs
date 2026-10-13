@@ -870,3 +870,37 @@ fn no_numeric_confidence_in_the_sources_module() {
         assert!(!source.contains(forbidden), "found {forbidden}");
     }
 }
+
+#[test]
+fn evidence_can_support_multiple_records_but_cannot_change_its_content() {
+    let a = native_item(
+        &forever(),
+        "a",
+        false,
+        "shared",
+        "src-synthetic-forever",
+        "inferred",
+    );
+    let b = native_item(
+        &forever(),
+        "b",
+        false,
+        "shared",
+        "src-synthetic-forever",
+        "inferred",
+    );
+    let state = NormalizedState::default()
+        .ingest(&registry(), [a.clone(), b.clone()])
+        .unwrap();
+    assert_eq!(
+        state
+            .entries_in_context(&serde_json::from_value(forever()).unwrap())
+            .count(),
+        2
+    );
+    assert_eq!(state.ingest(&registry(), [a, b.clone()]).unwrap(), state);
+    let mut changed = serde_json::to_value(b).unwrap();
+    changed["evidence"]["notes"] = json!("different evidence");
+    let changed: Candidate = serde_json::from_value(changed).unwrap();
+    assert!(state.ingest(&registry(), [changed]).is_err());
+}

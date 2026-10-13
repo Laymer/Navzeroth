@@ -432,7 +432,11 @@ enum Found<'a> {
         /// Only some branches need it.
         conditional: bool,
     },
-    Objective(&'a ObjectiveId),
+    Objective {
+        objective: &'a ObjectiveId,
+        positive: bool,
+        conditional: bool,
+    },
     Item(&'a ItemKey),
     Area(&'a MapKey),
 }
@@ -448,7 +452,11 @@ fn field_found<'a>(
             positive: positive_if == Some(true),
             conditional,
         }],
-        Field::Objective { objective } => vec![Found::Objective(objective)],
+        Field::Objective { objective } => vec![Found::Objective {
+            objective,
+            positive: positive_if == Some(true),
+            conditional,
+        }],
         _ => Vec::new(),
     }
 }
@@ -489,9 +497,14 @@ fn references(root: &PredicateNode) -> Vec<Found<'_>> {
                 positive: *value != negated,
                 conditional,
             }),
-            PredicateNode::ObjectiveState { objective, .. } => {
-                found.push(Found::Objective(objective))
-            }
+            PredicateNode::ObjectiveState {
+                objective,
+                completed,
+            } => found.push(Found::Objective {
+                objective,
+                positive: *completed != negated,
+                conditional,
+            }),
             PredicateNode::EquipmentMatches { item, .. } => found.push(Found::Item(item)),
             PredicateNode::LocationInSupportedArea { area } => found.push(Found::Area(&area.map)),
             PredicateNode::LevelAtLeast { .. }
@@ -817,7 +830,10 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
                     }
                     Some(&to) => {
                         if positive
-                            && site == PredicateSite::Prerequisites
+                            && matches!(
+                                site,
+                                PredicateSite::Prerequisites | PredicateSite::Eligibility
+                            )
                             && let RecordRef::Quest { id } = &referrer
                             && let Some(&from) = quest_ids.get(id)
                         {
@@ -828,7 +844,32 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
                         }
                     }
                 },
-                Found::Objective(objective) => {
+                Found::Objective {
+                    objective,
+                    positive,
+                    conditional,
+                } => {
+                    if positive
+                        && matches!(
+                            site,
+                            PredicateSite::Prerequisites | PredicateSite::Eligibility
+                        )
+                        && let RecordRef::Quest { id } = &referrer
+                        && let Some(&from) = quest_ids.get(id)
+                    {
+                        let owners: Vec<_> = dataset
+                            .quests
+                            .iter()
+                            .filter(|q| q.stages.contains(objective))
+                            .collect();
+                        for owner in &owners {
+                            let to = quest_ids[&owner.id];
+                            all_edges[from].insert(to);
+                            if !conditional && owners.len() == 1 {
+                                unconditional[from].insert(to);
+                            }
+                        }
+                    }
                     if !objective_ids.contains(objective) {
                         b.errors
                             .insert(CoverageFinding::DanglingPredicateObjective {

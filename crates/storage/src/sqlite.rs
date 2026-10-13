@@ -53,6 +53,85 @@ impl SqliteStore {
         Ok(Self { conn })
     }
 
+    /// Reads only a snapshot belonging to the exact profile context/fixture key.
+    pub fn historical_snapshot(
+        &self,
+        key: &ProfileKey,
+        selected: &SnapshotId,
+    ) -> Result<Option<Envelope<CharacterSnapshot>>> {
+        let Some((profile, _)) = find_profile(&self.conn, key)? else {
+            return Ok(None);
+        };
+        let document: Option<String> = self
+            .conn
+            .query_row(
+                "SELECT document FROM snapshots WHERE profile_id = ?1 AND snapshot_id = ?2",
+                params![profile, selected.as_str()],
+                |row| row.get(0),
+            )
+            .optional()
+            .db()?;
+        document.map(|s| decode_envelope(&s)).transpose()
+    }
+
+    /// Explicit compare-and-swap promotion. The immediate transaction excludes
+    /// concurrent imports between validation, selection and the bounded audit.
+    pub fn promote_snapshot(
+        &mut self,
+        key: &ProfileKey,
+        selected: &SnapshotId,
+        expected_current: &SnapshotId,
+        reason: &str,
+        now: UtcMillis,
+    ) -> Result<()> {
+        if reason.trim().is_empty() || reason.len() > 1024 {
+            return Err(invalid("Promotion reason must contain 1–1024 bytes"));
+        }
+        let tx = self
+            .conn
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .db()?;
+        let Some((profile, Some(current))) = find_profile(&tx, key)? else {
+            return Err(invalid("Profile has no current snapshot"));
+        };
+        let current_document: String = tx
+            .query_row(
+                "SELECT document FROM snapshots WHERE id = ?1",
+                [current],
+                |r| r.get(0),
+            )
+            .db()?;
+        let previous = decode_envelope::<CharacterSnapshot>(&current_document)?;
+        if previous.payload.id != *expected_current {
+            return Err(invalid("Current snapshot changed; preview again"));
+        }
+        if selected == expected_current {
+            return Err(invalid("Snapshot is already current"));
+        }
+        let row: Option<(i64, String)> = tx
+            .query_row(
+                "SELECT id, document FROM snapshots WHERE profile_id = ?1 AND snapshot_id = ?2",
+                params![profile, selected.as_str()],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .optional()
+            .db()?;
+        let (row, document) =
+            row.ok_or_else(|| invalid("Snapshot is absent from this profile history"))?;
+        let chosen = decode_envelope::<CharacterSnapshot>(&document)?;
+        if compare_capture(&chosen.payload.capture, &previous.payload.capture) == Recency::Older {
+            return Err(invalid("A provably older snapshot cannot be promoted"));
+        }
+        tx.execute(
+            "UPDATE profiles SET current_snapshot_id = ?1 WHERE id = ?2",
+            params![row, profile],
+        )
+        .db()?;
+        tx.execute("INSERT INTO snapshot_promotions (profile_id, previous_snapshot_id, selected_snapshot_id, reason, operated_at_utc_ms) VALUES (?1, ?2, ?3, ?4, ?5)", params![profile, expected_current.as_str(), selected.as_str(), reason, now.get()]).db()?;
+        tx.execute("DELETE FROM snapshot_promotions WHERE id NOT IN (SELECT id FROM snapshot_promotions ORDER BY id DESC LIMIT 256)", []).db()?;
+        tx.commit().db()
+    }
+
     /// Whether foreign key enforcement is on for this connection.
     pub fn foreign_keys_enabled(&self) -> Result<bool> {
         let value: i64 = self
@@ -118,7 +197,10 @@ const PROFILE_LOOKUP: &str = "SELECT id, current_snapshot_id FROM profiles
     WHERE character_id = ?1 AND edition = ?2 AND build = ?3
       AND interface = ?4 AND namespace = ?5 AND is_fixture = ?6";
 
-fn find_profile(conn: &Connection, key: &ProfileKey) -> Result<Option<(i64, Option<i64>)>> {
+pub(crate) fn find_profile(
+    conn: &Connection,
+    key: &ProfileKey,
+) -> Result<Option<(i64, Option<i64>)>> {
     let c = KeyColumns::new(key);
     conn.prepare_cached(PROFILE_LOOKUP)
         .db()?

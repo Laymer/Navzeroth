@@ -11,6 +11,8 @@ import type {
   MapKey,
   PixelPoint,
   Position,
+  TravelNode,
+  Objective,
 } from "../../../../schemas/v1/exchange";
 
 /** Where displayed data comes from. `demo` data is synthetic and always labelled. */
@@ -72,6 +74,61 @@ export interface StoredSnapshot {
   profile_id: string;
   freshness: Freshness;
   data_mode: DataMode;
+}
+export interface StoredParty {
+  id: string;
+  data_mode: DataMode;
+  participants: {
+    profile_id: string;
+    character: string;
+    snapshot: StoredSnapshot | null;
+  }[];
+}
+export interface PartyQuestCatalog {
+  context: DataContext;
+  fixture: boolean;
+  revision: string | null;
+  quests: string[];
+}
+type Policy<T> = { status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable" };
+export interface ContentInspection {
+  key: { scope: { context: DataContext; fixture: boolean }; revision: string };
+  report: {
+    passes: boolean;
+    report_version: number;
+    coverage: {
+      collections: Record<string, { total: number; fields: Record<string, Record<ObservationStatus, number>> }>;
+      evidence_records: { by_confidence: Record<string, number> };
+    } | null;
+    errors: { code: string }[];
+    gaps: { code: string }[];
+  };
+  sources: { id: string; publisher: string; license: Policy<string>; attribution: Policy<string>; redistribution: Policy<string>; offline_usable: Policy<boolean> }[];
+  conflicts: unknown[];
+}
+export type CatchUp =
+  | { kind: "single"; requirement: { kind: "quest"; quest: string; state: "accepted" | "completed" | "turned_in" } | { kind: "level"; level: number } | { kind: "other" } }
+  | { kind: "all_of"; items: CatchUp[] }
+  | { kind: "one_of"; alternatives: CatchUp[] };
+export interface PartyQuestReport {
+  context: DataContext;
+  fixture: boolean;
+  revision: string;
+  quest: string;
+  joint_status: "jointly_eligible" | "eligible_for_some" | "all_behind" | "blocked" | "unknown" | "missing_or_old_snapshots";
+  participants: {
+    character: string;
+    snapshot_id: string | null;
+    freshness: Freshness | null;
+    assessment: {
+      acceptance: "eligible" | "behind" | "blocked" | "unknown";
+      progress: "not_started" | "in_progress" | "all_stages_done" | "unknown";
+      completion: "complete" | "incomplete" | "unknown";
+      turn_in: "ready" | "not_ready" | "already_turned_in" | "unknown";
+      catch_up: CatchUp | null;
+      reasons: { phase: "acceptance" | "progress" | "completion" | "turn_in"; message: string }[];
+    } | null;
+  }[];
 }
 export interface HistoryEntry {
   snapshot_id: string;
@@ -181,10 +238,45 @@ export interface SnapshotMarker {
   data_mode: DataMode;
 }
 
+export interface PlanningCatalog {
+  snapshot_id: string | null; revision: string | null; fixture: boolean;
+  nodes: TravelNode[]; objectives: Objective[];
+}
+export interface PlanningRequest {
+  profile_id: string; snapshot_id: string; revision: string; goal_profile: string;
+  origin: string; stopping_node: string; budget_ms: number; stopping_service_ms: number;
+  candidates: { objective: string; node: string; utility: number; completion_ms: number; service_ms: number }[];
+  excluded: string[];
+}
+export interface PlanningReport {
+  request: PlanningRequest; context: DataContext; fixture: boolean; assumptions: string[];
+  filtered: { objective: string; reason: string }[];
+  result: {
+    selected: { candidate: string; utility: number; incremental_ms: number; completion_ms: number; service_ms: number; travel: { total_ms: number }; expected_session_ms: number }[];
+    stopping: { total_ms: number }; expected_total_ms: number; estimated: boolean;
+    alternatives: unknown[]; trace: unknown[]; termination: string;
+  };
+}
+
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_planning_catalog: { input: { profile_id: string }; output: PlanningCatalog };
+  plan_session: { input: { text: string }; output: PlanningReport };
+  get_historical_snapshot: { input: { profile_id: string; snapshot_id: string }; output: StoredSnapshot | null };
+  promote_snapshot: { input: { profile_id: string; snapshot_id: string; expected_current: string; reason: string }; output: null };
+
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
+  stage_content: { input: { text: string }; output: ContentInspection };
+  get_active_content: { input: { profile_id: string }; output: ContentInspection | null };
+  activate_content: { input: { profile_id: string; revision: string }; output: ContentInspection };
+  rollback_content: { input: { profile_id: string }; output: { changed: boolean; active: ContentInspection | null } };
+  list_parties: { input: undefined; output: string[] };
+  get_party_quests: { input: { party_id: string }; output: PartyQuestCatalog };
+  get_party_eligibility: { input: { party_id: string; revision: string; quest_id: string }; output: PartyQuestReport };
+  get_party: { input: { party_id: string }; output: StoredParty | null };
+  save_party: { input: { party_id: string; profile_ids: string[] }; output: null };
+  delete_party: { input: { party_id: string }; output: boolean };
   get_character_snapshot: {
     input: { profile_id: string };
     output: CharacterSnapshotEnvelope;

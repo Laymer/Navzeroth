@@ -36,6 +36,9 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
   const [receipt, setReceipt] = useState<ImportReceipt | null>(null);
   const [error, setError] = useState<AppError | null>(null);
   const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<{ snapshot: StoredSnapshot; expected: string } | null>(null);
+  const [promotionReason, setPromotionReason] = useState("");
+  const previewRequest = useRef(0);
   const lastWatched = useRef("");
   const mounted = useRef(true);
   const format: FileInputFormat = formatKind === "anav1_text" ? { kind: "anav1_text" } : { kind: "saved_variables", global, key };
@@ -91,7 +94,27 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     } else setError(result.error);
     setBusy(false);
   }
+  async function previewPromotion(snapshotId: string) {
+    if (current === null) return;
+    const request = ++previewRequest.current;
+    const expected = current.envelope.payload.id;
+    setPreview(null); setPromotionReason("");
+    const result = await client.getHistoricalSnapshot(selected, snapshotId);
+    if (!mounted.current || request !== previewRequest.current) return;
+    if (!result.ok) setError(result.error);
+    else if (result.value !== null) setPreview({ snapshot: result.value, expected });
+  }
+  async function promote() {
+    if (preview === null) return;
+    setBusy(true); setError(null);
+    const result = await client.promoteSnapshot(preview.snapshot.profile_id, preview.snapshot.envelope.payload.id, preview.expected, promotionReason);
+    if (!mounted.current) return;
+    setBusy(false); setPreview(null); previewRequest.current++;
+    if (!result.ok) setError(result.error);
+    else { await refresh(); onChanged(); }
+  }
   async function select(id: string) {
+    previewRequest.current++; setPreview(null);
     setBusy(true); setError(null);
     const result = await client.selectProfile(id);
     if (!mounted.current) return;
@@ -146,7 +169,16 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     </>}
     <h3>Recent snapshot history</h3>
     <p>Showing up to 32 recent snapshots.</p>
-    {history.length === 0 ? <p>No stored snapshot history.</p> : <ul>{history.map((entry) => <li key={entry.snapshot_id}>{entry.snapshot_id}{entry.is_current ? " (current)" : " (history only)"}: {describeAge(entry.freshness)}</li>)}</ul>}
+    {preview !== null && <section aria-label="Promotion preview">
+      <h3>Confirm snapshot selection</h3>
+      <p>Select {preview.snapshot.envelope.payload.id} instead of {preview.expected}. This explicitly changes imported desktop state. A provably older capture is rejected.</p>
+      <p>{describeAge(preview.snapshot.freshness)}</p>
+      <pre>{JSON.stringify({ capture: preview.snapshot.envelope.payload.capture, level: preview.snapshot.envelope.payload.level }, null, 2)}</pre>
+      <label>Selection reason <input value={promotionReason} maxLength={1024} onChange={(e) => setPromotionReason(e.target.value)} /></label>
+      <button type="button" disabled={busy || promotionReason.trim() === ""} onClick={() => void promote()}>Confirm promotion</button>
+      <button type="button" onClick={() => { previewRequest.current++; setPreview(null); }}>Cancel</button>
+    </section>}
+    {history.length === 0 ? <p>No stored snapshot history.</p> : <ul>{history.map((entry) => <li key={entry.snapshot_id}>{entry.snapshot_id}{entry.is_current ? " (current)" : " (history only)"}: {describeAge(entry.freshness)} {!entry.is_current && <button type="button" disabled={busy} onClick={() => void previewPromotion(entry.snapshot_id)}>Preview {entry.snapshot_id}</button>}</li>)}</ul>}
     <button type="button" disabled={busy} onClick={() => { setError(null); void refresh().then(onChanged); }}>Refresh stored state</button>
   </section>;
 }

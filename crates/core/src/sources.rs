@@ -445,11 +445,11 @@ impl NormalizedState {
         registry: &SourceRegistry,
         candidates: impl IntoIterator<Item = Candidate>,
     ) -> Result<Self> {
-        let mut records: BTreeMap<EvidenceId, NormalizedRecord> = self
+        let mut records: BTreeMap<(RecordKey, EvidenceId), NormalizedRecord> = self
             .entries
             .iter()
             .flat_map(|entry| entry.records.iter().cloned())
-            .map(|record| (record.evidence.id.clone(), record))
+            .map(|record| ((record.payload.key(), record.evidence.id.clone()), record))
             .collect();
         let mut seen = 0usize;
         for candidate in candidates {
@@ -466,13 +466,21 @@ impl NormalizedState {
                 ));
             }
             let record = NormalizedRecord::from_candidate(candidate);
-            match records.get(&record.evidence.id) {
+            if records.values().any(|existing| {
+                existing.evidence.id == record.evidence.id && existing.evidence != record.evidence
+            }) {
+                return Err(invalid(
+                    "Evidence identifier reused with different evidence content",
+                ));
+            }
+            let key = (record.payload.key(), record.evidence.id.clone());
+            match records.get(&key) {
                 Some(existing) if *existing == record => {}
                 Some(_) => {
                     return Err(invalid("Evidence identifier reused with different content"));
                 }
                 None => {
-                    records.insert(record.evidence.id.clone(), record);
+                    records.insert(key, record);
                     bounded(records.len())?;
                 }
             }

@@ -1,8 +1,9 @@
 # Project status
 
-Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13 (wave-1 review recorded).
-Current task: none claimed. The first review of the wave-1 PRs is recorded below; its open findings come before new feature work.
-Owner: Codex root (merge coordination); implementation owners are in ADR 0004.
+Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
+Current task: reconciliation, review fixes and M4.4; M4.5 follows separately.
+Owner: Codex root, sole writer; claimed at origin/main 6bb2649.
+See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
 Task PRs through #36 are merged into protected main f2f64a3 after fresh CI.
@@ -14,14 +15,14 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | --- | --- | --- |
 | M0 | IN_PROGRESS | Diagnostic addon and harness exist; recorded Forever client checks remain unverified. |
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
-| M2 | IN_PROGRESS | Bounded text/file imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party storage and verified live bindings remain. |
-| M3 | IN_PROGRESS | Source/conflict library, immutable contextual content revisions, activation/rollback, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Caller supplies clusters/goal utilities; planner UI/export integration remains. |
+| M2 | IN_PROGRESS | Bounded character imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party transport imports and verified live bindings remain. |
+| M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
+| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded export follows. |
 | M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
-| M7 | IN_PROGRESS | Pure reminder foundations; integrated party/preparation workflows remain. |
+| M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas workflow and browser tests; remaining planning/gear/session screens and packaging remain. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party workflow and browser tests; remaining planning/gear/session screens and packaging remain. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
@@ -76,6 +77,17 @@ between the ingest fixtures (`export`, ANAV1) and the addon layout
 (`diagnostic_export`), both unverified until M0.5; "Lua static checks" and
 "Desktop shell Windows" are still not required checks (owner decision).
 
+## Reconciliation at 2026-10-13
+
+The historical table above describes c357bf1 and remains unchanged as evidence.
+The reconciliation branch fixes its open blocker and important domain findings,
+adds audited v4 snapshot promotion and finishes M4.4. See the
+[reconciliation handoff](handoffs/2026-10-13-reconciliation.md) for regression
+coverage and actual checks. Hosted CI and protected merge are pending. M4.5
+bounded manual export follows on a separate branch/PR. Native interaction and
+live client behavior remain unverified. Optional findings and the external GTK
+limitation remain recorded separately in the original review.
+
 ## Wave-2 delivery and verification
 
 See [integration handoff](handoffs/2026-10-12-wave2-integration.md) for all twelve
@@ -100,8 +112,10 @@ History-only outcomes explain their reasons. SQLite migrations and content backu
 preserve snapshot hash/ordering behavior. The watcher uses a single selected path,
 500 ms polling, 750 ms stability and bounded retries/cancellation.
 
-Desktop character snapshots are supported; party imports are explicitly rejected
-until storage supports them. Profile selection persists for the application session.
+Desktop character snapshots are supported; PartySnapshot transport imports remain
+explicitly rejected. Local party configuration references individually imported
+character profiles (29c3188, 87 affected Rust tests passed, Clippy/fmt passed).
+Profile selection persists for the application session.
 Imported age comes from backend queries, refreshed every minute in open views.
 The atlas still serves the demo reference imagery; a stored position may report a
 namespace/build/floor gap instead of inventing a placement. Planner/acquisition
@@ -118,8 +132,17 @@ First fix the open blocker and important findings of the wave-1 review above
 (gear, eligibility, reminders, sessions, sources, coverage, storage promotion).
 Then continue with the items below.
 
-The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Integrate party persistence,
-planner/export UI and analytical display using existing explicit DTO boundaries;
+The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Local party persistence is delivered;
+see the [M7.3 handoff](handoffs/2026-10-13-M7.3-party-persistence.md).
+Party commands and screen now consume that foundation; see the
+[Party screen handoff](handoffs/2026-10-13-M7.3-party-screen.md).
+Local checks: 71 desktop unit tests, five Chromium command-mock workflows,
+typecheck/lint/build, 87 application/storage tests and affected Rust Clippy/fmt passed.
+Native desktop Clippy could not build because Linux dbus-1 development files are
+missing; native command execution and Windows verification remain unverified.
+Integrate per-participant eligibility with explicit quest/content inputs, planner/export UI
+and analytical display using existing explicit DTO boundaries;
+
 author permitted real content and explicit goal/gear models. Live client checks
 need sanitized evidence from the recorded build. Releases and PR/main merges need
 separate applicable authorization.

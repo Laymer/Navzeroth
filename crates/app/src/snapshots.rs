@@ -6,7 +6,7 @@ use azeroth_core::{
     entities::CharacterSnapshot,
     error::{AppError, ErrorCode, Result},
     observation::{ClockTrust, Freshness, FreshnessContext, freshness},
-    types::{DataContext, DatasetNamespace, Millis, SnapshotId, UtcMillis},
+    types::{DataContext, DatasetNamespace, Millis, PartyId, SnapshotId, UtcMillis},
 };
 use azeroth_ingest::{
     import::{ExportLocation, FileFormat, ImportOptions, ImportResult, import_file, import_text},
@@ -67,6 +67,19 @@ pub struct StoredSnapshot {
     pub profile_id: String,
     pub freshness: Freshness,
     pub data_mode: DataMode,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct StoredParty {
+    pub id: PartyId,
+    pub data_mode: DataMode,
+    pub participants: Vec<PartyParticipant>,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct PartyParticipant {
+    pub profile_id: String,
+    pub character: azeroth_core::types::CharacterId,
+    /// None means no imported current snapshot, including a deleted profile.
+    pub snapshot: Option<StoredSnapshot>,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct HistoryEntry {
@@ -284,6 +297,349 @@ impl SnapshotApplication {
         state.selected = Some(id.to_owned());
         Ok(())
     }
+    /// Explicit local configuration; never imports or alters participant state.
+    pub fn save_party(&self, id: &PartyId, profile_ids: &[String]) -> Result<()> {
+        if profile_ids.is_empty() || profile_ids.len() > azeroth_storage::party::MAX_PARTICIPANTS {
+            return Err(invalid("Party participant count is out of range"));
+        }
+        let mut state = self.lock()?;
+        let participants = profile_ids
+            .iter()
+            .map(|id| resolve(&state.store, id))
+            .collect::<Result<Vec<_>>>()?;
+        state
+            .store
+            .save_party(&azeroth_storage::party::PartyProfile {
+                id: id.clone(),
+                participants,
+            })
+    }
+    pub fn party_ids(&self) -> Result<Vec<PartyId>> {
+        self.lock()?.store.party_ids()
+    }
+    pub fn planning_catalog(&self, profile_id: &str) -> Result<crate::planning::PlanningCatalog> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let snapshot = state.store.current_snapshot(&key)?;
+        let content =
+            state
+                .store
+                .active_content_revision(&azeroth_storage::content::ContentScope {
+                    context: key.context,
+                    fixture: key.fixture,
+                })?;
+        Ok(crate::planning::PlanningCatalog {
+            snapshot_id: snapshot.map(|s| s.payload.id.clone()),
+            fixture: key.fixture,
+            revision: content
+                .as_ref()
+                .map(|c| c.envelope.payload.revision.clone()),
+            nodes: content
+                .as_ref()
+                .map(|c| c.envelope.payload.nodes.clone())
+                .unwrap_or_default(),
+            objectives: content
+                .map(|c| c.envelope.payload.objectives.clone())
+                .unwrap_or_default(),
+        })
+    }
+    pub fn plan_session(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::planning::PlanningReport> {
+        if text.len() > crate::planning::MAX_REQUEST_BYTES {
+            return Err(error(
+                ErrorCode::ImportTooLarge,
+                "Planning request exceeds size limit",
+            ));
+        }
+        let request: crate::planning::PlanningRequest =
+            serde_json::from_str(text).map_err(|_| invalid("Invalid planning request"))?;
+        let state = self.lock()?;
+        let key = resolve(&state.store, &request.profile_id)?;
+        let snapshot = state
+            .store
+            .current_snapshot(&key)?
+            .ok_or_else(|| invalid("Profile has no current snapshot"))?;
+        if snapshot.payload.id != request.snapshot_id {
+            return Err(invalid("Snapshot changed; refresh planning inputs"));
+        }
+        if !matches!(
+            freshness(&snapshot.payload.capture, &context(now)),
+            Freshness::Fresh { .. }
+        ) {
+            return Err(error(
+                ErrorCode::SnapshotOutdated,
+                "Planning requires a fresh capture with trusted age",
+            ));
+        }
+        let content = state
+            .store
+            .active_content_revision(&azeroth_storage::content::ContentScope {
+                context: key.context,
+                fixture: key.fixture,
+            })?
+            .ok_or_else(|| {
+                error(
+                    ErrorCode::DatasetIncomplete,
+                    "No active content for this profile",
+                )
+            })?;
+        if content.envelope.payload.revision != request.revision {
+            return Err(invalid("Active content changed; refresh planning inputs"));
+        }
+        crate::planning::calculate(request, &snapshot, &content, &context(now))
+    }
+    pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
+        if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
+            return Err(error(
+                ErrorCode::ImportTooLarge,
+                "Content revision limit exceeded",
+            ));
+        }
+        let content: azeroth_storage::content::ContentRevision =
+            serde_json::from_str(text).map_err(|_| invalid("Invalid content revision JSON"))?;
+        self.lock()?.store.stage_content_revision(&content)?;
+        Ok(crate::content::inspect(content))
+    }
+    pub fn active_content(
+        &self,
+        profile_id: &str,
+    ) -> Result<Option<crate::content::ContentInspection>> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context,
+            fixture: key.fixture,
+        };
+        Ok(state
+            .store
+            .active_content_revision(&scope)?
+            .map(crate::content::inspect))
+    }
+    pub fn activate_content(
+        &self,
+        profile_id: &str,
+        revision: &azeroth_core::types::DatasetRevision,
+    ) -> Result<crate::content::ContentInspection> {
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let key = azeroth_storage::content::ContentRevisionKey {
+            scope: azeroth_storage::content::ContentScope {
+                context: key.context,
+                fixture: key.fixture,
+            },
+            revision: revision.clone(),
+        };
+        state.store.activate_content_revision(&key)?;
+        let content = state
+            .store
+            .content_revision(&key)?
+            .ok_or_else(|| invalid("Content revision is not stored"))?;
+        Ok(crate::content::inspect(content))
+    }
+    pub fn rollback_content(&self, profile_id: &str) -> Result<crate::content::ContentRollback> {
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context,
+            fixture: key.fixture,
+        };
+        let changed = state
+            .store
+            .rollback_content_revision(&scope)?
+            .is_some_and(|result| result.changed);
+        Ok(crate::content::ContentRollback {
+            changed,
+            active: state
+                .store
+                .active_content_revision(&scope)?
+                .map(crate::content::inspect),
+        })
+    }
+    pub fn party_quests(&self, id: &PartyId) -> Result<crate::party::PartyQuestCatalog> {
+        let state = self.lock()?;
+        let party = state
+            .store
+            .party(id)?
+            .ok_or_else(|| invalid("No such party"))?;
+        let key = &party.participants[0];
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context.clone(),
+            fixture: key.fixture,
+        };
+        let content = state.store.active_content_revision(&scope)?;
+        Ok(crate::party::PartyQuestCatalog {
+            context: key.context.clone(),
+            fixture: key.fixture,
+            revision: content
+                .as_ref()
+                .map(|c| c.envelope.payload.revision.clone()),
+            quests: content
+                .map(|c| {
+                    c.envelope
+                        .payload
+                        .quests
+                        .iter()
+                        .map(|q| q.id.clone())
+                        .collect()
+                })
+                .unwrap_or_default(),
+        })
+    }
+    pub fn party_eligibility(
+        &self,
+        id: &PartyId,
+        revision: &azeroth_core::types::DatasetRevision,
+        quest: &azeroth_core::types::QuestId,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::party::PartyQuestReport> {
+        use crate::party::*;
+        use azeroth_core::{
+            eligibility::{EligibilityInputs, PartyOutcome, evaluate_participant, evaluate_party},
+            entities::{PartySnapshot, PartySnapshotData},
+            evaluation::StalePolicy,
+            predicate::RuleLimits,
+        };
+        let state = self.lock()?;
+        let party = state
+            .store
+            .party(id)?
+            .ok_or_else(|| invalid("No such party"))?;
+        let key = &party.participants[0];
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context.clone(),
+            fixture: key.fixture,
+        };
+        let content = state
+            .store
+            .active_content_revision(&scope)?
+            .ok_or_else(|| {
+                error(
+                    ErrorCode::DatasetIncomplete,
+                    "No active content for this party",
+                )
+            })?;
+        if &content.envelope.payload.revision != revision {
+            return Err(invalid("Active content changed; refresh the quest list"));
+        }
+        let definition = content
+            .envelope
+            .payload
+            .quests
+            .iter()
+            .find(|q| &q.id == quest)
+            .ok_or_else(|| invalid("Quest is not in the active content"))?;
+        let snapshots = party
+            .participants
+            .iter()
+            .map(|key| state.store.current_snapshot(key))
+            .collect::<Result<Vec<_>>>()?;
+        let available = snapshots
+            .iter()
+            .flatten()
+            .map(|e| e.payload.clone())
+            .collect::<Vec<_>>();
+        let domain_party = if available.is_empty() {
+            None
+        } else {
+            Some(PartySnapshot::try_new(PartySnapshotData {
+                id: id.clone(),
+                context: key.context.clone(),
+                participants: available,
+            })?)
+        };
+        let clock = context(now);
+        let facts = std::collections::BTreeMap::new();
+        let inputs = EligibilityInputs {
+            definition,
+            access: None,
+            exclusive_groups: &[],
+            facts: &facts,
+            freshness: &clock,
+            stale_policy: StalePolicy::Reject,
+            limits: RuleLimits::default(),
+        };
+        let mut participants = Vec::new();
+        let mut all_fresh = true;
+        for (key, snapshot) in party.participants.iter().zip(&snapshots) {
+            let capture_freshness = snapshot
+                .as_ref()
+                .map(|s| freshness(&s.payload.capture, &clock));
+            all_fresh &= matches!(capture_freshness, Some(Freshness::Fresh { .. }));
+            let result = snapshot
+                .as_ref()
+                .map(|s| evaluate_participant(&inputs, &s.payload, domain_party.as_ref()))
+                .transpose()?;
+            participants.push(ParticipantAssessment {
+                character: key.character.clone(),
+                snapshot_id: snapshot.as_ref().map(|s| s.payload.id.clone()),
+                freshness: capture_freshness,
+                assessment: result.map(assessment),
+            });
+        }
+        let joint_status = if !all_fresh {
+            JointStatus::MissingOrOldSnapshots
+        } else {
+            match evaluate_party(
+                &inputs,
+                domain_party.as_ref().expect("all fresh requires snapshots"),
+            )?
+            .outcome
+            {
+                PartyOutcome::JointlyEligible => JointStatus::JointlyEligible,
+                PartyOutcome::EligibleForSome { .. } => JointStatus::EligibleForSome,
+                PartyOutcome::AllBehind { .. } => JointStatus::AllBehind,
+                PartyOutcome::Blocked { .. } => JointStatus::Blocked,
+                PartyOutcome::Unknown { .. } => JointStatus::Unknown,
+            }
+        };
+        Ok(PartyQuestReport {
+            context: key.context.clone(),
+            fixture: key.fixture,
+            revision: revision.clone(),
+            quest: quest.clone(),
+            joint_status,
+            participants,
+        })
+    }
+    pub fn delete_party(&self, id: &PartyId) -> Result<bool> {
+        self.lock()?.store.delete_party(id)
+    }
+    /// One consistent service view; freshness is computed separately per capture.
+    pub fn party(&self, id: &PartyId, now: Option<UtcMillis>) -> Result<Option<StoredParty>> {
+        let state = self.lock()?;
+        let Some(party) = state.store.party(id)? else {
+            return Ok(None);
+        };
+        let participants = party
+            .participants
+            .into_iter()
+            .map(|key| {
+                let id = profile_id(&key)?;
+                let snapshot = state
+                    .store
+                    .current_snapshot(&key)?
+                    .map(|envelope| StoredSnapshot {
+                        freshness: freshness(&envelope.payload.capture, &context(now)),
+                        envelope,
+                        profile_id: id.clone(),
+                        data_mode: DataMode::Stored,
+                    });
+                Ok(PartyParticipant {
+                    profile_id: id,
+                    character: key.character,
+                    snapshot,
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(Some(StoredParty {
+            id: party.id,
+            data_mode: DataMode::Stored,
+            participants,
+        }))
+    }
     pub fn current(&self, id: &str, now: Option<UtcMillis>) -> Result<Option<StoredSnapshot>> {
         let state = self.lock()?;
         let key = resolve(&state.store, id)?;
@@ -296,6 +652,39 @@ impl SnapshotApplication {
                 profile_id: id.to_owned(),
                 data_mode: DataMode::Stored,
             }))
+    }
+    pub fn historical(
+        &self,
+        id: &str,
+        selected: &SnapshotId,
+        now: Option<UtcMillis>,
+    ) -> Result<Option<StoredSnapshot>> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, id)?;
+        Ok(state
+            .store
+            .historical_snapshot(&key, selected)?
+            .map(|envelope| StoredSnapshot {
+                freshness: freshness(&envelope.payload.capture, &context(now)),
+                envelope,
+                profile_id: id.to_owned(),
+                data_mode: DataMode::Stored,
+            }))
+    }
+    pub fn promote(
+        &self,
+        id: &str,
+        selected: &SnapshotId,
+        expected: &SnapshotId,
+        reason: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<()> {
+        let now = now.ok_or_else(|| invalid("Operation time unavailable"))?;
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, id)?;
+        state
+            .store
+            .promote_snapshot(&key, selected, expected, reason, now)
     }
     pub fn history(
         &self,

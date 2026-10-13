@@ -83,9 +83,9 @@ pub enum UnknownPolicy {
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum FingerprintBasis {
     /// Includes the snapshot ID, so any new snapshot is new state.
-    #[default]
     Snapshot,
     /// Only truth and reasons: the same outcome on a newer snapshot is unchanged.
+    #[default]
     OutcomeOnly,
 }
 
@@ -355,6 +355,8 @@ pub struct ShownRecord {
     pub fingerprint: Option<StateFingerprint>,
     /// Only recorded from a trusted clock.
     pub shown_at_utc_ms: Option<UtcMillis>,
+    #[serde(default)]
+    pub shown_at_session: Option<(SessionId, Millis)>,
     pub serial: u64,
 }
 
@@ -586,6 +588,7 @@ impl ReminderState {
                     rule: item.rule.clone(),
                     fingerprint: Some(item.fingerprint.clone()),
                     shown_at_utc_ms: at,
+                    shown_at_session: now.session.clone(),
                     serial: first + offset,
                 },
             );
@@ -597,21 +600,33 @@ impl ReminderState {
 fn cooldown_gate(
     cooldown: Millis,
     record: &ShownRecord,
-    now: Option<UtcMillis>,
+    now: &FreshnessContext,
 ) -> Option<ReminderReason> {
     if cooldown.get() == 0 {
         return None;
     }
-    let (Some(now), Some(then)) = (now, record.shown_at_utc_ms) else {
-        return Some(ReminderReason::CooldownUnverifiable);
-    };
-    let elapsed = now
-        .get()
-        .checked_sub(then.get())
+    let utc_elapsed = trusted_now(now)
+        .zip(record.shown_at_utc_ms)
+        .and_then(|(now, then)| now.get().checked_sub(then.get()))
         .and_then(|delta| u64::try_from(delta).ok());
-    match elapsed {
+    let session_elapsed = now
+        .session
+        .as_ref()
+        .zip(record.shown_at_session.as_ref())
+        .filter(|((a, _), (b, _))| a == b)
+        .and_then(|((_, now), (_, then))| now.get().checked_sub(then.get()));
+    match utc_elapsed.or(session_elapsed) {
         Some(elapsed) if elapsed >= cooldown.get() => None,
         Some(_) => Some(ReminderReason::CooldownActive),
+        None if record.fingerprint.is_none()
+            || now
+                .session
+                .as_ref()
+                .zip(record.shown_at_session.as_ref())
+                .is_some_and(|((a, _), (b, _))| a != b) =>
+        {
+            None
+        }
         None => Some(ReminderReason::CooldownUnverifiable),
     }
 }
@@ -706,7 +721,6 @@ impl ReminderEngine {
         });
 
         let mode = inputs.suppression.assess(context.freshness);
-        let now = trusted_now(context.freshness);
         let mut survivors: BTreeMap<RuleId, RuleId> = BTreeMap::new();
         let mut queue = Vec::new();
         let mut held = Vec::new();
@@ -732,7 +746,7 @@ impl ReminderEngine {
                 if record.fingerprint.as_ref() == Some(&item.fingerprint) {
                     Some(ReminderReason::StateUnchanged)
                 } else {
-                    cooldown_gate(item.cooldown_ms, record, now)
+                    cooldown_gate(item.cooldown_ms, record, context.freshness)
                 }
             } else {
                 None
@@ -796,21 +810,33 @@ mod tests {
                 namespace: DatasetNamespace::Demo,
             },
             rule: RuleId::new("r1").unwrap(),
-            fingerprint: None,
+            fingerprint: Some(
+                StateFingerprint::new(&RuleId::new("r1").unwrap(), None, Truth::True, &[]).unwrap(),
+            ),
+            shown_at_session: None,
             shown_at_utc_ms: at.map(|n| UtcMillis::new(n).unwrap()),
             serial: 0,
         };
         let ms = |n| Millis::new(n).unwrap();
+        let clock = |now| FreshnessContext {
+            now_utc_ms: now,
+            clock_trust: ClockTrust::Trusted,
+            session: None,
+            max_age_ms: ms(1000),
+        };
         let utc = |n| Some(UtcMillis::new(n).unwrap());
-        assert_eq!(cooldown_gate(ms(0), &record(None), None), None);
-        assert_eq!(cooldown_gate(ms(10), &record(Some(100)), utc(110)), None);
+        assert_eq!(cooldown_gate(ms(0), &record(None), &clock(None)), None);
         assert_eq!(
-            cooldown_gate(ms(10), &record(Some(100)), utc(109)),
+            cooldown_gate(ms(10), &record(Some(100)), &clock(utc(110))),
+            None
+        );
+        assert_eq!(
+            cooldown_gate(ms(10), &record(Some(100)), &clock(utc(109))),
             Some(ReminderReason::CooldownActive)
         );
         for (then, now) in [(Some(100), utc(99)), (None, utc(500)), (Some(100), None)] {
             assert_eq!(
-                cooldown_gate(ms(10), &record(then), now),
+                cooldown_gate(ms(10), &record(then), &clock(now)),
                 Some(ReminderReason::CooldownUnverifiable)
             );
         }
