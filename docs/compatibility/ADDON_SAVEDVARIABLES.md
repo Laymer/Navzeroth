@@ -102,3 +102,21 @@ interface number, and per-capability existence results. Not read at all: charact
 account name, realm, GUID, guild, chat, mail, combat-log data, position, inventory,
 quests, or any value the client restricts. The sources are scanned in tests for
 dynamic code loading and restricted libraries.
+
+## M2.1 additive snapshot keys (experimental)
+
+Layout version remains 1; diagnostics/settings and older exports are preserved.
+
+| Key | Type | Meaning |
+| --- | --- | --- |
+| snapshot_export | string | A separate v1 ANAV1 character snapshot, at most 32768 bytes including framing. |
+| snapshot_export_error | string | Closed export failure code; a failed encode retains the previous complete snapshot. |
+| snapshot_sequence | integer | Persisted logical capture counter, advanced only after successful storage; manual capture stops at 1,000,000,000. |
+
+The manual producer uses snapshot-stream-<anonymous-profile-id> as its logical
+stream identity and a monotonically increasing sequence, with no session elapsed
+or UTC claims. It rejects corrupt counters and incompatible DB versions.
+Snapshot export/import is separate from diagnostic_export. The desktop defaults to
+AzerothNavigatorDB / snapshot_export, while custom globals/keys remain supported.
+No actual snapshot persistence or real import is VERIFIED yet; the 70338 evidence
+records only the user's diagnostic persistence example.

@@ -1,0 +1,35 @@
+{
+  "evidence_version": 1,
+  "source": "user_report",
+  "reported_on": "2026-10-13",
+  "addon_version": "0.1.0",
+  "client": {
+    "version": "1.60.1",
+    "build": "70338",
+    "interface": "16001",
+    "edition": "wow_forever",
+    "edition_basis": "addon assumed target",
+    "language": "English (user reported)",
+    "locale_code": "unknown"
+  },
+  "conditions": [
+    "User ran the diagnostic addon and copied diagnostic_export from SavedVariables as instructed",
+    "User confirmed retrieval after reload or logout; exact transition unspecified"
+  ],
+  "observations": {
+    "GetBuildInfo": "call_returned_values; reported values serialized in persisted diagnostic JSON",
+    "SavedVariables": "one diagnostic_export string retrieved; general persistence behavior remains unverified",
+    "UnitLevel": "function present; readable return value and restricted contexts untested",
+    "GetInventoryItemLink": "function present; item links untested",
+    "C_Item.GetItemInfo": "function present; item loading untested",
+    "C_Map.GetBestMapForUnit": "function present; map identity untested",
+    "C_Map.GetPlayerMapPosition": "function present; readable/serializable position untested",
+    "C_Map.GetMapRectOnMap": "function present; rectangle untested",
+    "C_QuestLog.GetInfo": "function present; quest records untested",
+    "C_QuestLog.GetNumQuestLogEntries": "function present; quest records untested",
+    "C_QuestLog.IsQuestFlaggedCompleted": "function present; completion history untested",
+    "CombatLogGetCurrentEventInfo": "function missing; no fallback or workaround attempted"
+  },
+  "privacy": "Sanitized build/API evidence only; no account paths, character names, GUIDs or personal exports",
+  "limits": "Does not verify snapshot capture, client restrictions, coordinates, timing or plan UI"
+}

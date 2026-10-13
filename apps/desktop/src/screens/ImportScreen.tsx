@@ -30,8 +30,8 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
   const [text, setText] = useState("");
   const [path, setPath] = useState("");
   const [formatKind, setFormatKind] = useState<"anav1_text" | "saved_variables">("anav1_text");
-  const [global, setGlobal] = useState("");
-  const [key, setKey] = useState("");
+  const [global, setGlobal] = useState("AzerothNavigatorDB");
+  const [key, setKey] = useState("snapshot_export");
   const [watch, setWatch] = useState<WatchState>(EMPTY_WATCH);
   const [receipt, setReceipt] = useState<ImportReceipt | null>(null);
   const [error, setError] = useState<AppError | null>(null);
@@ -133,7 +133,7 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
   return <section aria-labelledby="import-heading" className="snapshot-import">
     <h2 id="import-heading">Snapshot imports</h2>
     <p>Desktop state is a saved snapshot. Choose the export for your installation, account and character. Watching follows only the selected file.</p>
-    <p>ANAV1 snapshot exports are accepted. Diagnostic probe reports are separate.</p>
+    <p>ANAV1 snapshot exports are accepted. For the experimental addon capture, use /anavdiag snapshot with a unique anonymous profile ID, then save with /reload or logout. Diagnostic probe reports are separate.</p>
     {error !== null && <p role="alert">Error {error.code}: {error.message}</p>}
     <label>Snapshot export text<textarea value={text} onChange={(e) => setText(e.target.value)} rows={5} /></label>
     <button type="button" disabled={busy || text.trim() === ""} onClick={() => void importSnapshot("text")}>Import text</button>
