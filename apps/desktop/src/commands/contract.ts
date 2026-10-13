@@ -1,3 +1,4 @@
+import type { CalibrationRequest, CalibrationReport, SessionCalibrationAnnotation } from "./calibration";
 // Typed application command boundary (plan section 13). Mirrors the Rust
 // DTOs in crates/app; wire names are snake_case, exactly as serialized.
 import type {
@@ -260,6 +261,9 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  set_session_calibration: { input: { profile_id: string; session_id: string; annotation: SessionCalibrationAnnotation }; output: null };
+  get_calibration: { input: { profile_id: string; request: CalibrationRequest }; output: CalibrationReport };
+
   inspect_plan_route: { input: { text: string }; output: import("./routes").RouteInspection };
   import_session_text: { input: { profile_id: string; text: string }; output: import("./sessions").SessionImportReceipt };
   import_session_file: { input: { profile_id: string; path: string; format: FileInputFormat }; output: import("./sessions").SessionImportReceipt };

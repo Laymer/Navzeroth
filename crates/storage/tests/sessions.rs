@@ -119,12 +119,15 @@ fn populated_v4_upgrade_preserves_other_domains() {
     // Remove only the new empty table and migration marker to reconstruct the
     // exact previous schema with real populated domain records.
     let conn = common::raw(&db.path);
-    conn.execute_batch("DROP TABLE sessions; DELETE FROM schema_migrations WHERE version=5")
+    conn.execute_batch("DROP TABLE session_calibration_annotations; DROP TABLE reminder_state; DROP TABLE sessions; DELETE FROM schema_migrations WHERE version>=5")
         .unwrap();
     let before = common::dump_state(&db.path);
     drop(conn);
     let store = SqliteStore::open(&db.path).unwrap();
-    assert_eq!(store.schema_version().unwrap(), 5);
+    assert_eq!(
+        store.schema_version().unwrap(),
+        azeroth_storage::migrations::latest_version()
+    );
     assert_eq!(common::dump_state(&db.path), before);
     assert_eq!(store.party_ids().unwrap()[0].as_str(), "kept");
     assert_eq!(
