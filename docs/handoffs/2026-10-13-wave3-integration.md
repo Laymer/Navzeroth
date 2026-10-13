@@ -126,3 +126,11 @@ wording mismatch against the recorder drift regression; corrected UTC drift to
 warn/revoke UTC trust while monotonic sampling continues. Reset/bounds still stop.
 Removed one trailing blank line reported by diff-check. No implementation blocker
 or important finding remains.
+
+Hosted candidate CI exposed the same Sessions unit sequencing failure on Linux
+and Windows: Delete was clicked while a selected-file import was still pending.
+Worker C reproduced it with a deferred response, confirming the product busy guard
+prevents overlapping deletion. Owning fix68a248f waits for completion and asserts
+no deletion during import. All87 unit tests, typecheck/lint and the Sessions browser
+flow passed; coordinator inspected the diff and independently reran both focused
+Sessions tests. Current-head hosted checks are rerun rather than excusing failure.
