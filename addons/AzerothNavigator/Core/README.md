@@ -181,3 +181,10 @@ visibility persists; reloading clears plan and observed runtime state. UI method
 are guarded and imported text escapes client markup. Capture/import/status actions
 refresh advice; there is no timer, automatic client read or inferred completion.
 Actual 70338 UI behavior, frame support and restricted contexts remain unverified.
+
+Explicit plan controls may restore the earlier addon-owned `snapshot_export` when
+no runtime snapshot exists after reload. `Snapshot.restoreTransport` enforces the
+32 KiB bound and original context/fixture/source/metadata consistency, returns an
+independent normalized copy and preserves the original capture age/trust. The HUD
+labels cached observations; restoring never reestablishes current clock trust or
+performs a fresh client observation. Malformed/mismatched documents are ignored.

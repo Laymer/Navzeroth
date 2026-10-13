@@ -49,3 +49,22 @@ Next separate task9 branch: conservative equipment observations and position-rea
 diagnostics. Session worker supplies task8 recorder binding patches independently;
 Diagnostics remains owned by A to avoid concurrent edits. Coordinator reviews and
 merges only after prerequisites/current-head hosted checks pass.
+
+## Review follow-up — reload and stored observation
+
+Self-review found a workflow gap: SavedVariables transfer requires reload, which
+clears the runtime capture. A new capture changes the expected snapshot ID, so a
+pasted plan otherwise cannot use its stored snapshot reference. Explicit plan
+controls now restore an earlier addon-owned snapshot_export through bounded strict
+context/fixture/source/metadata validation when runtime observations are absent.
+The HUD labels this cached prior observation; no client read or freshness claim
+is synthesized. Its original timestamp/trust stays intact, while current runtime
+clock trust remains uncertain after reload. Explicit clock confirmation can age-check
+previously trusted capture metadata. A later capture suspends the old plan as before.
+Malformed/mismatched cached documents are ignored and existing exports preserved.
+
+Added cached-loader bounds/context/fixture/source/alias/zero-timestamp regression
+and reload-to-plan-import workflow coverage. Full final harness: 90 tests passed,
+zero failures; scoped Clippy/fmt, 15-file Lua lint and diff-check passed. Reused
+CARGO_TARGET_DIR across worktrees initially selected a stale compile-time addon
+path; reran with this worktree's own target to ensure the edited sources were tested.
