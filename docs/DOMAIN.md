@@ -108,8 +108,11 @@ observations and timestamps.
 Requirements embedded in records are checked against the owning build/namespace,
 including predicate branches that could later be short-circuited. Reference
 datasets and evidence bundles resolve their local references inside the
-envelope (see the contract reference); cross-dataset resolution, predicate-only
-references and graph analysis remain later content work. Local record validity
+envelope (see the contract reference). Decoding does not check predicate-only
+references or prerequisite cycles; the coverage library (`coverage.rs`) reports
+them inside one dataset, but its cycle check does not follow eligibility or
+objective-state predicates (open finding in the 2026-10-13 wave-1 review).
+Cross-dataset resolution remains later content work. Local record validity
 does not establish a complete dataset.
 
 ## Pure projection
