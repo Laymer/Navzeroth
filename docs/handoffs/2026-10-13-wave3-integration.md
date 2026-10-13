@@ -134,3 +134,10 @@ prevents overlapping deletion. Owning fix68a248f waits for completion and assert
 no deletion during import. All87 unit tests, typecheck/lint and the Sessions browser
 flow passed; coordinator inspected the diff and independently reran both focused
 Sessions tests. Current-head hosted checks are rerun rather than excusing failure.
+
+Final equipment review checked private provider gating against exported evidence.
+Worker A independently probed missing, throwing and nil-link getters:19 unsupported
+slots for a missing API,19 unknown slots for failures/absence, explicit diagnostic
+counts, no exported capability field and an untested diagnostic catalogue. The
+private dispatch flag includes normalized records; disabling it would discard
+unsupported slots. No evidence promotion or material defect was reproduced.
