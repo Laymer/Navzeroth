@@ -65,7 +65,7 @@ export const demoAdapter: CommandAdapter = {
       switch (command) {
         case "get_app_status":
           return {
-            version: "0.1.0",
+            version: "0.2.0",
             data_mode: "demo",
             active_profile: DEMO_PROFILE_ID,
             capabilities: { addon_transport: "unverified", live_position: "unverified" },

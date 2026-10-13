@@ -125,3 +125,30 @@ the counter to make snapshots appear newer. Import conflicts preserve stored dat
 Uncertain freshness can prevent planning; level display/import does not establish a
 verified live gameplay workflow. Actual capture/import still needs the recorded
 client check. No automatic capture or background observation was added.
+
+## Capture timing in v0.2.0
+
+Clock APIs remain unverified on the recorded client. To inspect their guarded output:
+
+    /anavdiag clock
+
+It prints UTC epoch seconds. On Windows, compare with this PowerShell expression:
+
+    [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+
+Allow for time passing while switching windows. Only if the reported UTC agrees
+with your trusted PC clock, run /anavdiag clock trust within 120 seconds, then run
+/anavdiag snapshot with your existing anonymous profile ID. Reload/logout and import
+the updated file. This confirmation is explicit and applies only to the current
+addon runtime; reload clears trust, so repeat the check before the next capture.
+
+If the APIs are missing, values invalid, a sample takes more than two seconds,
+clocks reverse, or UTC/monotonic disagreement exceeds five seconds, timing remains
+or becomes uncertain. The thresholds are engineering guards, not verified game facts.
+Use /anavdiag clock clear to revoke trust. No trusted state is restored from disk.
+The monotonic clock checks consistency only; no elapsed gameplay time is exported.
+Level capture remains available with uncertain timing when clock checks fail.
+
+A timestamp alone never grants trust. The desktop continues rejecting future
+timestamps and treating captures older than its freshness window as stale.
+Fresh capture timing does not supply missing real quest content, gear, or map data.

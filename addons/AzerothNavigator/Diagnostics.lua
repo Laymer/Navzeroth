@@ -48,6 +48,12 @@ function Diagnostics.attach(env)
     last_code = nil,
   }
 
+  local clock = ns.Clock.new(function()
+    if type(env.GetServerTime) == 'function' then return env.GetServerTime() end
+  end, function()
+    if type(env.GetTime) == 'function' then return env.GetTime() end
+  end)
+
   local function say(message)
     if type(env.print) == "function" then
       pcall(env.print, "AzerothNavigator: " .. message)
@@ -123,8 +129,8 @@ function Diagnostics.attach(env)
     end
     sequence = sequence + 1
     local stream = 'snapshot-stream-' .. profile
-    local metadata = {source='addon_snapshot', clock_trust='uncertain',
-      session_id=stream, sequence=sequence}
+    local metadata, clockCode = clock:capture()
+    metadata.source, metadata.session_id, metadata.sequence = 'addon_snapshot', stream, sequence
     local getter
     if type(env.UnitLevel) == 'function' then
       getter = function() return env.UnitLevel('player') end
@@ -147,6 +153,28 @@ function Diagnostics.attach(env)
     say('snapshot stored (' .. #text .. ' bytes). /reload or logout, then import ' ..
       'AzerothNavigatorDB / snapshot_export from the selected SavedVariables file.')
     if code then say('level remains unavailable (' .. code .. ')') end
+    if clockCode or metadata.clock_trust ~= 'trusted' then
+      say('capture clock uncertain; use /anavdiag clock to inspect it before confirming trust')
+    end
+  end
+
+  local function clockCommand(action)
+    local build = Capabilities.probe(env).build
+    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
+      say('clock unavailable: build has no recorded capture evidence'); return
+    end
+    if action == 'clear' then clock:clear(); say('clock trust cleared'); return end
+    if action and action ~= 'trust' then say('usage: /anavdiag clock [trust|clear]'); return end
+    local result, code
+    if action == 'trust' then result, code = clock:confirm()
+    else result, code = clock:probe() end
+    if not result then say('clock remains uncertain (' .. code .. ')'); return end
+    say('UTC epoch seconds: ' .. string.format('%.0f', result.utc_seconds) ..
+      '; clock ' .. result.clock_trust)
+    if action ~= 'trust' then
+      say('Compare with trusted UTC on your PC. Only if it agrees, run ' ..
+        '/anavdiag clock trust within 120 seconds. Trust resets on reload.')
+    end
   end
 
   local function onSlash(message)
@@ -156,6 +184,16 @@ function Diagnostics.attach(env)
     end
     if command == "probe" then
       run()
+    elseif command == "clock" then
+      local action = type(message) == 'string' and message:match('^%s*%S+%s+(%S+)%s*$')
+      if type(message) == 'string' and
+        not message:match('^%s*%S+%s*$') and not action then
+        say('usage: /anavdiag clock [trust|clear]'); return
+      end
+      if action then action = action:lower() end
+      if not pcall(clockCommand, action) then
+        clock:clear(); say('clock remains uncertain (clock_internal)')
+      end
     elseif command == "snapshot" then
       local profile = type(message) == 'string' and message:match('^%s*%S+%s+(%S+)%s*$')
       if not pcall(snapshot, profile) then say('snapshot failed: capture_internal') end
@@ -167,7 +205,7 @@ function Diagnostics.attach(env)
       end
     else
       say(Version.addon .. " usage: " .. SLASH_COMMAND ..
-        " probe | status | snapshot <anonymous-profile-id>")
+        " probe | status | clock [trust|clear] | snapshot <anonymous-profile-id>")
     end
   end
 

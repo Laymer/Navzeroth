@@ -62,3 +62,12 @@ The earlier API-presence-only findings above remain the historical diagnostic
 baseline. No other capability status is promoted. Clock trust and region-specific
 locale remain unknown; equipment, quest, position and restricted-context checks
 remain untested. This does not verify freshness or real planning.
+
+## v0.2.0 clock verification boundary
+
+The level-12 report does not establish GetServerTime or GetTime behavior. v0.2.0
+offers an explicit guarded clock probe and an operator confirmation after trusted
+UTC comparison. Missing/invalid values remain uncertain; observed UTC is distinct
+from trusted UTC. Stability guards detect reversals/resets/jumps and reload clears
+trust. Actual client probe/confirmation, restrictions and displayed capture age
+remain UNVERIFIED until reported under recorded conditions.

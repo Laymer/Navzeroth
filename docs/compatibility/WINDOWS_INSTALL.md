@@ -115,7 +115,7 @@ powershell -ExecutionPolicy Bypass -File scripts\windows\Build-Windows.ps1 -Inst
 The files land in `dist\windows\` (ignored by git). The script:
 
 1. Checks that the version is the same in `Cargo.toml` (`[workspace.package]`),
-   `tauri.conf.json`, both `package.json` files and the addon TOC.
+   `tauri.conf.json`, both `package.json` files, the addon TOC and `Core/Version.lua`.
 2. Checks the toolchain pinned by the repository and, with `-InstallPrerequisites`,
    installs what is missing with winget (accepting the package agreements):
 
@@ -167,7 +167,7 @@ and uploads the release files as a workflow artifact (kept 14 days).
 
 To prepare a release:
 
-1. Set the new version in the five files listed above.
+1. Set the new version in the six files listed above.
 2. Write `docs/releases/<version>.md` (plan M9.5: limitations and verification evidence);
    a tag without it fails.
 3. Merge to main through the usual pull request.
