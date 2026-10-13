@@ -187,6 +187,59 @@ function Snapshot.readQuests(getCount, getInfo, context, metadata)
   if not ok then return nil, failure end
   return quests, diagnostics
 end
+-- Numeric inventory slots are an explicit probe scope, not authored slot semantics.
+-- Item links establish only identity; no variant/instance/modifier interpretation.
+function Snapshot.readEquipment(getLink, context, metadata)
+  local equipment, reasons = {}, {}
+  local function reason(code) reasons[code] = (reasons[code] or 0) + 1 end
+  for slot=1,19 do
+    local observation = {status='unknown'}
+    if type(getLink) ~= 'function' then
+      observation.status = 'unsupported'; reason('equipment_api_missing')
+    else
+      local ok, id = pcall(function()
+        local link = getLink(slot)
+        if link == nil then return nil end
+        check(type(link) == 'string' and #link <= 512)
+        local token = link:match('|Hitem:(%d+):[^|]*|h')
+        local number = token and tonumber(token)
+        check(number and number >= 1 and number <= 4294967295)
+        return string.format('%.0f', number)
+      end)
+      if ok and id then
+        observation = {status='known', value={state='item', item={context=context,
+          item_id=id, variant={status='unknown'}, instance={status='unknown'},
+          modifiers={status='unknown'}}}}
+        for key, value in pairs(metadata) do observation[key] = value end
+      elseif ok then reason('equipment_link_absent_unknown')
+      else reason('equipment_link_unreadable') end
+    end
+    equipment['inventory-slot-' .. slot] = observation
+  end
+  return equipment, reasons
+end
+
+-- Readability diagnostics deliberately cannot construct a snapshot MapSpace.
+function Snapshot.positionDiagnostics(getMap, getPoint)
+  if type(getMap) ~= 'function' or type(getPoint) ~= 'function' then
+    return {code='position_api_missing', location_status='unknown'}
+  end
+  local mapReadable, pointReadable = false, false
+  local ok = pcall(function()
+    local map = getMap()
+    check(type(map) == 'number' and map == math.floor(map) and map >= 1 and
+      map <= 4294967295)
+    mapReadable = true
+    local point = getPoint(map)
+    check(type(point) == 'table' and type(point.GetXY) == 'function')
+    local x, y = point:GetXY()
+    check(type(x) == 'number' and type(y) == 'number' and x == x and y == y and
+      x >= 0 and x <= 1 and y >= 0 and y <= 1)
+    pointReadable = true
+  end)
+  return {code=ok and 'position_readable_mapping_unknown' or 'position_read_failed',
+    map_readable=mapReadable, coordinates_readable=pointReadable, location_status='unknown'}
+end
 function Snapshot.store(db, snapshot, options)
   if type(db) ~= 'table' or getmetatable(db) ~= nil or db.db_version ~= ns.Version.db_version then
     return nil, 'snapshot_db_version'

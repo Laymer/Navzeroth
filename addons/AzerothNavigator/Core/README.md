@@ -181,3 +181,19 @@ visibility persists; reloading clears plan and observed runtime state. UI method
 are guarded and imported text escapes client markup. Capture/import/status actions
 refresh advice; there is no timer, automatic client read or inferred completion.
 Actual 70338 UI behavior, frame support and restricted contexts remain unverified.
+
+## Experimental equipment/position reads (wave 3 task 9)
+
+`Snapshot.readEquipment(getLink, context, metadata)` probes the explicit numeric
+inventory range 1..19, represented as `inventory-slot-N`. These keys describe API
+arguments, not verified semantic slot names or authored dataset mappings. Readable
+bounded item links yield canonical item ID only; variants, instances and modifiers
+remain Unknown. Missing links are Unknown rather than Empty; invalid/exceptional
+reads stay Unknown with fixed counts. Missing whole API yields Unsupported slots.
+
+Manual snapshot capture binds those reads only on the recorded 70338 tuple. The
+separate `/anavdiag position` command probes map/coordinate API readability, stores
+only bounded status diagnostics and never constructs a snapshot location. Even
+readable zero coordinates cannot supply missing floor, instance or coordinate
+meaning. No position values, item links, raw client errors or character names are
+stored in diagnostics. Live/restricted-context checks remain unverified.
