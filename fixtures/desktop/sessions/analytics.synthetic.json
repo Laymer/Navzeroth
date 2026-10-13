@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "session": "synthetic-session",
+    "character": "demo-character-paladin",
+    "context": {
+      "namespace": "demo",
+      "build": {
+        "edition": "wow_forever",
+        "build": "UNVERIFIED_DEMO",
+        "interface": "UNVERIFIED_DEMO"
+      }
+    },
+    "elapsed_ms": 15000,
+    "starting_level": {
+      "status": "known",
+      "value": 12
+    },
+    "ending_level": {
+      "status": "known",
+      "value": 13
+    },
+    "observed_quests": [],
+    "changed_equipment": [],
+    "intervals": [
+      {
+        "start_ms": 0,
+        "end_ms": 10000,
+        "quality": "unclassified",
+        "label": "manual_sample"
+      }
+    ],
+    "gaps": [
+      {
+        "start_ms": 10000,
+        "end_ms": 15000,
+        "reason": "recording_disabled"
+      }
+    ],
+    "methodology": "Synthetic command-mock analytics: intervals are unclassified, pause is a gap."
+  },
+  "progression": {
+    "observed_level_change": 1,
+    "unique_observed_quest_count": 0,
+    "equipment_change_item_count": 0
+  },
+  "timing": {
+    "covered_ms": 15000,
+    "totals": {
+      "observed_ms": 0,
+      "estimated_ms": 0,
+      "unclassified_ms": 10000,
+      "gap_ms": 5000
+    },
+    "uncovered_ms": 0,
+    "categories": {
+      "manual_sample": {
+        "observed_ms": 0,
+        "estimated_ms": 0,
+        "unclassified_ms": 10000,
+        "gap_ms": 0
+      }
+    },
+    "gap_reasons_ms": {
+      "recording_disabled": 5000
+    }
+  },
+  "clock_flags": [],
+  "utc": {
+    "status": "uncertain",
+    "reason": {
+      "code": "missing_or_untrusted_time"
+    }
+  }
+}

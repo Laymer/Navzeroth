@@ -41,7 +41,8 @@ function Session.new(monotonic, clock)
         if read and type(result)=='table' then metadata=result end
       end
       V.metadata(metadata)
-      return {mono=mono,utc=metadata.observed_at_utc_ms,clock_trust=metadata.clock_trust or 'uncertain'}
+      return {mono=mono,utc=metadata.observed_at_utc_ms,
+        clock_trust=metadata.clock_trust or 'uncertain'}
     end)
     if not ok then return fail('session_clock_unavailable') end
     if not value then return fail('session_clock_reset') end
@@ -77,7 +78,9 @@ function Session.new(monotonic, clock)
     if not document or state.phase~=phase then return nil,'session_' .. phase .. '_required' end
     return true
   end
-  local function unclassified() return {type='activity',label='manual_sample',quality='unclassified'} end
+  local function unclassified()
+    return {type='activity',label='manual_sample',quality='unclassified'}
+  end
   state.start=function(_,spec)
     if state.phase=='recording' or state.phase=='paused' then return nil,'session_stop_required' end
     local valid,copy=pcall(function()
@@ -110,7 +113,9 @@ function Session.new(monotonic, clock)
       V.observation(result,function(_,owner,key) V.integer(owner,key,1,65535) end)
       return assert(frozen(result))
     end)
-    if not read then level={status='unknown'};state.observation_warning='session_level_unreadable' end
+    if not read then
+      level={status='unknown'};state.observation_warning='session_level_unreadable'
+    end
     return append({unclassified(),{type='level',level=level}},value)
   end
   state.pause=function(_)
@@ -126,7 +131,9 @@ function Session.new(monotonic, clock)
     if result then state.phase='recording' end;return result,why
   end
   state.stop=function(_)
-    if state.phase~='recording' and state.phase~='paused' then return nil,'session_active_required' end
+    if state.phase~='recording' and state.phase~='paused' then
+      return nil,'session_active_required'
+    end
     local value,code=reading();if not value then return nil,code end
     local kinds=state.phase=='paused' and {{type='logout'}} or {unclassified(),{type='logout'}}
     local result,why=append(kinds,value)
@@ -135,7 +142,9 @@ function Session.new(monotonic, clock)
   state.export=function(_,db)
     if state.phase~='stopped' then return nil,'session_stop_before_export' end
     if not document then return nil,'session_missing' end
-    if type(db)~='table' or getmetatable(db)~=nil or db.db_version~=ns.Version.db_version then return nil,'session_db_version' end
+    if type(db)~='table' or getmetatable(db)~=nil or db.db_version~=ns.Version.db_version then
+      return nil,'session_db_version'
+    end
     local text,code=Session.encode(document)
     if not text then db.session_export_error=code;return nil,code end
     db.session_export,db.session_export_error=text,nil
