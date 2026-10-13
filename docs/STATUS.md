@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: record M2.1 user-reported level capture/import evidence; next is clock/freshness verification.
-Owner: Codex root, sole writer; evidence baseline main d5326c2.
+Current task: capture clock observation/confirmation and v0.2.0 release.
+Owner: Codex root, sole writer; release baseline main c460297.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -207,3 +207,15 @@ and [handoff](handoffs/2026-10-13-M2.1-snapshot-export.md).
 This verifies the level-only flow by user report in those conditions; the previously
 recorded pre-test limitations remain historical. Clock/freshness, locale code,
 equipment, quests, position, restrictions and plan execution remain unverified.
+
+
+## v0.2.0 capture timing / publication
+
+User authorized implementation, protected-main integration, tag and GitHub release.
+See [handoff](handoffs/2026-10-13-v0.2.0-capture-timing.md) and
+[release notes](releases/0.2.0.md). Clock readings stay uncertain until explicit
+operator UTC comparison/confirmation; drift/reversals/failures and reload revoke
+trust. No elapsed gameplay time is exported. Actual clock API/confirmation behavior
+on 70338 remains unverified; level-only flow retains its one user-reported result.
+Six version declarations and workspace lock entries are 0.2.0. Schema/layout v1
+remain unchanged; release is a developer prerelease, not full M0/M2 acceptance.

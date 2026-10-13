@@ -129,10 +129,13 @@ function Get-SourceVersion {
     $toc = Read-Text "addons/$AddonName/$AddonName.toc"
     if ($toc -match '(?m)^##\s*Version:\s*(\S+)') { $found["addons/$AddonName/$AddonName.toc"] = $Matches[1] }
 
+    $lua = Read-Text "addons/$AddonName/Core/Version.lua"
+    if ($lua -match '(?m)^\s*addon\s*=\s*"([^"]+)"') { $found["addons/$AddonName/Core/Version.lua"] = $Matches[1] }
+
     $distinct = @($found.Values | Sort-Object -Unique)
-    if ($found.Count -ne 5 -or $distinct.Count -ne 1) {
+    if ($found.Count -ne 6 -or $distinct.Count -ne 1) {
         $report = ($found.GetEnumerator() | ForEach-Object { "  $($_.Key): $($_.Value)" }) -join [Environment]::NewLine
-        throw "Version numbers disagree or are missing (expected 5 equal values):$([Environment]::NewLine)$report"
+        throw "Version numbers disagree or are missing (expected 6 equal values):$([Environment]::NewLine)$report"
     }
     $version = $distinct[0]
     if ($ExpectedVersion -and $ExpectedVersion.TrimStart('v') -ne $version) {

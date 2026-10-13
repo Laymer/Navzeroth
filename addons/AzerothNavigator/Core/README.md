@@ -128,3 +128,21 @@ complete snapshot_export after validation, retaining prior exports on failure.
 Only Diagnostics.lua binds an experimental explicit level capture to the
 user-reported 70338 build. Other adapters, clocks, locale codes and real capture
 verification remain future work. Existing diagnostic encoder/format are unchanged.
+
+## v0.2.0 explicit clock trust
+
+Clock.new(utcSeconds, monotonicSeconds) injects callbacks; no client I/O in Core.
+probe records an uncertain UTC candidate and clears prior trust. confirm requires a
+pending probe, continuity within five seconds and a monotonic delay no longer than
+120 seconds; Diagnostics exposes it only as explicit operator acknowledgment after
+comparison with trusted UTC. Readable return shapes alone never set clock trust.
+
+capture samples monotonic before/after UTC (maximum two-second span), rejects bad
+values, and detects backward readings or cumulative/adjacent drift beyond five
+seconds. Any failure/jump revokes trust. UTC candidates are recorded as integer
+milliseconds even while uncertain; missing clocks leave the timestamp absent.
+No session-relative time is exported into the persistent logical producer stream.
+clear and a new Clock instance revoke all trust; nothing is persisted.
+
+Callbacks are experimentally GetServerTime/GetTime in Diagnostics, not verified
+Forever capabilities. Existing level capture remains available if clocks fail.
