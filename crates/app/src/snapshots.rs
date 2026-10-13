@@ -369,7 +369,7 @@ impl SnapshotApplication {
             crate::plan_export::compile(&report, snapshot, content, clock)
         })
     }
-    fn with_planning<T>(
+    pub(crate) fn with_planning<T>(
         &self,
         text: &str,
         now: Option<UtcMillis>,

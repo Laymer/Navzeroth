@@ -60,6 +60,126 @@ function Diagnostics.attach(env)
     end
   end
 
+  local function renderPlan(model)
+    state.hud_model = model
+    if not state.settings.hud_visible then
+      if state.hud_frame then pcall(function() state.hud_frame:Hide() end) end
+      return
+    end
+    if type(env.CreateFrame) ~= 'function' then return end
+    local ok = pcall(function()
+      if not state.hud_frame then
+        local frame = env.CreateFrame('Frame', nil, env.UIParent)
+        frame:SetSize(420, 220)
+        frame:SetPoint('TOP', 0, -120)
+        frame:SetMovable(true)
+        frame:EnableMouse(true)
+        frame:RegisterForDrag('LeftButton')
+        frame:SetScript('OnDragStart', function(self) self:StartMoving() end)
+        frame:SetScript('OnDragStop', function(self) self:StopMovingOrSizing() end)
+        local text = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+        text:SetAllPoints(frame)
+        text:SetJustifyH('LEFT')
+        state.hud_frame, state.hud_text = frame, text
+      end
+      -- Imported text is display data: escape client texture/hyperlink markup.
+      state.hud_text:SetText(state.plan_controls:describe(model):gsub('|', '||'))
+      state.hud_frame:Show()
+    end)
+    if not ok then state.plan_ui_code = 'hud_ui_unavailable' end
+  end
+
+  local function ensurePlanControls()
+    if state.plan_controls then return state.plan_controls end
+    local build = Capabilities.probe(env).build
+    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
+      return nil, 'plan_build_unrecorded'
+    end
+    local context = {namespace='reference', build={edition=Version.edition,
+      build=build.version .. '.' .. build.build, interface=build.interface}}
+    if not state.last_snapshot and state.persist and state.db.snapshot_export then
+      local cached, cachedCode = ns.Snapshot.restoreTransport(state.db.snapshot_export,
+        {context=context, fixture=false})
+      if cached then state.last_snapshot, state.snapshot_cached = cached, true
+      else state.cached_snapshot_code = cachedCode end
+    end
+    local plans = ns.Plan.new({context=context, fixture=false})
+    state.plan_controls = ns.PlanControls.new(plans, function()
+      if not state.last_snapshot then return {} end
+      local now = clock:capture()
+      return {snapshot=state.last_snapshot, fixture=false,
+        cached_snapshot=state.snapshot_cached == true,
+        freshness={clock_trust=now.clock_trust, now_utc_ms=now.observed_at_utc_ms,
+          max_age_ms=1800000}, stale_policy='reject'}
+    end, renderPlan)
+    return state.plan_controls
+  end
+
+  local function planImport(text)
+    local controls, code = ensurePlanControls()
+    if not controls then say('plan unavailable: ' .. code); return end
+    local receipt, importCode = controls:import(text)
+    if not receipt then say('plan import failed (' .. importCode .. '); prior plan retained')
+    else
+      say('plan imported; runtime only, reload clears it')
+      say(controls:describe():gsub("|", "||"))
+    end
+    return receipt, importCode
+  end
+
+  local function pastePlan()
+    if type(env.CreateFrame) ~= 'function' then say('plan paste UI unavailable'); return end
+    local ok = pcall(function()
+      if not state.paste_frame then
+        local frame = env.CreateFrame('Frame', nil, env.UIParent)
+        frame:SetSize(520, 300)
+        frame:SetPoint('CENTER')
+        local title = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+        title:SetPoint('TOP', 0, -10)
+        title:SetText('Paste ANAV1 plan (32 KiB). Import explicitly; reload clears plan.')
+        local input = env.CreateFrame('EditBox', nil, frame)
+        input:SetSize(480, 210)
+        input:SetPoint('TOP', 0, -35)
+        input:SetMultiLine(true)
+        input:SetAutoFocus(false)
+        input:SetMaxLetters(32769) -- one extra byte makes overflow a visible rejection
+        input:SetFontObject('ChatFontNormal')
+        input:SetScript('OnEscapePressed', function() frame:Hide() end)
+        local import = env.CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
+        import:SetSize(120, 24); import:SetPoint('BOTTOMLEFT', 20, 12); import:SetText('Import')
+        import:SetScript('OnClick', function()
+          local read, text = pcall(function() return input:GetText() end)
+          if read then planImport(text) else say('plan paste unreadable; prior plan retained') end
+        end)
+        local close = env.CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
+        close:SetSize(120, 24); close:SetPoint('BOTTOMRIGHT', -20, 12); close:SetText('Close')
+        close:SetScript('OnClick', function() frame:Hide() end)
+        state.paste_frame, state.paste_input = frame, input
+      end
+      state.paste_frame:Show()
+    end)
+    if not ok then say('plan paste UI unavailable (experimental client binding)') end
+  end
+
+  local function planSlash(message)
+    local command, tail = '', ''
+    if type(message) == 'string' then
+      command, tail = message:match('^%s*(%S+)%s*(.*)$')
+      command = command and command:lower() or ''
+    end
+    if command == 'paste' then pastePlan(); return end
+    if command == 'import' then return planImport(tail) end
+    local controls, code = ensurePlanControls()
+    if not controls then say('plan unavailable: ' .. code); return end
+    if command == 'clear' then controls:clear(); say('loaded plan cleared')
+    elseif command == 'status' then say(controls:describe(controls:status()):gsub("|", "||"))
+    elseif command == 'show' or command == 'hide' then
+      state.settings.hud_visible = command == 'show'
+      if state.persist then state.db.settings.hud_visible = state.settings.hud_visible end
+      controls:refresh()
+    else say('/anavplan paste | import ANAV1:... | status | show | hide | clear') end
+  end
+
   local function run()
     local report = Capabilities.probe(env)
     local stored, code = false, "export_not_persisted"
@@ -138,18 +258,28 @@ function Diagnostics.attach(env)
     local level, code = ns.Snapshot.readLevel(getter, metadata)
     local context = {namespace='reference', build={edition=Version.edition,
       build=build.version .. '.' .. build.build, interface=build.interface}}
+    local questApi = type(env.C_QuestLog) == 'table' and env.C_QuestLog or {}
+    local quests, questDiagnostics = ns.Snapshot.readQuests(questApi.GetNumQuestLogEntries,
+      questApi.GetInfo, context, metadata)
+    if not quests then say('snapshot failed: ' .. questDiagnostics); return end
     local spec = {id='snapshot-' .. profile .. '-' .. string.format('%.0f', sequence),
       character=profile, context=context, fixture=false, locale='unknown',
       capture=metadata, source_revision='addon-observations-v1',
       capabilities={level={context=context, status=level.status == 'known' and
         'verified_available' or level.status == 'unsupported' and
-        'verified_unavailable' or 'untested'}}}
-    local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end})
+        'verified_unavailable' or 'untested'},
+        quests={context=context, status='verified_available'}}}
+    local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end,
+      quests=function() return quests end})
     if not captured then say('snapshot failed: ' .. errorCode); return end
     local text, storeCode = ns.Snapshot.store(state.db, captured,
       {fixture=false, locale=spec.locale})
     if not text then say('snapshot failed: ' .. storeCode); return end
     state.db.snapshot_sequence = sequence
+    state.db.snapshot_quest_diagnostics = questDiagnostics
+    state.last_snapshot = captured
+    state.snapshot_cached = false
+    if state.plan_controls then state.plan_controls:refresh() end
     say('snapshot stored (' .. #text .. ' bytes). /reload or logout, then import ' ..
       'AzerothNavigatorDB / snapshot_export from the selected SavedVariables file.')
     if code then say('level remains unavailable (' .. code .. ')') end
@@ -212,6 +342,9 @@ function Diagnostics.attach(env)
   state.onEvent = onEvent
   state.onSlash = onSlash
   state.run = run
+  state.onPlanSlash = function(message)
+    if not pcall(planSlash, message) then say('plan action failed (plan_internal)') end
+  end
 
   if type(env.CreateFrame) == "function" then
     local created, frame = pcall(env.CreateFrame, "Frame")
@@ -229,6 +362,8 @@ function Diagnostics.attach(env)
   if type(env.SlashCmdList) == "table" then
     env.SlashCmdList[SLASH_KEY] = onSlash
     env["SLASH_" .. SLASH_KEY .. "1"] = SLASH_COMMAND
+    env.SlashCmdList.ANAVPLAN = state.onPlanSlash
+    env.SLASH_ANAVPLAN1 = '/anavplan'
   end
 
   return state

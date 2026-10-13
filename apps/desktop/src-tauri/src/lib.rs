@@ -76,6 +76,16 @@ async fn export_plan(
     blocking(state, move |app| app.export_plan(&text, system_now())).await
 }
 #[tauri::command]
+async fn inspect_plan_route(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::routes::RouteInspection, AppError> {
+    blocking(state, move |app| {
+        app.inspect_plan_route(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
 async fn plan_session(
     state: State<'_, Application>,
     text: String,
@@ -256,6 +266,58 @@ async fn get_snapshot_markers(
     blocking(state, |app| app.markers(system_now())).await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn import_session_text(
+    state: State<'_, Application>,
+    profile_id: String,
+    text: String,
+) -> Result<azeroth_app::sessions::SessionImportReceipt, AppError> {
+    blocking(state, move |app| {
+        app.import_session_text(&profile_id, &text)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn import_session_file(
+    state: State<'_, Application>,
+    profile_id: String,
+    path: String,
+    format: FileInputFormat,
+) -> Result<azeroth_app::sessions::SessionImportReceipt, AppError> {
+    blocking(state, move |app| {
+        app.import_session_file(&profile_id, std::path::Path::new(&path), format)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn list_sessions(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<Vec<azeroth_app::sessions::SessionListEntry>, AppError> {
+    blocking(state, move |app| app.list_sessions(&profile_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_session_detail(
+    state: State<'_, Application>,
+    profile_id: String,
+    session_id: azeroth_core::types::SessionId,
+) -> Result<azeroth_app::sessions::SessionDetail, AppError> {
+    blocking(state, move |app| {
+        app.get_session_detail(&profile_id, &session_id)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn delete_session(
+    state: State<'_, Application>,
+    profile_id: String,
+    session_id: azeroth_core::types::SessionId,
+) -> Result<bool, AppError> {
+    blocking(state, move |app| {
+        app.delete_session(&profile_id, &session_id)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
 async fn get_gear_catalog(
     state: State<'_, Application>,
     profile_id: String,
@@ -285,12 +347,18 @@ pub fn run() {
             atlas_protocol::respond(&request)
         })
         .invoke_handler(tauri::generate_handler![
+            import_session_text,
+            import_session_file,
+            list_sessions,
+            get_session_detail,
+            delete_session,
             get_gear_catalog,
             compare_gear,
             get_historical_snapshot,
             promote_snapshot,
             get_planning_catalog,
             plan_session,
+            inspect_plan_route,
             export_plan,
             get_app_status,
             list_profiles,

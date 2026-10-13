@@ -43,6 +43,7 @@ async function mockCommands(page: Page) {
           case "activate_content": activeContent = true; return inspection;
           case "get_active_content": return activeContent ? inspection : null;
           case "get_planning_catalog": return { snapshot_id: "current-profile-one", revision: activeContent ? planning.envelope.payload.revision : null, fixture: true, nodes: planning.envelope.payload.nodes, objectives: planning.envelope.payload.objectives };
+          case "inspect_plan_route": return { context: snapshot.payload.context, fixture: true, frames: [], hops: [{ leg: 0, stopping: false, hop: { from: { id: "demo-node-1" }, to: { id: "demo-node-2" }, mode: "walking", cost_ms: 30000, status: "estimated" }, from: { outcome: "gap", gap: "no_image_for_map" }, to: { outcome: "gap", gap: "no_image_for_map" }, requirements: { status: "not_applicable" }, schematic_connection: false, geometry_gap: "Exact dataset projection unavailable; inspect endpoint gaps" }] };
           case "export_plan": return { text: "ANAV1:synthetic-command-mock", byte_count: 28, plan_id: "mock-plan", expires_at_utc_ms: 1 };
           case "plan_session": return { request: JSON.parse(String(args.text)), fixture: true, context: snapshot.payload.context, assumptions: ["Synthetic manual estimates"], filtered: [], result: { selected: [{ candidate: "synthetic-service", utility: 10, incremental_ms: 31000, completion_ms: 1000, service_ms: 0, travel: { total_ms: 30000 }, expected_session_ms: 61000 }], stopping: { total_ms: 30000 }, expected_total_ms: 61000, estimated: true, alternatives: [], trace: [], termination: "no_feasible_candidate" } };
           case "select_profile": selected = String(args.profile_id); return null;
@@ -216,6 +217,9 @@ test("content activation enables explicit planning and editing invalidates the r
   await page.getByLabel("completion_ms", { exact: true }).fill("1000");
   await page.getByRole("button", { name: "Plan session", exact: true }).click();
   await expect(page.getByRole("region", { name: "Planning result" })).toContainText("Total 61000 ms");
+  await page.getByRole("button", { name: "Inspect route", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Route inspection", exact: true })).toBeVisible();
+  await expect(page.getByText("Exact dataset projection unavailable; inspect endpoint gaps", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Export plan", exact: true }).click();
   await expect(page.getByLabel("Plan export text")).toHaveValue("ANAV1:synthetic-command-mock");
   await page.getByRole("button", { name: "Copy plan", exact: true }).click();

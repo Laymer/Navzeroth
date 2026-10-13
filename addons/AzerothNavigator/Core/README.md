@@ -146,3 +146,45 @@ clear and a new Clock instance revoke all trust; nothing is persisted.
 
 Callbacks are experimentally GetServerTime/GetTime in Diagnostics, not verified
 Forever capabilities. Existing level capture remains available if clocks fail.
+
+## Experimental bounded quest capture (wave 3 task 2)
+
+`Snapshot.readQuests(getCount, getInfo, context, metadata)` enumerates at most
+1024 log entries, with a final count consistency check. Exceptions, incomplete
+entry shapes, duplicates and changed/oversized counts reject the whole read.
+Confirmed headers and malformed IDs are excluded with bounded reason counts.
+Quest identity is the canonical decimal API ID; no authored identifiers are guessed.
+Accepted records carry Known true; readable boolean completion retains false.
+Unreadable completion and turn-in history remain Unknown. Quest objectives and
+snapshot objectives stay empty because no validated stage mapping is available.
+Missing adapters produce an empty unknown map with an explicit diagnostic.
+
+Only the manual `/anavdiag snapshot <anonymous-profile-id>` command binds these
+experimental reads, on the previously recorded 70338 tuple. Successful captures
+store diagnostic counts separately in `snapshot_quest_diagnostics`. Incomplete
+reads or export size failure preserve the previous text and sequence. No background
+capture, completion-history API or event subscription was added. Synthetic harness
+success does not verify actual-client readability or restricted-context behavior.
+
+## Runtime plan controls (wave 3 task 6)
+
+`PlanControls.new(plans, observe, render)` exposes explicit `import`, `status`,
+`clear`, `refresh` and `describe`. Imports use the existing strict 32 KiB ANAV1
+validator. Snapshot replacement suspends advice, while dependency identity checks
+and objective completion mappings are explicitly unavailable in this wave.
+Descriptions include expiry, uncertain observation age and revalidation needs.
+
+`/anavplan paste` opens an experimental manual paste UI; the Import button applies
+replacement explicitly. `/anavplan import ANAV1:...` supports text-only environments.
+`status`, `show`, `hide` and `clear` inspect/control the runtime plan. Only HUD
+visibility persists; reloading clears plan and observed runtime state. UI methods
+are guarded and imported text escapes client markup. Capture/import/status actions
+refresh advice; there is no timer, automatic client read or inferred completion.
+Actual 70338 UI behavior, frame support and restricted contexts remain unverified.
+
+Explicit plan controls may restore the earlier addon-owned `snapshot_export` when
+no runtime snapshot exists after reload. `Snapshot.restoreTransport` enforces the
+32 KiB bound and original context/fixture/source/metadata consistency, returns an
+independent normalized copy and preserves the original capture age/trust. The HUD
+labels cached observations; restoring never reestablishes current clock trust or
+performs a fresh client observation. Malformed/mismatched documents are ignored.
