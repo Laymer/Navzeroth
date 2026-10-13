@@ -512,6 +512,13 @@ fn build_one(
         SessionUtc::Uncertain {
             reason: SessionUtcUncertainty::TimelineDiscontinuity,
         }
+    } else if events
+        .iter()
+        .any(|event| event.clock_trust != ClockTrust::Trusted || event.utc.is_none())
+    {
+        SessionUtc::Uncertain {
+            reason: SessionUtcUncertainty::MissingOrUntrustedTime,
+        }
     } else {
         match (first.clock_trust, first.utc) {
             (ClockTrust::Trusted, Some(start_utc_ms)) => SessionUtc::Mapped { start_utc_ms },
