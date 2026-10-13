@@ -421,3 +421,25 @@ fn undeclared_ambiguous_and_unready_alternatives_are_not_recommended() {
         )
         .unwrap();
 }
+
+#[test]
+fn contradictory_party_copy_suspends_ungated_advancement() {
+    let sandbox = replay();
+    sandbox
+        .run::<()>(
+            "party_conflict",
+            r#"
+      ns.setObjective(ns.primary, true)
+      local partyCopy = assert(ns.Decode.decode(ns.snapshot_text))
+      ns.context.party = {id='local-party', context=partyCopy.context,
+        participants={partyCopy}}
+      assert(ns.hud:refresh().status == 'evaluation_error')
+      ns.context.party = nil
+      ns.setObjective(ns.primary, false)
+      assert(ns.hud:refresh().step_id == 'demo-step-1')
+      ns.context.limits = {depth=12, nodes=1024, steps=0}
+      assert(ns.hud:refresh().status == 'evaluation_error')
+    "#,
+        )
+        .unwrap();
+}

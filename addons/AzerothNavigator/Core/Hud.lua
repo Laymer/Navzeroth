@@ -75,6 +75,8 @@ function Hud.new(plans, observe, render)
         context.freshness.now_utc_ms >= plan.expires_at_utc_ms then model.status = 'expired'
       elseif not dependenciesMatch(plan, context.dependencies) then
         model.status = 'dependencies_changed'
+      elseif P.evaluate({op='all', predicates={}}, context).error then
+        model.status = 'evaluation_error'
       else
         local currentRevision = plans:revision()
         if currentRevision ~= revision then progress, revision = {}, currentRevision end
