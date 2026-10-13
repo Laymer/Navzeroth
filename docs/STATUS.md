@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: v0.1.0 developer-preview release preparation and publication; next implementation is M4.6.
-Owner: Codex root, sole writer; release baseline main 6231d79.
+Current task: M4.6 pure Lua plan advancement and stable alternatives; next is live capability evidence / M2.1 snapshot adapters.
+Owner: Codex root, sole writer; M4.6 baseline main a0ee6bc.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -17,12 +17,12 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
 | M2 | IN_PROGRESS | Bounded character imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party transport imports and verified live bindings remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded manual ANAV1 export implemented; automatic step advancement remains. |
+| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded manual ANAV1 export implemented; pure Lua advancement/stable alternatives implemented on the M4.6 branch; live bindings remain. |
 | M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging merged in PR #39; v0.1.0 preview preparation is in progress. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging merged in PR #39; v0.1.0 developer preview published. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
@@ -130,8 +130,10 @@ access was added. Remaining watcher/platform/model limitations are in the handof
 
 ## Next dependency-ready work
 
-M4.6: explicit Lua advancement and stable alternative/invalidation policy, with
-replay fixtures. Manual bounded export is delivered in PR #41; automatic advancement
+M4.6 pure advancement is implemented with synthetic replay tests; see its
+[handoff](handoffs/2026-10-13-M4.6-plan-advancement.md). M0.4 client capability
+evidence is needed before M2.1 real-character observation adapters and snapshot
+export can be verified. Manual bounded export is delivered in PR #41; automatic advancement
 and a live addon import UI remain later tasks. Continue analytical/gear views and
 permitted real-content authoring when their inputs are available. Live client
 checks need sanitized evidence from the recorded build. PR #39 integrates the Windows
@@ -164,3 +166,13 @@ See [release notes](releases/0.1.0.md) and [release handoff](handoffs/2026-10-13
 PR #39 merged as 6231d79; all eight post-merge CI jobs passed (38375740810).
 Full live-game release gates remain unverified; the 0.x developer preview is marked
 as a prerelease under the existing workflow convention.
+
+## M4.6 implementation
+
+Participant-scoped objective completion, sticky preloaded alternatives and explicit
+revalidation are implemented on feature/M4.6-plan-advancement. Unknown/stale
+completion never advances; alternative IDs without readiness declarations stay
+unavailable. Schema v1 remains unchanged. No live bindings or user-facing addon
+import/export UI are implied. See the task handoff for actual checks and review.
+v0.1.0 was published as a prerelease at a0ee6bc, with eight main CI jobs and tag
+packaging run 38378570735 passing. The immutable release is unchanged by this work.

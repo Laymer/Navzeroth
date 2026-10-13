@@ -28,6 +28,8 @@ dependencies, IDs, timing, predicates, participants, evidence, source claims,
 and addon limits (100 steps, 8 alternatives, rule depth 12). Failure retains
 the previous plan. Success returns `{id, fixture, steps}`. `state:get()` returns
 an independent decoded envelope; `state:clear()` removes the loaded plan.
+`state:revision()` changes on successful changed-content replacement or clear;
+identical reimports and failed replacements retain progression.
 Fixture and real documents cannot be interchanged at this boundary.
 
 `Hud.new(state, observe, render)` accepts callbacks. `hud:refresh()` calls
@@ -40,9 +42,34 @@ alternatives and predicate diagnostics are retained. True invalidation retains t
 does not prove completion. Unknown prerequisite/invalidation suppresses ready.
 For PlanStep gates, not_applicable declares no prerequisite/no invalidation, so
 it yields true/false respectively; all other unavailable statuses stay unknown.
-Alternatives are displayed in declared order; automatic alternative selection,
-revalidation event dispatch, stateful advancement and client rendering belong
-to later milestones.
+M4.6 adds participant-scoped, in-memory advancement. A fresh, known true
+objective observation records completion for that participant and step; false,
+missing, unknown, restricted, unsupported and stale observations never advance.
+Observed completion is retained within that loaded revision to avoid oscillation;
+a changed plan or clear resets it. This is not persisted across HUD instances/reloads.
+Completion uses the exact declared step objective ID. Quest-stage readiness and
+invalidation are not completion evidence; adapters must explicitly supply the
+aggregate objective observation when supported.
+
+Alternatives are considered in declared order only among unambiguous loaded steps
+for that objective and participant. They need fresh known-false completion,
+known-true prerequisites and known-false invalidation. IDs without a loaded readiness
+definition produce a gap rather than an inferred unlock/route. Keep a ready selected
+alternative even when the primary becomes ready; reconsider only when selected
+readiness/completion changes. Completing an alternative does not complete the
+primary, and its own ordered step is not recommended again. Models include
+anchor_step_id, selected_alternative, completion, rejected_alternatives and
+requires_revalidation. Alternative recommendations set travel_requires_revalidation
+and requires_revalidation because v1 global travel has no per-alternative route.
+All advice and advancement reject stale predicate inputs,
+even when the injected caller requests allow_stale.
+
+Optional context.dependencies carries dataset_revision, ruleset_version,
+score_model_version and optionally snapshots (the exact ordered plan input refs).
+A mismatch suspends evaluation as dependencies_changed. The model explicitly reports
+dependency_inputs_supplied; omitted live version inputs do not claim verification.
+Expiry/context/fixture checks suspend advancement. Live event dispatch, rendering,
+objective observation adapters and the plan-import UI remain future environment work.
 
 Checks: `cargo test --locked -p azeroth-lua-harness` consumes all 192 cases in
 `fixtures/predicates/v1` unchanged, including the three Lua-only decoder traps,

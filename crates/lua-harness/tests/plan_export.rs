@@ -131,3 +131,38 @@ fn maximum_compiled_predicate_depth_is_consumed_by_lua() {
     sandbox.ns().set("text", exported_at_depth(9)).unwrap();
     assert!(sandbox.run::<bool>("compiled depth", "local e = assert(ns.Decode.decode(ns.text:sub(7))); local p = ns.Plan.new({context=e.payload.context,fixture=true}); return p:importTransport(ns.text) ~= nil").unwrap());
 }
+
+#[test]
+fn rust_export_advances_only_on_explicit_objective_completion() {
+    let sandbox = common::strict_core();
+    sandbox.ns().set("exported", exported_at_depth(0)).unwrap();
+    sandbox
+        .ns()
+        .set(
+            "snapshot_text",
+            include_str!("../../../fixtures/contracts/v1/character-snapshot.json"),
+        )
+        .unwrap();
+    sandbox
+        .run::<()>(
+            "exported_progression",
+            r#"
+      local envelope = assert(ns.Decode.decode(ns.exported:sub(7)))
+      local plans = ns.Plan.new({context=envelope.payload.context, fixture=true})
+      assert(plans:importTransport(ns.exported))
+      local snapshot = assert(ns.Decode.decode(ns.snapshot_text)).payload
+      local context = {snapshot=snapshot, fixture=true,
+        freshness={clock_trust='trusted', now_utc_ms=1791791990100, max_age_ms=1800000}}
+      local hud = ns.Hud.new(plans, function() return context end, function() end)
+      local step = plans:get().payload.steps[1]
+      assert(hud:refresh().step_id == step.id)
+      snapshot.level.value = 1
+      assert(hud:refresh().status == 'invalidated')
+      assert(hud:refresh().step_id == step.id)
+      snapshot.objectives[step.objective] = {status='known', value=true,
+        clock_trust='trusted', observed_at_utc_ms=1791791990100}
+      assert(hud:refresh().status == 'complete')
+    "#,
+        )
+        .unwrap();
+}

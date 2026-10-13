@@ -152,13 +152,14 @@ function Plan.new(expected)
   local boundary = {fixture=expected.fixture, context={namespace=expected.context.namespace,
     build={edition=expected.context.build.edition, build=expected.context.build.build,
       interface=expected.context.build.interface}}}
-  local text
+  local text, revision = nil, 0
   local state = {}
   state.importText = function(_, candidate)
     local envelope, code = D.decode(candidate)
     if not envelope then return nil, code end
     local ok, result = pcall(validate, envelope, boundary)
     if not ok then return nil, 'plan_invalid' end
+    if candidate ~= text then revision = revision + 1 end
     text = candidate
     return {id=result.id, fixture=envelope.fixture, steps=#result.steps}
   end
@@ -175,7 +176,11 @@ function Plan.new(expected)
     if not text then return nil end
     return D.decode(text)
   end
-  state.clear = function(_) text = nil end
+  state.revision = function(_) return revision end
+  state.clear = function(_)
+    if text then revision = revision + 1 end
+    text = nil
+  end
   return state
 end
 ns.provide("Plan", Plan)
