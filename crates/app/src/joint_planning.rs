@@ -87,7 +87,7 @@ type JointView = (
     Vec<Option<Envelope<CharacterSnapshot>>>,
     Option<ContentRevision>,
 );
-fn view(store: &SqliteStore, id: &PartyId, now: Option<UtcMillis>) -> Result<JointView> {
+pub(crate) fn view(store: &SqliteStore, id: &PartyId, now: Option<UtcMillis>) -> Result<JointView> {
     let party = store
         .party(id)?
         .ok_or_else(|| invalid("No such local party"))?;
@@ -214,13 +214,19 @@ impl SnapshotApplication {
         })
     }
 }
-fn calculate(
+pub(crate) fn calculate(
     request: JointPlanningRequest,
     catalog: JointPlanningCatalog,
     snapshots: Vec<Envelope<CharacterSnapshot>>,
     content: &ContentRevision,
     now: Option<UtcMillis>,
 ) -> Result<JointPlanningReport> {
+    if request.candidates.len() > 128
+        || request.excluded.len() > 128
+        || !(2..=40).contains(&request.participants.len())
+    {
+        return Err(invalid("Joint planning input exceeds bounds"));
+    }
     let dataset = &content.envelope.payload;
     if request
         .excluded
