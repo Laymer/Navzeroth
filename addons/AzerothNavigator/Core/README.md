@@ -146,3 +146,22 @@ clear and a new Clock instance revoke all trust; nothing is persisted.
 
 Callbacks are experimentally GetServerTime/GetTime in Diagnostics, not verified
 Forever capabilities. Existing level capture remains available if clocks fail.
+
+## Experimental bounded quest capture (wave 3 task 2)
+
+`Snapshot.readQuests(getCount, getInfo, context, metadata)` enumerates at most
+1024 log entries, with a final count consistency check. Exceptions, incomplete
+entry shapes, duplicates and changed/oversized counts reject the whole read.
+Confirmed headers and malformed IDs are excluded with bounded reason counts.
+Quest identity is the canonical decimal API ID; no authored identifiers are guessed.
+Accepted records carry Known true; readable boolean completion retains false.
+Unreadable completion and turn-in history remain Unknown. Quest objectives and
+snapshot objectives stay empty because no validated stage mapping is available.
+Missing adapters produce an empty unknown map with an explicit diagnostic.
+
+Only the manual `/anavdiag snapshot <anonymous-profile-id>` command binds these
+experimental reads, on the previously recorded 70338 tuple. Successful captures
+store diagnostic counts separately in `snapshot_quest_diagnostics`. Incomplete
+reads or export size failure preserve the previous text and sequence. No background
+capture, completion-history API or event subscription was added. Synthetic harness
+success does not verify actual-client readability or restricted-context behavior.

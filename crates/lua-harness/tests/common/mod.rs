@@ -91,7 +91,7 @@ pub fn stub_client(version: &str, build: &str, interface: i64) -> Sandbox {
         .run::<()>(
             "stub-core",
             &format!(
-                "install_frame_stub(); install_build_info({version:?}, {build:?}, {interface})"
+                "install_frame_stub(); install_build_info({version:?}, {build:?}, {interface}); C_QuestLog.GetNumQuestLogEntries = function() return 0 end"
             ),
         )
         .expect("core stubs");
