@@ -32,12 +32,24 @@ async fn blocking<T: Send + 'static>(
         })?
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn get_joint_planning_catalog(state: State<'_, Application>, party_id: PartyId) -> Result<azeroth_app::joint_planning::JointPlanningCatalog, AppError> {
-    blocking(state, move |app| app.joint_planning_catalog(&party_id, system_now())).await
+async fn get_joint_planning_catalog(
+    state: State<'_, Application>,
+    party_id: PartyId,
+) -> Result<azeroth_app::joint_planning::JointPlanningCatalog, AppError> {
+    blocking(state, move |app| {
+        app.joint_planning_catalog(&party_id, system_now())
+    })
+    .await
 }
 #[tauri::command]
-async fn plan_joint_session(state: State<'_, Application>, text: String) -> Result<azeroth_app::joint_planning::JointPlanningReport, AppError> {
-    blocking(state, move |app| app.plan_joint_session(&text, system_now())).await
+async fn plan_joint_session(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::joint_planning::JointPlanningReport, AppError> {
+    blocking(state, move |app| {
+        app.plan_joint_session(&text, system_now())
+    })
+    .await
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -369,7 +381,6 @@ pub fn run() {
             plan_session,
             get_joint_planning_catalog,
             plan_joint_session,
-
             inspect_plan_route,
             export_plan,
             get_app_status,

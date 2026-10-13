@@ -4,6 +4,7 @@ import type { AppError, ProfileSummary, StoredParty } from "../commands/contract
 import { describeAge, describeUncertainty } from "../atlas/describe";
 import { describeObservation } from "../observation";
 import { PartyEligibility } from "./PartyEligibility";
+import { PartyPlanning } from "./PartyPlanning";
 
 type Detail = { phase: "loading" } | { phase: "ready"; party: StoredParty | null } | { phase: "error"; error: AppError };
 type Editor = { id: string; members: string[]; existing: boolean };
@@ -98,6 +99,7 @@ export function PartyScreen({ client, refreshKey = 0 }: { client: CommandClient;
         {participant.snapshot === null ? <p>Missing imported snapshot. Import this character to restore their state.</p> : <Participant snapshot={participant.snapshot} />}
       </li>)}</ul>
       <PartyEligibility key={party.id} client={client} partyId={party.id} refreshKey={refreshKey + revision} />
+      {party.participants.length >= 2 && <PartyPlanning key={`planning:${party.id}`} client={client} partyId={party.id} refreshKey={refreshKey + revision} />}
       <p>Session planning is not available yet.</p>
     </>}
     {editor && <form onSubmit={(event) => { event.preventDefault(); void save(); }}>

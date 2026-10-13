@@ -25,6 +25,7 @@ function mock() {
           { id: "one", display_name: "One", data_mode: "stored", context: envelope.payload.context, fixture: true },
           { id: "two", display_name: "Two", data_mode: "stored", context: envelope.payload.context, fixture: true },
         ]; break;
+        case "get_joint_planning_catalog": answer = { context: envelope.payload.context, fixture: true, revision: null, participants: [], nodes: [], objectives: [] }; break;
         case "get_party_quests": answer = { context: envelope.payload.context, fixture: true, revision: null, quests: [] }; break;
         case "list_parties": answer = party ? [party.id] : []; break;
         case "get_party":
@@ -69,7 +70,7 @@ it("creates a manual party, displays individual stale/missing state and removes 
   expect(await screen.findByText("character-one")).toBeInTheDocument();
   expect(screen.getByText("Last imported: captured 1 h ago (stale)")).toBeInTheDocument();
   expect(screen.getByText(/Missing imported snapshot/)).toBeInTheDocument();
-  expect(screen.getByText(/SYNTHETIC/)).toBeInTheDocument();
+  expect(screen.getAllByText(/SYNTHETIC/).length).toBeGreaterThan(0);
   expect(screen.getByText(/accepted true, completed false/)).toBeInTheDocument();
   expect(screen.getByText("Unknown (not observed)")).toBeInTheDocument();
   expect(calls).toContainEqual({ command: "save_party", input: { party_id: "Duo", profile_ids: ["one", "two"] } });
