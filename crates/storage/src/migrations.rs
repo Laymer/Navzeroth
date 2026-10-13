@@ -51,6 +51,16 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "immutable session events and summaries",
         sql: include_str!("schema_v5.sql"),
     },
+    Migration {
+        version: 6,
+        name: "bounded reminder state",
+        sql: include_str!("schema_v6.sql"),
+    },
+    Migration {
+        version: 7,
+        name: "explicit session calibration annotations",
+        sql: include_str!("schema_v7.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.

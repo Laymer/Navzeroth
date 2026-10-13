@@ -10,12 +10,12 @@ use common::{TempDb, count, raw};
 use rusqlite::Connection;
 
 const ADD_NOTE: Migration = Migration {
-    version: 6,
+    version: MIGRATIONS.len() as u32 + 1,
     name: "test: profile note",
     sql: "ALTER TABLE profiles ADD COLUMN note TEXT;",
 };
 const BROKEN: Migration = Migration {
-    version: 6,
+    version: MIGRATIONS.len() as u32 + 1,
     name: "test: fails partway",
     sql: "CREATE TABLE half_done (x INTEGER);
           INSERT INTO profiles (character_id) VALUES ('violates not null');",
@@ -39,7 +39,7 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 5);
+    assert_eq!(latest_version(), 7);
 }
 
 #[test]
@@ -276,7 +276,7 @@ fn populated_v3_upgrades_preserving_content_parties_and_snapshot_documents() {
     // Reconstruct the exact v3 schema; v4 only adds this empty audit table.
     raw(&db.path)
         .execute_batch(
-            "DROP TABLE sessions; DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version >= 4;",
+            "DROP TABLE session_calibration_annotations; DROP TABLE reminder_state; DROP TABLE sessions; DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version >= 4;",
         )
         .unwrap();
     let before = common::dump_state(&db.path);
@@ -289,4 +289,73 @@ fn populated_v3_upgrades_preserving_content_parties_and_snapshot_documents() {
         0
     );
     assert_eq!(count(&db.path, "SELECT COUNT(*) FROM dataset_revisions"), 1);
+}
+
+#[test]
+fn version_five_upgrade_preserves_sessions_and_adds_bounded_cascading_state() {
+    let db = TempDb::new("wave4-v5-upgrade");
+    let mut conn = raw(&db.path);
+    migrate_with(&mut conn, &MIGRATIONS[..5]).unwrap();
+    seed_profile(&db.path);
+    // Raw sentinel bytes test migration preservation, not session validity.
+    conn.execute("INSERT INTO sessions (profile_id,session_id,content_sha256,document,summary_document) VALUES (1,'kept',?1,'sentinel-events','sentinel-summary')", ["0".repeat(64)]).unwrap();
+    migrate(&mut conn).unwrap();
+    let documents: (String, String) = conn
+        .query_row(
+            "SELECT document,summary_document FROM sessions WHERE session_id='kept'",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )
+        .unwrap();
+    assert_eq!(
+        documents,
+        ("sentinel-events".into(), "sentinel-summary".into())
+    );
+    conn.execute("INSERT INTO reminder_state VALUES (1,'{}')", [])
+        .unwrap();
+    conn.execute(
+        "INSERT INTO session_calibration_annotations VALUES (1,'kept','{}')",
+        [],
+    )
+    .unwrap();
+    assert!(
+        conn.execute(
+            "UPDATE reminder_state SET document=?1",
+            ["x".repeat(1_048_577)]
+        )
+        .is_err()
+    );
+    assert!(
+        conn.execute(
+            "UPDATE session_calibration_annotations SET document=?1",
+            ["x".repeat(2049)]
+        )
+        .is_err()
+    );
+    assert!(
+        conn.execute(
+            "INSERT INTO session_calibration_annotations VALUES (1,'missing','{}')",
+            []
+        )
+        .is_err()
+    );
+    conn.execute("DELETE FROM sessions WHERE session_id='kept'", [])
+        .unwrap();
+    let annotations: i64 = conn
+        .query_row(
+            "SELECT COUNT(*) FROM session_calibration_annotations",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(annotations, 0);
+    let reminders: i64 = conn
+        .query_row("SELECT COUNT(*) FROM reminder_state", [], |r| r.get(0))
+        .unwrap();
+    assert_eq!(reminders, 1);
+    conn.execute("DELETE FROM profiles WHERE id=1", []).unwrap();
+    let reminders: i64 = conn
+        .query_row("SELECT COUNT(*) FROM reminder_state", [], |r| r.get(0))
+        .unwrap();
+    assert_eq!(reminders, 0);
 }
