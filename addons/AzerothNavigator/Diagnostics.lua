@@ -262,21 +262,29 @@ function Diagnostics.attach(env)
     local quests, questDiagnostics = ns.Snapshot.readQuests(questApi.GetNumQuestLogEntries,
       questApi.GetInfo, context, metadata)
     if not quests then say('snapshot failed: ' .. questDiagnostics); return end
+    local inventoryGetter
+    if type(env.GetInventoryItemLink) == 'function' then
+      inventoryGetter = function(slot) return env.GetInventoryItemLink('player', slot) end
+    end
+    local equipment, equipmentDiagnostics = ns.Snapshot.readEquipment(inventoryGetter,
+      context, metadata)
     local spec = {id='snapshot-' .. profile .. '-' .. string.format('%.0f', sequence),
       character=profile, context=context, fixture=false, locale='unknown',
       capture=metadata, source_revision='addon-observations-v1',
       capabilities={level={context=context, status=level.status == 'known' and
         'verified_available' or level.status == 'unsupported' and
         'verified_unavailable' or 'untested'},
-        quests={context=context, status='verified_available'}}}
+        quests={context=context, status='verified_available'},
+        equipment={context=context, status='verified_available'}}}
     local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end,
-      quests=function() return quests end})
+      quests=function() return quests end, equipment=function() return equipment end})
     if not captured then say('snapshot failed: ' .. errorCode); return end
     local text, storeCode = ns.Snapshot.store(state.db, captured,
       {fixture=false, locale=spec.locale})
     if not text then say('snapshot failed: ' .. storeCode); return end
     state.db.snapshot_sequence = sequence
     state.db.snapshot_quest_diagnostics = questDiagnostics
+    state.db.snapshot_equipment_diagnostics = equipmentDiagnostics
     state.last_snapshot = captured
     state.snapshot_cached = false
     if state.plan_controls then state.plan_controls:refresh() end
@@ -314,6 +322,28 @@ function Diagnostics.attach(env)
     end
     if command == "probe" then
       run()
+    elseif command == 'position' then
+      local ok = pcall(function()
+        local build = Capabilities.probe(env).build
+        if build.version ~= '1.60.1' or build.build ~= '70338' or
+          build.interface ~= '16001' then
+          say('position unavailable: build has no recorded capture evidence'); return
+        end
+        local mapApi = type(env.C_Map) == 'table' and env.C_Map or {}
+        local getMap, getPoint
+        if type(mapApi.GetBestMapForUnit) == 'function' then
+          getMap = function() return mapApi.GetBestMapForUnit('player') end
+        end
+        if type(mapApi.GetPlayerMapPosition) == 'function' then
+          getPoint = function(map) return mapApi.GetPlayerMapPosition(map, 'player') end
+        end
+        local result = ns.Snapshot.positionDiagnostics(getMap, getPoint)
+        state.position_diagnostics = result
+        if state.persist then state.db.position_diagnostics = result end
+        say('position diagnostic: ' .. result.code ..
+          '; snapshot location unknown (map/floor/instance/coordinate meaning unverified)')
+      end)
+      if not ok then say('position diagnostic failed (position_internal)') end
     elseif command == "clock" then
       local action = type(message) == 'string' and message:match('^%s*%S+%s+(%S+)%s*$')
       if type(message) == 'string' and
@@ -335,7 +365,7 @@ function Diagnostics.attach(env)
       end
     else
       say(Version.addon .. " usage: " .. SLASH_COMMAND ..
-        " probe | status | clock [trust|clear] | snapshot <anonymous-profile-id>")
+        " probe | status | position | clock [trust|clear] | snapshot <anonymous-profile-id>")
     end
   end
 
