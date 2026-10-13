@@ -84,13 +84,38 @@ fn bounds_unknown_reads_clock_drift_and_failed_export_keep_previous() {
 #[test]
 fn actual_rust_session_bytes_pass_lua_and_desktop_loaders() {
     let document:SessionDocument=serde_json::from_value(serde_json::json!({"format":"anav-session-events","version":1,"fixture":true,"batch":{"character":"demo-character-paladin","context":{"namespace":"demo","build":{"edition":"wow_forever","build":"UNVERIFIED_DEMO","interface":"UNVERIFIED_DEMO"}},"events":[{"session":"rust-1","sequence":1,"elapsed_ms":0,"utc":1000,"clock_trust":"trusted","kind":{"type":"session_start"}},{"session":"rust-1","sequence":2,"elapsed_ms":5000,"utc":6000,"clock_trust":"trusted","kind":{"type":"activity","quality":"unclassified","label":"sample"}}]}})).unwrap();
-    let text = azeroth_ingest::session::encode_text(&document).unwrap();
-    let sandbox = common::strict_core();
-    let returned:String=sandbox.run("rust-bytes",&format!("local text={};local d=assert(ns.Decode.decode(text:sub(14)));assert(d.version==1 and d.batch.events[1].elapsed_ms==0);return assert(ns.Session.encode(d))",serde_json::to_string(&text).unwrap())).unwrap();
-    assert_eq!(
-        azeroth_ingest::session::decode_text(&returned).unwrap(),
-        document
-    );
+    for (utc, trust, fixture) in [
+        (
+            Some(1000),
+            azeroth_core::observation::ClockTrust::Trusted,
+            true,
+        ),
+        (None, azeroth_core::observation::ClockTrust::Uncertain, true),
+        (
+            Some(0),
+            azeroth_core::observation::ClockTrust::Uncertain,
+            false,
+        ),
+    ] {
+        let mut document = document.clone();
+        document.fixture = fixture;
+        if !fixture {
+            document.batch.context.namespace = azeroth_core::types::DatasetNamespace::Reference;
+        }
+        for event in &mut document.batch.events {
+            event.utc = utc.map(|start| {
+                azeroth_core::types::UtcMillis::new(start + event.elapsed_ms.get() as i64).unwrap()
+            });
+            event.clock_trust = trust;
+        }
+        let text = azeroth_ingest::session::encode_text(&document).unwrap();
+        let sandbox = common::strict_core();
+        let returned:String=sandbox.run("rust-bytes",&format!("local text={};local d=assert(ns.Decode.decode(text:sub(14)));assert(d.version==1 and d.batch.events[1].elapsed_ms==0);return assert(ns.Session.encode(d))",serde_json::to_string(&text).unwrap())).unwrap();
+        assert_eq!(
+            azeroth_ingest::session::decode_text(&returned).unwrap(),
+            document
+        );
+    }
 }
 #[test]
 fn explicit_commands_new_identity_and_no_background_sampling() {
