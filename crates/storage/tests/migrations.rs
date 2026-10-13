@@ -10,12 +10,12 @@ use common::{TempDb, count, raw};
 use rusqlite::Connection;
 
 const ADD_NOTE: Migration = Migration {
-    version: 4,
+    version: 5,
     name: "test: profile note",
     sql: "ALTER TABLE profiles ADD COLUMN note TEXT;",
 };
 const BROKEN: Migration = Migration {
-    version: 4,
+    version: 5,
     name: "test: fails partway",
     sql: "CREATE TABLE half_done (x INTEGER);
           INSERT INTO profiles (character_id) VALUES ('violates not null');",
@@ -39,7 +39,7 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 3);
+    assert_eq!(latest_version(), 4);
 }
 
 #[test]
@@ -248,4 +248,45 @@ fn foreign_keys_are_enforced_on_every_opened_connection() {
     for store in [&file, &memory, &reopened] {
         assert!(store.foreign_keys_enabled().unwrap());
     }
+}
+
+#[test]
+fn populated_v3_upgrades_preserving_content_parties_and_snapshot_documents() {
+    use azeroth_core::types::PartyId;
+    use azeroth_storage::{
+        ImportSource, ProfileKey, SnapshotStore, content::ContentRevision, party::PartyProfile,
+    };
+    let db = TempDb::new("promotion-v3-upgrade");
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let envelope = common::Doc::base().decode();
+    store
+        .import_character_snapshot(&envelope, ImportSource::Fixture, None)
+        .unwrap();
+    let party = PartyProfile {
+        id: PartyId::new("kept-party").unwrap(),
+        participants: vec![ProfileKey::of(&envelope)],
+    };
+    store.save_party(&party).unwrap();
+    let content: ContentRevision = serde_json::from_str(include_str!(
+        "../../../fixtures/desktop/planning/synthetic-revision.json"
+    ))
+    .unwrap();
+    store.stage_content_revision(&content).unwrap();
+    drop(store);
+    // Reconstruct the exact v3 schema; v4 only adds this empty audit table.
+    raw(&db.path)
+        .execute_batch(
+            "DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version = 4;",
+        )
+        .unwrap();
+    let before = common::dump_state(&db.path);
+    let store = SqliteStore::open(&db.path).unwrap();
+    assert_eq!(store.schema_version().unwrap(), 4);
+    assert_eq!(common::dump_state(&db.path), before);
+    assert_eq!(store.party(&party.id).unwrap().unwrap(), party);
+    assert_eq!(
+        count(&db.path, "SELECT COUNT(*) FROM snapshot_promotions"),
+        0
+    );
+    assert_eq!(count(&db.path, "SELECT COUNT(*) FROM dataset_revisions"), 1);
 }
