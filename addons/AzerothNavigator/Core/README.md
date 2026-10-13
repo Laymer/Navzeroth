@@ -59,7 +59,9 @@ alternative even when the primary becomes ready; reconsider only when selected
 readiness/completion changes. Completing an alternative does not complete the
 primary, and its own ordered step is not recommended again. Models include
 anchor_step_id, selected_alternative, completion, rejected_alternatives and
-requires_revalidation. All advice and advancement reject stale predicate inputs,
+requires_revalidation. Alternative recommendations set travel_requires_revalidation
+and requires_revalidation because v1 global travel has no per-alternative route.
+All advice and advancement reject stale predicate inputs,
 even when the injected caller requests allow_stale.
 
 Optional context.dependencies carries dataset_revision, ruleset_version,

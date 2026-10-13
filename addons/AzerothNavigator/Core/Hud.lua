@@ -139,12 +139,15 @@ function Hud.new(plans, observe, render)
           model.completion = completion(chosen, context)
           model.anchor_step_id = anchor.id
           model.selected_alternative = chosen ~= anchor
+          -- v1 travel is global; an alternate objective cannot rewrite its route.
+          model.travel_requires_revalidation = chosen ~= anchor
           model.rejected_alternatives = rejected
           -- Completing an alternative never proves that the primary was completed.
         end
       end
     end
-    model.requires_revalidation = model.status == 'invalidated' or
+    model.requires_revalidation = model.travel_requires_revalidation == true or
+      model.status == 'invalidated' or
       model.status == 'dependencies_changed' or model.status == 'expired' or
       model.status == 'context_mismatch' or model.status == 'fixture_mismatch'
     render(model)

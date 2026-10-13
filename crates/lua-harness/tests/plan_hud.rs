@@ -327,6 +327,7 @@ fn alternatives_stay_selected_until_change_and_never_complete_primary() {
       local selected = ns.hud:refresh()
       assert(selected.status == 'ready' and selected.objective == 'alternative-a')
       assert(selected.selected_alternative and selected.anchor_step_id == 'demo-step-1')
+      assert(selected.travel_requires_revalidation and selected.requires_revalidation)
       ns.context.snapshot.level = ns.known(100)
       assert(ns.hud:refresh().objective == 'alternative-a')
       ns.setObjective('alternative-a', true)
