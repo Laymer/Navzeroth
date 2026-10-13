@@ -165,3 +165,19 @@ store diagnostic counts separately in `snapshot_quest_diagnostics`. Incomplete
 reads or export size failure preserve the previous text and sequence. No background
 capture, completion-history API or event subscription was added. Synthetic harness
 success does not verify actual-client readability or restricted-context behavior.
+
+## Runtime plan controls (wave 3 task 6)
+
+`PlanControls.new(plans, observe, render)` exposes explicit `import`, `status`,
+`clear`, `refresh` and `describe`. Imports use the existing strict 32 KiB ANAV1
+validator. Snapshot replacement suspends advice, while dependency identity checks
+and objective completion mappings are explicitly unavailable in this wave.
+Descriptions include expiry, uncertain observation age and revalidation needs.
+
+`/anavplan paste` opens an experimental manual paste UI; the Import button applies
+replacement explicitly. `/anavplan import ANAV1:...` supports text-only environments.
+`status`, `show`, `hide` and `clear` inspect/control the runtime plan. Only HUD
+visibility persists; reloading clears plan and observed runtime state. UI methods
+are guarded and imported text escapes client markup. Capture/import/status actions
+refresh advice; there is no timer, automatic client read or inferred completion.
+Actual 70338 UI behavior, frame support and restricted contexts remain unverified.
