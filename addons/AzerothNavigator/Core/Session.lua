@@ -135,7 +135,9 @@ function Session.new(monotonic, clock)
       return nil,'session_active_required'
     end
     local value,code=reading();if not value then return nil,code end
-    local kinds=state.phase=='paused' and {{type='logout'}} or {unclassified(),{type='logout'}}
+    -- Manual stop observes recording being disabled, never a game logout.
+    local terminal={type='recording_paused'}
+    local kinds=state.phase=='paused' and {terminal} or {unclassified(),terminal}
     local result,why=append(kinds,value)
     if result then state.phase,state.reason='stopped','manual_stop' end;return result,why
   end

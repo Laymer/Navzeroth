@@ -122,3 +122,54 @@ fn explicit_commands_new_identity_and_no_background_sampling() {
     );
     assert!(!document.fixture);
 }
+
+#[test]
+fn manually_stopping_recording_never_claims_game_logout() {
+    for paused in [false, true] {
+        let sandbox = common::strict_core();
+        initialize(&sandbox);
+        let action = if paused {
+            "assert(r:pause())"
+        } else {
+            "assert(r:sample(t.level(12)))"
+        };
+        let text: String = sandbox
+            .run(
+                "manual-stop-evidence",
+                &format!(
+                    r#"
+          local t=ns.recorder_test;local r=t.newRecorder();assert(r:start(t.spec))
+          t.mono=10;{action};t.mono=20;assert(r:stop())
+          assert(r:status().phase=='stopped' and r:status().reason=='manual_stop')
+          return assert(r:export(t.db))
+        "#
+                ),
+            )
+            .unwrap();
+        let document = azeroth_ingest::session::decode_text(&text).unwrap();
+        assert!(
+            !document.batch.events.iter().any(|event| matches!(
+                event.kind,
+                azeroth_core::sessions::SessionEventKind::Logout
+            )),
+            "manual recorder stop is not evidence of game logout"
+        );
+        assert!(matches!(
+            document.batch.events.last().unwrap().kind,
+            azeroth_core::sessions::SessionEventKind::RecordingPaused
+        ));
+        let build = azeroth_core::sessions::build_sessions(
+            &document.batch,
+            &azeroth_ingest::session::build_config(),
+        )
+        .unwrap();
+        let summary = &build[&SessionId::new("manual-1").unwrap()];
+        assert_eq!(summary.summary.elapsed_ms.get(), 20000);
+        assert_eq!(summary.totals.observed_ms.get(), 0);
+        assert_eq!(
+            summary.totals.unclassified_ms.get(),
+            if paused { 10000 } else { 20000 }
+        );
+        assert_eq!(summary.totals.gap_ms.get(), if paused { 10000 } else { 0 });
+    }
+}
