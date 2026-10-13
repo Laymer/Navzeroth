@@ -186,3 +186,10 @@ fn same_session_identity_is_isolated_between_complete_profile_keys() {
     store.delete_session(&other_key, &id).unwrap();
     assert_eq!(store.session_ids(&key).unwrap().len(), 1);
 }
+#[test]
+fn direct_storage_rejects_fixture_observation_source_disagreement() {
+    let (mut store, key, mut doc) = setup();
+    doc.batch.events[1].kind=serde_json::from_value(serde_json::json!({"type":"level","level":{"status":"known","value":12,"source":"addon_snapshot"}})).unwrap();
+    assert!(store.import_sessions(&key, &doc).is_err());
+    assert!(store.session_ids(&key).unwrap().is_empty());
+}

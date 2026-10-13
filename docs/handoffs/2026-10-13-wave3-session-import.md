@@ -61,3 +61,12 @@ first event followed by an uncertain or missing UTC still mapped the whole
 session. Added regression failed before correction. Mapping now requires trusted
 UTC on every event, preserving monotonic coverage regardless. Focused core and
 service checks were rerun; this does not change exchange schemas.
+
+Final fixture/source audit reproduced a document labelled synthetic with an
+addon_snapshot observation being accepted (failing regression). Shared pure
+SessionDocument identity validation now rejects captured-source metadata in
+fixtures and synthetic_fixture metadata in nonfixtures, in both ingest and direct
+storage paths. Current15focused ingest/storage/app tests pass. Initial helper
+incorrectly treated SessionEvent ItemKey as an observed equipment slot; corrected
+based on actual type (ItemKey has no observation metadata). Clippy needless-borrow
+was corrected before final passing check; no schema kind/version changed.

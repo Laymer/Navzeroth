@@ -8,7 +8,7 @@ use azeroth_core::{
     analytics::{SessionAnalytics, analyze_session},
     error::Result,
     sessions::{SessionBatch, SessionBuildConfig, SessionDocument, build_sessions},
-    types::{DatasetNamespace, Millis, SessionId},
+    types::{Millis, SessionId},
 };
 use rusqlite::{OptionalExtension, TransactionBehavior, params};
 use serde::Serialize;
@@ -45,20 +45,12 @@ fn validate(
     document: &SessionDocument,
     key: &ProfileKey,
 ) -> Result<BTreeMap<SessionId, (String, String)>> {
-    if document.format != "anav-session-events"
-        || document.version != 1
-        || document.fixture != key.fixture
+    document.validate_identity()?;
+    if document.fixture != key.fixture
         || document.batch.character != key.character
         || document.batch.context != key.context
     {
         return Err(invalid("Session identity does not match selected profile"));
-    }
-    if key.context.namespace == DatasetNamespace::Demo && !key.fixture
-        || document.batch.events.is_empty()
-    {
-        return Err(invalid(
-            "Session fixture identity or event count is invalid",
-        ));
     }
     if encode(document)?.len() > MAX_SESSION_DOCUMENT_BYTES {
         return Err(invalid("Session document exceeds 32 KiB"));

@@ -7,7 +7,7 @@ use crate::{
 use azeroth_core::{
     error::Result,
     sessions::{SessionBuildConfig, SessionDocument, build_sessions},
-    types::{DatasetNamespace, Millis},
+    types::Millis,
 };
 use std::{fs::File, io::Read, path::Path};
 
@@ -24,15 +24,7 @@ pub fn build_config() -> SessionBuildConfig {
     }
 }
 pub fn validate(document: &SessionDocument) -> Result<()> {
-    if document.format != "anav-session-events" || document.version != 1 {
-        return Err(invalid("Unsupported session document format or version"));
-    }
-    if document.batch.context.namespace == DatasetNamespace::Demo && !document.fixture {
-        return Err(invalid("Demo session data must be labelled synthetic"));
-    }
-    if document.batch.events.is_empty() {
-        return Err(invalid("Session document has no events"));
-    }
+    document.validate_identity()?;
     build_sessions(&document.batch, &build_config())?;
     Ok(())
 }
