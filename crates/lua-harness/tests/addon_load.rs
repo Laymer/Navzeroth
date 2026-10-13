@@ -90,6 +90,7 @@ fn every_toc_file_loads_in_order_into_a_fresh_state() {
             "Capabilities",
             "Export",
             "Settings",
+            "PlanControls",
             "Diagnostics"
         ]
     );
@@ -99,7 +100,7 @@ fn every_toc_file_loads_in_order_into_a_fresh_state() {
         .collect();
     assert_eq!(
         added,
-        ["SLASH_ANAVDIAG1"],
+        ["SLASH_ANAVDIAG1", "SLASH_ANAVPLAN1"],
         "loading may define only the slash command global; the SavedVariables table appears at ADDON_LOADED"
     );
 }

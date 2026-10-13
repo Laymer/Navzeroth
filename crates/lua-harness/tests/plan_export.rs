@@ -166,3 +166,49 @@ fn rust_export_advances_only_on_explicit_objective_completion() {
         )
         .unwrap();
 }
+
+#[test]
+fn explicit_plan_controller_uses_rust_bytes_and_invalidates_replaced_snapshot() {
+    let sandbox = common::strict_core();
+    sandbox.ns().set("text", exported_at_depth(0)).unwrap();
+    sandbox
+        .ns()
+        .set(
+            "snapshot_text",
+            include_str!("../../../fixtures/contracts/v1/character-snapshot.json"),
+        )
+        .unwrap();
+    sandbox
+        .run::<()>(
+            "controls",
+            r#"
+      local envelope=assert(ns.Decode.decode(ns.text:sub(7)))
+      local snapshot=assert(ns.Decode.decode(ns.snapshot_text)).payload
+      local plans=ns.Plan.new({context=snapshot.context,fixture=true})
+      local context={snapshot=snapshot,fixture=true,freshness={clock_trust='trusted',
+        now_utc_ms=1791791990100,max_age_ms=1800000},stale_policy='reject'}
+      local last
+      local controls=ns.PlanControls.new(plans,function() return context end,function(m) last=m end)
+      assert(controls:import(ns.text))
+      assert(last.plan_id==envelope.payload.id and last.requires_revalidation)
+      assert(last.dependency_check_available==false and last.objective_mapping_available==false)
+      assert(controls:describe():find('Dependency checks unavailable',1,true))
+      assert(last.status~='complete')
+      local prior=plans:get().payload.id
+      assert(not controls:import('ANAV1:{'))
+      assert(plans:get().payload.id==prior)
+      snapshot.id='new-snapshot'
+      assert(controls:refresh().status=='snapshot_superseded')
+      assert(last.requires_revalidation and not last.step_id)
+      snapshot.id=envelope.payload.inputs[1].id
+      context.freshness.clock_trust='uncertain'
+      assert(controls:refresh().status~='ready')
+      context.freshness.clock_trust='trusted'
+      context.freshness.now_utc_ms=9007199254740991
+      assert(controls:refresh().status=='expired')
+      controls:clear()
+      assert(last.status=='no_plan' and plans:get()==nil)
+    "#,
+        )
+        .unwrap();
+}
