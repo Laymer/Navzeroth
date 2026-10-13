@@ -1,3 +1,4 @@
+import type { PartyProposalReport } from "../party/proposals";
 import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
 // Typed application command boundary (plan section 13). Mirrors the Rust
 // DTOs in crates/app; wire names are snake_case, exactly as serialized.
@@ -261,6 +262,9 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_party_plan_proposal: { input: { party_id: string }; output: PartyProposalReport | null };
+  propose_party_plan: { input: { text: string }; output: PartyProposalReport };
+  accept_party_plan: { input: { text: string }; output: PartyProposalReport };
   get_joint_planning_catalog: { input: { party_id: string }; output: JointPlanningCatalog };
   plan_joint_session: { input: { text: string }; output: JointPlanningReport };
 

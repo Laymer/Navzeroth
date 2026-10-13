@@ -131,3 +131,5 @@ mod tests {
 pub mod sessions;
 
 pub mod joint_planning;
+
+pub mod party_proposals;

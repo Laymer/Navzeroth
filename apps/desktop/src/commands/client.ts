@@ -48,6 +48,9 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getPartyPlanProposal: (partyId: string) => run(() => adapter.invoke("get_party_plan_proposal", { party_id: partyId })),
+    proposePartyPlan: (text: string) => run(() => adapter.invoke("propose_party_plan", { text })),
+    acceptPartyPlan: (text: string) => run(() => adapter.invoke("accept_party_plan", { text })),
     getJointPlanningCatalog: (partyId: string) => run(() => adapter.invoke("get_joint_planning_catalog", { party_id: partyId })),
     planJointSession: (text: string) => run(() => adapter.invoke("plan_joint_session", { text })),
     importSessionText: (profileId: string, text: string) => run(() => adapter.invoke("import_session_text", { profile_id: profileId, text })),
