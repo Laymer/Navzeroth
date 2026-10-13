@@ -48,6 +48,9 @@ quest absence/completion does not establish turn-in, and no quest/equipment even
 is inferred. Each running span ends with an explicit unclassified marker. Pause
 spans remain gaps. No event or timer samples in the background.
 
+Manual stop records a terminal `recording_paused` event (recording disabled); it
+does not claim that the character logged out. The runtime still becomes stopped.
+
 Export requires a stopped recording: an intermediate export under the same
 immutable identity would conflict with the final batch. Export before reload,
 then reload/logout to save, and import `session_export`. Reload starts idle and

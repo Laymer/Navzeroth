@@ -63,3 +63,23 @@ turn-ins/equipment changes need permitted explicit evidence before producing tho
 events. Calibration, real content and full release acceptance are deferred.
 Next: coordinator reviews/integrates current-head task8, checks hosted CI and
 builds candidate; consolidated live checklist validates installed revision.
+
+Review limitation: if an external minute refresh changes refreshKey while import
+is pending, generation guards may suppress that mutation's receipt/onChanged.
+The immutable backend import still completes; the next periodic/manual history
+refresh exposes it. No corruption or cross-profile response is introduced. This
+minor feedback limitation is recorded; coordinator review did not require a fix.
+After merging final cached-plan734b2e4,28focused load/plan/snapshot/recorder tests
+passed. After fixture/source guard68630ae was merged,5recorder tests and affected
+all-target Clippy passed again. Both task trees were left clean for coordinator
+latest-main ancestry updates and shared conflict resolution.
+
+Coordinator review follow-up: manual recorder stop emitted Logout, despite no
+observed game logout. Added a focused transport regression; it failed before the
+fix. Stop now emits the existing recording_paused event as recording-disabled
+terminal evidence, while runtime phase remains stopped/manual_stop. Running stop
+retains unclassified coverage; stop during pause preserves the paused gap. The
+regression checks both states, no Logout claim, final event, zero measured play,
+coverage and gap totals. Six recorder tests, affected all-target Clippy, fmt,
+16-file Lua static checks (zero warnings/errors) and diff-check pass. Task4 and
+shared enums/exchange schemas were untouched. Handbook clarifies the distinction.
