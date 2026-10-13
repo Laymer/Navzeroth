@@ -85,3 +85,13 @@ fn exact_document_byte_boundary() {
         ErrorCode::ImportTooLarge
     );
 }
+#[test]
+fn fixture_flag_cannot_disguise_observation_sources() {
+    let mut d = document();
+    d.batch.events[0].kind=serde_json::from_value(serde_json::json!({"type":"level","level":{"status":"known","value":12,"source":"addon_snapshot"}})).unwrap();
+    assert!(encode_text(&d).is_err());
+    d.fixture = false;
+    d.batch.context.namespace = azeroth_core::types::DatasetNamespace::Reference;
+    d.batch.events[0].kind=serde_json::from_value(serde_json::json!({"type":"level","level":{"status":"known","value":12,"source":"synthetic_fixture"}})).unwrap();
+    assert!(encode_text(&d).is_err());
+}
