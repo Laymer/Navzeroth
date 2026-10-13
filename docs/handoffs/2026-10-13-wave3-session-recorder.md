@@ -83,3 +83,12 @@ regression checks both states, no Logout claim, final event, zero measured play,
 coverage and gap totals. Six recorder tests, affected all-target Clippy, fmt,
 16-file Lua static checks (zero warnings/errors) and diff-check pass. Task4 and
 shared enums/exchange schemas were untouched. Handbook clarifies the distinction.
+
+Coordinator interop follow-up: Decode.null was cloned into an empty table, so a
+valid Rust optional utc=None became [] on Lua reencoding and desktop rejected it.
+Extended actual Rust→Lua→desktop regression with absent UTC/uncertain clocks and
+zero UTC/elapsed values plus fixture=false; it failed before the fix. Recorder
+plain-copy now omits optional null fields, preserving their SessionBatch None
+semantics while false/zero remain values. Six recorder tests, all-target Clippy,
+fmt, 16-file Lua static checks (zero warnings/errors) and diff-check pass. The
+shared diagnostic JSON encoder and schemas are unchanged.

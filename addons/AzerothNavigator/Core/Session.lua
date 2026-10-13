@@ -4,6 +4,8 @@ local Session, V = {MAX_EVENTS=128}, ns.Predicate.validation
 local SAFE = 9007199254740991
 local function check(ok) if not ok then error('session_invalid',0) end end
 local function plain(value)
+  -- Rust optional fields may encode as null. Omission keeps the same None meaning.
+  if value==ns.Decode.null then return nil end
   if type(value)~='table' then return value end
   local copy={}
   for key,child in pairs(value) do copy[key]=plain(child) end
