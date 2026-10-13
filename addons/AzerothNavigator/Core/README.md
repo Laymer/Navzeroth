@@ -182,6 +182,13 @@ are guarded and imported text escapes client markup. Capture/import/status actio
 refresh advice; there is no timer, automatic client read or inferred completion.
 Actual 70338 UI behavior, frame support and restricted contexts remain unverified.
 
+Explicit plan controls may restore the earlier addon-owned `snapshot_export` when
+no runtime snapshot exists after reload. `Snapshot.restoreTransport` enforces the
+32 KiB bound and original context/fixture/source/metadata consistency, returns an
+independent normalized copy and preserves the original capture age/trust. The HUD
+labels cached observations; restoring never reestablishes current clock trust or
+performs a fresh client observation. Malformed/mismatched documents are ignored.
+
 ## Experimental equipment/position reads (wave 3 task 9)
 
 `Snapshot.readEquipment(getLink, context, metadata)` probes the explicit numeric
@@ -197,3 +204,4 @@ only bounded status diagnostics and never constructs a snapshot location. Even
 readable zero coordinates cannot supply missing floor, instance or coordinate
 meaning. No position values, item links, raw client errors or character names are
 stored in diagnostics. Live/restricted-context checks remain unverified.
+

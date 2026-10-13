@@ -25,6 +25,7 @@ function Controls.new(plans, observe, render)
       model.expires_at_utc_ms = envelope.payload.expires_at_utc_ms
       model.dependency_check_available = model.dependency_inputs_supplied == true
       model.objective_mapping_available = false
+      model.cached_snapshot = observed and observed.cached_snapshot == true
       model.observation_clock_uncertain = not observed or not observed.freshness or
         observed.freshness.clock_trust ~= 'trusted' or not observed.snapshot or
         not observed.snapshot.capture or observed.snapshot.capture.clock_trust ~= 'trusted'
@@ -56,6 +57,9 @@ function Controls.new(plans, observe, render)
       lines[#lines + 1] = model.dependency_check_available and
         'Dependency checks supplied' or 'Dependency checks unavailable'
       lines[#lines + 1] = 'Objective completion mapping unavailable; steps do not auto-complete'
+      if model.cached_snapshot then
+        lines[#lines + 1] = 'Cached prior addon capture; this is not a new client observation'
+      end
       if model.observation_clock_uncertain then
         lines[#lines + 1] = 'Observation age uncertain; clock confirmation/capture needed'
       end

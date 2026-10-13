@@ -291,3 +291,34 @@ fn explicit_capture_retains_diagnostics_and_never_runs_from_login() {
             .all(|line| !line.contains("private error"))
     );
 }
+
+#[test]
+fn cached_snapshot_readback_is_bounded_context_scoped_and_keeps_original_age() {
+    let sandbox = common::stub_client("1.60.1", "70338", 16001);
+    sandbox
+        .run::<()>("level", "function UnitLevel() return 12 end; function GetServerTime() return 0 end; function GetTime() return 0 end")
+        .unwrap();
+    sandbox.load_toc_files().unwrap();
+    sandbox.run::<()>("restore",r#"
+      ns.Diagnostics.state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+      ns.Diagnostics.state.onSlash('clock')
+      ns.Diagnostics.state.onSlash('clock trust')
+      ns.Diagnostics.state.onSlash('snapshot cached')
+      local text=AzerothNavigatorDB.snapshot_export
+      local context=ns.Diagnostics.state.last_snapshot.context
+      local expected={context=context,fixture=false}
+      local cached=assert(ns.Snapshot.restoreTransport(text,expected))
+      assert(cached.id==ns.Diagnostics.state.last_snapshot.id and cached.capture.clock_trust=='trusted' and cached.capture.observed_at_utc_ms==0)
+      cached.level.value=1
+      assert(ns.Snapshot.restoreTransport(text,expected).level.value==12)
+      assert(not ns.Snapshot.restoreTransport('ANAV1:{',expected))
+      assert(not ns.Snapshot.restoreTransport(text..string.rep(' ',32768),expected))
+      assert(not ns.Snapshot.restoreTransport(text,{context=context,fixture=true}))
+      local other={namespace='reference',build={edition='wow_forever',build='other',interface='16001'}}
+      assert(not ns.Snapshot.restoreTransport(text,{context=other,fixture=false}))
+      -- Json encoder is deliberately not used on decoded maps; modify the literal metadata.
+      local corrupt=text:gsub('"clock_trust":"trusted"','"clock_trust":"uncertain"',1)
+      assert(not ns.Snapshot.restoreTransport(corrupt,expected))
+      assert(AzerothNavigatorDB.snapshot_export==text)
+    "#).unwrap();
+}

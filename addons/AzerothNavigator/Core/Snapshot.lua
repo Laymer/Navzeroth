@@ -128,6 +128,33 @@ function Snapshot.capture(spec, providers)
   if not ok then return nil, 'snapshot_invalid' end
   return snapshot, issues
 end
+-- Explicit readback of an earlier addon-owned export, never a new client read.
+function Snapshot.restoreTransport(text, expected)
+  local ok, snapshot = pcall(function()
+    check(type(text) == 'string' and #text <= Snapshot.MAX_BYTES and
+      text:sub(1, 6) == 'ANAV1:')
+    local envelope = assert(D.decode(text:sub(7)))
+    check(envelope.format == 'azeroth-navigator' and envelope.schema_version == 1 and
+      envelope.kind == 'character_snapshot' and envelope.fixture == expected.fixture)
+    V.integer(envelope, 'schema_version', 1, 1)
+    local context = {namespace=envelope.namespace, build={edition=envelope.game.edition,
+      build=envelope.game.build, interface=envelope.game.interface}}
+    V.context(context); check(V.same(context, expected.context))
+    check(envelope.producer.component == 'addon' and
+      V.same(context, envelope.payload.context))
+    V.nonemptyText(envelope.producer.version); V.metadata(envelope.provenance)
+    check(envelope.provenance.source == envelope.payload.capture.source and
+      envelope.provenance.clock_trust == (envelope.payload.capture.clock_trust or 'uncertain') and
+      envelope.provenance.created_at_utc_ms == envelope.payload.capture.observed_at_utc_ms and
+      envelope.producer.session_id == envelope.payload.capture.session_id and
+      envelope.producer.sequence == envelope.payload.capture.sequence)
+    local encoded = assert(Snapshot.encode(envelope.payload,
+      {fixture=expected.fixture, locale=envelope.game.locale}))
+    return assert(D.decode(encoded:sub(7))).payload
+  end)
+  if not ok then return nil, 'snapshot_cached_invalid' end
+  return snapshot
+end
 -- This is a one-capture read, not a declaration of availability in all game contexts.
 function Snapshot.readLevel(getter, metadata)
   if type(getter) ~= 'function' then return {status='unsupported'}, 'level_api_missing' end

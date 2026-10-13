@@ -97,11 +97,18 @@ function Diagnostics.attach(env)
     end
     local context = {namespace='reference', build={edition=Version.edition,
       build=build.version .. '.' .. build.build, interface=build.interface}}
+    if not state.last_snapshot and state.persist and state.db.snapshot_export then
+      local cached, cachedCode = ns.Snapshot.restoreTransport(state.db.snapshot_export,
+        {context=context, fixture=false})
+      if cached then state.last_snapshot, state.snapshot_cached = cached, true
+      else state.cached_snapshot_code = cachedCode end
+    end
     local plans = ns.Plan.new({context=context, fixture=false})
     state.plan_controls = ns.PlanControls.new(plans, function()
       if not state.last_snapshot then return {} end
       local now = clock:capture()
       return {snapshot=state.last_snapshot, fixture=false,
+        cached_snapshot=state.snapshot_cached == true,
         freshness={clock_trust=now.clock_trust, now_utc_ms=now.observed_at_utc_ms,
           max_age_ms=1800000}, stale_policy='reject'}
     end, renderPlan)
@@ -279,6 +286,7 @@ function Diagnostics.attach(env)
     state.db.snapshot_quest_diagnostics = questDiagnostics
     state.db.snapshot_equipment_diagnostics = equipmentDiagnostics
     state.last_snapshot = captured
+    state.snapshot_cached = false
     if state.plan_controls then state.plan_controls:refresh() end
     say('snapshot stored (' .. #text .. ' bytes). /reload or logout, then import ' ..
       'AzerothNavigatorDB / snapshot_export from the selected SavedVariables file.')
