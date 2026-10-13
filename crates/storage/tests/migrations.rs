@@ -10,12 +10,12 @@ use common::{TempDb, count, raw};
 use rusqlite::Connection;
 
 const ADD_NOTE: Migration = Migration {
-    version: 5,
+    version: 6,
     name: "test: profile note",
     sql: "ALTER TABLE profiles ADD COLUMN note TEXT;",
 };
 const BROKEN: Migration = Migration {
-    version: 5,
+    version: 6,
     name: "test: fails partway",
     sql: "CREATE TABLE half_done (x INTEGER);
           INSERT INTO profiles (character_id) VALUES ('violates not null');",
@@ -39,7 +39,7 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 4);
+    assert_eq!(latest_version(), 5);
 }
 
 #[test]
@@ -276,12 +276,12 @@ fn populated_v3_upgrades_preserving_content_parties_and_snapshot_documents() {
     // Reconstruct the exact v3 schema; v4 only adds this empty audit table.
     raw(&db.path)
         .execute_batch(
-            "DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version = 4;",
+            "DROP TABLE sessions; DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version >= 4;",
         )
         .unwrap();
     let before = common::dump_state(&db.path);
     let store = SqliteStore::open(&db.path).unwrap();
-    assert_eq!(store.schema_version().unwrap(), 4);
+    assert_eq!(store.schema_version().unwrap(), latest_version());
     assert_eq!(common::dump_state(&db.path), before);
     assert_eq!(store.party(&party.id).unwrap().unwrap(), party);
     assert_eq!(

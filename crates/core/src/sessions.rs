@@ -31,7 +31,7 @@ use crate::{
         MeasurementQuality, SessionGap, SessionInterval, SessionSummary, SessionSummaryData,
     },
     error::{AppError, ErrorCode, Result, Validated, invalid},
-    observation::{ClockTrust, Observation, ObservationMetadata, ObservationStatus},
+    observation::{ClockTrust, Observation, ObservationMetadata, ObservationStatus, StateSource},
     types::*,
 };
 use serde::{Deserialize, Serialize};
@@ -145,6 +145,52 @@ pub struct SessionBatch {
     pub character: CharacterId,
     pub context: DataContext,
     pub events: Vec<SessionEvent>,
+}
+
+/// Local recorder transport; deliberately separate from exchange schemas.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SessionDocument {
+    pub format: String,
+    pub version: u32,
+    pub fixture: bool,
+    pub batch: SessionBatch,
+}
+
+impl SessionDocument {
+    /// Enforce the same distinction between captured and synthetic observations
+    /// as exchange envelopes, without registering a new exchange kind.
+    pub fn validate_identity(&self) -> Result<()> {
+        if self.format != "anav-session-events" || self.version != 1 {
+            return Err(invalid("Unsupported session document format or version"));
+        }
+        if self.batch.context.namespace == DatasetNamespace::Demo && !self.fixture
+            || self.batch.events.is_empty()
+        {
+            return Err(invalid(
+                "Session fixture identity or event count is invalid",
+            ));
+        }
+        let agrees = |metadata: &ObservationMetadata| match metadata.source {
+            StateSource::SyntheticFixture => self.fixture,
+            StateSource::AddonSnapshot | StateSource::ManualEntry | StateSource::OfficialApi => {
+                !self.fixture
+            }
+            StateSource::Unrecorded | StateSource::ReferenceData => true,
+        };
+        for event in &self.batch.events {
+            let valid = match &event.kind {
+                SessionEventKind::Level { level } => agrees(level.metadata()),
+                _ => true,
+            };
+            if !valid {
+                return Err(invalid(
+                    "Session observation source disagrees with fixture identity",
+                ));
+            }
+        }
+        Ok(())
+    }
 }
 
 /// Caller-chosen thresholds; there is deliberately no default.
@@ -501,6 +547,13 @@ fn build_one(
     } else if discontinuous {
         SessionUtc::Uncertain {
             reason: SessionUtcUncertainty::TimelineDiscontinuity,
+        }
+    } else if events
+        .iter()
+        .any(|event| event.clock_trust != ClockTrust::Trusted || event.utc.is_none())
+    {
+        SessionUtc::Uncertain {
+            reason: SessionUtcUncertainty::MissingOrUntrustedTime,
         }
     } else {
         match (first.clock_trust, first.utc) {

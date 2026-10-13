@@ -46,6 +46,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "audited snapshot promotion",
         sql: include_str!("schema_v4.sql"),
     },
+    Migration {
+        version: 5,
+        name: "immutable session events and summaries",
+        sql: include_str!("schema_v5.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.
