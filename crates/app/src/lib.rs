@@ -129,3 +129,5 @@ mod tests {
 }
 
 pub mod sessions;
+
+pub mod reminders;

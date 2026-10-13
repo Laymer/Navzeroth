@@ -38,3 +38,5 @@ pub use model::{
 pub use sqlite::SqliteStore;
 
 pub mod sessions;
+
+pub mod reminders;
