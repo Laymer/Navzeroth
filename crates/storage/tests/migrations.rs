@@ -10,12 +10,12 @@ use common::{TempDb, count, raw};
 use rusqlite::Connection;
 
 const ADD_NOTE: Migration = Migration {
-    version: 3,
+    version: 4,
     name: "test: profile note",
     sql: "ALTER TABLE profiles ADD COLUMN note TEXT;",
 };
 const BROKEN: Migration = Migration {
-    version: 3,
+    version: 4,
     name: "test: fails partway",
     sql: "CREATE TABLE half_done (x INTEGER);
           INSERT INTO profiles (character_id) VALUES ('violates not null');",
@@ -39,7 +39,60 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 2);
+    assert_eq!(latest_version(), 3);
+}
+
+#[test]
+fn version_two_upgrade_preserves_snapshots_preferences_and_hashes() {
+    use azeroth_storage::{ImportSource, ProfileKey, SnapshotStore};
+    let db = TempDb::new("party-v2-upgrade");
+    let mut conn = raw(&db.path);
+    migrate_with(&mut conn, &MIGRATIONS[..2]).unwrap();
+    // Populate the supported old schema using an exact validated document.
+    let envelope = common::Doc::base().character("kept").decode();
+    let document = serde_json::to_string(&envelope).unwrap();
+    let hash = azeroth_storage::snapshot_content_hash(&envelope).unwrap();
+    seed_profile(&db.path);
+    conn.execute(
+        "UPDATE profiles SET build = 'UNVERIFIED_DEMO', interface = 'UNVERIFIED_DEMO'",
+        [],
+    )
+    .unwrap();
+    conn.execute("INSERT INTO snapshots (profile_id, snapshot_id, content_sha256, producer_component, producer_version, game_locale, source_revision, capture_source, capture_clock_trust, document) VALUES (1, ?1, ?2, 'cli', 'test', 'enUS', 'test', 'synthetic_fixture', 'trusted', ?3)", rusqlite::params![envelope.payload.id.as_str(), hash.as_str(), document]).unwrap();
+    conn.execute("UPDATE profiles SET current_snapshot_id = 1", [])
+        .unwrap();
+    let preference =
+        azeroth_core::observation::Observation::known(false, envelope.payload.capture.clone())
+            .unwrap();
+    conn.execute("INSERT INTO profile_preferences (profile_id, preference_id, status, value, document) VALUES (1, 'manual', 'known', 0, ?1)", [serde_json::to_string(&preference).unwrap()]).unwrap();
+    let before = common::dump_state(&db.path);
+    drop(conn);
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    assert_eq!(common::dump_state(&db.path), before);
+    assert!(store.party_ids().unwrap().is_empty());
+    // The migrated database still accepts normal idempotent imports.
+    assert_eq!(
+        store
+            .import_character_snapshot(&envelope, ImportSource::Fixture, None)
+            .unwrap(),
+        azeroth_storage::ImportOutcome::Duplicate
+    );
+    assert!(
+        store
+            .current_snapshot(&ProfileKey::of(&envelope))
+            .unwrap()
+            .is_some()
+    );
+    assert_eq!(
+        store
+            .preferences(&ProfileKey::of(&envelope))
+            .unwrap()
+            .values()
+            .next()
+            .unwrap()
+            .value(),
+        Some(&false)
+    );
 }
 
 #[test]

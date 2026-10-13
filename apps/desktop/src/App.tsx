@@ -6,12 +6,16 @@ import { ImportScreen } from "./screens/ImportScreen";
 import { describeAge } from "./atlas/describe";
 import type { Freshness } from "./commands/contract";
 import { AtlasScreen } from "./screens/AtlasScreen";
+import { PartyScreen } from "./screens/PartyScreen";
+import { ContentScreen } from "./screens/ContentScreen";
 
-type Screen = "today" | "atlas" | "imports";
+type Screen = "today" | "atlas" | "imports" | "party" | "content";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "atlas", label: "Atlas" },
   { id: "imports", label: "Imports" },
+  { id: "party", label: "Party" },
+  { id: "content", label: "Content" },
 ];
 
 type Load =
@@ -95,6 +99,8 @@ export function App({ client }: { client: CommandClient }) {
       {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} freshness={load.freshness} />}
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
+      {load.phase === "ready" && screen === "party" && <PartyScreen client={client} refreshKey={revision} />}
+      {load.phase === "ready" && screen === "content" && <ContentScreen client={client} onChanged={changed} refreshKey={revision} />}
     </main>
   );
 }

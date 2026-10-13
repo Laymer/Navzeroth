@@ -11,6 +11,7 @@ async function mockCommands(page: Page) {
     const calls: { command: string; args: Record<string, unknown> }[] = [];
     let watching = false;
     let query = 0;
+    const parties = new Map<string, string[]>();
     const freshness = { status: "uncertain", reason: "missing_or_untrusted_time" };
     const receipt = (id: string, disposition: object) => ({ profile_id: id, snapshot_id: `current-${id}`, disposition, fixture: true, namespace: "demo", data_mode: "stored", freshness });
     const current = (id: string) => ({ envelope: { ...snapshot, payload: { ...snapshot.payload, id: `current-${id}` } }, profile_id: id, freshness, data_mode: "stored" });
@@ -22,6 +23,11 @@ async function mockCommands(page: Page) {
         switch (command) {
           case "get_app_status": return { version: "test", data_mode: "stored", active_profile: selected, capabilities: {} };
           case "list_profiles": return [...imported].map((id) => ({ id, display_name: id, data_mode: "stored", context: snapshot.payload.context, fixture: true, snapshot_count: 1 }));
+          case "get_party_quests": return { context: snapshot.payload.context, fixture: true, revision: null, quests: [] };
+          case "list_parties": return [...parties.keys()].sort();
+          case "save_party": parties.set(String(args.party_id), args.profile_ids as string[]); return null;
+          case "delete_party": return parties.delete(String(args.party_id));
+          case "get_party": return parties.has(String(args.party_id)) ? { id: args.party_id, data_mode: "stored", participants: (parties.get(String(args.party_id)) ?? []).map((id) => ({ profile_id: id, character: id, snapshot: id === "profile-one" ? { ...current(id), freshness: { status: "stale", age_ms: 3600000 } } : null })) } : null;
           case "get_stored_snapshot": return current(String(args.profile_id));
           case "get_snapshot_history": return [{ snapshot_id: `current-${String(args.profile_id)}`, is_current: true, freshness, observed_at_utc_ms: null, received_at_utc_ms: null }];
           case "select_profile": selected = String(args.profile_id); return null;
@@ -50,6 +56,35 @@ async function mockCommands(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => { await page.clock.install(); await mockCommands(page); await page.goto("/"); });
+
+test("manual party keeps stale and missing participants separate across navigation", async ({ page }) => {
+  await page.getByRole("button", { name: "Imports", exact: true }).click();
+  for (const name of ["one", "two"]) {
+    await page.getByLabel("Snapshot export text").fill(`ANAV1:valid-${name}`);
+    await page.getByRole("button", { name: "Import text", exact: true }).click();
+    await expect(page.getByText("Stored as the current snapshot.")).toBeVisible();
+  }
+  await page.getByRole("button", { name: "Party", exact: true }).click();
+  await page.getByRole("button", { name: "New party", exact: true }).click();
+  await page.getByLabel("Party name").fill("Duo");
+  await page.getByLabel(/^profile-one —/).check();
+  await page.getByLabel(/^profile-two —/).check();
+  await page.getByRole("button", { name: "Save membership", exact: true }).click();
+  await expect(page.getByText("Last imported: captured 1 h ago (stale)")).toBeVisible();
+  await expect(page.getByText(/Missing imported snapshot/)).toBeVisible();
+  await page.clock.fastForward(60000);
+  await expect(page.getByLabel("Selected party")).toHaveValue("Duo");
+  await page.getByRole("button", { name: "Today", exact: true }).click();
+  await page.getByRole("button", { name: "Party", exact: true }).click();
+  await expect(page.getByText(/Missing imported snapshot/)).toBeVisible();
+  await page.getByRole("button", { name: "Remove local party", exact: true }).click();
+  await expect(page.getByText("No local parties yet.")).toBeVisible();
+  await page.getByRole("button", { name: "Imports", exact: true }).click();
+  await expect(page.getByLabel("Selected profile").locator("option")).toHaveCount(2);
+  const calls = await page.evaluate(() => (window as unknown as { __MOCK_CALLS__: { command: string; args: object }[] }).__MOCK_CALLS__);
+  expect(calls).toContainEqual({ command: "save_party", args: { party_id: "Duo", profile_ids: ["profile-one", "profile-two"] } });
+  expect(calls).toContainEqual({ command: "delete_party", args: { party_id: "Duo" } });
+});
 
 test("imports recover from failure and preserve duplicate/history-only current state", async ({ page }) => {
   await expect(page.getByText("No character snapshot has been imported.")).toBeVisible();

@@ -25,7 +25,7 @@ pub const MAX_OBSERVATION_ROWS: usize = 65_536;
 
 /// Identifies one profile. Characters of different editions, builds,
 /// interfaces or namespaces, and fixture versus non-fixture data, are separate.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
 pub struct ProfileKey {
     pub character: CharacterId,
     pub context: DataContext,

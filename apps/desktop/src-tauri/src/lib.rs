@@ -4,14 +4,14 @@ mod atlas_protocol;
 use azeroth_app::AppStatus;
 use azeroth_app::atlas::{AtlasView, ProjectedPosition, SnapshotMarker};
 use azeroth_app::snapshots::{
-    FileInputFormat, HistoryEntry, ImportReceipt, ProfileDto, SnapshotApplication, StoredSnapshot,
-    WatchState, system_now,
+    FileInputFormat, HistoryEntry, ImportReceipt, ProfileDto, SnapshotApplication, StoredParty,
+    StoredSnapshot, WatchState, system_now,
 };
 use azeroth_core::{
     contract::Envelope,
     entities::CharacterSnapshot,
     error::{AppError, ErrorCode},
-    types::Position,
+    types::{DatasetRevision, PartyId, Position, QuestId},
 };
 use std::sync::Arc;
 use tauri::{Manager, State};
@@ -38,6 +38,80 @@ async fn get_app_status(state: State<'_, Application>) -> Result<AppStatus, AppE
 #[tauri::command]
 async fn list_profiles(state: State<'_, Application>) -> Result<Vec<ProfileDto>, AppError> {
     blocking(state, |app| app.profiles()).await
+}
+#[tauri::command]
+async fn list_parties(state: State<'_, Application>) -> Result<Vec<PartyId>, AppError> {
+    blocking(state, |app| app.party_ids()).await
+}
+#[tauri::command]
+async fn stage_content(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::content::ContentInspection, AppError> {
+    blocking(state, move |app| app.stage_content(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_active_content(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<Option<azeroth_app::content::ContentInspection>, AppError> {
+    blocking(state, move |app| app.active_content(&profile_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn activate_content(
+    state: State<'_, Application>,
+    profile_id: String,
+    revision: DatasetRevision,
+) -> Result<azeroth_app::content::ContentInspection, AppError> {
+    blocking(state, move |app| {
+        app.activate_content(&profile_id, &revision)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn rollback_content(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::content::ContentRollback, AppError> {
+    blocking(state, move |app| app.rollback_content(&profile_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_party_quests(
+    state: State<'_, Application>,
+    party_id: PartyId,
+) -> Result<azeroth_app::party::PartyQuestCatalog, AppError> {
+    blocking(state, move |app| app.party_quests(&party_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_party_eligibility(
+    state: State<'_, Application>,
+    party_id: PartyId,
+    revision: DatasetRevision,
+    quest_id: QuestId,
+) -> Result<azeroth_app::party::PartyQuestReport, AppError> {
+    blocking(state, move |app| {
+        app.party_eligibility(&party_id, &revision, &quest_id, system_now())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_party(
+    state: State<'_, Application>,
+    party_id: PartyId,
+) -> Result<Option<StoredParty>, AppError> {
+    blocking(state, move |app| app.party(&party_id, system_now())).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn save_party(
+    state: State<'_, Application>,
+    party_id: PartyId,
+    profile_ids: Vec<String>,
+) -> Result<(), AppError> {
+    blocking(state, move |app| app.save_party(&party_id, &profile_ids)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn delete_party(state: State<'_, Application>, party_id: PartyId) -> Result<bool, AppError> {
+    blocking(state, move |app| app.delete_party(&party_id)).await
 }
 #[tauri::command(rename_all = "snake_case")]
 async fn get_character_snapshot(
@@ -148,6 +222,16 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_app_status,
             list_profiles,
+            stage_content,
+            get_active_content,
+            activate_content,
+            rollback_content,
+            list_parties,
+            get_party_quests,
+            get_party_eligibility,
+            get_party,
+            save_party,
+            delete_party,
             get_character_snapshot,
             get_stored_snapshot,
             get_snapshot_history,

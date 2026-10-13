@@ -5,6 +5,7 @@ import type {
   HistoryEntry,
   ImportReceipt,
   StoredSnapshot,
+  StoredParty,
   WatchState,
   AtlasView,
   CommandAdapter,
@@ -51,6 +52,16 @@ export function createClient(adapter: CommandAdapter) {
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>
       run(() => adapter.invoke("list_profiles", undefined)),
+    stageContent: (text: string) => run(() => adapter.invoke("stage_content", { text })),
+    getActiveContent: (profileId: string) => run(() => adapter.invoke("get_active_content", { profile_id: profileId })),
+    activateContent: (profileId: string, revision: string) => run(() => adapter.invoke("activate_content", { profile_id: profileId, revision })),
+    rollbackContent: (profileId: string) => run(() => adapter.invoke("rollback_content", { profile_id: profileId })),
+    listParties: (): Promise<Result<string[]>> => run(() => adapter.invoke("list_parties", undefined)),
+    getPartyQuests: (partyId: string) => run(() => adapter.invoke("get_party_quests", { party_id: partyId })),
+    getPartyEligibility: (partyId: string, revision: string, questId: string) => run(() => adapter.invoke("get_party_eligibility", { party_id: partyId, revision, quest_id: questId })),
+    getParty: (partyId: string): Promise<Result<StoredParty | null>> => run(() => adapter.invoke("get_party", { party_id: partyId })),
+    saveParty: (partyId: string, profileIds: string[]): Promise<Result<null>> => run(() => adapter.invoke("save_party", { party_id: partyId, profile_ids: profileIds })),
+    deleteParty: (partyId: string): Promise<Result<boolean>> => run(() => adapter.invoke("delete_party", { party_id: partyId })),
     getCharacterSnapshot: (profileId: string): Promise<Result<CharacterSnapshotEnvelope>> =>
       run(() => adapter.invoke("get_character_snapshot", { profile_id: profileId })),
     importText: (text: string): Promise<Result<ImportReceipt>> =>

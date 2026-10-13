@@ -1,0 +1,212 @@
+use azeroth_core::{
+    contract::Envelope,
+    eligibility::{AcceptanceOutcome, EligibilityInputs, evaluate_participant},
+    entities::{CharacterSnapshot, Objective, ObjectiveTarget, TravelNode},
+    error::{AppError, ErrorCode, Result},
+    evaluation::{EvaluationContext, StalePolicy},
+    observation::{FreshnessContext, ObservationStatus},
+    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan},
+    predicate::RuleLimits,
+    travel::RouteOptions,
+    types::*,
+};
+use azeroth_storage::content::ContentRevision;
+use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, BTreeSet};
+pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
+#[derive(Clone, Debug, Serialize)]
+pub struct PlanningCatalog {
+    pub snapshot_id: Option<SnapshotId>,
+    pub revision: Option<DatasetRevision>,
+    pub fixture: bool,
+    pub nodes: Vec<TravelNode>,
+    pub objectives: Vec<Objective>,
+}
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CandidateEstimate {
+    pub objective: ObjectiveId,
+    pub node: NodeId,
+    pub utility: u32,
+    pub completion_ms: Millis,
+    pub service_ms: Millis,
+}
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct PlanningRequest {
+    pub profile_id: String,
+    pub snapshot_id: SnapshotId,
+    pub revision: DatasetRevision,
+    pub goal_profile: SourceId,
+    pub origin: NodeId,
+    pub stopping_node: NodeId,
+    pub budget_ms: Millis,
+    pub stopping_service_ms: Millis,
+    pub candidates: Vec<CandidateEstimate>,
+    pub excluded: BTreeSet<ObjectiveId>,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct FilteredCandidate {
+    pub objective: ObjectiveId,
+    pub reason: &'static str,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct PlanningReport {
+    pub request: PlanningRequest,
+    pub fixture: bool,
+    pub context: DataContext,
+    pub result: PlannerResult,
+    pub filtered: Vec<FilteredCandidate>,
+    pub assumptions: Vec<&'static str>,
+}
+fn invalid(message: &'static str) -> AppError {
+    AppError::new(ErrorCode::InvalidInput, message, false)
+}
+pub(crate) fn calculate(
+    request: PlanningRequest,
+    snapshot: &Envelope<CharacterSnapshot>,
+    content: &ContentRevision,
+    clock: &FreshnessContext,
+) -> Result<PlanningReport> {
+    if request.candidates.len() > 128 || request.excluded.len() > 128 {
+        return Err(invalid(
+            "Planning input exceeds 128 candidates or exclusions",
+        ));
+    }
+    let dataset = &content.envelope.payload;
+    let context = EvaluationContext {
+        snapshot: &snapshot.payload,
+        party: None,
+        freshness: clock,
+        stale_policy: StalePolicy::Reject,
+        limits: RuleLimits::default(),
+    };
+    let facts = BTreeMap::new();
+    let mut candidates = Vec::new();
+    let mut filtered = Vec::new();
+    let mut seen = BTreeSet::new();
+    for estimate in &request.candidates {
+        if !seen.insert(&estimate.objective) {
+            return Err(invalid("Duplicate planning candidate"));
+        }
+        let objective = dataset
+            .objectives
+            .iter()
+            .find(|o| o.id == estimate.objective)
+            .ok_or_else(|| invalid("Planning objective is absent from active content"))?;
+        if !dataset.nodes.iter().any(|n| n.id == estimate.node) {
+            return Err(invalid("Planning node is absent from active content"));
+        }
+        let mut reason = None;
+        if objective.participants != [snapshot.payload.character.clone()] {
+            reason = Some("Objective requires a different participant or a joint fairness model");
+        }
+        for target in &objective.targets {
+            match target {
+                ObjectiveTarget::QuestStage { quest, .. } => {
+                    let definition = dataset
+                        .quests
+                        .iter()
+                        .find(|q| &q.id == quest)
+                        .ok_or_else(|| invalid("Quest target is absent from active content"))?;
+                    let inputs = EligibilityInputs {
+                        definition,
+                        access: None,
+                        exclusive_groups: &[],
+                        facts: &facts,
+                        freshness: clock,
+                        stale_policy: StalePolicy::Reject,
+                        limits: RuleLimits::default(),
+                    };
+                    let outcome = evaluate_participant(&inputs, &snapshot.payload, None)?;
+                    if outcome.acceptance != AcceptanceOutcome::Eligible {
+                        reason = Some("Quest acceptance prerequisites are unmet or unknown");
+                    }
+                }
+                ObjectiveTarget::Service { node } if node.id != estimate.node => {
+                    reason = Some("Service objective must use its declared node");
+                }
+                ObjectiveTarget::Acquisition { .. } => {
+                    reason =
+                        Some("Acquisition requirements are not yet integrated into this planner");
+                }
+                _ => {}
+            }
+        }
+        let predicate = objective.requirements.value();
+        if predicate.is_none()
+            && objective.requirements.status() != ObservationStatus::NotApplicable
+        {
+            reason = Some("Objective requirements are unavailable");
+        }
+        if let Some(reason) = reason {
+            filtered.push(FilteredCandidate {
+                objective: objective.id.clone(),
+                reason,
+            });
+            continue;
+        }
+        // NotApplicable is an explicit absence of a requirement, not unknown.
+        candidates.push((estimate, objective, predicate));
+    }
+    let always =
+        azeroth_core::predicate::Predicate::try_new(azeroth_core::predicate::PredicateNode::All {
+            predicates: vec![],
+        })?;
+    let values = candidates
+        .iter()
+        .map(|(estimate, objective, predicate)| {
+            Ok(Candidate {
+                id: objective.id.clone(),
+                node: estimate.node.clone(),
+                gate: EligibilityGate::Predicate(predicate.unwrap_or(&always)),
+                utility: estimate.utility,
+                completion_ms: estimate.completion_ms,
+                service_ms: estimate.service_ms,
+                // One reward identity per target prevents different objectives counting
+                // the same quest/acquisition/service contribution twice.
+                rewards: objective
+                    .targets
+                    .iter()
+                    .map(|target| match target {
+                        ObjectiveTarget::QuestStage { quest, .. } => {
+                            SourceId::new(format!("quest:{}", quest.as_str()))
+                        }
+                        ObjectiveTarget::Acquisition { source } => {
+                            SourceId::new(format!("acquisition:{}", source.as_str()))
+                        }
+                        ObjectiveTarget::Service { node } => {
+                            SourceId::new(format!("service:{}", node.id.as_str()))
+                        }
+                    })
+                    .collect::<Result<BTreeSet<_>>>()?,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let result = plan(&PlannerInput {
+        goal_profile: request.goal_profile.clone(),
+        candidates: &values,
+        excluded: &request.excluded,
+        nodes: &dataset.nodes,
+        edges: &dataset.edges,
+        origin: request.origin.clone(),
+        stopping_node: request.stopping_node.clone(),
+        stopping_service_ms: request.stopping_service_ms,
+        budget_ms: request.budget_ms,
+        max_steps: 32,
+        context: &context,
+        travel_options: &RouteOptions::default(),
+    })?;
+    Ok(PlanningReport {
+        request,
+        fixture: snapshot.fixture,
+        context: snapshot.data_context(),
+        result,
+        filtered,
+        assumptions: vec![
+            "Utilities, objective node associations and completion/service times are explicit manual inputs",
+            "Expected-time greedy baseline; estimates are not guaranteed durations",
+            "No speculative prerequisite unlocks or party fairness; declared quest predicates only",
+        ],
+    })
+}

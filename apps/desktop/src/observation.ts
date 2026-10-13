@@ -11,7 +11,7 @@ const LABEL = {
   not_applicable: "Not applicable",
 } as const;
 
-export function describeObservation<T extends string | number | object>(
+export function describeObservation<T extends string | number | boolean | object>(
   obs: Obs<T>,
   format: (value: T) => string = (v) => String(v),
 ): string {

@@ -118,7 +118,10 @@ const PROFILE_LOOKUP: &str = "SELECT id, current_snapshot_id FROM profiles
     WHERE character_id = ?1 AND edition = ?2 AND build = ?3
       AND interface = ?4 AND namespace = ?5 AND is_fixture = ?6";
 
-fn find_profile(conn: &Connection, key: &ProfileKey) -> Result<Option<(i64, Option<i64>)>> {
+pub(crate) fn find_profile(
+    conn: &Connection,
+    key: &ProfileKey,
+) -> Result<Option<(i64, Option<i64>)>> {
     let c = KeyColumns::new(key);
     conn.prepare_cached(PROFILE_LOOKUP)
         .db()?
