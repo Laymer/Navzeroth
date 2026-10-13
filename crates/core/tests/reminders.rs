@@ -359,7 +359,7 @@ fn unchanged_state_is_not_repeated_but_changed_state_is() {
     let again = plan_clear(&set, &state);
     assert!(again.queue.is_empty());
     assert_eq!(again.excluded[&id("a")], ReminderReason::StateUnchanged);
-    // A new snapshot is new state under the default basis.
+    // A new snapshot does not repeat unchanged advice by default.
     let engine = ReminderEngine::default();
     let newer = run(
         &engine,
@@ -370,7 +370,7 @@ fn unchanged_state_is_not_repeated_but_changed_state_is() {
         &state,
     )
     .unwrap();
-    assert_eq!(queued(&newer), ["a"]);
+    assert_eq!(newer.excluded[&id("a")], ReminderReason::StateUnchanged);
     // The outcome-only basis treats the same outcome on a newer snapshot as unchanged.
     let outcome = ReminderEngine::new(ReminderPolicy {
         fingerprint: FingerprintBasis::OutcomeOnly,
@@ -445,7 +445,10 @@ fn cooldown_blocks_until_elapsed_on_a_trusted_clock_and_otherwise_stays_conserva
     let mut value = rule_json("a", 0, "a", is_true());
     value["cooldown_ms"] = json!(1000);
     let set = rules(vec![value]);
-    let engine = ReminderEngine::default();
+    let engine = ReminderEngine::new(ReminderPolicy {
+        fingerprint: FingerprintBasis::Snapshot,
+        ..Default::default()
+    });
     let at = |snapshot: &str, fresh: &FreshnessContext, state: &ReminderState| {
         run(
             &engine,
@@ -471,10 +474,7 @@ fn cooldown_blocks_until_elapsed_on_a_trusted_clock_and_otherwise_stays_conserva
         clock(None, ClockTrust::Trusted),
     ] {
         let plan = at("s_2", &fresh, &state);
-        assert_eq!(
-            plan.excluded[&id("a")],
-            ReminderReason::CooldownUnverifiable
-        );
+        assert_eq!(plan.excluded[&id("a")], ReminderReason::CooldownActive);
     }
     // A record made without a trusted clock cannot prove the cooldown elapsed.
     let mut blind = ReminderState::new();
@@ -484,16 +484,16 @@ fn cooldown_blocks_until_elapsed_on_a_trusted_clock_and_otherwise_stays_conserva
         .commit(&first, &[id("a")], &clock(None, ClockTrust::Uncertain))
         .unwrap();
     let later = at("s_2", &trusted(99_999), &blind);
-    assert_eq!(
-        later.excluded[&id("a")],
-        ReminderReason::CooldownUnverifiable
-    );
+    assert_eq!(later.excluded[&id("a")], ReminderReason::CooldownActive);
 }
 
 #[test]
 fn zero_cooldown_does_not_depend_on_the_clock() {
     let set = rules(vec![rule_json("a", 0, "a", is_true())]);
-    let engine = ReminderEngine::default();
+    let engine = ReminderEngine::new(ReminderPolicy {
+        fingerprint: FingerprintBasis::Snapshot,
+        ..Default::default()
+    });
     let blind = clock(None, ClockTrust::Uncertain);
     let mut state = ReminderState::new();
     let first = run(&engine, &set, &snap("s_1"), &blind, &clear_inputs(), &state).unwrap();
@@ -1009,4 +1009,47 @@ fn state_round_trips_and_rejects_inconsistent_records() {
         &|v| v["shown"][0]["fingerprint"]["issues"] = json!(["b", "a"])
     ));
     assert!(mutate(&|v| v["unexpected"] = json!(1)));
+}
+
+#[test]
+fn unavailable_utc_uses_session_time_and_rearming_releases_unverifiable_cooldown() {
+    let mut value = rule_json("a", 0, "a", is_true());
+    value["cooldown_ms"] = json!(1000);
+    let set = rules(vec![value]);
+    let engine = ReminderEngine::default();
+    let mut state = ReminderState::new();
+    let mut blind = clock(None, ClockTrust::Uncertain);
+    let first = run(&engine, &set, &snap("s1"), &blind, &clear_inputs(), &state).unwrap();
+    state.commit(&first, &[id("a")], &blind).unwrap();
+    let off = run(
+        &engine,
+        &set,
+        &snap_level("off", known(json!(5))),
+        &blind,
+        &clear_inputs(),
+        &state,
+    )
+    .unwrap();
+    state.commit(&off, &[], &blind).unwrap();
+    let early = run(&engine, &set, &snap("s2"), &blind, &clear_inputs(), &state).unwrap();
+    assert_eq!(early.excluded[&id("a")], ReminderReason::CooldownActive);
+    blind.session = Some((SessionId::new("s1").unwrap(), Millis::new(1020).unwrap()));
+    blind.max_age_ms = Millis::new(10000).unwrap();
+    let later = run(&engine, &set, &snap("s2"), &blind, &clear_inputs(), &state).unwrap();
+    assert_eq!(queued(&later), ["a"]);
+    let mut legacy = serde_json::to_value(&state).unwrap();
+    legacy["shown"][0]
+        .as_object_mut()
+        .unwrap()
+        .remove("shown_at_session");
+    let legacy: ReminderState = from_value(legacy).unwrap();
+    let rearmed = run(&engine, &set, &snap("s3"), &blind, &clear_inputs(), &legacy).unwrap();
+    assert_eq!(queued(&rearmed), ["a"]);
+    state.commit(&later, &[id("a")], &blind).unwrap();
+    assert!(
+        run(&engine, &set, &snap("s4"), &blind, &clear_inputs(), &state)
+            .unwrap()
+            .queue
+            .is_empty()
+    );
 }

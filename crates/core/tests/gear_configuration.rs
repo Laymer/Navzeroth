@@ -277,8 +277,12 @@ fn case_006_unknown_two_handed_is_never_assumed_one_handed() {
     let expected = &doc["expected"];
 
     // The mystery weapon with the shield is uncertain, excluded from valid.
-    assert_eq!(ranking.uncertain.len(), 1);
-    let uncertain = &ranking.uncertain[0];
+    assert_eq!(ranking.uncertain.len(), 2);
+    let uncertain = ranking
+        .uncertain
+        .iter()
+        .find(|r| r.configuration.items.len() == 2)
+        .unwrap();
     assert_eq!(config_ids(uncertain), strings(&expected["uncertain_items"]));
     assert_eq!(
         uncertain.configuration.validity,
@@ -307,10 +311,10 @@ fn case_006_unknown_two_handed_is_never_assumed_one_handed() {
         expected["best_valid_total"].as_i64().unwrap()
     );
     assert!(!ranking.top_is_definitive);
-    // The mystery weapon alone (empty off-hand) is fine either way.
+    // Unknown handedness remains uncertain even with an empty off-hand.
     assert!(
         ranking
-            .valid
+            .uncertain
             .iter()
             .any(|r| config_ids(r) == vec!["synthetic-mystery-sword".to_string()])
     );
@@ -681,7 +685,6 @@ fn every_enumerated_configuration_satisfies_the_constraints() {
     assert!(ranking.uncertain.iter().all(|e| {
         let held = config_ids(e);
         held.contains(&"synthetic-mystery".to_string())
-            && held.contains(&"synthetic-shield".to_string())
     }));
 }
 
@@ -1156,4 +1159,57 @@ fn obtainable_recommendation_data_requires_and_carries_known_eligibility() {
         )
         .is_err()
     );
+}
+
+#[test]
+fn off_hand_unknown_handedness_never_enters_valid_ranking() {
+    let mut doc = fixture("case-006-unknown-two-handed.json");
+    // Move the mystery weapon to the off hand without changing its uncertainty.
+    let text = serde_json::to_string(&doc)
+        .unwrap()
+        .replace("synthetic-main", "temporary-slot")
+        .replace("synthetic-off", "synthetic-main")
+        .replace("temporary-slot", "synthetic-off");
+    doc = serde_json::from_str(&text).unwrap();
+    // Keep the declared layout identifying the original main/off slots.
+    let original = fixture("case-006-unknown-two-handed.json");
+    doc["layout"] = original["layout"].clone();
+    let (profile, layout, candidates) = parts(&doc);
+    let ctx = demo();
+    let ranking = rank_theoretical(&scenario(&ctx, &profile, &layout, &candidates)).unwrap();
+    assert!(
+        ranking
+            .valid
+            .iter()
+            .all(|r| !config_ids(r).contains(&"synthetic-mystery-sword".to_string()))
+    );
+    assert!(!ranking.uncertain.is_empty());
+}
+
+#[test]
+fn incomplete_score_breakdowns_are_not_published_as_known() {
+    let mut doc = fixture("case-006-two-hand-shield.json");
+    for candidate in doc["candidates"].as_array_mut().unwrap() {
+        candidate["item"]["attributes"] = json!({"status":"unknown"});
+    }
+    let (profile, layout, candidates) = parts(&doc);
+    let context = demo();
+    let scenario = scenario(&context, &profile, &layout, &candidates);
+    let ranking = rank_theoretical(&scenario).unwrap();
+    let data = recommendation_data(
+        &scenario,
+        &ranking,
+        RecommendationInputs {
+            snapshot: SnapshotRef {
+                id: SnapshotId::new("synthetic-snapshot").unwrap(),
+                character: CharacterId::new("synthetic-character").unwrap(),
+                context: context.clone(),
+            },
+            dataset_revision: DatasetRevision::new("synthetic-r1").unwrap(),
+            evidence: vec![],
+            baseline: None,
+        },
+    )
+    .unwrap();
+    assert!(data.proposed_score.value().is_none());
 }

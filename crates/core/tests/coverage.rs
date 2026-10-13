@@ -522,3 +522,43 @@ fn error_and_gap_lists_are_sorted() {
         assert!(r.gaps.windows(2).all(|w| w[0] < w[1]), "{name}");
     }
 }
+
+#[test]
+fn eligibility_and_objective_stage_dependencies_detect_cycles() {
+    let original: Value = serde_json::from_str(&read("quest-prerequisite-cycle.json")).unwrap();
+    let mut eligibility = original.clone();
+    for q in eligibility["payload"]["quests"].as_array_mut().unwrap() {
+        q["eligibility"] = q["prerequisites"].clone();
+        q["prerequisites"] = json!({"status":"known","value":{"op":"all","predicates":[]}});
+    }
+    assert!(
+        content_report_from_json(&eligibility.to_string())
+            .errors
+            .iter()
+            .any(|e| e.code() == "quest_prerequisite_cycle")
+    );
+    let quests = original["payload"]["quests"].as_array().unwrap();
+    let mut objective = original.clone();
+    for (i, q) in objective["payload"]["quests"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .enumerate()
+    {
+        q["stages"] = json!([format!("stage-{i}")]);
+        q["prerequisites"] = json!({"status":"known","value":{"op":"objective_state","objective":format!("stage-{}", (i+1)%quests.len()),"completed":true}});
+    }
+    assert!(
+        content_report_from_json(&objective.to_string())
+            .errors
+            .iter()
+            .any(|e| e.code() == "quest_prerequisite_cycle")
+    );
+    objective["payload"]["quests"][0]["prerequisites"]["value"] = json!({"op":"any","predicates":[objective["payload"]["quests"][0]["prerequisites"]["value"].clone(),{"op":"all","predicates":[]}]});
+    assert!(
+        content_report_from_json(&objective.to_string())
+            .gaps
+            .iter()
+            .any(|e| e.code() == "possible_quest_prerequisite_cycle")
+    );
+}

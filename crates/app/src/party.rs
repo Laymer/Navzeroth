@@ -107,6 +107,9 @@ pub(crate) fn assessment(value: ParticipantEligibility) -> QuestAssessment {
                     other_quest.as_str()
                 ),
                 AlreadyTurnedIn => "Already turned in".into(),
+                ResetStateUnknown => {
+                    "Reset status is unknown for an already turned-in quest".into()
+                }
                 RepeatabilityUnknown { .. } => "Repeatability is unavailable".into(),
                 ObservationStale { .. } => "A required observation is stale".into(),
                 ClockUncertain { .. } => "A required observation has uncertain capture age".into(),
