@@ -6,20 +6,6 @@ name: Windows package
 on:
   pull_request:
     branches: [main]
-    paths:
-      - .github/workflows/package-windows.yml
-      - scripts/windows/**
-      - addons/**
-      - apps/desktop/**
-      - crates/**
-      - Cargo.toml
-      - package.json
-      - pnpm-workspace.yaml
-      - .node-version
-      - LICENSE
-      - rust-toolchain.toml
-      - Cargo.lock
-      - pnpm-lock.yaml
   push:
     tags: ['v[0-9]*']
   workflow_dispatch:

@@ -71,3 +71,12 @@ UTC comparison. Missing/invalid values remain uncertain; observed UTC is distinc
 from trusted UTC. Stability guards detect reversals/resets/jumps and reload clears
 trust. Actual client probe/confirmation, restrictions and displayed capture age
 remain UNVERIFIED until reported under recorded conditions.
+
+### Wave-3 reported clock follow-up
+
+The user-supplied delivery plan reports successful trusted-age display after clock
+confirmation and uncertain-age display after reload for the previously recorded
+1.60.1.70338 / interface 16001 client. This establishes two limited user-reported
+flow results. No raw exports, inspected addon revision, exact displayed values,
+combat/zone conditions or broader restriction evidence were supplied here.
+Earlier unverified statements remain historical; other bindings remain unverified.
