@@ -266,20 +266,6 @@ async fn get_snapshot_markers(
     blocking(state, |app| app.markers(system_now())).await
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn get_gear_catalog(
-    state: State<'_, Application>,
-    profile_id: String,
-) -> Result<azeroth_app::gear::GearCatalog, AppError> {
-    blocking(state, move |app| app.gear_catalog(&profile_id)).await
-}
-#[tauri::command]
-async fn compare_gear(
-    state: State<'_, Application>,
-    text: String,
-) -> Result<azeroth_app::gear::GearReport, AppError> {
-    blocking(state, move |app| app.compare_gear(&text, system_now())).await
-}
-#[tauri::command(rename_all = "snake_case")]
 async fn import_session_text(
     state: State<'_, Application>,
     profile_id: String,
@@ -331,6 +317,20 @@ async fn delete_session(
     })
     .await
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn get_gear_catalog(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::gear::GearCatalog, AppError> {
+    blocking(state, move |app| app.gear_catalog(&profile_id)).await
+}
+#[tauri::command]
+async fn compare_gear(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::gear::GearReport, AppError> {
+    blocking(state, move |app| app.compare_gear(&text, system_now())).await
+}
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
@@ -347,13 +347,13 @@ pub fn run() {
             atlas_protocol::respond(&request)
         })
         .invoke_handler(tauri::generate_handler![
-            get_gear_catalog,
-            compare_gear,
             import_session_text,
             import_session_file,
             list_sessions,
             get_session_detail,
             delete_session,
+            get_gear_catalog,
+            compare_gear,
             get_historical_snapshot,
             promote_snapshot,
             get_planning_catalog,
