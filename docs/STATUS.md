@@ -1,8 +1,11 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: capture clock observation/confirmation and v0.2.0 release.
-Owner: Codex root, sole writer; release baseline main c460297.
+Current task: parallel delivery wave toward 0.3.0-rc.1 candidate artifacts.
+Owner: Codex /root coordinator; baseline main 449a726.
+See [wave-3 coordination](handoffs/2026-10-13-wave3-coordination.md) for ownership,
+frozen boundaries and evidence scope. v0.2.0 is published; no new tag/release
+is part of this wave.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -219,3 +222,11 @@ trust. No elapsed gameplay time is exported. Actual clock API/confirmation behav
 on 70338 remains unverified; level-only flow retains its one user-reported result.
 Six version declarations and workspace lock entries are 0.2.0. Schema/layout v1
 remain unchanged; release is a developer prerelease, not full M0/M2 acceptance.
+
+## Wave-3 clock follow-up
+
+The supplied user delivery plan reports trusted capture age and uncertain age after
+reload on the recorded 70338 client. This is limited user-reported evidence; installed
+revision, raw export, exact age and restricted-context checks were not supplied.
+Quest/equipment/position bindings, addon plan UI and session workflows remain
+experimental until the consolidated live checklist is evidenced.
