@@ -11,7 +11,7 @@ use azeroth_core::{
     contract::Envelope,
     entities::CharacterSnapshot,
     error::{AppError, ErrorCode},
-    types::{PartyId, Position},
+    types::{DatasetRevision, PartyId, Position, QuestId},
 };
 use std::sync::Arc;
 use tauri::{Manager, State};
@@ -42,6 +42,25 @@ async fn list_profiles(state: State<'_, Application>) -> Result<Vec<ProfileDto>,
 #[tauri::command]
 async fn list_parties(state: State<'_, Application>) -> Result<Vec<PartyId>, AppError> {
     blocking(state, |app| app.party_ids()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_party_quests(
+    state: State<'_, Application>,
+    party_id: PartyId,
+) -> Result<azeroth_app::party::PartyQuestCatalog, AppError> {
+    blocking(state, move |app| app.party_quests(&party_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_party_eligibility(
+    state: State<'_, Application>,
+    party_id: PartyId,
+    revision: DatasetRevision,
+    quest_id: QuestId,
+) -> Result<azeroth_app::party::PartyQuestReport, AppError> {
+    blocking(state, move |app| {
+        app.party_eligibility(&party_id, &revision, &quest_id, system_now())
+    })
+    .await
 }
 #[tauri::command(rename_all = "snake_case")]
 async fn get_party(
@@ -172,6 +191,8 @@ pub fn run() {
             get_app_status,
             list_profiles,
             list_parties,
+            get_party_quests,
+            get_party_eligibility,
             get_party,
             save_party,
             delete_party,

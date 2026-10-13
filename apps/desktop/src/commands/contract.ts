@@ -82,6 +82,36 @@ export interface StoredParty {
     snapshot: StoredSnapshot | null;
   }[];
 }
+export interface PartyQuestCatalog {
+  context: DataContext;
+  fixture: boolean;
+  revision: string | null;
+  quests: string[];
+}
+export type CatchUp =
+  | { kind: "single"; requirement: { kind: "quest"; quest: string; state: "accepted" | "completed" | "turned_in" } | { kind: "level"; level: number } | { kind: "other" } }
+  | { kind: "all_of"; items: CatchUp[] }
+  | { kind: "one_of"; alternatives: CatchUp[] };
+export interface PartyQuestReport {
+  context: DataContext;
+  fixture: boolean;
+  revision: string;
+  quest: string;
+  joint_status: "jointly_eligible" | "eligible_for_some" | "all_behind" | "blocked" | "unknown" | "missing_or_old_snapshots";
+  participants: {
+    character: string;
+    snapshot_id: string | null;
+    freshness: Freshness | null;
+    assessment: {
+      acceptance: "eligible" | "behind" | "blocked" | "unknown";
+      progress: "not_started" | "in_progress" | "all_stages_done" | "unknown";
+      completion: "complete" | "incomplete" | "unknown";
+      turn_in: "ready" | "not_ready" | "already_turned_in" | "unknown";
+      catch_up: CatchUp | null;
+      reasons: { phase: "acceptance" | "progress" | "completion" | "turn_in"; message: string }[];
+    } | null;
+  }[];
+}
 export interface HistoryEntry {
   snapshot_id: string;
   is_current: boolean;
@@ -195,6 +225,8 @@ export interface CommandMap {
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
   list_parties: { input: undefined; output: string[] };
+  get_party_quests: { input: { party_id: string }; output: PartyQuestCatalog };
+  get_party_eligibility: { input: { party_id: string; revision: string; quest_id: string }; output: PartyQuestReport };
   get_party: { input: { party_id: string }; output: StoredParty | null };
   save_party: { input: { party_id: string; profile_ids: string[] }; output: null };
   delete_party: { input: { party_id: string }; output: boolean };

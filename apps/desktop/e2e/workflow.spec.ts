@@ -23,6 +23,7 @@ async function mockCommands(page: Page) {
         switch (command) {
           case "get_app_status": return { version: "test", data_mode: "stored", active_profile: selected, capabilities: {} };
           case "list_profiles": return [...imported].map((id) => ({ id, display_name: id, data_mode: "stored", context: snapshot.payload.context, fixture: true, snapshot_count: 1 }));
+          case "get_party_quests": return { context: snapshot.payload.context, fixture: true, revision: null, quests: [] };
           case "list_parties": return [...parties.keys()].sort();
           case "save_party": parties.set(String(args.party_id), args.profile_ids as string[]); return null;
           case "delete_party": return parties.delete(String(args.party_id));

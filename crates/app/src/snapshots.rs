@@ -317,6 +317,152 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub fn party_quests(&self, id: &PartyId) -> Result<crate::party::PartyQuestCatalog> {
+        let state = self.lock()?;
+        let party = state
+            .store
+            .party(id)?
+            .ok_or_else(|| invalid("No such party"))?;
+        let key = &party.participants[0];
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context.clone(),
+            fixture: key.fixture,
+        };
+        let content = state.store.active_content_revision(&scope)?;
+        Ok(crate::party::PartyQuestCatalog {
+            context: key.context.clone(),
+            fixture: key.fixture,
+            revision: content
+                .as_ref()
+                .map(|c| c.envelope.payload.revision.clone()),
+            quests: content
+                .map(|c| {
+                    c.envelope
+                        .payload
+                        .quests
+                        .iter()
+                        .map(|q| q.id.clone())
+                        .collect()
+                })
+                .unwrap_or_default(),
+        })
+    }
+    pub fn party_eligibility(
+        &self,
+        id: &PartyId,
+        revision: &azeroth_core::types::DatasetRevision,
+        quest: &azeroth_core::types::QuestId,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::party::PartyQuestReport> {
+        use crate::party::*;
+        use azeroth_core::{
+            eligibility::{EligibilityInputs, PartyOutcome, evaluate_participant, evaluate_party},
+            entities::{PartySnapshot, PartySnapshotData},
+            evaluation::StalePolicy,
+            predicate::RuleLimits,
+        };
+        let state = self.lock()?;
+        let party = state
+            .store
+            .party(id)?
+            .ok_or_else(|| invalid("No such party"))?;
+        let key = &party.participants[0];
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context.clone(),
+            fixture: key.fixture,
+        };
+        let content = state
+            .store
+            .active_content_revision(&scope)?
+            .ok_or_else(|| {
+                error(
+                    ErrorCode::DatasetIncomplete,
+                    "No active content for this party",
+                )
+            })?;
+        if &content.envelope.payload.revision != revision {
+            return Err(invalid("Active content changed; refresh the quest list"));
+        }
+        let definition = content
+            .envelope
+            .payload
+            .quests
+            .iter()
+            .find(|q| &q.id == quest)
+            .ok_or_else(|| invalid("Quest is not in the active content"))?;
+        let snapshots = party
+            .participants
+            .iter()
+            .map(|key| state.store.current_snapshot(key))
+            .collect::<Result<Vec<_>>>()?;
+        let available = snapshots
+            .iter()
+            .flatten()
+            .map(|e| e.payload.clone())
+            .collect::<Vec<_>>();
+        let domain_party = if available.is_empty() {
+            None
+        } else {
+            Some(PartySnapshot::try_new(PartySnapshotData {
+                id: id.clone(),
+                context: key.context.clone(),
+                participants: available,
+            })?)
+        };
+        let clock = context(now);
+        let facts = std::collections::BTreeMap::new();
+        let inputs = EligibilityInputs {
+            definition,
+            access: None,
+            exclusive_groups: &[],
+            facts: &facts,
+            freshness: &clock,
+            stale_policy: StalePolicy::Reject,
+            limits: RuleLimits::default(),
+        };
+        let mut participants = Vec::new();
+        let mut all_fresh = true;
+        for (key, snapshot) in party.participants.iter().zip(&snapshots) {
+            let capture_freshness = snapshot
+                .as_ref()
+                .map(|s| freshness(&s.payload.capture, &clock));
+            all_fresh &= matches!(capture_freshness, Some(Freshness::Fresh { .. }));
+            let result = snapshot
+                .as_ref()
+                .map(|s| evaluate_participant(&inputs, &s.payload, domain_party.as_ref()))
+                .transpose()?;
+            participants.push(ParticipantAssessment {
+                character: key.character.clone(),
+                snapshot_id: snapshot.as_ref().map(|s| s.payload.id.clone()),
+                freshness: capture_freshness,
+                assessment: result.map(assessment),
+            });
+        }
+        let joint_status = if !all_fresh {
+            JointStatus::MissingOrOldSnapshots
+        } else {
+            match evaluate_party(
+                &inputs,
+                domain_party.as_ref().expect("all fresh requires snapshots"),
+            )?
+            .outcome
+            {
+                PartyOutcome::JointlyEligible => JointStatus::JointlyEligible,
+                PartyOutcome::EligibleForSome { .. } => JointStatus::EligibleForSome,
+                PartyOutcome::AllBehind { .. } => JointStatus::AllBehind,
+                PartyOutcome::Blocked { .. } => JointStatus::Blocked,
+                PartyOutcome::Unknown { .. } => JointStatus::Unknown,
+            }
+        };
+        Ok(PartyQuestReport {
+            context: key.context.clone(),
+            fixture: key.fixture,
+            revision: revision.clone(),
+            quest: quest.clone(),
+            joint_status,
+            participants,
+        })
+    }
     pub fn delete_party(&self, id: &PartyId) -> Result<bool> {
         self.lock()?.store.delete_party(id)
     }

@@ -3,6 +3,7 @@ import type { CommandClient } from "../commands";
 import type { AppError, ProfileSummary, StoredParty } from "../commands/contract";
 import { describeAge, describeUncertainty } from "../atlas/describe";
 import { describeObservation } from "../observation";
+import { PartyEligibility } from "./PartyEligibility";
 
 type Detail = { phase: "loading" } | { phase: "ready"; party: StoredParty | null } | { phase: "error"; error: AppError };
 type Editor = { id: string; members: string[]; existing: boolean };
@@ -96,7 +97,8 @@ export function PartyScreen({ client, refreshKey = 0 }: { client: CommandClient;
         <h4>{participant.character}</h4>
         {participant.snapshot === null ? <p>Missing imported snapshot. Import this character to restore their state.</p> : <Participant snapshot={participant.snapshot} />}
       </li>)}</ul>
-      <p>Joint eligibility and session planning are not available yet.</p>
+      <PartyEligibility key={party.id} client={client} partyId={party.id} refreshKey={refreshKey + revision} />
+      <p>Session planning is not available yet.</p>
     </>}
     {editor && <form onSubmit={(event) => { event.preventDefault(); void save(); }}>
       <fieldset disabled={busy}><legend>{editor.existing ? "Edit party membership" : "Create local party"}</legend>

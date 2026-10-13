@@ -99,6 +99,8 @@ export const demoAdapter: CommandAdapter = {
         case "get_party":
           return null;
         case "save_party":
+        case "get_party_quests":
+        case "get_party_eligibility":
         case "delete_party":
           throw { code: "PROVIDER_UNAVAILABLE", message: "Local parties require the desktop application.", retryable: false } satisfies AppError;
         case "import_snapshot_text":

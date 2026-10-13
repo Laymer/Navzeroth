@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M7.3 Party commands and screen delivered locally; per-participant eligibility integration next.
-Owner: Codex root, sole writer; claimed 2026-10-13 at baseline 29c3188.
+Current task: M7.3 eligibility display delivered; content controls next.
+Owner: Codex root, sole writer; claimed 2026-10-13 at baseline 2b96b03.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
 Task PRs through #36 are merged into protected main f2f64a3 after fresh CI.
@@ -19,7 +19,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Caller supplies clusters/goal utilities; planner UI/export integration remains. |
 | M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
-| M7 | IN_PROGRESS | Pure reminders, bounded local parties and Party screen with separate missing/stale/progress display; eligibility/planner and preparation integration remain. |
+| M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
 | M9 | IN_PROGRESS | Today/Imports/Atlas/Party workflow and browser tests; remaining planning/gear/session screens and packaging remain. |
 | M10 | TODO | Optional native reference overlay. |

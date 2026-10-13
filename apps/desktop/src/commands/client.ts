@@ -53,6 +53,8 @@ export function createClient(adapter: CommandAdapter) {
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>
       run(() => adapter.invoke("list_profiles", undefined)),
     listParties: (): Promise<Result<string[]>> => run(() => adapter.invoke("list_parties", undefined)),
+    getPartyQuests: (partyId: string) => run(() => adapter.invoke("get_party_quests", { party_id: partyId })),
+    getPartyEligibility: (partyId: string, revision: string, questId: string) => run(() => adapter.invoke("get_party_eligibility", { party_id: partyId, revision, quest_id: questId })),
     getParty: (partyId: string): Promise<Result<StoredParty | null>> => run(() => adapter.invoke("get_party", { party_id: partyId })),
     saveParty: (partyId: string, profileIds: string[]): Promise<Result<null>> => run(() => adapter.invoke("save_party", { party_id: partyId, profile_ids: profileIds })),
     deleteParty: (partyId: string): Promise<Result<boolean>> => run(() => adapter.invoke("delete_party", { party_id: partyId })),
