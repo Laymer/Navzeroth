@@ -34,3 +34,15 @@ test("hide, restore and profile preferences remain explicit",async()=>{
  fireEvent.click(screen.getByRole("button",{name:"Restore r"}));await waitFor(()=>expect(screen.queryByRole("button",{name:"Restore r"})).toBeNull());
  fireEvent.click(screen.getByLabelText("Enable reminders for this profile"));await waitFor(()=>expect(screen.getByLabelText("Enable reminders for this profile")).not.toBeChecked());
 });
+test("refresh drops a response from the previous snapshot request",async()=>{
+ let resolveOld:((value:ReminderView)=>void)|undefined;
+ const old=new Promise<ReminderView>(resolve=>{resolveOld=resolve;});let requests=0;
+ const empty:ReminderView={profile_id:"one",snapshot_id:"new",revision:null,fixture:true,enabled:true,plan:null,rules:[],dismissed:[]};
+ const adapter:CommandAdapter={invoke:async(command)=>{if(command==="list_profiles")return [{id:"one",display_name:"One",data_mode:"stored",snapshot_count:1}] as never;if(command==="reminder_view"){requests++;return (requests===1?await old:empty) as never;}throw Error("Unexpected command");}};
+ const client=createClient(adapter);const rendered=render(<ReminderScreen client={client} refreshKey={0}/>);
+ await waitFor(()=>expect(requests).toBe(1));rendered.rerender(<ReminderScreen client={client} refreshKey={1}/>);
+ await screen.findByText(/No authored reminder rules/);
+ if(!resolveOld)throw Error("Missing pending read");
+ resolveOld({...empty,rules:[{id:"obsolete",text:"Old",dismissal:"permanent"}],plan:{mode:"non_intrusive",queue:[{rule:"obsolete",priority:1,dismissal:"permanent",kind:{kind:"advice",text:"Obsolete advice"},evidence:[]}],held:[],excluded:{}}});
+ await waitFor(()=>expect(screen.queryByText("Obsolete advice")).toBeNull());
+});

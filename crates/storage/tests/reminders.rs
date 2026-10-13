@@ -24,7 +24,7 @@ fn preferences_roundtrip_and_exact_profile_isolation() {
     assert!(!store.reminder_state(&key).unwrap().enabled);
 }
 #[test]
-fn v5_upgrade_preserves_populated_history_and_snapshot() {
+fn v5_upgrade_preserves_populated_session_history() {
     let db = common::TempDb::new("reminder-v5");
     let mut conn = common::raw(&db.path);
     migrate_with(&mut conn, &MIGRATIONS[..5]).unwrap();
@@ -32,7 +32,10 @@ fn v5_upgrade_preserves_populated_history_and_snapshot() {
     conn.execute("INSERT INTO sessions(profile_id,session_id,content_sha256,document,summary_document) VALUES (1,'kept',?1,'event-document','summary-document')",["a".repeat(64)]).unwrap();
     drop(conn);
     let store = SqliteStore::open(&db.path).unwrap();
-    assert_eq!(store.schema_version().unwrap(), 6);
+    assert_eq!(
+        store.schema_version().unwrap(),
+        azeroth_storage::migrations::latest_version()
+    );
     let conn = common::raw(&db.path);
     assert_eq!(
         conn.query_row(
