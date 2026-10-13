@@ -46,7 +46,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
       setCatalog(result.value); setError("");
       const nodes = new Set(result.value.nodes.map((n) => n.id));
       const objectives = new Set(result.value.objectives.map((o) => o.id));
-      setCandidates((old) => old.filter((c) => objectives.has(c.objective) && nodes.has(c.node)));
+      setCandidates((old) => old.filter((c) => objectives.has(c.objective)).map((c) => nodes.has(c.node) ? c : { ...c, node: "" }));
       setExcluded((old) => old.filter((id) => objectives.has(id)));
       setOrigin((old) => nodes.has(old) ? old : ""); setStop((old) => nodes.has(old) ? old : "");
     });

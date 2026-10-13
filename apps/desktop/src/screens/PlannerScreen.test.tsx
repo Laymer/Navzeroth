@@ -46,7 +46,7 @@ it("discards route responses when the planning inputs change", async () => {
 it("preserves same-profile manual planning inputs during routine refresh", async () => {
   const client = createClient({ invoke: vi.fn((command) => {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
-    if (command === "get_planning_catalog") return Promise.resolve({ snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: [] } as never);
+    if (command === "get_planning_catalog") return Promise.resolve({ snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: fixture.envelope.payload.objectives } as never);
     return Promise.reject(new Error("unexpected"));
   }) });
   const view = render(<PlannerScreen client={client} refreshKey={0} />);
@@ -54,8 +54,13 @@ it("preserves same-profile manual planning inputs during routine refresh", async
   fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });
   fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-2" } });
   fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });
+  fireEvent.click(screen.getByLabelText("Consider objective"));
+  fireEvent.change(screen.getByLabelText("utility"), { target: { value: "42" } });
   view.rerender(<PlannerScreen client={client} refreshKey={1} />);
   await screen.findByText(/Snapshot: s; revision: r/);
+  expect(screen.getByLabelText("Consider objective")).toBeChecked();
+  expect(screen.getByLabelText("utility")).toHaveValue(42);
+  expect(screen.getByLabelText("Objective node")).toHaveValue("");
   expect(screen.getByLabelText("Origin")).toHaveValue("demo-node-1");
   expect(screen.getByLabelText("Stopping node")).toHaveValue("demo-node-2");
   expect(screen.getByLabelText("Budget (ms)")).toHaveValue(5000);
