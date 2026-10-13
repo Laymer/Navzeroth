@@ -127,8 +127,10 @@ The files land in `dist\windows\` (ignored by git). The script:
 3. Installs locked dependencies (`pnpm install --frozen-lockfile`, `cargo fetch --locked`),
    runs `cargo test --workspace` and the desktop unit tests (skip with `-SkipTests`).
 4. Runs `tauri build --bundles nsis`; Tauri downloads its pinned NSIS on first use.
-5. Packages the addon (sorted entries, commit timestamp: the same bytes for the same
-   commit and .NET runtime) and writes `SHA256SUMS.txt`.
+5. Packages the addon (sorted entries, commit timestamp) and writes `SHA256SUMS.txt`.
+   Rebuilding the same checkout with the same .NET runtime gives the same zip; a
+   checkout with other line endings (Git's `core.autocrlf` on Windows) gives a
+   different one, because the addon files then differ.
 6. Fails if the build changed a tracked file.
 
 Other options: `-ExpectedVersion v0.2.0` (fail on mismatch), `-OutputDirectory`,
