@@ -71,7 +71,9 @@ function Snapshot.encode(snapshot, options)
       game={edition=context.build.edition, build=context.build.build,
         interface=context.build.interface, locale=options.locale},
       producer={component='addon', version=ns.Version.addon},
-      provenance=snapshot.capture, payload=snapshot}
+      provenance={source=snapshot.capture.source,
+        clock_trust=snapshot.capture.clock_trust or 'uncertain',
+        created_at_utc_ms=snapshot.capture.observed_at_utc_ms}, payload=snapshot}
     envelope.producer.session_id = snapshot.capture.session_id
     envelope.producer.sequence = snapshot.capture.sequence
     -- Serialize before deep validation: cycles/depth/bytes cannot evade the bounds.

@@ -49,6 +49,17 @@ fn lua_character_bytes_import_through_rust_contract_and_application() {
         assert!(value["payload"][field].is_object(), "{field}");
     }
     assert_eq!(value["payload"]["location"]["value"]["x"], json!(0.4));
+    assert_eq!(
+        value["provenance"]["created_at_utc_ms"],
+        value["payload"]["capture"]["observed_at_utc_ms"]
+    );
+    let missing_clock: String = sandbox.run("missing_clock",
+        "ns.snapshot.capture.clock_trust=nil; return assert(ns.Snapshot.encode(ns.snapshot,ns.options))").unwrap();
+    decode_any(&missing_clock[6..]).unwrap();
+    assert_eq!(
+        serde_json::from_str::<Value>(&missing_clock[6..]).unwrap()["provenance"]["clock_trust"],
+        "uncertain"
+    );
     let app = SnapshotApplication::in_memory().unwrap();
     let receipt = app.import_text(&text, None).unwrap();
     let duplicate = app.import_text(&text, None).unwrap();
