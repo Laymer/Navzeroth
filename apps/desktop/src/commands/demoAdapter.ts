@@ -100,6 +100,8 @@ export const demoAdapter: CommandAdapter = {
           return null;
         case "set_session_calibration":
         case "get_calibration":
+        case "reminder_view":
+        case "mutate_reminders":
         case "get_gear_catalog":
         case "compare_gear":
         case "inspect_plan_route":

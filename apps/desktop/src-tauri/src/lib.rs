@@ -51,6 +51,23 @@ async fn get_calibration(
 ) -> Result<azeroth_core::calibration::CalibrationReport, AppError> {
     blocking(state, move |app| app.get_calibration(&profile_id, &request)).await
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn reminder_view(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::reminders::ReminderView, AppError> {
+    blocking(state, move |app| {
+        app.reminder_view(&profile_id, system_now())
+    })
+    .await
+}
+#[tauri::command]
+async fn mutate_reminders(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::reminders::ReminderView, AppError> {
+    blocking(state, move |app| app.mutate_reminders(&text, system_now())).await
+}
 
 #[tauri::command(rename_all = "snake_case")]
 async fn get_historical_snapshot(
@@ -381,6 +398,8 @@ pub fn run() {
             plan_session,
             set_session_calibration,
             get_calibration,
+            reminder_view,
+            mutate_reminders,
             inspect_plan_route,
             export_plan,
             get_app_status,
