@@ -11,7 +11,7 @@ function fixture() {
   calls.push({command,args});let value:unknown;
   if(command==="list_profiles")value=[{id:"one",display_name:"One",data_mode:"stored",snapshot_count:1,fixture:true}];
   else if(command==="reminder_view")value=view;
-  else if(command==="mutate_reminders") {const request=JSON.parse((args as {request_json:string}).request_json);if(request.action.kind==="acknowledge")view={...view,plan:{...view.plan!,queue:[],excluded:{r:{code:"state_unchanged"}}}};else if(request.action.kind==="dismiss")view={...view,dismissed:["r"],plan:{...view.plan!,queue:[]}};else if(request.action.kind==="restore")view={...view,dismissed:[]};else view={...view,enabled:request.action.enabled};value=view;}
+  else if(command==="mutate_reminders") {const request=JSON.parse((args as {text:string}).text);if(request.action.kind==="acknowledge")view={...view,plan:{...(view.plan ?? {mode:"non_intrusive",queue:[],held:[],excluded:{}}),queue:[],excluded:{r:{code:"state_unchanged"}}}};else if(request.action.kind==="dismiss")view={...view,dismissed:["r"],plan:{...(view.plan ?? {mode:"non_intrusive",queue:[],held:[],excluded:{}}),queue:[]}};else if(request.action.kind==="restore")view={...view,dismissed:[]};else view={...view,enabled:request.action.enabled};value=view;}
   else throw Error(`Unexpected ${command}`);
   return value as never;
  }};
@@ -24,7 +24,8 @@ test("inspection stays nonintrusive and presentation needs explicit acknowledgme
  fireEvent.click(screen.getByRole("button",{name:"Mark r as read"}));
  await screen.findByText(/No new advice/);
  await waitFor(()=>expect(calls.filter(c=>c.command==="mutate_reminders")).toHaveLength(1));
- const request=JSON.parse((calls.find(c=>c.command==="mutate_reminders")!.args as {request_json:string}).request_json);
+ const call=calls.find(c=>c.command==="mutate_reminders");if(!call)throw Error("Missing explicit mutation");
+ const request=JSON.parse((call.args as {text:string}).text);
  expect(request).toEqual({profile_id:"one",snapshot_id:"snapshot",revision:"revision",action:{kind:"acknowledge",rules:["r"]}});
 });
 test("hide, restore and profile preferences remain explicit",async()=>{

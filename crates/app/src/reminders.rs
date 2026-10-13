@@ -103,8 +103,16 @@ fn evaluate(
         .dismissals()
         .filter(|r| {
             snapshot.as_ref().is_none_or(|s| match r.policy {
-                DismissalPolicy::Session => r.session == s.payload.capture.session_id,
-                DismissalPolicy::UntilRulesetChanges => r.ruleset == revision,
+                DismissalPolicy::Session => r
+                    .session
+                    .as_ref()
+                    .zip(s.payload.capture.session_id.as_ref())
+                    .is_none_or(|(a, b)| a == b),
+                DismissalPolicy::UntilRulesetChanges => r
+                    .ruleset
+                    .as_ref()
+                    .zip(revision.as_ref())
+                    .is_none_or(|(a, b)| a == b),
                 DismissalPolicy::Permanent => true,
             })
         })
