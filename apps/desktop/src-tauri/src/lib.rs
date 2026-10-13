@@ -53,15 +53,30 @@ async fn plan_joint_session(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-async fn get_party_plan_proposal(state: State<'_, Application>, party_id: PartyId) -> Result<Option<azeroth_app::party_proposals::PartyProposalReport>, AppError> {
-    blocking(state, move |app| app.party_plan_proposal(&party_id, system_now())).await
+async fn get_party_plan_proposal(
+    state: State<'_, Application>,
+    party_id: PartyId,
+) -> Result<Option<azeroth_app::party_proposals::PartyProposalReport>, AppError> {
+    blocking(state, move |app| {
+        app.party_plan_proposal(&party_id, system_now())
+    })
+    .await
 }
 #[tauri::command]
-async fn propose_party_plan(state: State<'_, Application>, text: String) -> Result<azeroth_app::party_proposals::PartyProposalReport, AppError> {
-    blocking(state, move |app| app.propose_party_plan(&text, system_now())).await
+async fn propose_party_plan(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::party_proposals::PartyProposalReport, AppError> {
+    blocking(state, move |app| {
+        app.propose_party_plan(&text, system_now())
+    })
+    .await
 }
 #[tauri::command]
-async fn accept_party_plan(state: State<'_, Application>, text: String) -> Result<azeroth_app::party_proposals::PartyProposalReport, AppError> {
+async fn accept_party_plan(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::party_proposals::PartyProposalReport, AppError> {
     blocking(state, move |app| app.accept_party_plan(&text, system_now())).await
 }
 

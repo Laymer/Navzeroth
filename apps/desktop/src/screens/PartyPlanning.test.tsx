@@ -21,6 +21,7 @@ function fill() {
   fireEvent.change(screen.getByLabelText("Utility for two on demo-objective-1"), { target: { value: "3" } });
 }
 const report = {
+  participants: catalog.participants,
   request: { revision: "demo-r1" }, result: { plan: { selected: [], expected_total_ms: 0 }, assessments: [{ objective: "demo-objective-1", ready: false, participants: [
     { character: "one", utility: 10, readiness: { truth: "true", reasons: [] } },
     { character: "two", utility: 3, readiness: { truth: "unknown", reasons: [] } },
@@ -29,6 +30,7 @@ const report = {
 it("requires manual fields and sends every member snapshot and utility", async () => {
   let request: unknown;
   const adapter: CommandAdapter = { invoke(command, input) {
+    if (command === "get_party_plan_proposal") return Promise.resolve(null as never);
     if (command === "get_joint_planning_catalog") return Promise.resolve(catalog as never);
     request = JSON.parse((input as { text: string }).text); return Promise.resolve(report as never);
   } };
@@ -41,7 +43,7 @@ it("requires manual fields and sends every member snapshot and utility", async (
   expect(screen.getByText(/No jointly feasible objective/)).toBeInTheDocument();
 });
 it("blocks missing, stale and uncertain participants", async () => {
-  const adapter: CommandAdapter = { invoke() { return Promise.resolve({ ...catalog, participants: [catalog.participants[0], { ...catalog.participants[1], freshness: { status: "uncertain", reason: "missing_or_untrusted_time" } }] } as never); } };
+  const adapter: CommandAdapter = { invoke(command) { if (command === "get_party_plan_proposal") return Promise.resolve(null as never); return Promise.resolve({ ...catalog, participants: [catalog.participants[0], { ...catalog.participants[1], freshness: { status: "uncertain", reason: "missing_or_untrusted_time" } }] } as never); } };
   render(<PartyPlanning client={createClient(adapter)} partyId="duo" refreshKey={0} />);
   await screen.findByText(/Missing, stale or uncertain age blocks/);
   fill(); expect(screen.getByRole("button", { name: "Calculate joint estimate" })).toBeDisabled();
@@ -49,6 +51,7 @@ it("blocks missing, stale and uncertain participants", async () => {
 it("ignores an old calculation after refresh while retaining manual edits", async () => {
   let resolve: ((value: never) => void) | undefined;
   const adapter: CommandAdapter = { invoke(command) {
+    if (command === "get_party_plan_proposal") return Promise.resolve(null as never);
     return command === "get_joint_planning_catalog" ? Promise.resolve(catalog as never) : new Promise<never>((done) => { resolve = done; });
   } };
   const client = createClient(adapter);
