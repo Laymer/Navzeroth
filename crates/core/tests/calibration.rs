@@ -234,3 +234,28 @@ fn forged_analytics_or_changed_terminal_event_is_refused() {
         .is_err()
     );
 }
+
+#[test]
+fn declared_level_cannot_override_a_retained_known_level() {
+    let mut sample = sample("level-contradiction", 120_000);
+    for event in &mut sample.batch.events[1..] {
+        event.sequence = Sequence::new(event.sequence.get() + 1).unwrap();
+    }
+    let event:SessionEvent=serde_json::from_value(json!({"session":"level-contradiction","sequence":2,"elapsed_ms":0,"kind":{"type":"level","level":{"status":"known","value":13,"source":"synthetic_fixture","clock_trust":"uncertain"}}})).unwrap();
+    sample.batch.events.insert(1, event);
+    refresh(&mut sample);
+    let context = sample.batch.context.clone();
+    let report = calibrate(
+        &CharacterId::new("example").unwrap(),
+        &context,
+        true,
+        &request(),
+        &[sample],
+    )
+    .unwrap();
+    assert_eq!(report.sample_count, 0);
+    assert_eq!(
+        report.comparisons[0].exclusion.as_deref(),
+        Some("declared_level_contradicts_observation")
+    );
+}
