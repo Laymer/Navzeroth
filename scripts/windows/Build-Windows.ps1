@@ -361,6 +361,18 @@ if (-not $AddonOnly) {
     $artifacts += Build-Installer $version
 }
 $artifacts += New-AddonZip $version
+# Candidate downloads identify their exact source without creating a tag/release.
+$sourceCommit = Get-NativeOutput 'git' @('-C', $RepoRoot, 'rev-parse', 'HEAD')
+if (-not $sourceCommit -or $sourceCommit -notmatch '^[0-9a-f]{40}$') { throw 'Cannot identify candidate source commit.' }
+$sourcePath = Join-Path $OutputDirectory 'SOURCE_COMMIT.txt'
+[IO.File]::WriteAllText($sourcePath, ($sourceCommit + "`n"), (New-Object Text.UTF8Encoding($false)))
+$artifacts += $sourcePath
+$notesPath = Join-Path $RepoRoot ("docs/releases/$version.md")
+if (Test-Path -LiteralPath $notesPath -PathType Leaf) {
+    $candidateNotes = Join-Path $OutputDirectory 'CANDIDATE_NOTES.md'
+    Copy-Item -LiteralPath $notesPath -Destination $candidateNotes -Force
+    $artifacts += $candidateNotes
+}
 Write-Checksums $artifacts
 Assert-CleanTree 'after the build'
 

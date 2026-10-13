@@ -63,7 +63,7 @@ jobs:
           # Unset means an unsigned installer (SmartScreen warns).
           NAVZEROTH_SIGN_COMMAND: ${{ secrets.NAVZEROTH_SIGN_COMMAND }}
         run: |
-          $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { '' }
+          $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { 'v' + (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version }
           ./scripts/windows/Build-Windows.ps1 -SkipTests -ExpectedVersion $expected
       - name: Silent install, first start and uninstall
         shell: pwsh
