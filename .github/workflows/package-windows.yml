@@ -1,0 +1,155 @@
+name: Windows package
+# Task M9.4. Builds the NSIS installer and addon package on Windows, exercises
+# the addon helper and a silent install/uninstall, and uploads the files.
+# A version tag (v0.1.0) additionally creates a DRAFT GitHub release; publishing
+# it stays a manual owner decision (AGENTS.md, plan section 20.2).
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/package-windows.yml
+      - scripts/windows/**
+      - addons/**
+      - apps/desktop/src-tauri/tauri*.json
+      - apps/desktop/src-tauri/windows/**
+      - rust-toolchain.toml
+      - Cargo.lock
+      - pnpm-lock.yaml
+  push:
+    tags: ['v[0-9]*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: package-windows-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  package:
+    name: Windows installer and addon package
+    runs-on: windows-2025
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false # the application embeds demo imagery only; LFS imagery is never packaged
+      - name: Release notes exist for a tag (plan M9.5)
+        if: github.ref_type == 'tag'
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          notes="docs/releases/${TAG#v}.md"
+          test -f "$notes" || { echo "::error::$notes is missing; write the release notes before tagging."; exit 1; }
+      - name: Addon helper tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./scripts/windows/Test-AddonInstaller.ps1 -Shell powershell.exe
+      - name: Addon helper tests (PowerShell 7)
+        shell: pwsh
+        run: ./scripts/windows/Test-AddonInstaller.ps1 -Shell pwsh
+      - run: rustup show
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-release-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Build installer and addon package (Windows PowerShell 5.1)
+        shell: powershell
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          # Optional signing command; the separate word %1 is the file to sign
+          # Unset means an unsigned installer (SmartScreen warns).
+          NAVZEROTH_SIGN_COMMAND: ${{ secrets.NAVZEROTH_SIGN_COMMAND }}
+        run: |
+          $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { '' }
+          ./scripts/windows/Build-Windows.ps1 -SkipTests -ExpectedVersion $expected
+      - name: Silent install, first start and uninstall
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem dist/windows -Filter '*-x64-setup.exe' | Select-Object -First 1
+          $installDir = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
+          $exe = Join-Path $installDir 'azeroth-desktop.exe'
+          $data = Join-Path $env:APPDATA 'io.github.laymer.azeroth-navigator'
+          $programs = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
+          $shortcuts = @((Join-Path $programs 'Azeroth Navigator.lnk'), (Join-Path $programs 'Azeroth Navigator - WoW addon.lnk'))
+
+          $p = Start-Process -FilePath $setup.FullName -ArgumentList '/S' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Installer exit code $($p.ExitCode)" }
+          foreach ($file in @($exe, (Join-Path $installDir 'uninstall.exe'),
+                  (Join-Path $installDir 'addon\Install-AzerothNavigatorAddon.ps1'),
+                  (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc')) + $shortcuts) {
+            if (-not (Test-Path -LiteralPath $file)) { throw "Missing after install: $file" }
+            "installed: $file"
+          }
+          $key = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
+            Where-Object { (Get-ItemProperty $_.PSPath).DisplayName -eq 'Azeroth Navigator' }
+          if (-not $key) { throw 'No Apps & features entry' }
+          "Apps & features: $((Get-ItemProperty $key.PSPath).DisplayVersion)"
+
+          # First start: the process must stay up and create its SQLite store.
+          $app = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 20
+          $alive = -not $app.HasExited
+          $exitCode = if ($alive) { $null } else { $app.ExitCode }
+          if ($alive) { Stop-Process -Id $app.Id -Force; $app.WaitForExit() }
+          if (-not $alive) { throw "The application exited during its first 20 s (exit code $exitCode)" }
+          if (-not (Test-Path -LiteralPath (Join-Path $data 'snapshots.sqlite3'))) { throw "No snapshot store in $data" }
+          "first start: running after 20 s; store created in $data"
+
+          # Silent uninstall. The NSIS uninstaller re-launches itself from TEMP, so wait for its effect.
+          Start-Process -FilePath (Join-Path $installDir 'uninstall.exe') -ArgumentList '/S' -Wait
+          $deadline = (Get-Date).AddSeconds(90)
+          while ((Test-Path -LiteralPath $exe) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 2 }
+          if (Test-Path -LiteralPath $exe) { throw 'The application is still installed after uninstall' }
+          if (Test-Path -LiteralPath $installDir) { Get-ChildItem -LiteralPath $installDir -Recurse -Force | ForEach-Object FullName; throw "Leftovers in $installDir" }
+          foreach ($shortcut in $shortcuts) { if (Test-Path -LiteralPath $shortcut) { throw "Shortcut left after uninstall: $shortcut" } }
+          "uninstalled: $installDir and both shortcuts removed"
+          # A silent uninstall keeps user data (the "delete app data" box is unticked by default).
+          "user data kept: $(Test-Path -LiteralPath $data)"
+      - run: git diff --exit-code
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: azeroth-navigator-windows-${{ github.sha }}
+          path: dist/windows/
+          if-no-files-found: error
+          retention-days: 14
+
+  draft-release:
+    name: Draft GitHub release
+    if: github.ref_type == 'tag'
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: azeroth-navigator-windows-${{ github.sha }}
+          path: release
+      - name: Verify checksums
+        working-directory: release
+        run: sha256sum --check --strict SHA256SUMS.txt
+      - name: Create the draft release (never published here)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          flags=(--draft --verify-tag --title "Azeroth Navigator $version" --notes-file "docs/releases/$version.md")
+          case "$version" in 0.*|*-*) flags+=(--prerelease) ;; esac
+          gh release create "$TAG" release/* "${flags[@]}"

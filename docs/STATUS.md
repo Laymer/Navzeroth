@@ -1,7 +1,9 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13 (wave-1 review recorded).
-Current task: none claimed. The first review of the wave-1 PRs is recorded below; its open findings come before new feature work.
+Current task: none claimed on main. M9.4 Windows packaging automation is claimed by Claude Code on
+feature/M9.4-windows-packaging (base 6bb2649, owner request); see its [handoff](handoffs/2026-10-13-M9.4-windows-packaging.md).
+The first review of the wave-1 PRs is recorded below; its open findings come before new feature work.
 Owner: Codex root (merge coordination); implementation owners are in ADR 0004.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -21,7 +23,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
 | M7 | IN_PROGRESS | Pure reminder foundations; integrated party/preparation workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas workflow and browser tests; remaining planning/gear/session screens and packaging remain. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas workflow and browser tests; Windows installer/addon packaging automation (M9.4, IMPLEMENTED_UNVERIFIED on its branch). Remaining planning/gear/session screens, signing and release notes remain. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |

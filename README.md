@@ -61,6 +61,14 @@ The CLI accepts `export-schemas`, `prepare-atlas`, `validate-fixtures` and
 Content validation has bounded regular-file/directory discovery, deterministic
 JSON/human reports and separate nonfatal gaps. See [coverage](docs/data/COVERAGE.md).
 
+## Windows installer
+
+`scripts\windows\Build-Windows.ps1` builds the per-user NSIS installer and the addon
+package on Windows; the `Windows package` workflow builds, smoke-installs and uploads
+them, and drafts (never publishes) a GitHub release for a version tag. Installing,
+updating and removing the application and addon:
+[WINDOWS_INSTALL.md](docs/compatibility/WINDOWS_INSTALL.md).
+
 ## Content and imagery
 
 Owner-supplied imagery under `content/forever/atlas/` uses Git LFS and separate
@@ -82,4 +90,4 @@ Lua static/parity checks, explicit fixture/content validation, native Windows sh
 compilation and mocked Chromium desktop workflows. Cache hits never skip checks.
 PR CI targets main; stacked branches can dispatch `ci.yml` explicitly. Hand-offs
 record actual local/hosted checks, checked revisions, reviews and limitations.
-No release or native package is produced by these checks.
+CI itself produces no release; native packages come from the `Windows package` workflow.
