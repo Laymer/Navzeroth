@@ -6,6 +6,7 @@
 pub mod atlas;
 pub mod content;
 pub mod party;
+pub mod planning;
 pub mod snapshots;
 
 use azeroth_core::contract::decode_envelope;

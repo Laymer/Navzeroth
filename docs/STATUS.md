@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M3.6 desktop content controls delivered; planner integration next.
-Owner: Codex root, sole writer; claimed 2026-10-13 at baseline ccb2751.
+Current task: M4.4 planner application workflow.
+Owner: Codex root, sole writer; claimed 2026-10-13 at baseline 6e562f3.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
 Task PRs through #36 are merged into protected main f2f64a3 after fresh CI.

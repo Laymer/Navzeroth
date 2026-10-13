@@ -317,6 +317,80 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub fn planning_catalog(&self, profile_id: &str) -> Result<crate::planning::PlanningCatalog> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let snapshot = state.store.current_snapshot(&key)?;
+        let content =
+            state
+                .store
+                .active_content_revision(&azeroth_storage::content::ContentScope {
+                    context: key.context,
+                    fixture: key.fixture,
+                })?;
+        Ok(crate::planning::PlanningCatalog {
+            snapshot_id: snapshot.map(|s| s.payload.id.clone()),
+            fixture: key.fixture,
+            revision: content
+                .as_ref()
+                .map(|c| c.envelope.payload.revision.clone()),
+            nodes: content
+                .as_ref()
+                .map(|c| c.envelope.payload.nodes.clone())
+                .unwrap_or_default(),
+            objectives: content
+                .map(|c| c.envelope.payload.objectives.clone())
+                .unwrap_or_default(),
+        })
+    }
+    pub fn plan_session(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::planning::PlanningReport> {
+        if text.len() > crate::planning::MAX_REQUEST_BYTES {
+            return Err(error(
+                ErrorCode::ImportTooLarge,
+                "Planning request exceeds size limit",
+            ));
+        }
+        let request: crate::planning::PlanningRequest =
+            serde_json::from_str(text).map_err(|_| invalid("Invalid planning request"))?;
+        let state = self.lock()?;
+        let key = resolve(&state.store, &request.profile_id)?;
+        let snapshot = state
+            .store
+            .current_snapshot(&key)?
+            .ok_or_else(|| invalid("Profile has no current snapshot"))?;
+        if snapshot.payload.id != request.snapshot_id {
+            return Err(invalid("Snapshot changed; refresh planning inputs"));
+        }
+        if !matches!(
+            freshness(&snapshot.payload.capture, &context(now)),
+            Freshness::Fresh { .. }
+        ) {
+            return Err(error(
+                ErrorCode::SnapshotOutdated,
+                "Planning requires a fresh capture with trusted age",
+            ));
+        }
+        let content = state
+            .store
+            .active_content_revision(&azeroth_storage::content::ContentScope {
+                context: key.context,
+                fixture: key.fixture,
+            })?
+            .ok_or_else(|| {
+                error(
+                    ErrorCode::DatasetIncomplete,
+                    "No active content for this profile",
+                )
+            })?;
+        if content.envelope.payload.revision != request.revision {
+            return Err(invalid("Active content changed; refresh planning inputs"));
+        }
+        crate::planning::calculate(request, &snapshot, &content, &context(now))
+    }
     pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
         if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
             return Err(error(
