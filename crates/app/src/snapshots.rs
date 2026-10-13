@@ -317,6 +317,15 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub(crate) fn with_profile_store_mut<T>(
+        &self,
+        id: &str,
+        call: impl FnOnce(&mut SqliteStore, &ProfileKey) -> Result<T>,
+    ) -> Result<T> {
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, id)?;
+        call(&mut state.store, &key)
+    }
     pub fn planning_catalog(&self, profile_id: &str) -> Result<crate::planning::PlanningCatalog> {
         let state = self.lock()?;
         let key = resolve(&state.store, profile_id)?;

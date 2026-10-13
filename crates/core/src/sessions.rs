@@ -147,6 +147,16 @@ pub struct SessionBatch {
     pub events: Vec<SessionEvent>,
 }
 
+/// Local recorder transport; deliberately separate from exchange schemas.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SessionDocument {
+    pub format: String,
+    pub version: u32,
+    pub fixture: bool,
+    pub batch: SessionBatch,
+}
+
 /// Caller-chosen thresholds; there is deliberately no default.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

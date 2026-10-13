@@ -48,6 +48,11 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    importSessionText: (profileId: string, text: string) => run(() => adapter.invoke("import_session_text", { profile_id: profileId, text })),
+    importSessionFile: (profileId: string, path: string, format: FileInputFormat) => run(() => adapter.invoke("import_session_file", { profile_id: profileId, path, format })),
+    listSessions: (profileId: string) => run(() => adapter.invoke("list_sessions", { profile_id: profileId })),
+    getSessionDetail: (profileId: string, sessionId: string) => run(() => adapter.invoke("get_session_detail", { profile_id: profileId, session_id: sessionId })),
+    deleteSession: (profileId: string, sessionId: string) => run(() => adapter.invoke("delete_session", { profile_id: profileId, session_id: sessionId })),
     getHistoricalSnapshot: (profileId: string, snapshotId: string) => run(() => adapter.invoke("get_historical_snapshot", { profile_id: profileId, snapshot_id: snapshotId })),
     promoteSnapshot: (profileId: string, snapshotId: string, expectedCurrent: string, reason: string) => run(() => adapter.invoke("promote_snapshot", { profile_id: profileId, snapshot_id: snapshotId, expected_current: expectedCurrent, reason })),
     getPlanningCatalog: (profileId: string) => run(() => adapter.invoke("get_planning_catalog", { profile_id: profileId })),

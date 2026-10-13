@@ -125,3 +125,5 @@ mod tests {
         assert!(!err.to_string().contains("passwd"));
     }
 }
+
+pub mod sessions;
