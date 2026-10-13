@@ -22,3 +22,23 @@ it("ignores a response after its inputs change and clears results on refresh", a
   await Promise.resolve();
   expect(screen.queryByRole("region", { name: "Planning result" })).not.toBeInTheDocument();
 });
+
+it("discards route responses when the planning inputs change", async () => {
+  let finish: (value: unknown) => void = () => {};
+  const adapter: CommandAdapter = { invoke: vi.fn((command, input) => {
+    if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
+    if (command === "get_planning_catalog") return Promise.resolve({ snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: [] } as never);
+    if (command === "plan_session") return Promise.resolve({ request: JSON.parse((input as {text:string}).text), result: {selected: [], stopping: {total_ms:0}, expected_total_ms:0}, assumptions: [], filtered: [] } as never);
+    if (command === "inspect_plan_route") return new Promise<never>((resolve) => { finish = (value) => resolve(value as never); });
+    return Promise.reject(new Error("unexpected"));
+  }) };
+  render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);
+  await screen.findByText(/Snapshot: s; revision: r/);
+  fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });
+  fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-1" } });
+  fireEvent.click(screen.getByRole("button", { name: "Plan session" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Inspect route" }));
+  fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });
+  finish({});
+  expect(screen.queryByRole("region", { name: "Route inspection" })).toBeNull();
+});

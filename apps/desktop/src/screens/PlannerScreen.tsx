@@ -1,3 +1,5 @@
+import { RouteInspection } from "./RouteInspection";
+import type { RouteInspection as Inspection } from "../commands/routes";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { PlanningCatalog, PlanningReport, PlanningRequest, ProfileSummary, CommandMap } from "../commands/contract";
@@ -14,12 +16,13 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const [candidates, setCandidates] = useState<PlanningRequest["candidates"]>([]);
   const [excluded, setExcluded] = useState<string[]>([]);
   const [report, setReport] = useState<PlanningReport | null>(null);
+  const [route, setRoute] = useState<Inspection | null>(null);
   const [exported, setExported] = useState<CommandMap["export_plan"]["output"] | null>(null);
   const [copyStatus, setCopyStatus] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const generation = useRef(0);
-  const invalidate = () => { generation.current++; setReport(null); setExported(null); setCopyStatus(""); setBusy(false); };
+  const invalidate = () => { generation.current++; setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setBusy(false); };
   useEffect(() => {
     let live = true;
     void client.listProfiles().then((result) => {
@@ -32,7 +35,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   }, [client, refreshKey]);
   useEffect(() => {
     let live = true;
-    generation.current++; setReport(null); setExported(null); setCopyStatus(""); setCatalog(null); setBusy(false);
+    generation.current++; setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setCatalog(null); setBusy(false);
     if (profile) void client.getPlanningCatalog(profile).then((result) => {
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
@@ -44,7 +47,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     if (!catalog?.snapshot_id || !catalog.revision) return;
     const request: PlanningRequest = { profile_id: profile, snapshot_id: catalog.snapshot_id, revision: catalog.revision, goal_profile: goal, origin, stopping_node: stop, budget_ms: budget, stopping_service_ms: stoppingService, candidates, excluded };
     const ticket = ++generation.current;
-    setBusy(true); setReport(null); setExported(null); setCopyStatus(""); setError("");
+    setBusy(true); setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setError("");
     const result = await client.planSession(JSON.stringify(request));
     if (ticket !== generation.current) return;
     setBusy(false);
@@ -57,8 +60,18 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     const result = await client.exportPlan(JSON.stringify(report.request));
     if (ticket !== generation.current) return;
     setBusy(false);
-    if (!result.ok) { setReport(null); setError(result.error.message); }
+    if (!result.ok) { setReport(null); setRoute(null); setError(result.error.message); }
     else setExported(result.value);
+  }
+  async function inspectRoute() {
+    if (!report) return;
+    const ticket = ++generation.current;
+    setBusy(true); setRoute(null); setError("");
+    const result = await client.inspectPlanRoute(JSON.stringify(report.request));
+    if (ticket !== generation.current) return;
+    setBusy(false);
+    if (!result.ok) { setReport(null); setExported(null); setError(result.error.message); }
+    else setRoute(result.value);
   }
   async function copyExport() {
     if (!exported) return;
@@ -92,6 +105,8 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     <button type="button" disabled={busy || !catalog?.snapshot_id || !catalog.revision || !origin || !stop} onClick={() => void calculate()}>Plan session</button>
     {report && <section aria-label="Planning result">
       <button type="button" disabled={busy || report.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</button>
+      <button type="button" disabled={busy} onClick={() => void inspectRoute()}>Inspect route</button>
+      {route && <RouteInspection value={route} />}
       {exported && <section aria-label="Plan export"><p>{exported.byte_count} bytes; {exported.plan_id}; expires at UTC epoch ms {exported.expires_at_utc_ms}.</p>
         <label>Plan export text <textarea readOnly value={exported.text} rows={8} onFocus={(e) => e.target.select()} /></label>
         <button type="button" onClick={() => void copyExport()}>Copy plan</button><p role="status">{copyStatus}</p>
