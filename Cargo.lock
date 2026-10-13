@@ -141,6 +141,7 @@ version = "0.2.0"
 dependencies = [
  "azeroth-app",
  "azeroth-core",
+ "azeroth-ingest",
  "mlua",
  "serde_json",
 ]
