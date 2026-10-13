@@ -117,6 +117,23 @@ fn explicit_presentation_dismiss_restore_and_refresh_guards() {
             .queue
             .is_empty()
     );
+    let mut refreshed: serde_json::Value = serde_json::from_str(SNAPSHOT).unwrap();
+    refreshed["payload"]["id"] = serde_json::json!("refreshed");
+    refreshed["payload"]["capture"]["sequence"] = serde_json::json!(13);
+    refreshed["producer"]["sequence"] = serde_json::json!(13);
+    app.import_text(&format!("ANAV1:{refreshed}"), now).unwrap();
+    assert!(
+        app.reminder_view(&id, now)
+            .unwrap()
+            .plan
+            .unwrap()
+            .queue
+            .is_empty()
+    );
+    assert!(
+        app.mutate_reminders(&serde_json::to_string(&req).unwrap(), now)
+            .is_err()
+    );
     req.revision = Some(DatasetRevision::new("obsolete").unwrap());
     req.action = ReminderAction::Preferences { enabled: false };
     assert!(
