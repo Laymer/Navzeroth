@@ -55,3 +55,9 @@ categories and live acceptance remain deferred.
 
 Desktop 78 unit tests and production build passed. Shared wire boundary remains
 mock/native-compilation scoped; actual native interaction was not exercised.
+
+Recorder integration found and reproduced a UTC uncertainty defect: a trusted
+first event followed by an uncertain or missing UTC still mapped the whole
+session. Added regression failed before correction. Mapping now requires trusted
+UTC on every event, preserving monotonic coverage regardless. Focused core and
+service checks were rerun; this does not change exchange schemas.

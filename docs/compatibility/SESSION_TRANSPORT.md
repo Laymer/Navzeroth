@@ -31,7 +31,7 @@ sessions explicitly before importing additional history.
 Migration v5 persists immutable canonical per-session batches, their SHA-256
 and derived analytics. Reads recompute and compare analytics rather than trusting
 a stale cache. The current derivation uses a 300,000 ms observed-span threshold
-and 5,000 ms UTC-consistency tolerance; methodology records these settings.
+and 5,000 ms UTC-consistency tolerance; methodology records the span threshold. Any missing or untrusted event UTC prevents a certain mapping.
 Measured monotonic coverage is distinct from active play and wall-clock duration.
 Unknown endpoints, explicit unclassified intervals, uncovered intervals, gaps,
 clock flags and UTC uncertainty remain separate. Calibration is deferred.
