@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M7.3 eligibility display delivered; content controls next.
-Owner: Codex root, sole writer; claimed 2026-10-13 at baseline 2b96b03.
+Current task: M3.6 desktop content controls delivered; planner integration next.
+Owner: Codex root, sole writer; claimed 2026-10-13 at baseline ccb2751.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
 Task PRs through #36 are merged into protected main f2f64a3 after fresh CI.
@@ -15,7 +15,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M0 | IN_PROGRESS | Diagnostic addon and harness exist; recorded Forever client checks remain unverified. |
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
 | M2 | IN_PROGRESS | Bounded character imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party transport imports and verified live bindings remain. |
-| M3 | IN_PROGRESS | Source/conflict library, immutable contextual content revisions, activation/rollback, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
+| M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
 | M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Caller supplies clusters/goal utilities; planner UI/export integration remains. |
 | M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |

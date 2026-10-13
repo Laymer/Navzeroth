@@ -317,6 +317,73 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
+        if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
+            return Err(error(
+                ErrorCode::ImportTooLarge,
+                "Content revision limit exceeded",
+            ));
+        }
+        let content: azeroth_storage::content::ContentRevision =
+            serde_json::from_str(text).map_err(|_| invalid("Invalid content revision JSON"))?;
+        self.lock()?.store.stage_content_revision(&content)?;
+        Ok(crate::content::inspect(content))
+    }
+    pub fn active_content(
+        &self,
+        profile_id: &str,
+    ) -> Result<Option<crate::content::ContentInspection>> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context,
+            fixture: key.fixture,
+        };
+        Ok(state
+            .store
+            .active_content_revision(&scope)?
+            .map(crate::content::inspect))
+    }
+    pub fn activate_content(
+        &self,
+        profile_id: &str,
+        revision: &azeroth_core::types::DatasetRevision,
+    ) -> Result<crate::content::ContentInspection> {
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let key = azeroth_storage::content::ContentRevisionKey {
+            scope: azeroth_storage::content::ContentScope {
+                context: key.context,
+                fixture: key.fixture,
+            },
+            revision: revision.clone(),
+        };
+        state.store.activate_content_revision(&key)?;
+        let content = state
+            .store
+            .content_revision(&key)?
+            .ok_or_else(|| invalid("Content revision is not stored"))?;
+        Ok(crate::content::inspect(content))
+    }
+    pub fn rollback_content(&self, profile_id: &str) -> Result<crate::content::ContentRollback> {
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        let scope = azeroth_storage::content::ContentScope {
+            context: key.context,
+            fixture: key.fixture,
+        };
+        let changed = state
+            .store
+            .rollback_content_revision(&scope)?
+            .is_some_and(|result| result.changed);
+        Ok(crate::content::ContentRollback {
+            changed,
+            active: state
+                .store
+                .active_content_revision(&scope)?
+                .map(crate::content::inspect),
+        })
+    }
     pub fn party_quests(&self, id: &PartyId) -> Result<crate::party::PartyQuestCatalog> {
         let state = self.lock()?;
         let party = state

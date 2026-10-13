@@ -4,6 +4,7 @@
 //! desktop workflow. The free functions below remain explicit synthetic-demo
 //! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
+pub mod content;
 pub mod party;
 pub mod snapshots;
 

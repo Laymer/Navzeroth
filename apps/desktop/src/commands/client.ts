@@ -52,6 +52,10 @@ export function createClient(adapter: CommandAdapter) {
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>
       run(() => adapter.invoke("list_profiles", undefined)),
+    stageContent: (text: string) => run(() => adapter.invoke("stage_content", { text })),
+    getActiveContent: (profileId: string) => run(() => adapter.invoke("get_active_content", { profile_id: profileId })),
+    activateContent: (profileId: string, revision: string) => run(() => adapter.invoke("activate_content", { profile_id: profileId, revision })),
+    rollbackContent: (profileId: string) => run(() => adapter.invoke("rollback_content", { profile_id: profileId })),
     listParties: (): Promise<Result<string[]>> => run(() => adapter.invoke("list_parties", undefined)),
     getPartyQuests: (partyId: string) => run(() => adapter.invoke("get_party_quests", { party_id: partyId })),
     getPartyEligibility: (partyId: string, revision: string, questId: string) => run(() => adapter.invoke("get_party_eligibility", { party_id: partyId, revision, quest_id: questId })),

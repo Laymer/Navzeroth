@@ -96,6 +96,12 @@ export const demoAdapter: CommandAdapter = {
         case "get_snapshot_history":
         case "list_parties":
           return [];
+        case "get_active_content":
+          return null;
+        case "stage_content":
+        case "activate_content":
+        case "rollback_content":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "Content changes require the desktop application.", retryable: false } satisfies AppError;
         case "get_party":
           return null;
         case "save_party":

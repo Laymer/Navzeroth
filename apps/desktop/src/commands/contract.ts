@@ -88,6 +88,22 @@ export interface PartyQuestCatalog {
   revision: string | null;
   quests: string[];
 }
+type Policy<T> = { status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable" };
+export interface ContentInspection {
+  key: { scope: { context: DataContext; fixture: boolean }; revision: string };
+  report: {
+    passes: boolean;
+    report_version: number;
+    coverage: {
+      collections: Record<string, { total: number; fields: Record<string, Record<ObservationStatus, number>> }>;
+      evidence_records: { by_confidence: Record<string, number> };
+    } | null;
+    errors: { code: string }[];
+    gaps: { code: string }[];
+  };
+  sources: { id: string; publisher: string; license: Policy<string>; attribution: Policy<string>; redistribution: Policy<string>; offline_usable: Policy<boolean> }[];
+  conflicts: unknown[];
+}
 export type CatchUp =
   | { kind: "single"; requirement: { kind: "quest"; quest: string; state: "accepted" | "completed" | "turned_in" } | { kind: "level"; level: number } | { kind: "other" } }
   | { kind: "all_of"; items: CatchUp[] }
@@ -224,6 +240,10 @@ export interface SnapshotMarker {
 export interface CommandMap {
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
+  stage_content: { input: { text: string }; output: ContentInspection };
+  get_active_content: { input: { profile_id: string }; output: ContentInspection | null };
+  activate_content: { input: { profile_id: string; revision: string }; output: ContentInspection };
+  rollback_content: { input: { profile_id: string }; output: { changed: boolean; active: ContentInspection | null } };
   list_parties: { input: undefined; output: string[] };
   get_party_quests: { input: { party_id: string }; output: PartyQuestCatalog };
   get_party_eligibility: { input: { party_id: string; revision: string; quest_id: string }; output: PartyQuestReport };

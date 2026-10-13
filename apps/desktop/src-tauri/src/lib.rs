@@ -43,6 +43,38 @@ async fn list_profiles(state: State<'_, Application>) -> Result<Vec<ProfileDto>,
 async fn list_parties(state: State<'_, Application>) -> Result<Vec<PartyId>, AppError> {
     blocking(state, |app| app.party_ids()).await
 }
+#[tauri::command]
+async fn stage_content(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::content::ContentInspection, AppError> {
+    blocking(state, move |app| app.stage_content(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_active_content(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<Option<azeroth_app::content::ContentInspection>, AppError> {
+    blocking(state, move |app| app.active_content(&profile_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn activate_content(
+    state: State<'_, Application>,
+    profile_id: String,
+    revision: DatasetRevision,
+) -> Result<azeroth_app::content::ContentInspection, AppError> {
+    blocking(state, move |app| {
+        app.activate_content(&profile_id, &revision)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn rollback_content(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::content::ContentRollback, AppError> {
+    blocking(state, move |app| app.rollback_content(&profile_id)).await
+}
 #[tauri::command(rename_all = "snake_case")]
 async fn get_party_quests(
     state: State<'_, Application>,
@@ -190,6 +222,10 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_app_status,
             list_profiles,
+            stage_content,
+            get_active_content,
+            activate_content,
+            rollback_content,
             list_parties,
             get_party_quests,
             get_party_eligibility,
