@@ -204,3 +204,4 @@ only bounded status diagnostics and never constructs a snapshot location. Even
 readable zero coordinates cannot supply missing floor, instance or coordinate
 meaning. No position values, item links, raw client errors or character names are
 stored in diagnostics. Live/restricted-context checks remain unverified.
+

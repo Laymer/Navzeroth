@@ -41,3 +41,9 @@ Next: coordinator integration/live checklist and candidate packaging after all
 previous PRs. Obtain sanitized recorded-client evidence for quests, equipment,
 position diagnostics, plan paste/HUD and session reload/export/import. Real authored
 content, validated stage mappings and full live acceptance remain later work.
+
+Integration follow-up: merged task6 cached-observation fix734b2e4 preserving both
+README additions (only textual conflict). Own worktree target checks establish the
+correct compile-time addon root; final harness93 passed, scoped Clippy/fmt,15-file
+Lua lint and post-resolution diff-check passed. Cached persisted equipment stays
+prior observation with original age/unknown variant states, never a new live read.
