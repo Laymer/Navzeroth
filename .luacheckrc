@@ -16,6 +16,7 @@ read_globals = {}
 globals = {
   "AzerothNavigatorDB",
   "SLASH_ANAVDIAG1",
+  "SLASH_ANAVSESSION1",
 }
 
 -- Whole warning classes stay enabled; do not add ignore patterns to get a clean run.

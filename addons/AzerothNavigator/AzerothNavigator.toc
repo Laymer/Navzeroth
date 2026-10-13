@@ -17,6 +17,7 @@ Core\Decode.lua
 Core\Predicate.lua
 Core\Snapshot.lua
 Core\Clock.lua
+Core\Session.lua
 Core\Plan.lua
 Core\Hud.lua
 Core\Gear.lua
