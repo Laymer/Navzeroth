@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { createClient } from "../commands";
 import type { CommandAdapter } from "../commands/contract";
 import type { SessionAnalytics, SessionDetail } from "../commands/sessions";
@@ -74,4 +74,61 @@ test("a superseded detail response cannot restore another profile's session", as
   fireEvent.change(screen.getByLabelText("Session profile"), { target: { value: "two" } });
   resolve(detail);
   await waitFor(() => expect(screen.queryByText("Session detail: synthetic-session")).not.toBeInTheDocument());
+});
+
+test("a same-profile refresh preserves the pending import receipt and refreshes history", async () => {
+  let finish!: () => void;
+  const pending = new Promise<void>((resolve) => { finish = resolve; });
+  const { client, calls } = fixture(undefined, pending);
+  const changed = vi.fn();
+  const view = render(<SessionsScreen client={client} refreshKey={0} onChanged={changed} />);
+  await screen.findByLabelText("Session profile");
+  fireEvent.change(screen.getByLabelText("Selected session file path"), { target: { value: "/selected/session.lua" } });
+  fireEvent.click(screen.getByRole("button", { name: "Import selected session file" }));
+  await waitFor(() => expect(calls.some((call) => call.command === "import_session_file")).toBe(true));
+  const reads = calls.filter((call) => call.command === "list_sessions").length;
+  view.rerender(<SessionsScreen client={client} refreshKey={1} onChanged={changed} />);
+  await waitFor(() => expect(calls.filter((call) => call.command === "list_sessions").length).toBeGreaterThan(reads));
+  finish();
+  await screen.findByText("Imported 1 session(s); 0 already stored.");
+  await screen.findByRole("button", { name: "Inspect synthetic-session" });
+  expect(changed).toHaveBeenCalledTimes(1);
+});
+
+test("a same-profile refresh preserves a pending import failure", async () => {
+  let fail!: (error: unknown) => void;
+  const pending = new Promise<void>((_, reject) => { fail = reject; });
+  const { client, calls } = fixture(undefined, pending);
+  const changed = vi.fn();
+  const view = render(<SessionsScreen client={client} refreshKey={0} onChanged={changed} />);
+  await screen.findByLabelText("Session profile");
+  fireEvent.change(screen.getByLabelText("Selected session file path"), { target: { value: "/selected/session.lua" } });
+  fireEvent.click(screen.getByRole("button", { name: "Import selected session file" }));
+  await waitFor(() => expect(calls.some((call) => call.command === "import_session_file")).toBe(true));
+  const reads = calls.filter((call) => call.command === "list_sessions").length;
+  view.rerender(<SessionsScreen client={client} refreshKey={1} onChanged={changed} />);
+  await waitFor(() => expect(calls.filter((call) => call.command === "list_sessions").length).toBeGreaterThan(reads));
+  fail({ code: "INVALID_INPUT", message: "Session identity conflict", retryable: false });
+  expect(await screen.findByRole("alert")).toHaveTextContent("Session identity conflict");
+  expect(changed).not.toHaveBeenCalled();
+});
+
+test("a replaced client cannot show an old pending import receipt", async () => {
+  let finish!: () => void;
+  const pending = new Promise<void>((resolve) => { finish = resolve; });
+  const original = fixture(undefined, pending);
+  const replacement = fixture();
+  const changed = vi.fn();
+  const view = render(<SessionsScreen client={original.client} refreshKey={0} onChanged={changed} />);
+  await screen.findByLabelText("Session profile");
+  fireEvent.change(screen.getByLabelText("Selected session file path"), { target: { value: "/selected/session.lua" } });
+  fireEvent.click(screen.getByRole("button", { name: "Import selected session file" }));
+  await waitFor(() => expect(original.calls.some((call) => call.command === "import_session_file")).toBe(true));
+  view.rerender(<SessionsScreen client={replacement.client} refreshKey={1} onChanged={changed} />);
+  await waitFor(() => expect(replacement.calls.some((call) => call.command === "list_sessions")).toBe(true));
+  finish();
+  await waitFor(() => expect(screen.getByRole("button", { name: "Import selected session file" })).toBeEnabled());
+  expect(changed).not.toHaveBeenCalled();
+  expect(screen.queryByText("Imported 1 session(s); 0 already stored.")).not.toBeInTheDocument();
+  expect(screen.getByText("No stored sessions for this profile.")).toBeInTheDocument();
 });

@@ -24,6 +24,9 @@ export function SessionsScreen({ client, refreshKey, onChanged }: { client: Comm
   const mutation = useRef(false);
   useEffect(() => {
     active.current = true;
+    return () => { active.current = false; generation.current++; detailRequest.current++; };
+  }, [client]);
+  useEffect(() => {
     let current = true;
     void Promise.all([client.listProfiles(), client.getAppStatus()]).then(([list, status]) => {
       if (!current) return;
@@ -32,11 +35,14 @@ export function SessionsScreen({ client, refreshKey, onChanged }: { client: Comm
       setProfiles(list.value); setNative(status.value.data_mode === "stored");
       setProfile((old) => list.value.some((p) => p.id === old) ? old : list.value.find((p) => p.id === status.value.active_profile)?.id ?? list.value[0]?.id ?? "");
     });
-    return () => { current = false; active.current = false; generation.current++; detailRequest.current++; };
+    return () => { current = false; };
   }, [client, refreshKey]);
   useEffect(() => {
+    generation.current++; detailRequest.current++;
+  }, [client, profile, native]);
+  useEffect(() => {
     let current = true;
-    generation.current++; detailRequest.current++; setRows([]); setDetail(null);
+    detailRequest.current++; setRows([]); setDetail(null);
     if (profile && native) void client.listSessions(profile).then((result) => {
       if (!current) return;
       if (result.ok) setRows(result.value); else setError(result.error);
