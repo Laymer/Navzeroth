@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M4.6 pure Lua plan advancement and stable alternatives; next is live capability evidence / M2.1 snapshot adapters.
-Owner: Codex root, sole writer; M4.6 baseline main a0ee6bc.
+Current task: M2.1 bounded snapshot export and explicit experimental level capture.
+Owner: Codex root, sole writer; M2.1 baseline main 09e5e69.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -176,3 +176,23 @@ unavailable. Schema v1 remains unchanged. No live bindings or user-facing addon
 import/export UI are implied. See the task handoff for actual checks and review.
 v0.1.0 was published as a prerelease at a0ee6bc, with eight main CI jobs and tag
 packaging run 38378570735 passing. The immutable release is unchanged by this work.
+
+
+## M2.1 snapshot capture progress
+
+User merged PR #43 at 09e5e69. M2.1 is claimed on feature/M2.1-snapshot-export.
+The user supplied a diagnostic SavedVariables report and confirmed English client
+language and retrieval after the instructed reload/logout. Sanitized evidence records
+1.60.1.70338 / interface 16001; API presence remains distinct from readable values.
+No dataset was relabeled from 70205 to 70338.
+
+Pure bounded ANAV1 encoding and context-gated observation providers are implemented,
+with an explicit experimental /anavdiag snapshot <anonymous-profile-id> command
+for 70338. Only a guarded player-level read is attempted; other fields remain
+unknown/absent. UTC/session elapsed and locale code remain unobserved. Desktop
+SavedVariables defaults are AzerothNavigatorDB / snapshot_export.
+See [handoff](handoffs/2026-10-13-M2.1-snapshot-export.md) for checks and limitations.
+Next environment check: actual manual level capture, SavedVariables persistence and
+desktop import on the recorded client. Next implementation: verified clocks and
+additional field adapters after readability/restriction evidence. M0/M2 live acceptance
+remains unverified; no new release or main merge is included.

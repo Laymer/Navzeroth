@@ -4,7 +4,7 @@
 # addon out of date; the fix is a measured value, never a workaround.
 ## X-Interface-Status: UNVERIFIED
 ## Title: Azeroth Navigator Diagnostics
-## Notes: Records build and capability probe results for development. Collects no personal data.
+## Notes: Diagnostics and explicit bounded character snapshots. Live capture is experimental.
 ## Version: 0.1.0
 ## Author: Igor K
 ## SavedVariables: AzerothNavigatorDB
@@ -15,6 +15,7 @@ Core\Version.lua
 Core\Json.lua
 Core\Decode.lua
 Core\Predicate.lua
+Core\Snapshot.lua
 Core\Plan.lua
 Core\Hud.lua
 Core\Gear.lua

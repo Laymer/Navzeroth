@@ -79,7 +79,9 @@ it("passes only the explicitly chosen path and format to import and watcher cont
   expect(await screen.findByText(/current-one/)).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Export file path"), { target: { value: "/selected/account/export.lua" } });
   fireEvent.change(screen.getByLabelText("File format"), { target: { value: "saved_variables" } });
-  expect(screen.getByRole("button", { name: "Watch selected file" })).toBeDisabled();
+  expect(screen.getByLabelText("SavedVariables global")).toHaveValue("AzerothNavigatorDB");
+  expect(screen.getByLabelText("Snapshot export key")).toHaveValue("snapshot_export");
+  expect(screen.getByRole("button", { name: "Watch selected file" })).toBeEnabled();
   fireEvent.change(screen.getByLabelText("SavedVariables global"), { target: { value: "UserChosenDB" } });
   fireEvent.change(screen.getByLabelText("Snapshot export key"), { target: { value: "snapshot" } });
   fireEvent.click(screen.getByRole("button", { name: "Import selected file" }));

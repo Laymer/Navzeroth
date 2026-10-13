@@ -101,3 +101,30 @@ multiply/divide/half-away rounding; `Gear.toFixed(value)` reproduces Rust's firs
 IEEE-754 conversion. Arithmetic outside the safe range fails without wrapping.
 These are scoring-only comparisons. They do not establish equip eligibility,
 configuration legality, acquisition availability or a practical recommendation.
+
+## M2.1 character capture/export core
+
+Snapshot.capture(spec, providers) uses explicit, context-qualified capability
+declarations. Only verified_available real providers or synthetic_fixture test
+providers are called; untested inputs remain unknown. Scalar unavailable states
+and missing map records stay distinct. Failed provider calls emit a closed reason
+and never client error text. Returned snapshots are independent decoded copies.
+
+Snapshot.encode(snapshot, {fixture, locale}) produces bounded ANAV1 v1 text.
+Character documents contain objects/maps rather than arrays; empty maps encode as
+{}, optional nulls are preserved, decimal coordinates retain double precision,
+keys are sorted by UTF-8 bytes, and false/zero remain values. It validates context,
+identity, observations, metadata and source/fixture consistency before success.
+Bounds: 32768 total bytes, depth 32, 8192 values, 1024 keys per object, 512-byte
+UTF-8 strings (a conservative producer limit, below the consumer's 4096).
+No truncation, raw Lua execution or client I/O occurs.
+
+Snapshot.readLevel(getter, metadata) is an injected, guarded one-read adapter.
+Missing getter -> Unsupported; exceptions, restricted arithmetic or invalid
+return shapes -> Unknown; valid integer 1..65535 -> Known. It does not turn API
+presence into a global capability declaration. Snapshot.store writes only a
+complete snapshot_export after validation, retaining prior exports on failure.
+
+Only Diagnostics.lua binds an experimental explicit level capture to the
+user-reported 70338 build. Other adapters, clocks, locale codes and real capture
+verification remain future work. Existing diagnostic encoder/format are unchanged.

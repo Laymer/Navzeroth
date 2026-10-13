@@ -102,6 +102,53 @@ function Diagnostics.attach(env)
     end
   end
 
+  local function snapshot(profile)
+    if not state.persist then say('snapshot failed: saved variables unavailable'); return end
+    if type(profile) ~= 'string' or #profile < 1 or #profile > 80 or
+      not profile:match('^[A-Za-z0-9_-]+$') then
+      say('usage: /anavdiag snapshot <anonymous-profile-id> (1-80 letters, digits, _ or -)')
+      return
+    end
+    local report = Capabilities.probe(env)
+    local build = report.build
+    -- Only the user-reported tuple is enabled for this experimental manual slice.
+    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
+      say('snapshot failed: build has no recorded capture evidence'); return
+    end
+    local sequence = state.db.snapshot_sequence
+    if sequence == nil then sequence = 0 end
+    if type(sequence) ~= 'number' or sequence ~= math.floor(sequence) or
+      sequence < 0 or sequence >= 1000000000 then
+      say('snapshot failed: invalid capture sequence'); return
+    end
+    sequence = sequence + 1
+    local stream = 'snapshot-stream-' .. profile
+    local metadata = {source='addon_snapshot', clock_trust='uncertain',
+      session_id=stream, sequence=sequence}
+    local getter
+    if type(env.UnitLevel) == 'function' then
+      getter = function() return env.UnitLevel('player') end
+    end
+    local level, code = ns.Snapshot.readLevel(getter, metadata)
+    local context = {namespace='reference', build={edition=Version.edition,
+      build=build.version .. '.' .. build.build, interface=build.interface}}
+    local spec = {id='snapshot-' .. profile .. '-' .. string.format('%.0f', sequence),
+      character=profile, context=context, fixture=false, locale='unknown',
+      capture=metadata, source_revision='addon-observations-v1',
+      capabilities={level={context=context, status=level.status == 'known' and
+        'verified_available' or level.status == 'unsupported' and
+        'verified_unavailable' or 'untested'}}}
+    local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end})
+    if not captured then say('snapshot failed: ' .. errorCode); return end
+    local text, storeCode = ns.Snapshot.store(state.db, captured,
+      {fixture=false, locale=spec.locale})
+    if not text then say('snapshot failed: ' .. storeCode); return end
+    state.db.snapshot_sequence = sequence
+    say('snapshot stored (' .. #text .. ' bytes). /reload or logout, then import ' ..
+      'AzerothNavigatorDB / snapshot_export from the selected SavedVariables file.')
+    if code then say('level remains unavailable (' .. code .. ')') end
+  end
+
   local function onSlash(message)
     local command = ""
     if type(message) == "string" then
@@ -109,6 +156,9 @@ function Diagnostics.attach(env)
     end
     if command == "probe" then
       run()
+    elseif command == "snapshot" then
+      local profile = type(message) == 'string' and message:match('^%s*%S+%s+(%S+)%s*$')
+      if not pcall(snapshot, profile) then say('snapshot failed: capture_internal') end
     elseif command == "status" then
       if state.report then
         say(summarize(state.report, state.persist, state.last_code))
@@ -116,7 +166,8 @@ function Diagnostics.attach(env)
         say("no probe has run yet")
       end
     else
-      say(Version.addon .. " usage: " .. SLASH_COMMAND .. " probe | status")
+      say(Version.addon .. " usage: " .. SLASH_COMMAND ..
+        " probe | status | snapshot <anonymous-profile-id>")
     end
   end
 

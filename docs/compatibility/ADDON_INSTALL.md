@@ -98,3 +98,30 @@ Lua 5.1 state with a stub client and checks load order, reload stability, bounds
 privacy rules. The CI job "Lua static checks" runs luacheck over the addon. Neither
 says anything about real client behavior; see
 [LUA_RUNTIME_DIFFERENCES.md](LUA_RUNTIME_DIFFERENCES.md).
+
+## Experimental character capture (M2.1 branch; not in released v0.1.0)
+
+After installing the updated addon from the M2.1 build, the user-operated command
+
+    /anavdiag snapshot anonymous-one
+
+attempts a bounded capture on client 1.60.1.70338 / interface 16001. Choose a unique
+anonymous identifier for each character and keep it consistent across captures.
+No character name, GUID, realm or account path is read. The command calls only the
+existing build probe and one guarded UnitLevel('player') read; all other fields
+remain unknown or absent. Errors do not expose raw client messages.
+
+Run /reload or log out to save. In the updated desktop Imports screen, select the
+exact AzerothNavigator.lua file, choose SavedVariables export string, and use
+global AzerothNavigatorDB / key snapshot_export. These are editable defaults.
+Import selected file, or Watch selected file for later manually requested captures.
+diagnostic_export remains a separate diagnostic JSON report and is not importable
+as a character snapshot.
+
+UTC/session elapsed clocks are not observed: captures explicitly carry uncertain
+clock trust. The logical capture stream uses the anonymous identifier and a
+persisted monotonic sequence; it is not an elapsed gameplay session. Do not reset
+the counter to make snapshots appear newer. Import conflicts preserve stored data.
+Uncertain freshness can prevent planning; level display/import does not establish a
+verified live gameplay workflow. Actual capture/import still needs the recorded
+client check. No automatic capture or background observation was added.
