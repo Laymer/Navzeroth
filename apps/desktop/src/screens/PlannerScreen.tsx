@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
-import type { PlanningCatalog, PlanningReport, PlanningRequest, ProfileSummary } from "../commands/contract";
+import type { PlanningCatalog, PlanningReport, PlanningRequest, ProfileSummary, CommandMap } from "../commands/contract";
 
 export function PlannerScreen({ client, refreshKey }: { client: CommandClient; refreshKey: number }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
@@ -14,10 +14,12 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const [candidates, setCandidates] = useState<PlanningRequest["candidates"]>([]);
   const [excluded, setExcluded] = useState<string[]>([]);
   const [report, setReport] = useState<PlanningReport | null>(null);
+  const [exported, setExported] = useState<CommandMap["export_plan"]["output"] | null>(null);
+  const [copyStatus, setCopyStatus] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const generation = useRef(0);
-  const invalidate = () => { generation.current++; setReport(null); setBusy(false); };
+  const invalidate = () => { generation.current++; setReport(null); setExported(null); setCopyStatus(""); setBusy(false); };
   useEffect(() => {
     let live = true;
     void client.listProfiles().then((result) => {
@@ -30,7 +32,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   }, [client, refreshKey]);
   useEffect(() => {
     let live = true;
-    generation.current++; setReport(null); setCatalog(null); setBusy(false);
+    generation.current++; setReport(null); setExported(null); setCopyStatus(""); setCatalog(null); setBusy(false);
     if (profile) void client.getPlanningCatalog(profile).then((result) => {
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
@@ -42,11 +44,27 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     if (!catalog?.snapshot_id || !catalog.revision) return;
     const request: PlanningRequest = { profile_id: profile, snapshot_id: catalog.snapshot_id, revision: catalog.revision, goal_profile: goal, origin, stopping_node: stop, budget_ms: budget, stopping_service_ms: stoppingService, candidates, excluded };
     const ticket = ++generation.current;
-    setBusy(true); setReport(null); setError("");
+    setBusy(true); setReport(null); setExported(null); setCopyStatus(""); setError("");
     const result = await client.planSession(JSON.stringify(request));
     if (ticket !== generation.current) return;
     setBusy(false);
     if (!result.ok) setError(result.error.message); else setReport(result.value);
+  }
+  async function exportPlan() {
+    if (!report) return;
+    const ticket = ++generation.current;
+    setBusy(true); setExported(null); setCopyStatus(""); setError("");
+    const result = await client.exportPlan(JSON.stringify(report.request));
+    if (ticket !== generation.current) return;
+    setBusy(false);
+    if (!result.ok) { setReport(null); setError(result.error.message); }
+    else setExported(result.value);
+  }
+  async function copyExport() {
+    if (!exported) return;
+    const ticket = generation.current;
+    try { await navigator.clipboard.writeText(exported.text); if (ticket === generation.current) setCopyStatus("Copied plan export."); }
+    catch { if (ticket === generation.current) setCopyStatus("Clipboard unavailable; select the text and copy manually."); }
   }
   const nodeOptions = <><option value="">Choose a node</option>{catalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</>;
   return <section aria-label="Planner">
@@ -73,6 +91,11 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     })}
     <button type="button" disabled={busy || !catalog?.snapshot_id || !catalog.revision || !origin || !stop} onClick={() => void calculate()}>Plan session</button>
     {report && <section aria-label="Planning result">
+      <button type="button" disabled={busy || report.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</button>
+      {exported && <section aria-label="Plan export"><p>{exported.byte_count} bytes; {exported.plan_id}; expires at UTC epoch ms {exported.expires_at_utc_ms}.</p>
+        <label>Plan export text <textarea readOnly value={exported.text} rows={8} onFocus={(e) => e.target.select()} /></label>
+        <button type="button" onClick={() => void copyExport()}>Copy plan</button><p role="status">{copyStatus}</p>
+      </section>}
       <h3>Estimated plan</h3><p>Total {report.result.expected_total_ms} ms; final travel {report.result.stopping.total_ms} ms; stopping service {report.request.stopping_service_ms} ms.</p>
       <ol>{report.result.selected.map((step) => <li key={step.candidate}>{step.candidate}: utility {step.utility}; travel {step.travel.total_ms} ms; completion {step.completion_ms} ms; service {step.service_ms} ms</li>)}</ol>
       {report.result.selected.length === 0 && <p>No feasible objectives.</p>}

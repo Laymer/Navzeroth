@@ -270,6 +270,7 @@ pub struct ReminderPlan {
     pub held: Vec<ReminderItem>,
     pub excluded: BTreeMap<RuleId, ReminderReason>,
     rearm: BTreeSet<RuleId>,
+    scope_session: Option<SessionId>,
 }
 impl ReminderPlan {
     /// Rules that evaluated to a definite `False`.
@@ -357,6 +358,9 @@ pub struct ShownRecord {
     pub shown_at_utc_ms: Option<UtcMillis>,
     #[serde(default)]
     pub shown_at_session: Option<(SessionId, Millis)>,
+    /// Session identity can be known without an elapsed-time observation.
+    #[serde(default)]
+    pub shown_session: Option<SessionId>,
     pub serial: u64,
 }
 
@@ -589,6 +593,7 @@ impl ReminderState {
                     fingerprint: Some(item.fingerprint.clone()),
                     shown_at_utc_ms: at,
                     shown_at_session: now.session.clone(),
+                    shown_session: plan.scope_session.clone(),
                     serial: first + offset,
                 },
             );
@@ -601,6 +606,7 @@ fn cooldown_gate(
     cooldown: Millis,
     record: &ShownRecord,
     now: &FreshnessContext,
+    scope: &ReminderScope,
 ) -> Option<ReminderReason> {
     if cooldown.get() == 0 {
         return None;
@@ -619,6 +625,11 @@ fn cooldown_gate(
         Some(elapsed) if elapsed >= cooldown.get() => None,
         Some(_) => Some(ReminderReason::CooldownActive),
         None if record.fingerprint.is_none()
+            || scope
+                .session
+                .as_ref()
+                .zip(record.shown_session.as_ref())
+                .is_some_and(|(a, b)| a != b)
             || now
                 .session
                 .as_ref()
@@ -746,7 +757,7 @@ impl ReminderEngine {
                 if record.fingerprint.as_ref() == Some(&item.fingerprint) {
                     Some(ReminderReason::StateUnchanged)
                 } else {
-                    cooldown_gate(item.cooldown_ms, record, context.freshness)
+                    cooldown_gate(item.cooldown_ms, record, context.freshness, &inputs.scope)
                 }
             } else {
                 None
@@ -761,6 +772,7 @@ impl ReminderEngine {
             }
         }
         Ok(ReminderPlan {
+            scope_session: inputs.scope.session.clone(),
             context: snapshot.context.clone(),
             mode,
             queue,
@@ -814,6 +826,7 @@ mod tests {
                 StateFingerprint::new(&RuleId::new("r1").unwrap(), None, Truth::True, &[]).unwrap(),
             ),
             shown_at_session: None,
+            shown_session: None,
             shown_at_utc_ms: at.map(|n| UtcMillis::new(n).unwrap()),
             serial: 0,
         };
@@ -825,18 +838,41 @@ mod tests {
             max_age_ms: ms(1000),
         };
         let utc = |n| Some(UtcMillis::new(n).unwrap());
-        assert_eq!(cooldown_gate(ms(0), &record(None), &clock(None)), None);
         assert_eq!(
-            cooldown_gate(ms(10), &record(Some(100)), &clock(utc(110))),
+            cooldown_gate(
+                ms(0),
+                &record(None),
+                &clock(None),
+                &ReminderScope::default()
+            ),
             None
         );
         assert_eq!(
-            cooldown_gate(ms(10), &record(Some(100)), &clock(utc(109))),
+            cooldown_gate(
+                ms(10),
+                &record(Some(100)),
+                &clock(utc(110)),
+                &ReminderScope::default()
+            ),
+            None
+        );
+        assert_eq!(
+            cooldown_gate(
+                ms(10),
+                &record(Some(100)),
+                &clock(utc(109)),
+                &ReminderScope::default()
+            ),
             Some(ReminderReason::CooldownActive)
         );
         for (then, now) in [(Some(100), utc(99)), (None, utc(500)), (Some(100), None)] {
             assert_eq!(
-                cooldown_gate(ms(10), &record(then), &clock(now)),
+                cooldown_gate(
+                    ms(10),
+                    &record(then),
+                    &clock(now),
+                    &ReminderScope::default()
+                ),
                 Some(ReminderReason::CooldownUnverifiable)
             );
         }

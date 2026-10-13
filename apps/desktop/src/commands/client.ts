@@ -51,6 +51,7 @@ export function createClient(adapter: CommandAdapter) {
     getHistoricalSnapshot: (profileId: string, snapshotId: string) => run(() => adapter.invoke("get_historical_snapshot", { profile_id: profileId, snapshot_id: snapshotId })),
     promoteSnapshot: (profileId: string, snapshotId: string, expectedCurrent: string, reason: string) => run(() => adapter.invoke("promote_snapshot", { profile_id: profileId, snapshot_id: snapshotId, expected_current: expectedCurrent, reason })),
     getPlanningCatalog: (profileId: string) => run(() => adapter.invoke("get_planning_catalog", { profile_id: profileId })),
+    exportPlan: (text: string) => run(() => adapter.invoke("export_plan", { text })),
     planSession: (text: string) => run(() => adapter.invoke("plan_session", { text })),
     getAppStatus: (): Promise<Result<AppStatus>> =>
       run(() => adapter.invoke("get_app_status", undefined)),

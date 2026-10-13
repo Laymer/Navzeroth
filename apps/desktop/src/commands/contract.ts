@@ -260,6 +260,7 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  export_plan: { input: { text: string }; output: { text: string; byte_count: number; plan_id: string; expires_at_utc_ms: number } };
   get_planning_catalog: { input: { profile_id: string }; output: PlanningCatalog };
   plan_session: { input: { text: string }; output: PlanningReport };
   get_historical_snapshot: { input: { profile_id: string; snapshot_id: string }; output: StoredSnapshot | null };

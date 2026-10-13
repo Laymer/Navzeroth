@@ -139,6 +139,8 @@ dependencies = [
 name = "azeroth-lua-harness"
 version = "0.1.0"
 dependencies = [
+ "azeroth-app",
+ "azeroth-core",
  "mlua",
  "serde_json",
 ]
