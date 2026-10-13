@@ -16,11 +16,21 @@ fn request() -> CalibrationRequest {
     }
 }
 fn sample(id: &str, duration: u64) -> CalibrationSample {
-    let batch: SessionBatch = serde_json::from_value(json!({"character":"example","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"events":[{"session":id,"sequence":1,"elapsed_ms":0,"kind":{"type":"session_start"}},{"session":id,"sequence":2,"elapsed_ms":duration,"kind":{"type":"activity","label":"declared_stage","quality":"observed"}},{"session":id,"sequence":3,"elapsed_ms":duration,"kind":{"type":"quest_turn_in","quest":"quest-a"}}]})).unwrap();
+    let mut events =
+        vec![json!({"session":id,"sequence":1,"elapsed_ms":0,"kind":{"type":"session_start"}})];
+    let mut elapsed = 0;
+    let mut sequence = 2;
+    while elapsed < duration {
+        elapsed = (elapsed + 100_000).min(duration);
+        events.push(json!({"session":id,"sequence":sequence,"elapsed_ms":elapsed,"kind":{"type":"activity","label":"declared_stage","quality":"observed"}}));
+        sequence += 1;
+    }
+    events.push(json!({"session":id,"sequence":sequence,"elapsed_ms":duration,"kind":{"type":"quest_turn_in","quest":"quest-a"}}));
+    let batch: SessionBatch = serde_json::from_value(json!({"character":"example","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"events":events})).unwrap();
     let build = build_sessions(
         &batch,
         &SessionBuildConfig {
-            max_observed_span_ms: Millis::new(86_400_000).unwrap(),
+            max_observed_span_ms: Millis::new(300_000).unwrap(),
             clock_tolerance_ms: Millis::new(5000).unwrap(),
         },
     )
@@ -82,11 +92,10 @@ fn ambiguous_incomplete_and_unclassified_samples_do_not_calibrate() {
     let mut b = sample("b", 200_000);
     b.annotation.as_mut().unwrap().complete = false;
     let mut c = sample("c", 200_000);
-    c.analytics.summary = {
-        let mut data = (*c.analytics.summary).clone();
-        data.intervals[0].quality = azeroth_core::entities::MeasurementQuality::Unclassified;
-        azeroth_core::error::Validated::try_new(data).unwrap()
-    };
+    if let SessionEventKind::Activity { quality, .. } = &mut c.batch.events[1].kind {
+        *quality = azeroth_core::entities::MeasurementQuality::Unclassified;
+    }
+    refresh(&mut c);
     let mut d = sample("d", 200_000);
     d.annotation.as_mut().unwrap().completion_quest = "other".into();
     let samples = vec![a, b, c, d];
@@ -107,7 +116,7 @@ fn conditions_context_fixture_and_duplicates_are_guarded() {
     let mut a = sample("a", 200_000);
     a.annotation.as_mut().unwrap().conditions.party_size = 1;
     let mut b = sample("b", 200_000);
-    b.fixture = false;
+    b.annotation.as_mut().unwrap().conditions.role = "other".into();
     let context = a.batch.context.clone();
     let report = calibrate(
         &CharacterId::new("example").unwrap(),
@@ -118,6 +127,18 @@ fn conditions_context_fixture_and_duplicates_are_guarded() {
     )
     .unwrap();
     assert_eq!(report.sample_count, 0);
+    let mut invalid_fixture = sample("invalid", 200_000);
+    invalid_fixture.fixture = false;
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &context,
+            true,
+            &request(),
+            &[invalid_fixture]
+        )
+        .is_err()
+    );
     let a = sample("a", 200_000);
     let b = sample("a", 200_000);
     assert!(
@@ -144,28 +165,36 @@ fn conditions_context_fixture_and_duplicates_are_guarded() {
     );
 }
 
+fn refresh(sample: &mut CalibrationSample) {
+    let build = build_sessions(
+        &sample.batch,
+        &SessionBuildConfig {
+            max_observed_span_ms: Millis::new(300_000).unwrap(),
+            clock_tolerance_ms: Millis::new(5000).unwrap(),
+        },
+    )
+    .unwrap()
+    .into_values()
+    .next()
+    .unwrap();
+    sample.analytics = analyze_session(&build).unwrap();
+}
 #[test]
-fn unknown_activity_zero_width_resets_and_other_identity_remain_excluded() {
+fn unknown_activity_and_other_identity_remain_excluded() {
     let mut a = sample("plain", 120_000);
-    let mut data = (*a.analytics.summary).clone();
-    data.intervals[0].label = Text::new(OBSERVED_SPAN_LABEL).unwrap();
-    a.analytics.summary = azeroth_core::error::Validated::try_new(data).unwrap();
+    if let SessionEventKind::Activity { label, .. } = &mut a.batch.events[1].kind {
+        *label = Text::new(OBSERVED_SPAN_LABEL).unwrap();
+    }
+    refresh(&mut a);
     let mut b = sample("reset", 120_000);
-    let mut data = (*b.analytics.summary).clone();
-    data.gaps.push(azeroth_core::entities::SessionGap {
-        start_ms: Millis::new(0).unwrap(),
-        end_ms: Millis::new(0).unwrap(),
-        reason: Text::new("session_reset").unwrap(),
-    });
-    b.analytics.summary = azeroth_core::error::Validated::try_new(data).unwrap();
+    b.batch.events[1].kind = SessionEventKind::RecordingPaused;
+    refresh(&mut b);
     let mut c = sample("other-build", 120_000);
-    let mut data = (*c.analytics.summary).clone();
-    data.context = serde_json::from_value(json!({"build":{"edition":"wow_forever","build":"OTHER","interface":"SYNTHETIC"},"namespace":"demo"})).unwrap();
-    c.analytics.summary = azeroth_core::error::Validated::try_new(data).unwrap();
+    c.batch.context=serde_json::from_value(json!({"build":{"edition":"wow_forever","build":"OTHER","interface":"SYNTHETIC"},"namespace":"demo"})).unwrap();
+    refresh(&mut c);
     let mut d = sample("other-character", 120_000);
-    let mut data = (*d.analytics.summary).clone();
-    data.character = CharacterId::new("other").unwrap();
-    d.analytics.summary = azeroth_core::error::Validated::try_new(data).unwrap();
+    d.batch.character = CharacterId::new("other").unwrap();
+    refresh(&mut d);
     let context = a.batch.context.clone();
     let report = calibrate(
         &CharacterId::new("example").unwrap(),
@@ -177,4 +206,31 @@ fn unknown_activity_zero_width_resets_and_other_identity_remain_excluded() {
     .unwrap();
     assert_eq!(report.sample_count, 0);
     assert!(report.comparisons.iter().all(|v| v.observed_ms.is_none()));
+}
+#[test]
+fn forged_analytics_or_changed_terminal_event_is_refused() {
+    let mut a = sample("forged", 120_000);
+    a.analytics.timing.totals.observed_ms = Millis::new(1).unwrap();
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &a.batch.context.clone(),
+            true,
+            &request(),
+            &[a]
+        )
+        .is_err()
+    );
+    let mut b = sample("changed", 120_000);
+    b.batch.events.last_mut().unwrap().kind = SessionEventKind::Logout;
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &b.batch.context.clone(),
+            true,
+            &request(),
+            &[b]
+        )
+        .is_err()
+    );
 }

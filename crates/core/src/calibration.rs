@@ -82,6 +82,7 @@ pub struct CalibrationSample {
 #[derive(Clone, Debug, Serialize)]
 pub struct CalibrationComparison {
     pub session_id: SessionId,
+    pub annotation: Option<SessionCalibrationAnnotation>,
     pub observed_ms: Option<u64>,
     pub difference_ms: Option<i64>,
     pub exclusion: Option<String>,
@@ -119,6 +120,37 @@ pub fn calibrate(
     let mut comparisons = Vec::new();
     let mut seen = std::collections::BTreeSet::new();
     for sample in samples {
+        let document = crate::sessions::SessionDocument {
+            format: "anav-session-events".into(),
+            version: 1,
+            fixture: sample.fixture,
+            batch: sample.batch.clone(),
+        };
+        document.validate_identity()?;
+        let mut builds = crate::sessions::build_sessions(
+            &sample.batch,
+            &crate::sessions::SessionBuildConfig {
+                max_observed_span_ms: crate::types::Millis::new(300_000)?,
+                clock_tolerance_ms: crate::types::Millis::new(5_000)?,
+            },
+        )?;
+        if builds.len() != 1
+            || sample
+                .batch
+                .events
+                .windows(2)
+                .any(|w| w[0].sequence >= w[1].sequence)
+        {
+            return Err(invalid(
+                "Calibration requires one canonical retained session",
+            ));
+        }
+        let derived = crate::analytics::analyze_session(&builds.pop_first().expect("one build").1)?;
+        if derived != sample.analytics {
+            return Err(invalid(
+                "Calibration analytics disagree with retained events",
+            ));
+        }
         let summary = &sample.analytics.summary;
         if !seen.insert((
             summary.context.clone(),
@@ -140,6 +172,7 @@ pub fn calibrate(
             annotation.validate()?;
             if annotation.conditions != request.conditions { Some("different_route_or_conditions") }
             else if !annotation.complete { Some("completion_not_declared") }
+            else if [summary.starting_level.value(),summary.ending_level.value()].into_iter().flatten().any(|level| u32::from(level.get()) != annotation.conditions.level) { Some("declared_level_contradicts_observation") }
             else if !matches!(sample.batch.events.first().map(|event| &event.kind), Some(crate::sessions::SessionEventKind::SessionStart)) || !sample.batch.events.last().is_some_and(|event| matches!(&event.kind, crate::sessions::SessionEventKind::QuestTurnIn { quest } if quest.as_str() == annotation.completion_quest)) { Some("missing_terminal_completion_evidence") }
             else if !summary.gaps.is_empty() || sample.analytics.timing.uncovered_ms.get() != 0 { Some("gaps_or_uncovered_time") }
             else if summary.intervals.iter().any(|span| span.quality != MeasurementQuality::Observed || span.label.as_str() == crate::sessions::OBSERVED_SPAN_LABEL) { Some("activity_not_completely_observed") }
@@ -149,6 +182,7 @@ pub fn calibrate(
         let observed = reason.is_none().then_some(summary.elapsed_ms.get());
         comparisons.push(CalibrationComparison {
             session_id: summary.session.clone(),
+            annotation: sample.annotation.clone(),
             observed_ms: observed,
             difference_ms: observed.map(|v| v as i64 - request.baseline_ms as i64),
             exclusion: reason.map(str::to_owned),

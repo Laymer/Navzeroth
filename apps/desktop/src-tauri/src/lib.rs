@@ -32,11 +32,23 @@ async fn blocking<T: Send + 'static>(
         })?
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn set_session_calibration(state: State<'_, Application>, profile_id: String, session_id: azeroth_core::types::SessionId, annotation: azeroth_core::calibration::SessionCalibrationAnnotation) -> Result<(), AppError> {
-    blocking(state, move |app| app.set_session_calibration(&profile_id, &session_id, &annotation)).await
+async fn set_session_calibration(
+    state: State<'_, Application>,
+    profile_id: String,
+    session_id: azeroth_core::types::SessionId,
+    annotation: azeroth_core::calibration::SessionCalibrationAnnotation,
+) -> Result<(), AppError> {
+    blocking(state, move |app| {
+        app.set_session_calibration(&profile_id, &session_id, &annotation)
+    })
+    .await
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn get_calibration(state: State<'_, Application>, profile_id: String, request: azeroth_core::calibration::CalibrationRequest) -> Result<azeroth_core::calibration::CalibrationReport, AppError> {
+async fn get_calibration(
+    state: State<'_, Application>,
+    profile_id: String,
+    request: azeroth_core::calibration::CalibrationRequest,
+) -> Result<azeroth_core::calibration::CalibrationReport, AppError> {
     blocking(state, move |app| app.get_calibration(&profile_id, &request)).await
 }
 
@@ -369,7 +381,6 @@ pub fn run() {
             plan_session,
             set_session_calibration,
             get_calibration,
-
             inspect_plan_route,
             export_plan,
             get_app_status,
