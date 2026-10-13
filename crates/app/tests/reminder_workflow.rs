@@ -141,3 +141,36 @@ fn explicit_presentation_dismiss_restore_and_refresh_guards() {
             .is_err()
     );
 }
+#[test]
+fn manual_checklist_is_opt_in_guarded_and_does_not_invent_observations() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let id = app
+        .import_text(&format!("ANAV1:{SNAPSHOT}"), None)
+        .unwrap()
+        .profile_id;
+    let view = app.reminder_view(&id, None).unwrap();
+    assert!(!view.bag_checklist_enabled);
+    assert_eq!(view.gaps.len(), 5);
+    let mut req = ReminderRequest {
+        profile_id: id.clone(),
+        snapshot_id: view.snapshot_id,
+        revision: view.revision,
+        action: ReminderAction::BagChecklist {
+            enabled: true,
+            checked: false,
+        },
+    };
+    let enabled = app
+        .mutate_reminders(&serde_json::to_string(&req).unwrap(), None)
+        .unwrap();
+    assert!(enabled.bag_checklist_enabled);
+    assert!(!enabled.bag_checklist_checked);
+    req.action = ReminderAction::BagChecklist {
+        enabled: true,
+        checked: true,
+    };
+    app.mutate_reminders(&serde_json::to_string(&req).unwrap(), None)
+        .unwrap();
+    assert!(app.reminder_view(&id, None).unwrap().bag_checklist_checked);
+    assert!(app.reminder_view(&id, None).unwrap().rules.is_empty());
+}

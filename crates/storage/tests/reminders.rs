@@ -48,3 +48,29 @@ fn v5_upgrade_preserves_populated_session_history() {
     );
     assert_eq!(common::count(&db.path, "SELECT COUNT(*) FROM profiles"), 1);
 }
+#[test]
+fn existing_v1_document_without_checklist_fields_remains_readable() {
+    let db = common::TempDb::new("reminder-document-v1");
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let snapshot = common::Doc::base().decode();
+    store
+        .import_character_snapshot(&snapshot, ImportSource::Fixture, None)
+        .unwrap();
+    let key = ProfileKey::of(&snapshot);
+    let mut state = store.reminder_state(&key).unwrap();
+    state.enabled = false;
+    store.save_reminder_state(&key, &state).unwrap();
+    let conn = common::raw(&db.path);
+    let text: String = conn
+        .query_row("SELECT document FROM reminder_state", [], |r| r.get(0))
+        .unwrap();
+    let mut old: serde_json::Value = serde_json::from_str(&text).unwrap();
+    old.as_object_mut().unwrap().remove("bag_checklist_enabled");
+    old.as_object_mut().unwrap().remove("bag_checklist_checked");
+    conn.execute("UPDATE reminder_state SET document=?1", [old.to_string()])
+        .unwrap();
+    let restored = store.reminder_state(&key).unwrap();
+    assert!(!restored.enabled);
+    assert!(!restored.bag_checklist_enabled);
+    assert!(!restored.bag_checklist_checked);
+}
