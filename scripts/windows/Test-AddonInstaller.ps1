@@ -138,6 +138,9 @@ try {
     $r = Invoke-AddonScript @('-Action', 'Install', '-AddOnsPath', $g.Game, '-Quiet', '-StateDirectory', $g.State)
     Check 'game folder resolves to Interface\AddOns' (($r.Code -eq 0) -and (Test-Path -LiteralPath (Join-Parts @($g.AddOns, 'AzerothNavigator', 'AzerothNavigator.toc')))) $r.Output
 
+    $r = Invoke-AddonScript @('-Action', 'Status', '-AddOnsPath', $g.Game, '-Quiet', '-StateDirectory', $g.State)
+    Check 'status resolves a game folder like install' (($r.Code -eq 0) -and ($r.Output -match 'installed version: ')) $r.Output
+
     # Refusals.
     $plain = Join-Path $Root 'not-a-game'
     New-Item -ItemType Directory -Path $plain | Out-Null
@@ -157,12 +160,26 @@ try {
     $r = Invoke-AddonScript @('-Action', 'Uninstall', '-AddOnsPath', $g.AddOns, '-Quiet', '-StateDirectory', $g.State)
     Check 'a different addon with the same folder name is refused on uninstall' (($r.Code -eq 1) -and ((Get-Tree $g.Game) -eq $before)) $r.Output
 
+    Set-Content -LiteralPath (Join-Path $foreign 'AzerothNavigator.toc') -Value '## Title: Azeroth Navigator Unrelated'
+    $before = Get-Tree $g.Game
+    foreach ($action in @('Install', 'Uninstall')) {
+        $r = Invoke-AddonScript @('-Action', $action, '-AddOnsPath', $g.AddOns, '-Quiet', '-StateDirectory', $g.State)
+        Check "a title prefix is insufficient ownership for $action" (($r.Code -eq 1) -and ((Get-Tree $g.Game) -eq $before)) $r.Output
+    }
+
     $broken = Join-Path (Join-Path $Root 'broken-source') 'AzerothNavigator'
     Copy-Item -LiteralPath $Source -Destination $broken -Recurse
     Remove-Item -LiteralPath (Join-Parts @($broken, 'Core', 'Json.lua'))
     $g = New-Game 'broken'
     $r = Invoke-AddonScript @('-Action', 'Install', '-AddOnsPath', $g.AddOns, '-Source', $broken, '-Quiet', '-StateDirectory', $g.State)
     Check 'an incomplete source is refused' (($r.Code -eq 1) -and -not (Test-Path -LiteralPath (Join-Path $g.AddOns 'AzerothNavigator'))) $r.Output
+
+    $escape = Join-Path (Join-Path $Root 'escaping-source') 'AzerothNavigator'
+    Copy-Item -LiteralPath $Source -Destination $escape -Recurse
+    Set-Content -LiteralPath (Join-Path (Split-Path -Parent $escape) 'outside.lua') -Value '-- outside'
+    Add-Content -LiteralPath (Join-Path $escape 'AzerothNavigator.toc') -Value '../outside.lua'
+    $r = Invoke-AddonScript @('-Action', 'Install', '-AddOnsPath', $g.AddOns, '-Source', $escape, '-Quiet', '-StateDirectory', $g.State)
+    Check 'TOC paths escaping the source are refused' (($r.Code -eq 1) -and ($r.Output -match 'outside its source folder')) $r.Output
 
     # A process running from the game folder blocks changes.
     $g = New-Game 'running'
@@ -190,6 +207,9 @@ try {
         Start-Sleep -Milliseconds 500
         $r = Invoke-AddonScript @('-Action', 'Install', '-AddOnsPath', $g.AddOns, '-Quiet', '-StateDirectory', $g.State)
         Check 'a running game blocks installation' (($r.Code -eq 1) -and ($r.Output -match 'Close the game first') -and -not (Test-Path -LiteralPath (Join-Path $g.AddOns 'AzerothNavigator'))) $r.Output
+        $before = Get-Tree $g.Game
+        $r = Invoke-AddonScript @('-Action', 'Uninstall', '-AddOnsPath', $g.AddOns, '-RemoveSavedVariables', '-Quiet', '-StateDirectory', $g.State)
+        Check 'a running game protects SavedVariables even without an addon folder' (($r.Code -eq 1) -and ($r.Output -match 'Close the game first') -and ((Get-Tree $g.Game) -eq $before)) $r.Output
     }
     finally {
         Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue

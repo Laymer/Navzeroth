@@ -10,8 +10,13 @@ on:
       - .github/workflows/package-windows.yml
       - scripts/windows/**
       - addons/**
-      - apps/desktop/src-tauri/tauri*.json
-      - apps/desktop/src-tauri/windows/**
+      - apps/desktop/**
+      - crates/**
+      - Cargo.toml
+      - package.json
+      - pnpm-workspace.yaml
+      - .node-version
+      - LICENSE
       - rust-toolchain.toml
       - Cargo.lock
       - pnpm-lock.yaml
@@ -84,8 +89,17 @@ jobs:
           $programs = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
           $shortcuts = @((Join-Path $programs 'Azeroth Navigator.lnk'), (Join-Path $programs 'Azeroth Navigator - WoW addon.lnk'))
 
+          # A previously installed addon must survive both silent operations unchanged.
+          $gameAddOns = Join-Path $env:RUNNER_TEMP 'Synthetic Game\Interface\AddOns'
+          New-Item -ItemType Directory -Path $gameAddOns -Force | Out-Null
+          ./scripts/windows/Install-AzerothNavigatorAddon.ps1 -Action Install -AddOnsPath $gameAddOns -Quiet
+          if ($LASTEXITCODE -ne 0) { throw 'Could not seed synthetic addon' }
+          $sentinel = Join-Path $gameAddOns 'AzerothNavigator\SilentInstallSentinel.txt'
+          Set-Content -LiteralPath $sentinel -Value 'Keep this existing addon unchanged'
+
           $p = Start-Process -FilePath $setup.FullName -ArgumentList '/S' -Wait -PassThru
           if ($p.ExitCode -ne 0) { throw "Installer exit code $($p.ExitCode)" }
+          if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent install replaced the game addon' }
           foreach ($file in @($exe, (Join-Path $installDir 'uninstall.exe'),
                   (Join-Path $installDir 'addon\Install-AzerothNavigatorAddon.ps1'),
                   (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc')) + $shortcuts) {
@@ -116,7 +130,9 @@ jobs:
           foreach ($shortcut in $shortcuts) { if (Test-Path -LiteralPath $shortcut) { throw "Shortcut left after uninstall: $shortcut" } }
           "uninstalled: $installDir and both shortcuts removed"
           # A silent uninstall keeps user data (the "delete app data" box is unticked by default).
-          "user data kept: $(Test-Path -LiteralPath $data)"
+          if (-not (Test-Path -LiteralPath (Join-Path $data 'snapshots.sqlite3'))) { throw 'Silent uninstall removed user data' }
+          if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent uninstall removed the game addon' }
+          "user data and existing addon kept: $data"
       - run: git diff --exit-code
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

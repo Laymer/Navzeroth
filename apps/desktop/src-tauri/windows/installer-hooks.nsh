@@ -72,7 +72,7 @@
       Pop $R3
       ${If} $R3 != 0
         MessageBox MB_OK|MB_ICONEXCLAMATION \
-          "The addon was not updated (result: $R3). The previous addon files were kept.$\r$\nUse Start menu > ${PRODUCTNAME} - WoW addon to retry." \
+          "The addon helper reported an error (result: $R3). Check the installed addon version before retrying.$\r$\nUse Start menu > ${PRODUCTNAME} - WoW addon to retry." \
           /SD IDOK
       ${EndIf}
     anav_skip_addon_update:

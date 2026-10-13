@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M4.4/M4.5 delivery (PRs #40–41); next implementation is M4.6.
-Owner: Codex root, sole writer; claimed at origin/main 6bb2649.
+Current task: PR #39 Windows packaging review and integration; next implementation is M4.6.
+Owner: Codex root, sole writer; claimed at PR head 1273c57 / main d7ee6d5.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -123,8 +123,9 @@ namespace/build/floor gap instead of inventing a placement. Planner consumes exa
 gameplay coverage remains missing. Acquisition remains a library foundation.
 Lua plan invalidation does not imply completion. Lua gear accepts synthetic inputs.
 
-Live WoW observations/transitions, native window interaction and packaging remain
-UNVERIFIED. No socket bridge, input automation, hidden telemetry or forbidden game
+Live WoW observations/transitions and interactive native window behavior remain
+UNVERIFIED. Hosted Windows packaging smoke evidence is revision-scoped in the M9.4
+and PR39 handoffs. No socket bridge, input automation, hidden telemetry or forbidden game
 access was added. Remaining watcher/platform/model limitations are in the handoffs.
 
 ## Next dependency-ready work
@@ -133,14 +134,14 @@ M4.6: explicit Lua advancement and stable alternative/invalidation policy, with
 replay fixtures. Manual bounded export is delivered in PR #41; automatic advancement
 and a live addon import UI remain later tasks. Continue analytical/gear views and
 permitted real-content authoring when their inputs are available. Live client
-checks need sanitized evidence from the recorded build. The concurrent M9.4 Windows
-packaging branch was created after this task's inventory and remains separate.
+checks need sanitized evidence from the recorded build. PR #39 integrates the Windows
+packaging branch after the planner/export reconciliation.
 
 Latest local checks: 495 Rust tests, zero failures, one existing ignored generator;
 78 desktop unit tests and seven Chromium workflows; locked fmt/Clippy,
 typecheck/lint/build, schema/type drift, contract/transport/content and Lua parity.
-PR #40 and resulting main 301dc60 passed all eight hosted jobs. PR #41 requires
-all eight on its final revision; GitHub is the authoritative merge/check record.
+PRs #40 and #41 and resulting main d7ee6d5 passed all eight hosted jobs;
+GitHub is the authoritative merge/check record.
 Native interaction/live checks remain unverified. Releases still need separate
 authorization. The branch inventory and ancestry audit are in the reconciliation
 handoff; every initially outstanding tip and the preserved planner draft reached

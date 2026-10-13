@@ -3,7 +3,8 @@
 Task M9.4 (packaging automation) with the installation and removal instructions
 of M9.5. Status: IMPLEMENTED_UNVERIFIED. The hosted Windows runner builds the
 installer, installs it silently, starts the application and uninstalls it (see
-the [handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md)). Interactive
+the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
+[PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
 client are not verified.
 
@@ -46,9 +47,10 @@ The helper:
 - refuses a folder that is not named `AddOns`, and never creates one;
 - refuses while a program from that game folder is running;
 - writes only `AddOns\AzerothNavigator`, and replaces it only if its TOC title is
-  Azeroth Navigator's; a different addon with that folder name is left untouched;
+  `Azeroth Navigator Diagnostics` exactly; a different addon with that folder name is left untouched;
 - copies to a temporary sibling folder, checks every file (SHA-256), then swaps it in,
-  so a failure keeps the previous version;
+  restoring the previous version if the swap fails (a later cleanup or location-recording
+  error can occur after the new version is installed);
 - remembers the AddOns folder in
   `%LOCALAPPDATA%\io.github.laymer.azeroth-navigator\addon-location.txt` so updates and
   the uninstaller can find it.

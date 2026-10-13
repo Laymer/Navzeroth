@@ -13,7 +13,8 @@
 
     Install is staged and atomic within the AddOns folder: the new copy is
     written next to the old one, verified file by file (SHA-256), then swapped
-    in by rename. If anything fails, the previous addon stays in place.
+    in by rename. If the swap fails, the previous addon is restored; a later
+    cleanup or location-recording error can occur after the new version is installed.
 
     Only the AddOns\AzerothNavigator folder is written or removed, and only when
     it is absent or its TOC title is Azeroth Navigator's. SavedVariables are
@@ -71,7 +72,7 @@ Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
 
 $AddonName = 'AzerothNavigator'
-$TitlePrefix = 'Azeroth Navigator'
+$AddonTitle = 'Azeroth Navigator Diagnostics'
 $BundleId = 'io.github.laymer.azeroth-navigator'
 $MarkerName = 'addon-location.txt'
 $Separator = [IO.Path]::DirectorySeparatorChar
@@ -136,7 +137,7 @@ function Read-Toc([string] $Folder) {
 }
 
 function Test-OwnAddon($Toc) {
-    return ($null -ne $Toc) -and ($null -ne $Toc.Title) -and $Toc.Title.StartsWith($TitlePrefix)
+    return ($null -ne $Toc) -and ($null -ne $Toc.Title) -and [string]::Equals($Toc.Title, $AddonTitle, [StringComparison]::Ordinal)
 }
 
 function Resolve-Source {
@@ -158,6 +159,11 @@ function Resolve-Source {
             if (-not (Test-OwnAddon $toc)) { throw "No Azeroth Navigator TOC in $folder" }
             foreach ($file in $toc.Files) {
                 $relative = $file.Replace('\', $Separator).Replace('/', $Separator)
+                $resolved = Get-FullPath (Join-Path $folder $relative)
+                if ([IO.Path]::IsPathRooted($relative) -or
+                    -not $resolved.StartsWith(($folder + $Separator), [StringComparison]::OrdinalIgnoreCase)) {
+                    throw "The addon TOC contains a path outside its source folder: $file"
+                }
                 if (-not (Test-Path -LiteralPath (Join-Path $folder $relative) -PathType Leaf)) {
                     throw "The addon source is incomplete: $file is listed in the TOC but missing."
                 }
@@ -340,6 +346,8 @@ function Uninstall-Addon {
     $addOns = Resolve-AddOnsDirectory $AddOnsPath
     $target = Join-Path $addOns $AddonName
     $removedSomething = $false
+    # SavedVariables can exist after the addon itself has been removed.
+    if ($RemoveSavedVariables) { Assert-GameNotRunning $addOns }
 
     if (Test-Path -LiteralPath $target) {
         if (-not (Test-OwnAddon (Read-Toc $target))) {
@@ -397,6 +405,7 @@ function Show-Status {
         Write-Step 'installed: unknown (no AddOns folder recorded; pass -AddOnsPath).'
         return
     }
+    $addOns = Resolve-AddOnsDirectory $addOns
     $toc = Read-Toc (Join-Path $addOns $AddonName)
     if (Test-OwnAddon $toc) { Write-Step "installed version: $($toc.Version) in $addOns" }
     elseif ($toc) { Write-Step "installed: a different addon uses the folder name $AddonName in $addOns" }
