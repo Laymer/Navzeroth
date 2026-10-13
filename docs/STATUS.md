@@ -7,6 +7,7 @@ v0.3.0 is published as a developer prerelease at main 1924a84 (PR #57).
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
 [wave-4 coordination](handoffs/2026-10-13-wave4-coordination.md).
+See [task ledger](IMPLEMENTATION_TASKS.md) for every M0–M12 task.
 Historical preparation/authorization statements below describe their original scope.
 See [wave-3 coordination](handoffs/2026-10-13-wave3-coordination.md) for ownership,
 frozen boundaries and evidence scope. v0.2.0 is published; no new tag/release
