@@ -30,8 +30,9 @@ packaging establish separate evidence, never actual game API behavior.
       uncertainty separately. Duplicate import is idempotent; conflicting reuse
       refuses without changing history. Explicit deletion removes selected history.
 - [ ] Reload never resumes the previous recording timeline; prior successful export
-      survives. Start creates a new runtime identity. Reset/drift/bound failures stop
-      recording visibly. Failed export leaves previous export intact.
+      survives. Start creates a new runtime identity. Monotonic reset and bound failures stop
+      recording visibly. UTC drift warns and marks UTC uncertain while monotonic
+      recording continues. Failed export leaves previous export intact.
 - [ ] Check experimental UI for focus/drag behavior and combat restrictions/taint;
       record unsupported/restricted observations without bypassing restrictions.
 - [ ] Native Windows Gear/Sessions/Planner interaction and accessibility: record
