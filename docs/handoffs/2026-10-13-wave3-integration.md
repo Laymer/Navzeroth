@@ -94,3 +94,28 @@ is explicit128 entries/profile without silent pruning. See the
 Next task: collect sanitized client-specific evidence for this checklist and author
 permitted real content; stage mappings, joint planning and calibration require their
 missing data. Published v0.2.0 and earlier releases remain unchanged.
+
+## Candidate packaging checkpoint and review follow-ups
+
+[Pre-merge candidate downloads](https://github.com/Laymer/Navzeroth/actions/runs/38415134097/artifacts/11823887545)
+were verified from source8e83a9f608518274803455b773ce6ac883f8fefd (synthetic PR merge;
+head0cdffcc). All four SHA256 entries, ZIP integrity,19exact addon source files,
+root/addon license and committed notes matched. Hosted Windows additionally passed
+installed0.3.0-rc.1 version and bundled-license assertions. Artifact expires
+2026-10-27T14:45:35Z. Final main downloads/checks/ancestry are in the commit-locked
+PR56 audit after its final source is merged; this checkpoint is distinct.
+
+An earlier interim download38413573852 passed hashes/ZIP integrity but differed
+from source bytes solely by Windows CRLF conversion. The workflow now disables
+conversion before checkout; the exact-byte verification above reproduced the fix.
+
+Final recorder review reproduced a semantic error: manual stop emitted a game
+logout event. Owning task8 now records recording-disabled evidence with runtime
+state still stopped; running and paused stop regressions preserve measured coverage,
+unclassified spans and pause gaps without asserting game logout. The pure
+SessionBatch/exchange schemas remain unchanged. A second reproduced recorder issue
+converted absent UTC into an array during Lua reencoding; optional null now stays
+absent while false and zero survive. Worker B reviewed both fixes without remaining
+important findings. The final integrated portable Rust run passed550 tests with
+zero failures and one existing ignored test; Clippy, formatting and Lua lint also
+passed. Earlier check counts remain historical.

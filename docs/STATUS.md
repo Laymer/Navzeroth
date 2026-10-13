@@ -16,16 +16,16 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 
 | Milestone | State | Delivered scope / remaining work |
 | --- | --- | --- |
-| M0 | IN_PROGRESS | Diagnostic addon and harness exist; recorded Forever client checks remain unverified. |
+| M0 | IN_PROGRESS | Diagnostic addon/harness and limited 70338 diagnostic, level and clock-age reports exist; consolidated live checks remain unverified. |
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
-| M2 | IN_PROGRESS | Bounded character imports, snapshot storage UI, selected-file watcher, Lua decoder/predicates/plan/HUD foundation. Party transport imports and verified live bindings remain. |
+| M2 | IN_PROGRESS | Bounded character imports/storage/watcher, guarded manual 70338 quest/equipment capture, runtime plan paste/HUD and local session transport implemented. Party transport and consolidated live acceptance remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel, eligibility and pure deterministic greedy planner. Single-character Planner service/UI with explicit utilities, estimates, exclusions and stopping routes; bounded manual ANAV1 export implemented; pure Lua advancement/stable alternatives implemented on the M4.6 branch; live bindings remain. |
-| M5 | IN_PROGRESS | Fixed-point gear core, finite-session acquisitions, bounded synthetic Rust/Lua scoring parity. Real weights/catalogs, gear UI and live bindings remain. |
-| M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
+| M4 | IN_PROGRESS | Travel/eligibility/greedy Planner with manual assumptions, ANAV1 export, selected/stopping route inspection and conservative Lua advancement/HUD implemented. Real quest-stage mappings, joint planning and live acceptance remain. |
+| M5 | IN_PROGRESS | Fixed-point gear/acquisition services, current/theoretical/eligible/acquisition/practical comparisons, editable Gear screen and synthetic Rust/Lua parity implemented. Real weights/catalogs and live validation remain. |
+| M6 | IN_PROGRESS | Demo atlas/markers/layers/pin search and keyboard navigation; exact-dataset schematic route inspection with ordered geometry gaps implemented. Reference geography stays distinct from unlocks; verified road geometry remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
-| M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens remain; Windows packaging merged in PR #39; v0.1.0 developer preview published. |
+| M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Calibration and consolidated live checks remain. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner/Gear/Sessions workflows and mocked browser tests; revision-scoped Windows packaging and 0.3.0-rc.1 CI candidate. v0.2.0 remains latest published preview; native interaction/live acceptance remains. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
