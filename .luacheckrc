@@ -16,6 +16,7 @@ read_globals = {}
 globals = {
   "AzerothNavigatorDB",
   "SLASH_ANAVDIAG1",
+  "SLASH_ANAVSESSION1",
   "SLASH_ANAVPLAN1",
 }
 

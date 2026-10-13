@@ -369,11 +369,91 @@ function Diagnostics.attach(env)
     end
   end
 
+  local recorder = ns.Session.new(function()
+    if type(env.GetTime) == 'function' then return env.GetTime() end
+  end, function() return clock:capture() end)
+  state.session_recorder = recorder
+  local function sessionSlash(message)
+    local command, profile = '', nil
+    if type(message) == 'string' then
+      command, profile = message:match('^%s*(%S+)%s*(.-)%s*$')
+      command = command and command:lower() or ''
+    end
+    if command == 'status' then
+      local status = recorder:status()
+      say('session ' .. status.phase .. '; events=' .. status.events ..
+        '; reason=' .. (status.reason or 'none') ..
+        '; clock consistency=' ..
+        (status.clock_warning or 'no detected inconsistency; trust not implied') ..
+        '; observation=' .. (status.observation_warning or 'none'))
+      return
+    end
+    if command == 'export' then
+      if not state.persist then
+        say('session export failed: saved variables unavailable'); return
+      end
+      local text, code = recorder:export(state.db)
+      if not text then say('session export failed (' .. code .. '); prior export retained')
+      else say('session export stored (' .. #text ..
+        ' bytes); reload/logout, then import AzerothNavigatorDB / session_export') end
+      return
+    end
+    if not ({start=true, sample=true, pause=true, resume=true, stop=true})[command] then
+      say('/anavsession start <anonymous-profile-id> | sample | pause | resume | stop | ' ..
+        'export | status')
+      return
+    end
+    local build = Capabilities.probe(env).build
+    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
+      say('session unavailable: build has no recorded capture evidence'); return
+    end
+    local result, code
+    if command == 'start' then
+      if not state.persist then say('session start failed: saved variables unavailable'); return end
+      if type(profile) ~= 'string' or #profile < 1 or #profile > 80 or
+        not profile:match('^[A-Za-z0-9_-]+$') then
+        say('usage: /anavsession start <anonymous-profile-id> (1-80 letters, digits, _ or -)')
+        return
+      end
+      local sequence = state.db.session_recording_sequence
+      if sequence == nil then sequence = 0 end
+      if type(sequence) ~= 'number' or sequence ~= math.floor(sequence) or
+        sequence < 0 or sequence >= 1000000000 then
+        say('session start failed: invalid recording sequence'); return
+      end
+      sequence = sequence + 1
+      result, code = recorder:start({session='recording-' .. profile .. '-' .. sequence,
+        character=profile, fixture=false, context={namespace='reference',
+          build={edition=Version.edition, build=build.version .. '.' .. build.build,
+            interface=build.interface}}})
+      if result then state.db.session_recording_sequence = sequence end
+    elseif command == 'sample' then
+      result, code = recorder:sample(function(metadata)
+        local getter
+        if type(env.UnitLevel) == 'function' then
+          getter = function() return env.UnitLevel('player') end
+        end
+        return ns.Snapshot.readLevel(getter, metadata)
+      end)
+    else result, code = recorder[command](recorder) end
+    local status = recorder:status()
+    if result then say('session ' .. status.phase .. '; manual ' .. command .. ' recorded')
+    else say('session action failed (' .. (code or 'session_internal') ..
+      '); state=' .. status.phase .. '; reason=' .. (status.reason or 'none')) end
+    if status.clock_warning then say('session clock warning: ' .. status.clock_warning) end
+    if status.observation_warning then
+      say('session observation warning: ' .. status.observation_warning)
+    end
+  end
+
   state.onEvent = onEvent
   state.onSlash = onSlash
   state.run = run
   state.onPlanSlash = function(message)
     if not pcall(planSlash, message) then say('plan action failed (plan_internal)') end
+  end
+  state.onSessionSlash = function(message)
+    if not pcall(sessionSlash, message) then say('session action failed (session_internal)') end
   end
 
   if type(env.CreateFrame) == "function" then
@@ -394,6 +474,8 @@ function Diagnostics.attach(env)
     env["SLASH_" .. SLASH_KEY .. "1"] = SLASH_COMMAND
     env.SlashCmdList.ANAVPLAN = state.onPlanSlash
     env.SLASH_ANAVPLAN1 = '/anavplan'
+    env.SlashCmdList.ANAVSESSION = state.onSessionSlash
+    env.SLASH_ANAVSESSION1 = '/anavsession'
   end
 
   return state
