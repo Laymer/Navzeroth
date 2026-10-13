@@ -267,6 +267,7 @@ export interface CommandMap {
   list_sessions: { input: { profile_id: string }; output: import("./sessions").SessionListEntry[] };
   get_session_detail: { input: { profile_id: string; session_id: string }; output: import("./sessions").SessionDetail };
   delete_session: { input: { profile_id: string; session_id: string }; output: boolean };
+  inspect_plan_route: { input: { text: string }; output: import("./routes").RouteInspection };
   export_plan: { input: { text: string }; output: { text: string; byte_count: number; plan_id: string; expires_at_utc_ms: number } };
   get_planning_catalog: { input: { profile_id: string }; output: PlanningCatalog };
   plan_session: { input: { text: string }; output: PlanningReport };

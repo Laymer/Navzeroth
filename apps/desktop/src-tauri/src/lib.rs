@@ -76,6 +76,16 @@ async fn export_plan(
     blocking(state, move |app| app.export_plan(&text, system_now())).await
 }
 #[tauri::command]
+async fn inspect_plan_route(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::routes::RouteInspection, AppError> {
+    blocking(state, move |app| {
+        app.inspect_plan_route(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
 async fn plan_session(
     state: State<'_, Application>,
     text: String,
@@ -348,6 +358,7 @@ pub fn run() {
             promote_snapshot,
             get_planning_catalog,
             plan_session,
+            inspect_plan_route,
             export_plan,
             get_app_status,
             list_profiles,
