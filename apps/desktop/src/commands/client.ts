@@ -48,6 +48,8 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getJointPlanningCatalog: (partyId: string) => run(() => adapter.invoke("get_joint_planning_catalog", { party_id: partyId })),
+    planJointSession: (text: string) => run(() => adapter.invoke("plan_joint_session", { text })),
     importSessionText: (profileId: string, text: string) => run(() => adapter.invoke("import_session_text", { profile_id: profileId, text })),
     importSessionFile: (profileId: string, path: string, format: FileInputFormat) => run(() => adapter.invoke("import_session_file", { profile_id: profileId, path, format })),
     listSessions: (profileId: string) => run(() => adapter.invoke("list_sessions", { profile_id: profileId })),

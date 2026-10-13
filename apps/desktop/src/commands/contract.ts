@@ -1,3 +1,4 @@
+import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
 // Typed application command boundary (plan section 13). Mirrors the Rust
 // DTOs in crates/app; wire names are snake_case, exactly as serialized.
 import type {
@@ -260,6 +261,9 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_joint_planning_catalog: { input: { party_id: string }; output: JointPlanningCatalog };
+  plan_joint_session: { input: { text: string }; output: JointPlanningReport };
+
   inspect_plan_route: { input: { text: string }; output: import("./routes").RouteInspection };
   import_session_text: { input: { profile_id: string; text: string }; output: import("./sessions").SessionImportReceipt };
   import_session_file: { input: { profile_id: string; path: string; format: FileInputFormat }; output: import("./sessions").SessionImportReceipt };
