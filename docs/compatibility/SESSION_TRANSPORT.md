@@ -38,3 +38,29 @@ clock flags and UTC uncertainty remain separate. Calibration is deferred.
 
 Native interaction and recorded-client addon/clock behavior remain unverified
 until the consolidated live checklist provides revision-scoped evidence.
+
+## Manual addon recording
+
+`/anavsession start <anonymous-profile-id>` creates a new recording identity using
+an independent recording counter. Then use `sample`, `pause`, `resume`, `stop`,
+`export` and `status`. Recording is opt-in. Sampling reads level explicitly;
+quest absence/completion does not establish turn-in, and no quest/equipment event
+is inferred. Each running span ends with an explicit unclassified marker. Pause
+spans remain gaps. No event or timer samples in the background.
+
+Export requires a stopped recording: an intermediate export under the same
+immutable identity would conflict with the final batch. Export before reload,
+then reload/logout to save, and import `session_export`. Reload starts idle and
+never restores the monotonic timeline. Successful exports survive later failures.
+
+The producer uses the existing smaller JSON encoder ceiling (16 KiB, 2,048 nodes)
+and at most 128 events/runtime, below the consumer's 32 KiB/1,024-event bound.
+It stops visibly at the first event/encoding limit or unreadable/reversed monotonic
+clock. Coverage ends at the last retained event; unobserved time is not invented.
+UTC trust uses runtime operator confirmation and a five-second consistency
+threshold. A UTC inconsistency is recorded separately from monotonic coverage;
+any untrusted/missing event UTC prevents a definite UTC mapping.
+
+Live GetTime behavior, slash commands, reads, SavedVariables persistence and
+native history interactions remain experimental until the consolidated checklist
+has evidence for the recorded client and installed candidate commit.
