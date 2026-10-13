@@ -1,6 +1,6 @@
 # 0.3.0-rc.1 consolidated live checklist
 
-Run only on the previously recorded Forever client 1.60.1.70338 / interface16001.
+Run only on the previously recorded Forever client 1.60.1.70338 / interface 16001.
 Record actual GetBuildInfo tuple, installed candidate source SHA, OS, locale,
 combat state and transition for each result. Keep personal exports private.
 A missing environment check stays UNVERIFIED; synthetic replay and hosted Windows

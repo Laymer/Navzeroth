@@ -98,6 +98,15 @@ export const demoAdapter: CommandAdapter = {
           return [];
         case "get_active_content":
           return null;
+        case "get_gear_catalog":
+        case "compare_gear":
+        case "inspect_plan_route":
+        case "import_session_text":
+        case "import_session_file":
+        case "list_sessions":
+        case "get_session_detail":
+        case "delete_session":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "This workflow requires imported data in the desktop application.", retryable: false } satisfies AppError;
         case "stage_content":
         case "activate_content":
         case "rollback_content":

@@ -345,7 +345,7 @@ Assert-CleanTree 'before the build'
 # Remove only files an earlier run of this script wrote; never the directory itself.
 if (Test-Path -LiteralPath $OutputDirectory) {
     Get-ChildItem -LiteralPath $OutputDirectory -File |
-        Where-Object { $_.Name -like "$AddonName-*-x64-setup.exe" -or $_.Name -like "$AddonName-addon-*.zip" -or $_.Name -eq 'SHA256SUMS.txt' } |
+        Where-Object { $_.Name -like "$AddonName-*-x64-setup.exe" -or $_.Name -like "$AddonName-addon-*.zip" -or @('SHA256SUMS.txt', 'SOURCE_COMMIT.txt', 'CANDIDATE_NOTES.md') -contains $_.Name } |
         Remove-Item
 }
 else { New-Item -ItemType Directory -Path $OutputDirectory | Out-Null }

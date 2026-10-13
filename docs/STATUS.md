@@ -1,7 +1,7 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: parallel delivery wave toward 0.3.0-rc.1 candidate artifacts.
+Current task: reviewed integration and 0.3.0-rc.1 candidate artifacts.
 Owner: Codex /root coordinator; baseline main 449a726.
 See [wave-3 coordination](handoffs/2026-10-13-wave3-coordination.md) for ownership,
 frozen boundaries and evidence scope. v0.2.0 is published; no new tag/release
@@ -230,3 +230,36 @@ reload on the recorded 70338 client. This is limited user-reported evidence; ins
 revision, raw export, exact age and restricted-context checks were not supplied.
 Quest/equipment/position bindings, addon plan UI and session workflows remain
 experimental until the consolidated live checklist is evidenced.
+
+## 0.3.0-rc.1 delivery wave
+
+See [integration audit](handoffs/2026-10-13-wave3-integration.md),
+[candidate notes](releases/0.3.0-rc.1.md) and the
+[consolidated live checklist](compatibility/RC1_LIVE_CHECKLIST.md).
+Quest capture, runtime plan paste/HUD, conservative equipment identities and position
+readability diagnostics remain explicitly manual and experimental on 70338. Cached
+captures after reload are labelled and retain original timestamps; runtime plans
+clear on reload. Missing authored completion mappings never advance steps.
+
+Gear services/screens expose current, theoretical, equip-eligible, guaranteed
+individual acquisition and conditional practical comparisons. Models, categories,
+proficiencies, hand relationships and effort assumptions are explicitly supplied;
+unknown critical baseline/acquisition inputs block practical advice. No real tables
+are invented. Same-profile refresh preserves manual model and planning edits while
+invalidating results; removed catalog references are cleared safely.
+
+Sessions use separate bounded ANAVSESSION1 local transport and migration v5 immutable
+context/fixture-scoped history, duplicate idempotence, atomic conflict/capacity
+refusal and explicit deletion. Manual recorder never samples in background or
+resumes across reload. Unclassified intervals, gaps, progression and UTC uncertainty
+remain distinct; calibration remains deferred.
+
+Planner route inspection recomputes current request, selected travel and stopping
+route; exact dataset projection permits labelled schematic endpoint links only.
+Geometry/image gaps and incompatible spaces keep ordered travel inspectable.
+
+Versions agree at 0.3.0-rc.1; CI produces installer/addon/checksums/notes/source commit
+artifacts without tag creation or GitHub publication. Published releases remain
+unchanged. Actual current-head reviews/checks, ordered merges and downloaded artifact
+verification are recorded in the integration audit; no live results are inferred
+from mocked browser flows or hosted packaging.
