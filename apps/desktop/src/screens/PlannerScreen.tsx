@@ -22,6 +22,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const generation = useRef(0);
+  const catalogProfile = useRef("");
   const invalidate = () => { generation.current++; setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setBusy(false); };
   useEffect(() => {
     let live = true;
@@ -35,11 +36,19 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   }, [client, refreshKey]);
   useEffect(() => {
     let live = true;
+    const profileChanged = catalogProfile.current !== profile;
+    catalogProfile.current = profile;
+    if (profileChanged) { setCandidates([]); setExcluded([]); setOrigin(""); setStop(""); }
     generation.current++; setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setCatalog(null); setBusy(false);
     if (profile) void client.getPlanningCatalog(profile).then((result) => {
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
-      setCatalog(result.value); setError(""); setCandidates([]); setExcluded([]); setOrigin(""); setStop("");
+      setCatalog(result.value); setError("");
+      const nodes = new Set(result.value.nodes.map((n) => n.id));
+      const objectives = new Set(result.value.objectives.map((o) => o.id));
+      setCandidates((old) => old.filter((c) => objectives.has(c.objective) && nodes.has(c.node)));
+      setExcluded((old) => old.filter((id) => objectives.has(id)));
+      setOrigin((old) => nodes.has(old) ? old : ""); setStop((old) => nodes.has(old) ? old : "");
     });
     return () => { live = false; generation.current++; };
   }, [client, profile, refreshKey]);

@@ -20,3 +20,9 @@ matching objective reference; corrected the fixture declaration, reran successfu
 No real imagery or road geometry is invented. Frame diagrams use exact dataset
 projection and expose a schematic grid even when background imagery is unavailable.
 Hosted current-head checks and read-only review are recorded in PR metadata.
+
+Review follow-up: same-profile minute refresh previously cleared all manual planner
+selections. A focused UI regression now verifies preservation during refresh;
+results still invalidate, missing catalog IDs are pruned and profile switches reset
+scoped controls. Typecheck/lint,80 unit tests and seven Chromium flows passed after
+the fix. No new Rust changes. Read-only reviewer checks this small delta separately.
