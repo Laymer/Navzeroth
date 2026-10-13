@@ -193,7 +193,7 @@ fn settings_merge_applies_defaults_and_keeps_unknown_keys_out() {
         .unwrap();
     assert_eq!(
         serde_json::from_str::<Value>(&merged).unwrap(),
-        json!({ "auto_probe": false, "chat_summary": true })
+        json!({ "auto_probe": false, "chat_summary": true, "hud_visible": true })
     );
     for saved in ["nil", "'text'", "42", "true", "{}"] {
         let defaults: String = sandbox
@@ -204,7 +204,7 @@ fn settings_merge_applies_defaults_and_keeps_unknown_keys_out() {
             .unwrap();
         assert_eq!(
             serde_json::from_str::<Value>(&defaults).unwrap(),
-            json!({ "auto_probe": true, "chat_summary": true })
+            json!({ "auto_probe": true, "chat_summary": true, "hud_visible": true })
         );
     }
     let fresh: bool = sandbox
@@ -243,7 +243,7 @@ fn settings_apply_never_overwrites_the_export_or_unrelated_fields() {
             "db_version": 1,
             "diagnostic_export": "{\"kept\":true}",
             "diagnostic_export_error": "json_cycle",
-            "settings": { "auto_probe": false, "chat_summary": true },
+            "settings": { "auto_probe": false, "chat_summary": true, "hud_visible": true },
             "untouched": [1, 2, 3]
         })
     );

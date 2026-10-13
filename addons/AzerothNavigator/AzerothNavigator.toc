@@ -23,4 +23,5 @@ Core\Gear.lua
 Core\Capabilities.lua
 Core\Export.lua
 Core\Settings.lua
+Core\PlanControls.lua
 Diagnostics.lua

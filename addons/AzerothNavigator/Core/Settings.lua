@@ -8,6 +8,7 @@ local Version = ns.Version
 
 local SCHEMA = {
   auto_probe = { type = "boolean", default = true },
+  hud_visible = { type = "boolean", default = true },
   chat_summary = { type = "boolean", default = true },
 }
 
