@@ -1,7 +1,7 @@
 # Project status
 
-Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: final wave-2 merge documentation; next implementation task unclaimed.
+Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13 (wave-1 review recorded).
+Current task: none claimed. The first review of the wave-1 PRs is recorded below; its open findings come before new feature work.
 Owner: Codex root (merge coordination); implementation owners are in ADR 0004.
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -25,6 +25,56 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
+
+## Wave-1 review (2026-10-13)
+
+The wave-1 PRs (9-22, main 8cca94d..08f6daa) had no review before merging: the
+planned review workflow failed on a spend limit. A read-only review then ran
+at 08f6daa with eight area reviewers, an integration reviewer and adversarial
+verification of every blocker and important finding; see the
+[wave-1 review record](reviews/2026-10-13-wave1-main.md). Wave 2 (PRs 23-37)
+was not part of it and has only the focused reviews listed in its integration
+handoff.
+
+At 08f6daa all checks passed (397 Rust tests, 56 desktop unit tests, contract,
+fixture and pointer checks; main run 38298517870 green on all seven jobs). The
+ADR 0003 frozen files were untouched and the dependency rules held.
+
+Verified findings and their state on c357bf1:
+
+| Severity | Finding | State on c357bf1 |
+| --- | --- | --- |
+| Blocker | Gear: an item of unknown handedness in the off-hand slot makes a configuration Valid, Complete and definitive (`gear/configuration.rs`) | Open |
+| Blocker | Desktop: the UI sent `profile_id` while the native command expected `profileId`, so the native app never reached the Atlas screen | Fixed in wave 2 |
+| Important | Gear: `recommendation_data` publishes scores as Known while unknown attributes count as 0 | Open |
+| Important | Eligibility: unknown access, choice or sibling prerequisites are reported as Behind with a catch-up path | Open |
+| Important | Eligibility: progress NotStarted and turn-in NotReady while turned-in/completed are Unknown | Open |
+| Important | Eligibility: a reset-bound quest known turned in is Eligible with no reason | Open |
+| Important | Eligibility: `ParticipantFacts` has no DataContext, so another namespace or build can supply class and race | Open |
+| Important | Reminders: the default fingerprint repeats unchanged advice on every new export | Open |
+| Important | Reminders: a reminder shown without a trusted clock stays suppressed forever | Open |
+| Important | Sessions: the summary merge key omits DataContext, so a demo summary blocks a real one | Open |
+| Important | Sources: evidence is keyed by EvidenceId alone, so one record cannot support two records | Open |
+| Important | Coverage: cycle detection ignores eligibility and objective-state predicates | Open |
+| Important | Storage: a snapshot from a new session with an uncertain clock can never become current, and no explicit promotion exists | Open |
+
+One finding was refuted (travel: final return hop readiness). 32 optional
+findings are listed in the record unverified. The review's stale-record
+findings for STATUS and README were resolved by PR 37.
+
+Status corrections from the review: M4.2, M5.2, M7.1, M3.2, M3.5 and the M2.4
+ordering rules stay IMPLEMENTED_UNVERIFIED until their findings above are fixed.
+M5.1 (structure only), M5.3, M8.3 pure intervals and the M2.5 Rust corpus met
+their declared wave-1 scope, but M8.3 now has the open session-key finding. No
+wave-1 task is VERIFIED for live gameplay; M0.3 and M6.1 need the client and
+the native window.
+
+Other open items: Dependabot alert GHSA-wrw7-89jp-8q8g (medium) on `glib`
+0.18.5, a Linux-only transitive dependency of the Tauri GTK stack since M1.4,
+whose automatic update runs fail upstream; the SavedVariables key differs
+between the ingest fixtures (`export`, ANAV1) and the addon layout
+(`diagnostic_export`), both unverified until M0.5; "Lua static checks" and
+"Desktop shell Windows" are still not required checks (owner decision).
 
 ## Wave-2 delivery and verification
 
@@ -63,6 +113,10 @@ UNVERIFIED. No socket bridge, input automation, hidden telemetry or forbidden ga
 access was added. Remaining watcher/platform/model limitations are in the handoffs.
 
 ## Next dependency-ready work
+
+First fix the open blocker and important findings of the wave-1 review above
+(gear, eligibility, reminders, sessions, sources, coverage, storage promotion).
+Then continue with the items below.
 
 The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Integrate party persistence,
 planner/export UI and analytical display using existing explicit DTO boundaries;
