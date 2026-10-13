@@ -263,3 +263,36 @@ fn unknown_scores_false_requirements_zero_probability_and_configuration_gaps_rem
             .any(|reason| reason.contains("hand-slot"))
     );
 }
+#[test]
+fn desktop_gear_golden_preserves_actual_rust_serialization() {
+    let (app, request) = setup();
+    let profile = request["profile_id"].as_str().unwrap();
+    let fixtures =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/desktop/gear");
+    let values = [
+        (
+            "catalog.json",
+            serde_json::to_value(app.gear_catalog(profile).unwrap()).unwrap(),
+        ),
+        (
+            "report.json",
+            serde_json::to_value(app.compare_gear(&request.to_string(), now()).unwrap()).unwrap(),
+        ),
+    ];
+    if std::env::var_os("UPDATE_GEAR_GOLDENS").is_some() {
+        std::fs::create_dir_all(&fixtures).unwrap();
+    }
+    for (name, value) in values {
+        let path = fixtures.join(name);
+        if std::env::var_os("UPDATE_GEAR_GOLDENS").is_some() {
+            std::fs::write(
+                &path,
+                format!("{}\n", serde_json::to_string_pretty(&value).unwrap()),
+            )
+            .unwrap();
+        }
+        let committed: Value =
+            serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        assert_eq!(value, committed);
+    }
+}
