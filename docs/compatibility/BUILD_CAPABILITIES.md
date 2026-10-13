@@ -46,3 +46,19 @@ Unsupported. This does not update the diagnostic catalogue to verified availabil
 for all game contexts. All other character fields remain unknown/absent. No real
 snapshot result has yet been reported. The older dataset at 1.60.1.70205 is unchanged;
 it is not silently treated as compatible with 70338.
+
+
+### Manual snapshot follow-up — level 12
+
+After the preview capture/import instructions, the user confirmed that the desktop
+shows the correct level, **12**. This is one user-reported positive result for the
+manual level capture, serialization/persistence, import and display flow. Preview
+head: 6477f26; artifact run: 38387827829; implementation merged through PR #44 at
+d5326c2. Installed files were not independently inspected. Combat state, zone,
+and the exact reload/logout transition were not separately reported.
+
+Level readability/serialization is verified by user report for this limited flow.
+The earlier API-presence-only findings above remain the historical diagnostic
+baseline. No other capability status is promoted. Clock trust and region-specific
+locale remain unknown; equipment, quest, position and restricted-context checks
+remain untested. This does not verify freshness or real planning.

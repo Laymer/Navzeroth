@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M2.1 bounded snapshot export and explicit experimental level capture.
-Owner: Codex root, sole writer; M2.1 baseline main 09e5e69.
+Current task: record M2.1 user-reported level capture/import evidence; next is clock/freshness verification.
+Owner: Codex root, sole writer; evidence baseline main d5326c2.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
 6f7fbb6 adds only the coordination documentation prerequisite.
@@ -196,3 +196,14 @@ Next environment check: actual manual level capture, SavedVariables persistence 
 desktop import on the recorded client. Next implementation: verified clocks and
 additional field adapters after readability/restriction evidence. M0/M2 live acceptance
 remains unverified; no new release or main merge is included.
+
+
+## M2.1 reported live result
+
+PR #44 merged at d5326c2. The user reports the imported preview snapshot displays
+the correct level (12), one positive manual-flow sample. See the
+[capability record](compatibility/BUILD_CAPABILITIES.md#manual-snapshot-follow-up--level-12)
+and [handoff](handoffs/2026-10-13-M2.1-snapshot-export.md).
+This verifies the level-only flow by user report in those conditions; the previously
+recorded pre-test limitations remain historical. Clock/freshness, locale code,
+equipment, quests, position, restrictions and plan execution remain unverified.
