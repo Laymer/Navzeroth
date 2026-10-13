@@ -1,7 +1,7 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: M4.5 export verification and protected integration.
+Current task: M4.4/M4.5 delivery (PRs #40–41); next implementation is M4.6.
 Owner: Codex root, sole writer; claimed at origin/main 6bb2649.
 See [reconciliation handoff](handoffs/2026-10-13-reconciliation.md).
 Starting main baseline: 08f6daa. Combined implementation: a08f5d7;
@@ -22,7 +22,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Demo atlas, markers from selected stored snapshots, layers, pin search/filters and keyboard navigation. Reference geography stays distinct from unlocks. Route rendering remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval model, timing metadata correction and pure progression/timing analytics. Addon recorder and calibration remain. |
-| M9 | IN_PROGRESS | Today/Imports/Atlas/Party workflow and browser tests; remaining planning/gear/session screens and packaging remain. |
+| M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner workflows and browser tests; gear/session screens and packaging remain. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
@@ -84,7 +84,7 @@ The reconciliation branch fixes its open blocker and important domain findings,
 adds audited v4 snapshot promotion and finishes M4.4. See the
 [reconciliation handoff](handoffs/2026-10-13-reconciliation.md) for regression
 coverage and actual checks. PR #40 merged at 301dc60 after all eight hosted jobs passed. M4.5
-bounded manual export is implemented on a separate branch; see the
+bounded manual export is implemented in PR #41; see the
 [export handoff](handoffs/2026-10-13-M4.5-plan-export.md). Native interaction and
 live client behavior remain unverified. Optional findings and the external GTK
 limitation remain recorded separately in the original review.
@@ -108,7 +108,7 @@ imagery pointers checked. Combined hosted CI is recorded in the integration hand
 
 Exchange schemas are unchanged. Desktop commands have explicit application DTOs;
 profile IDs resolve full character/edition/build/interface/namespace/fixture keys.
-Malformed, duplicate, older and incomparable imports preserve current state.
+Automatic malformed, duplicate, older and incomparable imports preserve current state.
 History-only outcomes explain their reasons. SQLite migrations and content backups
 preserve snapshot hash/ordering behavior. The watcher uses a single selected path,
 500 ms polling, 750 ms stability and bounded retries/cancellation.
@@ -119,8 +119,8 @@ character profiles (29c3188, 87 affected Rust tests passed, Clippy/fmt passed).
 Profile selection persists for the application session.
 Imported age comes from backend queries, refreshed every minute in open views.
 The atlas still serves the demo reference imagery; a stored position may report a
-namespace/build/floor gap instead of inventing a placement. Planner/acquisition
-outputs are independent library foundations, not integrated production advice.
+namespace/build/floor gap instead of inventing a placement. Planner consumes exact imported state/content with explicit manual assumptions; real
+gameplay coverage remains missing. Acquisition remains a library foundation.
 Lua plan invalidation does not imply completion. Lua gear accepts synthetic inputs.
 
 Live WoW observations/transitions, native window interaction and packaging remain
@@ -129,23 +129,21 @@ access was added. Remaining watcher/platform/model limitations are in the handof
 
 ## Next dependency-ready work
 
-First fix the open blocker and important findings of the wave-1 review above
-(gear, eligibility, reminders, sessions, sources, coverage, storage promotion).
-Then continue with the items below.
+M4.6: explicit Lua advancement and stable alternative/invalidation policy, with
+replay fixtures. Manual bounded export is delivered in PR #41; automatic advancement
+and a live addon import UI remain later tasks. Continue analytical/gear views and
+permitted real-content authoring when their inputs are available. Live client
+checks need sanitized evidence from the recorded build. The concurrent M9.4 Windows
+packaging branch was created after this task's inventory and remains separate.
 
-The PR stacks are merged after protected CI; see the [merge audit](handoffs/2026-10-12-wave2-merge.md). Local party persistence is delivered;
-see the [M7.3 handoff](handoffs/2026-10-13-M7.3-party-persistence.md).
-Party commands and screen now consume that foundation; see the
-[Party screen handoff](handoffs/2026-10-13-M7.3-party-screen.md).
-Local checks: 71 desktop unit tests, five Chromium command-mock workflows,
-typecheck/lint/build, 87 application/storage tests and affected Rust Clippy/fmt passed.
-Native desktop Clippy could not build because Linux dbus-1 development files are
-missing; native command execution and Windows verification remain unverified.
-Integrate per-participant eligibility with explicit quest/content inputs, planner/export UI
-and analytical display using existing explicit DTO boundaries;
-
-author permitted real content and explicit goal/gear models. Live client checks
-need sanitized evidence from the recorded build. Releases and PR/main merges need
-separate applicable authorization.
+Latest local checks: 495 Rust tests, zero failures, one existing ignored generator;
+78 desktop unit tests and seven Chromium workflows; locked fmt/Clippy,
+typecheck/lint/build, schema/type drift, contract/transport/content and Lua parity.
+PR #40 and resulting main 301dc60 passed all eight hosted jobs. PR #41 requires
+all eight on its final revision; GitHub is the authoritative merge/check record.
+Native interaction/live checks remain unverified. Releases still need separate
+authorization. The branch inventory and ancestry audit are in the reconciliation
+handoff; every initially outstanding tip and the preserved planner draft reached
+main through PR #40 without rewriting or deleting branches/worktrees.
 
 Merge follow-up: schema-valid UTC values outside JavaScript Date range now display numeric epoch milliseconds, with positive/negative safe-limit and zero regressions. Corrected desktop checks: 65 unit tests and four Chromium workflows passed; synchronized integration hosted CI passed all eight jobs.

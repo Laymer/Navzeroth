@@ -1053,3 +1053,42 @@ fn unavailable_utc_uses_session_time_and_rearming_releases_unverifiable_cooldown
             .is_empty()
     );
 }
+
+#[test]
+fn known_session_identity_releases_unverifiable_cooldown_without_elapsed_time() {
+    let mut value = rule_json("a", 0, "a", json!({"op":"all","predicates":[]}));
+    value["cooldown_ms"] = json!(1000);
+    let set = rules(vec![value]);
+    let engine = ReminderEngine::new(ReminderPolicy {
+        fingerprint: FingerprintBasis::Snapshot,
+        ..Default::default()
+    });
+    let mut blind = clock(None, ClockTrust::Uncertain);
+    blind.session = None;
+    let mut inputs = clear_inputs();
+    inputs.scope.session = Some(SessionId::new("one").unwrap());
+    let mut state = ReminderState::new();
+    let first = run(&engine, &set, &snap("first"), &blind, &inputs, &state).unwrap();
+    state.commit(&first, &[id("a")], &blind).unwrap();
+    let same = run(&engine, &set, &snap("second"), &blind, &inputs, &state).unwrap();
+    assert_eq!(
+        same.excluded[&id("a")],
+        ReminderReason::CooldownUnverifiable
+    );
+    inputs.scope.session = Some(SessionId::new("two").unwrap());
+    assert_eq!(
+        queued(&run(&engine, &set, &snap("second"), &blind, &inputs, &state).unwrap()),
+        ["a"]
+    );
+    let default = ReminderEngine::default();
+    let mut state = ReminderState::new();
+    let first = run(&default, &set, &snap("first"), &blind, &inputs, &state).unwrap();
+    state.commit(&first, &[id("a")], &blind).unwrap();
+    inputs.scope.session = Some(SessionId::new("three").unwrap());
+    assert_eq!(
+        run(&default, &set, &snap("second"), &blind, &inputs, &state)
+            .unwrap()
+            .excluded[&id("a")],
+        ReminderReason::StateUnchanged
+    );
+}
