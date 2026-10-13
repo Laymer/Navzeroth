@@ -142,6 +142,51 @@ function Snapshot.readLevel(getter, metadata)
   for key, item in pairs(metadata) do observation[key] = item end
   return observation
 end
+-- Explicit log reads only: no history inference or objective-index/stage mapping.
+-- Any incomplete enumeration rejects the entire read. Diagnostics contain counts,
+-- never quest titles or raw client errors.
+function Snapshot.readQuests(getCount, getInfo, context, metadata)
+  if type(getCount) ~= 'function' or type(getInfo) ~= 'function' then
+    return {}, {quest_api_missing=1}
+  end
+  local failure = 'quest_read_failed'
+  local ok, quests, diagnostics = pcall(function()
+    V.context(context)
+    local count = getCount()
+    check(type(count) == 'number' and count == math.floor(count) and count >= 0)
+    if count > 1024 then failure = 'quest_entries'; error(failure, 0) end
+    local result, reasons = {}, {objective_mapping_unavailable=1, history_unobserved=1}
+    local function reason(code) reasons[code] = (reasons[code] or 0) + 1 end
+    local function observed(value)
+      local observation = {status='known', value=value}
+      for key, item in pairs(metadata) do observation[key] = item end
+      return observation
+    end
+    for index=1,count do
+      local info = getInfo(index)
+      check(type(info) == 'table' and type(info.isHeader) == 'boolean')
+      if info.isHeader then reason('quest_header_excluded')
+      else
+        local id = info.questID
+        if type(id) ~= 'number' or id ~= math.floor(id) or id < 1 or id > 4294967295 then
+          reason('quest_id_invalid')
+        else
+          id = string.format('%.0f', id)
+          if result[id] then failure = 'quest_duplicate'; error(failure, 0) end
+          local completed = {status='unknown'}
+          if type(info.isComplete) == 'boolean' then completed = observed(info.isComplete)
+          else reason('quest_completion_unreadable') end
+          result[id] = {quest=id, context=context, accepted=observed(true),
+            completed=completed, turned_in={status='unknown'}, objectives={}}
+        end
+      end
+    end
+    if getCount() ~= count then failure = 'quest_log_changed'; error(failure, 0) end
+    return result, reasons
+  end)
+  if not ok then return nil, failure end
+  return quests, diagnostics
+end
 function Snapshot.store(db, snapshot, options)
   if type(db) ~= 'table' or getmetatable(db) ~= nil or db.db_version ~= ns.Version.db_version then
     return nil, 'snapshot_db_version'

@@ -53,6 +53,8 @@ export function createClient(adapter: CommandAdapter) {
     listSessions: (profileId: string) => run(() => adapter.invoke("list_sessions", { profile_id: profileId })),
     getSessionDetail: (profileId: string, sessionId: string) => run(() => adapter.invoke("get_session_detail", { profile_id: profileId, session_id: sessionId })),
     deleteSession: (profileId: string, sessionId: string) => run(() => adapter.invoke("delete_session", { profile_id: profileId, session_id: sessionId })),
+    getGearCatalog: (profileId: string) => run(() => adapter.invoke("get_gear_catalog", { profile_id: profileId })),
+    compareGear: (text: string) => run(() => adapter.invoke("compare_gear", { text })),
     getHistoricalSnapshot: (profileId: string, snapshotId: string) => run(() => adapter.invoke("get_historical_snapshot", { profile_id: profileId, snapshot_id: snapshotId })),
     promoteSnapshot: (profileId: string, snapshotId: string, expectedCurrent: string, reason: string) => run(() => adapter.invoke("promote_snapshot", { profile_id: profileId, snapshot_id: snapshotId, expected_current: expectedCurrent, reason })),
     getPlanningCatalog: (profileId: string) => run(() => adapter.invoke("get_planning_catalog", { profile_id: profileId })),
