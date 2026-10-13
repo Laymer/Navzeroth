@@ -24,9 +24,10 @@ protected CI. See [the integration handoff](docs/handoffs/2026-10-12-wave2-integ
 and [merge audit](docs/handoffs/2026-10-12-wave2-merge.md).
 Guarded manual capture, runtime addon plan controls, acquisition-aware Gear and
 Sessions history/analytics, and Planner route inspection are implemented for the
-0.3.0-rc.1 candidate. Actual client bindings remain experimental and native window
+v0.3.0 developer preview (release preparation). Actual client bindings remain experimental and native window
 interaction remains unverified; hosted Windows packaging is revision-scoped.
-See the [consolidated live checklist](docs/compatibility/RC1_LIVE_CHECKLIST.md).
+See the [release notes](docs/releases/0.3.0.md) and
+[consolidated live checklist](docs/compatibility/V030_LIVE_CHECKLIST.md).
 PartySnapshot transport, joint planning, real content and calibration remain later work.
 
 ## Development checks

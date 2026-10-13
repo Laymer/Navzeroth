@@ -1,8 +1,9 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
-Current task: reviewed integration and 0.3.0-rc.1 candidate artifacts.
-Owner: Codex /root coordinator; baseline main 449a726.
+Current task: v0.3.0 release review and preparation on release/v0.3.0.
+Owner: Codex /root, sole writer; baseline main eba537c.
+See [release preparation](handoffs/2026-10-13-v0.3.0-release.md).
 See [wave-3 coordination](handoffs/2026-10-13-wave3-coordination.md) for ownership,
 frozen boundaries and evidence scope. v0.2.0 is published; no new tag/release
 is part of this wave.
@@ -263,3 +264,19 @@ artifacts without tag creation or GitHub publication. Published releases remain
 unchanged. Actual current-head reviews/checks, ordered merges and downloaded artifact
 verification are recorded in the integration audit; no live results are inferred
 from mocked browser flows or hosted packaging.
+
+## v0.3.0 release preparation
+
+User requested review and preparation. Main baseline eba537c and its RC artifacts
+passed all nine hosted checks and exact source/hash/license verification. The new
+release branch aligns six declarations and seven workspace lock entries to 0.3.0,
+updates producer-version fixtures/generator stamps and prepares version-specific
+notes and a live checklist. No exchange or dataset version is relabeled.
+
+The documented Sessions refresh limitation was reproduced with deferred import
+success/failure tests and fixed: same-profile refresh retains outcomes and updates
+history; genuine client/profile replacements still reject old responses.
+Actual new-source checks and review/download evidence are recorded in the release
+handoff and draft PR. Version 0.3.0 retains the 0.x developer-preview prerelease
+classification. Full live/native acceptance stays incomplete. Preparation does not
+create a tag, merge main or publish a GitHub release; v0.2.0 stays latest published.

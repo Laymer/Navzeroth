@@ -14,7 +14,9 @@ Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Window
 | --- | --- |
 | `AzerothNavigator-<version>-x64-setup.exe` | Per-user NSIS installer: the application, a copy of the addon and its helper script |
 | `AzerothNavigator-addon-<version>.zip` | The `AzerothNavigator` addon folder alone, for manual installation |
-| `SHA256SUMS.txt` | SHA-256 of both files |
+| `SHA256SUMS.txt` | SHA-256 of the installer, addon and included metadata |
+| `SOURCE_COMMIT.txt` | Exact packaged source commit |
+| `CANDIDATE_NOTES.md` | Version-specific notes when present |
 
 ## For users
 
