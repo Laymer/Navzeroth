@@ -1,7 +1,8 @@
 //! Development and diagnostic CLI for Azeroth Navigator.
 //!
 //! The no-argument banner identifies the current capability. `export-schemas`
-//! writes the generated exchange schema; `prepare-atlas` prepares map imagery
+//! writes the generated exchange schema; `doctor` reports selected path kinds;
+//! `build-content`/`verify-pack` handle local reference packs; `prepare-atlas` prepares map imagery
 //! (ADR 0002); `validate-fixtures` checks the contract and transport fixture
 //! manifests. The remaining plan section 19.3 commands land in later
 //! milestones. Unsupported arguments fail explicitly without echoing input.
@@ -14,7 +15,7 @@ use std::{
     process::ExitCode,
 };
 
-const USAGE: &str = "Unsupported command or options. Implemented: build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
+const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]. See README.md.";
 
@@ -212,7 +213,7 @@ fn main() -> ExitCode {
                 env!("CARGO_PKG_VERSION")
             );
             println!(
-                "Implemented subcommands: build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
+                "Implemented subcommands: doctor; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures. \
                  Other commands are planned; see README.md and plan section 19.3."
             );
@@ -233,6 +234,26 @@ fn main() -> ExitCode {
         }
         [command, flag, input] if command == "verify-pack" && flag == "--input" => {
             pack_result(azeroth_cli::pack::verify(Path::new(input)))
+        }
+        [command, rest @ ..] if command == "doctor" => {
+            let Some(options) = azeroth_cli::doctor::Options::parse(rest) else {
+                eprintln!("{USAGE}");
+                return ExitCode::from(2);
+            };
+            let report = azeroth_cli::doctor::report(&options);
+            if options.json {
+                println!(
+                    "{}",
+                    serde_json::to_string_pretty(&report).expect("report serialization")
+                );
+            } else {
+                print!("{}", report.human());
+            }
+            if report.passes() {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::FAILURE
+            }
         }
         [command] if command == "validate-fixtures" => validate_fixtures(),
         [command, flag, input, rest @ ..]

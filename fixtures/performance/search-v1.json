@@ -1,0 +1,12 @@
+{
+  "fixture_version": 1,
+  "identity": "synthetic-star-search-v1",
+  "generation": "ordered node IDs; bidirectional star, then deterministic extra directed edges; all edges one estimated millisecond; distinct objective reward IDs",
+  "focused": {"candidates":128,"nodes":256,"edges":512},
+  "larger": {"candidates":128,"nodes":1024,"edges":1024},
+  "joint_participants": [2,40],
+  "completion_ms":1000,
+  "budget_ms":2500,
+  "warmup":10,
+  "samples":100
+}
