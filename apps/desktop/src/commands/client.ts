@@ -48,6 +48,8 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    setSessionCalibration: (profileId: string, sessionId: string, annotation: import("./calibration").SessionCalibrationAnnotation) => run(() => adapter.invoke("set_session_calibration", { profile_id: profileId, session_id: sessionId, annotation })),
+    getCalibration: (profileId: string, request: import("./calibration").CalibrationRequest) => run(() => adapter.invoke("get_calibration", { profile_id: profileId, request })),
     reminderView: (profileId: string) => run(() => adapter.invoke("reminder_view", { profile_id: profileId })),
     mutateReminders: (request: import("./reminders").ReminderRequest) => run(() => adapter.invoke("mutate_reminders", { text: JSON.stringify(request) })),
     importSessionText: (profileId: string, text: string) => run(() => adapter.invoke("import_session_text", { profile_id: profileId, text })),
