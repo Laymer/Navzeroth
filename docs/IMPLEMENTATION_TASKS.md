@@ -14,8 +14,10 @@ behavior and installed capability/version evidence remain unverified.
 
 Published0.8 atdb8530f8 implements all four finite UI scopes below. Actual release,
 main and tag checks plus exact asset evidence are in wave9 coordination. Portable
-and synthetic checks do not promote native/live acceptance. Two ready local pack
-repairs are claimed in isolated parallel PRs for a0.8.1 patch preview.
+and synthetic checks do not promote native/live acceptance. The two local pack
+repairs are reviewed/merged in isolated PR109/110 for the0.8.1 patch preview.
+Candidate9192552 passes actual local build/verify with distribution eligibilityfalse;
+final release gates and published-tag audit remain pending.
 
 | Plan scope | Current disposition | Evidence / remaining acceptance |
 | --- | --- | --- |
@@ -23,8 +25,8 @@ repairs are claimed in isolated parallel PRs for a0.8.1 patch preview.
 |12.4 HUD appearance|IMPLEMENTED_UNVERIFIED|PR103 bounded size/font/contrast/movement, protected combat gate and session-only/reset repair; actual client taint/focus/display acceptance remains unverified.|
 |12.5 reference controls|IMPLEMENTED_UNVERIFIED|PR105 opt-in focused-main shortcut and requested interaction receipts; actual focus/hit-test/display acceptance remains unverified.|
 |12.6 heading reflow|IMPLEMENTED_UNVERIFIED|PR106 320px/200% heading wrapping; actual screen-reader/native DPI acceptance remains unverified.|
-|19.3 typed empty pack arrays|READY / wave9 claimed|Canonical pack comparison rejects valid explicit map_embeddings=[] because typed serialization omits the empty default. Preserve schema1 and unknown-field refusal.|
-|8.3/19.3 existing Forever source registry|READY / wave9 claimed|Add sources.json for existing documented sources with exact context/evidence links and recorded policies; unknown rights remain blocked, no new permissions or playable records invented.|
+|19.3 typed empty pack arrays|IMPLEMENTED_UNVERIFIED / wave9 candidate|Canonical pack comparison rejects valid explicit map_embeddings=[] because typed serialization omits the empty default. Preserve schema1 and unknown-field refusal.|
+|8.3/19.3 existing Forever source registry|IMPLEMENTED_UNVERIFIED / wave9 candidate|Add sources.json for existing documented sources with exact context/evidence links and recorded policies; unknown rights remain blocked, no new permissions or playable records invented.|
 
 Historical scheduling sections below are snapshots, not the current ready queue.
 Today/Settings (PR96) and M7.6 evidence-gap infrastructure (PR90) are implemented;
@@ -217,3 +219,13 @@ input failures remain dependency-ready and are claimed separately: valid typed
 empty-default comparison and the documented source sidecar. Unknown redistribution
 rights remain unknown; local packs stay distribution-ineligible. See wave9 for
 exact source/assets, ownership, checks and unchanged external unblock requirements.
+
+## Final candidate engineering audit
+
+Both finite wave9 gaps are implemented and reviewed through mainc49b4be, with
+versioned822 Rust/195 desktop/40 mocked browser and actual local pack checks.
+No further dependency-ready scope is identified; see the requirement/evidence map
+in [candidate engineering audit](handoffs/2026-10-14-candidate-engineering-audit.md).
+Confirm after actual0.8.1 publication. The complete M0–M12 table above remains an
+explicit acceptance/external/deferred ledger; no native/live/source task is promoted
+to VERIFIED and no unchanged-blocker-only release is planned.
