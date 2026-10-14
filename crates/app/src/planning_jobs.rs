@@ -73,6 +73,25 @@ impl JobTicket {
     pub fn id(&self) -> &str {
         &self.entry.id
     }
+    /// Terminal worker outcome remains available even after result retrieval/pruning.
+    pub fn completion_result(&self) -> Result<()> {
+        if self.entry.state.load(Ordering::Acquire) <= RUNNING {
+            return Err(error(
+                ErrorCode::ProviderUnavailable,
+                "Planning job is not terminal",
+            ));
+        }
+        let outcome = self.entry.outcome.lock().map_err(|_| {
+            error(
+                ErrorCode::ProviderUnavailable,
+                "Planning job outcome unavailable",
+            )
+        })?;
+        match &outcome.1 {
+            Some(error) => Err(error.clone()),
+            None => Ok(()),
+        }
+    }
 }
 pub struct PlanningJobs {
     registry: u64,
