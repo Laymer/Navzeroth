@@ -5,7 +5,7 @@ function code(value: string) { return CODES.has(value) ? value : "INTERNAL"; }
 export function DiagnosticsPanel({ client, refreshKey = 0 }: { client: DiagnosticsClient; refreshKey?: number }) {
   const [path, setPath] = useState(""); const [report, setReport] = useState<DiagnosticReport | null>(null);
   const [message, setMessage] = useState(""); const [busy, setBusy] = useState(false); const generation = useRef(0);
-  useEffect(() => { generation.current++; setReport(null); setMessage(""); return () => { generation.current++; }; }, [client, refreshKey]);
+  useEffect(() => { generation.current++; setReport(null); setMessage(""); setBusy(false); return () => { generation.current++; }; }, [client, refreshKey]);
   async function run(exportFile: boolean) {
     if (busy) return; const epoch = generation.current; setBusy(true); setMessage("");
     try {
@@ -20,7 +20,7 @@ export function DiagnosticsPanel({ client, refreshKey = 0 }: { client: Diagnosti
         else { setReport(null); setMessage(`Preview failed: ${code(result.error.code)}.`); }
       }
     } catch { if (epoch === generation.current) setMessage("Diagnostic operation failed: INTERNAL."); }
-    finally { setBusy(false); }
+    finally { if (epoch === generation.current) setBusy(false); }
   }
   return <section aria-labelledby="diagnostics-title">
     <h3 id="diagnostics-title">Local diagnostics</h3>

@@ -23,7 +23,8 @@ Imported values/identities never form export text. Versions derive from trusted
 package version metadata; bundled addon is distinct from unknown installed addon.
 OS and edition are fixed categories. Only ASCII-decimal u32 build/interface values
 survive; arbitrary/synthetic labels become unknown. Selected snapshot level/role/
-location availability and capture freshness expose no values, IDs or timestamps.
+location availability, individual field freshness and capture freshness expose no
+values, IDs or absolute timestamps. Field and snapshot age remain separate.
 
 Dataset revision is explicitly a SHA256 fingerprint of revision bytes, not the
 raw imported label or a profile hash. Coverage contains aggregate predefined
@@ -54,13 +55,17 @@ performed while recovery owns it.
 
 ## Actual checks
 
-Five Rust integration tests pass: planted secrets in imported identifiers,
+Six Rust integration tests pass: planted secrets in imported identifiers,
 versions, build labels, free text/source-policy fields and unknown keys; schema/
 byte bounds; capability false/restricted/stale; unknown versus actual0; ring
 retention/truncation; context mismatch; create-new refusal preserving existing
 file and stored profile state. App lib tests pass9, including dedicated numeric
 build and byte-cap regressions. Locked app all-target Clippy and Rust fmt check
-pass. Three DiagnosticsPanel tests pass; desktop typecheck/lint pass.
+pass. Four DiagnosticsPanel tests pass; desktop typecheck/lint pass. Root review found
+the frontend coverage-class casing mismatch and refresh busy-state race; both
+were corrected. The new deferred old/new preview regression failed on87df42d
+source and passes after correction. An old completion cannot unlock or replace
+a newer pending request; Rust and frontend assert snake_case coverage classes.
 
 Dependency setup used documented `pnpm install --frozen-lockfile`. An initial
 npm-ci attempt could not run because this project uses pnpm and has no npm lock;

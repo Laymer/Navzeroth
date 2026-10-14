@@ -106,6 +106,7 @@ fn arbitrary_imported_strings_and_ids_never_enter_report() {
     assert!(bytes.len() < MAX_DIAGNOSTIC_BYTES);
     let j = json_report(&report);
     assert_eq!(j["schema_version"], 1);
+    assert_eq!(j["dataset"]["coverage_class"], "demo");
     assert_eq!(j["versions"]["app"], env!("CARGO_PKG_VERSION"));
     assert_eq!(j["versions"]["bundled_addon"], env!("CARGO_PKG_VERSION"));
     assert!(j["versions"]["installed_addon"].is_null());
@@ -221,4 +222,24 @@ fn create_new_export_preserves_existing_file_and_stored_state() {
         serde_json::to_value(app.profiles().unwrap()).unwrap()
     );
     std::fs::remove_file(path).unwrap();
+}
+
+#[test]
+fn stale_field_age_is_not_replaced_by_fresh_snapshot_age() {
+    let mut value: Value = serde_json::from_str(SNAPSHOT).unwrap();
+    value["payload"]["capture"] = json!({"clock_trust":"trusted","observed_at_utc_ms":1000});
+    value["payload"]["level"] =
+        json!({"status":"known","value":12,"clock_trust":"trusted","observed_at_utc_ms":1});
+    let snapshot: Envelope<CharacterSnapshot> = serde_json::from_value(value).unwrap();
+    let clock = FreshnessContext {
+        now_utc_ms: Some(UtcMillis::new(1000).unwrap()),
+        clock_trust: ClockTrust::Trusted,
+        session: None,
+        max_age_ms: Millis::new(1).unwrap(),
+    };
+    let j =
+        json_report(&build_with_context(Some(&snapshot), None, None, Some(&clock), None).unwrap());
+    assert_eq!(j["snapshot_freshness"]["status"], "fresh");
+    assert_eq!(j["field_freshness"]["level"]["status"], "stale");
+    assert_eq!(j["field_freshness"]["level"]["age_ms"], 999);
 }

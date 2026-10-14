@@ -9,7 +9,8 @@ export interface DiagnosticReport {
   historical_user_report: { build: 70338; interface: 16001; source: "limited_user_report"; fields: ["level", "clock"]; installed_revision_match: null };
   snapshot_availability: Record<string, string>;
   snapshot_freshness: DiagnosticCapability["freshness"];
-  dataset: { revision_fingerprint_sha256: string; coverage_class: "Demo" | "ReferenceFixture" | "Reference"; collections: Record<string, unknown>; errors: number; gaps: number } | null;
+  field_freshness: Record<string, DiagnosticCapability["freshness"]>;
+  dataset: { revision_fingerprint_sha256: string; coverage_class: "demo" | "reference_fixture" | "reference"; collections: Record<string, unknown>; errors: number; gaps: number } | null;
   dataset_context_mismatch: boolean;
   telemetry: { scope: "current_process_collector"; event_limit: 64; truncated: boolean | null; import_attempts: number | null; import_succeeded: number | null; import_failed: number | null; events: { operation: string; error: string | null; duration_ms: number | null }[] };
 }

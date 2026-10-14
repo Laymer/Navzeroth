@@ -179,6 +179,7 @@ pub struct DiagnosticReport {
     historical_user_report: HistoricalReport,
     snapshot_availability: BTreeMap<&'static str, ObservationStatus>,
     snapshot_freshness: Option<Freshness>,
+    field_freshness: BTreeMap<&'static str, Option<Freshness>>,
     dataset: Option<Dataset>,
     dataset_context_mismatch: bool,
     telemetry: Telemetry,
@@ -324,6 +325,25 @@ pub fn build_with_context(
                     ("level", s.payload.level.status()),
                     ("role", s.payload.role.status()),
                     ("location", s.payload.location.status()),
+                ]
+                .into()
+            })
+            .unwrap_or_default(),
+        field_freshness: snapshot
+            .map(|s| {
+                [
+                    (
+                        "level",
+                        clock.map(|c| freshness(s.payload.level.metadata(), c)),
+                    ),
+                    (
+                        "role",
+                        clock.map(|c| freshness(s.payload.role.metadata(), c)),
+                    ),
+                    (
+                        "location",
+                        clock.map(|c| freshness(s.payload.location.metadata(), c)),
+                    ),
                 ]
                 .into()
             })
