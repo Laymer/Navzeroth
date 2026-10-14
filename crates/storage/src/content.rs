@@ -205,7 +205,7 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
     }
     Ok(revision)
 }
-fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
+pub(crate) fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
     let value =
         serde_json::to_value(revision).map_err(|_| storage("Content cannot be serialized"))?;
     let mut bytes = Vec::new();
@@ -218,13 +218,13 @@ fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
             .collect::<String>(),
     )
 }
-fn namespace(scope: &ContentScope) -> &'static str {
+pub(crate) fn namespace(scope: &ContentScope) -> &'static str {
     match scope.context.namespace {
         azeroth_core::types::DatasetNamespace::Demo => "demo",
         azeroth_core::types::DatasetNamespace::Reference => "reference",
     }
 }
-fn find(conn: &Connection, key: &ContentRevisionKey) -> Result<Option<i64>> {
+pub(crate) fn find(conn: &Connection, key: &ContentRevisionKey) -> Result<Option<i64>> {
     conn.query_row("SELECT id FROM dataset_revisions WHERE edition=?1 AND build=?2 AND interface=?3 AND namespace=?4 AND is_fixture=?5 AND revision=?6",
         params![key.scope.context.build.edition.as_str(), key.scope.context.build.build.as_str(), key.scope.context.build.interface.as_str(), namespace(&key.scope), key.scope.fixture, key.revision.as_str()],
         |row| row.get(0)).optional().db()
@@ -279,12 +279,34 @@ pub(crate) fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
     }
     Ok(revision)
 }
-fn pointers(conn: &Connection, scope: &ContentScope) -> Result<Option<(i64, Option<i64>)>> {
+pub(crate) fn pointers(
+    conn: &Connection,
+    scope: &ContentScope,
+) -> Result<Option<(i64, Option<i64>)>> {
     conn.query_row("SELECT revision_id, previous_revision_id FROM active_datasets WHERE edition=?1 AND build=?2 AND interface=?3 AND namespace=?4 AND is_fixture=?5",
         params![scope.context.build.edition.as_str(), scope.context.build.build.as_str(), scope.context.build.interface.as_str(), namespace(scope), scope.fixture],
         |row| Ok((row.get(0)?, row.get(1)?))).optional().db()
 }
-fn activate(conn: &Connection, id: i64, key: ContentRevisionKey) -> Result<ActivationOutcome> {
+pub(crate) fn eligible(conn: &Connection, id: i64) -> Result<bool> {
+    let state: Option<String> = conn
+        .query_row(
+            "SELECT state FROM content_dispositions WHERE revision_id=?1",
+            [id],
+            |row| row.get(0),
+        )
+        .optional()
+        .db()?;
+    Ok(state.as_deref() == Some("eligible"))
+}
+
+pub(crate) fn activate(
+    conn: &Connection,
+    id: i64,
+    key: ContentRevisionKey,
+) -> Result<ActivationOutcome> {
+    if !eligible(conn, id)? {
+        return Err(invalid("Content revision is unavailable for activation"));
+    }
     let previous_id = pointers(conn, &key.scope)?.map(|(id, _)| id);
     let previous = previous_id
         .map(|id| load(conn, id).map(|r| r.envelope.payload.revision.clone()))
@@ -295,6 +317,16 @@ fn activate(conn: &Connection, id: i64, key: ContentRevisionKey) -> Result<Activ
             previous,
             changed: false,
         });
+    }
+    let ordinal: i64 = conn.query_row(
+        "SELECT coalesce(max(d.last_activated_order),0) FROM content_dispositions d JOIN dataset_revisions r ON r.id=d.revision_id WHERE r.edition=?1 AND r.build=?2 AND r.interface=?3 AND r.namespace=?4 AND r.is_fixture=?5",
+        params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),namespace(&key.scope),key.scope.fixture], |row| row.get(0)
+    ).db()?;
+    if ordinal >= azeroth_core::types::MAX_SAFE_INTEGER as i64 {
+        return Err(invalid("Content activation order is exhausted"));
+    }
+    if conn.execute("UPDATE content_dispositions SET last_activated_order=?1 WHERE revision_id=?2 AND state='eligible'", params![ordinal+1,id]).db()? != 1 {
+        return Err(storage("Content disposition is unavailable"));
     }
     conn.execute("INSERT INTO active_datasets (edition, build, interface, namespace, is_fixture, revision_id, previous_revision_id) VALUES (?1,?2,?3,?4,?5,?6,?7) ON CONFLICT (edition,build,interface,namespace,is_fixture) DO UPDATE SET previous_revision_id=active_datasets.revision_id, revision_id=excluded.revision_id",
         params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),namespace(&key.scope),key.scope.fixture,id,previous_id]).db()?;
@@ -336,6 +368,7 @@ impl SqliteStore {
         tx.execute("INSERT INTO dataset_revisions (edition,build,interface,namespace,is_fixture,revision,document) VALUES (?1,?2,?3,?4,?5,?6,?7)",
             params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),namespace(&key.scope),key.scope.fixture,key.revision.as_str(),document]).db()?;
         let id = tx.last_insert_rowid();
+        tx.execute("INSERT INTO content_dispositions (revision_id,state,state_revision,reason_code) VALUES (?1,'eligible',1,'initial_eligibility')",[id]).db()?;
         for source in &revision.sources {
             tx.execute(
                 "INSERT INTO source_records (revision_id,source_id,document) VALUES (?1,?2,?3)",
@@ -383,6 +416,9 @@ impl SqliteStore {
         let Some((id, _)) = pointers(&self.conn, scope)? else {
             return Ok(None);
         };
+        if !eligible(&self.conn, id)? {
+            return Ok(None);
+        }
         let revision = load(&self.conn, id)?;
         if revision.key().scope != *scope {
             return Err(storage("Stored content identity disagrees"));
