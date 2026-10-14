@@ -160,3 +160,47 @@ fn explicit_export_recaptures_and_never_overwrites_and_recovery_keeps_unknown_me
     assert!(v["snapshot_freshness"].is_null());
     assert_eq!(v["telemetry"]["import_attempts"], 0);
 }
+
+#[test]
+fn accepted_job_outcomes_record_success_cancellation_and_failure_after_actual_dispatch() {
+    use azeroth_app::planning_jobs::PlanningKind;
+    let temp = Temp::new();
+    let host = DatabaseHost::open(&temp.0.join("store.sqlite3"));
+    let now = UtcMillis::new(1791792000000).unwrap();
+    let jobs = host.planning_jobs();
+    let success = jobs.register(PlanningKind::Solo).unwrap();
+    host.observe(DiagnosticOperation::Planning, || {
+        jobs.run(success.clone(), |_| Ok(json!({"synthetic":true})));
+        jobs.take_result(success.id())?;
+        success.completion_result()
+    })
+    .unwrap();
+    let canceled = jobs.register(PlanningKind::Joint).unwrap();
+    jobs.cancel(canceled.id()).unwrap();
+    host.observe(DiagnosticOperation::JointPlanning, || {
+        jobs.run(canceled.clone(), |_| Ok(json!({})));
+        canceled.completion_result()
+    })
+    .unwrap_err();
+    let failed = jobs.register(PlanningKind::Solo).unwrap();
+    host.observe(DiagnosticOperation::Planning, || {
+        jobs.run(failed.clone(), |_| {
+            Err::<(), _>(AppError::new(
+                ErrorCode::DatasetIncomplete,
+                "private-secret",
+                false,
+            ))
+        });
+        failed.completion_result()
+    })
+    .unwrap_err();
+    let r = report(&host, now);
+    let events = r["telemetry"]["events"].as_array().unwrap();
+    assert_eq!(events.len(), 3);
+    assert!(events[0]["error"].is_null());
+    assert_eq!(events[1]["error"], "OPERATION_CANCELED");
+    assert_eq!(events[2]["error"], "DATASET_INCOMPLETE");
+    assert!(events.iter().all(|e| e["duration_ms"].is_u64()));
+    assert_eq!(r["telemetry"]["import_attempts"], 0);
+    assert!(!r.to_string().contains("private-secret"));
+}
