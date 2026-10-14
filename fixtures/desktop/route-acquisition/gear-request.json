@@ -1,0 +1,48 @@
+{
+  "candidates": [
+    {
+      "acquisition": null,
+      "category": {
+        "status": "not_applicable"
+      },
+      "item": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "item_id": "synthetic-upgrade",
+        "variant": "base"
+      }
+    }
+  ],
+  "class": {
+    "status": "unknown"
+  },
+  "layout": {
+    "hands": null,
+    "slots": [
+      "head"
+    ]
+  },
+  "model": {
+    "known_unmodeled": [],
+    "role": "manual",
+    "version": "gear-model-v1",
+    "weight_source": {
+      "type": "synthetic_test"
+    },
+    "weights": {
+      "power": 1000
+    }
+  },
+  "proficiency": {
+    "classes": {}
+  },
+  "profile_id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6",
+  "revision": "synthetic-planning-v1",
+  "snapshot_id": "demo-snapshot-001"
+}

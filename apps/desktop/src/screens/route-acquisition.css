@@ -1,0 +1,6 @@
+.route-acquisition { overflow-wrap: anywhere; }
+.route-acquisition label { display: block; margin: 0.5rem 0; }
+.route-acquisition fieldset { min-width: 0; margin: 0.75rem 0; }
+.route-acquisition input, .route-acquisition select { box-sizing: border-box; max-width: 100%; font: inherit; }
+.route-acquisition button { font: inherit; }
+.route-acquisition pre { white-space: pre-wrap; overflow-wrap: anywhere; }

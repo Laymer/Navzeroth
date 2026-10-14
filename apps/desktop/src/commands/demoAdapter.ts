@@ -108,6 +108,8 @@ export const demoAdapter: CommandAdapter = {
           return null;
         case "preview_diagnostics":
         case "export_diagnostics":
+        case "preview_acquisition_route":
+        case "assess_route_acquisition":
         case "start_planning_job":
         case "get_planning_job":
         case "cancel_planning_job":
