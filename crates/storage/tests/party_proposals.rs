@@ -82,7 +82,10 @@ fn version_seven_upgrade_preserves_reminders_calibration_and_party_membership() 
     conn.execute("INSERT INTO party_participants(party_id,position,profile_id,profile_key) VALUES('duo',0,1,?1)",[serde_json::to_string(&key).unwrap()]).unwrap();
     drop(conn);
     let store = SqliteStore::open(&db.path).unwrap();
-    assert_eq!(store.schema_version().unwrap(), 8);
+    assert_eq!(
+        store.schema_version().unwrap(),
+        azeroth_storage::migrations::latest_version()
+    );
     assert_eq!(
         store
             .party(&PartyId::new("duo").unwrap())
