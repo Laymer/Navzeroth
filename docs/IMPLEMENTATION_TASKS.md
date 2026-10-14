@@ -1,8 +1,8 @@
 # Implementation task ledger — recurring release program
 
-Published baseline: main `035f28e`, `v0.7.0`. Owner: Codex /root.
-Fresh released-source audit: [wave8 coordination](handoffs/2026-10-14-wave8-coordination.md).
-Exact current candidate checks: [0.8 preparation](handoffs/2026-10-14-v0.8.0-release.md).
+Published baseline: main `db8530f8`, `v0.8.0`. Owner: Codex /root.
+Fresh released-source audit: [wave9 coordination](handoffs/2026-10-14-wave9-coordination.md).
+Exact0.8 source checks: [candidate reconciliation](handoffs/2026-10-14-v0.8.0-release.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
@@ -10,11 +10,12 @@ implementation-plan section 17. Exact future checks belong in task handoffs.
 Section16.2 explicit redacted diagnostics is implemented in PR70/76; native file
 behavior and installed capability/version evidence remain unverified.
 
-## Current candidate and next scheduling decisions
+## Current published source and scheduling decisions
 
-Latest actual publication stays0.7 at035f28e. Combined0.8 preparation5b7f7b9
-implements these finite UI scopes; all four feature PRs are merged through
-protected main12b6ff4. Release PR/main/tag and asset gates remain pending. Portable/synthetic checks do not promote native/live acceptance.
+Published0.8 atdb8530f8 implements all four finite UI scopes below. Actual release,
+main and tag checks plus exact asset evidence are in wave9 coordination. Portable
+and synthetic checks do not promote native/live acceptance. Two ready local pack
+repairs are claimed in isolated parallel PRs for a0.8.1 patch preview.
 
 | Plan scope | Current disposition | Evidence / remaining acceptance |
 | --- | --- | --- |
@@ -22,8 +23,8 @@ protected main12b6ff4. Release PR/main/tag and asset gates remain pending. Porta
 |12.4 HUD appearance|IMPLEMENTED_UNVERIFIED|PR103 bounded size/font/contrast/movement, protected combat gate and session-only/reset repair; actual client taint/focus/display acceptance remains unverified.|
 |12.5 reference controls|IMPLEMENTED_UNVERIFIED|PR105 opt-in focused-main shortcut and requested interaction receipts; actual focus/hit-test/display acceptance remains unverified.|
 |12.6 heading reflow|IMPLEMENTED_UNVERIFIED|PR106 320px/200% heading wrapping; actual screen-reader/native DPI acceptance remains unverified.|
-|19.3 typed empty pack arrays|READY after actual0.8 publication|Canonical pack comparison rejects valid explicit map_embeddings=[] because typed serialization omits the empty default. Preserve schema1 and unknown-field refusal.|
-|8.4/19.3 existing Forever source registry|READY after actual0.8 publication|Add sources.json for existing documented sources with exact context/evidence links and recorded policies; unknown rights remain blocked, no new permissions or playable records invented.|
+|19.3 typed empty pack arrays|READY / wave9 claimed|Canonical pack comparison rejects valid explicit map_embeddings=[] because typed serialization omits the empty default. Preserve schema1 and unknown-field refusal.|
+|8.3/19.3 existing Forever source registry|READY / wave9 claimed|Add sources.json for existing documented sources with exact context/evidence links and recorded policies; unknown rights remain blocked, no new permissions or playable records invented.|
 
 Historical scheduling sections below are snapshots, not the current ready queue.
 Today/Settings (PR96) and M7.6 evidence-gap infrastructure (PR90) are implemented;
@@ -94,7 +95,7 @@ separate parallel PR batch and publication audit; no exhaustion claim is made.
 | M9.3 | IMPLEMENTED_UNVERIFIED | PR69/75/74 measurements/control, guarded jobs/frontend and PR80 typed-field expiry correction merged. Scoped synthetic checks pass; ordinary Windows/live performance remains unverified. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M9.6 | IMPLEMENTED_UNVERIFIED | v0.7.0 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
+| M9.6 | IMPLEMENTED_UNVERIFIED | v0.8.0 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
 | M10.1 | IMPLEMENTED_UNVERIFIED | PR89 ordinary imported reference window merged; candidate PR105 focused-main opt-in shortcut and requested interaction controls implemented; native interaction remains unverified. |
 | M10.2 | BLOCKED | Interactive native focus/DPI/monitor/borderless checks unavailable. |
 | M10.3 | IMPLEMENTED_UNVERIFIED | PR89 separate capture/field age and unsupported exclusive-fullscreen explanations merged; native display-mode evidence missing. |
@@ -206,3 +207,13 @@ Published2026-10-14T15:14:38Z at035f28e with five verified assets. Wave7 scopes
 are implemented; the three remaining finite section12 UI gaps are now claimed by
 distinct wave8 writers. Exact publication/review/check provenance and external
 unblock requirements are in the wave8 handoff. No task is promoted to live VERIFIED.
+
+## v0.8.0 published-source audit
+
+Published2026-10-14T16:48:12Z atdb8530f8 with five verified assets. Route fit/
+selection, bounded HUD appearance and session movement, reference shortcut/
+interaction receipts and heading reflow are implemented. Two actual local pack
+input failures remain dependency-ready and are claimed separately: valid typed
+empty-default comparison and the documented source sidecar. Unknown redistribution
+rights remain unknown; local packs stay distribution-ineligible. See wave9 for
+exact source/assets, ownership, checks and unchanged external unblock requirements.
