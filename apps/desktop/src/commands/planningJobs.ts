@@ -38,7 +38,8 @@ export async function runPlanningJob<T>(client: PlanningJobClient, kind: Plannin
   if (signal.aborted) return canceled();
   const started = await client.startPlanningJob(kind, text);
   if (!started.ok) return started;
-  if (started.value?.job_schema_version !== PLANNING_JOB_SCHEMA_VERSION || typeof started.value.job_id !== "string" || started.value.job_id.length === 0 || started.value.job_id.length > 128) return unavailable("Planning job registration version or identity is unsupported.");
+  if (typeof started.value?.job_id !== "string" || started.value.job_id.length === 0 || started.value.job_id.length > 128) return unavailable("Planning job registration identity is invalid.");
+  if (started.value.job_schema_version !== PLANNING_JOB_SCHEMA_VERSION) { void client.cancelPlanningJob(started.value.job_id); return unavailable("Planning job registration version is unsupported."); }
   const id = started.value.job_id;
   const cancel = () => { void client.cancelPlanningJob(id); };
   signal.addEventListener("abort", cancel, { once: true });
@@ -51,7 +52,7 @@ export async function runPlanningJob<T>(client: PlanningJobClient, kind: Plannin
       if (!response.ok) { cancel(); return response; }
       const status = response.value;
       if (status?.job_schema_version !== PLANNING_JOB_SCHEMA_VERSION || status.job_id !== id || status.kind !== kind || !Number.isSafeInteger(status.work_units) || status.work_units < 0) { cancel(); return unavailable("Planning job version, identity or progress is invalid."); }
-      if (!["queued", "running", "succeeded", "failed", "canceled"].includes(status.state) || ![null, "validate_inputs", "participant_readiness", "edge_assessment", "route_expansion", "candidate_assessment", "selection"].includes(status.phase)) { cancel(); return unavailable("Planning job status is unsupported."); }
+      if (typeof status.cancel_requested !== "boolean" || typeof status.result_available !== "boolean" || !["queued", "running", "succeeded", "failed", "canceled"].includes(status.state) || ![null, "validate_inputs", "participant_readiness", "edge_assessment", "route_expansion", "candidate_assessment", "selection"].includes(status.phase)) { cancel(); return unavailable("Planning job status is unsupported."); }
       onProgress(status);
       if (status.state === "canceled") return status.error ? { ok: false, error: status.error } : canceled();
       if (status.state === "failed") {

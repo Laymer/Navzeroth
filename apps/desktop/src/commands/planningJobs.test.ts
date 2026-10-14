@@ -45,12 +45,14 @@ describe("visible planning jobs", () => {
   });
 });
 it("rejects unsupported registration/status/result versions and invalid work counters", async () => {
-  for (const patch of [
+  const patches: Partial<PlanningJobClient>[] = [
     { startPlanningJob: async () => ok({ job_schema_version: 2, job_id: "job-a" } as never) },
     { getPlanningJob: async () => ok({ ...status, job_schema_version: 2 } as never) },
     { getPlanningJob: async () => ok({ ...status, work_units: -1 }) },
+    { getPlanningJob: async () => ok({ ...status, result_available: "unknown" } as never) },
     { getPlanningJob: async () => ok({ ...status, state: "succeeded", result_available: true }) , takePlanningJobResult: async () => ok({ job_schema_version: 2, job_id: "job-a", kind: "solo", report_json: "{}" } as never) },
-  ]) {
+  ];
+  for (const patch of patches) {
     expect(await runPlanningJob(fake(patch).client, "solo", "request", new AbortController().signal, () => undefined)).toMatchObject({ ok: false, error: { code: "PROVIDER_UNAVAILABLE" } });
   }
 });
