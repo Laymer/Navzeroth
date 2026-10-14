@@ -1,3 +1,4 @@
+import { AcquisitionDetails, BaselineSlots, EligibilityDetails, RankingDetails, ScoreDetails, formatMilli } from "./GearExplanations";
 import { RouteAcquisitionPanel } from "./RouteAcquisitionPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
@@ -11,8 +12,8 @@ const itemId = (input: Pick<GearInput, "item">) => `${input.item.item_id} (${inp
 function RankingView({ name, ranking }: { name: string; ranking: GearRanking }) {
   return <section aria-label={name}><h3>{name}</h3><p>{ranking.label}. {ranking.scope_note}</p>
     <p>{ranking.top_is_definitive ? "Definitive ordering within the supplied model" : "Ordering is not definitive"}. {ranking.valid.length} legal, {ranking.uncertain.length} uncertain, {ranking.rejected.length} rejected configurations.</p>
-    {ranking.valid.slice(0, 5).map((configuration) => <p key={configuration.rank}>#{configuration.rank}: {Object.entries(configuration.configuration.items).map(([slot, item]) => `${slot}: ${item.item.item_id} (${item.item.variant})`).join(", ")}; model score {configuration.score.total / 1000}; {configuration.score.certainty}.</p>)}
-    <details><summary>Configuration legality, exclusions and score breakdowns</summary><pre>{JSON.stringify(ranking, null, 2)}</pre></details>
+    {ranking.valid.slice(0, 5).map((configuration) => <p key={configuration.rank}>#{configuration.rank}: {Object.entries(configuration.configuration.items).map(([slot, item]) => `${slot}: ${item.item.item_id} (${item.item.variant})`).join(", ")}; model score {formatMilli(configuration.score.total)}; {configuration.score.certainty}.</p>)}
+    <details><summary>Configuration legality, exclusions and score breakdowns</summary><RankingDetails ranking={ranking} /></details>
   </section>;
 }
 export function GearScreen({ client, refreshKey }: { client: CommandClient; refreshKey: number }) {
@@ -139,15 +140,15 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
       </fieldset>;
     })}
     <button type="button" disabled={busy || !catalog?.snapshot_id || !catalog.revision} onClick={() => void calculate()}>Compare gear</button>
-    <details><summary>Captured equipment and variant/modifier gaps</summary><pre>{JSON.stringify(catalog?.equipment ?? {}, null, 2)}</pre></details>
-    {report && <section aria-label="Gear result"><h3>Current baseline</h3><p>Model score {report.current_score.total / 1000}; {report.current_score.certainty}.</p>
-      <ul>{report.baseline_gaps.map((gap) => <li key={gap}>{gap}</li>)}</ul><details><summary>Baseline slots and attribute contributions</summary><pre>{JSON.stringify({ slots: report.current, score: report.current_score }, null, 2)}</pre></details>
+    <details><summary>Advanced captured-equipment data</summary><pre>{JSON.stringify(catalog?.equipment ?? {}, null, 2)}</pre></details>
+    {report && <section aria-label="Gear result"><h3>Current baseline</h3><p>Model score {formatMilli(report.current_score.total)}; {report.current_score.certainty}.</p>
+      <ul>{report.baseline_gaps.map((gap) => <li key={gap}>{gap}</li>)}</ul><BaselineSlots current={report.current} /><ScoreDetails score={report.current_score} />
       <p>{reportBasis === "route" ? "Gear comparison uses backend-calculated route effort and its remaining budget." : "Gear comparison uses your manual effort assumptions."}</p>
       <RankingView name="Theoretical comparison" ranking={report.theoretical} /><RankingView name="Equipment eligibility" ranking={report.equip_eligible} /><RankingView name="Guaranteed individual acquisition" ranking={report.obtainable} />
       <h3>Practical single-acquisition estimates ({report.practical_model_version})</h3><p>Conditional expected positive model gain per reserved effort. No combined acquisition probabilities or useful lifespan.</p>
       {report.practical.length === 0 && <p>No definite practical recommendation. Inspect the missing inputs and rejection reasons below.</p>}
-      <ol>{report.practical.map((upgrade) => <li key={`${JSON.stringify(upgrade.item)}:${upgrade.slot}`}>{upgrade.item.item_id}: {upgrade.conditional ? "Conditional estimate" : "Guaranteed acquisition under supplied assumptions"}; positive gain {upgrade.gain_milli / 1000}; expected gain {upgrade.conditional_expected_gain_milli / 1000}; reserved effort {upgrade.reserved_effort_ms} ms; probability {upgrade.probability_millionths / 1000000}.</li>)}</ol>
-      {report.candidates.map((candidate) => <section key={JSON.stringify(candidate.item)} aria-label={`Comparison ${candidate.item.item_id}`}><h4>{itemId(candidate)}</h4><p>Eligibility: {candidate.eligibility.outcome}; acquisition: {candidate.acquisition?.status ?? "unknown"}; model score {candidate.score.total / 1000} ({candidate.score.certainty}).</p><ul>{candidate.practical_reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul><details><summary>Score, progression and acquisition details</summary><pre>{JSON.stringify(candidate, null, 2)}</pre></details></section>)}
+      <ol>{report.practical.map((upgrade) => <li key={`${JSON.stringify(upgrade.item)}:${upgrade.slot}`}>{upgrade.item.item_id}: {upgrade.conditional ? "Conditional estimate" : "Guaranteed acquisition under supplied assumptions"}; positive gain {formatMilli(upgrade.gain_milli)}; expected gain {formatMilli(upgrade.conditional_expected_gain_milli)}; reserved effort {upgrade.reserved_effort_ms} ms; probability {upgrade.probability_millionths / 1000000}.</li>)}</ol>
+      {report.candidates.map((candidate) => <section key={JSON.stringify(candidate.item)} aria-label={`Comparison ${candidate.item.item_id}`}><h4>{itemId(candidate)}</h4><p>Eligibility: {candidate.eligibility.outcome}; acquisition: {candidate.acquisition?.status ?? "unknown"}; model score {formatMilli(candidate.score.total)} ({candidate.score.certainty}).</p><ul>{candidate.practical_reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul><details><summary>Score, progression and acquisition details</summary><EligibilityDetails eligibility={candidate.eligibility} /><ScoreDetails score={candidate.score} /><AcquisitionDetails acquisition={candidate.acquisition} /></details></section>)}
       <ul>{report.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul>
     </section>}
   </section>;

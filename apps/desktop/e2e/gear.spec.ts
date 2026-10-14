@@ -31,6 +31,18 @@ test("gear manual assumptions display actual Rust fixture explanations and inval
   await expect(result.getByText(/synthetic-b: Conditional estimate/)).toBeVisible();
   await expect(result.getByText(/synthetic-a: Guaranteed acquisition/)).toBeVisible();
   await expect(result.getByText(/No combined acquisition probabilities or useful lifespan/)).toBeVisible();
+  const baseline=result.getByRole("region",{name:"Model score explanation"}).first();
+  await expect(baseline.getByLabel("Attribute synthetic-power")).toBeVisible();
+  await expect(baseline.getByText(/not a damage or survivability prediction/)).toBeVisible();
+  const candidate=result.getByRole("region",{name:"Comparison synthetic-a"});
+  await candidate.getByText("Score, progression and acquisition details",{exact:true}).click();
+  await expect(candidate.getByText("Explicit caller spending ceiling")).toBeVisible();
+  await expect(candidate.getByText(/not tonight’s attempt count/)).toBeVisible();
+  await expect(candidate.locator("pre")).toHaveCount(0);
+  await page.setViewportSize({width:320,height:800});
+  await page.evaluate(()=>document.documentElement.style.fontSize="32px");
+  const bounds=await candidate.evaluate(el=>({left:el.getBoundingClientRect().left,right:el.getBoundingClientRect().right}));
+  expect(bounds.left).toBeGreaterThanOrEqual(-1);expect(bounds.right).toBeLessThanOrEqual(321);
   await page.getByLabel("Attribute weights (JSON, integer thousandths)").fill('{"synthetic-power":2000}');
   await expect(result).toHaveCount(0);
 });
