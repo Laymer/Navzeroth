@@ -48,6 +48,8 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    previewAcquisitionRoute: (text: string) => run(() => adapter.invoke("preview_acquisition_route", { text })),
+    assessRouteAcquisition: (text: string) => run(() => adapter.invoke("assess_route_acquisition", { text })),
     previewDiagnostics: () => run(() => adapter.invoke("preview_diagnostics", undefined)),
     exportDiagnostics: (path: string) => run(() => adapter.invoke("export_diagnostics", { path })),
     startPlanningJob: (kind: import("./planningJobs").PlanningKind, text: string) => run(() => adapter.invoke("start_planning_job", { kind, text })),

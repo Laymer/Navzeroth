@@ -265,6 +265,8 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  preview_acquisition_route: { input: { text: string }; output: import("./routeAcquisition").RouteAcquisitionBaseline };
+  assess_route_acquisition: { input: { text: string }; output: import("./routeAcquisition").RouteAcquisitionReport };
   preview_diagnostics: { input: undefined; output: import("./diagnostics").DiagnosticReport };
   export_diagnostics: { input: { path: string }; output: import("./diagnostics").DiagnosticReceipt };
   start_planning_job: { input: { kind: import("./planningJobs").PlanningKind; text: string }; output: { job_schema_version: 1; job_id: string } };
