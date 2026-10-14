@@ -1,13 +1,16 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: wave6 parallel clustering, route-derived acquisition and agreed recipient export.
+Current task: v0.6.0 route/preparation developer-preview verification.
 Owner: Codex /root coordinator; published baseline f525911 (v0.5.0).
-v0.5.0 is published as a developer prerelease at main f525911 (PR79).
-All wave5 task PRs and release PR79 passed fresh nine-job checks; exact PR/main/tag
-assets were verified before publication. Final source checks:677 Rust/131 desktop/
-25 mocked browser tests. Native/live acceptance remains unverified.
-See [wave6 publication audit and ownership](handoffs/2026-10-14-wave6-coordination.md).
+Wave6 task PRs81–90 are integrated into protected main5bd5f1b after fresh
+nine-job checks on each exact reconciled head. Versions are being aligned to0.6.0;
+no new tag or publication is claimed by this candidate status.
+See [candidate reconciliation](handoffs/2026-10-14-v0.6.0-release.md) and
+[release notes](releases/0.6.0.md) for source, actual checks and limits.
+Native Windows compilation/packaging passes; interactive native/live acceptance
+remains unverified. Next released-source audit targets Today/Settings, durable
+content restriction, local moderation and readable gear/acquisition explanations.
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
 [wave-4 coordination](handoffs/2026-10-13-wave4-coordination.md).

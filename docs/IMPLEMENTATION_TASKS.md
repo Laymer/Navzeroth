@@ -1,8 +1,8 @@
 # Implementation task ledger — recurring release program
 
-Baseline: main `2d5de64`, published `v0.4.0`. Owner: Codex /root.
-Fresh audit: see [wave5 coordination](handoffs/2026-10-14-wave5-coordination.md) and
-[versioned candidate preparation](handoffs/2026-10-14-v0.5.0-preparation.md).
+Published baseline: main `f525911`, `v0.5.0`. Owner: Codex /root.
+Candidate integration baseline: protected main `5bd5f1b`, preparing `v0.6.0`.
+Fresh audit and exact task checks: [candidate reconciliation](handoffs/2026-10-14-v0.6.0-release.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
@@ -39,15 +39,15 @@ behavior and installed capability/version evidence remain unverified.
 | M3.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.1 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M4.3 | IN_PROGRESS | Greedy baseline exists; automatic compatible objective clustering is dependency-ready engineering work. |
+| M4.3 | IMPLEMENTED_UNVERIFIED | PR83/84 conservative same-declared-node clustering merged; no inferred shared-kill savings; real session acceptance remains missing. |
 | M4.4 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.7 | BLOCKED | Documented actual play session and comparable planned route missing. |
 | M5.1 | IMPLEMENTED_UNVERIFIED | Structure/arithmetic exists; real four-scenario models/weights remain missing. |
 | M5.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M5.3 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M5.4 | IN_PROGRESS | Acquisition services exist; planner currently rejects acquisition targets and travel effort is manual. Route integration remains ready. |
+| M5.3 | IMPLEMENTED_UNVERIFIED | Typed score contributions/unmodeled effects exist; ordinary readable explanation presentation remains ready engineering. |
+| M5.4 | IMPLEMENTED_UNVERIFIED | PR86 finite route-derived acquisition alternatives merged; explicitly bound sources/legs and independent opportunities. Combined acquisition scheduling and real catalogs are not claimed. |
 | M5.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M5.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M5.7 | IMPLEMENTED_UNVERIFIED | Synthetic Rust/Lua parity exists; representative real changes need input/evidence. |
@@ -61,24 +61,24 @@ behavior and installed capability/version evidence remain unverified.
 | M7.2 | IMPLEMENTED_UNVERIFIED | Evidence delivery gates/manual checklist delivered in PR63; real category rules require missing records/observations. |
 | M7.3 | IMPLEMENTED_UNVERIFIED | Manual joint planning with all-member readiness, exclusions and fairness delivered in PR62; real workflow remains unverified. |
 | M7.4 | DEFERRED_WITH_REASON | Requires verified party addon-message capability and limits. |
-| M7.5 | IMPLEMENTED_UNVERIFIED | Local CAS proposals/explicit acceptance and divergence delivered in PR64; remote consent and game messaging are not claimed. |
-| M7.6 | BLOCKED | Verified Forever Deadmines records missing; independent preparation UI may proceed. |
+| M7.5 | IMPLEMENTED_UNVERIFIED | Local CAS proposals/acceptance64 and agreed recipient export85 merged; no verified remote consent or game messaging. |
+| M7.6 | BLOCKED | PR90 bounded evidence-gap preparation infrastructure merged; verified Forever Deadmines records remain missing. |
 | M7.7 | BLOCKED | Complete paladin/mage live workflow evidence missing. |
 | M8.1 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M8.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M8.3 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M8.4 | IMPLEMENTED_UNVERIFIED | Conditional complete-session comparison/calibration delivered in PR61; real complete samples and native interaction missing. |
 | M8.5 | DEFERRED_WITH_REASON | Requires real permitted combat-log format and intended-use verification. |
-| M9.1 | TODO | Next batch: consolidate compatibility/coverage evidence. |
+| M9.1 | IMPLEMENTED_UNVERIFIED | PR88 exact-context compatibility/coverage consolidation and historical hash-bound inventory merged; real playable catalogs and consolidated live acceptance remain missing. |
 | M9.2 | IMPLEMENTED_UNVERIFIED | PR72 recovery/backup/integrity/startup guards and PR77 completion checks merged; interactive Windows replacement remains unverified. |
 | M9.3 | IMPLEMENTED_UNVERIFIED | PR69/75/74 measurements/control, guarded jobs/frontend and PR80 typed-field expiry correction merged. Scoped synthetic checks pass; ordinary Windows/live performance remains unverified. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M9.6 | IMPLEMENTED_UNVERIFIED | v0.4.0 published developer prerelease; focused-release acceptance incomplete. |
-| M10.1 | TODO | Next batch: explicitly scoped independent reference-window experiment. |
+| M9.6 | IMPLEMENTED_UNVERIFIED | v0.5.0 published developer prerelease; v0.6.0 candidate checks pending. Focused-release acceptance remains incomplete. |
+| M10.1 | IMPLEMENTED_UNVERIFIED | PR89 ordinary opt-in imported reference window and explicit show/hide/topmost controls merged; native interaction remains unverified. |
 | M10.2 | BLOCKED | Interactive native focus/DPI/monitor/borderless checks unavailable. |
-| M10.3 | TODO | Next batch: imported-age/display-mode explanations. |
-| M10.4 | TODO | Next batch: ordinary desktop fallback. |
+| M10.3 | IMPLEMENTED_UNVERIFIED | PR89 separate capture/field age and unsupported exclusive-fullscreen explanations merged; native display-mode evidence missing. |
+| M10.4 | IMPLEMENTED_UNVERIFIED | PR89 ordinary desktop fallback implemented and mocked; actual native fallback behavior remains unverified. |
 | M11.1 | DEFERRED_WITH_REASON | No verified official Forever endpoint/auth/terms evidence. |
 | M11.2 | DEFERRED_WITH_REASON | Depends on M11.1 enablement prerequisites. |
 | M11.3 | DEFERRED_WITH_REASON | Requires authorized real endpoint/access. |
@@ -124,3 +124,25 @@ safe active fallback and reactivation refusal; bounded opt-in local submission,
 moderation and withdrawal lifecycle (sections8.4/8.6 preparatory infrastructure).
 M12.4 full community acceptance remains BLOCKED by focused-release and real source
 prerequisites; developer-preview tags do not satisfy that gate. Hosting is deferred.
+
+## v0.6.0 candidate audit and next ready batch
+
+Task PRs81–90 are integrated; exact checked heads and actual findings are recorded
+in the candidate handoff. No publication is implied by this candidate audit.
+The four finite ready scopes after publication are:
+
+- Section12.1: persisted explicit Today/Settings choices and a guarded current-plan
+  reference, with bounded read-only plan text available to the ordinary reference view.
+- M3 pipeline: durable content quarantine/revocation, safe eligible fallback or
+  no-active state, and reactivation refusal. Rollback alone is insufficient.
+- Sections8.4/8.6 preparatory infrastructure: bounded opt-in local submissions,
+  review, withdrawal/revocation and permission-gated export. No hosting or evidence
+  confidence promotion. Full M12.4 acceptance remains blocked.
+- Sections10.3/9.8/12.1: ordinary readable typed gear/acquisition explanation views.
+  Existing contributions, unmodeled effects and reasons need no invented game facts.
+
+PR86 satisfies finite route-aware opportunity review. Automatic combined acquisition
+scheduling, speculative useful lifespan, beam search and shared-kill savings do not
+become mandatory extensions without their missing models/evidence. Re-audit the
+actual published source before launching this next batch. Native/live/source/API
+unblock requirements and local-first hosting deferral remain unchanged.
