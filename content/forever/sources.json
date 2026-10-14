@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "src-wowforevermap-ek-terrain-2026-10-07",
+      "provider": null,
+      "publisher": "WoWForeverMap.com",
+      "location": {
+        "status": "known",
+        "value": "Rendered into the owner's composite poster"
+      },
+      "editions": {
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "access": {
+        "status": "unknown"
+      },
+      "authentication": {
+        "status": "not_applicable"
+      },
+      "license": {
+        "status": "unknown"
+      },
+      "attribution": {
+        "status": "known",
+        "value": "Terrain and zone boundaries: WoWForeverMap.com"
+      },
+      "redistribution": {
+        "status": "unknown"
+      },
+      "retention": {
+        "status": "known",
+        "value": "Retained as long as the owner's composite statement stands"
+      },
+      "allowed_fields": {
+        "status": "known",
+        "value": [
+          "Terrain and zone boundaries as drawn"
+        ]
+      },
+      "transformations": {
+        "status": "known",
+        "value": [
+          "Crop",
+          "Downscale"
+        ]
+      },
+      "update_schedule": {
+        "status": "known",
+        "value": "None (static poster)"
+      },
+      "conditional_requests": {
+        "status": "not_applicable"
+      },
+      "failure_behavior": {
+        "status": "unknown"
+      },
+      "last_retrieval_utc_ms": {
+        "status": "unknown"
+      },
+      "verified_revision": {
+        "status": "unknown"
+      },
+      "offline_usable": {
+        "status": "known",
+        "value": true
+      },
+      "record_class": "secondary_inference"
+    },
+    {
+      "id": "src-endgametools-ek-flight-2026-10-07",
+      "provider": null,
+      "publisher": "EndgameTools.com",
+      "location": {
+        "status": "known",
+        "value": "Rendered into the owner's composite poster"
+      },
+      "editions": {
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "access": {
+        "status": "unknown"
+      },
+      "authentication": {
+        "status": "not_applicable"
+      },
+      "license": {
+        "status": "unknown"
+      },
+      "attribution": {
+        "status": "known",
+        "value": "Flight records and paths: EndgameTools.com"
+      },
+      "redistribution": {
+        "status": "unknown"
+      },
+      "retention": {
+        "status": "unknown"
+      },
+      "allowed_fields": {
+        "status": "known",
+        "value": [
+          "Flight-master names",
+          "Faction access",
+          "Drawn routes"
+        ]
+      },
+      "transformations": {
+        "status": "known",
+        "value": [
+          "Pin tracing in image space"
+        ]
+      },
+      "update_schedule": {
+        "status": "known",
+        "value": "None (static poster)"
+      },
+      "conditional_requests": {
+        "status": "not_applicable"
+      },
+      "failure_behavior": {
+        "status": "unknown"
+      },
+      "last_retrieval_utc_ms": {
+        "status": "unknown"
+      },
+      "verified_revision": {
+        "status": "unknown"
+      },
+      "offline_usable": {
+        "status": "known",
+        "value": true
+      },
+      "record_class": "secondary_inference"
+    },
+    {
+      "id": "src-blizzard-map-artwork",
+      "provider": null,
+      "publisher": "Blizzard Entertainment",
+      "location": {
+        "status": "known",
+        "value": "Underlying map artwork inside the renders"
+      },
+      "editions": {
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "access": {
+        "status": "unknown"
+      },
+      "authentication": {
+        "status": "not_applicable"
+      },
+      "license": {
+        "status": "unknown"
+      },
+      "attribution": {
+        "status": "known",
+        "value": "Map artwork (c) Blizzard Entertainment."
+      },
+      "redistribution": {
+        "status": "unknown"
+      },
+      "retention": {
+        "status": "unknown"
+      },
+      "allowed_fields": {
+        "status": "not_applicable"
+      },
+      "transformations": {
+        "status": "not_applicable"
+      },
+      "update_schedule": {
+        "status": "not_applicable"
+      },
+      "conditional_requests": {
+        "status": "not_applicable"
+      },
+      "failure_behavior": {
+        "status": "unknown"
+      },
+      "last_retrieval_utc_ms": {
+        "status": "not_applicable"
+      },
+      "verified_revision": {
+        "status": "unknown"
+      },
+      "offline_usable": {
+        "status": "known",
+        "value": true
+      },
+      "record_class": "secondary_inference"
+    },
+    {
+      "id": "src-owner-ek-composite-2026-10-07",
+      "provider": null,
+      "publisher": "Repository owner (Igor K)",
+      "location": {
+        "status": "known",
+        "value": "content/forever/atlas/eastern-kingdoms/source/"
+      },
+      "editions": {
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "access": {
+        "status": "known",
+        "value": "file_download"
+      },
+      "authentication": {
+        "status": "not_applicable"
+      },
+      "license": {
+        "status": "unknown"
+      },
+      "attribution": {
+        "status": "known",
+        "value": "Terrain and zone boundaries: WoWForeverMap.com\nFlight records and paths: EndgameTools.com\nReference data: beta build 1.60.1.70205. Routes and access may change during beta.\nMap artwork (c) Blizzard Entertainment.\nMain-road overlay manually traced from terrain and map artwork.\nUse the in-game map for exact local junctions."
+      },
+      "redistribution": {
+        "status": "known",
+        "value": "conditional"
+      },
+      "retention": {
+        "status": "unknown"
+      },
+      "allowed_fields": {
+        "status": "known",
+        "value": [
+          "Composite poster panels"
+        ]
+      },
+      "transformations": {
+        "status": "known",
+        "value": [
+          "Crop panels",
+          "Downscale overview",
+          "Trace pins; roads are manual tracing, not level-safe routes"
+        ]
+      },
+      "update_schedule": {
+        "status": "known",
+        "value": "None (static poster)"
+      },
+      "conditional_requests": {
+        "status": "not_applicable"
+      },
+      "failure_behavior": {
+        "status": "unknown"
+      },
+      "last_retrieval_utc_ms": {
+        "status": "unknown"
+      },
+      "verified_revision": {
+        "status": "unknown"
+      },
+      "offline_usable": {
+        "status": "known",
+        "value": true
+      },
+      "record_class": "secondary_inference"
+    }
+  ]
+}
