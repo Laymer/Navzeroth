@@ -396,6 +396,9 @@ fn expected_tree(files: &BTreeSet<AssetPath>) -> Res<BTreeSet<AssetPath>> {
             dirs.insert(
                 AssetPath::new(parts[..end].join("/")).map_err(|_| "Invalid pack directory")?,
             );
+            if files.len() + dirs.len() > MAX_TREE_ENTRIES {
+                return Err("Pack file tree exceeds limit");
+            }
         }
     }
     if files.len() + dirs.len() > MAX_TREE_ENTRIES {
@@ -607,6 +610,9 @@ impl Staging {
             if self.directories.borrow().contains(&next) {
                 path_checked(&next, true)?;
             } else {
+                if self.directories.borrow().len() + self.files.borrow().len() >= MAX_TREE_ENTRIES {
+                    return Err("Staging file tree exceeds limit");
+                }
                 fs::create_dir(&next).map_err(|_| "Staging directory collision")?;
                 self.directories.borrow_mut().push(next.clone());
             }
@@ -614,6 +620,9 @@ impl Staging {
         Ok(())
     }
     fn write(&self, path: &Path, bytes: &[u8]) -> Res<()> {
+        if self.directories.borrow().len() + self.files.borrow().len() >= MAX_TREE_ENTRIES {
+            return Err("Staging file tree exceeds limit");
+        }
         let mut file = OpenOptions::new()
             .write(true)
             .create_new(true)
@@ -817,6 +826,13 @@ mod publication_tests {
             b"preserved"
         );
         fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn manifest_directory_prefixes_are_bounded_before_filesystem_traversal() {
+        let files = (0..500)
+            .map(|n| AssetPath::new(format!("path{n}/{}image.png", "nested/".repeat(20))).unwrap())
+            .collect();
+        assert!(expected_tree(&files).is_err());
     }
     #[test]
     fn staging_cleanup_preserves_unrelated_files_and_nonempty_directory() {
