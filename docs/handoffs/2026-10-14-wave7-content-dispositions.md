@@ -132,3 +132,29 @@ creation, imported SQL/Lua execution or game bridge was added.
 
 Next: independent source review and shared integration, fresh exact-head hosted
 checks, protected-main reconciliation and the next versioned preview candidate.
+
+## Peer correction: valid long identity tuples
+
+Peer Atlas demonstrated an actual compatibility defect at f5798e6/source677f068:
+a valid129-byte DatasetRevision stages and raw-reads, but disposition reads and
+activation fail because metadata SQL used128-byte limits. Root normally merged
+foundation main into8a23b42 before returning sole fix ownership. Claim55288e5
+preceded the repair. New fulltuple regression reproduced the failure against the
+unchanged SQL; log /tmp/navzeroth-quarantine-identity-baseline.log.
+
+Fix71d6983f65823d46e0dad156bb413d18ec23977d raises only the four identity byte
+bounds (edition/build/interface/revision) to the existing core256-byte contract,
+retaining SQL CASE byte checks before allocating strings. Namespace/state/reason
+bounds and all policy/API behavior are unchanged. Actual regression stages and
+reads full tuples using129/256 ASCII bytes and256 UTF8bytes, activates/reads active
+content, then restricts it. Core rejects257 ASCII bytes and258 UTF8bytes. This
+uses valid synthetic documents without corrupt SQL. All11 disposition storage
+cases passed; /tmp/navzeroth-quarantine-identity-fixed.log.
+
+After the committed source repair, full app/storage checks passed274 tests,
+0failed/0ignored across40 targets (including foundation6 and empty doctests), and
+strict all-target app/storage Clippy plus workspace fmt/diff checks passed. Logs
+/tmp/navzeroth-quarantine-identity-{full,clippy}.log. Desktop/native behavior did
+not change; earlier frontend evidence remains scoped, while all nine fresh hosted
+checks on the corrected exact head are still required. Recovery/schema files were
+not edited by this worker. Source ownership returns to root after the pushed fix.
