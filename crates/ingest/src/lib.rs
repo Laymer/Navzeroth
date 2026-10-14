@@ -17,6 +17,7 @@
 pub mod anav1;
 pub mod fixtures;
 pub mod import;
+pub mod questiedb;
 pub mod savedvars;
 pub mod watcher;
 

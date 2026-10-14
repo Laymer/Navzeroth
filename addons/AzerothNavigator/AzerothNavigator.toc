@@ -26,4 +26,5 @@ Core\Export.lua
 Core\HudAppearance.lua
 Core\Settings.lua
 Core\PlanControls.lua
+Core\CopyExport.lua
 Diagnostics.lua

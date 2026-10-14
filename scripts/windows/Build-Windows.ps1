@@ -292,6 +292,53 @@ function Assert-CleanTree([string] $When) {
     if ($status) { throw "Tracked files differ from HEAD $When (use -AllowDirty to override):$([Environment]::NewLine)$status" }
 }
 
+function Assert-ReleaseReadiness([string] $Version) {
+    # Match the CLI's strict version subset. Malformed input must never turn a
+    # stable release into an exempt preview. AddonOnly/AllowDirty do not bypass it.
+    $parts = $Version -split '-', 2
+    if ($parts[0] -notmatch '^(0|[1-9][0-9]{0,8})\.(0|[1-9][0-9]{0,8})\.(0|[1-9][0-9]{0,8})$') {
+        throw 'Invalid release version.'
+    }
+    if ($parts.Count -eq 2) {
+        if ($parts[1].Length -gt 128) { throw 'Invalid prerelease version.' }
+        foreach ($identifier in ($parts[1] -split '\.')) {
+            if ($identifier -notmatch '^[0-9A-Za-z-]+$' -or
+                ($identifier -match '^[0-9]+$' -and $identifier.Length -gt 1 -and $identifier.StartsWith('0'))) {
+                throw 'Invalid prerelease version.'
+            }
+        }
+        return
+    }
+    if ($parts[0].StartsWith('0.')) { return }
+    # Git status respects ignores, while both New-AddonZip and the installer
+    # resource mapping recursively include addon files. Refuse extra bytes and
+    # reparse points before either path can package them, even with AllowDirty.
+    $extra = Get-NativeOutput 'git' @('-C', $RepoRoot, 'ls-files', '--others', '--', "addons/$AddonName/")
+    if ($null -eq $extra) { throw 'Cannot inspect stable addon packaging inputs.' }
+    if ($extra) { throw 'Stable addon packaging inputs contain untracked or ignored files.' }
+    $addonRoot = Join-Path (Join-Path $RepoRoot 'addons') $AddonName
+    $pending = New-Object 'Collections.Generic.Stack[string]'
+    $pending.Push($addonRoot)
+    $count = 0
+    while ($pending.Count -gt 0) {
+        $directory = Get-Item -LiteralPath $pending.Pop() -Force
+        if ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Stable addon inputs contain a reparse point.' }
+        foreach ($entry in Get-ChildItem -LiteralPath $directory.FullName -Force) {
+            $count++
+            if ($count -gt 250000) { throw 'Stable addon inputs exceed verification bounds.' }
+            if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Stable addon inputs contain a reparse point.' }
+            if ($entry.PSIsContainer) { $pending.Push($entry.FullName) }
+        }
+    }
+    if (-not (Test-Command 'cargo')) { throw 'Stable packaging requires the locked Rust release-readiness gate.' }
+    Push-Location $RepoRoot
+    try {
+        Invoke-Native 'cargo' @('run', '--locked', '-p', 'azeroth-cli', '--', 'release-readiness',
+            '--root', $RepoRoot, '--version', $Version)
+    }
+    finally { Pop-Location }
+}
+
 function Build-Installer([string] $Version) {
     Push-Location $RepoRoot
     try {
@@ -342,6 +389,17 @@ $version = Get-SourceVersion
 Write-Step "Azeroth Navigator $version from $RepoRoot"
 Assert-CleanTree 'before the build'
 
+if (-not $AddonOnly) {
+    if (-not $OnWindows) { throw 'The installer is built on Windows only (plan section 5.2). Use -AddonOnly elsewhere.' }
+    $pins = Get-PinnedVersions
+    Assert-MsvcBuildTools
+    Assert-Rust $pins.Rust
+    Assert-Node $pins.Node
+    Assert-Pnpm $pins.Pnpm
+}
+# Refuse an unready stable version before removing or writing any output files.
+Assert-ReleaseReadiness $version
+
 # Remove only files an earlier run of this script wrote; never the directory itself.
 if (Test-Path -LiteralPath $OutputDirectory) {
     Get-ChildItem -LiteralPath $OutputDirectory -File |
@@ -352,12 +410,6 @@ else { New-Item -ItemType Directory -Path $OutputDirectory | Out-Null }
 
 $artifacts = @()
 if (-not $AddonOnly) {
-    if (-not $OnWindows) { throw 'The installer is built on Windows only (plan section 5.2). Use -AddonOnly elsewhere.' }
-    $pins = Get-PinnedVersions
-    Assert-MsvcBuildTools
-    Assert-Rust $pins.Rust
-    Assert-Node $pins.Node
-    Assert-Pnpm $pins.Pnpm
     $artifacts += Build-Installer $version
 }
 $artifacts += New-AddonZip $version
@@ -373,6 +425,9 @@ if (Test-Path -LiteralPath $notesPath -PathType Leaf) {
     Copy-Item -LiteralPath $notesPath -Destination $candidateNotes -Force
     $artifacts += $candidateNotes
 }
+# Tool-driven builds must not add packaging inputs or modify tested production
+# bytes after the first gate. Refuse before checksums/upload can finalize them.
+Assert-ReleaseReadiness $version
 Write-Checksums $artifacts
 Assert-CleanTree 'after the build'
 

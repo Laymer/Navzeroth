@@ -100,7 +100,7 @@ export function PartyScreen({ client, refreshKey = 0 }: { client: CommandClient;
       </li>)}</ul>
       <PartyEligibility key={party.id} client={client} partyId={party.id} refreshKey={refreshKey + revision} />
       {party.participants.length >= 2 && <PartyPlanning key={`planning:${party.id}`} client={client} partyId={party.id} refreshKey={refreshKey + revision} />}
-      <p>Session planning is not available yet.</p>
+      {party.participants.length < 2 && <p>Add a second character to plan a shared session.</p>}
     </>}
     {editor && <form onSubmit={(event) => { event.preventDefault(); void save(); }}>
       <fieldset disabled={busy}><legend>{editor.existing ? "Edit party membership" : "Create local party"}</legend>

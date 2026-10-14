@@ -78,7 +78,7 @@ cannot establish ancestry and cannot pass stable readiness.
 
 ## Enforcement
 
-The batch-2 CLI boundary and workflow integration will provide:
+The batch-2 CLI boundary and workflow integration provide:
 
 ```sh
 cargo run --locked -p azeroth-cli -- release-readiness --root . --version 1.0.0
@@ -94,3 +94,69 @@ again before publication. All nine existing CI checks and independent review on
 the exact merge candidate remain separate requirements.
 
 No 1.0.0 tag or stable publication is justified by these initial manifests.
+
+## CLI record bindings and supported boundary
+
+The CLI generates canonical JSON-array strings from verified typed pack payloads,
+then compares the complete set to inventory required IDs. Strings must be exactly
+canonical; changing whitespace or inventing an ID cannot create a matching record.
+The leading element is the dataset revision, followed by collection and identity:
+
+| Domain | Collections and identity suffix |
+| --- | --- |
+| quests | `quests, quest_id`; `quest_stages, quest_id, stage_id`; `objectives, objective_id` |
+| equipment | `items, item_id, variant` |
+| acquisition | `acquisitions, acquisition_id` |
+| geography | `map_spaces, map_id, floor, nullable_instance`; `map_images, image_id`; `map_pins, image_id, pin_id`; `map_embeddings, child_map_id, child_floor, nullable_child_instance, parent_map_id, parent_floor, nullable_parent_instance` |
+| travel | `nodes, node_id`; `edges, edge_id` |
+| reminders | `rules, rule_id` |
+
+For example, an item identity is `["dataset-r1","items","item-123","base"]`.
+IDs preserve typed string/nullable identity; they never use ambiguous joined
+separators. Dataset revisions may not be reused across packs. Each coverage unit's
+source IDs must match the union of sources cited by the datasets supplying its
+records. Every pack registry source must be accepted at exactly its pinned revision,
+and the union of shipped registry sources must equal the accepted inventory.
+
+Current reference datasets have no complete class/role, party-scenario or dungeon
+preparation record contract. The CLI explicitly blocks those mandatory domains;
+a dungeon acquisition row is insufficient to stand in for a verified dungeon
+package. Future binding support requires actual existing/approved contracts and
+representative tests, never invented models. Passing pure declaration tests does
+not imply the full CLI can accept these missing formats.
+
+An independent blocker records that release packaging still emits only the
+installer, addon ZIP, notes, source-commit metadata and checksums. It does not yet
+deliver the verified offline packs, required licenses/notices or corresponding
+source assets. The CLI cannot report stable readiness until packaging gains a
+reviewed asset manifest and verifies delivery of that complete set. Filling the
+content/domain contracts alone must not remove this blocker. Existing preview
+packages are unchanged; local pack verification is not distribution evidence.
+
+Packs and all their datasets, registries and imagery must be tracked production
+files outside `docs/` and `release/`. Otherwise an evidence-only commit could change
+content without invalidating the tested production fingerprint. The gate rejects
+untracked or excluded pack payloads. Generated packs in an ignored output directory
+remain useful local artifacts but cannot supply stable acceptance. A future scheme
+for separately stored content needs an explicit tested-content digest binding.
+
+The I/O boundary caps one evidence file at 256 MiB, cumulative reads and verified
+packs at 1 GiB, and Git output at 32 MiB. Manifests keep their stricter core/pack
+limits. It rejects symlink/reparse path components, traversal, unsupported schema
+versions, version mismatches, missing/changed file hashes, unrelated tested commits
+and production changes. Evidence file reads are deduplicated by exact path/hash/size.
+It never executes referenced source or evidence. Concurrent hostile filesystem
+replacement is outside this local release workflow.
+
+`release-readiness` emits JSON; exit 0 means publication is allowed for the supplied
+version, exit 1 means a failed gate or invalid input, and exit 2 means invalid CLI
+options. For previews, `stable_ready=false` and the blocker list remain visible even
+when publication is allowed. The six source declarations and seven internal
+Cargo.lock versions must match the requested version. Stable packaging calls the
+gate before touching output files, including with `-AddonOnly` or `-AllowDirty`.
+It rejects ignored/untracked addon inputs and symlink/reparse entries because the
+ZIP and installer recursively package that directory; an ignored file cannot
+silently become a source-bound artifact. Stable builds rerun readiness after
+building, before checksums are finalized, to detect changes made by build tools.
+The tag workflow reruns the gate before creating any GitHub draft. Stable packages
+require Cargo; existing preview addon-only packaging retains its no-toolchain use.

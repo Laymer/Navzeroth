@@ -26,9 +26,11 @@ real acceptance evidence keeps v1.0.0 at candidate status; see the
 2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md), including
    the separate, explicit addon installation into the client-selected AddOns folder.
 3. Use [addon setup](docs/compatibility/ADDON_INSTALL.md) to record the actual client
-   build. Current snapshot, clock, position, plan and recording adapters are guarded
-   to `1.60.1.70338 / interface 16001`; they refuse an unrecorded build such as the
-   v1 target. A matching TOC interface alone does not establish compatibility.
+   build. Published 0.8.1 snapshot, clock, position, plan and recording adapters
+   allow only `1.60.1.70338 / interface 16001`. Current development source also
+   admits the exact 70374 tuple experimentally and adds selectable export text;
+   the setup guide identifies the verified candidate artifact. Fresh live checks
+   remain required. A matching TOC interface alone does not establish compatibility.
 4. Imported profiles remain local. The browser demo and bundled reference imagery
    are synthetic; they do not establish game-content coverage. Keep personal
    SavedVariables and backups private.
@@ -39,6 +41,13 @@ real acceptance evidence keeps v1.0.0 at candidate status; see the
 | Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
 | Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; limited user-reported build/diagnostic result, with exact installed source and full acceptance still unverified |
+
+Current source includes a bounded QuestieDB raw-table staging adapter and
+[versioned release checks](release/v1/README.md). Staging preserves partial facts
+and reports unsupported corrections. The [pinned source audit](docs/sources/v1-public-source-audit.md)
+accepts neither QuestieDB nor historical CMaNGOS for shipped assets. Unknown
+content inventory, source rights, real class/role models and live/Windows acceptance
+continue to block v1.0.0.
 
 ## Development
 
@@ -96,7 +105,8 @@ Native Rust checks are `cargo clippy --locked -p azeroth-desktop --all-targets -
 and `cargo test --locked -p azeroth-desktop`.
 
 The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures`,
-`validate-content`, `build-content`, `verify-pack` and bounded synthetic
+`validate-content`, `build-content`, `verify-pack`, `release-readiness`,
+[`stage-questiedb`](docs/data/QUESTIEDB_STAGING.md) and bounded synthetic
 `replay --fixture <file>`. Replay format/examples/limits are documented in
 [PLANNER_REPLAY.md](docs/data/PLANNER_REPLAY.md).
 `cargo run --locked -p azeroth-cli -- doctor --json` reports this binary's version,

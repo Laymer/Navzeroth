@@ -222,7 +222,7 @@ function Diagnostics.attach(env)
   local function ensurePlanControls()
     if state.plan_controls then return state.plan_controls end
     local build = Capabilities.probe(env).build
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
+    if not Capabilities.isCaptureTarget(build) then
       return nil, 'plan_build_unrecorded'
     end
     local context = {namespace='reference', build={edition=Version.edition,
@@ -289,6 +289,119 @@ function Diagnostics.attach(env)
       state.paste_frame:Show()
     end)
     if not ok then say('plan paste UI unavailable (experimental client binding)') end
+  end
+
+  local function copyExport(kind)
+    local selected, code = ns.CopyExport.select(state.db, kind)
+    if not selected then
+      say('copy unavailable (' .. code .. '); saved exports unchanged'); return
+    end
+    local checked, allowed, reason = pcall(function()
+      if type(env.InCombatLockdown) ~= 'function' then return false, 'copy_combat_unknown' end
+      local combat = env.InCombatLockdown()
+      if type(combat) ~= 'boolean' then return false, 'copy_combat_unknown' end
+      if combat then return false, 'copy_combat_deferred' end
+      return true
+    end)
+    if not checked or not allowed then
+      state.copy_ui_code = checked and reason or 'copy_combat_unknown'
+      say('copy unavailable (' .. state.copy_ui_code .. '); retry explicitly out of combat')
+      return
+    end
+    if type(env.CreateFrame) ~= 'function' then
+      say('copy unavailable (copy_ui_unavailable); saved exports unchanged'); return
+    end
+    state.copy_view = state.copy_view or {}
+    local view = state.copy_view
+    local function close()
+      local ok = pcall(function() view.input:ClearFocus(); view.frame:Hide() end)
+      if not ok then state.copy_ui_code = 'copy_ui_unavailable' end
+    end
+    local function restoreText(select)
+      if view.restoring or not view.text then return end
+      view.restoring = true
+      local ok = pcall(function()
+        if view.input:GetText() ~= view.text then view.input:SetText(view.text) end
+        if view.input:GetText() ~= view.text then error('copy_text_changed', 0) end
+        if select then view.input:SetFocus(); view.input:HighlightText() end
+      end)
+      view.restoring = false
+      if not ok then
+        state.copy_ui_code = 'copy_ui_unavailable'
+        close()
+        say('copy view unavailable; saved exports unchanged')
+      end
+    end
+    -- All methods act only on our ordinary text view. No source or clipboard writes.
+    local ok = pcall(function()
+      view.frame = view.frame or env.CreateFrame('Frame', nil, env.UIParent)
+      if not has(view.frame, {'SetSize','SetPoint','SetFrameStrata','EnableMouse',
+        'CreateFontString','CreateTexture','Show','Hide'}) then
+        error('copy_frame_unavailable', 0)
+      end
+      view.frame:Hide()
+      view.frame:SetSize(620, 380); view.frame:SetPoint('CENTER')
+      view.frame:SetFrameStrata('DIALOG'); view.frame:EnableMouse(true)
+      view.background = view.background or view.frame:CreateTexture(nil, 'BACKGROUND')
+      if not has(view.background, {'SetAllPoints','SetColorTexture'}) then
+        error('copy_background_unavailable', 0)
+      end
+      view.background:SetAllPoints(view.frame); view.background:SetColorTexture(0, 0, 0, 1)
+      view.title = view.title or view.frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+      if not has(view.title, {'SetPoint','SetText'}) then error('copy_title_unavailable', 0) end
+      view.title:SetPoint('TOP', 0, -12)
+      view.scroll = view.scroll or env.CreateFrame('ScrollFrame', nil, view.frame,
+        'UIPanelScrollFrameTemplate')
+      if not has(view.scroll, {'SetSize','SetPoint','SetScrollChild'}) then
+        error('copy_scroll_unavailable', 0)
+      end
+      view.scroll:SetSize(560, 260); view.scroll:SetPoint('TOPLEFT', 20, -58)
+      view.input = view.input or env.CreateFrame('EditBox', nil, view.scroll)
+      if not has(view.input, {'SetSize','SetMultiLine','SetAutoFocus','SetMaxLetters',
+        'SetFontObject','SetText','GetText','SetScript','SetFocus','ClearFocus',
+        'HighlightText'}) then
+        error('copy_input_unavailable', 0)
+      end
+      view.input:SetSize(560, 260); view.input:SetMultiLine(true)
+      -- Changing the limit can truncate the previous view and fire OnTextChanged.
+      view.restoring = true
+      view.input:SetAutoFocus(false); view.input:SetMaxLetters(selected.limit)
+      view.input:SetFontObject('ChatFontNormal')
+      view.input:SetScript('OnTextChanged', function() restoreText(false) end)
+      view.input:SetScript('OnEscapePressed', close)
+      view.scroll:SetScrollChild(view.input)
+      view.select = view.select or env.CreateFrame('Button', nil, view.frame,
+        'UIPanelButtonTemplate')
+      view.close = view.close or env.CreateFrame('Button', nil, view.frame, 'UIPanelButtonTemplate')
+      for _, button in ipairs({view.select, view.close}) do
+        if not has(button, {'SetSize','SetPoint','SetText','SetScript'}) then
+          error('copy_button_unavailable', 0)
+        end
+        button:SetSize(140, 24)
+      end
+      view.select:SetPoint('BOTTOMLEFT', 20, 14); view.select:SetText('Select text')
+      view.select:SetScript('OnClick', function() restoreText(true) end)
+      view.close:SetPoint('BOTTOMRIGHT', -20, 14); view.close:SetText('Close')
+      view.close:SetScript('OnClick', close)
+      view.text = selected.text
+      view.restoring = true
+      view.input:SetText(view.text)
+      view.restoring = false
+      if view.input:GetText() ~= view.text then error('copy_text_changed', 0) end
+      view.title:SetText('Stored ' .. selected.kind .. ' export (' .. selected.bytes ..
+        ' bytes). Not a new capture.\nSelect text, then press Ctrl+C. Edits are discarded.')
+      view.input:ClearFocus()
+      view.frame:Show()
+    end)
+    view.restoring = false
+    if not ok then
+      state.copy_ui_code = 'copy_ui_unavailable'
+      if view.frame and has(view.frame, {'Hide'}) then pcall(function() view.frame:Hide() end) end
+      say('copy unavailable (copy_ui_unavailable); saved exports unchanged')
+      return
+    end
+    state.copy_ui_code = 'copy_shown'
+    say('stored ' .. selected.kind .. ' export shown; select text and press Ctrl+C yourself')
   end
 
   local function planSlash(message)
@@ -385,9 +498,9 @@ function Diagnostics.attach(env)
     end
     local report = Capabilities.probe(env)
     local build = report.build
-    -- Only the user-reported tuple is enabled for this experimental manual slice.
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
-      say('snapshot failed: build has no recorded capture evidence'); return
+    -- Admission enables guarded experimental reads; it does not verify capabilities.
+    if not Capabilities.isCaptureTarget(build) then
+      say('snapshot failed: build is not an enabled experimental target'); return
     end
     local sequence = state.db.snapshot_sequence
     if sequence == nil then sequence = 0 end
@@ -446,8 +559,8 @@ function Diagnostics.attach(env)
 
   local function clockCommand(action)
     local build = Capabilities.probe(env).build
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
-      say('clock unavailable: build has no recorded capture evidence'); return
+    if not Capabilities.isCaptureTarget(build) then
+      say('clock unavailable: build is not an enabled experimental target'); return
     end
     if action == 'clear' then clock:clear(); say('clock trust cleared'); return end
     if action and action ~= 'trust' then say('usage: /anavdiag clock [trust|clear]'); return end
@@ -470,12 +583,21 @@ function Diagnostics.attach(env)
     end
     if command == "probe" then
       run()
+    elseif command == 'copy' then
+      local kind = message:match('^%s*%S+%s*(.-)%s*$')
+      if kind == '' then kind = 'diagnostic' end
+      if kind ~= 'diagnostic' and kind ~= 'snapshot' then
+        say('usage: /anavdiag copy [snapshot]'); return
+      end
+      if not pcall(copyExport, kind) then
+        state.copy_ui_code = 'copy_ui_unavailable'
+        say('copy unavailable (copy_ui_unavailable); saved exports unchanged')
+      end
     elseif command == 'position' then
       local ok = pcall(function()
         local build = Capabilities.probe(env).build
-        if build.version ~= '1.60.1' or build.build ~= '70338' or
-          build.interface ~= '16001' then
-          say('position unavailable: build has no recorded capture evidence'); return
+        if not Capabilities.isCaptureTarget(build) then
+          say('position unavailable: build is not an enabled experimental target'); return
         end
         local mapApi = type(env.C_Map) == 'table' and env.C_Map or {}
         local getMap, getPoint
@@ -513,7 +635,8 @@ function Diagnostics.attach(env)
       end
     else
       say(Version.addon .. " usage: " .. SLASH_COMMAND ..
-        " probe | status | position | clock [trust|clear] | snapshot <anonymous-profile-id>")
+        " probe | status | copy [snapshot] | position | clock [trust|clear] | " ..
+        "snapshot <anonymous-profile-id>")
     end
   end
 
@@ -552,8 +675,8 @@ function Diagnostics.attach(env)
       return
     end
     local build = Capabilities.probe(env).build
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
-      say('session unavailable: build has no recorded capture evidence'); return
+    if not Capabilities.isCaptureTarget(build) then
+      say('session unavailable: build is not an enabled experimental target'); return
     end
     local result, code
     if command == 'start' then
