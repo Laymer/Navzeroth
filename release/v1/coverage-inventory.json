@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "inventory_id": "forever-1.60.1.70374-full-content-v1",
+  "target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70374",
+    "interface": 16001
+  },
+  "domains": [
+    {
+      "domain": "quests",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "quests-inventory-pending",
+          "scope": "Every available Forever quest and objective stage, prerequisites, faction/race/class/level eligibility and rewards; partition by audited regions.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "equipment",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "equipment-inventory-pending",
+          "scope": "Every available equippable item and its supported attributes, requirements and variants.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "acquisition",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "acquisition-inventory-pending",
+          "scope": "All available quest rewards, vendors, dungeon drops, crafting and other acquisition paths with prerequisites and currencies.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "geography",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "geography-inventory-pending",
+          "scope": "Both continents and every further available region, maps/floors, coordinates and calibrated imagery with usage rights.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "travel",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "travel-inventory-pending",
+          "scope": "All supported directed walk, flight, boat, portal and access connections; unlocks and costs remain explicit.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "dungeons",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "dungeons-inventory-pending",
+          "scope": "Every available dungeon, entry/access requirements, preparation quest chains, travel and rewards.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "class_roles",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "class_roles-inventory-pending",
+          "scope": "Every available faction/race/class/role/level model with documented weights and representative scenarios.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "party",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "party-inventory-pending",
+          "scope": "Every supported party size and differing-progress workflow across the complete available content inventory.",
+          "required_record_ids": null
+        }
+      ]
+    },
+    {
+      "domain": "reminders",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "reminders-inventory-pending",
+          "scope": "Every declared reminder rule and its source-backed conditions, suppression and unknown-state behavior.",
+          "required_record_ids": null
+        }
+      ]
+    }
+  ],
+  "sources": []
+}
