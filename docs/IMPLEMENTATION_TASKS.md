@@ -31,8 +31,9 @@ bug; no unchanged-blocker-only release is created.
 
 Historical scheduling sections below are snapshots, not the current ready queue.
 Today/Settings (PR96) and M7.6 evidence-gap infrastructure (PR90) are implemented;
-verified Deadmines content stays blocked. The two READY rows above require another
-separate parallel PR batch and publication audit; no exhaustion claim is made.
+verified Deadmines content stays blocked. Both previously READY rows above were
+completed in separate PR109/110 and published0.8.1; only the explicit external
+prerequisites remain. Historical scheduling text does not reopen those tasks.
 
 | Task | Current disposition | Remaining work / scheduling decision |
 | --- | --- | --- |
