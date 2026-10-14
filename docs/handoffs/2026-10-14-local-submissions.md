@@ -28,3 +28,80 @@ source policy/content hash/CAS. No new exchange format or transport.
 Checks: pending implementation. Native/live environment acceptance remains
 unverified. Next: normal merge root foundation, implement/test bounded storage,
 app service and explicit local UI; record actual checks and limitations here.
+
+## Implementation and reviewable source
+
+Granular commits45905da claim,5fc1f6c pure declarations/policy,41f577d storage/app,
+ef30950 feature UI/native/SDK, e13c2bf storage regressions,31f46f5 app regressions,
+15d62cb UI/browser regressions,e53ec2d existing Content mock compatibility,
+29c38ed disposition-revision guard/docs. Normal foundation merge3abe684 imports
+dfcd37b; normal governance API mergeeafa5ef imports9b0a651. Main coordination
+normal merge257f97d preserves the published baseline claim and all histories.
+Draft PR94: https://github.com/Laymer/Navzeroth/pull/94. No main merge performed.
+
+Core keeps minimal declarations pure and refuses unknown nested fields, duplicate
+known JSON fields, future schema, excessive input and successes>opportunities.
+No raw snapshot/session/name/chat/credential field is accepted. Storage verifies
+full context, fixture, base, registered source/evidence and target citation; every
+read revalidates canonical document identity and bounded metadata. Tombstones
+retain disclosed fingerprints/base/source/decision/time and consume queue capacity.
+Revoked payload erasure preserves terminal revocation. Rows are never deleted to
+make capacity available or silently resurrected by a duplicate submission.
+
+Export binds the exact locally accepted guard, active eligible exact base,
+manifest SHA, source-policy SHA and disposition revision. Recorded Permitted,
+nonblank license/attribution, edition, exact revision and closed payload/transform
+policy tokens are all required. Initial/final immediate reads surround bounded
+serialization; final reservation spans validation and handoff. Restrict/release/
+reactivate ABA refuses a pending export; a newly requested export after review of
+the current eligible base remains possible. Declaration timestamps remain nullable
+signed-safe values, with no inferred trusted clock/freshness or probability.
+
+The child Content view provides explicit opt-in, bounded queue pages, guarded local
+decisions, payload-erasing withdrawal, terminal revocation/erasure and manual local
+JSON export inspection. Deferred responses and existing exports are cleared after
+queue context/refresh changes. Native additive command registration preserves the
+actual-webview reference-only gate and generated typed function-pointer annotation.
+Native DTOs are re-exported from the app crate, requiring no new native dependency.
+See docs/data/LOCAL_SUBMISSIONS.md for the local format and exact policy tokens.
+
+## Actual checks and limitations
+
+On source29c38ed (main257f97d adds coordination docs only):
+
+- `cargo test --locked -p azeroth-core -p azeroth-storage -p azeroth-app`:563 passed,
+  0 failures/ignored, including3 new pure tests,6 storage tests and8 app tests.
+  Capacity/pagination exercised actual1024 rows including a withdrawn tombstone;
+  corruption bypassed SQL CHECKs and was refused by the typed validator. A real
+  second connection tested stale CAS preservation. Deterministic private app hooks
+  tested withdrawal/base activation during compile and restrict/release/reactivate
+  ABA without sleeps. Unknown/Conditional/NotPermitted and each missing source
+  constraint refused export. False/zero, unavailable states and signed/null/zero
+  timestamps stay distinct. Log /tmp/navzeroth-submissions-rust-full.log.
+- Strict core/storage/app all-target Clippy, fmt and diff checks passed.
+  Log /tmp/navzeroth-submissions-clippy.log.
+- Desktop156 unit tests across27 files passed; latest affected6 tests passed.
+  Typecheck/lint/production build passed. Logs /tmp/navzeroth-submissions-ui-full.log,
+  -ui.log, -typecheck.log, -lint.log and -build.log.
+- One mocked Chromium opt-in→local accept→source-policy refusal→withdraw→erased
+  duplicate flow passed. It is command-boundary mock evidence, not native storage
+  or game execution. Log /tmp/navzeroth-submissions-browser.log. Port1420 released
+  after the run, verified by ss. Final affected existing Content/browser rerun is
+  pending the coordinated next lease.
+- Native `cargo check --locked -p azeroth-desktop` was attempted and blocked by
+  missing system dbus-1 development metadata before desktop compilation. Log
+  /tmp/navzeroth-submissions-native.log. Native interaction/live client acceptance
+  remains unverified; no real source permission or observed game data was invented.
+
+Failed development attempts were corrected before passing checks: the first core
+fixture builder used the envelope's absent build field rather than the recorded
+context; the first app test called a nonexistent constructor; Rust SQL u64 conversion,
+and a desktop test unused import/namespace typing were corrected. Those attempts
+are not included in passing test totals.
+
+Recovery registration remains root-owned and deliberately fail closed for populated
+local_submissions until root calls public
+`local_submissions::validate_local_submissions(&SqliteStore)` after canonical content
+validation. This branch supplies and directly tests that validator. Next: final
+coordinated affected browser checks, independent source review, exact-head hosted
+checks and root reconciliation/validator registration before any release.
