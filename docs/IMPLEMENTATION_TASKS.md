@@ -1,6 +1,7 @@
 # Implementation task ledger — recurring release program
 
-Baseline: main `1924a84`, published `v0.3.0`. Owner: Codex /root.
+Baseline: main `2d5de64`, published `v0.4.0`. Owner: Codex /root.
+Fresh audit: see [wave5 coordination](handoffs/2026-10-14-wave5-coordination.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
@@ -53,7 +54,7 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M6.3 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
 | M6.4 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
 | M6.5 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
-| M6.6 | TODO | Next batch: dense atlas accessibility/scaling/performance. |
+| M6.6 | IN_PROGRESS | /root/atlas_dense: dense atlas accessibility/scaling/performance, separate task PR. |
 | M7.1 | IMPLEMENTED_UNVERIFIED | Persisted guarded desktop controls and deduplication delivered in PR59; live delivery remains unverified. |
 | M7.2 | IMPLEMENTED_UNVERIFIED | Evidence delivery gates/manual checklist delivered in PR63; real category rules require missing records/observations. |
 | M7.3 | IMPLEMENTED_UNVERIFIED | Manual joint planning with all-member readiness, exclusions and fairness delivered in PR62; real workflow remains unverified. |
@@ -67,11 +68,11 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M8.4 | IMPLEMENTED_UNVERIFIED | Conditional complete-session comparison/calibration delivered in PR61; real complete samples and native interaction missing. |
 | M8.5 | DEFERRED_WITH_REASON | Requires real permitted combat-log format and intended-use verification. |
 | M9.1 | TODO | Next batch: consolidate compatibility/coverage evidence. |
-| M9.2 | TODO | Next batch: audit recovery/backup/uninstall gaps. |
-| M9.3 | TODO | Next batch: documented fixtures, budgets and profiling. |
+| M9.2 | IN_PROGRESS | /root/release_review: explicit backup/restore/integrity/startup recovery, separate task PR. |
+| M9.3 | IN_PROGRESS | /root/backlog_audit: core cancellation/declared measurements; root app-job integration follows separately. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M9.6 | IMPLEMENTED_UNVERIFIED | v0.3.0 published developer prerelease; focused-release acceptance incomplete. |
+| M9.6 | IMPLEMENTED_UNVERIFIED | v0.4.0 published developer prerelease; focused-release acceptance incomplete. |
 | M10.1 | TODO | Next batch: explicitly scoped independent reference-window experiment. |
 | M10.2 | BLOCKED | Interactive native focus/DPI/monitor/borderless checks unavailable. |
 | M10.3 | TODO | Next batch: imported-age/display-mode explanations. |
@@ -109,5 +110,5 @@ immutable evidence; this current ledger does not erase their actual results.
 - M7.6: evidence-gap preparation infrastructure can proceed; verified Deadmines package stays blocked.
 
 These gaps remain actionable; existing foundations and synthetic tests do not prove
-full implementation-plan completion. The next batch is scheduled after v0.4.0
+full implementation-plan completion. Wave5 starts after verified v0.4.0
 publication; every task retains a separate claim, branch, PR and release audit.

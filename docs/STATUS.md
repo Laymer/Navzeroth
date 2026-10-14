@@ -1,9 +1,10 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: v0.4.0 guidance batch integration and release preparation.
-Owner: Codex /root coordinator; wave baseline1924a84, current main d0dfe7a.
-v0.3.0 is published as a developer prerelease at main 1924a84 (PR #57).
+Current task: wave5 recovery, dense Atlas, search control/performance and CLI hardening.
+Owner: Codex /root coordinator; released baseline/main2d5de64 (v0.4.0).
+v0.4.0 is published as a developer prerelease at main2d5de64 (PR #65).
+See [wave5 coordination/publication evidence](handoffs/2026-10-14-wave5-coordination.md).
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
 [wave-4 coordination](handoffs/2026-10-13-wave4-coordination.md).
@@ -31,7 +32,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Demo atlas/markers/layers/pin search and keyboard navigation; exact-dataset schematic route inspection with ordered geometry gaps implemented. Reference geography stays distinct from unlocks; verified road geometry remains. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; preparation, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
-| M9 | IN_PROGRESS | Guidance workflows and command-mock browser coverage implemented; revision-scoped Windows packaging remains checked per source. v0.3.0 is the latest published preview; v0.4.0 preparation is in PR65. Native interaction, live acceptance, recovery and performance work remain. |
+| M9 | IN_PROGRESS | Guidance workflows and command-mock browser coverage implemented; revision-scoped Windows packaging remains checked per source. v0.4.0 is the latest published developer preview (PR65; main2d5de64). Native interaction, live acceptance, recovery and performance work remain. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
