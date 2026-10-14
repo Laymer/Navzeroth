@@ -70,7 +70,7 @@ export const demoAdapter: CommandAdapter = {
         case "restore_database_backup": throw { code: "PROVIDER_UNAVAILABLE", message: "Database recovery is available in the native desktop application", retryable: false };
         case "get_app_status":
           return {
-            version: "0.4.0",
+            version: "0.5.0",
             data_mode: "demo",
             active_profile: DEMO_PROFILE_ID,
             capabilities: { addon_transport: "unverified", live_position: "unverified" },
