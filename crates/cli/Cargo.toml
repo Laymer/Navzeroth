@@ -10,6 +10,8 @@ publish.workspace = true
 
 [dependencies]
 azeroth-core = { path = "../core" }
+azeroth-app = { path = "../app" }
+azeroth-storage = { path = "../storage" }
 azeroth-ingest = { path = "../ingest" }
 # Image decoding and hashing live here, never in core (plan section 4.3).
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
