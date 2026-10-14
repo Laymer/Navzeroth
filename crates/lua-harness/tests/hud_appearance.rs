@@ -315,3 +315,78 @@ fn resume_rechecks_actual_plan_expiry_with_new_clock_before_rendering() {
         )
         .unwrap();
 }
+
+#[test]
+fn session_only_drag_survives_refresh_and_appearance_changes_until_explicit_reset() {
+    client()
+        .run::<()>(
+            "session-position",
+            r#"
+      for _,getter in ipairs({false,function() error('restricted') end}) do
+        local state=ns.Diagnostics.attach(_G)
+        state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+        state.onPlanSlash('show')
+        local frame=state.hud_frame
+        frame.point={'BOTTOM',UIParent,'BOTTOM',120,140}
+        frame.GetPoint=getter
+        frame.scripts.OnDragStop(frame)
+        assert(state.hud_movement_code=='hud_movement_session_only')
+        assert(AzerothNavigatorDB.settings.hud_position.y==-120)
+        local function unchanged()
+          assert(frame.point[1]=='BOTTOM' and frame.point[4]==120 and frame.point[5]==140,
+            'session-only drag was reset by model or appearance refresh')
+          assert(AzerothNavigatorDB.settings.hud_position.y==-120)
+        end
+        state.plan_controls:refresh();unchanged()
+        state.onPlanSlash('font 175');unchanged()
+        assert(state.hud_text.font[2]==21)
+        state.onPlanSlash('size 500 300');unchanged()
+        assert(frame.width==500 and frame.height==300)
+        state.onPlanSlash('contrast high');unchanged()
+        state.onPlanSlash('hide');state.onPlanSlash('show');unchanged()
+        -- Saved/requested position is still the default, yet reset must re-anchor.
+        combat=true;state.onPlanSlash('reset');unchanged()
+        assert(state.hud_pending)
+        combat=false;state.frame.scripts.OnEvent(state.frame,'PLAYER_REGEN_ENABLED')
+        assert(frame.point[1]=='TOP' and frame.point[4]==0 and frame.point[5]==-120)
+        assert(frame.width==420 and frame.height==220 and state.hud_text.font[2]==12)
+        assert(not state.hud_pending)
+        -- Another explicit reset with all equal defaults is still an operation.
+        frame.point={'BOTTOM',UIParent,'BOTTOM',120,140}
+        frame.scripts.OnDragStop(frame)
+        state.onPlanSlash('reset')
+        assert(frame.point[1]=='TOP' and frame.point[5]==-120)
+      end
+    "#,
+        )
+        .unwrap();
+}
+
+#[test]
+fn deferred_reset_supersedes_pending_drag_and_retries_a_failed_anchor_operation() {
+    client()
+        .run::<()>(
+            "reset-position",
+            r#"
+      local state=ns.Diagnostics.state
+      state.onPlanSlash('show')
+      local frame=state.hud_frame
+      frame.point={'BOTTOM',UIParent,'BOTTOM',120,140}
+      combat=true;frame.scripts.OnDragStop(frame)
+      assert(state.hud_stop_pending)
+      state.onPlanSlash('reset');state.onPlanSlash('font 150')
+      assert(frame.point[1]=='BOTTOM' and AzerothNavigatorDB.settings.hud_position.y==-120)
+      local setter=frame.SetPoint
+      frame.SetPoint=function() error('unavailable') end
+      combat=false;state.frame.scripts.OnEvent(state.frame,'PLAYER_REGEN_ENABLED')
+      assert(not state.hud_stop_pending and state.hud_pending)
+      assert(AzerothNavigatorDB.settings.hud_position.y==-120)
+      assert(state.hud_reset_position) -- request is not consumed by a failed setter
+      frame.SetPoint=setter;state.plan_controls:refresh()
+      assert(frame.point[1]=='TOP' and frame.point[4]==0 and frame.point[5]==-120)
+      assert(state.hud_text.font[2]==18 and not state.hud_pending)
+      assert(not state.hud_reset_position)
+    "#,
+        )
+        .unwrap();
+}

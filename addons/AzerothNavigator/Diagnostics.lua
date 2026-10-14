@@ -90,6 +90,9 @@ function Diagnostics.attach(env)
     end)
     if not ok or not position then return end
     state.settings.hud_position = position
+    -- Consume the observed request without snapping a drag to rounded saved offsets.
+    state.hud_position_request = Appearance.position(position.anchor, position.relative,
+      position.x, position.y)
     if state.persist then
       state.db.settings.hud_position = Appearance.copy(state.settings).hud_position
       state.hud_movement_code = 'hud_movement_persisted'
@@ -105,7 +108,8 @@ function Diagnostics.attach(env)
         defer('hud_movement_unavailable'); return
       end
       state.hud_stop_pending = false
-      persistMovement(state.hud_frame)
+      -- An explicit reset supersedes a deferred drag observation.
+      if not state.hud_reset_position then persistMovement(state.hud_frame) end
     end
     if not state.settings.hud_visible then
       if state.hud_frame then
@@ -161,9 +165,17 @@ function Diagnostics.attach(env)
       end
       local prefs = Appearance.copy(state.settings)
       frame:SetSize(prefs.hud_width, prefs.hud_height)
-      frame:ClearAllPoints()
       local pos = prefs.hud_position
-      frame:SetPoint(pos.anchor, env.UIParent, pos.relative, pos.x, pos.y)
+      local prior = state.hud_position_request
+      -- This is a consumed preference, not an observation of the current position.
+      -- Unknown/session-only drags must survive model, font and size refreshes.
+      if state.hud_reset_position or not prior or prior.anchor ~= pos.anchor or
+        prior.relative ~= pos.relative or prior.x ~= pos.x or prior.y ~= pos.y then
+        frame:ClearAllPoints()
+        frame:SetPoint(pos.anchor, env.UIParent, pos.relative, pos.x, pos.y)
+        state.hud_position_request = Appearance.position(pos.anchor, pos.relative, pos.x, pos.y)
+        state.hud_reset_position = false
+      end
       frame:SetMovable(true); frame:EnableMouse(true); frame:RegisterForDrag('LeftButton')
       frame:SetScript('OnDragStart', function(self)
         local safe, reason = uiGate()
@@ -177,7 +189,7 @@ function Diagnostics.attach(env)
         if not safe then state.hud_stop_pending = true; defer(reason); return end
         if has(self, {'StopMovingOrSizing'}) and
           pcall(function() self:StopMovingOrSizing() end) then
-          persistMovement(self)
+          if not state.hud_reset_position then persistMovement(self) end
         else state.hud_movement_code = 'hud_movement_unavailable' end
       end)
       text:SetAllPoints(frame); text:SetJustifyH('LEFT')
@@ -292,6 +304,7 @@ function Diagnostics.attach(env)
     if command == 'size' or command == 'font' or command == 'contrast' or command == 'reset' then
       local prefs, errorCode = Appearance.command(command, tail, state.settings)
       if not prefs then say('HUD preference refused (' .. errorCode .. ')'); return end
+      if command == 'reset' then state.hud_reset_position = true end
       for key, value in pairs(prefs) do state.settings[key] = value end
       if state.persist then
         for key, value in pairs(Appearance.copy(prefs)) do state.db.settings[key] = value end
