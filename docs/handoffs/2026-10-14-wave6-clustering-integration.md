@@ -34,7 +34,10 @@ Desktop131 unit tests, typecheck/lint/build and focused workflow/joint/planning-
 mocked Chromium checks passed. Logs /tmp/navzeroth-wave6-integration-*.log.
 Mocked browser checks exercise UI lifecycle, not native backend or live gameplay.
 Native Windows interactive and recorded-client acceptance remain unverified.
-Source-locked peer review of backend39398fe is pending with the core worker;
+Source-locked peer review of backend39398fe found no blocker; the core worker
+independently passed36 focused tests and strict app/core Clippy in an isolated
+peer worktree. An initial peer command named a nonexistent test target; actual
+reruns and logs are recorded in the review messages.
 hosted nine-job checks and dependency reconciliation are required before merge.
 Next: review findings, merge separate core task after exact-head checks, update
 this separate integration PR with main and rerun all nine checks before merging.
