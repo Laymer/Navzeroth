@@ -135,6 +135,7 @@ impl DatabaseHost {
         &self,
         now: Option<azeroth_core::types::UtcMillis>,
     ) -> Result<crate::diagnostics::DiagnosticReport> {
+        let started = std::time::Instant::now();
         let hosted = self
             .gate
             .read()
@@ -149,7 +150,10 @@ impl DatabaseHost {
             .unwrap_or_else(|poison| poison.into_inner())
             .clone();
         drop(hosted);
-        let clock = crate::snapshots::context(now);
+        let clock = crate::snapshots::context(crate::planning_job_service::advanced_now(
+            now,
+            started.elapsed(),
+        ));
         crate::diagnostics::build_with_context(
             snapshot.as_ref(),
             content.as_ref(),

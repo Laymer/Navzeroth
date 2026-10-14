@@ -83,3 +83,12 @@ last recovery-navigation change; its affected diagnostics/recovery2 cases were
 rerun afterward and passed. Browser port1420 is free. Next: exact combined-head
 peer/hosted review, reconcile separate backend/UI PR dependencies, and update the
 batch release ledger without claiming native/live acceptance.
+
+Root integration review at85756db found no privacy/context/collector/locking or
+create-new preservation blocker; Atlas independently passed19 affected Rust and
+13 App/Panel tests. Metadata age had used a clock sampled before lease/store waits.
+Root now advances that supplied clock through consistent metadata capture before
+building freshness, preserving unknown clock when absent. Workflow age assertions
+allow actual elapsed time rather than asserting an artificially frozen age.
+This updates metadata timing only; advice publication retains its separate atomic
+guard and tests. Fresh exact-head checks are required after this correction.
