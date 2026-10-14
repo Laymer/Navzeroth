@@ -220,7 +220,7 @@ describe("dense reference search", () => {
     renderAtlas(adapterWith({ query_atlas: () => ({ ...dense, revision: ++queries === 1 ? "dense-original" : "dense-refreshed" }) }));
     const last = await screen.findByRole("button", { name: "Show Reference 199 on the map" });
     fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "landmark" } });
-    expect(screen.getByText("100 of 200 reference pins shown.")).toBeInTheDocument();
+    expect(screen.getByText("100 of 200 reference pins match these filters.")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "all" } });
     fireEvent.click(last);
     expect(last).toHaveAttribute("aria-pressed", "true");
@@ -320,9 +320,18 @@ it("bounds dense map/list pages and keeps global keyboard focus across pages", a
   let removed = false;
   const pins = Array.from({ length: 450 }, (_, i) => ({ ...template, id: `dense-${i}`, label: `Dense ${i}` }));
   renderAtlas(adapterWith({ query_atlas: () => ({ ...original, revision: removed ? "trimmed" : "full", images: [{ ...image, pins: removed ? pins.slice(0, 20) : pins }] }) }));
-  const first = await screen.findByRole("button", { name: "Show Dense 0 on the map" });
+  await screen.findByRole("button", { name: "Show Dense 0 on the map" });
+  expect(screen.getByRole("button", { name: "Previous pin page" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Next pin page" }));
+  expect(screen.getByRole("button", { name: "Show Dense 200 on the map" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Next pin page" }));
+  expect(screen.getByRole("button", { name: "Next pin page" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Previous pin page" }));
+  fireEvent.click(screen.getByRole("button", { name: "Previous pin page" }));
+  expect(screen.getByRole("button", { name: "Previous pin page" })).toBeDisabled();
   expect(document.querySelectorAll(".pins button")).toHaveLength(200);
   expect(document.querySelectorAll("g.pin")).toHaveLength(200);
+  const first = screen.getByRole("button", { name: "Show Dense 0 on the map" });
   first.focus(); fireEvent.keyDown(first, { key: "End" });
   const last = screen.getByRole("button", { name: "Show Dense 449 on the map" });
   expect(last).toHaveFocus();

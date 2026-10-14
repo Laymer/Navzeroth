@@ -29,7 +29,7 @@ for (const count of [1000, 5000, 10000]) {
       await expect(page.getByRole("button", { name: "Atlas", exact: true })).toBeVisible();
       const start = await page.evaluate(() => performance.now());
       await page.getByRole("button", { name: "Atlas", exact: true }).click();
-      await expect(page.getByText(`${count} of ${count} reference pins shown.`)).toBeVisible();
+      await expect(page.getByText(`${count} of ${count} reference pins match these filters.`)).toBeVisible();
       samples.push(await page.evaluate(() => performance.now()) - start);
       await expect(page.locator(".pins button")).toHaveCount(200);
       await expect(page.locator("g.pin")).toHaveCount(200);
@@ -49,6 +49,14 @@ for (const width of [320, 640]) {
     await expect(page.locator(".pins button")).toHaveCount(200);
     await expect(page.locator("g.pin")).toHaveCount(200);
     await expect(page.getByTestId("schematic")).toBeVisible();
+    const nextPage = page.getByRole("button", { name: "Next pin page" });
+    await nextPage.focus(); await nextPage.press("Enter");
+    await expect(nextPage).toBeFocused();
+    await expect(page.getByText("Page 2 of 50", { exact: true })).toBeVisible();
+    const previousPage = page.getByRole("button", { name: "Previous pin page" });
+    await previousPage.focus(); await previousPage.press("Enter");
+    await expect(page.getByText("Page 1 of 50", { exact: true })).toBeVisible();
+    await expect(previousPage).toBeDisabled();
     const first = page.getByRole("button", { name: "Show Dense 00000 on the map" });
     await first.focus(); await first.press("End");
     const last = page.getByRole("button", { name: "Show Dense 09999 on the map" });

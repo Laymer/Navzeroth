@@ -193,7 +193,7 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
             <option value={kind}>{kind.replace(/_/g, " ")} (absent in this revision)</option>}
           {[...new Set(image.pins.map((pin) => pin.kind.kind))].sort().map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
         </select></label>
-        <p role="status">{pins.length} of {image.pins.length} reference pins shown.</p>
+        <p role="status">{pins.length} of {image.pins.length} reference pins match these filters.</p>
         {selectedPin !== null && !image.pins.some((pin) => pin.id === selectedPin)
           ? <p role="note">The selected pin is no longer present in this atlas revision.</p>
           : selectedPin !== null && !pins.some((pin) => pin.id === selectedPin)
