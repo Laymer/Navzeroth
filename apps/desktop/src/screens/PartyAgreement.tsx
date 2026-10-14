@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
-import type { AppError } from "../commands/contract";
+import type { AppError, CommandMap } from "../commands/contract";
 import type { JointPlanningReport } from "../party/contract";
 import type { PartyProposalReport } from "../party/proposals";
 
 export function PartyAgreement({ client, partyId, refreshKey, planning }: { client: CommandClient; partyId: string; refreshKey: number; planning: JointPlanningReport | null }) {
   const [proposal, setProposal] = useState<PartyProposalReport | null>(null);
   const [proposer, setProposer] = useState("");
+  const [recipient, setRecipient] = useState("");
+  const [exported, setExported] = useState<CommandMap["export_agreed_party_plan"]["output"] | null>(null);
   const [loading, setLoading] = useState(true);
   const [readReady, setReadReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -20,7 +22,7 @@ export function PartyAgreement({ client, partyId, refreshKey, planning }: { clie
   }
   useEffect(() => {
     let mounted = true; const token = { ...active.current };
-    setLoading(true); setReadReady(false); setProposal(null); setError(null); setBusy(false);
+    setLoading(true); setReadReady(false); setProposal(null); setError(null); setBusy(false); setExported(null); setRecipient("");
     void client.getPartyPlanProposal(partyId).then((result) => {
       if (!mounted || token.serial !== active.current.serial) return;
       setLoading(false);
@@ -33,7 +35,7 @@ export function PartyAgreement({ client, partyId, refreshKey, planning }: { clie
     if (busyRef.current || loading || !readReady) return;
     if (kind === "propose" && !canPropose) return;
     if (kind === "accept" && (!proposal || !profile)) return;
-    busyRef.current = true; setBusy(true); setError(null);
+    busyRef.current = true; setBusy(true); setError(null); setExported(null);
     const token = { ...active.current };
     const result = kind === "propose"
       ? await client.proposePartyPlan(JSON.stringify({ planning: planning?.request, proposer_profile_id: proposer, expected: proposal?.guard ?? null }))
@@ -46,6 +48,20 @@ export function PartyAgreement({ client, partyId, refreshKey, planning }: { clie
     busyRef.current = false; setBusy(false);
     if (refreshed.ok) { setReadReady(true); setProposal(refreshed.value); }
     else { setReadReady(false); setProposal((old) => old ? { ...old, state: "invalidated", reasons: [...old.reasons, "Agreement could not be refreshed after the failed change"] } : null); }
+  }
+  async function exportForRecipient() {
+    if (busyRef.current || loading || !readReady || proposal?.state !== "agreed" || !proposal.participants.some((p) => p.profile_id === recipient)) return;
+    busyRef.current = true; setBusy(true); setError(null); setExported(null);
+    const token = { ...active.current };
+    const result = await client.exportAgreedPartyPlan(JSON.stringify({ party_id: partyId, expected: proposal.guard, recipient_profile_id: recipient }));
+    if (token.serial !== active.current.serial || token.identity !== active.current.identity || token.client !== active.current.client) return;
+    if (result.ok) { busyRef.current = false; setBusy(false); setExported(result.value); return; }
+    setError(result.error);
+    const refreshed = await client.getPartyPlanProposal(partyId);
+    if (token.serial !== active.current.serial || token.identity !== active.current.identity || token.client !== active.current.client) return;
+    busyRef.current = false; setBusy(false);
+    if (refreshed.ok) { setReadReady(true); setProposal(refreshed.value); }
+    else { setReadReady(false); setProposal((old) => old ? { ...old, state: "invalidated", reasons: [...old.reasons, "Agreement could not be refreshed after the failed export"] } : null); }
   }
   return <section aria-labelledby="party-agreement-title">
     <h3 id="party-agreement-title">Local plan proposal and agreement</h3>
@@ -70,6 +86,9 @@ export function PartyAgreement({ client, partyId, refreshKey, planning }: { clie
         <button type="button" disabled={busy || loading || !readReady || !p.accepted} onClick={() => void mutate("accept", p.profile_id, false)}>Withdraw acceptance for {p.profile_id}</button>
         {p.progress_changes.length > 0 && <details><summary>Imported quest observation changes for {p.profile_id}</summary><pre>{JSON.stringify(p.progress_changes, null, 2)}</pre></details>}
       </div>)}
+      <label>Export recipient <select value={recipient} disabled={busy || loading || !readReady || proposal.state !== "agreed"} onChange={(e) => { setRecipient(e.target.value); setExported(null); }}><option value="">Choose who receives this plan</option>{proposal.participants.map((p) => <option key={p.profile_id} value={p.profile_id}>{p.profile_id}</option>)}</select></label>
+      <button type="button" disabled={busy || loading || !readReady || proposal.state !== "agreed" || !proposal.participants.some((p) => p.profile_id === recipient)} onClick={() => void exportForRecipient()}>Export agreed plan for recipient</button>
+      {exported && <section aria-label="Agreed recipient plan export"><p>Recipient {recipient}; {exported.byte_count} bytes; plan {exported.plan_id}. Expires at UTC epoch ms {exported.expires_at_utc_ms}.</p><p>Copy this bounded plan into the recipient's addon manually. It follows the agreed joint choices and advances only that character's observed progress. Re-import and agree again if another member's progress diverges.</p><label>Recipient plan text <textarea readOnly value={exported.text} rows={6} /></label></section>}
       <details><summary>Review exact proposed assumptions and participant inputs</summary><pre>{JSON.stringify(proposal.request, null, 2)}</pre></details>
     </div>}
   </section>;
