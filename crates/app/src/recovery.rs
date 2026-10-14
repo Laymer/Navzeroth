@@ -20,10 +20,30 @@ static SERIAL: AtomicU64 = AtomicU64::new(1);
 fn fail(message: &'static str) -> AppError {
     AppError::new(ErrorCode::StorageError, message, false)
 }
+fn pending_path(path: &Path) -> PathBuf {
+    let mut name = path.as_os_str().to_owned();
+    name.push(".restore-pending");
+    PathBuf::from(name)
+}
+fn pending_directory(path: &Path) -> Option<String> {
+    let marker = pending_path(path);
+    let info = fs::symlink_metadata(&marker).ok()?;
+    if !info.file_type().is_file() || info.len() > 4096 {
+        return None;
+    }
+    let file = fs::File::open(marker).ok()?;
+    let mut text = String::new();
+    file.take(4097).read_to_string(&mut text).ok()?;
+    if text.len() > 4096 { None } else { Some(text) }
+}
 fn serial() -> String {
     format!(
-        "{}-{}",
+        "{}-{}-{}",
         std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos(),
         SERIAL.fetch_add(1, Ordering::Relaxed)
     )
 }
@@ -55,6 +75,7 @@ fn digest(path: &Path) -> Result<String> {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct DatabaseStatus {
+    pub preserved_recovery_directory: Option<String>,
     pub state: &'static str,
     pub error: Option<AppError>,
     pub schema_version: u32,
@@ -67,6 +88,7 @@ pub struct BackupPreview {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct RestoreReceipt {
+    pub pending_marker_cleanup_required: bool,
     pub original_files_retained: bool,
     pub recovery_directory: String,
 }
@@ -118,13 +140,22 @@ impl DatabaseHost {
     }
     pub fn open(path: &Path) -> Self {
         let opened = (|| {
+            if pending_path(path).exists() {
+                return Err(fail(
+                    "Interrupted restore detected; inspect a retained compatible backup before recovery",
+                ));
+            }
             if path.exists() {
                 let probe = path.with_file_name(format!("recovery-check-{}.sqlite3", serial()));
                 let checked = reconstruct_backup(path, &probe);
                 let _ = fs::remove_file(&probe);
                 checked?;
             }
-            SnapshotApplication::open(path)
+            let app = SnapshotApplication::open(path)?;
+            for party in app.party_ids()? {
+                app.party_plan_proposal(&party, None)?;
+            }
+            Ok::<SnapshotApplication, AppError>(app)
         })();
         let hosted = match opened {
             Ok(app) => Hosted {
@@ -154,6 +185,13 @@ impl DatabaseHost {
             .gate
             .read()
             .map_err(|_| fail("Database operation lease unavailable"))?;
+        if state.checking {
+            return Err(AppError::new(
+                ErrorCode::ProviderUnavailable,
+                "Database initialization is still checking",
+                true,
+            ));
+        }
         call(
             state
                 .app
@@ -167,6 +205,7 @@ impl DatabaseHost {
             .read()
             .map_err(|_| fail("Database status unavailable"))?;
         Ok(DatabaseStatus {
+            preserved_recovery_directory: pending_directory(&self.path),
             state: if state.checking {
                 "checking"
             } else if state.app.is_some() {
@@ -240,6 +279,14 @@ impl DatabaseHost {
         id: &str,
         install_candidate: impl FnOnce(&Path, &Path) -> std::io::Result<()>,
     ) -> Result<RestoreReceipt> {
+        self.restore_with_files(id, install_candidate, |path| fs::remove_file(path))
+    }
+    fn restore_with_files(
+        &self,
+        id: &str,
+        install_candidate: impl FnOnce(&Path, &Path) -> std::io::Result<()>,
+        cleanup_marker: impl FnOnce(&Path) -> std::io::Result<()>,
+    ) -> Result<RestoreReceipt> {
         let mut hosted = self
             .gate
             .write()
@@ -279,6 +326,35 @@ impl DatabaseHost {
             })?;
         }
         // Stop/join before closing, with no store mutex held.
+        use std::io::Write;
+        let marker_path = pending_path(&self.path);
+        let marker_was_present = marker_path.exists();
+        if marker_was_present && pending_directory(&self.path).is_none() {
+            return Err(fail(
+                "Existing recovery marker is unreadable or exceeds bounds",
+            ));
+        }
+        // Never overwrite an existing marker during a retry: its original
+        // retained-directory identity must survive every pre-install failure.
+        if !marker_was_present {
+            let mut marker = fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&marker_path)
+                .map_err(|_| fail("Recovery transaction marker cannot be created"))?;
+            let persisted = marker
+                .write_all(recovery.to_string_lossy().as_bytes())
+                .and_then(|_| marker.sync_all());
+            drop(marker);
+            if persisted.is_err() {
+                if fs::remove_file(&marker_path).is_err() {
+                    hosted.error = Some(fail(
+                        "Recovery marker write failed and cleanup remains required",
+                    ));
+                }
+                return Err(fail("Recovery transaction marker cannot be persisted"));
+            }
+        }
         drop(hosted.app.take());
         let original_paths = [
             self.path.clone(),
@@ -305,10 +381,18 @@ impl DatabaseHost {
         match install {
             Ok(app) => {
                 hosted.app = Some(app);
-                hosted.error = None;
+                let pending_marker_cleanup_required = cleanup_marker(&marker_path).is_err();
+                hosted.error = if pending_marker_cleanup_required {
+                    Some(fail(
+                        "Database restored but recovery marker cleanup failed; next startup will require recovery",
+                    ))
+                } else {
+                    None
+                };
                 let retained = !moved.is_empty();
                 slot.take();
                 Ok(RestoreReceipt {
+                    pending_marker_cleanup_required,
                     original_files_retained: retained,
                     recovery_directory: recovery.to_string_lossy().into_owned(),
                 })
@@ -326,6 +410,8 @@ impl DatabaseHost {
                         }
                     }
                 }
+                let marker_cleanup_failed =
+                    rollback_ok && !marker_was_present && cleanup_marker(&marker_path).is_err();
                 hosted.app = if rollback_ok && was_ready {
                     SnapshotApplication::open(&self.path).ok()
                 } else {
@@ -333,6 +419,10 @@ impl DatabaseHost {
                 };
                 hosted.error = if hosted.app.is_none() {
                     Some(fail("Restore failed; preserved originals require recovery"))
+                } else if marker_cleanup_failed {
+                    Some(fail(
+                        "Original database restored but recovery marker cleanup failed; next startup will require recovery",
+                    ))
                 } else {
                     None
                 };
@@ -376,12 +466,82 @@ mod tests {
         app.import_text(&format!("ANAV1:{SNAPSHOT}"), None).unwrap();
     }
     #[test]
+    fn marker_cleanup_failure_is_visible_and_next_startup_remains_guarded() {
+        let dir = Directory::new();
+        let live = dir.path("live.sqlite3");
+        seed(&live);
+        let host = DatabaseHost::open(&live);
+        let preview = host.inspect(&live).unwrap();
+        let receipt = host
+            .restore_with_files(
+                &preview.candidate_id,
+                |from, to| fs::rename(from, to),
+                |_| Err(std::io::Error::other("cleanup failed")),
+            )
+            .unwrap();
+        assert!(receipt.pending_marker_cleanup_required);
+        assert!(host.status().unwrap().error.is_some());
+        assert_eq!(host.status().unwrap().state, "ready");
+        drop(host);
+        assert_eq!(
+            DatabaseHost::open(&live).status().unwrap().state,
+            "recovery_required"
+        );
+    }
+
+    #[test]
+    fn interrupted_restore_does_not_silently_create_empty_database() {
+        let dir = Directory::new();
+        let live = dir.path("missing.sqlite3");
+        let backup = dir.path("good.sqlite3");
+        seed(&backup);
+        fs::write(pending_path(&live), "retained-original-directory").unwrap();
+        let host = DatabaseHost::open(&live);
+        assert_eq!(host.status().unwrap().state, "recovery_required");
+        assert!(!live.exists());
+        let preview = host.inspect(&backup).unwrap();
+        assert!(
+            host.restore_using(&preview.candidate_id, |_, _| Err(std::io::Error::other(
+                "install failed"
+            )))
+            .is_err()
+        );
+        assert_eq!(
+            pending_directory(&live).as_deref(),
+            Some("retained-original-directory")
+        );
+        assert!(!live.exists());
+        host.restore(&preview.candidate_id).unwrap();
+        assert!(!pending_path(&live).exists());
+        assert_eq!(host.status().unwrap().state, "ready");
+    }
+    #[test]
+    fn asynchronous_startup_publishes_ready_service_without_dropping_it() {
+        let dir = Directory::new();
+        let live = dir.path("async.sqlite3");
+        seed(&live);
+        let host = DatabaseHost::start(&live);
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+        while host.status().unwrap().state == "checking" {
+            assert!(std::time::Instant::now() < deadline);
+            std::thread::yield_now();
+        }
+        assert_eq!(host.status().unwrap().state, "ready");
+        assert_eq!(
+            host.with_application(|app| app.profiles()).unwrap().len(),
+            1
+        );
+    }
+
+    #[test]
     fn corrupt_startup_can_inspect_and_restore_without_touching_original_until_explicit_action() {
         let dir = Directory::new();
         let database = dir.path("live.sqlite3");
         let backup = dir.path("good.sqlite3");
         seed(&backup);
         fs::write(&database, b"corrupt original").unwrap();
+        fs::write(database.with_file_name("live.sqlite3-wal"), b"original WAL").unwrap();
+        fs::write(database.with_file_name("live.sqlite3-shm"), b"original SHM").unwrap();
         let host = DatabaseHost::open(&database);
         assert_eq!(host.status().unwrap().state, "recovery_required");
         assert!(host.with_application(|app| app.status()).is_err());
@@ -389,6 +549,14 @@ mod tests {
         assert_eq!(fs::read(&database).unwrap(), b"corrupt original");
         let receipt = host.restore(&preview.candidate_id).unwrap();
         assert_eq!(host.status().unwrap().state, "ready");
+        assert_eq!(
+            fs::read(Path::new(&receipt.recovery_directory).join("live.sqlite3-wal")).unwrap(),
+            b"original WAL"
+        );
+        assert_eq!(
+            fs::read(Path::new(&receipt.recovery_directory).join("live.sqlite3-shm")).unwrap(),
+            b"original SHM"
+        );
         assert_eq!(
             fs::read(Path::new(&receipt.recovery_directory).join("live.sqlite3")).unwrap(),
             b"corrupt original"

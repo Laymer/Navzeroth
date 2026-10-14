@@ -106,6 +106,14 @@ fn malicious_schema_future_history_and_corrupt_data_refuse_without_destination()
         ("observation", "DELETE FROM snapshot_observations"),
         ("context", "UPDATE profiles SET build='other'"),
         ("document", "UPDATE snapshots SET document='{}'"),
+        (
+            "audit-code",
+            "UPDATE imports SET status='failed',error_code='INVALID_NEW_CODE'",
+        ),
+        (
+            "audit-message",
+            "UPDATE imports SET message=printf('%2048d',0)",
+        ),
     ] {
         let source = TempDb::new(name);
         let target = TempDb::new(&format!("refused-{name}"));

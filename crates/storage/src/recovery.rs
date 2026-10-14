@@ -84,6 +84,16 @@ fn open_source(path: &Path) -> Result<Connection> {
     if total > MAX_BACKUP_BYTES {
         return Err(storage("Backup and sidecars exceed 512 MiB"));
     }
+    // Reject invalid file headers before SQLite can initialize a shared-memory
+    // sidecar for a broken source. WAL locks/SHM are SQLite-managed for valid DBs.
+    use std::io::Read;
+    let mut header = [0u8; 16];
+    std::fs::File::open(path)
+        .and_then(|mut file| file.read_exact(&mut header))
+        .map_err(|_| storage("Backup is not a readable SQLite database"))?;
+    if &header != b"SQLite format 3\0" {
+        return Err(storage("Backup is not a SQLite database"));
+    }
     // READ_ONLY, no URI interpretation, extension loading is not enabled.
     let conn = Connection::open_with_flags(
         path,
@@ -109,6 +119,15 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
         }
     }
     let version = version.ok_or_else(|| storage("Backup schema is unsupported or modified"))?;
+    // A newly registered migration must also register its recovery table copier;
+    // refusing is safer than accepting its schema and silently dropping state.
+    if actual.iter().any(|(kind, name, _, _)| {
+        kind == "table" && name != "schema_migrations" && !TABLES.contains(&name.as_str())
+    }) {
+        return Err(storage(
+            "Recovery copier does not support every schema table",
+        ));
+    }
     let mut history = input
         .prepare("SELECT version,name FROM schema_migrations ORDER BY version LIMIT 10")
         .db()?;
@@ -399,6 +418,28 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
         azeroth_core::types::UtcMillis::new(now)?;
         if reason.trim().is_empty() || reason.len() > 1024 {
             return Err(storage("Promotion audit exceeds bounds"));
+        }
+    }
+    let mut audits = conn
+        .prepare("SELECT error_code,message FROM imports")
+        .db()?;
+    for row in audits
+        .query_map([], |r| {
+            Ok((
+                r.get::<_, Option<String>>(0)?,
+                r.get::<_, Option<String>>(1)?,
+            ))
+        })
+        .db()?
+    {
+        let (code, message) = row.db()?;
+        if let Some(code) = code {
+            let _: azeroth_core::error::ErrorCode =
+                serde_json::from_value(serde_json::Value::String(code))
+                    .map_err(|_| storage("Import audit error code is invalid"))?;
+        }
+        if message.is_some_and(|text| text.len() > 1024) {
+            return Err(storage("Import audit message exceeds bounds"));
         }
     }
     let mut receipts=conn.prepare("SELECT received_at_utc_ms FROM snapshots WHERE received_at_utc_ms IS NOT NULL UNION ALL SELECT received_at_utc_ms FROM imports WHERE received_at_utc_ms IS NOT NULL").db()?;
