@@ -37,14 +37,17 @@ workflows; actual checks and limits are in the v0.5.0 release handoff.
 | Task | Sole writer | Worktree / branch | Scope |
 | --- | --- | --- | --- |
 | M4.3 conservative clustering | /root/backlog_audit | /tmp/navzeroth-wave6-clustering; feat/objective-clustering | New pure core clustering module, module export, fixtures/tests |
-| M5.4 route-derived acquisition | /root/release_review | /tmp/navzeroth-wave6-route-acquisition; feat/route-acquisition | New app feature module/tests, feature-local DTO/Panel, GearScreen |
-| M4.5/M7.5 agreed recipient export | /root/atlas_dense | /tmp/navzeroth-wave6-recipient-export; feat/agreed-recipient-export | New app feature module/tests, PartyAgreement UI, Lua harness regressions |
+| M5.4 route-derived acquisition | /root/release_review | /tmp/navzeroth-wave6-route-acquisition; feat/route-acquisition | New app feature module/tests, feature-local DTO/Panel, GearScreen and acquisition-specific additive command wiring |
+| M4.5/M7.5 agreed recipient export | /root/atlas_dense | /tmp/navzeroth-wave6-recipient-export; feat/agreed-recipient-export | New app feature module/tests, PartyAgreement UI, Lua harness regressions and recipient-specific additive command wiring |
 | Coordination | /root | /tmp/navzeroth-wave6-coordination; docs/wave6-coordination | STATUS/ledger, publication evidence and ownership |
-| Shared integration, after API freeze | /root | Separate claimed worktree/PR | Existing planners, app module exports, publication-guard helpers, native/client/contract/demo SDK wiring |
+| Shared integration, after API freeze | /root | Separate claimed worktree/PR | Existing planners and publication-guard helpers; reconcile additive feature wiring |
 
 Each worker claims exact baseline before code, owns its task exclusively and pushes
-small coherent commits in a separate draft PR. Shared root wiring follows frozen
-APIs and is a separate PR. Focused independent review and all nine fresh exact-head
+small coherent commits in a separate draft PR. Each feature PR includes its own additive app/native/SDK registration so hosted
+checks compile independently; this amends the initial root-only registration
+boundary. Workers touch only their feature entries in isolated worktrees; root
+reconciles any same-file conflicts and reruns checks. Existing planner integration
+and guard helpers remain root-owned separate PRs. Focused independent review and all nine fresh exact-head
 hosted checks precede every protected-main merge. Combined checks and exact-source
 PR/main/tag asset verification precede the next minor preview release.
 
