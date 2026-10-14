@@ -70,6 +70,8 @@ export const demoAdapter: CommandAdapter = {
         case "create_database_backup":
         case "inspect_database_backup":
         case "restore_database_backup": throw { code: "PROVIDER_UNAVAILABLE", message: "Database recovery is available in the native desktop application", retryable: false };
+        case "get_content_dispositions":
+        case "change_content_disposition":
         case "get_compatibility_report": throw { code: "PROVIDER_UNAVAILABLE", message: "Select imported data in the native application to inspect exact active source coverage", retryable: false };
         case "get_app_settings":return {revision:0,settings:defaultSettings()};
         case "get_today_view":return {schema_version:1,settings_revision:0,selected_subject:{kind:"character",profile_id:DEMO_PROFILE_ID},members:[{profile_id:DEMO_PROFILE_ID,character:snapshot.payload.character,snapshot_id:snapshot.payload.id,freshness:{status:"uncertain",reason:"missing_or_untrusted_time"}}],selection_available:true,manual_goal:null,current_plan:{revision:1,state:"empty",subject:null,fixture:null,context:null,saved_at_utc_ms:null,evaluated_at_utc_ms:null,age_ms:null,reason:null,summary:null}};

@@ -542,6 +542,38 @@ impl SnapshotApplication {
         )?;
         Ok(result)
     }
+    pub fn content_governance(
+        &self,
+        profile_id: &str,
+    ) -> Result<crate::content_dispositions::ContentGovernance> {
+        let state = self.lock()?;
+        let key = resolve(&state.store, profile_id)?;
+        crate::content_dispositions::read(
+            &state.store,
+            azeroth_storage::content::ContentScope {
+                context: key.context,
+                fixture: key.fixture,
+            },
+        )
+    }
+    pub fn change_content_disposition(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::content_dispositions::ContentDecision> {
+        let request = crate::content_dispositions::parse(text)?;
+        let mut state = self.lock()?;
+        let key = resolve(&state.store, &request.profile_id)?;
+        crate::content_dispositions::change(
+            &mut state.store,
+            &azeroth_storage::content::ContentScope {
+                context: key.context,
+                fixture: key.fixture,
+            },
+            &request,
+            now,
+        )
+    }
     pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
         if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
             return Err(error(

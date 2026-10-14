@@ -54,6 +54,8 @@ export function createClient(adapter: CommandAdapter) {
     pinCurrentPlan:(jobId:string,expectedRevision:number)=>run(()=>adapter.invoke("pin_current_plan",{job_id:jobId,expected_revision:expectedRevision})),
     clearCurrentPlan:(expectedRevision:number)=>run(()=>adapter.invoke("clear_current_plan",{expected_revision:expectedRevision})),
     
+    getContentDispositions: (profileId:string) => run(() => adapter.invoke("get_content_dispositions",{profile_id:profileId})),
+    changeContentDisposition: (text:string) => run(() => adapter.invoke("change_content_disposition",{text})),
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
     getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
     getReferenceWindowState: () => run(() => adapter.invoke("get_reference_window_state",undefined)),
