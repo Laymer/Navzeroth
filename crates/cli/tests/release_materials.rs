@@ -223,6 +223,43 @@ fn selected_closure_is_deterministic_inert_exact_and_private_proofs_are_excluded
 }
 
 #[test]
+fn declared_public_notices_can_also_support_permission_without_selecting_proof_copies() {
+    for notice in ["license", "attribution"] {
+        for separate_copy in [false, true] {
+            let temp = Temp::new(true);
+            let public_path = format!("vendor/{notice}.txt");
+            let proof_path = if separate_copy {
+                temp.write(
+                    "docs/public-notice-proof-copy.txt",
+                    &fs::read(temp.0.join(&public_path)).unwrap(),
+                );
+                "docs/public-notice-proof-copy.txt"
+            } else {
+                &public_path
+            };
+            let mut evidence = temp.read(EVIDENCE);
+            evidence["sources"][0]["permission_evidence"] = json!([temp.reference(proof_path)]);
+            temp.json(EVIDENCE, &evidence);
+            temp.commit();
+
+            let manifest = materials::plan(&temp.options()).unwrap();
+            assert_eq!(manifest.files.len(), 6);
+            assert!(
+                manifest
+                    .files
+                    .iter()
+                    .any(|f| f.input.path.as_str() == public_path)
+            );
+            let bytes = manifest.bytes().unwrap();
+            let public_metadata = String::from_utf8(bytes).unwrap();
+            assert!(!public_metadata.contains("proof-copy"));
+            assert!(!public_metadata.contains("private-proof"));
+            assert!(!public_metadata.contains("permission_evidence"));
+        }
+    }
+}
+
+#[test]
 fn empty_preview_selection_does_not_create_output() {
     let temp = Temp::new(false);
     let output = temp.0.join("output");

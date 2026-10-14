@@ -38,8 +38,11 @@ source IDs/revisions/origin metadata and each exact input/archive path and hash.
 Files are sorted by portable archive path. Private enumeration, coverage,
 acceptance, permission and target proofs are never selected automatically. A
 selected file that overlaps a private proof by path **or exact content hash** is
-refused, so the public-material and private-proof roles must be disjoint. Only
-declared source/license/attribution fields enter the public source metadata.
+refused, except for bytes explicitly declared as a public license or attribution
+notice. A public LICENSE can therefore also substantiate permission, including
+through an identical proof copy. This exception never selects the proof-copy
+path or proof metadata; only declared source/license/attribution fields enter
+the public source metadata. Other proof-only material stays excluded.
 
 The archive keeps the original terms and bytes in two separate trees:
 
@@ -55,6 +58,8 @@ When the verified selection is nonempty, Windows packaging additionally emits
 entries are sorted with a fixed source timestamp. The asset manifest records the
 exact release file set, candidate commit, sizes and hashes; checksums cover both
 public manifests, the ZIP and the ordinary installer/addon/metadata files.
+The asset manifest uses compact ordered JSON with identical formatting in
+Windows PowerShell 5.1 and PowerShell 7.
 Schema-version changes require explicit compatibility work; current verification
 compares the canonical manifests to a freshly generated expected selection.
 

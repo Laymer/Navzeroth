@@ -90,6 +90,12 @@ try {
     Write-Text (Join-Path $output 'SOURCE_COMMIT.txt') ($head + "`n")
     Write-Text (Join-Path $output 'AzerothNavigator-addon-0.8.1.zip') 'synthetic addon artifact'
     $null = Write-ReleaseArtifactManifest $root '0.8.1' $output $true $selection
+    $expectedFiles = foreach ($fileName in @('AzerothNavigator-addon-0.8.1.zip', 'AzerothNavigator-materials-0.8.1.zip', 'RELEASE_MATERIALS.json', 'SOURCE_COMMIT.txt')) {
+        $filePath = Join-Path $output $fileName
+        '{"path":"' + $fileName + '","bytes":' + (Get-Item -LiteralPath $filePath).Length + ',"sha256":"' + (Get-FileHash -LiteralPath $filePath).Hash.ToLowerInvariant() + '"}'
+    }
+    $expectedManifest = '{"schema_version":1,"version":"0.8.1","source_commit":"' + $head + '","files":[' + ($expectedFiles -join ',') + "]}`n"
+    Check 'asset manifest has fixed canonical bytes across PowerShell versions' ((Read-BoundedReleaseText (Join-Path $output 'RELEASE_ASSETS.json')) -ceq $expectedManifest)
     Set-Checksums $output
     Assert-ReleaseArtifacts $root '0.8.1' $output $true
     Check 'complete artifact set validates independently' $true

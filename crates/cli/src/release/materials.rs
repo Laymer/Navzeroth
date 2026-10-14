@@ -173,10 +173,21 @@ pub(super) fn selected_files(
         .iter()
         .map(|f| (f.bytes, f.sha256.as_str()))
         .collect();
+    // A public LICENSE or attribution notice can itself be the permission
+    // evidence. Its explicitly public bytes take precedence; this never adds
+    // a proof-only path to the selected set.
+    let public_notice_hashes: BTreeSet<_> = evidence
+        .sources
+        .iter()
+        .flat_map(|s| s.license_files.iter().chain(&s.attribution_files))
+        .map(|f| (f.bytes, f.sha256.as_str()))
+        .collect();
     let mut selected: BTreeMap<String, MaterialFile> = BTreeMap::new();
     let mut add = |reference: &FileRef, kind: Kind, budget: &mut Budget| -> Result<()> {
-        if private_paths.contains(reference.path.as_str())
-            || private_hashes.contains(&(reference.bytes, reference.sha256.as_str()))
+        let identity = (reference.bytes, reference.sha256.as_str());
+        if !public_notice_hashes.contains(&identity)
+            && (private_paths.contains(reference.path.as_str())
+                || private_hashes.contains(&identity))
         {
             return Err("Private validation or permission evidence cannot be shipped as material");
         }

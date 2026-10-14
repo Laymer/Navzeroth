@@ -195,7 +195,10 @@ function Get-ReleaseArtifactManifest([string] $Root, [string] $Version, [string]
         Assert-RegularReleasePath $path
         [ordered]@{path=$name; bytes=(Get-Item -LiteralPath $path).Length; sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()}
     }
-    return (([ordered]@{schema_version=1; version=$Version; source_commit=$Selection.Manifest.candidate_source_commit; files=@($files)} | ConvertTo-Json -Depth 8).Replace("`r`n", "`n") + "`n")
+    # All values are constrained ASCII names, versions, hashes or integers.
+    # Compact ordered JSON has identical bytes in Windows PowerShell 5.1 and 7;
+    # their indented ConvertTo-Json output does not.
+    return (([ordered]@{schema_version=1; version=$Version; source_commit=$Selection.Manifest.candidate_source_commit; files=@($files)} | ConvertTo-Json -Depth 8 -Compress) + "`n")
 }
 
 function Write-ReleaseArtifactManifest([string] $Root, [string] $Version, [string] $Directory, [bool] $AddonOnly, $Selection) {
