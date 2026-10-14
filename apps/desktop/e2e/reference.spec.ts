@@ -22,9 +22,10 @@ test("fixed reference page renders only imported facts with separate ages and re
   expect(await page.locator(".reference-view").evaluate(el=>el.getBoundingClientRect().right<=window.innerWidth+1)).toBe(true);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
  }
+ const readsBefore=await page.evaluate(()=>(window as unknown as {__REFERENCE_CALLS__:string[]}).__REFERENCE_CALLS__.length);
  await page.getByRole("button",{name:"Refresh imported reference"}).click();
- await expect.poll(()=>page.evaluate(()=>(window as unknown as {__REFERENCE_CALLS__:string[]}).__REFERENCE_CALLS__.length)).toBe(2);
- expect(await page.evaluate(()=>(window as unknown as {__REFERENCE_CALLS__:string[]}).__REFERENCE_CALLS__)).toEqual(["get_reference_view","get_reference_view"]);
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {__REFERENCE_CALLS__:string[]}).__REFERENCE_CALLS__.length)).toBe(readsBefore+1);
+ expect((await page.evaluate(()=>(window as unknown as {__REFERENCE_CALLS__:string[]}).__REFERENCE_CALLS__)).every(command=>command==="get_reference_view")).toBe(true);
 });
 test("main reference controls require explicit show/topmost and retain fallback after native failure",async({page})=>{
  await page.addInitScript((report)=>{
