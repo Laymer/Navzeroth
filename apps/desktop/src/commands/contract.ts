@@ -1,3 +1,4 @@
+import type { CalibrationRequest, CalibrationReport, SessionCalibrationAnnotation } from "./calibration";
 import type { ReminderView } from "./reminders";
 // Typed application command boundary (plan section 13). Mirrors the Rust
 // DTOs in crates/app; wire names are snake_case, exactly as serialized.
@@ -261,6 +262,8 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  set_session_calibration: { input: { profile_id: string; session_id: string; annotation: SessionCalibrationAnnotation }; output: null };
+  get_calibration: { input: { profile_id: string; request: CalibrationRequest }; output: CalibrationReport };
   reminder_view: { input: { profile_id: string }; output: ReminderView };
   mutate_reminders: { input: { text: string }; output: ReminderView };
 

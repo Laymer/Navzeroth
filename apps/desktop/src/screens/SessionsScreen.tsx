@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { AppError, CommandClient, ProfileSummary } from "../commands";
 import type { FileInputFormat } from "../commands/contract";
 import type { SessionAnalytics, SessionDetail, SessionListEntry } from "../commands/sessions";
+import { CalibrationPanel } from "./CalibrationPanel";
 import { describeObservation } from "../observation";
 
 function duration(ms: number): string { return `${(ms / 1000).toFixed(1)} s`; }
@@ -102,6 +103,7 @@ export function SessionsScreen({ client, refreshKey, onChanged }: { client: Comm
     </li>)}</ul>}
     {detail && <><h3>Session detail: {detail.analytics.summary.session}</h3><Analytics value={detail.analytics} />
       <details><summary>Recorded events ({detail.batch.events.length})</summary><pre>{JSON.stringify(detail.batch.events, null, 2)}</pre></details></>}
+    <CalibrationPanel client={client} profile={profile} detail={detail} refreshKey={refreshKey + revision} disabled={!native || !profile || busy} />
     <p>Addon: /anavsession start &lt;anonymous-profile-id&gt;, sample, pause, resume, stop, then export. Export a stopped recording before reload; reload never resumes it. Save with reload/logout and select session_export here. Every sampled running span defaults to unclassified.</p>
   </section>;
 }
@@ -116,6 +118,6 @@ function Analytics({ value }: { value: SessionAnalytics }) {
     {value.clock_flags.length > 0 && <ul>{value.clock_flags.map((flag, index) => <li key={index}>{flag.code.replaceAll("_", " ")} at {duration(flag.at_ms)}</li>)}</ul>}
     <h4>Intervals and gaps</h4><ul>{value.summary.intervals.map((span, index) => <li key={`interval-${index}`}>{duration(span.start_ms)}–{duration(span.end_ms)}: {span.label}, {span.quality}</li>)}{value.summary.gaps.map((gap, index) => <li key={`gap-${index}`}>{duration(gap.start_ms)}–{duration(gap.end_ms)}: gap ({gap.reason})</li>)}</ul>
     <p>{value.summary.methodology}</p>
-    <p>These observations remain separate from planner estimates. Personalized calibration is deferred.</p>
+    <p>These observations remain separate from planner estimates. Conditional personal comparisons require explicit associations and complete supported observations.</p>
   </>;
 }
