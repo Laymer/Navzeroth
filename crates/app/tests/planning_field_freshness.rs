@@ -9,6 +9,10 @@ const SNAPSHOT: &str = include_str!("../../../fixtures/contracts/v1/character-sn
 const BUNDLE: &str = include_str!("../../../fixtures/desktop/planning/synthetic-revision.json");
 const REFERENCE: &str = include_str!("../../../fixtures/contracts/v1/reference-dataset.json");
 const NOW: i64 = 1791792000000;
+// Leave fifty seconds for real calculation time; cross the same typed transition
+// with an explicit later UTC instead of depending on a runner finishing in50ms.
+const INITIAL_FIELD_AGE_MS: i64 = 1_750_000;
+const AFTER_TRANSITION_MS: i64 = 100_000;
 fn stamp(observation: &mut Value, at: i64) {
     observation["source"] = json!("synthetic_fixture");
     observation["clock_trust"] = json!("trusted");
@@ -61,7 +65,7 @@ fn assert_expiry(app: &SnapshotApplication, request: &Value, now: UtcMillis) {
     let report = serde_json::to_value(report).unwrap();
     assert_eq!(report["result"]["selected"].as_array().unwrap().len(), 1);
     let mut published = false;
-    let later = UtcMillis::new(now.get() + 100).unwrap();
+    let later = UtcMillis::new(now.get() + AFTER_TRANSITION_MS).unwrap();
     let result = guard.publish(app, Some(later), &mut || {
         published = true;
         Ok(())
@@ -79,7 +83,7 @@ fn assert_expiry(app: &SnapshotApplication, request: &Value, now: UtcMillis) {
 #[test]
 fn fresh_capture_cannot_publish_level_eligibility_after_independent_field_expiry() {
     let (app, request, now) = setup(
-        |s| stamp(&mut s["payload"]["level"], NOW - 1_799_950),
+        |s| stamp(&mut s["payload"]["level"], NOW - INITIAL_FIELD_AGE_MS),
         |b| requirement(b, json!({"op":"level_at_least","level":22})),
     );
     assert_expiry(&app, &request, now);
@@ -91,7 +95,7 @@ fn nested_equipped_variant_expiry_rejects_eligible_item_comparison() {
             stamp(&mut s["payload"]["equipment"]["main_hand"], NOW - 100);
             stamp(
                 &mut s["payload"]["equipment"]["main_hand"]["value"]["item"]["variant"],
-                NOW - 1_799_950,
+                NOW - INITIAL_FIELD_AGE_MS,
             );
         },
         |b| {
@@ -112,7 +116,7 @@ fn nested_quest_progress_expiry_cannot_publish_accepted_quest_requirement() {
         |s| {
             stamp(
                 &mut s["payload"]["quests"]["demo-quest-1"]["accepted"],
-                NOW - 1_799_950,
+                NOW - INITIAL_FIELD_AGE_MS,
             )
         },
         |b| {
@@ -137,7 +141,7 @@ fn declared_travel_preference_expiry_rejects_a_previously_usable_route() {
                 json!({"status":"known","value":true});
             stamp(
                 &mut s["payload"]["preferences"]["synthetic-travel-unlock"],
-                NOW - 1_799_950,
+                NOW - INITIAL_FIELD_AGE_MS,
             );
         },
         |b| {
@@ -167,7 +171,7 @@ fn unchanged_fresh_classes_preserve_false_zero_and_ignore_extension_metadata() {
                 &mut s["payload"]["equipment"]["main_hand"]["value"]["item"]["modifiers"],
                 NOW - 100,
             );
-            s["x_metadata_lookalike"] = json!({"status":"known","value":true,"clock_trust":"trusted","observed_at_utc_ms":NOW - 1_799_950});
+            s["x_metadata_lookalike"] = json!({"status":"known","value":true,"clock_trust":"trusted","observed_at_utc_ms":NOW - INITIAL_FIELD_AGE_MS});
         },
         |b| {
             let reference: Value = serde_json::from_str(REFERENCE).unwrap();
@@ -196,16 +200,20 @@ fn unchanged_fresh_classes_preserve_false_zero_and_ignore_extension_metadata() {
     );
     let mut published = false;
     guard
-        .publish(&app, Some(UtcMillis::new(NOW + 100).unwrap()), &mut || {
-            published = true;
-            Ok(())
-        })
+        .publish(
+            &app,
+            Some(UtcMillis::new(NOW + AFTER_TRANSITION_MS).unwrap()),
+            &mut || {
+                published = true;
+                Ok(())
+            },
+        )
         .unwrap();
     assert!(published);
     assert_eq!(
         app.plan_session(
             &request.to_string(),
-            Some(UtcMillis::new(NOW + 100).unwrap())
+            Some(UtcMillis::new(NOW + AFTER_TRANSITION_MS).unwrap())
         )
         .unwrap()
         .result
@@ -231,7 +239,7 @@ fn already_stale_or_unavailable_observations_keep_unchanged_filtered_results() {
                 } else if status == "uncertain_known" {
                     s["payload"]["level"]["clock_trust"] = json!("uncertain");
                 } else {
-                    s["payload"]["level"] = json!({"status":status,"clock_trust":"trusted","observed_at_utc_ms":NOW - 1_799_950});
+                    s["payload"]["level"] = json!({"status":status,"clock_trust":"trusted","observed_at_utc_ms":NOW - INITIAL_FIELD_AGE_MS});
                 }
             },
             |b| requirement(b, json!({"op":"level_at_least","level":22})),
@@ -252,10 +260,14 @@ fn already_stale_or_unavailable_observations_keep_unchanged_filtered_results() {
         );
         let mut published = false;
         guard
-            .publish(&app, Some(UtcMillis::new(NOW + 100).unwrap()), &mut || {
-                published = true;
-                Ok(())
-            })
+            .publish(
+                &app,
+                Some(UtcMillis::new(NOW + AFTER_TRANSITION_MS).unwrap()),
+                &mut || {
+                    published = true;
+                    Ok(())
+                },
+            )
             .unwrap();
         assert!(published);
     }
@@ -263,7 +275,7 @@ fn already_stale_or_unavailable_observations_keep_unchanged_filtered_results() {
 #[test]
 fn newly_usable_previously_uncertain_field_requires_recalculation() {
     let (app, request, now) = setup(
-        |s| stamp(&mut s["payload"]["level"], NOW + 50),
+        |s| stamp(&mut s["payload"]["level"], NOW + 50_000),
         |b| requirement(b, json!({"op":"level_at_least","level":22})),
     );
     let (_, guard) = app
@@ -276,9 +288,11 @@ fn newly_usable_previously_uncertain_field_requires_recalculation() {
         .unwrap();
     assert_eq!(
         guard
-            .publish(&app, Some(UtcMillis::new(NOW + 100).unwrap()), &mut || Ok(
-                ()
-            ))
+            .publish(
+                &app,
+                Some(UtcMillis::new(NOW + AFTER_TRANSITION_MS).unwrap()),
+                &mut || Ok(())
+            )
             .unwrap_err()
             .code,
         ErrorCode::SnapshotOutdated
