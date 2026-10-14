@@ -1,3 +1,4 @@
+import { CompatibilityPanel } from "./screens/CompatibilityPanel";
 import { DiagnosticsPanel } from "./screens/DiagnosticsPanel";
 import { RecoveryPanel } from "./screens/RecoveryPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -15,9 +16,10 @@ import { SessionsScreen } from "./screens/SessionsScreen";
 import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
 
-type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics";
+type Screen = "compatibility" | "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
+  { id: "compatibility", label: "Compatibility and coverage" },
   { id: "diagnostics", label: "Local diagnostics" },
   { id: "recovery", label: "Backup and recovery" },
   { id: "atlas", label: "Atlas" },
@@ -111,6 +113,7 @@ export function App({ client }: { client: CommandClient }) {
         </nav>
       )}
       {(load.phase === "ready" || load.phase === "error") && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
+      {load.phase === "ready" && screen === "compatibility" && <CompatibilityPanel client={client} profileId={load.status.active_profile} refreshKey={revision} />}
       {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} freshness={load.freshness} />}
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}

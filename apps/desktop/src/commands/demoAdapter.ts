@@ -68,6 +68,7 @@ export const demoAdapter: CommandAdapter = {
         case "create_database_backup":
         case "inspect_database_backup":
         case "restore_database_backup": throw { code: "PROVIDER_UNAVAILABLE", message: "Database recovery is available in the native desktop application", retryable: false };
+        case "get_compatibility_report": throw { code: "PROVIDER_UNAVAILABLE", message: "Select imported data in the native application to inspect exact active source coverage", retryable: false };
         case "get_app_status":
           return {
             version: "0.5.0",
