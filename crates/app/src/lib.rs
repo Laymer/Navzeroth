@@ -131,4 +131,5 @@ mod tests {
 pub mod sessions;
 
 pub mod calibration;
+pub mod joint_planning;
 pub mod reminders;

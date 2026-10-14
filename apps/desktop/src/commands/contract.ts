@@ -1,3 +1,4 @@
+import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
 import type { CalibrationRequest, CalibrationReport, SessionCalibrationAnnotation } from "./calibration";
 import type { ReminderView } from "./reminders";
 // Typed application command boundary (plan section 13). Mirrors the Rust
@@ -262,6 +263,8 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_joint_planning_catalog: { input: { party_id: string }; output: JointPlanningCatalog };
+  plan_joint_session: { input: { text: string }; output: JointPlanningReport };
   set_session_calibration: { input: { profile_id: string; session_id: string; annotation: SessionCalibrationAnnotation }; output: null };
   get_calibration: { input: { profile_id: string; request: CalibrationRequest }; output: CalibrationReport };
   reminder_view: { input: { profile_id: string }; output: ReminderView };
