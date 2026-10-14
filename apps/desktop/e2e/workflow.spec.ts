@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { syntheticRoute } from "../src/screens/test-fixtures/route";
 import planning from "../../../fixtures/desktop/planning/synthetic-revision.json" with { type: "json" };
 import snapshot from "../../../fixtures/contracts/v1/character-snapshot.json" with { type: "json" };
 import view from "../../../fixtures/desktop/atlas/query-atlas.json" with { type: "json" };
@@ -6,7 +7,13 @@ import markers from "../../../fixtures/desktop/atlas/snapshot-markers-uncertain.
 
 /** Mock the existing native adapter at its command boundary; no product test hook. */
 async function mockCommands(page: Page) {
-  await page.addInitScript(({ snapshot, view, markers, planning }) => {
+  await page.addInitScript(({ snapshot, view, markers, planning, denseRoute }) => {
+    const context = snapshot.payload.context as typeof denseRoute.context;
+    denseRoute.context = context;
+    for (const frame of denseRoute.frames) frame.map.context = context;
+    for (const hop of denseRoute.hops) { hop.hop.from.map.context = context; hop.hop.to.map.context = context; }
+    const tail = denseRoute.hops.at(-1);
+    if (tail) { tail.schematic_connection = false; tail.geometry_gap = "Synthetic tail gap: no floor connection"; }
     let selected: string | null = null;
     const imported = new Set<string>();
     const calls: { command: string; args: Record<string, unknown> }[] = [];
@@ -47,7 +54,7 @@ async function mockCommands(page: Page) {
           case "list_local_submissions": return { rows: [], next: null, total: 0 };
           case "get_active_content": return activeContent ? inspection : null;
           case "get_planning_catalog": return { snapshot_id: "current-profile-one", revision: activeContent ? planning.envelope.payload.revision : null, fixture: true, nodes: planning.envelope.payload.nodes, objectives: planning.envelope.payload.objectives };
-          case "inspect_plan_route": return { context: snapshot.payload.context, fixture: true, frames: [], hops: [{ leg: 0, stopping: false, hop: { from: { id: "demo-node-1" }, to: { id: "demo-node-2" }, mode: "walking", cost_ms: 30000, status: "estimated" }, from: { outcome: "gap", gap: "no_image_for_map" }, to: { outcome: "gap", gap: "no_image_for_map" }, requirements: { status: "not_applicable" }, schematic_connection: false, geometry_gap: "Exact dataset projection unavailable; inspect endpoint gaps" }] };
+          case "inspect_plan_route": if (Reflect.get(window, "__DENSE_ROUTE_MOCK__")) return { ...denseRoute, report: planningReport }; return { report: planningReport, context: snapshot.payload.context, fixture: true, frames: [], hops: [{ leg: 0, stopping: false, hop: { from: { id: "demo-node-1" }, to: { id: "demo-node-2" }, mode: "walking", cost_ms: 30000, status: "estimated" }, from: { outcome: "gap", gap: "no_image_for_map" }, to: { outcome: "gap", gap: "no_image_for_map" }, requirements: { status: "not_applicable" }, schematic_connection: false, geometry_gap: "Exact dataset projection unavailable; inspect endpoint gaps" }] };
           case "export_plan": return { text: "ANAV1:synthetic-command-mock", byte_count: 28, plan_id: "mock-plan", expires_at_utc_ms: 1 };
           case "start_planning_job": {
             if (args.kind !== "solo") throw new Error("Unexpected planning kind");
@@ -79,7 +86,7 @@ async function mockCommands(page: Page) {
         }
       },
     } });
-  }, { snapshot, view, markers, planning });
+  }, { snapshot, view, markers, planning, denseRoute: syntheticRoute() });
 }
 
 test.beforeEach(async ({ page }) => { await page.clock.install(); await mockCommands(page); await page.goto("/"); });
@@ -238,4 +245,27 @@ test("content activation enables explicit planning and editing invalidates the r
   await page.getByLabel("Budget (ms)").fill("100");
   await expect(page.getByLabel("Plan export text")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Planning result" })).toHaveCount(0);
+});
+
+
+test("route segment keyboard selection retains the tail and fits only schematic frame endpoints", async ({page}) => {
+  await page.evaluate(()=>Reflect.set(window,"__DENSE_ROUTE_MOCK__",true));
+  await page.getByRole("button",{name:"Imports",exact:true}).click();
+  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-one");await page.getByRole("button",{name:"Import text",exact:true}).click();
+  await page.getByRole("button",{name:"Content",exact:true}).click();await page.getByRole("button",{name:"Load synthetic planning example"}).click();await page.getByRole("button",{name:"Validate and stage content"}).click();await page.getByRole("button",{name:"Activate staged revision"}).click();
+  await page.getByRole("button",{name:"Planner",exact:true}).click();await page.getByRole("combobox",{name:"Origin",exact:true}).selectOption("demo-node-1");await page.getByRole("combobox",{name:"Stopping node",exact:true}).selectOption("demo-node-1");await page.getByRole("button",{name:"Plan session",exact:true}).click();await page.getByRole("button",{name:"Inspect route",exact:true}).click();
+  const route=page.getByRole("region",{name:"Route inspection",exact:true});
+  await expect(route.getByRole("button",{name:/Select hop/})).toHaveCount(50);
+  await expect(route.locator('[data-route-hop="0"]')).toHaveAttribute("data-selected","true");
+  const line=route.locator('[data-route-hop="0"] line');
+  const before=await line.evaluate(el=>Number(el.getAttribute("x2"))-Number(el.getAttribute("x1")));
+  await route.getByRole("button",{name:"Fit selected hop endpoints",exact:true}).click();
+  await expect.poll(()=>line.evaluate(el=>Number(el.getAttribute("x2"))-Number(el.getAttribute("x1")))).toBeGreaterThan(before);
+  await route.getByRole("button",{name:/Select hop 1:/}).press("End");
+  await expect(route.getByRole("button",{name:/Select hop 103:/})).toBeFocused();await expect(route.getByRole("button",{name:/Select hop/})).toHaveCount(3);
+  await expect(route.getByText("Synthetic tail gap: no floor connection",{exact:true})).toBeVisible();await expect(route.locator('[data-route-hop="102"]')).toHaveCount(0);await expect(route.getByRole("button",{name:"Fit selected hop endpoints"})).toBeDisabled();
+  await route.getByRole("button",{name:"Previous route hop page",exact:true}).click();await expect(route.getByRole("button",{name:/Select hop 51:/})).toBeFocused();
+  await route.getByRole("button",{name:/Select hop 51:/}).press("Home");await expect(route.getByRole("button",{name:/Select hop 1:/})).toBeFocused();
+  await route.getByRole("button",{name:"Next route frame",exact:true}).click();await expect(route.getByRole("group",{name:"Schematic route frame synthetic-other-floor"})).toBeVisible();await expect(route.locator('[data-route-hop]')).toHaveCount(0);await expect(route.getByRole("button",{name:"Fit route endpoints in this frame"})).toBeDisabled();
+  await page.getByLabel("Budget (ms)").fill("100");await expect(route).toHaveCount(0);
 });
