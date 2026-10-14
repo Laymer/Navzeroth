@@ -858,10 +858,6 @@ pub fn report(options: &Options) -> Result<Report> {
             tested_source_commit: tested,
         },
     )?;
-    // Removed only by the packaging integration that delivers and verifies the plan.
-    readiness.block(
-        "Stable offline content and required source/license asset delivery is not implemented",
-    );
     let status = production_status(&root)?;
     if !status.is_empty() {
         readiness.block("Production working tree contains tracked or untracked changes");

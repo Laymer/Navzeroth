@@ -68,6 +68,7 @@ $OnWindows = [Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT
 $RepoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot (Join-Path '..' '..')))
 if (-not $OutputDirectory) { $OutputDirectory = Join-Path (Join-Path $RepoRoot 'dist') 'windows' }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
+. (Join-Path $PSScriptRoot 'Release-Materials.ps1')
 
 function Write-Step([string] $Message) { Write-Host "==> $Message" -ForegroundColor Cyan }
 
@@ -295,21 +296,7 @@ function Assert-CleanTree([string] $When) {
 function Assert-ReleaseReadiness([string] $Version) {
     # Match the CLI's strict version subset. Malformed input must never turn a
     # stable release into an exempt preview. AddonOnly/AllowDirty do not bypass it.
-    $parts = $Version -split '-', 2
-    if ($parts[0] -notmatch '^(0|[1-9][0-9]{0,8})\.(0|[1-9][0-9]{0,8})\.(0|[1-9][0-9]{0,8})$') {
-        throw 'Invalid release version.'
-    }
-    if ($parts.Count -eq 2) {
-        if ($parts[1].Length -gt 128) { throw 'Invalid prerelease version.' }
-        foreach ($identifier in ($parts[1] -split '\.')) {
-            if ($identifier -notmatch '^[0-9A-Za-z-]+$' -or
-                ($identifier -match '^[0-9]+$' -and $identifier.Length -gt 1 -and $identifier.StartsWith('0'))) {
-                throw 'Invalid prerelease version.'
-            }
-        }
-        return
-    }
-    if ($parts[0].StartsWith('0.')) { return }
+    if (-not (Test-StableReleaseVersion $Version)) { return }
     # Git status respects ignores, while both New-AddonZip and the installer
     # resource mapping recursively include addon files. Refuse extra bytes and
     # reparse points before either path can package them, even with AllowDirty.
@@ -399,11 +386,13 @@ if (-not $AddonOnly) {
 }
 # Refuse an unready stable version before removing or writing any output files.
 Assert-ReleaseReadiness $version
+$materialSelection = Get-ReleaseMaterialSelection $RepoRoot $version
+Assert-ReleaseDestination $OutputDirectory
 
 # Remove only files an earlier run of this script wrote; never the directory itself.
 if (Test-Path -LiteralPath $OutputDirectory) {
     Get-ChildItem -LiteralPath $OutputDirectory -File |
-        Where-Object { $_.Name -like "$AddonName-*-x64-setup.exe" -or $_.Name -like "$AddonName-addon-*.zip" -or @('SHA256SUMS.txt', 'SOURCE_COMMIT.txt', 'CANDIDATE_NOTES.md') -contains $_.Name } |
+        Where-Object { $_.Name -like "$AddonName-*-x64-setup.exe" -or $_.Name -like "$AddonName-addon-*.zip" -or $_.Name -like "$AddonName-materials-*.zip" -or @('SHA256SUMS.txt', 'SOURCE_COMMIT.txt', 'CANDIDATE_NOTES.md', 'RELEASE_MATERIALS.json', 'RELEASE_ASSETS.json') -contains $_.Name } |
         Remove-Item
 }
 else { New-Item -ItemType Directory -Path $OutputDirectory | Out-Null }
@@ -413,6 +402,7 @@ if (-not $AddonOnly) {
     $artifacts += Build-Installer $version
 }
 $artifacts += New-AddonZip $version
+$artifacts += New-ReleaseMaterials $RepoRoot $version $OutputDirectory $materialSelection (Get-SourceDateEpoch)
 # Candidate downloads identify their exact source without creating a tag/release.
 $sourceCommit = Get-NativeOutput 'git' @('-C', $RepoRoot, 'rev-parse', 'HEAD')
 if (-not $sourceCommit -or $sourceCommit -notmatch '^[0-9a-f]{40}$') { throw 'Cannot identify candidate source commit.' }
@@ -428,7 +418,9 @@ if (Test-Path -LiteralPath $notesPath -PathType Leaf) {
 # Tool-driven builds must not add packaging inputs or modify tested production
 # bytes after the first gate. Refuse before checksums/upload can finalize them.
 Assert-ReleaseReadiness $version
+$artifacts += Write-ReleaseArtifactManifest $RepoRoot $version $OutputDirectory ([bool]$AddonOnly) $materialSelection
 Write-Checksums $artifacts
+Assert-ReleaseArtifacts $RepoRoot $version $OutputDirectory ([bool]$AddonOnly)
 Assert-CleanTree 'after the build'
 
 Write-Step ("Done in {0:N0} s. Release files are in {1}" -f ((Get-Date) - $started).TotalSeconds, $OutputDirectory)
