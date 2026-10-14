@@ -1,8 +1,8 @@
 # Implementation task ledger — recurring release program
 
-Published baseline: main `739a822`, `v0.6.0`. Owner: Codex /root.
-Fresh released-source audit: [wave7 coordination](handoffs/2026-10-14-wave7-coordination.md).
-Exact task/candidate checks: [candidate reconciliation](handoffs/2026-10-14-v0.6.0-release.md).
+Published baseline: main `035f28e`, `v0.7.0`. Owner: Codex /root.
+Fresh released-source audit: [wave8 coordination](handoffs/2026-10-14-wave8-coordination.md).
+Exact task/candidate checks: [candidate reconciliation](handoffs/2026-10-14-v0.7.0-release.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
@@ -178,3 +178,10 @@ then run another parallel PR/release batch. Imported snapshots, permitted addon
 observations, exact contexts and all reported data states remain unchanged in scope.
 World expansion still requires the focused-release evidence; missing real sources,
 models, capability/format evidence and native/live measurements remain blockers.
+
+## v0.7.0 published-source audit
+
+Published2026-10-14T15:14:38Z at035f28e with five verified assets. Wave7 scopes
+are implemented; the three remaining finite section12 UI gaps are now claimed by
+distinct wave8 writers. Exact publication/review/check provenance and external
+unblock requirements are in the wave8 handoff. No task is promoted to live VERIFIED.
