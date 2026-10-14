@@ -17,6 +17,7 @@ export interface JointPlanningRequest {
   budget_ms: number; stopping_service_ms: number; candidates: JointEstimate[]; excluded: string[];
 }
 export interface JointPlanningReport {
+  clustering?: import("../commands/clustering").ClusteringMetadata;
   request: JointPlanningRequest; context: DataContext; fixture: boolean; participants: JointMember[];
   filtered: { objective: string; reason: string }[]; assumptions: string[];
   result: {
