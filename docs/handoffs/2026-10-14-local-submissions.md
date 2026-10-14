@@ -145,3 +145,34 @@ UTF8 bytes. New129/256 ASCII and256 UTF8 positives plus257/258-byte negatives
 preserve source identities. Root owns a separate migration10 widening the column
 without rewriting committed schema9. Positive persistence checks depend on that
 frozen foundation commit; no migration/recovery code was edited here.
+
+## SourceId dependency verification
+
+Normal merge6509a3c imports root's separately owned migration10 widening source_id
+and its preservation/history checks; schema9 is unchanged. On the combined source,
+129/256-byte ASCII and256-byte UTF8 registered sources actually stage, submit,
+read and deduplicate. Core rejects257/258-byte IDs. All7 storage and8 app submission
+cases are included in the fresh full Rust run;4 pure cases passed. Full totals and
+strict checks are recorded in the next final check note. Logs
+/tmp/navzeroth-submissions-{rust,clippy}-schema10.log. Affected6 desktop tests,
+typecheck/lint/fmt/diff passed after full context labels were added to queue rows.
+The queue explicitly spans all local contexts; edition/build/interface/namespace/
+fixture are displayed before a local decision. No migration/recovery file was
+edited by this worker.
+
+Independent read-only quarantine review atf5798e6 passed10 storage+2 app focused
+cases and strict Clippy, but found a valid129-byte revision blocked by that module's
+128-byte guard reads. Separate external Rust repro confirmed successful staging/
+raw read followed by rejected guard/activation. The sole writer fixed all tuple
+bounds to256 in71d6983, final8cced745. Independent11-case rerun and original repro
+now pass against that exact corrected head. No peer files were edited. Other
+fallback/CAS/terminal/immutable-source/recovery-validator checks found no concrete
+blocker. Logs /tmp/navzeroth-peer-quarantine-*.log and
+/tmp/navzeroth-quarantine-long-identity-{repro,fixed}.log.
+
+Final combined schema10 source check:579 core/storage/app Rust tests passed,
+0 failures/ignored; strict all-target Clippy passed. Affected6 desktop tests and
+strict typecheck/lint/fmt/diff passed. Prior full160 desktop/build checks apply to
+unchanged command/UI behavior except the separately checked full-context row text.
+Native/live acceptance and combined post-merge browser integration remain explicitly
+unverified here. This handoff replaces earlier pending SourceId dependency notes.
