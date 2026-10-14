@@ -108,6 +108,22 @@ fn detour_rejoins_selected_route_and_reserves_baseline_return_once() {
             ("report", output.clone()),
             ("input", input.clone()),
             (
+                "stored-snapshot",
+                serde_json::to_value(
+                    app.current(input["planning"]["profile_id"].as_str().unwrap(), now())
+                        .unwrap(),
+                )
+                .unwrap(),
+            ),
+            (
+                "gear-catalog",
+                serde_json::to_value(
+                    app.gear_catalog(input["planning"]["profile_id"].as_str().unwrap())
+                        .unwrap(),
+                )
+                .unwrap(),
+            ),
+            (
                 "catalog",
                 serde_json::to_value(
                     app.planning_catalog(input["planning"]["profile_id"].as_str().unwrap())
@@ -233,7 +249,23 @@ fn optional_gear_receives_only_authoritative_derived_effort() {
     let (app, mut input, _) = setup(|_| {});
     let key = input["opportunities"][0]["target"].clone();
     input["gear"] = json!({"profile_id":input["planning"]["profile_id"],"snapshot_id":input["planning"]["snapshot_id"],"revision":"synthetic-planning-v1","model":{"role":"manual","version":"gear-model-v1","weight_source":{"type":"synthetic_test"},"weights":{"power":1000},"known_unmodeled":[]},"layout":{"slots":["head"],"hands":null},"class":{"status":"unknown"},"proficiency":{"classes":{}},"candidates":[{"item":key,"category":{"status":"not_applicable"},"acquisition":null}]});
+    input["opportunities"][0]["formation_ms"] = json!({"status":"known","value":2000});
+    input["opportunities"][0]["attempt_ms"] = json!({"status":"known","value":10000});
     let r = run(&app, &input);
+    if std::env::var_os("UPDATE_ROUTE_ACQUISITION_GOLDENS").is_some() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../fixtures/desktop/route-acquisition");
+        for (name, value) in [
+            ("report-with-gear", r.clone()),
+            ("gear-request", input["gear"].clone()),
+        ] {
+            std::fs::write(
+                dir.join(format!("{name}.json")),
+                format!("{}\n", serde_json::to_string_pretty(&value).unwrap()),
+            )
+            .unwrap();
+        }
+    }
     assert_eq!(
         r["gear"]["request"]["candidates"][0]["acquisition"]["effort"]["incremental_travel_ms"]["value"],
         5000
@@ -249,7 +281,7 @@ fn optional_gear_receives_only_authoritative_derived_effort() {
 #[test]
 fn selected_quest_rewards_prevent_duplicate_full_item_credit_and_missing_coverage_blocks_credit() {
     for unknown in [false, true] {
-        let (app, input, _) = setup(|c| {
+        let (app, mut input, _) = setup(|c| {
             let original: Value = serde_json::from_str(include_str!(
                 "../../../fixtures/desktop/content/demo-revision.json"
             ))
@@ -263,7 +295,12 @@ fn selected_quest_rewards_prevent_duplicate_full_item_credit_and_missing_coverag
             c["envelope"]["payload"]["objectives"][0]["targets"] =
                 json!([{"kind":"quest_stage","quest":"demo-quest-1","stage":"demo-objective-1"}]);
         });
+        input["gear"] = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/route-acquisition/gear-request.json"
+        ))
+        .unwrap();
         let r = run(&app, &input);
+        assert!(r["gear"]["practical"].as_array().unwrap().is_empty());
         assert_eq!(
             r["baseline"]["planning_report"]["result"]["selected"]
                 .as_array()
@@ -367,4 +404,32 @@ fn quest_reward_deduplication_uses_complete_variant_identity() {
             .unwrap()
             <= input["planning"]["budget_ms"].as_u64().unwrap()
     );
+}
+#[test]
+fn verified_reserved_action_is_never_used_outbound_but_can_remain_at_route_ending() {
+    let (app, input, _) = setup(|c| {
+        let e = &mut c["envelope"]["payload"]["edges"][2];
+        e["mode"] = json!("return");
+        e["status"] = json!("verified");
+        e["evidence"] = json!(["demo-evidence-1"]);
+        e["cooldown_ms"] = known(json!(0));
+    });
+    let r = run(&app, &input);
+    assert_eq!(
+        r["opportunities"][0]["detour"]["reason"],
+        "unsafe_stateful_action"
+    );
+    assert!(r["opportunities"][0]["assessment"]["credited_reward"].is_null());
+    let (app, mut input, _) = setup(|c| {
+        let e = &mut c["envelope"]["payload"]["edges"][1];
+        e["mode"] = json!("return");
+        e["status"] = json!("verified");
+        e["evidence"] = json!(["demo-evidence-1"]);
+        e["cooldown_ms"] = known(json!(0));
+    });
+    input["opportunities"][0]["leg_index"] = json!(1);
+    input["opportunities"][0]["node"]["id"] = json!("demo-node-2");
+    let r = run(&app, &input);
+    assert_eq!(r["opportunities"][0]["detour"]["status"], "complete");
+    assert_eq!(r["opportunities"][0]["detour"]["incremental_ms"], 0);
 }

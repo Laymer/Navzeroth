@@ -1,0 +1,128 @@
+{
+  "acquisitions": [
+    {
+      "conditions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "cost": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": "0"
+      },
+      "evidence": [],
+      "id": "synthetic-source",
+      "items": [
+        {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "item_id": "synthetic-upgrade",
+          "variant": "base"
+        }
+      ],
+      "kind": "other",
+      "probability": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": 1.0
+      }
+    }
+  ],
+  "context": {
+    "build": {
+      "build": "UNVERIFIED_DEMO",
+      "edition": "wow_forever",
+      "interface": "UNVERIFIED_DEMO"
+    },
+    "namespace": "demo"
+  },
+  "equipment": {
+    "head": {
+      "clock_trust": "trusted",
+      "observed_at_utc_ms": 1791791990000,
+      "source": "synthetic_fixture",
+      "status": "known",
+      "value": {
+        "state": "empty"
+      }
+    }
+  },
+  "fixture": true,
+  "items": [
+    {
+      "attributes": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": {
+          "power": 10.0
+        }
+      },
+      "effects": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": []
+      },
+      "evidence": [],
+      "key": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "item_id": "synthetic-upgrade",
+        "variant": "base"
+      },
+      "requirements": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": {
+          "op": "all",
+          "predicates": []
+        }
+      },
+      "slots": [
+        "head"
+      ],
+      "two_handed": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "unique_group": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      }
+    }
+  ],
+  "revision": "synthetic-planning-v1",
+  "snapshot_id": "demo-snapshot-001"
+}
