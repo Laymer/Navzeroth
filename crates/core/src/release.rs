@@ -3,7 +3,7 @@
 //! hashes, pack contents and the tested Git revision before publication.
 use crate::types::{AssetPath, Sha256Hex};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 pub const MAX_RELEASE_BYTES: usize = 16 * 1024 * 1024;
 pub const MAX_UNITS: usize = 4096;
@@ -267,25 +267,32 @@ pub fn is_stable(version: &str) -> Result<bool, &'static str> {
     {
         return Err("Invalid release version");
     }
-    if let Some(pre) = pre {
-        if pre.len() > 128
+    if let Some(pre) = pre
+        && (pre.len() > 128
             || pre.split('.').any(|p| {
                 p.is_empty()
                     || !p.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')
                     || (p.len() > 1 && p.bytes().all(|b| b.is_ascii_digit()) && p.starts_with('0'))
-            })
-        {
-            return Err("Invalid prerelease version");
-        }
+            }))
+    {
+        return Err("Invalid prerelease version");
     }
     Ok(parts[0] != "0" && pre.is_none())
 }
 
 pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
-    decode(bytes)
+    let inventory: Inventory = decode(bytes)?;
+    if inventory.schema_version != 1 {
+        return Err("Unsupported inventory version");
+    }
+    Ok(inventory)
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
-    decode(bytes)
+    let evidence: Evidence = decode(bytes)?;
+    if evidence.schema_version != 1 {
+        return Err("Unsupported evidence version");
+    }
+    Ok(evidence)
 }
 fn decode<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, &'static str> {
     if bytes.len() > MAX_RELEASE_BYTES {
@@ -293,6 +300,37 @@ fn decode<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, &'static st
     }
     // Typed structs reject duplicate and unknown fields. Arrays are checked below.
     serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")
+}
+
+fn check_limits(inventory: &Inventory, evidence: Option<&Evidence>) -> Result<(), &'static str> {
+    let units = inventory.domains.iter().flat_map(|d| &d.units);
+    if inventory.domains.len() > DOMAINS.len()
+        || inventory.sources.len() > MAX_UNITS
+        || units.clone().count() > MAX_UNITS
+        || units
+            .map(|u| u.required_record_ids.as_ref().map_or(0, Vec::len))
+            .sum::<usize>()
+            > MAX_RECORDS
+    {
+        return Err("Release inventory exceeds collection limits");
+    }
+    if let Some(e) = evidence
+        && (e.checks.len() > LIVE_CHECKS.len() + WINDOWS_CHECKS.len()
+            || e.coverage.len() > MAX_UNITS
+            || e.sources.len() > MAX_UNITS
+            || e.packs.len() > MAX_UNITS
+            || e.optional_deferrals.len() > 4
+            || e.coverage
+                .iter()
+                .map(|c| c.included_record_ids.len())
+                .sum::<usize>()
+                > MAX_RECORDS
+            || e.coverage.iter().any(|c| c.source_ids.len() > MAX_UNITS)
+            || evidence_files(inventory, e).len() > MAX_RECORDS)
+    {
+        return Err("Release evidence exceeds collection limits");
+    }
+    Ok(())
 }
 
 /// Evaluate the complete, fixed release requirements. A caller cannot make a
@@ -304,6 +342,10 @@ pub fn assess(
     bindings: &Bindings<'_>,
 ) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
+    check_limits(inventory, evidence)?;
+    if inventory.schema_version != 1 || evidence.is_some_and(|e| e.schema_version != 1) {
+        return Err("Unsupported release manifest version");
+    }
     let mut report = Readiness {
         report_version: 1,
         version: version.into(),
@@ -334,6 +376,11 @@ pub fn assess(
     for domain in &inventory.domains {
         if domain.completeness != Completeness::Complete
             || domain.units.is_empty()
+            || !domain.units.iter().any(|u| {
+                u.required_record_ids
+                    .as_ref()
+                    .is_some_and(|ids| !ids.is_empty())
+            })
             || !files_present(&domain.enumeration_evidence)
         {
             report.block(format!(
@@ -421,8 +468,14 @@ pub fn assess(
     {
         report.block("Unit coverage is missing, duplicated or excessive");
     }
+    let coverage_by_id: BTreeMap<_, _> = evidence
+        .coverage
+        .iter()
+        .map(|c| (c.unit_id.as_str(), c))
+        .collect();
+    let source_ids: BTreeSet<_> = inventory.sources.iter().map(|s| s.id.as_str()).collect();
     for unit in units {
-        let coverage = evidence.coverage.iter().find(|c| c.unit_id == unit.id);
+        let coverage = coverage_by_id.get(unit.id.as_str());
         if coverage.is_none_or(|c| {
             c.status != Status::Pass
                 || c.unresolved_conflicts != 0
@@ -432,7 +485,7 @@ pub fn assess(
                 || !unique(c.source_ids.iter().map(String::as_str))
                 || c.source_ids
                     .iter()
-                    .any(|id| !inventory.sources.iter().any(|s| s.id == *id))
+                    .any(|id| !source_ids.contains(id.as_str()))
                 || !unique(c.included_record_ids.iter().map(String::as_str))
                 || unit.required_record_ids.as_ref().is_none_or(|ids| {
                     ids.iter().collect::<BTreeSet<_>>()
@@ -450,24 +503,24 @@ pub fn assess(
     {
         report.block("Source evidence inventory differs from accepted sources");
     }
+    let sources_by_id: BTreeMap<_, _> = evidence
+        .sources
+        .iter()
+        .map(|s| (s.id.as_str(), s))
+        .collect();
     for required in &inventory.sources {
-        if evidence
-            .sources
-            .iter()
-            .find(|s| s.id == required.id)
-            .is_none_or(|s| {
-                s.revision != required.revision
-                    || s.redistribution != Permission::Permitted
-                    || !bounded_text(&s.origin_edition)
-                    || s.origin_build.as_deref().is_some_and(|b| !bounded_text(b))
-                    || !files_present(&s.files)
-                    || !files_present(&s.license_files)
-                    || !files_present(&s.attribution_files)
-                    || !files_present(&s.permission_evidence)
-                    || s.target_validation != Status::Pass
-                    || !files_present(&s.target_evidence)
-            })
-        {
+        if sources_by_id.get(required.id.as_str()).is_none_or(|s| {
+            s.revision != required.revision
+                || s.redistribution != Permission::Permitted
+                || !bounded_text(&s.origin_edition)
+                || s.origin_build.as_deref().is_some_and(|b| !bounded_text(b))
+                || !files_present(&s.files)
+                || !files_present(&s.license_files)
+                || !files_present(&s.attribution_files)
+                || !files_present(&s.permission_evidence)
+                || s.target_validation != Status::Pass
+                || !files_present(&s.target_evidence)
+        }) {
             report.block(format!(
                 "Source permission, provenance or target validation is incomplete: {}",
                 required.id
