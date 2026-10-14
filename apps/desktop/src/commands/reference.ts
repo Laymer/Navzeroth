@@ -10,3 +10,11 @@ export interface ReferenceClient {
  getReferenceWindowState():Promise<Result<ReferenceWindowState>>;
  setReferenceWindow(visible:boolean,alwaysOnTop:boolean):Promise<Result<ReferenceWindowState>>;
 }
+export type InteractionMode="interactive"|"pass_through";
+export type OperationDispatch="not_attempted"|"accepted"|"failed";
+export type ControlReason="main_not_focused"|"focus_query_failed"|"reference_focused"|"window_absent"|"create_failed"|"focusable_failed"|"pointer_failed"|"topmost_failed"|"visibility_failed"|"state_query_failed";
+export interface ReferenceControlReceipt {schema_version:1;requested_visible:boolean|null;requested_interaction:InteractionMode;dispatch:"accepted"|"refused"|"partial_failure";reason:ControlReason|null;operations:{creation:OperationDispatch;focusability:OperationDispatch;pointer_events:OperationDispatch;topmost:OperationDispatch;visibility:OperationDispatch;state_query:OperationDispatch};window:ReferenceWindowState|null}
+export interface ReferenceControlClient extends ReferenceClient {
+ toggleReferenceWindow(alwaysOnTop:boolean,interactionMode:InteractionMode):Promise<Result<ReferenceControlReceipt>>;
+ setReferenceInteraction(interactionMode:InteractionMode):Promise<Result<ReferenceControlReceipt>>;
+}

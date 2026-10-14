@@ -63,6 +63,8 @@ export function createClient(adapter: CommandAdapter) {
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
     getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
     getReferenceWindowState: () => run(() => adapter.invoke("get_reference_window_state",undefined)),
+    toggleReferenceWindow: (alwaysOnTop:boolean,interactionMode:import("./reference").InteractionMode) => run(() => adapter.invoke("toggle_reference_window",{always_on_top:alwaysOnTop,interaction_mode:interactionMode})),
+    setReferenceInteraction: (interactionMode:import("./reference").InteractionMode) => run(() => adapter.invoke("set_reference_interaction",{interaction_mode:interactionMode})),
     setReferenceWindow: (visible:boolean,alwaysOnTop:boolean) => run(() => adapter.invoke("set_reference_window",{visible,always_on_top:alwaysOnTop})),
     previewAcquisitionRoute: (text: string) => run(() => adapter.invoke("preview_acquisition_route", { text })),
     assessRouteAcquisition: (text: string) => run(() => adapter.invoke("assess_route_acquisition", { text })),
