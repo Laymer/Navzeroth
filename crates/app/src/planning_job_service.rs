@@ -301,8 +301,10 @@ impl PublicationGuard {
     ) -> Result<()> {
         let started = std::time::Instant::now();
         app.with_store_mut(|store| {
-            self.validate(store, || advanced_now(now, started.elapsed()))?;
-            publish()
+            store.with_immediate_read(|store| {
+                self.validate(store, || advanced_now(now, started.elapsed()))?;
+                publish()
+            })
         })
     }
 }
@@ -406,6 +408,76 @@ mod tests {
                 "must check again after the class walk"
             );
         }
+    }
+
+    #[test]
+    fn publication_reserves_the_validated_content_until_handoff() {
+        let path = std::env::temp_dir().join(format!(
+            "anav-publication-{}-{}.sqlite",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let app = SnapshotApplication::open(&path).unwrap();
+        let snapshot = demo_snapshot().unwrap();
+        let now = snapshot.payload.capture.observed_at_utc_ms.unwrap();
+        let profile = app
+            .import_text(
+                &format!("ANAV1:{}", serde_json::to_string(&snapshot).unwrap()),
+                Some(now),
+            )
+            .unwrap()
+            .profile_id;
+        let content_text =
+            include_str!("../../../fixtures/desktop/planning/synthetic-revision.json");
+        app.stage_content(content_text).unwrap();
+        app.activate_content(
+            &profile,
+            &DatasetRevision::new("synthetic-planning-v1").unwrap(),
+        )
+        .unwrap();
+        let mut alternate: Value = serde_json::from_str(content_text).unwrap();
+        alternate["envelope"]["payload"]["revision"] = json!("alternate-v1");
+        app.stage_content(&alternate.to_string()).unwrap();
+        let alternate: ContentRevision = serde_json::from_value(alternate).unwrap();
+        let mut writer = SqliteStore::open(&path).unwrap();
+        let catalog = app.planning_catalog(&profile).unwrap();
+        let request = json!({"profile_id":profile,"snapshot_id":catalog.snapshot_id,"revision":catalog.revision,"goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1","budget_ms":100000,"stopping_service_ms":0,"candidates":[],"excluded":[]});
+        let (_, guard) = app
+            .calculate_planning_job(
+                PlanningKind::Solo,
+                &request.to_string(),
+                Some(now),
+                &mut NoopSearchControl,
+            )
+            .unwrap();
+        guard
+            .publish(&app, Some(now), &mut || {
+                let error = writer
+                    .activate_content_revision(&alternate.key())
+                    .unwrap_err();
+                assert_eq!(
+                    error.code,
+                    ErrorCode::StorageError,
+                    "independent writer must be excluded through result handoff"
+                );
+                Ok(())
+            })
+            .unwrap();
+        writer.activate_content_revision(&alternate.key()).unwrap();
+        assert_eq!(
+            writer
+                .active_content_revision(&alternate.key().scope)
+                .unwrap()
+                .unwrap()
+                .key(),
+            alternate.key()
+        );
+        drop(writer);
+        drop(app);
+        std::fs::remove_file(path).unwrap();
     }
 
     #[test]
