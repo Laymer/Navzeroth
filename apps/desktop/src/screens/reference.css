@@ -1,0 +1,5 @@
+.reference-view { overflow-wrap: anywhere; max-width: 48rem; }
+.reference-view dl { margin: 1rem 0; }
+.reference-view dt { font-weight: bold; }
+.reference-view dd { margin: 0 0 0.75rem; }
+.reference-view button { font: inherit; max-width: 100%; }

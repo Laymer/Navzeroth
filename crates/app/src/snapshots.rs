@@ -261,6 +261,26 @@ impl SnapshotApplication {
             )
         })
     }
+    /// A narrow read of the selected imported capture, without content/history/UI state.
+    pub fn reference_view(
+        &self,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::reference::ReferenceView> {
+        let started = std::time::Instant::now();
+        let state = self.lock()?;
+        let snapshot = match &state.selected {
+            Some(id) => state.store.current_snapshot(&resolve(&state.store, id)?)?,
+            None => None,
+        };
+        drop(state);
+        crate::reference::build(
+            snapshot.as_ref(),
+            &context(crate::planning_job_service::advanced_now(
+                now,
+                started.elapsed(),
+            )),
+        )
+    }
     /// Capture selection, current snapshot and active content under one store lock.
     pub(crate) fn diagnostic_inputs(
         &self,

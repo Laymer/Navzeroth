@@ -49,6 +49,9 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 export function createClient(adapter: CommandAdapter) {
   return {
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
+    getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
+    getReferenceWindowState: () => run(() => adapter.invoke("get_reference_window_state",undefined)),
+    setReferenceWindow: (visible:boolean,alwaysOnTop:boolean) => run(() => adapter.invoke("set_reference_window",{visible,always_on_top:alwaysOnTop})),
     previewAcquisitionRoute: (text: string) => run(() => adapter.invoke("preview_acquisition_route", { text })),
     assessRouteAcquisition: (text: string) => run(() => adapter.invoke("assess_route_acquisition", { text })),
     previewDiagnostics: () => run(() => adapter.invoke("preview_diagnostics", undefined)),
