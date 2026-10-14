@@ -3,6 +3,7 @@
 mod atlas_protocol;
 use azeroth_app::AppStatus;
 use azeroth_app::atlas::{AtlasView, ProjectedPosition, SnapshotMarker};
+use azeroth_app::diagnostics::DiagnosticOperation;
 use azeroth_app::snapshots::{
     FileInputFormat, HistoryEntry, ImportReceipt, ProfileDto, SnapshotApplication, StoredParty,
     StoredSnapshot, WatchState, system_now,
@@ -31,6 +32,25 @@ async fn blocking<T: Send + 'static>(
             )
         })?
 }
+async fn observed_blocking<T: Send + 'static>(
+    state: State<'_, Application>,
+    operation: DiagnosticOperation,
+    call: impl FnOnce(&SnapshotApplication) -> Result<T, AppError> + Send + 'static,
+) -> Result<T, AppError> {
+    let host = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        host.observe(operation, || host.with_application(call))
+    })
+    .await
+    .map_err(|_| {
+        AppError::new(
+            ErrorCode::ProviderUnavailable,
+            "Foreground worker unavailable",
+            false,
+        )
+    })?
+}
+
 #[derive(serde::Serialize)]
 struct PlanningJobAccepted {
     job_schema_version: u32,
@@ -53,39 +73,47 @@ async fn start_planning_job(
     let ticket = host.planning_jobs().register(kind)?;
     let job_id = ticket.id().to_owned();
     let _worker = tauri::async_runtime::spawn_blocking(move || {
-        let failed_ticket = ticket.clone();
-        let jobs = host.planning_jobs();
-        let operation = host.with_application(|app| {
-            let guard = std::cell::RefCell::new(
-                None::<azeroth_app::planning_job_service::PublicationGuard>,
-            );
-            jobs.run_guarded(
-                ticket,
-                |control| {
-                    let (report, input_guard) =
-                        app.calculate_planning_job(kind, &text, system_now(), control)?;
-                    *guard.borrow_mut() = Some(input_guard);
-                    Ok(report)
-                },
-                |publish| {
-                    guard
-                        .borrow()
-                        .as_ref()
-                        .ok_or_else(|| {
-                            AppError::new(
-                                ErrorCode::SnapshotOutdated,
-                                "Planning input guard unavailable",
-                                false,
-                            )
-                        })?
-                        .publish(app, system_now(), publish)
-                },
-            );
-            Ok(())
+        let terminal_ticket = ticket.clone();
+        let operation_kind = match kind {
+            azeroth_app::planning_jobs::PlanningKind::Solo => DiagnosticOperation::Planning,
+            azeroth_app::planning_jobs::PlanningKind::Joint => DiagnosticOperation::JointPlanning,
+        };
+        let _observed = host.observe(operation_kind, || {
+            let failed_ticket = ticket.clone();
+            let jobs = host.planning_jobs();
+            let operation = host.with_application(|app| {
+                let guard = std::cell::RefCell::new(
+                    None::<azeroth_app::planning_job_service::PublicationGuard>,
+                );
+                jobs.run_guarded(
+                    ticket,
+                    |control| {
+                        let (report, input_guard) =
+                            app.calculate_planning_job(kind, &text, system_now(), control)?;
+                        *guard.borrow_mut() = Some(input_guard);
+                        Ok(report)
+                    },
+                    |publish| {
+                        guard
+                            .borrow()
+                            .as_ref()
+                            .ok_or_else(|| {
+                                AppError::new(
+                                    ErrorCode::SnapshotOutdated,
+                                    "Planning input guard unavailable",
+                                    false,
+                                )
+                            })?
+                            .publish(app, system_now(), publish)
+                    },
+                );
+                Ok(())
+            });
+            if let Err(error) = operation {
+                jobs.run(failed_ticket, |_| Err::<serde_json::Value, _>(error));
+            }
+            terminal_ticket.completion_result()
         });
-        if let Err(error) = operation {
-            jobs.run(failed_ticket, |_| Err::<serde_json::Value, _>(error));
-        }
     });
     Ok(PlanningJobAccepted {
         job_schema_version: 1,
@@ -167,7 +195,7 @@ async fn plan_joint_session(
     state: State<'_, Application>,
     text: String,
 ) -> Result<azeroth_app::joint_planning::JointPlanningReport, AppError> {
-    blocking(state, move |app| {
+    observed_blocking(state, DiagnosticOperation::JointPlanning, move |app| {
         app.plan_joint_session(&text, system_now())
     })
     .await
@@ -260,7 +288,10 @@ async fn plan_session(
     state: State<'_, Application>,
     text: String,
 ) -> Result<azeroth_app::planning::PlanningReport, AppError> {
-    blocking(state, move |app| app.plan_session(&text, system_now())).await
+    observed_blocking(state, DiagnosticOperation::Planning, move |app| {
+        app.plan_session(&text, system_now())
+    })
+    .await
 }
 #[tauri::command]
 async fn get_app_status(state: State<'_, Application>) -> Result<AppStatus, AppError> {
@@ -279,7 +310,10 @@ async fn stage_content(
     state: State<'_, Application>,
     text: String,
 ) -> Result<azeroth_app::content::ContentInspection, AppError> {
-    blocking(state, move |app| app.stage_content(&text)).await
+    observed_blocking(state, DiagnosticOperation::ContentImport, move |app| {
+        app.stage_content(&text)
+    })
+    .await
 }
 #[tauri::command(rename_all = "snake_case")]
 async fn get_active_content(
@@ -389,7 +423,10 @@ async fn import_snapshot_text(
     state: State<'_, Application>,
     text: String,
 ) -> Result<ImportReceipt, AppError> {
-    blocking(state, move |app| app.import_text(&text, system_now())).await
+    observed_blocking(state, DiagnosticOperation::SnapshotImport, move |app| {
+        app.import_text(&text, system_now())
+    })
+    .await
 }
 #[tauri::command]
 async fn import_snapshot_file(
@@ -397,7 +434,7 @@ async fn import_snapshot_file(
     path: String,
     format: FileInputFormat,
 ) -> Result<ImportReceipt, AppError> {
-    blocking(state, move |app| {
+    observed_blocking(state, DiagnosticOperation::SnapshotImport, move |app| {
         app.import_file(std::path::Path::new(&path), &format, system_now())
     })
     .await
@@ -441,7 +478,7 @@ async fn import_session_text(
     profile_id: String,
     text: String,
 ) -> Result<azeroth_app::sessions::SessionImportReceipt, AppError> {
-    blocking(state, move |app| {
+    observed_blocking(state, DiagnosticOperation::SessionImport, move |app| {
         app.import_session_text(&profile_id, &text)
     })
     .await
@@ -453,7 +490,7 @@ async fn import_session_file(
     path: String,
     format: FileInputFormat,
 ) -> Result<azeroth_app::sessions::SessionImportReceipt, AppError> {
-    blocking(state, move |app| {
+    observed_blocking(state, DiagnosticOperation::SessionImport, move |app| {
         app.import_session_file(&profile_id, std::path::Path::new(&path), format)
     })
     .await
@@ -515,6 +552,8 @@ pub fn run() {
             atlas_protocol::respond(&request)
         })
         .invoke_handler(tauri::generate_handler![
+            preview_diagnostics,
+            export_diagnostics,
             start_planning_job,
             get_planning_job,
             cancel_planning_job,
@@ -605,7 +644,12 @@ async fn create_database_backup(
     state: State<'_, Application>,
     path: String,
 ) -> Result<(), AppError> {
-    recovery_blocking(state, move |host| host.backup(std::path::Path::new(&path))).await
+    recovery_blocking(state, move |host| {
+        host.observe(DiagnosticOperation::Backup, || {
+            host.backup(std::path::Path::new(&path))
+        })
+    })
+    .await
 }
 #[tauri::command]
 async fn inspect_database_backup(
@@ -619,5 +663,32 @@ async fn restore_database_backup(
     state: State<'_, Application>,
     candidate_id: String,
 ) -> Result<azeroth_app::recovery::RestoreReceipt, AppError> {
-    recovery_blocking(state, move |host| host.restore(&candidate_id)).await
+    recovery_blocking(state, move |host| {
+        host.observe(DiagnosticOperation::Restore, || host.restore(&candidate_id))
+    })
+    .await
+}
+
+#[tauri::command]
+async fn preview_diagnostics(
+    state: State<'_, Application>,
+) -> Result<azeroth_app::diagnostics::DiagnosticReport, AppError> {
+    recovery_blocking(state, |host| host.diagnostic_report(system_now())).await
+}
+#[tauri::command]
+async fn export_diagnostics(
+    state: State<'_, Application>,
+    path: String,
+) -> Result<azeroth_app::diagnostics::DiagnosticReceipt, AppError> {
+    if path.len() > 4096 || path.is_empty() {
+        return Err(AppError::new(
+            ErrorCode::InvalidInput,
+            "Select a bounded new diagnostic file path",
+            false,
+        ));
+    }
+    recovery_blocking(state, move |host| {
+        host.export_diagnostics(std::path::Path::new(&path), system_now())
+    })
+    .await
 }
