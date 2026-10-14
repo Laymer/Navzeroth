@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::{BTreeMap, BTreeSet},
     fs::{self, File, OpenOptions},
     io::{Cursor, Read, Write},
@@ -593,6 +593,7 @@ fn input_datasets(input: &Path, budget: &mut Budget) -> Res<Vec<Envelope<Referen
 static STAGING_COUNTER: AtomicU64 = AtomicU64::new(0);
 struct Staging {
     root: PathBuf,
+    bytes: Cell<usize>,
     files: RefCell<Vec<PathBuf>>,
     directories: RefCell<Vec<PathBuf>>,
 }
@@ -620,6 +621,11 @@ impl Staging {
         Ok(())
     }
     fn write(&self, path: &Path, bytes: &[u8]) -> Res<()> {
+        // Canonical serialization can expand inputs. Bound actual planned staging
+        // bytes independently of the input/read budget before creating any file.
+        if bytes.len() > MAX_TOTAL_BYTES.saturating_sub(self.bytes.get()) {
+            return Err("Staging byte budget exceeded");
+        }
         if self.directories.borrow().len() + self.files.borrow().len() >= MAX_TREE_ENTRIES {
             return Err("Staging file tree exceeds limit");
         }
@@ -629,6 +635,7 @@ impl Staging {
             .open(path)
             .map_err(|_| "Pack output cannot be created without overwrite")?;
         self.files.borrow_mut().push(path.to_owned());
+        self.bytes.set(self.bytes.get() + bytes.len());
         file.write_all(bytes)
             .and_then(|_| file.sync_all())
             .map_err(|_| "Pack output cannot be written")
@@ -667,6 +674,7 @@ fn stage(output: &Path) -> Res<Staging> {
     fs::create_dir(&root).map_err(|_| "Create-new pack staging failed")?;
     Ok(Staging {
         root: root.clone(),
+        bytes: Cell::new(0),
         files: RefCell::new(Vec::new()),
         directories: RefCell::new(vec![root]),
     })
@@ -833,6 +841,29 @@ mod publication_tests {
             .map(|n| AssetPath::new(format!("path{n}/{}image.png", "nested/".repeat(20))).unwrap())
             .collect();
         assert!(expected_tree(&files).is_err());
+    }
+    #[test]
+    fn canonical_expansion_is_refused_before_staging_file_creation() {
+        let root = temporary();
+        let staging = stage(&root.join("output")).unwrap();
+        let raw = br#"{"x":0}"#;
+        let canonical_bytes = canonical(&json(raw).unwrap()).unwrap();
+        assert!(canonical_bytes.len() > raw.len());
+        staging.bytes.set(MAX_TOTAL_BYTES - raw.len());
+        let target = staging.root.join("dataset.json");
+        assert!(staging.write(&target, &canonical_bytes).is_err());
+        assert!(!target.exists());
+        assert!(staging.files.borrow().is_empty());
+        assert_eq!(staging.bytes.get(), MAX_TOTAL_BYTES - raw.len());
+        // At the exact boundary a smaller file may be created, but no subsequent
+        // manifest/source/asset write may create another byte or even an empty file.
+        staging.write(&target, raw).unwrap();
+        assert_eq!(staging.bytes.get(), MAX_TOTAL_BYTES);
+        let manifest = staging.root.join("manifest.json");
+        assert!(staging.write(&manifest, b"x").is_err());
+        assert!(!manifest.exists());
+        drop(staging);
+        fs::remove_dir_all(root).unwrap();
     }
     #[test]
     fn staging_cleanup_preserves_unrelated_files_and_nonempty_directory() {

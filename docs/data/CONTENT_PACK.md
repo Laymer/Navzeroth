@@ -38,7 +38,9 @@ Current real content/source gaps remain blocked. Synthetic examples are labeled 
 ## Implemented bounds and subset
 
 Manifest and sources files:2MiB each; dataset:16MiB; each PNG:64MiB; all
-pack files together:256MiB (including metadata). At most128 datasets,1024
+pack files together:256MiB (including metadata). Independent cumulative input,
+staging and verification budgets apply; canonical expansion is checked before
+each staging file is created or written. At most128 datasets,1024
 registered sources and2048 referenced assets across the pack. The exact tree
 contains at most8192 file/directory entries. PNG decoding permits at most8192
 pixels per axis and256MiB decoder allocation. Existing core bounds apply to
