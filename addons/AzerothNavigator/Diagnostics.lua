@@ -222,7 +222,7 @@ function Diagnostics.attach(env)
   local function ensurePlanControls()
     if state.plan_controls then return state.plan_controls end
     local build = Capabilities.probe(env).build
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
+    if not Capabilities.isCaptureTarget(build) then
       return nil, 'plan_build_unrecorded'
     end
     local context = {namespace='reference', build={edition=Version.edition,
@@ -498,9 +498,9 @@ function Diagnostics.attach(env)
     end
     local report = Capabilities.probe(env)
     local build = report.build
-    -- Only the user-reported tuple is enabled for this experimental manual slice.
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
-      say('snapshot failed: build has no recorded capture evidence'); return
+    -- Admission enables guarded experimental reads; it does not verify capabilities.
+    if not Capabilities.isCaptureTarget(build) then
+      say('snapshot failed: build is not an enabled experimental target'); return
     end
     local sequence = state.db.snapshot_sequence
     if sequence == nil then sequence = 0 end
@@ -559,8 +559,8 @@ function Diagnostics.attach(env)
 
   local function clockCommand(action)
     local build = Capabilities.probe(env).build
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
-      say('clock unavailable: build has no recorded capture evidence'); return
+    if not Capabilities.isCaptureTarget(build) then
+      say('clock unavailable: build is not an enabled experimental target'); return
     end
     if action == 'clear' then clock:clear(); say('clock trust cleared'); return end
     if action and action ~= 'trust' then say('usage: /anavdiag clock [trust|clear]'); return end
@@ -596,9 +596,8 @@ function Diagnostics.attach(env)
     elseif command == 'position' then
       local ok = pcall(function()
         local build = Capabilities.probe(env).build
-        if build.version ~= '1.60.1' or build.build ~= '70338' or
-          build.interface ~= '16001' then
-          say('position unavailable: build has no recorded capture evidence'); return
+        if not Capabilities.isCaptureTarget(build) then
+          say('position unavailable: build is not an enabled experimental target'); return
         end
         local mapApi = type(env.C_Map) == 'table' and env.C_Map or {}
         local getMap, getPoint
@@ -676,8 +675,8 @@ function Diagnostics.attach(env)
       return
     end
     local build = Capabilities.probe(env).build
-    if build.version ~= '1.60.1' or build.build ~= '70338' or build.interface ~= '16001' then
-      say('session unavailable: build has no recorded capture evidence'); return
+    if not Capabilities.isCaptureTarget(build) then
+      say('session unavailable: build is not an enabled experimental target'); return
     end
     local result, code
     if command == 'start' then
