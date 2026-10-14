@@ -64,13 +64,24 @@ export interface GearRanking {
   excluded: { item: ItemKey; eligibility: GearEligibility }[];
   top_is_definitive: boolean;
 }
+export type GearInputField = {field:"level"|"role"}
+  | {field:"preference";key:string}
+  | {field:"quest";quest:string;state:"accepted"|"completed"|"turned_in"}
+  | {field:"objective";objective:string};
+export interface GearEvaluationIssue {
+  participant: string;
+  input: {input:"field";field:GearInputField}
+    | {input:"equipment"|"variant"|"modifiers";slot:string}
+    | {input:"location"|"participant"|"rule_expiry"};
+  reason: { reason: string; status?: string };
+}
 export interface GearAcquisition {
   source: AcquisitionSource;
   effort: Omit<GearEffortInput, "independent_player_attempts" | "cost_per_attempt"> & { balance_basis: string; probability_model: string; cost_schedule: string };
   target: ItemKey;
   status: "guaranteed" | "uncertain" | "unavailable";
   reasons: GearReason[];
-  requirements: { truth: "true" | "false" | "unknown" } | null;
+  requirements: { truth: "true" | "false" | "unknown"; reasons?: GearEvaluationIssue[]; warnings?: GearEvaluationIssue[] } | null;
   feasible_attempts: number | null;
   budgeted_effort_ms: number | null;
   budgeted_cost_copper: string | null;

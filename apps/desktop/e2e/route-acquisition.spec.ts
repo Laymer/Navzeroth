@@ -38,6 +38,11 @@ test("explicit Gear route opportunities use Rust fixture detour/residual budget 
  await panel.getByRole("combobox",{name:"Source node for synthetic-upgrade",exact:true}).selectOption("synthetic-source-node");await panel.getByRole("button",{name:"Assess independent route opportunities"}).click();
  await expect(panel.getByText("Incremental travel: 5000 ms.")).toBeVisible();await expect(panel.getByText("Acquisition: guaranteed; feasible trials: 3; reserved total: 98000 ms.")).toBeVisible();
  await expect(page.getByText("Gear comparison uses backend-calculated route effort and its remaining budget.")).toBeVisible();
+ await panel.getByText("Requirements, route gaps and uncertainty",{exact:true}).click();
+ await expect(panel.getByRole("region",{name:"Outbound source route"}).getByText(/Complete declared graph route: 5000 ms/)).toBeVisible();
+ await expect(panel.getByRole("region",{name:"Rejoin reserved route"}).getByText(/Complete declared graph route: 30000 ms/)).toBeVisible();
+ await expect(panel.getByText("Explicit caller spending ceiling")).toBeVisible();
+ await expect(panel.locator("pre")).toHaveCount(0);
  const calls=await page.evaluate(()=>(window as unknown as {__ROUTE_CALLS__:{command:string;args:{text:string}}[]}).__ROUTE_CALLS__);
  const preview=calls.find(c=>c.command==="preview_acquisition_route");const assessment=calls.find(c=>c.command==="assess_route_acquisition");expect(preview).toBeDefined();expect(assessment).toBeDefined();
  expect(JSON.parse(preview?.args.text??"{}")).toEqual(baseline.planning_report.request);
