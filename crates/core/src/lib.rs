@@ -20,3 +20,4 @@ pub mod travel;
 pub mod types;
 
 pub mod calibration;
+pub mod joint_planner;

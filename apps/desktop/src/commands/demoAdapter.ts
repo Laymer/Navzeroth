@@ -98,6 +98,8 @@ export const demoAdapter: CommandAdapter = {
           return [];
         case "get_active_content":
           return null;
+        case "get_joint_planning_catalog":
+        case "plan_joint_session":
         case "set_session_calibration":
         case "get_calibration":
         case "reminder_view":
