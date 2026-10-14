@@ -72,7 +72,7 @@ export const demoAdapter: CommandAdapter = {
         case "get_compatibility_report": throw { code: "PROVIDER_UNAVAILABLE", message: "Select imported data in the native application to inspect exact active source coverage", retryable: false };
         case "get_app_status":
           return {
-            version: "0.5.0",
+            version: "0.6.0",
             data_mode: "demo",
             active_profile: DEMO_PROFILE_ID,
             capabilities: { addon_transport: "unverified", live_position: "unverified" },
