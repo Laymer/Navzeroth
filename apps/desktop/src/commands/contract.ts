@@ -1,4 +1,6 @@
 import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
+import type { CalibrationRequest, CalibrationReport, SessionCalibrationAnnotation } from "./calibration";
+import type { ReminderView } from "./reminders";
 // Typed application command boundary (plan section 13). Mirrors the Rust
 // DTOs in crates/app; wire names are snake_case, exactly as serialized.
 import type {
@@ -263,6 +265,10 @@ export interface PlanningReport {
 export interface CommandMap {
   get_joint_planning_catalog: { input: { party_id: string }; output: JointPlanningCatalog };
   plan_joint_session: { input: { text: string }; output: JointPlanningReport };
+  set_session_calibration: { input: { profile_id: string; session_id: string; annotation: SessionCalibrationAnnotation }; output: null };
+  get_calibration: { input: { profile_id: string; request: CalibrationRequest }; output: CalibrationReport };
+  reminder_view: { input: { profile_id: string }; output: ReminderView };
+  mutate_reminders: { input: { text: string }; output: ReminderView };
 
   inspect_plan_route: { input: { text: string }; output: import("./routes").RouteInspection };
   import_session_text: { input: { profile_id: string; text: string }; output: import("./sessions").SessionImportReceipt };
