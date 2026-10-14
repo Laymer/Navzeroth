@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           lfs: false # the application embeds demo imagery only; LFS imagery is never packaged
+          fetch-depth: 0 # release gate must prove the tested commit's ancestry
       - name: Release notes exist for a tag (plan M9.5)
         if: github.ref_type == 'tag'
         shell: bash
@@ -41,6 +42,12 @@ jobs:
       - name: Addon helper tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-AddonInstaller.ps1 -Shell pwsh
+      - name: Stable packaging gate tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./scripts/windows/Test-ReleaseGate.ps1 -Shell powershell.exe
+      - name: Stable packaging gate tests (PowerShell 7)
+        shell: pwsh
+        run: ./scripts/windows/Test-ReleaseGate.ps1 -Shell pwsh
       - run: rustup show
       - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
@@ -150,13 +157,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           lfs: false
+          fetch-depth: 0
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: azeroth-navigator-windows-${{ github.sha }}
-          path: release
+          path: dist/release-artifacts
       - name: Verify checksums
-        working-directory: release
+        working-directory: dist/release-artifacts
         run: sha256sum --check --strict SHA256SUMS.txt
+      - name: Verify release evidence before drafting
+        env:
+          TAG: ${{ github.ref_name }}
+        run: cargo run --locked -p azeroth-cli -- release-readiness --root . --version "${TAG#v}"
       - name: Create the draft release (never published here)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -165,4 +177,4 @@ jobs:
           version="${TAG#v}"
           flags=(--draft --verify-tag --title "Azeroth Navigator $version" --notes-file "docs/releases/$version.md")
           case "$version" in 0.*|*-*) flags+=(--prerelease) ;; esac
-          gh release create "$TAG" release/* "${flags[@]}"
+          gh release create "$TAG" dist/release-artifacts/* "${flags[@]}"

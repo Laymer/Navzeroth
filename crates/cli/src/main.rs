@@ -17,7 +17,8 @@ use std::{
 
 const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
-    validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>. See README.md.";
+    validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
+    release-readiness --root <repository> --version <version> [--evidence <relative-file>]. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
 /// This list is explicit on purpose: the command never globs `fixtures/**`.
@@ -215,6 +216,7 @@ fn main() -> ExitCode {
             println!(
                 "Implemented subcommands: doctor; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
+                 release-readiness --root <repository> --version <version> [--evidence <relative-file>]. \
                  Other commands are planned; see README.md and plan section 19.3."
             );
             ExitCode::SUCCESS
@@ -253,6 +255,30 @@ fn main() -> ExitCode {
                 ExitCode::SUCCESS
             } else {
                 ExitCode::FAILURE
+            }
+        }
+        [command, rest @ ..] if command == "release-readiness" => {
+            let Some(options) = azeroth_cli::release::Options::parse(rest) else {
+                eprintln!("{USAGE}");
+                return ExitCode::from(2);
+            };
+            match azeroth_cli::release::report(&options) {
+                Ok(report) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&report)
+                            .expect("release report serialization")
+                    );
+                    if report.readiness.publication_allowed {
+                        ExitCode::SUCCESS
+                    } else {
+                        ExitCode::FAILURE
+                    }
+                }
+                Err(message) => {
+                    eprintln!("release-readiness: {message}");
+                    ExitCode::FAILURE
+                }
             }
         }
         [command] if command == "validate-fixtures" => validate_fixtures(),
