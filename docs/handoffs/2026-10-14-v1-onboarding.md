@@ -95,3 +95,11 @@ Follow-up user evidence forwarded by the coordinator: GetBuildInfo reports
 indicate no errors and `/anavdiag` reports 0.8.1. The source archive hash was not
 inspected. README/addon/release-process docs now preserve this narrow report,
 without promoting unchanged 70338-gated adapters or full target acceptance.
+
+Independent reviewer Codex `/root/acceptance` inspected `26b7ebb` (product docs
+`cb60914`), checked commands/UI labels against source, diff whitespace and all 37
+relative links, and found no blocking/important findings. Its optional clarification
+was applied: preservation backups belong outside installation and application-data
+directories; recovery originals live beside the database and can be removed with
+application-data deletion. Subsequent build-report/retention-only edits do not
+alter commands, application code or evidence promotion rules.

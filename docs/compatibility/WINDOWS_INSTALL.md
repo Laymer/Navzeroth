@@ -92,8 +92,9 @@ Record the actual client build before capture. The 0.8.1 adapters are guarded to
 ### Update
 
 Use **Backup and recovery > Create consistent backup** before an upgrade; see
-[database recovery](DATABASE_RECOVERY.md). Keep that private backup outside the
-installation directory. Copying only the live SQLite file is not a consistent backup.
+[database recovery](DATABASE_RECOVERY.md). Keep that private backup outside both
+the installation and application-data directories. Copying only the live SQLite
+file is not a consistent backup.
 
 Run the newer setup file over the installed one. Updates are designed to retain
 application data; interactive upgrade acceptance remains unverified. If the helper recorded
@@ -128,8 +129,11 @@ conventional layout, unverified for Forever) are removed only by the helper with
 `-Action Uninstall -RemoveSavedVariables`, or by hand. That switch covers the named
 `.lua` and `.lua.bak` files in every account under the selected game folder; use
 `-WhatIf` to inspect the scope first. A silent uninstall retains application data
-and the game addon, as checked by the hosted packaging smoke test. External backups
-and recovery directories require their own explicit retention decisions.
+and the game addon, as checked by the hosted packaging smoke test. Recovery
+originals are siblings of the live database inside application data, so deleting
+application data can also remove those originals. Keep preservation copies outside
+application-data directories before choosing deletion; external backups have their
+own explicit retention decisions.
 
 ## For builders
 
