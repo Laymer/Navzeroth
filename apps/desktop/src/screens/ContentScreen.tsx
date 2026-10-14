@@ -1,3 +1,4 @@
+import { LocalSubmissionsPanel } from "./LocalSubmissionsPanel";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { AppError, ContentInspection, ProfileSummary } from "../commands/contract";
@@ -82,6 +83,7 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     {staged && <><h3>Staged revision</h3><Inspection value={staged} />
       {!compatible && <p>This revision does not match the selected profile’s edition, build, interface, namespace and synthetic status.</p>}
       <button type="button" disabled={!native || busy || !compatible} onClick={() => void mutate("activate")}>Activate staged revision</button></>}
+    <LocalSubmissionsPanel client={client} enabled={native} refreshKey={refreshKey + revision} />
   </section>;
 }
 function Inspection({ value }: { value: ContentInspection }) {

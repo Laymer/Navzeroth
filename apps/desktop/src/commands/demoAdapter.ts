@@ -79,6 +79,10 @@ export const demoAdapter: CommandAdapter = {
           };
         case "list_profiles":
           return [{ id: DEMO_PROFILE_ID, display_name: "Demo paladin", data_mode: "demo" }];
+        case "list_local_submissions":
+        case "submit_local_observation":
+        case "change_local_submission":
+        case "export_local_submission":
         case "get_dungeon_preparation":
           throw { code: "PROVIDER_UNAVAILABLE", message: "Preparation assessments require imported stored snapshots in the native application.", retryable: false } satisfies AppError;
         case "get_character_snapshot": {

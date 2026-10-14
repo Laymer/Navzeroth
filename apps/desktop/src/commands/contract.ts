@@ -267,6 +267,10 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  list_local_submissions: { input: { after: string | null; limit: number }; output: import("./localSubmissions").SubmissionPage };
+  submit_local_observation: { input: { text: string; opt_in: boolean }; output: import("./localSubmissions").SubmitReceipt };
+  change_local_submission: { input: { text: string }; output: import("./localSubmissions").SubmissionRecord };
+  export_local_submission: { input: { text: string }; output: import("./localSubmissions").LocalSubmissionExport };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
   get_reference_window_state: {input:undefined;output:import("./reference").ReferenceWindowState};
