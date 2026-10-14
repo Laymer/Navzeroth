@@ -326,7 +326,7 @@ impl SnapshotApplication {
                     required_evidence: "Finite supported region/quest/travel/acquisition package with exact-build source coverage and explicit gaps.",
                 },
             ],
-            limitations: "Recorded evidence is historical and finite. Synthetic fixtures never verify live capability. No network requests, account/character data, paths, source URLs or personal exports are included.",
+            limitations: "Recorded evidence is historical and finite. Synthetic fixtures never verify live capability. No network requests, account/character data, personal filesystem paths, source URLs or personal exports are included.",
         };
         if serde_json::to_vec(&report).map_err(|_| invalid())?.len() > MAX_COMPATIBILITY_BYTES {
             return Err(AppError::new(
