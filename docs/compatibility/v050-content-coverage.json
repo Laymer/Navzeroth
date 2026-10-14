@@ -1,0 +1,476 @@
+{
+  "inventory_version": 1,
+  "dataset_file": "content/forever/datasets/forever-atlas-r1.json",
+  "dataset_sha256": "531860e5189146b17bfee5b2654dfbef58c4acb922d692f0f16c73a9726789db",
+  "released_source": "f525911",
+  "command": [
+    "cargo",
+    "run",
+    "--locked",
+    "-p",
+    "azeroth-cli",
+    "--",
+    "validate-content",
+    "--input",
+    "content/forever/datasets/forever-atlas-r1.json",
+    "--json"
+  ],
+  "reports": [
+    {
+      "report_version": 1,
+      "passes": true,
+      "outcome": {
+        "outcome": "decoded"
+      },
+      "dataset": {
+        "revision": "forever-atlas-r1",
+        "namespace": "reference",
+        "fixture": false,
+        "edition": "wow_forever",
+        "build": "1.60.1.70205",
+        "interface": "16001",
+        "coverage_class": "reference",
+        "forever_reference_content": true
+      },
+      "coverage": {
+        "collections": {
+          "evidence": {
+            "total": 6,
+            "evidence": null,
+            "fields": {
+              "license": {
+                "known": 0,
+                "unknown": 6,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "observed_at_utc_ms": {
+                "known": 6,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "items": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "attributes": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "effects": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "requirements": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "two_handed": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "unique_group": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "acquisitions": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "conditions": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "cost": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "probability": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "quests": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "completion": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "eligibility": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "locations": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "prerequisites": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "rewards": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "shared_progress": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "map_spaces": {
+            "total": 1,
+            "evidence": {
+              "records_with_evidence": 1,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 1,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "transform": {
+                "known": 0,
+                "unknown": 1,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "nodes": {
+            "total": 0,
+            "evidence": null,
+            "fields": {
+              "service": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "edges": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "consumes_resource": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "cooldown_ms": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "expected_ms": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "requirements": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "uncertainty": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "wait_ms": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "objectives": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "expected_ms": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              },
+              "requirements": {
+                "known": 0,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "rules": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {}
+          },
+          "map_images": {
+            "total": 1,
+            "evidence": {
+              "records_with_evidence": 1,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 3,
+                "cross_edition_unverified": 0,
+                "inferred": 1,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {
+              "calibration": {
+                "known": 1,
+                "unknown": 0,
+                "unsupported": 0,
+                "restricted": 0,
+                "not_applicable": 0
+              }
+            }
+          },
+          "map_embeddings": {
+            "total": 0,
+            "evidence": {
+              "records_with_evidence": 0,
+              "records_without_evidence": 0,
+              "links_by_confidence": {
+                "verified_on_build": 0,
+                "publisher_documented": 0,
+                "limited_sample": 0,
+                "cross_edition_unverified": 0,
+                "inferred": 0,
+                "disputed_or_stale": 0
+              }
+            },
+            "fields": {}
+          }
+        },
+        "evidence_records": {
+          "by_confidence": {
+            "verified_on_build": 0,
+            "publisher_documented": 0,
+            "limited_sample": 3,
+            "cross_edition_unverified": 0,
+            "inferred": 3,
+            "disputed_or_stale": 0
+          },
+          "records_with_conflicts": 0,
+          "conflict_links": 0
+        },
+        "edge_status": {
+          "verified": 0,
+          "estimated": 0,
+          "temporarily_unavailable": 0,
+          "unverified": 0
+        },
+        "quest_graph": {
+          "quests": 0,
+          "unconditional_edges": 0,
+          "conditional_edges": 0
+        },
+        "atlas": {
+          "positions_checked": 0,
+          "projected": 0,
+          "gaps": {}
+        }
+      },
+      "errors": [],
+      "gaps": [
+        {
+          "code": "unverified_evidence",
+          "record": {
+            "kind": "map_space",
+            "key": {
+              "context": {
+                "build": {
+                  "edition": "wow_forever",
+                  "build": "1.60.1.70205",
+                  "interface": "16001"
+                },
+                "namespace": "reference"
+              },
+              "map_id": "1415",
+              "floor": "0",
+              "instance": null
+            }
+          },
+          "evidence": [
+            "ev-ek-build-2026-10-07"
+          ]
+        },
+        {
+          "code": "unverified_evidence",
+          "record": {
+            "kind": "map_image",
+            "id": "atlas-ek-2026-10-07"
+          },
+          "evidence": [
+            "ev-ek-build-2026-10-07",
+            "ev-ek-flight-2026-10-07",
+            "ev-ek-roads-traced-2026-10-07",
+            "ev-ek-terrain-2026-10-07"
+          ]
+        },
+        {
+          "code": "unknown_map_transform",
+          "map": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "1.60.1.70205",
+                "interface": "16001"
+              },
+              "namespace": "reference"
+            },
+            "map_id": "1415",
+            "floor": "0",
+            "instance": null
+          },
+          "status": "unknown"
+        }
+      ]
+    }
+  ]
+}
