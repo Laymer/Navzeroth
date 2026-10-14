@@ -9,6 +9,8 @@ export function SavedPlanCard({plan}:{plan:CurrentPlanView}) {
    <p>{current?"Current against imported inputs at this check.":"Historical saved advice — inputs or freshness changed. Calculate a fresh plan before using it."}</p>
    {plan.reason==="recovered_reference_requires_new_plan"&&<p>Recovered local reference. Calculate and explicitly save a new plan before using this advice.</p>}
    {plan.fixture&&<p role="note">SYNTHETIC — fixture plan, not verified gameplay advice.</p>}
+   {plan.context&&<p>Recorded context: {plan.context.build.edition} / {plan.context.build.build}; interface {plan.context.build.interface}; {plan.context.namespace}. Dataset revision: {plan.dataset_revision??"unavailable"}.</p>}
+   {plan.input_snapshots&&<details><summary>Imported inputs used</summary><ul>{plan.input_snapshots.map(input=><li key={input.profile_id}>{input.profile_id}: snapshot {input.snapshot_id}.</li>)}</ul></details>}
    <p>Plan subject: {plan.subject?.kind==="party"?`party ${plan.subject.party_id}`:plan.subject?.kind==="character"?`character ${plan.subject.profile_id}`:"unavailable"}.</p><p>Saved {utc(plan.saved_at_utc_ms)}. Age {plan.age_ms===null?"unknown":`${Math.floor(plan.age_ms/1000)} seconds`}.</p>
    {plan.summary&&<><p>Declared goal: {plan.summary.goal_profile}. Expected session: {plan.summary.expected_total_ms/1000} seconds (manual estimates).</p>
     {current&&<p>Next action: {plan.summary.steps[0]?.objective??"No feasible objective selected"}</p>}

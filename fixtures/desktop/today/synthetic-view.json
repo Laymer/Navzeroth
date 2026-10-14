@@ -312,8 +312,15 @@
         },
         "namespace": "demo"
       },
+      "dataset_revision": "synthetic-planning-v1",
       "evaluated_at_utc_ms": 1791792000000,
       "fixture": true,
+      "input_snapshots": [
+        {
+          "profile_id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6",
+          "snapshot_id": "demo-snapshot-001"
+        }
+      ],
       "original_step_count": 1,
       "reason": null,
       "revision": 2,

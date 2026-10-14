@@ -35,12 +35,19 @@ pub enum PlanState {
     Current,
 }
 #[derive(Clone, Debug, Serialize)]
+pub struct PlanInputSnapshot {
+    pub profile_id: String,
+    pub snapshot_id: SnapshotId,
+}
+#[derive(Clone, Debug, Serialize)]
 pub struct CurrentPlanView {
     pub revision: i64,
     pub state: PlanState,
     pub subject: Option<Subject>,
     pub fixture: Option<bool>,
     pub context: Option<azeroth_core::types::DataContext>,
+    pub dataset_revision: Option<azeroth_core::types::DatasetRevision>,
+    pub input_snapshots: Vec<PlanInputSnapshot>,
     pub saved_at_utc_ms: Option<UtcMillis>,
     pub evaluated_at_utc_ms: Option<UtcMillis>,
     pub age_ms: Option<u64>,
@@ -76,6 +83,8 @@ pub(crate) fn plan_view(
             subject: None,
             fixture: None,
             context: None,
+            dataset_revision: None,
+            input_snapshots: Vec::new(),
             saved_at_utc_ms: None,
             evaluated_at_utc_ms: None,
             age_ms: None,
@@ -123,6 +132,16 @@ pub(crate) fn plan_view(
         subject: Some(plan.guard.subject),
         fixture: Some(plan.guard.content.scope.fixture),
         context: Some(plan.guard.content.scope.context),
+        dataset_revision: Some(plan.guard.content.revision),
+        input_snapshots: plan
+            .guard
+            .profiles
+            .into_iter()
+            .map(|p| PlanInputSnapshot {
+                profile_id: p.profile_id,
+                snapshot_id: p.snapshot_id,
+            })
+            .collect(),
         saved_at_utc_ms: Some(plan.guard.publication_utc_ms),
         evaluated_at_utc_ms: Some(plan.guard.evaluation_utc_ms),
         age_ms,
