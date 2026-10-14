@@ -25,3 +25,7 @@ test("old completion cannot unlock or replace a newer pending request after refr
  expect(screen.getByRole("button",{name:"Preview diagnostic metadata"})).toBeEnabled();
  expect(screen.getByText(/"coverage_class": "demo"/)).toBeInTheDocument();
 });
+test("observed zero is displayed without inventing historical imports or capability evidence",async()=>{
+ const client:DiagnosticsClient={previewDiagnostics:async()=>({ok:true,value:{...report,telemetry:{...report.telemetry,truncated:false,import_attempts:0,import_succeeded:0,import_failed:0}}}),exportDiagnostics:async()=>({ok:true,value:{schema_version:1,bytes:1}})};
+ render(<DiagnosticsPanel client={client}/>); fireEvent.click(screen.getByRole("button",{name:"Preview diagnostic metadata"})); await screen.findByText("Recorded imports: 0."); expect(screen.getByText(/Watcher imports and earlier processes are excluded/)).toBeVisible();
+});

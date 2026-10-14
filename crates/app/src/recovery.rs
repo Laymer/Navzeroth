@@ -107,8 +107,68 @@ pub struct DatabaseHost {
     gate: RwLock<Hosted>,
     candidate: Mutex<Option<Candidate>>,
     planning_jobs: crate::planning_jobs::PlanningJobs,
+    telemetry: Mutex<crate::diagnostics::DiagnosticTelemetry>,
 }
 impl DatabaseHost {
+    /// Observe only explicitly wrapped foreground attempts, never watcher/history data.
+    /// The collector has no message/path input and never changes the operation result.
+    pub fn observe<T>(
+        &self,
+        operation: crate::diagnostics::DiagnosticOperation,
+        call: impl FnOnce() -> Result<T>,
+    ) -> Result<T> {
+        let started = std::time::Instant::now();
+        let result = call();
+        let duration = u64::try_from(started.elapsed().as_millis())
+            .ok()
+            .filter(|ms| *ms <= 86_400_000);
+        let mut telemetry = self
+            .telemetry
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
+        let _ = telemetry.record(operation, duration, result.as_ref().err().map(|e| e.code));
+        result
+    }
+    /// Selection and data are captured consistently; capabilities remain unknown.
+    /// Telemetry is a current-process foreground sample, independent of stored history.
+    pub fn diagnostic_report(
+        &self,
+        now: Option<azeroth_core::types::UtcMillis>,
+    ) -> Result<crate::diagnostics::DiagnosticReport> {
+        let started = std::time::Instant::now();
+        let hosted = self
+            .gate
+            .read()
+            .map_err(|_| fail("Diagnostic capture unavailable"))?;
+        let (snapshot, content) = match &hosted.app {
+            Some(app) => app.diagnostic_inputs()?,
+            None => (None, None),
+        };
+        let telemetry = self
+            .telemetry
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner())
+            .clone();
+        drop(hosted);
+        let clock = crate::snapshots::context(crate::planning_job_service::advanced_now(
+            now,
+            started.elapsed(),
+        ));
+        crate::diagnostics::build_with_context(
+            snapshot.as_ref(),
+            content.as_ref(),
+            Some(&telemetry),
+            Some(&clock),
+            None,
+        )
+    }
+    pub fn export_diagnostics(
+        &self,
+        path: &Path,
+        now: Option<azeroth_core::types::UtcMillis>,
+    ) -> Result<crate::diagnostics::DiagnosticReceipt> {
+        crate::diagnostics::write_new(&self.diagnostic_report(now)?, path)
+    }
     /// Cancellation/status never acquire the recovery lease or store mutex.
     pub fn planning_jobs(&self) -> &crate::planning_jobs::PlanningJobs {
         &self.planning_jobs
@@ -123,6 +183,7 @@ impl DatabaseHost {
             }),
             candidate: Mutex::new(None),
             planning_jobs: crate::planning_jobs::PlanningJobs::default(),
+            telemetry: Mutex::new(crate::diagnostics::DiagnosticTelemetry::observed()),
         });
         let worker = host.clone();
         let spawned = std::thread::Builder::new()
@@ -180,6 +241,7 @@ impl DatabaseHost {
             gate: RwLock::new(hosted),
             candidate: Mutex::new(None),
             planning_jobs: crate::planning_jobs::PlanningJobs::default(),
+            telemetry: Mutex::new(crate::diagnostics::DiagnosticTelemetry::observed()),
         }
     }
     /// The read lease covers the entire operation, including any detached work

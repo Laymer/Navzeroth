@@ -25,7 +25,7 @@ export function DiagnosticsPanel({ client, refreshKey = 0 }: { client: Diagnosti
   return <section aria-labelledby="diagnostics-title">
     <h3 id="diagnostics-title">Local diagnostics</h3>
     <p>Create an explicit local report of versions, build compatibility, coverage and bounded operation codes. Personal exports, account paths, chat, tokens and character identities are excluded. Nothing is uploaded.</p>
-    <p>Bundled addon version describes this package; the installed addon version remains unknown. Historical client reports do not verify the currently installed revision. Missing timing or import counters remain unknown.</p>
+    <p>Bundled addon version describes this package; the installed addon version remains unknown. Historical client reports do not verify the currently installed revision. Import statistics and timing cover foreground attempts observed in this process, including successful no-op imports. Watcher imports and earlier processes are excluded. Missing evidence remains unknown.</p>
     <button type="button" disabled={busy} onClick={() => void run(false)}>Preview diagnostic metadata</button>
     <label>New diagnostic file path <input value={path} maxLength={4096} disabled={busy} onChange={e => setPath(e.target.value)} /></label>
     <button type="button" disabled={busy || !path.trim()} onClick={() => void run(true)}>Create local diagnostic file</button>
