@@ -1,0 +1,33 @@
+import {expect,test} from "@playwright/test";
+import {readFileSync} from "node:fs";
+const flow=JSON.parse(readFileSync(new URL("../../../fixtures/desktop/content-governance/synthetic-flow.json",import.meta.url),"utf8"));
+test("explicit content restriction and guarded release retain no-active fallback without activating",async({page})=>{
+ await page.addInitScript(flow=>{let current=flow.initial;let active=flow.inspection;let decisions=0;const calls:{command:string;args:Record<string,unknown>}[]=[];
+  Object.defineProperty(window,"__DISPOSITION_CALLS__",{value:calls});Object.defineProperty(window,"__TAURI_INTERNALS__",{value:{invoke:async(command:string,args:Record<string,unknown>)=>{calls.push({command,args});switch(command){
+   case "get_app_status":return {version:"test",data_mode:"stored",active_profile:null,capabilities:{}};
+   case "get_reference_window_state":return {schema_version:1,exists:false,visible:false,always_on_top:false};
+   case "get_snapshot_watch":return {active:false,status:null,last_import:null,error:null};
+   case "list_profiles":return flow.profiles;
+   case "get_active_content":return active;
+   case "get_content_dispositions":return current;
+   case "change_content_disposition":decisions++;if(decisions===1){current=flow.quarantined;active=null;return flow.quarantine_decision;}if(decisions===2){current=flow.released;return flow.release_decision;}throw {code:"INVALID_INPUT",message:"private-source-path",retryable:false};
+   default:throw {code:"INVALID_INPUT",message:"Unexpected mocked command",retryable:false};
+  }}}});
+ },flow);
+ await page.goto("/");await page.getByRole("button",{name:"Content",exact:true}).click();
+ await expect(page.getByText(/Eligibility: eligible. Decision revision: 1/)).toBeVisible();
+ const calls=()=>page.evaluate(()=>(window as unknown as {__DISPOSITION_CALLS__:{command:string;args:Record<string,unknown>}[]}).__DISPOSITION_CALLS__);
+ expect((await calls()).filter(c=>c.command==="change_content_disposition")).toEqual([]);
+ await expect(page.getByRole("button",{name:"Quarantine selected revision"})).toBeDisabled();
+ await page.getByRole("checkbox",{name:"I confirm this explicit local eligibility decision"}).check();
+ await page.getByRole("button",{name:"Quarantine selected revision"}).click();
+ await expect(page.getByText(/Eligibility: quarantined. Decision revision: 2/)).toBeVisible();
+ await expect(page.getByText("No active content for this profile.")).toBeVisible();
+ await expect(page.getByText(/No eligible previously active fallback; active content cleared/)).toBeVisible();
+ await page.getByRole("checkbox",{name:"I confirm this explicit local eligibility decision"}).check();
+ await page.getByRole("button",{name:"Release quarantine without activating"}).click();
+ await expect(page.getByText(/Eligibility: eligible. Decision revision: 3/)).toBeVisible();
+ await expect(page.getByText("No active content for this profile.")).toBeVisible();
+ const decisions=(await calls()).filter(c=>c.command==="change_content_disposition").map(c=>JSON.parse(c.args.text as string));expect(decisions).toEqual([flow.quarantine_request,flow.release_request]);expect((await calls()).filter(c=>c.command==="activate_content")).toEqual([]);
+ await page.getByRole("checkbox",{name:"I confirm this explicit local eligibility decision"}).check();await page.getByRole("button",{name:"Quarantine selected revision"}).click();await expect(page.getByText(/Content decision unavailable: INVALID_INPUT/)).toBeVisible();await expect(page.locator("body")).not.toContainText("private-source-path");await expect(page.getByLabel("Stored revision")).toHaveCount(0);
+});
