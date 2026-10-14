@@ -282,10 +282,23 @@ fn dataset(bytes: &[u8]) -> Res<Envelope<ReferenceDataset>> {
     if !envelope.extensions.is_empty() {
         return Err("Exchange extensions are unsupported in local packs");
     }
-    known_fields(
-        &raw,
-        &serde_json::to_value(&envelope).map_err(|_| "Invalid dataset")?,
-    )?;
+    let mut comparison = serde_json::to_value(&envelope).map_err(|_| "Invalid dataset")?;
+    // Schema1 defines this additive typed default; serde omits its empty array.
+    // Restore only its comparison shape. The input and canonical envelope stay
+    // unchanged, and generic source/manifest/unknown-field checks stay strict.
+    if envelope.payload.map_embeddings.is_empty()
+        && raw
+            .get("payload")
+            .and_then(|payload| payload.get("map_embeddings"))
+            .is_some_and(|value| matches!(value, Value::Array(entries) if entries.is_empty()))
+    {
+        comparison
+            .get_mut("payload")
+            .and_then(Value::as_object_mut)
+            .ok_or("Invalid dataset comparison shape")?
+            .insert("map_embeddings".into(), Value::Array(Vec::new()));
+    }
+    known_fields(&raw, &comparison)?;
     if !content_report(&envelope).passes {
         return Err("Reference dataset has validation errors");
     }
@@ -883,5 +896,32 @@ mod publication_tests {
             b"preserved"
         );
         fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod dataset_default_tests {
+    use super::*;
+
+    #[test]
+    fn actual_forever_reference_with_explicit_empty_embeddings_keeps_original_identity() {
+        let bytes = include_bytes!("../../../content/forever/datasets/forever-atlas-r1.json");
+        let parsed = dataset(bytes).expect("existing typed empty default must parse");
+        let original =
+            decode_envelope::<ReferenceDataset>(std::str::from_utf8(bytes).unwrap()).unwrap();
+        assert_eq!(canonical(&parsed).unwrap(), canonical(&original).unwrap());
+        assert_eq!(parsed.game.build.as_str(), "1.60.1.70205");
+        assert_eq!(parsed.game.interface.as_str(), "16001");
+        assert_eq!(
+            parsed.namespace,
+            azeroth_core::types::DatasetNamespace::Reference
+        );
+        assert!(!parsed.fixture);
+        assert_eq!(parsed.payload.revision.as_str(), "forever-atlas-r1");
+        assert!(parsed.payload.map_embeddings.is_empty());
+        let report = content_report(&parsed);
+        assert!(report.passes);
+        assert!(report.errors.is_empty());
+        assert_eq!(report.gaps.len(), 3);
     }
 }
