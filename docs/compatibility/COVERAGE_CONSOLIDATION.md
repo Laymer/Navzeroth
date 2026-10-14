@@ -10,9 +10,9 @@ No selected profile or active revision means unavailable coverage, not zero.
 
 | Tuple | Evidence and finite scope | Unverified boundaries |
 | --- | --- | --- |
-| wow_forever / build70338 / interface16001; version1.60.1 | [Sanitized user report](../../fixtures/compatibility/forever-70338-user-diagnostic.json),2026-10-13: build strings serialized; one diagnostic SavedVariables retrieval; one level12 manual capture/import/display result. Function names were present; CombatLogGetCurrentEventInfo was missing in that diagnostic. | Edition was the selected addon target. Installed files/revision, locale code, combat/zone restrictions, quest/equipment/position values, plan load/advance and broader persistence remain unverified. Function presence is not usability. |
-| Previously recorded70338 client: clock follow-up | [Build capability notes](BUILD_CAPABILITIES.md): narrowly reported trusted age after confirmation and uncertain age after reload. | No raw export, independently inspected addon revision, exact displayed values or restriction conditions; follow-up date not separately recorded. |
-| wow_forever /1.60.1.70205 / interface16001 | [Poster reference tuple](../data/atlas-eastern-kingdoms.md); interface community assumption,2026-10-12. | No client session for this tuple. Map1415/floor0, calibration, zone embeddings, geography-to-game placement and route safety remain unverified. It never inherits70338 observations. |
+| wow_forever / build 70338 / interface 16001; version 1.60.1 | [Sanitized user report](../../fixtures/compatibility/forever-70338-user-diagnostic.json),2026-10-13: build strings serialized; one diagnostic SavedVariables retrieval; one level 12 manual capture/import/display result. Function names were present; CombatLogGetCurrentEventInfo was missing in that diagnostic. | Edition was the selected addon target. Installed files/revision, locale code, combat/zone restrictions, quest/equipment/position values, plan load/advance and broader persistence remain unverified. Function presence is not usability. |
+| Previously recorded 70338 client: clock follow-up | [Build capability notes](BUILD_CAPABILITIES.md): narrowly reported trusted age after confirmation and uncertain age after reload. | No raw export, independently inspected addon revision, exact displayed values or restriction conditions; follow-up date not separately recorded. |
+| wow_forever /1.60.1.70205 / interface 16001 | [Poster reference tuple](../data/atlas-eastern-kingdoms.md); interface community assumption,2026-10-12. | No client session for this tuple. Map 1415/floor 0, calibration, zone embeddings, geography-to-game placement and route safety remain unverified. It never inherits 70338 observations. |
 
 The app compares exact edition/build/interface strings, without aliases or edition
 mixing. A matching selected tuple only identifies applicable historical evidence;
@@ -58,7 +58,7 @@ relabel its Markdown registry as an installed typed SourceRegistry.
 For an installed active ContentRevision, the app separately reports registered and
 referenced source counts, unregistered evidence/image source references, declared
 conflicts, exact-edition/revision policy matches, observation-status counts for
-all16 policy fields, explicit redistribution values and offline true/false values.
+all 16 policy fields, explicit redistribution values and offline true/false values.
 Known, unknown, unsupported, restricted and not-applicable remain separate.
 Conditional/unrecorded redistribution never authorizes distribution. Recorded
 policy claims and confidence categories do not independently prove permissions

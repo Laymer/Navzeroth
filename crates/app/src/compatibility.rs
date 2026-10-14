@@ -35,7 +35,7 @@ pub struct CapabilityEvidence {
 #[derive(Clone, Debug, Serialize)]
 pub struct BuildEvidence {
     pub build: BuildKey,
-    pub version: &'static str,
+    pub version: String,
     pub basis: EvidenceState,
     pub reported_on: String,
     pub addon_version: Option<String>,
@@ -218,6 +218,7 @@ struct Diagnostic {
 }
 #[derive(Deserialize)]
 struct Client {
+    version: String,
     edition: EditionId,
     build: BuildId,
     interface: InterfaceId,
@@ -264,7 +265,7 @@ fn recorded(selected: Option<&SelectedContext>) -> Result<Vec<BuildEvidence>> {
     let observed = BuildEvidence {
         matches_selected_build: selected.map(|s| s.context.build == build),
         build,
-        version: "1.60.1",
+        version: diagnostic.client.version,
         basis: EvidenceState::ReportedFlow,
         reported_on: diagnostic.reported_on,
         addon_version: Some(diagnostic.addon_version),
@@ -276,7 +277,7 @@ fn recorded(selected: Option<&SelectedContext>) -> Result<Vec<BuildEvidence>> {
         build: BuildId::new("1.60.1.70205")?,
         interface: InterfaceId::new("16001")?,
     };
-    let assumed=BuildEvidence{matches_selected_build:selected.map(|s|s.context.build==assumed_build),build:assumed_build,version:"1.60.1",basis:EvidenceState::AssumedReference,reported_on:"2026-10-12".into(),addon_version:None,limitations:"Poster footer/community interface assumption only, not a client session. Never inherit 70338 observations for this reference tuple.",capabilities:vec![CapabilityEvidence{capability:"reference_map_and_position".into(),state:EvidenceState::Unverified,statement:"Map identifiers, coordinates, axis calibration, zone embeddings and real travel connections remain unverified for this reference dataset.".into(),source:"docs/data/atlas-eastern-kingdoms.md"}]};
+    let assumed=BuildEvidence{matches_selected_build:selected.map(|s|s.context.build==assumed_build),build:assumed_build,version:"1.60.1".into(),basis:EvidenceState::AssumedReference,reported_on:"2026-10-12".into(),addon_version:None,limitations:"Poster footer/community interface assumption only, not a client session. Never inherit 70338 observations for this reference tuple.",capabilities:vec![CapabilityEvidence{capability:"reference_map_and_position".into(),state:EvidenceState::Unverified,statement:"Map identifiers, coordinates, axis calibration, zone embeddings and real travel connections remain unverified for this reference dataset.".into(),source:"docs/data/atlas-eastern-kingdoms.md"}]};
     Ok(vec![observed, assumed])
 }
 impl SnapshotApplication {

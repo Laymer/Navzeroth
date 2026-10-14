@@ -2,7 +2,7 @@
   "inventory_version": 1,
   "dataset_file": "content/forever/datasets/forever-atlas-r1.json",
   "dataset_sha256": "531860e5189146b17bfee5b2654dfbef58c4acb922d692f0f16c73a9726789db",
-  "released_source": "f525911",
+  "released_source": "f525911ba13244cd0dbb26a78ada59fe91dd5184",
   "command": [
     "cargo",
     "run",

@@ -179,3 +179,26 @@ fn matching_numeric_build_from_another_edition_does_not_inherit_recorded_evidenc
             .all(|b| b.matches_selected_build == Some(false))
     );
 }
+
+#[test]
+fn shipped_inventory_is_bound_to_dataset_bytes_and_reproduces_the_core_report() {
+    use azeroth_core::{
+        contract::{ReferenceDataset, decode_envelope},
+        coverage::content_report,
+    };
+    use sha2::{Digest, Sha256};
+    let bytes = include_str!("../../../content/forever/datasets/forever-atlas-r1.json");
+    let inventory: Value = serde_json::from_str(include_str!(
+        "../../../docs/compatibility/v050-content-coverage.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        inventory["dataset_sha256"],
+        format!("{:x}", Sha256::digest(bytes.as_bytes()))
+    );
+    let dataset = decode_envelope::<ReferenceDataset>(bytes).unwrap();
+    assert_eq!(
+        inventory["reports"][0],
+        serde_json::to_value(content_report(&dataset)).unwrap()
+    );
+}
