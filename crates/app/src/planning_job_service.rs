@@ -77,7 +77,11 @@ impl PublicationGuard {
             content_hash: content_hash(content)?,
         })
     }
-    fn validate(&self, store: &SqliteStore, now: Option<UtcMillis>) -> Result<()> {
+    fn validate(
+        &self,
+        store: &SqliteStore,
+        publication_now: impl FnOnce() -> Option<UtcMillis>,
+    ) -> Result<()> {
         if let Some(id) = &self.party {
             let party = store.party(id)?.ok_or_else(outdated)?;
             if party.participants
@@ -90,22 +94,29 @@ impl PublicationGuard {
                 return Err(outdated());
             }
         }
-        let clock = context(now);
+        let mut snapshots = Vec::with_capacity(self.profiles.len());
         for (key, hash) in &self.profiles {
             let snapshot = store.current_snapshot(key)?.ok_or_else(outdated)?;
-            if azeroth_storage::snapshot_content_hash(&snapshot)? != *hash
-                || !matches!(
-                    freshness(&snapshot.payload.capture, &clock),
-                    Freshness::Fresh { .. }
-                )
-            {
+            if azeroth_storage::snapshot_content_hash(&snapshot)? != *hash {
                 return Err(outdated());
             }
+            snapshots.push(snapshot);
         }
         let content = store
             .active_content_revision(&self.content.scope)?
             .ok_or_else(outdated)?;
         if content.key() != self.content || content_hash(&content)? != self.content_hash {
+            return Err(outdated());
+        }
+        // Sample after lock acquisition and identity hashing, immediately before
+        // publication. Waiting for the mutex must not freeze snapshot age.
+        let clock = context(publication_now());
+        if snapshots.iter().any(|snapshot| {
+            !matches!(
+                freshness(&snapshot.payload.capture, &clock),
+                Freshness::Fresh { .. }
+            )
+        }) {
             return Err(outdated());
         }
         Ok(())
@@ -118,8 +129,9 @@ impl PublicationGuard {
         now: Option<UtcMillis>,
         publish: &mut dyn FnMut() -> Result<()>,
     ) -> Result<()> {
+        let started = std::time::Instant::now();
         app.with_store_mut(|store| {
-            self.validate(store, now)?;
+            self.validate(store, || advanced_now(now, started.elapsed()))?;
             publish()
         })
     }
