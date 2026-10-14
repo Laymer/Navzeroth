@@ -21,6 +21,7 @@
 //! The module is pure: it reads no clock, performs no I/O and uses only
 //! ordered collections, so equal inputs give an identical result regardless of
 //! the order in which nodes and edges are supplied.
+use crate::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use crate::{
     entities::{
         DurationRange, EdgeStatus, NodeRef, TravelEdge, TravelMode, TravelNode, TravelSegment,
@@ -266,9 +267,11 @@ fn build_route(
     start: NodeRef,
     label: &Label,
     prepared: &BTreeMap<&EdgeId, &Prepared<'_>>,
+    control: &mut dyn SearchControl,
 ) -> Result<Route> {
     let mut hops = Vec::with_capacity(label.2.len());
     for id in &label.2 {
+        control.checkpoint(SearchPhase::RouteExpansion)?;
         let item = prepared
             .get(id)
             .ok_or_else(|| invalid("Route references an unusable edge"))?;
@@ -314,15 +317,39 @@ pub fn shortest_route(
     context: &EvaluationContext<'_>,
     options: &RouteOptions,
 ) -> Result<RouteSearch> {
+    shortest_route_controlled(
+        nodes,
+        edges,
+        origin,
+        target,
+        context,
+        options,
+        &mut NoopSearchControl,
+    )
+}
+
+/// Cooperatively controlled shortest route; callback errors abort without a route.
+pub fn shortest_route_controlled(
+    nodes: &[TravelNode],
+    edges: &[TravelEdge],
+    origin: &NodeId,
+    target: &NodeId,
+    context: &EvaluationContext<'_>,
+    options: &RouteOptions,
+    control: &mut dyn SearchControl,
+) -> Result<RouteSearch> {
+    control.checkpoint(SearchPhase::ValidateInputs)?;
     unique(nodes.iter().map(|node| &node.id))?;
     unique(edges.iter().map(|edge| &edge.id))?;
     for node in nodes {
+        control.checkpoint(SearchPhase::ValidateInputs)?;
         node.position
             .map
             .context
             .ensure_compatible(&context.snapshot.context)?;
     }
     for edge in edges {
+        control.checkpoint(SearchPhase::ValidateInputs)?;
         edge.context.ensure_compatible(&context.snapshot.context)?;
     }
     let by_node: BTreeMap<&NodeId, &TravelNode> = nodes.iter().map(|n| (&n.id, n)).collect();
@@ -345,6 +372,7 @@ pub fn shortest_route(
     let mut exclusions = Vec::new();
     let mut usable = Vec::new();
     for edge in sorted {
+        control.checkpoint(SearchPhase::EdgeAssessment)?;
         let (Some(from), Some(to)) = (by_node.get(&edge.from.id), by_node.get(&edge.to.id)) else {
             return Err(invalid("Travel edge references an unknown node"));
         };
@@ -373,6 +401,7 @@ pub fn shortest_route(
         usable.iter().map(|item| (&item.edge.id, item)).collect();
     let mut adjacency: BTreeMap<&NodeId, Vec<&Prepared<'_>>> = BTreeMap::new();
     for item in usable.iter().filter(|item| !item.stateful) {
+        control.checkpoint(SearchPhase::EdgeAssessment)?;
         adjacency.entry(&item.edge.from.id).or_default().push(item);
     }
 
@@ -390,10 +419,12 @@ pub fn shortest_route(
         origin.clone(),
     )));
     while let Some(Reverse((cost, hops, path, node))) = heap.pop() {
+        control.checkpoint(SearchPhase::RouteExpansion)?;
         if settled.contains_key(&node) {
             continue;
         }
         for item in adjacency.get(&node).into_iter().flatten() {
+            control.checkpoint(SearchPhase::RouteExpansion)?;
             let next = &item.edge.to.id;
             if settled.contains_key(next) {
                 continue;
@@ -413,6 +444,7 @@ pub fn shortest_route(
     // a settled node onto the target. The same label order decides.
     let mut chosen: Option<Label> = settled.get(target).cloned();
     for item in usable.iter().filter(|item| item.stateful) {
+        control.checkpoint(SearchPhase::RouteExpansion)?;
         let Some(base) = settled.get(&item.edge.from.id) else {
             continue;
         };
@@ -426,11 +458,12 @@ pub fn shortest_route(
 
     let outcome = match chosen {
         Some(label) => RouteOutcome::Complete {
-            route: build_route(start, &label, &prepared)?,
+            route: build_route(start, &label, &prepared, control)?,
         },
         None => {
             let mut frontier: Option<&Label> = None;
             for label in settled.values() {
+                control.checkpoint(SearchPhase::RouteExpansion)?;
                 if frontier.is_none_or(|known| label.0 > known.0) {
                     frontier = Some(label);
                 }
@@ -438,11 +471,12 @@ pub fn shortest_route(
             let label = frontier.ok_or_else(|| invalid("Search did not settle the origin"))?;
             RouteOutcome::Incomplete {
                 target: target.clone(),
-                reached: build_route(start, label, &prepared)?,
+                reached: build_route(start, label, &prepared, control)?,
                 reachable: settled.keys().cloned().collect(),
             }
         }
     };
+    control.checkpoint(SearchPhase::RouteExpansion)?;
     Ok(RouteSearch {
         outcome,
         exclusions,
