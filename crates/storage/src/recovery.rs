@@ -289,7 +289,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
         if oversized {
             return Err(storage("Database row exceeds validation capacity"));
         }
-        let count: usize = conn
+        let count: u32 = conn
             .query_row(
                 &format!(
                     "SELECT COUNT(*) FROM (SELECT 1 FROM {table} LIMIT {})",
@@ -299,7 +299,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
                 |r| r.get(0),
             )
             .db()?;
-        total = total.saturating_add(count);
+        total = total.saturating_add(count as usize);
         if total > MAX_ROWS {
             return Err(storage("Database row count exceeds validation capacity"));
         }
