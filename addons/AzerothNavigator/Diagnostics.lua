@@ -60,34 +60,164 @@ function Diagnostics.attach(env)
     end
   end
 
+  local Appearance = ns.HudAppearance
+  local function uiGate()
+    local ok, report = pcall(Capabilities.probe, env)
+    if not ok then return false, 'hud_build_unrecorded' end
+    return Appearance.gate(report.build, env.InCombatLockdown)
+  end
+  local function defer(code)
+    state.hud_pending = true -- one latest request: settings/model are replaced, never queued
+    state.plan_ui_code = code
+  end
+  local function has(object, names)
+    if not object then return false end
+    for _, name in ipairs(names) do
+      if type(object[name]) ~= 'function' then return false end
+    end
+    return true
+  end
+  local function persistMovement(frame)
+    state.hud_movement_code = 'hud_movement_session_only'
+    if not has(frame, {'GetPoint', 'GetNumPoints'}) then return end
+    local ok, position = pcall(function()
+      if frame:GetNumPoints() ~= 1 then return end
+      local anchor, parent, relative, x, y = frame:GetPoint(1)
+      if parent ~= env.UIParent or env.UIParent == nil or
+        type(x) ~= 'number' or type(y) ~= 'number' or x ~= x or y ~= y or
+        x < -4096 or x > 4096 or y < -4096 or y > 4096 then return end
+      return Appearance.position(anchor, relative, math.floor(x + 0.5), math.floor(y + 0.5))
+    end)
+    if not ok or not position then return end
+    state.settings.hud_position = position
+    -- Consume the observed request without snapping a drag to rounded saved offsets.
+    state.hud_position_request = Appearance.position(position.anchor, position.relative,
+      position.x, position.y)
+    if state.persist then
+      state.db.settings.hud_position = Appearance.copy(state.settings).hud_position
+      state.hud_movement_code = 'hud_movement_persisted'
+    end
+  end
   local function renderPlan(model)
     state.hud_model = model
+    local allowed, code = uiGate()
+    if not allowed then defer(code); return end
+    if state.hud_stop_pending and state.hud_frame then
+      if not has(state.hud_frame, {'StopMovingOrSizing'}) or
+        not pcall(function() state.hud_frame:StopMovingOrSizing() end) then
+        defer('hud_movement_unavailable'); return
+      end
+      state.hud_stop_pending = false
+      -- An explicit reset supersedes a deferred drag observation.
+      if not state.hud_reset_position then persistMovement(state.hud_frame) end
+    end
     if not state.settings.hud_visible then
-      if state.hud_frame then pcall(function() state.hud_frame:Hide() end) end
+      if state.hud_frame then
+        if not has(state.hud_frame, {'Hide'}) or
+          not pcall(function() state.hud_frame:Hide() end) then
+          defer('hud_ui_unavailable'); return
+        end
+      end
+      state.hud_pending, state.plan_ui_code = false, 'hud_hidden'
       return
     end
-    if type(env.CreateFrame) ~= 'function' then return end
-    local ok = pcall(function()
-      if not state.hud_frame then
-        local frame = env.CreateFrame('Frame', nil, env.UIParent)
-        frame:SetSize(420, 220)
-        frame:SetPoint('TOP', 0, -120)
-        frame:SetMovable(true)
-        frame:EnableMouse(true)
-        frame:RegisterForDrag('LeftButton')
-        frame:SetScript('OnDragStart', function(self) self:StartMoving() end)
-        frame:SetScript('OnDragStop', function(self) self:StopMovingOrSizing() end)
-        local text = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-        text:SetAllPoints(frame)
-        text:SetJustifyH('LEFT')
-        state.hud_frame, state.hud_text = frame, text
+    if type(env.CreateFrame) ~= 'function' then defer('hud_ui_unavailable'); return end
+    local ok, failure = pcall(function()
+      if not state.hud_frame then state.hud_frame = env.CreateFrame('Frame', nil, env.UIParent) end
+      local frame = state.hud_frame
+      if not has(frame, {'SetSize','SetPoint','ClearAllPoints','SetMovable','EnableMouse',
+        'RegisterForDrag','SetScript','CreateFontString','Show'}) then
+        return 'hud_ui_unavailable'
       end
-      -- Imported text is display data: escape client texture/hyperlink markup.
-      state.hud_text:SetText(state.plan_controls:describe(model):gsub('|', '||'))
-      state.hud_frame:Show()
+      if not state.hud_text then
+        state.hud_text = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+      end
+      local text = state.hud_text
+      if not has(text, {'SetAllPoints','SetJustifyH','SetText','GetFont','SetFont',
+        'GetTextColor','SetTextColor'}) then return 'hud_text_unavailable' end
+      if not state.hud_font then
+        local path, size, flags = text:GetFont()
+        if type(path) ~= 'string' or #path == 0 or #path > 4096 or
+          type(size) ~= 'number' or size ~= size or size <= 0 or size > 200 or
+          (flags ~= nil and (type(flags) ~= 'string' or #flags > 80)) then
+          return 'hud_font_unavailable'
+        end
+        state.hud_font = {path=path, size=size, flags=flags}
+      end
+      if not state.hud_color then
+        local r, g, b, a = text:GetTextColor()
+        for _, value in ipairs({r,g,b,a}) do
+          if type(value) ~= 'number' or value ~= value or value < 0 or value > 1 then
+            return 'hud_contrast_unavailable'
+          end
+        end
+        if r == nil or g == nil or b == nil or a == nil then return 'hud_contrast_unavailable' end
+        state.hud_color = {r,g,b,a}
+      end
+      if state.settings.hud_contrast == 'high' then
+        if not state.hud_background then
+          if not has(frame, {'CreateTexture'}) then return 'hud_contrast_unavailable' end
+          state.hud_background = frame:CreateTexture(nil, 'BACKGROUND')
+        end
+        if not has(state.hud_background, {'SetAllPoints','SetColorTexture','Show','Hide'}) then
+          return 'hud_contrast_unavailable'
+        end
+      end
+      local prefs = Appearance.copy(state.settings)
+      frame:SetSize(prefs.hud_width, prefs.hud_height)
+      local pos = prefs.hud_position
+      local prior = state.hud_position_request
+      -- This is a consumed preference, not an observation of the current position.
+      -- Unknown/session-only drags must survive model, font and size refreshes.
+      if state.hud_reset_position or not prior or prior.anchor ~= pos.anchor or
+        prior.relative ~= pos.relative or prior.x ~= pos.x or prior.y ~= pos.y then
+        frame:ClearAllPoints()
+        frame:SetPoint(pos.anchor, env.UIParent, pos.relative, pos.x, pos.y)
+        state.hud_position_request = Appearance.position(pos.anchor, pos.relative, pos.x, pos.y)
+        state.hud_reset_position = false
+      end
+      frame:SetMovable(true); frame:EnableMouse(true); frame:RegisterForDrag('LeftButton')
+      frame:SetScript('OnDragStart', function(self)
+        local safe, reason = uiGate()
+        if not safe then defer(reason); return end
+        if not has(self, {'StartMoving'}) or not pcall(function() self:StartMoving() end) then
+          state.hud_movement_code = 'hud_movement_unavailable'
+        end
+      end)
+      frame:SetScript('OnDragStop', function(self)
+        local safe, reason = uiGate()
+        if not safe then state.hud_stop_pending = true; defer(reason); return end
+        if has(self, {'StopMovingOrSizing'}) and
+          pcall(function() self:StopMovingOrSizing() end) then
+          if not state.hud_reset_position then persistMovement(self) end
+        else state.hud_movement_code = 'hud_movement_unavailable' end
+      end)
+      text:SetAllPoints(frame); text:SetJustifyH('LEFT')
+      local baseline = state.hud_font
+      if text:SetFont(baseline.path, baseline.size * prefs.hud_font_percent / 100,
+        baseline.flags) == false then return 'hud_font_unavailable' end
+      if prefs.hud_contrast == 'high' then
+        state.hud_background:SetAllPoints(frame)
+        state.hud_background:SetColorTexture(0,0,0,1); state.hud_background:Show()
+        text:SetTextColor(1,1,1,1)
+      else
+        if state.hud_background then state.hud_background:Hide() end
+        text:SetTextColor(unpack(state.hud_color))
+      end
+      -- Every rendered card identifies its capture; deferral cannot relabel it as live.
+      text:SetText(('Last evaluated addon observation (UI updates may defer).\n' ..
+        state.plan_controls:describe(model)):gsub('|', '||'))
+      frame:Show()
+      state.hud_applied = prefs
     end)
-    if not ok then state.plan_ui_code = 'hud_ui_unavailable' end
+    if not ok or failure then defer(ok and failure or 'hud_ui_unavailable'); return end
+    state.hud_pending, state.plan_ui_code = false, 'hud_applied'
   end
+
+  local function resumeHud()
+    if state.hud_pending and state.plan_controls then state.plan_controls:refresh() end
+  end
+  state.resumeHud = resumeHud
 
   local function ensurePlanControls()
     if state.plan_controls then return state.plan_controls end
@@ -171,13 +301,31 @@ function Diagnostics.attach(env)
     if command == 'import' then return planImport(tail) end
     local controls, code = ensurePlanControls()
     if not controls then say('plan unavailable: ' .. code); return end
-    if command == 'clear' then controls:clear(); say('loaded plan cleared')
-    elseif command == 'status' then say(controls:describe(controls:status()):gsub("|", "||"))
+    if command == 'size' or command == 'font' or command == 'contrast' or command == 'reset' then
+      local prefs, errorCode = Appearance.command(command, tail, state.settings)
+      if not prefs then say('HUD preference refused (' .. errorCode .. ')'); return end
+      if command == 'reset' then state.hud_reset_position = true end
+      for key, value in pairs(prefs) do state.settings[key] = value end
+      if state.persist then
+        for key, value in pairs(Appearance.copy(prefs)) do state.db.settings[key] = value end
+      end
+      controls:refresh()
+      say('HUD requested; application status=' .. (state.plan_ui_code or 'unknown'))
+    elseif command == 'clear' then controls:clear(); say('loaded plan cleared')
+    elseif command == 'status' then
+      resumeHud()
+      say(controls:describe(controls:status()):gsub("|", "||"))
+      local prefs = Appearance.copy(state.settings)
+      say('HUD requested=' .. prefs.hud_width .. 'x' .. prefs.hud_height ..
+        ', font=' .. prefs.hud_font_percent .. ', contrast=' .. prefs.hud_contrast ..
+        '; last application=' .. (state.plan_ui_code or 'unknown') ..
+        '; movement=' .. (state.hud_movement_code or 'hud_movement_not_observed'))
     elseif command == 'show' or command == 'hide' then
       state.settings.hud_visible = command == 'show'
       if state.persist then state.db.settings.hud_visible = state.settings.hud_visible end
       controls:refresh()
-    else say('/anavplan paste | import ANAV1:... | status | show | hide | clear') end
+    else say('/anavplan paste | import ANAV1:... | status | show | hide | clear | size W H | ' ..
+      'font 100/125/150/175/200 | contrast default/high | reset') end
   end
 
   local function run()
@@ -463,9 +611,17 @@ function Diagnostics.attach(env)
         for _, event in ipairs(EVENTS) do
           frame:RegisterEvent(event)
         end
-        frame:SetScript("OnEvent", onEvent)
+        frame:SetScript("OnEvent", function(self, event, ...)
+          if event == 'PLAYER_REGEN_ENABLED' then resumeHud()
+          else onEvent(self, event, ...) end
+        end)
       end)
       state.frame = wired and frame or nil
+      if wired then
+        state.hud_resume_event_available = pcall(function()
+          frame:RegisterEvent('PLAYER_REGEN_ENABLED')
+        end)
+      end
     end
   end
 

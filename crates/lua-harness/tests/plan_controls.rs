@@ -13,7 +13,7 @@ fn slash_paste_is_explicit_runtime_only_and_visibility_survives_reload() {
         local f={kind=kind,scripts={},shown=false,text=''}
         frames[#frames+1]=f
         local noop=function() end
-        for _,name in ipairs({'SetSize','SetPoint','SetMovable','EnableMouse','RegisterForDrag',
+        for _,name in ipairs({'SetSize','ClearAllPoints','SetPoint','SetMovable','EnableMouse','RegisterForDrag',
           'SetMultiLine','SetAutoFocus','SetFontObject','SetAllPoints','SetJustifyH',
           'StartMoving','StopMovingOrSizing','RegisterEvent'}) do f[name]=noop end
         function f:SetScript(name,callback) self.scripts[name]=callback end
@@ -22,9 +22,14 @@ fn slash_paste_is_explicit_runtime_only_and_visibility_survives_reload() {
         function f:SetMaxLetters(value) self.max=value end
         function f:Show() self.shown=true end
         function f:Hide() self.shown=false end
+        function f:GetFont() return 'synthetic-font',12,'' end
+        function f:SetFont() return true end
+        function f:GetTextColor() return 1,1,1,1 end
+        function f:SetTextColor() end
         function f:CreateFontString() return CreateFrame('FontString') end
         return f
       end
+      function InCombatLockdown() return false end
       function UnitLevel() return 12 end
       messages={}
       function print(message) messages[#messages+1]=message end

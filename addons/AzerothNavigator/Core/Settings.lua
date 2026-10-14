@@ -12,12 +12,17 @@ local SCHEMA = {
   chat_summary = { type = "boolean", default = true },
 }
 
+for key, value in pairs(ns.HudAppearance.defaults()) do
+  SCHEMA[key] = {type=type(value), default=value, appearance=true}
+end
+
 local Settings = { SCHEMA = SCHEMA, DB_VERSION = Version.db_version }
 
 function Settings.defaults()
   local result = {}
   for key, spec in pairs(SCHEMA) do
-    result[key] = spec.default
+    if spec.appearance then result[key] = ns.HudAppearance.defaults()[key]
+    else result[key] = spec.default end
   end
   return result
 end
@@ -30,8 +35,11 @@ function Settings.merge(saved)
   end
   for key, spec in pairs(SCHEMA) do
     local value = saved[key]
-    if type(value) == spec.type then
-      result[key] = value
+    if type(value) == spec.type and
+      (not spec.appearance or ns.HudAppearance.validate(key, value)) then
+      if key == 'hud_position' then
+        result[key] = ns.HudAppearance.position(value.anchor, value.relative, value.x, value.y)
+      else result[key] = value end
     end
   end
   return result
