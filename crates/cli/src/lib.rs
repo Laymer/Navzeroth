@@ -1,3 +1,5 @@
 pub mod atlas;
 pub mod content;
 pub mod doctor;
+
+pub mod replay;

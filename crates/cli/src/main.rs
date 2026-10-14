@@ -17,7 +17,7 @@ use std::{
 
 const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
-    validate-fixtures; validate-content --input <file-or-dir> [--json]. See README.md.";
+    validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
 /// This list is explicit on purpose: the command never globs `fixtures/**`.
@@ -198,7 +198,7 @@ fn main() -> ExitCode {
             );
             println!(
                 "Implemented subcommands: doctor; export-schemas --output <dir>; prepare-atlas --manifest \
-                 <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures. \
+                 <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  Other commands are planned; see README.md and plan section 19.3."
             );
             ExitCode::SUCCESS
@@ -227,6 +227,28 @@ fn main() -> ExitCode {
             }
         }
         [command] if command == "validate-fixtures" => validate_fixtures(),
+        [command, flag, path]
+            if command == "replay"
+                && flag == "--fixture"
+                && !path.to_str().is_some_and(|p| p.starts_with("--")) =>
+        {
+            match azeroth_cli::replay::file(Path::new(path)) {
+                Ok(bytes) => {
+                    use std::io::Write;
+                    match std::io::stdout().lock().write_all(&bytes) {
+                        Ok(()) => ExitCode::SUCCESS,
+                        Err(_) => {
+                            eprintln!("Replay output cannot be written");
+                            ExitCode::FAILURE
+                        }
+                    }
+                }
+                Err(message) => {
+                    eprintln!("replay: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
         [command, flag, input, rest @ ..]
             if command == "validate-content"
                 && flag == "--input"

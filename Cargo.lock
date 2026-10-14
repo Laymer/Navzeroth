@@ -98,8 +98,10 @@ dependencies = [
 name = "azeroth-cli"
 version = "0.4.0"
 dependencies = [
+ "azeroth-app",
  "azeroth-core",
  "azeroth-ingest",
+ "azeroth-storage",
  "image",
  "serde",
  "serde_json",
