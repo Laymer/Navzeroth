@@ -655,9 +655,13 @@ fn evaluate_inputs(
     let available = captured
         .snapshots
         .iter()
-        .flatten()
-        .map(|s| s.payload.clone())
+        .zip(&capture_freshness)
+        .filter(|(_, freshness)| matches!(freshness, Some(Freshness::Fresh { .. })))
+        .filter_map(|(snapshot, _)| snapshot.as_ref().map(|s| s.payload.clone()))
         .collect::<Vec<_>>();
+    // ParticipantState can read remote typed fields. Only fresh captures belong
+    // in this evaluator party, matching the fresh-subset publication guard.
+    // The explanatory report below still retains the entire requested cohort.
     let party = captured
         .party
         .as_ref()
@@ -1017,5 +1021,59 @@ mod tests {
             panic!("Independently expired field must fail")
         };
         assert_eq!(error.code, ErrorCode::SnapshotOutdated);
+    }
+    #[test]
+    fn stale_remote_capture_cannot_supply_independently_fresh_fields_to_party_predicates() {
+        let (app, mut request, _, second) = setup();
+        let now = Some(UtcMillis::new(NOW).unwrap());
+        let mut snapshot =
+            serde_json::to_value(app.current(&second, now).unwrap().unwrap().envelope).unwrap();
+        snapshot["payload"]["id"] = json!("remote-expiring-snapshot");
+        snapshot["payload"]["capture"]["sequence"] = json!(2000);
+        snapshot["producer"]["sequence"] = json!(2000);
+        snapshot["payload"]["capture"]["session_elapsed_ms"] = json!(500000);
+        snapshot["payload"]["level"]["observed_at_utc_ms"] = json!(NOW - 1_799_950);
+        app.import_text(&format!("ANAV1:{snapshot}"), now).unwrap();
+        assert_eq!(
+            app.current(&second, now)
+                .unwrap()
+                .unwrap()
+                .envelope
+                .payload
+                .id
+                .as_str(),
+            "remote-expiring-snapshot"
+        );
+        request["package"]["access"]["observation"] = json!({"status":"known","value":{"op":"participant_state","participant":"member-1","predicate":{"op":"level_at_least","level":22}}});
+        // Supplied clocks span the remote field's expiry without sleeps. Its
+        // already stale capture makes that field unavailable at both clocks.
+        for at in [NOW, NOW + 100] {
+            let report = app
+                .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(at).unwrap()))
+                .unwrap();
+            assert_eq!(
+                report.members[0]
+                    .access
+                    .as_ref()
+                    .unwrap()
+                    .evaluation
+                    .as_ref()
+                    .unwrap()
+                    .truth,
+                Truth::Unknown
+            );
+            assert!(matches!(
+                report.members[1].freshness,
+                Some(Freshness::Stale { .. })
+            ));
+            assert!(
+                report.members[1]
+                    .access
+                    .as_ref()
+                    .unwrap()
+                    .evaluation
+                    .is_none()
+            );
+        }
     }
 }
