@@ -71,3 +71,12 @@ After PR85 reconciliation, recipient export also identifies the clustered joint
 ruleset and minimum participant summed utility model explicitly; each exported
 original still reports its original minimum-member contribution. No schema or
 recipient consent/transport behavior changes. Combined dependency checks follow.
+
+Combined reconciled app/core/storage/Lua checks passed, along with135 desktop
+unit tests, strict typecheck/lint/build and all-target affected Clippy. Logs
+/tmp/navzeroth-wave6-cluster-combined-*.log. Initial combined run failed two
+recipient assertions expecting the old ruleset/explanation; those now assert the
+new explicit ruleset/model and unchanged original contribution3. Recalculated
+choices did not change in those regressions. Old accepted proposals whose result
+changes under clustering require explicit reproposal/acceptance through existing
+result-hash/CAS checks; no agreement is silently migrated.
