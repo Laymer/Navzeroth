@@ -271,3 +271,30 @@ fn oversized_valid_joint_plan_is_refused_without_mutating_acceptances() {
     assert_eq!(still.guard, p.guard);
     assert!(still.participants.iter().all(|p| p.accepted));
 }
+
+#[test]
+fn stored_proposal_context_fixture_and_result_fingerprint_must_match_recomputed_inputs() {
+    for change in ["context", "fixture", "result"] {
+        let db = setup(|_| {});
+        members(&db, 23, NOW);
+        let p = agree(&db);
+        let mut store = SqliteStore::open(&db.path).unwrap();
+        let mut stored = store.party_proposal(&id()).unwrap().unwrap();
+        match change {
+            "context" => {
+                stored.context.namespace = azeroth_core::types::DatasetNamespace::Reference
+            }
+            "fixture" => stored.fixture = false,
+            _ => stored.result_hash = azeroth_core::types::Sha256Hex::new("b".repeat(64)).unwrap(),
+        }
+        stored.guard.revision += 1;
+        store.save_party_proposal(&stored, Some(&p.guard)).unwrap();
+        let request = json!({"party_id":"duo","expected":stored.guard,"recipient_profile_id":p.participants[0].profile_id});
+        assert!(
+            db.app
+                .export_agreed_party_plan(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .is_err(),
+            "{change}"
+        );
+    }
+}
