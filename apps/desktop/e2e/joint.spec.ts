@@ -6,6 +6,7 @@ test("joint planning sends exact participant guards and hard exclusions, then in
   await page.addInitScript(({ content, snapshot }) => {
     const calls: { command: string; args: Record<string, unknown> }[] = [];
     let stale = false;
+    let planningReport: unknown = null;
     const profiles = ["one", "two"];
     const members = () => profiles.map((character) => ({ character, profile_id: character, snapshot_id: `snapshot-${character}`, freshness: stale ? { status: "uncertain", reason: "missing_or_untrusted_time" } : { status: "fresh", age_ms: 0 } }));
     Object.defineProperty(window, "__JOINT_CALLS__", { value: calls });
@@ -19,10 +20,15 @@ test("joint planning sends exact participant guards and hard exclusions, then in
         case "get_party_plan_proposal": return null;
         case "get_party_quests": return { context: snapshot.payload.context, fixture: true, revision: null, quests: [] };
         case "get_joint_planning_catalog": return { context: snapshot.payload.context, fixture: true, revision: "demo-r1", participants: members(), nodes: content.envelope.payload.nodes, objectives: content.envelope.payload.objectives };
-        case "plan_joint_session": {
-          const request = JSON.parse(String(args.text)); stale = true;
-          return { request, context: snapshot.payload.context, fixture: true, participants: members(), filtered: [], assumptions: ["Manual utility and shared origin"], result: { assessments: [], unavailable_edges: [], plan: { selected: [], expected_total_ms: 0, estimated: true, alternatives: [], trace: [], termination: "no_feasible_candidate", stopping: { total_ms: 0 } } } };
+        case "start_planning_job": {
+          if (args.kind !== "joint") throw new Error("Wrong planning kind");
+          const request = JSON.parse(String(args.text));
+          planningReport = { request, context: snapshot.payload.context, fixture: true, participants: members(), filtered: [], assumptions: ["Manual utility and shared origin"], result: { assessments: [], unavailable_edges: [], plan: { selected: [], expected_total_ms: 0, estimated: true, alternatives: [], trace: [], termination: "no_feasible_candidate", stopping: { total_ms: 0 } } } };
+          return { job_schema_version: 1, job_id: "joint-mock-job" };
         }
+        case "get_planning_job": return { job_schema_version: 1, job_id: args.job_id, kind: "joint", state: "succeeded", cancel_requested: false, phase: "selection", work_units: 8, result_available: true, error: null };
+        case "take_planning_job_result": { const result = { job_schema_version: 1, job_id: args.job_id, kind: "joint", report_json: JSON.stringify(planningReport) }; stale = true; return result; }
+        case "cancel_planning_job": return null;
         default: throw { code: "INVALID_INPUT", message: "Unexpected mock command", retryable: false };
       }
     } } });
@@ -45,8 +51,8 @@ test("joint planning sends exact participant guards and hard exclusions, then in
   await calculate.click();
   await expect(page.getByText("No jointly feasible objective fits the supplied inputs and stopping route.")).toBeVisible();
   const calls = await page.evaluate(() => (window as unknown as { __JOINT_CALLS__: { command: string; args: Record<string, unknown> }[] }).__JOINT_CALLS__);
-  const invocation = calls.find((c) => c.command === "plan_joint_session");
-  expect(invocation).toBeDefined();
+  const invocation = calls.find((c) => c.command === "start_planning_job");
+  expect(invocation?.args.kind).toBe("joint");
   expect(JSON.parse(String(invocation?.args.text))).toMatchObject({ party_id: "duo", revision: "demo-r1", excluded: ["demo-objective-1"], participants: [{ profile_id: "one", snapshot_id: "snapshot-one" }, { profile_id: "two", snapshot_id: "snapshot-two" }], candidates: [{ utilities: { one: 10, two: 3 } }] });
   await page.getByRole("button", { name: "Refresh parties" }).click();
   await expect(page.getByText(/Missing, stale or uncertain age blocks calculation/)).toBeVisible();

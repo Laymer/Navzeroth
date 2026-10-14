@@ -16,6 +16,7 @@ async function mockCommands(page: Page) {
     const inspection = { key: { scope: { context: snapshot.payload.context, fixture: true }, revision: planning.envelope.payload.revision }, report: { passes: true, gaps: [], errors: [], coverage: null }, sources: [], conflicts: [] };
     let query = 0;
     const parties = new Map<string, string[]>();
+    let planningReport: unknown = null;
     const freshness = { status: "uncertain", reason: "missing_or_untrusted_time" };
     const receipt = (id: string, disposition: object) => ({ profile_id: id, snapshot_id: promoted ? "historical" : `current-${id}`, disposition, fixture: true, namespace: "demo", data_mode: "stored", freshness });
     const current = (id: string) => ({ envelope: { ...snapshot, payload: { ...snapshot.payload, id: `current-${id}` } }, profile_id: id, freshness, data_mode: "stored" });
@@ -47,7 +48,14 @@ async function mockCommands(page: Page) {
           case "get_planning_catalog": return { snapshot_id: "current-profile-one", revision: activeContent ? planning.envelope.payload.revision : null, fixture: true, nodes: planning.envelope.payload.nodes, objectives: planning.envelope.payload.objectives };
           case "inspect_plan_route": return { context: snapshot.payload.context, fixture: true, frames: [], hops: [{ leg: 0, stopping: false, hop: { from: { id: "demo-node-1" }, to: { id: "demo-node-2" }, mode: "walking", cost_ms: 30000, status: "estimated" }, from: { outcome: "gap", gap: "no_image_for_map" }, to: { outcome: "gap", gap: "no_image_for_map" }, requirements: { status: "not_applicable" }, schematic_connection: false, geometry_gap: "Exact dataset projection unavailable; inspect endpoint gaps" }] };
           case "export_plan": return { text: "ANAV1:synthetic-command-mock", byte_count: 28, plan_id: "mock-plan", expires_at_utc_ms: 1 };
-          case "plan_session": return { request: JSON.parse(String(args.text)), fixture: true, context: snapshot.payload.context, assumptions: ["Synthetic manual estimates"], filtered: [], result: { selected: [{ candidate: "synthetic-service", utility: 10, incremental_ms: 31000, completion_ms: 1000, service_ms: 0, travel: { total_ms: 30000 }, expected_session_ms: 61000 }], stopping: { total_ms: 30000 }, expected_total_ms: 61000, estimated: true, alternatives: [], trace: [], termination: "no_feasible_candidate" } };
+          case "start_planning_job": {
+            if (args.kind !== "solo") throw new Error("Unexpected planning kind");
+            planningReport = { request: JSON.parse(String(args.text)), fixture: true, context: snapshot.payload.context, assumptions: ["Synthetic manual estimates"], filtered: [], result: { selected: [{ candidate: "synthetic-service", utility: 10, incremental_ms: 31000, completion_ms: 1000, service_ms: 0, travel: { total_ms: 30000 }, expected_session_ms: 61000 }], stopping: { total_ms: 30000 }, expected_total_ms: 61000, estimated: true, alternatives: [], trace: [], termination: "no_feasible_candidate" } };
+            return { job_schema_version: 1, job_id: "solo-mock-job" };
+          }
+          case "get_planning_job": return { job_schema_version: 1, job_id: args.job_id, kind: "solo", state: "succeeded", cancel_requested: false, phase: "selection", work_units: 3, result_available: true, error: null };
+          case "take_planning_job_result": return { job_schema_version: 1, job_id: args.job_id, kind: "solo", report_json: JSON.stringify(planningReport) };
+          case "cancel_planning_job": return null;
           case "select_profile": selected = String(args.profile_id); return null;
           case "import_snapshot_text": {
             const text = String(args.text);
