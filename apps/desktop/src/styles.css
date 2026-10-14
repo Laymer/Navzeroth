@@ -1,5 +1,6 @@
 :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
 main { max-width: 48rem; margin: 0 auto; padding: 1rem; }
+main :is(h1, h2, h3, h4, h5, h6) { overflow-wrap: anywhere; }
 .demo-label {
   border: 2px solid currentColor;
   padding: 0.5rem 0.75rem;
