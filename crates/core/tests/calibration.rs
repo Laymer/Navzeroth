@@ -1,0 +1,261 @@
+use azeroth_core::{analytics::analyze_session, calibration::*, sessions::*, types::*};
+use serde_json::json;
+fn conditions() -> CalibrationConditions {
+    CalibrationConditions {
+        route_stage: "route-a/turn-in".into(),
+        level: 12,
+        role: "healer".into(),
+        party_size: 2,
+    }
+}
+fn request() -> CalibrationRequest {
+    CalibrationRequest {
+        conditions: conditions(),
+        baseline_ms: 100_000,
+        baseline_source: "declared planning assumption".into(),
+    }
+}
+fn sample(id: &str, duration: u64) -> CalibrationSample {
+    let mut events =
+        vec![json!({"session":id,"sequence":1,"elapsed_ms":0,"kind":{"type":"session_start"}})];
+    let mut elapsed = 0;
+    let mut sequence = 2;
+    while elapsed < duration {
+        elapsed = (elapsed + 100_000).min(duration);
+        events.push(json!({"session":id,"sequence":sequence,"elapsed_ms":elapsed,"kind":{"type":"activity","label":"declared_stage","quality":"observed"}}));
+        sequence += 1;
+    }
+    events.push(json!({"session":id,"sequence":sequence,"elapsed_ms":duration,"kind":{"type":"quest_turn_in","quest":"quest-a"}}));
+    let batch: SessionBatch = serde_json::from_value(json!({"character":"example","context":{"build":{"edition":"wow_forever","build":"SYNTHETIC","interface":"SYNTHETIC"},"namespace":"demo"},"events":events})).unwrap();
+    let build = build_sessions(
+        &batch,
+        &SessionBuildConfig {
+            max_observed_span_ms: Millis::new(300_000).unwrap(),
+            clock_tolerance_ms: Millis::new(5000).unwrap(),
+        },
+    )
+    .unwrap()
+    .into_values()
+    .next()
+    .unwrap();
+    CalibrationSample {
+        fixture: true,
+        analytics: analyze_session(&build).unwrap(),
+        batch,
+        annotation: Some(SessionCalibrationAnnotation {
+            conditions: conditions(),
+            complete: true,
+            completion_quest: "quest-a".into(),
+        }),
+    }
+}
+#[test]
+fn sparse_data_blends_baseline_and_preserves_extremes_reproducibly() {
+    let samples = vec![
+        sample("b", 200_000),
+        sample("a", 200_000),
+        sample("c", 2_000_000),
+    ];
+    let report = calibrate(
+        &CharacterId::new("example").unwrap(),
+        &samples[0].batch.context,
+        true,
+        &request(),
+        &samples,
+    )
+    .unwrap();
+    assert_eq!(report.sample_count, 3);
+    assert_eq!(report.median_ms, Some(200_000));
+    assert_eq!(report.blended_ms, 137_500);
+    assert_eq!(report.maximum_ms, Some(2_000_000));
+    assert!(report.comparisons[2].outlier);
+    let reversed = samples.into_iter().rev().collect::<Vec<_>>();
+    assert_eq!(
+        serde_json::to_value(&report).unwrap(),
+        serde_json::to_value(
+            calibrate(
+                &CharacterId::new("example").unwrap(),
+                &reversed[0].batch.context,
+                true,
+                &request(),
+                &reversed
+            )
+            .unwrap()
+        )
+        .unwrap()
+    );
+}
+#[test]
+fn ambiguous_incomplete_and_unclassified_samples_do_not_calibrate() {
+    let mut a = sample("a", 200_000);
+    a.annotation = None;
+    let mut b = sample("b", 200_000);
+    b.annotation.as_mut().unwrap().complete = false;
+    let mut c = sample("c", 200_000);
+    if let SessionEventKind::Activity { quality, .. } = &mut c.batch.events[1].kind {
+        *quality = azeroth_core::entities::MeasurementQuality::Unclassified;
+    }
+    refresh(&mut c);
+    let mut d = sample("d", 200_000);
+    d.annotation.as_mut().unwrap().completion_quest = "other".into();
+    let samples = vec![a, b, c, d];
+    let report = calibrate(
+        &CharacterId::new("example").unwrap(),
+        &samples[0].batch.context,
+        true,
+        &request(),
+        &samples,
+    )
+    .unwrap();
+    assert_eq!(report.sample_count, 0);
+    assert_eq!(report.blended_ms, 100_000);
+    assert!(report.comparisons.iter().all(|r| r.exclusion.is_some()));
+}
+#[test]
+fn conditions_context_fixture_and_duplicates_are_guarded() {
+    let mut a = sample("a", 200_000);
+    a.annotation.as_mut().unwrap().conditions.party_size = 1;
+    let mut b = sample("b", 200_000);
+    b.annotation.as_mut().unwrap().conditions.role = "other".into();
+    let context = a.batch.context.clone();
+    let report = calibrate(
+        &CharacterId::new("example").unwrap(),
+        &context,
+        true,
+        &request(),
+        &[a, b],
+    )
+    .unwrap();
+    assert_eq!(report.sample_count, 0);
+    let mut invalid_fixture = sample("invalid", 200_000);
+    invalid_fixture.fixture = false;
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &context,
+            true,
+            &request(),
+            &[invalid_fixture]
+        )
+        .is_err()
+    );
+    let a = sample("a", 200_000);
+    let b = sample("a", 200_000);
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &context,
+            true,
+            &request(),
+            &[a, b]
+        )
+        .is_err()
+    );
+    let mut bad = request();
+    bad.baseline_ms = 0;
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &context,
+            true,
+            &bad,
+            &[]
+        )
+        .is_err()
+    );
+}
+
+fn refresh(sample: &mut CalibrationSample) {
+    let build = build_sessions(
+        &sample.batch,
+        &SessionBuildConfig {
+            max_observed_span_ms: Millis::new(300_000).unwrap(),
+            clock_tolerance_ms: Millis::new(5000).unwrap(),
+        },
+    )
+    .unwrap()
+    .into_values()
+    .next()
+    .unwrap();
+    sample.analytics = analyze_session(&build).unwrap();
+}
+#[test]
+fn unknown_activity_and_other_identity_remain_excluded() {
+    let mut a = sample("plain", 120_000);
+    if let SessionEventKind::Activity { label, .. } = &mut a.batch.events[1].kind {
+        *label = Text::new(OBSERVED_SPAN_LABEL).unwrap();
+    }
+    refresh(&mut a);
+    let mut b = sample("reset", 120_000);
+    b.batch.events[1].kind = SessionEventKind::RecordingPaused;
+    refresh(&mut b);
+    let mut c = sample("other-build", 120_000);
+    c.batch.context=serde_json::from_value(json!({"build":{"edition":"wow_forever","build":"OTHER","interface":"SYNTHETIC"},"namespace":"demo"})).unwrap();
+    refresh(&mut c);
+    let mut d = sample("other-character", 120_000);
+    d.batch.character = CharacterId::new("other").unwrap();
+    refresh(&mut d);
+    let context = a.batch.context.clone();
+    let report = calibrate(
+        &CharacterId::new("example").unwrap(),
+        &context,
+        true,
+        &request(),
+        &[a, b, c, d],
+    )
+    .unwrap();
+    assert_eq!(report.sample_count, 0);
+    assert!(report.comparisons.iter().all(|v| v.observed_ms.is_none()));
+}
+#[test]
+fn forged_analytics_or_changed_terminal_event_is_refused() {
+    let mut a = sample("forged", 120_000);
+    a.analytics.timing.totals.observed_ms = Millis::new(1).unwrap();
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &a.batch.context.clone(),
+            true,
+            &request(),
+            &[a]
+        )
+        .is_err()
+    );
+    let mut b = sample("changed", 120_000);
+    b.batch.events.last_mut().unwrap().kind = SessionEventKind::Logout;
+    assert!(
+        calibrate(
+            &CharacterId::new("example").unwrap(),
+            &b.batch.context.clone(),
+            true,
+            &request(),
+            &[b]
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn declared_level_cannot_override_a_retained_known_level() {
+    let mut sample = sample("level-contradiction", 120_000);
+    for event in &mut sample.batch.events[1..] {
+        event.sequence = Sequence::new(event.sequence.get() + 1).unwrap();
+    }
+    let event:SessionEvent=serde_json::from_value(json!({"session":"level-contradiction","sequence":2,"elapsed_ms":0,"kind":{"type":"level","level":{"status":"known","value":13,"source":"synthetic_fixture","clock_trust":"uncertain"}}})).unwrap();
+    sample.batch.events.insert(1, event);
+    refresh(&mut sample);
+    let context = sample.batch.context.clone();
+    let report = calibrate(
+        &CharacterId::new("example").unwrap(),
+        &context,
+        true,
+        &request(),
+        &[sample],
+    )
+    .unwrap();
+    assert_eq!(report.sample_count, 0);
+    assert_eq!(
+        report.comparisons[0].exclusion.as_deref(),
+        Some("declared_level_contradicts_observation")
+    );
+}

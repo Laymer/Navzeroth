@@ -103,6 +103,10 @@ export const demoAdapter: CommandAdapter = {
         case "get_party_plan_proposal":
         case "propose_party_plan":
         case "accept_party_plan":
+        case "set_session_calibration":
+        case "get_calibration":
+        case "reminder_view":
+        case "mutate_reminders":
         case "get_gear_catalog":
         case "compare_gear":
         case "inspect_plan_route":
