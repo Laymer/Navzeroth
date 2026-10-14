@@ -269,6 +269,16 @@ async fn export_plan(
     blocking(state, move |app| app.export_plan(&text, system_now())).await
 }
 #[tauri::command]
+async fn export_agreed_party_plan(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::plan_export::PlanExport, AppError> {
+    blocking(state, move |app| {
+        app.export_agreed_party_plan(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
 async fn inspect_plan_route(
     state: State<'_, Application>,
     text: String,
@@ -582,6 +592,7 @@ pub fn run() {
             mutate_reminders,
             inspect_plan_route,
             export_plan,
+            export_agreed_party_plan,
             get_app_status,
             list_profiles,
             stage_content,

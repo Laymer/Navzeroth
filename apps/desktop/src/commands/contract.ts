@@ -297,6 +297,7 @@ export interface CommandMap {
   get_gear_catalog: { input: { profile_id: string }; output: import("./gear").GearCatalog };
   compare_gear: { input: { text: string }; output: import("./gear").GearReport };
   export_plan: { input: { text: string }; output: { text: string; byte_count: number; plan_id: string; expires_at_utc_ms: number } };
+  export_agreed_party_plan: { input: { text: string }; output: { text: string; byte_count: number; plan_id: string; expires_at_utc_ms: number } };
   get_planning_catalog: { input: { profile_id: string }; output: PlanningCatalog };
   plan_session: { input: { text: string }; output: PlanningReport };
   get_historical_snapshot: { input: { profile_id: string; snapshot_id: string }; output: StoredSnapshot | null };
