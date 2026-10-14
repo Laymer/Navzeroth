@@ -48,4 +48,5 @@ pub mod recovery;
 
 mod consistent_read;
 
+pub mod local_submissions;
 pub mod today;

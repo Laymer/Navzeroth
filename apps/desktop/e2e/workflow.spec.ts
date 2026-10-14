@@ -44,6 +44,7 @@ async function mockCommands(page: Page) {
           case "promote_snapshot": if (args.expected_current !== "current-profile-one") throw new Error("Wrong expected snapshot"); promoted = true; return null;
           case "stage_content": return inspection;
           case "activate_content": activeContent = true; return inspection;
+          case "list_local_submissions": return { rows: [], next: null, total: 0 };
           case "get_active_content": return activeContent ? inspection : null;
           case "get_planning_catalog": return { snapshot_id: "current-profile-one", revision: activeContent ? planning.envelope.payload.revision : null, fixture: true, nodes: planning.envelope.payload.nodes, objectives: planning.envelope.payload.objectives };
           case "inspect_plan_route": return { context: snapshot.payload.context, fixture: true, frames: [], hops: [{ leg: 0, stopping: false, hop: { from: { id: "demo-node-1" }, to: { id: "demo-node-2" }, mode: "walking", cost_ms: 30000, status: "estimated" }, from: { outcome: "gap", gap: "no_image_for_map" }, to: { outcome: "gap", gap: "no_image_for_map" }, requirements: { status: "not_applicable" }, schematic_connection: false, geometry_gap: "Exact dataset projection unavailable; inspect endpoint gaps" }] };
