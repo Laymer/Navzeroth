@@ -569,7 +569,7 @@ pub fn run() {
         })
         .manage(reference_window::Controller::default())
         .invoke_handler({
-            let generated = tauri::generate_handler![
+            let generated: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
                 preview_diagnostics,
                 export_diagnostics,
                 get_reference_view,

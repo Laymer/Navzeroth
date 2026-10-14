@@ -97,3 +97,22 @@ latency or window compatibility conclusion follows from mocked Chromium.
 Next: independent root source review, exact-head hosted checks (including Windows
 compilation), protected-main reconciliation, and release evidence. Environment-bound
 M10 focus/DPI/monitor/fullscreen acceptance stays pending actual native observations.
+
+## Hosted native compilation repair (PR89)
+
+Actual Windows package job `115836304674`, run `38559354017`, failed with E0282
+at the untyped local `let generated = tauri::generate_handler![...]`. This was a
+real compile failure; earlier portable/Chromium checks did not validate it. Root
+normally reconciled compatibility main into `b7e0ce3`, preserving the IPC wrapper
+and compatibility command. Sole fix ownership was reclaimed in a separate claim.
+
+The generated handler now has explicit type
+`fn(tauri::ipc::Invoke<tauri::Wry>) -> bool`. Pinned tauri-macros2.7.2
+`src/command/handler.rs` expansion is a captureless `move |invoke|` containing
+only static command paths/wrapper macros and an unknown-command false result, so
+function-pointer coercion supplies the missing argument type without bypassing
+the outer actual-webview caller gate. All registered command entries are retained.
+Actual local fmt/diff checks and all three portable reference tests passed after
+the annotation. Native compilation remains locally DBus-blocked; no successful
+native compile is claimed until fresh exact-head hosted jobs complete. Both Windows
+native jobs and all other required checks must be rerun at the pushed fix head.
