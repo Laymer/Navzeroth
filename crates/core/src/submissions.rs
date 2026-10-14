@@ -83,9 +83,6 @@ impl LocalObservation {
                 false,
             ));
         }
-        if self.source.as_str().len() > 128 {
-            return Err(invalid("Local observation source exceeds bounds"));
-        }
         if let LocalPayload::AcquisitionOutcome {
             opportunities: Reported::Known(n),
             successes: Reported::Known(s),

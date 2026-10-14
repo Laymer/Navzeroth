@@ -199,3 +199,44 @@ fn each_supported_payload_remains_a_declaration_without_confidence_promotion() {
     .unwrap();
     validate_local_submissions(&s).unwrap();
 }
+#[test]
+fn valid_registered_129_and_256_byte_sources_submit_read_and_deduplicate() {
+    fn replace(value: &mut Value, source: &str) {
+        match value {
+            Value::String(s) if s == "demo-source-1" => *s = source.into(),
+            Value::Object(map) => {
+                for value in map.values_mut() {
+                    replace(value, source)
+                }
+            }
+            Value::Array(items) => {
+                for value in items {
+                    replace(value, source)
+                }
+            }
+            _ => {}
+        }
+    }
+    for source in ["s".repeat(129), "s".repeat(256), "é".repeat(128)] {
+        let mut value = serde_json::to_value(content()).unwrap();
+        replace(&mut value, &source);
+        let c: ContentRevision = serde_json::from_value(value).unwrap();
+        let mut s = SqliteStore::open_in_memory().unwrap();
+        s.stage_content_revision(&c).unwrap();
+        let mut value = serde_json::to_value(doc()).unwrap();
+        value["source"] = json!(source);
+        let d = decode_local_observation(&value.to_string()).unwrap();
+        let first = s.submit_local_observation(&d, true, None).unwrap();
+        assert_eq!(first.record.source.as_str(), source);
+        assert_eq!(
+            s.local_submission(&first.record.guard.id).unwrap().unwrap(),
+            first.record
+        );
+        assert!(
+            s.submit_local_observation(&d, true, None)
+                .unwrap()
+                .duplicate
+        );
+        validate_local_submissions(&s).unwrap();
+    }
+}

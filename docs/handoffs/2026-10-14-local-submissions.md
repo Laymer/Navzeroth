@@ -134,3 +134,14 @@ checks were sequential, with no browser server running.
 Ready for independent source review and exact-head hosted checks. Root still owns
 recovery validator registration and main/release integration; populated recovery
 remains deliberately refused until those validators are registered together.
+
+## Registered SourceId bound follow-up
+
+Root requested the existing256-byte core SourceId contract after independent
+review reproduced a valid129-byte registered source blocked by the intentionally
+frozen minimum128-byte feature limit. Core now relies on the checked SourceId
+primitive rather than adding a narrower cutoff; the bounded SQL read accepts256
+UTF8 bytes. New129/256 ASCII and256 UTF8 positives plus257/258-byte negatives
+preserve source identities. Root owns a separate migration10 widening the column
+without rewriting committed schema9. Positive persistence checks depend on that
+frozen foundation commit; no migration/recovery code was edited here.

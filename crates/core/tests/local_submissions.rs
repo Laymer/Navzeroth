@@ -33,3 +33,23 @@ fn anomaly_checks_do_not_infer_drop_probability() {
     v["payload"]["successes"] = json!({"status":"known","value":1});
     assert!(decode_local_observation(&v.to_string()).is_err());
 }
+#[test]
+fn registered_source_identifiers_keep_the_existing_256_byte_contract() {
+    for source in ["s".repeat(129), "s".repeat(256), "é".repeat(128)] {
+        let mut v = input();
+        v["source"] = json!(source);
+        assert_eq!(
+            decode_local_observation(&v.to_string())
+                .unwrap()
+                .source
+                .as_str()
+                .len(),
+            v["source"].as_str().unwrap().len()
+        );
+    }
+    for source in ["s".repeat(257), "é".repeat(129)] {
+        let mut v = input();
+        v["source"] = json!(source);
+        assert!(decode_local_observation(&v.to_string()).is_err());
+    }
+}
