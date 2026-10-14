@@ -48,6 +48,12 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getDatabaseStatus: () => run(() => adapter.invoke("get_database_status", undefined)),
+    checkDatabase: () => run(() => adapter.invoke("check_database", undefined)),
+    createDatabaseBackup: (path: string) => run(() => adapter.invoke("create_database_backup", { path })),
+    inspectDatabaseBackup: (path: string) => run(() => adapter.invoke("inspect_database_backup", { path })),
+    restoreDatabaseBackup: (candidateId: string) => run(() => adapter.invoke("restore_database_backup", { candidate_id: candidateId })),
+
     getPartyPlanProposal: (partyId: string) => run(() => adapter.invoke("get_party_plan_proposal", { party_id: partyId })),
     proposePartyPlan: (text: string) => run(() => adapter.invoke("propose_party_plan", { text })),
     acceptPartyPlan: (text: string) => run(() => adapter.invoke("accept_party_plan", { text })),

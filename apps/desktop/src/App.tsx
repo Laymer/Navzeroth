@@ -1,3 +1,4 @@
+import { RecoveryPanel } from "./screens/RecoveryPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AppError, AppStatus, CommandClient } from "./commands";
 import type { CharacterSnapshotEnvelope } from "../../../schemas/v1/exchange";
@@ -13,9 +14,10 @@ import { SessionsScreen } from "./screens/SessionsScreen";
 import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
 
-type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders";
+type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
+  { id: "recovery", label: "Backup and recovery" },
   { id: "atlas", label: "Atlas" },
   { id: "imports", label: "Imports" },
   { id: "party", label: "Party" },
@@ -38,6 +40,7 @@ export function App({ client }: { client: CommandClient }) {
   const [revision, setRevision] = useState(0);
   const watchedImport = useRef("");
   const changed = useCallback(() => setRevision((value) => value + 1), []);
+  const restored = useCallback(() => { setScreen("recovery"); changed(); }, [changed]);
   useEffect(() => {
     // Requery backend freshness as imported observations age; no local age math.
     const timer = window.setInterval(changed, 60_000);
@@ -90,6 +93,7 @@ export function App({ client }: { client: CommandClient }) {
         </p>
       )}
       {load.phase === "error" && <button type="button" onClick={changed}>Retry loading</button>}
+      {(load.phase === "error" || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} />}
       {load.phase === "ready" && (
         <nav aria-label="Primary">
           {SCREENS.map(({ id, label }) => (
