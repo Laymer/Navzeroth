@@ -1,23 +1,24 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: wave9 parallel strict pack-default and existing source-registry repairs.
-Owner: Codex /root coordinator; published baseline db8530f8/v0.8.0.
-v0.8.0 published2026-10-14T16:48:12Z after reviewed feature PRs103–106,
-release PR107, all nine exact-source PR/main gates and verified PR/main/tag assets.
-All four wave8 UI scopes are implemented. Actual816 portable Rust,195 desktop and
-40 mocked browser tests passed on code identical to the final released source.
-See [publication audit and next task ownership](handoffs/2026-10-14-wave9-coordination.md).
-Two finite repairs remain READY: strict typed empty map_embeddings comparison and
-the typed existing Forever sources registry. Each has a sole writer, isolated PR
-and granular commits. The next fix-only preview is0.8.1; publication is not implied.
-Native/live/source/model acceptance remains explicitly unverified or blocked.
+Current task: final0.8.1 candidate integration and exact-source release gates.
+Owner: Codex /root; latest actual publication v0.8.0 atdb8530f8.
+Both wave9 repairs are reviewed and merged through protected mainc49b4be.
+Versioned9192552 passed822 portable Rust,195 desktop/40 mocked browser tests,
+strict checks, schema/content/image validation and actual local pack build/verify.
+The pack preserves historical context and remains distribution-ineligible; it is
+not uploaded. Final-main reconciliation preserves the tested non-doc source tree.
+All dependency-ready engineering found in the full-plan audit is implemented;
+release PR/main/tag/assets/publication and actual-tag audit remain pending.
+Native/live/model/source/API acceptance stays blocked/deferred or unverified.
+See [candidate source evidence](handoffs/2026-10-14-v0.8.1-release.md) and
+[engineering audit](handoffs/2026-10-14-candidate-engineering-audit.md).
 
 Today/Settings, durable restrictions/fallback, opted-in local review/tombstones,
 readable explanations and typed historical recovery are implemented in published0.7.
 Wave8 UI engineering is implemented in published0.8; native/live acceptance
-remains unverified. The current parallel batch has two
-READY scopes: typed explicit-empty map_embeddings pack comparison and an existing
+remains unverified. The completed wave9 batch implements two
+finite repairs: typed explicit-empty map_embeddings pack comparison and an existing
 Forever sources.json registry sidecar. Preserve schema1/source policies and unknown
 redistribution rights. See [current task ledger](IMPLEMENTATION_TASKS.md).
 Historical scheduling paragraphs below describe their original releases; Today and
