@@ -1,8 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: wave-4 joint guidance and recurring releases.
-Owner: Codex /root coordinator, baseline main 1924a84.
+Current task: v0.4.0 guidance batch integration and release preparation.
+Owner: Codex /root coordinator; wave baseline1924a84, current main7b52f2f.
 v0.3.0 is published as a developer prerelease at main 1924a84 (PR #57).
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
@@ -26,11 +26,11 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
 | M2 | IN_PROGRESS | Bounded character imports/storage/watcher, guarded manual 70338 quest/equipment capture, runtime plan paste/HUD and local session transport implemented. Party transport and consolidated live acceptance remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop staging/activation/rollback and coverage/source inspection, migration/backup and coverage CLI. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel/eligibility/greedy Planner with manual assumptions, ANAV1 export, selected/stopping route inspection and conservative Lua advancement/HUD implemented. Real quest-stage mappings, joint planning and live acceptance remain. |
+| M4 | IN_PROGRESS | Travel/eligibility/greedy Planner with manual assumptions, ANAV1 export, selected/stopping route inspection and conservative Lua advancement/HUD implemented. Manual joint planning is implemented; real quest-stage mappings, joint export and live acceptance remain. |
 | M5 | IN_PROGRESS | Fixed-point gear/acquisition services, current/theoretical/eligible/acquisition/practical comparisons, editable Gear screen and synthetic Rust/Lua parity implemented. Real weights/catalogs and live validation remain. |
 | M6 | IN_PROGRESS | Demo atlas/markers/layers/pin search and keyboard navigation; exact-dataset schematic route inspection with ordered geometry gaps implemented. Reference geography stays distinct from unlocks; verified road geometry remains. |
-| M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; joint planning, preparation and live workflows remain. |
-| M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Calibration and consolidated live checks remain. |
+| M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; preparation, real rules and live workflows remain. |
+| M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
 | M9 | IN_PROGRESS | Today/Imports/Atlas/Party/Content/Planner/Gear/Sessions workflows and mocked browser tests; revision-scoped Windows packaging and 0.3.0-rc.1 CI candidate. v0.2.0 remains latest published preview; native interaction/live acceptance remains. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
@@ -285,3 +285,18 @@ Actual new-source checks and review/download evidence are recorded in the releas
 handoff and draft PR. Version 0.3.0 retains the 0.x developer-preview prerelease
 classification. Full live/native acceptance stays incomplete. Preparation does not
 create a tag, merge main or publish a GitHub release; v0.2.0 stays latest published.
+
+## Wave4 guidance integration
+
+Separate task PRs59 (controls),61 (calibration),62 (joint planning),63 (evidence
+delivery) and64 (local proposals), plus coordination58 and storage60, preserve
+granular pushed commits and isolated ownership. See the
+[review record](reviews/2026-10-14-wave4-guidance.md) for actual findings/checks.
+The inherited uncommitted proposal read-failure fix was preserved, reproduced,
+committed and independently reviewed. Migrations6–8 add feature state without
+changing exchange or dataset identities. Full live/native acceptance stays unverified.
+v0.4.0 version/notes preparation is separate; publication awaits complete protected
+main integration, exact-source hosted checks and verified downloaded tag assets.
+Dependency-ready gaps found during audit remain in the task ledger, including
+clustering, route-aware acquisition, cancellation, recovery, CLI workflows,
+preparation infrastructure, diagnostics and Today/Settings/reference-window work.
