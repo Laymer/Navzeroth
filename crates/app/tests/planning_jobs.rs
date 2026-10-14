@@ -169,3 +169,37 @@ fn simultaneous_completions_obey_terminal_cap_and_evict_by_completion_age() {
     }
     assert!(terminal_ids[..3].iter().all(|id| jobs.status(id).is_err()));
 }
+
+#[test]
+fn publication_guard_rejects_obsolete_success_and_serialization_precedes_guard() {
+    let jobs = PlanningJobs::default();
+    let ticket = jobs.register(PlanningKind::Solo).unwrap();
+    let id = ticket.id().to_owned();
+    jobs.run_guarded(
+        ticket,
+        |_| Ok(42u32),
+        |_publish| {
+            Err(azeroth_core::error::AppError::new(
+                ErrorCode::SnapshotOutdated,
+                "Snapshot changed",
+                false,
+            ))
+        },
+    );
+    assert_eq!(
+        jobs.status(&id).unwrap().error.unwrap().code,
+        ErrorCode::SnapshotOutdated
+    );
+    assert!(!jobs.status(&id).unwrap().result_available);
+    let ticket = jobs.register(PlanningKind::Solo).unwrap();
+    let id = ticket.id().to_owned();
+    jobs.run_guarded(
+        ticket,
+        |_| Ok("x".repeat(MAX_RESULT_BYTES)),
+        |_| panic!("oversized output must fail before guard"),
+    );
+    assert_eq!(
+        jobs.status(&id).unwrap().error.unwrap().code,
+        ErrorCode::ImportTooLarge
+    );
+}

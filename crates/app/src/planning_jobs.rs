@@ -203,12 +203,20 @@ impl PlanningJobs {
             report_json,
         })
     }
-    /// Caller owns worker dispatch and lifecycle lease. Panic, cancellation,
-    /// timeout and oversized reports all terminate without partial success.
+    /// Caller owns worker dispatch. Use guarded publication to check current
+    /// input identities and publish while holding the short store lock.
     pub fn run<T: Serialize>(
         &self,
         ticket: JobTicket,
         call: impl FnOnce(&mut JobControl) -> Result<T>,
+    ) {
+        self.run_guarded(ticket, call, |publish| publish());
+    }
+    pub fn run_guarded<T: Serialize>(
+        &self,
+        ticket: JobTicket,
+        call: impl FnOnce(&mut JobControl) -> Result<T>,
+        validate_and_publish: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<()>,
     ) {
         if self.entry(ticket.id()).is_err() {
             return;
@@ -225,7 +233,7 @@ impl PlanningJobs {
             entry: ticket.entry.clone(),
             started: Instant::now(),
         };
-        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let computed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             control.checkpoint(SearchPhase::ValidateInputs)?;
             let result = call(&mut control)?;
             control.checkpoint(SearchPhase::Selection)?;
@@ -250,54 +258,103 @@ impl PlanningJobs {
                 "Planning worker failed",
             ))
         });
-        if let Ok(mut stored) = ticket.entry.outcome.lock() {
-            let outcome = if ticket.entry.canceled.load(Ordering::Acquire) {
-                Err(canceled())
-            } else {
-                outcome
-            };
-            ticket.entry.completed_order.store(
-                self.completed.fetch_add(1, Ordering::Relaxed),
-                Ordering::Relaxed,
-            );
-            match outcome {
-                Ok(report) => {
-                    *stored = (Some(report), None);
-                    ticket.entry.state.store(SUCCEEDED, Ordering::Release);
-                }
-                Err(error) => {
-                    let state = if error.code == ErrorCode::OperationCanceled {
-                        CANCELED
-                    } else {
-                        FAILED
-                    };
-                    *stored = (None, Some(error));
-                    ticket.entry.state.store(state, Ordering::Release);
+        match computed {
+            Err(error) => {
+                let _ = self.complete(&ticket, Err(error));
+            }
+            Ok(report) => {
+                let mut report = Some(report);
+                let mut published = false;
+                let mut publish = || {
+                    control.check_time()?;
+                    let report = report.take().ok_or_else(|| {
+                        error(
+                            ErrorCode::InvalidInput,
+                            "Planning publication already completed",
+                        )
+                    })?;
+                    self.complete(&ticket, Ok(report))?;
+                    published = true;
+                    Ok(())
+                };
+                let checked = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    validate_and_publish(&mut publish)
+                }))
+                .unwrap_or_else(|_| {
+                    Err(error(
+                        ErrorCode::ProviderUnavailable,
+                        "Planning publication failed",
+                    ))
+                });
+                if !published {
+                    let failure = checked.err().unwrap_or_else(|| {
+                        error(
+                            ErrorCode::ProviderUnavailable,
+                            "Planning publication was not validated",
+                        )
+                    });
+                    let _ = self.complete(&ticket, Err(failure));
                 }
             }
         }
-        self.prune_terminal();
     }
-    fn prune_terminal(&self) {
-        if let Ok(mut entries) = self.entries.lock() {
-            while entries
-                .values()
-                .filter(|e| e.state.load(Ordering::Acquire) > RUNNING)
-                .count()
-                > MAX_TERMINAL_JOBS
-            {
-                let oldest = entries
-                    .iter()
-                    .filter(|(_, e)| e.state.load(Ordering::Acquire) > RUNNING)
-                    .min_by_key(|(_, e)| e.completed_order.load(Ordering::Relaxed))
-                    .map(|(id, _)| *id);
-                if let Some(oldest) = oldest {
-                    entries.remove(&oldest);
-                } else {
-                    break;
-                }
+    fn complete(&self, ticket: &JobTicket, result: Result<String>) -> Result<()> {
+        // Registry -> outcome is the only nested order; status/cancel release
+        // registry before locking outcome. Pruning and publication are atomic.
+        let mut entries = self.entries.lock().map_err(|_| {
+            error(
+                ErrorCode::ProviderUnavailable,
+                "Planning registry unavailable",
+            )
+        })?;
+        let mut stored = ticket.entry.outcome.lock().map_err(|_| {
+            error(
+                ErrorCode::ProviderUnavailable,
+                "Planning outcome unavailable",
+            )
+        })?;
+        while entries
+            .values()
+            .filter(|e| e.state.load(Ordering::Acquire) > RUNNING)
+            .count()
+            >= MAX_TERMINAL_JOBS
+        {
+            let oldest = entries
+                .iter()
+                .filter(|(_, e)| e.state.load(Ordering::Acquire) > RUNNING)
+                .min_by_key(|(_, e)| e.completed_order.load(Ordering::Relaxed))
+                .map(|(id, _)| *id);
+            if let Some(oldest) = oldest {
+                entries.remove(&oldest);
+            } else {
+                break;
             }
         }
+        let result = if ticket.entry.canceled.load(Ordering::Acquire) {
+            Err(canceled())
+        } else {
+            result
+        };
+        ticket.entry.completed_order.store(
+            self.completed.fetch_add(1, Ordering::Relaxed),
+            Ordering::Relaxed,
+        );
+        match result {
+            Ok(report) => {
+                *stored = (Some(report), None);
+                ticket.entry.state.store(SUCCEEDED, Ordering::Release);
+            }
+            Err(error) => {
+                let state = if error.code == ErrorCode::OperationCanceled {
+                    CANCELED
+                } else {
+                    FAILED
+                };
+                *stored = (None, Some(error));
+                ticket.entry.state.store(state, Ordering::Release);
+            }
+        }
+        Ok(())
     }
 }
 struct BoundedBytes(Vec<u8>);
