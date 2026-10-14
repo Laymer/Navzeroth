@@ -212,7 +212,7 @@ fn main() -> ExitCode {
                 env!("CARGO_PKG_VERSION")
             );
             println!(
-                "Implemented subcommands: export-schemas --output <dir>; prepare-atlas --manifest \
+                "Implemented subcommands: build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures. \
                  Other commands are planned; see README.md and plan section 19.3."
             );

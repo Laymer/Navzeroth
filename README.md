@@ -64,10 +64,16 @@ browser demo run `pnpm --dir apps/desktop dev`; for the native shell run
 Native Rust checks are `cargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings`
 and `cargo test --locked -p azeroth-desktop`.
 
-The CLI accepts `export-schemas`, `prepare-atlas`, `validate-fixtures` and
-`validate-content`; `doctor` and remaining plan commands are not implemented.
+The CLI accepts `export-schemas`, `prepare-atlas`, `validate-fixtures`,
+`validate-content`, `build-content` and `verify-pack`; other plan commands
+remain separate tasks.
 Content validation has bounded regular-file/directory discovery, deterministic
 JSON/human reports and separate nonfatal gaps. See [coverage](docs/data/COVERAGE.md).
+Content packs require a typed `sources.json` sidecar and registered evidence/image
+sources. They preserve exact dataset identities and verified PNG bytes, refuse
+overwrite, and report declared distribution eligibility separately from gaps.
+See [local reference pack format](docs/data/CONTENT_PACK.md). Real Forever content
+lacks the necessary registered source/coverage records; no real pack is claimed.
 
 ## Windows installer
 
