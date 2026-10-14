@@ -69,6 +69,7 @@ struct Entry {
     phase: AtomicU8,
     work: AtomicU64,
     outcome: Mutex<(Option<String>, Option<AppError>)>,
+    pin: Mutex<Option<azeroth_storage::today::PlanDescriptor>>,
 }
 #[derive(Clone)]
 pub struct JobTicket {
@@ -142,6 +143,7 @@ impl PlanningJobs {
             phase: AtomicU8::new(0),
             work: AtomicU64::new(0),
             outcome: Mutex::new((None, None)),
+            pin: Mutex::new(None),
         });
         entries.insert(serial, entry.clone());
         Ok(JobTicket { entry })
@@ -242,6 +244,51 @@ impl PlanningJobs {
         call: impl FnOnce(&mut JobControl) -> Result<T>,
         validate_and_publish: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<()>,
     ) {
+        self.run_guarded_inner(
+            ticket,
+            |control| call(control).map(|report| (report, None)),
+            validate_and_publish,
+        );
+    }
+    pub fn run_guarded_with_pin<T: Serialize>(
+        &self,
+        ticket: JobTicket,
+        call: impl FnOnce(
+            &mut JobControl,
+        ) -> Result<(T, Option<azeroth_storage::today::PlanDescriptor>)>,
+        validate_and_publish: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<()>,
+    ) {
+        self.run_guarded_inner(ticket, call, validate_and_publish);
+    }
+    /// Registry lookups are required even if a worker still owns a pruned ticket.
+    pub(crate) fn pin_descriptor(
+        &self,
+        id: &str,
+    ) -> Result<azeroth_storage::today::PlanDescriptor> {
+        let entry = self.entry(id)?;
+        if entry.state.load(Ordering::Acquire) != SUCCEEDED
+            || entry.canceled.load(Ordering::Acquire)
+        {
+            return Err(error(
+                ErrorCode::SnapshotOutdated,
+                "Planning job cannot be pinned",
+            ));
+        }
+        entry
+            .pin
+            .lock()
+            .map_err(|_| error(ErrorCode::ProviderUnavailable, "Planning pin unavailable"))?
+            .clone()
+            .ok_or_else(|| error(ErrorCode::SnapshotOutdated, "Planning pin unavailable"))
+    }
+    fn run_guarded_inner<T: Serialize>(
+        &self,
+        ticket: JobTicket,
+        call: impl FnOnce(
+            &mut JobControl,
+        ) -> Result<(T, Option<azeroth_storage::today::PlanDescriptor>)>,
+        validate_and_publish: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<()>,
+    ) {
         if self.entry(ticket.id()).is_err() {
             return;
         }
@@ -259,7 +306,10 @@ impl PlanningJobs {
         };
         let computed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             control.checkpoint(SearchPhase::ValidateInputs)?;
-            let result = call(&mut control)?;
+            let (result, pin) = call(&mut control)?;
+            if let Some(p) = &pin {
+                p.validate()?;
+            }
             control.checkpoint(SearchPhase::Selection)?;
             let mut bytes = BoundedBytes(Vec::new());
             serde_json::to_writer(&mut bytes, &result).map_err(|_| {
@@ -269,12 +319,14 @@ impl PlanningJobs {
                 )
             })?;
             control.check_time()?;
-            String::from_utf8(bytes.0).map_err(|_| {
-                error(
-                    ErrorCode::InvalidInput,
-                    "Planning report cannot be serialized",
-                )
-            })
+            String::from_utf8(bytes.0)
+                .map(|report| (report, pin))
+                .map_err(|_| {
+                    error(
+                        ErrorCode::InvalidInput,
+                        "Planning report cannot be serialized",
+                    )
+                })
         }))
         .unwrap_or_else(|_| {
             Err(error(
@@ -286,8 +338,9 @@ impl PlanningJobs {
             Err(error) => {
                 let _ = self.complete(&ticket, Err(error));
             }
-            Ok(report) => {
+            Ok((report, pin)) => {
                 let mut report = Some(report);
+                let mut pin = pin;
                 let mut published = false;
                 let mut publish = || {
                     control.check_time()?;
@@ -297,7 +350,7 @@ impl PlanningJobs {
                             "Planning publication already completed",
                         )
                     })?;
-                    self.complete(&ticket, Ok(report))?;
+                    self.complete_with_pin(&ticket, Ok(report), pin.take())?;
                     published = true;
                     Ok(())
                 };
@@ -323,6 +376,14 @@ impl PlanningJobs {
         }
     }
     fn complete(&self, ticket: &JobTicket, result: Result<String>) -> Result<()> {
+        self.complete_with_pin(ticket, result, None)
+    }
+    fn complete_with_pin(
+        &self,
+        ticket: &JobTicket,
+        result: Result<String>,
+        pin: Option<azeroth_storage::today::PlanDescriptor>,
+    ) -> Result<()> {
         // Registry -> outcome is the only nested order; status/cancel release
         // registry before locking outcome. Pruning and publication are atomic.
         let mut entries = self.entries.lock().map_err(|_| {
@@ -365,6 +426,9 @@ impl PlanningJobs {
         );
         match result {
             Ok(report) => {
+                *ticket.entry.pin.lock().map_err(|_| {
+                    error(ErrorCode::ProviderUnavailable, "Planning pin unavailable")
+                })? = pin;
                 *stored = (Some(report), None);
                 ticket.entry.state.store(SUCCEEDED, Ordering::Release);
             }

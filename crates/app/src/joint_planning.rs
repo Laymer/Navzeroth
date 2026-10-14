@@ -17,7 +17,7 @@ use azeroth_storage::{
     SnapshotStore, SqliteStore,
     content::{ContentRevision, ContentScope},
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 #[derive(Clone, Debug, Serialize)]
 pub struct JointMember {
@@ -35,36 +35,7 @@ pub struct JointPlanningCatalog {
     pub nodes: Vec<TravelNode>,
     pub objectives: Vec<Objective>,
 }
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct JointParticipantInput {
-    pub profile_id: String,
-    pub snapshot_id: SnapshotId,
-}
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct JointEstimate {
-    pub objective: ObjectiveId,
-    pub node: NodeId,
-    /// Explicit same-unit contributions; every member must have positive utility.
-    pub utilities: BTreeMap<String, u32>,
-    pub completion_ms: Millis,
-    pub service_ms: Millis,
-}
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct JointPlanningRequest {
-    pub party_id: PartyId,
-    pub participants: Vec<JointParticipantInput>,
-    pub revision: DatasetRevision,
-    pub goal_profile: SourceId,
-    pub origin: NodeId,
-    pub stopping_node: NodeId,
-    pub budget_ms: Millis,
-    pub stopping_service_ms: Millis,
-    pub candidates: Vec<JointEstimate>,
-    pub excluded: BTreeSet<ObjectiveId>,
-}
+pub use azeroth_storage::today::{JointEstimate, JointParticipantInput, JointPlanningRequest};
 #[derive(Clone, Debug, Serialize)]
 pub struct JointFilteredCandidate {
     pub objective: ObjectiveId,

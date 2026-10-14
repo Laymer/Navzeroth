@@ -237,11 +237,16 @@ impl SnapshotApplication {
         Self::with_store(SqliteStore::open_in_memory()?)
     }
     fn with_store(store: SqliteStore) -> Result<Self> {
-        let selected = store
-            .list_profiles()?
-            .first()
-            .map(|p| profile_id(&p.key))
-            .transpose()?;
+        let configured = store.settings()?.settings.selected_subject;
+        let selected = match configured {
+            Some(azeroth_storage::today::Subject::Character { profile_id }) => Some(profile_id),
+            Some(azeroth_storage::today::Subject::Party { .. }) => None,
+            None => store
+                .list_profiles()?
+                .first()
+                .map(|p| profile_id(&p.key))
+                .transpose()?,
+        };
         Ok(Self {
             watch_control: Mutex::new(()),
             state: Arc::new(Mutex::new(State {
@@ -268,18 +273,27 @@ impl SnapshotApplication {
     ) -> Result<crate::reference::ReferenceView> {
         let started = std::time::Instant::now();
         let state = self.lock()?;
-        let snapshot = match &state.selected {
-            Some(id) => state.store.current_snapshot(&resolve(&state.store, id)?)?,
-            None => None,
-        };
-        drop(state);
-        crate::reference::build(
-            snapshot.as_ref(),
-            &context(crate::planning_job_service::advanced_now(
-                now,
-                started.elapsed(),
-            )),
-        )
+        state.store.with_immediate_read(|store| {
+            let snapshot = match &state.selected {
+                Some(id) => match resolve(store, id) {
+                    Ok(key) => store.current_snapshot(&key)?,
+                    Err(_) => None,
+                },
+                None => None,
+            };
+            let mut view = crate::reference::build(
+                snapshot.as_ref(),
+                &context(crate::planning_job_service::advanced_now(
+                    now,
+                    started.elapsed(),
+                )),
+            )?;
+            view.current_plan = Some(crate::today::plan_view(store, || {
+                crate::planning_job_service::advanced_now(now, started.elapsed())
+            })?);
+            crate::reference::validate_bound(&view)?;
+            Ok(view)
+        })
     }
     /// Capture selection, current snapshot and active content under one store lock.
     pub(crate) fn diagnostic_inputs(
@@ -336,8 +350,41 @@ impl SnapshotApplication {
     pub fn select_profile(&self, id: &str) -> Result<()> {
         let mut state = self.lock()?;
         resolve(&state.store, id)?;
+        state.store.with_intent_transaction(|store| {
+            let mut record = store.settings()?;
+            record.settings.selected_subject = Some(azeroth_storage::today::Subject::Character {
+                profile_id: id.to_owned(),
+            });
+            store.replace_settings(record.revision, &record.settings)?;
+            Ok(())
+        })?;
         state.selected = Some(id.to_owned());
         Ok(())
+    }
+    pub(crate) fn save_app_settings(
+        &self,
+        expected: i64,
+        settings: &azeroth_storage::today::Settings,
+    ) -> Result<azeroth_storage::today::SettingsRecord> {
+        let mut state = self.lock()?;
+        let selected = match &settings.selected_subject {
+            Some(azeroth_storage::today::Subject::Character { profile_id }) => {
+                resolve(&state.store, profile_id)?;
+                Some(profile_id.clone())
+            }
+            Some(azeroth_storage::today::Subject::Party { party_id }) => {
+                if state.store.party(party_id)?.is_none() {
+                    return Err(invalid("Selected party is missing"));
+                }
+                None
+            }
+            None => None,
+        };
+        let record = state
+            .store
+            .with_intent_transaction(|s| s.replace_settings(expected, settings))?;
+        state.selected = selected;
+        Ok(record)
     }
     /// Explicit local configuration; never imports or alters participant state.
     pub fn save_party(&self, id: &PartyId, profile_ids: &[String]) -> Result<()> {
