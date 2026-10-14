@@ -1,14 +1,19 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: wave7 parallel local state, governance and readable explanations.
+Current task: prepare the 0.7.0 local intent/governance preview and reconcile task PRs.
 Owner: Codex /root coordinator; published baseline739a822 (v0.6.0).
-v0.6.0 is published as a developer prerelease after reviewed task PRs81–90,
-release PR91, fresh exact-source checks and verified downloaded PR/main/tag assets.
-Source checks:746 portable Rust/152 desktop/30 mocked browser tests.
-See [wave7 publication audit and ownership](handoffs/2026-10-14-wave7-coordination.md).
-Ready scopes: Today/Settings/current-plan reference, durable content restriction,
-bounded local moderation and typed gear/acquisition explanation presentation.
+v0.6.0 is published after reviewed PRs81–91 and verified PR/main/tag assets.
+The versioned0.7 candidate includes guarded Today/Settings, durable content
+restriction/fallback, opted-in local review/withdrawal, typed gear explanations,
+schema10 identity preservation and populated backup recovery with historical advice.
+Actual candidate checks:801 portable Rust tests (one existing ignored generator),
+180 desktop tests and36 mocked Chromium cases; details and source bounds belong in
+the release handoff. This preparation record does not claim0.7 publication.
+Independent re-audit found three further ready section12 UI scopes: route-segment
+selection/fit, HUD resize/font/contrast and focused-desktop reference hotkey/interaction.
+They form the next parallel batch after this preview; real data and acceptance
+prerequisites remain in the task ledger.
 Native interactive/live/source acceptance remains explicitly unverified or blocked.
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
@@ -32,13 +37,13 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
 | M2 | IN_PROGRESS | Bounded character imports/storage/watcher, guarded manual 70338 quest/equipment capture, runtime plan paste/HUD and local session transport implemented. Party transport and consolidated live acceptance remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop content workflows, bounded recovery/backup, coverage CLI and typed local content packs implemented. Real playable quest/acquisition data remains missing. |
-| M4 | IN_PROGRESS | Travel/eligibility/greedy Planner, manual joint planning, bounded single-character export and conservative Lua advancement implemented. Automatic clustering, joint export, real stage mappings and live acceptance remain. |
-| M5 | IN_PROGRESS | Fixed-point gear/acquisition comparisons, editable Gear screen and synthetic Rust/Lua parity implemented. Route-derived acquisition integration, real weights/catalogs and live validation remain. |
+| M4 | IN_PROGRESS | Travel/eligibility/greedy Planner, manual joint planning, bounded single-character export and conservative Lua advancement implemented. Conservative automatic clustering and guarded joint export are implemented; real stage mappings and live acceptance remain. |
+| M5 | IN_PROGRESS | Fixed-point gear/acquisition comparisons, editable Gear screen and synthetic Rust/Lua parity implemented. Finite route-derived alternatives and typed explanations are implemented; real weights/catalogs and live validation remain. |
 | M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; schematic route inspection preserves geometry gaps. Native interaction and verified real road geometry remain. |
-| M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; preparation, real rules and live workflows remain. |
+| M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; bounded preparation infrastructure is implemented; verified records, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
-| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.5.0 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
-| M10 | TODO | Optional native reference overlay. |
+| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.6.0 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
+| M10 | IMPLEMENTED_UNVERIFIED | Ordinary read-only native reference window and saved-plan projection implemented; shortcut/interaction engineering is ready, native display acceptance remains unverified. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
 

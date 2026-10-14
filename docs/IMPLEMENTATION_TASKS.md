@@ -46,7 +46,7 @@ behavior and installed capability/version evidence remain unverified.
 | M4.7 | BLOCKED | Documented actual play session and comparable planned route missing. |
 | M5.1 | IMPLEMENTED_UNVERIFIED | Structure/arithmetic exists; real four-scenario models/weights remain missing. |
 | M5.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M5.3 | IMPLEMENTED_UNVERIFIED | Typed score contributions/unmodeled effects exist; ordinary readable explanation presentation remains ready engineering. |
+| M5.3 | IMPLEMENTED_UNVERIFIED | Wave7 typed readable contributions, unmodeled effects and exact input/participant reasons are implemented in candidate PR97; real-model/live acceptance remains unverified. |
 | M5.4 | IMPLEMENTED_UNVERIFIED | PR86 finite route-derived acquisition alternatives merged; explicitly bound sources/legs and independent opportunities. Combined acquisition scheduling and real catalogs are not claimed. |
 | M5.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M5.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
@@ -155,3 +155,26 @@ ready scopes remain absent in this released source and are now claimed by distin
 writers. Shared migration9/recovery registration precedes feature integration.
 No new external prerequisite was inferred away, and no unchanged blocker-only
 release is planned. After the next publication repeat this audit against its tag.
+
+## Wave7 candidate and next ready batch
+
+Candidate0.7 engineering adds Today/Settings/server-owned guarded plan pinning,
+durable quarantine/revocation/fallback, bounded opted-in local moderation/export,
+readable gear/acquisition reasons, schema10 and typed populated backup recovery.
+Task PRs remain isolated; release handoff records their final checked/merged sources.
+This section does not claim publication or native/live verification.
+
+Independent full-plan UI audit identified three finite additional scopes not supplied
+by the narrower milestone implementations:
+
+| Plan requirement | Ready engineering | External acceptance |
+| --- | --- | --- |
+|12.2| Accessible route-segment selection and bounded per-frame schematic fit | Actual road geometry, calibration/rights and native map interaction remain unverified. |
+|12.4| Bounded HUD resize/font/contrast preferences and conservative UI-operation gates | Recorded-client combat restrictions, taint, focus and display checks remain unverified. |
+|12.5| Explicit opt-in focused-desktop shortcut and reference interaction choice | Native focus, hit testing, chord conflicts and display modes remain unverified. |
+
+Claim these independently against the actual published0.7 source after publication,
+then run another parallel PR/release batch. Imported snapshots, permitted addon
+observations, exact contexts and all reported data states remain unchanged in scope.
+World expansion still requires the focused-release evidence; missing real sources,
+models, capability/format evidence and native/live measurements remain blockers.
