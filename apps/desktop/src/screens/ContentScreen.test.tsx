@@ -14,6 +14,7 @@ function mock() {
     switch (command) {
       case "get_app_status": return Promise.resolve({ data_mode: "stored" } as never);
       case "list_profiles": return Promise.resolve([{ id: "stored-one", display_name: "One", context, fixture: true, data_mode: "stored" }] as never);
+      case "get_content_dispositions": return Promise.resolve({schema_version:1,scope:inspection.key.scope,active:active?.key??null,revisions:[]} as never);
       case "get_active_content": return Promise.resolve(active as never);
       case "stage_content": return fail ? Promise.reject({ code: "INVALID_INPUT", message: "Invalid content revision JSON", retryable: false }) : Promise.resolve(inspection as never);
       case "activate_content": active = inspection; return Promise.resolve(inspection as never);
