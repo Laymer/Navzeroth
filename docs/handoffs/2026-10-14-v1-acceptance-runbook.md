@@ -28,7 +28,8 @@ identification report. The reported `/dump GetBuildInfo()` tuple includes
 user-reported client identification; installed addon revision and test conditions
 are still pending, so the complete `LIVE-BUILD` row is not passed. Later user
 reports identify Windows 11, out-of-combat conditions and no errors from probe/
-status commands; actual output and installed source identity remain pending.
+status commands; `/anavdiag` subsequently reported addon version `0.8.1`. Actual
+serialized output and installed source/artifact identity remain pending.
 
 ## Delivered procedures and evidence boundary
 

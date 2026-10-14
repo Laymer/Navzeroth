@@ -8,9 +8,10 @@ records release-gate dispositions. Earlier 70338 evidence remains historical.
 ## Client identification reported on 2026-10-14
 
 Source: the user reported the result of `/dump GetBuildInfo()` in the task
-conversation, then Windows 11, out-of-combat conditions and error-free probe/status
-commands. No screenshot, serialized diagnostic export or installed addon source
-revision accompanied these reports.
+conversation, then Windows 11, out-of-combat conditions, error-free probe/status
+commands and addon version `0.8.1` displayed by `/anavdiag` with no arguments.
+No screenshot, serialized diagnostic export or installed addon source revision
+accompanied these reports.
 
 Reported values, preserving the empty and single-space final strings:
 
@@ -26,7 +27,8 @@ Reported values, preserving the empty and single-space final strings:
 | Interface | `16001` | User-reported client result |
 | Remaining returned values | `""`, `" "` | Retained without interpreting their meaning |
 | Edition | Target `wow_forever` | GetBuildInfo tuple alone does not establish edition |
-| Addon/app version and source commit | Unverified | Installation evidence pending |
+| Addon version | `0.8.1` | User-reported no-argument `/anavdiag` output; installed files not inspected |
+| App version, source commit and archive hashes | Unverified | Installation evidence pending; version text alone does not bind source |
 | OS | Windows 11 | User report: "I am running windows 11 out of combat"; exact OS build/hardware pending |
 | Combat condition | Out of combat | Same user report; no combat-transition acceptance established |
 | Diagnostic commands | Reportedly no errors | User report: "anavdiag probe and status indicate no errors"; actual output pending |
@@ -39,8 +41,7 @@ plan advancement, SavedVariables persistence, or native Windows acceptance.
 operating conditions and diagnostic output are recorded. The user-reported
 error-free commands establish only that narrow reported diagnostic flow.
 
-Next operator evidence requested by the coordinator: `/anavdiag` with no arguments
-for the displayed addon version, actual probe/status screenshot/transcription or
-sanitized `diagnostic_export` after reload, and installed source identity. Record
+Next operator evidence: actual probe/status screenshot/transcription or sanitized
+`diagnostic_export` after reload, plus installed source/artifact identity. Record
 actual results here before updating any release acceptance status. Detailed
 Windows environment collection follows the runbook.
