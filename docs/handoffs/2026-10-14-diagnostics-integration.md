@@ -1,9 +1,10 @@
 # Explicit diagnostics workflow integration
 
 Owner: Codex `/root/release_review`, sole task writer. Baseline main02044c2;
-diagnostics foundation c221752, backend planning dependency cb9b1be.
-Branch `feature/wave5-diagnostics-integration`; source ownership remains active
-until the pending final backend freshness fix has been normally merged.
+diagnostics foundation c221752, backend planning dependency daf82b7 (including native DTO cb9b1be).
+Branch `feature/wave5-diagnostics-integration`; source ownership released at `d135b73e6b06083ff243b231334bd9316f1ef1c0`
+after normal merging the final backend freshness fix. Further source fixes require
+coordination with root.
 
 ## Result and interfaces
 
@@ -74,5 +75,11 @@ system `dbus-1.pc` dependency before shell compilation. Actual native command
 execution, selected-file behavior/permissions on Windows, installed addon version,
 telemetry durations on target hardware and live gameplay remain UNVERIFIED.
 Exact-head hosted Windows compilation and peer review remain required before
-protected-main integration. Final backend dependency/head and actual checks will
-be recorded below after its publication-freshness fix lands.
+protected-main integration. The final backend freshness fix daf82b7 was normally merged; final18 affected
+Rust tests (workflow4, registry9, service5 including store-wait expiry) and strict
+app Clippy/fmt/diff pass at source d135b73. Final desktop122 unit tests across22
+files, typecheck/lint/build pass. Full20 mocked Chromium cases passed before the
+last recovery-navigation change; its affected diagnostics/recovery2 cases were
+rerun afterward and passed. Browser port1420 is free. Next: exact combined-head
+peer/hosted review, reconcile separate backend/UI PR dependencies, and update the
+batch release ledger without claiming native/live acceptance.
