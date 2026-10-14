@@ -254,6 +254,7 @@ export interface PlanningRequest {
   excluded: string[];
 }
 export interface PlanningReport {
+  clustering?: import("./clustering").ClusteringMetadata;
   request: PlanningRequest; context: DataContext; fixture: boolean; assumptions: string[];
   filtered: { objective: string; reason: string }[];
   result: {

@@ -4,8 +4,11 @@ use azeroth_core::{
     entities::{CharacterSnapshot, Objective, ObjectiveTarget, TravelNode},
     error::{AppError, ErrorCode, Result},
     evaluation::{EvaluationContext, StalePolicy, Truth, evaluate},
+    objective_clustering::{
+        ClusterPlanningInput, PreparedContribution, PreparedObjective, plan_clustered_controlled,
+    },
     observation::{FreshnessContext, ObservationStatus},
-    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan_controlled},
+    planner::{EligibilityEvidence, PlannerResult},
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     travel::RouteOptions,
     types::*,
@@ -56,6 +59,7 @@ pub struct PlanningReport {
     pub fixture: bool,
     pub context: DataContext,
     pub result: PlannerResult,
+    pub clustering: crate::clustering::ClusteringMetadata,
     pub filtered: Vec<FilteredCandidate>,
     pub assumptions: Vec<&'static str>,
 }
@@ -201,11 +205,15 @@ pub(crate) fn calculate_controlled(
         .iter()
         .map(|(estimate, objective, predicate)| {
             control.checkpoint(SearchPhase::CandidateAssessment)?;
-            Ok(Candidate {
+            let evidence = evaluate(predicate.unwrap_or(&always), &context)?;
+            Ok(PreparedObjective {
                 id: objective.id.clone(),
                 node: estimate.node.clone(),
-                gate: EligibilityGate::Predicate(predicate.unwrap_or(&always)),
-                utility: estimate.utility,
+                participants: vec![PreparedContribution {
+                    utility: estimate.utility,
+                    truth: evidence.truth,
+                    evidence: EligibilityEvidence::Predicate { result: evidence },
+                }],
                 completion_ms: estimate.completion_ms,
                 service_ms: estimate.service_ms,
                 // One reward identity per target prevents different objectives counting
@@ -228,10 +236,11 @@ pub(crate) fn calculate_controlled(
             })
         })
         .collect::<Result<Vec<_>>>()?;
-    let result = plan_controlled(
-        &PlannerInput {
+    let clustered = plan_clustered_controlled(
+        &ClusterPlanningInput {
             goal_profile: request.goal_profile.clone(),
-            candidates: &values,
+            objectives: &values,
+            participant_count: 1,
             excluded: &request.excluded,
             nodes: &dataset.nodes,
             edges: &dataset.edges,
@@ -249,12 +258,13 @@ pub(crate) fn calculate_controlled(
         request,
         fixture: snapshot.fixture,
         context: snapshot.data_context(),
-        result,
+        result: clustered.plan.clone(),
+        clustering: crate::clustering::ClusteringMetadata::from(clustered),
         filtered,
         assumptions: vec![
             "Utilities, objective node associations and completion/service times are explicit manual inputs",
-            "Expected-time greedy baseline; estimates are not guaranteed durations",
-            "No speculative prerequisite unlocks or party fairness; declared quest predicates only",
+            "Expected-time greedy baseline with deterministic same-node clusters and singleton fallbacks; estimates are not guaranteed durations",
+            "No speculative prerequisite unlocks or party fairness; declared quest predicates only; no shared-kill or service savings inferred",
         ],
     })
 }
