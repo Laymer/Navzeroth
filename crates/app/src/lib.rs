@@ -137,3 +137,4 @@ pub mod party_proposals;
 pub mod reminders;
 
 pub mod diagnostics;
+pub mod recovery;

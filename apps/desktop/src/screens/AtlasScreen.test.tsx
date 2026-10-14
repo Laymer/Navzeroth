@@ -220,7 +220,7 @@ describe("dense reference search", () => {
     renderAtlas(adapterWith({ query_atlas: () => ({ ...dense, revision: ++queries === 1 ? "dense-original" : "dense-refreshed" }) }));
     const last = await screen.findByRole("button", { name: "Show Reference 199 on the map" });
     fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "landmark" } });
-    expect(screen.getByText("100 of 200 reference pins shown.")).toBeInTheDocument();
+    expect(screen.getByText("100 of 200 reference pins match these filters.")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Point type"), { target: { value: "all" } });
     fireEvent.click(last);
     expect(last).toHaveAttribute("aria-pressed", "true");
@@ -310,4 +310,44 @@ it("renders schema-valid UTC limits without throwing and preserves a zero timest
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     instance.unmount();
   }
+});
+
+it("bounds dense map/list pages and keeps global keyboard focus across pages", async () => {
+  const original = await demoAdapter.invoke("query_atlas", { image: null });
+  const image = original.images[0];
+  const template = image?.pins[0];
+  if (!image || !template) throw new Error("Missing demo image/pin");
+  let removed = false;
+  const pins = Array.from({ length: 450 }, (_, i) => ({ ...template, id: `dense-${i}`, label: `Dense ${i}` }));
+  renderAtlas(adapterWith({ query_atlas: () => ({ ...original, revision: removed ? "trimmed" : "full", images: [{ ...image, pins: removed ? pins.slice(0, 20) : pins }] }) }));
+  await screen.findByRole("button", { name: "Show Dense 0 on the map" });
+  expect(screen.getByRole("button", { name: "Previous pin page" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Next pin page" }));
+  expect(screen.getByRole("button", { name: "Show Dense 200 on the map" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Next pin page" }));
+  expect(screen.getByRole("button", { name: "Next pin page" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Previous pin page" }));
+  fireEvent.click(screen.getByRole("button", { name: "Previous pin page" }));
+  expect(screen.getByRole("button", { name: "Previous pin page" })).toBeDisabled();
+  expect(document.querySelectorAll(".pins button")).toHaveLength(200);
+  expect(document.querySelectorAll("g.pin")).toHaveLength(200);
+  const first = screen.getByRole("button", { name: "Show Dense 0 on the map" });
+  first.focus(); fireEvent.keyDown(first, { key: "End" });
+  const last = screen.getByRole("button", { name: "Show Dense 449 on the map" });
+  expect(last).toHaveFocus();
+  expect(document.querySelectorAll(".pins button")).toHaveLength(50);
+  expect(screen.getByText("Page 3 of 3")).toBeInTheDocument();
+  fireEvent.click(last);
+  fireEvent.keyDown(last, { key: "ArrowDown" });
+  expect(screen.getByRole("button", { name: "Show Dense 0 on the map" })).toHaveFocus();
+  expect(screen.getByText(/The selected pin is on another page/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Next pin page" }));
+  expect(screen.getByText("Page 2 of 3")).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Search reference pins"), { target: { value: "Dense 449" } });
+  expect(screen.getByRole("button", { name: "Show Dense 449 on the map" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.queryByRole("group", { name: "Reference pin pages" })).not.toBeInTheDocument();
+  removed = true;
+  fireEvent.click(screen.getByRole("button", { name: "Refresh atlas" }));
+  await screen.findByText(/Dataset trimmed/);
+  expect(screen.getByText("The selected pin is no longer present in this atlas revision.")).toBeInTheDocument();
 });
