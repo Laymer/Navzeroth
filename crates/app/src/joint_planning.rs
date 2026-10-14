@@ -267,6 +267,7 @@ impl SnapshotApplication {
             Some(request.party_id.clone()),
             &snapshots,
             &content,
+            &context(now),
         )?;
         let result = calculate(request, catalog, snapshots, &content, control)?;
         guard.publish(
