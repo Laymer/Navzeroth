@@ -6,7 +6,8 @@ or automatic capture. Acceptance means local queue review; it never activates a
 dataset, upgrades confidence, authenticates a source or verifies gameplay.
 
 A declaration contains schema_version1, full context/build/namespace, fixture flag,
-base_revision, registered source and evidence IDs, optional signed-safe UTC time,
+base_revision, registered source and evidence IDs (at most256 UTF8 bytes), nullable
+signed-safe UTC time (explicit null when unrecorded),
 and one closed payload. IDs must belong to the exact stored immutable revision;
 the referenced quest/item must cite the registered evidence. No names, character
 or session IDs, chat, paths, account data, free text or extension fields are accepted.

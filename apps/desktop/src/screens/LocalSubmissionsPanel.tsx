@@ -49,6 +49,7 @@ export function LocalSubmissionsPanel({ client, enabled, refreshKey }: { client:
   return <section aria-labelledby="local-submissions-title">
     <h3 id="local-submissions-title">Local observation review</h3>
     <p>Opt in to store a minimal declaration on this device. No names, chat, account paths or credentials. Local acceptance does not verify gameplay, activate content or grant redistribution permission.</p>
+    <p>The queue spans all local dataset contexts. Each declaration retains its exact edition, build, interface and synthetic status.</p>
     <p>Use registered dataset, source, evidence and quest/item identities. Unknown counts remain unknown; one success does not establish a drop rate. Withdrawal erases the payload and keeps a disclosed fingerprint tombstone to prevent duplicate recreation.</p>
     {!enabled && <p>Local submissions require the desktop application.</p>}
     {error && <p role="alert">{error}</p>}{message && <p role="status">{message}</p>}
@@ -61,7 +62,7 @@ export function LocalSubmissionsPanel({ client, enabled, refreshKey }: { client:
     </form>
     <button type="button" disabled={busy || !enabled} onClick={() => { setOutput(null); setError(""); setRevision((n) => n + 1); }}>Refresh local queue</button>
     {page && <><p>{page.total} local records including erased tombstones; {page.rows.length} on this page.</p><ul>{page.rows.map((record) => <li key={record.guard.id}>
-      <p>{record.base.revision}, {record.base.scope.context.build.build}, {record.base.scope.context.namespace}{record.base.scope.fixture ? ", synthetic" : ""}: {record.state}, revision {record.guard.revision}</p>
+      <p>{record.base.revision}, {record.base.scope.context.build.edition}/{record.base.scope.context.build.build}/{record.base.scope.context.build.interface}, {record.base.scope.context.namespace}{record.base.scope.fixture ? ", synthetic" : ""}: {record.state}, revision {record.guard.revision}</p>
       <details><summary>Declaration and opaque fingerprint</summary><p>{record.guard.id}</p><pre>{record.document ? JSON.stringify(record.document, null, 2) : "Payload erased; fingerprint, source, base and local decision retained."}</pre></details>
       {record.state === "pending" && <><button disabled={busy || !enabled} onClick={() => void run("accept", record)}>Accept local declaration</button><button disabled={busy || !enabled} onClick={() => void run("reject", record)}>Reject local declaration</button></>}
       {["pending", "accepted", "rejected"].includes(record.state) && <><button disabled={busy || !enabled} onClick={() => void run("withdraw", record)}>Withdraw and erase payload</button><button disabled={busy || !enabled} onClick={() => void run("revoke", record)}>Revoke local declaration</button></>}
