@@ -38,7 +38,11 @@ fn exact_recipients_share_joint_choices_but_have_distinct_stable_identities() {
                 .map(|s| s.as_str())
                 .collect::<Vec<_>>()
         );
-        assert_eq!(payload["ruleset_version"], "joint-greedy-v1");
+        assert_eq!(payload["ruleset_version"], "joint-same-node-clusters-v1");
+        assert_eq!(
+            payload["score_model_version"],
+            "manual-minimum-member-sum-utility-v1"
+        );
     }
 }
 #[test]
@@ -226,7 +230,7 @@ fn joint_minimum_member_choice_is_not_replaced_with_recipient_solo_preference() 
         value["payload"]["steps"][0]["explanation"]
             .as_str()
             .unwrap()
-            .contains("minimum-member group utility 3")
+            .contains("original minimum-member contribution 3")
     );
 }
 #[test]
