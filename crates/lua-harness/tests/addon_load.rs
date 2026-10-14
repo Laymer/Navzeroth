@@ -90,6 +90,7 @@ fn every_toc_file_loads_in_order_into_a_fresh_state() {
             "Gear",
             "Capabilities",
             "Export",
+            "HudAppearance",
             "Settings",
             "PlanControls",
             "Diagnostics"
@@ -212,7 +213,7 @@ fn addon_registers_events_and_a_slash_command_and_stores_one_export() {
             "return table.concat(frame.events, ','), frame.kind, SLASH_ANAVDIAG1, type(SlashCmdList.ANAVDIAG)",
         )
         .unwrap();
-    assert_eq!(events, "ADDON_LOADED,PLAYER_LOGIN");
+    assert_eq!(events, "ADDON_LOADED,PLAYER_LOGIN,PLAYER_REGEN_ENABLED");
     assert_eq!(kind, "Frame");
     assert_eq!(slash, "/anavdiag");
     assert_eq!(handler, "function");
