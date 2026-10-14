@@ -1,3 +1,4 @@
+import { ClusterSummary } from "./ClusterSummary";
 import { runPlanningJob, type PlanningJobStatus } from "../commands/planningJobs";
 import { RouteInspection } from "./RouteInspection";
 import type { RouteInspection as Inspection } from "../commands/routes";
@@ -133,6 +134,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     </div>}
     <button type="button" disabled={busy || !visibleCatalog?.snapshot_id || !visibleCatalog.revision || !origin || !stop} onClick={() => void calculate()}>Plan session</button>
     {visibleReport && <section aria-label="Planning result">
+      <ClusterSummary clustering={visibleReport.clustering} />
       <button type="button" disabled={busy || visibleReport.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</button>
       <button type="button" disabled={busy} onClick={() => void inspectRoute()}>Inspect route</button>
       {route && <RouteInspection value={route} />}
