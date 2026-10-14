@@ -169,3 +169,10 @@ now pass against that exact corrected head. No peer files were edited. Other
 fallback/CAS/terminal/immutable-source/recovery-validator checks found no concrete
 blocker. Logs /tmp/navzeroth-peer-quarantine-*.log and
 /tmp/navzeroth-quarantine-long-identity-{repro,fixed}.log.
+
+Final combined schema10 source check:579 core/storage/app Rust tests passed,
+0 failures/ignored; strict all-target Clippy passed. Affected6 desktop tests and
+strict typecheck/lint/fmt/diff passed. Prior full160 desktop/build checks apply to
+unchanged command/UI behavior except the separately checked full-context row text.
+Native/live acceptance and combined post-merge browser integration remain explicitly
+unverified here. This handoff replaces earlier pending SourceId dependency notes.
