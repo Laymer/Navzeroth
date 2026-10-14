@@ -81,13 +81,14 @@ async fn start_planning_job(
                 let guard = std::cell::RefCell::new(
                     None::<azeroth_app::planning_job_service::PublicationGuard>,
                 );
-                jobs.run_guarded(
+                jobs.run_guarded_with_pin(
                     ticket,
                     |control| {
                         let (report, input_guard) =
                             app.calculate_planning_job(kind, &text, system_now(), control)?;
+                        let pin = input_guard.pin_descriptor(&report, system_now()).ok();
                         *guard.borrow_mut() = Some(input_guard);
-                        Ok(report)
+                        Ok((report, pin))
                     },
                     |publish| {
                         guard
@@ -136,6 +137,76 @@ async fn take_planning_job_result(
     job_id: String,
 ) -> Result<azeroth_app::planning_jobs::JobResult, AppError> {
     state.planning_jobs().take_result(&job_id)
+}
+
+async fn intent_foreground<T: Send + 'static>(
+    state: State<'_, Application>,
+    call: impl FnOnce(&azeroth_app::snapshots::SnapshotApplication) -> Result<T, AppError>
+    + Send
+    + 'static,
+) -> Result<T, AppError> {
+    let host = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || host.with_application(call))
+        .await
+        .map_err(|_| {
+            AppError::new(
+                ErrorCode::ProviderUnavailable,
+                "Foreground worker unavailable",
+                false,
+            )
+        })?
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_app_settings(
+    state: State<'_, Application>,
+) -> Result<azeroth_app::today::SettingsRecord, AppError> {
+    intent_foreground(state, |app| app.app_settings()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn update_app_settings(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::today::SettingsRecord, AppError> {
+    intent_foreground(state, move |app| app.update_settings(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_today_view(
+    state: State<'_, Application>,
+) -> Result<azeroth_app::today::TodayView, AppError> {
+    intent_foreground(state, |app| app.today_view(system_now())).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn clear_current_plan(
+    state: State<'_, Application>,
+    expected_revision: i64,
+) -> Result<i64, AppError> {
+    intent_foreground(state, move |app| app.clear_current_plan(expected_revision)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn pin_current_plan(
+    state: State<'_, Application>,
+    job_id: String,
+    expected_revision: i64,
+) -> Result<i64, AppError> {
+    let host = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        host.with_application(|app| {
+            app.pin_current_plan(
+                host.planning_jobs(),
+                &job_id,
+                expected_revision,
+                system_now(),
+            )
+        })
+    })
+    .await
+    .map_err(|_| {
+        AppError::new(
+            ErrorCode::ProviderUnavailable,
+            "Foreground worker unavailable",
+            false,
+        )
+    })?
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -609,6 +680,11 @@ pub fn run() {
                 preview_diagnostics,
                 export_diagnostics,
                 get_reference_view,
+                get_app_settings,
+                update_app_settings,
+                get_today_view,
+                pin_current_plan,
+                clear_current_plan,
                 get_compatibility_report,
                 get_reference_window_state,
                 set_reference_window,

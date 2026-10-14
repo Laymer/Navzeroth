@@ -1,3 +1,6 @@
+import {TodayScreen} from "./screens/TodayScreen";
+import {SettingsScreen} from "./screens/SettingsScreen";
+import "./screens/settings.css";
 import { ReferenceWindowControls } from "./screens/ReferenceWindowControls";
 import { CompatibilityPanel } from "./screens/CompatibilityPanel";
 import { DiagnosticsPanel } from "./screens/DiagnosticsPanel";
@@ -18,9 +21,10 @@ import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
 import { DungeonsScreen } from "./screens/DungeonsScreen";
 
-type Screen = "compatibility" | "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics" | "dungeons";
+type Screen = "compatibility" | "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics" | "dungeons" | "settings";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
+  { id: "settings", label: "Settings" },
   { id: "compatibility", label: "Compatibility and coverage" },
   { id: "diagnostics", label: "Local diagnostics" },
   { id: "recovery", label: "Backup and recovery" },
@@ -45,7 +49,9 @@ export function App({ client }: { client: CommandClient }) {
   const [screen, setScreen] = useState<Screen>("today");
 
   const [revision, setRevision] = useState(0);
+  const [savedTopmost,setSavedTopmost]=useState(false);
   const watchedImport = useRef("");
+  useEffect(()=>{let live=true;void client.getAppSettings().then(result=>{if(!live||!result.ok)return;setSavedTopmost(result.value.settings.reference_always_on_top);const a=result.value.settings.accessibility;document.documentElement.style.fontSize=`${a.text_scale_percent}%`;document.documentElement.dataset.contrast=a.contrast;document.documentElement.dataset.motion=a.motion;});return()=>{live=false;};},[client,revision]);
   const changed = useCallback(() => setRevision((value) => value + 1), []);
   const restored = useCallback(() => { setScreen("recovery"); changed(); }, [changed]);
   useEffect(() => {
@@ -92,7 +98,7 @@ export function App({ client }: { client: CommandClient }) {
   return (
     <main>
       <h1>Azeroth Navigator</h1>
-      <details><summary>Optional reference window</summary><ReferenceWindowControls client={client}/></details>
+      <details><summary>Optional reference window</summary><ReferenceWindowControls client={client} initialTopmost={savedTopmost}/></details>
       {load.phase === "loading" && <p role="status">Loading…</p>}
       {load.phase === "error" && (
         <p role="alert">
@@ -118,8 +124,9 @@ export function App({ client }: { client: CommandClient }) {
       )}
       {(load.phase === "ready" || load.phase === "error") && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "compatibility" && <CompatibilityPanel client={client} profileId={load.status.active_profile} refreshKey={revision} />}
-      {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} freshness={load.freshness} />}
+      {load.phase === "ready" && screen === "today" && <><TodayScreen client={client} refreshKey={revision}/><Today status={load.status} snapshot={load.snapshot} freshness={load.freshness}/></>}
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
+      {load.phase === "ready" && screen === "settings" && <SettingsScreen client={client} refreshKey={revision} onChanged={changed}/>}
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
       {load.phase === "ready" && screen === "party" && <PartyScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "dungeons" && <DungeonsScreen client={client} refreshKey={revision} />}
@@ -143,7 +150,7 @@ function Today({ status, snapshot, freshness }: { status: AppStatus; snapshot: C
       {status.data_mode === "stored" && snapshot !== null && (snapshot.fixture || snapshot.namespace === "demo") && (
         <p className="demo-label" role="note">SYNTHETIC — fixture or demo data, not from your game</p>
       )}
-      <h2 id="today">Today</h2>
+      <h2 id="today">Imported character reference</h2>
       {freshness !== null && <p>Last imported: {describeAge(freshness)}</p>}
       {snapshot === null ? (
         <p>No character snapshot has been imported.</p>

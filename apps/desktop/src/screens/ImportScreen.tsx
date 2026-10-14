@@ -41,6 +41,7 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
   const previewRequest = useRef(0);
   const lastWatched = useRef("");
   const mounted = useRef(true);
+  const savedPathToken=useRef(0);const pathOwner=useRef(client);if(pathOwner.current!==client){pathOwner.current=client;savedPathToken.current++;}
   const format: FileInputFormat = formatKind === "anav1_text" ? { kind: "anav1_text" } : { kind: "saved_variables", global, key };
   const fileReady = path.trim() !== "" && (formatKind === "anav1_text" || (global !== "" && key !== ""));
   const loadProfile = useCallback(async (id: string) => {
@@ -65,7 +66,7 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     mounted.current = true;
     void refresh();
     void client.getWatch().then((result) => { if (mounted.current && result.ok) setWatch(result.value); });
-    return () => { mounted.current = false; };
+    return () => { mounted.current = false; savedPathToken.current++; };
   }, [client, refresh]);
   useEffect(() => {
     if (!watch.active) return;
@@ -85,6 +86,15 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     }, 1000);
     return () => { live = false; window.clearInterval(timer); };
   }, [client, watch.active, refresh, onChanged]);
+  async function useSavedFile() {
+    const ticket=++savedPathToken.current;const expected=client;setError(null);
+    const result=await client.getAppSettings();if(!mounted.current||pathOwner.current!==expected||ticket!==savedPathToken.current)return;
+    if(!result.ok){setError(result.error);return;}
+    if(result.value.settings.schema_version!==1){setError({code:"UNSUPPORTED_SCHEMA",message:"Unsupported saved settings",retryable:false});return;}
+    const choice=result.value.settings.selected_export;
+    if(choice===null){setError({code:"INVALID_INPUT",message:"No saved export-file choice. Choose it in Settings first.",retryable:false});return;}
+    setPath(choice.path);setFormatKind(choice.format.kind);if(choice.format.kind==="saved_variables"){setGlobal(choice.format.global);setKey(choice.format.key);}
+  }
   async function importSnapshot(kind: "text" | "file") {
     setBusy(true); setError(null);
     const result = kind === "text" ? await client.importText(text) : await client.importFile(path, format);
@@ -139,13 +149,14 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     <button type="button" disabled={busy || text.trim() === ""} onClick={() => void importSnapshot("text")}>Import text</button>
     <fieldset disabled={busy}>
       <legend>Selected export file</legend>
-      <label>Export file path<input value={path} onChange={(e) => setPath(e.target.value)} /></label>
-      <label>File format<select value={formatKind} onChange={(e) => setFormatKind(e.target.value as typeof formatKind)}>
+      <button type="button" onClick={()=>void useSavedFile()}>Use saved export-file choice</button>
+      <label>Export file path<input value={path} onChange={(e) => {savedPathToken.current++;setPath(e.target.value);}} /></label>
+      <label>File format<select value={formatKind} onChange={(e) => {savedPathToken.current++;setFormatKind(e.target.value as typeof formatKind);}}>
         <option value="anav1_text">ANAV1 text</option><option value="saved_variables">SavedVariables export string</option>
       </select></label>
       {formatKind === "saved_variables" && <>
-        <label>SavedVariables global<input value={global} onChange={(e) => setGlobal(e.target.value)} /></label>
-        <label>Snapshot export key<input value={key} onChange={(e) => setKey(e.target.value)} /></label>
+        <label>SavedVariables global<input value={global} onChange={(e) => {savedPathToken.current++;setGlobal(e.target.value);}} /></label>
+        <label>Snapshot export key<input value={key} onChange={(e) => {savedPathToken.current++;setKey(e.target.value);}} /></label>
       </>}
       <button type="button" disabled={!fileReady} onClick={() => void importSnapshot("file")}>Import selected file</button>
       <button type="button" disabled={!fileReady || watch.active} onClick={() => void controlWatch(true)}>Watch selected file</button>

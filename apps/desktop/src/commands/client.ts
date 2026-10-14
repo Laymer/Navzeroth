@@ -28,7 +28,7 @@ export function toAppError(thrown: unknown): AppError {
     const e = thrown as Record<string, unknown>;
     if (typeof e["code"] === "string" && CODES.has(e["code"]) && typeof e["message"] === "string") {
       return {
-        code: e["code"] as AppError["code"],
+    code: e["code"] as AppError["code"],
         message: e["message"],
         retryable: e["retryable"] === true,
       };
@@ -52,6 +52,12 @@ export function createClient(adapter: CommandAdapter) {
     submitLocalObservation: (text: string, opt_in: boolean) => run(() => adapter.invoke("submit_local_observation", { text, opt_in })),
     changeLocalSubmission: (expected: import("./localSubmissions").SubmissionGuard, action: import("./localSubmissions").SubmissionAction) => run(() => adapter.invoke("change_local_submission", { text: JSON.stringify({ expected, action }) })),
     exportLocalSubmission: (expected: import("./localSubmissions").SubmissionGuard) => run(() => adapter.invoke("export_local_submission", { text: JSON.stringify(expected) })),
+    getAppSettings:()=>run(()=>adapter.invoke("get_app_settings",undefined)),
+    updateAppSettings:(text:string)=>run(()=>adapter.invoke("update_app_settings",{text})),
+    getTodayView:()=>run(()=>adapter.invoke("get_today_view",undefined)),
+    pinCurrentPlan:(jobId:string,expectedRevision:number)=>run(()=>adapter.invoke("pin_current_plan",{job_id:jobId,expected_revision:expectedRevision})),
+    clearCurrentPlan:(expectedRevision:number)=>run(()=>adapter.invoke("clear_current_plan",{expected_revision:expectedRevision})),
+    
     getContentDispositions: (profileId:string) => run(() => adapter.invoke("get_content_dispositions",{profile_id:profileId})),
     changeContentDisposition: (text:string) => run(() => adapter.invoke("change_content_disposition",{text})),
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
