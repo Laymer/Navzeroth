@@ -30,6 +30,10 @@ const TABLES: &[&str] = &[
     "reminder_state",
     "session_calibration_annotations",
     "party_plan_proposals",
+    "content_dispositions",
+    "app_settings",
+    "current_plan",
+    "local_submissions",
 ];
 #[derive(Clone, Debug, Serialize)]
 pub struct RecoveryInspection {
@@ -170,6 +174,11 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
                 .any(|(kind, name, _, _)| kind == "table" && name == table)
             {
                 continue;
+            }
+            // Migration9 seeds its empty CAS tombstone. Replace it with the exact
+            // copied source row, rather than colliding or silently keeping revision1.
+            if table == "current_plan" {
+                tx.execute("DELETE FROM current_plan", []).db()?;
             }
             // Names and columns below originate solely from our canonical schema.
             let mut columns = trusted
@@ -315,6 +324,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     if fk.query([]).db()?.next().db()?.is_some() {
         return Err(storage("Database foreign-key check failed"));
     }
+    validate_local_foundation(conn)?;
     for sql in [
         "SELECT (SELECT COUNT(*) FROM profiles)>1024 OR (SELECT COUNT(*) FROM imports)>1024 OR (SELECT COUNT(*) FROM party_profiles)>128 OR (SELECT COUNT(*) FROM dataset_revisions)>1024 OR (SELECT COUNT(*) FROM snapshot_promotions)>256",
         "SELECT EXISTS(SELECT 1 FROM snapshots GROUP BY profile_id HAVING count(*)>257)",
@@ -497,5 +507,19 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     }
     // Proposals' internal request is application-owned; storage validates the
     // bounded typed proposal and app validates guarded joint requests on read.
+    Ok(())
+}
+
+// Replace feature-document refusal with the owning feature's typed validator only
+// after that module is integrated. Unknown documents are never copied as trusted.
+fn validate_local_foundation(conn: &Connection) -> Result<()> {
+    for sql in [
+        "SELECT (SELECT count(*) FROM content_dispositions)!=(SELECT count(*) FROM dataset_revisions) OR (SELECT count(*) FROM content_dispositions)>1024",
+        "SELECT EXISTS(SELECT 1 FROM active_datasets a LEFT JOIN content_dispositions d ON d.revision_id=a.revision_id WHERE d.state IS NULL OR d.state!='eligible' OR d.last_activated_order IS NULL)",
+        "SELECT (SELECT count(*) FROM current_plan)!=1 OR EXISTS(SELECT 1 FROM current_plan WHERE kind IS NOT NULL OR request_json IS NOT NULL OR guard_json IS NOT NULL OR summary_json IS NOT NULL)",
+        "SELECT EXISTS(SELECT 1 FROM app_settings) OR EXISTS(SELECT 1 FROM local_submissions)",
+    ] {
+        reject(conn, sql)?;
+    }
     Ok(())
 }

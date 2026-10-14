@@ -17,7 +17,10 @@ fn all_supported_historical_schemas_reconstruct_populated_profiles_without_sourc
         let before = std::fs::read(&source.path).unwrap();
         let report = reconstruct_backup(&source.path, &restored.path).unwrap();
         assert_eq!(report.source_schema_version, version as u32);
-        assert_eq!(report.restored_schema_version, 8);
+        assert_eq!(
+            report.restored_schema_version,
+            azeroth_storage::migrations::latest_version()
+        );
         let store = SqliteStore::open(&restored.path).unwrap();
         assert_eq!(
             store.list_profiles().unwrap()[0].key.character.as_str(),
@@ -89,7 +92,7 @@ fn malicious_schema_future_history_and_corrupt_data_refuse_without_destination()
         ),
         (
             "future",
-            "INSERT INTO schema_migrations(version,name) VALUES(9,'future')",
+            "INSERT INTO schema_migrations(version,name) SELECT max(version)+1,'future' FROM schema_migrations",
         ),
         (
             "history",

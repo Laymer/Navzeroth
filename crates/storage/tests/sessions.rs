@@ -119,7 +119,7 @@ fn populated_v4_upgrade_preserves_other_domains() {
     // Remove only the new empty table and migration marker to reconstruct the
     // exact previous schema with real populated domain records.
     let conn = common::raw(&db.path);
-    conn.execute_batch("DROP TABLE party_plan_proposals; DROP TABLE session_calibration_annotations; DROP TABLE reminder_state; DROP TABLE sessions; DELETE FROM schema_migrations WHERE version>=5")
+    conn.execute_batch("DROP TABLE local_submissions; DROP TABLE current_plan; DROP TABLE app_settings; DROP TABLE content_dispositions; DROP TABLE party_plan_proposals; DROP TABLE session_calibration_annotations; DROP TABLE reminder_state; DROP TABLE sessions; DELETE FROM schema_migrations WHERE version>=5")
         .unwrap();
     let before = common::dump_state(&db.path);
     drop(conn);
