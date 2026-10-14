@@ -329,10 +329,14 @@ impl DatabaseHost {
         use std::io::Write;
         let marker_path = pending_path(&self.path);
         let marker_was_present = marker_path.exists();
-        if marker_was_present && pending_directory(&self.path).is_none() {
-            return Err(fail(
-                "Existing recovery marker is unreadable or exceeds bounds",
-            ));
+        if marker_was_present {
+            let info = fs::symlink_metadata(&marker_path)
+                .map_err(|_| fail("Existing recovery marker metadata unavailable"))?;
+            if !info.file_type().is_file() || info.len() > 4096 {
+                return Err(fail(
+                    "Existing recovery marker must be a regular file within bounds",
+                ));
+            }
         }
         // Never overwrite an existing marker during a retry: its original
         // retained-directory identity must survive every pre-install failure.
@@ -465,6 +469,31 @@ mod tests {
         let app = SnapshotApplication::open(path).unwrap();
         app.import_text(&format!("ANAV1:{SNAPSHOT}"), None).unwrap();
     }
+    #[test]
+    fn bounded_empty_or_unreadable_marker_content_does_not_block_explicit_recovery() {
+        for bytes in [vec![], vec![0xff, 0x00], b"truncated-directory".to_vec()] {
+            let dir = Directory::new();
+            let live = dir.path("missing.sqlite3");
+            let backup = dir.path("good.sqlite3");
+            seed(&backup);
+            fs::write(pending_path(&live), &bytes).unwrap();
+            let host = DatabaseHost::open(&live);
+            assert_eq!(host.status().unwrap().state, "recovery_required");
+            let preview = host.inspect(&backup).unwrap();
+            assert!(
+                host.restore_using(&preview.candidate_id, |_, _| Err(std::io::Error::other(
+                    "install failure"
+                )))
+                .is_err()
+            );
+            assert_eq!(fs::read(pending_path(&live)).unwrap(), bytes);
+            assert!(!live.exists());
+            host.restore(&preview.candidate_id).unwrap();
+            assert_eq!(host.status().unwrap().state, "ready");
+            assert!(!pending_path(&live).exists());
+        }
+    }
+
     #[test]
     fn marker_cleanup_failure_is_visible_and_next_startup_remains_guarded() {
         let dir = Directory::new();
