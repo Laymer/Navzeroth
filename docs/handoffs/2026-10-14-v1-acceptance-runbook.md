@@ -28,6 +28,51 @@ identification report. The reported `/dump GetBuildInfo()` tuple includes
 user-reported client identification; installed addon revision and test conditions
 are still pending, so the complete `LIVE-BUILD` row is not passed.
 
-Planned verification: inspect the actual slash commands, native UI labels,
-installer and helper behavior; check local Markdown links and diff whitespace;
-obtain an independent peer review. Record actual results below after completion.
+## Delivered procedures and evidence boundary
+
+The runbook defines the coordinator's exact 25 mandatory `LIVE-*`/`WIN-*` IDs,
+expected methods and pass/fail/unverified vocabulary. It binds operator evidence
+to source/artifacts/environment/content/inventory and expands aggregate cases to
+every mandatory inventory unit. Procedures cover the complete real duo scenario,
+field states, transfer/watching/reload, restrictions/HUD, progression/deviation,
+gear/preparation/reminders, sessions/next plan and interactive Windows lifecycle,
+recovery, offline use, focus/reference/display/accessibility/full-size performance.
+The evidence log retains only the actual user-reported GetBuildInfo tuple; it
+does not promote API or full `LIVE-BUILD` acceptance.
+
+Actual baseline source inspection found these independently actionable gaps:
+
+- `Diagnostics.lua` and `HudAppearance.lua` still gate observations and UI on
+  70338. Updating the version condition alone would not establish capability truth.
+- `PlanControls.lua` explicitly has no completion mappings or current dependency
+  context; there is no user-facing live advancement path to verify yet.
+- Snapshot/session producers store strings in SavedVariables; no supported
+  snapshot copy-out UI or CLI extraction command exists for the real text path.
+- Manual session sampling observes level/unclassified spans, not complete real
+  route/quest milestones. Such sessions cannot prove measured route calibration.
+- `PartyScreen.tsx` still renders stale "Session planning is not available yet."
+  after its implemented planning component. Root owns scheduling its separate fix.
+
+No existing historical document, source code or schema was changed. Optional API,
+party messaging, combat logs and hosting stay explicitly deferrable; the mandatory
+live/content/native rows do not become optional when blocked.
+
+## Actual verification
+
+- Inspected installed helper and NSIS hooks, addon commands/gates/plan controls,
+  native screens and reference control behavior against each procedure. Read the
+  actual wave8 reference-interaction handoff after an initial guessed file name
+  was absent; the failed read was not validation evidence.
+- A local Python read-only audit found exactly the agreed 25 unique IDs and valid
+  existing Markdown file links. Three links intentionally await coordinator
+  integration: `release/v1/README.md`, `coverage-inventory.json`, and
+  `acceptance-evidence.json`. Recheck them on the combined branch.
+- `git diff --check` passed for tracked edits. Staged whitespace and independent
+  peer review follow before final integration. No code tests are required for
+  these documentation-only additions; no live or interactive Windows check ran
+  in this worker environment.
+
+Next: independent peer review and coordinator-owned evidence contract integration;
+then gather the user's installed-addon/OS/combat diagnostics, address the recorded
+engineering blockers in isolated tasks, and execute applicable runbook cases on
+the exact packaged candidate. Mandatory missing evidence holds stable v1.0.0.
