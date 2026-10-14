@@ -6,8 +6,15 @@ use crate::{
     entities::{TravelEdge, TravelNode},
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationResult, Truth, evaluate},
+    objective_clustering::{
+        ClusterPlanningInput, ClusteredResult, PreparedContribution, PreparedObjective,
+        plan_clustered_controlled,
+    },
     observation::{Freshness, ObservationStatus, freshness},
-    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan_controlled},
+    planner::{
+        Candidate, EligibilityEvidence, EligibilityGate, PlannerInput, PlannerResult,
+        plan_controlled,
+    },
     predicate::Predicate,
     travel::RouteOptions,
     types::{CharacterId, EdgeId, Millis, NodeId, ObjectiveId, SourceId},
@@ -69,6 +76,24 @@ pub fn plan_joint_controlled(
     input: &JointInput<'_>,
     control: &mut dyn SearchControl,
 ) -> Result<JointResult> {
+    Ok(calculate_joint(input, control, false)?.0)
+}
+
+/// Same conservative member/edge checks, with bounded same-node clustering.
+/// Flattened choices retain original objective IDs; explanations are separate.
+pub fn plan_joint_clustered_controlled(
+    input: &JointInput<'_>,
+    control: &mut dyn SearchControl,
+) -> Result<(JointResult, ClusteredResult)> {
+    let (result, clustered) = calculate_joint(input, control, true)?;
+    Ok((result, clustered.expect("clustering requested")))
+}
+
+fn calculate_joint(
+    input: &JointInput<'_>,
+    control: &mut dyn SearchControl,
+    automatic_clustering: bool,
+) -> Result<(JointResult, Option<ClusteredResult>)> {
     control.checkpoint(SearchPhase::ValidateInputs)?;
     if !(2..=40).contains(&input.contexts.len())
         || input.candidates.len() > 128
@@ -169,30 +194,83 @@ pub fn plan_joint_controlled(
             edges.push(edge.clone());
         }
     }
+    let mut prepared = Vec::new();
+    if automatic_clustering {
+        for (candidate, assessment) in input.candidates.iter().zip(&assessments) {
+            control.checkpoint(SearchPhase::CandidateAssessment)?;
+            prepared.push(PreparedObjective {
+                id: candidate.id.clone(),
+                node: candidate.node.clone(),
+                completion_ms: candidate.completion_ms,
+                service_ms: candidate.service_ms,
+                rewards: candidate.rewards.clone(),
+                participants: assessment
+                    .participants
+                    .iter()
+                    .map(|member| PreparedContribution {
+                        utility: member.utility,
+                        truth: member.readiness.truth,
+                        evidence: EligibilityEvidence::Predicate {
+                            result: member.readiness.clone(),
+                        },
+                    })
+                    .collect(),
+            });
+        }
+    }
     candidates.sort_by(|a, b| a.id.cmp(&b.id));
     assessments.sort_by(|a, b| a.objective.cmp(&b.objective));
     unavailable_edges.sort_by(|a, b| (&a.edge, &a.character).cmp(&(&b.edge, &b.character)));
-    let plan = plan_controlled(
-        &PlannerInput {
-            goal_profile: input.goal_profile.clone(),
-            candidates: &candidates,
-            excluded: input.excluded,
-            nodes: input.nodes,
-            edges: &edges,
-            origin: input.origin.clone(),
-            stopping_node: input.stopping_node.clone(),
-            budget_ms: input.budget_ms,
-            stopping_service_ms: input.stopping_service_ms,
-            max_steps: 32,
-            context: first,
-            travel_options: &RouteOptions::default(),
-        },
-        control,
-    )?;
+    let clustered = if automatic_clustering {
+        Some(plan_clustered_controlled(
+            &ClusterPlanningInput {
+                goal_profile: input.goal_profile.clone(),
+                participant_count: input.contexts.len(),
+                objectives: &prepared,
+                excluded: input.excluded,
+                nodes: input.nodes,
+                edges: &edges,
+                origin: input.origin.clone(),
+                stopping_node: input.stopping_node.clone(),
+                budget_ms: input.budget_ms,
+                stopping_service_ms: input.stopping_service_ms,
+                max_steps: 32,
+                context: first,
+                travel_options: &RouteOptions::default(),
+            },
+            control,
+        )?)
+    } else {
+        None
+    };
+    let plan = if let Some(result) = &clustered {
+        result.plan.clone()
+    } else {
+        plan_controlled(
+            &PlannerInput {
+                goal_profile: input.goal_profile.clone(),
+                candidates: &candidates,
+                excluded: input.excluded,
+                nodes: input.nodes,
+                edges: &edges,
+                origin: input.origin.clone(),
+                stopping_node: input.stopping_node.clone(),
+                budget_ms: input.budget_ms,
+                stopping_service_ms: input.stopping_service_ms,
+                max_steps: 32,
+                context: first,
+                travel_options: &RouteOptions::default(),
+            },
+            control,
+        )?
+    };
     control.checkpoint(SearchPhase::Selection)?;
-    Ok(JointResult {
-        plan,
-        assessments,
-        unavailable_edges,
-    })
+    Ok((
+        JointResult {
+            plan,
+            assessments,
+            unavailable_edges,
+        },
+        clustered,
+    ))
 }

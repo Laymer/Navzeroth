@@ -8,7 +8,7 @@ use azeroth_core::{
     },
     error::{AppError, ErrorCode, Result},
     evaluation::{EvaluationContext, StalePolicy},
-    joint_planner::{JointCandidate, JointInput, JointResult, plan_joint_controlled},
+    joint_planner::{JointCandidate, JointInput, JointResult, plan_joint_clustered_controlled},
     observation::{Freshness, ObservationStatus, freshness},
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     types::*,
@@ -77,6 +77,7 @@ pub struct JointPlanningReport {
     pub fixture: bool,
     pub participants: Vec<JointMember>,
     pub result: JointResult,
+    pub clustering: crate::clustering::ClusteringMetadata,
     pub filtered: Vec<JointFilteredCandidate>,
     pub assumptions: Vec<&'static str>,
 }
@@ -471,7 +472,7 @@ pub(crate) fn calculate_controlled(
         })
         .collect::<Vec<_>>();
     filtered.sort_by(|a, b| a.objective.cmp(&b.objective));
-    let result = plan_joint_controlled(
+    let (result, clustered) = plan_joint_clustered_controlled(
         &JointInput {
             contexts: &contexts,
             candidates: &candidates,
@@ -492,12 +493,13 @@ pub(crate) fn calculate_controlled(
         fixture: catalog.fixture,
         participants: catalog.participants,
         result,
+        clustering: crate::clustering::ClusteringMetadata::from(clustered),
         filtered,
         assumptions: vec![
-            "Utilities share an explicit goal profile; group utility is the minimum per-member contribution and every member must benefit",
+            "Utilities share an explicit goal profile; cluster utility is the minimum participant sum of original contributions and every member must benefit",
             "Origin, stopping point, utility and duration are manual assumptions, not observed positions or measured rewards",
             "Joint readiness and travel requirements are checked independently for every participant; blocked catch-up requires separate eligibility review",
-            "Expected-time greedy estimate; no speculative unlocks, quest sharing claim or live synchronization",
+            "Expected-time same-node clustered greedy estimate; no inferred shared-kill/service savings, speculative unlocks, quest sharing claim or live synchronization",
         ],
     })
 }
