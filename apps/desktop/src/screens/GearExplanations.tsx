@@ -22,7 +22,21 @@ function issueText(value: unknown): string {
   const issue = record(value); const reason = record(issue.reason); const input = record(issue.input);
   const reasons: Record<string,string> = { missing_record: "required record is missing", stale: "captured input is stale", clock_uncertain: "capture clock is uncertain", expired_rule: "rule has expired" };
   const why = reason.reason === "unavailable" ? status(reason.status) : reasons[text(reason.reason)] ?? "explanation unavailable";
-  return `${text(input.field ?? input.input)}${typeof input.slot === "string" ? ` (${input.slot})` : ""}: ${why}`;
+  const field = record(input.field);
+  let label = "required input unavailable";
+  if(input.input === "field") {
+    switch(field.field) {
+      case "level": case "role": label=field.field;break;
+      case "preference":label=`preference ${text(field.key)}`;break;
+      case "quest":label=`quest ${text(field.quest)} (${text(field.state).replaceAll("_"," ")})`;break;
+      case "objective":label=`objective ${text(field.objective)}`;break;
+    }
+  } else {
+    const labels:Record<string,string>={equipment:"equipment",variant:"item variant",modifiers:"item modifiers",location:"location",participant:"participant",rule_expiry:"rule expiry"};
+    label=labels[text(input.input)]??label;
+    if(typeof input.slot === "string")label+=` (${input.slot})`;
+  }
+  return `${typeof issue.participant === "string" ? `${issue.participant}: ` : ""}${label}: ${why}`;
 }
 export function reasonText(reason: GearReason): string {
   const unavailable = `${text(reason.field ?? reason.slot ?? reason.attribute ?? "Input")}: ${status(reason.status)}`;

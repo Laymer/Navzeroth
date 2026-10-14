@@ -64,8 +64,15 @@ export interface GearRanking {
   excluded: { item: ItemKey; eligibility: GearEligibility }[];
   top_is_definitive: boolean;
 }
+export type GearInputField = {field:"level"|"role"}
+  | {field:"preference";key:string}
+  | {field:"quest";quest:string;state:"accepted"|"completed"|"turned_in"}
+  | {field:"objective";objective:string};
 export interface GearEvaluationIssue {
-  input: { input: string; field?: string; slot?: string };
+  participant: string;
+  input: {input:"field";field:GearInputField}
+    | {input:"equipment"|"variant"|"modifiers";slot:string}
+    | {input:"location"|"participant"|"rule_expiry"};
   reason: { reason: string; status?: string };
 }
 export interface GearAcquisition {

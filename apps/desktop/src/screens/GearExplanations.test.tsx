@@ -28,11 +28,11 @@ it("distinguishes zero, lossless copper, unknown, unsupported, restricted and no
   render(<AcquisitionDetails acquisition={{ ...acquisition, feasible_attempts: 0, budgeted_effort_ms: 0, budgeted_cost_copper: "18446744073709551615", success_probability: 0, expected_attempts: null,
     effort: { ...acquisition.effort, incremental_travel_ms: { status: "known", value: 0 }, formation_ms: { status: "restricted" }, attempt_ms: { status: "unsupported" }, stopping_ms: { status: "not_applicable" }, available_copper: { status: "unknown" } },
     source: { ...acquisition.source, cost: { status: "known", value: "0", source: "unrecorded", clock_trust: "uncertain" } },
-    requirements: { truth: "false", reasons: [{input:{input:"field",field:"level"},reason:{reason:"stale"}}] }, reasons: [{ code: "zero_probability" }] }} />);
+    requirements: { truth: "false", reasons: [{participant:"synthetic-character",input:{input:"field",field:{field:"level"}},reason:{reason:"stale"}}] }, reasons: [{ code: "zero_probability" }] }} />);
   expect(screen.getByText("18446744073709551615 copper")).toBeVisible(); expect(screen.getByText("0 copper")).toBeVisible();
   expect(screen.getByText("Restricted")).toBeVisible(); expect(screen.getByText("Unsupported")).toBeVisible(); expect(screen.getByText("Not applicable")).toBeVisible();
   expect(screen.getByText("Unknown (not observed)")).toBeVisible(); expect(screen.getByText(/not satisfied/)).toBeVisible();
-  expect(screen.getByText("level: captured input is stale")).toBeVisible(); expect(screen.getByText("Declared acquisition probability is zero.")).toBeVisible();
+  expect(screen.getByText("synthetic-character: level: captured input is stale")).toBeVisible(); expect(screen.getByText("Declared acquisition probability is zero.")).toBeVisible();
   expect(screen.getByText(/not tonight’s attempt count/)).toBeVisible();
 });
 it("pages every unmodeled effect instead of hiding the tail or treating absence as completeness", () => {
@@ -52,4 +52,23 @@ it("keeps future equipment unavailable now and handles an unknown reason without
   render(<EligibilityDetails eligibility={{outcome:"future_progression",required_level:20}} />);
   expect(screen.getByText(/unavailable for use now/)).toBeVisible();
   expect(reasonText({code:"future_reason",private_text:"do not display"})).toBe("Unrecognized explanation code (future_reason); no definite conclusion is added.");
+});
+
+it("renders the tagged Rust input paths and participants for acquisition and travel gaps", () => {
+  const issues = [
+    {participant:"synthetic-character",input:{input:"field" as const,field:{field:"quest" as const,quest:"quest-a",state:"turned_in" as const}},reason:{reason:"missing_record"}},
+    {participant:"synthetic-character",input:{input:"field" as const,field:{field:"preference" as const,key:"preference-a"}},reason:{reason:"unavailable",status:"restricted"}},
+    {participant:"other-character",input:{input:"field" as const,field:{field:"objective" as const,objective:"objective-a"}},reason:{reason:"clock_uncertain"}},
+    {participant:"other-character",input:{input:"field" as const,field:{field:"role" as const}},reason:{reason:"unavailable",status:"unknown"}},
+    {participant:"other-character",input:{input:"variant" as const,slot:"main_hand"},reason:{reason:"stale"}},
+  ];
+  render(<AcquisitionDetails acquisition={{...acquisition,requirements:{truth:"unknown",reasons:issues}}}/>);
+  expect(screen.getByText("synthetic-character: quest quest-a (turned in): required record is missing")).toBeVisible();
+  expect(screen.getByText("synthetic-character: preference preference-a: Restricted")).toBeVisible();
+  expect(screen.getByText("other-character: objective objective-a: capture clock is uncertain")).toBeVisible();
+  expect(screen.getByText("other-character: role: Unknown (not observed)")).toBeVisible();
+  expect(screen.getByText("other-character: item variant (main_hand): captured input is stale")).toBeVisible();
+  const trace=route.opportunities[0]?.detour.outbound;if(!trace)throw Error("Missing trace");
+  render(<RouteTraceDetails label="Wire path" trace={{...trace,exclusions:[{edge:"edge-a",reason:{code:"requirement_unknown",issues:[issues[0]]}}]}}/>);
+  expect(screen.getAllByText("synthetic-character: quest quest-a (turned in): required record is missing")).toHaveLength(2);
 });
