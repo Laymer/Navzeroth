@@ -137,3 +137,6 @@ pub mod party_proposals;
 pub mod reminders;
 
 pub mod recovery;
+
+pub mod planning_job_service;
+pub mod planning_jobs;
