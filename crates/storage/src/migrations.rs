@@ -71,6 +71,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "bounded local settings plans and content governance",
         sql: include_str!("schema_v9.sql"),
     },
+    Migration {
+        version: 10,
+        name: "registered source identity compatibility",
+        sql: include_str!("schema_v10.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.

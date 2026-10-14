@@ -39,7 +39,7 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 9);
+    assert_eq!(latest_version(), 10);
 }
 
 #[test]
