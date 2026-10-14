@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "location": {
+        "status": "unknown"
+      },
+      "editions": {
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "access": {
+        "status": "known",
+        "value": "authored"
+      },
+      "authentication": {
+        "status": "unknown"
+      },
+      "license": {
+        "status": "known",
+        "value": "Synthetic test policy only"
+      },
+      "attribution": {
+        "status": "known",
+        "value": "Synthetic fixtures authored for the test suite"
+      },
+      "redistribution": {
+        "status": "known",
+        "value": "permitted"
+      },
+      "retention": {
+        "status": "unknown"
+      },
+      "allowed_fields": {
+        "status": "known",
+        "value": [
+          "synthetic_reference_records"
+        ]
+      },
+      "transformations": {
+        "status": "known",
+        "value": [
+          "canonical_typed_serialization"
+        ]
+      },
+      "update_schedule": {
+        "status": "unknown"
+      },
+      "conditional_requests": {
+        "status": "unknown"
+      },
+      "failure_behavior": {
+        "status": "unknown"
+      },
+      "last_retrieval_utc_ms": {
+        "status": "known",
+        "value": 0
+      },
+      "verified_revision": {
+        "status": "unknown"
+      },
+      "offline_usable": {
+        "status": "known",
+        "value": false
+      },
+      "id": "demo-source-1",
+      "provider": null,
+      "publisher": "Synthetic pack-test publisher (not a production permission record)",
+      "record_class": "secondary_inference"
+    }
+  ]
+}
