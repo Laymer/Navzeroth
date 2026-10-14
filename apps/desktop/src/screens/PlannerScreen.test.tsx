@@ -2,10 +2,11 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { vi } from "vitest";
 import { PlannerScreen } from "./PlannerScreen";
 import { createClient, type CommandAdapter } from "../commands";
+import { syntheticRoute, required } from "./test-fixtures/route";
 import type { PlanningRequest } from "../commands/contract";
 import fixture from "../../../../fixtures/desktop/planning/synthetic-revision.json";
 const catalog = { snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: [] };
-function result(request: PlanningRequest) { return { request, result: { selected: [], stopping: { total_ms: 0 }, expected_total_ms: 0 }, assumptions: ["Retained valid estimate"], filtered: [] }; }
+function result(request: PlanningRequest) { return { ...syntheticRoute(0).report, request, assumptions: ["Retained valid estimate"] }; }
 const status = { job_schema_version: 1, job_id: "job-a", kind: "solo", state: "succeeded", cancel_requested: false, phase: "selection", work_units: 5, result_available: true, error: null };
 function fields() { fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-1" } }); }
 it("cancels registration that arrives after input edits and ignores its old result", async () => {
@@ -72,4 +73,44 @@ it("profile changes abort running work and ignore late progress; navigation abor
   } };
   const view = render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button", { name: "Plan session" }));await waitFor(() => expect(finishStatus).toBeDefined());fireEvent.change(screen.getByLabelText("Planning profile"), { target: { value: "q" } });
   await act(async () => { finishStatus?.({ ...status, state: "running", work_units: 999 } as never); });expect(screen.queryByText(/999 work units/)).not.toBeInTheDocument();await screen.findByText(/Snapshot: s; revision: r/);fields();delayedStart = true;fireEvent.click(screen.getByRole("button", { name: "Plan session" }));view.unmount();await act(async () => { finishStart?.({ job_schema_version: 1, job_id: "job-b" } as never); });expect(canceled).toEqual([{ job_id: "job-a" }, { job_id: "job-b" }]);
+});
+for (const mismatch of ["context", "fixture", "choices"] as const) it(`rejects route ${mismatch} changes even when revision and node labels match`, async () => {
+  let request: PlanningRequest | undefined;
+  const client = createClient({ invoke(command, input) {
+    if(command === "list_profiles") return Promise.resolve([{id:"p",display_name:"Synthetic",fixture:true}] as never);
+    if(command === "get_planning_catalog") return Promise.resolve(catalog as never);
+    if(command === "start_planning_job") { request=JSON.parse((input as {text:string}).text); return Promise.resolve({job_schema_version:1,job_id:"job-a"} as never); }
+    if(command === "get_planning_job") return Promise.resolve(status as never);
+    if(command === "take_planning_job_result" && request) return Promise.resolve({job_schema_version:1,job_id:"job-a",kind:"solo",report_json:JSON.stringify(result(request))} as never);
+    if(command === "inspect_plan_route" && request) {
+      const route=syntheticRoute(); route.report=result(request);
+      if(mismatch === "context") route.context={...route.context,build:{...route.context.build,build:"another-build"}};
+      if(mismatch === "fixture") route.fixture=false;
+      if(mismatch === "choices") route.report.result.stopping.total_ms=1;
+      return Promise.resolve(route as never);
+    }
+    return Promise.reject(new Error("unexpected"));
+  }});
+  render(<PlannerScreen client={client} refreshKey={0}/>);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button",{name:"Plan session"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect route"}));
+  await screen.findByText(/Route inspection no longer matches/);expect(screen.queryByRole("region",{name:"Planning result"})).toBeNull();expect(screen.queryByRole("region",{name:"Route inspection"})).toBeNull();
+});
+it("discards deferred route projections across same-profile content refresh and accepts the new original report", async () => {
+  let request:PlanningRequest|undefined;let finish:((v:never)=>void)|undefined;let refreshed=false;
+  const client=createClient({invoke(command,input){
+    if(command === "list_profiles")return Promise.resolve([{id:"p",display_name:"Synthetic",fixture:true}] as never);
+    if(command === "get_planning_catalog")return Promise.resolve({...catalog,snapshot_id:refreshed?"new-snapshot":"s"} as never);
+    if(command === "start_planning_job"){request=JSON.parse((input as {text:string}).text);return Promise.resolve({job_schema_version:1,job_id:"job-a"} as never);}
+    if(command === "get_planning_job")return Promise.resolve(status as never);
+    if(command === "take_planning_job_result"&&request)return Promise.resolve({job_schema_version:1,job_id:"job-a",kind:"solo",report_json:JSON.stringify(result(request))} as never);
+    if(command === "inspect_plan_route")return new Promise<never>(resolve=>{finish=resolve;});
+    return Promise.reject(new Error("unexpected"));
+  }});
+  const view=render(<PlannerScreen client={client} refreshKey={0}/>);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button",{name:"Plan session"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect route"}));
+  const oldRoute={...syntheticRoute(),report:result(required(request))};
+  refreshed=true;view.rerender(<PlannerScreen client={client} refreshKey={1}/>);
+  await screen.findByText(/Snapshot: new-snapshot; revision: r/);
+  await act(async()=>{finish?.(oldRoute as never);});expect(screen.queryByRole("region",{name:"Route inspection"})).toBeNull();
+  fireEvent.click(screen.getByRole("button",{name:"Plan session"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect route"}));
+  await act(async()=>{finish?.({...syntheticRoute(1),report:result(required(request))} as never);});
+  expect(screen.getByRole("region",{name:"Route inspection"})).toBeInTheDocument();expect(screen.getByText(/Snapshot new-snapshot; revision r/)).toBeInTheDocument();
 });
