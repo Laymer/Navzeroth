@@ -1,22 +1,23 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: final0.8.1 candidate integration and exact-source release gates.
-Owner: Codex /root; latest actual publication v0.8.0 atdb8530f8.
-Both wave9 repairs are reviewed and merged through protected mainc49b4be.
-Versioned9192552 passed822 portable Rust,195 desktop/40 mocked browser tests,
-strict checks, schema/content/image validation and actual local pack build/verify.
-The pack preserves historical context and remains distribution-ineligible; it is
-not uploaded. Final-main reconciliation preserves the tested non-doc source tree.
-All dependency-ready engineering found in the full-plan audit is implemented;
-release PR/main/tag/assets/publication and actual-tag audit remain pending.
-Native/live/model/source/API acceptance stays blocked/deferred or unverified.
-See [candidate source evidence](handoffs/2026-10-14-v0.8.1-release.md) and
-[engineering audit](handoffs/2026-10-14-candidate-engineering-audit.md).
+Current task: final published-source audit records; dependency-ready engineering exhausted.
+Owner: Codex /root. Latest published preview v0.8.1 atd11853e,
+published2026-10-14T18:02:38Z after reviewed isolated task/release PRs,
+allnine exact-source PR/main gates, both tag jobs and verified five-file assets.
+Actual822 portable Rust/195desktop/40 mocked browser tests and strict/schema/
+content/pointer/PNG checks pass on code identical to the published source.
+Both local pipeline repairs work against the actual Forever directory; local pack
+build/verify remains distribution-ineligible and that pack was not uploaded.
+All79 M0–M12 task IDs have explicit dispositions. No dependency-ready engineering
+remains; native/live/model/source/API and focused-expansion prerequisites stay
+blocked/deferred or unverified. A developer preview is not focused-release acceptance.
+See [final publication/evidence/unblock audit](handoffs/2026-10-14-final-program-audit.md).
+The final docs PR adds records only and preserves the published product source.
 
 Today/Settings, durable restrictions/fallback, opted-in local review/tombstones,
 readable explanations and typed historical recovery are implemented in published0.7.
-Wave8 UI engineering is implemented in published0.8; native/live acceptance
+Wave8 UI engineering is implemented in published0.8; wave9 pipeline repairs are published0.8.1; native/live acceptance
 remains unverified. The completed wave9 batch implements two
 finite repairs: typed explicit-empty map_embeddings pack comparison and an existing
 Forever sources.json registry sidecar. Preserve schema1/source policies and unknown
@@ -53,10 +54,10 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; candidate route hop selection/pages and exact-frame endpoint fit preserve geometry gaps. Native interaction and verified real road geometry remain. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; bounded preparation infrastructure is implemented; verified records, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
-| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.8.0 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
+| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.8.1 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
 | M10 | IMPLEMENTED_UNVERIFIED | Ordinary read-only native reference window and saved-plan projection implemented; candidate opt-in focused-main shortcut/interaction control is implemented, native display acceptance remains unverified. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
-| M12 | TODO | Expansion after focused release. |
+| M12 | BLOCKED | Focused-release/source/coverage prerequisites remain unmet; local submission foundations exist, hosting is deferred. |
 
 ## Wave-1 review (2026-10-13)
 
