@@ -25,6 +25,13 @@ fn planted(value: &mut Value, key: &str) {
                     "url",
                     "summary",
                     "locator",
+                    "name",
+                    "notes",
+                    "explanation",
+                    "text",
+                    "result_template",
+                    "units",
+                    "edition",
                 ]
                 .contains(&key)
             {
@@ -59,6 +66,25 @@ fn values() -> (Envelope<CharacterSnapshot>, ContentRevision) {
     s["payload"]["preferences"] = json!({SECRET:{"status":"known","value":false}});
     s["payload"]["objectives"] = json!({SECRET:{"status":"restricted"}});
     s["payload"]["equipment"] = json!({SECRET:{"status":"unsupported"}});
+    s["payload"]["role"] = json!({"status":"known","value":SECRET});
+    for source in c["sources"].as_array_mut().unwrap() {
+        source["provider"] = json!(SECRET);
+        for field in [
+            "location",
+            "license",
+            "attribution",
+            "retention",
+            "update_schedule",
+            "failure_behavior",
+            "verified_revision",
+        ] {
+            source[field] = json!({"status":"known","value":SECRET});
+        }
+        for field in ["allowed_fields", "transformations"] {
+            source[field] = json!({"status":"known","value":[SECRET]});
+        }
+    }
+
     (
         serde_json::from_value(s).unwrap(),
         serde_json::from_value(c).unwrap(),
