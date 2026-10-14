@@ -39,8 +39,9 @@ packaging establish separate evidence, never actual game API behavior.
       actual installer version/source, successful import and navigation separately
       from command-mock browser flows and hosted packaging smoke tests.
 
-No real content authoring, validated stage mapping, joint planning, party messaging,
-calibration or full live release acceptance is supplied by this candidate.
+No real content authoring, validated stage mapping, party messaging or full live
+release acceptance is supplied by this preview. Desktop joint planning and
+conditional calibration engineering have separate verification records.
 
 ## New desktop-only workflows
 
