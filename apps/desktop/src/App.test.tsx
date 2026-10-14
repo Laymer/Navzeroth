@@ -74,3 +74,15 @@ it("labels stored synthetic snapshots and uncertain age explicitly", async () =>
   expect(screen.getByText(/Last imported:.*uncertain/)).toBeInTheDocument();
   expect(screen.getByText("demo-snapshot-001")).toBeInTheDocument();
 });
+
+test("startup failure keeps explicit local diagnostics reachable without gameplay navigation", async()=>{
+  const {fireEvent}=await import("@testing-library/react");
+  const calls:string[]=[];
+  const adapter:CommandAdapter={invoke:async(command)=>{ calls.push(command); if(command==="preview_diagnostics") return {format:"azeroth-local-diagnostics",schema_version:1,versions:{app:"test",bundled_addon:"test",installed_addon:null},os:"linux",game:null,capabilities:{},historical_user_report:{build:70338,interface:16001,source:"limited_user_report",fields:["level","clock"],installed_revision_match:null},snapshot_availability:{},snapshot_freshness:null,field_freshness:{},dataset:null,dataset_context_mismatch:false,telemetry:{scope:"current_process_collector",event_limit:64,truncated:false,import_attempts:0,import_succeeded:0,import_failed:0,events:[]}} as never; throw {code:"STORAGE_ERROR",message:"Recovery required",retryable:false};}};
+  render(<App client={createClient(adapter)}/>);
+  fireEvent.click(await screen.findByRole("button",{name:"Local diagnostics"}));
+  expect(screen.queryByRole("button",{name:"Planner"})).toBeNull();
+  expect(calls).not.toContain("preview_diagnostics");
+  fireEvent.click(screen.getByRole("button",{name:"Preview diagnostic metadata"}));
+  await screen.findByText("Recorded imports: 0.");
+});

@@ -95,10 +95,10 @@ export function App({ client }: { client: CommandClient }) {
         </p>
       )}
       {load.phase === "error" && <button type="button" onClick={changed}>Retry loading</button>}
-      {(load.phase === "error" || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} />}
-      {load.phase === "ready" && (
+      {((load.phase === "error" && screen !== "diagnostics") || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} />}
+      {(load.phase === "ready" || load.phase === "error") && (
         <nav aria-label="Primary">
-          {SCREENS.map(({ id, label }) => (
+          {SCREENS.filter(({id}) => load.phase === "ready" || id === "recovery" || id === "diagnostics").map(({ id, label }) => (
             <button
               key={id}
               type="button"
@@ -110,7 +110,7 @@ export function App({ client }: { client: CommandClient }) {
           ))}
         </nav>
       )}
-      {load.phase === "ready" && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
+      {(load.phase === "ready" || load.phase === "error") && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} freshness={load.freshness} />}
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
