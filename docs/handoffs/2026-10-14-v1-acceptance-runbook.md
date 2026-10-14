@@ -26,7 +26,9 @@ Scope extension authorized by coordinator on 2026-10-14: also own the new
 identification report. The reported `/dump GetBuildInfo()` tuple includes
 `1.60.1`, `70374`, `Oct 12 2026`, `16001`, `""`, `" "`. This is narrow
 user-reported client identification; installed addon revision and test conditions
-are still pending, so the complete `LIVE-BUILD` row is not passed.
+are still pending, so the complete `LIVE-BUILD` row is not passed. Later user
+reports identify Windows 11, out-of-combat conditions and no errors from probe/
+status commands; actual output and installed source identity remain pending.
 
 ## Delivered procedures and evidence boundary
 
@@ -37,8 +39,9 @@ every mandatory inventory unit. Procedures cover the complete real duo scenario,
 field states, transfer/watching/reload, restrictions/HUD, progression/deviation,
 gear/preparation/reminders, sessions/next plan and interactive Windows lifecycle,
 recovery, offline use, focus/reference/display/accessibility/full-size performance.
-The evidence log retains only the actual user-reported GetBuildInfo tuple; it
-does not promote API or full `LIVE-BUILD` acceptance.
+The evidence log retains the actual user-reported GetBuildInfo tuple and narrow
+environment/diagnostic reports; it does not promote API or full `LIVE-BUILD`
+acceptance.
 
 Actual baseline source inspection found these independently actionable gaps:
 
@@ -67,10 +70,15 @@ live/content/native rows do not become optional when blocked.
   existing Markdown file links. Three links intentionally await coordinator
   integration: `release/v1/README.md`, `coverage-inventory.json`, and
   `acceptance-evidence.json`. Recheck them on the combined branch.
-- `git diff --check` passed for tracked edits. Staged whitespace and independent
-  peer review follow before final integration. No code tests are required for
+- `git diff --check` and `git diff --cached --check` passed. Independent peer
+  review follows before final integration. No code tests are required for
   these documentation-only additions; no live or interactive Windows check ran
   in this worker environment.
+
+Draft [PR #114](https://github.com/Laymer/Navzeroth/pull/114) carries the granular
+claim, reported-client evidence and runbook commits. Runbook implementation is
+`e2b29d1e3824a7419e3da586648e43e11f4be70d`; later changes append actual user
+reports and review records only unless identified otherwise.
 
 Next: independent peer review and coordinator-owned evidence contract integration;
 then gather the user's installed-addon/OS/combat diagnostics, address the recorded
