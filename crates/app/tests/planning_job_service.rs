@@ -248,3 +248,98 @@ fn joint_publication_rechecks_membership_and_each_participant_snapshot() {
     );
     assert!(!published);
 }
+
+struct Hold {
+    entered: Arc<Barrier>,
+    release: Arc<Barrier>,
+    held: bool,
+}
+impl SearchControl for Hold {
+    fn checkpoint(&mut self, phase: SearchPhase) -> Result<()> {
+        if !self.held && phase == SearchPhase::ParticipantReadiness {
+            self.held = true;
+            self.entered.wait();
+            self.release.wait();
+        }
+        Ok(())
+    }
+}
+#[test]
+fn publication_clock_advances_while_waiting_for_store_lock() {
+    let app = Arc::new(SnapshotApplication::in_memory().unwrap());
+    let mut snapshot: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v1/character-snapshot.json"
+    ))
+    .unwrap();
+    let capture = snapshot["payload"]["capture"]["observed_at_utc_ms"]
+        .as_i64()
+        .unwrap();
+    let imported_now = UtcMillis::new(capture + 100).unwrap();
+    let publication_now = UtcMillis::new(capture + 1_799_950).unwrap();
+    let first = app
+        .import_text(&format!("ANAV1:{snapshot}"), Some(imported_now))
+        .unwrap()
+        .profile_id;
+    app.stage_content(include_str!(
+        "../../../fixtures/desktop/planning/synthetic-revision.json"
+    ))
+    .unwrap();
+    app.activate_content(
+        &first,
+        &DatasetRevision::new("synthetic-planning-v1").unwrap(),
+    )
+    .unwrap();
+    let catalog = app.planning_catalog(&first).unwrap();
+    let request = json!({"profile_id":first,"snapshot_id":catalog.snapshot_id,"revision":catalog.revision,"goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1","budget_ms":100000,"stopping_service_ms":0,"candidates":[],"excluded":[]});
+    let (_, guard) = app
+        .calculate_planning_job(
+            PlanningKind::Solo,
+            &request.to_string(),
+            Some(imported_now),
+            &mut NoopSearchControl,
+        )
+        .unwrap();
+    snapshot["payload"]["character"] = json!("peer-second-member");
+    snapshot["payload"]["id"] = json!("peer-second-snapshot");
+    let second = app
+        .import_text(&format!("ANAV1:{snapshot}"), Some(imported_now))
+        .unwrap()
+        .profile_id;
+    let party = PartyId::new("peer-publication-duo").unwrap();
+    app.save_party(&party, &[first, second]).unwrap();
+    let joint = app
+        .joint_planning_catalog(&party, Some(publication_now))
+        .unwrap();
+    let request = json!({"party_id":party,"participants":joint.participants.iter().map(|p|json!({"profile_id":p.profile_id,"snapshot_id":p.snapshot_id})).collect::<Vec<_>>(),"revision":joint.revision,"goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1","budget_ms":100000,"stopping_service_ms":0,"candidates":[],"excluded":[]});
+    let entered = Arc::new(Barrier::new(2));
+    let release = Arc::new(Barrier::new(2));
+    let worker_app = app.clone();
+    let worker_entered = entered.clone();
+    let worker_release = release.clone();
+    let worker = std::thread::spawn(move || {
+        worker_app.calculate_planning_job(
+            PlanningKind::Joint,
+            &request.to_string(),
+            Some(imported_now),
+            &mut Hold {
+                entered: worker_entered,
+                release: worker_release,
+                held: false,
+            },
+        )
+    });
+    entered.wait();
+    let unlock = std::thread::spawn(move || {
+        std::thread::sleep(Duration::from_millis(100));
+        release.wait();
+    });
+    let mut published = false;
+    let result = guard.publish(&app, Some(publication_now), &mut || {
+        published = true;
+        Ok(())
+    });
+    unlock.join().unwrap();
+    worker.join().unwrap().unwrap();
+    assert_eq!(result.unwrap_err().code, ErrorCode::SnapshotOutdated);
+    assert!(!published);
+}
