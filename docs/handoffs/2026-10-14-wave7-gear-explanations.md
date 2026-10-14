@@ -33,3 +33,14 @@ acceptance remain unverified. These views explain supplied models; they do not
 invent combat damage predictions, road geometry, measured probabilities or sources.
 Next: require fresh exact-head hosted checks and integrate, then combine with the
 remaining local state/governance tasks and typed recovery for the next preview.
+
+Final wire review at a51b76c exposed a separate real DTO mismatch: Rust Field is
+nested/tagged, while the first frontend DTO/test incorrectly used a flat string.
+Actual-shaped stale input reproduced a missing identity label. Source4e53411 uses
+the tagged level/role/quest+state/preference+key/objective shape, equipment paths
+and participant identity, with bounded existing issue pages and no raw private
+metadata echo. The regression covers acquisition and excluded-edge issue paths.
+Final15 focused Gear/Route tests, typecheck and lint passed; prior full/browser
+results above remain explicitly bound to their earlier source. Hosted checks must
+run again on the final pushed head. Reproduction /tmp/navzeroth-gear-a51-wire-repro.log;
+corrected checks /tmp/navzeroth-gear-wire-{fixed,typecheck,lint}.log.
