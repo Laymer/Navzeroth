@@ -54,7 +54,7 @@ fn client(build: &str) -> azeroth_lua_harness::Sandbox {
 
 #[test]
 fn copies_existing_diagnostic_on_unrecorded_build_without_capturing_or_auto_focus() {
-    let sandbox = client("70374");
+    let sandbox = client("70375");
     sandbox
         .run::<()>(
             "diagnostic-copy",
