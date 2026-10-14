@@ -1,0 +1,7 @@
+.gear-explanation { min-width: 0; overflow-wrap: anywhere; }
+.explanation-values { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: .25rem .75rem; margin: .5rem 0 1rem; }
+.explanation-values dt { font-weight: 600; }
+.explanation-values dd { margin: 0; min-width: 0; }
+.explanation-pages { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.explanation-pages p { flex-basis: 100%; }
+@media (max-width: 400px) { .explanation-values { grid-template-columns: minmax(0, 1fr); } .explanation-values dd { margin-bottom: .35rem; } }
