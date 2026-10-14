@@ -12,3 +12,8 @@ native/SDK/demo command wiring and shared PublicationGuard helper visibility.
 Original joint choices, explicit all-local acceptance, CAS revision, recipient-only
 applicable steps/all-cohort provenance and final typed-field freshness checks are
 required. Schema1 unchanged; no remote authentication or game messaging inferred.
+
+Ownership amendments from root: recipient-specific additive app lib/native/SDK/demo
+wiring is now task-owned for self-contained CI. Also own scoped SQLite consistent
+immediate-read transaction helper and cross-connection regression; other workers
+do not write storage. Root retains existing guard implementation/helper ownership.
