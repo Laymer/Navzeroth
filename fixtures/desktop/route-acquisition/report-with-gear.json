@@ -205,9 +205,66 @@
     "planning_report": {
       "assumptions": [
         "Utilities, objective node associations and completion/service times are explicit manual inputs",
-        "Expected-time greedy baseline; estimates are not guaranteed durations",
-        "No speculative prerequisite unlocks or party fairness; declared quest predicates only"
+        "Expected-time greedy baseline with deterministic same-node clusters and singleton fallbacks; estimates are not guaranteed durations",
+        "No speculative prerequisite unlocks or party fairness; declared quest predicates only; no shared-kill or service savings inferred"
       ],
+      "clustering": {
+        "assessments": [
+          {
+            "decision": "feasible",
+            "objective": "synthetic-service",
+            "participants": [
+              {
+                "evidence": {
+                  "kind": "predicate",
+                  "result": {
+                    "reasons": [],
+                    "steps": 1,
+                    "truth": "true",
+                    "warnings": []
+                  }
+                },
+                "truth": "true",
+                "utility": 10
+              }
+            ]
+          }
+        ],
+        "cluster_alternatives": [
+          []
+        ],
+        "peak_variant_count": 1,
+        "schema_version": 1,
+        "selected_clusters": [
+          {
+            "completion_ms": 1000,
+            "expected_session_ms": 61000,
+            "inbound_ms": 30000,
+            "incremental_ms": 31000,
+            "members": [
+              "synthetic-service"
+            ],
+            "node": "demo-node-2",
+            "participant_utilities": [
+              10
+            ],
+            "service_ms": 0,
+            "stopping_ms": 30000,
+            "utility": 10
+          }
+        ],
+        "variant_trace": [
+          {
+            "decision": "feasible",
+            "expected_session_ms": 61000,
+            "iteration": 0,
+            "members": [
+              "synthetic-service"
+            ]
+          }
+        ],
+        "variants_evaluated": 1
+      },
       "context": {
         "build": {
           "build": "UNVERIFIED_DEMO",

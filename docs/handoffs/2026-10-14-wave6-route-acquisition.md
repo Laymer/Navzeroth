@@ -126,3 +126,18 @@ crates apps fixtures` passed, confirming the checked feature source/fixtures are
 unchanged. Final source ownership release remains in effect. Fresh exact-head
 hosted jobs and root's independent route-service rerun are pending; no extra
 local suite rerun or hosted result is implied by this documentation update.
+
+## Coordinator clustering reconciliation
+
+Root source review found no service blocker and independently passed11 route
+integration tests, strict app Clippy/typecheck after recipient wiring reconciliation.
+Protected-main3202c6d then added clustering metadata and assumptions; the full
+backend-report equality failed while the other10 cases passed. Existing
+UPDATE_ROUTE_ACQUISITION_GOLDENS=1 regenerated actual service outputs; that first
+run still compared the old compile-time include and failed as expected. A normal
+recompiled run passed all11 cases, strict app all-target Clippy/typecheck and139
+desktop unit tests. Only three synthetic baseline/report goldens changed; exact
+route fingerprint,61000ms baseline,39000ms residual,5000ms detour and98000ms
+reservation remained identical. Logs /tmp/navzeroth-route-cluster-integration-*.log
+and /tmp/navzeroth-route-goldens-regenerate.log. No numeric value or game fact was
+edited to manufacture a pass. Fresh exact-head hosted checks still gate merge.
