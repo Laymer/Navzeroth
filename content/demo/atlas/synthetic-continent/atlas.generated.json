@@ -1,5 +1,5 @@
 {
-  "generator": "azeroth-cli 0.6.0",
+  "generator": "azeroth-cli 0.7.0",
   "atlas_manifest_version": 1,
   "image_id": "demo-image-1",
   "manifest_sha256": "311670eca10b144686a291ae30183391f5942e3d2d0e13ccce3bec8e6ae63b10",
