@@ -619,12 +619,21 @@ mod tests {
         let live = dir.path("async.sqlite3");
         seed(&live);
         let host = DatabaseHost::start(&live);
-        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-        while host.status().unwrap().state == "checking" {
-            assert!(std::time::Instant::now() < deadline);
-            std::thread::yield_now();
-        }
-        assert_eq!(host.status().unwrap().state, "ready");
+        // Allow busy CI hosts to finish opening SQLite, and leave time between
+        // status reads for the startup worker to acquire the publication lock.
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        let status = loop {
+            let status = host.status().unwrap();
+            if status.state != "checking" {
+                break status;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "asynchronous database startup did not finish within 60 seconds"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        };
+        assert_eq!(status.state, "ready");
         assert_eq!(
             host.with_application(|app| app.profiles()).unwrap().len(),
             1
