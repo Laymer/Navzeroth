@@ -408,7 +408,12 @@ pub fn plan_clustered_controlled(
             control.checkpoint(SearchPhase::Selection)?;
             let variant = &variants[slot(&alternate.candidate)];
             cluster_choices.push(variant.summary(alternate, spent)?);
-            if variant.members.len() == 1 {
+            if variant.members.len() == 1
+                && !selected_variant
+                    .members
+                    .iter()
+                    .any(|m| m.id == variant.members[0].id)
+            {
                 let mut original = alternate.clone();
                 original.candidate = variant.members[0].id.clone();
                 original.expected_session_ms = sum_ms([spent, original.expected_session_ms])?;
