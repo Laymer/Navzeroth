@@ -21,7 +21,12 @@ successful stop and a successful single-point observation relative to actual
 UIParent, with allowlisted anchor/relative anchor and finite offsets within±4096.
 Offsets round to whole logical UI units. Missing methods, failed reads, multiple
 anchors, another parent, malformed or out-of-range observations retain the saved
-position and report session-only movement. No coordinates are inferred.
+position and report session-only movement. Model refreshes, font/size/contrast
+changes and hide/show do not re-anchor unchanged position preferences, so the
+session-only drag survives until reload or an explicit reset. No coordinates are
+inferred. Reset explicitly applies the default anchor even when the saved tuple
+already equals that default; its pending anchor request survives combat deferral
+and a failed setter, and supersedes a pending drag persistence observation.
 
 Known combat, unavailable/throwing combat queries and nonboolean results defer
 HUD mutations, including creation, text, visibility and drag operations. One
