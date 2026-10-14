@@ -17,6 +17,28 @@ objective mapping and complete-content models remain explicit requirements.
 No M0–M12 task is promoted by these foundation changes. Existing 79 task
 dispositions below remain the published-preview baseline until actual evidence
 and implemented subscopes justify per-task updates.
+
+Foundation PR115 merged as `3cf4f0a` after all nine candidate checks; all nine
+post-merge main checks also passed. The follow-on integration adds bounded raw
+Questie staging (62 ingest tests and independent full-file parsing), copyable addon
+exports, guarded experimental 70374 capture, stable-readiness enforcement and
+correct Party planning availability text. These are implemented subscopes of
+M0/M2/M3/M7/M9, not complete milestone acceptance. The real client report still
+covers only build/version/out-of-combat diagnostics on an unidentified 0.8.1
+installation. Candidate artifact checks and the pending new live check are kept
+separate in [70374 evidence](compatibility/FOREVER_70374_EVIDENCE.md).
+
+Re-audit after foundation integration: all 79 M0–M12 task IDs remain accounted
+for below. M3.3/M3.4 and expanded region/equipment/dungeon/model content cannot
+proceed to accepted production data without source permission, complete corrected
+70374 facts and enumerated target coverage. The inspected raw tables lack required
+stages, item attributes, verified travel links and role models. All 18 correction
+providers remain unapplied. M4/M7/M8 real advancement, duo and comparable-session
+acceptance remain blocked by those inputs and actual client evidence. M9/M10
+interactive Windows checks remain unverified. Stable asset delivery and validated
+pack bindings for dungeons, class/role and party coverage are explicit implementation
+prerequisites; neither preview allowance nor synthetic tests waive them.
+
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
 implementation-plan section 17. Exact future checks belong in task handoffs.
 Section16.2 explicit redacted diagnostics is implemented in PR70/76; native file

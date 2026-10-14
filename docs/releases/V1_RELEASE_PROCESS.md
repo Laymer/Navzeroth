@@ -22,10 +22,10 @@ is needed for work already authorized here.
 ## Freeze scope and evidence before release claims
 
 The coordinator owns the canonical contract under `release/v1/`: `README.md`,
-`coverage-inventory.json` and `acceptance-evidence.json`. Those files and the
-stable-readiness CLI are being implemented in separate PRs; they must be integrated
-and tested before stable publication. This document does not claim that enforcement
-exists in the 0.8.1 baseline.
+`coverage-inventory.json` and `acceptance-evidence.json`. Current source includes
+these contracts and CLI/Windows/workflow enforcement in separate reviewed tasks.
+The published 0.8.1 baseline does not include that enforcement. Incomplete real
+inventory/evidence and the remaining delivery contracts still block stable output.
 
 The inventory must enumerate quest, equipment, acquisition, geography, directed
 travel, dungeon/preparation, class/role and party workflows across the whole frozen
@@ -90,14 +90,21 @@ retention, backup/restore, offline operation, focus, reference-window interactio
 DPI/multiple monitors, accessibility and performance on recorded hardware and
 declared realistic workloads. Missing environment checks remain unverified.
 
-The planned enforcement command is
+The enforcement command is
 `cargo run --locked -p azeroth-cli -- release-readiness --root . --version <version>`
-with optional `--evidence <path>` and a JSON report. Do not treat it as available
-until the gate PR lands. Its canonical contract binds evidence to a tested source
+with optional `--evidence <path>` and a JSON report. Its canonical contract binds evidence to a tested source
 commit and a production-tree SHA-256, with ancestry/tree checks so documentation
 updates can retain evidence without pretending changed production was tested.
 Test missing evidence, wrong build/source revision, failed mandatory coverage,
 valid records and prerelease handling. Retest affected behavior after fixes.
+
+Current enforcement deliberately blocks stable output while validated offline
+content, license/attribution and corresponding-source delivery are unimplemented.
+The existing five-file package cannot satisfy that requirement merely by filling
+the evidence manifest. Three mandatory domains (dungeons, class/role models and
+party coverage) also lack validated pack record bindings. These are explicit
+implementation prerequisites in addition to missing content rights and real
+acceptance. Current preview allowance is never a stable-readiness result.
 
 ## Candidate, tag and publication
 

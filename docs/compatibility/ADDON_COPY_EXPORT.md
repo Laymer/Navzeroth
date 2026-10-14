@@ -21,7 +21,8 @@ The window does not take keyboard focus when it opens; the explicit selection
 button focuses and highlights the text. Paste diagnostic JSON into a private text
 file or the requested diagnostic-report destination. Paste ANAV1 snapshots into
 the desktop **Snapshot export text** field and select **Import text**. A diagnostic
-report is not an importable character snapshot. Close with **Close** or Escape.
+report is not an importable character snapshot. Close with **Close**, or press
+Escape while the text box has focus.
 
 The copy view is a frozen copy of the stored bytes when the command runs, including
 the original capture/build metadata. Reopen explicitly after a new probe/capture
