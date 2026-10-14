@@ -10,6 +10,7 @@ pub mod error;
 pub mod evaluation;
 pub mod gear;
 pub mod json;
+pub mod objective_clustering;
 pub mod observation;
 pub mod planner;
 pub mod predicate;
