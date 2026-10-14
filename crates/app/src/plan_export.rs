@@ -16,7 +16,7 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
 pub const MAX_EXPORT_BYTES: usize = 32768;
-pub const RULESET_VERSION: &str = "planner-greedy-v1";
+pub const RULESET_VERSION: &str = "planner-same-node-clusters-v1";
 pub const MODEL_VERSION: &str = "manual-utility-v1";
 #[derive(Clone, Debug, Serialize)]
 pub struct PlanExport {
@@ -88,15 +88,15 @@ pub(crate) fn compile(
     let now = clock
         .now_utc_ms
         .ok_or_else(|| invalid("Export generation time is unavailable"))?;
-    let capture = snapshot
-        .payload
-        .capture
-        .observed_at_utc_ms
-        .ok_or_else(|| invalid("Snapshot capture time is unavailable"))?;
-    let deadline = capture
-        .get()
-        .checked_add(clock.max_age_ms.get() as i64)
-        .ok_or_else(|| invalid("Snapshot freshness deadline overflows"))?;
+    let guard = crate::planning_job_service::PublicationGuard::new(
+        None,
+        std::slice::from_ref(snapshot),
+        content,
+        clock,
+    )?;
+    let deadline = guard
+        .valid_until_utc_ms()
+        .ok_or_else(|| invalid("Typed freshness deadline is unavailable"))?;
     let expiry = deadline.min(
         now.get()
             .checked_add(1_800_000)
@@ -108,7 +108,17 @@ pub(crate) fn compile(
             "Snapshot freshness deadline has expired; import a new snapshot",
         ));
     }
-    let canonical = serde_json::to_vec(&json!({"request":report.request,"context":report.context,"fixture":report.fixture,"ruleset":RULESET_VERSION,"model":MODEL_VERSION})).map_err(|_| invalid("Cannot canonicalize planning inputs"))?;
+    let snapshot_hash = azeroth_storage::snapshot_content_hash(snapshot)?;
+    let content_bytes =
+        serde_json::to_vec(content).map_err(|_| invalid("Cannot canonicalize content identity"))?;
+    let content_hash = format!("{:x}", Sha256::digest(content_bytes));
+    let canonical = serde_json::to_vec(&json!({
+        "request": report.request, "result": report.result,
+        "context": report.context, "fixture": report.fixture,
+        "snapshot_hash": snapshot_hash, "content_hash": content_hash,
+        "ruleset": RULESET_VERSION, "model": MODEL_VERSION,
+    }))
+    .map_err(|_| invalid("Cannot canonicalize planning inputs"))?;
     let digest = format!("{:x}", Sha256::digest(canonical));
     let plan_id = PlanId::new(format!("plan-{digest}"))?;
     let dataset = &content.envelope.payload;

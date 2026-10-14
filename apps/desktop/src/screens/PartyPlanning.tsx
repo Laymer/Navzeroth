@@ -1,3 +1,4 @@
+import { ClusterSummary } from "./ClusterSummary";
 import { runPlanningJob, type PlanningJobStatus } from "../commands/planningJobs";
 import { useEffect, useRef, useState } from "react";
 import { PartyAgreement } from "./PartyAgreement";
@@ -129,8 +130,9 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       {visibleReport && <p>Previous valid joint estimate remains visible while this calculation runs.</p>}
     </div>}
     {visibleReport && <div aria-label="Joint estimate">
-      <p>Dataset {visibleReport.request.revision}; expected {visibleReport.result.plan.expected_total_ms / 60_000} minutes. Minimum per-member utility determines priority.</p>
-      <ol>{visibleReport.result.plan.selected.map((choice) => <li key={choice.candidate}>{choice.candidate}: group utility {choice.utility}, expected session {choice.expected_session_ms / 60_000} minutes</li>)}</ol>
+      <ClusterSummary clustering={visibleReport.clustering} />
+      <p>Dataset {visibleReport.request.revision}; expected {visibleReport.result.plan.expected_total_ms / 60_000} minutes. Minimum participant total utility within each same-node cluster determines priority.</p>
+      <ol>{visibleReport.result.plan.selected.map((choice) => <li key={choice.candidate}>{choice.candidate}: minimum member contribution {choice.utility}, expected session {choice.expected_session_ms / 60_000} minutes</li>)}</ol>
       {visibleReport.result.plan.selected.length === 0 && <p>No jointly feasible objective fits the supplied inputs and stopping route.</p>}
       <ul>{visibleReport.assumptions.map((a) => <li key={a}>{a}</li>)}</ul>
       <ul>{visibleReport.filtered.map((f) => <li key={f.objective}>{f.objective}: {f.reason}</li>)}</ul>

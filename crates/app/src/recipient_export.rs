@@ -24,8 +24,8 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
 pub const MAX_EXPORT_BYTES: usize = 32768;
-pub const RULESET_VERSION: &str = "joint-greedy-v1";
-pub const MODEL_VERSION: &str = "manual-minimum-member-utility-v1";
+pub const RULESET_VERSION: &str = "joint-same-node-clusters-v1";
+pub const MODEL_VERSION: &str = "manual-minimum-member-sum-utility-v1";
 fn invalid(message: &'static str) -> AppError {
     AppError::new(ErrorCode::InvalidInput, message, false)
 }
@@ -217,7 +217,7 @@ fn compile(
             "alternatives":alternatives, "prerequisite":{"status":"known","value":prerequisite},
             "invalidation":{"status":"known","value":invalidation}, "required_fields":[],
             "expected_ms":{"status":"known","value":choice.incremental_ms}, "estimate":{"status":"unknown"},
-            "explanation":format!("Declared minimum-member group utility {}; expected incremental {} ms (travel {} ms, completion {} ms, service {} ms). Original joint greedy utility/time order with deterministic ties; includes feasible stopping. Revalidate when readiness changes; invalidation does not prove completion.",choice.utility,choice.incremental_ms.get(),choice.travel.total_ms.get(),choice.completion_ms.get(),choice.service_ms.get()),
+            "explanation":format!("Declared original minimum-member contribution {}; expected incremental {} ms (travel {} ms, completion {} ms, service {} ms). Original jointly selected clustered utility/time order with deterministic ties; includes feasible stopping. Revalidate when readiness changes; invalidation does not prove completion.",choice.utility,choice.incremental_ms.get(),choice.travel.total_ms.get(),choice.completion_ms.get(),choice.service_ms.get()),
             "evidence":step_evidence
         }));
     }
