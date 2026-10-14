@@ -102,3 +102,7 @@ exit 37
     $env:NAVZEROTH_TEST_CARGO_CALLED = $oldMarker
     if (Test-Path -LiteralPath $testRoot) { Remove-Item -LiteralPath $testRoot -Recurse -Force }
 }
+# Expected negative subprocesses leave LASTEXITCODE nonzero. GitHub's PowerShell
+# command wrapper propagates it unless the successful test script resets it.
+# Failed assertions/cleanup throw before this point and still fail the step.
+exit 0
