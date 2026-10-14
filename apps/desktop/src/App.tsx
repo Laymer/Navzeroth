@@ -14,8 +14,9 @@ import { GearScreen } from "./screens/GearScreen";
 import { SessionsScreen } from "./screens/SessionsScreen";
 import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
+import { DungeonsScreen } from "./screens/DungeonsScreen";
 
-type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics";
+type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics" | "dungeons";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "diagnostics", label: "Local diagnostics" },
@@ -23,6 +24,7 @@ const SCREENS: { id: Screen; label: string }[] = [
   { id: "atlas", label: "Atlas" },
   { id: "imports", label: "Imports" },
   { id: "party", label: "Party" },
+  { id: "dungeons", label: "Dungeons" },
   { id: "content", label: "Content" },
   { id: "planner", label: "Planner" },
   { id: "gear", label: "Gear" },
@@ -115,6 +117,7 @@ export function App({ client }: { client: CommandClient }) {
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
       {load.phase === "ready" && screen === "party" && <PartyScreen client={client} refreshKey={revision} />}
+      {load.phase === "ready" && screen === "dungeons" && <DungeonsScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "planner" && <PlannerScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "gear" && <GearScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "sessions" && <SessionsScreen client={client} refreshKey={revision} onChanged={changed} />}

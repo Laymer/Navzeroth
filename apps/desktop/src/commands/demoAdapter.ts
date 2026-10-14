@@ -77,6 +77,8 @@ export const demoAdapter: CommandAdapter = {
           };
         case "list_profiles":
           return [{ id: DEMO_PROFILE_ID, display_name: "Demo paladin", data_mode: "demo" }];
+        case "get_dungeon_preparation":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "Preparation assessments require imported stored snapshots in the native application.", retryable: false } satisfies AppError;
         case "get_character_snapshot": {
           const { profile_id } = input as CommandMap["get_character_snapshot"]["input"];
           if (profile_id !== DEMO_PROFILE_ID) {

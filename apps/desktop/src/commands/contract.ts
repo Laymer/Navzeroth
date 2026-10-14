@@ -265,6 +265,7 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   preview_diagnostics: { input: undefined; output: import("./diagnostics").DiagnosticReport };
   export_diagnostics: { input: { path: string }; output: import("./diagnostics").DiagnosticReceipt };
   start_planning_job: { input: { kind: import("./planningJobs").PlanningKind; text: string }; output: { job_schema_version: 1; job_id: string } };

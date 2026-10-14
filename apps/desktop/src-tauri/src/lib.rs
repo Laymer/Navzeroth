@@ -353,6 +353,16 @@ async fn get_party_quests(
     blocking(state, move |app| app.party_quests(&party_id)).await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn get_dungeon_preparation(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::dungeon_preparation::PreparationReport, AppError> {
+    blocking(state, move |app| {
+        app.dungeon_preparation(&text, system_now())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
 async fn get_party_eligibility(
     state: State<'_, Application>,
     party_id: PartyId,
@@ -600,6 +610,7 @@ pub fn run() {
             list_parties,
             get_party_quests,
             get_party_eligibility,
+            get_dungeon_preparation,
             get_party,
             save_party,
             delete_party,

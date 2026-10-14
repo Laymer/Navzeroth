@@ -1,0 +1,7 @@
+.dungeon-preparation { overflow-wrap: anywhere; }
+.dungeon-preparation > label { display: block; margin: 0.75rem 0; }
+.dungeon-preparation input, .dungeon-preparation select, .dungeon-preparation button, .dungeon-preparation textarea { font: inherit; box-sizing: border-box; max-width: 100%; }
+.dungeon-preparation textarea { display: block; width: 100%; resize: vertical; }
+.dungeon-preparation pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.dungeon-preparation button { margin: 0.25rem; overflow-wrap: anywhere; }
+.dungeon-preparation :focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
