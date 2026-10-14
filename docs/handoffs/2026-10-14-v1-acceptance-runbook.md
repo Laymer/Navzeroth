@@ -21,6 +21,13 @@ The requested frozen target is Forever `1.60.1.70374`; the expected interface
 and interactive Windows access are unavailable to this worker, so all such checks
 remain unverified. Synthetic/browser/hosted checks cannot establish those results.
 
+Scope extension authorized by coordinator on 2026-10-14: also own the new
+`docs/compatibility/FOREVER_70374_EVIDENCE.md` to retain the user's fresh build
+identification report. The reported `/dump GetBuildInfo()` tuple includes
+`1.60.1`, `70374`, `Oct 12 2026`, `16001`, `""`, `" "`. This is narrow
+user-reported client identification; installed addon revision and test conditions
+are still pending, so the complete `LIVE-BUILD` row is not passed.
+
 Planned verification: inspect the actual slash commands, native UI labels,
 installer and helper behavior; check local Markdown links and diff whitespace;
 obtain an independent peer review. Record actual results below after completion.
