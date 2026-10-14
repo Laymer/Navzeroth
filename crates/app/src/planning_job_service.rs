@@ -225,7 +225,7 @@ impl PublicationGuard {
             content_hash: content_hash(content)?,
         })
     }
-    fn validate(
+    pub(crate) fn validate(
         &self,
         store: &SqliteStore,
         mut publication_now: impl FnMut() -> Option<UtcMillis>,
@@ -281,6 +281,16 @@ impl PublicationGuard {
         }
         Ok(())
     }
+    /// Earliest finite inclusive UTC upper bound retained by the typed guard.
+    /// None means no finite bound was inferred, not unlimited usable freshness.
+    /// Exporters must also require fresh captures and bound their own lifetime.
+    pub fn valid_until_utc_ms(&self) -> Option<i64> {
+        self.profiles
+            .iter()
+            .filter_map(|(_, _, signature)| signature.stable_utc.latest)
+            .min()
+    }
+
     /// Only validation and the constant-time result handoff run under store lock;
     /// calculation and bounded serialization have already completed outside it.
     pub fn publish(
@@ -346,6 +356,7 @@ impl SnapshotApplication {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::demo_snapshot;
     use azeroth_core::{search_control::NoopSearchControl, types::DatasetRevision};
     use serde_json::{Value, json};
 
@@ -395,6 +406,40 @@ mod tests {
                 "must check again after the class walk"
             );
         }
+    }
+
+    #[test]
+    fn export_deadline_is_earliest_finite_member_bound() {
+        let mut guard = PublicationGuard {
+            party: None,
+            profiles: Vec::new(),
+            content: ContentRevisionKey {
+                scope: azeroth_storage::content::ContentScope {
+                    context: demo_snapshot().unwrap().payload.context.clone(),
+                    fixture: true,
+                },
+                revision: DatasetRevision::new("test-v1").unwrap(),
+            },
+            content_hash: String::new(),
+        };
+        assert_eq!(guard.valid_until_utc_ms(), None);
+        let snapshot = demo_snapshot().unwrap();
+        let key = ProfileKey::of(&snapshot);
+        let hash = azeroth_storage::snapshot_content_hash(&snapshot).unwrap();
+        for bound in [None, Some(500), Some(100), Some(700)] {
+            guard.profiles.push((
+                key.clone(),
+                hash.clone(),
+                ObservationSignature {
+                    classes: Vec::new(),
+                    stable_utc: StableUtcRange {
+                        earliest: None,
+                        latest: bound,
+                    },
+                },
+            ));
+        }
+        assert_eq!(guard.valid_until_utc_ms(), Some(100));
     }
 
     #[test]
