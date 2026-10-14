@@ -6,12 +6,15 @@ use crate::{
     snapshots::{SnapshotApplication, context},
 };
 use azeroth_core::{
-    contract::Envelope,
-    entities::CharacterSnapshot,
+    contract::{Envelope, MAX_ENVELOPE_BYTES},
+    entities::{CharacterSnapshot, EquipmentSlot},
     error::{AppError, ErrorCode, Result},
-    observation::{Freshness, freshness},
+    observation::{
+        ClockTrust, ClockUncertainty, Freshness, FreshnessContext, Observation,
+        ObservationMetadata, ObservationStatus, freshness,
+    },
     search_control::{SearchControl, SearchPhase},
-    types::{PartyId, Sha256Hex, UtcMillis},
+    types::{MAX_SAFE_INTEGER, PartyId, Sha256Hex, UtcMillis},
 };
 use azeroth_storage::{
     ProfileKey, SnapshotStore, SqliteStore,
@@ -28,9 +31,152 @@ pub enum PlanningJobReport {
 }
 pub struct PublicationGuard {
     party: Option<PartyId>,
-    profiles: Vec<(ProfileKey, Sha256Hex)>,
+    profiles: Vec<(ProfileKey, Sha256Hex, ObservationSignature)>,
     content: ContentRevisionKey,
     content_hash: String,
+}
+// Snapshot maps are bounded by the core, and imported snapshots by bytes. This
+// additional count cap bounds signature allocation even for constructed values.
+const MAX_TYPED_OBSERVATIONS: usize = MAX_ENVELOPE_BYTES;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum FreshnessClass {
+    Fresh,
+    Stale,
+    Uncertain(ClockUncertainty),
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ObservationClass {
+    Unavailable(ObservationStatus),
+    Known(FreshnessClass),
+}
+#[derive(Default)]
+struct StableUtcRange {
+    earliest: Option<i64>,
+    latest: Option<i64>,
+}
+impl StableUtcRange {
+    // Actual callers use fixed trusted UTC with no session context. Infer no
+    // deadline from missing/untrusted time or unavailable observation values.
+    fn include(&mut self, metadata: &ObservationMetadata, clock: &FreshnessContext) {
+        if clock.session.is_some()
+            || clock.clock_trust != ClockTrust::Trusted
+            || metadata.clock_trust != ClockTrust::Trusted
+        {
+            return;
+        }
+        let Some(observed) = metadata.observed_at_utc_ms.map(|v| v.get()) else {
+            return;
+        };
+        // UtcMillis and Millis bounds keep these sums within i64.
+        let max_age = i64::try_from(clock.max_age_ms.get()).expect("bounded milliseconds");
+        let (earliest, latest) = match freshness(metadata, clock) {
+            Freshness::Fresh { .. } => (Some(observed), Some(observed + max_age)),
+            Freshness::Stale { .. } => (
+                Some(observed + max_age + 1),
+                Some(observed + MAX_SAFE_INTEGER as i64),
+            ),
+            Freshness::Uncertain {
+                reason: ClockUncertainty::ClockReversed,
+            } => (None, Some(observed - 1)),
+            Freshness::Uncertain {
+                reason: ClockUncertainty::AgeOutOfRange,
+            } => (Some(observed + MAX_SAFE_INTEGER as i64 + 1), None),
+            Freshness::Uncertain {
+                reason: ClockUncertainty::MissingOrUntrustedTime,
+            } => (None, None),
+        };
+        if let Some(v) = earliest {
+            self.earliest = Some(self.earliest.map_or(v, |n| n.max(v)));
+        }
+        if let Some(v) = latest {
+            self.latest = Some(self.latest.map_or(v, |n| n.min(v)));
+        }
+    }
+    fn contains(&self, now: Option<UtcMillis>) -> bool {
+        if self.earliest.is_none() && self.latest.is_none() {
+            return true;
+        }
+        now.is_some_and(|v| {
+            self.earliest.is_none_or(|n| v.get() >= n) && self.latest.is_none_or(|n| v.get() <= n)
+        })
+    }
+}
+struct ObservationSignature {
+    classes: Vec<ObservationClass>,
+    stable_utc: StableUtcRange,
+}
+struct ObservationClasses<'a> {
+    clock: &'a FreshnessContext,
+    classes: Vec<ObservationClass>,
+    stable_utc: StableUtcRange,
+}
+impl ObservationClasses<'_> {
+    fn record<T>(&mut self, observation: &Observation<T>) -> Result<()> {
+        if self.classes.len() >= MAX_TYPED_OBSERVATIONS {
+            return Err(AppError::new(
+                ErrorCode::ImportTooLarge,
+                "Planning observation count exceeds guard limit",
+                false,
+            ));
+        }
+        let class = if observation.status() != ObservationStatus::Known {
+            ObservationClass::Unavailable(observation.status())
+        } else {
+            ObservationClass::Known(match freshness(observation.metadata(), self.clock) {
+                Freshness::Fresh { .. } => FreshnessClass::Fresh,
+                Freshness::Stale { .. } => FreshnessClass::Stale,
+                Freshness::Uncertain { reason } => FreshnessClass::Uncertain(reason),
+            })
+        };
+        if observation.status() == ObservationStatus::Known {
+            self.stable_utc.include(observation.metadata(), self.clock);
+        }
+        self.classes.push(class);
+        Ok(())
+    }
+}
+/// Traverse only actual typed observations, never serialized keys/extensions.
+/// Conservatively cover every observation (including unused ones), retaining
+/// availability and freshness classes rather than continually changing ages.
+fn observation_classes(
+    snapshot: &CharacterSnapshot,
+    clock: &FreshnessContext,
+) -> Result<ObservationSignature> {
+    let mut signature = ObservationClasses {
+        clock,
+        classes: Vec::new(),
+        stable_utc: StableUtcRange::default(),
+    };
+    signature.stable_utc.include(&snapshot.capture, clock);
+    signature.record(&snapshot.level)?;
+    signature.record(&snapshot.role)?;
+    signature.record(&snapshot.location)?;
+    for value in snapshot.preferences.values() {
+        signature.record(value)?;
+    }
+    for slot in snapshot.equipment.values() {
+        signature.record(slot)?;
+        if let Some(EquipmentSlot::Item(item)) = slot.value() {
+            signature.record(&item.variant)?;
+            signature.record(&item.instance)?;
+            signature.record(&item.modifiers)?;
+        }
+    }
+    for quest in snapshot.quests.values() {
+        signature.record(&quest.accepted)?;
+        signature.record(&quest.completed)?;
+        signature.record(&quest.turned_in)?;
+        for value in quest.objectives.values() {
+            signature.record(value)?;
+        }
+    }
+    for value in snapshot.objectives.values() {
+        signature.record(value)?;
+    }
+    Ok(ObservationSignature {
+        classes: signature.classes,
+        stable_utc: signature.stable_utc,
+    })
 }
 fn outdated() -> AppError {
     AppError::new(
@@ -61,6 +207,7 @@ impl PublicationGuard {
         party: Option<PartyId>,
         snapshots: &[Envelope<CharacterSnapshot>],
         content: &ContentRevision,
+        clock: &FreshnessContext,
     ) -> Result<Self> {
         Ok(Self {
             party,
@@ -70,6 +217,7 @@ impl PublicationGuard {
                     Ok((
                         ProfileKey::of(s),
                         azeroth_storage::snapshot_content_hash(s)?,
+                        observation_classes(&s.payload, clock)?,
                     ))
                 })
                 .collect::<Result<_>>()?,
@@ -80,7 +228,7 @@ impl PublicationGuard {
     fn validate(
         &self,
         store: &SqliteStore,
-        publication_now: impl FnOnce() -> Option<UtcMillis>,
+        mut publication_now: impl FnMut() -> Option<UtcMillis>,
     ) -> Result<()> {
         if let Some(id) = &self.party {
             let party = store.party(id)?.ok_or_else(outdated)?;
@@ -88,14 +236,14 @@ impl PublicationGuard {
                 != self
                     .profiles
                     .iter()
-                    .map(|(key, _)| key.clone())
+                    .map(|(key, _, _)| key.clone())
                     .collect::<Vec<_>>()
             {
                 return Err(outdated());
             }
         }
         let mut snapshots = Vec::with_capacity(self.profiles.len());
-        for (key, hash) in &self.profiles {
+        for (key, hash, _) in &self.profiles {
             let snapshot = store.current_snapshot(key)?.ok_or_else(outdated)?;
             if azeroth_storage::snapshot_content_hash(&snapshot)? != *hash {
                 return Err(outdated());
@@ -111,12 +259,24 @@ impl PublicationGuard {
         // Sample after lock acquisition and identity hashing, immediately before
         // publication. Waiting for the mutex must not freeze snapshot age.
         let clock = context(publication_now());
-        if snapshots.iter().any(|snapshot| {
-            !matches!(
+        for (snapshot, (_, _, original_classes)) in snapshots.iter().zip(&self.profiles) {
+            if !matches!(
                 freshness(&snapshot.payload.capture, &clock),
                 Freshness::Fresh { .. }
-            )
-        }) {
+            ) || observation_classes(&snapshot.payload, &clock)?.classes
+                != original_classes.classes
+            {
+                return Err(outdated());
+            }
+        }
+        // Signature traversal is bounded but can itself cross a deadline. Check
+        // its stable interval after all comparisons without another large walk.
+        let final_now = publication_now();
+        if self
+            .profiles
+            .iter()
+            .any(|(_, _, signature)| !signature.stable_utc.contains(final_now))
+        {
             return Err(outdated());
         }
         Ok(())
@@ -149,8 +309,12 @@ impl SnapshotApplication {
             PlanningKind::Solo => {
                 self.with_planning(text, now, |request, snapshot, content, clock| {
                     control.checkpoint(SearchPhase::ValidateInputs)?;
-                    let guard =
-                        PublicationGuard::new(None, std::slice::from_ref(snapshot), content)?;
+                    let guard = PublicationGuard::new(
+                        None,
+                        std::slice::from_ref(snapshot),
+                        content,
+                        clock,
+                    )?;
                     let report = crate::planning::calculate_controlled(
                         request, snapshot, content, clock, control,
                     )?;
@@ -163,8 +327,12 @@ impl SnapshotApplication {
                 control,
                 |request, catalog, snapshots, content, control| {
                     control.checkpoint(SearchPhase::ParticipantReadiness)?;
-                    let guard =
-                        PublicationGuard::new(Some(request.party_id.clone()), &snapshots, content)?;
+                    let guard = PublicationGuard::new(
+                        Some(request.party_id.clone()),
+                        &snapshots,
+                        content,
+                        &context(now),
+                    )?;
                     let report = crate::joint_planning::calculate_controlled(
                         request, catalog, snapshots, content, now, control,
                     )?;
@@ -172,5 +340,81 @@ impl SnapshotApplication {
                 },
             ),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use azeroth_core::{search_control::NoopSearchControl, types::DatasetRevision};
+    use serde_json::{Value, json};
+
+    #[test]
+    fn final_clock_after_class_walk_rejects_expiry_and_newly_usable_fields() {
+        const NOW: i64 = 1791792000000;
+        for observed in [NOW - 1_799_950, NOW + 50] {
+            let app = SnapshotApplication::in_memory().unwrap();
+            let now = UtcMillis::new(NOW).unwrap();
+            let mut snapshot: Value = serde_json::from_str(include_str!(
+                "../../../fixtures/contracts/v1/character-snapshot.json"
+            ))
+            .unwrap();
+            snapshot["payload"]["capture"]["observed_at_utc_ms"] = json!(NOW - 100);
+            snapshot["payload"]["level"]["clock_trust"] = json!("trusted");
+            snapshot["payload"]["level"]["observed_at_utc_ms"] = json!(observed);
+            let profile = app
+                .import_text(&format!("ANAV1:{snapshot}"), Some(now))
+                .unwrap()
+                .profile_id;
+            app.stage_content(include_str!(
+                "../../../fixtures/desktop/planning/synthetic-revision.json"
+            ))
+            .unwrap();
+            app.activate_content(
+                &profile,
+                &DatasetRevision::new("synthetic-planning-v1").unwrap(),
+            )
+            .unwrap();
+            let catalog = app.planning_catalog(&profile).unwrap();
+            let request = json!({"profile_id":profile,"snapshot_id":catalog.snapshot_id,"revision":catalog.revision,"goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1","budget_ms":100000,"stopping_service_ms":0,"candidates":[],"excluded":[]});
+            let (_, guard) = app
+                .calculate_planning_job(
+                    PlanningKind::Solo,
+                    &request.to_string(),
+                    Some(now),
+                    &mut NoopSearchControl,
+                )
+                .unwrap();
+            let mut samples = [Some(now), Some(UtcMillis::new(NOW + 100).unwrap())].into_iter();
+            let error = app
+                .with_store_mut(|store| guard.validate(store, || samples.next().unwrap()))
+                .unwrap_err();
+            assert_eq!(error.code, ErrorCode::SnapshotOutdated);
+            assert!(
+                samples.next().is_none(),
+                "must check again after the class walk"
+            );
+        }
+    }
+
+    #[test]
+    fn stable_interval_preserves_inclusive_bounds_and_missing_time() {
+        let observed = UtcMillis::new(100).unwrap();
+        let metadata = ObservationMetadata {
+            clock_trust: ClockTrust::Trusted,
+            observed_at_utc_ms: Some(observed),
+            ..Default::default()
+        };
+        let clock = context(Some(observed));
+        let mut range = StableUtcRange::default();
+        range.include(&metadata, &clock);
+        assert!(range.contains(Some(observed)));
+        assert!(range.contains(Some(UtcMillis::new(1_800_100).unwrap())));
+        assert!(!range.contains(Some(UtcMillis::new(1_800_101).unwrap())));
+        assert!(!range.contains(Some(UtcMillis::new(99).unwrap())));
+        assert!(!range.contains(None));
+        let mut missing = StableUtcRange::default();
+        missing.include(&ObservationMetadata::default(), &clock);
+        assert!(missing.contains(None));
     }
 }

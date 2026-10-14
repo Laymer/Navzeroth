@@ -457,6 +457,7 @@ impl SnapshotApplication {
             None,
             std::slice::from_ref(&snapshot),
             &content,
+            &context(now),
         )?;
         let result = calculate(request, &snapshot, &content, &context(now))?;
         guard.publish(
