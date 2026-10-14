@@ -49,9 +49,14 @@ Numbered output prefixes count toward the256-byte AssetPath bound.
 
 JSON duplicate members and unknown typed fields are refused, including ignored
 nested fields in existing exchange types. Nonempty exchange extensions are an
-explicit unsupported pack subset; schema1 itself remains unchanged. Explicit
-null/empty optional fields omitted by typed serialization are also refused;
-omitted defaults and canonical typed forms work. Arrays retain semantic order;
+explicit unsupported pack subset; schema1 itself remains unchanged. The validated
+schema1 dataset field `payload.map_embeddings: []` is accepted as its documented
+typed empty default, equivalent to omission. Only the temporary comparison shape
+recognizes that exact field; input bytes, identity/context/revision and the existing
+canonical pack output remain unchanged. This exception does not apply to unknown
+empty fields, another nesting path, null, or source/manifest documents. Other
+null/empty optional fields omitted by typed serialization remain refused; omitted
+defaults and canonical typed forms work. Arrays retain semantic order;
 JSON object keys, source registry IDs, dataset identities and asset paths are
 sorted. Input filenames do not determine output order. Verification recomputes
 full typed coverage; the manifest stores its digest plus eleven bounded collection

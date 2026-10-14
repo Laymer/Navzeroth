@@ -488,3 +488,99 @@ fn dataset_collection_bound_is_enforced_before_publishing() {
     assert!(build(&input, &temp.0.join("pack")).is_err());
     assert!(!temp.0.join("pack").exists());
 }
+
+#[test]
+fn explicit_empty_embeddings_and_omission_build_identical_canonical_packs_without_input_changes() {
+    let one = Temp::new();
+    let two = Temp::new();
+    let omitted = one.input();
+    let explicit = two.input();
+    modify(&omitted.join("datasets/synthetic.json"), |v| {
+        v["payload"]
+            .as_object_mut()
+            .unwrap()
+            .remove("map_embeddings");
+    });
+    modify(&explicit.join("datasets/synthetic.json"), |v| {
+        v["payload"]["map_embeddings"] = json!([]);
+    });
+    let omitted_before = files(&omitted);
+    let explicit_before = files(&explicit);
+    let omitted_pack = one.0.join("pack");
+    let explicit_pack = two.0.join("pack");
+    let a = build(&omitted, &omitted_pack).unwrap();
+    let b = build(&explicit, &explicit_pack).unwrap();
+    assert_eq!(files(&omitted_pack), files(&explicit_pack));
+    assert_eq!(verify(&explicit_pack).unwrap().total_bytes, a.total_bytes);
+    assert_eq!(a.total_bytes, b.total_bytes);
+    assert_eq!(files(&omitted), omitted_before);
+    assert_eq!(files(&explicit), explicit_before);
+}
+
+#[test]
+fn empty_default_exception_refuses_malformed_unknown_duplicate_and_future_inputs_and_keeps_prior_pack()
+ {
+    for case in 0..12 {
+        let temp = Temp::new();
+        let input = temp.input();
+        let output = temp.0.join("pack");
+        build(&input, &output).unwrap();
+        let prior = files(&output);
+        let dataset = input.join("datasets/synthetic.json");
+        match case {
+            0..=4 => modify(&dataset, |v| {
+                v["payload"]["map_embeddings"] = match case {
+                    0 => Value::Null,
+                    1 => json!({}),
+                    2 => json!(false),
+                    3 => json!(0),
+                    _ => json!([{}]),
+                };
+            }),
+            5 => modify(&dataset, |v| {
+                v["payload"]["unknown_private_array"] = json!([])
+            }),
+            6 => modify(&dataset, |v| {
+                v["payload"]["evidence"][0]["map_embeddings"] = json!([])
+            }),
+            7 => modify(&dataset, |v| v["map_embeddings"] = json!([])),
+            8 => modify(&dataset, |v| v["schema_version"] = json!(2)),
+            9 => modify(&input.join("sources.json"), |v| {
+                v["sources"][0]["map_embeddings"] = json!([])
+            }),
+            10 => modify(&dataset, |v| v["payload"]["map_images"] = json!([])),
+            _ => {
+                let mut value = read(&dataset);
+                value["payload"]["map_embeddings"] = json!([]);
+                let text = serde_json::to_string(&value).unwrap();
+                let duplicate = text.replacen(
+                    "\"map_embeddings\":[]",
+                    "\"map_embeddings\":[],\"map_embeddings\":[]",
+                    1,
+                );
+                assert_ne!(text, duplicate);
+                fs::write(&dataset, duplicate).unwrap();
+            }
+        }
+        let unchanged_input = files(&input);
+        let failed_output = temp.0.join("invalid");
+        let result = cli()
+            .args(["build-content", "--input"])
+            .arg(&input)
+            .arg("--output")
+            .arg(&failed_output)
+            .output()
+            .unwrap();
+        assert!(!result.status.success(), "case {case}");
+        assert!(result.stdout.is_empty(), "case {case}");
+        assert!(
+            !String::from_utf8(result.stderr)
+                .unwrap()
+                .contains("private")
+        );
+        assert!(!failed_output.exists(), "case {case}");
+        assert_eq!(files(&output), prior, "case {case}");
+        assert_eq!(files(&input), unchanged_input, "case {case}");
+        assert!(verify(&output).is_ok(), "case {case}");
+    }
+}
