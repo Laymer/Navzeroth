@@ -1,21 +1,22 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: 0.8.0 candidate preparation and exact-source release gates.
-Owner: Codex /root coordinator; Codex /root/atlas_dense owns candidate records.
-Latest actual publication remains v0.7.0 at035f28e, published2026-10-14T15:14:38Z.
-Combined0.8 preparation5b7f7b9 contains route selection/fit, HUD appearance,
-reference shortcut/interaction and main heading reflow. Portable816 Rust tests,
-195 desktop tests/40 mocked browser flows and schema/content checks pass at that
-exact source. All four feature PRs are reviewed/merged through protected main12b6ff4.
-Final-main reconciliation preserves the independently tested code/fixture tree;
-release PR/main/tag and downloaded-asset gates remain pending. Preparation is not
-publication. See [candidate evidence](handoffs/2026-10-14-v0.8.0-release.md).
+Current task: wave9 parallel strict pack-default and existing source-registry repairs.
+Owner: Codex /root coordinator; published baseline db8530f8/v0.8.0.
+v0.8.0 published2026-10-14T16:48:12Z after reviewed feature PRs103–106,
+release PR107, all nine exact-source PR/main gates and verified PR/main/tag assets.
+All four wave8 UI scopes are implemented. Actual816 portable Rust,195 desktop and
+40 mocked browser tests passed on code identical to the final released source.
+See [publication audit and next task ownership](handoffs/2026-10-14-wave9-coordination.md).
+Two finite repairs remain READY: strict typed empty map_embeddings comparison and
+the typed existing Forever sources registry. Each has a sole writer, isolated PR
+and granular commits. The next fix-only preview is0.8.1; publication is not implied.
+Native/live/source/model acceptance remains explicitly unverified or blocked.
 
 Today/Settings, durable restrictions/fallback, opted-in local review/tombstones,
 readable explanations and typed historical recovery are implemented in published0.7.
-Wave8 UI engineering is implemented in this candidate; native/live acceptance
-remains unverified. The next parallel batch after actual0.8 publication has two
+Wave8 UI engineering is implemented in published0.8; native/live acceptance
+remains unverified. The current parallel batch has two
 READY scopes: typed explicit-empty map_embeddings pack comparison and an existing
 Forever sources.json registry sidecar. Preserve schema1/source policies and unknown
 redistribution rights. See [current task ledger](IMPLEMENTATION_TASKS.md).
