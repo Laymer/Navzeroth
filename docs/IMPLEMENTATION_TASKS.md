@@ -1,12 +1,14 @@
 # Implementation task ledger — recurring release program
 
 Baseline: main `2d5de64`, published `v0.4.0`. Owner: Codex /root.
-Fresh audit: see [wave5 coordination](handoffs/2026-10-14-wave5-coordination.md).
+Fresh audit: see [wave5 coordination](handoffs/2026-10-14-wave5-coordination.md) and
+[versioned candidate preparation](handoffs/2026-10-14-v0.5.0-preparation.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
 implementation-plan section 17. Exact future checks belong in task handoffs.
-Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
+Section16.2 explicit redacted diagnostics is implemented in PR70/76; native file
+behavior and installed capability/version evidence remain unverified.
 
 | Task | Current disposition | Remaining work / scheduling decision |
 | --- | --- | --- |
@@ -54,7 +56,7 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M6.3 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
 | M6.4 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
 | M6.5 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
-| M6.6 | IN_PROGRESS | /root/atlas_dense: dense atlas accessibility/scaling/performance, separate task PR. |
+| M6.6 | IMPLEMENTED_UNVERIFIED | PR68 bounded dense rendering and synthetic accessibility/performance checks plus PR78 navigation reflow merged. Native focus/DPI/target performance remain unverified. |
 | M7.1 | IMPLEMENTED_UNVERIFIED | Persisted guarded desktop controls and deduplication delivered in PR59; live delivery remains unverified. |
 | M7.2 | IMPLEMENTED_UNVERIFIED | Evidence delivery gates/manual checklist delivered in PR63; real category rules require missing records/observations. |
 | M7.3 | IMPLEMENTED_UNVERIFIED | Manual joint planning with all-member readiness, exclusions and fairness delivered in PR62; real workflow remains unverified. |
@@ -68,8 +70,8 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M8.4 | IMPLEMENTED_UNVERIFIED | Conditional complete-session comparison/calibration delivered in PR61; real complete samples and native interaction missing. |
 | M8.5 | DEFERRED_WITH_REASON | Requires real permitted combat-log format and intended-use verification. |
 | M9.1 | TODO | Next batch: consolidate compatibility/coverage evidence. |
-| M9.2 | IN_PROGRESS | /root/release_review: explicit backup/restore/integrity/startup recovery, separate task PR. |
-| M9.3 | IN_PROGRESS | /root/backlog_audit: core cancellation/declared measurements; root app-job integration follows separately. |
+| M9.2 | IMPLEMENTED_UNVERIFIED | PR72 recovery/backup/integrity/startup guards and PR77 completion checks merged; interactive Windows replacement remains unverified. |
+| M9.3 | IMPLEMENTED_UNVERIFIED | PR69/75/74 measurements/control, guarded jobs/frontend and PR80 typed-field expiry correction merged. Scoped synthetic checks pass; ordinary Windows/live performance remains unverified. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M9.6 | IMPLEMENTED_UNVERIFIED | v0.4.0 published developer prerelease; focused-release acceptance incomplete. |
@@ -102,11 +104,11 @@ immutable evidence; this current ledger does not erase their actual results.
 ## Dependency-ready engineering follow-ups found during wave4 review
 
 - M4.5/M7.5: participant-scoped export of agreed joint plans through bounded v1 transport.
-- M3 pipeline / section19.3: doctor, deterministic build-content/verify-pack and bounded replay commands.
-- M9.3: measured fixtures and cooperative cancellation; compute outside shared store lock with publication guards.
-- M9.2: expose existing valid online backup through explicit restore/integrity/recovery workflows.
+- M3 pipeline / section19.3: doctor67, bounded deterministic content packs71 and synthetic replay73 are merged; real permitted source/coverage pipeline stays missing.
+- M9.3: measurements/control69, backend75, frontend74 and typed-field correction80 are merged; target-hardware/live checks remain unverified.
+- M9.2: recovery72 and completion-check hardening77 are merged; native replacement remains unverified.
 - Section12.1: Today selected-party/goal/current-plan summary and Settings are incomplete.
-- Section16.2: explicit bounded allowlisted diagnostic export remains missing.
+- Section16.2: bounded explicit diagnostics70/76 is merged; native execution remains unverified.
 - M7.6: evidence-gap preparation infrastructure can proceed; verified Deadmines package stays blocked.
 
 These gaps remain actionable; existing foundations and synthetic tests do not prove
