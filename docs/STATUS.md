@@ -1,19 +1,17 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: prepare the 0.7.0 local intent/governance preview and reconcile task PRs.
-Owner: Codex /root coordinator; published baseline739a822 (v0.6.0).
-v0.6.0 is published after reviewed PRs81–91 and verified PR/main/tag assets.
-The versioned0.7 candidate includes guarded Today/Settings, durable content
-restriction/fallback, opted-in local review/withdrawal, typed gear explanations,
-schema10 identity preservation and populated backup recovery with historical advice.
-Actual candidate checks:801 portable Rust tests (one existing ignored generator),
-180 desktop tests and36 mocked Chromium cases; see the
-[release handoff](handoffs/2026-10-14-v0.7.0-release.md) for exact sources and gates. This preparation record does not claim0.7 publication.
-Independent re-audit found three further ready section12 UI scopes: route-segment
-selection/fit, HUD resize/font/contrast and focused-desktop reference hotkey/interaction.
-They form the next parallel batch after this preview; real data and acceptance
-prerequisites remain in the task ledger.
+Current task: wave8 parallel route selection/fit, HUD appearance and reference controls.
+Owner: Codex /root coordinator; published baseline035f28e (v0.7.0).
+v0.7.0 was published2026-10-14T15:14:38Z after reviewed task PRs92–100,
+release PR101, fresh exact-source checks and verified PR/main/tag assets.
+Source checks:801 portable Rust/180 desktop/36 mocked browser tests.
+See [publication audit and frozen ownership](handoffs/2026-10-14-wave8-coordination.md).
+Today/Settings, durable restrictions/fallback, opted-in local review/tombstones,
+readable explanations and typed historical recovery are implemented.
+Independent released-source audit found three further finite section12 UI scopes;
+those are claimed separately for the next parallel batch. External acceptance and
+source prerequisites remain in the task ledger.
 Native interactive/live/source acceptance remains explicitly unverified or blocked.
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
@@ -42,7 +40,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; schematic route inspection preserves geometry gaps. Native interaction and verified real road geometry remain. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; bounded preparation infrastructure is implemented; verified records, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
-| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.6.0 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
+| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.7.0 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
 | M10 | IMPLEMENTED_UNVERIFIED | Ordinary read-only native reference window and saved-plan projection implemented; shortcut/interaction engineering is ready, native display acceptance remains unverified. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
