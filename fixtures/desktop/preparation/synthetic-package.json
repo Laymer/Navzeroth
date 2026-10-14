@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "id": "synthetic-local-preparation",
+  "title": "Synthetic preparation reference \u2014 no verified dungeon",
+  "context": {
+    "build": {
+      "edition": "wow_forever",
+      "build": "UNVERIFIED_DEMO",
+      "interface": "UNVERIFIED_DEMO"
+    },
+    "namespace": "demo"
+  },
+  "fixture": true,
+  "revision": "demo-r1",
+  "entrance": {
+    "observation": {
+      "status": "known",
+      "value": {
+        "id": "demo-node-2",
+        "map": {
+          "context": {
+            "build": {
+              "edition": "wow_forever",
+              "build": "UNVERIFIED_DEMO",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "map_id": "demo-map-1",
+          "floor": "0",
+          "instance": null
+        }
+      }
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "access": {
+    "observation": {
+      "status": "known",
+      "value": {
+        "op": "level_at_least",
+        "level": 20
+      }
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "quests": {
+    "observation": {
+      "status": "known",
+      "value": [
+        "demo-quest-1"
+      ]
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "rewards": {
+    "observation": {
+      "status": "known",
+      "value": [
+        {
+          "item": {
+            "context": {
+              "build": {
+                "edition": "wow_forever",
+                "build": "UNVERIFIED_DEMO",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "item_id": "demo-item-1",
+            "variant": "base"
+          },
+          "source": "demo-acq-1",
+          "declared_role": {
+            "status": "unknown"
+          }
+        }
+      ]
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "checks": {
+    "observation": {
+      "status": "known",
+      "value": [
+        {
+          "id": "manual-condition",
+          "label": "Synthetic declared equipment condition",
+          "category": "equipment",
+          "requirement": {
+            "observation": {
+              "status": "known",
+              "value": {
+                "op": "equals",
+                "field": {
+                  "field": "preference",
+                  "key": "preparation-test"
+                },
+                "value": {
+                  "type": "bool",
+                  "value": true
+                }
+              }
+            },
+            "evidence": [
+              "demo-evidence-1"
+            ]
+          }
+        }
+      ]
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "formation_ms": {
+    "observation": {
+      "status": "unknown"
+    },
+    "evidence": []
+  },
+  "run_ms": {
+    "observation": {
+      "status": "unsupported"
+    },
+    "evidence": []
+  },
+  "before_departure": {
+    "observation": {
+      "status": "known",
+      "value": [
+        "Review missing or stale participant observations before departure."
+      ]
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "before_entry": {
+    "observation": {
+      "status": "known",
+      "value": [
+        "Inspect source evidence; this local reference is unverified."
+      ]
+    },
+    "evidence": [
+      "demo-evidence-1"
+    ]
+  },
+  "encounter_notes": {
+    "observation": {
+      "status": "unknown"
+    },
+    "evidence": []
+  }
+}
