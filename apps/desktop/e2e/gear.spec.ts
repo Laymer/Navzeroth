@@ -9,6 +9,7 @@ test("gear manual assumptions display actual Rust fixture explanations and inval
         case "get_app_status": return { version:"mock",data_mode:"stored",active_profile:null,capabilities:{} };
         case "get_snapshot_watch": return {active:false,last_import:null,error:null,status:null};
         case "list_profiles": return [{id:report.request.profile_id,display_name:"Synthetic gear profile",data_mode:"stored",fixture:true}];
+        case "get_planning_catalog": return {snapshot_id:catalog.snapshot_id,revision:catalog.revision,fixture:catalog.fixture,nodes:[],objectives:[]};
         case "get_gear_catalog": return catalog;
         case "compare_gear": return {...report,request:JSON.parse(String(args.text))};
         default: throw {code:"INVALID_INPUT",message:"Unexpected gear command mock",retryable:false};

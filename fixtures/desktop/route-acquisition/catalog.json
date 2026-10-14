@@ -1,0 +1,134 @@
+{
+  "fixture": true,
+  "nodes": [
+    {
+      "id": "demo-node-1",
+      "position": {
+        "map": {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "floor": "0",
+          "instance": null,
+          "map_id": "demo-map-1"
+        },
+        "x": 0.1,
+        "y": 0.1
+      },
+      "service": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "vendor"
+      }
+    },
+    {
+      "id": "demo-node-2",
+      "position": {
+        "map": {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "floor": "0",
+          "instance": null,
+          "map_id": "demo-map-1"
+        },
+        "x": 0.9,
+        "y": 0.9
+      },
+      "service": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      }
+    },
+    {
+      "id": "synthetic-source-node",
+      "position": {
+        "map": {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "floor": "0",
+          "instance": null,
+          "map_id": "demo-map-1"
+        },
+        "x": 0.1,
+        "y": 0.1
+      },
+      "service": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "vendor"
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "expected_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "id": "synthetic-service",
+      "participants": [
+        "demo-character-paladin"
+      ],
+      "requirements": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "targets": [
+        {
+          "kind": "service",
+          "node": {
+            "id": "demo-node-2",
+            "map": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "floor": "0",
+              "instance": null,
+              "map_id": "demo-map-1"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "revision": "synthetic-planning-v1",
+  "snapshot_id": "demo-snapshot-001"
+}
