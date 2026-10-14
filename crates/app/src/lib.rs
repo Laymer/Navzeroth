@@ -5,6 +5,7 @@
 //! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
 pub mod content;
+pub mod dungeon_preparation;
 pub mod gear;
 pub mod party;
 pub mod plan_export;
