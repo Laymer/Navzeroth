@@ -1,17 +1,27 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: wave8 parallel route selection/fit, HUD appearance and reference controls.
-Owner: Codex /root coordinator; published baseline035f28e (v0.7.0).
-v0.7.0 was published2026-10-14T15:14:38Z after reviewed task PRs92–100,
-release PR101, fresh exact-source checks and verified PR/main/tag assets.
-Source checks:801 portable Rust/180 desktop/36 mocked browser tests.
-See [publication audit and frozen ownership](handoffs/2026-10-14-wave8-coordination.md).
+Current task: 0.8.0 candidate preparation and exact-source release gates.
+Owner: Codex /root coordinator; Codex /root/atlas_dense owns candidate records.
+Latest actual publication remains v0.7.0 at035f28e, published2026-10-14T15:14:38Z.
+Combined0.8 preparation5b7f7b9 contains route selection/fit, HUD appearance,
+reference shortcut/interaction and main heading reflow. Portable816 Rust tests,
+195 desktop tests/40 mocked browser flows and schema/content checks pass at that
+exact source. HUD103 still awaits its last hosted gate/protected-main merge;
+release PR/main/tag and downloaded-asset gates remain pending. Preparation is not
+publication. See [candidate evidence](handoffs/2026-10-14-v0.8.0-release.md).
+
 Today/Settings, durable restrictions/fallback, opted-in local review/tombstones,
-readable explanations and typed historical recovery are implemented.
-Independent released-source audit found three further finite section12 UI scopes;
-those are claimed separately for the next parallel batch. External acceptance and
-source prerequisites remain in the task ledger.
+readable explanations and typed historical recovery are implemented in published0.7.
+Wave8 UI engineering is implemented in this candidate; native/live acceptance
+remains unverified. The next parallel batch after actual0.8 publication has two
+READY scopes: typed explicit-empty map_embeddings pack comparison and an existing
+Forever sources.json registry sidecar. Preserve schema1/source policies and unknown
+redistribution rights. See [current task ledger](IMPLEMENTATION_TASKS.md).
+Historical scheduling paragraphs below describe their original releases; Today and
+M7.6 preparation infrastructure are not current ready tasks. Missing verified
+Deadmines records, playable sources/models and native/live evidence remain external
+prerequisites. [Wave8 ownership](handoffs/2026-10-14-wave8-coordination.md).
 Native interactive/live/source acceptance remains explicitly unverified or blocked.
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
@@ -33,15 +43,15 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | --- | --- | --- |
 | M0 | IN_PROGRESS | Diagnostic addon/harness and limited 70338 diagnostic, level and clock-age reports exist; consolidated live checks remain unverified. |
 | M1 | IMPLEMENTED_UNVERIFIED | Domain/contracts, fixtures, shell, CI and SQLite foundations implemented and checked; native window interaction not verified. |
-| M2 | IN_PROGRESS | Bounded character imports/storage/watcher, guarded manual 70338 quest/equipment capture, runtime plan paste/HUD and local session transport implemented. Party transport and consolidated live acceptance remain. |
+| M2 | IN_PROGRESS | Bounded character imports/storage/watcher, guarded manual 70338 quest/equipment capture, runtime plan paste/HUD and local session transport implemented; candidate bounded HUD appearance and conservative UI gate preserve unknown/session-only movement. Party transport and consolidated live acceptance remain. |
 | M3 | IN_PROGRESS | Source/conflict library, immutable revisions, desktop content workflows, bounded recovery/backup, coverage CLI and typed local content packs implemented. Real playable quest/acquisition data remains missing. |
 | M4 | IN_PROGRESS | Travel/eligibility/greedy Planner, manual joint planning, bounded single-character export and conservative Lua advancement implemented. Conservative automatic clustering and guarded joint export are implemented; real stage mappings and live acceptance remain. |
 | M5 | IN_PROGRESS | Fixed-point gear/acquisition comparisons, editable Gear screen and synthetic Rust/Lua parity implemented. Finite route-derived alternatives and typed explanations are implemented; real weights/catalogs and live validation remain. |
-| M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; schematic route inspection preserves geometry gaps. Native interaction and verified real road geometry remain. |
+| M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; candidate route hop selection/pages and exact-frame endpoint fit preserve geometry gaps. Native interaction and verified real road geometry remain. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; bounded preparation infrastructure is implemented; verified records, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
 | M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.7.0 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
-| M10 | IMPLEMENTED_UNVERIFIED | Ordinary read-only native reference window and saved-plan projection implemented; shortcut/interaction engineering is ready, native display acceptance remains unverified. |
+| M10 | IMPLEMENTED_UNVERIFIED | Ordinary read-only native reference window and saved-plan projection implemented; candidate opt-in focused-main shortcut/interaction control is implemented, native display acceptance remains unverified. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
 
@@ -295,7 +305,7 @@ handoff and draft PR. Version 0.3.0 retains the 0.x developer-preview prerelease
 classification. Full live/native acceptance stays incomplete. Preparation does not
 create a tag, merge main or publish a GitHub release; v0.2.0 stays latest published.
 
-## Wave4 guidance integration
+## Historical wave4 guidance integration
 
 Separate task PRs59 (controls),61 (calibration),62 (joint planning),63 (evidence
 delivery) and64 (local proposals), plus coordination58 and storage60, preserve
@@ -306,6 +316,8 @@ committed and independently reviewed. Migrations6–8 add feature state without
 changing exchange or dataset identities. Full live/native acceptance stays unverified.
 v0.4.0 version/notes preparation is separate; publication awaits complete protected
 main integration, exact-source hosted checks and verified downloaded tag assets.
-Dependency-ready gaps found during audit remain in the task ledger, including
-clustering, route-aware acquisition, cancellation, recovery, CLI workflows,
-preparation infrastructure, diagnostics and Today/Settings/reference-window work.
+At that historical wave4 audit, dependency-ready gaps included clustering,
+route-aware acquisition, cancellation, recovery, CLI workflows, preparation
+infrastructure, diagnostics and Today/Settings/reference-window work. Those finite
+engineering scopes were subsequently implemented; the current ledger above governs
+new scheduling. Verified Deadmines records and external acceptance remain blocked.
