@@ -26,11 +26,16 @@ in `release-readiness`. No imported Lua or SQL is executed.
 
 All selected inputs must be tracked production files outside `docs/` and
 `release/`, have the declared bytes/hash and remain unchanged in the working tree.
-Symlinks/reparse paths, unknown editions, fixture packs, coverage gaps, unsupported
+Symlinks/reparse paths, non-target pack contexts, fixture packs, coverage gaps, unsupported
 schemas, unresolved redistribution permission, unpinned revisions and duplicate
 pack/source identities refuse selection. Inputs are bounded to 256 MiB each,
 16,384 selected files and the release verifier's cumulative 1 GiB budget. Existing
 pack and manifest limits remain stricter where applicable.
+
+Selected Git LFS inputs must be hydrated before selection. Pointer text is
+refused when it differs from the declared file bytes/hash. Both release workflow
+checkouts hydrate LFS objects; hydration does not select or accept an asset.
+Current unaccepted imagery therefore remains excluded from release materials.
 
 The public schema-version-1 material manifest records the candidate commit,
 production fingerprint, inventory hash, target, pack manifests/revisions,

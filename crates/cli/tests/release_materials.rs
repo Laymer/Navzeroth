@@ -502,3 +502,45 @@ fn powershell_packages_actual_verified_cli_selection_and_preserves_prior_output_
     assert!(!run(false).status.success());
     assert_eq!(fs::read(output.join("SHA256SUMS.txt")).unwrap(), before);
 }
+
+#[test]
+#[ignore = "requires Git LFS; the Windows package job runs this explicitly"]
+fn git_lfs_material_inputs_require_hydrated_exact_bytes() {
+    let temp = Temp::new(true);
+    temp.git(&["lfs", "install", "--local", "--skip-smudge"]);
+    temp.write(
+        ".gitattributes",
+        b"vendor/lfs-source.lua filter=lfs diff=lfs merge=lfs -text\n",
+    );
+    temp.write("vendor/lfs-source.lua", RAW);
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["sources"][0]["files"] = json!([temp.reference("vendor/lfs-source.lua")]);
+    temp.json(EVIDENCE, &evidence);
+    temp.commit();
+    let pointer = temp.git(&["show", "HEAD:vendor/lfs-source.lua"]);
+    assert!(pointer.starts_with("version https://git-lfs.github.com/spec/v1\n"));
+    assert!(pointer.contains(&format!("oid sha256:{}", digest(RAW))));
+    assert!(materials::plan(&temp.options()).is_ok());
+
+    fs::remove_file(temp.0.join("vendor/lfs-source.lua")).unwrap();
+    temp.git(&["checkout", "--", "vendor/lfs-source.lua"]);
+    assert_eq!(
+        fs::read(temp.0.join("vendor/lfs-source.lua")).unwrap(),
+        format!("{pointer}\n").as_bytes()
+    );
+    let status = temp.git(&["status", "--porcelain"]);
+    assert!(status.is_empty(), "{status}");
+    let output = temp.0.join("materials");
+    assert!(materials::stage(&temp.options(), &output).is_err());
+    assert!(!output.exists());
+
+    temp.git(&["lfs", "checkout", "vendor/lfs-source.lua"]);
+    let status = temp.git(&["status", "--porcelain"]);
+    assert!(status.is_empty(), "{status}");
+    let manifest = materials::stage(&temp.options(), &output).unwrap();
+    assert_eq!(manifest.files.len(), 6);
+    assert_eq!(
+        fs::read(output.join("source-materials/vendor/lfs-source.lua")).unwrap(),
+        RAW
+    );
+}

@@ -92,6 +92,19 @@ supported record bindings and real client/interactive Windows evidence.
 Reviewer `/root/acceptance` is reviewing the material implementation read-only.
 The public-notice role-precedence and compact JSON follow-up are being sent as a
 new frozen revision; actual findings and final review will be appended here.
+At `5ae7df3`, the reviewer independently passed all 99 CLI tests (two ignored),
+18 PowerShell 7 material checks and 27 existing release-gate checks. The reviewer
+identified that both release jobs still checked out LFS pointers,
+which would prevent a future verified LFS asset closure from passing its hashes.
+Both release checkouts now hydrate LFS objects, while the selector still excludes
+all unaccepted assets. A temporary local LFS test is explicitly invoked by the
+Windows package job alongside the real CLI/PowerShell integration. Both explicit
+integration tests now pass locally: a pointer-only clean Git checkout refuses
+before staging, and local LFS object hydration delivers exact source bytes. The
+first attempt wrote pointer text directly and exposed Git's stale index/stat
+state, so the regression now uses a real skip-smudge checkout before hydration.
+The reviewer also narrowed documentation wording to non-target pack contexts;
+source-origin labels remain bounded provenance text, not authenticated editions.
 No stable tag or release was created. Next: resolve independent findings, finish
 all nine hosted checks, and let the coordinator normally integrate the reviewed
 task. Real source acceptance, content population, unsupported class/role/party/
