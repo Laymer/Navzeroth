@@ -1,3 +1,4 @@
+import { DiagnosticsPanel } from "./screens/DiagnosticsPanel";
 import { RecoveryPanel } from "./screens/RecoveryPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AppError, AppStatus, CommandClient } from "./commands";
@@ -14,9 +15,10 @@ import { SessionsScreen } from "./screens/SessionsScreen";
 import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
 
-type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery";
+type Screen = "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
+  { id: "diagnostics", label: "Local diagnostics" },
   { id: "recovery", label: "Backup and recovery" },
   { id: "atlas", label: "Atlas" },
   { id: "imports", label: "Imports" },
@@ -108,6 +110,7 @@ export function App({ client }: { client: CommandClient }) {
           ))}
         </nav>
       )}
+      {load.phase === "ready" && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "today" && <Today status={load.status} snapshot={load.snapshot} freshness={load.freshness} />}
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
