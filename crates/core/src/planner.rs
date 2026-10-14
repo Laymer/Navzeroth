@@ -2,6 +2,7 @@
 //! Utilities must share a declared goal profile/unit. No weights or world facts
 //! are invented. Eligibility is reevaluated against the supplied snapshot, never
 //! speculative future state. Feasibility is expected time, not a guarantee.
+use crate::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use crate::{
     eligibility::{
         AcceptanceOutcome, EligibilityInputs, ParticipantEligibility, TurnInOutcome,
@@ -11,7 +12,7 @@ use crate::{
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationResult, Truth, evaluate},
     predicate::Predicate,
-    travel::{Route, RouteOptions, RouteOutcome, RouteSearch, shortest_route},
+    travel::{Route, RouteOptions, RouteOutcome, RouteSearch, shortest_route_controlled},
     types::{Millis, NodeId, ObjectiveId, SourceId},
 };
 use serde::Serialize;
@@ -145,25 +146,36 @@ fn gate(
 /// cross products: utility / incremental time (zero time ranks first), then
 /// greater utility, shorter time and lexicographic ID. Filters run before score.
 pub fn plan(input: &PlannerInput<'_>) -> Result<PlannerResult> {
+    plan_controlled(input, &mut NoopSearchControl)
+}
+
+/// Cooperatively controlled planning; callback errors never return partial advice.
+pub fn plan_controlled(
+    input: &PlannerInput<'_>,
+    control: &mut dyn SearchControl,
+) -> Result<PlannerResult> {
+    control.checkpoint(SearchPhase::ValidateInputs)?;
     unique(input.candidates.iter().map(|c| &c.id))?;
     bounded(input.excluded.len())?;
     if input.max_steps == 0 || input.max_steps > 64 {
         return Err(invalid("Planner step bound must be 1..=64"));
     }
     for c in input.candidates {
+        control.checkpoint(SearchPhase::ValidateInputs)?;
         bounded(c.rewards.len())?;
     }
-    let route = |from: &NodeId, to: &NodeId| {
-        shortest_route(
+    let route = |from: &NodeId, to: &NodeId, control: &mut dyn SearchControl| {
+        shortest_route_controlled(
             input.nodes,
             input.edges,
             from,
             to,
             input.context,
             input.travel_options,
+            control,
         )
     };
-    let initial_stop = route(&input.origin, &input.stopping_node)?;
+    let initial_stop = route(&input.origin, &input.stopping_node, control)?;
     let RouteOutcome::Complete {
         route: mut stopping,
     } = initial_stop.outcome
@@ -183,6 +195,7 @@ pub fn plan(input: &PlannerInput<'_>) -> Result<PlannerResult> {
     let mut spent = 0;
     let mut termination = Termination::StepLimit;
     for iteration in 0..input.max_steps {
+        control.checkpoint(SearchPhase::Selection)?;
         let mut feasible = Vec::new();
         let mut candidates: Vec<_> = input
             .candidates
@@ -191,6 +204,7 @@ pub fn plan(input: &PlannerInput<'_>) -> Result<PlannerResult> {
             .collect();
         candidates.sort_by_key(|c| &c.id);
         for candidate in candidates {
+            control.checkpoint(SearchPhase::CandidateAssessment)?;
             let mut entry = CandidateTrace {
                 iteration,
                 candidate: candidate.id.clone(),
@@ -214,8 +228,8 @@ pub fn plan(input: &PlannerInput<'_>) -> Result<PlannerResult> {
                     } else if candidate.utility == 0 {
                         entry.decision = Decision::NoUtility;
                     } else {
-                        let inbound = route(&current, &candidate.node)?;
-                        let outbound = route(&candidate.node, &input.stopping_node)?;
+                        let inbound = route(&current, &candidate.node, control)?;
+                        let outbound = route(&candidate.node, &input.stopping_node, control)?;
                         match (&inbound.outcome, &outbound.outcome) {
                             (
                                 RouteOutcome::Complete { route: travel },
@@ -273,6 +287,7 @@ pub fn plan(input: &PlannerInput<'_>) -> Result<PlannerResult> {
             termination = Termination::NoFeasibleCandidate;
             break;
         }
+        control.checkpoint(SearchPhase::Selection)?;
         let best = feasible.remove(0);
         spent = add(&[spent, best.incremental_ms.get()])?.get();
         let candidate = input
@@ -288,6 +303,7 @@ pub fn plan(input: &PlannerInput<'_>) -> Result<PlannerResult> {
         selected.push(best);
         alternatives.push(feasible);
     }
+    control.checkpoint(SearchPhase::Selection)?;
     Ok(PlannerResult {
         goal_profile: input.goal_profile.clone(),
         selected,
