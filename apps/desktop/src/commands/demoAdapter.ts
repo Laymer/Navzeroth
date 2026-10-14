@@ -100,6 +100,9 @@ export const demoAdapter: CommandAdapter = {
           return null;
         case "get_joint_planning_catalog":
         case "plan_joint_session":
+        case "get_party_plan_proposal":
+        case "propose_party_plan":
+        case "accept_party_plan":
         case "set_session_calibration":
         case "get_calibration":
         case "reminder_view":

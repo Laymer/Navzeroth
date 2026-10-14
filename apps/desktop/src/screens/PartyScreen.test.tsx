@@ -25,6 +25,7 @@ function mock() {
           { id: "one", display_name: "One", data_mode: "stored", context: envelope.payload.context, fixture: true },
           { id: "two", display_name: "Two", data_mode: "stored", context: envelope.payload.context, fixture: true },
         ]; break;
+        case "get_party_plan_proposal": answer = null; break;
         case "get_joint_planning_catalog": answer = { context: envelope.payload.context, fixture: true, revision: null, participants: [], nodes: [], objectives: [] }; break;
         case "get_party_quests": answer = { context: envelope.payload.context, fixture: true, revision: null, quests: [] }; break;
         case "list_parties": answer = party ? [party.id] : []; break;

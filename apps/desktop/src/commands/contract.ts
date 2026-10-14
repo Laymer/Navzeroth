@@ -1,3 +1,4 @@
+import type { PartyProposalReport } from "../party/proposals";
 import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
 import type { CalibrationRequest, CalibrationReport, SessionCalibrationAnnotation } from "./calibration";
 import type { ReminderView } from "./reminders";
@@ -263,6 +264,9 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_party_plan_proposal: { input: { party_id: string }; output: PartyProposalReport | null };
+  propose_party_plan: { input: { text: string }; output: PartyProposalReport };
+  accept_party_plan: { input: { text: string }; output: PartyProposalReport };
   get_joint_planning_catalog: { input: { party_id: string }; output: JointPlanningCatalog };
   plan_joint_session: { input: { text: string }; output: JointPlanningReport };
   set_session_calibration: { input: { profile_id: string; session_id: string; annotation: SessionCalibrationAnnotation }; output: null };

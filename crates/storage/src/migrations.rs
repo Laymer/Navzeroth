@@ -61,6 +61,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "explicit session calibration annotations",
         sql: include_str!("schema_v7.sql"),
     },
+    Migration {
+        version: 8,
+        name: "bounded local party plan proposals",
+        sql: include_str!("schema_v8.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.
