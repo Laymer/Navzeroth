@@ -84,6 +84,7 @@ export function createClient(adapter: CommandAdapter) {
     exportAgreedPartyPlan: (text: string) => run(() => adapter.invoke("export_agreed_party_plan", { text })),
     inspectPlanRoute: (text: string) => run(() => adapter.invoke("inspect_plan_route", { text })),
     planSession: (text: string) => run(() => adapter.invoke("plan_session", { text })),
+    getCompatibilityReport: (profile_id: string | null) => run(() => adapter.invoke("get_compatibility_report", { profile_id })),
     getAppStatus: (): Promise<Result<AppStatus>> =>
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>

@@ -261,6 +261,16 @@ async fn get_planning_catalog(
 ) -> Result<azeroth_app::planning::PlanningCatalog, AppError> {
     blocking(state, move |app| app.planning_catalog(&profile_id)).await
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn get_compatibility_report(
+    state: State<'_, Application>,
+    profile_id: Option<String>,
+) -> Result<azeroth_app::compatibility::CompatibilityReport, AppError> {
+    blocking(state, move |app| {
+        app.compatibility_report(profile_id.as_deref())
+    })
+    .await
+}
 #[tauri::command]
 async fn export_plan(
     state: State<'_, Application>,
@@ -599,6 +609,7 @@ pub fn run() {
             reminder_view,
             mutate_reminders,
             inspect_plan_route,
+            get_compatibility_report,
             export_plan,
             export_agreed_party_plan,
             get_app_status,

@@ -7,7 +7,7 @@ for (const width of [320, 640]) {
       await page.addStyleTag({content:`:root { font-size: ${fontSize}px; }`});
       const nav=page.getByRole("navigation",{name:"Primary"});
       const buttons=nav.getByRole("button");
-      await expect(buttons).toHaveCount(12);
+      await expect(buttons).toHaveCount(13);
       const geometry=await nav.evaluate(el=>({width:el.clientWidth,scrollWidth:el.scrollWidth,overflow:getComputedStyle(el).overflowX,buttons:Array.from(el.querySelectorAll("button")).map(button=>{const r=button.getBoundingClientRect();return {text:button.textContent,left:r.left,right:r.right,width:r.width};})}));
       expect(geometry.overflow).toBe("visible");
       expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width);
