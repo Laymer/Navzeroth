@@ -66,6 +66,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "bounded local party plan proposals",
         sql: include_str!("schema_v8.sql"),
     },
+    Migration {
+        version: 9,
+        name: "bounded local settings plans and content governance",
+        sql: include_str!("schema_v9.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.
