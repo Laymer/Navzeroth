@@ -1,8 +1,8 @@
 //! Development and diagnostic CLI for Azeroth Navigator.
 //!
 //! The no-argument banner identifies the current capability. `export-schemas`
-//! writes the generated exchange schema; `doctor` reports host requirements and
-//! explicitly selected paths without reading their contents; `prepare-atlas` prepares map imagery
+//! writes the generated exchange schema; `doctor` reports selected path kinds;
+//! `build-content`/`verify-pack` handle local reference packs; `prepare-atlas` prepares map imagery
 //! (ADR 0002); `validate-fixtures` checks the contract and transport fixture
 //! manifests. The remaining plan section 19.3 commands land in later
 //! milestones. Unsupported arguments fail explicitly without echoing input.
@@ -15,7 +15,7 @@ use std::{
     process::ExitCode,
 };
 
-const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; export-schemas --output <dir>; \
+const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>. See README.md.";
 
@@ -187,6 +187,22 @@ fn prepare_atlas(args: &AtlasArgs) -> ExitCode {
     }
 }
 
+fn pack_result(result: Result<azeroth_cli::pack::Report, &'static str>) -> ExitCode {
+    match result {
+        Ok(report) => {
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&report).expect("safe report serialization")
+            );
+            ExitCode::SUCCESS
+        }
+        Err(message) => {
+            eprintln!("content-pack: {message}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
 fn main() -> ExitCode {
     let args: Vec<_> = std::env::args_os().skip(1).collect();
     match args.as_slice() {
@@ -197,7 +213,7 @@ fn main() -> ExitCode {
                 env!("CARGO_PKG_VERSION")
             );
             println!(
-                "Implemented subcommands: doctor; export-schemas --output <dir>; prepare-atlas --manifest \
+                "Implemented subcommands: doctor; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  Other commands are planned; see README.md and plan section 19.3."
             );
@@ -205,6 +221,19 @@ fn main() -> ExitCode {
         }
         [command, flag, dir] if command == "export-schemas" && flag == "--output" => {
             export_schemas(Path::new(dir))
+        }
+        [command, input_flag, input, output_flag, output]
+            if command == "build-content"
+                && input_flag == "--input"
+                && output_flag == "--output" =>
+        {
+            pack_result(azeroth_cli::pack::build(
+                Path::new(input),
+                Path::new(output),
+            ))
+        }
+        [command, flag, input] if command == "verify-pack" && flag == "--input" => {
+            pack_result(azeroth_cli::pack::verify(Path::new(input)))
         }
         [command, rest @ ..] if command == "doctor" => {
             let Some(options) = azeroth_cli::doctor::Options::parse(rest) else {

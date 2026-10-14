@@ -64,11 +64,10 @@ browser demo run `pnpm --dir apps/desktop dev`; for the native shell run
 Native Rust checks are `cargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings`
 and `cargo test --locked -p azeroth-desktop`.
 
-The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures` and
-`validate-content` and bounded synthetic `replay --fixture <file>`. Content pack
-build/verification remain planned. Replay format/examples/limits are documented in
+The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures`,
+`validate-content`, `build-content`, `verify-pack` and bounded synthetic
+`replay --fixture <file>`. Replay format/examples/limits are documented in
 [PLANNER_REPLAY.md](docs/data/PLANNER_REPLAY.md).
-
 `cargo run --locked -p azeroth-cli -- doctor --json` reports this binary's version,
 OS/architecture, pinned development requirements and tool presence on PATH. Presence
 is not runtime-version verification, and missing development tools do not prevent
@@ -77,8 +76,14 @@ and `--content <dir>` inspect only explicitly selected path kinds. Unselected pa
 stay unselected; invalid selections return a nonzero exit code. The command does
 not read their contents, scan account directories, run detected tools, or print
 selected paths. Native prerequisites and live-client compatibility remain unverified.
+
 Content validation has bounded regular-file/directory discovery, deterministic
 JSON/human reports and separate nonfatal gaps. See [coverage](docs/data/COVERAGE.md).
+Content packs require a typed `sources.json` sidecar and registered evidence/image
+sources. They preserve exact dataset identities and verified PNG bytes, refuse
+overwrite, and report declared distribution eligibility separately from gaps.
+See [local reference pack format](docs/data/CONTENT_PACK.md). Real Forever content
+lacks the necessary registered source/coverage records; no real pack is claimed.
 
 ## Windows installer
 
