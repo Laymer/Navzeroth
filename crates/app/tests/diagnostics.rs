@@ -146,6 +146,7 @@ fn missing_statistics_remain_unknown_observed_zero_and_false_are_distinct() {
     let j = json_report(&build(None, None, Some(&telemetry)).unwrap());
     assert_eq!(j["telemetry"]["events"].as_array().unwrap().len(), 64);
     assert_eq!(j["telemetry"]["import_attempts"], 100);
+    assert_eq!(j["telemetry"]["truncated"], true);
     assert_eq!(j["telemetry"]["import_succeeded"], 0);
     assert_eq!(j["telemetry"]["events"][0]["duration_ms"], 0);
     let before = serialize(&build(None, None, Some(&telemetry)).unwrap()).unwrap();

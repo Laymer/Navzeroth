@@ -11,7 +11,7 @@ export interface DiagnosticReport {
   snapshot_freshness: DiagnosticCapability["freshness"];
   dataset: { revision_fingerprint_sha256: string; coverage_class: "Demo" | "ReferenceFixture" | "Reference"; collections: Record<string, unknown>; errors: number; gaps: number } | null;
   dataset_context_mismatch: boolean;
-  telemetry: { import_attempts: number | null; import_succeeded: number | null; import_failed: number | null; events: { operation: string; error: string | null; duration_ms: number | null }[] };
+  telemetry: { scope: "current_process_collector"; event_limit: 64; truncated: boolean | null; import_attempts: number | null; import_succeeded: number | null; import_failed: number | null; events: { operation: string; error: string | null; duration_ms: number | null }[] };
 }
 export interface DiagnosticReceipt { schema_version: 1; bytes: number }
 /** Root wires these only to the explicit native capture/create-new file operations. */

@@ -52,6 +52,7 @@ struct DiagnosticEvent {
 #[derive(Clone, Default)]
 pub struct DiagnosticTelemetry {
     events: VecDeque<DiagnosticEvent>,
+    truncated: bool,
     import_attempts: Option<u64>,
     import_succeeded: Option<u64>,
     import_failed: Option<u64>,
@@ -95,6 +96,7 @@ impl DiagnosticTelemetry {
             }
         }
         if self.events.len() == MAX_EVENTS {
+            self.truncated = true;
             self.events.pop_front();
         }
         self.events.push_back(DiagnosticEvent {
@@ -143,6 +145,9 @@ struct Dataset {
 }
 #[derive(Serialize)]
 struct Telemetry {
+    scope: &'static str,
+    event_limit: usize,
+    truncated: Option<bool>,
     import_attempts: Option<u64>,
     import_succeeded: Option<u64>,
     import_failed: Option<u64>,
@@ -243,6 +248,7 @@ pub fn build_with_context(
             }
         })
     };
+    let has_telemetry = telemetry.is_some();
     let unknown = DiagnosticTelemetry::default();
     let telemetry = telemetry.unwrap_or(&unknown);
     let report = DiagnosticReport {
@@ -328,6 +334,9 @@ pub fn build_with_context(
         dataset,
         dataset_context_mismatch: mismatch,
         telemetry: Telemetry {
+            scope: "current_process_collector",
+            event_limit: MAX_EVENTS,
+            truncated: has_telemetry.then_some(telemetry.truncated),
             import_attempts: telemetry.import_attempts,
             import_succeeded: telemetry.import_succeeded,
             import_failed: telemetry.import_failed,
