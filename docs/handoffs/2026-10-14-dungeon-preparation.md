@@ -96,3 +96,14 @@ Root reviews the final UI/source, merges dependencies/current main normally,
 requires fresh exact-head hosted jobs and integrates this separate PR. Next content
 work is a verified source-covered preparation package; continue other independent
 engineering while its real-data prerequisites remain blocked.
+
+## Coordinator frontend reconciliation
+
+Root read the final ordinary/advanced preparation flow and found no confirmed UI
+blocker. After normal main6e3f717 reconciliation, both Dungeons and Compatibility
+remain registered; thirteen navigation controls retain the original geometry,
+Tab/focus and Enter checks. Four preparation panel tests, strict typecheck/lint and
+five mocked Chromium cases (preparation plus320/640px at16/32px text) passed.
+Logs /tmp/navzeroth-prep-reconciled-{ui,typecheck,lint,browser}.log. This does not
+promote the synthetic package or native/live behavior. Fresh exact-head checks
+on the reconciled source still gate protected-main merge.
