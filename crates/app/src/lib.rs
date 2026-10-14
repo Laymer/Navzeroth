@@ -130,6 +130,6 @@ mod tests {
 
 pub mod sessions;
 
-pub mod joint_planning;
 pub mod calibration;
+pub mod joint_planning;
 pub mod reminders;

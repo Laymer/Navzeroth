@@ -19,5 +19,5 @@ pub mod sources;
 pub mod travel;
 pub mod types;
 
-pub mod joint_planner;
 pub mod calibration;
+pub mod joint_planner;
