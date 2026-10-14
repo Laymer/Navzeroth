@@ -157,9 +157,9 @@ test("profile selection, explicit file import and watch cancellation use command
 
 test("dense atlas filters and keyboard navigation retain selection after completed refresh", async ({ page }) => {
   await page.getByRole("button", { name: "Atlas", exact: true }).click();
-  await expect(page.getByText("150 of 150 reference pins shown.")).toBeVisible();
+  await expect(page.getByText("150 of 150 reference pins match these filters.")).toBeVisible();
   await page.getByLabel("Point type").selectOption("landmark");
-  await expect(page.getByText("75 of 150 reference pins shown.")).toBeVisible();
+  await expect(page.getByText("75 of 150 reference pins match these filters.")).toBeVisible();
   await page.getByLabel("Search reference pins").fill("Reference 148");
   const pin = page.getByRole("button", { name: "Show Reference 148 on the map" });
   await pin.focus(); await pin.press("Enter");

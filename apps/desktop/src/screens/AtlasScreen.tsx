@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AppError, AtlasView, CommandClient, SnapshotMarker } from "../commands";
 import type { AtlasImage } from "../commands/contract";
+import "../atlas/atlas.css";
 import { MapView } from "../atlas/MapView";
 import {
   APPROXIMATE_LABEL,
@@ -19,6 +20,8 @@ import {
 import { chooseLayer, type LayerToggles } from "../atlas/layers";
 import { MARKER_STATE_LABELS, markerState, placementOf } from "../atlas/markerState";
 import type { Point } from "../atlas/viewport";
+
+const PIN_PAGE_SIZE = 200;
 
 type Load =
   | { phase: "loading" }
@@ -114,12 +117,24 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
 
   const [search, setSearch] = useState("");
   const [kind, setKind] = useState("all");
+  const [page, setPage] = useState(0);
+  const [pendingFocus, setPendingFocus] = useState<string | null>(null);
   const pinButtons = useRef(new Map<string, HTMLButtonElement>());
   const pins = image.pins.filter((pin) =>
     (kind === "all" || pin.kind.kind === kind) &&
     `${pin.label} ${pin.id}`.toLowerCase().includes(search.trim().toLowerCase()),
   );
-  const filteredImage = { ...image, pins };
+  const pageCount = Math.max(1, Math.ceil(pins.length / PIN_PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount - 1);
+  const pageStart = currentPage * PIN_PAGE_SIZE;
+  const pagePins = pins.slice(pageStart, pageStart + PIN_PAGE_SIZE);
+  const filteredImage = { ...image, pins: pagePins };
+  useEffect(() => {
+    if (pendingFocus !== null) {
+      pinButtons.current.get(pendingFocus)?.focus();
+      setPendingFocus(null);
+    }
+  }, [pendingFocus, currentPage]);
   const layer = useMemo(() => chooseLayer(image, toggles, failed), [image, toggles, failed]);
   const placement = placementOf(marker);
   const drawn = placement !== null && placement.image === image.id ? placement : null;
@@ -171,23 +186,31 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
       <section aria-labelledby="pins-heading">
         <h3 id="pins-heading">Reference pins</h3>
         <p>Reference geography; these pins do not indicate player unlocks.</p>
-        <label>Search reference pins <input value={search} maxLength={256} onChange={(event) => setSearch(event.target.value)} /></label>
-        <label>Point type <select value={kind} onChange={(event) => setKind(event.target.value)}>
+        <label>Search reference pins <input value={search} maxLength={256} onChange={(event) => { setSearch(event.target.value); setPage(0); }} /></label>
+        <label>Point type <select value={kind} onChange={(event) => { setKind(event.target.value); setPage(0); }}>
           <option value="all">All types</option>
           {kind !== "all" && !image.pins.some((pin) => pin.kind.kind === kind) &&
             <option value={kind}>{kind.replace(/_/g, " ")} (absent in this revision)</option>}
           {[...new Set(image.pins.map((pin) => pin.kind.kind))].sort().map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
         </select></label>
-        <p role="status">{pins.length} of {image.pins.length} reference pins shown.</p>
+        <p role="status">{pins.length} of {image.pins.length} reference pins match these filters.</p>
         {selectedPin !== null && !image.pins.some((pin) => pin.id === selectedPin)
           ? <p role="note">The selected pin is no longer present in this atlas revision.</p>
           : selectedPin !== null && !pins.some((pin) => pin.id === selectedPin)
             ? <p role="note">The selected pin is hidden by the current filters.</p> : null}
+        {selectedPin !== null && pins.some((pin) => pin.id === selectedPin) && !pagePins.some((pin) => pin.id === selectedPin) &&
+          <p role="note">The selected pin is on another page. Change pages or search to show it.</p>}
+        {pageCount > 1 && <div className="pin-pagination" role="group" aria-label="Reference pin pages">
+          <p role="status">Map and list display pins {pageStart + 1}–{Math.min(pageStart + PIN_PAGE_SIZE, pins.length)} of {pins.length} matches. Other reference pins are on the remaining pages.</p>
+          <button type="button" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous pin page</button>
+          <span>Page {currentPage + 1} of {pageCount}</span>
+          <button type="button" disabled={currentPage === pageCount - 1} onClick={() => setPage(currentPage + 1)}>Next pin page</button>
+        </div>}
         {pins.length === 0 ? (
           <p>{image.pins.length === 0 ? "This image has no pins." : "No reference pins match these filters."}</p>
         ) : (
           <ul className="pins">
-            {pins.map((pin, index) => (
+            {pagePins.map((pin, pageIndex) => (
               <li key={pin.id}>
                 <strong>{pin.label}</strong>. {describePin(pin)}.
                 {describePinAccess(pin) !== null && <> {describePinAccess(pin)}.</>}{" "}
@@ -195,10 +218,18 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
                   type="button"
                   ref={(node) => { if (node) pinButtons.current.set(pin.id, node); else pinButtons.current.delete(pin.id); }}
                   onKeyDown={(event) => {
+                    const index = pageStart + pageIndex;
                     const target = event.key === "ArrowDown" ? (index + 1) % pins.length
                       : event.key === "ArrowUp" ? (index + pins.length - 1) % pins.length
                       : event.key === "Home" ? 0 : event.key === "End" ? pins.length - 1 : null;
-                    if (target !== null) { event.preventDefault(); const pin = pins[target]; if (pin) pinButtons.current.get(pin.id)?.focus(); }
+                    if (target !== null) {
+                      event.preventDefault();
+                      const targetPin = pins[target];
+                      if (targetPin) {
+                        setPage(Math.floor(target / PIN_PAGE_SIZE));
+                        setPendingFocus(targetPin.id);
+                      }
+                    }
                   }}
                   aria-pressed={selectedPin === pin.id}
                   onClick={() => {
