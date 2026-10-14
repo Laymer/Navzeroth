@@ -8,8 +8,8 @@ The versioned0.7 candidate includes guarded Today/Settings, durable content
 restriction/fallback, opted-in local review/withdrawal, typed gear explanations,
 schema10 identity preservation and populated backup recovery with historical advice.
 Actual candidate checks:801 portable Rust tests (one existing ignored generator),
-180 desktop tests and36 mocked Chromium cases; details and source bounds belong in
-the release handoff. This preparation record does not claim0.7 publication.
+180 desktop tests and36 mocked Chromium cases; see the
+[release handoff](handoffs/2026-10-14-v0.7.0-release.md) for exact sources and gates. This preparation record does not claim0.7 publication.
 Independent re-audit found three further ready section12 UI scopes: route-segment
 selection/fit, HUD resize/font/contrast and focused-desktop reference hotkey/interaction.
 They form the next parallel batch after this preview; real data and acceptance
