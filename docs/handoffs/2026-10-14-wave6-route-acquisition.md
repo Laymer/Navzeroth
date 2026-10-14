@@ -117,3 +117,12 @@ Hosted exact-head Windows compilation/nine jobs and source-locked independent
 review remain required before normal protected-main integration. Next: root review,
 resolve additive task wiring/cluster result conflicts normally, rerun exact heads,
 and audit the next release without promoting engineering fixtures to real advice.
+
+## Final main reconciliation
+
+Normal merged coordination mainb5e6e11 in dc2d97a after draft PR86 creation.
+This main update changes documentation only; `git diff --quiet 52010b6 HEAD --
+crates apps fixtures` passed, confirming the checked feature source/fixtures are
+unchanged. Final source ownership release remains in effect. Fresh exact-head
+hosted jobs and root's independent route-service rerun are pending; no extra
+local suite rerun or hosted result is implied by this documentation update.
