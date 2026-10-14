@@ -31,17 +31,12 @@ async fn blocking<T: Send + 'static>(
             )
         })?
 }
-#[derive(serde::Serialize)]
-struct PlanningJobAccepted {
-    job_schema_version: u32,
-    job_id: String,
-}
 #[tauri::command(rename_all = "snake_case")]
 async fn start_planning_job(
     state: State<'_, Application>,
     kind: azeroth_app::planning_jobs::PlanningKind,
     text: String,
-) -> Result<PlanningJobAccepted, AppError> {
+) -> Result<azeroth_app::planning_jobs::JobAccepted, AppError> {
     if text.len() > azeroth_app::planning::MAX_REQUEST_BYTES {
         return Err(AppError::new(
             ErrorCode::ImportTooLarge,
@@ -84,10 +79,10 @@ async fn start_planning_job(
             Ok(())
         });
         if let Err(error) = operation {
-            jobs.run(failed_ticket, |_| Err::<serde_json::Value, _>(error));
+            jobs.run(failed_ticket, |_| Err::<(), _>(error));
         }
     });
-    Ok(PlanningJobAccepted {
+    Ok(azeroth_app::planning_jobs::JobAccepted {
         job_schema_version: 1,
         job_id,
     })
