@@ -41,6 +41,14 @@ fn imported_zero_unknown_restricted_and_distinct_field_age_remain_explicit() {
     assert_eq!(report["snapshot"]["location"]["status"], "restricted");
     assert!(!report.to_string().contains("private-secret"));
     assert!(report.to_string().len() < MAX_REFERENCE_BYTES);
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/desktop/reference/imported.json");
+    if std::env::var_os("UPDATE_REFERENCE_GOLDEN").is_some() {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, serde_json::to_string_pretty(&report).unwrap() + "\n").unwrap();
+    }
+    let expected: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    assert_eq!(report, expected);
 }
 #[test]
 fn actual_selected_snapshot_changes_and_missing_clock_remains_uncertain() {

@@ -734,7 +734,7 @@ async fn get_reference_window_state(
     controller: State<'_, reference_window::Controller>,
 ) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
     reference_window::main_caller(window.label())?;
-    let _serial = controller.0.lock().map_err(|_| {
+    let _serial = controller.inner().0.lock().map_err(|_| {
         AppError::new(
             ErrorCode::ProviderUnavailable,
             "Reference window controls unavailable",
@@ -752,7 +752,7 @@ async fn set_reference_window(
     always_on_top: bool,
 ) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
     reference_window::main_caller(window.label())?;
-    let _serial = controller.0.lock().map_err(|_| {
+    let _serial = controller.inner().0.lock().map_err(|_| {
         AppError::new(
             ErrorCode::ProviderUnavailable,
             "Reference window controls unavailable",
