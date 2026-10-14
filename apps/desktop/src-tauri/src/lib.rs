@@ -816,7 +816,7 @@ async fn list_local_submissions(
     state: State<'_, Application>,
     after: Option<azeroth_core::types::Sha256Hex>,
     limit: usize,
-) -> Result<azeroth_storage::local_submissions::SubmissionPage, AppError> {
+) -> Result<azeroth_app::local_submissions::SubmissionPage, AppError> {
     blocking(state, move |app| {
         app.local_submission_page(after.as_ref(), limit)
     })
@@ -827,7 +827,7 @@ async fn submit_local_observation(
     state: State<'_, Application>,
     text: String,
     opt_in: bool,
-) -> Result<azeroth_storage::local_submissions::SubmitReceipt, AppError> {
+) -> Result<azeroth_app::local_submissions::SubmitReceipt, AppError> {
     blocking(state, move |app| {
         app.submit_local_observation(&text, opt_in, system_now())
     })
@@ -837,7 +837,7 @@ async fn submit_local_observation(
 async fn change_local_submission(
     state: State<'_, Application>,
     text: String,
-) -> Result<azeroth_storage::local_submissions::SubmissionRecord, AppError> {
+) -> Result<azeroth_app::local_submissions::SubmissionRecord, AppError> {
     blocking(state, move |app| {
         app.change_local_submission(&text, system_now())
     })
