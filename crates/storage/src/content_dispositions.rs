@@ -307,7 +307,12 @@ impl SqliteStore {
             if ids.len() > MAX_CONTENT_REVISIONS {
                 return Err(storage("Content disposition count exceeds limit"));
             }
+            let ordinal:i64=tx.query_row("SELECT coalesce(max(CASE WHEN d.last_activated_order IS NULL THEN 0 WHEN typeof(d.last_activated_order)='integer' AND d.last_activated_order BETWEEN 1 AND 9007199254740991 THEN d.last_activated_order ELSE 9007199254740991 END),0) FROM content_dispositions d JOIN dataset_revisions r ON r.id=d.revision_id WHERE r.edition=?1 AND r.build=?2 AND r.interface=?3 AND r.namespace=?4 AND r.is_fixture=?5",params![scope.context.build.edition.as_str(),scope.context.build.build.as_str(),scope.context.build.interface.as_str(),content::namespace(scope),scope.fixture],|row|row.get(0)).db()?;
             for candidate in ids {
+                if ordinal >= MAX_SAFE_INTEGER as i64 {
+                    break;
+                }
+
                 // Malformed retained data is unavailable; genuine SQLite failures propagate.
                 let d = match read_checked(&tx, candidate) {
                     Ok(d) => d,
