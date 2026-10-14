@@ -185,11 +185,13 @@ fn identifier(value: &str) -> bool {
             .all(|b| b.is_ascii_alphanumeric() || b == b'_')
 }
 fn profile(value: &str) -> bool {
-    value.len() == 64
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    value.strip_prefix("stored-").is_some_and(|v| {
+        v.len() == 64
+            && v.bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    })
 }
+
 impl Settings {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version !=1 || ![100,125,150,175,200].contains(&self.accessibility.text_scale_percent)

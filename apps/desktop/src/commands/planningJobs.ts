@@ -34,7 +34,7 @@ function pause(signal: AbortSignal): Promise<void> {
 /** Poll only the visible pending job. Abort handles cancellation before registration
  * finishes; bounded polling and backend deadlines keep failures inspectable. */
 export async function runPlanningJob<T>(client: PlanningJobClient, kind: PlanningKind, text: string, signal: AbortSignal,
-  onProgress: (status: PlanningJobStatus) => void, wait: (signal: AbortSignal) => Promise<void> = pause): Promise<Result<T>> {
+  onProgress: (status: PlanningJobStatus) => void, wait: (signal: AbortSignal) => Promise<void> = pause, onCompleted?: (jobId:string)=>void): Promise<Result<T>> {
   if (signal.aborted) return canceled();
   const started = await client.startPlanningJob(kind, text);
   if (!started.ok) return started;
@@ -64,7 +64,7 @@ export async function runPlanningJob<T>(client: PlanningJobClient, kind: Plannin
         if (signal.aborted) return canceled();
         if (!result.ok) return result;
         if (result.value?.job_schema_version !== PLANNING_JOB_SCHEMA_VERSION || result.value.job_id !== id || result.value.kind !== kind || typeof result.value.report_json !== "string" || result.value.report_json.length > 4 * 1024 * 1024 || new TextEncoder().encode(result.value.report_json).byteLength > 4 * 1024 * 1024) return unavailable("Planning result version, identity or byte size is invalid.");
-        try { const parsed: unknown = JSON.parse(result.value.report_json); if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) return unavailable("Planning result is not a report object."); return { ok: true, value: parsed as T }; }
+        try { const parsed: unknown = JSON.parse(result.value.report_json); if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) return unavailable("Planning result is not a report object."); onCompleted?.(id); return { ok: true, value: parsed as T }; }
         catch { return unavailable("Planning result could not be read."); }
       }
       await wait(signal);

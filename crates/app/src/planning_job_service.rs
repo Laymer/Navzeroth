@@ -437,6 +437,12 @@ impl PublicationGuard {
         )
     }
 
+    pub(crate) fn valid_from_utc_ms(&self) -> Option<i64> {
+        self.profiles
+            .iter()
+            .filter_map(|(_, _, s)| s.stable_utc.earliest)
+            .max()
+    }
     /// Earliest finite inclusive UTC upper bound retained by the typed guard.
     /// None means no finite bound was inferred, not unlimited usable freshness.
     /// Exporters must also require fresh captures and bound their own lifetime.
@@ -649,6 +655,8 @@ mod tests {
                 revision: DatasetRevision::new("test-v1").unwrap(),
             },
             content_hash: String::new(),
+            evaluation_utc_ms: None,
+            max_age_ms: azeroth_core::types::Millis::new(1_800_000).unwrap(),
         };
         assert_eq!(guard.valid_until_utc_ms(), None);
         let snapshot = demo_snapshot().unwrap();

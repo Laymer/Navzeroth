@@ -1,3 +1,4 @@
+import {SavedPlanCard} from "./SavedPlanCard";
 import {useEffect,useRef,useState} from "react";
 import type {ReferenceClient,ReferenceViewData} from "../commands/reference";
 import {describeObservation} from "../observation";
@@ -18,5 +19,6 @@ export function ReferenceView({client}:{client:Pick<ReferenceClient,"getReferenc
  <dt>Capture age</dt><dd>{describeAge(snapshot.capture_freshness)}</dd><dt>Level</dt><dd>{describeObservation(snapshot.level)}; {describeAge(snapshot.level_freshness)}</dd>
  <dt>Role</dt><dd>{describeObservation(snapshot.role)}; {describeAge(snapshot.role_freshness)}</dd><dt>Location</dt><dd>{describeObservation(snapshot.location,p=>`${p.map.map_id} / floor ${p.map.floor} (${p.x}, ${p.y})`)}; {describeAge(snapshot.location_freshness)}</dd></dl></>}
  <p>This is an ordinary desktop window. Visibility in exclusive fullscreen is unsupported by this experiment; borderless, focus, DPI and multiple-monitor behavior remain unverified. Use the normal desktop reference if this window is unsuitable.</p>
+ {displayed?.current_plan&&!busy&&<SavedPlanCard plan={displayed.current_plan}/>}
  </section>;
 }

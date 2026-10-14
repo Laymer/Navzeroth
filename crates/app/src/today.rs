@@ -44,6 +44,10 @@ pub struct CurrentPlanView {
     pub saved_at_utc_ms: Option<UtcMillis>,
     pub evaluated_at_utc_ms: Option<UtcMillis>,
     pub age_ms: Option<u64>,
+    pub valid_from_utc_ms: Option<UtcMillis>,
+    pub valid_until_utc_ms: Option<UtcMillis>,
+    pub original_step_count: usize,
+    pub summary_truncated: bool,
     pub reason: Option<&'static str>,
     pub summary: Option<PlanSummary>,
 }
@@ -75,13 +79,29 @@ pub(crate) fn plan_view(
             saved_at_utc_ms: None,
             evaluated_at_utc_ms: None,
             age_ms: None,
+            valid_from_utc_ms: None,
+            valid_until_utc_ms: None,
+            original_step_count: 0,
+            summary_truncated: false,
             reason: None,
             summary: None,
         });
     };
+    let selection = store.settings()?.settings.selected_subject;
+    let selection_matches = selection.as_ref() == Some(&plan.guard.subject);
     let mut now = now;
-    let checked = PublicationGuard::restore(store, &plan.guard)
-        .and_then(|guard| guard.validate(store, &mut now));
+    let restored = PublicationGuard::restore(store, &plan.guard);
+    let valid_from_utc_ms = restored
+        .as_ref()
+        .ok()
+        .and_then(|g| g.valid_from_utc_ms())
+        .and_then(|n| UtcMillis::new(n).ok());
+    let valid_until_utc_ms = restored
+        .as_ref()
+        .ok()
+        .and_then(|g| g.valid_until_utc_ms())
+        .and_then(|n| UtcMillis::new(n).ok());
+    let checked = restored.and_then(|guard| guard.validate(store, &mut now));
     // Infrastructure failures are not misrepresented as ordinary historical advice.
     if let Err(e) = &checked {
         if e.code != ErrorCode::SnapshotOutdated {
@@ -95,7 +115,7 @@ pub(crate) fn plan_view(
         .and_then(|d| u64::try_from(d).ok());
     Ok(CurrentPlanView {
         revision: record.revision,
-        state: if checked.is_ok() {
+        state: if checked.is_ok() && selection_matches {
             PlanState::Current
         } else {
             PlanState::Historical
@@ -106,7 +126,15 @@ pub(crate) fn plan_view(
         saved_at_utc_ms: Some(plan.guard.publication_utc_ms),
         evaluated_at_utc_ms: Some(plan.guard.evaluation_utc_ms),
         age_ms,
-        reason: checked.err().map(|_| "dependencies_or_freshness_changed"),
+        valid_from_utc_ms,
+        valid_until_utc_ms,
+        original_step_count: plan.summary.steps.len(),
+        summary_truncated: false,
+        reason: if !selection_matches {
+            Some("selected_subject_differs")
+        } else {
+            checked.err().map(|_| "dependencies_or_freshness_changed")
+        },
         summary: Some(plan.summary),
     })
 }
@@ -206,7 +234,7 @@ impl SnapshotApplication {
                     manual_goal: settings.settings.manual_planning_defaults.goal_profile,
                     current_plan: plan_view(store, || advanced_now(now, started.elapsed()))?,
                 };
-                encode(&view, MAX_DOCUMENT)?;
+                encode(&view, 128 * 1024)?;
                 Ok(view)
             })
         })
