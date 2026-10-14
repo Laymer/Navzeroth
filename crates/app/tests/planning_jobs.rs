@@ -135,3 +135,37 @@ fn foreign_registry_cannot_dispatch_a_ticket() {
     jobs.run(ticket, |_| Ok(1u32));
     assert_eq!(jobs.take_result(&id).unwrap().report_json, "1");
 }
+
+#[test]
+fn simultaneous_completions_obey_terminal_cap_and_evict_by_completion_age() {
+    let jobs = PlanningJobs::default();
+    let oldest_active = jobs.register(PlanningKind::Solo).unwrap();
+    let oldest_active_id = oldest_active.id().to_owned();
+    let mut terminal_ids = Vec::new();
+    for _ in 0..15 {
+        let ticket = jobs.register(PlanningKind::Solo).unwrap();
+        terminal_ids.push(ticket.id().to_owned());
+        jobs.run(ticket, |_| Ok(0u32));
+    }
+    let mut active = Vec::new();
+    for _ in 0..3 {
+        active.push(jobs.register(PlanningKind::Joint).unwrap());
+    }
+    let active_ids: Vec<_> = active.iter().map(|t| t.id().to_owned()).collect();
+    for ticket in active {
+        jobs.run(ticket, |_| Ok(1u32));
+    }
+    assert_eq!(jobs.status(&oldest_active_id).unwrap().state, "queued");
+    jobs.run(oldest_active, |_| Ok(2u32));
+    let retained = terminal_ids
+        .iter()
+        .chain(active_ids.iter())
+        .chain(std::iter::once(&oldest_active_id))
+        .filter(|id| jobs.status(id).is_ok())
+        .count();
+    assert_eq!(retained, MAX_TERMINAL_JOBS);
+    for id in active_ids.iter().chain(std::iter::once(&oldest_active_id)) {
+        assert!(jobs.status(id).unwrap().result_available);
+    }
+    assert!(terminal_ids[..3].iter().all(|id| jobs.status(id).is_err()));
+}
