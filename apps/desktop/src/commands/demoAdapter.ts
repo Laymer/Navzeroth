@@ -103,6 +103,10 @@ export const demoAdapter: CommandAdapter = {
           return [];
         case "get_active_content":
           return null;
+        case "start_planning_job":
+        case "get_planning_job":
+        case "cancel_planning_job":
+        case "take_planning_job_result":
         case "get_joint_planning_catalog":
         case "plan_joint_session":
         case "get_party_plan_proposal":

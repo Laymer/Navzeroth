@@ -1,10 +1,11 @@
+use azeroth_core::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use azeroth_core::{
     contract::Envelope,
     entities::{CharacterSnapshot, Objective, ObjectiveTarget, TravelNode},
     error::{AppError, ErrorCode, Result},
     evaluation::{EvaluationContext, StalePolicy, Truth, evaluate},
     observation::{FreshnessContext, ObservationStatus},
-    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan},
+    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan_controlled},
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     travel::RouteOptions,
     types::*,
@@ -62,11 +63,21 @@ fn invalid(message: &'static str) -> AppError {
     AppError::new(ErrorCode::InvalidInput, message, false)
 }
 pub(crate) fn calculate(
-    mut request: PlanningRequest,
+    request: PlanningRequest,
     snapshot: &Envelope<CharacterSnapshot>,
     content: &ContentRevision,
     clock: &FreshnessContext,
 ) -> Result<PlanningReport> {
+    calculate_controlled(request, snapshot, content, clock, &mut NoopSearchControl)
+}
+pub(crate) fn calculate_controlled(
+    mut request: PlanningRequest,
+    snapshot: &Envelope<CharacterSnapshot>,
+    content: &ContentRevision,
+    clock: &FreshnessContext,
+    control: &mut dyn SearchControl,
+) -> Result<PlanningReport> {
+    control.checkpoint(SearchPhase::ValidateInputs)?;
     if request.candidates.len() > 128 || request.excluded.len() > 128 {
         return Err(invalid(
             "Planning input exceeds 128 candidates or exclusions",
@@ -94,6 +105,7 @@ pub(crate) fn calculate(
     let mut filtered = Vec::new();
     let mut seen = BTreeSet::new();
     for estimate in &request.candidates {
+        control.checkpoint(SearchPhase::CandidateAssessment)?;
         if !seen.insert(&estimate.objective) {
             return Err(invalid("Duplicate planning candidate"));
         }
@@ -110,6 +122,7 @@ pub(crate) fn calculate(
             reason = Some("Objective requires a different participant or a joint fairness model");
         }
         for target in &objective.targets {
+            control.checkpoint(SearchPhase::CandidateAssessment)?;
             match target {
                 ObjectiveTarget::QuestStage { quest, stage } => {
                     let definition = dataset
@@ -187,6 +200,7 @@ pub(crate) fn calculate(
     let values = candidates
         .iter()
         .map(|(estimate, objective, predicate)| {
+            control.checkpoint(SearchPhase::CandidateAssessment)?;
             Ok(Candidate {
                 id: objective.id.clone(),
                 node: estimate.node.clone(),
@@ -214,20 +228,23 @@ pub(crate) fn calculate(
             })
         })
         .collect::<Result<Vec<_>>>()?;
-    let result = plan(&PlannerInput {
-        goal_profile: request.goal_profile.clone(),
-        candidates: &values,
-        excluded: &request.excluded,
-        nodes: &dataset.nodes,
-        edges: &dataset.edges,
-        origin: request.origin.clone(),
-        stopping_node: request.stopping_node.clone(),
-        stopping_service_ms: request.stopping_service_ms,
-        budget_ms: request.budget_ms,
-        max_steps: 32,
-        context: &context,
-        travel_options: &RouteOptions::default(),
-    })?;
+    let result = plan_controlled(
+        &PlannerInput {
+            goal_profile: request.goal_profile.clone(),
+            candidates: &values,
+            excluded: &request.excluded,
+            nodes: &dataset.nodes,
+            edges: &dataset.edges,
+            origin: request.origin.clone(),
+            stopping_node: request.stopping_node.clone(),
+            stopping_service_ms: request.stopping_service_ms,
+            budget_ms: request.budget_ms,
+            max_steps: 32,
+            context: &context,
+            travel_options: &RouteOptions::default(),
+        },
+        control,
+    )?;
     Ok(PlanningReport {
         request,
         fixture: snapshot.fixture,

@@ -32,6 +32,84 @@ async fn blocking<T: Send + 'static>(
         })?
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn start_planning_job(
+    state: State<'_, Application>,
+    kind: azeroth_app::planning_jobs::PlanningKind,
+    text: String,
+) -> Result<azeroth_app::planning_jobs::JobAccepted, AppError> {
+    if text.len() > azeroth_app::planning::MAX_REQUEST_BYTES {
+        return Err(AppError::new(
+            ErrorCode::ImportTooLarge,
+            "Planning request exceeds size limit",
+            false,
+        ));
+    }
+    let host = state.inner().clone();
+    let ticket = host.planning_jobs().register(kind)?;
+    let job_id = ticket.id().to_owned();
+    let _worker = tauri::async_runtime::spawn_blocking(move || {
+        let failed_ticket = ticket.clone();
+        let jobs = host.planning_jobs();
+        let operation = host.with_application(|app| {
+            let guard = std::cell::RefCell::new(
+                None::<azeroth_app::planning_job_service::PublicationGuard>,
+            );
+            jobs.run_guarded(
+                ticket,
+                |control| {
+                    let (report, input_guard) =
+                        app.calculate_planning_job(kind, &text, system_now(), control)?;
+                    *guard.borrow_mut() = Some(input_guard);
+                    Ok(report)
+                },
+                |publish| {
+                    guard
+                        .borrow()
+                        .as_ref()
+                        .ok_or_else(|| {
+                            AppError::new(
+                                ErrorCode::SnapshotOutdated,
+                                "Planning input guard unavailable",
+                                false,
+                            )
+                        })?
+                        .publish(app, system_now(), publish)
+                },
+            );
+            Ok(())
+        });
+        if let Err(error) = operation {
+            jobs.run(failed_ticket, |_| Err::<(), _>(error));
+        }
+    });
+    Ok(azeroth_app::planning_jobs::JobAccepted {
+        job_schema_version: 1,
+        job_id,
+    })
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_planning_job(
+    state: State<'_, Application>,
+    job_id: String,
+) -> Result<azeroth_app::planning_jobs::JobStatus, AppError> {
+    state.planning_jobs().status(&job_id)
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn cancel_planning_job(
+    state: State<'_, Application>,
+    job_id: String,
+) -> Result<(), AppError> {
+    state.planning_jobs().cancel(&job_id)
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn take_planning_job_result(
+    state: State<'_, Application>,
+    job_id: String,
+) -> Result<azeroth_app::planning_jobs::JobResult, AppError> {
+    state.planning_jobs().take_result(&job_id)
+}
+
+#[tauri::command(rename_all = "snake_case")]
 async fn set_session_calibration(
     state: State<'_, Application>,
     profile_id: String,
@@ -432,6 +510,10 @@ pub fn run() {
             atlas_protocol::respond(&request)
         })
         .invoke_handler(tauri::generate_handler![
+            start_planning_job,
+            get_planning_job,
+            cancel_planning_job,
+            take_planning_job_result,
             get_database_status,
             check_database,
             create_database_backup,

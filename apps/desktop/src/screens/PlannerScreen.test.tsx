@@ -1,67 +1,75 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { PlannerScreen } from "./PlannerScreen";
 import { createClient, type CommandAdapter } from "../commands";
+import type { PlanningRequest } from "../commands/contract";
 import fixture from "../../../../fixtures/desktop/planning/synthetic-revision.json";
-
-it("ignores a response after its inputs change and clears results on refresh", async () => {
-  let finish: (value: unknown) => void = () => {};
-  const adapter: CommandAdapter = { invoke: vi.fn((command) => {
+const catalog = { snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: [] };
+function result(request: PlanningRequest) { return { request, result: { selected: [], stopping: { total_ms: 0 }, expected_total_ms: 0 }, assumptions: ["Retained valid estimate"], filtered: [] }; }
+const status = { job_schema_version: 1, job_id: "job-a", kind: "solo", state: "succeeded", cancel_requested: false, phase: "selection", work_units: 5, result_available: true, error: null };
+function fields() { fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-1" } }); }
+it("cancels registration that arrives after input edits and ignores its old result", async () => {
+  let finish: ((value: never) => void) | undefined; const canceled: unknown[] = [];
+  const adapter: CommandAdapter = { invoke(command, input) {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
-    if (command === "get_planning_catalog") return Promise.resolve({ snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: [] } as never);
-    if (command === "plan_session") return new Promise<never>((resolve) => { finish = (value) => resolve(value as never); });
+    if (command === "get_planning_catalog") return Promise.resolve(catalog as never);
+    if (command === "start_planning_job") return new Promise<never>((resolve) => { finish = resolve; });
+    if (command === "cancel_planning_job") { canceled.push(input);return Promise.resolve(null as never); }
     return Promise.reject(new Error("unexpected"));
-  }) };
-  render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);
-  await screen.findByText(/Snapshot: s; revision: r/);
-  fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });
-  fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-1" } });
-  fireEvent.click(screen.getByRole("button", { name: "Plan session" }));
-  fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });
-  finish({});
-  await Promise.resolve();
-  expect(screen.queryByRole("region", { name: "Planning result" })).not.toBeInTheDocument();
+  } };
+  render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button", { name: "Plan session" }));
+  expect(screen.getByRole("button", { name: "Cancel planning" })).toBeEnabled();fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });
+  await act(async () => { finish?.({ job_schema_version: 1, job_id: "job-a" } as never); });
+  expect(canceled).toEqual([{ job_id: "job-a" }]);expect(screen.queryByRole("region", { name: "Planning result" })).not.toBeInTheDocument();expect(screen.queryByLabelText("Planning job progress")).not.toBeInTheDocument();
 });
-
 it("discards route responses when the planning inputs change", async () => {
-  let finish: (value: unknown) => void = () => {};
-  const adapter: CommandAdapter = { invoke: vi.fn((command, input) => {
+  let finish: ((value: never) => void) | undefined; let request: PlanningRequest | undefined;
+  const adapter: CommandAdapter = { invoke(command, input) {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
-    if (command === "get_planning_catalog") return Promise.resolve({ snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: [] } as never);
-    if (command === "plan_session") return Promise.resolve({ request: JSON.parse((input as {text:string}).text), result: {selected: [], stopping: {total_ms:0}, expected_total_ms:0}, assumptions: [], filtered: [] } as never);
-    if (command === "inspect_plan_route") return new Promise<never>((resolve) => { finish = (value) => resolve(value as never); });
+    if (command === "get_planning_catalog") return Promise.resolve(catalog as never);
+    if (command === "start_planning_job") { request = JSON.parse((input as { text: string }).text);return Promise.resolve({ job_schema_version: 1, job_id: "job-a" } as never); }
+    if (command === "get_planning_job") return Promise.resolve(status as never);
+    if (command === "take_planning_job_result" && request) return Promise.resolve({ job_schema_version: 1, job_id: "job-a", kind: "solo", report_json: JSON.stringify(result(request)) } as never);
+    if (command === "inspect_plan_route") return new Promise<never>((resolve) => { finish = resolve; });
     return Promise.reject(new Error("unexpected"));
-  }) };
-  render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);
-  await screen.findByText(/Snapshot: s; revision: r/);
-  fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });
-  fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-1" } });
-  fireEvent.click(screen.getByRole("button", { name: "Plan session" }));
-  fireEvent.click(await screen.findByRole("button", { name: "Inspect route" }));
-  fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });
-  finish({});
-  expect(screen.queryByRole("region", { name: "Route inspection" })).toBeNull();
+  } };
+  render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button", { name: "Plan session" }));fireEvent.click(await screen.findByRole("button", { name: "Inspect route" }));fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });await act(async () => { finish?.({} as never); });expect(screen.queryByRole("region", { name: "Route inspection" })).toBeNull();
 });
-
 it("preserves same-profile manual planning inputs during routine refresh", async () => {
   const client = createClient({ invoke: vi.fn((command) => {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
-    if (command === "get_planning_catalog") return Promise.resolve({ snapshot_id: "s", revision: "r", fixture: true, nodes: fixture.envelope.payload.nodes, objectives: fixture.envelope.payload.objectives } as never);
+    if (command === "get_planning_catalog") return Promise.resolve({ ...catalog, objectives: fixture.envelope.payload.objectives } as never);
     return Promise.reject(new Error("unexpected"));
   }) });
-  const view = render(<PlannerScreen client={client} refreshKey={0} />);
-  await screen.findByText(/Snapshot: s; revision: r/);
-  fireEvent.change(screen.getByLabelText("Origin"), { target: { value: "demo-node-1" } });
-  fireEvent.change(screen.getByLabelText("Stopping node"), { target: { value: "demo-node-2" } });
-  fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });
-  fireEvent.click(screen.getByLabelText("Consider objective"));
-  fireEvent.change(screen.getByLabelText("utility"), { target: { value: "42" } });
-  view.rerender(<PlannerScreen client={client} refreshKey={1} />);
-  await screen.findByText(/Snapshot: s; revision: r/);
-  expect(screen.getByLabelText("Consider objective")).toBeChecked();
-  expect(screen.getByLabelText("utility")).toHaveValue(42);
-  expect(screen.getByLabelText("Objective node")).toHaveValue("");
-  expect(screen.getByLabelText("Origin")).toHaveValue("demo-node-1");
-  expect(screen.getByLabelText("Stopping node")).toHaveValue("demo-node-2");
-  expect(screen.getByLabelText("Budget (ms)")).toHaveValue(5000);
+  const view = render(<PlannerScreen client={client} refreshKey={0} />);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.change(screen.getByLabelText("Budget (ms)"), { target: { value: "5000" } });fireEvent.click(screen.getByLabelText("Consider objective"));fireEvent.change(screen.getByLabelText("utility"), { target: { value: "42" } });view.rerender(<PlannerScreen client={client} refreshKey={1} />);await screen.findByText(/Snapshot: s; revision: r/);
+  expect(screen.getByLabelText("Consider objective")).toBeChecked();expect(screen.getByLabelText("utility")).toHaveValue(42);expect(screen.getByLabelText("Objective node")).toHaveValue("");expect(screen.getByLabelText("Origin")).toHaveValue("demo-node-1");expect(screen.getByLabelText("Budget (ms)")).toHaveValue(5000);
+});
+it("retains the previous valid same-input estimate on cancel and ordinary failure but clears stale publication", async () => {
+  let request: PlanningRequest | undefined; let mode: "success" | "running" | "failed" | "stale" = "success"; const canceled: unknown[] = [];
+  const adapter: CommandAdapter = { invoke(command, input) {
+    if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
+    if (command === "get_planning_catalog") return Promise.resolve(catalog as never);
+    if (command === "start_planning_job") { request = JSON.parse((input as { text: string }).text);return Promise.resolve({ job_schema_version: 1, job_id: "job-a" } as never); }
+    if (command === "get_planning_job") return Promise.resolve({ ...status, state: mode === "success" ? "succeeded" : mode === "running" ? "running" : "failed", error: mode === "failed" || mode === "stale" ? { code: mode === "stale" ? "SNAPSHOT_OUTDATED" : "PROVIDER_UNAVAILABLE", message: mode === "stale" ? "Snapshot changed" : "Work unavailable", retryable: false } : null } as never);
+    if (command === "take_planning_job_result" && request) return Promise.resolve({ job_schema_version: 1, job_id: "job-a", kind: "solo", report_json: JSON.stringify(result(request)) } as never);
+    if (command === "cancel_planning_job") { canceled.push(input);return Promise.resolve(null as never); }
+    return Promise.reject(new Error("unexpected"));
+  } };
+  render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button", { name: "Plan session" }));await screen.findByText("Retained valid estimate");
+  mode = "running";fireEvent.click(screen.getByRole("button", { name: "Plan session" }));await screen.findByText(/running; selection; 5 work units/);expect(screen.getByText("Retained valid estimate")).toBeInTheDocument();fireEvent.click(screen.getByRole("button", { name: "Cancel planning" }));await waitFor(() => expect(canceled).toEqual([{ job_id: "job-a" }]));expect(screen.getByText("Retained valid estimate")).toBeInTheDocument();
+  mode = "failed";fireEvent.click(screen.getByRole("button", { name: "Plan session" }));await screen.findByText("Work unavailable");expect(screen.getByText("Retained valid estimate")).toBeInTheDocument();
+  mode = "stale";fireEvent.click(screen.getByRole("button", { name: "Plan session" }));await screen.findByText("Snapshot changed");expect(screen.queryByRole("region", { name: "Planning result" })).not.toBeInTheDocument();
+});
+it("profile changes abort running work and ignore late progress; navigation aborts a pending registration", async () => {
+  let finishStatus: ((value: never) => void) | undefined; let finishStart: ((value: never) => void) | undefined; let delayedStart = false; const canceled: unknown[] = [];
+  const adapter: CommandAdapter = { invoke(command, input) {
+    if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "One" }, { id: "q", display_name: "Two" }] as never);
+    if (command === "get_planning_catalog") return Promise.resolve(catalog as never);
+    if (command === "start_planning_job") return delayedStart ? new Promise<never>((resolve) => { finishStart = resolve; }) : Promise.resolve({ job_schema_version: 1, job_id: "job-a" } as never);
+    if (command === "get_planning_job") return new Promise<never>((resolve) => { finishStatus = resolve; });
+    if (command === "cancel_planning_job") { canceled.push(input);return Promise.resolve(null as never); }
+    return Promise.reject(new Error("unexpected"));
+  } };
+  const view = render(<PlannerScreen client={createClient(adapter)} refreshKey={0} />);await screen.findByText(/Snapshot: s; revision: r/);fields();fireEvent.click(screen.getByRole("button", { name: "Plan session" }));await waitFor(() => expect(finishStatus).toBeDefined());fireEvent.change(screen.getByLabelText("Planning profile"), { target: { value: "q" } });
+  await act(async () => { finishStatus?.({ ...status, state: "running", work_units: 999 } as never); });expect(screen.queryByText(/999 work units/)).not.toBeInTheDocument();await screen.findByText(/Snapshot: s; revision: r/);fields();delayedStart = true;fireEvent.click(screen.getByRole("button", { name: "Plan session" }));view.unmount();await act(async () => { finishStart?.({ job_schema_version: 1, job_id: "job-b" } as never); });expect(canceled).toEqual([{ job_id: "job-a" }, { job_id: "job-b" }]);
 });

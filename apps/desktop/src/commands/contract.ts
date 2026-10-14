@@ -265,6 +265,10 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  start_planning_job: { input: { kind: import("./planningJobs").PlanningKind; text: string }; output: { job_schema_version: 1; job_id: string } };
+  get_planning_job: { input: { job_id: string }; output: import("./planningJobs").PlanningJobStatus & { job_schema_version: 1 } };
+  cancel_planning_job: { input: { job_id: string }; output: null };
+  take_planning_job_result: { input: { job_id: string }; output: import("./planningJobs").PlanningJobResult & { job_schema_version: 1 } };
   get_database_status: { input: undefined; output: DatabaseStatus };
   check_database: { input: undefined; output: null };
   create_database_backup: { input: { path: string }; output: null };
