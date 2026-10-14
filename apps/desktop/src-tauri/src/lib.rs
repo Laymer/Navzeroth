@@ -570,6 +570,8 @@ pub fn run() {
         .manage(reference_window::Controller::default())
         .invoke_handler({
             let generated: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+                preview_acquisition_route,
+                assess_route_acquisition,
                 preview_diagnostics,
                 export_diagnostics,
                 get_reference_view,
@@ -771,4 +773,25 @@ async fn set_reference_window(
         )
     })?;
     reference_window::set(&app, visible, always_on_top)
+}
+
+#[tauri::command]
+async fn preview_acquisition_route(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::route_acquisition::RouteAcquisitionBaseline, AppError> {
+    observed_blocking(state, DiagnosticOperation::Planning, move |app| {
+        app.preview_acquisition_route(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
+async fn assess_route_acquisition(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::route_acquisition::RouteAcquisitionReport, AppError> {
+    blocking(state, move |app| {
+        app.assess_route_acquisition(&text, system_now())
+    })
+    .await
 }

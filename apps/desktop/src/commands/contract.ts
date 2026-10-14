@@ -270,6 +270,8 @@ export interface CommandMap {
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
   get_reference_window_state: {input:undefined;output:import("./reference").ReferenceWindowState};
   set_reference_window: {input:{visible:boolean;always_on_top:boolean};output:import("./reference").ReferenceWindowState};
+  preview_acquisition_route: { input: { text: string }; output: import("./routeAcquisition").RouteAcquisitionBaseline };
+  assess_route_acquisition: { input: { text: string }; output: import("./routeAcquisition").RouteAcquisitionReport };
   preview_diagnostics: { input: undefined; output: import("./diagnostics").DiagnosticReport };
   export_diagnostics: { input: { path: string }; output: import("./diagnostics").DiagnosticReceipt };
   start_planning_job: { input: { kind: import("./planningJobs").PlanningKind; text: string }; output: { job_schema_version: 1; job_id: string } };
