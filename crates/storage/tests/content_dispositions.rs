@@ -286,3 +286,68 @@ fn activated_fallback_does_not_cross_build_or_fixture_scope_and_rollback_refuses
         foreign.key()
     );
 }
+#[test]
+fn backup_restore_preserves_restrictions_counters_and_activation_history() {
+    let db = TempDb::new("disposition-backup");
+    let backup = TempDb::new("disposition-copy");
+    let target = TempDb::new("disposition-restored");
+    let mut s = SqliteStore::open(&db.path).unwrap();
+    let a = stage(&mut s, "a");
+    let b = stage(&mut s, "b");
+    s.activate_content_revision(&a.key()).unwrap();
+    s.activate_content_revision(&b.key()).unwrap();
+    change(&mut s, &b, DispositionState::Quarantined);
+    let before = s.list_content_dispositions(&a.key().scope).unwrap();
+    validate_content_dispositions(&raw(&db.path)).unwrap();
+    s.backup_to(&backup.path).unwrap();
+    azeroth_storage::recovery::reconstruct_backup(&backup.path, &target.path).unwrap();
+    let restored = SqliteStore::open(&target.path).unwrap();
+    assert_eq!(
+        restored.list_content_dispositions(&a.key().scope).unwrap(),
+        before
+    );
+    validate_content_dispositions(&raw(&target.path)).unwrap();
+    assert_eq!(
+        restored
+            .active_content_revision(&a.key().scope)
+            .unwrap()
+            .unwrap()
+            .key(),
+        a.key()
+    );
+    assert!(restored.usable_content_revision(&b.key()).is_err());
+}
+#[test]
+fn recovery_validator_refuses_blocked_active_and_missing_disposition_rows() {
+    let db = TempDb::new("disposition-validator");
+    let mut s = SqliteStore::open(&db.path).unwrap();
+    let a = stage(&mut s, "a");
+    s.activate_content_revision(&a.key()).unwrap();
+    let conn = raw(&db.path);
+    conn.execute("UPDATE content_dispositions SET state='quarantined',state_revision=2,reason_code='operator_review'",[]).unwrap();
+    assert!(validate_content_dispositions(&conn).is_err());
+    conn.execute("DELETE FROM content_dispositions", [])
+        .unwrap();
+    assert!(validate_content_dispositions(&conn).is_err());
+}
+#[test]
+fn ambiguous_activation_history_never_invents_most_recent_fallback() {
+    let db = TempDb::new("disposition-order-tie");
+    let mut s = SqliteStore::open(&db.path).unwrap();
+    let a = stage(&mut s, "a");
+    let b = stage(&mut s, "b");
+    let c = stage(&mut s, "c");
+    for r in [&a, &b, &c] {
+        s.activate_content_revision(&r.key()).unwrap();
+    }
+    let conn = raw(&db.path);
+    conn.execute("UPDATE content_dispositions SET last_activated_order=1 WHERE revision_id=(SELECT id FROM dataset_revisions WHERE revision='b')",[]).unwrap();
+    assert!(validate_content_dispositions(&conn).is_err());
+    let out = change(&mut s, &c, DispositionState::Quarantined);
+    assert!(out.active.is_none());
+    assert!(!out.fallback_applied);
+    assert_eq!(
+        s.content_disposition(&c.key()).unwrap().unwrap().state,
+        DispositionState::Quarantined
+    );
+}

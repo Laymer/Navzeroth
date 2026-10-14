@@ -174,6 +174,14 @@ fn read_checked(
     validate(&d)?;
     Ok(d)
 }
+fn unique_order(conn: &Connection, d: &ContentDisposition) -> Result<bool> {
+    let Some(order) = d.last_activated_order else {
+        return Ok(true);
+    };
+    let scope = &d.key.scope;
+    let count:i64=conn.query_row("SELECT count(*) FROM content_dispositions d JOIN dataset_revisions r ON r.id=d.revision_id WHERE r.edition=?1 AND r.build=?2 AND r.interface=?3 AND r.namespace=?4 AND r.is_fixture=?5 AND d.last_activated_order=?6",params![scope.context.build.edition.as_str(),scope.context.build.build.as_str(),scope.context.build.interface.as_str(),content::namespace(scope),scope.fixture,order as i64],|row|row.get(0)).db()?;
+    Ok(count == 1)
+}
 pub(crate) fn ensure_eligible(conn: &Connection, id: i64) -> Result<ContentDisposition> {
     let d = read(conn, id)?;
     if d.state != DispositionState::Eligible {
@@ -311,6 +319,9 @@ impl SqliteStore {
                     Err(content::LoadFailure::Invalid(_)) => continue,
                     Err(content::LoadFailure::Database(e)) => return Err(e),
                 };
+                if !unique_order(&tx, &d)? {
+                    continue;
+                }
                 if d.state != DispositionState::Eligible
                     || d.key.scope != *scope
                     || revision.key() != d.key
@@ -362,6 +373,9 @@ pub fn validate_content_dispositions(conn: &Connection) -> Result<()> {
         .db()?;
     for id in ids {
         let d = read(conn, id)?;
+        if !unique_order(conn, &d)? {
+            return Err(storage("Content activation history is ambiguous"));
+        }
         if content::load(conn, id)?.key() != d.key {
             return Err(storage("Content disposition identity disagrees"));
         }
