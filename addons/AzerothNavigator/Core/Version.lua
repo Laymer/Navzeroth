@@ -2,7 +2,7 @@
 local _, ns = ...
 
 ns.provide("Version", {
-  addon = "0.3.0",
+  addon = "0.4.0",
   -- Diagnostic export format. This is NOT an ANAV1 envelope and NOT a contract kind.
   format = "anav-diagnostic",
   format_version = 1,

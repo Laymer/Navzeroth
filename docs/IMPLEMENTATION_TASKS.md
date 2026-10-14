@@ -36,7 +36,7 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M3.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.1 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M4.3 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
+| M4.3 | IN_PROGRESS | Greedy baseline exists; automatic compatible objective clustering is dependency-ready engineering work. |
 | M4.4 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M4.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
@@ -44,7 +44,7 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M5.1 | IMPLEMENTED_UNVERIFIED | Structure/arithmetic exists; real four-scenario models/weights remain missing. |
 | M5.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M5.3 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M5.4 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
+| M5.4 | IN_PROGRESS | Acquisition services exist; planner currently rejects acquisition targets and travel effort is manual. Route integration remains ready. |
 | M5.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M5.6 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M5.7 | IMPLEMENTED_UNVERIFIED | Synthetic Rust/Lua parity exists; representative real changes need input/evidence. |
@@ -54,17 +54,17 @@ Section 16.2 redacted desktop diagnostics is additional dependency-ready work.
 | M6.4 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
 | M6.5 | IMPLEMENTED_UNVERIFIED | Demo/reference geography implemented; real route/geography/license/calibration acceptance remains scoped. |
 | M6.6 | TODO | Next batch: dense atlas accessibility/scaling/performance. |
-| M7.1 | IN_PROGRESS | Worker B: persist reminder controls and expose desktop workflow. |
-| M7.2 | TODO | Worker B: evidence-gated rules; missing-input checklist alternatives. |
-| M7.3 | IN_PROGRESS | Worker A: joint planning beyond existing party eligibility. |
+| M7.1 | IMPLEMENTED_UNVERIFIED | Persisted guarded desktop controls and deduplication delivered in PR59; live delivery remains unverified. |
+| M7.2 | IMPLEMENTED_UNVERIFIED | Evidence delivery gates/manual checklist delivered in PR63; real category rules require missing records/observations. |
+| M7.3 | IMPLEMENTED_UNVERIFIED | Manual joint planning with all-member readiness, exclusions and fairness delivered in PR62; real workflow remains unverified. |
 | M7.4 | DEFERRED_WITH_REASON | Requires verified party addon-message capability and limits. |
-| M7.5 | TODO | Worker A: explicit proposals/acceptance and divergence. |
+| M7.5 | IMPLEMENTED_UNVERIFIED | Local CAS proposals/explicit acceptance and divergence delivered in PR64; remote consent and game messaging are not claimed. |
 | M7.6 | BLOCKED | Verified Forever Deadmines records missing; independent preparation UI may proceed. |
 | M7.7 | BLOCKED | Complete paladin/mage live workflow evidence missing. |
 | M8.1 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M8.2 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
 | M8.3 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M8.4 | IN_PROGRESS | Worker C: conservative reproducible comparison/calibration. |
+| M8.4 | IMPLEMENTED_UNVERIFIED | Conditional complete-session comparison/calibration delivered in PR61; real complete samples and native interaction missing. |
 | M8.5 | DEFERRED_WITH_REASON | Requires real permitted combat-log format and intended-use verification. |
 | M9.1 | TODO | Next batch: consolidate compatibility/coverage evidence. |
 | M9.2 | TODO | Next batch: audit recovery/backup/uninstall gaps. |
@@ -97,3 +97,17 @@ Launch all dependency-ready tasks in three-worker batches with separate PRs.
 When only external prerequisites remain, stop with explicit unblock requirements.
 No release is created for an unchanged blocker ledger. Historical handoffs remain
 immutable evidence; this current ledger does not erase their actual results.
+
+## Dependency-ready engineering follow-ups found during wave4 review
+
+- M4.5/M7.5: participant-scoped export of agreed joint plans through bounded v1 transport.
+- M3 pipeline / section19.3: doctor, deterministic build-content/verify-pack and bounded replay commands.
+- M9.3: measured fixtures and cooperative cancellation; compute outside shared store lock with publication guards.
+- M9.2: expose existing valid online backup through explicit restore/integrity/recovery workflows.
+- Section12.1: Today selected-party/goal/current-plan summary and Settings are incomplete.
+- Section16.2: explicit bounded allowlisted diagnostic export remains missing.
+- M7.6: evidence-gap preparation infrastructure can proceed; verified Deadmines package stays blocked.
+
+These gaps remain actionable; existing foundations and synthetic tests do not prove
+full implementation-plan completion. The next batch is scheduled after v0.4.0
+publication; every task retains a separate claim, branch, PR and release audit.
