@@ -14,7 +14,7 @@ use azeroth_core::{
     types::*,
 };
 use azeroth_storage::content::ContentRevision;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::collections::BTreeSet;
 pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
 #[derive(Clone, Debug, Serialize)]
@@ -25,29 +25,7 @@ pub struct PlanningCatalog {
     pub nodes: Vec<TravelNode>,
     pub objectives: Vec<Objective>,
 }
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct CandidateEstimate {
-    pub objective: ObjectiveId,
-    pub node: NodeId,
-    pub utility: u32,
-    pub completion_ms: Millis,
-    pub service_ms: Millis,
-}
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct PlanningRequest {
-    pub profile_id: String,
-    pub snapshot_id: SnapshotId,
-    pub revision: DatasetRevision,
-    pub goal_profile: SourceId,
-    pub origin: NodeId,
-    pub stopping_node: NodeId,
-    pub budget_ms: Millis,
-    pub stopping_service_ms: Millis,
-    pub candidates: Vec<CandidateEstimate>,
-    pub excluded: BTreeSet<ObjectiveId>,
-}
+pub use azeroth_storage::today::{CandidateEstimate, PlanningRequest};
 #[derive(Clone, Debug, Serialize)]
 pub struct FilteredCandidate {
     pub objective: ObjectiveId,

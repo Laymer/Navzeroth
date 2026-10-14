@@ -27,6 +27,8 @@ pub struct ReferenceView {
     pub schema_version: u32,
     pub app_version: &'static str,
     pub snapshot: Option<ReferenceSnapshot>,
+    pub current_plan: Option<crate::today::CurrentPlanView>,
+    pub accessibility: Option<azeroth_storage::today::Accessibility>,
 }
 pub fn build(
     snapshot: Option<&Envelope<CharacterSnapshot>>,
@@ -35,6 +37,8 @@ pub fn build(
     let view = ReferenceView {
         schema_version: 1,
         app_version: env!("CARGO_PKG_VERSION"),
+        current_plan: None,
+        accessibility: None,
         snapshot: snapshot.map(|s| ReferenceSnapshot {
             character: s.payload.character.clone(),
             snapshot_id: s.payload.id.clone(),
@@ -49,6 +53,10 @@ pub fn build(
             location_freshness: freshness(s.payload.location.metadata(), clock),
         }),
     };
+    validate_bound(&view)?;
+    Ok(view)
+}
+pub(crate) fn validate_bound(view: &ReferenceView) -> Result<()> {
     struct Counter(usize);
     impl std::io::Write for Counter {
         fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
@@ -62,14 +70,14 @@ pub fn build(
             Ok(())
         }
     }
-    serde_json::to_writer(Counter(0), &view).map_err(|_| {
+    serde_json::to_writer(Counter(0), view).map_err(|_| {
         AppError::new(
             ErrorCode::ImportTooLarge,
             "Reference metadata exceeds limit",
             false,
         )
     })?;
-    Ok(view)
+    Ok(())
 }
 /// Actual native properties; frontend requested preferences are not observations.
 #[derive(Clone, Debug, Serialize)]

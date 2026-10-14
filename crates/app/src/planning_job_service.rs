@@ -29,11 +29,15 @@ pub enum PlanningJobReport {
     Solo(PlanningReport),
     Joint(JointPlanningReport),
 }
+#[derive(Clone)]
 pub struct PublicationGuard {
     party: Option<PartyId>,
     profiles: Vec<(ProfileKey, Sha256Hex, ObservationSignature)>,
     content: ContentRevisionKey,
     content_hash: String,
+    disposition: Option<azeroth_storage::content_dispositions::DispositionGuard>,
+    evaluation_utc_ms: Option<UtcMillis>,
+    max_age_ms: azeroth_core::types::Millis,
 }
 // Snapshot maps are bounded by the core, and imported snapshots by bytes. This
 // additional count cap bounds signature allocation even for constructed values.
@@ -49,7 +53,7 @@ enum ObservationClass {
     Unavailable(ObservationStatus),
     Known(FreshnessClass),
 }
-#[derive(Default)]
+#[derive(Default, Clone)]
 struct StableUtcRange {
     earliest: Option<i64>,
     latest: Option<i64>,
@@ -101,6 +105,7 @@ impl StableUtcRange {
         })
     }
 }
+#[derive(Clone)]
 struct ObservationSignature {
     classes: Vec<ObservationClass>,
     stable_utc: StableUtcRange,
@@ -223,13 +228,33 @@ impl PublicationGuard {
                 .collect::<Result<_>>()?,
             content: content.key(),
             content_hash: content_hash(content)?,
+            disposition: None,
+            evaluation_utc_ms: clock.now_utc_ms,
+            max_age_ms: clock.max_age_ms,
         })
+    }
+    pub(crate) fn bind_disposition(
+        mut self,
+        guard: azeroth_storage::content_dispositions::DispositionGuard,
+    ) -> Result<Self> {
+        if guard.key != self.content {
+            return Err(outdated());
+        }
+        self.disposition = Some(guard);
+        Ok(self)
     }
     pub(crate) fn validate(
         &self,
         store: &SqliteStore,
         mut publication_now: impl FnMut() -> Option<UtcMillis>,
     ) -> Result<()> {
+        let disposition = self.disposition.as_ref().ok_or_else(outdated)?;
+        if let Err(e) = store.validate_usable_content_guard(disposition) {
+            if e.code == ErrorCode::StorageError {
+                return Err(e);
+            }
+            return Err(outdated());
+        }
         if let Some(id) = &self.party {
             let party = store.party(id)?.ok_or_else(outdated)?;
             if party.participants
@@ -281,6 +306,175 @@ impl PublicationGuard {
         }
         Ok(())
     }
+    /// Compact server-owned intent; no observations or report serialization retained.
+    pub fn pin_descriptor(
+        &self,
+        report: &PlanningJobReport,
+        publication_now: Option<UtcMillis>,
+    ) -> Result<azeroth_storage::today::PlanDescriptor> {
+        use azeroth_storage::today::*;
+        let (kind, request_json, subject, snapshot_ids, plan) = match report {
+            PlanningJobReport::Solo(r) => (
+                PlanKind::Solo,
+                encode(&r.request, MAX_REQUEST)?,
+                Subject::Character {
+                    profile_id: r.request.profile_id.clone(),
+                },
+                std::collections::BTreeMap::from([(
+                    r.request.profile_id.clone(),
+                    r.request.snapshot_id.clone(),
+                )]),
+                &r.result,
+            ),
+            PlanningJobReport::Joint(r) => (
+                PlanKind::Joint,
+                encode(&r.request, MAX_REQUEST)?,
+                Subject::Party {
+                    party_id: r.request.party_id.clone(),
+                },
+                r.request
+                    .participants
+                    .iter()
+                    .map(|p| (p.profile_id.clone(), p.snapshot_id.clone()))
+                    .collect(),
+                &r.result.plan,
+            ),
+        };
+        if snapshot_ids.len() != self.profiles.len() {
+            return Err(outdated());
+        }
+        let descriptor = PlanDescriptor {
+            kind,
+            request_json,
+            guard: GuardDescriptor {
+                schema_version: 1,
+                provenance: PlanProvenance::LocalGuardedSuccess,
+                subject,
+                profiles: self
+                    .profiles
+                    .iter()
+                    .map(|(key, hash, _)| {
+                        let profile_id = crate::snapshots::profile_id(key)?;
+                        let snapshot_id = snapshot_ids
+                            .get(&profile_id)
+                            .cloned()
+                            .ok_or_else(outdated)?;
+                        Ok(SavedProfile {
+                            profile_id,
+                            key: key.clone(),
+                            snapshot_id,
+                            snapshot_hash: hash.clone(),
+                        })
+                    })
+                    .collect::<Result<_>>()?,
+                content: self.content.clone(),
+                content_hash: azeroth_core::types::Sha256Hex::new(self.content_hash.clone())?,
+                content_disposition: self.disposition.clone().ok_or_else(outdated)?,
+                evaluation_utc_ms: self.evaluation_utc_ms.ok_or_else(outdated)?,
+                publication_utc_ms: publication_now.ok_or_else(outdated)?,
+                max_age_ms: self.max_age_ms,
+                ruleset_version: crate::plan_export::RULESET_VERSION.into(),
+                model_version: crate::plan_export::MODEL_VERSION.into(),
+            },
+            summary: PlanSummary {
+                schema_version: 1,
+                goal_profile: plan.goal_profile.clone(),
+                steps: plan
+                    .selected
+                    .iter()
+                    .map(|c| {
+                        // Original request is the authority for declared objective node.
+                        let node = match report {
+                            PlanningJobReport::Solo(r) => r
+                                .request
+                                .candidates
+                                .iter()
+                                .find(|e| e.objective == c.candidate)
+                                .map(|e| e.node.clone()),
+                            PlanningJobReport::Joint(r) => r
+                                .request
+                                .candidates
+                                .iter()
+                                .find(|e| e.objective == c.candidate)
+                                .map(|e| e.node.clone()),
+                        }
+                        .ok_or_else(outdated)?;
+                        Ok(SavedStep {
+                            objective: c.candidate.clone(),
+                            node,
+                            completion_ms: c.completion_ms,
+                            service_ms: c.service_ms,
+                            expected_session_ms: c.expected_session_ms,
+                        })
+                    })
+                    .collect::<Result<_>>()?,
+                expected_total_ms: plan.expected_total_ms,
+                termination: match plan.termination {
+                    azeroth_core::planner::Termination::NoFeasibleCandidate => {
+                        SavedTermination::NoFeasibleCandidate
+                    }
+                    azeroth_core::planner::Termination::StepLimit => SavedTermination::StepLimit,
+                },
+            },
+        };
+        descriptor.validate()?;
+        Ok(descriptor)
+    }
+    /// Reconstruct the original typed classes without retaining raw snapshots.
+    pub(crate) fn restore(
+        store: &SqliteStore,
+        descriptor: &azeroth_storage::today::GuardDescriptor,
+    ) -> Result<Self> {
+        if descriptor.provenance != azeroth_storage::today::PlanProvenance::LocalGuardedSuccess
+            || descriptor.ruleset_version != crate::plan_export::RULESET_VERSION
+            || descriptor.model_version != crate::plan_export::MODEL_VERSION
+            || descriptor.max_age_ms != context(Some(descriptor.evaluation_utc_ms)).max_age_ms
+        {
+            return Err(outdated());
+        }
+        let content = store
+            .active_content_revision(&descriptor.content.scope)?
+            .ok_or_else(outdated)?;
+        if content.key() != descriptor.content
+            || content_hash(&content)? != descriptor.content_hash.as_str()
+        {
+            return Err(outdated());
+        }
+        let snapshots = descriptor
+            .profiles
+            .iter()
+            .map(|p| {
+                if crate::snapshots::profile_id(&p.key)? != p.profile_id {
+                    return Err(outdated());
+                }
+                let s = store.current_snapshot(&p.key)?.ok_or_else(outdated)?;
+                if s.payload.id != p.snapshot_id
+                    || azeroth_storage::snapshot_content_hash(&s)? != p.snapshot_hash
+                {
+                    return Err(outdated());
+                }
+                Ok(s)
+            })
+            .collect::<Result<Vec<_>>>()?;
+        let party = match &descriptor.subject {
+            azeroth_storage::today::Subject::Party { party_id } => Some(party_id.clone()),
+            _ => None,
+        };
+        Self::new(
+            party,
+            &snapshots,
+            &content,
+            &context(Some(descriptor.evaluation_utc_ms)),
+        )?
+        .bind_disposition(descriptor.content_disposition.clone())
+    }
+
+    pub(crate) fn valid_from_utc_ms(&self) -> Option<i64> {
+        self.profiles
+            .iter()
+            .filter_map(|(_, _, s)| s.stable_utc.earliest)
+            .max()
+    }
     /// Earliest finite inclusive UTC upper bound retained by the typed guard.
     /// None means no finite bound was inferred, not unlimited usable freshness.
     /// Exporters must also require fresh captures and bound their own lifetime.
@@ -319,36 +513,24 @@ impl SnapshotApplication {
         control.checkpoint(SearchPhase::ValidateInputs)?;
         match kind {
             PlanningKind::Solo => {
-                self.with_planning(text, now, |request, snapshot, content, clock| {
+                self.with_planning_guarded(text, now, |request, snapshot, content, clock, guard| {
                     control.checkpoint(SearchPhase::ValidateInputs)?;
-                    let guard = PublicationGuard::new(
-                        None,
-                        std::slice::from_ref(snapshot),
-                        content,
-                        clock,
-                    )?;
                     let report = crate::planning::calculate_controlled(
                         request, snapshot, content, clock, control,
                     )?;
-                    Ok((PlanningJobReport::Solo(report), guard))
+                    Ok((PlanningJobReport::Solo(report), guard.clone()))
                 })
             }
-            PlanningKind::Joint => self.with_joint_planning_controlled(
+            PlanningKind::Joint => self.with_joint_planning_guarded(
                 text,
                 now,
                 control,
-                |request, catalog, snapshots, content, control| {
+                |request, catalog, snapshots, content, control, guard| {
                     control.checkpoint(SearchPhase::ParticipantReadiness)?;
-                    let guard = PublicationGuard::new(
-                        Some(request.party_id.clone()),
-                        &snapshots,
-                        content,
-                        &context(now),
-                    )?;
                     let report = crate::joint_planning::calculate_controlled(
                         request, catalog, snapshots, content, now, control,
                     )?;
-                    Ok((PlanningJobReport::Joint(report), guard))
+                    Ok((PlanningJobReport::Joint(report), guard.clone()))
                 },
             ),
         }
@@ -365,7 +547,7 @@ mod tests {
     #[test]
     fn final_clock_after_class_walk_rejects_expiry_and_newly_usable_fields() {
         const NOW: i64 = 1791792000000;
-        for observed in [NOW - 1_799_950, NOW + 50] {
+        for observed in [NOW - 1_790_000, NOW + 10000] {
             let app = SnapshotApplication::in_memory().unwrap();
             let now = UtcMillis::new(NOW).unwrap();
             let mut snapshot: Value = serde_json::from_str(include_str!(
@@ -398,7 +580,7 @@ mod tests {
                     &mut NoopSearchControl,
                 )
                 .unwrap();
-            let mut samples = [Some(now), Some(UtcMillis::new(NOW + 100).unwrap())].into_iter();
+            let mut samples = [Some(now), Some(UtcMillis::new(NOW + 20000).unwrap())].into_iter();
             let error = app
                 .with_store_mut(|store| guard.validate(store, || samples.next().unwrap()))
                 .unwrap_err();
@@ -493,6 +675,9 @@ mod tests {
                 revision: DatasetRevision::new("test-v1").unwrap(),
             },
             content_hash: String::new(),
+            disposition: None,
+            evaluation_utc_ms: None,
+            max_age_ms: azeroth_core::types::Millis::new(1_800_000).unwrap(),
         };
         assert_eq!(guard.valid_until_utc_ms(), None);
         let snapshot = demo_snapshot().unwrap();

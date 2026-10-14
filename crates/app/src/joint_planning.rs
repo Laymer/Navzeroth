@@ -17,7 +17,7 @@ use azeroth_storage::{
     SnapshotStore, SqliteStore,
     content::{ContentRevision, ContentScope},
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 #[derive(Clone, Debug, Serialize)]
 pub struct JointMember {
@@ -35,36 +35,7 @@ pub struct JointPlanningCatalog {
     pub nodes: Vec<TravelNode>,
     pub objectives: Vec<Objective>,
 }
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct JointParticipantInput {
-    pub profile_id: String,
-    pub snapshot_id: SnapshotId,
-}
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct JointEstimate {
-    pub objective: ObjectiveId,
-    pub node: NodeId,
-    /// Explicit same-unit contributions; every member must have positive utility.
-    pub utilities: BTreeMap<String, u32>,
-    pub completion_ms: Millis,
-    pub service_ms: Millis,
-}
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct JointPlanningRequest {
-    pub party_id: PartyId,
-    pub participants: Vec<JointParticipantInput>,
-    pub revision: DatasetRevision,
-    pub goal_profile: SourceId,
-    pub origin: NodeId,
-    pub stopping_node: NodeId,
-    pub budget_ms: Millis,
-    pub stopping_service_ms: Millis,
-    pub candidates: Vec<JointEstimate>,
-    pub excluded: BTreeSet<ObjectiveId>,
-}
+pub use azeroth_storage::today::{JointEstimate, JointParticipantInput, JointPlanningRequest};
 #[derive(Clone, Debug, Serialize)]
 pub struct JointFilteredCandidate {
     pub objective: ObjectiveId,
@@ -198,6 +169,29 @@ impl SnapshotApplication {
             &mut dyn SearchControl,
         ) -> Result<T>,
     ) -> Result<T> {
+        self.with_joint_planning_guarded(
+            text,
+            now,
+            control,
+            |request, catalog, snapshots, content, control, _| {
+                calculate(request, catalog, snapshots, content, control)
+            },
+        )
+    }
+    pub(crate) fn with_joint_planning_guarded<T>(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+        control: &mut dyn SearchControl,
+        calculate: impl FnOnce(
+            JointPlanningRequest,
+            JointPlanningCatalog,
+            Vec<Envelope<CharacterSnapshot>>,
+            &ContentRevision,
+            &mut dyn SearchControl,
+            &crate::planning_job_service::PublicationGuard,
+        ) -> Result<T>,
+    ) -> Result<T> {
         control.checkpoint(SearchPhase::ValidateInputs)?;
         let started = std::time::Instant::now();
         if text.len() > crate::planning::MAX_REQUEST_BYTES {
@@ -215,7 +209,7 @@ impl SnapshotApplication {
         {
             return Err(invalid("Joint input count exceeds limits"));
         }
-        let (catalog, snapshots, content) = self.with_store_mut(|store| {
+        let (catalog, snapshots, content, guard) = self.with_store_mut(|store| store.with_immediate_read(|store| {
             let (catalog, snapshots, content) =
                 view_controlled(store, &request.party_id, now, control)?;
             let content = content.ok_or_else(|| {
@@ -262,15 +256,10 @@ impl SnapshotApplication {
                 .into_iter()
                 .map(|s| s.expect("expected snapshot checked"))
                 .collect::<Vec<_>>();
-            Ok((catalog, snapshots, content))
-        })?;
-        let guard = crate::planning_job_service::PublicationGuard::new(
-            Some(request.party_id.clone()),
-            &snapshots,
-            &content,
-            &context(now),
-        )?;
-        let result = calculate(request, catalog, snapshots, &content, control)?;
+            let guard=crate::planning_job_service::PublicationGuard::new(Some(request.party_id.clone()),&snapshots,&content,&context(now))?.bind_disposition(store.usable_content_revision(&content.key())?.ok_or_else(||invalid("Active content unavailable"))?.1.guard())?;
+            Ok((catalog,snapshots,content,guard))
+        }))?;
+        let result = calculate(request, catalog, snapshots, &content, control, &guard)?;
         guard.publish(
             self,
             crate::planning_job_service::advanced_now(now, started.elapsed()),
