@@ -31,7 +31,7 @@ fn the_crate_has_no_lua_engine_dependency() {
         .filter(|l| !l.trim().is_empty())
         .map(|l| l.split('=').next().unwrap().trim().to_owned())
         .collect();
-    assert_eq!(deps, ["azeroth-core", "serde", "serde_json"]);
+    assert_eq!(deps, ["azeroth-core", "serde", "serde_json", "sha2"]);
 
     let lock = workspace_file("Cargo.lock");
     let block = lock
@@ -45,7 +45,7 @@ fn the_crate_has_no_lua_engine_dependency() {
         .take_while(|l| l.starts_with(' '))
         .map(|l| l.trim().trim_matches(|c| c == '"' || c == ',').to_owned())
         .collect();
-    assert_eq!(locked, ["azeroth-core", "serde", "serde_json"]);
+    assert_eq!(locked, ["azeroth-core", "serde", "serde_json", "sha2"]);
     // No Lua engine is reachable from this crate, directly or transitively.
     // The dev-only `azeroth-lua-harness` crate (ADR 0003) may lock a Lua
     // engine for addon tests; it must never enter the import path.

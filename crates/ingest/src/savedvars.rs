@@ -64,6 +64,8 @@ const MAX_NUMBER_BYTES: usize = 64;
 /// A parsed Lua literal. Tables are ordered maps, so output is deterministic.
 #[derive(Clone, Debug, PartialEq)]
 pub enum LuaValue {
+    /// Explicit source-table nil. SavedVariables entry points still reject nil.
+    Nil,
     Bool(bool),
     Int(i64),
     Float(f64),
@@ -176,6 +178,7 @@ pub fn parse_detailed(input: &str) -> std::result::Result<ParsedFile, Rejection>
         bytes: input.as_bytes(),
         pos: 0,
         values: 0,
+        policy: LiteralPolicy::SAVED_VARIABLES,
     };
     Ok(ParsedFile {
         globals: parser.file()?,
@@ -207,6 +210,53 @@ struct Parser<'a> {
     bytes: &'a [u8],
     pos: usize,
     values: usize,
+    policy: LiteralPolicy,
+}
+
+/// Source staging reuses the literal reader without widening SavedVariables.
+/// Kept private to ingest; callers cannot raise parser budgets.
+#[derive(Clone, Copy)]
+struct LiteralPolicy {
+    allow_nil: bool,
+    exact_integers: bool,
+    max_values: usize,
+    max_string_bytes: usize,
+    max_identifier_bytes: Option<usize>,
+}
+impl LiteralPolicy {
+    const SAVED_VARIABLES: Self = Self {
+        allow_nil: false,
+        exact_integers: false,
+        max_values: MAX_VALUES,
+        max_string_bytes: MAX_STRING_BYTES,
+        max_identifier_bytes: None,
+    };
+    const SOURCE: Self = Self {
+        allow_nil: true,
+        exact_integers: true,
+        max_values: crate::questiedb::MAX_VALUES,
+        max_string_bytes: crate::questiedb::MAX_STRING_BYTES,
+        max_identifier_bytes: Some(crate::questiedb::MAX_STRING_BYTES),
+    };
+}
+
+/// Parse one literal prefix for an independently validated source wrapper.
+/// The caller must validate the entire remaining wrapper and file size. Nil
+/// stays a present value and consumes its positional index, unlike Lua runtime
+/// table deletion. Overlarge integer tokens cannot silently round into floats.
+pub(crate) fn source_literal_prefix(input: &str) -> Parsed<(LuaValue, usize)> {
+    if input.len() > MAX_FILE_BYTES {
+        return Err(Rejection::FileTooLarge);
+    }
+    let mut parser = Parser {
+        bytes: input.as_bytes(),
+        pos: 0,
+        values: 0,
+        policy: LiteralPolicy::SOURCE,
+    };
+    parser.skip()?;
+    let value = parser.value(1)?;
+    Ok((value, parser.pos))
 }
 
 const KEYWORDS: [&str; 22] = [
@@ -229,7 +279,7 @@ impl Parser<'_> {
     }
     fn count_value(&mut self) -> Parsed<()> {
         self.values += 1;
-        if self.values > MAX_VALUES {
+        if self.values > self.policy.max_values {
             return Err(Rejection::TooManyValues);
         }
         Ok(())
@@ -275,6 +325,15 @@ impl Parser<'_> {
         std::str::from_utf8(&self.bytes[start..self.pos]).unwrap_or_default()
     }
 
+    fn owned_ident(&mut self) -> Parsed<String> {
+        let limit = self.policy.max_identifier_bytes;
+        let name = self.ident();
+        if limit.is_some_and(|limit| name.len() > limit) {
+            return Err(Rejection::StringTooLong);
+        }
+        Ok(name.to_owned())
+    }
+
     fn file(&mut self) -> Parsed<BTreeMap<String, LuaValue>> {
         let mut globals = BTreeMap::new();
         loop {
@@ -288,7 +347,7 @@ impl Parser<'_> {
                 Some(c) if is_ident_start(c) => {}
                 Some(_) => return Err(Rejection::Syntax),
             }
-            let name = self.ident().to_owned();
+            let name = self.owned_ident()?;
             if KEYWORDS.contains(&name.as_str()) {
                 return Err(if name == "function" {
                     Rejection::Function
@@ -330,10 +389,11 @@ impl Parser<'_> {
             Some(b'-' | b'0'..=b'9') => self.number(),
             Some(b'[') => Err(Rejection::LongBracket),
             Some(c) if is_ident_start(c) => {
-                let name = self.ident().to_owned();
+                let name = self.owned_ident()?;
                 match name.as_str() {
                     "true" => Ok(LuaValue::Bool(true)),
                     "false" => Ok(LuaValue::Bool(false)),
+                    "nil" if self.policy.allow_nil => Ok(LuaValue::Nil),
                     "nil" => Err(Rejection::Nil),
                     "function" => Err(Rejection::Function),
                     _ => {
@@ -403,7 +463,7 @@ impl Parser<'_> {
             }
             Some(c) if is_ident_start(c) => {
                 let start = self.pos;
-                let name = self.ident().to_owned();
+                let name = self.owned_ident()?;
                 self.skip()?;
                 if self.peek() == Some(b'=') && self.peek_at(1) != Some(b'=') {
                     if KEYWORDS.contains(&name.as_str()) {
@@ -485,6 +545,9 @@ impl Parser<'_> {
         if integral && let Ok(n) = text.parse::<i64>() {
             return Ok(LuaValue::Int(n));
         }
+        if integral && self.policy.exact_integers {
+            return Err(Rejection::BadNumber);
+        }
         match text.parse::<f64>() {
             Ok(f) if f.is_finite() => Ok(LuaValue::Float(f)),
             _ => Err(Rejection::BadNumber),
@@ -513,7 +576,7 @@ impl Parser<'_> {
                 b'\\' => self.escape(&mut out)?,
                 _ => out.push(c),
             }
-            if out.len() > MAX_STRING_BYTES {
+            if out.len() > self.policy.max_string_bytes {
                 return Err(Rejection::StringTooLong);
             }
         }
@@ -595,5 +658,44 @@ impl Parser<'_> {
         self.pos += 1;
         // A hexadecimal digit is below 16.
         Ok(u8::try_from(digit).unwrap_or_default())
+    }
+}
+
+#[cfg(test)]
+mod source_budget_tests {
+    use super::*;
+
+    #[test]
+    fn nil_holes_and_empty_tables_consume_the_source_value_budget() {
+        let parse_with_budget = |input: &str, budget| {
+            let mut parser = Parser {
+                bytes: input.as_bytes(),
+                pos: 0,
+                values: 0,
+                policy: LiteralPolicy {
+                    max_values: budget,
+                    ..LiteralPolicy::SOURCE
+                },
+            };
+            parser.value(1)
+        };
+        // Root plus four explicit values; nil is not discarded to evade limits.
+        assert!(parse_with_budget("{nil,{},false,0}", 5).is_ok());
+        assert_eq!(
+            parse_with_budget("{nil,{},false,0}", 4),
+            Err(Rejection::TooManyValues)
+        );
+        assert_eq!(
+            parse_with_budget("{nil,nil,nil,nil}", 4),
+            Err(Rejection::TooManyValues)
+        );
+        assert_eq!(
+            LiteralPolicy::SOURCE.max_values,
+            crate::questiedb::MAX_VALUES
+        );
+        assert_eq!(
+            LiteralPolicy::SOURCE.max_string_bytes,
+            crate::questiedb::MAX_STRING_BYTES
+        );
     }
 }
