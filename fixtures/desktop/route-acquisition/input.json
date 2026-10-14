@@ -1,0 +1,79 @@
+{
+  "expected_route_fingerprint": "0f76fa1ece897dee7f3291cb3b7565918be5530833f25698e7b86209709d1e96",
+  "gear": null,
+  "opportunities": [
+    {
+      "attempt_ms": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": 10000
+      },
+      "available_copper": {
+        "status": "unknown"
+      },
+      "cost_per_attempt": false,
+      "formation_ms": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": 2000
+      },
+      "independent_player_attempts": true,
+      "leg_index": 0,
+      "max_attempts": 3,
+      "node": {
+        "id": "synthetic-source-node",
+        "map": {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "floor": "0",
+          "instance": null,
+          "map_id": "demo-map-1"
+        }
+      },
+      "source": "synthetic-source",
+      "target": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "item_id": "synthetic-upgrade",
+        "variant": "base"
+      }
+    }
+  ],
+  "planning": {
+    "budget_ms": 100000,
+    "candidates": [
+      {
+        "completion_ms": 1000,
+        "node": "demo-node-2",
+        "objective": "synthetic-service",
+        "service_ms": 0,
+        "utility": 10
+      }
+    ],
+    "excluded": [],
+    "goal_profile": "manual",
+    "origin": "demo-node-1",
+    "profile_id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6",
+    "revision": "synthetic-planning-v1",
+    "snapshot_id": "demo-snapshot-001",
+    "stopping_node": "demo-node-1",
+    "stopping_service_ms": 0
+  },
+  "schema_version": 1
+}

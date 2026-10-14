@@ -48,6 +48,11 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
+    getReferenceWindowState: () => run(() => adapter.invoke("get_reference_window_state",undefined)),
+    setReferenceWindow: (visible:boolean,alwaysOnTop:boolean) => run(() => adapter.invoke("set_reference_window",{visible,always_on_top:alwaysOnTop})),
+    previewAcquisitionRoute: (text: string) => run(() => adapter.invoke("preview_acquisition_route", { text })),
+    assessRouteAcquisition: (text: string) => run(() => adapter.invoke("assess_route_acquisition", { text })),
     previewDiagnostics: () => run(() => adapter.invoke("preview_diagnostics", undefined)),
     exportDiagnostics: (path: string) => run(() => adapter.invoke("export_diagnostics", { path })),
     startPlanningJob: (kind: import("./planningJobs").PlanningKind, text: string) => run(() => adapter.invoke("start_planning_job", { kind, text })),
@@ -83,6 +88,7 @@ export function createClient(adapter: CommandAdapter) {
     exportAgreedPartyPlan: (text: string) => run(() => adapter.invoke("export_agreed_party_plan", { text })),
     inspectPlanRoute: (text: string) => run(() => adapter.invoke("inspect_plan_route", { text })),
     planSession: (text: string) => run(() => adapter.invoke("plan_session", { text })),
+    getCompatibilityReport: (profile_id: string | null) => run(() => adapter.invoke("get_compatibility_report", { profile_id })),
     getAppStatus: (): Promise<Result<AppStatus>> =>
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>

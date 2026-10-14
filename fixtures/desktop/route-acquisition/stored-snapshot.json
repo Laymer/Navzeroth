@@ -1,0 +1,189 @@
+{
+  "data_mode": "stored",
+  "envelope": {
+    "fixture": true,
+    "format": "azeroth-navigator",
+    "game": {
+      "build": "UNVERIFIED_DEMO",
+      "edition": "wow_forever",
+      "interface": "UNVERIFIED_DEMO",
+      "locale": "enGB"
+    },
+    "kind": "character_snapshot",
+    "namespace": "demo",
+    "payload": {
+      "capture": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "sequence": 12,
+        "session_id": "demo-session-001",
+        "source": "synthetic_fixture"
+      },
+      "character": "demo-character-paladin",
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "equipment": {
+        "head": {
+          "clock_trust": "trusted",
+          "observed_at_utc_ms": 1791791990000,
+          "source": "synthetic_fixture",
+          "status": "known",
+          "value": {
+            "state": "empty"
+          }
+        }
+      },
+      "id": "demo-snapshot-001",
+      "level": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "received_at_utc_ms": 1791792005000,
+        "sequence": 12,
+        "session_elapsed_ms": 120000,
+        "session_id": "demo-session-001",
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": 22
+      },
+      "location": {
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "received_at_utc_ms": 1791792005000,
+        "sequence": 12,
+        "session_elapsed_ms": 120000,
+        "session_id": "demo-session-001",
+        "source": "synthetic_fixture",
+        "status": "known",
+        "value": {
+          "map": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "floor": "0",
+            "instance": null,
+            "map_id": "demo-map-1"
+          },
+          "x": 0.25,
+          "y": 1.0
+        }
+      },
+      "objectives": {
+        "demo-objective-1": {
+          "clock_trust": "trusted",
+          "observed_at_utc_ms": 1791791990000,
+          "source": "synthetic_fixture",
+          "status": "known",
+          "value": false
+        },
+        "demo-objective-2": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unsupported"
+        },
+        "demo-objective-3": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": false
+        }
+      },
+      "preferences": {
+        "show_tips": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": false
+        },
+        "zero_like": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "not_applicable"
+        }
+      },
+      "quests": {
+        "demo-quest-1": {
+          "accepted": {
+            "clock_trust": "trusted",
+            "observed_at_utc_ms": 1791791990000,
+            "source": "synthetic_fixture",
+            "status": "known",
+            "value": true
+          },
+          "completed": {
+            "clock_trust": "trusted",
+            "observed_at_utc_ms": 1791791990000,
+            "source": "synthetic_fixture",
+            "status": "known",
+            "value": false
+          },
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "objectives": {
+            "demo-objective-1": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": false
+            }
+          },
+          "quest": "demo-quest-1",
+          "turned_in": {
+            "clock_trust": "trusted",
+            "observed_at_utc_ms": 1791791990000,
+            "source": "synthetic_fixture",
+            "status": "known",
+            "value": false
+          }
+        }
+      },
+      "role": {
+        "clock_trust": "uncertain",
+        "source": "synthetic_fixture",
+        "status": "unknown"
+      },
+      "schema_version": 1,
+      "source_revision": "demo-r1"
+    },
+    "producer": {
+      "component": "test_fixture",
+      "sequence": 12,
+      "session_id": "demo-session-001",
+      "version": "0.1.0"
+    },
+    "provenance": {
+      "clock_trust": "uncertain",
+      "created_at_utc_ms": 1791792000000,
+      "source": "synthetic_fixture"
+    },
+    "schema_version": 1,
+    "x_producer_debug": {
+      "note": "retained extension",
+      "values": [
+        1,
+        2
+      ]
+    }
+  },
+  "freshness": {
+    "age_ms": 100,
+    "status": "fresh"
+  },
+  "profile_id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6"
+}

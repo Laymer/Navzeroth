@@ -1,6 +1,7 @@
 //! Explicit command DTOs; snapshot normalization and SQLite execute on blocking
 //! workers. No live addon bridge or generic filesystem command is exposed.
 mod atlas_protocol;
+mod reference_window;
 use azeroth_app::AppStatus;
 use azeroth_app::atlas::{AtlasView, ProjectedPosition, SnapshotMarker};
 use azeroth_app::diagnostics::DiagnosticOperation;
@@ -260,6 +261,16 @@ async fn get_planning_catalog(
     profile_id: String,
 ) -> Result<azeroth_app::planning::PlanningCatalog, AppError> {
     blocking(state, move |app| app.planning_catalog(&profile_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_compatibility_report(
+    state: State<'_, Application>,
+    profile_id: Option<String>,
+) -> Result<azeroth_app::compatibility::CompatibilityReport, AppError> {
+    blocking(state, move |app| {
+        app.compatibility_report(profile_id.as_deref())
+    })
+    .await
 }
 #[tauri::command]
 async fn export_plan(
@@ -556,66 +567,90 @@ pub fn run() {
         .register_uri_scheme_protocol(atlas_protocol::SCHEME, |_ctx, request| {
             atlas_protocol::respond(&request)
         })
-        .invoke_handler(tauri::generate_handler![
-            preview_diagnostics,
-            export_diagnostics,
-            start_planning_job,
-            get_planning_job,
-            cancel_planning_job,
-            take_planning_job_result,
-            get_database_status,
-            check_database,
-            create_database_backup,
-            inspect_database_backup,
-            restore_database_backup,
-            import_session_text,
-            import_session_file,
-            list_sessions,
-            get_session_detail,
-            delete_session,
-            get_gear_catalog,
-            compare_gear,
-            get_historical_snapshot,
-            promote_snapshot,
-            get_planning_catalog,
-            plan_session,
-            get_party_plan_proposal,
-            propose_party_plan,
-            accept_party_plan,
-            get_joint_planning_catalog,
-            plan_joint_session,
-            set_session_calibration,
-            get_calibration,
-            reminder_view,
-            mutate_reminders,
-            inspect_plan_route,
-            export_plan,
-            export_agreed_party_plan,
-            get_app_status,
-            list_profiles,
-            stage_content,
-            get_active_content,
-            activate_content,
-            rollback_content,
-            list_parties,
-            get_party_quests,
-            get_party_eligibility,
-            get_party,
-            save_party,
-            delete_party,
-            get_character_snapshot,
-            get_stored_snapshot,
-            get_snapshot_history,
-            select_profile,
-            import_snapshot_text,
-            import_snapshot_file,
-            start_snapshot_watch,
-            stop_snapshot_watch,
-            get_snapshot_watch,
-            query_atlas,
-            project_positions,
-            get_snapshot_markers
-        ])
+        .manage(reference_window::Controller::default())
+        .invoke_handler({
+            let generated: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+                preview_acquisition_route,
+                assess_route_acquisition,
+                preview_diagnostics,
+                export_diagnostics,
+                get_reference_view,
+                get_compatibility_report,
+                get_reference_window_state,
+                set_reference_window,
+                start_planning_job,
+                get_planning_job,
+                cancel_planning_job,
+                take_planning_job_result,
+                get_database_status,
+                check_database,
+                create_database_backup,
+                inspect_database_backup,
+                restore_database_backup,
+                import_session_text,
+                import_session_file,
+                list_sessions,
+                get_session_detail,
+                delete_session,
+                get_gear_catalog,
+                compare_gear,
+                get_historical_snapshot,
+                promote_snapshot,
+                get_planning_catalog,
+                plan_session,
+                get_party_plan_proposal,
+                propose_party_plan,
+                accept_party_plan,
+                get_joint_planning_catalog,
+                plan_joint_session,
+                set_session_calibration,
+                get_calibration,
+                reminder_view,
+                mutate_reminders,
+                inspect_plan_route,
+                export_plan,
+                export_agreed_party_plan,
+                get_app_status,
+                list_profiles,
+                stage_content,
+                get_active_content,
+                activate_content,
+                rollback_content,
+                list_parties,
+                get_party_quests,
+                get_party_eligibility,
+                get_party,
+                save_party,
+                delete_party,
+                get_character_snapshot,
+                get_stored_snapshot,
+                get_snapshot_history,
+                select_profile,
+                import_snapshot_text,
+                import_snapshot_file,
+                start_snapshot_watch,
+                stop_snapshot_watch,
+                get_snapshot_watch,
+                query_atlas,
+                project_positions,
+                get_snapshot_markers
+            ];
+            move |invoke: tauri::ipc::Invoke<tauri::Wry>| {
+                if !reference_window::permits(
+                    invoke.message.webview_ref().label(),
+                    invoke.message.command(),
+                ) {
+                    invoke.resolver.reject(AppError::new(
+                        ErrorCode::ProviderUnavailable,
+                        "This application window permits imported reference reads only",
+                        false,
+                    ));
+                    true
+                } else {
+                    generated(invoke)
+                }
+            }
+        })
         .run(tauri::generate_context!())
         .expect("error while running the Azeroth Navigator shell");
 }
@@ -695,6 +730,68 @@ async fn export_diagnostics(
     }
     recovery_blocking(state, move |host| {
         host.export_diagnostics(std::path::Path::new(&path), system_now())
+    })
+    .await
+}
+
+#[tauri::command]
+async fn get_reference_view(
+    state: State<'_, Application>,
+) -> Result<azeroth_app::reference::ReferenceView, AppError> {
+    blocking(state, |app| app.reference_view(system_now())).await
+}
+#[tauri::command]
+async fn get_reference_window_state(
+    app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
+    controller: State<'_, reference_window::Controller>,
+) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
+    reference_window::main_caller(window.label())?;
+    let _serial = controller.inner().0.lock().map_err(|_| {
+        AppError::new(
+            ErrorCode::ProviderUnavailable,
+            "Reference window controls unavailable",
+            false,
+        )
+    })?;
+    reference_window::state(&app)
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn set_reference_window(
+    app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
+    controller: State<'_, reference_window::Controller>,
+    visible: bool,
+    always_on_top: bool,
+) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
+    reference_window::main_caller(window.label())?;
+    let _serial = controller.inner().0.lock().map_err(|_| {
+        AppError::new(
+            ErrorCode::ProviderUnavailable,
+            "Reference window controls unavailable",
+            false,
+        )
+    })?;
+    reference_window::set(&app, visible, always_on_top)
+}
+
+#[tauri::command]
+async fn preview_acquisition_route(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::route_acquisition::RouteAcquisitionBaseline, AppError> {
+    observed_blocking(state, DiagnosticOperation::Planning, move |app| {
+        app.preview_acquisition_route(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
+async fn assess_route_acquisition(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::route_acquisition::RouteAcquisitionReport, AppError> {
+    blocking(state, move |app| {
+        app.assess_route_acquisition(&text, system_now())
     })
     .await
 }

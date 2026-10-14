@@ -4,6 +4,7 @@
 //! desktop workflow. The free functions below remain explicit synthetic-demo
 //! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
+pub mod clustering;
 pub mod content;
 pub mod gear;
 pub mod party;
@@ -142,4 +143,8 @@ pub mod recovery;
 pub mod planning_job_service;
 pub mod planning_jobs;
 
+pub mod compatibility;
 pub mod recipient_export;
+
+pub mod reference;
+pub mod route_acquisition;

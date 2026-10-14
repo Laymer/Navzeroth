@@ -1,3 +1,4 @@
+import type { CompatibilityReport } from "./compatibility";
 import type { DatabaseStatus, BackupPreview, RestoreReceipt } from "./recovery";
 import type { PartyProposalReport } from "../party/proposals";
 import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
@@ -254,6 +255,7 @@ export interface PlanningRequest {
   excluded: string[];
 }
 export interface PlanningReport {
+  clustering?: import("./clustering").ClusteringMetadata;
   request: PlanningRequest; context: DataContext; fixture: boolean; assumptions: string[];
   filtered: { objective: string; reason: string }[];
   result: {
@@ -265,6 +267,11 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
+  get_reference_window_state: {input:undefined;output:import("./reference").ReferenceWindowState};
+  set_reference_window: {input:{visible:boolean;always_on_top:boolean};output:import("./reference").ReferenceWindowState};
+  preview_acquisition_route: { input: { text: string }; output: import("./routeAcquisition").RouteAcquisitionBaseline };
+  assess_route_acquisition: { input: { text: string }; output: import("./routeAcquisition").RouteAcquisitionReport };
   preview_diagnostics: { input: undefined; output: import("./diagnostics").DiagnosticReport };
   export_diagnostics: { input: { path: string }; output: import("./diagnostics").DiagnosticReceipt };
   start_planning_job: { input: { kind: import("./planningJobs").PlanningKind; text: string }; output: { job_schema_version: 1; job_id: string } };
@@ -301,6 +308,7 @@ export interface CommandMap {
   get_historical_snapshot: { input: { profile_id: string; snapshot_id: string }; output: StoredSnapshot | null };
   promote_snapshot: { input: { profile_id: string; snapshot_id: string; expected_current: string; reason: string }; output: null };
 
+  get_compatibility_report: { input: { profile_id: string | null }; output: CompatibilityReport };
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
   stage_content: { input: { text: string }; output: ContentInspection };
