@@ -61,7 +61,7 @@ elapsed measurement is included in output or used as a scenario expectation.
 Reports identify schema1, fixture=true, mode, declared UTC, logical participant
 indexes and exact content context/revision. They include selected steps,
 exclusions/readiness evidence, alternatives, travel and termination from the
-application result, plus its filtering and explicit assumptions. Aggregate fixed
+application result, plus its filtering and explicit assumptions. Fixed
 source-policy fields preserve unknown versus known enum/false values; they are
 fixture metadata, not production source permission evidence. Unknown/restricted
 eligibility blocks advice; false and zero remain explicit. JSON is serialized
