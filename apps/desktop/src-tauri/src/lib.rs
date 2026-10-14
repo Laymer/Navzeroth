@@ -15,13 +15,13 @@ use azeroth_core::{
 };
 use std::sync::Arc;
 use tauri::{Manager, State};
-type Application = Arc<SnapshotApplication>;
+type Application = Arc<azeroth_app::recovery::DatabaseHost>;
 async fn blocking<T: Send + 'static>(
     state: State<'_, Application>,
-    call: impl FnOnce(Application) -> Result<T, AppError> + Send + 'static,
+    call: impl FnOnce(&SnapshotApplication) -> Result<T, AppError> + Send + 'static,
 ) -> Result<T, AppError> {
     let app = state.inner().clone();
-    tauri::async_runtime::spawn_blocking(move || call(app))
+    tauri::async_runtime::spawn_blocking(move || app.with_application(call))
         .await
         .map_err(|_| {
             AppError::new(
@@ -424,16 +424,19 @@ pub fn run() {
             let directory = app.path().app_data_dir()?;
             std::fs::create_dir_all(&directory)?;
             let database = directory.join("snapshots.sqlite3");
-            let service = std::thread::spawn(move || SnapshotApplication::open(&database))
-                .join()
-                .map_err(|_| std::io::Error::other("Snapshot initialization worker failed"))??;
-            app.manage(Arc::new(service));
+            let service = azeroth_app::recovery::DatabaseHost::start(&database);
+            app.manage(service);
             Ok(())
         })
         .register_uri_scheme_protocol(atlas_protocol::SCHEME, |_ctx, request| {
             atlas_protocol::respond(&request)
         })
         .invoke_handler(tauri::generate_handler![
+            get_database_status,
+            check_database,
+            create_database_backup,
+            inspect_database_backup,
+            restore_database_backup,
             import_session_text,
             import_session_file,
             list_sessions,
@@ -483,4 +486,51 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running the Azeroth Navigator shell");
+}
+
+async fn recovery_blocking<T: Send + 'static>(
+    state: State<'_, Application>,
+    call: impl FnOnce(Application) -> Result<T, AppError> + Send + 'static,
+) -> Result<T, AppError> {
+    let host = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || call(host))
+        .await
+        .map_err(|_| {
+            AppError::new(
+                ErrorCode::ProviderUnavailable,
+                "Recovery worker unavailable",
+                false,
+            )
+        })?
+}
+#[tauri::command]
+async fn get_database_status(
+    state: State<'_, Application>,
+) -> Result<azeroth_app::recovery::DatabaseStatus, AppError> {
+    recovery_blocking(state, |host| host.status()).await
+}
+#[tauri::command]
+async fn check_database(state: State<'_, Application>) -> Result<(), AppError> {
+    recovery_blocking(state, |host| host.check()).await
+}
+#[tauri::command]
+async fn create_database_backup(
+    state: State<'_, Application>,
+    path: String,
+) -> Result<(), AppError> {
+    recovery_blocking(state, move |host| host.backup(std::path::Path::new(&path))).await
+}
+#[tauri::command]
+async fn inspect_database_backup(
+    state: State<'_, Application>,
+    path: String,
+) -> Result<azeroth_app::recovery::BackupPreview, AppError> {
+    recovery_blocking(state, move |host| host.inspect(std::path::Path::new(&path))).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn restore_database_backup(
+    state: State<'_, Application>,
+    candidate_id: String,
+) -> Result<azeroth_app::recovery::RestoreReceipt, AppError> {
+    recovery_blocking(state, move |host| host.restore(&candidate_id)).await
 }

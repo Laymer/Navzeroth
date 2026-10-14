@@ -1,0 +1,12 @@
+/* Atlas-local reflow: preserve map keyboard controls at enlarged text sizes. */
+.atlas { min-width: 0; overflow-wrap: anywhere; }
+.atlas .map-region { box-sizing: border-box; height: clamp(16rem, 60vh, 30rem); }
+.atlas input, .atlas select { box-sizing: border-box; max-width: 100%; font: inherit; }
+.atlas label { display: block; margin-block: 0.5rem; }
+.atlas button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.atlas .pins { padding-inline-start: 1.5rem; }
+.atlas .pins li { margin-block: 0.75rem; }
+.atlas .pin-pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.atlas .pin-pagination p { flex-basis: 100%; }
+.atlas .pin-pagination button { font: inherit; }
+.atlas button:focus-visible, .atlas input:focus-visible, .atlas select:focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
