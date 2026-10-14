@@ -372,14 +372,22 @@ fn content_hash(content: &Option<ContentRevision>) -> Result<Option<String>> {
         })
         .transpose()
 }
-fn freshness_class(value: Option<&Freshness>) -> u8 {
+#[derive(PartialEq, Eq)]
+enum CaptureClass {
+    Missing,
+    Fresh,
+    Stale,
+    Uncertain(azeroth_core::observation::ClockUncertainty),
+}
+fn freshness_class(value: Option<&Freshness>) -> CaptureClass {
     match value {
-        None => 0,
-        Some(Freshness::Fresh { .. }) => 1,
-        Some(Freshness::Stale { .. }) => 2,
-        Some(Freshness::Uncertain { reason }) => 3 + *reason as u8,
+        None => CaptureClass::Missing,
+        Some(Freshness::Fresh { .. }) => CaptureClass::Fresh,
+        Some(Freshness::Stale { .. }) => CaptureClass::Stale,
+        Some(Freshness::Uncertain { reason }) => CaptureClass::Uncertain(*reason),
     }
 }
+
 fn bounded_report(report: &PreparationReport) -> Result<()> {
     struct Limit {
         bytes: usize,
@@ -430,6 +438,14 @@ impl SnapshotApplication {
         text: &str,
         now: Option<UtcMillis>,
     ) -> Result<PreparationReport> {
+        self.dungeon_preparation_using(text, now, || Ok(()))
+    }
+    fn dungeon_preparation_using(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+        before_publication: impl FnOnce() -> Result<()>,
+    ) -> Result<PreparationReport> {
         let started = Instant::now();
         let request = json::request(text)?;
         let mut gaps = Vec::new();
@@ -440,15 +456,18 @@ impl SnapshotApplication {
             .transpose()?
             .unwrap_or_default();
         let captured = match &request.subject {
-            PreparationSubject::Character { profile_id } => self
-                .with_profile_store_mut(profile_id, |store, key| {
-                    capture(store, vec![key.clone()], None)
-                })?,
+            PreparationSubject::Character { profile_id } => {
+                self.with_profile_store_mut(profile_id, |store, key| {
+                    store.with_immediate_read(|store| capture(store, vec![key.clone()], None))
+                })?
+            }
             PreparationSubject::Party { party_id } => self.with_store_mut(|store| {
-                let party = store
-                    .party(party_id)?
-                    .ok_or_else(|| invalid("No such preparation party"))?;
-                capture(store, party.participants, Some(party_id.clone()))
+                store.with_immediate_read(|store| {
+                    let party = store
+                        .party(party_id)?
+                        .ok_or_else(|| invalid("No such preparation party"))?;
+                    capture(store, party.participants, Some(party_id.clone()))
+                })
             })?,
         };
         let hashes = captured
@@ -463,29 +482,30 @@ impl SnapshotApplication {
             .iter()
             .map(|s| s.as_ref().map(|s| freshness(&s.payload.capture, &clock)))
             .collect::<Vec<_>>();
-        let all_fresh = capture_freshness
+        // Independently guard fresh members even when another member is stale or
+        // missing. Full cohort membership is checked in the same final transaction.
+        let fresh_snapshots = captured
+            .snapshots
             .iter()
-            .all(|f| matches!(f, Some(Freshness::Fresh { .. })));
-        let guard = if all_fresh {
+            .zip(&capture_freshness)
+            .filter(|(_, f)| matches!(f, Some(Freshness::Fresh { .. })))
+            .filter_map(|(s, _)| s.clone())
+            .collect::<Vec<_>>();
+        let guard = if fresh_snapshots.is_empty() {
+            None
+        } else {
             captured
                 .content
                 .as_ref()
                 .map(|content| {
                     crate::planning_job_service::PublicationGuard::new(
-                        captured.party.clone(),
-                        &captured
-                            .snapshots
-                            .iter()
-                            .flatten()
-                            .cloned()
-                            .collect::<Vec<_>>(),
+                        None,
+                        &fresh_snapshots,
                         content,
                         &clock,
                     )
                 })
                 .transpose()?
-        } else {
-            None
         };
         let report = evaluate_inputs(
             request,
@@ -496,51 +516,53 @@ impl SnapshotApplication {
             now,
         )?;
         bounded_report(&report)?;
+        before_publication()?;
         self.with_store_mut(|store| {
-            if let Some(id) = &captured.party {
-                if store
-                    .party(id)?
-                    .is_none_or(|p| p.participants != captured.keys)
+            store.with_immediate_read(|store| {
+                if let Some(id) = &captured.party
+                    && store
+                        .party(id)?
+                        .is_none_or(|p| p.participants != captured.keys)
                 {
                     return Err(outdated());
                 }
-            }
-            for ((key, hash), old_freshness) in
-                captured.keys.iter().zip(&hashes).zip(&capture_freshness)
-            {
-                let current = store.current_snapshot(key)?;
-                if snapshot_hash(&current)? != *hash {
+                let mut current_snapshots = Vec::new();
+                for (key, hash) in captured.keys.iter().zip(&hashes) {
+                    let current = store.current_snapshot(key)?;
+                    if snapshot_hash(&current)? != *hash {
+                        return Err(outdated());
+                    }
+                    current_snapshots.push(current);
+                }
+                let current = store.active_content_revision(&ContentScope {
+                    context: captured.keys[0].context.clone(),
+                    fixture: captured.keys[0].fixture,
+                })?;
+                if content_hash(&current)? != original_content_hash {
                     return Err(outdated());
                 }
-                let new = current.as_ref().map(|s| {
-                    freshness(
-                        &s.payload.capture,
-                        &context(crate::planning_job_service::advanced_now(
-                            now,
-                            started.elapsed(),
-                        )),
-                    )
-                });
-                if freshness_class(new.as_ref()) != freshness_class(old_freshness.as_ref()) {
-                    return Err(outdated());
+                if let Some(guard) = &guard {
+                    guard.validate(store, || {
+                        crate::planning_job_service::advanced_now(now, started.elapsed())
+                    })?;
                 }
-            }
-            let current = store.active_content_revision(&ContentScope {
-                context: captured.keys[0].context.clone(),
-                fixture: captured.keys[0].fixture,
-            })?;
-            if content_hash(&current)? != original_content_hash {
-                return Err(outdated());
-            }
-            Ok(())
+                // Sample after all hashes and field comparisons, including captures
+                // omitted from the fresh-member guard. No second store read follows.
+                let final_clock = context(crate::planning_job_service::advanced_now(
+                    now,
+                    started.elapsed(),
+                ));
+                for (current, original) in current_snapshots.iter().zip(&capture_freshness) {
+                    let new = current
+                        .as_ref()
+                        .map(|s| freshness(&s.payload.capture, &final_clock));
+                    if freshness_class(new.as_ref()) != freshness_class(original.as_ref()) {
+                        return Err(outdated());
+                    }
+                }
+                Ok(())
+            })
         })?;
-        if let Some(guard) = guard {
-            guard.publish(
-                self,
-                crate::planning_job_service::advanced_now(now, started.elapsed()),
-                &mut || Ok(()),
-            )?;
-        }
         Ok(report)
     }
 }
@@ -677,7 +699,7 @@ fn evaluate_inputs(
             profile_id: profile_id(key)?,
             character: key.character.clone(),
             snapshot_id: snapshot.as_ref().map(|s| s.payload.id.clone()),
-            freshness: freshness.clone(),
+            freshness: *freshness,
             access: None,
             quests: vec![],
             checks: vec![],
@@ -784,21 +806,35 @@ fn evaluate_inputs(
                         let mut usable = true;
                         for context in &contexts {
                             let assessment = condition(&edge.requirements, Some(context))?;
-                            let member_usable = assessment.evaluation.as_ref().is_some_and(|r|r.truth==Truth::True)
-                                || assessment.availability==ObservationStatus::NotApplicable;
+                            let member_usable = assessment
+                                .evaluation
+                                .as_ref()
+                                .is_some_and(|r| r.truth == Truth::True)
+                                || assessment.availability == ObservationStatus::NotApplicable;
                             usable &= member_usable;
-                            if !member_usable {route_exclusions.push(PreparationEdgeExclusion {
-                                edge:edge.id.clone(),character:Some(context.snapshot.character.clone()),
-                                condition:Some(assessment),reason:"member_requirement_unavailable_or_unmet",
-                            });}
+                            if !member_usable {
+                                route_exclusions.push(PreparationEdgeExclusion {
+                                    edge: edge.id.clone(),
+                                    character: Some(context.snapshot.character.clone()),
+                                    condition: Some(assessment),
+                                    reason: "member_requirement_unavailable_or_unmet",
+                                });
+                            }
                         }
                         // Shared entrance travel never spends a stateful return action.
-                        let stateful=matches!(
-                                edge.mode,
-                                azeroth_core::entities::TravelMode::Return
-                                    | azeroth_core::entities::TravelMode::Teleport
-                            );
-                        if stateful {route_exclusions.push(PreparationEdgeExclusion {edge:edge.id.clone(),character:None,condition:None,reason:"stateful_action_not_used_for_shared_entrance"});}
+                        let stateful = matches!(
+                            edge.mode,
+                            azeroth_core::entities::TravelMode::Return
+                                | azeroth_core::entities::TravelMode::Teleport
+                        );
+                        if stateful {
+                            route_exclusions.push(PreparationEdgeExclusion {
+                                edge: edge.id.clone(),
+                                character: None,
+                                condition: None,
+                                reason: "stateful_action_not_used_for_shared_entrance",
+                            });
+                        }
                         if usable && !stateful {
                             edges.push(edge.clone());
                         }
@@ -834,4 +870,152 @@ fn evaluate_inputs(
         route,
         route_exclusions,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::{Value, json};
+    const NOW: i64 = 1791792000000;
+    fn setup() -> (SnapshotApplication, Value, String, String) {
+        let app = SnapshotApplication::in_memory().unwrap();
+        let mut ids = Vec::new();
+        for index in 0..2 {
+            let mut s: Value = serde_json::from_str(include_str!(
+                "../../../fixtures/contracts/v1/character-snapshot.json"
+            ))
+            .unwrap();
+            s["payload"]["character"] = json!(format!("member-{index}"));
+            s["payload"]["id"] = json!(format!("snapshot-{index}"));
+            s["payload"]["capture"]["observed_at_utc_ms"] = json!(if index == 0 {
+                NOW - 100
+            } else {
+                NOW - 1_800_100
+            });
+            s["payload"]["level"]["clock_trust"] = json!("trusted");
+            s["payload"]["level"]["observed_at_utc_ms"] = json!(NOW - 100);
+            ids.push(
+                app.import_text(&format!("ANAV1:{s}"), Some(UtcMillis::new(NOW).unwrap()))
+                    .unwrap()
+                    .profile_id,
+            );
+        }
+        app.stage_content(include_str!(
+            "../../../fixtures/desktop/content/demo-revision.json"
+        ))
+        .unwrap();
+        app.activate_content(&ids[0], &DatasetRevision::new("demo-r1").unwrap())
+            .unwrap();
+        app.save_party(&PartyId::new("prep-test").unwrap(), &ids)
+            .unwrap();
+        let request = json!({"schema_version":1,"subject":{"kind":"party","party_id":"prep-test"},"origin":"demo-node-1","package":serde_json::from_str::<Value>(include_str!("../../../fixtures/desktop/preparation/synthetic-package.json")).unwrap()});
+        (app, request, ids[0].clone(), ids[1].clone())
+    }
+    #[test]
+    fn changed_snapshot_membership_or_content_refuses_prepared_report_after_unlocked_work() {
+        for kind in ["snapshot", "membership", "content"] {
+            let (app, request, first, second) = setup();
+            let result = app.dungeon_preparation_using(
+                &request.to_string(),
+                Some(UtcMillis::new(NOW).unwrap()),
+                || {
+                    match kind {
+                        "snapshot" => {
+                            let mut s = app
+                                .current(&first, Some(UtcMillis::new(NOW).unwrap()))?
+                                .unwrap()
+                                .envelope;
+                            let mut raw = serde_json::to_value(&s).unwrap();
+                            raw["payload"]["id"] = json!("changed-snapshot");
+                            raw["payload"]["capture"]["sequence"] = json!(2000);
+                            raw["producer"]["sequence"] = json!(2000);
+                            raw["payload"]["capture"]["session_elapsed_ms"] = json!(500000);
+                            raw["payload"]["capture"]["observed_at_utc_ms"] = json!(NOW);
+                            s = serde_json::from_value(raw).unwrap();
+                            app.import_text(
+                                &format!("ANAV1:{}", serde_json::to_string(&s).unwrap()),
+                                Some(UtcMillis::new(NOW).unwrap()),
+                            )?;
+                        }
+                        "membership" => {
+                            app.save_party(&PartyId::new("prep-test").unwrap(), &[second, first])?;
+                        }
+                        _ => {
+                            let mut content: Value = serde_json::from_str(include_str!(
+                                "../../../fixtures/desktop/content/demo-revision.json"
+                            ))
+                            .unwrap();
+                            content["envelope"]["payload"]["revision"] =
+                                json!("new-preparation-revision");
+                            app.stage_content(&content.to_string())?;
+                            app.activate_content(
+                                &first,
+                                &DatasetRevision::new("new-preparation-revision").unwrap(),
+                            )?;
+                        }
+                    }
+                    Ok(())
+                },
+            );
+            let Err(error) = result else {
+                panic!("Changed captured inputs must fail")
+            };
+            assert_eq!(error.code, ErrorCode::SnapshotOutdated);
+        }
+    }
+    #[test]
+    fn missing_member_stays_missing_with_independent_fresh_member_assessment() {
+        let (app, request, _, second) = setup();
+        app.with_profile_store_mut(&second, |store, key| store.delete_profile(key))
+            .unwrap();
+        let report = app
+            .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+            .unwrap();
+        assert!(report.members[1].snapshot_id.is_none());
+        assert!(report.members[1].freshness.is_none());
+        assert!(report.members[1].quests[0].assessment.is_none());
+        assert!(report.route.is_none());
+        assert!(
+            report.members[0]
+                .access
+                .as_ref()
+                .unwrap()
+                .evaluation
+                .is_some()
+        );
+    }
+    #[test]
+    fn fresh_member_field_expiry_is_guarded_even_when_other_member_is_stale() {
+        let (app, request, first, _) = setup();
+        let mut snapshot = serde_json::to_value(
+            app.current(&first, Some(UtcMillis::new(NOW).unwrap()))
+                .unwrap()
+                .unwrap()
+                .envelope,
+        )
+        .unwrap();
+        snapshot["payload"]["id"] = json!("field-expiry-snapshot");
+        snapshot["payload"]["capture"]["sequence"] = json!(2000);
+        snapshot["producer"]["sequence"] = json!(2000);
+        snapshot["payload"]["capture"]["session_elapsed_ms"] = json!(500000);
+        snapshot["payload"]["capture"]["observed_at_utc_ms"] = json!(NOW);
+        snapshot["payload"]["level"]["observed_at_utc_ms"] = json!(NOW - 1_799_950);
+        app.import_text(
+            &format!("ANAV1:{snapshot}"),
+            Some(UtcMillis::new(NOW).unwrap()),
+        )
+        .unwrap();
+        let result = app.dungeon_preparation_using(
+            &request.to_string(),
+            Some(UtcMillis::new(NOW).unwrap()),
+            || {
+                std::thread::sleep(std::time::Duration::from_millis(100));
+                Ok(())
+            },
+        );
+        let Err(error) = result else {
+            panic!("Independently expired field must fail")
+        };
+        assert_eq!(error.code, ErrorCode::SnapshotOutdated);
+    }
 }
