@@ -229,7 +229,7 @@ fn find(conn: &Connection, key: &ContentRevisionKey) -> Result<Option<i64>> {
         params![key.scope.context.build.edition.as_str(), key.scope.context.build.build.as_str(), key.scope.context.build.interface.as_str(), namespace(&key.scope), key.scope.fixture, key.revision.as_str()],
         |row| row.get(0)).optional().db()
 }
-fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
+pub(crate) fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
     let (document, digest, coverage): (String, String, String) = conn.query_row(
         "SELECT r.document, m.content_sha256, m.coverage_document FROM dataset_revisions r JOIN dataset_manifests m ON m.revision_id=r.id WHERE r.id=?1 AND length(CAST(r.document AS BLOB)) <= ?2 AND length(CAST(m.coverage_document AS BLOB)) <= ?2 AND m.manifest_version=1",
         params![id,MAX_CONTENT_REVISION_BYTES as i64], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?))).db()?;
