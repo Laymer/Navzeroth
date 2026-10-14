@@ -62,5 +62,12 @@ manual solo utility units remain manual-utility-v1. Schema1 is unchanged.
 
 Actual updated full408 app/core tests and strict all-target Clippy/fmt/diff passed;
 logs /tmp/navzeroth-cluster-export-fixed-{tests,clippy}.log. Existing repeat/later
-stable export identity and addon size/depth checks still pass. Peer review of this
-follow-up is pending with /root/release_review. Native/live remains unverified.
+stable export identity and addon size/depth checks still pass. Peer /root/release_review independently passed the new collision/typed-expiry
+case and existing stable-ID/snapshot-expiry case on isolated exact source, and
+found no blocker. Generation time is excluded and freshness reasons have no
+continually changing age values. Native/live remains unverified.
+
+After PR85 reconciliation, recipient export also identifies the clustered joint
+ruleset and minimum participant summed utility model explicitly; each exported
+original still reports its original minimum-member contribution. No schema or
+recipient consent/transport behavior changes. Combined dependency checks follow.
