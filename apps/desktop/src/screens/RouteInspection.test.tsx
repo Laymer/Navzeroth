@@ -1,0 +1,62 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { RouteInspection } from "./RouteInspection";
+import { endpoints, routeBounds } from "./routeSegments";
+import { syntheticRoute, required } from "./test-fixtures/route";
+
+it("preserves zero/false observations and fits only exact same-context frame endpoints", () => {
+  const value = syntheticRoute(3); const frame = required(value.frames[0]);
+  required(value.hops[1]).hop.to.map = { ...frame.map, floor: "upper" };
+  required(value.hops[2]).to = { ...required(value.hops[2]).to, image: "synthetic-other-floor" } as typeof value.hops[2]["to"];
+  expect(routeBounds(value, frame)).toEqual({ count: 1, bounds: { minX: 0, maxX: 100, minY: 100, maxY: 200 } });
+  expect(endpoints({ ...value, context: { ...value.context, namespace: "reference" } }, frame, required(value.hops[0]))).toBeNull();
+  const { container } = render(<RouteInspection value={value} />);
+  expect(screen.getByRole("button", { name: /Select hop 1:/ })).toHaveAttribute("aria-pressed", "true");
+  expect(container.querySelectorAll("[data-route-hop]")).toHaveLength(1);
+  expect(container.querySelector('[data-route-hop="0"]')).toHaveAttribute("data-selected", "true");
+  expect(screen.getByText(/walking; 0 ms; estimated/)).toBeInTheDocument();
+  expect(screen.getAllByText(/"value": false/)).toHaveLength(3);
+  expect(screen.getAllByText(/"status": "unknown"/)).toHaveLength(3);
+  expect(screen.getByText(/incomplete_synthetic_trace/)).toBeInTheDocument();
+});
+it("keeps the tail reachable with global keyboard selection and page controls, including focus", async () => {
+  const value = syntheticRoute(); required(value.hops[102]).schematic_connection = false; required(value.hops[102]).geometry_gap = "Synthetic cross-frame gap, no connection";
+  const { container } = render(<RouteInspection value={value} />);
+  expect(screen.getAllByRole("button", { name: /Select hop/ })).toHaveLength(50);
+  fireEvent.keyDown(screen.getByRole("button", { name: /Select hop 1:/ }), { key: "End" });
+  const tail = await screen.findByRole("button", { name: /Select hop 103:/ });
+  await waitFor(() => expect(tail).toHaveFocus());
+  expect(tail).toHaveAttribute("aria-pressed", "true"); expect(screen.getAllByRole("button", { name: /Select hop/ })).toHaveLength(3);
+  expect(screen.getByText("Synthetic cross-frame gap, no connection")).toBeInTheDocument();
+  expect(container.querySelector('[data-route-hop="102"]')).toBeNull();
+  expect(screen.getByRole("button", { name: "Fit selected hop endpoints" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Next route hop page" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Previous route hop page" }));
+  await waitFor(() => expect(screen.getByRole("button", { name: /Select hop 51:/ })).toHaveFocus());
+  fireEvent.click(screen.getByRole("button", { name: "Next route hop page" }));
+  await waitFor(() => expect(screen.getByRole("button", { name: /Select hop 101:/ })).toHaveFocus());
+  fireEvent.keyDown(screen.getByRole("button", { name: /Select hop 101:/ }), { key: "Home" });
+  await waitFor(() => expect(screen.getByRole("button", { name: /Select hop 1:/ })).toHaveFocus());
+  expect(screen.getByRole("button", { name: "Previous route hop page" })).toBeDisabled();
+});
+it("selects the hop's exact frame and resets projection, page and selection for a new guarded response", () => {
+  const value = syntheticRoute(); const second = required(value.frames[1]);
+  const hop = required(value.hops[1]); hop.hop.from.map = second.map; hop.hop.to.map = second.map;
+  hop.from = { ...hop.from, image: second.id } as typeof hop.from; hop.to = { ...hop.to, image: second.id } as typeof hop.to;
+  const view = render(<RouteInspection value={value} />);
+  fireEvent.click(screen.getByRole("button", { name: /Select hop 2:/ }));
+  expect(screen.getByRole("group", { name: `Schematic route frame ${second.id}` })).toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole("button", { name: /Select hop 2:/ }), { key: "End" });
+  const next = syntheticRoute(); next.report.request.snapshot_id = "new-snapshot";
+  view.rerender(<RouteInspection value={next} />);
+  expect(screen.getByRole("button", { name: /Select hop 1:/ })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByText(/Snapshot new-snapshot/)).toBeInTheDocument();
+  expect(screen.getByRole("group", { name: "Schematic route frame synthetic-frame" })).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /Select hop 103:/ })).toBeNull();
+});
+it("fit selection increases bounded zoom; manual pan/zoom remains available", () => {
+  const { container } = render(<RouteInspection value={syntheticRoute(1)} />);
+  const zoom = () => Number(container.querySelector('[data-route-hop="0"] line')?.getAttribute('x2')) - Number(container.querySelector('[data-route-hop="0"] line')?.getAttribute('x1'));
+  const before = zoom(); fireEvent.click(screen.getByRole("button", { name: "Fit selected hop endpoints" }));
+  expect(zoom()).toBeGreaterThan(before);
+  fireEvent.click(screen.getByRole("button", { name: "Fit to frame" })); expect(zoom()).toBe(before);
+});

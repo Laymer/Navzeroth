@@ -7,6 +7,12 @@ import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { PlanningCatalog, PlanningReport, PlanningRequest, ProfileSummary, CommandMap } from "../commands/contract";
 
+// Compare complete serialized reports, including context, fixture and recomputed choices.
+// Object property order is not provenance; array order and every recorded value are.
+function canonical(value: unknown): string {
+  return JSON.stringify(value, (_key, item: unknown) => item && typeof item === "object" && !Array.isArray(item)
+    ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
+}
 export function PlannerScreen({ client, refreshKey }: { client: CommandClient; refreshKey: number }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
   const [profile, setProfile] = useState("");
@@ -20,6 +26,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const [excluded, setExcluded] = useState<string[]>([]);
   const [pinJob,setPinJob]=useState<string|null>(null);
   const [report, setReport] = useState<PlanningReport | null>(null);
+  const routeOwner = useRef<PlanningReport | null>(null);
   const [route, setRoute] = useState<Inspection | null>(null);
   const [exported, setExported] = useState<CommandMap["export_plan"]["output"] | null>(null);
   const [copyStatus, setCopyStatus] = useState("");
@@ -37,6 +44,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const catalogOwner = useRef<{ client: CommandClient; refreshKey: number; profile: string } | null>(null);
   const visibleCatalog = catalog && catalogOwner.current?.client === client && catalogOwner.current.refreshKey === refreshKey && catalogOwner.current.profile === profile ? catalog : null;
   const visibleReport = report && reportOwner.current?.client === client && reportOwner.current.refreshKey === refreshKey && reportOwner.current.profile === profile ? report : null;
+  const visibleRoute = visibleReport && routeOwner.current === visibleReport ? route : null;
   const invalidate = () => { generation.current++; abortJob(); setReport(null); setPinJob(null); setRoute(null); setExported(null); setCopyStatus(""); setBusy(false); };
   useEffect(() => {
     let live = true;
@@ -93,13 +101,17 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   }
   async function inspectRoute() {
     if (!visibleReport) return;
+    const original = visibleReport;
     const ticket = ++generation.current;
     setBusy(true); setRoute(null); setError("");
-    const result = await client.inspectPlanRoute(JSON.stringify(visibleReport.request));
+    const result = await client.inspectPlanRoute(JSON.stringify(original.request));
     if (ticket !== generation.current) return;
     setBusy(false);
     if (!result.ok) { setReport(null); setPinJob(null); setExported(null); setError(result.error.message); }
-    else setRoute(result.value);
+    else if (canonical(result.value.context) !== canonical(original.context) || result.value.fixture !== original.fixture || canonical(result.value.report) !== canonical(original)) {
+      setReport(null); setPinJob(null); setExported(null);
+      setError("Route inspection no longer matches the original plan. Calculate again before selecting route segments.");
+    } else { routeOwner.current = original; setRoute(result.value); }
   }
   async function copyExport() {
     if (!exported) return;
@@ -141,7 +153,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
       <ClusterSummary clustering={visibleReport.clustering} />
       <button type="button" disabled={busy || visibleReport.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</button>
       <button type="button" disabled={busy} onClick={() => void inspectRoute()}>Inspect route</button>
-      {route && <RouteInspection value={route} />}
+      {visibleRoute && <RouteInspection value={visibleRoute} />}
       {exported && <section aria-label="Plan export"><p>{exported.byte_count} bytes; {exported.plan_id}; expires at UTC epoch ms {exported.expires_at_utc_ms}.</p>
         <label>Plan export text <textarea readOnly value={exported.text} rows={8} onFocus={(e) => e.target.select()} /></label>
         <button type="button" onClick={() => void copyExport()}>Copy plan</button><p role="status">{copyStatus}</p>
