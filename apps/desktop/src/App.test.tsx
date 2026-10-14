@@ -37,8 +37,9 @@ describe("non-demo and failure states", () => {
   it("surfaces backend failures without leaking raw error text", async () => {
     const failing: CommandAdapter = { invoke: () => Promise.reject(new Error("secret path /home/x")) };
     render(<App client={createClient(failing)} />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("INTERNAL");
-    expect(screen.getByRole("alert")).not.toHaveTextContent("secret");
+    const alerts = await screen.findAllByRole("alert");
+    expect(alerts.some((alert) => alert.textContent?.includes("INTERNAL"))).toBe(true);
+    for (const alert of screen.getAllByRole("alert")) expect(alert).not.toHaveTextContent("secret");
   });
 });
 
