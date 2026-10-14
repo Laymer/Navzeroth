@@ -95,7 +95,7 @@ separate parallel PR batch and publication audit; no exhaustion claim is made.
 | M9.3 | IMPLEMENTED_UNVERIFIED | PR69/75/74 measurements/control, guarded jobs/frontend and PR80 typed-field expiry correction merged. Scoped synthetic checks pass; ordinary Windows/live performance remains unverified. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M9.6 | IMPLEMENTED_UNVERIFIED | v0.7.0 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
+| M9.6 | IMPLEMENTED_UNVERIFIED | v0.8.0 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
 | M10.1 | IMPLEMENTED_UNVERIFIED | PR89 ordinary imported reference window merged; candidate PR105 focused-main opt-in shortcut and requested interaction controls implemented; native interaction remains unverified. |
 | M10.2 | BLOCKED | Interactive native focus/DPI/monitor/borderless checks unavailable. |
 | M10.3 | IMPLEMENTED_UNVERIFIED | PR89 separate capture/field age and unsupported exclusive-fullscreen explanations merged; native display-mode evidence missing. |
