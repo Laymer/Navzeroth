@@ -366,3 +366,60 @@ fn exhausted_activation_order_commits_restriction_and_clears_instead_of_rolling_
     assert_eq!(out.disposition.state, DispositionState::Revoked);
     assert!(s.active_content_revision(&b.key().scope).unwrap().is_none());
 }
+#[test]
+fn complete_identity_tuple_accepts_core_256_byte_and_multibyte_boundaries() {
+    for (label, value) in [
+        ("129 ASCII", "r".repeat(129)),
+        ("256 ASCII", "r".repeat(256)),
+        ("256 UTF8 bytes", "é".repeat(128)),
+    ] {
+        let mut document = serde_json::to_value(revision(&value)).unwrap();
+        fn identities(v: &mut Value, value: &str) {
+            match v {
+                Value::Object(m) => {
+                    if m.contains_key("edition")
+                        && m.contains_key("build")
+                        && m.contains_key("interface")
+                    {
+                        m.insert("edition".into(), json!(value));
+                        m.insert("build".into(), json!(value));
+                        m.insert("interface".into(), json!(value));
+                    }
+                    for v in m.values_mut() {
+                        identities(v, value);
+                    }
+                }
+                Value::Array(a) => {
+                    for v in a {
+                        identities(v, value);
+                    }
+                }
+                _ => {}
+            }
+        }
+        identities(&mut document, &value);
+        let content: ContentRevision = serde_json::from_value(document).unwrap();
+        let mut s = SqliteStore::open_in_memory().unwrap();
+        s.stage_content_revision(&content).unwrap();
+        assert!(
+            s.content_revision(&content.key()).unwrap().is_some(),
+            "{label}"
+        );
+        let d = s.content_disposition(&content.key()).unwrap().unwrap();
+        assert_eq!(d.key, content.key(), "{label}");
+        s.activate_content_revision(&content.key()).unwrap();
+        assert_eq!(
+            s.active_content_revision(&content.key().scope)
+                .unwrap()
+                .unwrap()
+                .key(),
+            content.key()
+        );
+        let out = change(&mut s, &content, DispositionState::Quarantined);
+        assert!(out.active.is_none());
+        assert_eq!(out.disposition.key, content.key());
+    }
+    for invalid in ["r".repeat(257), "é".repeat(129)] {
+        assert!(azeroth_core::types::DatasetRevision::new(invalid).is_err());
+    }
+}
