@@ -49,6 +49,14 @@ generator. The root log is `/tmp/navzeroth-v1-integration-tests.log`. This check
 the composition of release/staging imports and addon capture/copy behavior; it
 does not establish live or interactive Windows acceptance.
 
+On clean committed `20b4aa7`, root ran the actual `release-readiness --root .
+--version 0.8.1` command: stable=false, stable_ready=false, publication_allowed=true
+for this preview, 68 blockers, zero verified evidence files and zero verified
+content packs. The independent acceptance reviewer repeated that smoke result,
+checked the seven changed docs and found no blocker/important findings. Its 60
+local-link checks pass. Final documentation only records these results and
+corrects stale future tense in the already implemented release command guide.
+
 For the guided 70374 check, root downloaded artifact `11925586142` from package
 run `38627880967`, PR118 head `8ec4edc`. Its source `004058f` has the identical
 tree `240f6670a30d00f87e23e2230b2ab20b49269ff9`. Exact five-file set, all four

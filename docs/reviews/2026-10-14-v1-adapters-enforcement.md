@@ -39,3 +39,12 @@ run inherited the old test harness and failed despite its assertions passing;
 normal merge `4f725fc` includes the independently reviewed exit fix. Fresh PR122
 and combined integration checks remain required. No live or interactive Windows
 acceptance is inferred from any portable, mocked or hosted result.
+
+Final coordinator documentation review at `20b4aa7` by `/root/acceptance` found
+no blocker/important findings. It independently checked all 79 plan IDs, 60 local
+links in the seven changed documents, the 25 unverified acceptance rows and the
+recorded combined result (272 passes, zero failures, one ignored). Its actual
+CLI smoke against that clean revision reports preview allowance with
+`stable_ready=false`, 68 blockers and zero verified packs. The optional stale
+"will provide" wording in the release contract is corrected to the implemented
+present tense. The separate materials task remains pending.
