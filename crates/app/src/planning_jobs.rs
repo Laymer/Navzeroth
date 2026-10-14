@@ -3,7 +3,7 @@ use azeroth_core::{
     error::{AppError, ErrorCode, Result},
     search_control::{SearchControl, SearchPhase},
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
     io::Write,
@@ -29,7 +29,7 @@ fn error(code: ErrorCode, message: &'static str) -> AppError {
 fn canceled() -> AppError {
     error(ErrorCode::OperationCanceled, "Planning job canceled")
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PlanningKind {
     Solo,
@@ -37,6 +37,7 @@ pub enum PlanningKind {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct JobStatus {
+    pub job_schema_version: u32,
     pub job_id: String,
     pub kind: PlanningKind,
     pub state: &'static str,
@@ -48,6 +49,7 @@ pub struct JobStatus {
 }
 #[derive(Debug, Serialize)]
 pub struct JobResult {
+    pub job_schema_version: u32,
     pub job_id: String,
     pub kind: PlanningKind,
     /// Serialized typed backend report, bounded independently of command input.
@@ -58,6 +60,7 @@ struct Entry {
     kind: PlanningKind,
     canceled: AtomicBool,
     state: AtomicU8,
+    completed_order: AtomicU64,
     phase: AtomicU8,
     work: AtomicU64,
     outcome: Mutex<(Option<String>, Option<AppError>)>,
@@ -74,6 +77,7 @@ impl JobTicket {
 pub struct PlanningJobs {
     registry: u64,
     next: AtomicU64,
+    completed: AtomicU64,
     entries: Mutex<BTreeMap<u64, Arc<Entry>>>,
 }
 impl Default for PlanningJobs {
@@ -81,6 +85,7 @@ impl Default for PlanningJobs {
         Self {
             registry: REGISTRY_IDS.fetch_add(1, Ordering::Relaxed),
             next: AtomicU64::new(1),
+            completed: AtomicU64::new(1),
             entries: Mutex::new(BTreeMap::new()),
         }
     }
@@ -103,28 +108,13 @@ impl PlanningJobs {
                 "Planning job capacity reached",
             ));
         }
-        while entries
-            .values()
-            .filter(|e| e.state.load(Ordering::Acquire) > RUNNING)
-            .count()
-            >= MAX_TERMINAL_JOBS
-        {
-            let oldest = entries
-                .iter()
-                .find(|(_, e)| e.state.load(Ordering::Acquire) > RUNNING)
-                .map(|(id, _)| *id);
-            if let Some(oldest) = oldest {
-                entries.remove(&oldest);
-            } else {
-                break;
-            }
-        }
         let serial = self.next.fetch_add(1, Ordering::Relaxed);
         let entry = Arc::new(Entry {
             id: format!("planning-{}-{serial}", self.registry),
             kind,
             canceled: AtomicBool::new(false),
             state: AtomicU8::new(QUEUED),
+            completed_order: AtomicU64::new(0),
             phase: AtomicU8::new(0),
             work: AtomicU64::new(0),
             outcome: Mutex::new((None, None)),
@@ -161,6 +151,7 @@ impl PlanningJobs {
         })?;
         let state = entry.state.load(Ordering::Acquire);
         Ok(JobStatus {
+            job_schema_version: 1,
             job_id: entry.id.clone(),
             kind: entry.kind,
             state: match state {
@@ -206,17 +197,26 @@ impl PlanningJobs {
             )
         })?;
         Ok(JobResult {
+            job_schema_version: 1,
             job_id: entry.id.clone(),
             kind: entry.kind,
             report_json,
         })
     }
-    /// Caller owns worker dispatch and lifecycle lease. Panic, cancellation,
-    /// timeout and oversized reports all terminate without partial success.
+    /// Caller owns worker dispatch. Use guarded publication to check current
+    /// input identities and publish while holding the short store lock.
     pub fn run<T: Serialize>(
         &self,
         ticket: JobTicket,
         call: impl FnOnce(&mut JobControl) -> Result<T>,
+    ) {
+        self.run_guarded(ticket, call, |publish| publish());
+    }
+    pub fn run_guarded<T: Serialize>(
+        &self,
+        ticket: JobTicket,
+        call: impl FnOnce(&mut JobControl) -> Result<T>,
+        validate_and_publish: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<()>,
     ) {
         if self.entry(ticket.id()).is_err() {
             return;
@@ -233,7 +233,7 @@ impl PlanningJobs {
             entry: ticket.entry.clone(),
             started: Instant::now(),
         };
-        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let computed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             control.checkpoint(SearchPhase::ValidateInputs)?;
             let result = call(&mut control)?;
             control.checkpoint(SearchPhase::Selection)?;
@@ -258,28 +258,103 @@ impl PlanningJobs {
                 "Planning worker failed",
             ))
         });
-        if let Ok(mut stored) = ticket.entry.outcome.lock() {
-            let outcome = if ticket.entry.canceled.load(Ordering::Acquire) {
-                Err(canceled())
-            } else {
-                outcome
-            };
-            match outcome {
-                Ok(report) => {
-                    *stored = (Some(report), None);
-                    ticket.entry.state.store(SUCCEEDED, Ordering::Release);
-                }
-                Err(error) => {
-                    let state = if error.code == ErrorCode::OperationCanceled {
-                        CANCELED
-                    } else {
-                        FAILED
-                    };
-                    *stored = (None, Some(error));
-                    ticket.entry.state.store(state, Ordering::Release);
+        match computed {
+            Err(error) => {
+                let _ = self.complete(&ticket, Err(error));
+            }
+            Ok(report) => {
+                let mut report = Some(report);
+                let mut published = false;
+                let mut publish = || {
+                    control.check_time()?;
+                    let report = report.take().ok_or_else(|| {
+                        error(
+                            ErrorCode::InvalidInput,
+                            "Planning publication already completed",
+                        )
+                    })?;
+                    self.complete(&ticket, Ok(report))?;
+                    published = true;
+                    Ok(())
+                };
+                let checked = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    validate_and_publish(&mut publish)
+                }))
+                .unwrap_or_else(|_| {
+                    Err(error(
+                        ErrorCode::ProviderUnavailable,
+                        "Planning publication failed",
+                    ))
+                });
+                if !published {
+                    let failure = checked.err().unwrap_or_else(|| {
+                        error(
+                            ErrorCode::ProviderUnavailable,
+                            "Planning publication was not validated",
+                        )
+                    });
+                    let _ = self.complete(&ticket, Err(failure));
                 }
             }
         }
+    }
+    fn complete(&self, ticket: &JobTicket, result: Result<String>) -> Result<()> {
+        // Registry -> outcome is the only nested order; status/cancel release
+        // registry before locking outcome. Pruning and publication are atomic.
+        let mut entries = self.entries.lock().map_err(|_| {
+            error(
+                ErrorCode::ProviderUnavailable,
+                "Planning registry unavailable",
+            )
+        })?;
+        let mut stored = ticket.entry.outcome.lock().map_err(|_| {
+            error(
+                ErrorCode::ProviderUnavailable,
+                "Planning outcome unavailable",
+            )
+        })?;
+        while entries
+            .values()
+            .filter(|e| e.state.load(Ordering::Acquire) > RUNNING)
+            .count()
+            >= MAX_TERMINAL_JOBS
+        {
+            let oldest = entries
+                .iter()
+                .filter(|(_, e)| e.state.load(Ordering::Acquire) > RUNNING)
+                .min_by_key(|(_, e)| e.completed_order.load(Ordering::Relaxed))
+                .map(|(id, _)| *id);
+            if let Some(oldest) = oldest {
+                entries.remove(&oldest);
+            } else {
+                break;
+            }
+        }
+        let result = if ticket.entry.canceled.load(Ordering::Acquire) {
+            Err(canceled())
+        } else {
+            result
+        };
+        ticket.entry.completed_order.store(
+            self.completed.fetch_add(1, Ordering::Relaxed),
+            Ordering::Relaxed,
+        );
+        match result {
+            Ok(report) => {
+                *stored = (Some(report), None);
+                ticket.entry.state.store(SUCCEEDED, Ordering::Release);
+            }
+            Err(error) => {
+                let state = if error.code == ErrorCode::OperationCanceled {
+                    CANCELED
+                } else {
+                    FAILED
+                };
+                *stored = (None, Some(error));
+                ticket.entry.state.store(state, Ordering::Release);
+            }
+        }
+        Ok(())
     }
 }
 struct BoundedBytes(Vec<u8>);

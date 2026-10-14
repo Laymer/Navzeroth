@@ -48,6 +48,10 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    startPlanningJob: (kind: import("./planningJobs").PlanningKind, text: string) => run(() => adapter.invoke("start_planning_job", { kind, text })),
+    getPlanningJob: (jobId: string) => run(() => adapter.invoke("get_planning_job", { job_id: jobId })),
+    cancelPlanningJob: (jobId: string) => run(() => adapter.invoke("cancel_planning_job", { job_id: jobId })),
+    takePlanningJobResult: (jobId: string) => run(() => adapter.invoke("take_planning_job_result", { job_id: jobId })),
     getDatabaseStatus: () => run(() => adapter.invoke("get_database_status", undefined)),
     checkDatabase: () => run(() => adapter.invoke("check_database", undefined)),
     createDatabaseBackup: (path: string) => run(() => adapter.invoke("create_database_backup", { path })),
