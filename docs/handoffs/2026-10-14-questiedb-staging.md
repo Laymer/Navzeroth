@@ -94,9 +94,24 @@ Independent reviewer `/root/acceptance` found that bare named table keys could
 exceed the source's 64 KiB string bound, while equivalent quoted keys could not.
 Code `ed1a1df` adds a source-only identifier cap before allocation and a
 bare/quoted boundary regression; the final tests and four-file probe include
-that fix. The reviewer has the frozen code commit for final review. Coordinator
-owns integration and all nine exact-candidate gates; this handoff does not claim
-those hosted checks have run on this task PR.
+that fix. Final independent review at exact code commit
+`ed1a1dfe7cda0735372ce54a23c16670a71d199e` found no remaining blocker or important
+finding. The reviewer independently passed all 62 ingest tests, checked all
+eighteen correction paths against the source audit, verified all four file
+lengths/SHA-256 values and reproduced every parsed count. The independent probe
+measured 79/195/231/97 ms per entity; all four results retained used 234,544 KiB
+peak RSS and 0.758 s wall time under Linux WSL2 on Ryzen 9950X3D, Rust 1.99.0.
+These are local debug measurements, not Windows/live acceptance. The observed
+raw body value counts were 158,056 / 419,956 / 417,446 / 193,273 and maximum table
+depths 6 / 6 / 3 / 5. The reviewer confirmed explicit nil and wide integers,
+false build/distribution/playable flags, and eighteen missing corrections.
+Peer logs: `/tmp/navzeroth-v1-ingestion-peer-tests.log`,
+`/tmp/navzeroth-v1-ingestion-peer-real.log` and
+`/tmp/navzeroth-v1-ingestion-peer-memory.json`. The temporary peer driver was
+removed; missing `/usr/bin/time` was replaced with Python child-resource
+measurement and was not counted as a passing invocation. Coordinator owns
+integration and all nine exact-candidate gates; this handoff does not claim
+those hosted checks have completed on this task PR.
 
 Unimplemented by design in this raw-only task: correction composition,
 symbolic constants/operators, runtime branches, derived passes, source conflict
