@@ -112,5 +112,15 @@ immutable evidence; this current ledger does not erase their actual results.
 - M7.6: evidence-gap preparation infrastructure can proceed; verified Deadmines package stays blocked.
 
 These gaps remain actionable; existing foundations and synthetic tests do not prove
-full implementation-plan completion. Wave5 starts after verified v0.4.0
-publication; every task retains a separate claim, branch, PR and release audit.
+full implementation-plan completion. Wave6 starts at published v0.5.0 source f525911; every task retains a separate
+claim, branch, PR and release audit. See the wave6 coordination handoff.
+
+## v0.5.0 released-source audit
+
+Published2026-10-14T10:42:55Z at f525911. Wave6 claims M4.3 clustering, M5.4
+route-derived acquisition and M4.5/M7.5 agreed recipient export in separate PRs.
+Additional ready local foundations: M3 durable content quarantine/revocation with
+safe active fallback and reactivation refusal; bounded opt-in local submission,
+moderation and withdrawal lifecycle (sections8.4/8.6 preparatory infrastructure).
+M12.4 full community acceptance remains BLOCKED by focused-release and real source
+prerequisites; developer-preview tags do not satisfy that gate. Hosting is deferred.
