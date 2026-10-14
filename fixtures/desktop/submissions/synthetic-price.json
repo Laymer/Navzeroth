@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "context": {
+    "build": {
+      "edition": "wow_forever",
+      "build": "UNVERIFIED_DEMO",
+      "interface": "UNVERIFIED_DEMO"
+    },
+    "namespace": "demo"
+  },
+  "fixture": true,
+  "base_revision": "demo-r1",
+  "source": "demo-source-1",
+  "evidence": "demo-evidence-1",
+  "observed_at_utc_ms": null,
+  "payload": {
+    "kind": "price",
+    "item": "demo-item-1",
+    "copper": {
+      "status": "known",
+      "value": 0
+    }
+  }
+}

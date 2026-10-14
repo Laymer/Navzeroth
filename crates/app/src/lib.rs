@@ -151,4 +151,5 @@ pub mod recipient_export;
 pub mod reference;
 pub mod route_acquisition;
 
+pub mod local_submissions;
 pub mod today;
