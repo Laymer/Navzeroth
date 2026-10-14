@@ -14,7 +14,7 @@ use std::{
     process::ExitCode,
 };
 
-const USAGE: &str = "Unsupported command or options. Implemented: export-schemas --output <dir>; \
+const USAGE: &str = "Unsupported command or options. Implemented: build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]. See README.md.";
 
@@ -186,6 +186,22 @@ fn prepare_atlas(args: &AtlasArgs) -> ExitCode {
     }
 }
 
+fn pack_result(result: Result<azeroth_cli::pack::Report, &'static str>) -> ExitCode {
+    match result {
+        Ok(report) => {
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&report).expect("safe report serialization")
+            );
+            ExitCode::SUCCESS
+        }
+        Err(message) => {
+            eprintln!("content-pack: {message}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
 fn main() -> ExitCode {
     let args: Vec<_> = std::env::args_os().skip(1).collect();
     match args.as_slice() {
@@ -204,6 +220,19 @@ fn main() -> ExitCode {
         }
         [command, flag, dir] if command == "export-schemas" && flag == "--output" => {
             export_schemas(Path::new(dir))
+        }
+        [command, input_flag, input, output_flag, output]
+            if command == "build-content"
+                && input_flag == "--input"
+                && output_flag == "--output" =>
+        {
+            pack_result(azeroth_cli::pack::build(
+                Path::new(input),
+                Path::new(output),
+            ))
+        }
+        [command, flag, input] if command == "verify-pack" && flag == "--input" => {
+            pack_result(azeroth_cli::pack::verify(Path::new(input)))
         }
         [command] if command == "validate-fixtures" => validate_fixtures(),
         [command, flag, input, rest @ ..]
