@@ -13,8 +13,8 @@ behavior and installed capability/version evidence remain unverified.
 ## Current candidate and next scheduling decisions
 
 Latest actual publication stays0.7 at035f28e. Combined0.8 preparation5b7f7b9
-implements these finite UI scopes; HUD103 main merge and release gates remain
-pending. Portable/synthetic checks do not promote native/live acceptance.
+implements these finite UI scopes; all four feature PRs are merged through
+protected main12b6ff4. Release PR/main/tag and asset gates remain pending. Portable/synthetic checks do not promote native/live acceptance.
 
 | Plan scope | Current disposition | Evidence / remaining acceptance |
 | --- | --- | --- |

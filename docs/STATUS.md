@@ -7,7 +7,8 @@ Latest actual publication remains v0.7.0 at035f28e, published2026-10-14T15:14:38
 Combined0.8 preparation5b7f7b9 contains route selection/fit, HUD appearance,
 reference shortcut/interaction and main heading reflow. Portable816 Rust tests,
 195 desktop tests/40 mocked browser flows and schema/content checks pass at that
-exact source. HUD103 still awaits its last hosted gate/protected-main merge;
+exact source. All four feature PRs are reviewed/merged through protected main12b6ff4.
+Final-main reconciliation preserves the independently tested code/fixture tree;
 release PR/main/tag and downloaded-asset gates remain pending. Preparation is not
 publication. See [candidate evidence](handoffs/2026-10-14-v0.8.0-release.md).
 
