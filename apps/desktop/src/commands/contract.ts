@@ -1,3 +1,4 @@
+import type { CompatibilityReport } from "./compatibility";
 import type { DatabaseStatus, BackupPreview, RestoreReceipt } from "./recovery";
 import type { PartyProposalReport } from "../party/proposals";
 import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
@@ -300,6 +301,7 @@ export interface CommandMap {
   get_historical_snapshot: { input: { profile_id: string; snapshot_id: string }; output: StoredSnapshot | null };
   promote_snapshot: { input: { profile_id: string; snapshot_id: string; expected_current: string; reason: string }; output: null };
 
+  get_compatibility_report: { input: { profile_id: string | null }; output: CompatibilityReport };
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
   stage_content: { input: { text: string }; output: ContentInspection };
