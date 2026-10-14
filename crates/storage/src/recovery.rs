@@ -240,6 +240,27 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
         output.pragma_update(None, "foreign_keys", true).db()?;
         let store = SqliteStore { conn: output };
         validate(&store)?;
+        // A backup can preserve references, but cannot authenticate a successful
+        // locally guarded publication. Never promote imported advice to Current.
+        let guard: Option<String> = store
+            .conn
+            .query_row(
+                "SELECT guard_json FROM current_plan WHERE slot=1",
+                [],
+                |row| row.get(0),
+            )
+            .db()?;
+        if let Some(guard) = guard {
+            let recovered = crate::today::mark_recovered_plan_guard(&guard)?;
+            store
+                .conn
+                .execute(
+                    "UPDATE current_plan SET guard_json=?1 WHERE slot=1",
+                    [recovered],
+                )
+                .db()?;
+        }
+        validate(&store)?;
         Ok(RecoveryInspection {
             source_schema_version: version as u32,
             restored_schema_version: migrations::latest_version(),
@@ -326,7 +347,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     if fk.query([]).db()?.next().db()?.is_some() {
         return Err(storage("Database foreign-key check failed"));
     }
-    validate_local_foundation(conn)?;
+    validate_local_foundation(store)?;
     for sql in [
         "SELECT (SELECT COUNT(*) FROM profiles)>1024 OR (SELECT COUNT(*) FROM imports)>1024 OR (SELECT COUNT(*) FROM party_profiles)>128 OR (SELECT COUNT(*) FROM dataset_revisions)>1024 OR (SELECT COUNT(*) FROM snapshot_promotions)>256",
         "SELECT EXISTS(SELECT 1 FROM snapshots GROUP BY profile_id HAVING count(*)>257)",
@@ -512,16 +533,12 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     Ok(())
 }
 
-// Replace feature-document refusal with the owning feature's typed validator only
-// after that module is integrated. Unknown documents are never copied as trusted.
-fn validate_local_foundation(conn: &Connection) -> Result<()> {
-    for sql in [
-        "SELECT (SELECT count(*) FROM content_dispositions)!=(SELECT count(*) FROM dataset_revisions) OR (SELECT count(*) FROM content_dispositions)>1024",
-        "SELECT EXISTS(SELECT 1 FROM active_datasets a LEFT JOIN content_dispositions d ON d.revision_id=a.revision_id WHERE d.state IS NULL OR d.state!='eligible' OR d.last_activated_order IS NULL)",
-        "SELECT (SELECT count(*) FROM current_plan)!=1 OR EXISTS(SELECT 1 FROM current_plan WHERE kind IS NOT NULL OR request_json IS NOT NULL OR guard_json IS NOT NULL OR summary_json IS NOT NULL)",
-        "SELECT EXISTS(SELECT 1 FROM app_settings) OR EXISTS(SELECT 1 FROM local_submissions)",
-    ] {
-        reject(conn, sql)?;
-    }
+// Validate every populated feature document using its owning typed reader.
+fn validate_local_foundation(store: &SqliteStore) -> Result<()> {
+    crate::content_dispositions::validate_content_dispositions(&store.conn)?;
+    reject(&store.conn, "SELECT (SELECT count(*) FROM current_plan)!=1")?;
+    store.settings()?;
+    store.current_plan()?;
+    crate::local_submissions::validate_local_submissions(store)?;
     Ok(())
 }
