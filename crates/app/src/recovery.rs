@@ -106,8 +106,13 @@ pub struct DatabaseHost {
     path: PathBuf,
     gate: RwLock<Hosted>,
     candidate: Mutex<Option<Candidate>>,
+    planning_jobs: crate::planning_jobs::PlanningJobs,
 }
 impl DatabaseHost {
+    /// Cancellation/status never acquire the recovery lease or store mutex.
+    pub fn planning_jobs(&self) -> &crate::planning_jobs::PlanningJobs {
+        &self.planning_jobs
+    }
     pub fn start(path: &Path) -> Arc<Self> {
         let host = Arc::new(Self {
             path: path.to_owned(),
@@ -117,6 +122,7 @@ impl DatabaseHost {
                 error: None,
             }),
             candidate: Mutex::new(None),
+            planning_jobs: crate::planning_jobs::PlanningJobs::default(),
         });
         let worker = host.clone();
         let spawned = std::thread::Builder::new()
@@ -173,6 +179,7 @@ impl DatabaseHost {
             path: path.to_owned(),
             gate: RwLock::new(hosted),
             candidate: Mutex::new(None),
+            planning_jobs: crate::planning_jobs::PlanningJobs::default(),
         }
     }
     /// The read lease covers the entire operation, including any detached work

@@ -178,7 +178,7 @@ pub(crate) fn profile_id(key: &ProfileKey) -> Result<String> {
         })?;
     Ok(format!("stored-{:x}", Sha256::digest(encoded)))
 }
-fn resolve(store: &SqliteStore, id: &str) -> Result<ProfileKey> {
+pub(crate) fn resolve(store: &SqliteStore, id: &str) -> Result<ProfileKey> {
     if id.len() > 128 {
         return Err(invalid("No such profile"));
     }
@@ -394,6 +394,7 @@ impl SnapshotApplication {
                 "Planning request exceeds size limit",
             ));
         }
+        let started = std::time::Instant::now();
         let request: crate::planning::PlanningRequest =
             serde_json::from_str(text).map_err(|_| invalid("Invalid planning request"))?;
         let state = self.lock()?;
@@ -417,7 +418,7 @@ impl SnapshotApplication {
         let content = state
             .store
             .active_content_revision(&azeroth_storage::content::ContentScope {
-                context: key.context,
+                context: key.context.clone(),
                 fixture: key.fixture,
             })?
             .ok_or_else(|| {
@@ -429,7 +430,19 @@ impl SnapshotApplication {
         if content.envelope.payload.revision != request.revision {
             return Err(invalid("Active content changed; refresh planning inputs"));
         }
-        calculate(request, &snapshot, &content, &context(now))
+        drop(state);
+        let guard = crate::planning_job_service::PublicationGuard::new(
+            None,
+            std::slice::from_ref(&snapshot),
+            &content,
+        )?;
+        let result = calculate(request, &snapshot, &content, &context(now))?;
+        guard.publish(
+            self,
+            crate::planning_job_service::advanced_now(now, started.elapsed()),
+            &mut || Ok(()),
+        )?;
+        Ok(result)
     }
     pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
         if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
