@@ -63,6 +63,11 @@ export const demoAdapter: CommandAdapter = {
   invoke<C extends CommandName>(command: C, input: CommandMap[C]["input"]) {
     const answer = ((): CommandMap[CommandName]["output"] => {
       switch (command) {
+        case "get_database_status": throw { code: "PROVIDER_UNAVAILABLE", message: "Database recovery is available in the native desktop application", retryable: false };
+        case "check_database":
+        case "create_database_backup":
+        case "inspect_database_backup":
+        case "restore_database_backup": throw { code: "PROVIDER_UNAVAILABLE", message: "Database recovery is available in the native desktop application", retryable: false };
         case "get_app_status":
           return {
             version: "0.4.0",

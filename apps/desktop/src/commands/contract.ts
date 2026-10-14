@@ -1,3 +1,4 @@
+import type { DatabaseStatus, BackupPreview, RestoreReceipt } from "./recovery";
 import type { PartyProposalReport } from "../party/proposals";
 import type { JointPlanningCatalog, JointPlanningReport } from "../party/contract";
 import type { CalibrationRequest, CalibrationReport, SessionCalibrationAnnotation } from "./calibration";
@@ -264,6 +265,11 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_database_status: { input: undefined; output: DatabaseStatus };
+  check_database: { input: undefined; output: null };
+  create_database_backup: { input: { path: string }; output: null };
+  inspect_database_backup: { input: { path: string }; output: BackupPreview };
+  restore_database_backup: { input: { candidate_id: string }; output: RestoreReceipt };
   get_party_plan_proposal: { input: { party_id: string }; output: PartyProposalReport | null };
   propose_party_plan: { input: { text: string }; output: PartyProposalReport };
   accept_party_plan: { input: { text: string }; output: PartyProposalReport };

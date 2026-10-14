@@ -135,3 +135,5 @@ pub mod joint_planning;
 
 pub mod party_proposals;
 pub mod reminders;
+
+pub mod recovery;
