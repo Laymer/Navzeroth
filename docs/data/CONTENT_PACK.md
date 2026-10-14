@@ -1,6 +1,6 @@
 # Local reference pack format1
 
-Frozen interface for section19.3 build-content/verify-pack, owner Codex/root,
+Frozen interface for section19.3 build-content/verify-pack, implementation owner Codex/root/atlas_dense,
 baseline v0.4.0. This internal container does not alter exchange schema1.
 
 Input: one selected content directory with datasets/*.json and sources.json.
