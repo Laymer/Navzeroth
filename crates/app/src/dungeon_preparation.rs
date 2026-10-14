@@ -327,6 +327,7 @@ struct Captured {
     keys: Vec<ProfileKey>,
     snapshots: Vec<Option<Envelope<CharacterSnapshot>>>,
     content: Option<ContentRevision>,
+    disposition: Option<azeroth_storage::content_dispositions::DispositionGuard>,
     party: Option<PartyId>,
 }
 fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -> Result<Captured> {
@@ -348,7 +349,22 @@ fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -
         .iter()
         .map(|key| store.current_snapshot(key))
         .collect::<Result<Vec<_>>>()?;
+    let disposition = content
+        .as_ref()
+        .map(|c| {
+            store.usable_content_revision(&c.key()).and_then(|v| {
+                v.map(|(_, d)| d.guard()).ok_or_else(|| {
+                    AppError::new(
+                        ErrorCode::SnapshotOutdated,
+                        "Preparation content changed",
+                        false,
+                    )
+                })
+            })
+        })
+        .transpose()?;
     Ok(Captured {
+        disposition,
         keys,
         snapshots,
         content,
@@ -503,6 +519,15 @@ impl SnapshotApplication {
                         &fresh_snapshots,
                         content,
                         &clock,
+                    )?
+                    .bind_disposition(
+                        captured.disposition.clone().ok_or_else(|| {
+                            AppError::new(
+                                ErrorCode::SnapshotOutdated,
+                                "Preparation content changed",
+                                false,
+                            )
+                        })?,
                     )
                 })
                 .transpose()?
@@ -540,6 +565,14 @@ impl SnapshotApplication {
                 })?;
                 if content_hash(&current)? != original_content_hash {
                     return Err(outdated());
+                }
+                if let Some(disposition) = &captured.disposition {
+                    if let Err(e) = store.validate_usable_content_guard(disposition) {
+                        if e.code == ErrorCode::StorageError {
+                            return Err(e);
+                        }
+                        return Err(outdated());
+                    }
                 }
                 if let Some(guard) = &guard {
                     guard.validate(store, || {

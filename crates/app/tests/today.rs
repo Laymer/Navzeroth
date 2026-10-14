@@ -329,11 +329,12 @@ fn joint_pin_is_local_intent_and_membership_changes_invalidate_it() {
     )
     .unwrap();
     let catalog = app.joint_planning_catalog(&party, Some(time(NOW))).unwrap();
-    let profiles: Vec<_> = catalog
+    let mut profiles: Vec<_> = catalog
         .participants
         .iter()
         .map(|p| json!({"profile_id":p.profile_id,"snapshot_id":p.snapshot_id}))
         .collect();
+    profiles.reverse(); // Request member order need not equal declared party order.
     let utilities: serde_json::Map<String, Value> = catalog
         .participants
         .iter()
@@ -448,6 +449,59 @@ fn malformed_saved_documents_and_revision_exhaustion_fail_without_mutation() {
         .is_err()
     );
     assert!(app.clear_current_plan(MAX_REVISION).is_err());
+    assert_eq!(
+        app.today_view(Some(time(NOW)))
+            .unwrap()
+            .current_plan
+            .revision,
+        2
+    );
+}
+#[test]
+fn content_restrict_release_reactivate_aba_refuses_original_publication_and_pin() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let request = setup(&app, &snapshot());
+    let jobs = PlanningJobs::default();
+    let job = run(&app, &jobs, PlanningKind::Solo, &request);
+    app.pin_current_plan(&jobs, &job, 1, Some(time(NOW)))
+        .unwrap();
+    let (_, guard) = app
+        .calculate_planning_job(
+            PlanningKind::Solo,
+            &request.to_string(),
+            Some(time(NOW)),
+            &mut azeroth_core::search_control::NoopSearchControl,
+        )
+        .unwrap();
+    let profile = request["profile_id"].as_str().unwrap();
+    for state in ["quarantined", "eligible"] {
+        let g = app.content_governance(profile).unwrap();
+        let change = json!({"schema_version":1,"profile_id":profile,"mutation":{"guard":g.revisions[0].guard(),"state":state,"reason_code":"operator_review"}});
+        app.change_content_disposition(&change.to_string(), Some(time(NOW)))
+            .unwrap();
+    }
+    app.activate_content(
+        profile,
+        &DatasetRevision::new("synthetic-planning-v1").unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        guard
+            .publish(&app, Some(time(NOW)), &mut || Ok(()))
+            .unwrap_err()
+            .code,
+        ErrorCode::SnapshotOutdated
+    );
+    assert!(matches!(
+        app.today_view(Some(time(NOW))).unwrap().current_plan.state,
+        PlanState::Historical
+    ));
+    assert_eq!(
+        app.pin_current_plan(&jobs, &job, 2, Some(time(NOW)))
+            .unwrap_err()
+            .code,
+        ErrorCode::SnapshotOutdated
+    );
     assert_eq!(
         app.today_view(Some(time(NOW)))
             .unwrap()

@@ -300,6 +300,11 @@ impl SnapshotApplication {
                 }
             }
             crate::reference::validate_bound(&view)?;
+            if let Some(plan) = &mut view.current_plan {
+                crate::today::revalidate_view(store, plan, || {
+                    crate::planning_job_service::advanced_now(now, started.elapsed())
+                })?;
+            }
             Ok(view)
         })
     }
@@ -485,6 +490,22 @@ impl SnapshotApplication {
             &FreshnessContext,
         ) -> Result<T>,
     ) -> Result<T> {
+        self.with_planning_guarded(text, now, |request, snapshot, content, clock, _| {
+            calculate(request, snapshot, content, clock)
+        })
+    }
+    pub(crate) fn with_planning_guarded<T>(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+        calculate: impl FnOnce(
+            crate::planning::PlanningRequest,
+            &Envelope<CharacterSnapshot>,
+            &azeroth_storage::content::ContentRevision,
+            &FreshnessContext,
+            &crate::planning_job_service::PublicationGuard,
+        ) -> Result<T>,
+    ) -> Result<T> {
         if text.len() > crate::planning::MAX_REQUEST_BYTES {
             return Err(error(
                 ErrorCode::ImportTooLarge,
@@ -495,46 +516,54 @@ impl SnapshotApplication {
         let request: crate::planning::PlanningRequest =
             serde_json::from_str(text).map_err(|_| invalid("Invalid planning request"))?;
         let state = self.lock()?;
-        let key = resolve(&state.store, &request.profile_id)?;
-        let snapshot = state
-            .store
-            .current_snapshot(&key)?
-            .ok_or_else(|| invalid("Profile has no current snapshot"))?;
-        if snapshot.payload.id != request.snapshot_id {
-            return Err(invalid("Snapshot changed; refresh planning inputs"));
-        }
-        if !matches!(
-            freshness(&snapshot.payload.capture, &context(now)),
-            Freshness::Fresh { .. }
-        ) {
-            return Err(error(
-                ErrorCode::SnapshotOutdated,
-                "Planning requires a fresh capture with trusted age",
-            ));
-        }
-        let content = state
-            .store
-            .active_content_revision(&azeroth_storage::content::ContentScope {
-                context: key.context.clone(),
-                fixture: key.fixture,
-            })?
-            .ok_or_else(|| {
-                error(
-                    ErrorCode::DatasetIncomplete,
-                    "No active content for this profile",
-                )
-            })?;
-        if content.envelope.payload.revision != request.revision {
-            return Err(invalid("Active content changed; refresh planning inputs"));
-        }
+        let (snapshot, content, guard) = state.store.with_immediate_read(|store| {
+            let key = resolve(store, &request.profile_id)?;
+            let snapshot = store
+                .current_snapshot(&key)?
+                .ok_or_else(|| invalid("Profile has no current snapshot"))?;
+            if snapshot.payload.id != request.snapshot_id {
+                return Err(invalid("Snapshot changed; refresh planning inputs"));
+            }
+            if !matches!(
+                freshness(&snapshot.payload.capture, &context(now)),
+                Freshness::Fresh { .. }
+            ) {
+                return Err(error(
+                    ErrorCode::SnapshotOutdated,
+                    "Planning requires a fresh capture with trusted age",
+                ));
+            }
+            let content = store
+                .active_content_revision(&azeroth_storage::content::ContentScope {
+                    context: key.context.clone(),
+                    fixture: key.fixture,
+                })?
+                .ok_or_else(|| {
+                    error(
+                        ErrorCode::DatasetIncomplete,
+                        "No active content for this profile",
+                    )
+                })?;
+            if content.envelope.payload.revision != request.revision {
+                return Err(invalid("Active content changed; refresh planning inputs"));
+            }
+            let guard = crate::planning_job_service::PublicationGuard::new(
+                None,
+                std::slice::from_ref(&snapshot),
+                &content,
+                &context(now),
+            )?
+            .bind_disposition(
+                store
+                    .usable_content_revision(&content.key())?
+                    .ok_or_else(|| invalid("Active content unavailable"))?
+                    .1
+                    .guard(),
+            )?;
+            Ok((snapshot, content, guard))
+        })?;
         drop(state);
-        let guard = crate::planning_job_service::PublicationGuard::new(
-            None,
-            std::slice::from_ref(&snapshot),
-            &content,
-            &context(now),
-        )?;
-        let result = calculate(request, &snapshot, &content, &context(now))?;
+        let result = calculate(request, &snapshot, &content, &context(now), &guard)?;
         guard.publish(
             self,
             crate::planning_job_service::advanced_now(now, started.elapsed()),

@@ -138,6 +138,29 @@ pub(crate) fn plan_view(
         summary: Some(plan.summary),
     })
 }
+pub(crate) fn revalidate_view(
+    store: &SqliteStore,
+    view: &mut CurrentPlanView,
+    now: impl FnMut() -> Option<UtcMillis>,
+) -> Result<()> {
+    if !matches!(view.state, PlanState::Current) {
+        return Ok(());
+    }
+    let plan = store
+        .current_plan()?
+        .plan
+        .ok_or_else(|| invalid("Saved plan slot changed"))?;
+    if let Err(e) =
+        PublicationGuard::restore(store, &plan.guard).and_then(|g| g.validate(store, now))
+    {
+        if e.code != ErrorCode::SnapshotOutdated {
+            return Err(e);
+        }
+        view.state = PlanState::Historical;
+        view.reason = Some("dependencies_or_freshness_changed");
+    }
+    Ok(())
+}
 impl SnapshotApplication {
     pub fn app_settings(&self) -> Result<SettingsRecord> {
         self.with_store_mut(|s| s.settings())
@@ -162,8 +185,9 @@ impl SnapshotApplication {
                 // Registry is consulted under the same lock order as successful publication.
                 let descriptor = jobs.pin_descriptor(id)?;
                 let guard = PublicationGuard::restore(store, &descriptor.guard)?;
-                guard.validate(store, || advanced_now(now, started.elapsed()))?;
-                store.replace_current_plan(expected, Some(&descriptor))
+                store.replace_current_plan_guarded(expected, Some(&descriptor), |store| {
+                    guard.validate(store, || advanced_now(now, started.elapsed()))
+                })
             })
         })
     }
@@ -225,7 +249,7 @@ impl SnapshotApplication {
                     }
                     None => selection_available = false,
                 }
-                let view = TodayView {
+                let mut view = TodayView {
                     schema_version: 1,
                     settings_revision: settings.revision,
                     selected_subject: settings.settings.selected_subject,
@@ -234,7 +258,10 @@ impl SnapshotApplication {
                     manual_goal: settings.settings.manual_planning_defaults.goal_profile,
                     current_plan: plan_view(store, || advanced_now(now, started.elapsed()))?,
                 };
-                encode(&view, 128 * 1024)?;
+                encode(&view, 128 * 1024 - 64)?;
+                revalidate_view(store, &mut view.current_plan, || {
+                    advanced_now(now, started.elapsed())
+                })?;
                 Ok(view)
             })
         })

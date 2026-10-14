@@ -220,6 +220,7 @@ pub struct GuardDescriptor {
     pub profiles: Vec<SavedProfile>,
     pub content: ContentRevisionKey,
     pub content_hash: Sha256Hex,
+    pub content_disposition: crate::content_dispositions::DispositionGuard,
     pub evaluation_utc_ms: UtcMillis,
     pub publication_utc_ms: UtcMillis,
     pub max_age_ms: Millis,
@@ -275,7 +276,12 @@ impl PlanDescriptor {
     pub fn validate(&self) -> Result<()> {
         let g = &self.guard;
         let s = &self.summary;
-        if g.schema_version != 1
+        if g.content_disposition.key != g.content
+            || g.content_disposition.state
+                != crate::content_dispositions::DispositionState::Eligible
+            || g.content_disposition.state_revision == 0
+            || g.content_disposition.state_revision > MAX_REVISION as u64
+            || g.schema_version != 1
             || s.schema_version != 1
             || g.profiles.is_empty()
             || g.profiles.len() > 40
@@ -320,6 +326,16 @@ impl PlanDescriptor {
         let (goal, revision, candidates, excluded) = match self.kind {
             PlanKind::Solo => {
                 let r: PlanningRequest = decode(&self.request_json, MAX_REQUEST)?;
+                if r.candidates.len() > 128
+                    || r.candidates
+                        .iter()
+                        .map(|c| &c.objective)
+                        .collect::<BTreeSet<_>>()
+                        .len()
+                        != r.candidates.len()
+                {
+                    return Err(invalid("Invalid saved candidate collection"));
+                }
                 if g.profiles.len() != 1
                     || !matches!(&g.subject, Subject::Character{profile_id} if profile_id==&r.profile_id && profile_id==&g.profiles[0].profile_id)
                     || r.snapshot_id != g.profiles[0].snapshot_id
@@ -343,12 +359,28 @@ impl PlanDescriptor {
             }
             PlanKind::Joint => {
                 let r: JointPlanningRequest = decode(&self.request_json, MAX_REQUEST)?;
+                if r.candidates.len() > 128
+                    || r.candidates
+                        .iter()
+                        .map(|c| &c.objective)
+                        .collect::<BTreeSet<_>>()
+                        .len()
+                        != r.candidates.len()
+                {
+                    return Err(invalid("Invalid saved candidate collection"));
+                }
+                let expected = r
+                    .participants
+                    .iter()
+                    .map(|p| (&p.profile_id, &p.snapshot_id))
+                    .collect::<BTreeMap<_, _>>();
                 if !(2..=40).contains(&r.participants.len())
                     || !matches!(&g.subject,Subject::Party{party_id} if party_id==&r.party_id)
                     || r.participants.len() != g.profiles.len()
-                    || r.participants.iter().zip(&g.profiles).any(|(p, g)| {
-                        p.profile_id != g.profile_id || p.snapshot_id != g.snapshot_id
-                    })
+                    || expected.len() != r.participants.len()
+                    || g.profiles
+                        .iter()
+                        .any(|p| expected.get(&p.profile_id) != Some(&&p.snapshot_id))
                     || r.candidates.iter().any(|c| {
                         c.utilities.len() != g.profiles.len()
                             || g.profiles
@@ -402,7 +434,7 @@ pub struct CurrentPlanRecord {
     pub plan: Option<PlanDescriptor>,
 }
 fn next(revision: i64) -> Result<i64> {
-    if revision < 0 || revision >= MAX_REVISION {
+    if !(0..MAX_REVISION).contains(&revision) {
         Err(invalid("Local revision exhausted"))
     } else {
         Ok(revision + 1)
@@ -518,6 +550,14 @@ impl SqliteStore {
         expected: i64,
         plan: Option<&PlanDescriptor>,
     ) -> Result<i64> {
+        self.replace_current_plan_guarded(expected, plan, |_| Ok(()))
+    }
+    pub fn replace_current_plan_guarded(
+        &self,
+        expected: i64,
+        plan: Option<&PlanDescriptor>,
+        validate: impl FnOnce(&Self) -> Result<()>,
+    ) -> Result<i64> {
         let revision = next(expected)?;
         let (kind, request, guard, summary) = match plan {
             Some(p) => {
@@ -531,6 +571,7 @@ impl SqliteStore {
             }
             None => (None, None, None, None),
         };
+        validate(self)?;
         let count=self.conn.execute("UPDATE current_plan SET revision=?1,kind=?2,request_json=?3,guard_json=?4,summary_json=?5 WHERE slot=1 AND revision=?6",params![revision,kind,request,guard,summary,expected]).db()?;
         if count != 1 {
             return Err(invalid("Saved plan revision changed"));
