@@ -1,3 +1,4 @@
+import { ReferenceWindowControls } from "./screens/ReferenceWindowControls";
 import { CompatibilityPanel } from "./screens/CompatibilityPanel";
 import { DiagnosticsPanel } from "./screens/DiagnosticsPanel";
 import { RecoveryPanel } from "./screens/RecoveryPanel";
@@ -89,6 +90,7 @@ export function App({ client }: { client: CommandClient }) {
   return (
     <main>
       <h1>Azeroth Navigator</h1>
+      <details><summary>Optional reference window</summary><ReferenceWindowControls client={client}/></details>
       {load.phase === "loading" && <p role="status">Loading…</p>}
       {load.phase === "error" && (
         <p role="alert">

@@ -1,3 +1,4 @@
+import desktopPackage from "../../package.json";
 // Browser-only adapter serving the synthetic fixture. Used for `vite dev`,
 // unit tests and the explicit demo mode; it can never report stored data.
 import type { CharacterSnapshotEnvelope } from "../../../../schemas/v1/exchange";
@@ -86,6 +87,9 @@ export const demoAdapter: CommandAdapter = {
           }
           return snapshot;
         }
+        case "get_reference_view": return {schema_version:1,app_version:desktopPackage.version,snapshot:{character:snapshot.payload.character,snapshot_id:snapshot.payload.id,context:snapshot.payload.context,fixture:snapshot.fixture,level:snapshot.payload.level,role:snapshot.payload.role,location:snapshot.payload.location,capture_freshness:{status:"uncertain",reason:"missing_or_untrusted_time"},level_freshness:{status:"uncertain",reason:"missing_or_untrusted_time"},role_freshness:{status:"uncertain",reason:"missing_or_untrusted_time"},location_freshness:{status:"uncertain",reason:"missing_or_untrusted_time"}}};
+        case "get_reference_window_state":
+        case "set_reference_window": throw {code:"PROVIDER_UNAVAILABLE",message:"Ordinary reference windows require the native desktop",retryable:false};
         case "get_snapshot_watch":
         case "stop_snapshot_watch":
           return { active: false, status: null, last_import: null, error: null };
