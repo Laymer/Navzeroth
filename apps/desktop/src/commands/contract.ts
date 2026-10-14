@@ -267,6 +267,8 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  toggle_reference_window: {input:{always_on_top:boolean;interaction_mode:import("./reference").InteractionMode};output:import("./reference").ReferenceControlReceipt};
+  set_reference_interaction: {input:{interaction_mode:import("./reference").InteractionMode};output:import("./reference").ReferenceControlReceipt};
   list_local_submissions: { input: { after: string | null; limit: number }; output: import("./localSubmissions").SubmissionPage };
   submit_local_observation: { input: { text: string; opt_in: boolean }; output: import("./localSubmissions").SubmitReceipt };
   change_local_submission: { input: { text: string }; output: import("./localSubmissions").SubmissionRecord };

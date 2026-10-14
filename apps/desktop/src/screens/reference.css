@@ -3,3 +3,8 @@
 .reference-view dt { font-weight: bold; }
 .reference-view dd { margin: 0 0 0.75rem; }
 .reference-view button { font: inherit; max-width: 100%; }
+.reference-controls { min-width: 0; overflow-wrap: anywhere; }
+.reference-controls label { display: block; margin-block: .5rem; }
+.reference-controls button, .reference-controls select { box-sizing: border-box; min-width: 0; max-width: 100%; font: inherit; }
+.reference-controls select { display: block; width: 100%; }
+.reference-controls button { white-space: normal; overflow-wrap: anywhere; margin: .25rem; }

@@ -688,6 +688,8 @@ pub fn run() {
                 get_compatibility_report,
                 get_reference_window_state,
                 set_reference_window,
+                toggle_reference_window,
+                set_reference_interaction,
                 start_planning_job,
                 get_planning_job,
                 cancel_planning_job,
@@ -865,6 +867,48 @@ async fn get_reference_window_state(
         )
     })?;
     reference_window::state(&app)
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn toggle_reference_window(
+    app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
+    controller: State<'_, reference_window::Controller>,
+    always_on_top: bool,
+    interaction_mode: azeroth_app::reference_controls::InteractionMode,
+) -> Result<azeroth_app::reference_controls::ControlReceipt, AppError> {
+    reference_window::main_caller(window.label())?;
+    let _serial = controller.inner().0.lock().map_err(|_| {
+        AppError::new(
+            ErrorCode::ProviderUnavailable,
+            "Reference controls unavailable",
+            false,
+        )
+    })?;
+    Ok(azeroth_app::reference_controls::toggle(
+        &mut reference_window::Operations::new(app, window),
+        interaction_mode,
+        always_on_top,
+    ))
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn set_reference_interaction(
+    app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
+    controller: State<'_, reference_window::Controller>,
+    interaction_mode: azeroth_app::reference_controls::InteractionMode,
+) -> Result<azeroth_app::reference_controls::ControlReceipt, AppError> {
+    reference_window::main_caller(window.label())?;
+    let _serial = controller.inner().0.lock().map_err(|_| {
+        AppError::new(
+            ErrorCode::ProviderUnavailable,
+            "Reference controls unavailable",
+            false,
+        )
+    })?;
+    Ok(azeroth_app::reference_controls::set_interaction(
+        &mut reference_window::Operations::new(app, window),
+        interaction_mode,
+    ))
 }
 #[tauri::command(rename_all = "snake_case")]
 async fn set_reference_window(
