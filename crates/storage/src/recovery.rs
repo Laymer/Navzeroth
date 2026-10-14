@@ -260,6 +260,51 @@ fn reject(conn: &Connection, sql: &str) -> Result<()> {
 /// the current selections displayed by the application.
 pub fn validate(store: &SqliteStore) -> Result<()> {
     let conn = &store.conn;
+    let trusted = canonical(migrations::MIGRATIONS.len())?;
+    if schema(conn)? != schema(&trusted)? {
+        return Err(storage("Database schema differs from trusted schema"));
+    }
+    let mut total = 0usize;
+    for &table in TABLES {
+        let mut columns = trusted
+            .prepare(&format!("PRAGMA table_info({table})"))
+            .db()?;
+        let names = columns
+            .query_map([], |r| r.get::<_, String>(1))
+            .db()?
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .db()?;
+        let size = names
+            .iter()
+            .map(|name| format!("coalesce(length(CAST({name} AS BLOB)),0)"))
+            .collect::<Vec<_>>()
+            .join("+");
+        let oversized: bool = conn
+            .query_row(
+                &format!("SELECT EXISTS(SELECT 1 FROM {table} WHERE {size}>?1)"),
+                [MAX_CELL as i64],
+                |r| r.get(0),
+            )
+            .db()?;
+        if oversized {
+            return Err(storage("Database row exceeds validation capacity"));
+        }
+        let count: usize = conn
+            .query_row(
+                &format!(
+                    "SELECT COUNT(*) FROM (SELECT 1 FROM {table} LIMIT {})",
+                    MAX_ROWS + 1
+                ),
+                [],
+                |r| r.get(0),
+            )
+            .db()?;
+        total = total.saturating_add(count);
+        if total > MAX_ROWS {
+            return Err(storage("Database row count exceeds validation capacity"));
+        }
+    }
+
     let integrity: String = conn
         .query_row("PRAGMA integrity_check(1)", [], |r| r.get(0))
         .db()?;
