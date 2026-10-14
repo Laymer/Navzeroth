@@ -44,3 +44,5 @@ pub mod party_proposals;
 pub mod reminders;
 
 pub mod recovery;
+
+mod consistent_read;
