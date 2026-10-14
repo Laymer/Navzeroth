@@ -137,3 +137,66 @@ fn restricted_original_stage_never_becomes_ready_through_clustering() {
         assert_eq!(selected[0].candidate.as_str(), "synthetic-service");
     }
 }
+
+#[test]
+fn exported_identity_changes_with_recomputed_choices_and_expiry_tracks_typed_fields() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let mut snapshot: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v1/character-snapshot.json"
+    ))
+    .unwrap();
+    snapshot["payload"]["capture"]["observed_at_utc_ms"] = json!(NOW - 100);
+    snapshot["payload"]["level"]["observed_at_utc_ms"] = json!(NOW - 1_785_000);
+    snapshot["payload"]["level"]["clock_trust"] = json!("trusted");
+    let profile = app
+        .import_text(
+            &format!("ANAV1:{snapshot}"),
+            Some(UtcMillis::new(NOW).unwrap()),
+        )
+        .unwrap()
+        .profile_id;
+    let mut content: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/desktop/planning/synthetic-revision.json"
+    ))
+    .unwrap();
+    let mut unrestricted = content["envelope"]["payload"]["objectives"][0].clone();
+    unrestricted["id"] = json!("unrestricted-service");
+    content["envelope"]["payload"]["objectives"][0]["requirements"] =
+        json!({"status":"known","value":{"op":"level_at_least","level":22}});
+    content["envelope"]["payload"]["objectives"]
+        .as_array_mut()
+        .unwrap()
+        .push(unrestricted);
+    app.stage_content(&content.to_string()).unwrap();
+    app.activate_content(
+        &profile,
+        &DatasetRevision::new("synthetic-planning-v1").unwrap(),
+    )
+    .unwrap();
+    let catalog = app.planning_catalog(&profile).unwrap();
+    let request = json!({"profile_id":profile,"snapshot_id":catalog.snapshot_id,"revision":catalog.revision,"goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1","budget_ms":100000,"stopping_service_ms":0,"excluded":[],"candidates":[{"objective":"synthetic-service","node":"demo-node-2","utility":20,"completion_ms":1000,"service_ms":0},{"objective":"unrestricted-service","node":"demo-node-2","utility":10,"completion_ms":1000,"service_ms":0}]});
+    let first = app
+        .export_plan(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+        .unwrap();
+    let later = app
+        .export_plan(
+            &request.to_string(),
+            Some(UtcMillis::new(NOW + 16000).unwrap()),
+        )
+        .unwrap();
+    let first_value: Value = serde_json::from_str(&first.text[6..]).unwrap();
+    let later_value: Value = serde_json::from_str(&later.text[6..]).unwrap();
+    assert_eq!(
+        first_value["payload"]["steps"][0]["objective"],
+        "synthetic-service"
+    );
+    assert_eq!(
+        later_value["payload"]["steps"][0]["objective"],
+        "unrestricted-service"
+    );
+    assert_ne!(
+        first.plan_id, later.plan_id,
+        "different recomputed choices must not reuse addon progress identity"
+    );
+    assert_eq!(first.expires_at_utc_ms.get(), NOW + 15000);
+}
