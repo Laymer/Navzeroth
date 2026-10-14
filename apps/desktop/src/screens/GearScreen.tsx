@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { RouteAcquisitionPanel } from "./RouteAcquisitionPanel";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { ProfileSummary } from "../commands/contract";
 import type { GearCatalog, GearInput, GearObservation, GearReport, GearRequest, GearRanking } from "../commands/gear";
@@ -29,12 +30,14 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   const [independent, setIndependent] = useState(false);
   const [perAttempt, setPerAttempt] = useState(false);
   const [synthetic, setSynthetic] = useState(false);
+  const [reportBasis, setReportBasis] = useState<"manual" | "route" | null>(null);
   const [report, setReport] = useState<GearReport | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const generation = useRef(0);
   const scope = useRef<{ client: CommandClient; profile: string } | null>(null);
-  const invalidate = () => { generation.current++; setReport(null); setBusy(false); };
+  const routeReport = useCallback((value: GearReport | null) => { generation.current++; setReport(value); setReportBasis(value ? "route" : null); }, []);
+  const invalidate = useCallback(() => { generation.current++; setReport(null); setBusy(false); }, []);
   useEffect(() => {
     let live = true;
     void client.listProfiles().then((result) => {
@@ -74,11 +77,9 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     setTimes({ travel: "0", formation: "0", attempt: "1000", stopping: "0", budget: "10000", copper: "0", attempts: "1" });
     setIndependent(false); setPerAttempt(false); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
   }
-  async function calculate() {
-    if (!catalog?.snapshot_id || !catalog.revision) return;
-    const ticket = ++generation.current; setBusy(true); setReport(null); setError("");
-    try {
-      const request: GearRequest = {
+  function gearRequest(): GearRequest {
+    if (!catalog?.snapshot_id || !catalog.revision) throw new Error("Import a capture and activate content first.");
+    return {
         profile_id: profile, snapshot_id: catalog.snapshot_id, revision: catalog.revision,
         model: { role, version: "gear-model-v1", weight_source: { type: synthetic ? "synthetic_test" : "user_preference" }, weights: JSON.parse(weights) as Record<string, number>, known_unmodeled: [] },
         layout: { slots, hands: mainHand || offHand ? { main_hand: mainHand, off_hand: offHand } : null },
@@ -87,11 +88,17 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
           incremental_travel_ms: numberObservation(times.travel), formation_ms: numberObservation(times.formation), attempt_ms: numberObservation(times.attempt), stopping_ms: numberObservation(times.stopping),
           available_copper: times.copper.trim() ? known(times.copper) : unknown(), session_budget_ms: Number(times.budget), max_attempts: Number(times.attempts), independent_player_attempts: independent, cost_per_attempt: perAttempt,
         } } : null })),
-      };
+      } satisfies GearRequest;
+  }
+  async function calculate() {
+    if (!catalog?.snapshot_id || !catalog.revision) return;
+    const ticket = ++generation.current; setBusy(true); setReport(null); setError("");
+    try {
+      const request = gearRequest();
       if (inputs.length === 0 || times.budget.trim() === "" || !Object.keys(request.model.weights).length) throw new Error("Select candidates and explicitly supply weights and session budget.");
       const result = await client.compareGear(JSON.stringify(request));
       if (ticket !== generation.current) return;
-      if (!result.ok) setError(result.error.message); else setReport(result.value);
+      if (!result.ok) setError(result.error.message); else { setReport(result.value); setReportBasis("manual"); }
     } catch (failure) { if (ticket === generation.current) setError(failure instanceof Error ? failure.message : "Invalid manual inputs"); }
     finally { if (ticket === generation.current) setBusy(false); }
   }
@@ -101,6 +108,9 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     {error && <p role="alert">{error}</p>}
     <label>Gear profile <select value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
     <p>Snapshot: {catalog?.snapshot_id ?? "none"}; revision: {catalog?.revision ?? "none — activate Content first"}</p>
+    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
+      gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || !Object.keys(request.model.weights).length) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
+      onGearReport={routeReport} onBusyChange={setBusy} externalBusy={busy} opportunities={inputs.flatMap(input=>input.acquisition?[{source:input.acquisition.source,target:input.item,formation_ms:numberObservation(times.formation),attempt_ms:numberObservation(times.attempt),available_copper:times.copper.trim()?known(times.copper):unknown<string>(),max_attempts:Number(times.attempts),independent_player_attempts:independent,cost_per_attempt:perAttempt}]:[])} />
     <button type="button" disabled={!catalog?.fixture} onClick={example}>Load labelled synthetic example</button>
     {synthetic && <p>Engineering example: all readable attributes have equal weight 1; categories are explicitly assumed inapplicable, effort is fictional and sources remain unselected. Edit each assumption before use.</p>}
     <fieldset><legend>Manual model</legend>
@@ -132,6 +142,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     <details><summary>Captured equipment and variant/modifier gaps</summary><pre>{JSON.stringify(catalog?.equipment ?? {}, null, 2)}</pre></details>
     {report && <section aria-label="Gear result"><h3>Current baseline</h3><p>Model score {report.current_score.total / 1000}; {report.current_score.certainty}.</p>
       <ul>{report.baseline_gaps.map((gap) => <li key={gap}>{gap}</li>)}</ul><details><summary>Baseline slots and attribute contributions</summary><pre>{JSON.stringify({ slots: report.current, score: report.current_score }, null, 2)}</pre></details>
+      <p>{reportBasis === "route" ? "Gear comparison uses backend-calculated route effort and its remaining budget." : "Gear comparison uses your manual effort assumptions."}</p>
       <RankingView name="Theoretical comparison" ranking={report.theoretical} /><RankingView name="Equipment eligibility" ranking={report.equip_eligible} /><RankingView name="Guaranteed individual acquisition" ranking={report.obtainable} />
       <h3>Practical single-acquisition estimates ({report.practical_model_version})</h3><p>Conditional expected positive model gain per reserved effort. No combined acquisition probabilities or useful lifespan.</p>
       {report.practical.length === 0 && <p>No definite practical recommendation. Inspect the missing inputs and rejection reasons below.</p>}
