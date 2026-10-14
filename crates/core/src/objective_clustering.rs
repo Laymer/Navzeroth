@@ -23,6 +23,8 @@ pub const MAX_OBJECTIVES: usize = 128;
 pub const MAX_PARTICIPANTS: usize = 40;
 /// Every original has a singleton; additional disjoint packs have >=2 members.
 pub const MAX_VARIANTS: usize = MAX_OBJECTIVES + MAX_OBJECTIVES / 2;
+/// The existing planner bounds each candidate's reward set to 1024 identities.
+pub const MAX_CLUSTER_REWARDS: usize = 1024;
 pub const CLUSTER_SCHEMA_VERSION: u16 = 1;
 
 /// A contribution already evaluated against one actual participant's snapshot.
@@ -215,6 +217,8 @@ fn variants<'a>(
         for (index, pack) in node_packs.iter().enumerate() {
             control.checkpoint(SearchPhase::CandidateAssessment)?;
             if pack.len() < remaining_steps
+                && pack.iter().map(|m| m.rewards.len()).sum::<usize>() + objective.rewards.len()
+                    <= MAX_CLUSTER_REWARDS
                 && pack
                     .iter()
                     .all(|m| m.rewards.is_disjoint(&objective.rewards))

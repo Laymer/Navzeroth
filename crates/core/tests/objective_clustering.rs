@@ -704,3 +704,25 @@ fn maximum_variant_count_is_finite_even_when_every_two_objectives_have_their_own
     assert!(result.plan.selected.is_empty());
     assert_eq!(result.plan.termination, Termination::NoFeasibleCandidate);
 }
+
+#[test]
+fn valid_original_reward_sets_do_not_create_an_oversized_derived_pack() {
+    let harness = Harness::new();
+    let mut objectives = vec![
+        objective("a", "b", &[5], 1, 0),
+        objective("b", "b", &[5], 1, 0),
+    ];
+    for (index, objective) in objectives.iter_mut().enumerate() {
+        objective.rewards = (0..MAX_CLUSTER_REWARDS)
+            .map(|i| SourceId::new(format!("reward-{index}-{i}")).unwrap())
+            .collect();
+    }
+    let result = harness.run(&objectives, 1, 1000, 32).unwrap();
+    assert_eq!(selected(&result), vec!["a", "b"]);
+    assert!(
+        result
+            .selected_clusters
+            .iter()
+            .all(|c| c.members.len() == 1)
+    );
+}
