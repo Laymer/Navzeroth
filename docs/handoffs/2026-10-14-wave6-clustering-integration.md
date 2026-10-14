@@ -41,3 +41,26 @@ reruns and logs are recorded in the review messages.
 hosted nine-job checks and dependency reconciliation are required before merge.
 Next: review findings, merge separate core task after exact-head checks, update
 this separate integration PR with main and rerun all nine checks before merging.
+
+## Solo export identity and expiry follow-up
+
+A fourth application regression reproduced same-ID reuse after a trusted level
+field aged out while capture remained fresh: the same stored snapshot/request
+recomputed a different selected objective but old export canonicalization ignored
+that result. Actual old-code failures are in
+/tmp/navzeroth-cluster-export-baseline{,-final}.log. The final regression uses a
+15second field deadline and supplied later clock+16seconds, without sleeps, so
+ordinary computation is not tested against a narrow timing assumption.
+
+Solo export identity now includes actual flattened result and exact snapshot and
+content hashes alongside request/context/fixture/model/ruleset; generation time
+remains excluded. Inspection also found expiry only capped capture; it now uses
+the earliest finite retained typed/capture boundary, conservatively including
+unused known fields. Later recalculation can safely export a different remaining
+choice with a different identity. The ruleset is planner-same-node-clusters-v1;
+manual solo utility units remain manual-utility-v1. Schema1 is unchanged.
+
+Actual updated full408 app/core tests and strict all-target Clippy/fmt/diff passed;
+logs /tmp/navzeroth-cluster-export-fixed-{tests,clippy}.log. Existing repeat/later
+stable export identity and addon size/depth checks still pass. Peer review of this
+follow-up is pending with /root/release_review. Native/live remains unverified.
