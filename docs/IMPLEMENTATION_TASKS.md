@@ -1,8 +1,8 @@
 # Implementation task ledger — recurring release program
 
-Published baseline: main `db8530f8`, `v0.8.0`. Owner: Codex /root.
-Fresh released-source audit: [wave9 coordination](handoffs/2026-10-14-wave9-coordination.md).
-Exact0.8 source checks: [candidate reconciliation](handoffs/2026-10-14-v0.8.0-release.md).
+Published baseline: tag/main `d11853e`, `v0.8.1`. Owner: Codex /root.
+Fresh released-source audit: [final publication audit](handoffs/2026-10-14-final-program-audit.md).
+Exact0.8.1 source checks: [candidate reconciliation](handoffs/2026-10-14-v0.8.1-release.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
@@ -12,12 +12,13 @@ behavior and installed capability/version evidence remain unverified.
 
 ## Current published source and scheduling decisions
 
-Published0.8 atdb8530f8 implements all four finite UI scopes below. Actual release,
-main and tag checks plus exact asset evidence are in wave9 coordination. Portable
-and synthetic checks do not promote native/live acceptance. The two local pack
-repairs are reviewed/merged in isolated PR109/110 for the0.8.1 patch preview.
-Candidate9192552 passes actual local build/verify with distribution eligibilityfalse;
-final release gates and published-tag audit remain pending.
+Published0.8.1 atd11853e retains the four implemented UI scopes and resolves both
+local pipeline omissions. Actual822 Rust/195 desktop/40 mocked browser and real
+local pack checks pass. Source/asset/publication evidence and the requirement audit
+are in the final handoff. No further dependency-ready engineering remains. Native,
+live, source/model/API and focused-expansion acceptance stays explicitly incomplete.
+Re-enter the parallel loop only with new prerequisite evidence or a concrete ready
+bug; no unchanged-blocker-only release is created.
 
 | Plan scope | Current disposition | Evidence / remaining acceptance |
 | --- | --- | --- |
@@ -25,8 +26,8 @@ final release gates and published-tag audit remain pending.
 |12.4 HUD appearance|IMPLEMENTED_UNVERIFIED|PR103 bounded size/font/contrast/movement, protected combat gate and session-only/reset repair; actual client taint/focus/display acceptance remains unverified.|
 |12.5 reference controls|IMPLEMENTED_UNVERIFIED|PR105 opt-in focused-main shortcut and requested interaction receipts; actual focus/hit-test/display acceptance remains unverified.|
 |12.6 heading reflow|IMPLEMENTED_UNVERIFIED|PR106 320px/200% heading wrapping; actual screen-reader/native DPI acceptance remains unverified.|
-|19.3 typed empty pack arrays|IMPLEMENTED_UNVERIFIED / wave9 candidate|Canonical pack comparison rejects valid explicit map_embeddings=[] because typed serialization omits the empty default. Preserve schema1 and unknown-field refusal.|
-|8.3/19.3 existing Forever source registry|IMPLEMENTED_UNVERIFIED / wave9 candidate|Add sources.json for existing documented sources with exact context/evidence links and recorded policies; unknown rights remain blocked, no new permissions or playable records invented.|
+|19.3 typed empty pack arrays|IMPLEMENTED_UNVERIFIED / published0.8.1|PR110 recognizes only validated typed map_embeddings=[] comparison shape; raw data/schema1 and strict unknown/duplicate/future refusal are preserved.|
+|8.3/19.3 existing Forever source registry|IMPLEMENTED_UNVERIFIED / published0.8.1|PR109 adds the typed registry for four documented sources/three cited IDs; licenses/revisions/date-only UTC remain Unknown, owner-only assertion Conditional; local pack distribution stays false.|
 
 Historical scheduling sections below are snapshots, not the current ready queue.
 Today/Settings (PR96) and M7.6 evidence-gap infrastructure (PR90) are implemented;
@@ -35,9 +36,9 @@ separate parallel PR batch and publication audit; no exhaustion claim is made.
 
 | Task | Current disposition | Remaining work / scheduling decision |
 | --- | --- | --- |
-| M0.1 | IMPLEMENTED_UNVERIFIED | Existing intake/diagnostics records; verify current scope as part of audit. |
-| M0.2 | IMPLEMENTED_UNVERIFIED | Existing intake/diagnostics records; verify current scope as part of audit. |
-| M0.3 | IMPLEMENTED_UNVERIFIED | Existing intake/diagnostics records; verify current scope as part of audit. |
+| M0.1 | IMPLEMENTED_UNVERIFIED | Repository/diagnostic records inspected in the final source audit; consolidated recorded-client acceptance remains separately blocked. |
+| M0.2 | IMPLEMENTED_UNVERIFIED | Repository/diagnostic records inspected in the final source audit; consolidated recorded-client acceptance remains separately blocked. |
+| M0.3 | IMPLEMENTED_UNVERIFIED | Repository/diagnostic records inspected in the final source audit; consolidated recorded-client acceptance remains separately blocked. |
 | M0.4 | BLOCKED | Recorded-build live field/event/restriction checks unavailable. |
 | M0.5 | BLOCKED | Consolidated live export/persistence/plan import checks unavailable. |
 | M0.6 | BLOCKED | Only level/clock user reports exist; consolidated capability decisions pending. |
@@ -97,7 +98,7 @@ separate parallel PR batch and publication audit; no exhaustion claim is made.
 | M9.3 | IMPLEMENTED_UNVERIFIED | PR69/75/74 measurements/control, guarded jobs/frontend and PR80 typed-field expiry correction merged. Scoped synthetic checks pass; ordinary Windows/live performance remains unverified. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M9.6 | IMPLEMENTED_UNVERIFIED | v0.8.0 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
+| M9.6 | IMPLEMENTED_UNVERIFIED | v0.8.1 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
 | M10.1 | IMPLEMENTED_UNVERIFIED | PR89 ordinary imported reference window merged; candidate PR105 focused-main opt-in shortcut and requested interaction controls implemented; native interaction remains unverified. |
 | M10.2 | BLOCKED | Interactive native focus/DPI/monitor/borderless checks unavailable. |
 | M10.3 | IMPLEMENTED_UNVERIFIED | PR89 separate capture/field age and unsupported exclusive-fullscreen explanations merged; native display-mode evidence missing. |
@@ -220,7 +221,7 @@ empty-default comparison and the documented source sidecar. Unknown redistributi
 rights remain unknown; local packs stay distribution-ineligible. See wave9 for
 exact source/assets, ownership, checks and unchanged external unblock requirements.
 
-## Final candidate engineering audit
+## Historical final candidate engineering audit
 
 Both finite wave9 gaps are implemented and reviewed through mainc49b4be, with
 versioned822 Rust/195 desktop/40 mocked browser and actual local pack checks.
@@ -229,3 +230,15 @@ in [candidate engineering audit](handoffs/2026-10-14-candidate-engineering-audit
 Confirm after actual0.8.1 publication. The complete M0–M12 table above remains an
 explicit acceptance/external/deferred ledger; no native/live/source task is promoted
 to VERIFIED and no unchanged-blocker-only release is planned.
+
+## v0.8.1 published-source completion audit
+
+Published2026-10-14T18:02:38Z atd11853e. Actual tag matches all independently
+tested non-doc source. Both ready pipeline repairs are resolved and local build/
+verify succeeds with historical bytes/context and distribution eligibilityfalse.
+All79 unique IDs match the implementation plan:55 IMPLEMENTED_UNVERIFIED,16 BLOCKED,
+8 DEFERRED_WITH_REASON. No current ready engineering remains; neither partial
+real-world acceptance nor missing external inputs are silently promoted. Full
+publication/check/asset evidence and explicit unblock requirements are in the
+[final audit](handoffs/2026-10-14-final-program-audit.md). The final docs-only audit
+PR changes no product code and requires no new blocker-only release.
