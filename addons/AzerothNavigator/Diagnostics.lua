@@ -80,15 +80,15 @@ function Diagnostics.attach(env)
   local function persistMovement(frame)
     state.hud_movement_code = 'hud_movement_session_only'
     if not has(frame, {'GetPoint', 'GetNumPoints'}) then return end
-    local ok, anchor, parent, relative, x, y = pcall(function()
+    local ok, position = pcall(function()
       if frame:GetNumPoints() ~= 1 then return end
-      return frame:GetPoint(1)
+      local anchor, parent, relative, x, y = frame:GetPoint(1)
+      if parent ~= env.UIParent or env.UIParent == nil or
+        type(x) ~= 'number' or type(y) ~= 'number' or x ~= x or y ~= y or
+        x < -4096 or x > 4096 or y < -4096 or y > 4096 then return end
+      return Appearance.position(anchor, relative, math.floor(x + 0.5), math.floor(y + 0.5))
     end)
-    if not ok or parent ~= env.UIParent or env.UIParent == nil or
-      type(x) ~= 'number' or type(y) ~= 'number' or x ~= x or y ~= y or
-      x < -4096 or x > 4096 or y < -4096 or y > 4096 then return end
-    local position = Appearance.position(anchor, relative, math.floor(x + 0.5), math.floor(y + 0.5))
-    if not position then return end
+    if not ok or not position then return end
     state.settings.hud_position = position
     if state.persist then
       state.db.settings.hud_position = Appearance.copy(state.settings).hud_position

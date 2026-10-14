@@ -216,6 +216,8 @@ fn build_and_combat_gate_never_interpret_truthy_unknown_values() {
       assert(not a.gate(build,function() return true end))
       assert(a.gate(build,function() return false end))
       build.build='70205';assert(not a.gate(build,function() return false end))
+      local unreadable=setmetatable({}, {__index=function() error('restricted build') end})
+      assert(not a.gate(unreadable,function() return false end))
     "#,
         )
         .unwrap();
@@ -237,6 +239,9 @@ fn unsafe_observed_positions_and_build_changes_preserve_saved_geometry() {
         assert(AzerothNavigatorDB.settings.hud_position.y==-120)
       end
       frame.GetPoint=function() error('restricted') end
+      frame.scripts.OnDragStop(frame)
+      assert(state.hud_movement_code=='hud_movement_session_only')
+      frame.GetNumPoints=function() error('restricted point count') end
       frame.scripts.OnDragStop(frame)
       assert(state.hud_movement_code=='hud_movement_session_only')
       frame.GetPoint=nil;frame.scripts.OnDragStop(frame)

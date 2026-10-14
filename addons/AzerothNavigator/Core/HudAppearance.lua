@@ -69,12 +69,17 @@ function Appearance.command(command, tail, current)
   return result
 end
 function Appearance.gate(build, combatGetter)
-  if type(build) ~= 'table' or build.version ~= '1.60.1' or build.build ~= '70338' or
-    build.interface ~= '16001' then return false, 'hud_build_unrecorded' end
-  if type(combatGetter) ~= 'function' then return false, 'hud_combat_unknown' end
-  local ok, combat = pcall(combatGetter)
-  if not ok or type(combat) ~= 'boolean' then return false, 'hud_combat_unknown' end
-  if combat then return false, 'hud_combat_deferred' end
-  return true, 'hud_gate_allowed'
+  -- Protect the complete observation/truth decision, including restricted values.
+  local ok, allowed, code = pcall(function()
+    if type(build) ~= 'table' or build.version ~= '1.60.1' or build.build ~= '70338' or
+      build.interface ~= '16001' then return false, 'hud_build_unrecorded' end
+    if type(combatGetter) ~= 'function' then return false, 'hud_combat_unknown' end
+    local combat = combatGetter()
+    if type(combat) ~= 'boolean' then return false, 'hud_combat_unknown' end
+    if combat then return false, 'hud_combat_deferred' end
+    return true, 'hud_gate_allowed'
+  end)
+  if not ok then return false, 'hud_combat_unknown' end
+  return allowed, code
 end
 ns.provide('HudAppearance', Appearance)
