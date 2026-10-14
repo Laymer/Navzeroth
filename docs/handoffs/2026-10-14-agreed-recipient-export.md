@@ -1,10 +1,10 @@
 # Agreed recipient export
 
 Owner: Codex /root/atlas_dense, sole feature writer. Claim 8808571 precedes code;
-released baseline f 525911/v 0.5.0. Root explicitly amended ownership to include
+released baseline f525911/v0.5.0. Root explicitly amended ownership to include
 recipient-specific additive app/native/SDK/demo registration and a scoped storage
-consistent-read helper. Root's guard helper 47ef 7d 0 was normally cherry-picked as
-648f 614; normal main cb 7e 03d merge 3f 127f 0 retains both histories. Root owns other
+consistent-read helper. Root's guard helper 47ef7d0 was normally cherry-picked as
+648f614; normal main cb7e03d merge 3f127f0 retains both histories. Root owns other
 features, existing guard implementation and final integration/releases.
 
 API: export_agreed_party_plan(text, now) -> PlanExport. Request JSON is bounded
@@ -54,14 +54,14 @@ agreement mutation, refresh, client/party changes or backend refusal. Late async
 responses cannot reinstate obsolete bytes. Backend export failure refreshes the
 authoritative agreement; failed refresh disables the stale state.
 
-Actual checks, source 58b 39a 1 plus focused browser testc 5d 2d 04/main merge 3f 127f 0:
+Actual checks, source 58b39a1 plus focused browser test c5d2d04/main merge 3f127f0:
 
 - cargo test --locked -p azeroth-app -p azeroth-storage -p azeroth-lua-harness:
   315 passed,0 failures. Includes two prepared/final-phase regressions (withdrawal
   and independent field expiry after compilation), eight initial export cases,
   two cross-connection/nested/rollback transaction cases, two actual app-produced
   Lua cases and the existing suites.
-- Added stored proposal context/fixture/result corruption case at 8d 54261:
+- Added stored proposal context/fixture/result corruption case at 8d54261:
   affected recipient integration suite 9 passed; strict all-target app/storage/Lua
   Clippy passed again. Formatting and whitespace checks passed.
 - Desktop full 135 unit tests passed (four new export cases), typecheck/lint/build
