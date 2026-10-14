@@ -133,10 +133,12 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
         ));
     }
     let mut history = input
-        .prepare("SELECT version,name FROM schema_migrations ORDER BY version LIMIT 10")
+        .prepare("SELECT version,name FROM schema_migrations ORDER BY version LIMIT ?1")
         .db()?;
     let history = history
-        .query_map([], |r| Ok((r.get::<_, u32>(0)?, r.get::<_, String>(1)?)))
+        .query_map([i64::from(migrations::latest_version()) + 1], |r| {
+            Ok((r.get::<_, u32>(0)?, r.get::<_, String>(1)?))
+        })
         .db()?
         .collect::<rusqlite::Result<Vec<_>>>()
         .db()?;
