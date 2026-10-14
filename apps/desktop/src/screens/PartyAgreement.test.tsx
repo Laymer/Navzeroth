@@ -74,3 +74,12 @@ it("refreshes authoritative agreement after a guard conflict", async () => {
   await screen.findByText(/Agreement invalidated/);
   expect(screen.getByRole("alert")).toHaveTextContent("Proposal changed");
 });
+
+it("does not claim absence or permit replacement when the proposal read failed", async () => {
+  const adapter: CommandAdapter = { invoke() { return Promise.reject({ code: "STORAGE_ERROR", message: "Stored proposal unavailable", retryable: false }); } };
+  render(<PartyAgreement client={createClient(adapter)} partyId="duo" refreshKey={0} planning={planning} />);
+  await screen.findByRole("alert");
+  fireEvent.change(screen.getByLabelText("Proposing participant"), { target: { value: "one" } });
+  expect(screen.getByRole("button", { name: "Propose this estimate" })).toBeDisabled();
+  expect(screen.queryByText(/No local proposal/)).not.toBeInTheDocument();
+});
