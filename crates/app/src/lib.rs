@@ -6,6 +6,7 @@
 pub mod atlas;
 pub mod clustering;
 pub mod content;
+pub mod dungeon_preparation;
 pub mod gear;
 pub mod party;
 pub mod plan_export;

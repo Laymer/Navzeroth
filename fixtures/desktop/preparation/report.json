@@ -1,0 +1,457 @@
+{
+  "context": {
+    "build": {
+      "build": "UNVERIFIED_DEMO",
+      "edition": "wow_forever",
+      "interface": "UNVERIFIED_DEMO"
+    },
+    "namespace": "demo"
+  },
+  "evidence": [
+    {
+      "confidence": "limited_sample",
+      "id": "demo-evidence-1",
+      "license": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "offline_usable": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "redistribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "source": "demo-source-1"
+    }
+  ],
+  "fixture": true,
+  "gaps": [
+    {
+      "availability": null,
+      "code": "evidence_missing",
+      "section": "formation_time"
+    },
+    {
+      "availability": "unsupported",
+      "code": "section_unavailable",
+      "section": "run_time"
+    },
+    {
+      "availability": "unknown",
+      "code": "section_unavailable",
+      "section": "encounter_notes"
+    },
+    {
+      "availability": null,
+      "code": "local_package_unverified",
+      "section": "package"
+    },
+    {
+      "availability": null,
+      "code": "consumable_inventory_unavailable",
+      "section": "consumables"
+    },
+    {
+      "availability": null,
+      "code": "snapshot_not_fresh",
+      "section": "member"
+    },
+    {
+      "availability": null,
+      "code": "route_needs_fresh_members",
+      "section": "route"
+    }
+  ],
+  "members": [
+    {
+      "access": {
+        "availability": "known",
+        "evaluation": {
+          "reasons": [],
+          "steps": 3,
+          "truth": "true",
+          "warnings": []
+        }
+      },
+      "character": "member-0",
+      "checks": [
+        {
+          "check": "manual-condition",
+          "condition": {
+            "availability": "known",
+            "evaluation": {
+              "reasons": [],
+              "steps": 3,
+              "truth": "false",
+              "warnings": []
+            }
+          }
+        }
+      ],
+      "freshness": {
+        "age_ms": 100,
+        "status": "fresh"
+      },
+      "profile_id": "stored-fe7ea31501003a8d5946fba30e6bc0fcf9e2ef305cc86d9eccf892c776133bec",
+      "quests": [
+        {
+          "assessment": {
+            "acceptance": "unknown",
+            "catch_up": null,
+            "completion": "unknown",
+            "progress": "unknown",
+            "reasons": [
+              {
+                "message": "Requirement data is Unknown",
+                "phase": "acceptance"
+              },
+              {
+                "message": "Requirement data is Unknown",
+                "phase": "acceptance"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "acceptance"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "progress"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "progress"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "progress"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "completion"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "turn_in"
+              },
+              {
+                "message": "A required observation has uncertain capture age",
+                "phase": "turn_in"
+              }
+            ],
+            "turn_in": "unknown"
+          },
+          "quest": "demo-quest-1"
+        }
+      ],
+      "rewards": [
+        {
+          "acquisition_requirement": {
+            "availability": "unknown",
+            "evaluation": null
+          },
+          "cost": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "9007199254740993"
+          },
+          "item": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "item_id": "demo-item-1",
+            "variant": "base"
+          },
+          "item_requirement": {
+            "availability": "known",
+            "evaluation": {
+              "reasons": [],
+              "steps": 3,
+              "truth": "true",
+              "warnings": []
+            }
+          },
+          "probability": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": 1.0
+          },
+          "source": "demo-acq-1"
+        }
+      ],
+      "snapshot_id": "snapshot-0"
+    },
+    {
+      "access": {
+        "availability": "known",
+        "evaluation": null
+      },
+      "character": "member-1",
+      "checks": [
+        {
+          "check": "manual-condition",
+          "condition": {
+            "availability": "known",
+            "evaluation": null
+          }
+        }
+      ],
+      "freshness": {
+        "age_ms": 1800001,
+        "status": "stale"
+      },
+      "profile_id": "stored-2443437837c5332ae7a980d5f50050158138e68eb817dd13d3139036cb140f4a",
+      "quests": [
+        {
+          "assessment": null,
+          "quest": "demo-quest-1"
+        }
+      ],
+      "rewards": [
+        {
+          "acquisition_requirement": {
+            "availability": "unknown",
+            "evaluation": null
+          },
+          "cost": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "9007199254740993"
+          },
+          "item": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "item_id": "demo-item-1",
+            "variant": "base"
+          },
+          "item_requirement": {
+            "availability": "known",
+            "evaluation": null
+          },
+          "probability": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": 1.0
+          },
+          "source": "demo-acq-1"
+        }
+      ],
+      "snapshot_id": "snapshot-1"
+    }
+  ],
+  "package": {
+    "access": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "level": 20,
+          "op": "level_at_least"
+        }
+      }
+    },
+    "before_departure": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "Review missing or stale participant observations before departure."
+        ]
+      }
+    },
+    "before_entry": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "Inspect source evidence; this local reference is unverified."
+        ]
+      }
+    },
+    "checks": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          {
+            "category": "equipment",
+            "id": "manual-condition",
+            "label": "Synthetic declared equipment condition",
+            "requirement": {
+              "evidence": [
+                "demo-evidence-1"
+              ],
+              "observation": {
+                "clock_trust": "uncertain",
+                "source": "unrecorded",
+                "status": "known",
+                "value": {
+                  "field": {
+                    "field": "preference",
+                    "key": "preparation-test"
+                  },
+                  "op": "equals",
+                  "value": {
+                    "type": "bool",
+                    "value": true
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "context": {
+      "build": {
+        "build": "UNVERIFIED_DEMO",
+        "edition": "wow_forever",
+        "interface": "UNVERIFIED_DEMO"
+      },
+      "namespace": "demo"
+    },
+    "encounter_notes": {
+      "evidence": [],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      }
+    },
+    "entrance": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "id": "demo-node-2",
+          "map": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "floor": "0",
+            "instance": null,
+            "map_id": "demo-map-1"
+          }
+        }
+      }
+    },
+    "fixture": true,
+    "formation_ms": {
+      "evidence": [],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "max_ms": 0,
+          "min_ms": 0
+        }
+      }
+    },
+    "id": "synthetic-local-preparation",
+    "quests": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "demo-quest-1"
+        ]
+      }
+    },
+    "revision": "demo-r1",
+    "rewards": {
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          {
+            "declared_role": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "item": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "demo-item-1",
+              "variant": "base"
+            },
+            "source": "demo-acq-1"
+          }
+        ]
+      }
+    },
+    "run_ms": {
+      "evidence": [],
+      "observation": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unsupported"
+      }
+    },
+    "schema_version": 1,
+    "title": "Synthetic preparation reference — no verified dungeon"
+  },
+  "revision": "demo-r1",
+  "route": null,
+  "route_exclusions": [],
+  "schema_version": 1
+}
