@@ -1,8 +1,8 @@
 # Implementation task ledger — recurring release program
 
-Published baseline: main `f525911`, `v0.5.0`. Owner: Codex /root.
-Candidate integration baseline: protected main `5bd5f1b`, preparing `v0.6.0`.
-Fresh audit and exact task checks: [candidate reconciliation](handoffs/2026-10-14-v0.6.0-release.md).
+Published baseline: main `739a822`, `v0.6.0`. Owner: Codex /root.
+Fresh released-source audit: [wave7 coordination](handoffs/2026-10-14-wave7-coordination.md).
+Exact task/candidate checks: [candidate reconciliation](handoffs/2026-10-14-v0.6.0-release.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
@@ -74,7 +74,7 @@ behavior and installed capability/version evidence remain unverified.
 | M9.3 | IMPLEMENTED_UNVERIFIED | PR69/75/74 measurements/control, guarded jobs/frontend and PR80 typed-field expiry correction merged. Scoped synthetic checks pass; ordinary Windows/live performance remains unverified. |
 | M9.4 | IMPLEMENTED_UNVERIFIED | Hosted package/install/start/uninstall smoke exists; native interaction and game smoke missing. |
 | M9.5 | IMPLEMENTED_UNVERIFIED | Existing engineering implementation and recorded checks; full milestone acceptance remains incomplete. |
-| M9.6 | IMPLEMENTED_UNVERIFIED | v0.5.0 published developer prerelease; v0.6.0 candidate checks pending. Focused-release acceptance remains incomplete. |
+| M9.6 | IMPLEMENTED_UNVERIFIED | v0.6.0 published developer prerelease with verified assets; focused-release acceptance remains incomplete. |
 | M10.1 | IMPLEMENTED_UNVERIFIED | PR89 ordinary opt-in imported reference window and explicit show/hide/topmost controls merged; native interaction remains unverified. |
 | M10.2 | BLOCKED | Interactive native focus/DPI/monitor/borderless checks unavailable. |
 | M10.3 | IMPLEMENTED_UNVERIFIED | PR89 separate capture/field age and unsupported exclusive-fullscreen explanations merged; native display-mode evidence missing. |
@@ -146,3 +146,12 @@ scheduling, speculative useful lifespan, beam search and shared-kill savings do 
 become mandatory extensions without their missing models/evidence. Re-audit the
 actual published source before launching this next batch. Native/live/source/API
 unblock requirements and local-first hosting deferral remain unchanged.
+
+## v0.6.0 released-source audit
+
+Published2026-10-14T12:49:07Z at739a822. Exact task/PR/main/tag checks and five-file
+asset verification are recorded in wave7 coordination. The four previously found
+ready scopes remain absent in this released source and are now claimed by distinct
+writers. Shared migration9/recovery registration precedes feature integration.
+No new external prerequisite was inferred away, and no unchanged blocker-only
+release is planned. After the next publication repeat this audit against its tag.
