@@ -5,11 +5,11 @@ use azeroth_core::{
     submissions::{decode_local_observation, permits_local_export},
     types::{Sha256Hex, UtcMillis},
 };
-use azeroth_storage::SqliteStore;
 pub use azeroth_storage::local_submissions::{
     SubmissionAction, SubmissionGuard, SubmissionPage, SubmissionRecord, SubmissionState,
     SubmitReceipt,
 };
+use azeroth_storage::{SqliteStore, content_dispositions::DispositionGuard};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 pub const MAX_EXPORT_BYTES: usize = 32 * 1024;
@@ -40,6 +40,7 @@ fn decode_request<T: serde::de::DeserializeOwned>(text: &str) -> Result<T> {
 struct Capture {
     record: SubmissionRecord,
     content_hash: Sha256Hex,
+    disposition_guard: DispositionGuard,
     policy_hash: Sha256Hex,
     license: String,
     attribution: String,
@@ -69,6 +70,9 @@ fn capture(store: &SqliteStore, expected: &SubmissionGuard) -> Result<Capture> {
         .active_content_revision(&record.base.scope)?
         .filter(|c| c.key() == record.base)
         .ok_or_else(|| invalid("The submission base is no longer active and eligible"))?;
+    let (content, disposition) = store
+        .usable_content_revision(&content.key())?
+        .ok_or_else(|| invalid("The submission base is unavailable"))?;
     let source = content
         .sources
         .iter()
@@ -82,7 +86,8 @@ fn capture(store: &SqliteStore, expected: &SubmissionGuard) -> Result<Capture> {
         ));
     }
     Ok(Capture {
-        content_hash: hash(&content)?,
+        content_hash: disposition.content_sha256.clone(),
+        disposition_guard: disposition.guard(),
         policy_hash: hash(source)?,
         license: source
             .license
@@ -109,6 +114,7 @@ fn compile(captured: &Capture, now: Option<UtcMillis>) -> Result<LocalSubmission
         guard: &'a SubmissionGuard,
         base_content_sha256: &'a Sha256Hex,
         source_policy_sha256: &'a Sha256Hex,
+        base_disposition_revision: u64,
         license: &'a str,
         attribution: &'a str,
         exported_at_utc_ms: Option<UtcMillis>,
@@ -122,6 +128,7 @@ fn compile(captured: &Capture, now: Option<UtcMillis>) -> Result<LocalSubmission
         guard: &captured.record.guard,
         base_content_sha256: &captured.content_hash,
         source_policy_sha256: &captured.policy_hash,
+        base_disposition_revision: captured.disposition_guard.state_revision,
         license: &captured.license,
         attribution: &captured.attribution,
         exported_at_utc_ms: now,
@@ -381,6 +388,61 @@ mod tests {
             })
             .is_err()
         );
+    }
+    #[test]
+    fn restricting_then_releasing_and_reactivating_the_identical_base_refuses_export_aba() {
+        use azeroth_storage::content_dispositions::{
+            DispositionMutation, DispositionReason, DispositionState,
+        };
+        let app = setup(permitted());
+        let old = accept(&app);
+        let outcome = app.export_local_submission_inner(&old.guard, None, || {
+            app.with_store_mut(|store| {
+                let (_, before) = store.usable_content_revision(&old.base)?.unwrap();
+                let restricted = store.change_content_disposition(
+                    &DispositionMutation {
+                        guard: before.guard(),
+                        state: DispositionState::Quarantined,
+                        reason_code: DispositionReason::OperatorReview,
+                    },
+                    None,
+                )?;
+                store.change_content_disposition(
+                    &DispositionMutation {
+                        guard: restricted.disposition.guard(),
+                        state: DispositionState::Eligible,
+                        reason_code: DispositionReason::OperatorReview,
+                    },
+                    None,
+                )?;
+                store.activate_content_revision(&old.base)?;
+                Ok(())
+            })
+            .unwrap();
+        });
+        assert!(outcome.is_err());
+        assert!(export(&app, &old).is_ok());
+    }
+    #[test]
+    fn declared_and_export_timestamps_preserve_unknown_zero_and_signed_safe_values() {
+        let app = setup(permitted());
+        let row = accept(&app);
+        for now in [
+            None,
+            Some(UtcMillis::new(0).unwrap()),
+            Some(UtcMillis::new(-1).unwrap()),
+        ] {
+            let output = app
+                .export_local_submission(&serde_json::to_string(&row.guard).unwrap(), now)
+                .unwrap();
+            let value: Value = serde_json::from_str(&output.text).unwrap();
+            assert_eq!(
+                value["exported_at_utc_ms"],
+                serde_json::to_value(now).unwrap()
+            );
+            assert!(value["observation"]["observed_at_utc_ms"].is_null());
+            assert!(value.get("clock_trust").is_none());
+        }
     }
     #[test]
     fn malformed_future_or_personal_input_is_refused_without_echo() {
