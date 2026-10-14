@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70374",
+    "interface": 16001
+  },
+  "inventory_sha256": "1b7b7f1fd30a4a76e8bd363beaf31e505a61d6d648de030df9980eeee5d1ea21",
+  "tested_source_commit": null,
+  "production_sha256": null,
+  "checks": [
+    {
+      "id": "LIVE-BUILD",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-CAPTURE",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-TRANSFER",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-RELOAD",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-RESTRICTIONS",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-HUD",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-PLAN",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-ADVANCE",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-DEVIATION",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-DUO",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-SESSION",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-NEXT-PLAN",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-REMINDERS",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-GEAR",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "LIVE-DUNGEON",
+      "status": "unverified",
+      "method": "live_game",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-INSTALL",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-UPGRADE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-UNINSTALL",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-RECOVERY",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-OFFLINE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-FOCUS",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-REFERENCE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-DISPLAY",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-ACCESSIBILITY",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-PERFORMANCE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    }
+  ],
+  "coverage": [],
+  "sources": [],
+  "packs": [],
+  "optional_deferrals": [
+    {
+      "feature": "official_api",
+      "reason": "No verified official Forever endpoint, authorized response and usage terms."
+    },
+    {
+      "feature": "party_messaging",
+      "reason": "Permitted message API and limits have not been verified; individual snapshots and local party planning remain required."
+    },
+    {
+      "feature": "combat_log_analysis",
+      "reason": "Permitted format and intended use have not been verified."
+    },
+    {
+      "feature": "hosted_distribution",
+      "reason": "Local offline distribution is the required baseline; hosted delivery prerequisites are not verified."
+    }
+  ]
+}

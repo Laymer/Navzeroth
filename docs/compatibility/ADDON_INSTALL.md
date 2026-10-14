@@ -1,154 +1,168 @@
-# Diagnostic addon: install, use and removal
+# Addon: install, capture and remove
 
-Task M0.3. Status: IMPLEMENTED_UNVERIFIED. No Forever client was available when
-this addon was written, so **every path, file name, slash-command behavior, event
-name and API name below is an unverified assumption** until a user-operated client
-check (M0.4, M0.5) records it in
-[BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md) and
-[capability-observations.template.json](capability-observations.template.json).
+This guide describes the published **0.8.1 developer preview**. The AddOns entry is
+still named **Azeroth Navigator Diagnostics**, but the addon now includes manual
+snapshots, plan import and HUD controls, and manual session recording. These are
+experimental client bindings. It runs inside the permitted addon environment;
+desktop exchange uses explicit files or pasted text.
 
-The addon is a development tool. It records build and capability results for the
-maintainers. It does not navigate, plan, show a HUD, sync parties or talk to the
-desktop application.
+The enabled experimental tuple is `1.60.1.70338 / interface 16001`. Limited user-reported
+diagnostic retrieval, level capture and clock-age results are recorded in
+[BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,
+HUD, plan, session and reload acceptance remains unverified.
 
-## What it does
+The frozen v1 target is **Forever 1.60.1.70374**. On 2026-10-14 the user reported
+`GetBuildInfo` version `1.60.1`, build `70374`, date `Oct 12 2026`, interface `16001`,
+on Windows 11 out of combat, with `/anavdiag` reporting addon `0.8.1` and probe/status
+showing no errors. The installed archive hash/source commit was not inspected;
+this is a narrow build/version/diagnostic report, not full adapter acceptance.
 
-- On `ADDON_LOADED` it prepares its own SavedVariables table `AzerothNavigatorDB`
-  (layout: [ADDON_SAVEDVARIABLES.md](ADDON_SAVEDVARIABLES.md)).
-- On `PLAYER_LOGIN`, when the `auto_probe` setting is on (default), it runs the
-  capability probe once and stores one bounded JSON diagnostic export in that table.
-- `/anavdiag probe` runs the probe again; `/anavdiag status` prints the last summary;
-  any other argument prints the usage line.
-- The probe checks that a fixed list of function names exists and calls exactly one
-  getter, `GetBuildInfo`, inside `pcall`. It never calls unit, chat, combat-log,
-  map-position or item functions, and reads no character name, realm, GUID or chat
-  text. A missing API is reported, never replaced by a shim or workaround.
+Current capture, clock, position,
+plan and recording adapters refuse builds other than the recorded 70338 tuple.
+On 70374, retain the diagnostic build/interface and exact installed source record;
+a reviewed compatibility change and fresh checks are required before using those
+adapters. Do not relabel a 70338 export or edit a guard to claim 70374 evidence.
 
-## Install (manual)
+## Install
 
 1. Close the game client.
-2. Copy the folder `addons/AzerothNavigator` from this repository, as a whole, into the
-   client's AddOns directory so that the result is
-   `<product folder>/Interface/AddOns/AzerothNavigator/AzerothNavigator.toc`.
-   - The AddOns directory of the Forever product folder is **unverified**. Use the
-     directory the client itself uses for addons; do not guess a path or move other
-     files to make it appear.
-3. Start the client and open the AddOns list on the character screen. The entry is
-   named "Azeroth Navigator Diagnostics".
+2. Download `AzerothNavigator-addon-0.8.1.zip` and `SHA256SUMS.txt` from the
+   [0.8.1 release](https://github.com/Laymer/Navzeroth/releases/tag/v0.8.1). Verify
+   the ZIP's SHA-256. Extract its `AzerothNavigator` folder into the directory the
+   client actually uses for addons, so that this file exists:
 
-### Install with the Windows helper
+   ```text
+   <product folder>/Interface/AddOns/AzerothNavigator/AzerothNavigator.toc
+   ```
 
-The Windows installer ships a helper that performs the steps above with checks: it
-refuses a folder not named `AddOns`, a running game, an incomplete addon copy and a
-different addon that uses the folder name `AzerothNavigator`, and it swaps the new copy
-in only after verifying every file. Start menu > *Azeroth Navigator - WoW addon*, or
-[`scripts/windows/Install-AzerothNavigatorAddon.ps1`](../../scripts/windows/Install-AzerothNavigatorAddon.ps1)
-from a checkout. Details: [WINDOWS_INSTALL.md](WINDOWS_INSTALL.md#install-the-addon).
-The AddOns location stays the user's choice; the helper does not verify it either.
+   From source, copy the entire `addons/AzerothNavigator` directory, including its
+   `LICENSE`. Avoid an extra enclosing ZIP or repository directory. The exact
+   Forever product path is not established by the conventional layout above.
+3. Start the client and enable **Azeroth Navigator Diagnostics** in the AddOns list.
+   Record the installed addon version and exact source commit from the release's
+   `SOURCE_COMMIT.txt` when gathering acceptance evidence.
 
-### Out-of-date marking
+The Windows application's **Azeroth Navigator - WoW addon** Start menu entry
+provides an alternative installer. Choose the existing AddOns folder or the product
+folder containing `Interface\AddOns`. The helper checks its source, refuses a
+different addon with the same folder name, and verifies copied bytes before replacing
+its own folder. It attempts to detect processes running from the conventional game
+directory; still close the client yourself. See
+[Windows addon installation](WINDOWS_INSTALL.md#install-the-addon).
 
-The TOC declares `## Interface: 16001`. That number comes from community client
-exports of the Forever beta (plan section 3.2), not from a client check, so it is
-**unverified**. If the client marks the addon out of date, that is itself a result:
-record the number the client reports and the `build.interface` value in the export,
-and change the TOC only to a value measured that way. Do not install third-party
-compatibility tools or edit client files to hide the warning. Early reports about
-SavedVariables problems on the beta conflict with later reports of fixes, so whether
-writing works at all is checked in M0.5, not assumed.
+The TOC declares interface `16001`, which was returned by the recorded 70338
+diagnostic. This does not establish the target 70374 interface or addon compatibility.
+If the client marks the addon out of date, record that result and the actual build
+before changing anything; do not hide it with compatibility tools or client edits.
 
-## Use
+## Record the client first
 
-1. Log in with the addon enabled. In chat you should see one line starting with
-   `AzerothNavigator:` that counts capabilities by result code.
-2. Optionally run `/anavdiag probe` or `/anavdiag status`.
-3. Log out or run `/reload` so the client writes SavedVariables to disk. Whether and
-   when the client writes the file is **unverified**; the addon never forces a UI
-   reload.
-4. The file is expected at
-   `<product folder>/WTF/Account/<account folder>/SavedVariables/AzerothNavigator.lua`
-   (conventional layout, **unverified** for Forever). The account folder name can be
-   personal data. Do not commit the raw file or its path; sanitize before sharing
-   (AGENTS.md: never commit personal exports).
-5. Copy results into a filled copy of the capability observations template with the
-   conditions under which they were observed. A probe result of `untested` stays
-   `untested` until an operator records conditions and evidence.
+On login, the default `auto_probe` setting runs one bounded capability probe.
+Run `/anavdiag probe` to repeat it and `/anavdiag status` for the last summary.
+The probe checks API-name presence and calls `GetBuildInfo`; API presence does not
+prove readable values, permitted use or behavior in restricted contexts.
 
-## Remove
+Run `/reload` or log out to let the client persist SavedVariables. One retrieval
+is recorded for 70338; general write timing and the new target's behavior still need
+evidence. The conventional file is:
 
-1. Close the client.
-2. Delete the folder `AzerothNavigator` from the AddOns directory.
-3. Delete the addon's own SavedVariables file `AzerothNavigator.lua` (and a backup
-   copy of the same name, if the client keeps one) from the account's
-   `SavedVariables` directory.
+```text
+<product folder>/WTF/Account/<account>/SavedVariables/AzerothNavigator.lua
+```
 
-The Windows helper does steps 2 and 3 with `-Action Uninstall -RemoveSavedVariables`
-(only files named `AzerothNavigator.lua` and `AzerothNavigator.lua.bak`), and the
-application's uninstaller offers step 2 for the folder the helper recorded.
+Use the actual client file, not a guessed account path. Copy only sanitized results
+into the [capability observations template](capability-observations.template.json),
+with installed revision, client build/interface, locale, conditions and observed
+outcome. Do not commit the raw file or personal account path. Stored keys and their
+formats are described in [ADDON_SAVEDVARIABLES.md](ADDON_SAVEDVARIABLES.md).
 
-Nothing else is touched: no other addon, no client file, no executable, no registry
-entry, no network configuration. The addon starts no process, opens no socket, reads
-no file and has no background task; it runs only inside the client's addon sandbox,
-reacts to two events and one slash command, and holds a small table in memory.
+## Manual snapshots on the recorded 70338 build
+
+Use a unique anonymous identifier for each character, containing 1–80 letters,
+digits, underscores or hyphens. Keep it stable across captures:
+
+```text
+/anavdiag snapshot anonymous-one
+```
+
+The current adapter attempts bounded level, quest-log and equipment-identity reads.
+Unreadable or unsupported fields remain distinct; missing item metadata or quest
+completion mappings are not invented. `/anavdiag position` reports readability
+diagnostics only: snapshot location stays unknown until map, floor, instance and
+coordinate meaning are verified.
+
+After a successful capture, reload/logout. In the desktop **Imports** screen,
+select that exact SavedVariables file, choose **SavedVariables export string**, and
+use global `AzerothNavigatorDB` / key `snapshot_export`. Import once, or explicitly
+watch that selected file for later manually requested captures. The parser treats
+the file as bounded data and never executes its Lua. `diagnostic_export` is a
+separate diagnostic report and cannot be imported as a character snapshot.
+
+The snapshot sequence is a capture-order counter, not elapsed gameplay time. Do
+not reset it to make a capture appear newer. A fresh timestamp does not supply
+missing quests, equipment metadata, geography or a compatible playable catalog.
+
+### Capture age
+
+Run `/anavdiag clock` and compare its reported UTC epoch seconds with a trusted PC
+clock. For example, in Windows PowerShell:
+
+```powershell
+[DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+```
+
+Allow for switching windows. Only after the values agree, run
+`/anavdiag clock trust` within 120 seconds, then capture. Confirmation lasts only
+for the current addon runtime; reload clears it. `/anavdiag clock clear` revokes it.
+Invalid/missing values, reversals, slow samples or inconsistent clocks leave timing
+uncertain. These are engineering guards; restricted-context and target-build
+clock behavior still require acceptance evidence.
+
+## Plans, HUD and sessions
+
+On the recorded build, copy a compatible desktop-exported `ANAV1:` plan and use
+`/anavplan paste`, then explicitly import it. The importer is bounded to 32 KiB.
+`/anavplan status`, `show`, `hide` and `clear` inspect or control the runtime plan.
+Invalid input retains the previous plan. Plans clear on reload; retained snapshots
+are labelled cached and keep their original capture time. Unknown/stale state or
+missing completion mappings cannot establish advancement. The addon does not
+generate missing routes or perform game actions.
+
+Use [HUD appearance](HUD_APPEARANCE.md) for size, font, contrast and movement
+commands. UI updates defer when combat state is restricted or unreadable; a visible
+card may therefore describe the last evaluation. Native UI/taint/focus acceptance
+remains unverified.
+
+For explicit session recording, use `/anavsession start anonymous-one`, followed
+by `sample`, `pause`, `resume`, `stop`, `export` or `status`. Stop and export before
+reload, then import `AzerothNavigatorDB / session_export` in **Sessions** for the
+same previously imported character. Recording never samples in the background or
+resumes after reload. Measured intervals, gaps and unknown activity remain distinct.
+See [session transport](SESSION_TRANSPORT.md) for bounds and retention behavior.
+
+## Update and remove
+
+Close the game, then replace the addon with the same version as the desktop using
+the helper or a verified ZIP. Preserve SavedVariables when updating. After a new
+addon revision, record that revision and rerun any affected acceptance checks.
+
+To remove the addon, close the client and remove only
+`Interface\AddOns\AzerothNavigator`. SavedVariables may remain for later use.
+Deleting the addon's `AzerothNavigator.lua` and `AzerothNavigator.lua.bak` from a
+chosen account's SavedVariables folder is a separate, explicit removal of settings
+and retained exports.
+
+The Windows helper's `-Action Uninstall` removes its own addon and leaves
+SavedVariables. Adding `-RemoveSavedVariables` removes those two filenames from
+**every account folder** under that selected game's conventional `WTF\Account`;
+preview with `-WhatIf` before choosing that wider deletion. The desktop uninstaller
+can offer addon removal but does not request SavedVariables deletion.
 
 ## Checks that do not need a client
 
-`cargo test -p azeroth-lua-harness` loads every TOC-listed file into a restricted
-Lua 5.1 state with a stub client and checks load order, reload stability, bounds and
-privacy rules. The CI job "Lua static checks" runs luacheck over the addon. Neither
-says anything about real client behavior; see
-[LUA_RUNTIME_DIFFERENCES.md](LUA_RUNTIME_DIFFERENCES.md).
-
-## Experimental character capture (M2.1 branch; not in released v0.1.0)
-
-After installing the updated addon from the M2.1 build, the user-operated command
-
-    /anavdiag snapshot anonymous-one
-
-attempts a bounded capture on client 1.60.1.70338 / interface 16001. Choose a unique
-anonymous identifier for each character and keep it consistent across captures.
-No character name, GUID, realm or account path is read. The command calls only the
-existing build probe and one guarded UnitLevel('player') read; all other fields
-remain unknown or absent. Errors do not expose raw client messages.
-
-Run /reload or log out to save. In the updated desktop Imports screen, select the
-exact AzerothNavigator.lua file, choose SavedVariables export string, and use
-global AzerothNavigatorDB / key snapshot_export. These are editable defaults.
-Import selected file, or Watch selected file for later manually requested captures.
-diagnostic_export remains a separate diagnostic JSON report and is not importable
-as a character snapshot.
-
-UTC/session elapsed clocks are not observed: captures explicitly carry uncertain
-clock trust. The logical capture stream uses the anonymous identifier and a
-persisted monotonic sequence; it is not an elapsed gameplay session. Do not reset
-the counter to make snapshots appear newer. Import conflicts preserve stored data.
-Uncertain freshness can prevent planning; level display/import does not establish a
-verified live gameplay workflow. Actual capture/import still needs the recorded
-client check. No automatic capture or background observation was added.
-
-## Capture timing in v0.2.0
-
-Clock APIs remain unverified on the recorded client. To inspect their guarded output:
-
-    /anavdiag clock
-
-It prints UTC epoch seconds. On Windows, compare with this PowerShell expression:
-
-    [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-
-Allow for time passing while switching windows. Only if the reported UTC agrees
-with your trusted PC clock, run /anavdiag clock trust within 120 seconds, then run
-/anavdiag snapshot with your existing anonymous profile ID. Reload/logout and import
-the updated file. This confirmation is explicit and applies only to the current
-addon runtime; reload clears trust, so repeat the check before the next capture.
-
-If the APIs are missing, values invalid, a sample takes more than two seconds,
-clocks reverse, or UTC/monotonic disagreement exceeds five seconds, timing remains
-or becomes uncertain. The thresholds are engineering guards, not verified game facts.
-Use /anavdiag clock clear to revoke trust. No trusted state is restored from disk.
-The monotonic clock checks consistency only; no elapsed gameplay time is exported.
-Level capture remains available with uncertain timing when clock checks fail.
-
-A timestamp alone never grants trust. The desktop continues rejecting future
-timestamps and treating captures older than its freshness window as stale.
-Fresh capture timing does not supply missing real quest content, gear, or map data.
+`cargo test --locked -p azeroth-lua-harness` runs synthetic Lua 5.1 checks for
+load order, bounded data, capture/plan/session behavior, HUD guards and privacy.
+CI also runs Lua static checks. These do not establish real-client behavior; see
+[Lua runtime differences](LUA_RUNTIME_DIFFERENCES.md). The
+[v1 release process](../releases/V1_RELEASE_PROCESS.md) requires actual target-build
+evidence before stable publication.
