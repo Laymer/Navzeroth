@@ -1,5 +1,6 @@
 //! Release gate I/O: bounded evidence, exact Git/source binding and verified packs.
 //! All referenced game/source material is data; no Lua or SQL is executed.
+pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
     release::{self, Bindings, Evidence, FileRef, Inventory, Readiness},
@@ -426,6 +427,7 @@ struct Catalog {
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
     sources: BTreeSet<String>,
+    files: BTreeMap<String, FileRef>,
 }
 fn add_record(
     catalog: &mut Catalog,
@@ -596,6 +598,25 @@ fn production_file(root: &Path, pack_root: &Path, reference: &FileRef, tree: &Tr
     }
     checked_path(&path, false)
 }
+fn pack_file(
+    root: &Path,
+    pack_root: &Path,
+    reference: &FileRef,
+    tree: &Tree,
+    catalog: &mut Catalog,
+) -> Result<()> {
+    production_file(root, pack_root, reference, tree)?;
+    let mut reference = reference.clone();
+    reference.path = relative(root, &pack_root.join(reference.path.as_str()))?;
+    if let Some(previous) = catalog
+        .files
+        .insert(reference.path.as_str().to_owned(), reference.clone())
+        && previous != reference
+    {
+        return Err("Conflicting release material file references");
+    }
+    Ok(())
+}
 fn packs(
     root: &Path,
     inventory: &Inventory,
@@ -622,6 +643,7 @@ fn packs(
             return Err("Pack manifest must be tracked production data");
         }
         let pack_root = manifest_path.parent().ok_or("Invalid pack location")?;
+        pack_file(root, root, &pack.manifest, tree, &mut catalog)?;
         budget.verify(root, &pack.manifest)?;
         let manifest: PackManifest = serde_json::from_slice(&checked_ref_bytes(
             budget,
@@ -639,7 +661,7 @@ fn packs(
                 "Release pack has fixture content, coverage gaps or ineligible distribution",
             );
         }
-        production_file(root, pack_root, &manifest.sources, tree)?;
+        pack_file(root, pack_root, &manifest.sources, tree, &mut catalog)?;
         let sources: PackSources = serde_json::from_slice(&checked_ref_bytes(
             budget,
             pack_root,
@@ -654,13 +676,16 @@ fn packs(
             if source.verified_revision.value().map(|r| r.as_str()) != Some(*revision) {
                 return Err("Pack source revision differs from accepted source");
             }
+            if source.offline_usable.value() != Some(&true) {
+                return Err("Release pack source does not permit offline use");
+            }
             catalog.sources.insert(source.id.as_str().to_owned());
         }
         let mut revisions = BTreeSet::new();
         for entry in manifest.entries {
-            production_file(root, pack_root, &entry.dataset, tree)?;
+            pack_file(root, pack_root, &entry.dataset, tree, &mut catalog)?;
             for asset in &entry.assets {
-                production_file(root, pack_root, asset, tree)?;
+                pack_file(root, pack_root, asset, tree, &mut catalog)?;
             }
             let bytes = checked_ref_bytes(
                 budget,
@@ -748,7 +773,16 @@ fn bind_records(
     }
 }
 
-pub fn report(options: &Options) -> Result<Report> {
+struct Inputs {
+    root: PathBuf,
+    budget: Budget,
+    inventory_bytes: Vec<u8>,
+    inventory: Inventory,
+    evidence: Option<Evidence>,
+    head: String,
+    candidate: Tree,
+}
+fn inputs(options: &Options) -> Result<Inputs> {
     release::is_stable(&options.version)?;
     let root = root_path(&options.root)?;
     let mut budget = Budget::default();
@@ -775,6 +809,41 @@ pub fn report(options: &Options) -> Result<Report> {
         return Err("Unsupported Git source identity");
     }
     let candidate = tree(&root, "HEAD")?;
+    Ok(Inputs {
+        root,
+        budget,
+        inventory_bytes,
+        inventory,
+        evidence,
+        head,
+        candidate,
+    })
+}
+fn production_status(root: &Path) -> Result<Vec<u8>> {
+    git(
+        root,
+        &[
+            "status",
+            "--porcelain=v1",
+            "-z",
+            "--untracked-files=all",
+            "--",
+            ".",
+            ":(exclude)docs/**",
+            ":(exclude)release/**",
+        ],
+    )
+}
+pub fn report(options: &Options) -> Result<Report> {
+    let Inputs {
+        root,
+        mut budget,
+        inventory_bytes,
+        inventory,
+        evidence,
+        head,
+        candidate,
+    } = inputs(options)?;
     let tested = evidence
         .as_ref()
         .and_then(|e| e.tested_source_commit.as_deref())
@@ -789,25 +858,11 @@ pub fn report(options: &Options) -> Result<Report> {
             tested_source_commit: tested,
         },
     )?;
-    // Current packaging emits the installer/addon and metadata only. Verifying
-    // a local pack does not prove the offline data and upstream source/notices
-    // reach released assets. Remove this only with tested delivery integration.
+    // Removed only by the packaging integration that delivers and verifies the plan.
     readiness.block(
         "Stable offline content and required source/license asset delivery is not implemented",
     );
-    let status = git(
-        &root,
-        &[
-            "status",
-            "--porcelain=v1",
-            "-z",
-            "--untracked-files=all",
-            "--",
-            ".",
-            ":(exclude)docs/**",
-            ":(exclude)release/**",
-        ],
-    )?;
+    let status = production_status(&root)?;
     if !status.is_empty() {
         readiness.block("Production working tree contains tracked or untracked changes");
     }
@@ -836,6 +891,16 @@ pub fn report(options: &Options) -> Result<Report> {
             Ok((count, catalog)) => {
                 verified_packs = count;
                 bind_records(&mut readiness, &inventory, evidence, &catalog);
+                if let Err(message) = materials::selected_files(
+                    &root,
+                    &inventory,
+                    evidence,
+                    &candidate,
+                    &catalog,
+                    &mut budget,
+                ) {
+                    readiness.block(message);
+                }
             }
             Err(message) => readiness.block(message),
         }

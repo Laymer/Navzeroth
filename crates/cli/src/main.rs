@@ -19,6 +19,7 @@ const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
     release-readiness --root <repository> --version <version> [--evidence <relative-file>]; \
+    release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
     stage-questiedb <raw-file options>. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
@@ -218,6 +219,7 @@ fn main() -> ExitCode {
                 "Implemented subcommands: doctor; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  release-readiness --root <repository> --version <version> [--evidence <relative-file>]. \
+                 release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
                  stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md). \
                  Other commands are planned; see README.md and plan section 19.3."
             );
@@ -279,6 +281,31 @@ fn main() -> ExitCode {
                 }
                 Err(message) => {
                     eprintln!("release-readiness: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [command, rest @ ..] if command == "release-materials" => {
+            use azeroth_cli::release::materials;
+            let Some(options) = materials::Arguments::parse(rest) else {
+                eprintln!("{USAGE}");
+                return ExitCode::from(2);
+            };
+            let result = match &options.output {
+                Some(output) => materials::stage(&options.release, output),
+                None => materials::plan(&options.release),
+            };
+            match result.and_then(|manifest| manifest.bytes()) {
+                Ok(bytes) => {
+                    use std::io::Write;
+                    if std::io::stdout().lock().write_all(&bytes).is_ok() {
+                        ExitCode::SUCCESS
+                    } else {
+                        ExitCode::FAILURE
+                    }
+                }
+                Err(message) => {
+                    eprintln!("release-materials: {message}");
                     ExitCode::FAILURE
                 }
             }
