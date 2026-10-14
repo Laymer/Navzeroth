@@ -6,6 +6,7 @@ import {
   centerOn,
   clampViewport,
   fitViewport,
+  fitBounds,
   fitZoom,
   frameToScreen,
   keyAction,
@@ -120,4 +121,17 @@ describe("keyboard", () => {
     const centred = applyKeyAction(zoomed, key("c"), frame, container, { x: 32, y: 48 });
     expect(frameToScreen(centred, { x: 32, y: 48 }).x).toBeCloseTo(320, 9);
   });
+});
+
+it("fits endpoint boxes including zero/coincident coordinates within zoom/pan limits", () => {
+  for (const box of [{minX:0,minY:0,maxX:64,maxY:96},{minX:0,minY:0,maxX:0,maxY:0},{minX:16,minY:24,maxX:32,maxY:48}]) {
+    const v = fitBounds(box, frame, container);
+    expect(v.zoom).toBeLessThanOrEqual(fitZoom(frame,container)*MAX_ZOOM_FACTOR);
+    for (const p of [{x:box.minX,y:box.minY},{x:box.maxX,y:box.maxY}]) {
+      const screen = frameToScreen(v,p);
+      expect(screen.x).toBeGreaterThanOrEqual(0); expect(screen.x).toBeLessThanOrEqual(container.w);
+      expect(screen.y).toBeGreaterThanOrEqual(0); expect(screen.y).toBeLessThanOrEqual(container.h);
+    }
+  }
+  expect(fitBounds({minX:0,minY:0,maxX:Infinity,maxY:0},frame,container)).toEqual(fitViewport(frame,container));
 });
