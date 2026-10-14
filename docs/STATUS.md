@@ -2,7 +2,7 @@
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
 Current task: v0.4.0 guidance batch integration and release preparation.
-Owner: Codex /root coordinator; wave baseline1924a84, current main7b52f2f.
+Owner: Codex /root coordinator; wave baseline1924a84, current main d0dfe7a.
 v0.3.0 is published as a developer prerelease at main 1924a84 (PR #57).
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
