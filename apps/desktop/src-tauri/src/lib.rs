@@ -668,6 +668,10 @@ pub fn run() {
         .manage(reference_window::Controller::default())
         .invoke_handler({
             let generated: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+                list_local_submissions,
+                submit_local_observation,
+                change_local_submission,
+                export_local_submission,
                 get_content_dispositions,
                 change_content_disposition,
                 get_dungeon_preparation,
@@ -898,6 +902,49 @@ async fn assess_route_acquisition(
 ) -> Result<azeroth_app::route_acquisition::RouteAcquisitionReport, AppError> {
     blocking(state, move |app| {
         app.assess_route_acquisition(&text, system_now())
+    })
+    .await
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn list_local_submissions(
+    state: State<'_, Application>,
+    after: Option<azeroth_core::types::Sha256Hex>,
+    limit: usize,
+) -> Result<azeroth_app::local_submissions::SubmissionPage, AppError> {
+    blocking(state, move |app| {
+        app.local_submission_page(after.as_ref(), limit)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn submit_local_observation(
+    state: State<'_, Application>,
+    text: String,
+    opt_in: bool,
+) -> Result<azeroth_app::local_submissions::SubmitReceipt, AppError> {
+    blocking(state, move |app| {
+        app.submit_local_observation(&text, opt_in, system_now())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn change_local_submission(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::local_submissions::SubmissionRecord, AppError> {
+    blocking(state, move |app| {
+        app.change_local_submission(&text, system_now())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn export_local_submission(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::local_submissions::LocalSubmissionExport, AppError> {
+    blocking(state, move |app| {
+        app.export_local_submission(&text, system_now())
     })
     .await
 }

@@ -272,6 +272,10 @@ export interface CommandMap {
   get_today_view:{input:undefined;output:import("./today").TodayView};
   pin_current_plan:{input:{job_id:string;expected_revision:number};output:number};
   clear_current_plan:{input:{expected_revision:number};output:number};
+  list_local_submissions: { input: { after: string | null; limit: number }; output: import("./localSubmissions").SubmissionPage };
+  submit_local_observation: { input: { text: string; opt_in: boolean }; output: import("./localSubmissions").SubmitReceipt };
+  change_local_submission: { input: { text: string }; output: import("./localSubmissions").SubmissionRecord };
+  export_local_submission: { input: { text: string }; output: import("./localSubmissions").LocalSubmissionExport };
   get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
   change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
