@@ -1,5 +1,6 @@
 //! Local manual planning over a consistent party/content/snapshot view.
 use crate::snapshots::{SnapshotApplication, context, profile_id};
+use azeroth_core::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use azeroth_core::{
     contract::Envelope,
     entities::{
@@ -7,7 +8,7 @@ use azeroth_core::{
     },
     error::{AppError, ErrorCode, Result},
     evaluation::{EvaluationContext, StalePolicy},
-    joint_planner::{JointCandidate, JointInput, JointResult, plan_joint},
+    joint_planner::{JointCandidate, JointInput, JointResult, plan_joint_controlled},
     observation::{Freshness, ObservationStatus, freshness},
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     types::*,
@@ -88,6 +89,15 @@ type JointView = (
     Option<ContentRevision>,
 );
 pub(crate) fn view(store: &SqliteStore, id: &PartyId, now: Option<UtcMillis>) -> Result<JointView> {
+    view_controlled(store, id, now, &mut NoopSearchControl)
+}
+fn view_controlled(
+    store: &SqliteStore,
+    id: &PartyId,
+    now: Option<UtcMillis>,
+    control: &mut dyn SearchControl,
+) -> Result<JointView> {
+    control.checkpoint(SearchPhase::ParticipantReadiness)?;
     let party = store
         .party(id)?
         .ok_or_else(|| invalid("No such local party"))?;
@@ -103,6 +113,7 @@ pub(crate) fn view(store: &SqliteStore, id: &PartyId, now: Option<UtcMillis>) ->
     let mut snapshots = Vec::new();
     let mut participants = Vec::new();
     for key in &party.participants {
+        control.checkpoint(SearchPhase::ParticipantReadiness)?;
         first.context.ensure_compatible(&key.context)?;
         if key.fixture != first.fixture {
             return Err(invalid("Party fixture modes differ"));
@@ -149,6 +160,45 @@ impl SnapshotApplication {
         text: &str,
         now: Option<UtcMillis>,
     ) -> Result<JointPlanningReport> {
+        self.with_joint_planning(text, now, |request, catalog, snapshots, content| {
+            calculate(request, catalog, snapshots, content, now)
+        })
+    }
+    pub(crate) fn with_joint_planning<T>(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+        calculate: impl FnOnce(
+            JointPlanningRequest,
+            JointPlanningCatalog,
+            Vec<Envelope<CharacterSnapshot>>,
+            &ContentRevision,
+        ) -> Result<T>,
+    ) -> Result<T> {
+        self.with_joint_planning_controlled(
+            text,
+            now,
+            &mut NoopSearchControl,
+            |request, catalog, snapshots, content, _| {
+                calculate(request, catalog, snapshots, content)
+            },
+        )
+    }
+    pub(crate) fn with_joint_planning_controlled<T>(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+        control: &mut dyn SearchControl,
+        calculate: impl FnOnce(
+            JointPlanningRequest,
+            JointPlanningCatalog,
+            Vec<Envelope<CharacterSnapshot>>,
+            &ContentRevision,
+            &mut dyn SearchControl,
+        ) -> Result<T>,
+    ) -> Result<T> {
+        control.checkpoint(SearchPhase::ValidateInputs)?;
+        let started = std::time::Instant::now();
         if text.len() > crate::planning::MAX_REQUEST_BYTES {
             return Err(AppError::new(
                 ErrorCode::ImportTooLarge,
@@ -164,8 +214,9 @@ impl SnapshotApplication {
         {
             return Err(invalid("Joint input count exceeds limits"));
         }
-        self.with_store_mut(|store| {
-            let (catalog, snapshots, content) = view(store, &request.party_id, now)?;
+        let (catalog, snapshots, content) = self.with_store_mut(|store| {
+            let (catalog, snapshots, content) =
+                view_controlled(store, &request.party_id, now, control)?;
             let content = content.ok_or_else(|| {
                 AppError::new(
                     ErrorCode::DatasetIncomplete,
@@ -210,8 +261,20 @@ impl SnapshotApplication {
                 .into_iter()
                 .map(|s| s.expect("expected snapshot checked"))
                 .collect::<Vec<_>>();
-            calculate(request, catalog, snapshots, &content, now)
-        })
+            Ok((catalog, snapshots, content))
+        })?;
+        let guard = crate::planning_job_service::PublicationGuard::new(
+            Some(request.party_id.clone()),
+            &snapshots,
+            &content,
+        )?;
+        let result = calculate(request, catalog, snapshots, &content, control)?;
+        guard.publish(
+            self,
+            crate::planning_job_service::advanced_now(now, started.elapsed()),
+            &mut || Ok(()),
+        )?;
+        Ok(result)
     }
 }
 pub(crate) fn calculate(
@@ -221,6 +284,24 @@ pub(crate) fn calculate(
     content: &ContentRevision,
     now: Option<UtcMillis>,
 ) -> Result<JointPlanningReport> {
+    calculate_controlled(
+        request,
+        catalog,
+        snapshots,
+        content,
+        now,
+        &mut NoopSearchControl,
+    )
+}
+pub(crate) fn calculate_controlled(
+    request: JointPlanningRequest,
+    catalog: JointPlanningCatalog,
+    snapshots: Vec<Envelope<CharacterSnapshot>>,
+    content: &ContentRevision,
+    now: Option<UtcMillis>,
+    control: &mut dyn SearchControl,
+) -> Result<JointPlanningReport> {
+    control.checkpoint(SearchPhase::ValidateInputs)?;
     if request.candidates.len() > 128
         || request.excluded.len() > 128
         || !(2..=40).contains(&request.participants.len())
@@ -267,6 +348,7 @@ pub(crate) fn calculate(
     let mut filtered = Vec::new();
     let mut seen = BTreeSet::new();
     for estimate in &request.candidates {
+        control.checkpoint(SearchPhase::CandidateAssessment)?;
         if !seen.insert(&estimate.objective)
             || estimate.utilities.keys().cloned().collect::<BTreeSet<_>>() != profile_ids
         {
@@ -306,6 +388,7 @@ pub(crate) fn calculate(
             _ => reason = Some("Objective requirements are unavailable"),
         }
         for target in &objective.targets {
+            control.checkpoint(SearchPhase::CandidateAssessment)?;
             match target {
                 ObjectiveTarget::QuestStage { quest, stage } => {
                     let definition = dataset
@@ -387,18 +470,21 @@ pub(crate) fn calculate(
         })
         .collect::<Vec<_>>();
     filtered.sort_by(|a, b| a.objective.cmp(&b.objective));
-    let result = plan_joint(&JointInput {
-        contexts: &contexts,
-        candidates: &candidates,
-        goal_profile: request.goal_profile.clone(),
-        excluded: &request.excluded,
-        nodes: &dataset.nodes,
-        edges: &dataset.edges,
-        origin: request.origin.clone(),
-        stopping_node: request.stopping_node.clone(),
-        budget_ms: request.budget_ms,
-        stopping_service_ms: request.stopping_service_ms,
-    })?;
+    let result = plan_joint_controlled(
+        &JointInput {
+            contexts: &contexts,
+            candidates: &candidates,
+            goal_profile: request.goal_profile.clone(),
+            excluded: &request.excluded,
+            nodes: &dataset.nodes,
+            edges: &dataset.edges,
+            origin: request.origin.clone(),
+            stopping_node: request.stopping_node.clone(),
+            budget_ms: request.budget_ms,
+            stopping_service_ms: request.stopping_service_ms,
+        },
+        control,
+    )?;
     Ok(JointPlanningReport {
         request,
         context: catalog.context,
