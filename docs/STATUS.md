@@ -1,6 +1,6 @@
 # Project status
 
-Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-13.
+Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
 Current task: wave-4 joint guidance and recurring releases.
 Owner: Codex /root coordinator, baseline main 1924a84.
 v0.3.0 is published as a developer prerelease at main 1924a84 (PR #57).
