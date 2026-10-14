@@ -65,7 +65,9 @@ Native Rust checks are `cargo clippy --locked -p azeroth-desktop --all-targets -
 and `cargo test --locked -p azeroth-desktop`.
 
 The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures` and
-`validate-content`. Content pack build/verification and planner replay remain planned.
+`validate-content` and bounded synthetic `replay --fixture <file>`. Content pack
+build/verification remain planned. Replay format/examples/limits are documented in
+[PLANNER_REPLAY.md](docs/data/PLANNER_REPLAY.md).
 
 `cargo run --locked -p azeroth-cli -- doctor --json` reports this binary's version,
 OS/architecture, pinned development requirements and tool presence on PATH. Presence

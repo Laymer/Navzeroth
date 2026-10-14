@@ -268,3 +268,41 @@ fn selected_file_symlink_components_and_nonregular_inputs_fail() {
     assert!(file(&temp.0).is_err());
     assert!(file(&temp.0.join("../fixture.json")).is_err());
 }
+
+#[test]
+fn forty_participants_are_supported_and_forty_one_are_refused() {
+    let mut v = fixture(true);
+    let base = v["snapshots"][0].clone();
+    let snapshots = (0..40)
+        .map(|index| {
+            let mut snapshot = base.clone();
+            snapshot["payload"]["id"] = json!(format!("synthetic-snapshot-{index}"));
+            snapshot["payload"]["character"] = json!(format!("synthetic-character-{index}"));
+            snapshot
+        })
+        .collect::<Vec<_>>();
+    v["content"]["envelope"]["payload"]["objectives"][0]["participants"] = json!(
+        snapshots
+            .iter()
+            .map(|s| s["payload"]["character"].clone())
+            .collect::<Vec<_>>()
+    );
+    v["snapshots"] = json!(snapshots);
+    v["request"]["participants"] = json!((0..40).collect::<Vec<_>>());
+    v["request"]["candidates"][0]["utilities"] = json!(vec![1; 40]);
+    let out = run(&v);
+    assert_eq!(
+        out["result"]["plan"]["plan"]["selected"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    let mut extra = base;
+    extra["payload"]["id"] = json!("synthetic-snapshot-40");
+    extra["payload"]["character"] = json!("synthetic-character-40");
+    v["snapshots"].as_array_mut().unwrap().push(extra);
+    v["request"]["participants"] = json!((0..41).collect::<Vec<_>>());
+    v["request"]["candidates"][0]["utilities"] = json!(vec![1; 41]);
+    assert!(replay(&serde_json::to_vec(&v).unwrap()).is_err());
+}
