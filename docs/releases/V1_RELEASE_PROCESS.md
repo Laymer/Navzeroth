@@ -7,8 +7,10 @@ Current packaging, its verified artifacts and its acceptance limits are recorded
 in the [final preview audit](../handoffs/2026-10-14-final-program-audit.md).
 
 The target is Windows desktop support and all enumerated content available in
-**Forever 1.60.1.70374**. Confirm the version, build and interface in the actual
-client before acceptance. Neither the older 70338 reports nor the historical
+**Forever 1.60.1.70374**. The user's 2026-10-14 Windows 11 report identifies that
+build/interface 16001 and addon 0.8.1 diagnostics without errors while out of combat.
+Exact installed source and the remaining real acceptance are unverified. Bind every
+acceptance run to the actual client and installed source. Neither the older 70338 reports nor the historical
 70205 atlas establishes 70374 compatibility. Keep application, exchange schema,
 game dataset and upstream source revisions distinct.
 

@@ -89,3 +89,9 @@ by this documentation worker.
 Draft PR: https://github.com/Laymer/Navzeroth/pull/113. Task branch is published;
 review and hosted checks are pending at this record. Independent contract review
 for the coordinator is the worker's next assigned task, without edits to its tree.
+
+Follow-up user evidence forwarded by the coordinator: GetBuildInfo reports
+1.60.1 / 70374 / Oct 12 2026 / 16001, Windows 11 out of combat; probe/status
+indicate no errors and `/anavdiag` reports 0.8.1. The source archive hash was not
+inspected. README/addon/release-process docs now preserve this narrow report,
+without promoting unchanged 70338-gated adapters or full target acceptance.

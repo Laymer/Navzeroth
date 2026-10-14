@@ -6,14 +6,20 @@ snapshots, plan import and HUD controls, and manual session recording. These are
 experimental client bindings. It runs inside the permitted addon environment;
 desktop exchange uses explicit files or pasted text.
 
-The recorded client is `1.60.1.70338 / interface 16001`. Limited user-reported
+The enabled experimental tuple is `1.60.1.70338 / interface 16001`. Limited user-reported
 diagnostic retrieval, level capture and clock-age results are recorded in
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,
 HUD, plan, session and reload acceptance remains unverified.
 
-The frozen v1 target is **Forever 1.60.1.70374**. Current capture, clock, position,
+The frozen v1 target is **Forever 1.60.1.70374**. On 2026-10-14 the user reported
+`GetBuildInfo` version `1.60.1`, build `70374`, date `Oct 12 2026`, interface `16001`,
+on Windows 11 out of combat, with `/anavdiag` reporting addon `0.8.1` and probe/status
+showing no errors. The installed archive hash/source commit was not inspected;
+this is a narrow build/version/diagnostic report, not full adapter acceptance.
+
+Current capture, clock, position,
 plan and recording adapters refuse builds other than the recorded 70338 tuple.
-On 70374, start with the diagnostic probe and record the actual build/interface;
+On 70374, retain the diagnostic build/interface and exact installed source record;
 a reviewed compatibility change and fresh checks are required before using those
 adapters. Do not relabel a 70338 export or edit a guard to claim 70374 evidence.
 

@@ -12,9 +12,10 @@ remain unverified. See the [release notes](docs/releases/0.8.1.md) and
 [publication evidence](docs/handoffs/2026-10-14-final-program-audit.md).
 
 The authorized v1.0.0 target is full enumerated content for **Forever
-1.60.1.70374**, with Windows desktop support. Confirm that build and its interface
-in-game before collecting acceptance evidence. It is a target, not a compatibility
-claim for the current preview. Missing mandatory content, source permissions or
+1.60.1.70374**, with Windows desktop support. The user reports that build and
+interface 16001 on Windows 11, out of combat, with 0.8.1 diagnostics reporting no
+errors; the installed source commit was not inspected. This limited report does
+not establish full compatibility. Missing mandatory content, source permissions or
 real acceptance evidence keeps v1.0.0 at candidate status; see the
 [v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
 
@@ -37,7 +38,7 @@ real acceptance evidence keeps v1.0.0 at candidate status; see the
 | Application/addon 0.8.1 | Published developer preview with verified release hashes and hosted Windows smoke checks |
 | Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
-| Forever 1.60.1.70374 | Frozen v1 target; requires a new in-game build record and revision-specific acceptance |
+| Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; limited user-reported build/diagnostic result, with exact installed source and full acceptance still unverified |
 
 ## Development
 
