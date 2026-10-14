@@ -5,7 +5,8 @@ import type { CommandClient } from "../commands";
 import type { PreparationReport } from "../commands/dungeonPreparation";
 import fixture from "../../../../fixtures/desktop/preparation/report.json";
 const report=fixture as PreparationReport;
-const firstMember=report.members[0];if(!firstMember)throw Error("Synthetic wirefixture needs a member");
+function fixtureMember(){const member=report.members[0];if(!member)throw Error("Synthetic wirefixture needs a member");return member;}
+const firstMember=fixtureMember();
 function mock(mode:"stored"|"demo"="stored") {
   return {listProfiles:vi.fn(async()=>({ok:true,value:[{id:firstMember.profile_id,display_name:"Synthetic member",data_mode:mode}]})),
     listParties:vi.fn(async()=>({ok:true,value:["preparation-party"]})),
