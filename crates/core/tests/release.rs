@@ -96,6 +96,16 @@ fn unknown_coverage_differs_from_known_zero_and_missing_domains() {
     assert!(!check("1.0.0", &i, Some(&e)).stable_ready);
     i.domains[0].units[0].required_record_ids = Some(vec![]);
     e.coverage[0].included_record_ids.clear();
+    assert!(!check("1.0.0", &i, Some(&e)).stable_ready);
+    // A real empty subregion stays distinct from an absent inventory; another
+    // unit must still enumerate the mandatory domain's available content.
+    let (full_i, full_e) = complete();
+    let mut nonempty = full_i.domains[0].units[0].clone();
+    nonempty.id = "another-region".into();
+    i.domains[0].units.push(nonempty);
+    let mut nonempty = full_e.coverage[0].clone();
+    nonempty.unit_id = "another-region".into();
+    e.coverage.push(nonempty);
     assert!(check("1.0.0", &i, Some(&e)).stable_ready);
     i.domains[0].completeness = Completeness::Unknown;
     assert!(!check("1.0.0", &i, Some(&e)).stable_ready);
@@ -220,4 +230,23 @@ fn parsing_rejects_unknown_duplicate_oversized_and_executable_inputs() {
     let mut value = serde_json::to_value(&e).unwrap();
     value["checks"][0]["mandatory"] = json!(false);
     assert!(decode_evidence(&serde_json::to_vec(&value).unwrap()).is_err());
+    let mut value = serde_json::to_value(&i).unwrap();
+    value["schema_version"] = json!(2);
+    assert!(decode_inventory(&serde_json::to_vec(&value).unwrap()).is_err());
+}
+
+#[test]
+fn future_schema_and_excessive_collections_fail_even_for_prereleases() {
+    let (mut i, e) = complete();
+    let bindings = Bindings {
+        inventory_sha256: HASH,
+        production_sha256: HASH,
+        tested_source_commit: COMMIT,
+    };
+    i.schema_version = 2;
+    assert!(assess("1.0.0-rc.1", &i, Some(&e), &bindings).is_err());
+    i.schema_version = 1;
+    let mut excessive = e.clone();
+    excessive.coverage = vec![e.coverage[0].clone(); MAX_UNITS + 1];
+    assert!(assess("1.0.0-rc.1", &i, Some(&excessive), &bindings).is_err());
 }
