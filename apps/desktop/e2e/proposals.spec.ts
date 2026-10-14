@@ -17,6 +17,11 @@ test("local proposal retains per-member acceptance and invalidates after refresh
         case "get_party_quests": return { context: snapshot.payload.context, fixture: true, revision: null, quests: [] };
         case "get_joint_planning_catalog": return { context: snapshot.payload.context, fixture: true, revision: null, participants: [], nodes: [], objectives: [] };
         case "get_party_plan_proposal": if (accepted.size === 2) invalidated = true; return report();
+        case "export_agreed_party_plan": {
+          const input = JSON.parse(String(args.text));
+          if (input.expected.revision !== revision || input.recipient_profile_id !== "two" || accepted.size !== 2 || invalidated) throw { code: "SNAPSHOT_OUTDATED", message: "Agreement changed", retryable: false };
+          return { text: "ANAV1:explicit-recipient-two", byte_count: 28, plan_id: "plan-two", expires_at_utc_ms: 1791793800000 };
+        }
         case "accept_party_plan": {
           const input = JSON.parse(String(args.text));
           if (input.expected.revision !== revision || input.expected.proposal_id !== "a".repeat(64)) throw { code: "INVALID_INPUT", message: "Proposal changed", retryable: false };
@@ -34,12 +39,19 @@ test("local proposal retains per-member acceptance and invalidates after refresh
   await expect(page.getByRole("button", { name: "Record acceptance for two" })).toBeEnabled();
   await page.getByRole("button", { name: "Record acceptance for two" }).click();
   await expect(page.getByText("Every participant explicitly accepted this current proposal.")).toBeVisible();
+  await page.getByLabel("Export recipient").selectOption("two");
+  await page.getByRole("button", { name: "Export agreed plan for recipient" }).click();
+  await expect(page.getByLabel("Recipient plan text")).toHaveValue("ANAV1:explicit-recipient-two");
   await page.getByRole("button", { name: "Refresh parties" }).click();
   await expect(page.getByText(/Agreement invalidated: current inputs differ/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Record acceptance for two" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Export agreed plan for recipient" })).toBeDisabled();
+  await expect(page.getByLabel("Recipient plan text")).toHaveCount(0);
   await page.getByRole("button", { name: "Withdraw acceptance for one" }).click();
   await expect(page.getByRole("button", { name: "Withdraw acceptance for one" })).toBeDisabled();
   const calls = await page.evaluate(() => (window as unknown as { __PROPOSAL_CALLS__: { command: string; args: { text: string } }[] }).__PROPOSAL_CALLS__);
   const inputs = calls.filter((c) => c.command === "accept_party_plan").map((c) => JSON.parse(c.args.text));
+  const exportCall = calls.find((c) => c.command === "export_agreed_party_plan");
+  expect(JSON.parse(exportCall?.args.text ?? "{}")).toEqual({ party_id: "duo", expected: { proposal_id: "a".repeat(64), revision: 3 }, recipient_profile_id: "two" });
   expect(inputs).toMatchObject([{ profile_id: "one", accepted: true, expected: { revision: 1 } }, { profile_id: "two", accepted: true, expected: { revision: 2 } }, { profile_id: "one", accepted: false, expected: { revision: 3 } }]);
 });

@@ -80,6 +80,7 @@ export function createClient(adapter: CommandAdapter) {
     promoteSnapshot: (profileId: string, snapshotId: string, expectedCurrent: string, reason: string) => run(() => adapter.invoke("promote_snapshot", { profile_id: profileId, snapshot_id: snapshotId, expected_current: expectedCurrent, reason })),
     getPlanningCatalog: (profileId: string) => run(() => adapter.invoke("get_planning_catalog", { profile_id: profileId })),
     exportPlan: (text: string) => run(() => adapter.invoke("export_plan", { text })),
+    exportAgreedPartyPlan: (text: string) => run(() => adapter.invoke("export_agreed_party_plan", { text })),
     inspectPlanRoute: (text: string) => run(() => adapter.invoke("inspect_plan_route", { text })),
     planSession: (text: string) => run(() => adapter.invoke("plan_session", { text })),
     getCompatibilityReport: (profile_id: string | null) => run(() => adapter.invoke("get_compatibility_report", { profile_id })),
