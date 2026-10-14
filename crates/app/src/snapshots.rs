@@ -168,7 +168,7 @@ pub fn system_now() -> Option<UtcMillis> {
         .and_then(|d| i64::try_from(d.as_millis()).ok())
         .and_then(|n| UtcMillis::new(n).ok())
 }
-fn profile_id(key: &ProfileKey) -> Result<String> {
+pub(crate) fn profile_id(key: &ProfileKey) -> Result<String> {
     let encoded =
         serde_json::to_vec(&(&key.character, &key.context, key.fixture)).map_err(|_| {
             error(
@@ -317,6 +317,14 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    /// Serialize multi-profile operations against one consistent store state.
+    pub(crate) fn with_store_mut<T>(
+        &self,
+        call: impl FnOnce(&mut SqliteStore) -> Result<T>,
+    ) -> Result<T> {
+        call(&mut self.lock()?.store)
+    }
+
     pub(crate) fn with_profile_store_mut<T>(
         &self,
         id: &str,
