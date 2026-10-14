@@ -63,6 +63,7 @@ setSelected(old=>options.includes(old)?old:options[0]??"");
 }
 function Condition({value}:{value:ConditionAssessment|null}) {
   if(!value)return <>Unavailable</>;
+  if(value.availability==="known"&&!value.evaluation)return <>Known declared requirement; current assessment unavailable</>;
   return <>{value.availability}{value.evaluation&&<>; condition {value.evaluation.truth}
     {value.evaluation.reasons.length>0&&<details><summary>Observation gaps ({value.evaluation.reasons.length})</summary><pre>{JSON.stringify(value.evaluation.reasons.slice(0,8),null,2)}</pre>{value.evaluation.reasons.length>8&&<p>First eight reasons shown.</p>}</details>}
   </>}</>;

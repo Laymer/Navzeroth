@@ -28,6 +28,7 @@ test("explicit local party inspection exposes evidence gaps, false and zero with
   fireEvent.click(screen.getByRole("button",{name:"Inspect preparation gaps"}));
   await screen.findByText(/Declared group formation: 0 to 0 ms/);
   expect(screen.getByText(/member-1 — capture stale/)).toBeVisible();
+  expect(screen.getAllByText("Known declared requirement; current assessment unavailable").length).toBeGreaterThan(0);
   expect(screen.getByText(/condition false/)).toBeInTheDocument();
   expect(screen.getByText(/limited_sample; source demo-source-1/)).toBeVisible();
   expect(screen.getByText(/local package unverified/)).toBeVisible();
