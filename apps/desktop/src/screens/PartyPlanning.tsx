@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { PartyAgreement } from "./PartyAgreement";
 import type { CommandClient } from "../commands";
 import type { AppError } from "../commands/contract";
 import type { JointEstimate, JointPlanningCatalog, JointPlanningReport, JointPlanningRequest } from "../party/contract";
@@ -119,5 +120,6 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       <details><summary>Joint readiness and decision evidence</summary><pre>{JSON.stringify({ participants: report.participants, assessments: report.result.assessments, trace: report.result.plan.trace, stopping: report.result.plan.stopping }, null, 2)}</pre></details>
       <ul>{report.result.unavailable_edges.map((edge) => <li key={`${edge.edge}:${edge.character}`}>Travel {edge.edge} unavailable for {edge.character}: {edge.truth}</li>)}</ul>
     </div>}
+    <PartyAgreement client={client} partyId={partyId} refreshKey={refreshKey} planning={report} />
   </section>;
 }

@@ -39,7 +39,7 @@ fn seed_profile(path: &std::path::Path) {
 fn fresh_in_memory_database_migrates_to_latest() {
     let store = SqliteStore::open_in_memory().unwrap();
     assert_eq!(store.schema_version().unwrap(), latest_version());
-    assert_eq!(latest_version(), 7);
+    assert_eq!(latest_version(), 8);
 }
 
 #[test]
@@ -276,7 +276,7 @@ fn populated_v3_upgrades_preserving_content_parties_and_snapshot_documents() {
     // Reconstruct the exact v3 schema; v4 only adds this empty audit table.
     raw(&db.path)
         .execute_batch(
-            "DROP TABLE session_calibration_annotations; DROP TABLE reminder_state; DROP TABLE sessions; DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version >= 4;",
+            "DROP TABLE party_plan_proposals; DROP TABLE session_calibration_annotations; DROP TABLE reminder_state; DROP TABLE sessions; DROP TABLE snapshot_promotions; DELETE FROM schema_migrations WHERE version >= 4;",
         )
         .unwrap();
     let before = common::dump_state(&db.path);

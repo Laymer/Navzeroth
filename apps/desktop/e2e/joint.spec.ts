@@ -16,6 +16,7 @@ test("joint planning sends exact participant guards and hard exclusions, then in
         case "list_profiles": return profiles.map((id) => ({ id, display_name: id, data_mode: "stored", context: snapshot.payload.context, fixture: true }));
         case "list_parties": return ["duo"];
         case "get_party": return { id: "duo", data_mode: "stored", participants: profiles.map((id) => ({ character: id, profile_id: id, snapshot: { envelope: { ...snapshot, payload: { ...snapshot.payload, id: `snapshot-${id}`, character: id } }, profile_id: id, data_mode: "stored", freshness: { status: "fresh", age_ms: 0 } } })) };
+        case "get_party_plan_proposal": return null;
         case "get_party_quests": return { context: snapshot.payload.context, fixture: true, revision: null, quests: [] };
         case "get_joint_planning_catalog": return { context: snapshot.payload.context, fixture: true, revision: "demo-r1", participants: members(), nodes: content.envelope.payload.nodes, objectives: content.envelope.payload.objectives };
         case "plan_joint_session": {
