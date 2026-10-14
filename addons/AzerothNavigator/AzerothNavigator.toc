@@ -23,6 +23,7 @@ Core\Hud.lua
 Core\Gear.lua
 Core\Capabilities.lua
 Core\Export.lua
+Core\HudAppearance.lua
 Core\Settings.lua
 Core\PlanControls.lua
 Diagnostics.lua

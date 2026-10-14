@@ -193,7 +193,7 @@ fn settings_merge_applies_defaults_and_keeps_unknown_keys_out() {
         .unwrap();
     assert_eq!(
         serde_json::from_str::<Value>(&merged).unwrap(),
-        json!({ "auto_probe": false, "chat_summary": true, "hud_visible": true })
+        expected_settings(false)
     );
     for saved in ["nil", "'text'", "42", "true", "{}"] {
         let defaults: String = sandbox
@@ -204,7 +204,7 @@ fn settings_merge_applies_defaults_and_keeps_unknown_keys_out() {
             .unwrap();
         assert_eq!(
             serde_json::from_str::<Value>(&defaults).unwrap(),
-            json!({ "auto_probe": true, "chat_summary": true, "hud_visible": true })
+            expected_settings(true)
         );
     }
     let fresh: bool = sandbox
@@ -243,7 +243,7 @@ fn settings_apply_never_overwrites_the_export_or_unrelated_fields() {
             "db_version": 1,
             "diagnostic_export": "{\"kept\":true}",
             "diagnostic_export_error": "json_cycle",
-            "settings": { "auto_probe": false, "chat_summary": true, "hud_visible": true },
+            "settings": expected_settings(false),
             "untouched": [1, 2, 3]
         })
     );
@@ -271,4 +271,10 @@ fn settings_apply_refuses_unknown_layouts_and_leaves_them_untouched() {
         serde_json::from_str::<Value>(&db_json).unwrap(),
         json!({ "db_version": 2, "settings": { "auto_probe": false }, "extra": "x" })
     );
+}
+
+fn expected_settings(auto_probe: bool) -> Value {
+    json!({"auto_probe": auto_probe, "chat_summary": true, "hud_visible": true,
+      "hud_width":420,"hud_height":220,"hud_font_percent":100,"hud_contrast":"default",
+      "hud_position":{"anchor":"TOP","relative":"TOP","x":0,"y":-120}})
 }
