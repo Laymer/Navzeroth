@@ -36,6 +36,11 @@ pub enum PlanningKind {
     Joint,
 }
 #[derive(Clone, Debug, Serialize)]
+pub struct JobAccepted {
+    pub job_schema_version: u32,
+    pub job_id: String,
+}
+#[derive(Clone, Debug, Serialize)]
 pub struct JobStatus {
     pub job_schema_version: u32,
     pub job_id: String,

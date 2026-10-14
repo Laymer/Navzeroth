@@ -1,5 +1,4 @@
-#[path = "../src/planning_jobs.rs"]
-mod planning_jobs;
+use azeroth_app::planning_jobs;
 use azeroth_core::{
     error::ErrorCode,
     search_control::{SearchControl, SearchPhase},
