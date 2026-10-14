@@ -80,3 +80,14 @@ interfaces through normal main merge if needed, integrate only through protected
 main, then include this command's exact checks in the batch release audit. The
 larger program's real content/live acceptance and remaining engineering stay in
 the task ledger; this task does not complete those milestones.
+
+## Independent review and Windows follow-up
+
+Reviewer /root/release_review reran all40 CLI tests, Linux strict Clippy and both
+documented commands at7ddb495 with no functional blocker. Hosted Windows strict
+Clippy run38534479461/job115754269103 found an unconditional `file` import used
+only by the Unix symlink test. The import is now gated with cfg(unix); no replay
+behavior changes. Main02044c2 merged normally as8ca9295 before final task checks.
+Integrated locked CLI40 tests passed again, zero failures/one existing ignored
+generator; CLI all-target Clippy/fmt/diff passed. Fresh exact-head hosted Windows
+verification is required; the source correction is not a claimed Windows pass.

@@ -1,4 +1,6 @@
-use azeroth_cli::replay::{MAX_FIXTURE_BYTES, MAX_OUTPUT_BYTES, file, replay};
+#[cfg(unix)]
+use azeroth_cli::replay::file;
+use azeroth_cli::replay::{MAX_FIXTURE_BYTES, MAX_OUTPUT_BYTES, replay};
 use serde_json::{Value, json};
 use std::{
     fs,
