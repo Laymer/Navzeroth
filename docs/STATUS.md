@@ -1,14 +1,16 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: wave5 final freshness correction, protected-main reconciliation and0.5.0 candidate verification.
-Owner: Codex /root coordinator; released baseline2d5de64 (v0.4.0), task main through376a3df.
+Current task: final0.5.0 candidate/main/tag asset verification and publication.
+Owner: Codex /root coordinator; released baseline2d5de64 (v0.4.0), reconciled task main d09a2e0.
 v0.4.0 is published as a developer prerelease at main2d5de64 (PR #65).
 PR79 prepares0.5.0; it is not yet tagged or published. See
 [candidate preparation](handoffs/2026-10-14-v0.5.0-preparation.md).
-Recovery, Atlas, core control, diagnostics and CLI tooling are merged; frontend
-planning controls/navigation await final integration. A reproduced individual-field
-expiry gap must be corrected before release. Native/live acceptance remains unverified.
+All wave5 task PRs are merged, including frontend planning/navigation and typed
+field-expiry correction80, after independent review and fresh nine-job checks.
+Final candidate677 Rust/131 desktop/25 mocked browser checks are recorded in the
+release handoff. Publication still requires verified exact main/tag assets.
+Native/live acceptance remains unverified.
 See [wave5 coordination/publication evidence](handoffs/2026-10-14-wave5-coordination.md).
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
@@ -37,7 +39,7 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; schematic route inspection preserves geometry gaps. Native interaction and verified real road geometry remain. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; preparation, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
-| M9 | IN_PROGRESS | Recovery/diagnostics, cancellation foundations and scoped synthetic performance checks implemented; frontend/field-expiry correction and0.5.0 candidate integration ongoing. v0.4.0 remains latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
+| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented;0.5.0 candidate verification/publication ongoing. v0.4.0 remains latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
 | M10 | TODO | Optional native reference overlay. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | TODO | Expansion after focused release. |
