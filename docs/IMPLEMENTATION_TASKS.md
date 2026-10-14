@@ -5,6 +5,18 @@ Fresh released-source audit: [final publication audit](handoffs/2026-10-14-final
 Exact0.8.1 source checks: [candidate reconciliation](handoffs/2026-10-14-v0.8.1-release.md).
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
+
+The new user-authorized v1 plan reopens source acquisition and complete-content
+inventory at baseline `bb3782c`. Its [coordination record](handoffs/2026-10-14-v1-coordination.md)
+and [release manifests](../release/v1/README.md) supersede the historical statement
+that no dependency-ready work remained under the earlier preview scope. Batch 1
+covers public-source audit, consolidated acceptance and current onboarding; batch 2
+adds bounded source adapters, content validation and stable-release enforcement.
+The new audit also found copy-out UI and 70374 compatibility work; actual automatic
+objective mapping and complete-content models remain explicit requirements.
+No M0–M12 task is promoted by these foundation changes. Existing 79 task
+dispositions below remain the published-preview baseline until actual evidence
+and implemented subscopes justify per-task updates.
 Rows are audited against STATUS, task handoffs, current module/test inventory, and
 implementation-plan section 17. Exact future checks belong in task handoffs.
 Section16.2 explicit redacted diagnostics is implemented in PR70/76; native file
