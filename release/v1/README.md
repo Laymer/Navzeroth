@@ -125,6 +125,14 @@ package. Future binding support requires actual existing/approved contracts and
 representative tests, never invented models. Passing pure declaration tests does
 not imply the full CLI can accept these missing formats.
 
+An independent blocker records that release packaging still emits only the
+installer, addon ZIP, notes, source-commit metadata and checksums. It does not yet
+deliver the verified offline packs, required licenses/notices or corresponding
+source assets. The CLI cannot report stable readiness until packaging gains a
+reviewed asset manifest and verifies delivery of that complete set. Filling the
+content/domain contracts alone must not remove this blocker. Existing preview
+packages are unchanged; local pack verification is not distribution evidence.
+
 Packs and all their datasets, registries and imagery must be tracked production
 files outside `docs/` and `release/`. Otherwise an evidence-only commit could change
 content without invalidating the tested production fingerprint. The gate rejects

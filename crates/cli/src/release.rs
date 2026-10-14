@@ -789,6 +789,12 @@ pub fn report(options: &Options) -> Result<Report> {
             tested_source_commit: tested,
         },
     )?;
+    // Current packaging emits the installer/addon and metadata only. Verifying
+    // a local pack does not prove the offline data and upstream source/notices
+    // reach released assets. Remove this only with tested delivery integration.
+    readiness.block(
+        "Stable offline content and required source/license asset delivery is not implemented",
+    );
     let status = git(
         &root,
         &[
