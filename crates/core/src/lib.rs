@@ -14,6 +14,7 @@ pub mod objective_clustering;
 pub mod observation;
 pub mod planner;
 pub mod predicate;
+pub mod release;
 pub mod reminders;
 pub mod sessions;
 pub mod sources;
