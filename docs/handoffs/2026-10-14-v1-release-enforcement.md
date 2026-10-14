@@ -92,6 +92,16 @@ workflow reruns the CLI before creating a draft and downloads artifacts into
   candidate. Native Windows/PowerShell 5.1 and all live client acceptance remain
   unverified by this local Linux work. No stable tag or release was created.
 
+The first hosted Windows package runs (including job `116080110491`) reached all
+27 successful Windows PowerShell 5.1 assertions, then failed because the Actions
+command wrapper propagated the last intentionally failing child's exit code.
+The same wrapper invocation reproduced exit 1 locally despite 27 passing checks.
+The harness now exits 0 explicitly only after every assertion and cleanup; an
+exception still exits nonzero. The corrected wrapper invocation passes locally.
+Injecting `/bin/false` as the synthetic child shell still fails its assertion and
+returns exit 1, confirming the success exit does not mask a failed check.
+Fresh hosted checks remain required; the earlier job did not reach packaging.
+
 ## Explicit remaining blockers and next task
 
 Current manifests deliberately have incomplete mandatory inventory, no accepted
