@@ -351,3 +351,18 @@ fn ambiguous_activation_history_never_invents_most_recent_fallback() {
         DispositionState::Quarantined
     );
 }
+#[test]
+fn exhausted_activation_order_commits_restriction_and_clears_instead_of_rolling_back() {
+    let db = TempDb::new("disposition-order-exhausted");
+    let mut s = SqliteStore::open(&db.path).unwrap();
+    let a = stage(&mut s, "a");
+    let b = stage(&mut s, "b");
+    s.activate_content_revision(&a.key()).unwrap();
+    s.activate_content_revision(&b.key()).unwrap();
+    raw(&db.path).execute("UPDATE content_dispositions SET last_activated_order=9007199254740991 WHERE revision_id=(SELECT id FROM dataset_revisions WHERE revision='b')",[]).unwrap();
+    let out = change(&mut s, &b, DispositionState::Revoked);
+    assert!(out.active.is_none());
+    assert!(!out.fallback_applied);
+    assert_eq!(out.disposition.state, DispositionState::Revoked);
+    assert!(s.active_content_revision(&b.key().scope).unwrap().is_none());
+}

@@ -1,0 +1,897 @@
+{
+  "initial": {
+    "active": {
+      "revision": "demo-r1",
+      "scope": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true
+      }
+    },
+    "revisions": [
+      {
+        "changed_at_utc_ms": null,
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "last_activated_order": 1,
+        "reason_code": "initial_eligibility",
+        "state": "eligible",
+        "state_revision": 1
+      }
+    ],
+    "schema_version": 1,
+    "scope": {
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "fixture": true
+    }
+  },
+  "inspection": {
+    "conflicts": [],
+    "key": {
+      "revision": "demo-r1",
+      "scope": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "fixture": true
+      }
+    },
+    "report": {
+      "coverage": {
+        "atlas": {
+          "gaps": {
+            "no_image_for_map": 3
+          },
+          "positions_checked": 3,
+          "projected": 0
+        },
+        "collections": {
+          "acquisitions": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 1,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 1,
+              "records_without_evidence": 0
+            },
+            "fields": {
+              "conditions": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "cost": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "probability": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "edges": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 1,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 1,
+              "records_without_evidence": 0
+            },
+            "fields": {
+              "consumes_resource": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "cooldown_ms": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "expected_ms": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "requirements": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "uncertainty": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "wait_ms": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "evidence": {
+            "evidence": null,
+            "fields": {
+              "license": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "observed_at_utc_ms": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "items": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 1,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 1,
+              "records_without_evidence": 0
+            },
+            "fields": {
+              "attributes": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "effects": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "requirements": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "two_handed": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "unique_group": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "map_embeddings": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 0,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 0,
+              "records_without_evidence": 0
+            },
+            "fields": {},
+            "total": 0
+          },
+          "map_images": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 0,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 0,
+              "records_without_evidence": 0
+            },
+            "fields": {
+              "calibration": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              }
+            },
+            "total": 0
+          },
+          "map_spaces": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 0,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 0,
+              "records_without_evidence": 1
+            },
+            "fields": {
+              "transform": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "nodes": {
+            "evidence": null,
+            "fields": {
+              "service": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              }
+            },
+            "total": 2
+          },
+          "objectives": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 0,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 0,
+              "records_without_evidence": 1
+            },
+            "fields": {
+              "expected_ms": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "requirements": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "quests": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 0,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 0,
+              "records_without_evidence": 1
+            },
+            "fields": {
+              "completion": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "eligibility": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "locations": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "prerequisites": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              },
+              "rewards": {
+                "known": 1,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 0,
+                "unsupported": 0
+              },
+              "shared_progress": {
+                "known": 0,
+                "not_applicable": 0,
+                "restricted": 0,
+                "unknown": 1,
+                "unsupported": 0
+              }
+            },
+            "total": 1
+          },
+          "rules": {
+            "evidence": {
+              "links_by_confidence": {
+                "cross_edition_unverified": 0,
+                "disputed_or_stale": 0,
+                "inferred": 0,
+                "limited_sample": 1,
+                "publisher_documented": 0,
+                "verified_on_build": 0
+              },
+              "records_with_evidence": 1,
+              "records_without_evidence": 0
+            },
+            "fields": {},
+            "total": 1
+          }
+        },
+        "edge_status": {
+          "estimated": 1,
+          "temporarily_unavailable": 0,
+          "unverified": 0,
+          "verified": 0
+        },
+        "evidence_records": {
+          "by_confidence": {
+            "cross_edition_unverified": 0,
+            "disputed_or_stale": 0,
+            "inferred": 0,
+            "limited_sample": 1,
+            "publisher_documented": 0,
+            "verified_on_build": 0
+          },
+          "conflict_links": 0,
+          "records_with_conflicts": 0
+        },
+        "quest_graph": {
+          "conditional_edges": 0,
+          "quests": 1,
+          "unconditional_edges": 0
+        }
+      },
+      "dataset": {
+        "build": "UNVERIFIED_DEMO",
+        "coverage_class": "demo",
+        "edition": "wow_forever",
+        "fixture": true,
+        "forever_reference_content": false,
+        "interface": "UNVERIFIED_DEMO",
+        "namespace": "demo",
+        "revision": "demo-r1"
+      },
+      "errors": [],
+      "gaps": [
+        {
+          "code": "record_without_evidence",
+          "record": {
+            "id": "demo-quest-1",
+            "kind": "quest"
+          }
+        },
+        {
+          "code": "record_without_evidence",
+          "record": {
+            "key": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "floor": "0",
+              "instance": null,
+              "map_id": "demo-map-1"
+            },
+            "kind": "map_space"
+          }
+        },
+        {
+          "code": "record_without_evidence",
+          "record": {
+            "id": "demo-objective-1",
+            "kind": "objective"
+          }
+        },
+        {
+          "code": "unverified_evidence",
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "record": {
+            "key": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "demo-item-1",
+              "variant": "base"
+            },
+            "kind": "item"
+          }
+        },
+        {
+          "code": "unverified_evidence",
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "record": {
+            "id": "demo-acq-1",
+            "kind": "acquisition"
+          }
+        },
+        {
+          "code": "unverified_evidence",
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "record": {
+            "id": "demo-edge-1",
+            "kind": "edge"
+          }
+        },
+        {
+          "code": "unverified_evidence",
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "record": {
+            "id": "demo-rule-1",
+            "kind": "rule"
+          }
+        },
+        {
+          "code": "unknown_map_transform",
+          "map": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "floor": "0",
+            "instance": null,
+            "map_id": "demo-map-1"
+          },
+          "status": "unknown"
+        },
+        {
+          "code": "unprojectable_position",
+          "gap": "no_image_for_map",
+          "record": {
+            "id": "demo-quest-1",
+            "kind": "quest"
+          }
+        },
+        {
+          "code": "unprojectable_position",
+          "gap": "no_image_for_map",
+          "record": {
+            "id": "demo-node-1",
+            "kind": "node"
+          }
+        },
+        {
+          "code": "unprojectable_position",
+          "gap": "no_image_for_map",
+          "record": {
+            "id": "demo-node-2",
+            "kind": "node"
+          }
+        }
+      ],
+      "outcome": {
+        "outcome": "decoded"
+      },
+      "passes": true,
+      "report_version": 1
+    },
+    "sources": [
+      {
+        "access": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "allowed_fields": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "attribution": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "authentication": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "conditional_requests": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "editions": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "failure_behavior": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "id": "demo-source-1",
+        "last_retrieval_utc_ms": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "license": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "location": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "offline_usable": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "provider": null,
+        "publisher": "Synthetic engineering fixture",
+        "record_class": "secondary_inference",
+        "redistribution": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "retention": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "transformations": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "update_schedule": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "verified_revision": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ]
+  },
+  "profiles": [
+    {
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "data_mode": "stored",
+      "display_name": "demo-character-paladin",
+      "fixture": true,
+      "id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6",
+      "snapshot_count": 1
+    }
+  ],
+  "quarantine_decision": {
+    "outcome": {
+      "active": null,
+      "disposition": {
+        "changed_at_utc_ms": null,
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "last_activated_order": 1,
+        "reason_code": "operator_review",
+        "state": "quarantined",
+        "state_revision": 2
+      },
+      "fallback_applied": false
+    },
+    "schema_version": 1
+  },
+  "quarantine_request": {
+    "mutation": {
+      "guard": {
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "state": "eligible",
+        "state_revision": 1
+      },
+      "reason_code": "operator_review",
+      "state": "quarantined"
+    },
+    "profile_id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6",
+    "schema_version": 1
+  },
+  "quarantined": {
+    "active": null,
+    "revisions": [
+      {
+        "changed_at_utc_ms": null,
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "last_activated_order": 1,
+        "reason_code": "operator_review",
+        "state": "quarantined",
+        "state_revision": 2
+      }
+    ],
+    "schema_version": 1,
+    "scope": {
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "fixture": true
+    }
+  },
+  "release_decision": {
+    "outcome": {
+      "active": null,
+      "disposition": {
+        "changed_at_utc_ms": null,
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "last_activated_order": 1,
+        "reason_code": "operator_review",
+        "state": "eligible",
+        "state_revision": 3
+      },
+      "fallback_applied": false
+    },
+    "schema_version": 1
+  },
+  "release_request": {
+    "mutation": {
+      "guard": {
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "state": "quarantined",
+        "state_revision": 2
+      },
+      "reason_code": "operator_review",
+      "state": "eligible"
+    },
+    "profile_id": "stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6",
+    "schema_version": 1
+  },
+  "released": {
+    "active": null,
+    "revisions": [
+      {
+        "changed_at_utc_ms": null,
+        "content_sha256": "9e51c50c3463061bc690d9232c9a1e0525c57f6d7ccab44b1ed6a4ede619b21b",
+        "key": {
+          "revision": "demo-r1",
+          "scope": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "fixture": true
+          }
+        },
+        "last_activated_order": 1,
+        "reason_code": "operator_review",
+        "state": "eligible",
+        "state_revision": 3
+      }
+    ],
+    "schema_version": 1,
+    "scope": {
+      "context": {
+        "build": {
+          "build": "UNVERIFIED_DEMO",
+          "edition": "wow_forever",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "fixture": true
+    }
+  }
+}
