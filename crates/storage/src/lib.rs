@@ -42,3 +42,5 @@ pub mod sessions;
 pub mod calibration;
 pub mod party_proposals;
 pub mod reminders;
+
+pub mod recovery;
