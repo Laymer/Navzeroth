@@ -4,6 +4,21 @@ Every provider is registered here before its data is used (plan section 8.3).
 Public access never establishes redistribution permission. "Not recorded"
 means exactly that; it is not a claim either way.
 
+The matching typed schema-version-1 sidecar is
+[content/forever/sources.json](../../content/forever/sources.json). It registers
+these four IDs for local pack preparation without supplying missing permissions.
+Third-party redistribution remains Unknown; the owner's composite-only assertion
+is Conditional and does not grant permission for the underlying works. All
+licenses and verified revisions remain Unknown. Date-only retrieval/addition
+records are not invented exact UTC timestamps. Blizzard's direct allowed fields,
+transformations and retrieval are NotApplicable, matching the table's `None
+directly`/`n/a`. Offline composite access has no authentication or conditional HTTP
+requests; its unrecorded access method stays Unknown for the embedded sources.
+All four records are SecondaryInference, including publisher artwork and the manual
+composite: neither is promoted to publisher documentation or game observation.
+Local packs remain `distribution_eligible=false`; this sidecar introduces no source
+permission or build-specific verification.
+
 | Source ID | Publisher | Location | Edition/build coverage | Access | Licence / attribution / redistribution / retention | Allowed fields and transformations | Update schedule | Last retrieval | Offline | Record class |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `src-wowforevermap-ek-terrain-2026-10-07` | WoWForeverMap.com | Rendered into the owner's composite poster | WoW Forever beta 1.60.1.70205 (poster footer) | Via the composite only | Licence not recorded; attribution kept verbatim in NOTICE; redistribution rests on the owner's composite statement; retained as long as that statement stands | Terrain and zone boundaries as drawn; crop, downscale | None (static poster) | Poster dated 2026-10-07; retrieval date to be filled by the owner | Yes | Third-party render (secondary) |
