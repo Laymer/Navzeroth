@@ -1,16 +1,15 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: v0.6.0 route/preparation developer-preview verification.
-Owner: Codex /root coordinator; published baseline f525911 (v0.5.0).
-Wave6 task PRs81–90 are integrated into protected main5bd5f1b after fresh
-nine-job checks on each exact reconciled head. Versions are being aligned to0.6.0;
-no new tag or publication is claimed by this candidate status.
-See [candidate reconciliation](handoffs/2026-10-14-v0.6.0-release.md) and
-[release notes](releases/0.6.0.md) for source, actual checks and limits.
-Native Windows compilation/packaging passes; interactive native/live acceptance
-remains unverified. Next released-source audit targets Today/Settings, durable
-content restriction, local moderation and readable gear/acquisition explanations.
+Current task: wave7 parallel local state, governance and readable explanations.
+Owner: Codex /root coordinator; published baseline739a822 (v0.6.0).
+v0.6.0 is published as a developer prerelease after reviewed task PRs81–90,
+release PR91, fresh exact-source checks and verified downloaded PR/main/tag assets.
+Source checks:746 portable Rust/152 desktop/30 mocked browser tests.
+See [wave7 publication audit and ownership](handoffs/2026-10-14-wave7-coordination.md).
+Ready scopes: Today/Settings/current-plan reference, durable content restriction,
+bounded local moderation and typed gear/acquisition explanation presentation.
+Native interactive/live/source acceptance remains explicitly unverified or blocked.
 User authorizes isolated parallel task PRs, protected-main integration, tags and
 publication under the approved repeat-loop plan. See
 [wave-4 coordination](handoffs/2026-10-13-wave4-coordination.md).
