@@ -45,3 +45,20 @@ Next operator evidence: actual probe/status screenshot/transcription or sanitize
 `diagnostic_export` after reload, plus installed source/artifact identity. Record
 actual results here before updating any release acceptance status. Detailed
 Windows environment collection follows the runbook.
+
+## Development candidate prepared for the next guided check
+
+PR118 head `8ec4edcf706d5d0e6c5485a1d86717090dc88117` passed all nine hosted
+checks. Its package source `004058f863c3fe11472ddaa09d106c67e4f2c86a` is the
+GitHub PR merge candidate with the identical tree. Root downloaded the five-file
+artifact and verified the four checksum entries, source metadata, installer MZ
+header, exact source notes and all 21 addon file bytes. See the
+[machine-readable candidate record](../releases/candidates/70374-004058f.json).
+These are automated/artifact checks, not user installation or live acceptance.
+
+The user was given the exact candidate link and instructions to install with the
+game closed, retain SavedVariables, then run `/anavdiag probe` and `/anavdiag copy`
+out of combat and return the selectable diagnostic output. The candidate still
+displays `0.8.1`; version text alone cannot distinguish it from the published ZIP.
+No reply or observation for this new candidate is recorded yet. All mandatory
+aggregate release rows remain unverified.

@@ -60,12 +60,13 @@ on its newly packaged revision. Do not carry results across changed production
 trees/content without the evidence contract's identity and retest rules.
 
 At the runbook's inspected baseline `bb3782cbac13b5fb3e6ca8196278ba7fcc427474`,
-capture/clock/position/plan/session/HUD gates still allow only 70338. PlanControls
-declares completion mappings and current dependency checks unavailable. The manual
-recorder samples level and unclassified spans. These are implementation blockers,
-not instructions to weaken the acceptance criteria. The diagnostic probe can run
-before an evidence-backed 70374 compatibility change. Reinspect these limitations
-after each relevant implementation PR.
+capture/clock/position/plan/session/HUD gates allowed only 70338. PRs117/118 add
+copyable diagnostic/snapshot exports and guarded experimental 70374 admission.
+Their portable checks do not establish live results. PlanControls still declares
+completion mappings and current dependency checks unavailable; the manual recorder
+samples level and unclassified spans. These remain implementation/data blockers,
+not instructions to weaken acceptance criteria. Reinspect limitations after each
+relevant implementation PR and bind observations to the installed candidate.
 
 ## LIVE-BUILD — identify the installed client and addon
 
@@ -117,10 +118,12 @@ after each relevant implementation PR.
    the valid saved bytes; failed reads preserve current state and watching recovers.
    Import an older actual capture after a newer one; it must not silently replace
    current state. Record explicit history/promotion behavior separately.
-4. Also verify real bounded ANAV1 text export into **Snapshot export text** /
-   **Import text**. The inspected addon has no snapshot copy-out UI or CLI
-   extraction command: this subcheck is blocked until a supported bounded export
-   surface exists. Do not strip Lua quotes/escapes by hand or execute the file.
+4. Also run `/anavdiag copy snapshot` out of combat after an explicit capture.
+   Choose **Select text**, press **Ctrl+C**, and paste into **Snapshot export text**
+   / **Import text**. Compare the exact stored/copy/imported bytes, ensure editing
+   the copy view leaves stored data unchanged, and close/reopen it. Diagnostic
+   `/anavdiag copy` output must not import as a snapshot. Do not strip Lua
+   quotes/escapes by hand or execute the file. See [copy bounds](ADDON_COPY_EXPORT.md).
 
 ## LIVE-RELOAD — persistence without invented freshness
 

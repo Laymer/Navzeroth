@@ -1,12 +1,16 @@
 # Addon: install, capture and remove
 
-This guide describes the published **0.8.1 developer preview**. The AddOns entry is
+The published release remains **0.8.1 developer preview**. Current source also
+contains a reviewed development candidate with copyable exports and guarded
+70374 support; use its exact artifact/source identity when testing it. The AddOns entry is
 still named **Azeroth Navigator Diagnostics**, but the addon now includes manual
 snapshots, plan import and HUD controls, and manual session recording. These are
 experimental client bindings. It runs inside the permitted addon environment;
 desktop exchange uses explicit files or pasted text.
 
-The enabled experimental tuple is `1.60.1.70338 / interface 16001`. Limited user-reported
+Current source enables the exact experimental tuples `1.60.1.70338` and
+`1.60.1.70374`, both with interface `16001`. Published 0.8.1 enables only 70338.
+Limited user-reported
 diagnostic retrieval, level capture and clock-age results are recorded in
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,
 HUD, plan, session and reload acceptance remains unverified.
@@ -17,11 +21,11 @@ on Windows 11 out of combat, with `/anavdiag` reporting addon `0.8.1` and probe/
 showing no errors. The installed archive hash/source commit was not inspected;
 this is a narrow build/version/diagnostic report, not full adapter acceptance.
 
-Current capture, clock, position,
-plan and recording adapters refuse builds other than the recorded 70338 tuple.
-On 70374, retain the diagnostic build/interface and exact installed source record;
-a reviewed compatibility change and fresh checks are required before using those
-adapters. Do not relabel a 70338 export or edit a guard to claim 70374 evidence.
+The candidate's capture, clock, position, plan, recording and HUD adapters share
+the exact experimental build guard. Other tuples remain unsupported. On 70374,
+retain the diagnostic build/interface and exact installed source record; guarded
+admission does not establish readable fields or live acceptance. Do not relabel
+a 70338 export or edit a guard to claim 70374 evidence.
 
 ## Install
 
@@ -50,8 +54,18 @@ its own folder. It attempts to detect processes running from the conventional ga
 directory; still close the client yourself. See
 [Windows addon installation](WINDOWS_INSTALL.md#install-the-addon).
 
-The TOC declares interface `16001`, which was returned by the recorded 70338
-diagnostic. This does not establish the target 70374 interface or addon compatibility.
+For the guided 70374 development check, the independently verified
+[candidate package](https://github.com/Laymer/Navzeroth/actions/runs/38627880967/artifacts/11925586142)
+has source `004058f863c3fe11472ddaa09d106c67e4f2c86a` and still displays `0.8.1`.
+It differs from the published ZIP with the same versioned filename. Its exact
+bytes and limitations are in the [candidate verification record](../releases/candidates/70374-004058f.json).
+Extract the outer Actions artifact, then its inner addon ZIP using the same
+installation steps. The packaged notes describe published 0.8.1; this paragraph
+and the verification record describe the additional candidate changes. No stable
+or complete-content acceptance is implied.
+
+The TOC declares interface `16001`, matching both the earlier 70338 diagnostic and
+the user's 70374 report. A matching interface does not establish addon compatibility.
 If the client marks the addon out of date, record that result and the actual build
 before changing anything; do not hide it with compatibility tools or client edits.
 
@@ -76,7 +90,7 @@ with installed revision, client build/interface, locale, conditions and observed
 outcome. Do not commit the raw file or personal account path. Stored keys and their
 formats are described in [ADDON_SAVEDVARIABLES.md](ADDON_SAVEDVARIABLES.md).
 
-## Manual snapshots on the recorded 70338 build
+## Manual snapshots on an enabled experimental build
 
 Use a unique anonymous identifier for each character, containing 1–80 letters,
 digits, underscores or hyphens. Keep it stable across captures:
@@ -101,6 +115,13 @@ separate diagnostic report and cannot be imported as a character snapshot.
 The snapshot sequence is a capture-order counter, not elapsed gameplay time. Do
 not reset it to make a capture appear newer. A fresh timestamp does not supply
 missing quests, equipment metadata, geography or a compatible playable catalog.
+
+Current source also provides `/anavdiag copy` for an existing diagnostic report
+and `/anavdiag copy snapshot` for an existing ANAV1 capture. Open out of combat,
+choose **Select text**, press **Ctrl+C**, and paste a snapshot into **Snapshot
+export text** / **Import text**. Copying does not capture again or change freshness.
+These commands are absent from the published 0.8.1 ZIP; see
+[copy behavior and acceptance limits](ADDON_COPY_EXPORT.md).
 
 ### Capture age
 
