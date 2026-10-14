@@ -52,6 +52,8 @@ export function createClient(adapter: CommandAdapter) {
     submitLocalObservation: (text: string, opt_in: boolean) => run(() => adapter.invoke("submit_local_observation", { text, opt_in })),
     changeLocalSubmission: (expected: import("./localSubmissions").SubmissionGuard, action: import("./localSubmissions").SubmissionAction) => run(() => adapter.invoke("change_local_submission", { text: JSON.stringify({ expected, action }) })),
     exportLocalSubmission: (expected: import("./localSubmissions").SubmissionGuard) => run(() => adapter.invoke("export_local_submission", { text: JSON.stringify(expected) })),
+    getContentDispositions: (profileId:string) => run(() => adapter.invoke("get_content_dispositions",{profile_id:profileId})),
+    changeContentDisposition: (text:string) => run(() => adapter.invoke("change_content_disposition",{text})),
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
     getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
     getReferenceWindowState: () => run(() => adapter.invoke("get_reference_window_state",undefined)),

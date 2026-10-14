@@ -2,6 +2,7 @@ import { LocalSubmissionsPanel } from "./LocalSubmissionsPanel";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { AppError, ContentInspection, ProfileSummary } from "../commands/contract";
+import { ContentDispositionPanel } from "./ContentDispositionPanel";
 import { describeObservation } from "../observation";
 import planningExample from "../../../../fixtures/desktop/planning/synthetic-revision.json";
 import example from "../../../../fixtures/desktop/content/demo-revision.json";
@@ -71,6 +72,7 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     {profiles.length === 0 ? <p>Import a character before activating content.</p> : <label>Content profile <select value={profile} disabled={busy} onChange={(event) => { setProfile(event.target.value); setActive(null); setError(null); }}>
       {profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name} — {p.context?.build.build ?? "demo"}, {p.context?.namespace ?? "demo"}{p.fixture ? ", synthetic" : ""}</option>)}
     </select></label>}
+    {native&&<ContentDispositionPanel client={client} profileId={profile} refreshKey={refreshKey+revision} disabled={busy} onBusyChange={setBusy} onChanged={()=>{setActive(null);setStaged(null);setRevision(n=>n+1);onChanged();}}/>}
     <h3>Active revision</h3>
     {active ? <Inspection value={active} /> : <p>No active content for this profile.</p>}
     <button type="button" disabled={!native || busy || !active} onClick={() => void mutate("rollback")}>Restore previous revision</button>

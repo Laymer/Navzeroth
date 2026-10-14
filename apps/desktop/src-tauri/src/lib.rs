@@ -272,6 +272,23 @@ async fn get_compatibility_report(
     })
     .await
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn get_content_dispositions(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::content_dispositions::ContentGovernance, AppError> {
+    blocking(state, move |app| app.content_governance(&profile_id)).await
+}
+#[tauri::command]
+async fn change_content_disposition(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::content_dispositions::ContentDecision, AppError> {
+    blocking(state, move |app| {
+        app.change_content_disposition(&text, system_now())
+    })
+    .await
+}
 #[tauri::command]
 async fn export_plan(
     state: State<'_, Application>,
@@ -584,6 +601,8 @@ pub fn run() {
                 submit_local_observation,
                 change_local_submission,
                 export_local_submission,
+                get_content_dispositions,
+                change_content_disposition,
                 get_dungeon_preparation,
                 preview_acquisition_route,
                 assess_route_acquisition,
