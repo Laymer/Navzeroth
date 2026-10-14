@@ -267,6 +267,8 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
+  change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
   get_reference_window_state: {input:undefined;output:import("./reference").ReferenceWindowState};

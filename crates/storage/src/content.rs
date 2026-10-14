@@ -205,7 +205,7 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
     }
     Ok(revision)
 }
-fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
+pub(crate) fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
     let value =
         serde_json::to_value(revision).map_err(|_| storage("Content cannot be serialized"))?;
     let mut bytes = Vec::new();
@@ -218,36 +218,71 @@ fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
             .collect::<String>(),
     )
 }
-fn namespace(scope: &ContentScope) -> &'static str {
+pub(crate) fn namespace(scope: &ContentScope) -> &'static str {
     match scope.context.namespace {
         azeroth_core::types::DatasetNamespace::Demo => "demo",
         azeroth_core::types::DatasetNamespace::Reference => "reference",
     }
 }
-fn find(conn: &Connection, key: &ContentRevisionKey) -> Result<Option<i64>> {
+pub(crate) fn find(conn: &Connection, key: &ContentRevisionKey) -> Result<Option<i64>> {
     conn.query_row("SELECT id FROM dataset_revisions WHERE edition=?1 AND build=?2 AND interface=?3 AND namespace=?4 AND is_fixture=?5 AND revision=?6",
         params![key.scope.context.build.edition.as_str(), key.scope.context.build.build.as_str(), key.scope.context.build.interface.as_str(), namespace(&key.scope), key.scope.fixture, key.revision.as_str()],
         |row| row.get(0)).optional().db()
 }
+/// Malformed retained data may be skipped during restriction fallback; genuine
+/// SQLite failures must abort the whole restriction transaction.
+pub(crate) enum LoadFailure {
+    Invalid(AppError),
+    Database(AppError),
+}
+impl From<AppError> for LoadFailure {
+    fn from(e: AppError) -> Self {
+        Self::Invalid(e)
+    }
+}
+impl LoadFailure {
+    pub(crate) fn error(self) -> AppError {
+        match self {
+            Self::Invalid(e) | Self::Database(e) => e,
+        }
+    }
+}
+pub(crate) fn load_sql_error(e: rusqlite::Error) -> LoadFailure {
+    match e {
+        rusqlite::Error::InvalidColumnType(..)
+        | rusqlite::Error::IntegralValueOutOfRange(..)
+        | rusqlite::Error::FromSqlConversionFailure(..)
+        | rusqlite::Error::QueryReturnedNoRows => {
+            LoadFailure::Invalid(storage("Stored content metadata is invalid"))
+        }
+        _ => LoadFailure::Database(crate::error::from_sqlite(e)),
+    }
+}
 pub(crate) fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
+    load_checked(conn, id).map_err(LoadFailure::error)
+}
+pub(crate) fn load_checked(
+    conn: &Connection,
+    id: i64,
+) -> std::result::Result<ContentRevision, LoadFailure> {
     let (document, digest, coverage): (String, String, String) = conn.query_row(
         "SELECT r.document, m.content_sha256, m.coverage_document FROM dataset_revisions r JOIN dataset_manifests m ON m.revision_id=r.id WHERE r.id=?1 AND length(CAST(r.document AS BLOB)) <= ?2 AND length(CAST(m.coverage_document AS BLOB)) <= ?2 AND m.manifest_version=1",
-        params![id,MAX_CONTENT_REVISION_BYTES as i64], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?))).db()?;
+        params![id,MAX_CONTENT_REVISION_BYTES as i64], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?))).optional().map_err(load_sql_error)?.ok_or_else(|| LoadFailure::Invalid(storage("Stored content metadata is missing or exceeds bounds")))?;
     if document.len() > MAX_CONTENT_REVISION_BYTES {
-        return Err(storage("Stored content exceeds bounds"));
+        return Err(storage("Stored content exceeds bounds").into());
     }
     let revision: ContentRevision =
         serde_json::from_str(&document).map_err(|_| storage("Stored content is invalid"))?;
     let revision = canonical_revision(&revision)?;
     if hash(&revision)?.as_str() != digest {
-        return Err(storage("Stored content hash disagrees"));
+        return Err(storage("Stored content hash disagrees").into());
     }
     if coverage != encode(&content_report(&revision.envelope))? {
-        return Err(storage("Stored content coverage disagrees"));
+        return Err(storage("Stored content coverage disagrees").into());
     }
     for (sql, expected) in [
         (
-            "SELECT document FROM source_records WHERE revision_id=?1 ORDER BY source_id LIMIT 1025",
+            "SELECT CASE WHEN length(CAST(document AS BLOB))<=?2 THEN document END FROM source_records WHERE revision_id=?1 ORDER BY source_id LIMIT 1025",
             revision
                 .sources
                 .iter()
@@ -255,7 +290,7 @@ pub(crate) fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
                 .collect::<Result<Vec<_>>>()?,
         ),
         (
-            "SELECT document FROM source_conflicts WHERE revision_id=?1 ORDER BY conflict_index LIMIT 1025",
+            "SELECT CASE WHEN length(CAST(document AS BLOB))<=?2 THEN document END FROM source_conflicts WHERE revision_id=?1 ORDER BY conflict_index LIMIT 1025",
             revision
                 .conflicts
                 .iter()
@@ -263,31 +298,48 @@ pub(crate) fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
                 .collect::<Result<Vec<_>>>()?,
         ),
     ] {
-        let mut statement = conn.prepare(sql).db()?;
-        let mut rows = statement.query([id]).db()?;
+        let mut statement = conn.prepare(sql).map_err(load_sql_error)?;
+        let mut rows = statement
+            .query(params![id, MAX_CONTENT_REVISION_BYTES as i64])
+            .map_err(load_sql_error)?;
         let mut index = 0;
-        while let Some(row) = rows.next().db()? {
-            let document: String = row.get(0).db()?;
+        while let Some(row) = rows.next().map_err(load_sql_error)? {
+            let document: String = row.get(0).map_err(load_sql_error)?;
             if expected.get(index) != Some(&document) {
-                return Err(storage("Stored content records disagree"));
+                return Err(storage("Stored content records disagree").into());
             }
             index += 1;
         }
         if index != expected.len() {
-            return Err(storage("Stored content records disagree"));
+            return Err(storage("Stored content records disagree").into());
         }
     }
     Ok(revision)
 }
-fn pointers(conn: &Connection, scope: &ContentScope) -> Result<Option<(i64, Option<i64>)>> {
+pub(crate) fn pointers(
+    conn: &Connection,
+    scope: &ContentScope,
+) -> Result<Option<(i64, Option<i64>)>> {
     conn.query_row("SELECT revision_id, previous_revision_id FROM active_datasets WHERE edition=?1 AND build=?2 AND interface=?3 AND namespace=?4 AND is_fixture=?5",
         params![scope.context.build.edition.as_str(), scope.context.build.build.as_str(), scope.context.build.interface.as_str(), namespace(scope), scope.fixture],
         |row| Ok((row.get(0)?, row.get(1)?))).optional().db()
 }
-fn activate(conn: &Connection, id: i64, key: ContentRevisionKey) -> Result<ActivationOutcome> {
+pub(crate) fn eligible(conn: &Connection, id: i64) -> Result<bool> {
+    conn.query_row("SELECT EXISTS(SELECT 1 FROM content_dispositions WHERE revision_id=?1 AND state='eligible')",[id],|row|row.get(0)).db()
+}
+
+pub(crate) fn activate(
+    conn: &Connection,
+    id: i64,
+    key: ContentRevisionKey,
+) -> Result<ActivationOutcome> {
+    crate::content_dispositions::ensure_eligible(conn, id)?;
+    if !eligible(conn, id)? {
+        return Err(invalid("Content revision is unavailable for activation"));
+    }
     let previous_id = pointers(conn, &key.scope)?.map(|(id, _)| id);
     let previous = previous_id
-        .map(|id| load(conn, id).map(|r| r.envelope.payload.revision.clone()))
+        .map(|id| crate::content_dispositions::read(conn, id).map(|d| d.key.revision))
         .transpose()?;
     if previous_id == Some(id) {
         return Ok(ActivationOutcome {
@@ -295,6 +347,16 @@ fn activate(conn: &Connection, id: i64, key: ContentRevisionKey) -> Result<Activ
             previous,
             changed: false,
         });
+    }
+    let ordinal: i64 = conn.query_row(
+        "SELECT coalesce(max(d.last_activated_order),0) FROM content_dispositions d JOIN dataset_revisions r ON r.id=d.revision_id WHERE r.edition=?1 AND r.build=?2 AND r.interface=?3 AND r.namespace=?4 AND r.is_fixture=?5",
+        params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),namespace(&key.scope),key.scope.fixture], |row| row.get(0)
+    ).db()?;
+    if ordinal >= azeroth_core::types::MAX_SAFE_INTEGER as i64 {
+        return Err(invalid("Content activation order is exhausted"));
+    }
+    if conn.execute("UPDATE content_dispositions SET last_activated_order=?1 WHERE revision_id=?2 AND state='eligible'", params![ordinal+1,id]).db()? != 1 {
+        return Err(storage("Content disposition is unavailable"));
     }
     conn.execute("INSERT INTO active_datasets (edition, build, interface, namespace, is_fixture, revision_id, previous_revision_id) VALUES (?1,?2,?3,?4,?5,?6,?7) ON CONFLICT (edition,build,interface,namespace,is_fixture) DO UPDATE SET previous_revision_id=active_datasets.revision_id, revision_id=excluded.revision_id",
         params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),namespace(&key.scope),key.scope.fixture,id,previous_id]).db()?;
@@ -336,6 +398,7 @@ impl SqliteStore {
         tx.execute("INSERT INTO dataset_revisions (edition,build,interface,namespace,is_fixture,revision,document) VALUES (?1,?2,?3,?4,?5,?6,?7)",
             params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),namespace(&key.scope),key.scope.fixture,key.revision.as_str(),document]).db()?;
         let id = tx.last_insert_rowid();
+        tx.execute("INSERT INTO content_dispositions (revision_id,state,state_revision,reason_code) VALUES (?1,'eligible',1,'initial_eligibility')",[id]).db()?;
         for source in &revision.sources {
             tx.execute(
                 "INSERT INTO source_records (revision_id,source_id,document) VALUES (?1,?2,?3)",
@@ -380,14 +443,25 @@ impl SqliteStore {
         Ok(outcome)
     }
     pub fn active_content_revision(&self, scope: &ContentScope) -> Result<Option<ContentRevision>> {
-        let Some((id, _)) = pointers(&self.conn, scope)? else {
-            return Ok(None);
+        let get = |s: &Self| {
+            let Some((id, _)) = pointers(&s.conn, scope)? else {
+                return Ok(None);
+            };
+            if !eligible(&s.conn, id)? {
+                return Ok(None);
+            };
+            let disposition = crate::content_dispositions::ensure_eligible(&s.conn, id)?;
+            let revision = load(&s.conn, id)?;
+            if disposition.key.scope != *scope || revision.key() != disposition.key {
+                return Err(storage("Stored content identity disagrees"));
+            }
+            Ok(Some(revision))
         };
-        let revision = load(&self.conn, id)?;
-        if revision.key().scope != *scope {
-            return Err(storage("Stored content identity disagrees"));
+        if self.conn.is_autocommit() {
+            self.with_immediate_read(get)
+        } else {
+            get(self)
         }
-        Ok(Some(revision))
     }
     /// Restore the previously active immutable revision after revalidation.
     /// Rollback itself is an activation: a subsequent rollback toggles back.

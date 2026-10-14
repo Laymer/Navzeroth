@@ -48,6 +48,8 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getContentDispositions: (profileId:string) => run(() => adapter.invoke("get_content_dispositions",{profile_id:profileId})),
+    changeContentDisposition: (text:string) => run(() => adapter.invoke("change_content_disposition",{text})),
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
     getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
     getReferenceWindowState: () => run(() => adapter.invoke("get_reference_window_state",undefined)),
