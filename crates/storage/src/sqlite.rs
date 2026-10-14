@@ -856,6 +856,40 @@ impl SqliteStore {
     }
 }
 
+pub(crate) fn recovery_profile_key(row: &Row<'_>) -> rusqlite::Result<ProfileKey> {
+    build_key(key_from_row(row, 1)?, row.get(6)?).map_err(|_| rusqlite::Error::InvalidQuery)
+}
+/// Compare every queryable derived snapshot column/observation to a fresh
+/// trusted derivation. IDs, profile FK and desktop receipt remain historical.
+pub(crate) fn validate_recovery_snapshot(
+    conn: &Connection,
+    id: i64,
+    envelope: &Envelope<CharacterSnapshot>,
+) -> Result<()> {
+    let prepared = PreparedImport::new(envelope)?;
+    let mut expected = Connection::open_in_memory().db()?;
+    migrations::migrate_with(&mut expected, &migrations::MIGRATIONS[..1])?;
+    expected.pragma_update(None, "foreign_keys", false).db()?;
+    let tx = expected.transaction().db()?;
+    let row = insert_snapshot(&tx, 1, &prepared, envelope, None)?;
+    fn values(conn: &Connection, sql: &str, id: i64) -> Result<Vec<Vec<rusqlite::types::Value>>> {
+        let mut q = conn.prepare(sql).db()?;
+        let columns = q.column_count();
+        q.query_map([id], |r| (0..columns).map(|i| r.get(i)).collect())
+            .db()?
+            .collect::<rusqlite::Result<_>>()
+            .db()
+    }
+    let sql = "SELECT snapshot_id,content_sha256,producer_component,producer_version,producer_session_id,producer_sequence,game_locale,source_revision,capture_source,capture_clock_trust,capture_observed_at_utc_ms,capture_session_id,capture_session_elapsed_ms,capture_sequence FROM snapshots WHERE id=?1";
+    let observations = "SELECT field,entry_key,sub_key,status,clock_trust,observed_at_utc_ms FROM snapshot_observations WHERE snapshot_id=?1 ORDER BY field,entry_key,sub_key";
+    if values(conn, sql, id)? != values(&tx, sql, row)?
+        || values(conn, observations, id)? != values(&tx, observations, row)?
+    {
+        return Err(storage("Backup derived snapshot columns disagree"));
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
