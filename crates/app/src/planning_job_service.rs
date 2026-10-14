@@ -348,6 +348,7 @@ impl PublicationGuard {
             request_json,
             guard: GuardDescriptor {
                 schema_version: 1,
+                provenance: PlanProvenance::LocalGuardedSuccess,
                 subject,
                 profiles: self
                     .profiles
@@ -424,7 +425,8 @@ impl PublicationGuard {
         store: &SqliteStore,
         descriptor: &azeroth_storage::today::GuardDescriptor,
     ) -> Result<Self> {
-        if descriptor.ruleset_version != crate::plan_export::RULESET_VERSION
+        if descriptor.provenance != azeroth_storage::today::PlanProvenance::LocalGuardedSuccess
+            || descriptor.ruleset_version != crate::plan_export::RULESET_VERSION
             || descriptor.model_version != crate::plan_export::MODEL_VERSION
             || descriptor.max_age_ms != context(Some(descriptor.evaluation_utc_ms)).max_age_ms
         {

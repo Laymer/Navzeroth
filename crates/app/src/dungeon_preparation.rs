@@ -566,13 +566,13 @@ impl SnapshotApplication {
                 if content_hash(&current)? != original_content_hash {
                     return Err(outdated());
                 }
-                if let Some(disposition) = &captured.disposition {
-                    if let Err(e) = store.validate_usable_content_guard(disposition) {
-                        if e.code == ErrorCode::StorageError {
-                            return Err(e);
-                        }
-                        return Err(outdated());
+                if let Some(disposition) = &captured.disposition
+                    && let Err(e) = store.validate_usable_content_guard(disposition)
+                {
+                    if e.code == ErrorCode::StorageError {
+                        return Err(e);
                     }
+                    return Err(outdated());
                 }
                 if let Some(guard) = &guard {
                     guard.validate(store, || {

@@ -288,16 +288,16 @@ impl SnapshotApplication {
                     started.elapsed(),
                 )),
             )?;
+            view.accessibility = Some(store.settings()?.settings.accessibility);
             view.current_plan = Some(crate::today::plan_view(store, || {
                 crate::planning_job_service::advanced_now(now, started.elapsed())
             })?);
-            if let Some(plan) = &mut view.current_plan {
-                if let Some(summary) = &mut plan.summary {
-                    if summary.steps.len() > 8 {
-                        summary.steps.truncate(8);
-                        plan.summary_truncated = true;
-                    }
-                }
+            if let Some(plan) = &mut view.current_plan
+                && let Some(summary) = &mut plan.summary
+                && summary.steps.len() > 8
+            {
+                summary.steps.truncate(8);
+                plan.summary_truncated = true;
             }
             crate::reference::validate_bound(&view)?;
             if let Some(plan) = &mut view.current_plan {

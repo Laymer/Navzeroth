@@ -373,9 +373,11 @@ fn joint_pin_is_local_intent_and_membership_changes_invalidate_it() {
 #[test]
 fn settings_are_bounded_explicit_and_cas_preserves_false_zero_and_unknown_goal() {
     let app = SnapshotApplication::in_memory().unwrap();
-    let mut settings = Settings::default();
-    settings.selected_installation = Some("/chosen/local/install".into());
-    settings.reference_always_on_top = false;
+    let mut settings = Settings {
+        selected_installation: Some("/chosen/local/install".into()),
+        reference_always_on_top: false,
+        ..Settings::default()
+    };
     settings.manual_planning_defaults.budget_ms = azeroth_core::types::Millis::new(0).unwrap();
     let update = json!({"schema_version":1,"expected_revision":0,"settings":settings});
     let saved = app.update_settings(&update.to_string()).unwrap();
@@ -509,4 +511,84 @@ fn content_restrict_release_reactivate_aba_refuses_original_publication_and_pin(
             .revision,
         2
     );
+}
+#[test]
+fn synthetic_today_wire_fixture_has_declared_clock_and_original_steps() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let source = snapshot();
+    let request = setup(&app, &source);
+    let jobs = PlanningJobs::default();
+    let job = run(&app, &jobs, PlanningKind::Solo, &request);
+    app.pin_current_plan(&jobs, &job, 1, Some(time(NOW)))
+        .unwrap();
+    let view = app.today_view(Some(time(NOW))).unwrap();
+    let mut value = serde_json::to_value(view).unwrap();
+    // The wire fixture uses the explicitly declared fixture clock, not measured
+    // wall-clock duration. Production service ages retain actual elapsed UTC.
+    let typed: azeroth_core::contract::Envelope<azeroth_core::entities::CharacterSnapshot> =
+        azeroth_core::contract::decode_envelope(&source.to_string()).unwrap();
+    let clock = azeroth_core::observation::FreshnessContext {
+        now_utc_ms: Some(time(NOW)),
+        clock_trust: azeroth_core::observation::ClockTrust::Trusted,
+        session: None,
+        max_age_ms: azeroth_core::types::Millis::new(1800000).unwrap(),
+    };
+    value["members"][0]["freshness"] = serde_json::to_value(azeroth_core::observation::freshness(
+        &typed.payload.capture,
+        &clock,
+    ))
+    .unwrap();
+    let saved = value["current_plan"]["saved_at_utc_ms"].as_i64().unwrap();
+    value["current_plan"]["age_ms"] = json!(NOW.checked_sub(saved).unwrap());
+    let fixture = json!({"clock_semantics":"fixed_declared_synthetic_utc","now_utc_ms":NOW,"today":value,"settings":app.app_settings().unwrap(),"snapshot":source,"profiles":app.profiles().unwrap(),"reference":azeroth_app::reference::build(Some(&typed),&clock).unwrap()});
+    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/desktop/today/synthetic-view.json");
+    if std::env::var_os("UPDATE_TODAY_GOLDEN").is_some() {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(
+            &path,
+            format!("{}\n", serde_json::to_string_pretty(&fixture).unwrap()),
+        )
+        .unwrap();
+    }
+    let committed: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    assert_eq!(fixture, committed);
+}
+
+#[test]
+fn recovered_reference_remains_historical_even_with_identical_current_inputs() {
+    let path = Temp::new();
+    let app = SnapshotApplication::open(&path.0).unwrap();
+    let request = setup(&app, &snapshot());
+    let jobs = PlanningJobs::default();
+    let id = run(&app, &jobs, PlanningKind::Solo, &request);
+    app.pin_current_plan(&jobs, &id, 1, Some(time(NOW)))
+        .unwrap();
+    let store = SqliteStore::open(&path.0).unwrap();
+    let mut plan = store.current_plan().unwrap().plan.unwrap();
+    let original = serde_json::to_string(&plan.guard).unwrap();
+    let changed = azeroth_storage::today::mark_recovered_plan_guard(&original).unwrap();
+    plan.guard = serde_json::from_str(&changed).unwrap();
+    store
+        .with_intent_transaction(|s| s.replace_current_plan(2, Some(&plan)))
+        .unwrap();
+    let view = app.today_view(Some(time(NOW))).unwrap();
+    assert!(matches!(view.current_plan.state, PlanState::Historical));
+    assert!(view.current_plan.summary.is_some());
+    assert_eq!(view.current_plan.revision, 3);
+    assert!(matches!(
+        app.reference_view(Some(time(NOW)))
+            .unwrap()
+            .current_plan
+            .unwrap()
+            .state,
+        PlanState::Historical
+    ));
+    let next = run(&app, &jobs, PlanningKind::Solo, &request);
+    app.pin_current_plan(&jobs, &next, 3, Some(time(NOW)))
+        .unwrap();
+    assert!(matches!(
+        app.today_view(Some(time(NOW))).unwrap().current_plan.state,
+        PlanState::Current
+    ));
 }

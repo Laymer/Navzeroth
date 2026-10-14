@@ -9,7 +9,7 @@ export function TodayScreen({client,refreshKey=0}:{client:TodayClient;refreshKey
  useEffect(()=>{void refresh();const timer=window.setInterval(()=>void refresh(),60000);return()=>{clearInterval(timer);epoch.current++;};},[client,refreshKey]);
  const current=view?.epoch===epoch.current?view.data:null;
  async function clear(){if(!current)return;const expected=current.current_plan.revision;const ticket=++epoch.current;setBusy(ticket);const result=await client.clearCurrentPlan(expected);if(ticket!==epoch.current)return;setBusy(null);if(!result.ok){setError(result.error.message);setView(null);}else await refresh();}
- return <section aria-labelledby="today-heading"><h2 id="today-heading">Today</h2><button type="button" disabled={busy===epoch.current} onClick={()=>void refresh()}>Refresh imported advice</button>
+ return <section className="today-screen" aria-labelledby="today-heading"><h2 id="today-heading">Today</h2><button type="button" disabled={busy===epoch.current} onClick={()=>void refresh()}>Refresh imported advice</button>
  {busy===epoch.current&&<p role="status">Checking saved inputs…</p>}{error&&<p role="alert">{error}</p>}
  {current&&<><p>Selected {current.selected_subject?.kind??"subject"}: {current.selected_subject?.kind==="character"?current.members[0]?.character??"missing character":current.selected_subject?.kind==="party"?current.selected_subject.party_id:"none"}.</p>
  {!current.selection_available&&<p>Select an available character or party in Settings. Deleted or missing subjects remain unavailable.</p>}

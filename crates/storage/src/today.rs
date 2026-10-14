@@ -212,10 +212,17 @@ pub struct SavedProfile {
     pub snapshot_id: SnapshotId,
     pub snapshot_hash: Sha256Hex,
 }
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PlanProvenance {
+    LocalGuardedSuccess,
+    RecoveredReference,
+}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GuardDescriptor {
     pub schema_version: u32,
+    pub provenance: PlanProvenance,
     pub subject: Subject,
     pub profiles: Vec<SavedProfile>,
     pub content: ContentRevisionKey,
@@ -452,6 +459,16 @@ pub fn validate_current_plan_documents(
     summary: &str,
 ) -> Result<()> {
     descriptor(kind, request.to_owned(), guard, summary)?.validate()
+}
+/// Reconstruction never authenticates advice found in an untrusted backup.
+/// Caller validates all four documents first; preserve original input identities.
+pub fn mark_recovered_plan_guard(text: &str) -> Result<String> {
+    let mut guard: GuardDescriptor = decode(text, MAX_DOCUMENT)?;
+    if guard.schema_version != 1 || guard.profiles.is_empty() || guard.profiles.len() > 40 {
+        return Err(invalid("Invalid recovered plan guard"));
+    }
+    guard.provenance = PlanProvenance::RecoveredReference;
+    encode(&guard, MAX_DOCUMENT)
 }
 fn descriptor(kind: &str, request: String, guard: &str, summary: &str) -> Result<PlanDescriptor> {
     Ok(PlanDescriptor {

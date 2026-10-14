@@ -28,6 +28,7 @@ pub struct ReferenceView {
     pub app_version: &'static str,
     pub snapshot: Option<ReferenceSnapshot>,
     pub current_plan: Option<crate::today::CurrentPlanView>,
+    pub accessibility: Option<azeroth_storage::today::Accessibility>,
 }
 pub fn build(
     snapshot: Option<&Envelope<CharacterSnapshot>>,
@@ -37,6 +38,7 @@ pub fn build(
         schema_version: 1,
         app_version: env!("CARGO_PKG_VERSION"),
         current_plan: None,
+        accessibility: None,
         snapshot: snapshot.map(|s| ReferenceSnapshot {
             character: s.payload.character.clone(),
             snapshot_id: s.payload.id.clone(),

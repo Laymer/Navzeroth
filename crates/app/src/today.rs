@@ -103,15 +103,15 @@ pub(crate) fn plan_view(
         .and_then(|n| UtcMillis::new(n).ok());
     let checked = restored.and_then(|guard| guard.validate(store, &mut now));
     // Infrastructure failures are not misrepresented as ordinary historical advice.
-    if let Err(e) = &checked {
-        if e.code != ErrorCode::SnapshotOutdated {
-            return Err(e.clone());
-        }
+    if let Err(e) = &checked
+        && e.code != ErrorCode::SnapshotOutdated
+    {
+        return Err(e.clone());
     }
     let sampled = now();
     let age_ms = sampled
         .and_then(|n| n.get().checked_sub(plan.guard.publication_utc_ms.get()))
-        .filter(|d| *d >= 0)
+        .filter(|d| *d >= 0 && *d <= azeroth_core::types::MAX_SAFE_INTEGER as i64)
         .and_then(|d| u64::try_from(d).ok());
     Ok(CurrentPlanView {
         revision: record.revision,
@@ -130,7 +130,9 @@ pub(crate) fn plan_view(
         valid_until_utc_ms,
         original_step_count: plan.summary.steps.len(),
         summary_truncated: false,
-        reason: if !selection_matches {
+        reason: if plan.guard.provenance == PlanProvenance::RecoveredReference {
+            Some("recovered_reference_requires_new_plan")
+        } else if !selection_matches {
             Some("selected_subject_differs")
         } else {
             checked.err().map(|_| "dependencies_or_freshness_changed")

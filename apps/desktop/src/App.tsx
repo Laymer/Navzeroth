@@ -49,8 +49,9 @@ export function App({ client }: { client: CommandClient }) {
   const [screen, setScreen] = useState<Screen>("today");
 
   const [revision, setRevision] = useState(0);
+  const [savedTopmost,setSavedTopmost]=useState(false);
   const watchedImport = useRef("");
-  useEffect(()=>{let live=true;void client.getAppSettings().then(result=>{if(!live||!result.ok)return;const a=result.value.settings.accessibility;document.documentElement.style.fontSize=`${a.text_scale_percent}%`;document.documentElement.dataset.contrast=a.contrast;document.documentElement.dataset.motion=a.motion;});return()=>{live=false;};},[client,revision]);
+  useEffect(()=>{let live=true;void client.getAppSettings().then(result=>{if(!live||!result.ok)return;setSavedTopmost(result.value.settings.reference_always_on_top);const a=result.value.settings.accessibility;document.documentElement.style.fontSize=`${a.text_scale_percent}%`;document.documentElement.dataset.contrast=a.contrast;document.documentElement.dataset.motion=a.motion;});return()=>{live=false;};},[client,revision]);
   const changed = useCallback(() => setRevision((value) => value + 1), []);
   const restored = useCallback(() => { setScreen("recovery"); changed(); }, [changed]);
   useEffect(() => {
@@ -97,7 +98,7 @@ export function App({ client }: { client: CommandClient }) {
   return (
     <main>
       <h1>Azeroth Navigator</h1>
-      <details><summary>Optional reference window</summary><ReferenceWindowControls client={client}/></details>
+      <details><summary>Optional reference window</summary><ReferenceWindowControls client={client} initialTopmost={savedTopmost}/></details>
       {load.phase === "loading" && <p role="status">Loading…</p>}
       {load.phase === "error" && (
         <p role="alert">
