@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "synthetic-clustering-core-replay",
+  "label": "Declared same-node travel amortization; no game geography or kill savings",
+  "budget_ms": 250,
+  "stopping_service_ms": 5,
+  "edges": [
+    ["ab", "a", "b", 100],
+    ["ba", "b", "a", 100],
+    ["ac", "a", "c", 10],
+    ["ca", "c", "a", 10]
+  ],
+  "objectives": [
+    { "id": "one", "node": "b", "utility": 5, "completion_ms": 10, "service_ms": 0 },
+    { "id": "two", "node": "b", "utility": 5, "completion_ms": 10, "service_ms": 0 },
+    { "id": "competitor", "node": "c", "utility": 9, "completion_ms": 100, "service_ms": 0 }
+  ],
+  "expected": {
+    "baseline_selected": ["competitor"],
+    "clustered_selected": ["one", "two"],
+    "clustered_utility": 10,
+    "clustered_total_ms": 225,
+    "inbound_ms": 100,
+    "completion_ms": 20
+  }
+}
