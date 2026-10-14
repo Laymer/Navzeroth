@@ -33,17 +33,24 @@ No failed/partial invocation counts as a pass.
 
 | Task | Writer / branch | State |
 | --- | --- | --- |
-| Public source inventory | public_sources / docs/v1-public-source-audit | Audit in progress; QuestieDB license/exact-build coverage unestablished |
-| Acceptance runbook and 70374 log | acceptance / docs/v1-acceptance-runbook | PR114; root source review of `7d9d93c` has no blocker/important findings; hosted gates pending |
-| Current onboarding | onboarding / docs/v1-onboarding | PR113; acceptance peer reviewed `26b7ebb`, no blocker/important findings; backup wording clarified separately |
-| Shared release contract | root / feat/v1-release-contract | Core implemented; onboarding peer review fixes incorporated, final peer confirmation pending |
+| Public source inventory | public_sources / docs/v1-public-source-audit | PR119 at `7ec7429`; root independently verified all 26 complete-file identities and reviewed the audit; no blocker/important findings |
+| Acceptance runbook and 70374 log | acceptance / docs/v1-acceptance-runbook | PR114 at `7d9d93c`; root source review has no blocker/important findings; all nine hosted gates pass |
+| Current onboarding | onboarding / docs/v1-onboarding | PR113 at `1e923c5`; acceptance peer review has no blocker/important findings; all nine hosted gates pass |
+| Shared release contract | root / feat/v1-release-contract | PR115; onboarding cleared corrected core `c6a5792`; all nine checks pass on original `7f94919`; combined candidate needs fresh checks |
 | CLI/workflow enforcement | onboarding / feat/v1-release-enforcement | Separate dependent task, claim `17d73ba`; no core writer overlap |
-| Copyable addon exports | acceptance / feat/addon-copy-export | Separate task; no build-gate or Version.lua edits |
+| Copyable addon exports | acceptance / feat/addon-copy-export | PR117 at `047db62`; root reviewed production `f1a2af5`, no blocker/important findings; 115 Lua harness tests pass |
+| Guarded 70374 capture | root / feat/forever-70374-capture | PR118 at `8ec4edc`, includes copy UI; acceptance reviewed production `1767eeb`, no blocker/important findings; 119 Lua harness tests pass; live behavior unverified |
+| Party planning availability text | root / fix/party-planning-availability | PR116 at `0ae8806`; onboarding peer review cleared; 21 affected desktop tests pass |
+| Bounded Questie staging | public_sources / feat/questiedb-staging | Separate implementation in progress; raw partial facts only, no executable corrections or accepted gameplay dataset |
 
 All changes use isolated worktrees. The original main working tree and historical
 branches, handoffs and published tags remain preserved. Each task must pass all
-nine current hosted checks and independent review before integration. At this
-record no task above has been merged and no new tag/release has been created.
+nine current hosted checks and independent review before integration. PR115 now
+combines the foundation task branches through normal merges (combined source
+tip `78e7499`) and will run all nine checks again. This preserves each task PR
+and its published commits while checking one exact integration candidate. Main
+remains `bb3782c` at this record; no new tag/release has been created. See the
+[independent review record](../reviews/2026-10-14-v1-foundations.md).
 
 ## New evidence and discovered work
 
@@ -54,13 +61,24 @@ and addon version `0.8.1`. The acceptance worker preserves this narrowly in
 serialized diagnostic output are not yet inspected. The 70338 evidence and 70205
 reference data retain their original scope.
 
-The inspected addon still gates capture/clock/plan/session/HUD to 70338. It also
+The baseline addon gates capture/clock/plan/session/HUD to 70338. It also
 declares objective completion mapping unavailable, and has no snapshot copy-out
 UI. These are concrete implementation gaps, even though historical finite preview
-work was closed. A future build-enablement task must preserve guarded reads and
-unknown/restricted results; changing a build string cannot establish live facts.
+work was closed. PRs117/118 implement the copy UI and guarded 70374 admission,
+preserving unknown/restricted states; changing a build string cannot establish
+live facts. Objective completion mapping still lacks real verified inputs.
 The source audit must not infer redistribution permission from public access or
 Questie lineage. No third-party game records or personal exports are committed.
+
+The pinned public-source audit accepts neither QuestieDB nor CMaNGOS for shipped
+assets. QuestieDB's inspected public tree has no general data redistribution
+license, and its documented build lineage does not prove complete 70374 content.
+CMaNGOS targets historical 1.12 and includes both GPLv3 and separate restrictions
+on Blizzard material. Raw ID-line counts (4,244 quests, 10,119 NPCs, 14,889 items,
+6,645 objects) do not establish effective corrected records or a complete target
+denominator. All 18 correction providers and derived passes remain unapplied.
+These concrete limitations block content population and full-content release;
+bounded staging and release enforcement can proceed independently.
 
 Next: finish batch-1 reviews/checks, integrate normally, validate the CLI/workflow
 gate and export UI, continue accepted bounded adapters, and run guided 70374
