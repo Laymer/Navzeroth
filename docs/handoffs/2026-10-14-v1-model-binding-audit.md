@@ -34,6 +34,9 @@ No schema is chosen or changed. New sidecars require explicit pack, storage and
 consumer support; existing strict pack validation cannot be bypassed. Source
 population, exact-build completeness, permissions and real acceptance remain
 blocked independently of reusable validation code.
+Existing normalized record/conflict keys and storage resolution cover items and
+quests only; model/dungeon bindings also need explicit typed conflict identity and
+original source-context handling instead of discarding unsupported disputes.
 
 ## Verification scope
 
@@ -54,7 +57,7 @@ planner directory glob; it was corrected to the actual `joint_planner.rs` module
 before citing its bounds and fairness behavior.
 
 Only new audit/claim/handoff documentation is changed. Actual local checks pass:
-23 relative file links resolve and 24 symbol assertions resolve across eleven
+25 relative file links resolve and 28 symbol assertions resolve across thirteen
 production files; results are in `/tmp/navzeroth-v1-model-binding-audit-checks.json`.
 Whitespace checks pass. No unrelated test suite is represented as verification
 of this read-only audit. Independent review is requested before

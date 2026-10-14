@@ -209,6 +209,14 @@ Alternatively, adding typed dataset collections is a demonstrated schema require
 that needs explicit version/migration/compatibility tests. This audit chooses no
 wire format and does not authorize silently widening the current schema.
 
+The existing [normalization/conflict types](../../crates/core/src/sources.rs),
+`RecordKey`, `RecordPayload` and `CandidateData`, support only items and quests.
+[ContentRevision storage](../../crates/storage/src/content.rs) resolves conflict
+keys against those collections. New model/dungeon records also need typed,
+context-qualified evidence/normalization/conflict identities and preservation of
+the original source context. Do not drop disputes or substitute a source label
+for a supported record association when adding the new payloads.
+
 Acceptance tests for the chosen implementation should reject future/unknown or
 duplicate fields, mixed contexts/fixtures, missing references, source mismatch,
 synthetic-as-production models, forged opaque record IDs, wrong revisions/hashes,
