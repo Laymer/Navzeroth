@@ -16,8 +16,7 @@ fn no_arguments_reports_current_capabilities() {
 #[test]
 fn unsupported_commands_and_options_fail_without_echoing_input() {
     for args in [
-        &["doctor"][..],
-        &["validate-fixtures", "extra-sentinel"],
+        &["validate-fixtures", "extra-sentinel"][..],
         &["validate-fixtures", "--output", "dir-sentinel"],
         &["validate-fixtures", ""],
         &["--help"],
@@ -67,7 +66,7 @@ fn unsupported_commands_and_options_fail_without_echoing_input() {
         assert!(output.stdout.is_empty());
         let message = String::from_utf8(output.stderr).unwrap();
         assert!(message.contains("Unsupported"));
-        assert!(!message.contains("sentinel") && !message.contains("doctor"));
+        assert!(!message.contains("sentinel"));
     }
 }
 

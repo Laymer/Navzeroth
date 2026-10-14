@@ -1,12 +1,13 @@
 //! Conservative manual group baseline: every selected objective must contribute
 //! positive declared utility to every member and be ready for every member.
 //! Group utility is the minimum contribution, so one member cannot dominate.
+use crate::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use crate::{
     entities::{TravelEdge, TravelNode},
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationResult, Truth, evaluate},
     observation::{Freshness, ObservationStatus, freshness},
-    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan},
+    planner::{Candidate, EligibilityGate, PlannerInput, PlannerResult, plan_controlled},
     predicate::Predicate,
     travel::RouteOptions,
     types::{CharacterId, EdgeId, Millis, NodeId, ObjectiveId, SourceId},
@@ -60,6 +61,15 @@ pub struct JointResult {
     pub unavailable_edges: Vec<JointEdgeExclusion>,
 }
 pub fn plan_joint(input: &JointInput<'_>) -> Result<JointResult> {
+    plan_joint_controlled(input, &mut NoopSearchControl)
+}
+
+/// Cooperative joint readiness and nested route planning.
+pub fn plan_joint_controlled(
+    input: &JointInput<'_>,
+    control: &mut dyn SearchControl,
+) -> Result<JointResult> {
+    control.checkpoint(SearchPhase::ValidateInputs)?;
     if !(2..=40).contains(&input.contexts.len())
         || input.candidates.len() > 128
         || input.excluded.len() > 128
@@ -71,6 +81,7 @@ pub fn plan_joint(input: &JointInput<'_>) -> Result<JointResult> {
     let first = &input.contexts[0];
     let mut members = BTreeSet::new();
     for context in input.contexts {
+        control.checkpoint(SearchPhase::ParticipantReadiness)?;
         first
             .snapshot
             .context
@@ -90,6 +101,7 @@ pub fn plan_joint(input: &JointInput<'_>) -> Result<JointResult> {
     let mut candidates = Vec::new();
     let mut ids = BTreeSet::new();
     for candidate in input.candidates {
+        control.checkpoint(SearchPhase::CandidateAssessment)?;
         if candidate.readiness.len() != input.contexts.len()
             || candidate.utilities.len() != input.contexts.len()
             || !ids.insert(&candidate.id)
@@ -104,6 +116,7 @@ pub fn plan_joint(input: &JointInput<'_>) -> Result<JointResult> {
             .zip(&candidate.readiness)
             .zip(&candidate.utilities)
             .map(|((context, predicate), utility)| {
+                control.checkpoint(SearchPhase::ParticipantReadiness)?;
                 Ok(MemberReadiness {
                     character: context.snapshot.character.clone(),
                     utility: *utility,
@@ -134,8 +147,10 @@ pub fn plan_joint(input: &JointInput<'_>) -> Result<JointResult> {
     let mut edges = Vec::new();
     let mut unavailable_edges = Vec::new();
     for edge in input.edges {
+        control.checkpoint(SearchPhase::EdgeAssessment)?;
         let mut ready = true;
         for context in input.contexts {
+            control.checkpoint(SearchPhase::ParticipantReadiness)?;
             let truth = match (edge.requirements.value(), edge.requirements.status()) {
                 (Some(predicate), _) => evaluate(predicate, context)?.truth,
                 (None, ObservationStatus::NotApplicable) => Truth::True,
@@ -157,20 +172,24 @@ pub fn plan_joint(input: &JointInput<'_>) -> Result<JointResult> {
     candidates.sort_by(|a, b| a.id.cmp(&b.id));
     assessments.sort_by(|a, b| a.objective.cmp(&b.objective));
     unavailable_edges.sort_by(|a, b| (&a.edge, &a.character).cmp(&(&b.edge, &b.character)));
-    let plan = plan(&PlannerInput {
-        goal_profile: input.goal_profile.clone(),
-        candidates: &candidates,
-        excluded: input.excluded,
-        nodes: input.nodes,
-        edges: &edges,
-        origin: input.origin.clone(),
-        stopping_node: input.stopping_node.clone(),
-        budget_ms: input.budget_ms,
-        stopping_service_ms: input.stopping_service_ms,
-        max_steps: 32,
-        context: first,
-        travel_options: &RouteOptions::default(),
-    })?;
+    let plan = plan_controlled(
+        &PlannerInput {
+            goal_profile: input.goal_profile.clone(),
+            candidates: &candidates,
+            excluded: input.excluded,
+            nodes: input.nodes,
+            edges: &edges,
+            origin: input.origin.clone(),
+            stopping_node: input.stopping_node.clone(),
+            budget_ms: input.budget_ms,
+            stopping_service_ms: input.stopping_service_ms,
+            max_steps: 32,
+            context: first,
+            travel_options: &RouteOptions::default(),
+        },
+        control,
+    )?;
+    control.checkpoint(SearchPhase::Selection)?;
     Ok(JointResult {
         plan,
         assessments,

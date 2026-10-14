@@ -21,3 +21,5 @@ pub mod types;
 
 pub mod calibration;
 pub mod joint_planner;
+
+pub mod search_control;

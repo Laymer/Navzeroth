@@ -64,8 +64,17 @@ browser demo run `pnpm --dir apps/desktop dev`; for the native shell run
 Native Rust checks are `cargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings`
 and `cargo test --locked -p azeroth-desktop`.
 
-The CLI accepts `export-schemas`, `prepare-atlas`, `validate-fixtures` and
-`validate-content`; `doctor` and remaining plan commands are not implemented.
+The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures` and
+`validate-content`. Content pack build/verification and planner replay remain planned.
+
+`cargo run --locked -p azeroth-cli -- doctor --json` reports this binary's version,
+OS/architecture, pinned development requirements and tool presence on PATH. Presence
+is not runtime-version verification, and missing development tools do not prevent
+using the packaged desktop. Optional `--saved-variables <file>`, `--addons <dir>`
+and `--content <dir>` inspect only explicitly selected path kinds. Unselected paths
+stay unselected; invalid selections return a nonzero exit code. The command does
+not read their contents, scan account directories, run detected tools, or print
+selected paths. Native prerequisites and live-client compatibility remain unverified.
 Content validation has bounded regular-file/directory discovery, deterministic
 JSON/human reports and separate nonfatal gaps. See [coverage](docs/data/COVERAGE.md).
 
