@@ -1,3 +1,4 @@
+import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
 import { runPlanningJob, type PlanningJobStatus } from "../commands/planningJobs";
 import { RouteInspection } from "./RouteInspection";
@@ -17,6 +18,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const [stoppingService, setStoppingService] = useState(0);
   const [candidates, setCandidates] = useState<PlanningRequest["candidates"]>([]);
   const [excluded, setExcluded] = useState<string[]>([]);
+  const [pinJob,setPinJob]=useState<string|null>(null);
   const [report, setReport] = useState<PlanningReport | null>(null);
   const [route, setRoute] = useState<Inspection | null>(null);
   const [exported, setExported] = useState<CommandMap["export_plan"]["output"] | null>(null);
@@ -35,7 +37,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const catalogOwner = useRef<{ client: CommandClient; refreshKey: number; profile: string } | null>(null);
   const visibleCatalog = catalog && catalogOwner.current?.client === client && catalogOwner.current.refreshKey === refreshKey && catalogOwner.current.profile === profile ? catalog : null;
   const visibleReport = report && reportOwner.current?.client === client && reportOwner.current.refreshKey === refreshKey && reportOwner.current.profile === profile ? report : null;
-  const invalidate = () => { generation.current++; abortJob(); setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setBusy(false); };
+  const invalidate = () => { generation.current++; abortJob(); setReport(null); setPinJob(null); setRoute(null); setExported(null); setCopyStatus(""); setBusy(false); };
   useEffect(() => {
     let live = true;
     void client.listProfiles().then((result) => {
@@ -51,7 +53,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     const profileChanged = catalogProfile.current !== profile;
     catalogProfile.current = profile;
     if (profileChanged) { setCandidates([]); setExcluded([]); setOrigin(""); setStop(""); }
-    generation.current++; abortJob(); setReport(null); setRoute(null); setExported(null); setCopyStatus(""); setCatalog(null); setBusy(false);
+    generation.current++; abortJob(); setReport(null); setPinJob(null); setRoute(null); setExported(null); setCopyStatus(""); setCatalog(null); setBusy(false);
     if (profile) void client.getPlanningCatalog(profile).then((result) => {
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
@@ -70,12 +72,13 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     const ticket = ++generation.current;
     const controller = new AbortController(); activeJob.current = controller;
     setBusy(true); setProgress(null); setError("");
-    const result = await runPlanningJob<PlanningReport>(client, "solo", JSON.stringify(request), controller.signal, (status) => { if (ticket === generation.current && !controller.signal.aborted) setProgress({ ticket, status }); });
+    const result = await runPlanningJob<PlanningReport>(client, "solo", JSON.stringify(request), controller.signal, (status) => { if (ticket === generation.current && !controller.signal.aborted) setProgress({ ticket, status }); }, undefined, id=>{if(ticket===generation.current&&!controller.signal.aborted)setPinJob(id);});
     if (ticket !== generation.current) return;
     activeJob.current = null; setBusy(false); setProgress(null);
-    if (!result.ok) { setError(result.error.message); if (result.error.code === "SNAPSHOT_OUTDATED" || result.error.code === "BUILD_MISMATCH") { setReport(null); setRoute(null); setExported(null); setCopyStatus(""); } }
+    if (!result.ok) { setError(result.error.message); if (result.error.code === "SNAPSHOT_OUTDATED" || result.error.code === "BUILD_MISMATCH") { setReport(null); setPinJob(null); setRoute(null); setExported(null); setCopyStatus(""); } }
     else { reportOwner.current = { client, refreshKey, profile }; setReport(result.value); setRoute(null); setExported(null); setCopyStatus(""); }
   }
+  async function applyDefaults(){invalidate();const ticket=generation.current;const response=await client.getAppSettings();if(ticket!==generation.current)return;if(!response.ok){setError(response.error.message);return;}const d=response.value.settings.manual_planning_defaults;if(d.goal_profile!==null)setGoal(d.goal_profile);setBudget(d.budget_ms);setStoppingService(d.stopping_service_ms);}
   function cancelCalculation() { generation.current += 1; abortJob(); setBusy(false); setError("Planning request canceled locally; cancellation requested for its background job."); }
 
   async function exportPlan() {
@@ -85,7 +88,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     const result = await client.exportPlan(JSON.stringify(visibleReport.request));
     if (ticket !== generation.current) return;
     setBusy(false);
-    if (!result.ok) { setReport(null); setRoute(null); setError(result.error.message); }
+    if (!result.ok) { setReport(null); setPinJob(null); setRoute(null); setError(result.error.message); }
     else setExported(result.value);
   }
   async function inspectRoute() {
@@ -95,7 +98,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     const result = await client.inspectPlanRoute(JSON.stringify(visibleReport.request));
     if (ticket !== generation.current) return;
     setBusy(false);
-    if (!result.ok) { setReport(null); setExported(null); setError(result.error.message); }
+    if (!result.ok) { setReport(null); setPinJob(null); setExported(null); setError(result.error.message); }
     else setRoute(result.value);
   }
   async function copyExport() {
@@ -115,6 +118,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     <label>Origin <select value={origin} onChange={(e) => { invalidate(); setOrigin(e.target.value); }}>{nodeOptions}</select></label>
     <label>Stopping node <select value={stop} onChange={(e) => { invalidate(); setStop(e.target.value); }}>{nodeOptions}</select></label>
     <label>Versioned goal identifier <input value={goal} onChange={(e) => { invalidate(); setGoal(e.target.value); }} /></label>
+    <button type="button" disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</button>
     <label>Budget (ms) <input type="number" min="0" step="1" value={budget} onChange={(e) => { invalidate(); setBudget(e.target.valueAsNumber); }} /></label>
     <label>Stopping service (ms) <input type="number" min="0" step="1" value={stoppingService} onChange={(e) => { invalidate(); setStoppingService(e.target.valueAsNumber); }} /></label>
     {visibleCatalog?.objectives.map((objective) => {
@@ -147,6 +151,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
       {visibleReport.result.selected.length === 0 && <p>No feasible objectives.</p>}
       <ul>{visibleReport.assumptions.map((a) => <li key={a}>{a}</li>)}{visibleReport.filtered.map((f) => <li key={f.objective}>{f.objective}: {f.reason}</li>)}</ul>
       <details><summary>Alternatives, uncertainty and decision trace</summary><pre>{JSON.stringify({ alternatives: visibleReport.result.alternatives, trace: visibleReport.result.trace, stopping: visibleReport.result.stopping }, null, 2)}</pre></details>
+    {visibleReport && pinJob && <PlanPinControl client={client} jobId={pinJob}/>}
     </section>}
   </section>;
 }
