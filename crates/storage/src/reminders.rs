@@ -15,6 +15,10 @@ pub struct StoredReminderState {
     pub version: u32,
     pub enabled: bool,
     pub history: ReminderState,
+    #[serde(default)]
+    pub bag_checklist_enabled: bool,
+    #[serde(default)]
+    pub bag_checklist_checked: bool,
 }
 impl Default for StoredReminderState {
     fn default() -> Self {
@@ -22,6 +26,8 @@ impl Default for StoredReminderState {
             version: 1,
             enabled: true,
             history: ReminderState::new(),
+            bag_checklist_enabled: false,
+            bag_checklist_checked: false,
         }
     }
 }
