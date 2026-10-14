@@ -267,6 +267,11 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_app_settings:{input:undefined;output:import("./today").SettingsRecord};
+  update_app_settings:{input:{text:string};output:import("./today").SettingsRecord};
+  get_today_view:{input:undefined;output:import("./today").TodayView};
+  pin_current_plan:{input:{job_id:string;expected_revision:number};output:number};
+  clear_current_plan:{input:{expected_revision:number};output:number};
   get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
   change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };

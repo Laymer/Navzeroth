@@ -416,6 +416,13 @@ impl SnapshotApplication {
                     &snapshots,
                     &content,
                     &clock,
+                )?
+                .bind_disposition(
+                    store
+                        .usable_content_revision(&content.key())?
+                        .ok_or_else(changed)?
+                        .1
+                        .guard(),
                 )?;
                 Ok(Captured {
                     proposal,
