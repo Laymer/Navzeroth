@@ -105,3 +105,32 @@ local_submissions until root calls public
 validation. This branch supplies and directly tests that validator. Next: final
 coordinated affected browser checks, independent source review, exact-head hosted
 checks and root reconciliation/validator registration before any release.
+
+## Final dependency reconciliation
+
+Normal merge d27a2db integrates governance runtime677f068; four additive conflicts
+were resolved by preserving both complete command registrations/client entries/
+command-map entries and both Content child-panel mocks. Source ownership was not
+transferred and no governance behavior was rewritten. Its final f5798e6 handoff is
+normally merged as well. Fresh merged-source checks passed569 core/storage/app
+Rust tests (0 failures/ignored), strict all-target Clippy,160 desktop tests,
+typecheck/lint/build/fmt/diff. Logs /tmp/navzeroth-submissions-{rust,clippy,ui,
+typecheck,lint,build}-final.log. Own feature runtime remains29c38ed.
+
+The final coordinated clean browser rerun passed both affected cases2/2: local
+submission/review/refusal/withdrawal/tombstone, and existing Content activation/
+planning. Log /tmp/navzeroth-submissions-browser-final-clean.log. It ran before
+the final governance UI dependency merge; merged-source browser coverage belongs
+to root's forthcoming combined integration run. Port1420 was released and ss
+confirmed no listener. Root's Gear/Today browser leases were preserved.
+
+One browser attempt was invalidated by mistakenly starting a normal dependency
+merge while its Vite server was starting. That produced temporary merge markers;
+the merge was aborted, the failed attempt ended, and the clean sequential rerun
+passed. Log /tmp/navzeroth-submissions-browser-final.log records the failed attempt.
+It is not counted as successful product evidence. Subsequent merge resolution and
+checks were sequential, with no browser server running.
+
+Ready for independent source review and exact-head hosted checks. Root still owns
+recovery validator registration and main/release integration; populated recovery
+remains deliberately refused until those validators are registered together.
