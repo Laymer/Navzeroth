@@ -1,3 +1,4 @@
+import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
 import { runPlanningJob, type PlanningJobStatus } from "../commands/planningJobs";
 import { useEffect, useRef, useState } from "react";
@@ -23,6 +24,7 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
   const [budget, setBudget] = useState("");
   const [stopService, setStopService] = useState("0");
   const [goal, setGoal] = useState("");
+  const [pinJob,setPinJob]=useState<string|null>(null);
   const [report, setReport] = useState<JointPlanningReport | null>(null);
   const [error, setError] = useState<AppError | null>(null);
   const [busy, setBusy] = useState(false);
@@ -45,7 +47,7 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
   catalogRef.current = visibleCatalog;
   useEffect(() => {
     let active = true;
-    abortJob(); setLoading(true); setReport(null); setError(null); setBusy(false);
+    abortJob(); setLoading(true); setReport(null); setPinJob(null); setError(null); setBusy(false);
     void client.getJointPlanningCatalog(partyId).then((response) => {
       if (!active) return;
       setLoading(false);
@@ -64,7 +66,7 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
     });
     return () => { active = false; activeJob.current?.abort(); activeJob.current = null; };
   }, [client, partyId, refreshKey]);
-  function edit(action: () => void) { current.current.edit += 1; inputVersion.current += 1; abortJob(); setBusy(false); setReport(null); setError(null); action(); }
+  function edit(action: () => void) { current.current.edit += 1; inputVersion.current += 1; abortJob(); setBusy(false); setReport(null); setPinJob(null); setError(null); action(); }
   function candidate(id: string, patch: Partial<EstimateDraft>) { edit(() => setDrafts((old) => old[id] ? ({ ...old, [id]: { ...old[id], ...patch } }) : old)); }
   const expected = visibleCatalog?.participants.flatMap((p) => p.snapshot_id ? [{ profile_id: p.profile_id, snapshot_id: p.snapshot_id }] : []) ?? [];
   const fresh = visibleCatalog !== null && expected.length === visibleCatalog.participants.length && visibleCatalog.participants.every((p) => p.freshness?.status === "fresh");
@@ -78,6 +80,7 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
     estimates.push({ objective: id, node: draft.node, completion_ms: completion, service_ms: service, utilities: values as Record<string, number> });
   }
   const valid = fresh && visibleCatalog?.revision && origin && stop && goal.trim() && duration(budget) !== null && duration(stopService) !== null && validCandidates && estimates.length > 0;
+  async function applyDefaults(){edit(()=>{});const token={...current.current};const response=await client.getAppSettings();if(token.identity!==current.current.identity||token.client!==current.current.client||token.edit!==current.current.edit)return;if(!response.ok){setError(response.error);return;}const d=response.value.settings.manual_planning_defaults;if(d.goal_profile!==null)setGoal(d.goal_profile);setBudget(String(d.budget_ms/60000));setStopService(String(d.stopping_service_ms/60000));}
   async function calculate() {
     if (!valid || !visibleCatalog?.revision || busy || loading || activeJob.current) return;
     current.current.edit += 1;
@@ -87,10 +90,10 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       stopping_service_ms: duration(stopService) ?? 0, candidates: estimates, excluded: Object.entries(drafts).filter(([,d]) => d.excluded).map(([id]) => id) };
     const controller = new AbortController(); activeJob.current = controller;
     setBusy(true); setProgress(null); setError(null);
-    const response = await runPlanningJob<JointPlanningReport>(client, "joint", JSON.stringify(request), controller.signal, (status) => { if (token.identity === current.current.identity && token.client === current.current.client && token.edit === current.current.edit && !controller.signal.aborted) setProgress({ edit: token.edit, status }); });
+    const response = await runPlanningJob<JointPlanningReport>(client, "joint", JSON.stringify(request), controller.signal, (status) => { if (token.identity === current.current.identity && token.client === current.current.client && token.edit === current.current.edit && !controller.signal.aborted) setProgress({ edit: token.edit, status }); }, undefined, id=>{if(token.identity===current.current.identity&&token.client===current.current.client&&token.edit===current.current.edit&&!controller.signal.aborted)setPinJob(id);});
     if (token.identity !== current.current.identity || token.client !== current.current.client || token.edit !== current.current.edit || source !== catalogRef.current) return;
     activeJob.current = null; setBusy(false); setProgress(null);
-    if (response.ok) { reportOwner.current = { client, identity, inputVersion: sourceInputVersion }; setReport(response.value); } else { setError(response.error); if (response.error.code === "SNAPSHOT_OUTDATED" || response.error.code === "BUILD_MISMATCH") setReport(null); }
+    if (response.ok) { reportOwner.current = { client, identity, inputVersion: sourceInputVersion }; setReport(response.value); } else { setError(response.error); if (response.error.code === "SNAPSHOT_OUTDATED" || response.error.code === "BUILD_MISMATCH") setReport(null); setPinJob(null); }
   }
   function cancelCalculation() { current.current.edit += 1; abortJob(); setBusy(false); setError({ code: "OPERATION_CANCELED", message: "Planning request canceled locally; cancellation requested for its background job.", retryable: false }); }
 
@@ -107,6 +110,7 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       <legend>Manual shared assumptions</legend>
       <label>Goal profile / utility unit <input value={goal} onChange={(e) => edit(() => setGoal(e.target.value))} maxLength={128} /></label>
       {chooseNode("Shared origin", origin, setOrigin)}{chooseNode("Shared stopping point", stop, setStop)}
+      <button type="button" disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</button>
       <label>Session budget (minutes) <input type="number" min="0" value={budget} onChange={(e) => edit(() => setBudget(e.target.value))} /></label>
       <label>Stopping service time (minutes) <input type="number" min="0" value={stopService} onChange={(e) => edit(() => setStopService(e.target.value))} /></label>
       {visibleCatalog.objectives.length === 0 && <p>No authored objectives in this dataset.</p>}
@@ -141,5 +145,5 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       <ul>{visibleReport.result.unavailable_edges.map((edge) => <li key={`${edge.edge}:${edge.character}`}>Travel {edge.edge} unavailable for {edge.character}: {edge.truth}</li>)}</ul>
     </div>}
     <PartyAgreement client={client} partyId={partyId} refreshKey={refreshKey} planning={visibleReport} />
-  </section>;
+  {visibleReport && pinJob && <PlanPinControl client={client} jobId={pinJob}/>}</section>;
 }
