@@ -24,10 +24,14 @@ fn request(app: &SnapshotApplication, p: &str, state: &str) -> Value {
 #[test]
 fn explicit_profile_decision_clears_active_then_release_never_autoactivates() {
     let (app, p) = app();
+    let initial = app.content_governance(&p).unwrap();
+    let inspection = app.active_content(&p).unwrap();
+    let profiles = app.profiles().unwrap();
     let q = request(&app, &p, "quarantined");
     let outcome = app
         .change_content_disposition(&q.to_string(), None)
         .unwrap();
+    let quarantined = app.content_governance(&p).unwrap();
     assert!(outcome.outcome.active.is_none());
     assert!(app.active_content(&p).unwrap().is_none());
     assert!(
@@ -39,8 +43,18 @@ fn explicit_profile_decision_clears_active_then_release_never_autoactivates() {
             .is_err()
     );
     let release = request(&app, &p, "eligible");
-    app.change_content_disposition(&release.to_string(), None)
+    let released_decision = app
+        .change_content_disposition(&release.to_string(), None)
         .unwrap();
+    let flow = json!({"profiles":profiles,"initial":initial,"inspection":inspection,"quarantine_request":q,"quarantine_decision":outcome,"quarantined":quarantined,"release_request":release,"release_decision":released_decision,"released":app.content_governance(&p).unwrap()});
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/desktop/content-governance/synthetic-flow.json");
+    if std::env::var_os("UPDATE_CONTENT_DISPOSITION_GOLDENS").is_some() {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, serde_json::to_string_pretty(&flow).unwrap() + "\n").unwrap();
+    }
+    let expected: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    assert_eq!(flow, expected);
     assert!(app.active_content(&p).unwrap().is_none());
     let current = app.content_governance(&p).unwrap();
     assert_eq!(current.revisions[0].state, DispositionState::Eligible);
