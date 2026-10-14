@@ -261,6 +261,28 @@ impl SnapshotApplication {
             )
         })
     }
+    /// Capture selection, current snapshot and active content under one store lock.
+    pub(crate) fn diagnostic_inputs(
+        &self,
+    ) -> Result<(
+        Option<Envelope<CharacterSnapshot>>,
+        Option<azeroth_storage::content::ContentRevision>,
+    )> {
+        let state = self.lock()?;
+        let Some(id) = &state.selected else {
+            return Ok((None, None));
+        };
+        let key = resolve(&state.store, id)?;
+        let snapshot = state.store.current_snapshot(&key)?;
+        let content =
+            state
+                .store
+                .active_content_revision(&azeroth_storage::content::ContentScope {
+                    context: key.context,
+                    fixture: key.fixture,
+                })?;
+        Ok((snapshot, content))
+    }
     pub fn status(&self) -> Result<AppStatus> {
         let state = self.lock()?;
         Ok(AppStatus {

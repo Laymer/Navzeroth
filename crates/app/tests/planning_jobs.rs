@@ -202,3 +202,22 @@ fn publication_guard_rejects_obsolete_success_and_serialization_precedes_guard()
         ErrorCode::ImportTooLarge
     );
 }
+
+#[test]
+fn retained_ticket_reports_actual_terminal_outcome_after_result_retrieval() {
+    let jobs = PlanningJobs::default();
+    let ticket = jobs.register(PlanningKind::Solo).unwrap();
+    assert!(ticket.completion_result().is_err());
+    jobs.run(ticket.clone(), |_| {
+        Ok(serde_json::json!({"synthetic":true}))
+    });
+    jobs.take_result(ticket.id()).unwrap();
+    ticket.completion_result().unwrap();
+    let canceled = jobs.register(PlanningKind::Solo).unwrap();
+    jobs.cancel(canceled.id()).unwrap();
+    jobs.run(canceled.clone(), |_| Ok(serde_json::json!({})));
+    assert_eq!(
+        canceled.completion_result().unwrap_err().code,
+        ErrorCode::OperationCanceled
+    );
+}
