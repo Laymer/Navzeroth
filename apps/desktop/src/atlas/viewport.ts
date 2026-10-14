@@ -141,3 +141,15 @@ export function applyKeyAction(
       return marker === null ? v : centerOn(v, marker, frame, container);
   }
 }
+
+export interface Bounds { minX: number; minY: number; maxX: number; maxY: number }
+/** Fit a finite endpoint box within the existing zoom/pan limits; zero coordinates
+ * and coincident endpoints are valid. This creates no connecting geometry. */
+export function fitBounds(bounds: Bounds, frame: Size, container: Size): Viewport {
+  if (![bounds.minX, bounds.minY, bounds.maxX, bounds.maxY].every(Number.isFinite)
+    || bounds.minX < 0 || bounds.minY < 0 || bounds.maxX > frame.w || bounds.maxY > frame.h
+    || bounds.maxX < bounds.minX || bounds.maxY < bounds.minY) return fitViewport(frame, container);
+  const pad = Math.min(32, Math.max(0, Math.min(container.w, container.h) / 4));
+  const zoom = clampZoom(Math.min(Math.max(1, container.w - 2 * pad) / Math.max(1, bounds.maxX - bounds.minX), Math.max(1, container.h - 2 * pad) / Math.max(1, bounds.maxY - bounds.minY)), frame, container);
+  return clampViewport({ zoom, pan: { x: container.w / 2 - (bounds.minX + bounds.maxX) / 2 * zoom, y: container.h / 2 - (bounds.minY + bounds.maxY) / 2 * zoom } }, frame, container);
+}

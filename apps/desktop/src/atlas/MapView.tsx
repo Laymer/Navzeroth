@@ -7,6 +7,8 @@ import {
   applyKeyAction,
   clampViewport,
   fitViewport,
+  fitBounds,
+  type Bounds,
   frameToScreen,
   keyAction,
   panBy,
@@ -18,7 +20,7 @@ import {
 } from "./viewport";
 
 export interface MapViewProps {
-  image: AtlasImage;
+  image: Pick<AtlasImage, "id" | "map" | "width_px" | "height_px" | "pins">;
   /** The raster layer to draw; null selects the schematic fallback. */
   layer: AtlasLayer | null;
   onLayerError: (layerId: string) => void;
@@ -27,6 +29,9 @@ export interface MapViewProps {
   selectedPin: string | null;
   /** Centre the view on this frame point whenever `nonce` changes. */
   focus: { point: Point; nonce: number } | null;
+  segments?: readonly { index: number; from: Point; to: Point; selected: boolean; label: string }[];
+  fit?: { bounds: Bounds; nonce: number } | null;
+  mapLabel?: string;
 }
 
 const DEFAULT_SIZE: Size = { w: 640, h: 480 };
@@ -40,7 +45,7 @@ export function gridStep(extent: number): number {
   return (unit < 1.5 ? 1 : unit < 3.5 ? 2 : unit < 7.5 ? 5 : 10) * power;
 }
 
-export function MapView({ image, layer, onLayerError, marker, markerStale, selectedPin, focus }: MapViewProps) {
+export function MapView({ image, layer, onLayerError, marker, markerStale, selectedPin, focus, segments, fit = null, mapLabel }: MapViewProps) {
   const frame = useMemo<Size>(() => ({ w: image.width_px, h: image.height_px }), [image.width_px, image.height_px]);
   const regionRef = useRef<HTMLDivElement>(null);
   const helpId = useId();
@@ -49,6 +54,8 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
   // Until the user moves the map, resizing keeps it fitted.
   const touched = useRef(false);
   const drag = useRef<Point | null>(null);
+  const activeFit = useRef<Bounds | null>(null);
+  const lastFit = useRef<typeof fit>(null);
 
   useEffect(() => {
     const el = regionRef.current;
@@ -77,7 +84,7 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
       event.preventDefault();
       const rect = el.getBoundingClientRect();
       const anchor = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-      touched.current = true;
+      touched.current = true; activeFit.current = null;
       setView((v) => zoomAt(v, event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP, anchor, frame, size));
     };
     el.addEventListener("wheel", onWheel, { passive: false });
@@ -91,9 +98,14 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
     setView((v) => applyKeyAction(v, { type: "centre" }, frame, size, target));
   }, [focus, frame, size]);
 
+  useEffect(() => {
+    if (lastFit.current !== fit) { lastFit.current = fit; activeFit.current = fit?.bounds ?? null; }
+    if (activeFit.current) { touched.current = true; setView(fitBounds(activeFit.current, frame, size)); }
+  }, [fit, frame, size]);
+
   const markerPoint = marker === null ? null : marker.pixel;
   const act = (action: MapKeyAction) => {
-    touched.current = action.type !== "fit";
+    touched.current = action.type !== "fit"; activeFit.current = null;
     setView((v) => applyKeyAction(v, action, frame, size, markerPoint));
   };
 
@@ -122,7 +134,7 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
       </div>
       {layer === null && (
         <p className="map-note" role="status">
-          Schematic view: no imagery could be shown, so only the frame outline, grid, pins and marker are drawn.
+          {segments ? "Schematic route view: provided endpoint links only; no imagery or road geometry." : "Schematic view: no imagery could be shown, so only the frame outline, grid, pins and marker are drawn."}
         </p>
       )}
       <div
@@ -130,7 +142,7 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
         className="map-region"
         role="group"
         tabIndex={0}
-        aria-label={`Atlas map of ${image.id}`}
+        aria-label={mapLabel ?? `Atlas map of ${image.id}`}
         aria-describedby={helpId}
         onKeyDown={(event) => {
           if (event.ctrlKey || event.metaKey || event.altKey) return;
@@ -148,7 +160,7 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
           const last = drag.current;
           if (last === null) return;
           drag.current = { x: event.clientX, y: event.clientY };
-          touched.current = true;
+          touched.current = true; activeFit.current = null;
           setView((v) => panBy(v, event.clientX - last.x, event.clientY - last.y, frame, size));
         }}
         onPointerUp={() => {
@@ -170,7 +182,7 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
             <img src={layer.url} alt="" draggable={false} onError={() => onLayerError(layer.id)} />
           </div>
         )}
-        <svg className="map-overlay" width={size.w} height={size.h} role="img" aria-label={overlayLabel(image, marker)}>
+        <svg className="map-overlay" width={size.w} height={size.h} role="img" aria-label={segments ? `Schematic route overlay with ${segments.length} displayed links` : overlayLabel(image, marker)}>
           {layer === null && (
             <g className="schematic" data-testid="schematic">
               <rect x={origin.x} y={origin.y} width={far.x - origin.x} height={far.y - origin.y} className="schematic-fill" />
@@ -191,6 +203,15 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
             height={far.y - origin.y}
             className={layer === null ? "frame frame-schematic" : "frame"}
           />
+          {segments?.map((segment) => {
+            const from = frameToScreen(view, segment.from); const to = frameToScreen(view, segment.to);
+            return <g key={segment.index} data-route-hop={segment.index} data-selected={segment.selected}>
+              <title>{segment.selected ? "Selected: " : ""}{segment.label}; schematic endpoint link</title>
+              <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="currentColor" strokeWidth={segment.selected ? 5 : 2} strokeDasharray={segment.selected ? "10 4" : "3 5"} />
+              <circle cx={from.x} cy={from.y} r={segment.selected ? 6 : 3} fill="Canvas" stroke="currentColor" strokeWidth={2} />
+              <circle cx={to.x} cy={to.y} r={segment.selected ? 6 : 3} fill="currentColor" />
+            </g>;
+          })}
           {image.pins.map((pin) => {
             const at = frameToScreen(view, pin.pixel);
             return (
@@ -223,7 +244,7 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
   );
 }
 
-function overlayLabel(image: AtlasImage, marker: Placement | null): string {
+function overlayLabel(image: MapViewProps["image"], marker: Placement | null): string {
   const pins = `${image.pins.length} reference pin${image.pins.length === 1 ? "" : "s"}`;
   return marker === null
     ? `Map overlay with ${pins} and no snapshot marker`
