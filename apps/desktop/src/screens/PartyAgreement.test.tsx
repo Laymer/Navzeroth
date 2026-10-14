@@ -83,3 +83,61 @@ it("does not claim absence or permit replacement when the proposal read failed",
   expect(screen.getByRole("button", { name: "Propose this estimate" })).toBeDisabled();
   expect(screen.queryByText(/No local proposal/)).not.toBeInTheDocument();
 });
+
+it("exports only after all local acceptances for the explicitly chosen recipient and current guard", async () => {
+  const agreed = initial(); agreed.state = "agreed"; agreed.guard.revision = 3;
+  agreed.participants = agreed.participants.map((p) => ({ ...p, accepted: true }));
+  const calls: unknown[] = [];
+  const adapter: CommandAdapter = { invoke(command, input) {
+    if (command === "export_agreed_party_plan") { calls.push(input); return Promise.resolve({ text: "ANAV1:recipient-only", byte_count: 20, plan_id: "recipient-plan", expires_at_utc_ms: 100 } as never); }
+    return Promise.resolve(agreed as never);
+  } };
+  render(<PartyAgreement client={createClient(adapter)} partyId="duo" refreshKey={0} planning={null} />);
+  await screen.findByText(/Every participant explicitly accepted/);
+  const button = screen.getByRole("button", { name: "Export agreed plan for recipient" });
+  expect(button).toBeDisabled();
+  fireEvent.change(screen.getByLabelText("Export recipient"), { target: { value: "two" } });
+  fireEvent.click(button);
+  await screen.findByLabelText("Recipient plan text");
+  expect(JSON.parse((calls[0] as { text: string }).text)).toEqual({ party_id: "duo", expected: agreed.guard, recipient_profile_id: "two" });
+  expect(screen.getByLabelText("Recipient plan text")).toHaveValue("ANAV1:recipient-only");
+  fireEvent.change(screen.getByLabelText("Export recipient"), { target: { value: "one" } });
+  expect(screen.queryByLabelText("Recipient plan text")).not.toBeInTheDocument();
+});
+it("blocks export for awaiting or invalidated agreement", async () => {
+  const adapter: CommandAdapter = { invoke() { return Promise.resolve(initial() as never); } };
+  render(<PartyAgreement client={createClient(adapter)} partyId="duo" refreshKey={0} planning={null} />);
+  await screen.findByText(/Awaiting explicit acceptance/);
+  expect(screen.getByLabelText("Export recipient")).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Export agreed plan for recipient" })).toBeDisabled();
+});
+it("discards late recipient export after refresh and refreshes agreement on backend invalidation", async () => {
+  let agreed = initial(); agreed = { ...agreed, state: "agreed", participants: agreed.participants.map((p) => ({ ...p, accepted: true })) };
+  let finish: ((value: never) => void) | undefined; let invalidated = false;
+  const adapter: CommandAdapter = { invoke(command) {
+    if (command === "export_agreed_party_plan") return new Promise<never>((resolve) => { finish = resolve; });
+    return Promise.resolve({ ...agreed, state: invalidated ? "invalidated" : "agreed" } as never);
+  } };
+  const client = createClient(adapter); const view = render(<PartyAgreement client={client} partyId="duo" refreshKey={0} planning={null} />);
+  await screen.findByText(/Every participant explicitly accepted/);
+  fireEvent.change(screen.getByLabelText("Export recipient"), { target: { value: "one" } });
+  fireEvent.click(screen.getByRole("button", { name: "Export agreed plan for recipient" }));
+  invalidated = true; view.rerender(<PartyAgreement client={client} partyId="duo" refreshKey={1} planning={null} />);
+  await screen.findByText(/Agreement invalidated/);
+  await act(async () => finish?.({ text: "ANAV1:obsolete", byte_count: 14, plan_id: "obsolete", expires_at_utc_ms: 100 } as never));
+  expect(screen.queryByLabelText("Recipient plan text")).not.toBeInTheDocument();
+});
+it("backend export refusal refreshes authoritative agreement and exposes no export bytes", async () => {
+  const agreed = { ...initial(), state: "agreed" as const, participants: initial().participants.map((p) => ({ ...p, accepted: true })) }; let failed = false;
+  const adapter: CommandAdapter = { invoke(command) {
+    if (command === "export_agreed_party_plan") { failed = true; return Promise.reject({ code: "SNAPSHOT_OUTDATED", message: "Agreement changed", retryable: false }); }
+    return Promise.resolve({ ...agreed, state: failed ? "invalidated" : "agreed" } as never);
+  } };
+  render(<PartyAgreement client={createClient(adapter)} partyId="duo" refreshKey={0} planning={null} />);
+  await screen.findByText(/Every participant explicitly accepted/);
+  fireEvent.change(screen.getByLabelText("Export recipient"), { target: { value: "one" } });
+  fireEvent.click(screen.getByRole("button", { name: "Export agreed plan for recipient" }));
+  await screen.findByText(/Agreement invalidated/);
+  expect(screen.getByRole("alert")).toHaveTextContent("Agreement changed");
+  expect(screen.queryByLabelText("Recipient plan text")).not.toBeInTheDocument();
+});
