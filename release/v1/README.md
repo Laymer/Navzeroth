@@ -146,5 +146,9 @@ options. For previews, `stable_ready=false` and the blocker list remain visible 
 when publication is allowed. The six source declarations and seven internal
 Cargo.lock versions must match the requested version. Stable packaging calls the
 gate before touching output files, including with `-AddonOnly` or `-AllowDirty`.
+It rejects ignored/untracked addon inputs and symlink/reparse entries because the
+ZIP and installer recursively package that directory; an ignored file cannot
+silently become a source-bound artifact. Stable builds rerun readiness after
+building, before checksums are finalized, to detect changes made by build tools.
 The tag workflow reruns the gate before creating any GitHub draft. Stable packages
 require Cargo; existing preview addon-only packaging retains its no-toolchain use.

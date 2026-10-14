@@ -310,6 +310,26 @@ function Assert-ReleaseReadiness([string] $Version) {
         return
     }
     if ($parts[0].StartsWith('0.')) { return }
+    # Git status respects ignores, while both New-AddonZip and the installer
+    # resource mapping recursively include addon files. Refuse extra bytes and
+    # reparse points before either path can package them, even with AllowDirty.
+    $extra = Get-NativeOutput 'git' @('-C', $RepoRoot, 'ls-files', '--others', '--', "addons/$AddonName/")
+    if ($null -eq $extra) { throw 'Cannot inspect stable addon packaging inputs.' }
+    if ($extra) { throw 'Stable addon packaging inputs contain untracked or ignored files.' }
+    $addonRoot = Join-Path (Join-Path $RepoRoot 'addons') $AddonName
+    $pending = New-Object 'Collections.Generic.Stack[string]'
+    $pending.Push($addonRoot)
+    $count = 0
+    while ($pending.Count -gt 0) {
+        $directory = Get-Item -LiteralPath $pending.Pop() -Force
+        if ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Stable addon inputs contain a reparse point.' }
+        foreach ($entry in Get-ChildItem -LiteralPath $directory.FullName -Force) {
+            $count++
+            if ($count -gt 250000) { throw 'Stable addon inputs exceed verification bounds.' }
+            if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Stable addon inputs contain a reparse point.' }
+            if ($entry.PSIsContainer) { $pending.Push($entry.FullName) }
+        }
+    }
     if (-not (Test-Command 'cargo')) { throw 'Stable packaging requires the locked Rust release-readiness gate.' }
     Push-Location $RepoRoot
     try {
@@ -405,6 +425,9 @@ if (Test-Path -LiteralPath $notesPath -PathType Leaf) {
     Copy-Item -LiteralPath $notesPath -Destination $candidateNotes -Force
     $artifacts += $candidateNotes
 }
+# Tool-driven builds must not add packaging inputs or modify tested production
+# bytes after the first gate. Refuse before checksums/upload can finalize them.
+Assert-ReleaseReadiness $version
 Write-Checksums $artifacts
 Assert-CleanTree 'after the build'
 

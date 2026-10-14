@@ -280,6 +280,44 @@ fn tree(root: &Path, revision: &str) -> Result<Tree> {
         files,
     })
 }
+fn addon_inputs(root: &Path, candidate: &Tree) -> Result<()> {
+    // Both the ZIP and Tauri resource mapping recursively package this tree.
+    // Git status omits ignored files, so inspect the actual input directory too.
+    let mut pending = vec![root.join("addons/AzerothNavigator")];
+    let mut count = 0usize;
+    while let Some(directory) = pending.pop() {
+        checked_path(&directory, true)?;
+        for entry in fs::read_dir(directory).map_err(|_| "Addon inputs cannot be inspected")? {
+            let entry = entry.map_err(|_| "Addon inputs cannot be inspected")?;
+            count += 1;
+            if count > release::MAX_RECORDS {
+                return Err("Addon packaging inputs exceed verification bounds");
+            }
+            let path = entry.path();
+            let metadata =
+                fs::symlink_metadata(&path).map_err(|_| "Addon input metadata is unavailable")?;
+            if is_link(&metadata) {
+                return Err("Addon packaging inputs contain a symlink or reparse path");
+            }
+            if metadata.is_dir() {
+                pending.push(path);
+            } else if metadata.is_file() {
+                let path = path
+                    .strip_prefix(root)
+                    .map_err(|_| "Addon input is outside the repository")?
+                    .to_str()
+                    .ok_or("Addon input paths must be UTF-8")?
+                    .replace('\\', "/");
+                if !candidate.files.contains(&path) {
+                    return Err("Addon packaging inputs contain an untracked or ignored file");
+                }
+            } else {
+                return Err("Addon packaging inputs contain an unsupported file kind");
+            }
+        }
+    }
+    Ok(())
+}
 fn string_value(value: &str) -> Result<String> {
     serde_json::from_str(value.trim().trim_end_matches(','))
         .map_err(|_| "Invalid source version declaration")
@@ -766,6 +804,9 @@ pub fn report(options: &Options) -> Result<Report> {
     )?;
     if !status.is_empty() {
         readiness.block("Production working tree contains tracked or untracked changes");
+    }
+    if let Err(message) = addon_inputs(&root, &candidate) {
+        readiness.block(message);
     }
     if tested.len() == 40 && tested.bytes().all(|b| b.is_ascii_hexdigit()) {
         if git(&root, &["merge-base", "--is-ancestor", tested, "HEAD"]).is_err()

@@ -76,6 +76,26 @@ exit 37
             Check "$version rejection retains previous artifacts" (([IO.File]::ReadAllText($sentinel)) -eq 'preserve previous artifact')
         }
     }
+    Set-Version '1.0.0'
+    Write-Text '.gitignore' "*.log`ntarget/`n"
+    foreach ($relative in @('addons/AzerothNavigator/private.log', 'addons/AzerothNavigator/target/extra.lua')) {
+        Write-Text $relative 'Ignored bytes must never enter a stable artifact.'
+        $output = Join-Path $testRoot ('ignored-' + [Guid]::NewGuid().ToString('N'))
+        New-Item -ItemType Directory -Path $output | Out-Null
+        $sentinel = Join-Path $output 'SHA256SUMS.txt'
+        [IO.File]::WriteAllText($sentinel, 'preserve previous artifact')
+        if (Test-Path -LiteralPath $env:NAVZEROTH_TEST_CARGO_CALLED) { Remove-Item -LiteralPath $env:NAVZEROTH_TEST_CARGO_CALLED }
+        $saved = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $result = & $Shell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File (Join-Path $testRoot 'scripts/windows/Build-Windows.ps1') -AddonOnly -AllowDirty -OutputDirectory $output 2>&1 | Out-String
+            $code = $LASTEXITCODE
+        } finally { $ErrorActionPreference = $saved }
+        Check "$relative is refused before invoking Cargo" (-not (Test-Path -LiteralPath $env:NAVZEROTH_TEST_CARGO_CALLED))
+        Check "$relative stable package is refused" ($code -ne 0 -and $result.Contains('untracked or ignored'))
+        Check "$relative refusal retains previous artifacts" (([IO.File]::ReadAllText($sentinel)) -eq 'preserve previous artifact')
+        Remove-Item -LiteralPath (Join-Path $testRoot $relative)
+    }
     Write-Host "All $count release packaging checks passed."
 } finally {
     $env:PATH = $oldPath

@@ -184,6 +184,35 @@ fn untracked_product_and_staged_product_are_blockers() {
     ));
 }
 #[test]
+fn ignored_addon_inputs_are_blocked_even_with_a_clean_git_status() {
+    let temp = Temp::new("1.0.0");
+    temp.write(".gitignore", "*.log\ntarget/\n");
+    temp.commit();
+    temp.bind("1.0.0");
+    assert!(!blocked(
+        &report(&temp.options("1.0.0")).unwrap(),
+        "Addon packaging inputs"
+    ));
+    for name in [
+        "addons/AzerothNavigator/private.log",
+        "addons/AzerothNavigator/target/extra.lua",
+    ] {
+        temp.write(name, "must not enter a source-bound package");
+        assert!(temp.git(&["status", "--porcelain"]).is_empty());
+        let result = report(&temp.options("1.0.0")).unwrap();
+        assert!(
+            blocked(
+                &result,
+                "Addon packaging inputs contain an untracked or ignored file"
+            ),
+            "{}: {:?}",
+            name,
+            result.readiness.blockers
+        );
+        fs::remove_file(temp.0.join(name)).unwrap();
+    }
+}
+#[test]
 fn missing_or_nonancestor_tested_commit_is_not_accepted() {
     let temp = Temp::new("1.0.0");
     temp.bind("1.0.0");
