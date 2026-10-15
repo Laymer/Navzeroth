@@ -69,7 +69,18 @@ artifact verification, the operator closed WoW again. Installed all 21 files fro
 the downloaded, source-verified `809ba1f` package with a new private backup and
 unchanged SavedVariables. Main follow-up checks were still running. The requested
 manual test uses `guided-char2`: snapshot, explicit start-quests, exactly one
-operator-performed turn-in, stop/export/reload. Actual callback result is pending.
+operator-performed turn-in, stop/export/reload. The operator confirmed exactly one quest turned in, export/reload complete and
+no errors. Actual strict inspection validates fixture=false, target70374 tuple,
+five events, exactly one quest-turn-in and max relative elapsed41,604ms. This
+verifies the narrow normal-event callback/export flow on the identified package.
+
+A temporary local verifier (outside Git) used the existing inert parser/typed
+contracts and SnapshotApplication service on an isolated in-memory database to
+import this actual snapshot and session together. It succeeded, with0ms observed
+activity,41,604ms unclassified and0ms gaps. No personal database changed, no raw
+identifiers were printed, and no native UI/Windows acceptance is inferred. Actual
+paused-event exclusion, restrictions, full session analysis and final candidate
+scenarios remain unverified.
 
 ## Remaining release requirements
 
@@ -82,8 +93,8 @@ fingerprints. Production SHA256:
 `51bdce28c68867edf66f8deda827198b529712159ece926b43e9be365a50d6ad`.
 No fingerprint, evidence or packaging gate was bypassed.
 
-Next: inspect the pending turn-in export and operator result, verify resulting main
-`83f38c8`, and finish this documentation PR through normal checks. Continue complete
+Next: verify resulting main `83f38c8` and finish this documentation PR through
+normal checks. The actual development turn-in and import verification are complete. Continue complete
 licensed target content and supported advancement/deviation work only with actual
 inputs. Freeze 1.0.0 only after production/content/static readiness, then complete
 all required candidate-bound live/Windows scenarios and full-corpus performance.

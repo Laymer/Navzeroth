@@ -122,3 +122,23 @@ The operator reports C_EventUtils.IsEventValid and IsCallbackEvent as functions,
 and IsEventValid returned true for QUEST_TURNED_IN and QUEST_LOG_UPDATE. This is
 only reported event availability; callback dispatch and payload remain unverified.
 The opt-in recorder implementation uses only QUEST_TURNED_IN, with no log polling.
+
+
+## Opt-in turn-in callback and service import — 2026-10-15
+
+PR151 final head9cf62df passed all nine checks plus three source jobs and merged
+as83f38c8. Its checked preview package source809ba1f has the identical entire tree.
+All package hashes and21addon file bytes were verified. With the operator-confirmed
+game closed, installed those files, saved a private backup and verified project
+SavedVariables unchanged. Version stays0.8.1; main follow-up checks are separate.
+
+The operator used a distinct anonymous profile for the level13character, explicitly
+started quest mode, turned in exactly one quest and stopped/exported/reloaded with
+no errors. Actual strict inspection validates fixturefalse and the target tuple,
+five events, one quest-turn-in event and41,604ms maximum session-relative elapsed.
+An isolated in-memory desktop application service imported the actual snapshot and
+recording together:0ms observed,41,604ms unclassified,0ms gap. This is actual data
+consumption on the Linux service, not native Windows UI acceptance or active time.
+Raw exports remain private. No objective/turn-in history mapping, automatic plan
+advancement/deviation, loot fact or final acceptance row is inferred. Paused-event
+exclusion and restricted conditions remain synthetic-only for this binding.
