@@ -3,7 +3,7 @@
   "checked_on": "2026-10-15",
   "build": {
     "generator_version": "0.8.1",
-    "generator_sha256": "dda396318801bf9ddf2291412aa6f218ec3cf1123b99c0d89491b022003bf3b3",
+    "generator_sha256": "837e665fd907e8d73ac6514d49ba7448e13cfd656ad8bee4e87e4f1192bbca26",
     "format": "navzeroth-source-build",
     "schema_version": 1,
     "registry_sha256": "2e0946e6c87fb3b0cf53cf79d15b28ef1fdc2a2b9eac39d7cdcd0ae381d672cd",

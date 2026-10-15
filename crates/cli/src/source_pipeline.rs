@@ -185,7 +185,7 @@ fn verify(bytes: &[u8], material: &Material) -> Result<()> {
 fn cache_path(cache: &Path, hash: &str) -> PathBuf {
     cache.join(hash)
 }
-fn fetch(material: &Material, revision: &str) -> Result<Vec<u8>> {
+fn fetch(material: &Material, revision: &str, remaining_bytes: u64) -> Result<Vec<u8>> {
     // Automatic retrieval currently supports only publisher GitHub raw paths
     // pinned to this exact immutable source revision. Other hosts stay local.
     let path = material
@@ -201,7 +201,13 @@ fn fetch(material: &Material, revision: &str) -> Result<Vec<u8>> {
     {
         return Err("Source retrieval URL is not pinned to the admitted revision");
     }
-    let maximum = material.bytes.unwrap_or(source_admission::MAX_FILE_BYTES);
+    let maximum = material
+        .bytes
+        .unwrap_or(source_admission::MAX_FILE_BYTES)
+        .min(remaining_bytes);
+    if maximum == 0 || material.bytes.is_some_and(|n| n > maximum) {
+        return Err("Source retrieval would exceed remaining byte budget");
+    }
     let bytes = https_get(&material.url, maximum)?;
     verify(&bytes, material)?;
     Ok(bytes)
@@ -362,7 +368,12 @@ fn sync_registry(options: &Options, registry: &Registry, raw: &[u8]) -> Result<S
                     }
                 }
                 last_request = Some(Instant::now());
-                let bytes = fetch(material, &source.revision)?;
+                let remaining = source
+                    .retrieval
+                    .max_total_bytes
+                    .saturating_sub(total)
+                    .min(source_admission::MAX_RETRIEVAL_BYTES.saturating_sub(retained_bytes));
+                let bytes = fetch(material, &source.revision, remaining)?;
                 // Verify aggregate bound before publishing the downloaded object.
                 if total + bytes.len() as u64 > source.retrieval.max_total_bytes {
                     return Err("Source closure exceeds aggregate byte budget");
@@ -788,4 +799,29 @@ fn updates(registry: &Registry, policy: &UpdatesPolicy) -> Vec<Update> {
         });
     }
     rows
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn exhausted_or_smaller_transport_budget_is_refused_before_fetch() {
+        let mut material = Material {
+            url: format!(
+                "https://raw.githubusercontent.com/fixture/repo/{}/data",
+                "a".repeat(40)
+            ),
+            sha256: "0".repeat(64),
+            bytes: Some(1024),
+        };
+        assert_eq!(
+            fetch(&material, &"a".repeat(40), 1023).err(),
+            Some("Source retrieval would exceed remaining byte budget")
+        );
+        material.bytes = None;
+        assert_eq!(
+            fetch(&material, &"a".repeat(40), 0).err(),
+            Some("Source retrieval would exceed remaining byte budget")
+        );
+    }
 }
