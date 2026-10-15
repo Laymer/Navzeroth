@@ -139,7 +139,8 @@ fn relative(root: &Path, path: &Path) -> Result<AssetPath> {
 #[derive(Default)]
 struct Budget {
     bytes: u64,
-    verified: BTreeMap<String, (u64, String)>,
+    verified: BTreeMap<PathBuf, (u64, String)>,
+    charged: BTreeMap<PathBuf, u64>,
 }
 impl Budget {
     fn add(&mut self, bytes: u64) -> Result<()> {
@@ -152,6 +153,18 @@ impl Budget {
         }
         Ok(())
     }
+    fn charge(&mut self, path: &Path, bytes: u64) -> Result<()> {
+        if let Some(old) = self.charged.get(path) {
+            return if *old == bytes {
+                Ok(())
+            } else {
+                Err("Release input size changed")
+            };
+        }
+        self.add(bytes)?;
+        self.charged.insert(path.to_owned(), bytes);
+        Ok(())
+    }
     fn read(&mut self, path: &Path, limit: usize) -> Result<Vec<u8>> {
         checked_path(path, false)?;
         let file = File::open(path).map_err(|_| "Release file cannot be opened")?;
@@ -162,7 +175,7 @@ impl Budget {
         if size > limit as u64 {
             return Err("Release file exceeds its size limit");
         }
-        self.add(size)?;
+        self.charge(path, size)?;
         let mut bytes = Vec::new();
         file.take(limit as u64 + 1)
             .read_to_end(&mut bytes)
@@ -173,8 +186,9 @@ impl Budget {
         Ok(bytes)
     }
     fn verify(&mut self, root: &Path, reference: &FileRef) -> Result<()> {
+        let path = root.join(reference.path.as_str());
         let expected = (reference.bytes, reference.sha256.as_str().to_owned());
-        if let Some(previous) = self.verified.get(reference.path.as_str()) {
+        if let Some(previous) = self.verified.get(&path) {
             return if *previous == expected {
                 Ok(())
             } else {
@@ -184,9 +198,8 @@ impl Budget {
         if reference.bytes == 0 || reference.bytes > MAX_FILE_BYTES {
             return Err("Evidence file exceeds its size limit");
         }
-        let path = root.join(reference.path.as_str());
         checked_path(&path, false)?;
-        let mut file = File::open(path).map_err(|_| "Evidence file cannot be opened")?;
+        let mut file = File::open(&path).map_err(|_| "Evidence file cannot be opened")?;
         let size = file
             .metadata()
             .map_err(|_| "Evidence metadata is unavailable")?
@@ -194,7 +207,7 @@ impl Budget {
         if size != reference.bytes {
             return Err("Evidence file size does not match");
         }
-        self.add(size)?;
+        self.charge(&path, size)?;
         let mut digest = Sha256::new();
         let mut read = 0u64;
         let mut buffer = [0u8; 64 * 1024];
@@ -216,8 +229,7 @@ impl Budget {
         {
             return Err("Evidence file hash or size does not match");
         }
-        self.verified
-            .insert(reference.path.as_str().to_owned(), expected);
+        self.verified.insert(path, expected);
         Ok(())
     }
 }
@@ -832,10 +844,37 @@ fn packs(
             &pack.manifest,
             crate::pack::MAX_MANIFEST_BYTES,
         )?;
+        // Charge each distinct material before invoking the full verifier. Multiple
+        // passes over the same bounded bytes do not shrink the 1 GiB closure limit.
+        let version = serde_json::from_slice::<Value>(&manifest_bytes)
+            .map_err(|_| "Invalid pack manifest")?
+            .get("schema_version")
+            .and_then(Value::as_u64);
+        if version == Some(2) {
+            let manifest: PackV2 =
+                serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid v2 manifest")?;
+            for file in std::iter::once(&manifest.sources)
+                .chain(std::iter::once(&manifest.catalog))
+                .chain(&manifest.assets)
+                .chain(&manifest.party_support)
+                .chain(&manifest.supporting_files)
+            {
+                budget.verify(pack_root, file)?;
+            }
+        } else {
+            let manifest: PackManifest =
+                serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid manifest")?;
+            budget.verify(pack_root, &manifest.sources)?;
+            for entry in &manifest.entries {
+                for file in std::iter::once(&entry.dataset).chain(&entry.assets) {
+                    budget.verify(pack_root, file)?;
+                }
+            }
+        }
         // Existing verifier is authoritative for strict fields, canonical bytes,
         // exact trees, distribution, coordinates/references and PNG verification.
         let report = crate::pack::verify(pack_root)?;
-        budget.add(report.total_bytes as u64)?;
+
         if report.fixtures != 0 || report.coverage_gaps != 0 || !report.distribution_eligible {
             return Err(
                 "Release pack has fixture content, coverage gaps or ineligible distribution",
@@ -1161,6 +1200,20 @@ mod tests {
             publication_allowed: true,
             blockers: vec![],
         }
+    }
+    #[test]
+    fn repeated_material_reads_charge_distinct_closure_bytes_once() {
+        let mut budget = Budget::default();
+        let path = Path::new("/synthetic/catalog.json");
+        budget.charge(path, MAX_TOTAL_BYTES).unwrap();
+        budget.charge(path, MAX_TOTAL_BYTES).unwrap();
+        assert_eq!(budget.bytes, MAX_TOTAL_BYTES);
+        assert!(budget.charge(path, MAX_TOTAL_BYTES - 1).is_err());
+        assert!(
+            budget
+                .charge(Path::new("/synthetic/extra.json"), 1)
+                .is_err()
+        );
     }
     #[test]
     fn canonical_record_mapping_matches_actual_typed_identity_and_source_sets() {
