@@ -1,28 +1,28 @@
 # Project status
 
-Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: 1.0.0 source admission, inventory, guided acceptance and candidate contracts.
-Owner: Codex `/root`, baseline `d59aa91`; see [claim](claims/2026-10-15-release-candidates.md).
-Three isolated workers own source admission, inventory automation and acceptance kit.
-Complete licensed 70374 content and real Windows/live evidence remain unavailable.
-Owner: Codex /root, coordinator, baseline `bb3782cbac13b5fb3e6ca8196278ba7fcc427474`.
-The user supplied a new authorized three-worker implementation/release plan for
-Forever `1.60.1.70374`. Foundation PR115 integrated the separately reviewed source,
-runbook, onboarding and release contracts into main `3cf4f0a`; all nine PR and
-post-merge main checks passed. The coordinator owns the versioned coverage/evidence
-contracts. Stable publication
-requires complete mandatory coverage, source permissions and actual acceptance.
-The user reports `1.60.1 / 70374 / 16001`, Windows 11, out of combat and error-free
-diagnostic probe/status with addon 0.8.1. This is narrow reported evidence, not
-snapshot/plan/native acceptance or a hash-verified installed candidate.
-The next integration batch combines reviewed stable-publication enforcement,
-copyable addon exports, guarded 70374 admission, bounded Questie staging and the
-Party planning availability fix. Actual objective mapping remains unsupported.
-The public-source audit accepts neither inspected source for distribution or full
-70374 coverage, so playable content population remains blocked. Current 1.0
-inventory/evidence manifests intentionally block stable publication. See
-[v1 coordination](handoffs/2026-10-14-v1-coordination.md) and
-[release contract](../release/v1/README.md). Existing published release stays 0.8.1.
+Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-15.
+Current task: integrate independently reviewed 1.0 engineering foundations.
+Owner and integration writer: Codex `/root`; implementation baseline `d59aa91`.
+See the [integration handoff](handoffs/2026-10-15-v1-foundation-integration.md)
+for exact merged commits, hosted checks, local verification and remaining work.
+Three requested workers completed their isolated tasks and transferred integration
+ownership to the coordinator. Remaining engineering PRs stay draft until their
+nine hosted checks and dependency merges pass.
+
+The target remains Forever `1.60.1 / 70374 / interface 16001`, across all nine
+content domains. The user identified Wowhead after reporting verbal permission;
+no identifiable dataset, written redistribution grant or independent complete
+inventory has been provided. No source has been admitted. The permission-request
+draft remains unsent. All nine target inventories remain explicitly unknown.
+
+Version 0.8.1 remains the published developer preview. Complete licensed content,
+actual permitted live advancement/deviation/session bindings, operator acceptance
+and full-corpus Windows measurements remain unavailable. The Linux development
+session and hosted Windows smoke checks do not establish interactive acceptance.
+The narrow user-reported build/diagnostic result is not candidate-bound acceptance.
+Do not freeze 1.0.0 versions or publish until the full release gate passes; see the
+[release contract](../release/v1/README.md). The identity image is deferred until
+a published and verified 1.0.0 release, as authorized in the release plan.
 
 ## Previous program closure (historical scope)
 
