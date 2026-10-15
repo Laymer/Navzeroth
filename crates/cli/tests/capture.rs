@@ -143,6 +143,20 @@ fn actual_snapshot_contract_is_validated_without_exposing_identities() {
     let summary = report.snapshot.unwrap();
     assert!(summary.fixture);
     assert_eq!(summary.level, Some(22));
+    assert_eq!(summary.completed_quests, 0);
+    assert_eq!(summary.incomplete_quests, 1);
+    let mut fixture: Value = serde_json::from_str(json).unwrap();
+    fixture["payload"]["quests"]["demo-quest-1"]["completed"]["value"] = json!(true);
+    let text = format!(
+        "AzerothNavigatorDB = {{ snapshot_export = {} }}",
+        serde_json::to_string(&format!("ANAV1:{fixture}")).unwrap()
+    );
+    let complete = azeroth_cli::capture::inspect(&text)
+        .unwrap()
+        .snapshot
+        .unwrap();
+    assert_eq!(complete.completed_quests, 1);
+    assert_eq!(complete.incomplete_quests, 0);
     assert!(!summary.target_tuple_matches);
     assert!(
         azeroth_cli::capture::inspect("AzerothNavigatorDB = {snapshot_export='Private-Name'}")

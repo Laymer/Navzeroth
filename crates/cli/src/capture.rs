@@ -37,6 +37,8 @@ pub struct Snapshot {
     pub clock_trust: azeroth_core::observation::ClockTrust,
     pub quest_records: usize,
     pub quests_with_readable_completion: usize,
+    pub completed_quests: usize,
+    pub incomplete_quests: usize,
     pub equipment_slots: usize,
     pub known_equipment_slots: usize,
     pub objective_records: usize,
@@ -111,6 +113,16 @@ fn snapshot(text: &str) -> Result<Snapshot, &'static str> {
             .quests
             .values()
             .filter(|q| q.completed.value().is_some())
+            .count(),
+        completed_quests: data
+            .quests
+            .values()
+            .filter(|q| q.completed.value() == Some(&true))
+            .count(),
+        incomplete_quests: data
+            .quests
+            .values()
+            .filter(|q| q.completed.value() == Some(&false))
             .count(),
         equipment_slots: data.equipment.len(),
         known_equipment_slots: data

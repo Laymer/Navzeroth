@@ -28,7 +28,7 @@ capability status vocabulary refuses rather than accepting a claimed pass.
 Output contains the diagnostic build tuple and counts, plus an optional validated
 snapshot summary: fixture marker, target-tuple match, level status/value, clock
 trust and counts of quest/equipment/objective records, including readable
-completion flags and known equipment-slot observations. A present session export
+completion flags, separate true/false completion counts and known equipment-slot observations. A present session export
 also passes the existing bounded session contract and yields only fixture/target
 markers, event count, quest turn-in event count and maximum session-relative elapsed milliseconds. This
 maximum is not active play time or a total across sessions. Missing exports remain
