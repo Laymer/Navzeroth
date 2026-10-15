@@ -65,3 +65,8 @@ Desktop integration is a dependent writer's task. Backend pages alone do not
 establish that every UI list is bounded. Full accepted corpus measurement,
 ordinary Windows cached-lookup/focused-planning budgets and real source content
 remain unverified until the licensed corpus and operator environment exist.
+
+The UI obtains its initial identity with `catalog_first_page(scope, collection,
+limit)`. This uses the same cached index and returns offset zero with the bound
+revision/hash. Subsequent pages require those exact values. Callers do not need
+to reserialize the entire content merely to request the first page.
