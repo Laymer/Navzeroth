@@ -22,6 +22,9 @@ pub enum Collection {
     MapEmbeddings,
     Models,
     Dungeons,
+    EquipmentFacts,
+    QuestFacts,
+    AcquisitionFacts,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -92,6 +95,9 @@ impl CatalogIndex {
         add!(MapEmbeddings, data.map_embeddings, child);
         add!(Models, content.models, id);
         add!(Dungeons, content.dungeons, id);
+        add!(EquipmentFacts, content.equipment, item);
+        add!(QuestFacts, content.quest_facts, quest);
+        add!(AcquisitionFacts, content.acquisition_facts, acquisition);
         Ok(index)
     }
     pub fn find(&self, collection: Collection, identity: &str) -> Option<usize> {
@@ -99,6 +105,15 @@ impl CatalogIndex {
         rows.binary_search_by(|row| row.identity.as_str().cmp(identity))
             .ok()
             .map(|i| rows[i].record_index)
+    }
+    pub fn first_page(&self, collection: Collection, limit: usize) -> Result<CatalogPage> {
+        self.page(&PageRequest {
+            revision: self.revision.clone(),
+            catalog_sha256: self.catalog_sha256.clone(),
+            collection,
+            offset: 0,
+            limit,
+        })
     }
     pub fn page(&self, request: &PageRequest) -> Result<CatalogPage> {
         if request.revision != self.revision || request.catalog_sha256 != self.catalog_sha256 {

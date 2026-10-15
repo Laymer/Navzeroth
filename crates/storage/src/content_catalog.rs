@@ -136,6 +136,7 @@ fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
     drop(encoded);
     input.content.validate()?;
     let content = content_v2::decode(encode(&input.content)?.as_bytes())?;
+    catalog_content_sha256(&content)?;
     let registry = SourceRegistry::try_from(input.sources.clone())?;
     let data = &content.reference.payload;
     for evidence in &data.evidence {
@@ -336,11 +337,26 @@ pub fn catalog_content_sha256(
     azeroth_core::types::Sha256Hex::new(format!("{:x}", Sha256::digest(bytes)))
 }
 impl SqliteStore {
+    pub fn catalog_first_page(
+        &self,
+        scope: &ContentScope,
+        collection: azeroth_core::catalog::Collection,
+        limit: usize,
+    ) -> Result<azeroth_core::catalog::CatalogPage> {
+        self.with_catalog_index(scope, |index| index.first_page(collection, limit))
+    }
     pub fn catalog_page(
         &self,
         scope: &ContentScope,
         request: &azeroth_core::catalog::PageRequest,
     ) -> Result<azeroth_core::catalog::CatalogPage> {
+        self.with_catalog_index(scope, |index| index.page(request))
+    }
+    fn with_catalog_index<T>(
+        &self,
+        scope: &ContentScope,
+        read: impl Fn(&azeroth_core::catalog::CatalogIndex) -> Result<T>,
+    ) -> Result<T> {
         let get = |store: &Self| {
             let active = store
                 .active_catalog_revision(scope)?
@@ -361,13 +377,13 @@ impl SqliteStore {
                 && *cached_version == version
                 && *cached_changes == changes
             {
-                return index.page(request);
+                return read(index);
             }
             let index = Arc::new(azeroth_core::catalog::CatalogIndex::new(
                 content,
                 catalog_content_sha256(content)?,
             )?);
-            let page = index.page(request)?;
+            let page = read(&index)?;
             *store.catalog_index_cache.borrow_mut() = Some((id, version, changes, index));
             Ok(page)
         };

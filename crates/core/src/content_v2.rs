@@ -259,13 +259,24 @@ impl Graph<'_> {
         Ok(())
     }
 }
+impl ReferenceContent {
+    /// Matches release canonical record bindings; evidence has a separate budget.
+    pub fn identity_count(&self) -> usize {
+        self.reference.payload.identity_count()
+            + self.models.len()
+            + self.equipment.len()
+            + self.quest_facts.len()
+            + self.acquisition_facts.len()
+            + self.dungeons.len()
+    }
+}
 impl Validate for ReferenceContent {
     fn validate(&self) -> Result<()> {
         if self.format != "navzeroth-reference-content" || self.schema_version != 2 {
             return Err(invalid("Unsupported v2 content or party matrix version"));
         }
         crate::contract::validate_catalog_capacity(
-            self.reference.payload.identity_count() + self.models.len() + self.dungeons.len(),
+            self.identity_count(),
             self.reference.payload.evidence.len(),
         )?;
         self.reference.validate()?;
