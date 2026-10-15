@@ -40,3 +40,12 @@ mock/narrow-width fix dc0783f; all40 Playwright browser tests pass (24.5seconds)
 Directory paths now have an explicit4096byte app boundary. Independent coordinator
 review of bd3d4a4 found no important issue. Pending only coordinated Atlas consistent
 read correction before final integrated test run and draft handoff.
+
+Final integrated validation at614e02f: normal merged inventory63d5f1d (reviewed;
+no important findings), including one-transaction Atlas/catalog pages/marker reads
+and actual source attribution/licence display. Full azeroth-app test suite passed;
+all207 desktop tests in35files, typecheck, lint, strict app all-target Clippy,
+formatting and diff checks passed. Full40 browser suite passed before this Rust-only
+consistency correction (no browser test inputs changed). Root owns frozen consumer
+and Atlas branch integration. This importer branch is ready for independent review
+and protected-main checks; no pending app/UI edits remain with this worker.
