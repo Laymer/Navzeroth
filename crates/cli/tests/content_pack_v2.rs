@@ -108,6 +108,9 @@ fn add_party(input: &Path, retarget: bool) {
     if retarget {
         change(&path, target_context);
     }
+    change(&path, |v| {
+        v["reference"]["payload"]["quests"][0]["evidence"] = json!(["demo-evidence-1"])
+    });
     let content = content_v2::decode(&fs::read(&path).unwrap()).unwrap();
     // Hash the exact builder's canonical typed catalog, not authored whitespace.
     let bytes = canonical(&serde_json::to_value(content).unwrap());

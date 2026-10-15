@@ -40,28 +40,34 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
     if !catalog.revisions.insert(revision.to_owned()) {
         return Err("Duplicate dataset revision across release packs");
     }
-    let sources: BTreeSet<String> = data
+    let evidence: BTreeMap<_, _> = data
         .evidence
         .iter()
-        .map(|e| e.source.as_str().to_owned())
-        .chain(data.map_images.iter().map(|i| i.source.as_str().to_owned()))
+        .map(|e| (&e.id, e.source.as_str().to_owned()))
         .collect();
-    if sources.is_empty() {
-        return Err("Release dataset has no recorded sources");
-    }
+    let sources = |ids: &[crate::types::EvidenceId]| -> Result<BTreeSet<String>> {
+        ids.iter()
+            .map(|id| {
+                evidence
+                    .get(id)
+                    .cloned()
+                    .ok_or("Unresolved record provenance")
+            })
+            .collect()
+    };
     for quest in &data.quests {
         add_record(
             catalog,
             "quests",
             json!([revision, "quests", quest.id]),
-            &sources,
+            &sources(&quest.evidence)?,
         )?;
         for stage in &quest.stages {
             add_record(
                 catalog,
                 "quests",
                 json!([revision, "quest_stages", quest.id, stage]),
-                &sources,
+                &sources(&quest.evidence)?,
             )?;
         }
     }
@@ -70,7 +76,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
             catalog,
             "equipment",
             json!([revision, "items", item.key.item_id, item.key.variant]),
-            &sources,
+            &sources(&item.evidence)?,
         )?;
     }
     for source in &data.acquisitions {
@@ -78,7 +84,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
             catalog,
             "acquisition",
             json!([revision, "acquisitions", source.id]),
-            &sources,
+            &sources(&source.evidence)?,
         )?;
     }
     for map in &data.map_spaces {
@@ -92,22 +98,28 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
                 map.key.floor,
                 map.key.instance
             ]),
-            &sources,
+            &sources(&map.evidence)?,
         )?;
     }
     for image in &data.map_images {
+        let mut image_sources = sources(&image.evidence)?;
+        image_sources.insert(image.source.as_str().to_owned());
+        image_sources.extend(sources(&image.calibration_evidence)?);
+        for applicable in &image.applicable_builds {
+            image_sources.extend(sources(&applicable.evidence)?);
+        }
         add_record(
             catalog,
             "geography",
             json!([revision, "map_images", image.id]),
-            &sources,
+            &image_sources,
         )?;
         for pin in &image.pins {
             add_record(
                 catalog,
                 "geography",
                 json!([revision, "map_pins", image.id, pin.id]),
-                &sources,
+                &sources(&pin.evidence)?,
             )?;
         }
     }
@@ -125,7 +137,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
                 map.parent.floor,
                 map.parent.instance
             ]),
-            &sources,
+            &sources(&map.evidence)?,
         )?;
     }
     for node in &data.nodes {
@@ -133,7 +145,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
             catalog,
             "travel",
             json!([revision, "nodes", node.id]),
-            &sources,
+            &BTreeSet::new(),
         )?;
     }
     for edge in &data.edges {
@@ -141,7 +153,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
             catalog,
             "travel",
             json!([revision, "edges", edge.id]),
-            &sources,
+            &sources(&edge.evidence)?,
         )?;
     }
     for objective in &data.objectives {
@@ -149,7 +161,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
             catalog,
             "quests",
             json!([revision, "objectives", objective.id]),
-            &sources,
+            &sources(&objective.evidence)?,
         )?;
     }
     for rule in &data.rules {
@@ -157,7 +169,7 @@ fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
             catalog,
             "reminders",
             json!([revision, "rules", rule.id]),
-            &sources,
+            &sources(&rule.evidence)?,
         )?;
     }
     Ok(())
