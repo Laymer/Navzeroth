@@ -407,3 +407,39 @@ fn packs_in_evidence_only_paths_cannot_evade_production_fingerprint() {
         "Pack manifest must be tracked production data"
     ));
 }
+
+#[test]
+fn candidate_command_defers_initial_binding_without_waiving_content_or_integrity() {
+    let temp = Temp::new("0.8.1");
+    let mut e = temp.json(EVIDENCE);
+    e["inventory_sha256"] = json!(digest(&fs::read(temp.0.join(INVENTORY)).unwrap()));
+    temp.json_write(EVIDENCE, &e);
+    temp.commit();
+    let result = Command::new(env!("CARGO_BIN_EXE_azeroth-cli"))
+        .args(["candidate-readiness", "--root"])
+        .arg(&temp.0)
+        .args(["--version", "0.8.1"])
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    let value: Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(value["publication_allowed"], false);
+    assert_eq!(value["candidate_ready"], false); // no complete content
+    assert_eq!(value["pending"].as_array().unwrap().len(), 26);
+    assert!(!value["blockers"].as_array().unwrap().iter().any(|v| {
+        v.as_str()
+            .unwrap()
+            .contains("Tested source commit is missing or invalid")
+    }));
+    e["tested_source_commit"] = json!("f".repeat(40));
+    temp.json_write(EVIDENCE, &e);
+    let report = report(&temp.options("0.8.1")).unwrap();
+    assert!(!report.readiness.candidate_ready);
+    assert!(
+        report
+            .readiness
+            .blockers
+            .iter()
+            .any(|v| v.contains("Tested source"))
+    );
+}
