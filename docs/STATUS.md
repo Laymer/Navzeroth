@@ -21,8 +21,9 @@ actual permitted live advancement/deviation/session bindings, operator acceptanc
 and full-corpus Windows measurements remain unavailable. The Linux development
 session and hosted Windows smoke checks do not establish interactive acceptance.
 The narrow user-reported build/diagnostic result is not candidate-bound acceptance.
-Do not freeze 1.0.0 versions or publish until the full release gate passes; see the
-[release contract](../release/v1/README.md). The identity image is deferred until
+Freeze 1.0.0 versions only after complete licensed content, static readiness and
+production work are complete. Then run candidate-bound acceptance; publish only
+after the full release gate passes. See the [release contract](../release/v1/README.md). The identity image is deferred until
 a published and verified 1.0.0 release, as authorized in the release plan.
 
 ## Previous program closure (historical scope)
