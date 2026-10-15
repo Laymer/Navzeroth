@@ -35,6 +35,20 @@ fn catalog_keeps_cross_region_graph_references_and_refuses_missing_ones() {
         .as_array_mut()
         .unwrap()
         .push(other);
+    let mut cross_node = base["payload"]["nodes"][0].clone();
+    cross_node["id"] = "region-two-node".into();
+    cross_node["position"]["map"] = base["payload"]["map_spaces"][1]["key"].clone();
+    let mut cross_edge = base["payload"]["edges"][0].clone();
+    cross_edge["id"] = "cross-region-edge".into();
+    cross_edge["to"] = json!({"id":"region-two-node","map":cross_node["position"]["map"]});
+    base["payload"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(cross_node);
+    base["payload"]["edges"]
+        .as_array_mut()
+        .unwrap()
+        .push(cross_edge);
     let parsed = decode(&serde_json::to_vec(&content(base.clone())).unwrap()).unwrap();
     assert_eq!(parsed.reference.payload.map_spaces.len(), 2);
     base["payload"]["map_spaces"] = json!([]);

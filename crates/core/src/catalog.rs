@@ -22,6 +22,9 @@ pub enum Collection {
     MapEmbeddings,
     Models,
     Dungeons,
+    EquipmentFacts,
+    QuestFacts,
+    AcquisitionFacts,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -92,6 +95,9 @@ impl CatalogIndex {
         add!(MapEmbeddings, data.map_embeddings, child);
         add!(Models, content.models, id);
         add!(Dungeons, content.dungeons, id);
+        add!(EquipmentFacts, content.equipment, item);
+        add!(QuestFacts, content.quest_facts, quest);
+        add!(AcquisitionFacts, content.acquisition_facts, acquisition);
         Ok(index)
     }
     pub fn find(&self, collection: Collection, identity: &str) -> Option<usize> {
