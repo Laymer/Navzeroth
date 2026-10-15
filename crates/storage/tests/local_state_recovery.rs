@@ -8,8 +8,8 @@ fn extra_future_history_row_refuses_without_destination_or_source_writes() {
     drop(SqliteStore::open(&source.path).unwrap());
     raw(&source.path)
         .execute(
-            "INSERT INTO schema_migrations(version,name) VALUES(11,'unsupported future')",
-            [],
+            "INSERT INTO schema_migrations(version,name) VALUES(?1,'unsupported future')",
+            [azeroth_storage::migrations::latest_version() + 1],
         )
         .unwrap();
     let bytes = std::fs::read(&source.path).unwrap();

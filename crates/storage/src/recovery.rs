@@ -241,6 +241,7 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
         let store = SqliteStore {
             conn: output,
             catalog_cache: Default::default(),
+            catalog_index_cache: Default::default(),
         };
         validate(&store)?;
         // A backup can preserve references, but cannot authenticate a successful

@@ -263,11 +263,10 @@ impl Validate for ReferenceContent {
         if self.format != "navzeroth-reference-content" || self.schema_version != 2 {
             return Err(invalid("Unsupported v2 content or party matrix version"));
         }
-        if self.reference.payload.identity_count() + self.models.len() + self.dungeons.len()
-            > MAX_CATALOG_IDENTITIES
-        {
-            return Err(invalid("V2 catalog identity capacity exceeded"));
-        }
+        crate::contract::validate_catalog_capacity(
+            self.reference.payload.identity_count() + self.models.len() + self.dungeons.len(),
+            self.reference.payload.evidence.len(),
+        )?;
         self.reference.validate()?;
         if !self.reference.extensions.is_empty() {
             return Err(invalid("V2 content excludes untyped exchange extensions"));

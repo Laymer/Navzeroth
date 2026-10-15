@@ -9,7 +9,7 @@ use azeroth_core::{
     contract::ReferenceDataset,
     coverage::content_report,
     error::{Result, Validate},
-    sources::{RecordKey, SourceConflict, SourceRecord, SourceRegistry},
+    sources::{ConflictKind, RecordKey, SourceConflict, SourceRecord, SourceRegistry},
     types::{DataContext, DatasetRevision},
 };
 use rusqlite::{Connection, TransactionBehavior, params};
@@ -149,7 +149,14 @@ fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
         }
     }
     for image in &data.map_images {
-        registry.ensure_registered(&image.source)?;
+        let source = registry.ensure_registered(&image.source)?;
+        if source
+            .editions
+            .value()
+            .is_some_and(|editions| !editions.contains(&image.map.context.build.edition))
+        {
+            return Err(invalid("Catalog image source edition differs"));
+        }
     }
     let evidence: BTreeSet<_> = data.evidence.iter().map(|e| &e.id).collect();
     let items: BTreeSet<_> = data.items.iter().map(|i| &i.key).collect();
@@ -157,7 +164,8 @@ fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
     let context = content.reference.data_context();
     let mut conflicts = input.conflicts.clone();
     for conflict in &mut conflicts {
-        if conflict.key.context() != &context
+        if (conflict.others.is_empty() && conflict.kind != ConflictKind::CrossEditionRelabel)
+            || conflict.key.context() != &context
             || conflict.others.len() > 1024
             || !evidence.contains(&conflict.preferred)
             || conflict
@@ -300,13 +308,75 @@ impl SqliteStore {
         let changes = self.conn.total_changes();
         if let Some((cached_id, cached_version, cached_changes, catalog)) =
             self.catalog_cache.borrow().as_ref()
+            && *cached_id == id
+            && *cached_version == version
+            && *cached_changes == changes
         {
-            if *cached_id == id && *cached_version == version && *cached_changes == changes {
-                return Ok(catalog.clone());
-            }
+            return Ok(catalog.clone());
         }
         let catalog = content::load(&self.conn, id)?;
         *self.catalog_cache.borrow_mut() = Some((id, version, changes, catalog.clone()));
         Ok(catalog)
     }
 }
+
+/// Exact content-pack canonical bytes: sorted JSON object keys, pretty, newline.
+/// The v1 revision hash function and historical manifest bytes are unchanged.
+pub fn catalog_content_sha256(
+    content: &ReferenceContent,
+) -> Result<azeroth_core::types::Sha256Hex> {
+    use sha2::{Digest, Sha256};
+    let value = serde_json::to_value(content).map_err(|_| storage("Catalog cannot serialize"))?;
+    let mut bytes =
+        serde_json::to_vec_pretty(&value).map_err(|_| storage("Catalog cannot serialize"))?;
+    bytes.push(b'\n');
+    if bytes.len() > MAX_CONTENT_BYTES {
+        return Err(invalid("Canonical catalog exceeds byte capacity"));
+    }
+    azeroth_core::types::Sha256Hex::new(format!("{:x}", Sha256::digest(bytes)))
+}
+impl SqliteStore {
+    pub fn catalog_page(
+        &self,
+        scope: &ContentScope,
+        request: &azeroth_core::catalog::PageRequest,
+    ) -> Result<azeroth_core::catalog::CatalogPage> {
+        let get = |store: &Self| {
+            let active = store
+                .active_catalog_revision(scope)?
+                .ok_or_else(|| invalid("No active catalog"))?;
+            let content = active
+                .content_v2()
+                .ok_or_else(|| invalid("Catalog pages require v2 content"))?;
+            let id = content::find(&store.conn, &active.key())?
+                .ok_or_else(|| storage("Active catalog identity missing"))?;
+            let version: i64 = store
+                .conn
+                .pragma_query_value(None, "data_version", |r| r.get(0))
+                .db()?;
+            let changes = store.conn.total_changes();
+            if let Some((cached_id, cached_version, cached_changes, index)) =
+                store.catalog_index_cache.borrow().as_ref()
+                && *cached_id == id
+                && *cached_version == version
+                && *cached_changes == changes
+            {
+                return index.page(request);
+            }
+            let index = Arc::new(azeroth_core::catalog::CatalogIndex::new(
+                content,
+                catalog_content_sha256(content)?,
+            )?);
+            let page = index.page(request)?;
+            *store.catalog_index_cache.borrow_mut() = Some((id, version, changes, index));
+            Ok(page)
+        };
+        if self.conn.is_autocommit() {
+            self.with_immediate_read(get)
+        } else {
+            get(self)
+        }
+    }
+}
+
+pub(crate) type Cache<T> = std::cell::RefCell<Option<(i64, i64, u64, T)>>;

@@ -18,7 +18,9 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
-pub use crate::content_catalog::{ActiveContentRevision, ContentRevisionV2};
+pub use crate::content_catalog::{
+    ActiveContentRevision, ContentRevisionV2, catalog_content_sha256,
+};
 
 pub const MAX_CONTENT_REVISIONS: usize = 1024;
 pub const MAX_CONTENT_RECORDS: usize = 1024;

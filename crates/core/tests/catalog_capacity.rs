@@ -40,3 +40,53 @@ fn catalog_keeps_cross_region_graph_references_and_refuses_missing_ones() {
     base["payload"]["map_spaces"] = json!([]);
     assert!(decode(&serde_json::to_vec(&content(base)).unwrap()).is_err());
 }
+#[test]
+fn indexed_pages_are_revision_bound_and_at_most_200_rows() {
+    use azeroth_core::{
+        catalog::{CatalogIndex, Collection, PageRequest},
+        types::Sha256Hex,
+    };
+    let mut base = reference();
+    let item = base["payload"]["items"][0].clone();
+    for n in 0..401 {
+        let mut next = item.clone();
+        next["key"]["item_id"] = format!("page-item-{n}").into();
+        base["payload"]["items"].as_array_mut().unwrap().push(next);
+    }
+    let content = decode(&serde_json::to_vec(&content(base)).unwrap()).unwrap();
+    let digest = Sha256Hex::new("a".repeat(64)).unwrap();
+    let index = CatalogIndex::new(&content, digest.clone()).unwrap();
+    let mut request = PageRequest {
+        revision: content.reference.payload.revision.clone(),
+        catalog_sha256: digest,
+        collection: Collection::Items,
+        offset: 0,
+        limit: 200,
+    };
+    let page = index.page(&request).unwrap();
+    assert_eq!(page.rows.len(), 200);
+    assert_eq!(page.next_offset, Some(200));
+    assert_eq!(
+        index.find(Collection::Items, &page.rows[0].identity),
+        Some(page.rows[0].record_index)
+    );
+    request.offset = 200;
+    assert_eq!(index.page(&request).unwrap().rows.len(), 200);
+    request.offset = 400;
+    assert!(index.page(&request).unwrap().rows.len() < 200);
+    request.limit = 201;
+    assert!(index.page(&request).is_err());
+    request.limit = 0;
+    assert!(index.page(&request).is_err());
+    request.limit = 200;
+    request.catalog_sha256 = Sha256Hex::new("b".repeat(64)).unwrap();
+    assert!(index.page(&request).is_err());
+}
+#[test]
+fn catalog_identity_and_evidence_limits_are_independent_and_do_not_truncate() {
+    use azeroth_core::contract::validate_catalog_capacity;
+    assert!(validate_catalog_capacity(250_000, 250_000).is_ok());
+    assert!(validate_catalog_capacity(250_001, 0).is_err());
+    assert!(validate_catalog_capacity(0, 250_001).is_err());
+    assert!(validate_catalog_capacity(usize::MAX, 0).is_err());
+}

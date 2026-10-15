@@ -321,13 +321,7 @@ impl ReferenceDataset {
 impl Payload for CatalogDataset {
     const KIND: ContractKind = ContractKind::ReferenceDataset;
     fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()> {
-        if self.identity_count() > MAX_CATALOG_IDENTITIES
-            || self.evidence.len() > MAX_CATALOG_EVIDENCE
-        {
-            return Err(crate::error::invalid(
-                "Reference catalog exceeds identity or evidence capacity",
-            ));
-        }
+        validate_catalog_capacity(self.identity_count(), self.evidence.len())?;
         self.0.validate_reference(header, MAX_CATALOG_IDENTITIES)
     }
 }
@@ -341,6 +335,15 @@ pub(crate) fn unique_catalog<T: Ord>(values: impl IntoIterator<Item = T>) -> Res
         if seen.len() > MAX_CATALOG_IDENTITIES {
             return Err(crate::error::invalid("Catalog identity capacity exceeded"));
         }
+    }
+    Ok(())
+}
+
+pub fn validate_catalog_capacity(identities: usize, evidence: usize) -> Result<()> {
+    if identities > MAX_CATALOG_IDENTITIES || evidence > MAX_CATALOG_EVIDENCE {
+        return Err(crate::error::invalid(
+            "Reference catalog exceeds identity or evidence capacity",
+        ));
     }
     Ok(())
 }

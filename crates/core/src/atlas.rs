@@ -3,12 +3,16 @@
 //! explains, never a guessed marker. No clock, no I/O.
 use crate::{
     contract::ReferenceDataset,
-    entities::{Confidence, CoordinateTransformData, MAX_EMBEDDING_DEPTH, MapImage, PIXEL_UNITS},
+    entities::{
+        Confidence, CoordinateTransformData, MAX_EMBEDDING_DEPTH, MapEmbedding, MapImage,
+        PIXEL_UNITS,
+    },
     observation::ObservationStatus,
     types::*,
 };
 use schemars::JsonSchema;
 use serde::Serialize;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// Why a position could not be placed on an image.
 #[derive(Clone, Debug, PartialEq, Serialize, JsonSchema)]
@@ -61,9 +65,6 @@ pub struct Projection {
     pub calibration_confidence: Option<Confidence>,
 }
 
-fn same_space(a: &MapKey, b: &MapKey) -> bool {
-    a.map_id == b.map_id && a.floor == b.floor && a.instance == b.instance
-}
 fn confidence_rank(c: Confidence) -> u8 {
     match c {
         Confidence::VerifiedOnBuild => 0,
@@ -74,12 +75,61 @@ fn confidence_rank(c: Confidence) -> u8 {
         Confidence::DisputedOrStale => 5,
     }
 }
-fn weakest_confidence(image: &MapImage, dataset: &ReferenceDataset) -> Option<Confidence> {
-    dataset
-        .evidence
+/// Borrowed lookup cache for projecting a batch against one immutable catalog.
+pub struct ProjectionIndex<'a> {
+    images: BTreeMap<(MapId, Option<InstanceId>), Vec<&'a MapImage>>,
+    embeddings: BTreeMap<&'a MapKey, &'a MapEmbedding>,
+    embedding_spaces: BTreeSet<(MapId, FloorId, Option<InstanceId>)>,
+    confidence: BTreeMap<&'a EvidenceId, Confidence>,
+}
+impl<'a> ProjectionIndex<'a> {
+    pub fn new(dataset: &'a ReferenceDataset) -> Self {
+        let mut images: BTreeMap<_, Vec<_>> = BTreeMap::new();
+        for image in &dataset.map_images {
+            images
+                .entry((image.map.map_id.clone(), image.map.instance.clone()))
+                .or_default()
+                .push(image);
+        }
+        Self {
+            images,
+            embeddings: dataset
+                .map_embeddings
+                .iter()
+                .map(|e| (&e.child, e))
+                .collect(),
+            embedding_spaces: dataset
+                .map_embeddings
+                .iter()
+                .map(|e| {
+                    (
+                        e.child.map_id.clone(),
+                        e.child.floor.clone(),
+                        e.child.instance.clone(),
+                    )
+                })
+                .collect(),
+            confidence: dataset
+                .evidence
+                .iter()
+                .map(|e| (&e.id, e.confidence))
+                .collect(),
+        }
+    }
+    #[allow(clippy::result_large_err)]
+    pub fn project(
+        &self,
+        position: &Position,
+        context: &DataContext,
+    ) -> Result<Projection, ProjectionGap> {
+        project_indexed(position, context, self)
+    }
+}
+fn weakest_confidence(image: &MapImage, index: &ProjectionIndex<'_>) -> Option<Confidence> {
+    image
+        .calibration_evidence
         .iter()
-        .filter(|e| image.calibration_evidence.contains(&e.id))
-        .map(|e| e.confidence)
+        .filter_map(|id| index.confidence.get(id).copied())
         .max_by_key(|c| confidence_rank(*c))
 }
 
@@ -94,6 +144,14 @@ pub fn project_position(
     context: &DataContext,
     dataset: &ReferenceDataset,
 ) -> Result<Projection, ProjectionGap> {
+    ProjectionIndex::new(dataset).project(position, context)
+}
+#[allow(clippy::result_large_err)]
+fn project_indexed(
+    position: &Position,
+    context: &DataContext,
+    index: &ProjectionIndex<'_>,
+) -> Result<Projection, ProjectionGap> {
     if position.map.context.namespace != context.namespace {
         return Err(ProjectionGap::NamespaceMismatch);
     }
@@ -105,7 +163,12 @@ pub fn project_position(
     for _ in 0..=MAX_EMBEDDING_DEPTH {
         let mut floors = Vec::new();
         let mut build_mismatch = None;
-        for image in &dataset.map_images {
+        for image in index
+            .images
+            .get(&(current.map_id.clone(), current.instance.clone()))
+            .into_iter()
+            .flatten()
+        {
             if image.map.map_id != current.map_id || image.map.instance != current.instance {
                 continue;
             }
@@ -125,12 +188,12 @@ pub fn project_position(
                 });
                 continue;
             }
-            return place(image, dataset, build, x, y, via);
+            return place(image, index, build, x, y, via);
         }
         if let Some(gap) = build_mismatch {
             return Err(gap);
         }
-        let embedding = dataset.map_embeddings.iter().find(|e| e.child == current);
+        let embedding = index.embeddings.get(&current);
         match embedding {
             Some(embedding) => {
                 if via.is_empty() {
@@ -145,11 +208,11 @@ pub fn project_position(
                 current = embedding.parent.clone();
             }
             None => {
-                if dataset
-                    .map_embeddings
-                    .iter()
-                    .any(|e| same_space(&e.child, &current) && e.child.context != current.context)
-                {
+                if index.embedding_spaces.contains(&(
+                    current.map_id.clone(),
+                    current.floor.clone(),
+                    current.instance.clone(),
+                )) {
                     return Err(ProjectionGap::BuildMismatch {
                         position_build: build.clone(),
                         image: None,
@@ -181,7 +244,7 @@ pub fn project_position(
 #[allow(clippy::result_large_err)]
 fn place(
     image: &MapImage,
-    dataset: &ReferenceDataset,
+    index: &ProjectionIndex<'_>,
     build: &BuildKey,
     x: Normalized,
     y: Normalized,
@@ -222,7 +285,7 @@ fn place(
         pixel,
         notices,
         calibration_evidence: image.calibration_evidence.clone(),
-        calibration_confidence: weakest_confidence(image, dataset),
+        calibration_confidence: weakest_confidence(image, index),
     })
 }
 
