@@ -149,6 +149,9 @@ fn round_trip_and_committed_registry_admit_no_source() {
 fn rejects_ambiguous_urls_and_windows_path_aliases() {
     for value in [
         "https:///file",
+        "https://127.0.0.1/file",
+        "https://127.1/file",
+        "https://0x7f.0x1/file",
         "https://:443/file",
         "https://host:443/file",
         "https://host./file",

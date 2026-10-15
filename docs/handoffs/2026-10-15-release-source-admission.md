@@ -42,3 +42,10 @@ credentials, percent escapes or trailing dot), reuses AssetPath portability rule
 case-insensitively and rejects case-colliding file names. Exact upstream path case
 is retained. Six focused tests now pass, including malformed authorities and
 reserved/trailing-dot/space paths; strict Clippy/fmt/whitespace checks pass.
+
+Acceptance peer review additionally identified numeric IP authorities passing the
+DNS-label subset. The final-label rule now permits alphabetic or punycode DNS
+suffixes only; IPv4, shortened IPv4 and hexadecimal numeric forms have regression
+coverage. All six focused tests and strict Clippy passed after this correction.
+Network adapters must still validate destinations/resolution and enforce policy;
+this registry parser is not a network security boundary.

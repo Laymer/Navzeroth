@@ -141,6 +141,9 @@ fn url(s: &str) -> bool {
     // encoded authority, IP literals, trailing dot or alternate parser forms.
     authority.len() <= 253
         && authority.contains('.')
+        && authority.rsplit('.').next().is_some_and(|label| {
+            label.bytes().all(|c| c.is_ascii_alphabetic()) || label.starts_with("xn--")
+        })
         && authority.split('.').all(|label| {
             !label.is_empty()
                 && label.len() <= 63
