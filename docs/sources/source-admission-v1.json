@@ -371,6 +371,58 @@
           "transformation": "model_source_v1"
         }
       ]
+    },
+    {
+      "id": "allthethings-forever-riverglades",
+      "revision": "bf97402174a017c1ffe2b710e0ba9ac9eb7c169b",
+      "publisher": "ATTWoWAddon/AllTheThings",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "permissive",
+        "license_identifier": "MIT",
+        "reviewer": "Codex /root, 2026-10-15; independently researched by existing source-admission worker",
+        "attribution": "Copyright (c) 2026 AllTheThings WoW Addon; https://github.com/ATTWoWAddon/AllTheThings",
+        "obligations": "Retain exact MIT copyright/permission/warranty notices with original source and derived declarations. Preserve upstream URL, raw symbolic fields and unknown build. No media, external generated database, inferred flight edges or target70374 validation is included.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/ATTWoWAddon/AllTheThings/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b/LICENSE",
+            "revision": "bf97402174a017c1ffe2b710e0ba9ac9eb7c169b",
+            "sha256": "955281b9174e0f66b08c8e83d31e0f38b2fcaa247ca3af92d1723d81a13cddfb",
+            "reviewed_scope": "Retain the complete editable MIT source for reproducibility; transform only fp3276, cr257087, raw coord60.6/81.6/MAP.RIVERGLADES and ALLIANCE_ONLY declarations in this exact editable source. Exclude other groups/prose from derivation, and exclude generated data/media, symbol resolution, directed connections, access/unlock/cost/target-build/completeness claims. The portable path identifies the exact retained repository object; the immutable URL preserves the original upstream path. No selected-file exception/import notice found; explicit incremental authorship and published MIT cover this narrow declaration."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_pinned",
+        "max_total_bytes": 8513,
+        "minimum_interval_ms": 1000,
+        "max_requests": 2,
+        "access_evidence": {
+          "url": "https://raw.githubusercontent.com/ATTWoWAddon/AllTheThings/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b/LICENSE",
+          "revision": "bf97402174a017c1ffe2b710e0ba9ac9eb7c169b",
+          "sha256": "955281b9174e0f66b08c8e83d31e0f38b2fcaa247ca3af92d1723d81a13cddfb",
+          "reviewed_scope": "Published MIT grant permits copying the exact reviewed public GitHub source and licence. Serial bounded immutable raw-file HTTPS only, no redirects/authentication, whole-repository extraction, imported code execution or new revision retrieval. Metadata discovery is separately permitted in source-updates-v1.json."
+        }
+      },
+      "files": [
+        {
+          "path": "content/source-materials/objects/1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae",
+          "url": "https://raw.githubusercontent.com/ATTWoWAddon/AllTheThings/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b/.contrib/.db/forever/zones/eastern%20kingdoms/riverglades.lua",
+          "sha256": "1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae",
+          "bytes": 7434,
+          "fields": [
+            "travel.declared_flight_point_id",
+            "travel.declared_npc_id",
+            "geography.declared_coordinate_tuple",
+            "travel.declared_access_symbol"
+          ],
+          "transformation": "att_flight_point_v1"
+        }
+      ]
     }
   ]
 }

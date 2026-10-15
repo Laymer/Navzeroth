@@ -4,9 +4,10 @@ Owner: Codex `/root` (implementation/integration ownership transferred from the
 source-admission worker); original contract baseline `d59aa91`.
 Continuation claim: `24646a6`, pipeline PR147.
 
-The [registry](source-admission-v1.json) admits **three narrow source scopes**:
+The [registry](source-admission-v1.json) admits **four narrow source scopes**:
 AtlasLootClassic original declarations (GPL2), Mapzeroth Retail EK node literals
-(MIT) and a WoWSims paladin implementation pointer (MIT). Seven exact original
+(MIT), a WoWSims paladin implementation pointer (MIT), and four raw ATT Forever
+Riverglades flight-point fields (MIT). Nine exact original
 and licence objects are retained for the [offline pipeline](../data/SOURCE_PIPELINE.md).
 Eight other candidate/exclusion entries remain unavailable to acquisition.
 The pure Rust `azeroth_core::source_admission` contract is a prerequisite
@@ -120,3 +121,20 @@ registry integrity is bound by the current evidence file reference and independe
 review, just like permission proofs. No network retrieval or grant authentication
 is performed by the gate. Preview repositories with no accepted sources retain
 their existing behavior, and the committed registry still admits zero sources.
+
+
+## Upstream paths with encoded spaces
+
+Source HTTPS URLs admit canonical `%20` in the path, preserving upstream directory
+names containing spaces. Other percent encodings, encoded authorities, literal
+spaces, query/fragment/userinfo and encoded separators/dots/double escapes remain
+refused. No URL path is decoded into a local filename. AssetPath and exchange
+formats are unchanged. ATT's registry file path names its actual retained Git
+object under `content/source-materials/objects/`; its immutable URL and NOTICE
+preserve `.contrib/.db/forever/zones/eastern kingdoms/riverglades.lua` exactly.
+
+This source is publisher-declared Forever content with unknown origin build.
+Its four fields are a point/NPC/coordinate tuple/access symbol, not a directed
+flight connection, calibrated position or resolved eligibility. The initially
+investigated Ashenvale quest declaration was withdrawn upstream in bf974021;
+it is excluded from admitted inputs, not declared invalid in the target client.

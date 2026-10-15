@@ -3,24 +3,24 @@
   "checked_on": "2026-10-15",
   "build": {
     "generator_version": "0.8.1",
-    "generator_sha256": "837e665fd907e8d73ac6514d49ba7448e13cfd656ad8bee4e87e4f1192bbca26",
+    "generator_sha256": "f0b11ab2affdb641dc993d9ecee00cea590a4d07cbf6b08d4b9290df2575359b",
     "format": "navzeroth-source-build",
     "schema_version": 1,
-    "registry_sha256": "2e0946e6c87fb3b0cf53cf79d15b28ef1fdc2a2b9eac39d7cdcd0ae381d672cd",
-    "plan_sha256": "c707fa1bdbb86c00759f88d5e36e2d8bfab7b03d6394cb99c493a028a653f7a7",
-    "catalog_sha256": "ac2d4ecac0a62082aef56830abc2bcc9f59ceda10f2a8c6f594ab1c574bca00c",
-    "source_closure_sha256": "df63a700e0e50881137154c546dfc46f406266f9cba3a99ec6f48963a0776c26",
+    "registry_sha256": "5fa984b5f28a2efc2d6538d8d324dba73027069be8578cb3398ebe9202c4e8c4",
+    "plan_sha256": "c43ea72ebf9a1a91ea844033ae90a1339d08cc127bf4a3a39239c00922daef8d",
+    "catalog_sha256": "e547520e6788ea8ae30630d83a8d0193883829008352c3b8312e59995d11d524",
+    "source_closure_sha256": "2a34e60e164b164a13a732c1a7c91e22f9a89e6cc18a81d6a93353cdbe19da70",
     "publication_authorized": false,
-    "facts": 1681
+    "facts": 1685
   },
   "comparison": {
-    "platform": "Linux local PowerShell7 and hosted Linux/Windows",
-    "byte_identical_files": 13,
-    "hosted_windows_parity": "passed",
-    "workflow_run": "https://github.com/Laymer/Navzeroth/actions/runs/38767261441",
-    "tested_source_commit": "fbf540b2e03b65bb0b5edff0bbcc642d2fd589a2",
-    "artifact_material_and_transformation_source": "Knowledge documents, originals/licences and selected transformation code verified; pre-fix full source archives withdrawn because git archive expanded LFS images. Fixed archive workflow pending hosted confirmation.",
-    "withdrawn_pre_fix_artifacts": 8
+    "platform": "Linux local PowerShell7; new hosted Linux/Windows checks pending",
+    "byte_identical_files": 15,
+    "hosted_windows_parity": "pending",
+    "workflow_run": null,
+    "tested_source_commit": null,
+    "baseline_source_commit": "840939f7118d8022c1a12513f05f4571889a95a2",
+    "artifact_material_and_transformation_source": "Two actual offline builds match; all nine exact source/licence objects included. New hosted complete source/archive inspection pending. Current generator/input hashes identify this working implementation."
   },
   "domains": [
     {
@@ -46,14 +46,14 @@
     },
     {
       "domain": "geography",
-      "source_facts": 896,
+      "source_facts": 897,
       "target_facts": 0,
       "conflicts": 0,
       "required_inventory": null
     },
     {
       "domain": "travel",
-      "source_facts": 0,
+      "source_facts": 3,
       "target_facts": 0,
       "conflicts": 0,
       "required_inventory": null
@@ -88,8 +88,8 @@
     }
   ],
   "limitations": [
-    "Historical source knowledge only; no playable pack activation",
-    "All independent target inventory counts unknown",
-    "Native Windows interactive and live 70374 checks unverified"
+    "Publisher-declared/historical source references only; no playable pack activation",
+    "All independent target inventory counts unknown; no target-usable source facts",
+    "Full candidate live/native acceptance remains unverified; narrow source-identified development flows recorded separately"
   ]
 }

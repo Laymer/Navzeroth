@@ -31,14 +31,15 @@ plus original Forever observations. Provider correspondence is optional; specifi
 rights, target coverage and operator acceptance remain required. See the
 [research handoff](handoffs/2026-10-15-independent-source-strategy.md).
 
-Independent build continuation: three narrow published-licence scopes are now
-admitted (AtlasLootClassic declarations, Mapzeroth Retail node literals and a
-WoWSims source pointer), with seven original/licence objects retained in Git.
+Independent build continuation: four narrow published-licence scopes are now
+admitted (AtlasLootClassic declarations, Mapzeroth Retail node literals, a
+WoWSims source pointer and ATT Forever Riverglades point declarations), with nine
+original/licence objects retained in Git.
 The [offline pipeline](data/SOURCE_PIPELINE.md) builds a deterministic uniform
 source-knowledge catalog, preserving source origin, all candidates, conflicts,
 unknowns and reliable/trusted-fresh precedence. Optional bounded GitHub metadata
 checks discover updates without changing admission. Linux/Windows automation
-compares offline products. The current 1,681 reference facts contain zero
+compares offline products. The current 1,685 reference facts contain zero
 verified target-usable facts; all nine required inventories remain unknown. This
 is not an activated gameplay pack or a complete 70374 corpus. See the
 [pipeline handoff](handoffs/2026-10-15-offline-source-pipeline.md) for actual checks
@@ -52,12 +53,15 @@ operator-authorized addon update installed all 21 files from checked main
 `e45eed1`; prior addon/data were backed up and SavedVariables hashes stayed
 unchanged. A permitted persisted 70374 snapshot now parses (level 30, 30 quest
 records, 19 equipment slots, uncertain clock). The operator confirmed displayed build/level and no
-errors after probe, snapshot and reload; manual recorder checks are in progress.
+errors after probe, snapshot and reload. A seven-event manual session validates;
+both trusted capture and uncertainty after reload are persisted. The separate
+quest-completion getter is integrated in PR149; patched-client results are pending.
 The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
 the new bounded inspection command. No release acceptance row is promoted.
 
 Version 0.8.1 remains the published developer preview. Complete licensed content,
-actual permitted live advancement/deviation/session bindings, operator acceptance
+remaining live advancement/deviation bindings, complete session milestone
+observations, final operator acceptance
 and full-corpus Windows measurements remain unavailable. The Linux development
 session and hosted Windows smoke checks do not establish interactive acceptance.
 The narrow user-reported build/diagnostic result is not candidate-bound acceptance.
