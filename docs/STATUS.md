@@ -45,6 +45,17 @@ is not an activated gameplay pack or a complete 70374 corpus. See the
 and integration state. Publisher replies are not required for these admitted
 works. Complete target content and actual observations remain required.
 
+Development acceptance continuation: native Windows PowerShell 5.1 is reachable
+from the Linux development session. All 118 synthetic helper checks passed there;
+these do not establish interactive Windows acceptance. With the game closed, the
+operator-authorized addon update installed all 21 files from checked main
+`e45eed1`; prior addon/data were backed up and SavedVariables hashes stayed
+unchanged. A permitted persisted 70374 snapshot now parses (level 30, 30 quest
+records, 19 equipment slots, uncertain clock). The operator confirmed displayed build/level and no
+errors after probe, snapshot and reload; manual recorder checks are in progress.
+The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
+the new bounded inspection command. No release acceptance row is promoted.
+
 Version 0.8.1 remains the published developer preview. Complete licensed content,
 actual permitted live advancement/deviation/session bindings, operator acceptance
 and full-corpus Windows measurements remain unavailable. The Linux development

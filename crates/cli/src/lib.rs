@@ -1,4 +1,5 @@
 pub mod atlas;
+pub mod capture;
 pub mod content;
 pub mod doctor;
 pub mod foreverdb;
