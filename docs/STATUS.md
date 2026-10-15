@@ -11,10 +11,14 @@ PR checks and verification of preceding main commits. The linked handoff identif
 the final resulting-main workflows; this documentation merge waits for them.
 
 The target remains Forever `1.60.1 / 70374 / interface 16001`, across all nine
-content domains. The user identified Wowhead after reporting verbal permission;
-no identifiable dataset, written redistribution grant or independent complete
-inventory has been provided. No source has been admitted. The permission-request
-draft remains unsent. All nine target inventories remain explicitly unknown.
+content domains. The user selected ForeverDB instead of Wowhead on 2026-10-15;
+see the [provider review](sources/foreverdb.md). ForeverDB is the preferred source
+candidate. Addon 0.34.0 was retrieved from the publisher-linked Wago release and inspected
+as inert files. It advertises GPLv3; corresponding-source/file scope and 70374
+validation are still pending. Publisher metadata currently names origin build
+70338, with separate Classic-derived and player-observed facts. The unsent
+Wowhead request is superseded. No source has been admitted, and all nine target
+inventories remain explicitly unknown.
 
 Version 0.8.1 remains the published developer preview. Complete licensed content,
 actual permitted live advancement/deviation/session bindings, operator acceptance
