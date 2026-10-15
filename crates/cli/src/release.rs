@@ -1,5 +1,6 @@
 //! Release gate I/O: bounded evidence, exact Git/source binding and verified packs.
 //! All referenced game/source material is data; no Lua or SQL is executed.
+mod admission;
 pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -437,6 +438,7 @@ struct PackSources {
 }
 #[derive(Default)]
 struct Catalog {
+    admitted: BTreeMap<String, azeroth_core::source_admission::Source>,
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
     sources: BTreeSet<String>,
@@ -547,6 +549,7 @@ fn bind_v2_pack(
     )?)
     .map_err(|_| "Invalid v2 sources")?;
     for source in sources.sources {
+        admission::pack_source(&source, &catalog.admitted)?;
         let accepted = inventory
             .sources
             .iter()
@@ -583,14 +586,7 @@ fn bind_v2_pack(
     {
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
-    // Full target coverage requires a fact declaration per base record, even
-    // when the record cannot currently supply a known fact. Unknowns are gaps.
-    if content.equipment.len() != data.payload.items.len()
-        || content.quest_facts.len() != data.payload.quests.len()
-        || content.acquisition_facts.len() != data.payload.acquisitions.len()
-    {
-        return Err("V2 catalog lacks mandatory equipment, quest or acquisition facts");
-    }
+    require_complete_v2_facts(&content)?;
     let mut records = v2_catalog_records(&content)?;
     if let Some(support) = &manifest.party_support {
         let matrix = azeroth_core::release_party::SupportMatrix::decode(&checked_ref_bytes(
@@ -636,7 +632,10 @@ fn packs(
         .iter()
         .map(|s| (s.id.as_str(), s.revision.as_str()))
         .collect();
-    let mut catalog = Catalog::default();
+    let mut catalog = Catalog {
+        admitted: admission::load(root, inventory, evidence, budget)?,
+        ..Catalog::default()
+    };
     let mut count = 0;
     for pack in &evidence.packs {
         let manifest_path = root.join(pack.manifest.path.as_str());
@@ -723,6 +722,7 @@ fn packs(
         )?)
         .map_err(|_| "Invalid pack sources")?;
         for source in sources.sources {
+            admission::pack_source(&source, &catalog.admitted)?;
             let Some(revision) = accepted.get(source.id.as_str()) else {
                 return Err("Pack source is not in the accepted inventory");
             };
@@ -798,6 +798,12 @@ fn bind_records(
                 for id in ids {
                     required.insert(id.as_str());
                     if let Some(record_sources) = records.get(id) {
+                        if record_sources.is_empty() {
+                            report.block(format!(
+                                "Required record lacks source provenance: {}",
+                                unit.id
+                            ));
+                        }
                         sources.extend(record_sources.iter().map(String::as_str));
                     } else {
                         report.block(format!(
@@ -808,7 +814,6 @@ fn bind_records(
                 }
             }
             if let Some(row) = coverage.get(unit.id.as_str())
-                && !sources.is_empty()
                 && sources != row.source_ids.iter().map(String::as_str).collect()
             {
                 report.block(format!(
@@ -967,15 +972,39 @@ pub fn report(options: &Options) -> Result<Report> {
     })
 }
 
+fn require_complete_v2_facts(
+    content: &azeroth_core::content_v2::ReferenceContent,
+) -> std::result::Result<(), &'static str> {
+    // Full target coverage requires a fact declaration per base record, even
+    // when the record cannot currently supply a known fact. Unknowns are gaps.
+    if content.node_facts.len() != content.reference.payload.nodes.len()
+        || content.equipment.len() != content.reference.payload.items.len()
+        || content.quest_facts.len() != content.reference.payload.quests.len()
+        || content.acquisition_facts.len() != content.reference.payload.acquisitions.len()
+    {
+        return Err("V2 catalog lacks mandatory node, equipment, quest or acquisition facts");
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use azeroth_core::release::{Completeness, DomainInventory, Status, Unit, UnitCoverage};
+    use serde_json::json;
     fn sample() -> (Catalog, Inventory, Evidence) {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
         let text =
             fs::read_to_string(root.join("fixtures/contracts/v1/reference-dataset.json")).unwrap();
-        let dataset = decode_envelope::<ReferenceDataset>(&text).unwrap();
+        // This isolated mapping fixture explicitly attributes quest/objective
+        // facts; the shared v1 example deliberately leaves their provenance empty.
+        let mut value: Value = serde_json::from_str(&text).unwrap();
+        for collection in ["quests", "objectives"] {
+            for record in value["payload"][collection].as_array_mut().unwrap() {
+                record["evidence"] = json!(["demo-evidence-1"]);
+            }
+        }
+        let dataset = decode_envelope::<ReferenceDataset>(&value.to_string()).unwrap();
         let mut catalog = Catalog::default();
         catalog_dataset(&mut catalog, &dataset).unwrap();
         let records = &catalog.records["quests"];
@@ -1022,6 +1051,42 @@ mod tests {
         }
     }
     #[test]
+    fn full_v2_requires_node_facts_and_source_less_claims_cannot_borrow_other_records() {
+        let mut raw: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/contracts/v2/reference-content.json"
+        ))
+        .unwrap();
+        let content = azeroth_core::content_v2::decode(&serde_json::to_vec(&raw).unwrap()).unwrap();
+        assert!(require_complete_v2_facts(&content).is_err());
+        raw["node_facts"] = Value::Array(
+            raw["reference"]["payload"]["nodes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| json!({"node":n["id"],"evidence":["demo-evidence-1"]}))
+                .collect(),
+        );
+        let content = azeroth_core::content_v2::decode(&serde_json::to_vec(&raw).unwrap()).unwrap();
+        require_complete_v2_facts(&content).unwrap();
+        let (mut catalog, inventory, evidence) = sample();
+        catalog
+            .records
+            .get_mut("quests")
+            .unwrap()
+            .values_mut()
+            .next()
+            .unwrap()
+            .clear();
+        let mut result = mapping_report();
+        bind_records(&mut result, &inventory, &evidence, &catalog);
+        assert!(
+            result
+                .blockers
+                .iter()
+                .any(|v| v.contains("lacks source provenance"))
+        );
+    }
+    #[test]
     fn repeated_material_reads_charge_distinct_closure_bytes_once() {
         let mut budget = Budget::default();
         let path = Path::new("/synthetic/catalog.json");
@@ -1040,7 +1105,7 @@ mod tests {
         let (catalog, inventory, evidence) = sample();
         let mut result = mapping_report();
         bind_records(&mut result, &inventory, &evidence, &catalog);
-        assert!(result.blockers.is_empty());
+        assert!(result.blockers.is_empty(), "{:?}", result.blockers);
         assert!(
             catalog.records["equipment"]
                 .keys()

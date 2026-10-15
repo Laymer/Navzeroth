@@ -85,6 +85,9 @@ pub(super) fn typed(bytes: &[u8]) -> Res<super::ReferenceContent> {
     let parsed: super::ReferenceContent =
         serde_json::from_value(value.clone()).map_err(|_| "Invalid typed content")?;
     let mut comparison = serde_json::to_value(&parsed).map_err(|_| "Invalid typed content")?;
+    if parsed.node_facts.is_empty() && value.get("node_facts").is_some() {
+        comparison["node_facts"] = Value::Array(vec![]);
+    }
     for key in ["map_images", "map_embeddings"] {
         if value
             .pointer(&format!("/reference/payload/{key}"))

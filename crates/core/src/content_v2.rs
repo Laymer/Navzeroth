@@ -31,6 +31,14 @@ pub struct ReferenceContent {
     pub quest_facts: Vec<QuestFacts>,
     pub acquisition_facts: Vec<AcquisitionFacts>,
     pub dungeons: Vec<Dungeon>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub node_facts: Vec<NodeFacts>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct NodeFacts {
+    pub node: NodeId,
+    pub evidence: Vec<EvidenceId>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -268,6 +276,7 @@ impl ReferenceContent {
             + self.quest_facts.len()
             + self.acquisition_facts.len()
             + self.dungeons.len()
+            + self.node_facts.len()
     }
 }
 impl Validate for ReferenceContent {
@@ -292,6 +301,7 @@ impl Validate for ReferenceContent {
             self.quest_facts.len(),
             self.acquisition_facts.len(),
             self.dungeons.len(),
+            self.node_facts.len(),
         ] {
             if n > MAX_CATALOG_IDENTITIES {
                 return Err(invalid("V2 catalog collection capacity exceeded"));
@@ -302,6 +312,7 @@ impl Validate for ReferenceContent {
         crate::contract::unique_catalog(self.quest_facts.iter().map(|r| &r.quest))?;
         crate::contract::unique_catalog(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
         crate::contract::unique_catalog(self.dungeons.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.node_facts.iter().map(|r| &r.node))?;
         let data = &self.reference.payload;
         let g = Graph {
             context: self.reference.data_context(),
@@ -334,6 +345,12 @@ impl Validate for ReferenceContent {
         let acquisitions: BTreeSet<_> = acquisition_index.keys().copied().collect();
         let dungeons: BTreeSet<_> = self.dungeons.iter().map(|d| &d.id).collect();
         let edges: BTreeSet<_> = data.edges.iter().map(|e| &e.id).collect();
+        for facts in &self.node_facts {
+            if !g.nodes.contains_key(&facts.node) {
+                return Err(invalid("V2 node fact does not resolve"));
+            }
+            g.evidence(&facts.evidence)?;
+        }
         for m in &self.models {
             g.evidence(&m.evidence)?;
             m.profile.validate()?;
