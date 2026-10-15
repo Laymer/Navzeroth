@@ -47,6 +47,7 @@ pub struct Session {
     pub fixture: bool,
     pub target_tuple_matches: bool,
     pub events: usize,
+    pub quest_turn_in_events: usize,
     pub maximum_elapsed_ms: Option<u64>,
 }
 
@@ -66,6 +67,17 @@ fn session(text: &str) -> Result<Session, &'static str> {
             && build.build.as_str() == "1.60.1.70374"
             && build.interface.as_str() == "16001",
         events: document.batch.events.len(),
+        quest_turn_in_events: document
+            .batch
+            .events
+            .iter()
+            .filter(|event| {
+                matches!(
+                    event.kind,
+                    azeroth_core::sessions::SessionEventKind::QuestTurnIn { .. }
+                )
+            })
+            .count(),
         maximum_elapsed_ms: document
             .batch
             .events

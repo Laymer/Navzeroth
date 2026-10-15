@@ -55,7 +55,11 @@ unchanged. A permitted persisted 70374 snapshot now parses (level 30, 30 quest
 records, 19 equipment slots, uncertain clock). The operator confirmed displayed build/level and no
 errors after probe, snapshot and reload. A seven-event manual session validates;
 both trusted capture and uncertainty after reload are persisted. The separate
-quest-completion getter is integrated in PR149; patched-client results are pending.
+quest-completion getter is integrated in PR149. Checked main840939f is installed
+with all21files verified, private backup and unchanged SavedVariables; patched
+capture/visual comparison is pending. A separate explicit quest-turn-in recording
+mode passed synthetic checks; actual event dispatch remains unverified. See the
+[milestone handoff](handoffs/2026-10-15-session-quest-milestones.md).
 The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
 the new bounded inspection command. No release acceptance row is promoted.
 

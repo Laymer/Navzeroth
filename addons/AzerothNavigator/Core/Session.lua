@@ -1,4 +1,4 @@
--- Opt-in manual recorder. Pure injected clocks/reads; never starts a timer.
+-- Opt-in recorder with manual lifecycle. Pure injected clocks/reads; no timer.
 local _, ns = ...
 local Session, V = {MAX_EVENTS=128}, ns.Predicate.validation
 local SAFE = 9007199254740991
@@ -80,8 +80,8 @@ function Session.new(monotonic, clock)
     if not document or state.phase~=phase then return nil,'session_' .. phase .. '_required' end
     return true
   end
-  local function unclassified()
-    return {type='activity',label='manual_sample',quality='unclassified'}
+  local function unclassified(label)
+    return {type='activity',label=label or 'manual_sample',quality='unclassified'}
   end
   state.start=function(_,spec)
     if state.phase=='recording' or state.phase=='paused' then return nil,'session_stop_required' end
@@ -120,6 +120,19 @@ function Session.new(monotonic, clock)
     end
     return append({unclassified(),{type='level',level=level}},value)
   end
+  state.questTurnIn=function(_,questId)
+    local ok,code=active('recording');if not ok then return nil,code end
+    local valid,id=pcall(function()
+      check(type(questId)=='number' and questId==questId and questId==math.floor(questId)
+        and questId>0 and questId<=4294967295)
+      return string.format('%.0f',questId)
+    end)
+    if not valid then return fail('session_quest_unreadable') end
+    local value,errorCode=reading();if not value then return nil,errorCode end
+    -- Observing a milestone does not classify the time before it as questing.
+    return append({unclassified('quest_turn_in_interval'),{type='quest_turn_in',quest=id}},value)
+  end
+  state.unavailable=function(_) return fail('session_observation_unavailable') end
   state.pause=function(_)
     local ok,code=active('recording');if not ok then return nil,code end
     local value,errorCode=reading();if not value then return nil,errorCode end

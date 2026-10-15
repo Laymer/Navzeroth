@@ -172,7 +172,23 @@ fn session_summary_validates_transport_and_retains_zero_without_identities() {
     assert!(session.fixture);
     assert!(!session.target_tuple_matches);
     assert_eq!(session.events, 1);
+    assert_eq!(session.quest_turn_in_events, 0);
     assert_eq!(session.maximum_elapsed_ms, Some(0));
+    let mut milestones = document.clone();
+    let mut event = milestones["batch"]["events"][0].clone();
+    event["sequence"] = json!(2);
+    event["kind"] = json!({"type":"quest_turn_in","quest":"Private-Quest"});
+    milestones["batch"]["events"]
+        .as_array_mut()
+        .unwrap()
+        .push(event);
+    let report = azeroth_cli::capture::inspect(&saved(&milestones)).unwrap();
+    assert_eq!(report.session.as_ref().unwrap().quest_turn_in_events, 1);
+    assert!(
+        !serde_json::to_string(&report)
+            .unwrap()
+            .contains("Private-Quest")
+    );
     let mut invalid = document;
     invalid["version"] = json!(2);
     assert!(azeroth_cli::capture::inspect(&saved(&invalid)).is_err());
