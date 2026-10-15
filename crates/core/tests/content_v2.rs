@@ -169,3 +169,14 @@ fn regenerate_content_fixture() {
     )
     .unwrap();
 }
+
+#[test]
+fn extension_facts_cannot_contradict_known_base_semantics() {
+    let mut v = fixture();
+    v["quest_facts"][0]["reset"] = json!({"status":"known","value":{"kind":"repeatable"}});
+    assert!(parse(&v).is_err());
+    let mut v = fixture();
+    v["reference"]["payload"]["acquisitions"][0]["kind"] = "quest".into();
+    v["acquisition_facts"][0]["origin"] = json!({"status":"known","value":{"kind":"craft","recipe":"recipe-1","profession":"profession-1"}});
+    assert!(parse(&v).is_err());
+}
