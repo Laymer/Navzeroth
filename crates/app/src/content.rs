@@ -148,6 +148,9 @@ impl crate::snapshots::SnapshotApplication {
         &self,
         root: &std::path::Path,
     ) -> Result<ContentInspection> {
+        if root.as_os_str().as_encoded_bytes().len() > 4096 {
+            return Err(invalid("Content pack directory exceeds bounds"));
+        }
         let bundle = azeroth_ingest::pack::v2::read_verified(root).map_err(invalid)?;
         let content = azeroth_storage::content::ContentRevisionV2 {
             content: bundle.content,
