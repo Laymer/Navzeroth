@@ -41,6 +41,10 @@
 .PARAMETER AllowDirty
     Do not fail when tracked files differ from HEAD before or after the build.
 
+.PARAMETER AcceptanceCandidate
+    Explicit non-publishable acceptance package. Requires complete licensed content
+    and candidate readiness, writes a source-bound marker, and is forbidden on tags.
+
 .PARAMETER AddonOnly
     Package only the addon (no toolchain, no application build).
 
@@ -54,7 +58,8 @@ param(
     [string] $ExpectedVersion,
     [string] $OutputDirectory,
     [switch] $AllowDirty,
-    [switch] $AddonOnly
+    [switch] $AddonOnly,
+    [switch] $AcceptanceCandidate
 )
 
 Set-StrictMode -Version 3.0
@@ -66,7 +71,10 @@ $AddonName = 'AzerothNavigator'
 $OnWindows = [Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT
 
 $RepoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot (Join-Path '..' '..')))
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path (Join-Path $RepoRoot 'dist') 'windows' }
+if (-not $OutputDirectory) {
+    $folder = if ($AcceptanceCandidate) { 'acceptance-candidate' } else { 'windows' }
+    $OutputDirectory = Join-Path (Join-Path $RepoRoot 'dist') $folder
+}
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 . (Join-Path $PSScriptRoot 'Release-Materials.ps1')
 
@@ -296,6 +304,11 @@ function Assert-CleanTree([string] $When) {
 function Assert-ReleaseReadiness([string] $Version) {
     # Match the CLI's strict version subset. Malformed input must never turn a
     # stable release into an exempt preview. AddonOnly/AllowDirty do not bypass it.
+    if ($AcceptanceCandidate) {
+        if ($env:GITHUB_REF_TYPE -eq 'tag' -or $env:REF_TYPE -eq 'tag') { throw 'Tag builds cannot create acceptance candidates.' }
+        $script:candidateMarker = Get-AcceptanceCandidateMarker $RepoRoot $Version
+        return
+    }
     if (-not (Test-StableReleaseVersion $Version)) { return }
     # Git status respects ignores, while both New-AddonZip and the installer
     # resource mapping recursively include addon files. Refuse extra bytes and
@@ -392,7 +405,7 @@ Assert-ReleaseDestination $OutputDirectory
 # Remove only files an earlier run of this script wrote; never the directory itself.
 if (Test-Path -LiteralPath $OutputDirectory) {
     Get-ChildItem -LiteralPath $OutputDirectory -File |
-        Where-Object { $_.Name -like "$AddonName-*-x64-setup.exe" -or $_.Name -like "$AddonName-addon-*.zip" -or $_.Name -like "$AddonName-materials-*.zip" -or @('SHA256SUMS.txt', 'SOURCE_COMMIT.txt', 'CANDIDATE_NOTES.md', 'RELEASE_MATERIALS.json', 'RELEASE_ASSETS.json') -contains $_.Name } |
+        Where-Object { $_.Name -like "$AddonName-*-x64-setup.exe" -or $_.Name -like "$AddonName-addon-*.zip" -or $_.Name -like "$AddonName-materials-*.zip" -or @('ACCEPTANCE_CANDIDATE.json', 'SHA256SUMS.txt', 'SOURCE_COMMIT.txt', 'CANDIDATE_NOTES.md', 'RELEASE_MATERIALS.json', 'RELEASE_ASSETS.json') -contains $_.Name } |
         Remove-Item
 }
 else { New-Item -ItemType Directory -Path $OutputDirectory | Out-Null }
@@ -418,9 +431,14 @@ if (Test-Path -LiteralPath $notesPath -PathType Leaf) {
 # Tool-driven builds must not add packaging inputs or modify tested production
 # bytes after the first gate. Refuse before checksums/upload can finalize them.
 Assert-ReleaseReadiness $version
+if ($AcceptanceCandidate) {
+    $markerPath = Join-Path $OutputDirectory 'ACCEPTANCE_CANDIDATE.json'
+    [IO.File]::WriteAllText($markerPath, $script:candidateMarker, (New-Object Text.UTF8Encoding($false)))
+    $artifacts += $markerPath
+}
 $artifacts += Write-ReleaseArtifactManifest $RepoRoot $version $OutputDirectory ([bool]$AddonOnly) $materialSelection
 Write-Checksums $artifacts
-Assert-ReleaseArtifacts $RepoRoot $version $OutputDirectory ([bool]$AddonOnly)
+Assert-ReleaseArtifacts $RepoRoot $version $OutputDirectory ([bool]$AddonOnly) ([bool]$AcceptanceCandidate)
 Assert-CleanTree 'after the build'
 
 Write-Step ("Done in {0:N0} s. Release files are in {1}" -f ((Get-Date) - $started).TotalSeconds, $OutputDirectory)
