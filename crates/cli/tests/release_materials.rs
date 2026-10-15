@@ -38,7 +38,28 @@ impl Temp {
             INVENTORY,
             EVIDENCE,
         ] {
-            temp.write(name, &fs::read(root.join(name)).unwrap());
+            // Keep this synthetic preview independent of the release under test.
+            // Stable-version policy is exercised by the readiness tests separately.
+            let source = fs::read_to_string(root.join(name)).unwrap();
+            let current = env!("CARGO_PKG_VERSION");
+            let fixture = if name == "Cargo.lock" {
+                source
+                    .split("[[package]]")
+                    .map(|part| {
+                        if part.trim_start().starts_with("name = \"azeroth-") {
+                            part.replace(&format!("version = \"{current}\""), "version = \"0.8.1\"")
+                        } else {
+                            part.to_owned()
+                        }
+                    })
+                    .collect::<Vec<_>>()
+                    .join("[[package]]")
+            } else if name == INVENTORY || name == EVIDENCE {
+                source
+            } else {
+                source.replace(current, "0.8.1")
+            };
+            temp.write(name, fixture.as_bytes());
         }
         temp.write(".gitignore", b"dist/\ntarget/\n*.log\n");
         if content {

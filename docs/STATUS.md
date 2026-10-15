@@ -1,15 +1,16 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-15.
-Current task: automate independent sources/builds, acquire evidenced target content
-and complete live/native prerequisites.
-Owner and integration writer: Codex `/root`; implementation baseline `d59aa91`.
-See the [integration handoff](handoffs/2026-10-15-v1-foundation-integration.md)
-for exact merged commits, hosted checks, local verification and remaining work.
-Three requested workers completed their isolated tasks and transferred integration
-ownership to the coordinator. Independent engineering in this batch has merged through PR140 after all nine
-PR checks and verification of preceding main commits. The linked handoff identifies
-the final resulting-main workflows; this documentation merge waits for them.
+Current task: publish the user-requested 0.9.0 developer prerelease and provide
+`initial.md`, a detailed Claude Code continuation prompt for gated 1.0.0 delivery.
+Owner and sole writer: Codex `/root`; baseline main
+`cefc3cfcb38dc67231f39feeb3cb18da39bba4f2`, branch `release/v0.9.0`.
+See the [0.9.0 release handoff](handoffs/2026-10-15-v0.9.0-release.md) for actual
+checks and publication state. Preparation alone is not publication; the previous
+published preview remains 0.8.1 until the verified draft is published.
+The [integration handoff](handoffs/2026-10-15-v1-foundation-integration.md) and
+[development evidence closure](handoffs/2026-10-15-development-evidence-closure.md)
+record the preceding work. No final 1.0.0 acceptance is inferred from this release.
 
 The target remains Forever `1.60.1 / 70374 / interface 16001`, across all nine
 content domains. The user selected ForeverDB instead of Wowhead on 2026-10-15;
