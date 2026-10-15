@@ -28,4 +28,6 @@ pub mod search_control;
 
 pub mod submissions;
 
+pub mod release_inventory;
 pub mod release_party;
+pub mod source_admission;
