@@ -1,13 +1,14 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-15.
-Current task: integrate independently reviewed 1.0 engineering foundations.
+Current task: acquire evidenced target content and complete live/native prerequisites.
 Owner and integration writer: Codex `/root`; implementation baseline `d59aa91`.
 See the [integration handoff](handoffs/2026-10-15-v1-foundation-integration.md)
 for exact merged commits, hosted checks, local verification and remaining work.
 Three requested workers completed their isolated tasks and transferred integration
-ownership to the coordinator. Remaining engineering PRs stay draft until their
-nine hosted checks and dependency merges pass.
+ownership to the coordinator. Independent engineering in this batch has merged through PR140 after all nine
+PR checks and verification of preceding main commits. The linked handoff identifies
+the final resulting-main workflows; this documentation merge waits for them.
 
 The target remains Forever `1.60.1 / 70374 / interface 16001`, across all nine
 content domains. The user identified Wowhead after reporting verbal permission;
