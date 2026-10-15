@@ -18,7 +18,7 @@ It never authorizes publication, changes release inventory or admits source righ
 Actual checks:
 
 - `cargo check --locked -p azeroth-cli`: passed.
-- `cargo test --locked -p azeroth-core --lib release_inventory`: 10 passed.
+- `cargo test --locked -p azeroth-core --lib release_inventory`: 12 passed.
 - `cargo test --locked -p azeroth-cli --lib release_inventory`: 4 passed.
 - `cargo clippy --locked -p azeroth-core -p azeroth-cli --all-targets -- -D warnings`: passed.
 - `cargo fmt --all` and `git diff --check`: passed.
@@ -40,3 +40,10 @@ all nine checks. Implement reviewed content v2 contracts/consumers using the
 frozen requirements; accept sources and enumerate their actual target scope before
 populating inventory. Final v2 binding names and party support matrix remain
 coordinator-owned decisions. The preview release remains unchanged.
+
+Follow-up bounds review also limits sources to 4,096 even for an empty target,
+preventing empty per-source comparisons from expanding without the record bound.
+
+Independent source-worker review found mutable source labels and repeated per-source
+record scanning. Fixed with exact 40-hex Git revisions and a domain/source index;
+regressions cover moving refs and many-source unexpected records.

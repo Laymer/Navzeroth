@@ -32,7 +32,8 @@ inventory.
 - `records`: domain, exact record identity, source ID and immutable revision,
   original edition/build (build may remain null), target, target validation status,
   evidence file pins, unresolved conflicts and unsupported corrections. Source
-  pins must match inventory requirements. Inclusion declares neither rights nor
+  pins must match inventory requirements; revisions use the release contract
+  lowercase 40-hex immutable Git commit format (branches/tags are rejected). Inclusion declares neither rights nor
   successful validation. Any failed/unverified record, missing evidence, conflict
   or unapplied correction blocks that identity, even if another source passes.
 - `scenarios`: ID, domain, operator procedure, required record identities,
@@ -62,7 +63,7 @@ independence: the named reviewer must inspect the evidence and methodology.
 The CLI verifies every referenced evidence file's size/hash beneath the selected
 root, rejects symlink/reparse traversal and conflicting pins, and reads at most
 1 GiB of evidence with a 256 MiB per-file bound. Input JSON is at most 16 MiB,
-4,096 units, 250,000 required IDs/imported records/scenarios, 250,000 scenario
+4,096 units/sources, 250,000 required IDs/imported records/scenarios, 250,000 scenario
 dependencies, and 2,500,000 required-ID/source comparison pairs. Oversize inputs
 fail without truncation. These are investigation limits, not v2 catalog limits.
 No personal exports belong in committed evidence; review and sanitize first.

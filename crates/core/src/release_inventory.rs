@@ -133,7 +133,7 @@ impl Input {
             || self.records.len() > MAX_RECORDS
             || self.scenarios.len() > MAX_RECORDS
             || self.enumeration_reviews.len() > DOMAINS.len()
-            || self.inventory.sources.len() > MAX_RECORDS
+            || self.inventory.sources.len() > MAX_UNITS
         {
             return Err("invalid inventory bounds");
         }
@@ -180,7 +180,11 @@ impl Input {
         let mut sources = BTreeMap::new();
         for source in &self.inventory.sources {
             if !nonempty(&source.id)
-                || !nonempty(&source.revision)
+                || source.revision.len() != 40
+                || !source
+                    .revision
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
                 || sources.insert(&source.id, &source.revision).is_some()
             {
                 return Err("invalid or duplicate source requirement");
@@ -364,6 +368,13 @@ pub fn compare(input: &Input) -> Result<Report, &'static str> {
         })
         .map(|r| &r.record_id)
         .collect();
+    let mut by_source: BTreeMap<(&str, &str), BTreeSet<String>> = BTreeMap::new();
+    for record in &input.records {
+        by_source
+            .entry((&record.domain, &record.source_id))
+            .or_default()
+            .insert(record.record_id.clone());
+    }
     for name in DOMAINS {
         let d = input
             .inventory
@@ -434,11 +445,9 @@ pub fn compare(input: &Input) -> Result<Report, &'static str> {
         }
         let mut comparisons = Vec::new();
         for source in &input.inventory.sources {
-            let included: BTreeSet<_> = records
-                .iter()
-                .filter(|r| r.source_id == source.id)
-                .map(|r| r.record_id.clone())
-                .collect();
+            let included = by_source
+                .remove(&(name, source.id.as_str()))
+                .unwrap_or_default();
             comparisons.push(SourceComparison {
                 source_id: source.id.clone(),
                 source_revision: source.revision.clone(),
@@ -515,7 +524,7 @@ mod tests {
         }
         i.inventory.sources.push(SourceRequirement {
             id: "source-a".into(),
-            revision: "immutable-r1".into(),
+            revision: "1111111111111111111111111111111111111111".into(),
         });
         i
     }
@@ -524,7 +533,7 @@ mod tests {
             domain: "quests".into(),
             record_id: id.into(),
             source_id: "source-a".into(),
-            source_revision: "immutable-r1".into(),
+            source_revision: "1111111111111111111111111111111111111111".into(),
             origin_edition: "original-edition".into(),
             origin_build: None,
             target: Target::forever_70374(),
@@ -672,6 +681,42 @@ mod tests {
         );
         i.records[0].domain = "equipment".into();
         assert!(compare(&i).is_err());
+    }
+    #[test]
+    fn empty_inventory_cannot_expand_unbounded_source_comparisons() {
+        let mut i = known();
+        i.inventory.sources = (0..=MAX_UNITS)
+            .map(|n| SourceRequirement {
+                id: format!("s{n}"),
+                revision: "revision".into(),
+            })
+            .collect();
+        assert!(compare(&i).is_err());
+    }
+    #[test]
+    fn moving_source_revisions_refuse_and_unexpected_records_are_indexed() {
+        let mut i = known();
+        i.inventory.sources[0].revision = "main".into();
+        assert!(compare(&i).is_err());
+        i.inventory.sources[0].revision = "1".repeat(40);
+        i.records = (0..2048)
+            .map(|n| record(&format!("unexpected-{n}")))
+            .collect();
+        for n in 0..100 {
+            i.inventory.sources.push(SourceRequirement {
+                id: format!("unused-{n}"),
+                revision: "2".repeat(40),
+            });
+        }
+        let report = compare(&i).unwrap();
+        assert_eq!(report.domains[0].source_comparisons.len(), 101);
+        assert_eq!(report.domains[0].unexpected_record_ids.len(), 2048);
+        assert_eq!(
+            report.domains[0].source_comparisons[0]
+                .included_record_ids
+                .len(),
+            2048
+        );
     }
     #[test]
     fn all_nine_requirements_remain_explicit() {
