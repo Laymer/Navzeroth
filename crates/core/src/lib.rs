@@ -30,3 +30,4 @@ pub mod submissions;
 
 pub mod content_v2;
 pub mod release_party;
+pub mod source_admission;
