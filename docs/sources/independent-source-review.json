@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-15",
+  "purpose": "Research and no-reply source strategy; not production source admission",
+  "target": {
+    "edition": "forever",
+    "version": "1.60.1",
+    "build": 70374,
+    "interface": 16001
+  },
+  "publisher_reply_required": false,
+  "complete_target_inventory_verified": false,
+  "production_sources_admitted_by_this_review": [],
+  "repositories": [
+    {
+      "repository": "tr0tsky0/Mapzeroth",
+      "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+      "github_license_detection": "MIT"
+    },
+    {
+      "repository": "forever-guides-com/forever-guides",
+      "revision": "c986c13d8e6018294bea7e9535be741bbac91fcf",
+      "github_license_detection": "NOASSERTION"
+    },
+    {
+      "repository": "TylerAkins/forever-guide-mate",
+      "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
+      "github_license_detection": "GPL-3.0"
+    },
+    {
+      "repository": "Hoizame/AtlasLootClassic",
+      "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+      "github_license_detection": "GPL-2.0"
+    },
+    {
+      "repository": "danielcosta42/lodestar",
+      "revision": "5c5fa2346981eefe3f368f325b5ef80e2270d9de",
+      "github_license_detection": "MIT"
+    },
+    {
+      "repository": "vmangos/core",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "github_license_detection": "GPL-2.0"
+    },
+    {
+      "repository": "shagu/pfQuest",
+      "revision": "104f35678ca39ab1fb78b655f815cc7016f5e0c8",
+      "github_license_detection": "MIT"
+    },
+    {
+      "repository": "Questie/QuestieDB",
+      "revision": "49e7dbca1f18eb3b8e57ee5d9562ac3e5c9adcc4",
+      "github_license_detection": null
+    },
+    {
+      "repository": "wowsims/classic",
+      "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+      "github_license_detection": "MIT"
+    }
+  ],
+  "research_file_pins": [
+    {
+      "repo": "tr0tsky0/Mapzeroth",
+      "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/LICENSE",
+      "bytes": 1065,
+      "sha256": "a1a81f096871b14b1fbf1da9ca314bc9f5b1fbbed0bfdaa59b460a63061856d1"
+    },
+    {
+      "repo": "tr0tsky0/Mapzeroth",
+      "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+      "path": "Mapzeroth.toc",
+      "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/Mapzeroth.toc",
+      "bytes": 1497,
+      "sha256": "0b53f220e4a7ca97e1e864c9434c6f9d39ff4f9c5af2012a7d40f7f731a2d7f2"
+    },
+    {
+      "repo": "tr0tsky0/Mapzeroth",
+      "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+      "path": "Constants.lua",
+      "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/Constants.lua",
+      "bytes": 4231,
+      "sha256": "8e04990f64d01355a0284d670ccf7036131fd51d427984d26690c931b185940a"
+    },
+    {
+      "repo": "forever-guides-com/forever-guides",
+      "revision": "c986c13d8e6018294bea7e9535be741bbac91fcf",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/forever-guides-com/forever-guides/c986c13d8e6018294bea7e9535be741bbac91fcf/LICENSE",
+      "bytes": 6223,
+      "sha256": "0cab409b8a93522cc2fbc60b4aa7a33d2acbdea53f7cd4c4d12475feb6971773"
+    },
+    {
+      "repo": "forever-guides-com/forever-guides",
+      "revision": "c986c13d8e6018294bea7e9535be741bbac91fcf",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/forever-guides-com/forever-guides/c986c13d8e6018294bea7e9535be741bbac91fcf/README.md",
+      "bytes": 1175,
+      "sha256": "45f699314ae7390af7de73a20b19020134542f527931da3b876a4410f5c9ba49"
+    },
+    {
+      "repo": "forever-guides-com/forever-guides",
+      "revision": "c986c13d8e6018294bea7e9535be741bbac91fcf",
+      "path": "ForeverGuides/Data/Meta.lua",
+      "url": "https://raw.githubusercontent.com/forever-guides-com/forever-guides/c986c13d8e6018294bea7e9535be741bbac91fcf/ForeverGuides/Data/Meta.lua",
+      "bytes": 1906,
+      "sha256": "aa9bb3b895ec007c5736b5b6451e8d4b3aa71a81710cd08f86af927acc6790fa"
+    },
+    {
+      "repo": "TylerAkins/forever-guide-mate",
+      "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/TylerAkins/forever-guide-mate/c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8/LICENSE",
+      "bytes": 35150,
+      "sha256": "e57f1c320b8cf8798a7d2ff83a6f9e06a33a03585f6e065fea97f1d86db84052"
+    },
+    {
+      "repo": "TylerAkins/forever-guide-mate",
+      "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/TylerAkins/forever-guide-mate/c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8/README.md",
+      "bytes": 4981,
+      "sha256": "1dda80d3817816691c3f2f24391bf94e372bfb5fc1bd2d084aab06521550707c"
+    },
+    {
+      "repo": "TylerAkins/forever-guide-mate",
+      "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
+      "path": "ClassChains.lua",
+      "url": "https://raw.githubusercontent.com/TylerAkins/forever-guide-mate/c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8/ClassChains.lua",
+      "bytes": 603207,
+      "sha256": "43a5628c4a1e0cacad9ec9ff70c21681f2e8693d01ae5a302a079c26064b53ee"
+    },
+    {
+      "repo": "TylerAkins/forever-guide-mate",
+      "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
+      "path": "QuestPrerequisites.lua",
+      "url": "https://raw.githubusercontent.com/TylerAkins/forever-guide-mate/c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8/QuestPrerequisites.lua",
+      "bytes": 61710,
+      "sha256": "08b57c282ea0733606b6cffe5300abf2af590570bebfe1db4283cbefdcab79d7"
+    },
+    {
+      "repo": "Hoizame/AtlasLootClassic",
+      "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/LICENSE",
+      "bytes": 18092,
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "repo": "Hoizame/AtlasLootClassic",
+      "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/README.md",
+      "bytes": 1926,
+      "sha256": "1fd8462406f529f85ec10ae2e92539ceca59ad20a3874d2e07727ef3e8373c35"
+    },
+    {
+      "repo": "Hoizame/AtlasLootClassic",
+      "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+      "path": "AtlasLootClassic_DungeonsAndRaids/data.lua",
+      "url": "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/AtlasLootClassic_DungeonsAndRaids/data.lua",
+      "bytes": 209216,
+      "sha256": "ab12de3f642620ff52e5bb0c47139e4146e3c7021be99d55af76e5eae7bda557"
+    },
+    {
+      "repo": "danielcosta42/lodestar",
+      "revision": "5c5fa2346981eefe3f368f325b5ef80e2270d9de",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/danielcosta42/lodestar/5c5fa2346981eefe3f368f325b5ef80e2270d9de/LICENSE",
+      "bytes": 1085,
+      "sha256": "3bf186f101ae5f2be626a3f4269132683ee73396d510d91a24da053d4b93edeb"
+    },
+    {
+      "repo": "danielcosta42/lodestar",
+      "revision": "5c5fa2346981eefe3f368f325b5ef80e2270d9de",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/danielcosta42/lodestar/5c5fa2346981eefe3f368f325b5ef80e2270d9de/README.md",
+      "bytes": 6461,
+      "sha256": "7e2c7b745dbcfe93fa8d8ef79ded173e88f1ffc3bd5f83c551ad9a5f0ed9ec58"
+    },
+    {
+      "repo": "danielcosta42/lodestar",
+      "revision": "5c5fa2346981eefe3f368f325b5ef80e2270d9de",
+      "path": "TravelData.lua",
+      "url": "https://raw.githubusercontent.com/danielcosta42/lodestar/5c5fa2346981eefe3f368f325b5ef80e2270d9de/TravelData.lua",
+      "bytes": 328678,
+      "sha256": "cb555082818e522f493c4b3b701d9f9c95ff853c5daa59591eaacb01cec86b84"
+    },
+    {
+      "repo": "danielcosta42/lodestar",
+      "revision": "5c5fa2346981eefe3f368f325b5ef80e2270d9de",
+      "path": "tools/gen_travel.py",
+      "url": "https://raw.githubusercontent.com/danielcosta42/lodestar/5c5fa2346981eefe3f368f325b5ef80e2270d9de/tools/gen_travel.py",
+      "bytes": 18511,
+      "sha256": "4cd5b6a912ddd675934e2cdeeabc5d6d3f0a2f602a219294e8257782360e172b"
+    },
+    {
+      "repo": "shagu/pfQuest",
+      "revision": "104f35678ca39ab1fb78b655f815cc7016f5e0c8",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/shagu/pfQuest/104f35678ca39ab1fb78b655f815cc7016f5e0c8/LICENSE",
+      "bytes": 1081,
+      "sha256": "7ee3c5402cd719de230f3bbc59a6506a3b2b65981d0d793f143fa5b08f926510"
+    },
+    {
+      "repo": "shagu/pfQuest",
+      "revision": "104f35678ca39ab1fb78b655f815cc7016f5e0c8",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/shagu/pfQuest/104f35678ca39ab1fb78b655f815cc7016f5e0c8/README.md",
+      "bytes": 13379,
+      "sha256": "bb60e21e7ad238cf55855086fff8a13c7f035a2ad5b5f5012823dfb19d78ffff"
+    },
+    {
+      "repo": "shagu/pfQuest",
+      "revision": "104f35678ca39ab1fb78b655f815cc7016f5e0c8",
+      "path": "toolbox/extractor.lua",
+      "url": "https://raw.githubusercontent.com/shagu/pfQuest/104f35678ca39ab1fb78b655f815cc7016f5e0c8/toolbox/extractor.lua",
+      "bytes": 78497,
+      "sha256": "56ff1c23fb179e7247e4a7d3fc14bd1f91c19887f1f1b022b4097e86184db609"
+    },
+    {
+      "repo": "Questie/QuestieDB",
+      "revision": "49e7dbca1f18eb3b8e57ee5d9562ac3e5c9adcc4",
+      "path": "PROVENANCE.md",
+      "url": "https://raw.githubusercontent.com/Questie/QuestieDB/49e7dbca1f18eb3b8e57ee5d9562ac3e5c9adcc4/PROVENANCE.md",
+      "bytes": 4198,
+      "sha256": "f0af04c5daf16d72952710d6f78d82524f3c9d2f2876a1d59b86cc4759a7f628"
+    },
+    {
+      "repo": "Questie/QuestieDB",
+      "revision": "49e7dbca1f18eb3b8e57ee5d9562ac3e5c9adcc4",
+      "path": "docs/forever-data.md",
+      "url": "https://raw.githubusercontent.com/Questie/QuestieDB/49e7dbca1f18eb3b8e57ee5d9562ac3e5c9adcc4/docs/forever-data.md",
+      "bytes": 26880,
+      "sha256": "c561210f5f49087c0a215477eb7c8b7948e5dd9afd5831e77b136af4b6ad4adc"
+    },
+    {
+      "repo": "vmangos/core",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/vmangos/core/53d24d5c748bef5e0cde7b1155bcb3d979af614c/LICENSE",
+      "bytes": 18737,
+      "sha256": "b8632c574ee53ddf15ed7dd65b4a36611da50a77dffda62f978a30c076005456"
+    },
+    {
+      "repo": "vmangos/core",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/vmangos/core/53d24d5c748bef5e0cde7b1155bcb3d979af614c/README.md",
+      "bytes": 2200,
+      "sha256": "15fc7d78edb333ee43cae73b750ff352495f861fe6c1a0c614c877dc72016826"
+    },
+    {
+      "repo": "wowsims/classic",
+      "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/LICENSE",
+      "bytes": 1069,
+      "sha256": "09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd"
+    },
+    {
+      "repo": "wowsims/classic",
+      "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/README.md",
+      "bytes": 13660,
+      "sha256": "39a2256a6aef4350e0071a1b2d91249dd0f8aa37aa7d7299a8b768f78ce39240"
+    },
+    {
+      "repo": "wowsims/classic",
+      "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+      "path": "sim/paladin/paladin.go",
+      "url": "https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/sim/paladin/paladin.go",
+      "bytes": 6448,
+      "sha256": "5e9977210fabe15425e35fdfb772d2b36e3ea4dff10c5085ffc2894db58e8a65"
+    }
+  ],
+  "unavailable_research_paths": [
+    {
+      "repo": "tr0tsky0/Mapzeroth",
+      "path": "Data/Nodes.lua",
+      "result": "HTTP Error 404: Not Found"
+    },
+    {
+      "repo": "tr0tsky0/Mapzeroth",
+      "path": "Data/Connections.lua",
+      "result": "HTTP Error 404: Not Found"
+    },
+    {
+      "repo": "TylerAkins/forever-guide-mate",
+      "path": "Guides/README.md",
+      "result": "HTTP Error 404: Not Found"
+    }
+  ],
+  "unverified_candidates": [
+    "vmangos database release contents/licence scope",
+    "Warcraft Wiki copyright policy (HTTP403)"
+  ]
+}
