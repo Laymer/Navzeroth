@@ -90,3 +90,8 @@ completion APIs; no implementation assumption or capability promotion yet.
 Requested a fresh trusted snapshot before checking reload trust reset. Existing
 worker independently reviewed the final session/counter delta and passed all
 seven capture tests, with no findings.
+
+
+Integration follow-up: see the [development evidence closure](2026-10-15-development-evidence-closure.md)
+for protected merge commits, resulting-main checks, downloaded artifacts and later
+operator observations. Earlier pending statements above describe their record time.

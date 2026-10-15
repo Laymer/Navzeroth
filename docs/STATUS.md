@@ -56,11 +56,18 @@ records, 19 equipment slots, uncertain clock). The operator confirmed displayed 
 errors after probe, snapshot and reload. A seven-event manual session validates;
 both trusted capture and uncertainty after reload are persisted. The separate
 quest-completion getter is integrated in PR149. Checked main840939f is installed
-with all21files verified, private backup and unchanged SavedVariables; the operator confirmed a level13capture with exactly5completed/9incomplete
-quests, all14completion flags readable and no errors. A separate explicit quest-turn-in recording
-mode passed synthetic checks; actual event dispatch remains unverified. See the
+with all 21 files verified, private backup and unchanged SavedVariables. The operator
+confirmed a level-13 capture with exactly five completed/nine incomplete quests,
+all 14 completion flags readable and no errors. PR151's explicit quest-turn-in mode
+passed all nine checks and merged as `83f38c8`; all resulting-main checks passed. Its byte-verified package is installed
+with unchanged SavedVariables. Actual one-quest turn-in recording validates
+(five events/one milestone), and isolated desktop service import preserves
+41,604 ms as unclassified, zero observed activity. The operator confirmed idle
+after reload. This remains development evidence;
+final candidate acceptance and actual restricted/paused cases stay unverified. See the
 [milestone handoff](handoffs/2026-10-15-session-quest-milestones.md).
-The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
+The [integration closure](handoffs/2026-10-15-development-evidence-closure.md) records
+actual checks and artifacts. The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
 the new bounded inspection command. No release acceptance row is promoted.
 
 Version 0.8.1 remains the published developer preview. Complete licensed content,

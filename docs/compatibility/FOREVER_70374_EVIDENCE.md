@@ -122,3 +122,29 @@ The operator reports C_EventUtils.IsEventValid and IsCallbackEvent as functions,
 and IsEventValid returned true for QUEST_TURNED_IN and QUEST_LOG_UPDATE. This is
 only reported event availability; callback dispatch and payload remain unverified.
 The opt-in recorder implementation uses only QUEST_TURNED_IN, with no log polling.
+
+
+## Opt-in turn-in callback and service import — 2026-10-15
+
+PR #151 final head `9cf62df` passed all nine checks plus three source jobs and merged
+as `83f38c8`. Its checked preview package source `809ba1f` has the identical entire
+tree. All package hashes and 21 addon file bytes were verified. With the operator
+confirming the game closed, installed those files, saved a private backup and
+verified project SavedVariables unchanged. Version stays 0.8.1; main follow-up
+checks are separate.
+
+The operator used a distinct anonymous profile for the level-13 character,
+explicitly started quest mode, turned in exactly one quest and stopped/exported/
+reloaded with no errors. Actual strict inspection validates fixture=false and the
+target tuple, five events, one quest-turn-in event and 41,604 ms maximum relative
+elapsed time. An isolated in-memory desktop application service imported the
+actual snapshot and recording together: 0 ms observed, 41,604 ms unclassified,
+0 ms gap. This is actual data consumption on the Linux service, not native Windows
+UI acceptance or active time. Raw exports remain private. No objective/history
+mapping, automatic plan advancement/deviation, loot fact or final acceptance row
+is inferred. Paused-event exclusion and restricted conditions remain synthetic-only
+for this binding.
+
+
+The operator then ran `/anavsession status` after reload and confirmed `session idle`.
+This is the narrow reported reload-reset check; no automatic recording resumed.

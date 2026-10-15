@@ -72,3 +72,8 @@ Next: all nine PR checks and three source jobs, download/verify both complete
 artifacts, protected merge after review and resulting-main verification. Continue
 original permitted target observations and exact-scope licensed sources without
 turning reference counts into a target inventory or bypassing publication gates.
+
+
+Integration follow-up: see the [development evidence closure](2026-10-15-development-evidence-closure.md)
+for protected merge commits, resulting-main checks, downloaded artifacts and later
+operator observations. Earlier pending statements above describe their record time.

@@ -63,3 +63,8 @@ also passed; downloaded both platform artifacts and verified all1,079Gitblobs,
 all9materials, generator/input/catalog/receipt hashes. Both source archives SHA256
 4cba99db2f1cdf6f347024bb4db79c8bf1681333c05db3a4a4eae53a25626716.
 All1,685facts remain sourceknowledge,0targetusable; fullmain9checks still underway.
+
+
+Integration follow-up: see the [development evidence closure](2026-10-15-development-evidence-closure.md)
+for protected merge commits, resulting-main checks, downloaded artifacts and later
+operator observations. Earlier pending statements above describe their record time.
