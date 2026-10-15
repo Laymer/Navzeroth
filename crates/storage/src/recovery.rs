@@ -9,7 +9,7 @@ use rusqlite::{Connection, OpenFlags, params_from_iter, types::Value};
 use serde::Serialize;
 use std::{collections::BTreeMap, path::Path};
 
-pub const MAX_BACKUP_BYTES: u64 = 512 * 1024 * 1024;
+pub const MAX_BACKUP_BYTES: u64 = 4 * 1024 * 1024 * 1024;
 const MAX_ROWS: usize = 1_000_000;
 const MAX_CELL: usize = 32 * 1024 * 1024;
 fn row_limit(table: &str) -> usize {
@@ -17,6 +17,7 @@ fn row_limit(table: &str) -> usize {
         "dataset_revisions" | "dataset_manifests" => {
             azeroth_core::content_v2::MAX_CONTENT_BYTES + 16 * 1024
         }
+        "catalog_asset_blobs" => crate::catalog_assets::MAX_ASSET_BYTES + 16 * 1024,
         _ => MAX_CELL,
     }
 }
@@ -30,6 +31,8 @@ const TABLES: &[&str] = &[
     "source_records",
     "source_conflicts",
     "dataset_manifests",
+    "catalog_asset_blobs",
+    "catalog_asset_layers",
     "active_datasets",
     "party_profiles",
     "party_participants",
@@ -457,8 +460,13 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
         }
         crate::sqlite::validate_recovery_snapshot(conn, id, &envelope)?;
     }
+    let orphan_assets: bool = conn.query_row("SELECT EXISTS(SELECT 1 FROM catalog_asset_blobs b WHERE NOT EXISTS(SELECT 1 FROM catalog_asset_layers l WHERE l.sha256=b.sha256))", [], |r| r.get(0)).db()?;
+    if orphan_assets {
+        return Err(storage("Backup contains unreferenced catalog asset bytes"));
+    }
     for id in ids(conn, "SELECT id FROM dataset_revisions")? {
         let revision = crate::content::load(conn, id)?;
+        crate::catalog_assets::validate_revision_assets(conn, id, &revision)?;
         let context = revision.context();
         let columns:(String,String,String,String,bool,String)=conn.query_row("SELECT edition,build,interface,namespace,is_fixture,revision FROM dataset_revisions WHERE id=?1",[id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).db()?;
         let namespace =

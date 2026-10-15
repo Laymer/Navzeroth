@@ -435,6 +435,20 @@ impl SqliteStore {
         tx.commit().db()?;
         Ok(StageOutcome::Inserted)
     }
+    /// Read an immutable staged or active revision without changing its disposition.
+    pub fn catalog_revision(
+        &self,
+        key: &ContentRevisionKey,
+    ) -> Result<Option<ActiveContentRevision>> {
+        let Some(id) = find(&self.conn, key)? else {
+            return Ok(None);
+        };
+        let revision = load(&self.conn, id)?;
+        if revision.key() != *key {
+            return Err(storage("Stored content identity disagrees"));
+        }
+        Ok(Some(revision))
+    }
     pub fn content_revision(&self, key: &ContentRevisionKey) -> Result<Option<ContentRevision>> {
         let Some(id) = find(&self.conn, key)? else {
             return Ok(None);

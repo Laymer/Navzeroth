@@ -50,7 +50,7 @@ fn migration_preserves_v1_bytes_hashes_and_pointer_then_rolls_between_versions()
     drop(store);
     let conn = raw(&db.path);
     let before:(String,String)=conn.query_row("SELECT document,content_sha256 FROM dataset_revisions JOIN dataset_manifests ON revision_id=id",[],|r|Ok((r.get(0)?,r.get(1)?))).unwrap();
-    conn.execute_batch("ALTER TABLE dataset_revisions DROP COLUMN content_version; DELETE FROM schema_migrations WHERE version=11").unwrap();
+    conn.execute_batch("DROP TABLE catalog_asset_layers; DROP TABLE catalog_asset_blobs; ALTER TABLE dataset_revisions DROP COLUMN content_version; DELETE FROM schema_migrations WHERE version>=11").unwrap();
     drop(conn);
     let mut store = SqliteStore::open(&db.path).unwrap();
     let after:(String,String)=raw(&db.path).query_row("SELECT document,content_sha256 FROM dataset_revisions JOIN dataset_manifests ON revision_id=id",[],|r|Ok((r.get(0)?,r.get(1)?))).unwrap();
