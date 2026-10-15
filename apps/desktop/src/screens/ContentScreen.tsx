@@ -12,6 +12,7 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
   const [profile, setProfile] = useState("");
   const [active, setActive] = useState<ContentInspection | null>(null);
   const [staged, setStaged] = useState<ContentInspection | null>(null);
+  const [bundlePath,setBundlePath]=useState("");
   const [text, setText] = useState("");
   const [error, setError] = useState<AppError | null>(null);
   const [message, setMessage] = useState("");
@@ -41,11 +42,11 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     });
     return () => { current = false; };
   }, [client, profile, refreshKey, revision]);
-  async function mutate(action: "stage" | "activate" | "rollback") {
+  async function mutate(action: "stage" | "bundle" | "activate" | "rollback") {
     if (lock.current) return;
     lock.current = true; setBusy(true); setError(null); setMessage("");
-    if (action === "stage") {
-      const result = await client.stageContent(text);
+    if (action === "stage" || action === "bundle") {
+      const result = action === "bundle" ? await client.stageVerifiedContentBundle(bundlePath) : await client.stageContent(text);
       if (result.ok) { setStaged(result.value); setMessage("Validated and staged. Activation requires the matching profile context."); }
       else setError(result.error);
     } else if (action === "activate" && staged) {
@@ -74,33 +75,48 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     </select></label>}
     {native&&<ContentDispositionPanel client={client} profileId={profile} refreshKey={refreshKey+revision} disabled={busy} onBusyChange={setBusy} onChanged={()=>{setActive(null);setStaged(null);setRevision(n=>n+1);onChanged();}}/>}
     <h3>Active revision</h3>
-    {active ? <Inspection value={active} /> : <p>No active content for this profile.</p>}
+    {active ? <Inspection client={client} value={active} /> : <p>No active content for this profile.</p>}
     <button type="button" disabled={!native || busy || !active} onClick={() => void mutate("rollback")}>Restore previous revision</button>
+    <form onSubmit={event=>{event.preventDefault();void mutate("bundle");}}><label>Verified content pack directory <input value={bundlePath} maxLength={4096} disabled={busy} onChange={event=>{setBundlePath(event.target.value);setStaged(null);}}/></label><p>Choose an extracted content pack directory. The desktop verifies the catalog, source registry and declared image files before staging them together.</p><button type="submit" disabled={!native||busy||!bundlePath.trim()}>Verify and stage content pack</button></form>
     <form onSubmit={(event) => { event.preventDefault(); void mutate("stage"); }}>
       <label>Content revision JSON <textarea value={text} onChange={(event) => { setText(event.target.value); setStaged(null); }} rows={8} disabled={busy} /></label>
       <button type="button" disabled={busy} onClick={() => { setText(JSON.stringify(example, null, 2)); setStaged(null); }}>Load synthetic example</button>
       <button type="button" disabled={busy} onClick={() => setText(JSON.stringify(planningExample, null, 2))}>Load synthetic planning example</button>
       <button type="submit" disabled={!native || busy || !text.trim()}>Validate and stage content</button>
     </form>
-    {staged && <><h3>Staged revision</h3><Inspection value={staged} />
+    {staged && <><h3>Staged revision</h3><Inspection client={client} value={staged} />
       {!compatible && <p>This revision does not match the selected profile’s edition, build, interface, namespace and synthetic status.</p>}
       <button type="button" disabled={!native || busy || !compatible} onClick={() => void mutate("activate")}>Activate staged revision</button></>}
     <LocalSubmissionsPanel client={client} enabled={native} refreshKey={refreshKey + revision} />
   </section>;
 }
-function Inspection({ value }: { value: ContentInspection }) {
+function Inspection({ client, value }: { client:CommandClient; value: ContentInspection }) {
   const scope = value.key.scope;
   return <>
     {scope.fixture && <p className="demo-label">SYNTHETIC — engineering content, not verified gameplay coverage</p>}
     <p>{value.key.revision}: {scope.context.build.edition}/{scope.context.build.build}/{scope.context.build.interface}, {scope.context.namespace}</p>
-    <p>Validation passed: {String(value.report.passes)}. Coverage gaps: {value.report.gaps.length}. Conflicts: {value.conflicts.length}.</p>
+    <p>Validation passed: {String(value.report.passes)}. Coverage gaps: {value.pages?.gaps??value.report.gaps.length}. Conflicts: {value.pages?.conflicts??value.conflicts.length}.</p>
     {value.report.coverage && <><ul>{Object.entries(value.report.coverage.collections).map(([kind, collection]) => <li key={kind}>{kind.replaceAll("_", " ")}: {collection.total}</li>)}</ul>
       <p>Evidence categories</p><ul>{Object.entries(value.report.coverage.evidence_records.by_confidence).map(([kind, count]) => <li key={kind}>{kind.replaceAll("_", " ")}: {count}</li>)}</ul></>}
-    <details><summary>Coverage gaps</summary><ul>{value.report.gaps.map((gap, n) => <li key={n}>{gap.code.replaceAll("_", " ")}</li>)}</ul></details>
-    <h4>Source policies</h4><ul>{value.sources.map((source) => <li key={source.id}>{source.publisher} ({source.id})
-      <p>License: {describeObservation(source.license)}. Redistribution: {describeObservation(source.redistribution)}. Offline use: {describeObservation(source.offline_usable)}.</p>
-      <p>Attribution: {describeObservation(source.attribution)}</p>
-    </li>)}</ul>
+    <InspectionList client={client} value={value} collection="gaps"/>
+    <InspectionList client={client} value={value} collection="errors"/>
+    <InspectionList client={client} value={value} collection="conflicts"/>
+    <InspectionList client={client} value={value} collection="sources"/>
     <p>Passing structural validation does not establish source permissions or verified gameplay coverage.</p>
   </>;
+}
+
+function InspectionList({client,value,collection}:{client:CommandClient;value:ContentInspection;collection:"sources"|"conflicts"|"gaps"|"errors"}) {
+ const initial=collection==="gaps"||collection==="errors"?value.report[collection]:value[collection];
+ const identity=JSON.stringify([value.key,value.pages?.content_sha256,collection]);
+ const [loaded,setLoaded]=useState<{identity:string;offset:number;records:unknown[]}|null>(null);
+ const [busy,setBusy]=useState(false);const [error,setError]=useState("");const ticket=useRef(0);
+ const current=useRef({identity,client});if(current.current.identity!==identity||current.current.client!==client){current.current={identity,client};ticket.current++;}
+ useEffect(()=>{setLoaded(null);setBusy(false);setError("");return()=>{ticket.current++;};},[identity,client]);
+ const page=loaded?.identity===identity?loaded:{offset:0,records:initial};
+ const total=value.pages?.[collection]??initial.length;
+ async function move(offset:number){if(!value.pages||busy)return;const request=++ticket.current;setBusy(true);setError("");const result=await client.getContentInspectionPage(JSON.stringify({key:value.key,content_sha256:value.pages.content_sha256,collection,offset}));if(request!==ticket.current)return;setBusy(false);if(!result.ok){setError(result.error.message);return;}const p=result.value;if(JSON.stringify(p.key)!==JSON.stringify(value.key)||p.content_sha256!==value.pages.content_sha256||p.collection!==collection||p.offset!==offset||p.total!==total||p.records.length>200){setError("Inspection changed; refresh content.");return;}setLoaded({identity,offset,records:p.records});}
+ return <details><summary>{collection==="sources"?"Source policies":collection.replaceAll("_"," ")} ({total})</summary>
+ {total>200&&<nav aria-label={`${collection} inspection pages`}><button type="button" disabled={busy||page.offset===0} onClick={()=>void move(Math.max(0,page.offset-200))}>Previous {collection}</button><span>{page.offset+1}–{Math.min(page.offset+200,total)} of {total}</span><button type="button" disabled={busy||page.offset+200>=total} onClick={()=>void move(page.offset+200)}>Next {collection}</button></nav>}
+ {error&&<p role="alert">{error}</p>}<ul>{page.records.map((record,n)=>{if(collection==="sources"){const source=record as ContentInspection["sources"][number];return <li key={source.id}>{source.publisher} ({source.id})<p>License: {describeObservation(source.license)}. Redistribution: {describeObservation(source.redistribution)}. Offline use: {describeObservation(source.offline_usable)}.</p><p>Attribution: {describeObservation(source.attribution)}</p></li>;}const finding=record as {code?:string};return <li key={n}>{finding.code?.replaceAll("_"," ")??JSON.stringify(record)}</li>;})}</ul></details>;
 }
