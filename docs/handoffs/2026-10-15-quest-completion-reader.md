@@ -50,3 +50,8 @@ into this branch to check the combined inspector/getter implementation. Its
 resulting-main checks remain pending at this record. Updated shared70374evidence
 with both persisted clock states and operator completion-function observations;
 raw exports remain private. Current head needs all hosted checks before merge.
+
+
+Integration follow-up: see the [development evidence closure](2026-10-15-development-evidence-closure.md)
+for protected merge commits, resulting-main checks, downloaded artifacts and later
+operator observations. Earlier pending statements above describe their record time.
