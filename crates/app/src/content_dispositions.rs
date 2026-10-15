@@ -61,7 +61,7 @@ pub(crate) fn read(store: &SqliteStore, scope: ContentScope) -> Result<ContentGo
     store.with_immediate_read(|store| {
         Ok(ContentGovernance {
             schema_version: 1,
-            active: store.active_content_revision(&scope)?.map(|r| r.key()),
+            active: store.active_catalog_revision(&scope)?.map(|r| r.key()),
             revisions: store.list_content_dispositions(&scope)?,
             scope,
         })

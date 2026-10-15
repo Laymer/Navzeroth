@@ -452,6 +452,20 @@ async fn get_party_quests(
     blocking(state, move |app| app.party_quests(&party_id)).await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn get_catalog_page(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::catalog_pages::RecordPage, AppError> {
+    blocking(state, move |app| app.catalog_page(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_authored_catalog(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::authored_content::AuthoredCatalog, AppError> {
+    blocking(state, move |app| app.authored_catalog(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
 async fn get_dungeon_preparation(
     state: State<'_, Application>,
     text: String,
@@ -705,6 +719,8 @@ pub fn run() {
                 get_session_detail,
                 delete_session,
                 get_gear_catalog,
+                get_authored_catalog,
+                get_catalog_page,
                 compare_gear,
                 get_historical_snapshot,
                 promote_snapshot,

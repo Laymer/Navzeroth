@@ -14,6 +14,7 @@ function adapter(compare: (request: GearRequest) => Promise<GearReport>, fixture
   return { invoke: vi.fn((command, input) => {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic profile", fixture }] as never);
     if (command === "get_planning_catalog") return Promise.resolve({snapshot_id:"s",revision:"r",fixture,nodes:[],objectives:[]} as never);
+    if (command === "get_authored_catalog") return Promise.resolve({revision:"r",records:[],total:0,next_offset:null} as never);
     if (command === "get_gear_catalog") return Promise.resolve({ ...catalog, fixture } as never);
     if (command === "compare_gear") return compare(JSON.parse((input as {text:string}).text) as GearRequest) as Promise<never>;
     return Promise.reject(new Error("unexpected command"));
@@ -73,6 +74,7 @@ it("retains model edits while pruning removed candidate and hand references", as
   const client = createClient({ invoke: vi.fn((command) => {
     if (command === "list_profiles") return Promise.resolve([{id:"p",display_name:"Synthetic",fixture:true}] as never);
     if (command === "get_planning_catalog") return Promise.resolve({snapshot_id:"s",revision:"r",fixture:true,nodes:[],objectives:[]} as never);
+    if (command === "get_authored_catalog") return Promise.resolve({revision:"r",records:[],total:0,next_offset:null} as never);
     if (command === "get_gear_catalog") return Promise.resolve(currentCatalog as never);
     return Promise.reject(new Error("unexpected"));
   }) });
@@ -92,4 +94,26 @@ it("retains model edits while pruning removed candidate and hand references", as
   expect(screen.getByLabelText("Attribute weights (JSON, integer thousandths)")).toHaveValue(savedWeights);
   expect(screen.getByLabelText("Main-hand slot")).toHaveValue("");
   expect(screen.queryAllByLabelText(/^Compare demo-item/)).toHaveLength(0);
+});
+it("retains bounded candidates when browsing and refreshing an immutable catalog",async()=>{
+ const first=catalog.items[0];if(!first)throw Error('missing fixture');
+ const second={...first,key:{...first.key,item_id:'page-two-item'}};
+ const info={revision:'r',catalog_sha256:'a'.repeat(64),collection:'items' as const,offset:0,total:201,next_offset:200};
+ const base=adapter(async request=>mockReport(request));
+ const client=createClient({invoke:vi.fn((command,input)=>{
+  if(command==='get_gear_catalog')return Promise.resolve({...catalog,items:[first],pages:{items:info}} as never);
+  if(command==='get_catalog_page')return Promise.resolve({...info,offset:200,next_offset:null,records:[second]} as never);
+  return base.invoke(command,input);
+ })});
+ const view=render(<GearScreen client={client} refreshKey={0}/>);
+ fireEvent.click(await screen.findByLabelText(`Compare ${first.key.item_id}`));
+ fireEvent.click(screen.getByText('Next items'));
+ await screen.findByLabelText('Compare page-two-item');
+ expect(screen.getByText('Selected candidates: 1 / 128')).toBeInTheDocument();
+ expect(screen.getByRole('button',{name:`Remove ${first.key.item_id}`})).toBeInTheDocument();
+ fireEvent.click(screen.getByLabelText('Compare page-two-item'));
+ view.rerender(<GearScreen client={client} refreshKey={1}/>);
+ await screen.findByLabelText(`Compare ${first.key.item_id}`);
+ expect(screen.getByText('Selected candidates: 2 / 128')).toBeInTheDocument();
+ expect(screen.getByRole('button',{name:'Remove page-two-item'})).toBeInTheDocument();
 });

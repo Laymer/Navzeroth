@@ -7,6 +7,7 @@ test("local dungeon reference keeps stale members and unknown source evidence ex
     const nativeWindow=window as unknown as {__TAURI_INTERNALS__:{invoke:(command:string,input:unknown)=>Promise<unknown>}};
     nativeWindow.__TAURI_INTERNALS__={invoke:async(command,input)=>{
       switch(command){
+        case "get_authored_catalog":return {revision:null,records:[],total:0,next_offset:null};
         case "get_app_status":return {version:"synthetic",data_mode:"stored",active_profile:report.members[0]?.profile_id,capabilities:{}};
         case "get_character_snapshot":return snapshot;
         case "get_stored_snapshot":return {envelope:snapshot,freshness:{status:"fresh",age_ms:100},profile_id:report.members[0]?.profile_id,data_mode:"stored"};
@@ -21,7 +22,7 @@ test("local dungeon reference keeps stale members and unknown source evidence ex
   await page.setViewportSize({width:320,height:900});await page.goto("/");
   await page.getByRole("button",{name:"Dungeons",exact:true}).click();
   await expect(page.getByRole("heading",{name:"Dungeon preparation",exact:true})).toBeVisible();
-  await expect(page.getByText("No verified Deadmines package is installed.",{exact:false})).toBeVisible();
+  await expect(page.getByText("No authored records on this page.",{exact:false})).toBeVisible();
   await expect(page.getByLabel("Local preparation package JSON")).not.toBeVisible();
   await page.getByLabel("Preparation members").selectOption("party");
   await page.getByText("Advanced local reference editor",{exact:true}).click();

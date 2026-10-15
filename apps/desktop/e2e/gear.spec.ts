@@ -6,6 +6,7 @@ test("gear manual assumptions display actual Rust fixture explanations and inval
   await page.addInitScript(({ catalog, report }) => {
     Object.defineProperty(window, "__TAURI_INTERNALS__", { value: { invoke: async (command: string, args: Record<string,unknown>) => {
       switch(command) {
+        case "get_authored_catalog": return {revision:null,records:[],total:0,next_offset:null};
         case "get_app_status": return { version:"mock",data_mode:"stored",active_profile:null,capabilities:{} };
         case "get_snapshot_watch": return {active:false,last_import:null,error:null,status:null};
         case "list_profiles": return [{id:report.request.profile_id,display_name:"Synthetic gear profile",data_mode:"stored",fixture:true}];

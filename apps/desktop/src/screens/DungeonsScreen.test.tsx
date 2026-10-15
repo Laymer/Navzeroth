@@ -8,7 +8,7 @@ const report=fixture as PreparationReport;
 function fixtureMember(){const member=report.members[0];if(!member)throw Error("Synthetic wirefixture needs a member");return member;}
 const firstMember=fixtureMember();
 function mock(mode:"stored"|"demo"="stored") {
-  return {listProfiles:vi.fn(async()=>({ok:true,value:[{id:firstMember.profile_id,display_name:"Synthetic member",data_mode:mode}]})),
+  return {getAuthoredCatalog:vi.fn(async()=>({ok:true,value:{revision:null,records:[],total:0,next_offset:null}})),listProfiles:vi.fn(async()=>({ok:true,value:[{id:firstMember.profile_id,display_name:"Synthetic member",data_mode:mode}]})),
     listParties:vi.fn(async()=>({ok:true,value:["preparation-party"]})),
     getDungeonPreparation:vi.fn(async(text:string)=>{expect(JSON.parse(text).schema_version).toBe(1);return {ok:true,value:report};})};
 }
@@ -61,4 +61,11 @@ test("changing local input discards pending results",async()=>{
   await act(async()=>{resolvePending?.({ok:true,value:report});});
   expect(screen.queryByText(/Imported member assessments/)).toBeNull();
   view.unmount();expect(client.getDungeonPreparation).toHaveBeenCalledTimes(1);
+});
+test.each(["restricted","unknown","known"] as const)("authored travel displays %s without inventing an ordered route",async status=>{
+  const client=mock();client.getDungeonPreparation.mockResolvedValue({ok:true,value:{...report,authored_travel:{declaration:{observation:status==="known"?{status,value:[]}:{status},evidence:["travel-evidence"]},edges:[]}}} as {ok:true;value:PreparationReport});
+  render(<DungeonsScreen client={client as unknown as CommandClient} refreshKey={0}/>);await ready();fireEvent.click(screen.getByRole("button",{name:"Inspect preparation gaps"}));
+  expect(await screen.findByRole("region",{name:"Authored travel dependencies"})).toHaveTextContent(`Availability: ${status}`);
+  if(status==="known")expect(screen.getByText('The authored list is explicitly empty.')).toBeInTheDocument();
+  else expect(screen.queryByText('The authored list is explicitly empty.')).not.toBeInTheDocument();
 });

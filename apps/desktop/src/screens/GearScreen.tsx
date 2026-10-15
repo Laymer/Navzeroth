@@ -1,3 +1,6 @@
+import { CatalogPager, OffPageOptions } from "./CatalogPager";
+import {AuthoredContentPicker} from "./AuthoredContentPicker";
+import type {AuthoredSelection} from "../commands/authoredContent";
 import { AcquisitionDetails, BaselineSlots, EligibilityDetails, RankingDetails, ScoreDetails, formatMilli } from "./GearExplanations";
 import { RouteAcquisitionPanel } from "./RouteAcquisitionPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,7 +22,9 @@ function RankingView({ name, ranking }: { name: string; ranking: GearRanking }) 
 export function GearScreen({ client, refreshKey }: { client: CommandClient; refreshKey: number }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
   const [profile, setProfile] = useState("");
+  const previousCatalogBinding=useRef("");
   const [catalog, setCatalog] = useState<GearCatalog | null>(null);
+  const [authored,setAuthored]=useState<AuthoredSelection|null>(null);
   const [inputs, setInputs] = useState<GearInput[]>([]);
   const [role, setRole] = useState("manual-role");
   const [weights, setWeights] = useState("{}");
@@ -53,13 +58,16 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     const changedScope = scope.current?.client !== client || scope.current?.profile !== profile;
     scope.current = { client, profile };
     if (changedScope) {
-      setInputs([]); setSynthetic(false); setWeights("{}"); setRole("manual-role"); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
+      setInputs([]); setAuthored(null); setSynthetic(false); setWeights("{}"); setRole("manual-role"); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
       setTimes({ travel: "", formation: "", attempt: "", stopping: "", budget: "", copper: "", attempts: "1" }); setIndependent(false); setPerAttempt(false);
     }
     if (profile) void client.getGearCatalog(profile).then((result) => {
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
       setCatalog(result.value); setError("");
+      const binding=JSON.stringify([profile,result.value.revision,result.value.pages]);
+      if(result.value.pages&&previousCatalogBinding.current===binding)return;
+      previousCatalogBinding.current=binding;
       const availableSlots = new Set([...result.value.items.flatMap((item) => item.slots), ...Object.keys(result.value.equipment)]);
       setMainHand((old) => availableSlots.has(old) ? old : ""); setOffHand((old) => availableSlots.has(old) ? old : "");
       setInputs((old) => old.filter((input) => result.value.items.some((item) => JSON.stringify(item.key) === JSON.stringify(input.item))).map((input) => ({
@@ -80,7 +88,9 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   }
   function gearRequest(): GearRequest {
     if (!catalog?.snapshot_id || !catalog.revision) throw new Error("Import a capture and activate content first.");
+    if(authored && authored.revision!==catalog.revision) throw new Error("Authored model revision changed; select it again.");
     return {
+        authored_model: authored?.id??null,
         profile_id: profile, snapshot_id: catalog.snapshot_id, revision: catalog.revision,
         model: { role, version: "gear-model-v1", weight_source: { type: synthetic ? "synthetic_test" : "user_preference" }, weights: JSON.parse(weights) as Record<string, number>, known_unmodeled: [] },
         layout: { slots, hands: mainHand || offHand ? { main_hand: mainHand, off_hand: offHand } : null },
@@ -96,7 +106,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     const ticket = ++generation.current; setBusy(true); setReport(null); setError("");
     try {
       const request = gearRequest();
-      if (inputs.length === 0 || times.budget.trim() === "" || !Object.keys(request.model.weights).length) throw new Error("Select candidates and explicitly supply weights and session budget.");
+      if (inputs.length === 0 || times.budget.trim() === "" || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and explicitly supply weights and session budget.");
       const result = await client.compareGear(JSON.stringify(request));
       if (ticket !== generation.current) return;
       if (!result.ok) setError(result.error.message); else { setReport(result.value); setReportBasis("manual"); }
@@ -104,13 +114,15 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     finally { if (ticket === generation.current) setBusy(false); }
   }
   return <section aria-label="Gear"><h2>Gear comparisons</h2>
-    <p>Model scores use your explicit assumptions. No class, proficiency, category or weight table is supplied. Unknown acquisition or baseline inputs prevent a practical recommendation.</p>
+    <p>Model scores use your explicit assumptions. Select an installed authored model or supply a manual model. Class is an explicit assumption because imported snapshots do not contain class facts. Unknown acquisition or baseline inputs prevent a practical recommendation.</p>
     {catalog?.fixture && <p role="note">SYNTHETIC — engineering fixture, not live game advice.</p>}
     {error && <p role="alert">{error}</p>}
     <label>Gear profile <select value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
     <p>Snapshot: {catalog?.snapshot_id ?? "none"}; revision: {catalog?.revision ?? "none — activate Content first"}</p>
-    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
-      gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || !Object.keys(request.model.weights).length) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
+    <AuthoredContentPicker client={client} kind="models" subject={{kind:"character",profile_id:profile}} refreshKey={refreshKey} value={authored} onChange={v=>{invalidate();setAuthored(v);}}/>
+    {authored&&<p>Authored weights, proficiency, layout and item facts are resolved by the backend from this revision; unavailable applicability blocks comparison.</p>}
+    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({authored,weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
+      gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
       onGearReport={routeReport} onBusyChange={setBusy} externalBusy={busy} opportunities={inputs.flatMap(input=>input.acquisition?[{source:input.acquisition.source,target:input.item,formation_ms:numberObservation(times.formation),attempt_ms:numberObservation(times.attempt),available_copper:times.copper.trim()?known(times.copper):unknown<string>(),max_attempts:Number(times.attempts),independent_player_attempts:independent,cost_per_attempt:perAttempt}]:[])} />
     <button type="button" disabled={!catalog?.fixture} onClick={example}>Load labelled synthetic example</button>
     {synthetic && <p>Engineering example: all readable attributes have equal weight 1; categories are explicitly assumed inapplicable, effort is fictional and sources remain unselected. Edit each assumption before use.</p>}
@@ -119,23 +131,26 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
       <label>Attribute weights (JSON, integer thousandths) <textarea value={weights} onChange={(e) => { invalidate(); setWeights(e.target.value); }} rows={4} /></label>
       <label>Assumed class identifier <input value={className} onChange={(e) => { invalidate(); setClassName(e.target.value); }} /></label>
       <label>Class proficiency map (JSON allowed/disallowed categories) <textarea value={proficiency} onChange={(e) => { invalidate(); setProficiency(e.target.value); }} rows={3} /></label>
-      {(["Main-hand slot", "Off-hand slot"] as const).map((label, index) => <label key={label}>{label}<select value={index === 0 ? mainHand : offHand} onChange={(e) => { invalidate(); if (index === 0) setMainHand(e.target.value); else setOffHand(e.target.value); }}><option value="">Relationship unknown / inapplicable</option>{slots.map((slot) => <option key={slot}>{slot}</option>)}</select></label>)}
+      {(["Main-hand slot", "Off-hand slot"] as const).map((label, index) => <label key={label}>{label}<select value={index === 0 ? mainHand : offHand} onChange={(e) => { invalidate(); if (index === 0) setMainHand(e.target.value); else setOffHand(e.target.value); }}><OffPageOptions selected={[mainHand,offHand]} visible={slots}/><option value="">Relationship unknown / inapplicable</option>{slots.map((slot) => <option key={slot}>{slot}</option>)}</select></label>)}
     </fieldset>
     <fieldset><legend>Acquisition assumptions for each selected source</legend><p>Empty effort fields remain unknown. Spending ceiling is your declared budget. Probabilities come from active content; player trial semantics require your explicit assertion.</p>
       {(Object.keys(times) as (keyof typeof times)[]).map((key) => <label key={key}>{key === "copper" ? "Spending ceiling (copper)" : key === "attempts" ? "Maximum trials (1–1024)" : `${key} (ms)`}<input type="number" min="0" step="1" value={times[key]} onChange={(e) => { invalidate(); setTimes((old) => ({ ...old, [key]: e.target.value })); }} /></label>)}
       <label><input type="checkbox" checked={independent} onChange={(e) => { invalidate(); setIndependent(e.target.checked); }} />Assume independent identical player acquisition trials</label>
       <label><input type="checkbox" checked={perAttempt} onChange={(e) => { invalidate(); setPerAttempt(e.target.checked); }} />Pay source cost per attempt</label>
     </fieldset>
+    <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={catalog?.pages?.items} label="items" onPage={p=>{setCatalog(old=>old?{...old,items:p.records as NonNullable<typeof catalog>["items"],pages:{...old.pages,items:p}}:old);}}/>
+<CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={catalog?.pages?.acquisitions} label="acquisitions" onPage={p=>{setCatalog(old=>old?{...old,acquisitions:p.records as NonNullable<typeof catalog>["acquisitions"],pages:{...old.pages,acquisitions:p}}:old);}}/>
+<p>Selected candidates: {inputs.length} / 128</p>{inputs.filter(i=>!catalog?.items.some(item=>JSON.stringify(item.key)===JSON.stringify(i.item))).map(i=><p key={JSON.stringify(i.item)}>{i.item.item_id} (another page) <button type="button" onClick={()=>{invalidate();setInputs(old=>old.filter(v=>v!==i));}}>Remove {i.item.item_id}</button></p>)}
     <h3>Active candidates ({catalog?.items.length ?? 0})</h3>
     {catalog?.items.length === 0 && <p>No items in active content. Real catalogs require explicit authoring.</p>}
     {catalog?.items.map((item) => {
       const index = inputs.findIndex((i) => JSON.stringify(i.item) === JSON.stringify(item.key)); const selected = inputs[index];
       const update = (patch: Partial<GearInput>) => { invalidate(); setInputs((old) => old.map((input,i) => i === index ? { ...input, ...patch } : input)); };
       return <fieldset key={JSON.stringify(item.key)}><legend>{item.key.item_id} ({item.key.variant})</legend>
-        <label><input type="checkbox" checked={!!selected} onChange={(e) => { invalidate(); setInputs((old) => e.target.checked ? [...old, { item: item.key, category: unknown(), acquisition: null }] : old.filter((_,i) => i !== index)); }} />Compare {item.key.item_id}</label>
+        <label><input type="checkbox" checked={!!selected} disabled={!selected&&inputs.length>=128} onChange={(e) => { invalidate(); setInputs((old) => e.target.checked ? [...old, { item: item.key, category: unknown(), acquisition: null }] : old.filter((_,i) => i !== index)); }} />Compare {item.key.item_id}</label>
         {selected && <><label>Category status for {item.key.item_id}<select value={selected.category.status} onChange={(e) => update({ category: e.target.value === "known" ? known("") : { status: e.target.value as "unknown" | "unsupported" | "restricted" | "not_applicable" } })}>{["unknown","unsupported","restricted","not_applicable","known"].map((status) => <option key={status}>{status}</option>)}</select></label>
           {selected.category.status === "known" && <label>Category identifier for {item.key.item_id}<input value={selected.category.value} onChange={(e) => update({ category: known(e.target.value) })} /></label>}
-          <label>Acquisition source for {item.key.item_id}<select value={selected.acquisition?.source ?? ""} onChange={(e) => update({ acquisition: e.target.value ? { source: e.target.value, effort: { incremental_travel_ms: unknown(), formation_ms: unknown(), attempt_ms: unknown(), stopping_ms: unknown(), available_copper: unknown(), session_budget_ms: 0, max_attempts: 1, independent_player_attempts: false, cost_per_attempt: false } } : null })}><option value="">Unknown / unselected</option>{catalog.acquisitions.filter((source) => source.items.some((key) => JSON.stringify(key) === JSON.stringify(item.key))).map((source) => <option key={source.id}>{source.id}</option>)}</select></label>
+          <label>Acquisition source for {item.key.item_id}<select value={selected.acquisition?.source ?? ""} onChange={(e) => update({ acquisition: e.target.value ? { source: e.target.value, effort: { incremental_travel_ms: unknown(), formation_ms: unknown(), attempt_ms: unknown(), stopping_ms: unknown(), available_copper: unknown(), session_budget_ms: 0, max_attempts: 1, independent_player_attempts: false, cost_per_attempt: false } } : null })}><OffPageOptions selected={[selected.acquisition?.source??""]} visible={catalog.acquisitions.map(a=>a.id)}/><option value="">Unknown / unselected</option>{catalog.acquisitions.filter((source) => source.items.some((key) => JSON.stringify(key) === JSON.stringify(item.key))).map((source) => <option key={source.id}>{source.id}</option>)}</select></label>
         </>}
       </fieldset>;
     })}

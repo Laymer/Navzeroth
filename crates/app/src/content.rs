@@ -1,9 +1,10 @@
 //! Explicit local content inspection DTOs; checksums do not authenticate publishers.
+use crate::catalog::CatalogView;
 use azeroth_core::{
-    coverage::{ContentReport, content_report},
+    coverage::ContentReport,
     sources::{SourceConflict, SourceRecord},
 };
-use azeroth_storage::content::{ContentRevision, ContentRevisionKey};
+use azeroth_storage::content::ContentRevisionKey;
 use serde::Serialize;
 
 #[derive(Clone, Debug, Serialize)]
@@ -18,11 +19,11 @@ pub struct ContentRollback {
     pub changed: bool,
     pub active: Option<ContentInspection>,
 }
-pub(crate) fn inspect(content: ContentRevision) -> ContentInspection {
+pub(crate) fn inspect(content: impl CatalogView) -> ContentInspection {
     ContentInspection {
         key: content.key(),
-        report: content_report(&content.envelope),
-        sources: content.sources,
-        conflicts: content.conflicts,
+        report: content.report(),
+        sources: content.sources().to_vec(),
+        conflicts: content.conflicts().to_vec(),
     }
 }

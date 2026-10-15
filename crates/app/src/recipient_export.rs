@@ -1,4 +1,5 @@
 //! Explicit agreed-party projection for one recipient; no remote consent or game messaging.
+use crate::catalog::CatalogView;
 use crate::{
     joint_planning::{self, JointPlanningCatalog, JointPlanningReport, JointPlanningRequest},
     plan_export::PlanExport,
@@ -13,9 +14,9 @@ use azeroth_core::{
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     types::{PartyId, PlanId, Sha256Hex, UtcMillis},
 };
+use azeroth_storage::content::ActiveContentRevision;
 use azeroth_storage::{
     SqliteStore,
-    content::ContentRevision,
     party_proposals::{PartyProposal, ProposalGuard},
 };
 use serde::{Deserialize, Serialize};
@@ -82,7 +83,7 @@ fn compile(
     snapshots: &[Envelope<CharacterSnapshot>],
     recipient: &Envelope<CharacterSnapshot>,
     proposal: &PartyProposal,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
     deadline: i64,
 ) -> Result<PlanExport> {
@@ -107,11 +108,11 @@ fn compile(
         .iter()
         .map(azeroth_storage::snapshot_content_hash)
         .collect::<Result<Vec<_>>>()?;
-    let content_hash = digest(content)?;
+    let content_hash = Sha256Hex::new(content.content_hash()?)?;
     let canonical = serde_json::to_vec(&json!({"agreement":proposal.guard,"recipient":recipient.payload.character,"request":report.request,"result":report.result,"context":report.context,"fixture":report.fixture,"snapshots":snapshot_hashes,"content":content_hash,"ruleset":RULESET_VERSION,"model":MODEL_VERSION})).map_err(|_| invalid("Cannot canonicalize planning inputs"))?;
     let digest = format!("{:x}", Sha256::digest(canonical));
     let plan_id = PlanId::new(format!("plan-{digest}"))?;
-    let dataset = &content.envelope.payload;
+    let dataset = &content.reference();
     let mut route_predicates = Vec::new();
     let mut travel = Vec::new();
     let mut travel_assumptions = Vec::new();
@@ -326,7 +327,7 @@ struct Captured {
     request: JointPlanningRequest,
     catalog: JointPlanningCatalog,
     snapshots: Vec<Envelope<CharacterSnapshot>>,
-    content: ContentRevision,
+    content: ActiveContentRevision,
     guard: PublicationGuard,
     now: Option<UtcMillis>,
     recipient: usize,
@@ -419,7 +420,7 @@ impl SnapshotApplication {
                 )?
                 .bind_disposition(
                     store
-                        .usable_content_revision(&content.key())?
+                        .usable_catalog_revision(&content.key())?
                         .ok_or_else(changed)?
                         .1
                         .guard(),

@@ -227,7 +227,8 @@ fn unknown_scores_false_requirements_zero_probability_and_configuration_gaps_rem
         known(json!({"op":"level_at_least","level":60}));
     bundle["envelope"]["payload"]["items"][2]["two_handed"] = known(json!(true));
     bundle["envelope"]["payload"]["acquisitions"][0]["probability"] = known(json!(0));
-    let content = serde_json::from_value(bundle).unwrap();
+    let content: azeroth_storage::content::ContentRevision =
+        serde_json::from_value(bundle).unwrap();
     let clock = azeroth_core::observation::FreshnessContext {
         now_utc_ms: now(),
         clock_trust: azeroth_core::observation::ClockTrust::Trusted,
