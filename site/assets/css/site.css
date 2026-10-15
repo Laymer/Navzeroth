@@ -1,0 +1,43 @@
+/* Page-level rules for the Navzeroth site. Tokens and components live in nocturne.css. */
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { margin: 0; background: radial-gradient(1200px 720px at 82% -160px, color-mix(in srgb, var(--color-accent-900) 75%, transparent), transparent 60%), radial-gradient(1100px 800px at -10% 100%, color-mix(in srgb, black 30%, transparent), transparent 55%), var(--color-bg); }
+a { color: var(--color-accent-300); text-underline-offset: 3px; }
+a:hover { color: var(--color-accent-200); }
+[hidden] { display: none !important; }
+
+@keyframes nz-drift { 0% { transform: translate3d(0, 0, 0) scale(1); } 100% { transform: translate3d(-6%, 4%, 0) scale(1.1); } }
+@keyframes nz-ember { 0% { transform: translate3d(0, 0, 0); opacity: 0; } 15% { opacity: 0.85; } 100% { transform: translate3d(var(--dx), -420px, 0); opacity: 0; } }
+
+/* Feature tour tabs: state comes from aria-selected. */
+.tour-tab {
+  --tab-bg: transparent;
+  --tab-num: color-mix(in srgb, var(--color-text) 45%, transparent);
+  --tab-title: color-mix(in srgb, var(--color-text) 70%, transparent);
+  --tab-rows: 0fr;
+}
+.tour-tab[aria-selected="true"] {
+  --tab-bg: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  --tab-num: var(--color-accent);
+  --tab-title: var(--color-text);
+  --tab-rows: 1fr;
+}
+.tour-tab[aria-selected="false"]:hover { --tab-bg: color-mix(in srgb, var(--color-accent) 7%, transparent); }
+
+/* Tour window fade between screens. */
+.tour-window { opacity: 1; transform: translateY(0); transition: opacity 170ms ease, transform 220ms ease; }
+.tour-window.is-fading { opacity: 0; transform: translateY(8px); }
+
+/* FAQ accordion: state comes from aria-expanded. */
+.faq-q { --faq-rot: rotate(0deg); }
+.faq-q:hover { color: var(--color-accent-200); }
+.faq-q[aria-expanded="true"] { --faq-rot: rotate(90deg); }
+.faq-q[aria-expanded="true"] + div { grid-template-rows: 1fr !important; }
+
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .tour-window, .faq-q + div { transition: none !important; }
+  #embers { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .tour-tab span { transition: none !important; } }
