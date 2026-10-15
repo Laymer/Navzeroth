@@ -195,6 +195,12 @@ fn read(path: &Path, selected: &Metadata) -> Result<Vec<u8>, Error> {
     Ok(bytes)
 }
 
+/// Reuse the existing bounded, component-checked local-source read boundary.
+pub(crate) fn read_local_source(path: &Path) -> Result<Vec<u8>, Error> {
+    let (absolute, selected) = checked_path(path)?;
+    read(&absolute, &selected)
+}
+
 /// Stage only the selected raw files. No discovery, network, correction
 /// execution, file writes or playable conversion occurs. All output is metadata.
 pub fn report(options: &Options) -> Result<StagingReport, Error> {

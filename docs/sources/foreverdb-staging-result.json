@@ -1,0 +1,60 @@
+{
+  "report_format": "navzeroth-foreverdb-staging-observation",
+  "report_version": 1,
+  "adapter_version": "foreverdb-quest-staging-v1",
+  "archive_sha256": "197af97c02444077e8edd7883eeeb6328828cf9b2f06c540d5708d89894a17d0",
+  "selected_manifest_sha256": "9da51aa8cdf96e5c42fbc768763ebab2f1fbde2cab98622a0c873ca493dd9b5d",
+  "local_full_report_sha256": "da7182b55cda91d32fc3d251aa20ba8ddc28963c94d091424ab4a07f3ad1fe56",
+  "metadata": {
+    "addon_version": "0.34.0",
+    "data_revision": "2026-10-12.1bcd12db",
+    "bundle_origin_build": "1.60.1.70338",
+    "built_epoch": 1791839400,
+    "level_cap": 30
+  },
+  "files": {
+    "ForeverDB/Data/Meta.lua": {
+      "bytes": 149,
+      "sha256": "bb4734a7542048b844495260d6f9bd6527b453fd7d126fa379b9145d57754a57",
+      "assignments": {
+        "meta": 6
+      }
+    },
+    "ForeverDB/Data/QuestClassic.lua": {
+      "bytes": 562451,
+      "sha256": "5b2f95d0134c28509cdfbb32a7553e6c692b408da955855868af9ce3c51861da",
+      "assignments": {
+        "dgClassic": 33,
+        "qcByMap": 49,
+        "qcExcl": 84,
+        "qcItem": 1254,
+        "qcNpc": 3633,
+        "qcObj": 622,
+        "qcQuests": 3491
+      }
+    },
+    "ForeverDB/Data/QuestForever.lua": {
+      "bytes": 145415,
+      "sha256": "4c26c1187cc9c42c075ec2f614b8c369ececd2822a9d6a3668dbc468af199cfd",
+      "assignments": {
+        "qfArea": 42,
+        "qfByMap": 25,
+        "qfItems": 2225,
+        "qfNpcNames": 269,
+        "qfNpcSpots": 187,
+        "qfPoi": 22,
+        "qfQuests": 557,
+        "qfSeen": 386
+      }
+    }
+  },
+  "source_quest_counts": {
+    "forever_file": 557,
+    "classic_cmangos_file": 3491
+  },
+  "overlapping_quest_ids": 373,
+  "independent_target_inventory": null,
+  "target_validation": "unverified",
+  "rights_admission": "unreviewed",
+  "publication_allowed": false
+}
