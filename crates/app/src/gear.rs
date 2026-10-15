@@ -22,6 +22,7 @@ pub const PRACTICAL_MODEL_VERSION: &str = "gear-practical-v1";
 
 #[derive(Clone, Debug, Serialize)]
 pub struct GearCatalog {
+    pub pages: crate::catalog_pages::Pages,
     pub snapshot_id: Option<SnapshotId>,
     pub revision: Option<DatasetRevision>,
     pub fixture: bool,
@@ -143,7 +144,22 @@ impl SnapshotApplication {
                 context: key.context.clone(),
                 fixture: key.fixture,
             })?;
+            let mut pages = crate::catalog_pages::Pages::new();
+            let items = crate::catalog_pages::first(
+                store,
+                content.as_ref(),
+                azeroth_core::catalog::Collection::Items,
+                &mut pages,
+            )?;
+            let acquisitions = crate::catalog_pages::first(
+                store,
+                content.as_ref(),
+                azeroth_core::catalog::Collection::Acquisitions,
+                &mut pages,
+            )?;
             Ok(GearCatalog {
+                pages,
+
                 snapshot_id: snapshot.as_ref().map(|s| s.payload.id.clone()),
                 revision: content.as_ref().map(|c| c.reference().revision.clone()),
                 fixture: key.fixture,
@@ -151,13 +167,8 @@ impl SnapshotApplication {
                 equipment: snapshot
                     .map(|s| s.payload.equipment.clone())
                     .unwrap_or_default(),
-                items: content
-                    .as_ref()
-                    .map(|c| c.reference().items.clone())
-                    .unwrap_or_default(),
-                acquisitions: content
-                    .map(|c| c.reference().acquisitions.clone())
-                    .unwrap_or_default(),
+                items,
+                acquisitions,
             })
         })
     }

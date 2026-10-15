@@ -6,6 +6,7 @@
 pub mod atlas;
 pub mod authored_content;
 pub mod catalog;
+pub mod catalog_pages;
 pub mod clustering;
 pub mod content;
 pub mod content_dispositions;
@@ -16,6 +17,7 @@ pub mod plan_export;
 pub mod planning;
 pub mod routes;
 pub mod snapshots;
+pub mod stored_atlas;
 
 use azeroth_core::contract::decode_envelope;
 use azeroth_core::entities::CharacterSnapshot;

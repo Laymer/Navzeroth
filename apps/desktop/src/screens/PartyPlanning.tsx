@@ -1,3 +1,4 @@
+import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
 import { runPlanningJob, type PlanningJobStatus } from "../commands/planningJobs";
@@ -17,6 +18,7 @@ function utility(text: string): number | null {
   return text.trim() && Number.isInteger(number) && number >= 0 && number <= 4_294_967_295 ? number : null;
 }
 export function PartyPlanning({ client, partyId, refreshKey }: { client: CommandClient; partyId: string; refreshKey: number }) {
+  const previousCatalogBinding=useRef("");
   const [catalog, setCatalog] = useState<JointPlanningCatalog | null>(null);
   const [drafts, setDrafts] = useState<Record<string, EstimateDraft>>({});
   const [origin, setOrigin] = useState("");
@@ -53,6 +55,9 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       setLoading(false);
       if (!response.ok) { setCatalog(null); setError(response.error); return; }
       catalogOwner.current = { client, identity }; setCatalog(response.value);
+      const binding=JSON.stringify([partyId,response.value.revision,response.value.pages,response.value.participants.map(p=>p.profile_id)]);
+      if(response.value.pages&&previousCatalogBinding.current===binding)return;
+      previousCatalogBinding.current=binding;
       setOrigin((old) => response.value.nodes.some((n) => n.id === old) ? old : "");
       setStop((old) => response.value.nodes.some((n) => n.id === old) ? old : "");
       setDrafts((old) => Object.fromEntries(response.value.objectives.map((objective) => {
@@ -97,7 +102,7 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
   }
   function cancelCalculation() { current.current.edit += 1; abortJob(); setBusy(false); setError({ code: "OPERATION_CANCELED", message: "Planning request canceled locally; cancellation requested for its background job.", retryable: false }); }
 
-  const chooseNode = (label: string, value: string, change: (value: string) => void) => <label>{label} <select value={value} disabled={loading} onChange={(e) => edit(() => change(e.target.value))}><option value="">Choose a declared node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</select></label>;
+  const chooseNode = (label: string, value: string, change: (value: string) => void) => <label>{label} <select value={value} disabled={loading} onChange={(e) => edit(() => change(e.target.value))}><OffPageOptions selected={[value]} visible={visibleCatalog?.nodes.map(n=>n.id)??[]}/><option value="">Choose a declared node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</select></label>;
   return <section aria-labelledby="joint-planning-title">
     <h3 id="joint-planning-title">Manual joint session planning</h3>
     <p>Choose explicit shared travel assumptions and same-unit utility for each participant. Every selected objective must be ready and benefit every member. Review catch-up reasons above when progress differs; this planner does not predict unlocks or quest sharing.</p>
@@ -109,17 +114,20 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
     {visibleCatalog && <fieldset disabled={loading}>
       <legend>Manual shared assumptions</legend>
       <label>Goal profile / utility unit <input value={goal} onChange={(e) => edit(() => setGoal(e.target.value))} maxLength={128} /></label>
-      {chooseNode("Shared origin", origin, setOrigin)}{chooseNode("Shared stopping point", stop, setStop)}
+      <CatalogPager disabled={busy} client={client} subject={{kind:"party",party_id:partyId}} page={visibleCatalog?.pages?.nodes} label="nodes" onPage={p=>{setCatalog(old=>old?{...old,nodes:p.records as NonNullable<typeof catalog>["nodes"],pages:{...old.pages,nodes:p}}:old);}}/>
+<CatalogPager disabled={busy} client={client} subject={{kind:"party",party_id:partyId}} page={visibleCatalog?.pages?.objectives} label="objectives" onPage={p=>{setDrafts(old=>({...Object.fromEntries((p.records as NonNullable<typeof catalog>["objectives"]).map(o=>[o.id,{node:"",minutes:"",service:"0",included:false,excluded:false,utilities:Object.fromEntries((visibleCatalog?.participants??[]).map(member=>[member.profile_id,""]))}])),...Object.fromEntries(Object.entries(old).filter(([id,d])=>d.included||d.excluded||p.records.some(r=>(r as {id:string}).id===id)))}));setCatalog(old=>old?{...old,objectives:p.records as NonNullable<typeof catalog>["objectives"],pages:{...old.pages,objectives:p}}:old);}}/>
+{chooseNode("Shared origin", origin, setOrigin)}{chooseNode("Shared stopping point", stop, setStop)}
       <button type="button" disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</button>
       <label>Session budget (minutes) <input type="number" min="0" value={budget} onChange={(e) => edit(() => setBudget(e.target.value))} /></label>
       <label>Stopping service time (minutes) <input type="number" min="0" value={stopService} onChange={(e) => edit(() => setStopService(e.target.value))} /></label>
+      <p>{Object.values(drafts).filter(d=>d.included).length} selected objectives; {Object.values(drafts).filter(d=>d.excluded).length} exclusions (maximum 128 each).</p><button type="button" onClick={()=>edit(()=>setDrafts(old=>Object.fromEntries(Object.entries(old).filter(([id])=>visibleCatalog.objectives.some(o=>o.id===id)).map(([id,d])=>[id,{...d,included:false,excluded:false}]))))}>Clear objective selections</button>
       {visibleCatalog.objectives.length === 0 && <p>No authored objectives in this dataset.</p>}
       {visibleCatalog.objectives.map((objective) => {
         const draft = drafts[objective.id]; if (!draft) return null;
         return <fieldset key={objective.id}><legend>{objective.id}</legend>
           <p>Authored participants: {objective.participants.join(", ")}</p>
-          <label><input type="checkbox" checked={draft.included} onChange={(e) => candidate(objective.id, { included: e.target.checked })} /> Include {objective.id}</label>
-          <label><input type="checkbox" checked={draft.excluded} onChange={(e) => candidate(objective.id, { excluded: e.target.checked })} /> Exclude {objective.id} from the plan</label>
+          <label><input type="checkbox" checked={draft.included} disabled={!draft.included&&Object.values(drafts).filter(d=>d.included).length>=128} onChange={(e) => candidate(objective.id, { included: e.target.checked })} /> Include {objective.id}</label>
+          <label><input type="checkbox" checked={draft.excluded} disabled={!draft.excluded&&Object.values(drafts).filter(d=>d.excluded).length>=128} onChange={(e) => candidate(objective.id, { excluded: e.target.checked })} /> Exclude {objective.id} from the plan</label>
           {chooseNode(`Node for ${objective.id}`, draft.node, (node) => candidate(objective.id, { node }))}
           <label>Completion minutes for {objective.id} <input type="number" min="0" value={draft.minutes} onChange={(e) => candidate(objective.id, { minutes: e.target.value })} /></label>
           <label>Service minutes for {objective.id} <input type="number" min="0" value={draft.service} onChange={(e) => candidate(objective.id, { service: e.target.value })} /></label>

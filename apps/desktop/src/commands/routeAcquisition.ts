@@ -30,6 +30,7 @@ export interface RouteAcquisitionReport {
   gear: GearReport|null; assumptions:string[];
 }
 export interface RouteAcquisitionClient {
+  getCatalogPage?: import("./catalogPages").CatalogPageClient["getCatalogPage"];
   getPlanningCatalog(profileId:string):Promise<Result<PlanningCatalog>>;
   previewAcquisitionRoute(text:string):Promise<Result<RouteAcquisitionBaseline>>;
   assessRouteAcquisition(text:string):Promise<Result<RouteAcquisitionReport>>;

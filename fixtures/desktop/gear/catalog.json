@@ -273,6 +273,24 @@
       }
     }
   ],
+  "pages": {
+    "acquisitions": {
+      "catalog_sha256": "ccc8c0c32949d5eafaf1677f9ebc9c79736e0fc95884594f0cb189883ce00927",
+      "collection": "acquisitions",
+      "next_offset": null,
+      "offset": 0,
+      "revision": "synthetic-planning-v1",
+      "total": 2
+    },
+    "items": {
+      "catalog_sha256": "ccc8c0c32949d5eafaf1677f9ebc9c79736e0fc95884594f0cb189883ce00927",
+      "collection": "items",
+      "next_offset": null,
+      "offset": 0,
+      "revision": "synthetic-planning-v1",
+      "total": 3
+    }
+  },
   "revision": "synthetic-planning-v1",
   "snapshot_id": "demo-snapshot-001"
 }

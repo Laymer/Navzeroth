@@ -419,6 +419,16 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub(crate) fn with_consistent_selected_store<T>(
+        &self,
+        call: impl FnOnce(&SqliteStore, Option<&str>) -> Result<T>,
+    ) -> Result<T> {
+        let state = self.lock()?;
+        state
+            .store
+            .with_immediate_read(|store| call(store, state.selected.as_deref()))
+    }
+
     /// Serialize multi-profile operations against one consistent store state.
     pub(crate) fn with_store_mut<T>(
         &self,
@@ -447,17 +457,27 @@ impl SnapshotApplication {
                     context: key.context,
                     fixture: key.fixture,
                 })?;
+        let mut pages = crate::catalog_pages::Pages::new();
+        let nodes = crate::catalog_pages::first(
+            &state.store,
+            content.as_ref(),
+            azeroth_core::catalog::Collection::Nodes,
+            &mut pages,
+        )?;
+        let objectives = crate::catalog_pages::first(
+            &state.store,
+            content.as_ref(),
+            azeroth_core::catalog::Collection::Objectives,
+            &mut pages,
+        )?;
         Ok(crate::planning::PlanningCatalog {
+            pages,
+
             snapshot_id: snapshot.map(|s| s.payload.id.clone()),
             fixture: key.fixture,
             revision: content.as_ref().map(|c| c.reference().revision.clone()),
-            nodes: content
-                .as_ref()
-                .map(|c| c.reference().nodes.clone())
-                .unwrap_or_default(),
-            objectives: content
-                .map(|c| c.reference().objectives.clone())
-                .unwrap_or_default(),
+            nodes,
+            objectives,
         })
     }
     pub fn plan_session(
@@ -702,13 +722,21 @@ impl SnapshotApplication {
             fixture: key.fixture,
         };
         let content = state.store.active_catalog_revision(&scope)?;
+        let mut pages = crate::catalog_pages::Pages::new();
+        let definitions: Vec<azeroth_core::entities::QuestDefinition> =
+            crate::catalog_pages::first(
+                &state.store,
+                content.as_ref(),
+                azeroth_core::catalog::Collection::Quests,
+                &mut pages,
+            )?;
         Ok(crate::party::PartyQuestCatalog {
+            pages,
+
             context: key.context.clone(),
             fixture: key.fixture,
             revision: content.as_ref().map(|c| c.reference().revision.clone()),
-            quests: content
-                .map(|c| c.reference().quests.iter().map(|q| q.id.clone()).collect())
-                .unwrap_or_default(),
+            quests: definitions.into_iter().map(|q| q.id.clone()).collect(),
         })
     }
     pub fn party_eligibility(
@@ -979,17 +1007,7 @@ impl SnapshotApplication {
         }
     }
     pub fn markers(&self, now: Option<UtcMillis>) -> Result<Vec<atlas::SnapshotMarker>> {
-        let id = self.lock()?.selected.clone();
-        let Some(id) = id else {
-            return Ok(vec![]);
-        };
-        let Some(snapshot) = self.current(&id, now)? else {
-            return Ok(vec![]);
-        };
-        let mut marker = atlas::snapshot_marker_for(&snapshot.envelope, now)?;
-        marker.data_mode = DataMode::Stored;
-        marker.profile_id = id;
-        Ok(vec![marker])
+        self.atlas_markers(None, now)
     }
     pub fn watch_status(&self) -> Result<WatchState> {
         Ok(self.lock()?.watch_state.clone())

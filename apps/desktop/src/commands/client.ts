@@ -60,6 +60,7 @@ export function createClient(adapter: CommandAdapter) {
     
     getContentDispositions: (profileId:string) => run(() => adapter.invoke("get_content_dispositions",{profile_id:profileId})),
     changeContentDisposition: (text:string) => run(() => adapter.invoke("change_content_disposition",{text})),
+    getCatalogPage: (text: string) => run(() => adapter.invoke("get_catalog_page", { text })),
     getAuthoredCatalog: (text: string) => run(() => adapter.invoke("get_authored_catalog", { text })),
     getDungeonPreparation: (text: string) => run(() => adapter.invoke("get_dungeon_preparation", { text })),
     getReferenceView: () => run(() => adapter.invoke("get_reference_view",undefined)),
@@ -137,12 +138,12 @@ export function createClient(adapter: CommandAdapter) {
       run(() => adapter.invoke("get_stored_snapshot", { profile_id: profileId })),
     getSnapshotHistory: (profileId: string, limit = 32): Promise<Result<HistoryEntry[]>> =>
       run(() => adapter.invoke("get_snapshot_history", { profile_id: profileId, limit })),
-    queryAtlas: (image: string | null = null): Promise<Result<AtlasView>> =>
-      run(() => adapter.invoke("query_atlas", { image })),
-    projectPositions: (positions: Position[]): Promise<Result<ProjectedPosition[]>> =>
-      run(() => adapter.invoke("project_positions", { positions })),
-    getSnapshotMarkers: (): Promise<Result<SnapshotMarker[]>> =>
-      run(() => adapter.invoke("get_snapshot_markers", undefined)),
+    queryAtlas: (image: string | null = null, page?: import("./contract").AtlasToken, offset?: number): Promise<Result<AtlasView>> =>
+      run(() => adapter.invoke("query_atlas", { image, ...(page ? {page,offset:offset??0}: {}) })),
+    projectPositions: (positions: Position[], page?: import("./contract").AtlasToken): Promise<Result<ProjectedPosition[]>> =>
+      run(() => adapter.invoke("project_positions", { positions, ...(page ? {page}: {}) })),
+    getSnapshotMarkers: (page?: import("./contract").AtlasToken): Promise<Result<SnapshotMarker[]>> =>
+      run(() => adapter.invoke("get_snapshot_markers", page?{page}:undefined)),
   };
 }
 

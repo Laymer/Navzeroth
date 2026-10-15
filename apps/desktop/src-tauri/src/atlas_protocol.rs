@@ -23,3 +23,37 @@ pub fn respond(request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     }
     response
 }
+
+pub fn respond_stored(
+    request: &Request<Vec<u8>>,
+    host: &azeroth_app::recovery::DatabaseHost,
+) -> Response<Vec<u8>> {
+    let outcome = if request.method().as_str() != "GET" || request.uri().query().is_some() {
+        None
+    } else {
+        host.with_application(|app| app.stored_atlas_asset(request.uri().path()))
+            .ok()
+            .flatten()
+    };
+    let status = if request.method().as_str() != "GET" {
+        405
+    } else if outcome.is_some() {
+        200
+    } else {
+        404
+    };
+    let mut response = Response::new(outcome.unwrap_or_default());
+    *response.status_mut() = StatusCode::from_u16(status).unwrap_or(StatusCode::NOT_FOUND);
+    response
+        .headers_mut()
+        .insert(CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    response
+        .headers_mut()
+        .insert(X_CONTENT_TYPE_OPTIONS, HeaderValue::from_static("nosniff"));
+    if status == 200 {
+        response
+            .headers_mut()
+            .insert(CONTENT_TYPE, HeaderValue::from_static("image/png"));
+    }
+    response
+}
