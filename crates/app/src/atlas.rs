@@ -375,7 +375,7 @@ pub struct AtlasImage {
     pub approximate: bool,
     /// What the imagery does not show or verify.
     pub gaps: Text,
-    pub attribution: Text,
+    pub attribution: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -417,7 +417,7 @@ pub struct SnapshotMarker {
 // Handlers
 // ---------------------------------------------------------------------------
 
-fn confidence_rank(c: Confidence) -> u8 {
+pub(crate) fn confidence_rank(c: Confidence) -> u8 {
     match c {
         Confidence::VerifiedOnBuild => 0,
         Confidence::PublisherDocumented => 1,
@@ -469,23 +469,28 @@ fn atlas_image(
     image: &MapImage,
     style: SchemeStyle,
 ) -> Result<AtlasImage, AppError> {
-    catalog_image(&atlas.dataset, &atlas.context, image, style, &|layer| {
-        atlas
-            .integrity
-            .get(&(image.id.clone(), layer.id.clone()))
-            .copied()
-            .unwrap_or(LayerCheck::NotEmbedded)
-    })
+    catalog_image(
+        calibration_confidence(image, &atlas.dataset),
+        &atlas.context,
+        image,
+        style,
+        &|layer| {
+            atlas
+                .integrity
+                .get(&(image.id.clone(), layer.id.clone()))
+                .copied()
+                .unwrap_or(LayerCheck::NotEmbedded)
+        },
+    )
 }
 
 fn catalog_image(
-    dataset: &ReferenceDataset,
+    confidence: Option<Confidence>,
     context: &DataContext,
     image: &MapImage,
     style: SchemeStyle,
     integrity: &dyn Fn(&ImageLayer) -> LayerCheck,
 ) -> Result<AtlasImage, AppError> {
-    let confidence = calibration_confidence(image, dataset);
     let layers = image
         .layers
         .iter()
@@ -529,7 +534,7 @@ fn catalog_image(
         calibration_confidence: confidence,
         approximate: is_approximate(image, confidence),
         gaps: image.gaps.clone(),
-        attribution: attribution(image, context.namespace)?,
+        attribution: attribution(image, context.namespace)?.as_str().to_owned(),
     })
 }
 
@@ -677,12 +682,12 @@ pub(crate) fn marker_without_catalog(
     Ok(marker)
 }
 pub(crate) fn stored_image(
-    dataset: &ReferenceDataset,
+    confidence: Option<Confidence>,
     context: &DataContext,
     image: &MapImage,
 ) -> Result<AtlasImage, AppError> {
     catalog_image(
-        dataset,
+        confidence,
         context,
         image,
         SchemeStyle::for_platform(),

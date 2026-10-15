@@ -69,6 +69,11 @@ fn selected_v2_atlas_is_revision_bound_and_missing_material_unavailable() {
     );
     assert_eq!(view.images.len(), 200);
     assert!(
+        view.images[0]
+            .attribution
+            .contains("Attribution: unknown. Licence: unknown.")
+    );
+    assert!(
         view.images
             .iter()
             .flat_map(|i| &i.layers)
