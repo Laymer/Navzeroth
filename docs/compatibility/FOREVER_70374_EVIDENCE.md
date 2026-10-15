@@ -88,8 +88,13 @@ maximum relative elapsed time46,102ms. This is a manual unclassified recording;
 it does not establish quest turn-ins, automatic advancement/deviation, active
 play time, full session analysis or final candidate acceptance.
 
-Clock confirmation was reported successful; inspection of a new trusted capture
-and subsequent reload reset is pending. The first snapshot's clock is uncertain.
+Clock confirmation succeeded by operator report and a subsequent persisted
+capture recorded Trusted. After reload, the operator made a new capture without
+confirmation; it warned of uncertainty and the saved snapshot recorded Uncertain.
+The first reset-check disk read still contained the earlier trusted capture; a
+completed repeat capture/reload supplied the new uncertain record. The operator
+also observed both C_QuestLog.IsComplete and IsQuestFlaggedCompleted as functions;
+return values were not yet observed with the patched reader.
 These are narrow development observations with an inspected source revision.
 They do not update aggregate release acceptance rows, establish complete
 inventories/rights or bind a frozen1.0.0candidate. Windows PowerShell5.1 helper
