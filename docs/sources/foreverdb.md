@@ -72,7 +72,8 @@ the playable 70374 inventory and validate every required unit before claiming
 coverage. Current source admission remains empty and release blockers remain.
 
 The [robots policy](https://foreverdb.net/robots.txt) allows public-page research
-but excludes `/api/`; no excluded API was requested. Wago supplies expiring signed
+but excludes `/api/`; no data API extraction was performed. The separately
+authorized contact inquiry used the normal public contact form. Wago supplies expiring signed
 download links. The existing automated admission URL subset rejects query URLs;
 do not strip signatures or pretend these links are immutable retrieval URLs.
 Use a reviewed manual-file acquisition declaration, or obtain a supported static
@@ -89,3 +90,12 @@ file/field/transform list, implement an inert staging adapter, then compare it
 against the independent target inventory. Do not install the upstream addon or
 uploader as part of desktop import, and do not copy runtime telemetry or combat
 workarounds into Navzeroth.
+
+
+## Publisher inquiry
+
+The prepared [source/export inquiry](permission-requests/foreverdb-source-request-unsent.md)
+was sent through the public contact form on2026-10-15 with explicit user
+authorization and public logging disabled. Server and visible confirmations
+verified submission. No reply has been received; all admission and target
+validation questions remain open.
