@@ -521,7 +521,7 @@ function Diagnostics.attach(env)
       build=build.version .. '.' .. build.build, interface=build.interface}}
     local questApi = type(env.C_QuestLog) == 'table' and env.C_QuestLog or {}
     local quests, questDiagnostics = ns.Snapshot.readQuests(questApi.GetNumQuestLogEntries,
-      questApi.GetInfo, context, metadata)
+      questApi.GetInfo, context, metadata, questApi.IsComplete)
     if not quests then say('snapshot failed: ' .. questDiagnostics); return end
     local inventoryGetter
     if type(env.GetInventoryItemLink) == 'function' then
