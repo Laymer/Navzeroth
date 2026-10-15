@@ -689,7 +689,8 @@ function Diagnostics.attach(env)
         ' bytes); reload/logout, then import AzerothNavigatorDB / session_export') end
       return
     end
-    local actions={start=true, ['start-quests']=true, sample=true, pause=true, resume=true, stop=true}
+    local actions={start=true, ['start-quests']=true, sample=true,
+      pause=true, resume=true, stop=true}
     if not actions[command] then
       say('/anavsession start|start-quests <anonymous-profile-id> | sample | pause | ' ..
         'resume | stop | export | status')
