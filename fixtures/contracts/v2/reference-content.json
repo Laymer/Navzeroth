@@ -1,0 +1,661 @@
+{
+  "acquisition_facts": [
+    {
+      "acquisition": "demo-acq-1",
+      "availability": {
+        "status": "unknown"
+      },
+      "costs": {
+        "status": "known",
+        "value": [
+          {
+            "amount": "0",
+            "kind": "copper"
+          }
+        ]
+      },
+      "entitlement": {
+        "status": "restricted"
+      },
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "origin": {
+        "status": "unknown"
+      },
+      "prerequisites": {
+        "status": "unknown"
+      },
+      "rewards": {
+        "status": "known",
+        "value": [
+          {
+            "choice_group": null,
+            "item": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "demo-item-1",
+              "variant": "base"
+            },
+            "quantity": 0
+          }
+        ]
+      }
+    }
+  ],
+  "dungeons": [
+    {
+      "access": {
+        "status": "unknown"
+      },
+      "checklist": {
+        "status": "known",
+        "value": [
+          {
+            "condition": {
+              "status": "unknown"
+            },
+            "evidence": [
+              "demo-evidence-1"
+            ],
+            "id": "check-1",
+            "label": "Check"
+          }
+        ]
+      },
+      "entrance": {
+        "status": "known",
+        "value": {
+          "id": "demo-node-1",
+          "map": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "floor": "0",
+            "instance": null,
+            "map_id": "demo-map-1"
+          }
+        }
+      },
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "id": "dungeon-1",
+      "map": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "floor": "0",
+        "instance": null,
+        "map_id": "demo-map-1"
+      },
+      "preparation_quests": {
+        "status": "known",
+        "value": [
+          "demo-quest-1"
+        ]
+      },
+      "rewards": {
+        "status": "known",
+        "value": [
+          "demo-acq-1"
+        ]
+      },
+      "title": "Synthetic dungeon",
+      "travel_edges": {
+        "status": "known",
+        "value": []
+      }
+    }
+  ],
+  "equipment": [
+    {
+      "category": {
+        "status": "unknown"
+      },
+      "configuration": {
+        "status": "unknown"
+      },
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "item": {
+        "context": {
+          "build": {
+            "build": "UNVERIFIED_DEMO",
+            "edition": "wow_forever",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        },
+        "item_id": "demo-item-1",
+        "variant": "base"
+      }
+    }
+  ],
+  "format": "navzeroth-reference-content",
+  "models": [
+    {
+      "applicability": {
+        "status": "unknown"
+      },
+      "class": "synthetic-class",
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "exclusions": {
+        "status": "known",
+        "value": []
+      },
+      "id": "model-1",
+      "layout": {
+        "status": "known",
+        "value": {
+          "hands": {
+            "main_hand": "synthetic-main",
+            "off_hand": "synthetic-off"
+          },
+          "slots": [
+            "synthetic-main",
+            "synthetic-off"
+          ]
+        }
+      },
+      "maximum_level": 60,
+      "minimum_level": 1,
+      "proficiency": {
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [],
+        "role": "synthetic-role",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "type": "synthetic_test"
+        },
+        "weights": {
+          "synthetic-power": 1000
+        }
+      }
+    }
+  ],
+  "quest_facts": [
+    {
+      "access": {
+        "status": "unknown"
+      },
+      "access_requirements": {
+        "status": "unknown"
+      },
+      "evidence": [
+        "demo-evidence-1"
+      ],
+      "exclusive_groups": {
+        "status": "known",
+        "value": []
+      },
+      "quest": "demo-quest-1",
+      "reset": {
+        "status": "known",
+        "value": {
+          "kind": "never"
+        }
+      },
+      "shareable": {
+        "status": "known",
+        "value": false
+      },
+      "sharing_conditions": {
+        "status": "unknown"
+      }
+    }
+  ],
+  "reference": {
+    "fixture": true,
+    "format": "azeroth-navigator",
+    "game": {
+      "build": "UNVERIFIED_DEMO",
+      "edition": "wow_forever",
+      "interface": "UNVERIFIED_DEMO",
+      "locale": "enGB"
+    },
+    "kind": "reference_dataset",
+    "namespace": "demo",
+    "payload": {
+      "acquisitions": [
+        {
+          "conditions": {
+            "status": "unknown"
+          },
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "cost": {
+            "status": "known",
+            "value": "9007199254740993"
+          },
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "id": "demo-acq-1",
+          "items": [
+            {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "item_id": "demo-item-1",
+              "variant": "base"
+            }
+          ],
+          "kind": "vendor",
+          "probability": {
+            "status": "known",
+            "value": 1
+          }
+        }
+      ],
+      "edges": [
+        {
+          "consumes_resource": {
+            "status": "known",
+            "value": false
+          },
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "cooldown_ms": {
+            "status": "unknown"
+          },
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "expected_ms": {
+            "status": "known",
+            "value": 30000
+          },
+          "from": {
+            "id": "demo-node-1",
+            "map": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "floor": "0",
+              "instance": null,
+              "map_id": "demo-map-1"
+            }
+          },
+          "id": "demo-edge-1",
+          "mode": "walking",
+          "requirements": {
+            "status": "unknown"
+          },
+          "status": "estimated",
+          "to": {
+            "id": "demo-node-2",
+            "map": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "floor": "0",
+              "instance": null,
+              "map_id": "demo-map-1"
+            }
+          },
+          "uncertainty": {
+            "status": "known",
+            "value": {
+              "max_ms": 45000,
+              "min_ms": 20000
+            }
+          },
+          "wait_ms": {
+            "status": "known",
+            "value": 0
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "confidence": "limited_sample",
+          "conflicts": [],
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "id": "demo-evidence-1",
+          "license": {
+            "status": "unknown"
+          },
+          "notes": "Synthetic evidence",
+          "observed_at_utc_ms": {
+            "status": "known",
+            "value": 1791700000000
+          },
+          "source": "demo-source-1"
+        }
+      ],
+      "items": [
+        {
+          "attributes": {
+            "status": "known",
+            "value": {
+              "stamina": 0
+            }
+          },
+          "effects": {
+            "status": "known",
+            "value": []
+          },
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "key": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "item_id": "demo-item-1",
+            "variant": "base"
+          },
+          "requirements": {
+            "status": "known",
+            "value": {
+              "level": 20,
+              "op": "level_at_least"
+            }
+          },
+          "slots": [
+            "main_hand"
+          ],
+          "two_handed": {
+            "status": "known",
+            "value": false
+          },
+          "unique_group": {
+            "status": "unknown"
+          }
+        }
+      ],
+      "map_spaces": [
+        {
+          "evidence": [],
+          "key": {
+            "context": {
+              "build": {
+                "build": "UNVERIFIED_DEMO",
+                "edition": "wow_forever",
+                "interface": "UNVERIFIED_DEMO"
+              },
+              "namespace": "demo"
+            },
+            "floor": "0",
+            "instance": null,
+            "map_id": "demo-map-1"
+          },
+          "transform": {
+            "status": "unknown"
+          }
+        }
+      ],
+      "nodes": [
+        {
+          "id": "demo-node-1",
+          "position": {
+            "map": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "floor": "0",
+              "instance": null,
+              "map_id": "demo-map-1"
+            },
+            "x": 0.1,
+            "y": 0.1
+          },
+          "service": {
+            "status": "known",
+            "value": "vendor"
+          }
+        },
+        {
+          "id": "demo-node-2",
+          "position": {
+            "map": {
+              "context": {
+                "build": {
+                  "build": "UNVERIFIED_DEMO",
+                  "edition": "wow_forever",
+                  "interface": "UNVERIFIED_DEMO"
+                },
+                "namespace": "demo"
+              },
+              "floor": "0",
+              "instance": null,
+              "map_id": "demo-map-1"
+            },
+            "x": 0.9,
+            "y": 0.9
+          },
+          "service": {
+            "status": "unknown"
+          }
+        }
+      ],
+      "objectives": [
+        {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "evidence": [],
+          "expected_ms": {
+            "status": "unknown"
+          },
+          "id": "demo-objective-1",
+          "participants": [
+            "demo-character-paladin"
+          ],
+          "requirements": {
+            "status": "unknown"
+          },
+          "targets": [
+            {
+              "kind": "quest_stage",
+              "quest": "demo-quest-1",
+              "stage": "demo-objective-1"
+            },
+            {
+              "kind": "acquisition",
+              "source": "demo-acq-1"
+            },
+            {
+              "kind": "service",
+              "node": {
+                "id": "demo-node-1",
+                "map": {
+                  "context": {
+                    "build": {
+                      "build": "UNVERIFIED_DEMO",
+                      "edition": "wow_forever",
+                      "interface": "UNVERIFIED_DEMO"
+                    },
+                    "namespace": "demo"
+                  },
+                  "floor": "0",
+                  "instance": null,
+                  "map_id": "demo-map-1"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "quests": [
+        {
+          "completion": {
+            "status": "known",
+            "value": "unrepeatable"
+          },
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "eligibility": {
+            "status": "unknown"
+          },
+          "evidence": [],
+          "id": "demo-quest-1",
+          "locations": {
+            "status": "known",
+            "value": [
+              {
+                "map": {
+                  "context": {
+                    "build": {
+                      "build": "UNVERIFIED_DEMO",
+                      "edition": "wow_forever",
+                      "interface": "UNVERIFIED_DEMO"
+                    },
+                    "namespace": "demo"
+                  },
+                  "floor": "0",
+                  "instance": null,
+                  "map_id": "demo-map-1"
+                },
+                "x": 0.5,
+                "y": 0.5
+              }
+            ]
+          },
+          "prerequisites": {
+            "status": "unknown"
+          },
+          "rewards": {
+            "status": "known",
+            "value": [
+              {
+                "context": {
+                  "build": {
+                    "build": "UNVERIFIED_DEMO",
+                    "edition": "wow_forever",
+                    "interface": "UNVERIFIED_DEMO"
+                  },
+                  "namespace": "demo"
+                },
+                "item_id": "demo-item-1",
+                "variant": "base"
+              }
+            ]
+          },
+          "shared_progress": {
+            "status": "unknown"
+          },
+          "stages": [
+            "demo-objective-1"
+          ]
+        }
+      ],
+      "revision": "demo-r1",
+      "rules": [
+        {
+          "context": {
+            "build": {
+              "build": "UNVERIFIED_DEMO",
+              "edition": "wow_forever",
+              "interface": "UNVERIFIED_DEMO"
+            },
+            "namespace": "demo"
+          },
+          "cooldown_ms": 60000,
+          "deduplication_key": "demo-rule-1",
+          "dismissal": "session",
+          "evidence": [
+            "demo-evidence-1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "demo-rule-1",
+          "predicate": {
+            "level": 22,
+            "op": "level_at_least"
+          },
+          "priority": 0,
+          "result_template": "Synthetic tip",
+          "trigger": "level_changed"
+        }
+      ]
+    },
+    "producer": {
+      "component": "test_fixture",
+      "version": "0.1.0"
+    },
+    "provenance": {
+      "clock_trust": "uncertain",
+      "created_at_utc_ms": 1791792000000,
+      "source": "synthetic_fixture"
+    },
+    "schema_version": 1
+  },
+  "schema_version": 2
+}
