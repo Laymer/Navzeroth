@@ -17,6 +17,7 @@ pub mod plan_export;
 pub mod planning;
 pub mod routes;
 pub mod snapshots;
+pub mod stored_atlas;
 
 use azeroth_core::contract::decode_envelope;
 use azeroth_core::entities::CharacterSnapshot;

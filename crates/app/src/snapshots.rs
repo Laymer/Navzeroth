@@ -419,6 +419,16 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub(crate) fn with_consistent_selected_store<T>(
+        &self,
+        call: impl FnOnce(&SqliteStore, Option<&str>) -> Result<T>,
+    ) -> Result<T> {
+        let state = self.lock()?;
+        state
+            .store
+            .with_immediate_read(|store| call(store, state.selected.as_deref()))
+    }
+
     /// Serialize multi-profile operations against one consistent store state.
     pub(crate) fn with_store_mut<T>(
         &self,
@@ -997,17 +1007,7 @@ impl SnapshotApplication {
         }
     }
     pub fn markers(&self, now: Option<UtcMillis>) -> Result<Vec<atlas::SnapshotMarker>> {
-        let id = self.lock()?.selected.clone();
-        let Some(id) = id else {
-            return Ok(vec![]);
-        };
-        let Some(snapshot) = self.current(&id, now)? else {
-            return Ok(vec![]);
-        };
-        let mut marker = atlas::snapshot_marker_for(&snapshot.envelope, now)?;
-        marker.data_mode = DataMode::Stored;
-        marker.profile_id = id;
-        Ok(vec![marker])
+        self.atlas_markers(None, now)
     }
     pub fn watch_status(&self) -> Result<WatchState> {
         Ok(self.lock()?.watch_state.clone())
