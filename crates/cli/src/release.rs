@@ -8,7 +8,7 @@ use azeroth_core::{
     types::{AssetPath, DatasetNamespace},
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -441,154 +441,28 @@ struct Catalog {
     sources: BTreeSet<String>,
     files: BTreeMap<String, FileRef>,
 }
-fn add_record(
-    catalog: &mut Catalog,
-    domain: &str,
-    key: Value,
-    sources: &BTreeSet<String>,
-) -> Result<()> {
-    let key = serde_json::to_string(&key).map_err(|_| "Record identity cannot be encoded")?;
-    if catalog
-        .records
-        .entry(domain.into())
-        .or_default()
-        .insert(key, sources.clone())
-        .is_some()
+fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
+    if !catalog
+        .revisions
+        .insert(dataset.payload.revision.as_str().to_owned())
     {
-        return Err("Duplicate record identity across release packs");
+        return Err("Duplicate dataset revision across release packs");
+    }
+    for (domain, rows) in azeroth_core::content_v2::records::reference_records(&dataset.payload)? {
+        for (identity, sources) in rows {
+            if catalog
+                .records
+                .entry(domain.clone())
+                .or_default()
+                .insert(identity, sources)
+                .is_some()
+            {
+                return Err("Duplicate record identity across release packs");
+            }
+        }
     }
     if catalog.records.values().map(BTreeMap::len).sum::<usize>() > release::MAX_RECORDS {
         return Err("Release catalog exceeds record limit");
-    }
-    Ok(())
-}
-fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
-    catalog_data(catalog, &dataset.payload)
-}
-fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
-    let revision = data.revision.as_str();
-    if !catalog.revisions.insert(revision.to_owned()) {
-        return Err("Duplicate dataset revision across release packs");
-    }
-    let sources: BTreeSet<String> = data
-        .evidence
-        .iter()
-        .map(|e| e.source.as_str().to_owned())
-        .chain(data.map_images.iter().map(|i| i.source.as_str().to_owned()))
-        .collect();
-    if sources.is_empty() {
-        return Err("Release dataset has no recorded sources");
-    }
-    for quest in &data.quests {
-        add_record(
-            catalog,
-            "quests",
-            json!([revision, "quests", quest.id]),
-            &sources,
-        )?;
-        for stage in &quest.stages {
-            add_record(
-                catalog,
-                "quests",
-                json!([revision, "quest_stages", quest.id, stage]),
-                &sources,
-            )?;
-        }
-    }
-    for item in &data.items {
-        add_record(
-            catalog,
-            "equipment",
-            json!([revision, "items", item.key.item_id, item.key.variant]),
-            &sources,
-        )?;
-    }
-    for source in &data.acquisitions {
-        add_record(
-            catalog,
-            "acquisition",
-            json!([revision, "acquisitions", source.id]),
-            &sources,
-        )?;
-    }
-    for map in &data.map_spaces {
-        add_record(
-            catalog,
-            "geography",
-            json!([
-                revision,
-                "map_spaces",
-                map.key.map_id,
-                map.key.floor,
-                map.key.instance
-            ]),
-            &sources,
-        )?;
-    }
-    for image in &data.map_images {
-        add_record(
-            catalog,
-            "geography",
-            json!([revision, "map_images", image.id]),
-            &sources,
-        )?;
-        for pin in &image.pins {
-            add_record(
-                catalog,
-                "geography",
-                json!([revision, "map_pins", image.id, pin.id]),
-                &sources,
-            )?;
-        }
-    }
-    for map in &data.map_embeddings {
-        add_record(
-            catalog,
-            "geography",
-            json!([
-                revision,
-                "map_embeddings",
-                map.child.map_id,
-                map.child.floor,
-                map.child.instance,
-                map.parent.map_id,
-                map.parent.floor,
-                map.parent.instance
-            ]),
-            &sources,
-        )?;
-    }
-    for node in &data.nodes {
-        add_record(
-            catalog,
-            "travel",
-            json!([revision, "nodes", node.id]),
-            &sources,
-        )?;
-    }
-    for edge in &data.edges {
-        add_record(
-            catalog,
-            "travel",
-            json!([revision, "edges", edge.id]),
-            &sources,
-        )?;
-    }
-    for objective in &data.objectives {
-        add_record(
-            catalog,
-            "quests",
-            json!([revision, "objectives", objective.id]),
-            &sources,
-        )?;
-    }
-    for rule in &data.rules {
-        add_record(
-            catalog,
-            "reminders",
-            json!([revision, "rules", rule.id]),
-            &sources,
-        )?;
     }
     Ok(())
 }
@@ -615,69 +489,8 @@ fn production_file(root: &Path, pack_root: &Path, reference: &FileRef, tree: &Tr
 pub(crate) fn v2_catalog_records(
     content: &azeroth_core::content_v2::ReferenceContent,
 ) -> Result<azeroth_core::release_party::ConcreteCatalog> {
-    let mut catalog = Catalog::default();
-    catalog_data(&mut catalog, &content.reference.payload)?;
-    let revision = content.reference.payload.revision.as_str();
-    let evidence: BTreeMap<_, _> = content
-        .reference
-        .payload
-        .evidence
-        .iter()
-        .map(|e| (&e.id, e.source.as_str().to_owned()))
-        .collect();
-    let sources = |ids: &[azeroth_core::types::EvidenceId]| -> Result<BTreeSet<String>> {
-        ids.iter()
-            .map(|id| evidence.get(id).cloned().ok_or("Unresolved v2 provenance"))
-            .collect()
-    };
-    for row in &content.models {
-        add_record(
-            &mut catalog,
-            "class_roles",
-            json!([revision, "models", row.id]),
-            &sources(&row.evidence)?,
-        )?;
-    }
-    for row in &content.dungeons {
-        add_record(
-            &mut catalog,
-            "dungeons",
-            json!([revision, "dungeons", row.id]),
-            &sources(&row.evidence)?,
-        )?;
-    }
-    for row in &content.equipment {
-        add_record(
-            &mut catalog,
-            "equipment",
-            json!([
-                revision,
-                "equipment_facts",
-                row.item.item_id,
-                row.item.variant
-            ]),
-            &sources(&row.evidence)?,
-        )?;
-    }
-    for row in &content.quest_facts {
-        add_record(
-            &mut catalog,
-            "quests",
-            json!([revision, "quest_facts", row.quest]),
-            &sources(&row.evidence)?,
-        )?;
-    }
-    for row in &content.acquisition_facts {
-        add_record(
-            &mut catalog,
-            "acquisition",
-            json!([revision, "acquisition_facts", row.acquisition]),
-            &sources(&row.evidence)?,
-        )?;
-    }
-    Ok(catalog.records)
+    azeroth_core::content_v2::records::content_records(content)
 }
-
 fn pack_file(
     root: &Path,
     pack_root: &Path,

@@ -337,3 +337,22 @@ fn v2_pack_roundtrips_more_than_1024_records_without_widening_v1() {
         .is_err()
     );
 }
+
+#[test]
+fn shared_import_returns_verified_catalog_and_refuses_later_tampering() {
+    let temp = Temp::new();
+    build(&temp.input(), &temp.output()).unwrap();
+    let bundle = azeroth_ingest::pack::v2::read_verified(&temp.output()).unwrap();
+    let bytes = fs::read(temp.output().join("catalog.json")).unwrap();
+    assert_eq!(
+        serde_json::to_value(&bundle.catalog_sha256).unwrap(),
+        json!(digest(&bytes))
+    );
+    assert_eq!(
+        serde_json::to_value(&bundle.content).unwrap(),
+        serde_json::from_slice::<Value>(&bytes).unwrap()
+    );
+    assert!(!bundle.sources.is_empty());
+    fs::write(temp.output().join("catalog.json"), b"{}").unwrap();
+    assert!(azeroth_ingest::pack::v2::read_verified(&temp.output()).is_err());
+}

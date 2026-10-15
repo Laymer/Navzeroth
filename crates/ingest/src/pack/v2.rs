@@ -108,7 +108,26 @@ fn expected(manifest: &Manifest) -> Res<BTreeSet<AssetPath>> {
     expected_tree(&files)?;
     Ok(files)
 }
+/// Verified import bytes; no caller-selected asset path is read after this point.
+pub struct VerifiedAsset {
+    pub path: AssetPath,
+    pub bytes: Vec<u8>,
+}
+pub struct VerifiedBundle {
+    pub content: ReferenceContent,
+    pub catalog_sha256: Sha256Hex,
+    pub sources: Vec<SourceRecord>,
+    pub assets: Vec<VerifiedAsset>,
+}
+pub fn read_verified(root: &Path) -> Res<VerifiedBundle> {
+    inspect(root, true)?
+        .1
+        .ok_or("Verified bundle was not collected")
+}
 pub fn verify(root: &Path) -> Res<Report> {
+    Ok(inspect(root, false)?.0)
+}
+fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBundle>)> {
     path_checked(root, true)?;
     let mut budget = Budget {
         bytes: 0,
@@ -152,9 +171,16 @@ pub fn verify(root: &Path) -> Res<Report> {
     if layers.keys().collect::<BTreeSet<_>>() != manifest.assets.iter().map(|f| &f.path).collect() {
         return Err("V2 imagery closure differs");
     }
+    let mut verified_assets = Vec::new();
     for asset in &manifest.assets {
         let bytes = check_record(root, asset, MAX_ASSET_BYTES, &mut budget)?;
         png(&bytes, &layers[&asset.path])?;
+        if collect_assets {
+            verified_assets.push(VerifiedAsset {
+                path: asset.path.clone(),
+                bytes,
+            });
+        }
     }
     if let Some(support) = &manifest.party_support {
         let bytes = check_record(
@@ -180,7 +206,7 @@ pub fn verify(root: &Path) -> Res<Report> {
         matrix
             .bind(
                 manifest.catalog.sha256.as_str(),
-                &crate::release::v2_catalog_records(&content)?,
+                &azeroth_core::content_v2::records::content_records(&content)?,
             )
             .map_err(|_| "Party support dependencies do not bind concrete content")?;
         for file in &manifest.supporting_files {
@@ -194,7 +220,7 @@ pub fn verify(root: &Path) -> Res<Report> {
     if permitted != manifest.distribution_eligible || coverage_gaps != manifest.coverage_gaps {
         return Err("V2 declared distribution or coverage differs");
     }
-    Ok(Report {
+    let report = Report {
         report_version: 2,
         datasets: 1,
         fixtures: usize::from(content.reference.fixture),
@@ -202,7 +228,14 @@ pub fn verify(root: &Path) -> Res<Report> {
         total_bytes: budget.bytes,
         coverage_gaps,
         distribution_eligible: permitted,
-    })
+    };
+    let bundle = collect_assets.then_some(VerifiedBundle {
+        content,
+        catalog_sha256: manifest.catalog.sha256,
+        sources: registry.into(),
+        assets: verified_assets,
+    });
+    Ok((report, bundle))
 }
 pub fn build(input: &Path, output: &Path) -> Res<Report> {
     path_checked(input, true)?;

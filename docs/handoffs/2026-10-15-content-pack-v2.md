@@ -44,3 +44,17 @@ observed mappings, Windows/full-content performance and live acceptance. Hosted
 nine checks remain required before merge. This is not a1.0 release or candidate.
 Next: integrate capacity wrapper, test >1024 pack/rollback flows, complete consumers,
 review each PR and verify protected-main results; retain0.8.1 until external gates pass.
+
+Capacity wrapper integration now passes a deterministic v2 pack roundtrip with
+more than1,500 items while legacy v1 still refuses that catalog. The pack engine
+has moved into `azeroth-ingest::pack`, with CLI compatibility re-exports, so desktop
+imports use exactly the same verifier. `v2::read_verified` returns the parsed
+catalog, canonical hash, sources and exact verified asset bytes in one pass.
+Canonical gameplay identity enumeration lives in pure core and is shared by
+party binding and release validation. Full CLI+ingest tests and strict all-target
+Clippy passed after extraction; ten v2 pack tests include importer tamper refusal.
+The ingest guard now recursively inspects modules and permits only the inert
+`std::process::id()` naming call; process execution remains forbidden. Explicit
+manifest/lock allowlists include the bounded PNG decoder already used by the pack.
+An initial test comparison required JSON values because ReferenceContent has no
+PartialEq; corrected before the successful run. Real content/acceptance remain absent.

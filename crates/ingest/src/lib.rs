@@ -24,3 +24,5 @@ pub mod watcher;
 mod error;
 
 pub mod session;
+
+pub mod pack;
