@@ -45,3 +45,8 @@ UI coordination follow-up adds cached `catalog_first_page`, so an initial page
 request does not require serializing the full catalog to obtain its hash. The
 storage page test now verifies the returned first-page identity; all three storage
 v2 tests and strict core/storage Clippy pass after this change.
+
+Recovery follow-up: generic backup row bounds previously remained 32 MiB, which
+would refuse a valid large v2 catalog on restore. Revision/manifest rows now allow
+256 MiB plus bounded identity-column overhead; other rows keep their prior bound.
+A targeted regression checks the separate limits; affected recovery tests rerun.

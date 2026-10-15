@@ -128,7 +128,7 @@ fn encode<T: Serialize>(value: &T) -> Result<String> {
         .map_err(|_| invalid("Catalog exceeds byte capacity or cannot serialize"))?;
     String::from_utf8(writer.0).map_err(|_| storage("Catalog serialization failed"))
 }
-fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
+pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
     if input.sources.len() > 1024 || input.conflicts.len() > 250_000 {
         return Err(invalid("Catalog provenance capacity exceeded"));
     }
@@ -254,43 +254,13 @@ pub(crate) fn load_checked(
 impl SqliteStore {
     pub fn stage_content_v2_revision(&mut self, input: &ContentRevisionV2) -> Result<StageOutcome> {
         let revision = canonical(input)?;
-        let key = revision.key();
-        let hash = content::hash(&revision)?;
-        let document = encode(&revision)?;
-        let report = encode(&content_report(&revision.content.reference))?;
         let tx = self
             .conn
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .db()?;
-        if let Some(id) = content::find(&tx, &key)? {
-            let old = content::load(&tx, id)?;
-            if !matches!(old, ActiveContentRevision::V2(_)) || content::hash(&old)? != hash {
-                return Err(invalid("Immutable catalog revision already differs"));
-            }
-            return Ok(StageOutcome::Duplicate);
-        }
-        let count: i64 = tx
-            .query_row("SELECT count(*) FROM dataset_revisions", [], |r| r.get(0))
-            .db()?;
-        if count >= content::MAX_CONTENT_REVISIONS as i64 {
-            return Err(invalid("Catalog revision capacity exceeded"));
-        }
-        tx.execute("INSERT INTO dataset_revisions(edition,build,interface,namespace,is_fixture,revision,document,content_version) VALUES(?1,?2,?3,?4,?5,?6,?7,2)",params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),content::namespace(&key.scope),key.scope.fixture,key.revision.as_str(),document]).db()?;
-        let id = tx.last_insert_rowid();
-        tx.execute("INSERT INTO content_dispositions(revision_id,state,state_revision,reason_code) VALUES(?1,'eligible',1,'initial_eligibility')",[id]).db()?;
-        for source in &revision.sources {
-            tx.execute(
-                "INSERT INTO source_records(revision_id,source_id,document) VALUES(?1,?2,?3)",
-                params![id, source.id.as_str(), encode(source)?],
-            )
-            .db()?;
-        }
-        for (index, conflict) in revision.conflicts.iter().enumerate() {
-            tx.execute("INSERT INTO source_conflicts(revision_id,conflict_index,document) VALUES(?1,?2,?3)",params![id,index as i64,encode(conflict)?]).db()?;
-        }
-        tx.execute("INSERT INTO dataset_manifests(revision_id,manifest_version,content_sha256,coverage_document) VALUES(?1,1,?2,?3)",params![id,hash.as_str(),report]).db()?;
+        let outcome = stage_canonical(&tx, &revision)?;
         tx.commit().db()?;
-        Ok(StageOutcome::Inserted)
+        Ok(outcome)
     }
     pub fn active_content_v2_revision(
         &self,
@@ -352,7 +322,7 @@ impl SqliteStore {
     ) -> Result<azeroth_core::catalog::CatalogPage> {
         self.with_catalog_index(scope, |index| index.page(request))
     }
-    fn with_catalog_index<T>(
+    pub(crate) fn with_catalog_index<T>(
         &self,
         scope: &ContentScope,
         read: impl Fn(&azeroth_core::catalog::CatalogIndex) -> Result<T>,
@@ -396,3 +366,45 @@ impl SqliteStore {
 }
 
 pub(crate) type Cache<T> = std::cell::RefCell<Option<(i64, i64, u64, T)>>;
+
+pub(crate) fn stage_canonical(
+    conn: &Connection,
+    revision: &ContentRevisionV2,
+) -> Result<StageOutcome> {
+    let key = revision.key();
+    let hash = content::hash(&revision)?;
+    let document = encode(&revision)?;
+    let report = encode(&content_report(&revision.content.reference))?;
+    if let Some(id) = content::find(conn, &key)? {
+        let old = content::load(conn, id)?;
+        if !matches!(old, ActiveContentRevision::V2(_)) || content::hash(&old)? != hash {
+            return Err(invalid("Immutable catalog revision already differs"));
+        }
+        return Ok(StageOutcome::Duplicate);
+    }
+    let count: i64 = conn
+        .query_row("SELECT count(*) FROM dataset_revisions", [], |r| r.get(0))
+        .db()?;
+    if count >= content::MAX_CONTENT_REVISIONS as i64 {
+        return Err(invalid("Catalog revision capacity exceeded"));
+    }
+    conn.execute("INSERT INTO dataset_revisions(edition,build,interface,namespace,is_fixture,revision,document,content_version) VALUES(?1,?2,?3,?4,?5,?6,?7,2)",params![key.scope.context.build.edition.as_str(),key.scope.context.build.build.as_str(),key.scope.context.build.interface.as_str(),content::namespace(&key.scope),key.scope.fixture,key.revision.as_str(),document]).db()?;
+    let id = conn.last_insert_rowid();
+    conn.execute("INSERT INTO content_dispositions(revision_id,state,state_revision,reason_code) VALUES(?1,'eligible',1,'initial_eligibility')",[id]).db()?;
+    for source in &revision.sources {
+        conn.execute(
+            "INSERT INTO source_records(revision_id,source_id,document) VALUES(?1,?2,?3)",
+            params![id, source.id.as_str(), encode(source)?],
+        )
+        .db()?;
+    }
+    for (index, conflict) in revision.conflicts.iter().enumerate() {
+        conn.execute(
+            "INSERT INTO source_conflicts(revision_id,conflict_index,document) VALUES(?1,?2,?3)",
+            params![id, index as i64, encode(conflict)?],
+        )
+        .db()?;
+    }
+    conn.execute("INSERT INTO dataset_manifests(revision_id,manifest_version,content_sha256,coverage_document) VALUES(?1,1,?2,?3)",params![id,hash.as_str(),report]).db()?;
+    Ok(StageOutcome::Inserted)
+}
