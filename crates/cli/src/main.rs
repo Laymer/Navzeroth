@@ -238,6 +238,16 @@ fn main() -> ExitCode {
                 Path::new(output),
             ))
         }
+        [command, input_flag, input, output_flag, output]
+            if command == "build-content-v2"
+                && input_flag == "--input"
+                && output_flag == "--output" =>
+        {
+            pack_result(azeroth_cli::pack::v2::build(
+                Path::new(input),
+                Path::new(output),
+            ))
+        }
         [command, flag, input] if command == "verify-pack" && flag == "--input" => {
             pack_result(azeroth_cli::pack::verify(Path::new(input)))
         }

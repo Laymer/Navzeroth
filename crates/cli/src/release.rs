@@ -451,7 +451,9 @@ fn add_record(
     Ok(())
 }
 fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
-    let data = &dataset.payload;
+    catalog_data(catalog, &dataset.payload)
+}
+fn catalog_data(catalog: &mut Catalog, data: &ReferenceDataset) -> Result<()> {
     let revision = data.revision.as_str();
     if !catalog.revisions.insert(revision.to_owned()) {
         return Err("Duplicate dataset revision across release packs");
@@ -598,6 +600,72 @@ fn production_file(root: &Path, pack_root: &Path, reference: &FileRef, tree: &Tr
     }
     checked_path(&path, false)
 }
+pub(crate) fn v2_catalog_records(
+    content: &azeroth_core::content_v2::ReferenceContent,
+) -> Result<azeroth_core::release_party::ConcreteCatalog> {
+    let mut catalog = Catalog::default();
+    catalog_data(&mut catalog, &content.reference.payload)?;
+    let revision = content.reference.payload.revision.as_str();
+    let evidence: BTreeMap<_, _> = content
+        .reference
+        .payload
+        .evidence
+        .iter()
+        .map(|e| (&e.id, e.source.as_str().to_owned()))
+        .collect();
+    let sources = |ids: &[azeroth_core::types::EvidenceId]| -> Result<BTreeSet<String>> {
+        ids.iter()
+            .map(|id| evidence.get(id).cloned().ok_or("Unresolved v2 provenance"))
+            .collect()
+    };
+    for row in &content.models {
+        add_record(
+            &mut catalog,
+            "class_roles",
+            json!([revision, "models", row.id]),
+            &sources(&row.evidence)?,
+        )?;
+    }
+    for row in &content.dungeons {
+        add_record(
+            &mut catalog,
+            "dungeons",
+            json!([revision, "dungeons", row.id]),
+            &sources(&row.evidence)?,
+        )?;
+    }
+    for row in &content.equipment {
+        add_record(
+            &mut catalog,
+            "equipment",
+            json!([
+                revision,
+                "equipment_facts",
+                row.item.item_id,
+                row.item.variant
+            ]),
+            &sources(&row.evidence)?,
+        )?;
+    }
+    for row in &content.quest_facts {
+        add_record(
+            &mut catalog,
+            "quests",
+            json!([revision, "quest_facts", row.quest]),
+            &sources(&row.evidence)?,
+        )?;
+    }
+    for row in &content.acquisition_facts {
+        add_record(
+            &mut catalog,
+            "acquisition",
+            json!([revision, "acquisition_facts", row.acquisition]),
+            &sources(&row.evidence)?,
+        )?;
+    }
+    Ok(catalog.records)
+}
+
 fn pack_file(
     root: &Path,
     pack_root: &Path,
@@ -617,6 +685,118 @@ fn pack_file(
     }
     Ok(())
 }
+#[derive(Deserialize)]
+struct PackV2 {
+    sources: FileRef,
+    catalog: FileRef,
+    assets: Vec<FileRef>,
+    party_support: Option<FileRef>,
+    supporting_files: Vec<FileRef>,
+}
+fn bind_v2_pack(
+    root: &Path,
+    pack_root: &Path,
+    pack: &release::PackRef,
+    inventory: &Inventory,
+    tree: &Tree,
+    budget: &mut Budget,
+    catalog: &mut Catalog,
+    bytes: &[u8],
+) -> Result<()> {
+    let manifest: PackV2 = serde_json::from_slice(bytes).map_err(|_| "Invalid v2 pack manifest")?;
+    for file in std::iter::once(&manifest.sources)
+        .chain(std::iter::once(&manifest.catalog))
+        .chain(&manifest.assets)
+        .chain(&manifest.party_support)
+        .chain(&manifest.supporting_files)
+    {
+        pack_file(root, pack_root, file, tree, catalog)?;
+    }
+    let sources: PackSources = serde_json::from_slice(&checked_ref_bytes(
+        budget,
+        pack_root,
+        &manifest.sources,
+        crate::pack::MAX_SOURCES_BYTES,
+    )?)
+    .map_err(|_| "Invalid v2 sources")?;
+    for source in sources.sources {
+        let accepted = inventory
+            .sources
+            .iter()
+            .find(|s| s.id == source.id.as_str())
+            .ok_or("V2 source is not accepted")?;
+        if source.verified_revision.value().map(|r| r.as_str()) != Some(accepted.revision.as_str())
+            || source.offline_usable.value() != Some(&true)
+        {
+            return Err("V2 source revision or offline permission differs");
+        }
+        catalog.sources.insert(source.id.as_str().to_owned());
+    }
+    let content = azeroth_core::content_v2::decode(&checked_ref_bytes(
+        budget,
+        pack_root,
+        &manifest.catalog,
+        crate::pack::v2::MAX_CATALOG_BYTES,
+    )?)
+    .map_err(|_| "Invalid release v2 catalog")?;
+    let data = &content.reference;
+    if data.fixture
+        || data.namespace != DatasetNamespace::Reference
+        || data.game.edition.as_str() != inventory.target.edition
+        || data.game.build.as_str()
+            != format!("{}.{}", inventory.target.version, inventory.target.build)
+        || data.game.interface.as_str() != inventory.target.interface.to_string()
+    {
+        return Err("V2 catalog target differs or contains fixtures");
+    }
+    if pack.dataset_revisions != [data.payload.revision.as_str()]
+        || !catalog
+            .revisions
+            .insert(data.payload.revision.as_str().to_owned())
+    {
+        return Err("V2 catalog revisions differ or duplicate another pack");
+    }
+    // Full target coverage requires a fact declaration per base record, even
+    // when the record cannot currently supply a known fact. Unknowns are gaps.
+    if content.equipment.len() != data.payload.items.len()
+        || content.quest_facts.len() != data.payload.quests.len()
+        || content.acquisition_facts.len() != data.payload.acquisitions.len()
+    {
+        return Err("V2 catalog lacks mandatory equipment, quest or acquisition facts");
+    }
+    let mut records = v2_catalog_records(&content)?;
+    if let Some(support) = &manifest.party_support {
+        let matrix = azeroth_core::release_party::SupportMatrix::decode(&checked_ref_bytes(
+            budget,
+            pack_root,
+            support,
+            release::MAX_RELEASE_BYTES,
+        )?)
+        .map_err(|_| "Invalid release party support")?;
+        let rows = matrix
+            .bind(manifest.catalog.sha256.as_str(), &records)
+            .map_err(|_| "Party support does not bind actual catalog dependencies")?;
+        records.insert("party".into(), rows);
+    }
+    for (domain, rows) in records {
+        for (identity, sources) in rows {
+            if catalog
+                .records
+                .entry(domain.clone())
+                .or_default()
+                .insert(identity, sources)
+                .is_some()
+            {
+                return Err("Duplicate record across v2 release packs");
+            }
+        }
+    }
+    if catalog.records.values().map(BTreeMap::len).sum::<usize>() > release::MAX_RECORDS {
+        return Err("Release catalog exceeds record limit");
+    }
+    Ok(())
+}
+
 fn packs(
     root: &Path,
     inventory: &Inventory,
@@ -645,13 +825,12 @@ fn packs(
         let pack_root = manifest_path.parent().ok_or("Invalid pack location")?;
         pack_file(root, root, &pack.manifest, tree, &mut catalog)?;
         budget.verify(root, &pack.manifest)?;
-        let manifest: PackManifest = serde_json::from_slice(&checked_ref_bytes(
+        let manifest_bytes = checked_ref_bytes(
             budget,
             root,
             &pack.manifest,
             crate::pack::MAX_MANIFEST_BYTES,
-        )?)
-        .map_err(|_| "Invalid pack manifest")?;
+        )?;
         // Existing verifier is authoritative for strict fields, canonical bytes,
         // exact trees, distribution, coordinates/references and PNG verification.
         let report = crate::pack::verify(pack_root)?;
@@ -661,6 +840,27 @@ fn packs(
                 "Release pack has fixture content, coverage gaps or ineligible distribution",
             );
         }
+        if serde_json::from_slice::<Value>(&manifest_bytes)
+            .map_err(|_| "Invalid pack manifest")?
+            .get("schema_version")
+            .and_then(Value::as_u64)
+            == Some(2)
+        {
+            bind_v2_pack(
+                root,
+                pack_root,
+                pack,
+                inventory,
+                tree,
+                budget,
+                &mut catalog,
+                &manifest_bytes,
+            )?;
+            count += 1;
+            continue;
+        }
+        let manifest: PackManifest =
+            serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid pack manifest")?;
         pack_file(root, pack_root, &manifest.sources, tree, &mut catalog)?;
         let sources: PackSources = serde_json::from_slice(&checked_ref_bytes(
             budget,

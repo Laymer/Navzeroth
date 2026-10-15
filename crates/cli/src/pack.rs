@@ -1,4 +1,5 @@
 //! Deterministic local reference packs. Files are bounded data, never executable inputs.
+pub mod v2;
 use azeroth_core::{
     contract::{Envelope, MAX_DATASET_BYTES, ReferenceDataset, decode_envelope},
     coverage::content_report,
@@ -229,6 +230,7 @@ fn root_join(root: &Path, path: &AssetPath) -> PathBuf {
 }
 struct Budget {
     bytes: usize,
+    limit: usize,
 }
 impl Budget {
     fn read(&mut self, path: &Path, limit: usize) -> Res<Vec<u8>> {
@@ -246,7 +248,7 @@ impl Budget {
         file.take(limit as u64 + 1)
             .read_to_end(&mut bytes)
             .map_err(|_| "Pack file cannot be read")?;
-        if bytes.len() > limit || bytes.len() > MAX_TOTAL_BYTES - self.bytes {
+        if bytes.len() > limit || bytes.len() > self.limit.saturating_sub(self.bytes) {
             return Err("Pack byte budget exceeded");
         }
         self.bytes += bytes.len();
@@ -365,8 +367,11 @@ fn distribution(data: &Envelope<ReferenceDataset>, sources: &SourceRegistry) -> 
     Ok(permitted)
 }
 fn layers(data: &Envelope<ReferenceDataset>) -> Res<BTreeMap<AssetPath, (Sha256Hex, u32, u32)>> {
+    layers_data(&data.payload)
+}
+fn layers_data(data: &ReferenceDataset) -> Res<BTreeMap<AssetPath, (Sha256Hex, u32, u32)>> {
     let mut layers = BTreeMap::new();
-    for layer in data.payload.map_images.iter().flat_map(|im| &im.layers) {
+    for layer in data.map_images.iter().flat_map(|im| &im.layers) {
         let spec = (
             layer.sha256.clone(),
             layer.width_px.get(),
@@ -474,8 +479,18 @@ fn check_record(root: &Path, item: &FileRecord, limit: usize, budget: &mut Budge
 }
 pub fn verify(root: &Path) -> Res<Report> {
     path_checked(root, true)?;
-    let mut budget = Budget { bytes: 0 };
+    let mut budget = Budget {
+        bytes: 0,
+        limit: MAX_TOTAL_BYTES,
+    };
     let manifest_bytes = budget.read(&root.join("manifest.json"), MAX_MANIFEST_BYTES)?;
+    if json(&manifest_bytes)?
+        .get("schema_version")
+        .and_then(Value::as_u64)
+        == Some(2)
+    {
+        return v2::verify(root);
+    }
     let manifest: Manifest = typed(&manifest_bytes)?;
     if manifest.schema_version != 1
         || manifest.purpose != "local_reference"
@@ -606,6 +621,7 @@ fn input_datasets(input: &Path, budget: &mut Budget) -> Res<Vec<Envelope<Referen
 static STAGING_COUNTER: AtomicU64 = AtomicU64::new(0);
 struct Staging {
     root: PathBuf,
+    limit: usize,
     bytes: Cell<usize>,
     files: RefCell<Vec<PathBuf>>,
     directories: RefCell<Vec<PathBuf>>,
@@ -636,7 +652,7 @@ impl Staging {
     fn write(&self, path: &Path, bytes: &[u8]) -> Res<()> {
         // Canonical serialization can expand inputs. Bound actual planned staging
         // bytes independently of the input/read budget before creating any file.
-        if bytes.len() > MAX_TOTAL_BYTES.saturating_sub(self.bytes.get()) {
+        if bytes.len() > self.limit.saturating_sub(self.bytes.get()) {
             return Err("Staging byte budget exceeded");
         }
         if self.directories.borrow().len() + self.files.borrow().len() >= MAX_TREE_ENTRIES {
@@ -667,6 +683,9 @@ impl Drop for Staging {
     }
 }
 fn stage(output: &Path) -> Res<Staging> {
+    stage_with_limit(output, MAX_TOTAL_BYTES)
+}
+fn stage_with_limit(output: &Path, limit: usize) -> Res<Staging> {
     let parent = output
         .parent()
         .filter(|p| !p.as_os_str().is_empty())
@@ -687,6 +706,7 @@ fn stage(output: &Path) -> Res<Staging> {
     fs::create_dir(&root).map_err(|_| "Create-new pack staging failed")?;
     Ok(Staging {
         root: root.clone(),
+        limit,
         bytes: Cell::new(0),
         files: RefCell::new(Vec::new()),
         directories: RefCell::new(vec![root]),
@@ -696,6 +716,15 @@ fn stage(output: &Path) -> Res<Staging> {
 /// owned children exclusively, and writes manifest last. It is not an atomic
 /// directory rename. A partially published directory cannot verify as a pack.
 fn publish(stage: &Path, output: &Path, files: &BTreeSet<AssetPath>) -> Res<()> {
+    publish_with_limit(stage, output, files, MAX_TOTAL_BYTES, MAX_ASSET_BYTES)
+}
+fn publish_with_limit(
+    stage: &Path,
+    output: &Path,
+    files: &BTreeSet<AssetPath>,
+    total: usize,
+    file_limit: usize,
+) -> Res<()> {
     fs::create_dir(output).map_err(|_| "Output already exists or cannot be reserved")?;
     let mut created_files = Vec::new();
     let mut created_dirs = vec![output.to_owned()];
@@ -706,7 +735,10 @@ fn publish(stage: &Path, output: &Path, files: &BTreeSet<AssetPath>) -> Res<()> 
             fs::create_dir(&path).map_err(|_| "Output directory collision")?;
             created_dirs.push(path);
         }
-        let mut budget = Budget { bytes: 0 };
+        let mut budget = Budget {
+            bytes: 0,
+            limit: total,
+        };
         for file in files
             .iter()
             .filter(|p| p.as_str() != "manifest.json")
@@ -719,7 +751,7 @@ fn publish(stage: &Path, output: &Path, files: &BTreeSet<AssetPath>) -> Res<()> 
                 .open(&path)
                 .map_err(|_| "Output file collision")?;
             created_files.push(path);
-            let bytes = budget.read(&root_join(stage, file), MAX_ASSET_BYTES)?;
+            let bytes = budget.read(&root_join(stage, file), file_limit)?;
             target
                 .write_all(&bytes)
                 .and_then(|_| target.sync_all())
@@ -739,7 +771,10 @@ fn publish(stage: &Path, output: &Path, files: &BTreeSet<AssetPath>) -> Res<()> 
 }
 pub fn build(input: &Path, output: &Path) -> Res<Report> {
     let stage = stage(output)?;
-    let mut budget = Budget { bytes: 0 };
+    let mut budget = Budget {
+        bytes: 0,
+        limit: MAX_TOTAL_BYTES,
+    };
     let datasets = input_datasets(input, &mut budget)?;
     let registry = read_sources(&budget.read(&input.join("sources.json"), MAX_SOURCES_BYTES)?)?;
     let source_bytes = source_bytes(&registry)?;
