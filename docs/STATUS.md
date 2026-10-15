@@ -59,10 +59,11 @@ quest-completion getter is integrated in PR149. Checked main840939f is installed
 with all 21 files verified, private backup and unchanged SavedVariables. The operator
 confirmed a level-13 capture with exactly five completed/nine incomplete quests,
 all 14 completion flags readable and no errors. PR151's explicit quest-turn-in mode
-passed all nine checks and merged as83f38c8. Its byte-verified package is installed
+passed all nine checks and merged as `83f38c8`; all resulting-main checks passed. Its byte-verified package is installed
 with unchanged SavedVariables. Actual one-quest turn-in recording validates
 (five events/one milestone), and isolated desktop service import preserves
-41,604 ms as unclassified, zero observed activity. This remains development evidence;
+41,604 ms as unclassified, zero observed activity. The operator confirmed idle
+after reload. This remains development evidence;
 final candidate acceptance and actual restricted/paused cases stay unverified. See the
 [milestone handoff](handoffs/2026-10-15-session-quest-milestones.md).
 The [integration closure](handoffs/2026-10-15-development-evidence-closure.md) records

@@ -11,8 +11,7 @@ PR148 (capture/native tooling) merged as `8f24d89`; PR149 (separate completion
 getter) merged as `840939f`; PR150 (scoped MIT Forever declarations) merged as
 `c7e0b7b`; PR151 (opt-in session milestones) merged as `83f38c8`. Each passed all
 nine hosted checks and three source jobs before merge, after independent review.
-The resulting main commits through `c7e0b7b` also passed all those checks.
-Resulting `83f38c8` checks are pending at this record:
+All four resulting main commits also passed all nine checks and three source jobs:
 
 | Commit | CI | Windows package | Independent sources |
 | --- | --- | --- | --- |
@@ -28,13 +27,20 @@ against the committed receipt. Both source archive SHA256:
 The 1,685 facts remain reference knowledge, with zero verified target-usable facts
 and nine unknown independent inventories. No complete coverage is inferred.
 
-PR151 final head `9cf62df` passed CI38786821303, package38786821251 and
-sources38786821032. Its actual package source is
+PR151 final head `9cf62df` passed CI 38786821303, package 38786821251 and
+sources 38786821032. Its actual package source is
 `809ba1f8215e30e7b25b3706514d0ea8292c0650`; that entire tree equals merged main
 `83f38c8`. Downloaded the five-file preview package and checked four SHA256
 entries, exact source metadata/notes, ZIP integrity, all 21 addon Git blobs,
 licence inclusion and installer PE framing. Addon ZIP SHA256:
 `1e581afba695eebee3fe27a64d6b3184088d762ac0ec0511486c18640d0116b5`.
+The resulting-main package (run 38788666326) downloaded and passed the same
+source/hash/21-addon-file checks, with metadata naming actual main `83f38c8`.
+Its addon ZIP SHA256:
+`64af8bc37a29ebcc0b3ae21fb8b3e971c3d4e02e5f0cc1f0941ddf982575b01a`.
+Uncompressed addon files match the tested package exactly. Both main `83f38c8`
+source artifacts passed all 1,081 Git-blob/nine-material checks. Source archive
+SHA256: `e6697e5909c2330682ec36b1b5083f5b92a02a437601b8f90c757318577c4747`.
 No release was published. Versions remain 0.8.1.
 
 Local scope: 262 CLI/Lua tests passed, zero failed, three existing ignored; final
@@ -69,18 +75,20 @@ artifact verification, the operator closed WoW again. Installed all 21 files fro
 the downloaded, source-verified `809ba1f` package with a new private backup and
 unchanged SavedVariables. Main follow-up checks were still running. The requested
 manual test uses `guided-char2`: snapshot, explicit start-quests, exactly one
-operator-performed turn-in, stop/export/reload. The operator confirmed exactly one quest turned in, export/reload complete and
-no errors. Actual strict inspection validates fixture=false, target70374 tuple,
-five events, exactly one quest-turn-in and max relative elapsed41,604ms. This
+operator-performed turn-in, stop/export/reload. The operator confirmed exactly one
+quest turned in, export/reload complete and
+no errors. Actual strict inspection validates fixture=false, target 70374 tuple,
+five events, exactly one quest-turn-in and max relative elapsed 41,604 ms. This
 verifies the narrow normal-event callback/export flow on the identified package.
 
 A temporary local verifier (outside Git) used the existing inert parser/typed
 contracts and SnapshotApplication service on an isolated in-memory database to
-import this actual snapshot and session together. It succeeded, with0ms observed
-activity,41,604ms unclassified and0ms gaps. No personal database changed, no raw
-identifiers were printed, and no native UI/Windows acceptance is inferred. Actual
-paused-event exclusion, restrictions, full session analysis and final candidate
-scenarios remain unverified.
+import this actual snapshot and session together. It succeeded, with 0 ms observed
+activity, 41,604 ms unclassified and 0 ms gaps. No personal database changed, no raw
+identifiers were printed, and no native UI/Windows acceptance is inferred. The
+operator subsequently ran status after reload and confirmed `session idle`;
+the opt-in recording did not automatically resume. Actual paused-event exclusion,
+restrictions, full session analysis and final candidate scenarios remain unverified.
 
 ## Remaining release requirements
 
@@ -93,8 +101,8 @@ fingerprints. Production SHA256:
 `51bdce28c68867edf66f8deda827198b529712159ece926b43e9be365a50d6ad`.
 No fingerprint, evidence or packaging gate was bypassed.
 
-Next: verify resulting main `83f38c8` and finish this documentation PR through
-normal checks. The actual development turn-in and import verification are complete. Continue complete
+Next: finish this documentation PR through normal checks. Resulting main
+`83f38c8` and the development turn-in/import/reload checks are verified. Continue complete
 licensed target content and supported advancement/deviation work only with actual
 inputs. Freeze 1.0.0 only after production/content/static readiness, then complete
 all required candidate-bound live/Windows scenarios and full-corpus performance.
