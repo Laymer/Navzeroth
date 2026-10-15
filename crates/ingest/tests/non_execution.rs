@@ -28,10 +28,13 @@ fn the_crate_has_no_lua_engine_dependency() {
         .skip_while(|l| !l.starts_with("[dependencies]"))
         .skip(1)
         .take_while(|l| !l.starts_with('['))
-        .filter(|l| !l.trim().is_empty())
+        .filter(|l| !l.trim().is_empty() && !l.trim_start().starts_with('#'))
         .map(|l| l.split('=').next().unwrap().trim().to_owned())
         .collect();
-    assert_eq!(deps, ["azeroth-core", "serde", "serde_json", "sha2"]);
+    assert_eq!(
+        deps,
+        ["azeroth-core", "serde", "serde_json", "sha2", "image"]
+    );
 
     let lock = workspace_file("Cargo.lock");
     let block = lock
@@ -45,7 +48,10 @@ fn the_crate_has_no_lua_engine_dependency() {
         .take_while(|l| l.starts_with(' '))
         .map(|l| l.trim().trim_matches(|c| c == '"' || c == ',').to_owned())
         .collect();
-    assert_eq!(locked, ["azeroth-core", "serde", "serde_json", "sha2"]);
+    assert_eq!(
+        locked,
+        ["azeroth-core", "image", "serde", "serde_json", "sha2"]
+    );
     // No Lua engine is reachable from this crate, directly or transitively.
     // The dev-only `azeroth-lua-harness` crate (ADR 0003) may lock a Lua
     // engine for addon tests; it must never enter the import path.
@@ -103,7 +109,9 @@ fn code_lines(dir: &Path) -> Vec<(PathBuf, String)> {
     let mut lines = Vec::new();
     for entry in std::fs::read_dir(dir).unwrap() {
         let path = entry.unwrap().path();
-        if path.extension().is_some_and(|e| e == "rs") {
+        if path.is_dir() {
+            lines.extend(code_lines(&path));
+        } else if path.extension().is_some_and(|e| e == "rs") {
             for line in std::fs::read_to_string(&path).unwrap().lines() {
                 if !line.trim_start().starts_with("//") {
                     lines.push((path.clone(), line.to_owned()));
@@ -137,7 +145,13 @@ fn library_source_has_no_execution_or_dynamic_loading() {
     assert!(lines.len() > 500);
     for (path, line) in lines {
         for token in forbidden {
-            assert!(!line.contains(token), "{} contains {token}", path.display());
+            // Reading the current process ID only names create-new staging directories.
+            let executable = line.replace("std::process::id()", "current_process_id");
+            assert!(
+                !executable.contains(token),
+                "{} contains {token}",
+                path.display()
+            );
         }
     }
 }

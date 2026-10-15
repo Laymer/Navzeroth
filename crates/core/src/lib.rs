@@ -28,6 +28,7 @@ pub mod search_control;
 
 pub mod submissions;
 
+pub mod catalog;
 pub mod content_v2;
 pub mod release_inventory;
 pub mod release_party;

@@ -26,6 +26,9 @@ const BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 /// connection and verified when it opens.
 pub struct SqliteStore {
     pub(crate) conn: Connection,
+    pub(crate) catalog_index_cache:
+        crate::content_catalog::Cache<std::sync::Arc<azeroth_core::catalog::CatalogIndex>>,
+    pub(crate) catalog_cache: crate::content_catalog::Cache<crate::content::ActiveContentRevision>,
 }
 
 impl SqliteStore {
@@ -50,7 +53,11 @@ impl SqliteStore {
             return Err(storage("Foreign key enforcement is unavailable"));
         }
         migrations::migrate(&mut conn)?;
-        Ok(Self { conn })
+        Ok(Self {
+            conn,
+            catalog_cache: Default::default(),
+            catalog_index_cache: Default::default(),
+        })
     }
 
     /// Reads only a snapshot belonging to the exact profile context/fixture key.

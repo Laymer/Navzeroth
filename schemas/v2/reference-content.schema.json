@@ -1454,6 +1454,28 @@
       "minimum": 0,
       "type": "integer"
     },
+    "NodeFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "maxItems": 1024,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "node": {
+          "$ref": "#/$defs/NodeId"
+        }
+      },
+      "required": [
+        "node",
+        "evidence"
+      ],
+      "type": "object"
+    },
     "NodeId": {
       "maxLength": 256,
       "minLength": 1,
@@ -7166,60 +7188,70 @@
           "items": {
             "$ref": "#/$defs/AcquisitionSource"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "edges": {
           "items": {
             "$ref": "#/$defs/TravelEdge"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "evidence": {
           "items": {
             "$ref": "#/$defs/EvidenceRecord"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "items": {
           "items": {
             "$ref": "#/$defs/ItemDefinition"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "map_embeddings": {
           "items": {
             "$ref": "#/$defs/MapEmbedding"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "map_images": {
           "items": {
             "$ref": "#/$defs/MapImage"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "map_spaces": {
           "items": {
             "$ref": "#/$defs/MapSpace"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "nodes": {
           "items": {
             "$ref": "#/$defs/TravelNode"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "objectives": {
           "items": {
             "$ref": "#/$defs/Objective"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "quests": {
           "items": {
             "$ref": "#/$defs/QuestDefinition"
           },
+          "maxItems": 250000,
           "type": "array"
         },
         "revision": {
@@ -7229,6 +7261,7 @@
           "items": {
             "$ref": "#/$defs/ContextRule"
           },
+          "maxItems": 250000,
           "type": "array"
         }
       },
@@ -7871,18 +7904,21 @@
       "items": {
         "$ref": "#/$defs/AcquisitionFacts"
       },
+      "maxItems": 250000,
       "type": "array"
     },
     "dungeons": {
       "items": {
         "$ref": "#/$defs/Dungeon"
       },
+      "maxItems": 250000,
       "type": "array"
     },
     "equipment": {
       "items": {
         "$ref": "#/$defs/EquipmentFacts"
       },
+      "maxItems": 250000,
       "type": "array"
     },
     "format": {
@@ -7892,12 +7928,21 @@
       "items": {
         "$ref": "#/$defs/ClassRoleModel"
       },
+      "maxItems": 250000,
+      "type": "array"
+    },
+    "node_facts": {
+      "items": {
+        "$ref": "#/$defs/NodeFacts"
+      },
+      "maxItems": 250000,
       "type": "array"
     },
     "quest_facts": {
       "items": {
         "$ref": "#/$defs/QuestFacts"
       },
+      "maxItems": 250000,
       "type": "array"
     },
     "reference": {

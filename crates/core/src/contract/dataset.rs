@@ -84,7 +84,7 @@ impl ReferenceDataset {
 }
 
 impl ReferenceDataset {
-    fn validate_local(&self) -> Result<()> {
+    fn validate_local(&self, collection_limit: usize) -> Result<()> {
         for len in [
             self.evidence.len(),
             self.items.len(),
@@ -98,19 +98,23 @@ impl ReferenceDataset {
             self.map_images.len(),
             self.map_embeddings.len(),
         ] {
-            bounded(len)?;
+            if len > collection_limit {
+                return Err(crate::error::invalid(
+                    "Reference collection exceeds capacity",
+                ));
+            }
         }
-        unique(self.evidence.iter().map(|r| &r.id))?;
-        unique(self.items.iter().map(|r| &r.key))?;
-        unique(self.acquisitions.iter().map(|r| &r.id))?;
-        unique(self.quests.iter().map(|r| &r.id))?;
-        unique(self.map_spaces.iter().map(|r| &r.key))?;
-        unique(self.nodes.iter().map(|r| &r.id))?;
-        unique(self.edges.iter().map(|r| &r.id))?;
-        unique(self.objectives.iter().map(|r| &r.id))?;
-        unique(self.rules.iter().map(|r| &r.id))?;
-        unique(self.map_images.iter().map(|r| &r.id))?;
-        unique(self.map_embeddings.iter().map(|r| &r.child))?;
+        unique_catalog(self.evidence.iter().map(|r| &r.id))?;
+        unique_catalog(self.items.iter().map(|r| &r.key))?;
+        unique_catalog(self.acquisitions.iter().map(|r| &r.id))?;
+        unique_catalog(self.quests.iter().map(|r| &r.id))?;
+        unique_catalog(self.map_spaces.iter().map(|r| &r.key))?;
+        unique_catalog(self.nodes.iter().map(|r| &r.id))?;
+        unique_catalog(self.edges.iter().map(|r| &r.id))?;
+        unique_catalog(self.objectives.iter().map(|r| &r.id))?;
+        unique_catalog(self.rules.iter().map(|r| &r.id))?;
+        unique_catalog(self.map_images.iter().map(|r| &r.id))?;
+        unique_catalog(self.map_embeddings.iter().map(|r| &r.child))?;
 
         let evidence: BTreeSet<_> = self.evidence.iter().map(|r| &r.id).collect();
         let items: BTreeSet<_> = self.items.iter().map(|r| &r.key).collect();
@@ -226,6 +230,9 @@ impl ReferenceDataset {
                 match parents.get(current) {
                     Some(next) => {
                         depth += 1;
+                        if depth > MAX_EMBEDDING_DEPTH {
+                            return Err(crate::error::invalid("Map embedding chain is too deep"));
+                        }
                         current = next;
                     }
                     None => break,
@@ -241,8 +248,13 @@ impl ReferenceDataset {
 impl Payload for ReferenceDataset {
     const KIND: ContractKind = ContractKind::ReferenceDataset;
     fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()> {
+        self.validate_reference(header, 1024)
+    }
+}
+impl ReferenceDataset {
+    fn validate_reference(&self, header: &EnvelopeHeader, collection_limit: usize) -> Result<()> {
         no_dependencies(header)?;
-        self.validate_local()?;
+        self.validate_local(collection_limit)?;
         for context in self.contexts() {
             same_context(header, context)?;
         }
@@ -258,4 +270,80 @@ impl Payload for ReferenceDataset {
         }
         Ok(())
     }
+}
+
+/// Separate v2 catalog payload. Ordinary v1 decoding retains its 1,024 bound.
+pub const MAX_CATALOG_IDENTITIES: usize = 250_000;
+pub const MAX_CATALOG_EVIDENCE: usize = 250_000;
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(transparent)]
+pub struct CatalogDataset(pub ReferenceDataset);
+impl std::ops::Deref for CatalogDataset {
+    type Target = ReferenceDataset;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl AsRef<ReferenceDataset> for CatalogDataset {
+    fn as_ref(&self) -> &ReferenceDataset {
+        &self.0
+    }
+}
+impl AsRef<ReferenceDataset> for ReferenceDataset {
+    fn as_ref(&self) -> &ReferenceDataset {
+        self
+    }
+}
+impl ReferenceDataset {
+    pub fn identity_count(&self) -> usize {
+        self.items.len()
+            + self.acquisitions.len()
+            + self.quests.len()
+            + self.map_spaces.len()
+            + self.nodes.len()
+            + self.edges.len()
+            + self.objectives.len()
+            + self.rules.len()
+            + self.map_images.len()
+            + self.map_embeddings.len()
+            + self
+                .map_images
+                .iter()
+                .map(|image| image.pins.len())
+                .sum::<usize>()
+            + self
+                .quests
+                .iter()
+                .map(|quest| quest.stages.len())
+                .sum::<usize>()
+    }
+}
+impl Payload for CatalogDataset {
+    const KIND: ContractKind = ContractKind::ReferenceDataset;
+    fn validate_payload(&self, header: &EnvelopeHeader) -> Result<()> {
+        validate_catalog_capacity(self.identity_count(), self.evidence.len())?;
+        self.0.validate_reference(header, MAX_CATALOG_IDENTITIES)
+    }
+}
+
+pub(crate) fn unique_catalog<T: Ord>(values: impl IntoIterator<Item = T>) -> Result<()> {
+    let mut seen = BTreeSet::new();
+    for value in values {
+        if !seen.insert(value) {
+            return Err(crate::error::invalid("Duplicate catalog identifier"));
+        }
+        if seen.len() > MAX_CATALOG_IDENTITIES {
+            return Err(crate::error::invalid("Catalog identity capacity exceeded"));
+        }
+    }
+    Ok(())
+}
+
+pub fn validate_catalog_capacity(identities: usize, evidence: usize) -> Result<()> {
+    if identities > MAX_CATALOG_IDENTITIES || evidence > MAX_CATALOG_EVIDENCE {
+        return Err(crate::error::invalid(
+            "Reference catalog exceeds identity or evidence capacity",
+        ));
+    }
+    Ok(())
 }

@@ -20,6 +20,7 @@
 //!   and the audit row keeps only an error code and a static message (CASE-008).
 //! - Stored documents are re-validated through `decode_envelope` on every read.
 pub mod content;
+mod content_catalog;
 pub mod content_dispositions;
 mod error;
 pub mod hash;

@@ -12,6 +12,14 @@ use std::{collections::BTreeMap, path::Path};
 pub const MAX_BACKUP_BYTES: u64 = 512 * 1024 * 1024;
 const MAX_ROWS: usize = 1_000_000;
 const MAX_CELL: usize = 32 * 1024 * 1024;
+fn row_limit(table: &str) -> usize {
+    match table {
+        "dataset_revisions" | "dataset_manifests" => {
+            azeroth_core::content_v2::MAX_CONTENT_BYTES + 16 * 1024
+        }
+        _ => MAX_CELL,
+    }
+}
 const TABLES: &[&str] = &[
     "profiles",
     "snapshots",
@@ -199,7 +207,7 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
             let oversized: bool = input
                 .query_row(
                     &format!("SELECT EXISTS(SELECT 1 FROM {table} WHERE {size}>?1)"),
-                    [MAX_CELL as i64],
+                    [row_limit(table) as i64],
                     |r| r.get(0),
                 )
                 .db()?;
@@ -238,7 +246,11 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
         tx.commit().db()?;
         migrations::migrate(&mut output)?;
         output.pragma_update(None, "foreign_keys", true).db()?;
-        let store = SqliteStore { conn: output };
+        let store = SqliteStore {
+            conn: output,
+            catalog_cache: Default::default(),
+            catalog_index_cache: Default::default(),
+        };
         validate(&store)?;
         // A backup can preserve references, but cannot authenticate a successful
         // locally guarded publication. Never promote imported advice to Current.
@@ -314,7 +326,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
         let oversized: bool = conn
             .query_row(
                 &format!("SELECT EXISTS(SELECT 1 FROM {table} WHERE {size}>?1)"),
-                [MAX_CELL as i64],
+                [row_limit(table) as i64],
                 |r| r.get(0),
             )
             .db()?;
@@ -447,7 +459,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     }
     for id in ids(conn, "SELECT id FROM dataset_revisions")? {
         let revision = crate::content::load(conn, id)?;
-        let context = revision.envelope.data_context();
+        let context = revision.context();
         let columns:(String,String,String,String,bool,String)=conn.query_row("SELECT edition,build,interface,namespace,is_fixture,revision FROM dataset_revisions WHERE id=?1",[id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).db()?;
         let namespace =
             serde_json::to_value(context.namespace).map_err(|_| storage("Invalid namespace"))?;
@@ -457,8 +469,8 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
                 context.build.build.as_str().to_owned(),
                 context.build.interface.as_str().to_owned(),
                 namespace.as_str().unwrap_or("").to_owned(),
-                revision.envelope.fixture,
-                revision.envelope.payload.revision.as_str().to_owned(),
+                revision.fixture(),
+                revision.reference().revision.as_str().to_owned(),
             )
         {
             return Err(storage("Backup content identity disagrees"));
@@ -541,4 +553,20 @@ fn validate_local_foundation(store: &SqliteStore) -> Result<()> {
     store.current_plan()?;
     crate::local_submissions::validate_local_submissions(store)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod catalog_capacity_tests {
+    #[test]
+    fn catalog_rows_have_v2_capacity_without_loosening_snapshot_rows() {
+        assert_eq!(
+            super::row_limit("dataset_revisions"),
+            256 * 1024 * 1024 + 16 * 1024
+        );
+        assert_eq!(
+            super::row_limit("dataset_manifests"),
+            256 * 1024 * 1024 + 16 * 1024
+        );
+        assert_eq!(super::row_limit("snapshots"), 32 * 1024 * 1024);
+    }
 }

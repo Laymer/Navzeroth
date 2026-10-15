@@ -14,8 +14,8 @@
 //! reference to a quest outside the dataset is an error: cross-dataset
 //! references are not modelled.
 use crate::{
-    atlas::{ProjectionGap, project_position},
-    contract::{Envelope, ReferenceDataset, decode_envelope},
+    atlas::{ProjectionGap, ProjectionIndex},
+    contract::{Envelope, Payload, ReferenceDataset, decode_envelope},
     entities::{Confidence, EdgeStatus},
     error::ErrorCode,
     observation::{Observation, ObservationStatus},
@@ -584,9 +584,11 @@ fn cyclic_components(adjacency: &[BTreeSet<usize>]) -> Vec<Vec<usize>> {
 
 /// Build the report for a decoded dataset. Deterministic: every collection is
 /// ordered and nothing reads a clock or random source.
-pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
+pub fn content_report<P: Payload + AsRef<ReferenceDataset>>(
+    envelope: &Envelope<P>,
+) -> ContentReport {
     let context = envelope.data_context();
-    let dataset = &envelope.payload;
+    let dataset = envelope.payload.as_ref();
     let header = DatasetHeader {
         revision: dataset.revision.clone(),
         namespace: envelope.namespace,
@@ -811,6 +813,15 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
     let item_keys: BTreeSet<&ItemKey> = dataset.items.iter().map(|i| &i.key).collect();
     let map_keys: BTreeSet<&MapKey> = dataset.map_spaces.iter().map(|m| &m.key).collect();
 
+    let mut objective_owners: BTreeMap<&ObjectiveId, Vec<usize>> = BTreeMap::new();
+    for quest in &dataset.quests {
+        for objective in &quest.stages {
+            objective_owners
+                .entry(objective)
+                .or_default()
+                .push(quest_ids[&quest.id]);
+        }
+    }
     let mut unconditional = vec![BTreeSet::new(); quest_ids.len()];
     let mut all_edges = vec![BTreeSet::new(); quest_ids.len()];
     for (referrer, site, predicate) in predicates {
@@ -856,14 +867,9 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
                         )
                         && let RecordRef::Quest { id } = &referrer
                         && let Some(&from) = quest_ids.get(id)
+                        && let Some(owners) = objective_owners.get(objective)
                     {
-                        let owners: Vec<_> = dataset
-                            .quests
-                            .iter()
-                            .filter(|q| q.stages.contains(objective))
-                            .collect();
-                        for owner in &owners {
-                            let to = quest_ids[&owner.id];
+                        for &to in owners {
                             all_edges[from].insert(to);
                             if !conditional && owners.len() == 1 {
                                 unconditional[from].insert(to);
@@ -913,8 +919,9 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
             quests: names(component),
         });
     }
+    let definite_members: BTreeSet<_> = definite.iter().flat_map(|c| c.iter().copied()).collect();
     for component in cyclic_components(&all_edges) {
-        if !definite.iter().any(|d| component.contains(&d[0])) {
+        if !component.iter().any(|id| definite_members.contains(id)) {
             b.gaps
                 .insert(CoverageFinding::PossibleQuestPrerequisiteCycle {
                     quests: names(&component),
@@ -930,9 +937,10 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
 
     // Atlas coverage: positions that cannot be placed on imagery are gaps.
     let mut atlas = AtlasCoverage::default();
+    let projection_index = ProjectionIndex::new(dataset);
     let mut place = |b: &mut Builder, record: RecordRef, position: &Position| {
         atlas.positions_checked += 1;
-        match project_position(position, &context, dataset) {
+        match projection_index.project(position, &context) {
             Ok(_) => atlas.projected += 1,
             Err(gap) => {
                 let kind = ProjectionGapKind::from(&gap);
@@ -978,5 +986,23 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
         }),
         errors,
         gaps: b.gaps.into_iter().collect(),
+    }
+}
+
+#[cfg(test)]
+mod capacity_tests {
+    use super::*;
+    #[test]
+    fn long_prerequisite_chains_and_cycles_use_an_explicit_stack() {
+        let mut graph = vec![BTreeSet::new(); 50_000];
+        for (i, edges) in graph.iter_mut().enumerate().skip(1) {
+            edges.insert(i - 1);
+        }
+        assert!(cyclic_components(&graph).is_empty());
+        let last = graph.len() - 1;
+        graph[0].insert(last);
+        let cycles = cyclic_components(&graph);
+        assert_eq!(cycles.len(), 1);
+        assert_eq!(cycles[0].len(), 50_000);
     }
 }
