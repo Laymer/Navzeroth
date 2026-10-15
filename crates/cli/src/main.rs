@@ -21,7 +21,7 @@ const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json
     inventory-report --root <repository> --input <relative-file>; \
     (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]; \
     release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
-    stage-questiedb <raw-file options>. See README.md.";
+    stage-questiedb <raw-file options>; stage-foreverdb --input <directory> --manifest <file>. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
 /// This list is explicit on purpose: the command never globs `fixtures/**`.
@@ -221,7 +221,7 @@ fn main() -> ExitCode {
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
                  release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
-                 stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md). \
+                 stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md); stage-foreverdb --input <dir> --manifest <file> (see docs/data/FOREVERDB_STAGING.md). \
                  Other commands are planned; see README.md and plan section 19.3."
             );
             ExitCode::SUCCESS
@@ -348,6 +348,30 @@ fn main() -> ExitCode {
                 }
                 Err(message) => {
                     eprintln!("release-materials: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [command, rest @ ..] if command == "stage-foreverdb" => {
+            let Some(options) = azeroth_cli::foreverdb::Options::parse(rest) else {
+                eprintln!("Unsupported options. {}", azeroth_cli::foreverdb::USAGE);
+                return ExitCode::from(2);
+            };
+            match azeroth_cli::foreverdb::report(&options) {
+                Ok(report) => {
+                    use std::io::Write;
+                    let mut bytes =
+                        serde_json::to_vec_pretty(&report).expect("staging report serialization");
+                    bytes.push(b'\n');
+                    if std::io::stdout().lock().write_all(&bytes).is_ok() {
+                        ExitCode::SUCCESS
+                    } else {
+                        eprintln!("Staging report cannot be written");
+                        ExitCode::FAILURE
+                    }
+                }
+                Err(message) => {
+                    eprintln!("stage-foreverdb: {message}");
                     ExitCode::FAILURE
                 }
             }

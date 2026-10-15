@@ -18,7 +18,10 @@ as inert files. It advertises GPLv3; corresponding-source/file scope and 70374
 validation are still pending. Publisher metadata currently names origin build
 70338, with separate Classic-derived and player-observed facts. The unsent
 Wowhead request is superseded. No source has been admitted, and all nine target
-inventories remain explicitly unknown.
+inventories remain explicitly unknown. The read-only `stage-foreverdb` command
+now validates pinned local quest files and separates 557 Forever-labelled from
+3,491 Classic-derived source quest records (373 overlapping IDs). This is raw
+staging, with no playable activation or complete-target coverage claim.
 
 Version 0.8.1 remains the published developer preview. Complete licensed content,
 actual permitted live advancement/deviation/session bindings, operator acceptance
