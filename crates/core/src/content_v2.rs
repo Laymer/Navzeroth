@@ -6,7 +6,7 @@ use crate::{
     contract::{Envelope, ReferenceDataset},
     coverage::content_report,
     eligibility::{AccessRequirements, ChoiceTaken},
-    entities::{Confidence, NodeRef, bounded, unique},
+    entities::{AcquisitionKind, CompletionSemantics, Confidence, NodeRef, bounded, unique},
     error::{Result, Validate, invalid},
     gear::{ProficiencyTable, RoleProfile, SlotLayout, WeightSource},
     observation::Observation,
@@ -310,6 +310,7 @@ impl Validate for ReferenceContent {
                 .collect(),
             evidence: data.evidence.iter().map(|e| (&e.id, e)).collect(),
         };
+        let quest_index: BTreeMap<_, _> = data.quests.iter().map(|q| (&q.id, q)).collect();
         let acquisition_index: BTreeMap<_, _> =
             data.acquisitions.iter().map(|a| (&a.id, a)).collect();
         let acquisitions: BTreeSet<_> = acquisition_index.keys().copied().collect();
@@ -360,6 +361,25 @@ impl Validate for ReferenceContent {
         for q in &self.quest_facts {
             g.evidence(&q.evidence)?;
             refs(std::slice::from_ref(&q.quest), &g.quests)?;
+            if let (Some(reset), Some(completion)) = (
+                q.reset.value(),
+                quest_index
+                    .get(&q.quest)
+                    .and_then(|base| base.completion.value()),
+            ) {
+                let matches = matches!(
+                    (reset, completion),
+                    (ResetRule::Never, CompletionSemantics::Unrepeatable)
+                        | (ResetRule::Repeatable, CompletionSemantics::Repeatable)
+                        | (
+                            ResetRule::Timed { .. } | ResetRule::ServerReset { .. },
+                            CompletionSemantics::ResetBound
+                        )
+                );
+                if !matches {
+                    return Err(invalid("V2 reset contradicts base completion semantics"));
+                }
+            }
             g.predicate(&q.access)?;
             g.predicate(&q.sharing_conditions)?;
             if let Some(access) = q.access_requirements.value() {
@@ -387,6 +407,22 @@ impl Validate for ReferenceContent {
             g.predicate(&a.availability)?;
             g.predicate(&a.prerequisites)?;
             if let Some(origin) = a.origin.value() {
+                let base = acquisition_index
+                    .get(&a.acquisition)
+                    .expect("resolved acquisition");
+                let matches = matches!(
+                    (origin, base.kind),
+                    (AcquisitionOrigin::Quest { .. }, AcquisitionKind::Quest)
+                        | (AcquisitionOrigin::Vendor { .. }, AcquisitionKind::Vendor)
+                        | (AcquisitionOrigin::Craft { .. }, AcquisitionKind::Crafting)
+                        | (
+                            AcquisitionOrigin::Drop { .. },
+                            AcquisitionKind::Dungeon | AcquisitionKind::Other
+                        )
+                );
+                if !matches {
+                    return Err(invalid("V2 origin contradicts base acquisition kind"));
+                }
                 match origin {
                     AcquisitionOrigin::Quest { quest } => {
                         refs(std::slice::from_ref(quest), &g.quests)?
