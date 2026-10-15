@@ -161,3 +161,33 @@ silently become a source-bound artifact. Stable builds rerun readiness after
 building, before checksums are finalized, to detect changes made by build tools.
 The tag workflow reruns the gate before creating any GitHub draft. Stable packages
 require Cargo; existing preview addon-only packaging retains its no-toolchain use.
+
+## Explicit acceptance candidates
+
+`candidate-readiness` accepts the same arguments as `release-readiness`, with a
+separate exit decision: exit 0 requires `candidate_ready=true`, and its output
+always has `publication_allowed=false`. Report version 2 adds `candidate_ready`,
+typed `pending` requirements and the exact inventory digest. Publication behavior
+of `release-readiness` is unchanged.
+
+Only pristine `unverified` mandatory live/Windows rows (correct method, no claimed
+operator/time/environment/artifacts) and an initially absent pair of tested commit
+and production fingerprint may be pending. Missing/duplicate rows, partial claims,
+failures, stale existing bindings, malformed evidence, changed hashes, incomplete
+content, unsupported model bindings and unresolved rights still block candidates.
+A recorded pass without a tested binding is invalid, not pending. All referenced
+files and packs undergo the same integrity and material checks.
+
+`Build-Windows.ps1 -AcceptanceCandidate` writes to `dist/acceptance-candidate` by
+default, includes a checksum-covered `ACCEPTANCE_CANDIDATE.json`, and requires the
+candidate gate before output mutation and after building. The marker pins source,
+production and inventory and explicitly denies publication. The normal verifier
+rejects it; candidate verification requires an explicit switch and reruns the gate.
+Stable verification independently reruns full readiness, including if someone
+removes the marker and rebuilds checksums. No tag job uses candidate mode.
+
+The Windows workflow exposes a manual, non-tag `acceptance_candidate` input and
+labels its uploaded artifacts separately. Default PR/main/tag packaging retains
+its full stable gate, with no fallback. The currently unknown content means no
+1.0 acceptance candidate can yet be built. This implements packaging separation,
+not the separately required typed party support matrix or full v2 content contracts.

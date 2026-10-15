@@ -29,4 +29,5 @@ pub mod search_control;
 pub mod submissions;
 
 pub mod content_v2;
+pub mod release_inventory;
 pub mod source_admission;

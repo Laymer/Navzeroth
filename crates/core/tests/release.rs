@@ -250,3 +250,50 @@ fn future_schema_and_excessive_collections_fail_even_for_prereleases() {
     excessive.coverage = vec![e.coverage[0].clone(); MAX_UNITS + 1];
     assert!(assess("1.0.0-rc.1", &i, Some(&excessive), &bindings).is_err());
 }
+
+#[test]
+fn candidate_defers_only_pristine_pending_observations_and_initial_binding() {
+    let (i, mut e) = complete();
+    e.tested_source_commit = None;
+    e.production_sha256 = None;
+    for row in &mut e.checks {
+        row.status = Status::Unverified;
+        row.operator = None;
+        row.recorded_at = None;
+        row.environment = None;
+        row.artifacts.clear();
+    }
+    let report = check("1.0.0", &i, Some(&e));
+    assert!(report.candidate_ready);
+    assert!(!report.stable_ready && !report.publication_allowed);
+    assert_eq!(report.pending.len(), 26);
+    e.checks[0].status = Status::Fail;
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+    e.checks[0].status = Status::Unverified;
+    e.checks[0].operator = Some("partial observation".into());
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+    e.checks[0].operator = None;
+    e.checks[0].method = Method::Automated;
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+    e.checks[0].method = Method::LiveGame;
+    e.production_sha256 = Some(serde_json::from_value(json!(HASH)).unwrap());
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+}
+
+#[test]
+fn candidate_never_waives_content_rights_or_claimed_pass_binding() {
+    let (mut i, mut e) = complete();
+    assert!(check("1.0.0", &i, Some(&e)).candidate_ready);
+    e.tested_source_commit = None;
+    e.production_sha256 = None;
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+    let (_, e) = complete();
+    i.domains[0].completeness = Completeness::Unknown;
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+    let (i, mut e) = complete();
+    e.sources[0].redistribution = Permission::Unknown;
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+    e.sources[0].redistribution = Permission::Permitted;
+    e.inventory_sha256 = serde_json::from_value(json!("c".repeat(64))).unwrap();
+    assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+}
