@@ -106,6 +106,15 @@ impl CatalogIndex {
             .ok()
             .map(|i| rows[i].record_index)
     }
+    pub fn first_page(&self, collection: Collection, limit: usize) -> Result<CatalogPage> {
+        self.page(&PageRequest {
+            revision: self.revision.clone(),
+            catalog_sha256: self.catalog_sha256.clone(),
+            collection,
+            offset: 0,
+            limit,
+        })
+    }
     pub fn page(&self, request: &PageRequest) -> Result<CatalogPage> {
         if request.revision != self.revision || request.catalog_sha256 != self.catalog_sha256 {
             return Err(invalid("Catalog page belongs to a different revision"));
