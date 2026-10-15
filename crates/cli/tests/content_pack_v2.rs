@@ -309,3 +309,31 @@ fn v2_refuses_symlink_catalog_and_supporting_material() {
     std::os::unix::fs::symlink("real.txt", input.join("evidence/proof.txt")).unwrap();
     assert!(build(&input, &t.output()).is_err());
 }
+
+#[test]
+fn v2_pack_roundtrips_more_than_1024_records_without_widening_v1() {
+    let temp = Temp::new();
+    let input = temp.input();
+    change(&input.join("catalog.json"), |v| {
+        let item = v["reference"]["payload"]["items"][0].clone();
+        let items = v["reference"]["payload"]["items"].as_array_mut().unwrap();
+        for index in 0..1500 {
+            let mut row = item.clone();
+            row["key"]["item_id"] = json!(format!("large-item-{index}"));
+            items.push(row);
+        }
+    });
+    let report = build(&input, &temp.output()).unwrap();
+    assert_eq!(report.datasets, 1);
+    verify(&temp.output()).unwrap();
+    let bytes = fs::read(temp.output().join("catalog.json")).unwrap();
+    let content = content_v2::decode(&bytes).unwrap();
+    assert!(content.reference.payload.items.len() > 1500);
+    let serialized = serde_json::to_string(&content.reference).unwrap();
+    assert!(
+        azeroth_core::contract::decode_envelope::<azeroth_core::contract::ReferenceDataset>(
+            &serialized
+        )
+        .is_err()
+    );
+}
