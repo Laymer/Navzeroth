@@ -90,6 +90,22 @@ operator subsequently ran status after reload and confirmed `session idle`;
 the opt-in recording did not automatically resume. Actual paused-event exclusion,
 restrictions, full session analysis and final candidate scenarios remain unverified.
 
+## Source follow-up
+
+The read-only source reviewer recovered the exact mixed-source repository:
+`TylerAkins/wow-database` at `a8e22674a7148cd0e58049b577e387093edbb852`.
+The coordinator reopened its pinned primary documents:
+[attribution](https://raw.githubusercontent.com/TylerAkins/wow-database/a8e22674a7148cd0e58049b577e387093edbb852/ATTRIBUTION.md)
+and [source register](https://raw.githubusercontent.com/TylerAkins/wow-database/a8e22674a7148cd0e58049b577e387093edbb852/docs/SOURCES.md).
+They distinguish GPL-3.0 repository code from third-party game/website data,
+which the repository does not relicense. The documented QuestieDB permission is
+a maintainer-specific account, explicitly not a new upstream data licence. No
+additional grant for numeric quest/item/coordinate subsets was established by
+this review, so no combined outputs were admitted. Existing directly reviewed MIT
+ATT declarations remain admitted. This is a source-admission disposition, not a
+claim that every individual underlying fact requires permission. No publisher
+contact, imported Lua execution or client-file extraction was performed.
+
 ## Remaining release requirements
 
 The exact 1.0.0 readiness command refuses the intentionally unchanged 0.8.1 version.
