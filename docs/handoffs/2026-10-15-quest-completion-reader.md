@@ -42,3 +42,11 @@ Next: all nine hosted PR checks, protected merge after independent review, verif
 resulting main, then update the operator's addon with the game closed and compare
 actual completion booleans with the visible quest log. Keep missing/restricted
 observations unknown; never treat a complete quest as already turned in.
+
+
+Integration baseline update: PR148 passed all nine checks and the three source
+jobs, then merged as8f24d891a4599e2d812c175aef12cb02c10d3227. Merged that main
+into this branch to check the combined inspector/getter implementation. Its
+resulting-main checks remain pending at this record. Updated shared70374evidence
+with both persisted clock states and operator completion-function observations;
+raw exports remain private. Current head needs all hosted checks before merge.
