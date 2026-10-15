@@ -40,3 +40,19 @@ is claimed. See [design](../data/REFERENCE_CONTENT_V2.md).
 Next: peer review exact contract, integrate downstream consumers/pack/typed release
 identities, provide schema and full-capacity graph validation, then test combined
 behavior. Release remains blocked on complete licensed corpus and real acceptance.
+
+Schema follow-up adds JsonSchema derives for reused pure gear/access types,
+`content_v2::schema`, a deterministic generated v2 schema and a synthetic fixture.
+Strict Ajv2020 validates the fixture and rejects six nested/version/availability
+cases. Eight focused core tests pass (one explicit fixture generator ignored);
+existing v1 schema drift tests still pass. Schema generation closes fixed nested
+records while preserving typed maps; duplicate JSON keys remain Rust's boundary.
+`node scripts/validate-content-v2-schema.mjs` is the repeatable structural check.
+The earlier missing-generated-schema limitation is resolved by this follow-up;
+full-capacity and app/pack integration limitations remain.
+
+Semantic follow-up rejects known reset facts contradicting the base quest's
+completion semantics and acquisition origins contradicting the base source kind.
+Nine focused tests now pass (one generator ignored); strict Clippy/fmt/diff pass.
+This adds no fields or format changes. Both base and extension observations may
+remain unknown; absence is never substituted with a compatible factual default.

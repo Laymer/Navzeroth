@@ -6,13 +6,14 @@ use crate::{
     observation::Observation,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// An item definition plus its armor/weapon category. `ItemDefinition` has no
 /// category field and contracts are frozen, so the category is a local,
 /// caller-supplied observation. `NotApplicable` means no category applies
 /// (for example jewelry); unknown, unsupported and restricted stay distinct.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct GearCandidate {
     pub item: ItemDefinition,
     pub category: Observation<SourceId>,
@@ -24,7 +25,7 @@ impl GearCandidate {
 }
 
 /// The main-hand slot and the off-hand slot a two-handed item also occupies.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct HandSlots {
     pub main_hand: SlotId,
     pub off_hand: SlotId,
@@ -33,7 +34,7 @@ pub struct HandSlots {
 /// Slots the scenario may fill, plus the optional hand relationship. Paired
 /// slots (two fingers, two trinkets) are expressed by candidates listing both
 /// slots in `ItemDefinition.slots`; one candidate is never placed twice.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct SlotLayoutData {
     pub slots: Vec<SlotId>,
     pub hands: Option<HandSlots>,

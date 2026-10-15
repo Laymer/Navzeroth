@@ -1,23 +1,25 @@
 //! Additive v2 content contract. Never an alternate snapshot/plan decoder.
 //! Context, revision and fixture identity come exclusively from `reference`.
 mod json;
+pub mod schema;
 use crate::{
     contract::{Envelope, ReferenceDataset},
     coverage::content_report,
     eligibility::{AccessRequirements, ChoiceTaken},
-    entities::{Confidence, NodeRef, bounded, unique},
+    entities::{AcquisitionKind, CompletionSemantics, Confidence, NodeRef, bounded, unique},
     error::{Result, Validate, invalid},
     gear::{ProficiencyTable, RoleProfile, SlotLayout, WeightSource},
     observation::Observation,
     predicate::{Field, Predicate, PredicateNode},
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Intermediate contract ceiling; PR5 introduces the full v2 catalog capacity.
 pub const MAX_CONTENT_BYTES: usize = 16 * 1024 * 1024;
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceContent {
     pub format: String,
@@ -29,7 +31,7 @@ pub struct ReferenceContent {
     pub acquisition_facts: Vec<AcquisitionFacts>,
     pub dungeons: Vec<Dungeon>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ClassRoleModel {
     pub id: SourceId,
@@ -43,7 +45,7 @@ pub struct ClassRoleModel {
     pub layout: Observation<SlotLayout>,
     pub exclusions: Observation<Vec<Predicate>>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct EquipmentFacts {
     pub item: ItemKey,
@@ -51,7 +53,7 @@ pub struct EquipmentFacts {
     pub category: Observation<SourceId>,
     pub configuration: Observation<Predicate>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct QuestFacts {
     pub quest: QuestId,
@@ -63,13 +65,13 @@ pub struct QuestFacts {
     pub shareable: Observation<bool>,
     pub sharing_conditions: Observation<Predicate>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ExclusiveBranch {
     pub quests: Vec<QuestId>,
     pub taken_when: ChoiceTaken,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ResetRule {
     Never,
@@ -77,7 +79,7 @@ pub enum ResetRule {
     Timed { period_ms: Millis },
     ServerReset { identifier: SourceId },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct AcquisitionFacts {
     pub acquisition: AcquisitionId,
@@ -89,7 +91,7 @@ pub struct AcquisitionFacts {
     pub prerequisites: Observation<Predicate>,
     pub entitlement: Observation<LootEntitlement>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum AcquisitionOrigin {
     Quest {
@@ -108,7 +110,7 @@ pub enum AcquisitionOrigin {
         dungeon: Option<SourceId>,
     },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Reward {
     pub item: ItemKey,
@@ -116,14 +118,14 @@ pub struct Reward {
     /// None means unconditional; matching IDs identify mutually exclusive choices.
     pub choice_group: Option<SourceId>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Cost {
     Copper { amount: Copper },
     Item { item: ItemKey, quantity: u32 },
     Currency { currency: SourceId, quantity: u32 },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum LootEntitlement {
     Individual,
@@ -131,7 +133,7 @@ pub enum LootEntitlement {
     GroupChoice,
     MasterAssigned,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Dungeon {
     pub id: SourceId,
@@ -145,7 +147,7 @@ pub struct Dungeon {
     pub rewards: Observation<Vec<AcquisitionId>>,
     pub checklist: Observation<Vec<DungeonCheck>>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct DungeonCheck {
     pub id: SourceId,
@@ -308,6 +310,7 @@ impl Validate for ReferenceContent {
                 .collect(),
             evidence: data.evidence.iter().map(|e| (&e.id, e)).collect(),
         };
+        let quest_index: BTreeMap<_, _> = data.quests.iter().map(|q| (&q.id, q)).collect();
         let acquisition_index: BTreeMap<_, _> =
             data.acquisitions.iter().map(|a| (&a.id, a)).collect();
         let acquisitions: BTreeSet<_> = acquisition_index.keys().copied().collect();
@@ -358,6 +361,25 @@ impl Validate for ReferenceContent {
         for q in &self.quest_facts {
             g.evidence(&q.evidence)?;
             refs(std::slice::from_ref(&q.quest), &g.quests)?;
+            if let (Some(reset), Some(completion)) = (
+                q.reset.value(),
+                quest_index
+                    .get(&q.quest)
+                    .and_then(|base| base.completion.value()),
+            ) {
+                let matches = matches!(
+                    (reset, completion),
+                    (ResetRule::Never, CompletionSemantics::Unrepeatable)
+                        | (ResetRule::Repeatable, CompletionSemantics::Repeatable)
+                        | (
+                            ResetRule::Timed { .. } | ResetRule::ServerReset { .. },
+                            CompletionSemantics::ResetBound
+                        )
+                );
+                if !matches {
+                    return Err(invalid("V2 reset contradicts base completion semantics"));
+                }
+            }
             g.predicate(&q.access)?;
             g.predicate(&q.sharing_conditions)?;
             if let Some(access) = q.access_requirements.value() {
@@ -385,6 +407,22 @@ impl Validate for ReferenceContent {
             g.predicate(&a.availability)?;
             g.predicate(&a.prerequisites)?;
             if let Some(origin) = a.origin.value() {
+                let base = acquisition_index
+                    .get(&a.acquisition)
+                    .expect("resolved acquisition");
+                let matches = matches!(
+                    (origin, base.kind),
+                    (AcquisitionOrigin::Quest { .. }, AcquisitionKind::Quest)
+                        | (AcquisitionOrigin::Vendor { .. }, AcquisitionKind::Vendor)
+                        | (AcquisitionOrigin::Craft { .. }, AcquisitionKind::Crafting)
+                        | (
+                            AcquisitionOrigin::Drop { .. },
+                            AcquisitionKind::Dungeon | AcquisitionKind::Other
+                        )
+                );
+                if !matches {
+                    return Err(invalid("V2 origin contradicts base acquisition kind"));
+                }
                 match origin {
                     AcquisitionOrigin::Quest { quest } => {
                         refs(std::slice::from_ref(quest), &g.quests)?
