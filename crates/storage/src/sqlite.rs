@@ -26,8 +26,9 @@ const BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 /// connection and verified when it opens.
 pub struct SqliteStore {
     pub(crate) conn: Connection,
-    pub(crate) catalog_cache:
-        std::cell::RefCell<Option<(i64, i64, u64, crate::content::ActiveContentRevision)>>,
+    pub(crate) catalog_index_cache:
+        crate::content_catalog::Cache<std::sync::Arc<azeroth_core::catalog::CatalogIndex>>,
+    pub(crate) catalog_cache: crate::content_catalog::Cache<crate::content::ActiveContentRevision>,
 }
 
 impl SqliteStore {
@@ -55,6 +56,7 @@ impl SqliteStore {
         Ok(Self {
             conn,
             catalog_cache: Default::default(),
+            catalog_index_cache: Default::default(),
         })
     }
 

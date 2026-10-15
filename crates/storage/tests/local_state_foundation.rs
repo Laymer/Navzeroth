@@ -37,7 +37,7 @@ fn populated_v8_backfills_only_recorded_activations_and_preserves_immutable_byte
         .unwrap()
         .map(Result::unwrap)
         .collect();
-    conn.execute_batch("DROP TABLE local_submissions; DROP TABLE current_plan; DROP TABLE app_settings; DROP TABLE content_dispositions; DELETE FROM schema_migrations WHERE version>=9").unwrap();
+    conn.execute_batch("ALTER TABLE dataset_revisions DROP COLUMN content_version; DROP TABLE local_submissions; DROP TABLE current_plan; DROP TABLE app_settings; DROP TABLE content_dispositions; DELETE FROM schema_migrations WHERE version>=9").unwrap();
     drop(conn);
     let store = SqliteStore::open(&db.path).unwrap();
     assert_eq!(
