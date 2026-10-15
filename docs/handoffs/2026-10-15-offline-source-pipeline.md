@@ -17,7 +17,7 @@ This is not a playable pack, desktop activation or full release acceptance.
 Admitted three narrow published grants without requiring email: selected original
 AtlasLootClassic declarations (GPL2), Mapzeroth Retail EK node literals (MIT),
 and a WoWSims paladin source pointer (MIT). Retained seven exact originals/licence
-texts (~280 KiB), mapped in `content/source-materials/NOTICE.md`. AtlasLoot-derived
+texts (269,701 bytes; ~263 KiB), mapped in `content/source-materials/NOTICE.md`. AtlasLoot-derived
 JSON carries explicit dated transformation/GPL notices. CI bundles the complete
 transformation repository source alongside exact original/licence bytes. Eight
 other candidate/excluded registry entries are never fetched. ForeverDB remains
@@ -71,11 +71,19 @@ aggregate retrieval capacity. Reviewers confirmed their original
 findings closed; the last library guards have focused regression coverage; independent review
 also confirmed the remaining-budget transport fix.
 
-Integration at this record: PR143 merged as `bbd5140`, all nine resulting-main
-checks passed. PR144 passed all nine and merged as `a845127`; its resulting-main
-checks are pending. PR145/146 branches updated against that main for fresh checks.
-This pipeline needs its own reviewed PR, all nine existing checks plus source
-workflow/platform parity, protected merge and resulting-main verification. Native
+Hosted source workflow [38767261441](https://github.com/Laymer/Navzeroth/actions/runs/38767261441)
+passed both OS builds and platform parity against synthetic merge
+`fbf540b2e03b65bb0b5edff0bbcc642d2fd589a2`. Downloaded both complete artifacts:
+all six output documents match each other/local output, all seven objects match
+retained bytes/SHA256, and bundled transformation source matches reviewed code.
+These results do not establish interactive native Windows acceptance.
+
+Integration at this record: PR143 merged as `bbd5140`, PR144 as `a845127`;
+all nine resulting-main checks passed for each. PR145 passed all nine and merged
+as `06503c9`; its resulting-main checks are pending. PR146 updated against that
+main. The pipeline is PR147, with independently reviewed implementation and
+source workflow passing. Existing hosted checks and protected integration remain
+pending on the current exact head; then verify resulting main. Native
 interactive Windows and real70374 gameplay acceptance remain **unverified**.
 Preview0.8.1 and all release gates remain unchanged; do not publish1.0.
 

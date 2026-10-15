@@ -14,9 +14,12 @@
     "facts": 1681
   },
   "comparison": {
-    "platform": "Linux PowerShell 7",
+    "platform": "Linux local PowerShell7 and hosted Linux/Windows",
     "byte_identical_files": 13,
-    "hosted_windows_parity": "pending"
+    "hosted_windows_parity": "passed",
+    "workflow_run": "https://github.com/Laymer/Navzeroth/actions/runs/38767261441",
+    "tested_source_commit": "fbf540b2e03b65bb0b5edff0bbcc642d2fd589a2",
+    "artifact_material_and_transformation_source": "downloaded and verified"
   },
   "domains": [
     {
