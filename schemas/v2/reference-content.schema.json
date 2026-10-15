@@ -1454,6 +1454,28 @@
       "minimum": 0,
       "type": "integer"
     },
+    "NodeFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "maxItems": 1024,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "node": {
+          "$ref": "#/$defs/NodeId"
+        }
+      },
+      "required": [
+        "node",
+        "evidence"
+      ],
+      "type": "object"
+    },
     "NodeId": {
       "maxLength": 256,
       "minLength": 1,
@@ -7905,6 +7927,13 @@
     "models": {
       "items": {
         "$ref": "#/$defs/ClassRoleModel"
+      },
+      "maxItems": 250000,
+      "type": "array"
+    },
+    "node_facts": {
+      "items": {
+        "$ref": "#/$defs/NodeFacts"
       },
       "maxItems": 250000,
       "type": "array"

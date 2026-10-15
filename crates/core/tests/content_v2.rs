@@ -180,3 +180,52 @@ fn extension_facts_cannot_contradict_known_base_semantics() {
     v["acquisition_facts"][0]["origin"] = json!({"status":"known","value":{"kind":"craft","recipe":"recipe-1","profession":"profession-1"}});
     assert!(parse(&v).is_err());
 }
+
+#[test]
+fn optional_node_facts_preserve_old_serialization_and_reject_invalid_provenance() {
+    let original = fixture();
+    let old = decode(&serde_json::to_vec(&original).unwrap()).unwrap();
+    let canonical = serde_json::to_vec(&old).unwrap();
+    assert!(
+        !serde_json::to_value(&old)
+            .unwrap()
+            .as_object()
+            .unwrap()
+            .contains_key("node_facts")
+    );
+    let mut explicit_empty = original.clone();
+    explicit_empty["node_facts"] = json!([]);
+    assert_eq!(
+        serde_json::to_vec(&decode(&serde_json::to_vec(&explicit_empty).unwrap()).unwrap())
+            .unwrap(),
+        canonical
+    );
+    let mut populated = original;
+    populated["node_facts"] = json!([{"node":"demo-node-1","evidence":["demo-evidence-1"]}]);
+    let valid = decode(&serde_json::to_vec(&populated).unwrap()).unwrap();
+    assert_eq!(valid.identity_count(), old.identity_count() + 1);
+    for evidence in [
+        json!([]),
+        json!(["missing"]),
+        json!(["demo-evidence-1", "demo-evidence-1"]),
+    ] {
+        let mut bad = populated.clone();
+        bad["node_facts"][0]["evidence"] = evidence;
+        assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
+    }
+    let mut bad = populated.clone();
+    bad["node_facts"][0]["node"] = json!("unrelated-node");
+    assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
+    let mut bad = populated.clone();
+    bad["node_facts"]
+        .as_array_mut()
+        .unwrap()
+        .push(populated["node_facts"][0].clone());
+    assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
+    let mut bad = populated.clone();
+    bad["reference"]["payload"]["evidence"][0]["confidence"] = json!("disputed_or_stale");
+    assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
+    let mut bad = populated;
+    bad["node_facts"][0]["unexpected"] = json!(true);
+    assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
+}
