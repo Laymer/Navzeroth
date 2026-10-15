@@ -144,3 +144,28 @@ fn strict_nested_fields_duplicates_and_known_empty_defaults() {
     v["reference"]["payload"]["map_embeddings"] = json!([]);
     assert!(parse(&v).is_ok());
 }
+
+#[test]
+fn generated_schema_matches_committed_artifact() {
+    assert_eq!(
+        azeroth_core::content_v2::schema::reference_content_schema_text(),
+        include_str!("../../../schemas/v2/reference-content.schema.json")
+    );
+    let schema = azeroth_core::content_v2::schema::reference_content_schema();
+    assert_eq!(schema["properties"]["schema_version"]["const"], json!(2));
+    assert_eq!(
+        schema["$defs"]["RoleProfileData"]["additionalProperties"],
+        json!(false)
+    );
+}
+#[test]
+#[ignore = "explicit fixture regeneration only"]
+fn regenerate_content_fixture() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/contracts/v2");
+    std::fs::create_dir_all(&root).unwrap();
+    std::fs::write(
+        root.join("reference-content.json"),
+        format!("{}\n", serde_json::to_string_pretty(&fixture()).unwrap()),
+    )
+    .unwrap();
+}
