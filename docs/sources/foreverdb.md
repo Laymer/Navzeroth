@@ -73,6 +73,12 @@ do not strip signatures or pretend these links are immutable retrieval URLs.
 Use a reviewed manual-file acquisition declaration, or obtain a supported static
 export/repository and then add a separately tested downloader if useful.
 
+Read-only [quest staging](../data/FOREVERDB_STAGING.md) now verifies the selected
+local member files and parses the supported namespace tables without executing
+Lua or activating content. The pinned archive yielded 557 Forever-labelled and
+3,491 Classic-derived source quest records, with 373 overlapping IDs; these are
+source counts only. See the [result summary](foreverdb-staging-result.json).
+
 Next: review corresponding source and specific data scope, admit a narrow pinned
 file/field/transform list, implement an inert staging adapter, then compare it
 against the independent target inventory. Do not install the upstream addon or
