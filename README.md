@@ -5,17 +5,18 @@ for World of Warcraft: Forever. Desktop character state comes from
 explicitly imported snapshots; live game observations remain inside the permitted
 addon environment. Synthetic fixtures are always labelled.
 
-The published build is the **[0.8.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.8.1)**.
+The published build is the **[0.9.0 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.0)**.
 It contains tested engineering foundations, but no verified playable quest, item,
 acquisition or travel catalog. Interactive Windows and complete live-game acceptance
-remain unverified. See the [release notes](docs/releases/0.8.1.md) and
-[publication evidence](docs/handoffs/2026-10-14-final-program-audit.md).
+remain unverified. See the [release notes](docs/releases/0.9.0.md) and
+[publication evidence](docs/handoffs/2026-10-15-v0.9.0-release.md).
 
 The authorized v1.0.0 target is full enumerated content for **Forever
 1.60.1.70374**, with Windows desktop support. The user reports that build and
-interface 16001 on Windows 11, out of combat, with 0.8.1 diagnostics reporting no
-errors; the installed source commit was not inspected. This limited report does
-not establish full compatibility. Missing mandatory content, source permissions or
+interface 16001 on Windows 11, out of combat, with pre-version-bump 0.8.1 diagnostics reporting no
+errors; source-identified development captures now verify quest completion flags and one
+opt-in turn-in/export flow. These limited observations do not establish full
+compatibility or frozen-candidate acceptance. Missing mandatory content, source permissions or
 real acceptance evidence blocks v1.0.0 publication. Acceptance candidates also
 require complete licensed content and static validation; see the
 [v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
@@ -23,25 +24,24 @@ require complete licensed content and static validation; see the
 ## Try the current preview
 
 1. Download the Windows installer, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes
-   from the linked 0.8.1 release. Check the installer hash before running it.
+   from the linked 0.9.0 release. Check the installer hash before running it.
 2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md), including
    the separate, explicit addon installation into the client-selected AddOns folder.
 3. Use [addon setup](docs/compatibility/ADDON_INSTALL.md) to record the actual client
-   build. Published 0.8.1 snapshot, clock, position, plan and recording adapters
-   allow only `1.60.1.70338 / interface 16001`. Current development source also
-   admits the exact 70374 tuple experimentally and adds selectable export text;
-   the setup guide identifies the verified candidate artifact. Fresh live checks
-   remain required. A matching TOC interface alone does not establish compatibility.
+   build. The 0.9.0 snapshot, clock, position, plan and recording adapters admit
+   `1.60.1.70338` and `1.60.1.70374`, both with interface `16001`, experimentally.
+   Selectable exports and opt-in quest-turn-in recording are included. Full live
+   acceptance remains required. A matching TOC interface alone does not establish compatibility.
 4. Imported profiles remain local. The browser demo and bundled reference imagery
    are synthetic; they do not establish game-content coverage. Keep personal
    SavedVariables and backups private.
 
 | Identity | Current evidence |
 | --- | --- |
-| Application/addon 0.8.1 | Published developer preview with verified release hashes and hosted Windows smoke checks |
+| Application/addon 0.9.0 | Published developer preview with verified release hashes and hosted Windows smoke checks |
 | Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
-| Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; limited user-reported build/diagnostic result, with exact installed source and full acceptance still unverified |
+| Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; source-identified development capture/turn-in checks, with full acceptance still unverified |
 
 Current source includes a bounded QuestieDB raw-table staging adapter and
 [versioned release checks](release/v1/README.md). Staging preserves partial facts
@@ -49,6 +49,8 @@ and reports unsupported corrections. The [pinned source audit](docs/sources/v1-p
 accepts neither QuestieDB nor historical CMaNGOS for shipped assets. Unknown
 content inventory, source rights, real class/role models and live/Windows acceptance
 continue to block v1.0.0.
+
+[Claude Code 1.0.0 execution prompt](initial.md) — detailed continuation steps and release gates.
 
 [Repository identity gallery](docs/brand/README.md) — planned after the verified 1.0.0 release.
 
@@ -137,7 +139,7 @@ sources. They preserve exact dataset identities and verified PNG bytes, refuse
 overwrite, and report declared distribution eligibility separately from gaps.
 See [local reference pack format](docs/data/CONTENT_PACK.md). Real Forever content
 has a typed registry and can be built and verified as a `local_reference` pack in
-0.8.1, but its recorded source rights remain incomplete and
+0.9.0, but its recorded source rights remain incomplete and
 `distribution_eligible=false`. It is not a release asset or a playable-content pack.
 
 ## Windows installer

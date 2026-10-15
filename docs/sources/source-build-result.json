@@ -2,7 +2,7 @@
   "schema_version": 1,
   "checked_on": "2026-10-15",
   "build": {
-    "generator_version": "0.8.1",
+    "generator_version": "0.9.0",
     "generator_sha256": "f0b11ab2affdb641dc993d9ecee00cea590a4d07cbf6b08d4b9290df2575359b",
     "format": "navzeroth-source-build",
     "schema_version": 1,
@@ -14,13 +14,13 @@
     "facts": 1685
   },
   "comparison": {
-    "platform": "Linux local PowerShell7; new hosted Linux/Windows checks pending",
+    "platform": "Linux PowerShell7, release0.9.0; hosted parity pending",
     "byte_identical_files": 15,
     "hosted_windows_parity": "pending",
     "workflow_run": null,
     "tested_source_commit": null,
-    "baseline_source_commit": "840939f7118d8022c1a12513f05f4571889a95a2",
-    "artifact_material_and_transformation_source": "Two actual offline builds match; all nine exact source/licence objects included. New hosted complete source/archive inspection pending. Current generator/input hashes identify this working implementation."
+    "baseline_source_commit": "cefc3cfcb38dc67231f39feeb3cb18da39bba4f2",
+    "artifact_material_and_transformation_source": "Two actual offline 0.9.0 builds match, retaining all nine source/licence objects. Hosted artifacts require exact-source verification before publication."
   },
   "domains": [
     {
