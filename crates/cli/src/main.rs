@@ -15,7 +15,7 @@ use std::{
     process::ExitCode,
 };
 
-const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
+const USAGE: &str = "Unsupported command or options. Implemented: inspect-capture --input <SavedVariables-file>; doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
     inventory-report --root <repository> --input <relative-file>; \
@@ -210,6 +210,21 @@ fn pack_result(result: Result<azeroth_cli::pack::Report, &'static str>) -> ExitC
 fn main() -> ExitCode {
     let args: Vec<_> = std::env::args_os().skip(1).collect();
     match args.as_slice() {
+        [command, flag, input] if command == "inspect-capture" && flag == "--input" => {
+            match azeroth_cli::capture::inspect_file(Path::new(input)) {
+                Ok(report) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&report).expect("report serialization")
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("inspect-capture: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
         [] => {
             println!(
                 "{} {} - domain and exchange contracts available",
@@ -217,7 +232,7 @@ fn main() -> ExitCode {
                 env!("CARGO_PKG_VERSION")
             );
             println!(
-                "Implemented subcommands: doctor; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
+                "Implemented subcommands: inspect-capture --input <SavedVariables-file>; doctor; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
                  release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
