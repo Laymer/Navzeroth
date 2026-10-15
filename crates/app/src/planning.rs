@@ -19,6 +19,7 @@ use std::collections::BTreeSet;
 pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
 #[derive(Clone, Debug, Serialize)]
 pub struct PlanningCatalog {
+    pub pages: crate::catalog_pages::Pages,
     pub snapshot_id: Option<SnapshotId>,
     pub revision: Option<DatasetRevision>,
     pub fixture: bool,
