@@ -47,8 +47,8 @@ impl SnapshotApplication {
     ) -> Result<RouteInspection> {
         self.with_planning(text, now, |request, snapshot, content, clock| {
             let report = planning::calculate(request, snapshot, content, clock)?;
-            let dataset = &content.envelope.payload;
-            let context = content.envelope.data_context();
+            let dataset = &content.reference();
+            let context = content.context();
             let mut hops = Vec::new();
             for (leg, (route, stopping)) in report.result.selected.iter().map(|s| (&s.travel, false))
                 .chain(std::iter::once((&report.result.stopping, true))).enumerate() {

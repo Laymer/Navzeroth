@@ -8,7 +8,7 @@ const report=fixture as PreparationReport;
 function fixtureMember(){const member=report.members[0];if(!member)throw Error("Synthetic wirefixture needs a member");return member;}
 const firstMember=fixtureMember();
 function mock(mode:"stored"|"demo"="stored") {
-  return {listProfiles:vi.fn(async()=>({ok:true,value:[{id:firstMember.profile_id,display_name:"Synthetic member",data_mode:mode}]})),
+  return {getAuthoredCatalog:vi.fn(async()=>({ok:true,value:{revision:null,records:[],total:0,next_offset:null}})),listProfiles:vi.fn(async()=>({ok:true,value:[{id:firstMember.profile_id,display_name:"Synthetic member",data_mode:mode}]})),
     listParties:vi.fn(async()=>({ok:true,value:["preparation-party"]})),
     getDungeonPreparation:vi.fn(async(text:string)=>{expect(JSON.parse(text).schema_version).toBe(1);return {ok:true,value:report};})};
 }

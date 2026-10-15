@@ -28,6 +28,7 @@ export interface GearInput {
 }
 export type WeightSource = { type: "user_preference" | "synthetic_test" } | { type: "documented_model" | "permitted_guide"; source: string };
 export interface GearRequest {
+  authored_model?: string | null;
   profile_id: string;
   snapshot_id: string;
   revision: string;

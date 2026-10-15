@@ -1,16 +1,14 @@
 //! Finite compatibility/evidence inventory, never a global support assertion.
+use crate::catalog::CatalogView;
 use crate::snapshots::{SnapshotApplication, resolve};
 use azeroth_core::{
-    coverage::{DatasetCoverage, StatusCounts, content_report},
+    coverage::{DatasetCoverage, StatusCounts},
     error::{AppError, ErrorCode, Result},
     observation::ObservationStatus,
     sources::Redistribution,
     types::{BuildId, BuildKey, DataContext, DatasetRevision, EditionId, InterfaceId},
 };
-use azeroth_storage::{
-    SnapshotStore,
-    content::{ContentRevision, ContentScope},
-};
+use azeroth_storage::{SnapshotStore, content::ContentScope};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 pub const MAX_COMPATIBILITY_BYTES: usize = 64 * 1024;
@@ -120,12 +118,12 @@ fn add(count: &mut StatusCounts, status: ObservationStatus) {
         ObservationStatus::NotApplicable => count.not_applicable += 1,
     }
 }
-fn active(content: &ContentRevision) -> Result<ActiveCoverage> {
-    let report = content_report(&content.envelope);
-    let dataset = &content.envelope.payload;
+fn active(content: &dyn CatalogView) -> Result<ActiveCoverage> {
+    let report = content.report();
+    let dataset = &content.reference();
     let context = content.key().scope.context;
     let registered = content
-        .sources
+        .sources()
         .iter()
         .map(|s| &s.id)
         .collect::<BTreeSet<_>>();
@@ -141,10 +139,10 @@ fn active(content: &ContentRevision) -> Result<ActiveCoverage> {
         unregistered_distinct: referenced.difference(&registered).count(),
         evidence_references: dataset.evidence.len(),
         image_references: dataset.map_images.len(),
-        declared_conflicts: content.conflicts.len(),
+        declared_conflicts: content.conflicts().len(),
         ..Default::default()
     };
-    for source in &content.sources {
+    for source in content.sources() {
         for (field, status) in [
             ("location", source.location.status()),
             ("editions", source.editions.status()),
@@ -193,7 +191,7 @@ fn active(content: &ContentRevision) -> Result<ActiveCoverage> {
     }
     Ok(ActiveCoverage {
         context,
-        fixture: content.envelope.fixture,
+        fixture: content.fixture(),
         revision: dataset.revision.clone(),
         structurally_valid: report.passes,
         finite_scope: "Counts cover only records in this exact active revision. Zero is an observed empty collection; these counts do not establish geographic, gameplay or live-client completeness.",
@@ -295,7 +293,7 @@ impl SnapshotApplication {
                 fixture: key.fixture,
                 snapshot_present: store.current_snapshot(&key)?.is_some(),
             };
-            let content = store.active_content_revision(&ContentScope {
+            let content = store.active_catalog_revision(&ContentScope {
                 context: key.context,
                 fixture: key.fixture,
             })?;
@@ -305,7 +303,7 @@ impl SnapshotApplication {
             report_version: 1,
             app_version: env!("CARGO_PKG_VERSION"),
             recorded_builds: recorded(selected.as_ref())?,
-            active: content.as_ref().map(active).transpose()?,
+            active: content.as_ref().map(|c| active(c)).transpose()?,
             selected,
             official_api: "Enablement unverified: requires recorded exact-edition endpoint, authentication, retention and permitted fields/terms evidence. Lack of a verified provider is not evidence that an official API does not exist.",
             unverified_checks: vec![
@@ -342,6 +340,7 @@ impl SnapshotApplication {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use azeroth_storage::content::ContentRevision;
     #[test]
     fn source_registry_gaps_remain_separate_from_structural_dataset_validity() {
         let mut content: ContentRevision = serde_json::from_str(include_str!(
