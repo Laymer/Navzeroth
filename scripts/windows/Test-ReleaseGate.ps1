@@ -31,6 +31,7 @@ function Check([string] $Name, [bool] $Condition) {
 try {
     New-Item -ItemType Directory -Path $testRoot | Out-Null
     Write-Text 'scripts/windows/Build-Windows.ps1' ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Build-Windows.ps1')))
+    Write-Text 'scripts/windows/Release-Materials.ps1' ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Release-Materials.ps1')))
     Set-Version '0.8.1'
     Write-Text 'addons/AzerothNavigator/LICENSE' 'Synthetic test license; not production content.'
     & git -C $testRoot init -q

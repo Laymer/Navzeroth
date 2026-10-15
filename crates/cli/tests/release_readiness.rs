@@ -138,9 +138,6 @@ fn stable_missing_acceptance_fails_and_prereleases_keep_honest_blockers() {
         assert_eq!(value["publication_allowed"], allowed);
         assert_eq!(value["stable_ready"], false);
         assert!(value["blockers"].as_array().unwrap().len() > 20);
-        assert!(value["blockers"].as_array().unwrap().iter().any(|message| {
-            message == "Stable offline content and required source/license asset delivery is not implemented"
-        }));
         assert!(output.stderr.is_empty());
         fs::remove_file(temp.0.join(EVIDENCE)).unwrap();
         assert!(blocked(
