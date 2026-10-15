@@ -102,6 +102,7 @@ fn private_refs<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a
         .domains
         .iter()
         .flat_map(|d| &d.enumeration_evidence)
+        .chain(evidence.admission_registry.iter())
         .chain(evidence.checks.iter().flat_map(|c| &c.artifacts))
         .chain(
             evidence
@@ -185,6 +186,16 @@ pub(super) fn selected_files(
     let mut selected: BTreeMap<String, MaterialFile> = BTreeMap::new();
     let mut add = |reference: &FileRef, kind: Kind, budget: &mut Budget| -> Result<()> {
         let identity = (reference.bytes, reference.sha256.as_str());
+        if evidence
+            .admission_registry
+            .as_ref()
+            .is_some_and(|registry| {
+                registry.path == reference.path
+                    || (registry.bytes, registry.sha256.as_str()) == identity
+            })
+        {
+            return Err("Private admission registry cannot be shipped as material");
+        }
         if !public_notice_hashes.contains(&identity)
             && (private_paths.contains(reference.path.as_str())
                 || private_hashes.contains(&identity))

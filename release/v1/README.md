@@ -31,7 +31,11 @@ Existing exchange, source-registry and content-pack formats remain unchanged.
   must record reference/prerequisite checks, coordinates, directed connections,
   acquisition links, model provenance and representative scenarios as applicable.
   An unexplained `pass` cannot be accepted in review.
-- Sources: preserve origin edition/build separately. Each accepted revision needs
+- Sources: preserve origin edition/build separately. Accepted sources require a
+  pinned `admission_registry` FileRef bound to reviewed compatible rights, checked
+  permission evidence, exact original source files, pack metadata and allowed
+  fields; see [offline admission](../../docs/sources/source-admission-v1.md#offline-release-binding).
+  The registry is private evidence and is never a release material. Each accepted revision needs
   exact raw-file hashes, license and attribution files, redistribution evidence,
   and validation for the frozen target. `unknown`, `conditional` and `prohibited`
   permissions block publication. Cross-edition data does not become verified by

@@ -23,6 +23,7 @@ pub fn reference_content_schema() -> Value {
         "quest_facts",
         "acquisition_facts",
         "dungeons",
+        "node_facts",
     ] {
         value["properties"][collection]["maxItems"] =
             json!(crate::contract::MAX_CATALOG_IDENTITIES);
@@ -34,6 +35,9 @@ pub fn reference_content_schema() -> Value {
             }
         }
     }
+    value["$defs"]["NodeFacts"]["properties"]["evidence"]["minItems"] = json!(1);
+    value["$defs"]["NodeFacts"]["properties"]["evidence"]["maxItems"] = json!(1024);
+    value["$defs"]["NodeFacts"]["properties"]["evidence"]["uniqueItems"] = json!(true);
     close_records(&mut value);
     value
 }

@@ -50,3 +50,8 @@ Recovery follow-up: generic backup row bounds previously remained 32 MiB, which
 would refuse a valid large v2 catalog on restore. Revision/manifest rows now allow
 256 MiB plus bounded identity-column overhead; other rows keep their prior bound.
 A targeted regression checks the separate limits; affected recovery tests rerun.
+
+Integration verification: merged core v2/main dependencyfb6303b normally into
+837de5e, preserving catalog, release_inventory and source_admission registrations.
+Repeated four catalog-capacity and three storage-v2 tests: all passed. PR133 base
+changed to main for hosted checks; core PR131 remains a merge prerequisite.
