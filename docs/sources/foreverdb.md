@@ -69,7 +69,9 @@ The [publisher's provenance description](https://foreverdb.net/about) distinguis
 client extraction, player observations and CMaNGOS Classic fallback. Keep those
 labels and the origin build when mapping to Navzeroth. Independently enumerate
 the playable 70374 inventory and validate every required unit before claiming
-coverage. Current source admission remains empty and release blockers remain.
+coverage. No ForeverDB material is admitted; release blockers remain. Other narrowly
+licensed scopes now feed the [offline source pipeline](../data/SOURCE_PIPELINE.md),
+independently of a publisher reply.
 
 The [robots policy](https://foreverdb.net/robots.txt) allows public-page research
 but excludes `/api/`; no data API extraction was performed. The separately

@@ -1,4 +1,376 @@
 {
   "schema_version": 1,
-  "sources": []
+  "sources": [
+    {
+      "id": "atlasloot-classic-areas",
+      "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+      "publisher": "Hoizame/AtlasLootClassic",
+      "origin": {
+        "edition": "wow_classic",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "share_alike",
+        "license_identifier": "GPL-2.0-only",
+        "reviewer": "Codex /root, 2026-10-15, scoped published-licence assessment",
+        "attribution": "AtlasLootClassic contributors; https://github.com/Hoizame/AtlasLootClassic",
+        "obligations": "Retain the exact licence and existing notices with selected original source; mark modifications and provide applicable corresponding source including the transformation, under GPLv2. No media or external database is included.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/LICENSE",
+            "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+            "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+            "reviewed_scope": "GPLv2 root licence covers the selected authored data.lua source. Admit only literal dungeon area/instance declarations and retain the complete source for attribution/reproduction. Exclude conditional loot, third-party media, runtime code reuse and any claim of Forever validation. Also admit raw normal-difficulty NPC/item ID declarations in this exact source layout; no conditional expression is evaluated, and unsupported table constructs stay explicit."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_pinned",
+        "max_total_bytes": 227308,
+        "minimum_interval_ms": 1000,
+        "max_requests": 2,
+        "access_evidence": {
+          "url": "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/LICENSE",
+          "revision": "8e99341e4e779328460bf7684c0d5b22ce50ddf1",
+          "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+          "reviewed_scope": "Publisher distributes these exact reviewed source files in its public GitHub repository; the published licence permits copying. Bounded HTTPS raw-file retrieval at the immutable commit only; no scraping, authentication, redirects, game-data API or upstream execution. Separate bounded GitHub commit-metadata permission is recorded in source-updates-v1.json."
+        }
+      },
+      "files": [
+        {
+          "path": "AtlasLootClassic_DungeonsAndRaids/data.lua",
+          "url": "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/AtlasLootClassic_DungeonsAndRaids/data.lua",
+          "sha256": "ab12de3f642620ff52e5bb0c47139e4146e3c7021be99d55af76e5eae7bda557",
+          "bytes": 209216,
+          "fields": [
+            "dungeons.declared_legacy_area_id",
+            "dungeons.declared_legacy_instance_id",
+            "acquisition.declared_npc_id",
+            "acquisition.declared_normal_item_ids"
+          ],
+          "transformation": "atlasloot_areas_v1"
+        }
+      ]
+    },
+    {
+      "id": "cmangos-classic-candidate",
+      "revision": "ec4f596146be6467ea93c57397858e329e2db852",
+      "publisher": "cmangos/classic-db",
+      "origin": {
+        "edition": "wow_classic",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "forever-guidemate-candidate",
+      "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
+      "publisher": "TylerAkins/forever-guide-mate",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "forever-guides-excluded",
+      "revision": "c986c13d8e6018294bea7e9535be741bbac91fcf",
+      "publisher": "forever-guides-com/forever-guides",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "rejected",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "foreverdb-candidate",
+      "revision": "197af97c02444077e8edd7883eeeb6328828cf9b2f06c540d5708d89894a17d0",
+      "publisher": "ForeverDB",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "lodestar-candidate",
+      "revision": "5c5fa2346981eefe3f368f325b5ef80e2270d9de",
+      "publisher": "danielcosta42/lodestar",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "mapzeroth-retail-ek",
+      "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+      "publisher": "tr0tsky0/Mapzeroth",
+      "origin": {
+        "edition": "wow_retail",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "permissive",
+        "license_identifier": "MIT",
+        "reviewer": "Codex /root, 2026-10-15, scoped published-licence assessment",
+        "attribution": "Copyright (c) 2026 tr0tsky; Mapzeroth; https://github.com/tr0tsky0/Mapzeroth",
+        "obligations": "Retain the MIT copyright and permission notices with the selected source and derived material. Original implementation/fact declarations only; no bundled libraries, media or generated item database is admitted.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/LICENSE",
+            "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+            "sha256": "a1a81f096871b14b1fbf1da9ca314bc9f5b1fbbed0bfdaa59b460a63061856d1",
+            "reviewed_scope": "MIT root notice covers the selected source table and published original node declarations. Numeric map IDs, normalized coordinates and interior flags only; exclude media, labels and bundled libraries. TOC120100 establishes Retail, not Forever."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_pinned",
+        "max_total_bytes": 34876,
+        "minimum_interval_ms": 1000,
+        "max_requests": 3,
+        "access_evidence": {
+          "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/LICENSE",
+          "revision": "676241e234cbeab5e2066b869b52c235d675a9e0",
+          "sha256": "a1a81f096871b14b1fbf1da9ca314bc9f5b1fbbed0bfdaa59b460a63061856d1",
+          "reviewed_scope": "Publisher distributes these exact reviewed source files in its public GitHub repository; the published licence permits copying. Bounded HTTPS raw-file retrieval at the immutable commit only; no scraping, authentication, redirects, game-data API or upstream execution. Separate bounded GitHub commit-metadata permission is recorded in source-updates-v1.json."
+        }
+      },
+      "files": [
+        {
+          "path": "Data/Mapzeroth_Data_Nodes_EK.lua",
+          "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/Data/Mapzeroth_Data_Nodes_EK.lua",
+          "sha256": "b07bb7a81857f343cf3615f72dbc77de40596e7b4f8abe719159357a7b72738e",
+          "bytes": 32314,
+          "fields": [
+            "geography.map_ui_id",
+            "geography.normalized_x",
+            "geography.normalized_y",
+            "geography.interior"
+          ],
+          "transformation": "mapzeroth_nodes_v1"
+        },
+        {
+          "path": "Mapzeroth.toc",
+          "url": "https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/Mapzeroth.toc",
+          "sha256": "0b53f220e4a7ca97e1e864c9434c6f9d39ff4f9c5af2012a7d40f7f731a2d7f2",
+          "bytes": 1497,
+          "fields": [
+            "geography.source_interface"
+          ],
+          "transformation": "source_metadata_v1"
+        }
+      ]
+    },
+    {
+      "id": "pfquest-candidate",
+      "revision": "104f35678ca39ab1fb78b655f815cc7016f5e0c8",
+      "publisher": "shagu/pfQuest",
+      "origin": {
+        "edition": "wow_classic",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "questiedb-forever-candidate",
+      "revision": "49e7dbca1f18eb3b8e57ee5d9562ac3e5c9adcc4",
+      "publisher": "Questie/QuestieDB",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "vmangos-candidate",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "publisher": "vmangos/core",
+      "origin": {
+        "edition": "wow_classic",
+        "build": null
+      },
+      "rights": {
+        "status": "unreviewed",
+        "license": "unknown",
+        "license_identifier": null,
+        "reviewer": null,
+        "attribution": null,
+        "obligations": null,
+        "evidence": []
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 8388608,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": null
+      },
+      "files": []
+    },
+    {
+      "id": "wowsims-classic-paladin-model",
+      "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+      "publisher": "wowsims/classic",
+      "origin": {
+        "edition": "wow_classic",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "permissive",
+        "license_identifier": "MIT",
+        "reviewer": "Codex /root, 2026-10-15, scoped published-licence assessment",
+        "attribution": "Copyright (c) 2024 wowsims team; https://github.com/wowsims/classic",
+        "obligations": "Retain the MIT copyright and permission notices with the selected source and derived material. Original implementation/fact declarations only; no bundled libraries, media or generated item database is admitted.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/LICENSE",
+            "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+            "sha256": "09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd",
+            "reviewed_scope": "MIT root grant and README cover the selected authored paladin model implementation. Retain this source as reference evidence only: no execution/port, generated item data, assets or verified Forever coefficients. Provide a user-visible project link when model code is used."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_pinned",
+        "max_total_bytes": 7517,
+        "minimum_interval_ms": 1000,
+        "max_requests": 2,
+        "access_evidence": {
+          "url": "https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/LICENSE",
+          "revision": "7779ebbf79dc7f1341e6ab939b28a3402c9a730a",
+          "sha256": "09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd",
+          "reviewed_scope": "Publisher distributes these exact reviewed source files in its public GitHub repository; the published licence permits copying. Bounded HTTPS raw-file retrieval at the immutable commit only; no scraping, authentication, redirects, game-data API or upstream execution. Separate bounded GitHub commit-metadata permission is recorded in source-updates-v1.json."
+        }
+      },
+      "files": [
+        {
+          "path": "sim/paladin/paladin.go",
+          "url": "https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/sim/paladin/paladin.go",
+          "sha256": "5e9977210fabe15425e35fdfb772d2b36e3ea4dff10c5085ffc2894db58e8a65",
+          "bytes": 6448,
+          "fields": [
+            "class_roles.model_source"
+          ],
+          "transformation": "model_source_v1"
+        }
+      ]
+    }
+  ]
 }

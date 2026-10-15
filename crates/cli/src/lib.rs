@@ -8,3 +8,5 @@ pub mod release;
 pub mod replay;
 
 pub mod release_inventory;
+
+pub mod source_pipeline;

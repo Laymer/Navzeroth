@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-15",
+  "build": {
+    "generator_version": "0.8.1",
+    "generator_sha256": "dda396318801bf9ddf2291412aa6f218ec3cf1123b99c0d89491b022003bf3b3",
+    "format": "navzeroth-source-build",
+    "schema_version": 1,
+    "registry_sha256": "2e0946e6c87fb3b0cf53cf79d15b28ef1fdc2a2b9eac39d7cdcd0ae381d672cd",
+    "plan_sha256": "c707fa1bdbb86c00759f88d5e36e2d8bfab7b03d6394cb99c493a028a653f7a7",
+    "catalog_sha256": "ac2d4ecac0a62082aef56830abc2bcc9f59ceda10f2a8c6f594ab1c574bca00c",
+    "source_closure_sha256": "df63a700e0e50881137154c546dfc46f406266f9cba3a99ec6f48963a0776c26",
+    "publication_authorized": false,
+    "facts": 1681
+  },
+  "comparison": {
+    "platform": "Linux PowerShell 7",
+    "byte_identical_files": 13,
+    "hosted_windows_parity": "pending"
+  },
+  "domains": [
+    {
+      "domain": "quests",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "equipment",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "acquisition",
+      "source_facts": 718,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "geography",
+      "source_facts": 896,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "travel",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "dungeons",
+      "source_facts": 66,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "class_roles",
+      "source_facts": 1,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "party",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "reminders",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    }
+  ],
+  "limitations": [
+    "Historical source knowledge only; no playable pack activation",
+    "All independent target inventory counts unknown",
+    "Native Windows interactive and live 70374 checks unverified"
+  ]
+}

@@ -9,3 +9,11 @@ content/**/*.json text eol=lf
 content/**/NOTICE text eol=lf
 *.png binary
 content/forever/**/*.png filter=lfs diff=lfs merge=lfs -text
+
+# Exact licensed source snapshots; never normalize their hashed bytes.
+content/source-materials/objects/* -text
+
+# Generator fingerprints and source policies are platform-independent bytes.
+*.rs text eol=lf
+docs/sources/source-admission-v1.json text eol=lf
+docs/sources/source-updates-v1.json text eol=lf

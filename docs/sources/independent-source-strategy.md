@@ -13,7 +13,10 @@ Forever70374 catalog. There are useful open-source components requiring no
 personal approval. Their published licences and upstream source are sufficient
 starting points for scoped reuse; target validation remains a separate question.
 The [audit manifest](independent-source-review.json) pins the files actually read.
-These are research candidates, not an addition to the admitted-source registry.
+These entries describe the research baseline. The subsequent
+[offline pipeline](../data/SOURCE_PIPELINE.md) admits three narrowly reviewed
+scopes, retains their original/licence material and automates convergence. It
+does not admit the other candidates or establish complete target coverage.
 
 | Source | Published licence inspected | Useful scope | Limitation / decision |
 | --- | --- | --- | --- |
@@ -88,8 +91,9 @@ No blanket licence change to existing Navzeroth code or third-party data is made
 This removes provider replies, private APIs and single-provider uptime from the
 required acquisition/build design. Source updates, parsing, validation, reporting,
 pack assembly and repeat builds can be automated after specific inputs are accepted.
-The accepted-source registry is still empty today: this is an actionable selection
-and architecture decision, not a claim that the mirror or complete catalog exists.
+At this research baseline the accepted-source registry was empty. The
+[implementation continuation](../data/SOURCE_PIPELINE.md) now retains three narrow
+scopes and builds them offline. A complete target catalog remains unavailable.
 
 Live game actions, visual comparisons and real Windows acceptance remain human
 operator tasks under the release plan. A model cannot establish unobserved

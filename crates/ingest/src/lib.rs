@@ -27,3 +27,5 @@ mod error;
 pub mod session;
 
 pub mod pack;
+
+pub mod source_adapters;

@@ -1,0 +1,62 @@
+# Retained third-party source material
+
+These hash-named files are exact inert source inputs, not executable addons.
+The repository BSD licence does not relicense these third-party works.
+The admission registry maps original paths, hashes, permitted fields and licences.
+Generated knowledge from the AtlasLoot scope retains applicable GPLv2 terms.
+Navzeroth transforms its area, instance, NPC and normal-loot declarations into
+provenance-bearing JSON facts (modification date: 2026-10-15). The original
+source is unchanged; transformation source accompanies CI artifacts. This is
+a scoped historical reference, with no verified Forever build applicability.
+No client assets, uploader, personal exports or unadmitted source bytes are here.
+
+
+## atlasloot-classic-areas
+
+Origin: Hoizame/AtlasLootClassic at `8e99341e4e779328460bf7684c0d5b22ce50ddf1`.
+
+Licence: GPL-2.0-only.
+Attribution: AtlasLootClassic contributors; https://github.com/Hoizame/AtlasLootClassic.
+
+Retain the exact licence and existing notices with selected original source; mark modifications and provide applicable corresponding source including the transformation, under GPLv2. No media or external database is included.
+
+
+- `AtlasLootClassic_DungeonsAndRaids/data.lua` → [`ab12de3f642620ff52e5bb0c47139e4146e3c7021be99d55af76e5eae7bda557`](objects/ab12de3f642620ff52e5bb0c47139e4146e3c7021be99d55af76e5eae7bda557); [immutable upstream](https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/AtlasLootClassic_DungeonsAndRaids/data.lua).
+
+
+- `LICENSE` → [`8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643`](objects/8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643); [immutable upstream](https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/8e99341e4e779328460bf7684c0d5b22ce50ddf1/LICENSE).
+
+
+## mapzeroth-retail-ek
+
+Origin: tr0tsky0/Mapzeroth at `676241e234cbeab5e2066b869b52c235d675a9e0`.
+
+Licence: MIT.
+Attribution: Copyright (c) 2026 tr0tsky; Mapzeroth; https://github.com/tr0tsky0/Mapzeroth.
+
+Retain the MIT copyright and permission notices with the selected source and derived material. Original implementation/fact declarations only; no bundled libraries, media or generated item database is admitted.
+
+
+- `Data/Mapzeroth_Data_Nodes_EK.lua` → [`b07bb7a81857f343cf3615f72dbc77de40596e7b4f8abe719159357a7b72738e`](objects/b07bb7a81857f343cf3615f72dbc77de40596e7b4f8abe719159357a7b72738e); [immutable upstream](https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/Data/Mapzeroth_Data_Nodes_EK.lua).
+
+
+- `Mapzeroth.toc` → [`0b53f220e4a7ca97e1e864c9434c6f9d39ff4f9c5af2012a7d40f7f731a2d7f2`](objects/0b53f220e4a7ca97e1e864c9434c6f9d39ff4f9c5af2012a7d40f7f731a2d7f2); [immutable upstream](https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/Mapzeroth.toc).
+
+
+- `LICENSE` → [`a1a81f096871b14b1fbf1da9ca314bc9f5b1fbbed0bfdaa59b460a63061856d1`](objects/a1a81f096871b14b1fbf1da9ca314bc9f5b1fbbed0bfdaa59b460a63061856d1); [immutable upstream](https://raw.githubusercontent.com/tr0tsky0/Mapzeroth/676241e234cbeab5e2066b869b52c235d675a9e0/LICENSE).
+
+
+## wowsims-classic-paladin-model
+
+Origin: wowsims/classic at `7779ebbf79dc7f1341e6ab939b28a3402c9a730a`.
+
+Licence: MIT.
+Attribution: Copyright (c) 2024 wowsims team; https://github.com/wowsims/classic.
+
+Retain the MIT copyright and permission notices with the selected source and derived material. Original implementation/fact declarations only; no bundled libraries, media or generated item database is admitted.
+
+
+- `sim/paladin/paladin.go` → [`5e9977210fabe15425e35fdfb772d2b36e3ea4dff10c5085ffc2894db58e8a65`](objects/5e9977210fabe15425e35fdfb772d2b36e3ea4dff10c5085ffc2894db58e8a65); [immutable upstream](https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/sim/paladin/paladin.go).
+
+
+- `LICENSE` → [`09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd`](objects/09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd); [immutable upstream](https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/LICENSE).

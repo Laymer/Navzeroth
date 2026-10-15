@@ -352,6 +352,34 @@ fn main() -> ExitCode {
                 }
             }
         }
+        [command, rest @ ..] if command == "source-sync" || command == "source-build" => {
+            let build = command == "source-build";
+            let Some(options) = azeroth_cli::source_pipeline::Options::parse(rest, build) else {
+                eprintln!("{}", azeroth_cli::source_pipeline::USAGE);
+                return ExitCode::from(2);
+            };
+            let result = if build {
+                azeroth_cli::source_pipeline::build(&options).and_then(|r| {
+                    serde_json::to_string_pretty(&r)
+                        .map_err(|_| "Cannot encode source build report")
+                })
+            } else {
+                azeroth_cli::source_pipeline::sync(&options).and_then(|r| {
+                    serde_json::to_string_pretty(&r)
+                        .map_err(|_| "Cannot encode source closure report")
+                })
+            };
+            match result {
+                Ok(report) => {
+                    println!("{report}");
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("{message}");
+                    ExitCode::from(1)
+                }
+            }
+        }
         [command, rest @ ..] if command == "stage-foreverdb" => {
             let Some(options) = azeroth_cli::foreverdb::Options::parse(rest) else {
                 eprintln!("Unsupported options. {}", azeroth_cli::foreverdb::USAGE);
