@@ -172,7 +172,7 @@ end
 -- Explicit log reads only: no history inference or objective-index/stage mapping.
 -- Any incomplete enumeration rejects the entire read. Diagnostics contain counts,
 -- never quest titles or raw client errors.
-function Snapshot.readQuests(getCount, getInfo, context, metadata)
+function Snapshot.readQuests(getCount, getInfo, context, metadata, getComplete)
   if type(getCount) ~= 'function' or type(getInfo) ~= 'function' then
     return {}, {quest_api_missing=1}
   end
@@ -201,7 +201,15 @@ function Snapshot.readQuests(getCount, getInfo, context, metadata)
           id = string.format('%.0f', id)
           if result[id] then failure = 'quest_duplicate'; error(failure, 0) end
           local completed = {status='unknown'}
-          if type(info.isComplete) == 'boolean' then completed = observed(info.isComplete)
+          if type(getComplete) == 'function' then
+            -- Only the current, readable log identity is passed to this getter.
+            -- A failed call never falls back to a potentially stale info field.
+            local read, value = pcall(getComplete, info.questID)
+            if read and type(value) == 'boolean' then completed = observed(value)
+            elseif read then reason('quest_completion_unreadable')
+            else reason('quest_completion_failed') end
+          elseif type(info.isComplete) == 'boolean' then
+            completed = observed(info.isComplete)
           else reason('quest_completion_unreadable') end
           result[id] = {quest=id, context=context, accepted=observed(true),
             completed=completed, turned_in={status='unknown'}, objectives={}}
