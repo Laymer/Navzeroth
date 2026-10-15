@@ -1,7 +1,10 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: v1 bounded staging, release enforcement and guided acceptance integration.
+Current task: 1.0.0 source admission, inventory, guided acceptance and candidate contracts.
+Owner: Codex `/root`, baseline `d59aa91`; see [claim](claims/2026-10-15-release-candidates.md).
+Three isolated workers own source admission, inventory automation and acceptance kit.
+Complete licensed 70374 content and real Windows/live evidence remain unavailable.
 Owner: Codex /root, coordinator, baseline `bb3782cbac13b5fb3e6ca8196278ba7fcc427474`.
 The user supplied a new authorized three-worker implementation/release plan for
 Forever `1.60.1.70374`. Foundation PR115 integrated the separately reviewed source,

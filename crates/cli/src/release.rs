@@ -65,6 +65,7 @@ pub struct Report {
     pub readiness: Readiness,
     pub candidate_source_commit: String,
     pub production_sha256: String,
+    pub inventory_sha256: String,
     pub verified_evidence_files: usize,
     pub verified_content_packs: usize,
 }
@@ -872,7 +873,10 @@ pub fn report(options: &Options) -> Result<Report> {
             readiness
                 .block("Tested source is missing, unrelated or has different production bytes");
         }
-    } else {
+    } else if !evidence
+        .as_ref()
+        .is_some_and(|e| e.tested_source_commit.is_none() && e.production_sha256.is_none())
+    {
         readiness.block("Tested source commit is missing or invalid");
     }
     let mut verified_packs = 0;
@@ -905,6 +909,7 @@ pub fn report(options: &Options) -> Result<Report> {
         readiness,
         candidate_source_commit: head,
         production_sha256: candidate.fingerprint,
+        inventory_sha256: hash(&inventory_bytes),
         verified_evidence_files: budget.verified.len(),
         verified_content_packs: verified_packs,
     })
@@ -958,6 +963,8 @@ mod tests {
             version: "1.0.0".into(),
             stable: true,
             stable_ready: true,
+            candidate_ready: true,
+            pending: vec![],
             publication_allowed: true,
             blockers: vec![],
         }

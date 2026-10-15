@@ -208,8 +208,44 @@ function Write-ReleaseArtifactManifest([string] $Root, [string] $Version, [strin
     return @($path)
 }
 
-function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Directory, [bool] $AddonOnly) {
+# Candidate mode is opt-in and never a publication permission. Keep all CLI
+# integrity/content checks; only the typed pending observations may be deferred.
+function Get-AcceptanceCandidateMarker([string] $Root, [string] $Version) {
+    $saved = $ErrorActionPreference
+    Push-Location $Root
+    try {
+        $ErrorActionPreference = 'Continue'
+        $lines = & cargo run --locked -p azeroth-cli -- candidate-readiness --root $Root --version $Version
+        $code = $LASTEXITCODE
+    } finally { $ErrorActionPreference = $saved; Pop-Location }
+    if ($code -ne 0) { throw 'Acceptance candidate readiness failed.' }
+    $report = ($lines -join "`n") | ConvertFrom-Json
+    if (-not $report.candidate_ready -or $report.publication_allowed) { throw 'Invalid candidate readiness result.' }
+    return (([ordered]@{schema_version=1; kind='acceptance_candidate'; publication_allowed=$false;
+        version=$Version; source_commit=$report.candidate_source_commit;
+        production_sha256=$report.production_sha256; inventory_sha256=$report.inventory_sha256} |
+        ConvertTo-Json -Compress) + "`n")
+}
+
+function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Directory, [bool] $AddonOnly, [bool] $AcceptanceCandidate = $false) {
     Assert-RegularReleasePath $Directory -Directory
+    $marker = Join-Path $Directory 'ACCEPTANCE_CANDIDATE.json'
+    if ($AcceptanceCandidate) {
+        if ((Read-BoundedReleaseText $marker) -cne (Get-AcceptanceCandidateMarker $Root $Version)) {
+            throw 'Acceptance candidate marker differs from verified source.'
+        }
+    } elseif (Test-Path -LiteralPath $marker) {
+        throw 'Acceptance candidates cannot pass publication artifact verification.'
+    } elseif (Test-StableReleaseVersion $Version) {
+        $saved = $ErrorActionPreference
+        Push-Location $Root
+        try {
+            $ErrorActionPreference = 'Continue'
+            & cargo run --locked -p azeroth-cli -- release-readiness --root $Root --version $Version | Out-Host
+            $code = $LASTEXITCODE
+        } finally { $ErrorActionPreference = $saved; Pop-Location }
+        if ($code -ne 0) { throw 'Stable publication readiness failed.' }
+    }
     $selection = Get-ReleaseMaterialSelection $Root $Version
     [string[]] $names = @(Get-ExpectedArtifactNames $Root $Version $AddonOnly $selection)
     if ($selection -and @($selection.Manifest.files).Count -gt 0) {
@@ -220,6 +256,7 @@ function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Di
         if ($actual -cne (Get-ReleaseArtifactManifest $Root $Version $Directory $AddonOnly $selection)) { throw 'Release artifact manifest differs from actual files.' }
         $names += 'RELEASE_ASSETS.json'
     }
+    if ($AcceptanceCandidate) { $names += 'ACCEPTANCE_CANDIDATE.json' }
     $actualNames = @(Get-ChildItem -LiteralPath $Directory -Force | ForEach-Object Name)
     if ($actualNames.Count -ne $names.Count + 1 -or @($actualNames | Where-Object { $_ -cnotin ($names + 'SHA256SUMS.txt') }).Count -ne 0) { throw 'Release directory has missing or unexpected artifacts.' }
     $saved = $ErrorActionPreference
