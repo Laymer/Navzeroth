@@ -11,6 +11,9 @@ function Refuses([string] $Name, [scriptblock] $Action) { $refused=$false; try {
 function Json([string] $Path, $Value) { [IO.File]::WriteAllText($Path, ($Value | ConvertTo-Json -Depth 20)) }
 try {
     New-Item -ItemType Directory -Path $temp | Out-Null
+    Assert-AcceptanceToolRoot $root $PSScriptRoot
+    Check 'tooling belongs to candidate checkout' $true
+    Refuses 'foreign checkout tooling cannot claim candidate identity' { Assert-AcceptanceToolRoot $temp $PSScriptRoot }
     $inventoryPath = Join-Path $root 'release/v1/coverage-inventory.json'
     $inventory = (Read-BoundedReleaseText $inventoryPath) | ConvertFrom-Json
     $scenarios = [ordered]@{schema_version=1; inventory_sha256=(Get-AcceptanceHash $inventoryPath); scenarios=@()}

@@ -13,6 +13,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Acceptance-Kit.ps1')
 if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) { throw 'Operator acceptance requires native Windows.' }
 $Root = [IO.Path]::GetFullPath($Root)
+Assert-AcceptanceToolRoot $Root $PSScriptRoot
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 if ($OutputDirectory.Equals($Root, [StringComparison]::OrdinalIgnoreCase) -or $OutputDirectory.StartsWith($Root.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Evidence must remain outside the source checkout.' }
 Assert-ReleaseDestination $OutputDirectory

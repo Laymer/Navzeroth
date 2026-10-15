@@ -45,3 +45,10 @@ session retains missing rows as unverified and lacks a final identity recheck.
 
 Next: independently review this PR, integrate PR6 candidate verifier, exercise its
 actual preflight with a complete candidate, and operate the native/live sessions.
+
+Independent review by `/root/inventory` found that a runner from checkout A could
+verify checkout B while recording B's fingerprint. Fixed by requiring the executing
+tooling directory to equal the candidate root's ordinary `scripts/windows` directory;
+reparse paths refuse, and the candidate gate then checks those tracked bytes.
+Added matching/foreign-checkout regressions. All 18 synthetic PS7 checks now pass;
+`git diff --check` passes. Real native/live environments remain unverified.

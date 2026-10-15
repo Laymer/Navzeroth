@@ -2,6 +2,15 @@
 Set-StrictMode -Version 3.0
 . (Join-Path $PSScriptRoot 'Release-Materials.ps1')
 
+function Assert-AcceptanceToolRoot([string] $Root, [string] $ToolsDirectory) {
+    Assert-RegularReleasePath $Root -Directory
+    Assert-RegularReleasePath $ToolsDirectory -Directory
+    $expected = [IO.Path]::GetFullPath((Join-Path $Root 'scripts/windows')).TrimEnd('\', '/')
+    $actual = [IO.Path]::GetFullPath($ToolsDirectory).TrimEnd('\', '/')
+    $comparison = if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) { [StringComparison]::OrdinalIgnoreCase } else { [StringComparison]::Ordinal }
+    if (-not $actual.Equals($expected, $comparison)) { throw 'Run acceptance tooling from the reviewed candidate checkout.' }
+}
+
 function Get-AcceptanceHash([string] $Path) {
     Assert-RegularReleasePath $Path
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
