@@ -206,18 +206,34 @@ pub struct Evidence {
     pub optional_deferrals: Vec<Deferral>,
 }
 #[derive(Debug, Serialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum PendingRequirement {
+    InitialTestedBinding,
+    Observation { check_id: String },
+}
+#[derive(Debug, Serialize)]
 pub struct Readiness {
     pub report_version: u32,
     pub version: String,
     pub stable: bool,
     pub stable_ready: bool,
+    pub candidate_ready: bool,
+    pub pending: Vec<PendingRequirement>,
     pub publication_allowed: bool,
     pub blockers: Vec<String>,
 }
 impl Readiness {
+    fn defer(&mut self, requirement: PendingRequirement, message: impl Into<String>) {
+        self.pending.push(requirement);
+        self.blockers.push(message.into());
+        self.stable_ready = false;
+        self.publication_allowed = !self.stable;
+    }
+
     pub fn block(&mut self, message: impl Into<String>) {
         self.blockers.push(message.into());
         self.stable_ready = false;
+        self.candidate_ready = false;
         self.publication_allowed = !self.stable;
     }
 }
@@ -347,10 +363,12 @@ pub fn assess(
         return Err("Unsupported release manifest version");
     }
     let mut report = Readiness {
-        report_version: 1,
+        report_version: 2,
         version: version.into(),
         stable,
         stable_ready: true,
+        candidate_ready: true,
+        pending: vec![],
         publication_allowed: true,
         blockers: vec![],
     };
@@ -426,7 +444,14 @@ pub fn assess(
     if evidence.inventory_sha256.as_str() != bindings.inventory_sha256 {
         report.block("Evidence refers to a different inventory revision");
     }
-    if !sha1(bindings.tested_source_commit)
+    let initial_binding =
+        evidence.tested_source_commit.is_none() && evidence.production_sha256.is_none();
+    if initial_binding {
+        report.defer(
+            PendingRequirement::InitialTestedBinding,
+            "Initial tested source revision and production fingerprint are pending",
+        );
+    } else if !sha1(bindings.tested_source_commit)
         || evidence.tested_source_commit.as_deref() != Some(bindings.tested_source_commit)
         || evidence.production_sha256.as_ref().map(Sha256Hex::as_str)
             != Some(bindings.production_sha256)
@@ -450,7 +475,24 @@ pub fn assess(
         } else {
             Method::InteractiveWindows
         };
-        if check.status != Status::Pass
+        if check.status == Status::Unverified
+            && check.method == method
+            && check.operator.is_none()
+            && check.recorded_at.is_none()
+            && check.environment.is_none()
+            && check.artifacts.is_empty()
+            && expected_checks.contains(check.id.as_str())
+        {
+            report.defer(
+                PendingRequirement::Observation {
+                    check_id: check.id.clone(),
+                },
+                format!("Required acceptance observation is pending: {}", check.id),
+            );
+            continue;
+        }
+        if initial_binding
+            || check.status != Status::Pass
             || check.method != method
             || [&check.operator, &check.recorded_at, &check.environment]
                 .into_iter()

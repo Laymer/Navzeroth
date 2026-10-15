@@ -1,8 +1,8 @@
 [CmdletBinding()]
-param([Parameter(Mandatory)][string] $Version, [Parameter(Mandatory)][string] $Directory, [switch] $AddonOnly)
+param([Parameter(Mandatory)][string] $Version, [Parameter(Mandatory)][string] $Directory, [switch] $AddonOnly, [switch] $AcceptanceCandidate)
 Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Release-Materials.ps1')
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
-Assert-ReleaseArtifacts $root $Version ([IO.Path]::GetFullPath($Directory)) ([bool]$AddonOnly)
+Assert-ReleaseArtifacts $root $Version ([IO.Path]::GetFullPath($Directory)) ([bool]$AddonOnly) ([bool]$AcceptanceCandidate)
 exit 0
