@@ -101,3 +101,6 @@ try {
     Remove-Item Function:cargo -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $testRoot -Recurse -Force
 }
+# Expected failing native gate probes must not become the successful script's
+# process result under the GitHub Windows PowerShell wrapper.
+exit 0

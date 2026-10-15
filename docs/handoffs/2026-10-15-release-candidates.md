@@ -32,3 +32,9 @@ PR1–3; implement frozen v2 contracts/consumers, capacity and party evidence ma
 Real source admission/population and actual acceptance remain external gates.
 The user reports only unidentified verbal permission; no dataset or rights evidence
 has been admitted. Published preview remains unchanged.
+
+Hosted run 38712041192 passed all 14 candidate transport assertions on Windows
+PowerShell 5.1 but its wrapper propagated the expected negative probe's stale
+LASTEXITCODE=1. The test now explicitly exits zero after successful assertions
+and cleanup, as the existing release-gate harness does. Thrown failures still
+abort before that line. This is a harness correction, not a waived failure.
