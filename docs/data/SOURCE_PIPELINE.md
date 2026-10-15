@@ -121,6 +121,8 @@ licence does not relicense third-party material.
 
 The `Independent source knowledge` workflow builds twice on Linux and Windows,
 compares outputs locally and across platforms, then retains complete artifacts.
+Source archives disable Git LFS smudge/process filters and verify exact pointer
+bytes before upload, preserving the committed source without downloading imagery.
 It runs on relevant PRs/main pushes and can run manually or weekly. Only the
 scheduled/manual Linux job performs the separately permitted metadata check.
 Stable packaging still requires full release readiness. Real permitted addon

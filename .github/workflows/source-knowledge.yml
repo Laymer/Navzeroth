@@ -75,9 +75,25 @@ jobs:
           }
           # Include the exact original source, licence texts and transformation
           # source revision with the derived artifact, not just its hashes.
-          git archive --format=tar --output=dist/source-knowledge-a/navzeroth-source.tar HEAD
+          # git archive also runs smudge filters; checkout lfs:false alone is
+          # insufficient. Keep committed pointer bytes and never fetch imagery.
+          git -c filter.lfs.process= -c filter.lfs.smudge= -c filter.lfs.required=false archive --format=tar --output=dist/source-knowledge-a/navzeroth-source.tar HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Could not retain complete transformation source' }
           git rev-parse HEAD | Set-Content dist/source-knowledge-a/source-commit.txt
+      - name: Verify source archive retains exact LFS pointer bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive_check_dir=$(mktemp -d)
+          trap 'rm -rf "$archive_check_dir"' EXIT
+          git ls-files -z > "$archive_check_dir/files"
+          git check-attr --stdin -z filter < "$archive_check_dir/files" > "$archive_check_dir/attributes"
+          awk 'BEGIN{RS="\0"; ORS="\0"} NR%3==1{p=$0} NR%3==0 && $0=="lfs"{print p}' "$archive_check_dir/attributes" > "$archive_check_dir/lfs"
+          while IFS= read -r -d '' path; do
+            git show "HEAD:$path" > "$archive_check_dir/expected"
+            tar -xOf dist/source-knowledge-a/navzeroth-source.tar "$path" > "$archive_check_dir/actual"
+            cmp "$archive_check_dir/expected" "$archive_check_dir/actual"
+          done < "$archive_check_dir/lfs"
       - name: Check upstream revision metadata without changing retained inputs
         if: runner.os == 'Linux' && github.event_name != 'pull_request' && github.event_name != 'push'
         shell: bash

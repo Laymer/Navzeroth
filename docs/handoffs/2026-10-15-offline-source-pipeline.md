@@ -66,7 +66,7 @@ Actual checks on the implementation before PR:
 Independent review found and resolved unsafe float number spellings, promotion
 of explicitly unvalidated facts, a registry reread race, missing Cargo workflow
 path filters, separate metadata retrieval permission, actual dated GPL derivative
-notices a direct-library offline bypass and transport that was not clamped to remaining
+notices, a direct-library offline bypass and transport that was not clamped to remaining
 aggregate retrieval capacity. Reviewers confirmed their original
 findings closed; the last library guards have focused regression coverage; independent review
 also confirmed the remaining-budget transport fix.
@@ -108,3 +108,24 @@ independently reopened. Kept source unadmitted without creating a new required
 permission reply. Recorded details in `docs/sources/vmangos-closure-review.json`.
 The admission-contract documentation now reflects three current scopes rather
 than its original empty baseline; coordinator ownership explicitly recorded.
+
+
+Archive verification follow-up: comparison of every archived file against the
+Git tree found that `git archive` expanded four LFS pointers into images even
+though checkout used `lfs:false`. Knowledge documents, seven originals/licences
+and transformation code remained correct, but that archive was not an exact
+source snapshot and depended on unintended LFS retrieval. Withdrew **eight**
+generated source artifacts from the six pre-fix workflow runs (no releases or
+published history changed). Prior artifact links retain workflow logs but no
+longer supply those withdrawn downloads. Local copies remain only as regression
+fixtures outside Git.
+
+The archive command now disables LFS process/smudge filters explicitly. A local
+archive matches all **1,068** committed Git blobs. A new fail-closed CI guard
+checks every LFS path against its exact Git blob before upload. Its actual local
+regression accepts the pointer archive and refuses the original expanded-image
+archive. Independent review caught hidden producer failures in an initial
+process-substitution guard; replaced that with checked temporary-file commands
+and a NUL-safe loop. Reviewer confirmed the fix, with Windows confirmation
+pending. No Rust implementation or source-data pins changed; current exact-head
+hosted checks and replacement-artifact verification remain required.
