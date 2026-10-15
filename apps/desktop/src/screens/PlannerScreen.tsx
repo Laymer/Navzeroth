@@ -1,3 +1,4 @@
+import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
 import { runPlanningJob, type PlanningJobStatus } from "../commands/planningJobs";
@@ -16,6 +17,7 @@ function canonical(value: unknown): string {
 export function PlannerScreen({ client, refreshKey }: { client: CommandClient; refreshKey: number }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
   const [profile, setProfile] = useState("");
+  const previousCatalogBinding=useRef("");
   const [catalog, setCatalog] = useState<PlanningCatalog | null>(null);
   const [origin, setOrigin] = useState("");
   const [stop, setStop] = useState("");
@@ -66,6 +68,9 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
       if (!live) return;
       if (!result.ok) { setError(result.error.message); return; }
       catalogOwner.current = { client, refreshKey, profile }; setCatalog(result.value); setError("");
+      const binding=JSON.stringify([profile,result.value.revision,result.value.pages]);
+      if(result.value.pages&&previousCatalogBinding.current===binding)return;
+      previousCatalogBinding.current=binding;
       const nodes = new Set(result.value.nodes.map((n) => n.id));
       const objectives = new Set(result.value.objectives.map((o) => o.id));
       setCandidates((old) => old.filter((c) => objectives.has(c.objective)).map((c) => nodes.has(c.node) ? c : { ...c, node: "" }));
@@ -119,7 +124,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     try { await navigator.clipboard.writeText(exported.text); if (ticket === generation.current) setCopyStatus("Copied plan export."); }
     catch { if (ticket === generation.current) setCopyStatus("Clipboard unavailable; select the text and copy manually."); }
   }
-  const nodeOptions = <><option value="">Choose a node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</>;
+  const nodeOptions = <><OffPageOptions selected={[origin,stop,...candidates.map(c=>c.node)]} visible={visibleCatalog?.nodes.map(n=>n.id)??[]}/><option value="">Choose a node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</>;
   return <section aria-label="Planner">
     <h2>Single-character planner</h2>
     <p>Manual utility and time estimates. No inferred quest unlocks or transport links. Expected durations are uncertain.</p>
@@ -127,18 +132,21 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     {error && <p role="alert">{error}</p>}
     <label>Planning profile <select value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
     <p>Snapshot: {visibleCatalog?.snapshot_id ?? "none"}; revision: {visibleCatalog?.revision ?? "none — activate Content first"}</p>
-    <label>Origin <select value={origin} onChange={(e) => { invalidate(); setOrigin(e.target.value); }}>{nodeOptions}</select></label>
+    <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={visibleCatalog?.pages?.nodes} label="nodes" onPage={p=>{setCatalog(old=>old?{...old,nodes:p.records as NonNullable<typeof catalog>["nodes"],pages:{...old.pages,nodes:p}}:old);}}/>
+<CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={visibleCatalog?.pages?.objectives} label="objectives" onPage={p=>{setCatalog(old=>old?{...old,objectives:p.records as NonNullable<typeof catalog>["objectives"],pages:{...old.pages,objectives:p}}:old);}}/>
+<label>Origin <select value={origin} onChange={(e) => { invalidate(); setOrigin(e.target.value); }}>{nodeOptions}</select></label>
     <label>Stopping node <select value={stop} onChange={(e) => { invalidate(); setStop(e.target.value); }}>{nodeOptions}</select></label>
     <label>Versioned goal identifier <input value={goal} onChange={(e) => { invalidate(); setGoal(e.target.value); }} /></label>
     <button type="button" disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</button>
     <label>Budget (ms) <input type="number" min="0" step="1" value={budget} onChange={(e) => { invalidate(); setBudget(e.target.valueAsNumber); }} /></label>
     <label>Stopping service (ms) <input type="number" min="0" step="1" value={stoppingService} onChange={(e) => { invalidate(); setStoppingService(e.target.valueAsNumber); }} /></label>
+    <p>{candidates.length} selected objectives; {excluded.length} exclusions (maximum 128 each).</p><button type="button" onClick={()=>{invalidate();setCandidates([]);setExcluded([]);}}>Clear objective selections</button>
     {visibleCatalog?.objectives.map((objective) => {
       const candidate = candidates.find((c) => c.objective === objective.id);
       const update = (key: "node" | "utility" | "completion_ms" | "service_ms", value: string | number) => { invalidate(); setCandidates((old) => old.map((c) => c.objective === objective.id ? { ...c, [key]: value } : c)); };
       return <fieldset key={objective.id}><legend>{objective.id}</legend>
-        <label><input type="checkbox" checked={candidate !== undefined} onChange={(e) => { invalidate(); setCandidates((old) => e.target.checked ? [...old, { objective: objective.id, node: "", utility: 0, completion_ms: 0, service_ms: 0 }] : old.filter((c) => c.objective !== objective.id)); }} />Consider objective</label>
-        <label><input type="checkbox" checked={excluded.includes(objective.id)} onChange={(e) => { invalidate(); setExcluded((old) => e.target.checked ? [...old, objective.id] : old.filter((id) => id !== objective.id)); }} />Exclude objective</label>
+        <label><input type="checkbox" checked={candidate !== undefined} disabled={!candidate&&candidates.length>=128} onChange={(e) => { invalidate(); setCandidates((old) => e.target.checked ? [...old, { objective: objective.id, node: "", utility: 0, completion_ms: 0, service_ms: 0 }] : old.filter((c) => c.objective !== objective.id)); }} />Consider objective</label>
+        <label><input type="checkbox" checked={excluded.includes(objective.id)} disabled={!excluded.includes(objective.id)&&excluded.length>=128} onChange={(e) => { invalidate(); setExcluded((old) => e.target.checked ? [...old, objective.id] : old.filter((id) => id !== objective.id)); }} />Exclude objective</label>
         {candidate && <><label>Objective node <select value={candidate.node} onChange={(e) => update("node", e.target.value)}>{nodeOptions}</select></label>
           {(["utility", "completion_ms", "service_ms"] as const).map((key) => <label key={key}>{key} <input type="number" min="0" step="1" value={candidate[key]} onChange={(e) => update(key, e.target.valueAsNumber)} /></label>)}</>}
       </fieldset>;
