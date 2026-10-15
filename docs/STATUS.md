@@ -20,6 +20,14 @@ validation are still pending. Publisher metadata currently names origin build
 Wowhead request is superseded. No source has been admitted, and all nine target
 inventories remain explicitly unknown.
 
+Source-independence continuation: the user requests a path requiring no publisher
+reply. The [independent source strategy](sources/independent-source-strategy.md)
+compares published-licence alternatives and defines retained inputs/offline builds
+plus original Forever observations. Provider correspondence is optional; specific
+rights, target coverage and operator acceptance remain required. This research
+does not admit a dataset or implement a complete independent mirror. See the
+[research handoff](handoffs/2026-10-15-independent-source-strategy.md).
+
 Version 0.8.1 remains the published developer preview. Complete licensed content,
 actual permitted live advancement/deviation/session bindings, operator acceptance
 and full-corpus Windows measurements remain unavailable. The Linux development
