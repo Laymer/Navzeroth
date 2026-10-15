@@ -127,3 +127,26 @@ hashes, observed release metadata, uncertainty and independent review limits.
 Permitted licence/provenance research may continue without production admission
 or a required email; production extraction/redistribution requires its own
 established material scope. No server, SQL, converter or upstream script ran.
+
+
+## Scoped Forever continuation and withdrawal handling
+
+AllTheThings now supplies a narrowly admitted MIT source scope at
+[bf974021](https://github.com/ATTWoWAddon/AllTheThings/tree/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b).
+Only the Riverglades flight-point 3276 literal point/NPC/coordinate/access-symbol
+fields converge; the exact editable source and MIT notice are retained. Unknown
+build and unresolved symbols block 70374 promotion. No directed flight route is
+inferred. See the [handoff](../handoffs/2026-10-15-forever-source-declarations.md).
+
+The metadata check caught a publisher revert of the initially investigated
+Ashenvale declaration before admission. It remains excluded research, not a
+claim that its quest is absent or invalid. Freshness means reviewing current
+source changes while retaining reproducible pins, not automatically trusting a
+newer commit or assigning its date to gameplay observations.
+
+Further pinned GuideMate review traced travel/quest collection dependencies to
+Wowhead research, compiled Questie data and an unidentified local leveling dump;
+those broad scopes remain unadmitted. Ordinary factual citations alone do not
+prove a selected published MIT declaration lacks rights; explicit scope and
+actual selected material control admission. No additional permission email,
+third-party code execution or recursive dataset retrieval was used.

@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "registry_sha256": "2e0946e6c87fb3b0cf53cf79d15b28ef1fdc2a2b9eac39d7cdcd0ae381d672cd",
+  "registry_sha256": "5fa984b5f28a2efc2d6538d8d324dba73027069be8578cb3398ebe9202c4e8c4",
   "method": "github_commit_metadata",
   "reviewer": "Codex /root",
   "reviewed_on": "2026-10-15",
   "access_evidence_url": "https://docs.github.com/en/rest/commits/commits#list-commits",
-  "scope": "Public unauthenticated latest-commit SHA metadata only, using documented GET /repos/{owner}/{repo}/commits?per_page=1. No game-data extraction, raw new-revision retrieval, private content, credentials, redirects or source admission. Failure leaves freshness unknown and does not affect retained offline builds. This permission and budget are independent of pinned-source file acquisition.",
-  "max_requests": 3,
+  "scope": "Four admitted repositories only. Public unauthenticated latest-commit SHA metadata only, using documented GET /repos/{owner}/{repo}/commits?per_page=1. No game-data extraction, raw new-revision retrieval, private content, credentials, redirects or source admission. Failure leaves freshness unknown and does not affect retained offline builds. This permission and budget are independent of pinned-source file acquisition.",
+  "max_requests": 4,
   "max_response_bytes": 262144,
-  "max_total_bytes": 786432,
+  "max_total_bytes": 1048576,
   "minimum_interval_ms": 1000,
   "repositories": [
     {
@@ -22,6 +22,10 @@
     {
       "source_id": "wowsims-classic-paladin-model",
       "repository": "wowsims/classic"
+    },
+    {
+      "source_id": "allthethings-forever-riverglades",
+      "repository": "ATTWoWAddon/AllTheThings"
     }
   ]
 }

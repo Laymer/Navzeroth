@@ -23,6 +23,37 @@ fn fact(domain: &str, record: &str, field: &str, datum: Datum) -> Fact {
 fn known(value: serde_json::Value) -> Datum {
     Datum::Known { value }
 }
+/// Explicit transformation of one reviewed editable MIT source declaration.
+/// The whole-file pin prevents layout changes, expressions, comments or another
+/// revision from silently changing this mapping. Symbols remain unresolved.
+pub fn att_flight_point(bytes: &[u8]) -> Result<Vec<Fact>> {
+    if bytes.len() != 7434
+        || format!("{:x}", Sha256::digest(bytes))
+            != "1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae"
+    {
+        return Err("ATT adapter does not support this source revision");
+    }
+    // A point declaration is not a directed connection, calibrated coordinate,
+    // resolved faction/race rule, access unlock or observed target-world fact.
+    let declarations = [
+        ("travel", "declared_flight_point_id", json!(3276)),
+        ("travel", "declared_npc_id", json!(257087)),
+        (
+            "geography",
+            "declared_coordinate_tuple",
+            json!([60.6, 81.6, "MAP.RIVERGLADES"]),
+        ),
+        ("travel", "declared_access_symbol", json!("ALLIANCE_ONLY")),
+    ];
+    Ok(declarations
+        .into_iter()
+        .map(|(domain, field, value)| {
+            let mut row = fact(domain, "flight-point-3276", field, known(value));
+            row.confidence = Confidence::PublisherDocumented;
+            row
+        })
+        .collect())
+}
 /// This initial transformation is deliberately scoped to the reviewed file.
 /// It extracts declared legacy IDs only; conditional loot/runtime expressions
 /// are not interpreted. New revisions require a fresh adapter/schema review.
@@ -272,6 +303,29 @@ pub fn model_reference(path: &str, sha256: &str) -> Fact {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reviewed_att_declarations_keep_symbols_raw_and_refuse_changed_source() {
+        let bytes = include_bytes!(
+            "../../../content/source-materials/objects/1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae"
+        );
+        let rows = att_flight_point(bytes).unwrap();
+        assert_eq!(rows.len(), 4);
+        assert_eq!(rows[0].datum, known(json!(3276)));
+        assert_eq!(rows[1].datum, known(json!(257087)));
+        assert_eq!(rows[2].datum, known(json!([60.6, 81.6, "MAP.RIVERGLADES"])));
+        assert_eq!(rows[3].datum, known(json!("ALLIANCE_ONLY")));
+        assert!(
+            rows.iter()
+                .all(|row| row.confidence == Confidence::PublisherDocumented
+                    && row.observed_at_utc_ms.is_none())
+        );
+        let mut changed = bytes.to_vec();
+        changed[0] ^= 1;
+        assert!(att_flight_point(&changed).is_err());
+        changed.extend_from_slice(b"\nos.execute('do not execute imported source')");
+        assert!(att_flight_point(&changed).is_err());
+        assert!(att_flight_point(b"fp(3276,{cr=257087})").is_err());
+    }
     #[test]
     fn reviewed_declarations_never_evaluate_instance_expressions() {
         let rows =

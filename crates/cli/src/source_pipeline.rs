@@ -440,6 +440,7 @@ pub enum Adapter {
     AtlaslootAreasV1,
     MapzerothNodesV1,
     ModelSourceV1,
+    AttFlightPointV1,
 }
 impl Adapter {
     pub fn transform(self) -> &'static str {
@@ -448,6 +449,7 @@ impl Adapter {
             Self::AtlaslootAreasV1 => "atlasloot_areas_v1",
             Self::MapzerothNodesV1 => "mapzeroth_nodes_v1",
             Self::ModelSourceV1 => "model_source_v1",
+            Self::AttFlightPointV1 => "att_flight_point_v1",
         }
     }
 }
@@ -532,6 +534,7 @@ pub fn build(options: &Options) -> Result<BuildReport> {
             },
         )?;
         let rows: Vec<Fact> = match input.adapter {
+            Adapter::AttFlightPointV1 => azeroth_ingest::source_adapters::att_flight_point(&bytes)?,
             Adapter::KnowledgeV1 => Document::parse(&bytes, plan.as_of_utc_ms)?.facts,
             Adapter::AtlaslootAreasV1 => azeroth_ingest::source_adapters::atlasloot_areas(&bytes)?,
             Adapter::MapzerothNodesV1 => azeroth_ingest::source_adapters::mapzeroth_nodes(&bytes)?,

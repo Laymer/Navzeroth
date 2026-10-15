@@ -133,10 +133,16 @@ fn url(s: &str) -> bool {
     let Some(rest) = s.strip_prefix("https://") else {
         return false;
     };
-    if !text(s) || !s.is_ascii() || s.contains(['@', '#', '?', '\\', ' ', '%']) {
+    if !text(s) || !s.is_ascii() || s.contains(['@', '#', '?', '\\', ' ']) {
         return false;
     }
     let authority = rest.split('/').next().unwrap_or("");
+    // Literal spaces in immutable upstream filenames have one canonical URI
+    // spelling. No encoded separators, dots, percent or alternate authority
+    // forms are admitted. Paths are never decoded into local filenames.
+    if rest[authority.len()..].replace("%20", "").contains('%') {
+        return false;
+    }
     // Deliberately narrow: DNS names only, default HTTPS port, no credentials,
     // encoded authority, IP literals, trailing dot or alternate parser forms.
     authority.len() <= 253

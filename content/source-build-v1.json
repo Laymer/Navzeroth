@@ -20,6 +20,11 @@
       "source": "wowsims-classic-paladin-model",
       "file": "sim/paladin/paladin.go",
       "adapter": "model_source_v1"
+    },
+    {
+      "source": "allthethings-forever-riverglades",
+      "file": "content/source-materials/objects/1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae",
+      "adapter": "att_flight_point_v1"
     }
   ]
 }

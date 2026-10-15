@@ -243,7 +243,14 @@ fn committed_licensed_materials_build_without_network_on_every_platform() {
     );
     let catalog: Value =
         serde_json::from_slice(&fs::read(out.join("catalog.json")).unwrap()).unwrap();
-    assert_eq!(catalog["entries"].as_array().unwrap().len(), 1681);
+    assert_eq!(catalog["entries"].as_array().unwrap().len(), 1685);
+    let att: Vec<_> = catalog["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|entry| entry["record"] == "flight-point-3276")
+        .collect();
+    assert_eq!(att.len(), 4);
     assert!(
         catalog["domains"]
             .as_array()
