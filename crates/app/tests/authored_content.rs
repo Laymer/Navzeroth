@@ -189,3 +189,59 @@ fn generic_catalog_pages_bind_hash_scope_and_reject_unbounded_requests() {
     assert!(app.catalog_page(&request.to_string()).is_err());
     assert!(app.catalog_page(&" ".repeat(4097)).is_err());
 }
+
+#[test]
+fn authored_travel_preserves_unavailable_states_and_resolves_known_directed_edges() {
+    for status in ["unknown", "restricted", "unsupported", "not_applicable"] {
+        let mut data = bundle();
+        data["content"]["dungeons"][0]["travel_edges"] = json!({"status":status});
+        let (app, profile, _) = setup(&data);
+        let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},"package":null,"origin":null,"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+        let report = app
+            .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+            .unwrap();
+        let travel = report.authored_travel.unwrap();
+        assert_eq!(
+            serde_json::to_value(travel.declaration.observation).unwrap()["status"],
+            status
+        );
+        assert!(travel.edges.is_empty());
+        let gap = report
+            .gaps
+            .iter()
+            .find(|g| g.section == "authored_travel")
+            .unwrap();
+        assert_eq!(serde_json::to_value(gap.availability).unwrap(), status);
+    }
+    for empty in [false, true] {
+        let mut data = bundle();
+        let edge = data["content"]["reference"]["payload"]["edges"][0].clone();
+        data["content"]["dungeons"][0]["travel_edges"] = known(if empty {
+            json!([])
+        } else {
+            json!([edge["id"]])
+        });
+        let (app, profile, _) = setup(&data);
+        let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},"package":null,"origin":null,"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+        let report = app
+            .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+            .unwrap();
+        let travel = report.authored_travel.unwrap();
+        assert_eq!(
+            travel.declaration.observation.status(),
+            ObservationStatus::Known
+        );
+        assert_eq!(travel.edges.len(), usize::from(!empty));
+        assert!(!report.gaps.iter().any(|g| g.section == "authored_travel"));
+        if !empty {
+            let expected: azeroth_core::entities::TravelEdge =
+                serde_json::from_value(edge).unwrap();
+            assert_eq!(
+                serde_json::to_value(&travel.edges[0]).unwrap(),
+                serde_json::to_value(expected).unwrap()
+            );
+        }
+        // Merely referencing directed dependencies does not create a route.
+        assert!(report.route.is_none());
+    }
+}
