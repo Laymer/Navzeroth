@@ -1,7 +1,28 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-14.
-Current task: final published-source audit records; dependency-ready engineering exhausted.
+Current task: v1 bounded staging, release enforcement and guided acceptance integration.
+Owner: Codex /root, coordinator, baseline `bb3782cbac13b5fb3e6ca8196278ba7fcc427474`.
+The user supplied a new authorized three-worker implementation/release plan for
+Forever `1.60.1.70374`. Foundation PR115 integrated the separately reviewed source,
+runbook, onboarding and release contracts into main `3cf4f0a`; all nine PR and
+post-merge main checks passed. The coordinator owns the versioned coverage/evidence
+contracts. Stable publication
+requires complete mandatory coverage, source permissions and actual acceptance.
+The user reports `1.60.1 / 70374 / 16001`, Windows 11, out of combat and error-free
+diagnostic probe/status with addon 0.8.1. This is narrow reported evidence, not
+snapshot/plan/native acceptance or a hash-verified installed candidate.
+The next integration batch combines reviewed stable-publication enforcement,
+copyable addon exports, guarded 70374 admission, bounded Questie staging and the
+Party planning availability fix. Actual objective mapping remains unsupported.
+The public-source audit accepts neither inspected source for distribution or full
+70374 coverage, so playable content population remains blocked. Current 1.0
+inventory/evidence manifests intentionally block stable publication. See
+[v1 coordination](handoffs/2026-10-14-v1-coordination.md) and
+[release contract](../release/v1/README.md). Existing published release stays 0.8.1.
+
+## Previous program closure (historical scope)
+
 Owner: Codex /root. Latest published preview v0.8.1 atd11853e,
 published2026-10-14T18:02:38Z after reviewed isolated task/release PRs,
 allnine exact-source PR/main gates, both tag jobs and verified five-file assets.

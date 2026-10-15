@@ -78,7 +78,7 @@ cannot establish ancestry and cannot pass stable readiness.
 
 ## Enforcement
 
-The batch-2 CLI boundary and workflow integration will provide:
+The batch-2 CLI boundary and workflow integration provide:
 
 ```sh
 cargo run --locked -p azeroth-cli -- release-readiness --root . --version 1.0.0

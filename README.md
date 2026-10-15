@@ -1,39 +1,79 @@
 # Navzeroth
 
 Azeroth Navigator is a Rust, Tauri/React desktop companion with a Lua addon
-foundation for World of Warcraft: Forever. Desktop character state comes from
+for World of Warcraft: Forever. Desktop character state comes from
 explicitly imported snapshots; live game observations remain inside the permitted
 addon environment. Synthetic fixtures are always labelled.
+
+The published build is the **[0.8.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.8.1)**.
+It contains tested engineering foundations, but no verified playable quest, item,
+acquisition or travel catalog. Interactive Windows and complete live-game acceptance
+remain unverified. See the [release notes](docs/releases/0.8.1.md) and
+[publication evidence](docs/handoffs/2026-10-14-final-program-audit.md).
+
+The authorized v1.0.0 target is full enumerated content for **Forever
+1.60.1.70374**, with Windows desktop support. The user reports that build and
+interface 16001 on Windows 11, out of combat, with 0.8.1 diagnostics reporting no
+errors; the installed source commit was not inspected. This limited report does
+not establish full compatibility. Missing mandatory content, source permissions or
+real acceptance evidence keeps v1.0.0 at candidate status; see the
+[v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
+
+## Try the current preview
+
+1. Download the Windows installer, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes
+   from the linked 0.8.1 release. Check the installer hash before running it.
+2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md), including
+   the separate, explicit addon installation into the client-selected AddOns folder.
+3. Use [addon setup](docs/compatibility/ADDON_INSTALL.md) to record the actual client
+   build. Published 0.8.1 snapshot, clock, position, plan and recording adapters
+   allow only `1.60.1.70338 / interface 16001`. Current development source also
+   admits the exact 70374 tuple experimentally and adds selectable export text;
+   the setup guide identifies the verified candidate artifact. Fresh live checks
+   remain required. A matching TOC interface alone does not establish compatibility.
+4. Imported profiles remain local. The browser demo and bundled reference imagery
+   are synthetic; they do not establish game-content coverage. Keep personal
+   SavedVariables and backups private.
+
+| Identity | Current evidence |
+| --- | --- |
+| Application/addon 0.8.1 | Published developer preview with verified release hashes and hosted Windows smoke checks |
+| Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
+| Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
+| Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; limited user-reported build/diagnostic result, with exact installed source and full acceptance still unverified |
+
+Current source includes a bounded QuestieDB raw-table staging adapter and
+[versioned release checks](release/v1/README.md). Staging preserves partial facts
+and reports unsupported corrections. The [pinned source audit](docs/sources/v1-public-source-audit.md)
+accepts neither QuestieDB nor historical CMaNGOS for shipped assets. Unknown
+content inventory, source rights, real class/role models and live/Windows acceptance
+continue to block v1.0.0.
+
+## Development
 
 Read [AGENTS.md](AGENTS.md), [STATUS](docs/STATUS.md), the latest relevant handoff,
 and [the implementation plan](AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md) before
 changing code. [DOMAIN](docs/DOMAIN.md) describes types and boundaries;
 [exchange contracts](schemas/v1/README.md) describe the bounded data formats.
 
-## Implemented foundations
+### Implemented foundations
 
 SQLite character-snapshot storage and import ordering; bounded ANAV1/SavedVariables
 parsing; optional watcher for one selected file; Today/Imports/Atlas screens;
-reference pin search/layers/keyboard navigation; pure travel, eligibility, greedy
-planning, gear/acquisition, reminder and session analytics libraries; immutable
-context-qualified content revisions with activation/rollback/backup; Lua data
-decoding, predicate evaluation, injected HUD and synthetic gear scoring parity.
+reference pin search/layers/keyboard navigation; travel, eligibility, clustering and
+bounded planning; Gear/acquisition comparisons; local parties and guarded joint plan
+export; reminders and local proposals; Sessions history/analytics; content revisions
+with activation/rollback and local review dispositions; database backup/recovery;
+Settings and a read-only desktop reference window. The addon has guarded manual
+capture, bounded plan import, runtime HUD controls and opt-in manual session recording.
+Rust/Lua synthetic tests cover predicate and gear parity.
 
-Wave-2 work was delivered as separate PRs and merged in dependency order after
-protected CI. See [the integration handoff](docs/handoffs/2026-10-12-wave2-integration.md)
-and [merge audit](docs/handoffs/2026-10-12-wave2-merge.md).
-Guarded manual capture, runtime addon plan controls, acquisition-aware Gear and
-Sessions history/analytics, and Planner route inspection are implemented for the
-v0.4.0 developer preview (release preparation). Actual client bindings remain experimental and native window
-interaction remains unverified; hosted Windows packaging is revision-scoped.
-See the [release notes](docs/releases/0.4.0.md) and
-[consolidated live checklist](docs/compatibility/V040_LIVE_CHECKLIST.md).
-Manual joint planning, local proposals/acceptance, quiet reminder controls and
-conditional session comparison are added in the guidance batch. PartySnapshot
-transport, joint addon export, verified real content and full live acceptance
-remain later work. See the [task ledger](docs/IMPLEMENTATION_TASKS.md).
+Playable catalogs, documented real class/role models and complete duo/session
+acceptance remain prerequisites. Party messaging, combat-log analysis, official API
+access and hosted distribution remain explicitly deferred or blocked. See the
+[task ledger](docs/IMPLEMENTATION_TASKS.md) for individual dispositions.
 
-## Development checks
+### Development checks
 
 Use the pinned Rust toolchain, Node version and pnpm version in the repository.
 On Linux, source `~/.cargo/env` if Cargo is not on PATH (adapt for your
@@ -65,7 +105,8 @@ Native Rust checks are `cargo clippy --locked -p azeroth-desktop --all-targets -
 and `cargo test --locked -p azeroth-desktop`.
 
 The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures`,
-`validate-content`, `build-content`, `verify-pack` and bounded synthetic
+`validate-content`, `build-content`, `verify-pack`, `release-readiness`,
+[`stage-questiedb`](docs/data/QUESTIEDB_STAGING.md) and bounded synthetic
 `replay --fixture <file>`. Replay format/examples/limits are documented in
 [PLANNER_REPLAY.md](docs/data/PLANNER_REPLAY.md).
 `cargo run --locked -p azeroth-cli -- doctor --json` reports this binary's version,
@@ -83,7 +124,9 @@ Content packs require a typed `sources.json` sidecar and registered evidence/ima
 sources. They preserve exact dataset identities and verified PNG bytes, refuse
 overwrite, and report declared distribution eligibility separately from gaps.
 See [local reference pack format](docs/data/CONTENT_PACK.md). Real Forever content
-lacks the necessary registered source/coverage records; no real pack is claimed.
+has a typed registry and can be built and verified as a `local_reference` pack in
+0.8.1, but its recorded source rights remain incomplete and
+`distribution_eligible=false`. It is not a release asset or a playable-content pack.
 
 ## Windows installer
 
@@ -92,6 +135,8 @@ package on Windows; the `Windows package` workflow builds, smoke-installs and up
 them, and drafts (never publishes) a GitHub release for a version tag. Installing,
 updating and removing the application and addon:
 [WINDOWS_INSTALL.md](docs/compatibility/WINDOWS_INSTALL.md).
+The full-content v1 publication gates and required content/source assets are in the
+[v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
 
 ## Content and imagery
 

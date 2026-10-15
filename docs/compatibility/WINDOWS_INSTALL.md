@@ -3,10 +3,15 @@
 Task M9.4 (packaging automation) with the installation and removal instructions
 of M9.5. Status: IMPLEMENTED_UNVERIFIED. The hosted Windows runner builds the
 installer, installs it silently, starts the application and uninstalls it (see
+the [0.8.1 publication evidence](../handoffs/2026-10-14-final-program-audit.md),
 the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 [PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
-client are not verified.
+client are not fully verified. The current published download is the
+[0.8.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.8.1).
+It does not contain a verified playable-content catalog. Full-content v1.0.0 targets
+Forever 1.60.1.70374 and remains subject to the
+[v1 release gates](../releases/V1_RELEASE_PROCESS.md).
 
 Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Windows.ps1)):
 
@@ -18,22 +23,31 @@ Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Window
 | `SOURCE_COMMIT.txt` | Exact packaged source commit |
 | `CANDIDATE_NOTES.md` | Version-specific notes when present |
 
+The published 0.8.1 release has all five files. Its checksum manifest covers the
+four payload files, not itself. A local `-AddonOnly` build omits the installer;
+an untagged version without notes also omits `CANDIDATE_NOTES.md`. Neither is the
+complete Windows release asset set. The current packager does not include a
+production content pack or corresponding third-party source archives.
+
 ## For users
 
 ### Install the application
 
-1. Download the setup file and `SHA256SUMS.txt` from the project's GitHub release page.
-2. Optionally compare `Get-FileHash .\AzerothNavigator-<version>-x64-setup.exe` with the
-   line in `SHA256SUMS.txt`. A matching checksum shows the download is intact; it does
+1. Download the setup file, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes from the
+   linked project's release page. Check the version and evidence limitations.
+2. Compare `Get-FileHash .\AzerothNavigator-0.8.1-x64-setup.exe -Algorithm SHA256`
+   with its line in `SHA256SUMS.txt` (substitute the chosen version). A matching
+   checksum shows the download is intact; it does
    not prove who published it (plan §8.7). Download only from the project's release page.
 3. Run the setup file. It installs for the current Windows user into
    `%LOCALAPPDATA%\Azeroth Navigator` and needs no administrator rights.
    - Until releases are code-signed, Windows SmartScreen may show "Windows protected
      your PC". Choose *More info* > *Run anyway* only for a file from the release page
      whose checksum matches.
-   - The application uses Microsoft Edge WebView2. Windows 11 includes it. If it is
-     missing, the installer downloads Microsoft's WebView2 bootstrapper once; after that
-     the application works offline.
+   - The application uses Microsoft Edge WebView2. If the runtime is missing, this
+     installer is configured to download Microsoft's bootstrapper, so that first
+     installation requires network access. The local workflows are designed to run
+     offline after setup; acceptance on actual Windows hardware remains required.
 4. At the end the installer asks whether to install the World of Warcraft addon now
    (next section). You can say no and do it later.
 
@@ -47,7 +61,8 @@ then select the game's `Interface\AddOns` folder (or the game folder that contai
 The helper:
 
 - refuses a folder that is not named `AddOns`, and never creates one;
-- refuses while a program from that game folder is running;
+- attempts to detect running processes under the conventional game folder and
+  refuses when one is detected; this is not proof the client is closed;
 - writes only `AddOns\AzerothNavigator`, and replaces it only if its TOC title is
   `Azeroth Navigator Diagnostics` exactly; a different addon with that folder name is left untouched;
 - copies to a temporary sibling folder, checks every file (SHA-256), then swaps it in,
@@ -71,13 +86,23 @@ that `AddOns\AzerothNavigator\AzerothNavigator.toc` exists, as described in
 [ADDON_INSTALL.md](ADDON_INSTALL.md).
 
 Then start the game and enable *Azeroth Navigator Diagnostics* in the AddOns list.
+Record the actual client build before capture. The 0.8.1 adapters are guarded to
+70338/interface 16001; the frozen v1 target 70374 is not enabled by this installer.
 
 ### Update
 
-Run the newer setup file over the installed one. Your data stays. If the helper recorded
+Use **Backup and recovery > Create consistent backup** before an upgrade; see
+[database recovery](DATABASE_RECOVERY.md). Keep that private backup outside both
+the installation and application-data directories. Copying only the live SQLite
+file is not a consistent backup.
+
+Run the newer setup file over the installed one. Updates are designed to retain
+application data; interactive upgrade acceptance remains unverified. If the helper recorded
 an AddOns folder, the installer offers to update the addon there too, so the application
 and the addon keep the same version. Older versions cannot be installed over newer ones;
-uninstall first to go back.
+uninstall first to go back. An older application may refuse a newer database schema;
+retain a compatible pre-upgrade backup rather than treating executable downgrade as
+a database migration. Silent installation keeps an existing game addon unchanged.
 
 ### Where things are
 
@@ -101,7 +126,14 @@ Settings > Apps > *Azeroth Navigator* > Uninstall. The uninstaller:
 
 The addon's SavedVariables (`WTF\Account\<account>\SavedVariables\AzerothNavigator.lua`,
 conventional layout, unverified for Forever) are removed only by the helper with
-`-Action Uninstall -RemoveSavedVariables`, or by hand.
+`-Action Uninstall -RemoveSavedVariables`, or by hand. That switch covers the named
+`.lua` and `.lua.bak` files in every account under the selected game folder; use
+`-WhatIf` to inspect the scope first. A silent uninstall retains application data
+and the game addon, as checked by the hosted packaging smoke test. Recovery
+originals are siblings of the live database inside application data, so deleting
+application data can also remove those originals. Keep preservation copies outside
+application-data directories before choosing deletion; external backups have their
+own explicit retention decisions.
 
 ## For builders
 
@@ -109,7 +141,7 @@ Build on a native Windows checkout (plan §5.2). A WSL path such as
 `\\wsl.localhost\...` is not supported: clone the repository again on a Windows drive.
 
 ```powershell
-git clone https://github.com/Laymer/Navzeroth
+git clone --config core.autocrlf=false https://github.com/Laymer/Navzeroth
 cd Navzeroth
 powershell -ExecutionPolicy Bypass -File scripts\windows\Build-Windows.ps1 -InstallPrerequisites
 ```
@@ -129,15 +161,17 @@ The files land in `dist\windows\` (ignored by git). The script:
    | Corepack and pnpm | CI's Corepack version, `packageManager` | isolated Corepack under `%LOCALAPPDATA%\navzeroth-build` |
 
 3. Installs locked dependencies (`pnpm install --frozen-lockfile`, `cargo fetch --locked`),
-   runs `cargo test --workspace` and the desktop unit tests (skip with `-SkipTests`).
+   runs `cargo test --locked --workspace` and the desktop unit tests (skip with `-SkipTests`).
 4. Runs `tauri build --bundles nsis`; Tauri downloads its pinned NSIS on first use.
-5. Packages the addon (sorted entries, commit timestamp) and writes `SHA256SUMS.txt`.
+5. Packages the addon (sorted entries, commit timestamp), writes the exact commit
+   to `SOURCE_COMMIT.txt`, copies version-specific notes when present, and writes
+   `SHA256SUMS.txt`.
    Rebuilding the same checkout with the same .NET runtime gives the same zip; a
    checkout with other line endings (Git's `core.autocrlf` on Windows) gives a
    different one, because the addon files then differ.
 6. Fails if the build changed a tracked file.
 
-Other options: `-ExpectedVersion v0.2.0` (fail on mismatch), `-OutputDirectory`,
+Other options: `-ExpectedVersion v0.8.1` (fail on mismatch), `-OutputDirectory`,
 `-AllowDirty`, and `-AddonOnly` (addon package only; also runs with PowerShell 7 on
 Linux or macOS). `scripts\windows\Test-AddonInstaller.ps1` checks the helper against a
 synthetic game folder.
@@ -162,21 +196,26 @@ certificate or a cloud signing account is an owner decision (AGENTS.md).
 ## For maintainers: releases
 
 The workflow [`package-windows.yml`](../../.github/workflows/package-windows.yml) runs on
-pull requests that touch packaging inputs, on manual dispatch and on version tags. Each
+pull requests targeting main, pushes to main, manual dispatch and version tags. Each
 run tests the addon helper with Windows PowerShell 5.1 and PowerShell 7, builds with
 Windows PowerShell 5.1, installs silently, starts the application for 20 s, uninstalls,
 and uploads the release files as a workflow artifact (kept 14 days).
 
-To prepare a release:
+Tag runs also require version-specific release notes and draft a release containing
+the five normal files. Versions beginning `0.` or containing `-` are marked
+prerelease. The tag-only **Draft GitHub release** job does not replace the nine
+required PR/main checks.
 
-1. Set the new version in the six files listed above.
-2. Write `docs/releases/<version>.md` (plan M9.5: limitations and verification evidence);
-   a tag without it fails.
-3. Merge to main through the usual pull request.
-4. Tag the merged commit: `git tag v<version>` and `git push origin v<version>`.
-5. The workflow creates a **draft** GitHub release with the three files (versions `0.x`
-   and `-pre` versions are marked pre-release). Review it, then publish it by hand.
-   Publishing is the owner's decision (plan §20.2); the workflow never publishes.
+For the authorized v1.0.0 program, follow the
+[v1 release process](../releases/V1_RELEASE_PROCESS.md): enumerate full content,
+verify source rights and actual client/Windows behavior, pass stable-readiness
+enforcement, then create the reviewed version PR and tag. The baseline workflow
+only builds and drafts; the new stable-evidence gate and content/source-asset
+packaging are separate required implementation work. A successful 0.8.1-style
+five-file package alone cannot satisfy full-content v1 release acceptance.
+
+Publication is already authorized for this program once all mandatory gates pass.
+It remains an explicit coordinator action; the workflow never publishes by itself.
 
 ## Decisions
 

@@ -1,0 +1,41 @@
+{
+  "head": "8ec4edcf706d5d0e6c5485a1d86717090dc88117",
+  "tree": "240f6670a30d00f87e23e2230b2ab20b49269ff9",
+  "source_commit": "004058f863c3fe11472ddaa09d106c67e4f2c86a",
+  "addon_source_files": 21,
+  "assets": {
+    "AzerothNavigator-0.8.1-x64-setup.exe": {
+      "bytes": 5258465,
+      "sha256": "cf215212c2dc583750aa2d4b1ce7d1f0668469e0a206afb140ebdb7628330303"
+    },
+    "AzerothNavigator-addon-0.8.1.zip": {
+      "bytes": 51827,
+      "sha256": "a86f9845aa3cd015414f8cc9d562307297631f8736ad1b1fbbd55e488ac78e46"
+    },
+    "CANDIDATE_NOTES.md": {
+      "bytes": 2147,
+      "sha256": "d53743179da7a6fb3b47d5c5ec5e821586061637a10aaa45a5db086076d46200"
+    },
+    "SOURCE_COMMIT.txt": {
+      "bytes": 41,
+      "sha256": "9326d07f45c4d5e55c66c4b2e82566770d495a9462f5b043231b51fb0dad3ca0"
+    }
+  },
+  "notes_scope": "Existing 0.8.1 release notes; separate candidate instructions required.",
+  "record_version": 1,
+  "kind": "automated_candidate_artifact_verification",
+  "verified_by": "Codex /root",
+  "date": "2026-10-14",
+  "pull_request": 118,
+  "ci_run": 38627880969,
+  "package_run": 38627880967,
+  "artifact_id": 11925586142,
+  "all_nine_hosted_checks": "pass",
+  "live_acceptance": "unverified",
+  "interactive_windows_acceptance": "unverified",
+  "notes_verification": "Exact docs/releases/0.8.1.md bytes; a first check incorrectly expected candidate/source text and failed. Corrected source-byte comparison passed.",
+  "candidate_changes": [
+    "Explicit bounded diagnostic and ANAV1 snapshot copy window",
+    "Guarded experimental 1.60.1.70374 / interface16001 admission with unchanged unknown/restricted behavior"
+  ]
+}

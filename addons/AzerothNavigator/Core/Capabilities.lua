@@ -184,6 +184,18 @@ end
 
 -- Probes env (a table standing in for the client globals). Always returns a report;
 -- a missing or failing API only affects its own capability.
+-- An explicit experimental adapter allowlist, not capability verification.
+-- 70374 identification/diagnostic flow was reported by the operator; field
+-- readability and native/live acceptance still require separate evidence.
+-- Keep previously supported 70338 distinct, and never admit an unknown build.
+function Capabilities.isCaptureTarget(build)
+  local ok, supported = pcall(function()
+    return type(build) == 'table' and build.version == '1.60.1' and
+      (build.build == '70338' or build.build == '70374') and build.interface == '16001'
+  end)
+  return ok and supported == true
+end
+
 function Capabilities.probe(env)
   if type(env) ~= "table" then
     env = {}
