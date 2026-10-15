@@ -14,3 +14,10 @@ full 70374 coverage from public access or record counts.
 Verification: inspect primary publisher metadata and explicit downloadable source
 licence evidence, check pinned hashes and source-registry parsing, and document
 actual limitations and the next task. No live/Windows acceptance is implied.
+
+Contact continuation, owner unchanged, baseline `73688d9`: the user subsequently
+explicitly authorized submission through the public contact form and supplied a
+reply address. This supersedes the earlier no-contact scope for this one prepared
+inquiry. Record only a sanitized submission receipt and update the draft status;
+keep the reply address and full browser receipt outside Git. No follow-up contact
+or additional recipient is authorized by this continuation.
