@@ -196,6 +196,8 @@ pub struct Evidence {
     pub schema_version: u32,
     pub target: Target,
     pub inventory_sha256: Sha256Hex,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub admission_registry: Option<FileRef>,
     /// The actual tested ancestor, not the later commit that records evidence.
     pub tested_source_commit: Option<String>,
     pub production_sha256: Option<Sha256Hex>,
@@ -438,6 +440,9 @@ pub fn assess(
         report.block("Acceptance evidence is missing");
         return Ok(report);
     };
+    if !inventory.sources.is_empty() && evidence.admission_registry.is_none() {
+        report.block("Accepted sources require a pinned admission registry");
+    }
     if evidence.schema_version != 1 || evidence.target != inventory.target {
         report.block("Acceptance version or target differs from inventory");
     }
@@ -612,6 +617,7 @@ pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> V
                 .chain(&s.permission_evidence)
                 .chain(&s.target_evidence)
         }))
+        .chain(evidence.admission_registry.iter())
         .chain(evidence.packs.iter().map(|p| &p.manifest))
         .collect()
 }

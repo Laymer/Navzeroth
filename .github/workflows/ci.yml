@@ -118,6 +118,8 @@ jobs:
         run: git diff --exit-code
       - name: Contract fixtures, JSON Schema and TypeScript checks
         run: pnpm contracts:check
+      - name: Strict reference-content v2 schema checks
+        run: node scripts/validate-content-v2-schema.mjs
   desktop:
     name: Desktop shell Windows
     runs-on: windows-2025
