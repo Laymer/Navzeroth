@@ -77,7 +77,7 @@ fn query_atlas_describes_the_labelled_demo_dataset() {
     }
     assert_eq!(image.layers[1].kind, ImageLayerKind::FlightReference);
     assert!(!image.gaps.as_str().is_empty());
-    assert!(!image.attribution.as_str().is_empty());
+    assert!(!image.attribution.is_empty());
     assert_eq!(image.calibration_status, ObservationStatus::Known);
     assert_eq!(image.calibration_confidence, Some(Confidence::Inferred));
     assert!(image.approximate, "inferred calibration is approximate");

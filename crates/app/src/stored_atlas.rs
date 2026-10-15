@@ -10,7 +10,10 @@ use azeroth_core::{
     error::{AppError, ErrorCode, Result},
     types::*,
 };
-use azeroth_storage::content::{ActiveContentRevision, ContentScope};
+use azeroth_storage::{
+    SnapshotStore,
+    content::{ActiveContentRevision, ContentScope},
+};
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -69,23 +72,67 @@ fn token(
         catalog_sha256: hash,
     })
 }
+fn observed_text(value: &azeroth_core::observation::Observation<Text>) -> String {
+    use azeroth_core::observation::ObservationStatus;
+    value
+        .value()
+        .map(|v| v.as_str().to_owned())
+        .unwrap_or_else(|| {
+            match value.status() {
+                ObservationStatus::Known => "known",
+                ObservationStatus::Unknown => "unknown",
+                ObservationStatus::Unsupported => "unsupported",
+                ObservationStatus::Restricted => "restricted",
+                ObservationStatus::NotApplicable => "not applicable",
+            }
+            .to_owned()
+        })
+}
+
 impl SnapshotApplication {
     pub fn atlas_markers(
         &self,
         expected: Option<&AtlasToken>,
         now: Option<UtcMillis>,
     ) -> Result<Vec<crate::atlas::SnapshotMarker>> {
-        let markers = self.markers(now)?;
-        if let Some(expected) = expected {
-            self.with_selected_store(|store, id| {
-                let (id, scope, content) = selected(store, id)?;
-                if &token(store, id, &scope, &content)? != expected {
+        self.with_consistent_selected_store(|store, id| {
+            let Some(id) = id else {
+                return if expected.is_some() {
+                    Err(invalid("Selected atlas profile changed"))
+                } else {
+                    Ok(vec![])
+                };
+            };
+            let key = resolve(store, id)?;
+            let scope = ContentScope {
+                context: key.context.clone(),
+                fixture: key.fixture,
+            };
+            let content = store.active_catalog_revision(&scope)?;
+            if let Some(expected) = expected {
+                let content = content
+                    .as_ref()
+                    .ok_or_else(|| invalid("No active atlas catalog for this profile"))?;
+                if &token(store, id.to_owned(), &scope, content)? != expected {
                     return Err(invalid("Selected atlas revision changed; refresh"));
                 }
-                Ok(())
-            })?;
-        }
-        Ok(markers)
+            }
+            let Some(snapshot) = store.current_snapshot(&key)? else {
+                return Ok(vec![]);
+            };
+            let mut marker = match content {
+                Some(content) => crate::atlas::catalog_marker(
+                    content.reference(),
+                    &content.context(),
+                    &snapshot,
+                    now,
+                )?,
+                None => crate::atlas::marker_without_catalog(&snapshot, now)?,
+            };
+            marker.data_mode = DataMode::Stored;
+            marker.profile_id = id.to_owned();
+            Ok(vec![marker])
+        })
     }
 
     pub fn stored_atlas(
@@ -99,7 +146,7 @@ impl SnapshotApplication {
                 "Atlas page requires exact revision and bounded offset",
             ));
         }
-        self.with_selected_store(|store, id| {
+        self.with_consistent_selected_store(|store, id| {
             let (id, scope, content) = selected(store, id)?;
             let current = token(store, id, &scope, &content)?;
             if expected.is_some_and(|v| v != &current) {
@@ -147,14 +194,37 @@ impl SnapshotApplication {
                 let end = offset + indices.len();
                 (indices, total, (end < total).then_some(end))
             };
+            let evidence: std::collections::BTreeMap<_, _> = dataset
+                .evidence
+                .iter()
+                .map(|e| (&e.id, e.confidence))
+                .collect();
+            let sources: std::collections::BTreeMap<_, _> =
+                content.sources().iter().map(|s| (&s.id, s)).collect();
             let images = indices
                 .into_iter()
                 .map(|i| {
-                    let mut image = crate::atlas::stored_image(
-                        dataset,
-                        &content.context(),
-                        &dataset.map_images[i],
-                    )?;
+                    let declared = &dataset.map_images[i];
+                    let confidence = declared
+                        .calibration_evidence
+                        .iter()
+                        .filter_map(|id| evidence.get(id).copied())
+                        .max_by_key(|c| crate::atlas::confidence_rank(*c));
+                    let mut image =
+                        crate::atlas::stored_image(confidence, &content.context(), declared)?;
+                    image.attribution = match sources.get(&declared.source) {
+                        Some(source) => format!(
+                            "Source: {}. Publisher: {}. Attribution: {}. Licence: {}.",
+                            source.id.as_str(),
+                            source.publisher.as_str(),
+                            observed_text(&source.attribution),
+                            observed_text(&source.license)
+                        ),
+                        None => format!(
+                            "Source: {}. Attribution: unknown. Licence: unknown.",
+                            declared.source.as_str()
+                        ),
+                    };
                     if content.content_v2().is_some() {
                         for layer in &mut image.layers {
                             let request = azeroth_storage::catalog_assets::ImageRequest {
@@ -198,7 +268,7 @@ impl SnapshotApplication {
         if positions.is_empty() || positions.len() > crate::atlas::MAX_POSITIONS {
             return Err(invalid("Provide between 1 and 64 positions"));
         }
-        self.with_selected_store(|store, id| {
+        self.with_consistent_selected_store(|store, id| {
             let (id, scope, content) = selected(store, id)?;
             if &token(store, id, &scope, &content)? != expected {
                 return Err(invalid("Selected atlas revision changed; refresh"));
@@ -265,7 +335,7 @@ impl SnapshotApplication {
         let request: StoredImageRequest =
             serde_json::from_value(crate::dungeon_preparation::json::strict_value(text)?)
                 .map_err(|_| invalid("Invalid stored image token"))?;
-        self.with_selected_store(|store, selected| {
+        self.with_consistent_selected_store(|store, selected| {
             if selected != Some(request.profile_id.as_str()) {
                 return Err(invalid("Selected atlas profile changed"));
             }
@@ -381,5 +451,89 @@ mod tests {
             app.stored_atlas_asset(&changed[changed.find("/stored/").unwrap()..])
                 .is_err()
         );
+    }
+}
+
+#[cfg(test)]
+mod consistency_tests {
+    use super::*;
+    use azeroth_storage::{SqliteStore, content::ContentRevision};
+    use std::{sync::mpsc, time::Duration};
+    #[test]
+    fn source_display_retains_recorded_text_and_distinct_absence_states() {
+        for (status, label) in [
+            ("unknown", "unknown"),
+            ("unsupported", "unsupported"),
+            ("restricted", "restricted"),
+            ("not_applicable", "not applicable"),
+        ] {
+            let value = serde_json::from_value(serde_json::json!({"status":status})).unwrap();
+            assert_eq!(observed_text(&value), label);
+        }
+        let value = serde_json::from_value(
+            serde_json::json!({"status":"known","value":"Synthetic author / CC-BY-SA"}),
+        )
+        .unwrap();
+        assert_eq!(observed_text(&value), "Synthetic author / CC-BY-SA");
+    }
+    #[test]
+    fn selected_catalog_handoff_excludes_external_activation_until_complete() {
+        let path = std::env::temp_dir().join(format!(
+            "navzeroth-atlas-consistency-{}-{}.db",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let app = SnapshotApplication::open(&path).unwrap();
+        app.import_text(
+            &format!(
+                "ANAV1:{}",
+                include_str!("../../../fixtures/contracts/v1/character-snapshot.json")
+            ),
+            None,
+        )
+        .unwrap();
+        let mut document: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/planning/synthetic-revision.json"
+        ))
+        .unwrap();
+        let old: ContentRevision = serde_json::from_value(document.clone()).unwrap();
+        document["envelope"]["payload"]["revision"] = "replacement".into();
+        let new: ContentRevision = serde_json::from_value(document).unwrap();
+        let mut writer = SqliteStore::open(&path).unwrap();
+        writer.stage_content_revision(&old).unwrap();
+        writer.stage_content_revision(&new).unwrap();
+        writer.activate_content_revision(&old.key()).unwrap();
+        let (started_tx, started_rx) = mpsc::channel();
+        let (done_tx, done_rx) = mpsc::channel();
+        let mut worker = None;
+        app.with_consistent_selected_store(|store, id| {
+            let (_, scope, before) = selected(store, id)?;
+            worker = Some(std::thread::spawn(move || {
+                started_tx.send(()).unwrap();
+                let result = writer.activate_content_revision(&new.key());
+                done_tx.send(result).unwrap();
+            }));
+            started_rx.recv().unwrap();
+            assert!(matches!(
+                done_rx.recv_timeout(Duration::from_millis(50)),
+                Err(mpsc::RecvTimeoutError::Timeout)
+            ));
+            let after = store.active_catalog_revision(&scope)?.unwrap();
+            assert_eq!(before.revision(), after.revision());
+            Ok(())
+        })
+        .unwrap();
+        done_rx
+            .recv_timeout(Duration::from_secs(5))
+            .unwrap()
+            .unwrap();
+        worker.unwrap().join().unwrap();
+        let view = app.stored_atlas(None, None, 0).unwrap();
+        assert_eq!(view.revision.as_str(), "replacement");
+        drop(app);
+        let _ = std::fs::remove_file(path);
     }
 }
