@@ -356,3 +356,40 @@ fn shared_import_returns_verified_catalog_and_refuses_later_tampering() {
     fs::write(temp.output().join("catalog.json"), b"{}").unwrap();
     assert!(azeroth_ingest::pack::v2::read_verified(&temp.output()).is_err());
 }
+
+#[test]
+fn shared_import_retains_exact_verified_png_bytes() {
+    let temp = Temp::new();
+    let input = temp.input();
+    let reference: Value = serde_json::from_slice(include_bytes!(
+        "../../../fixtures/contracts/v1/reference-dataset-imagery.json"
+    ))
+    .unwrap();
+    write(
+        &input.join("catalog.json"),
+        &json!({
+            "format":"navzeroth-reference-content", "schema_version":2,
+            "reference":reference, "models":[], "equipment":[], "quest_facts":[],
+            "acquisition_facts":[], "dungeons":[]
+        }),
+    );
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    for name in ["roads", "flight", "overview"] {
+        let relative = format!("atlas/synthetic-continent/layers/{name}.png");
+        let target = input.join(&relative);
+        fs::create_dir_all(target.parent().unwrap()).unwrap();
+        fs::copy(root.join("content/demo").join(relative), target).unwrap();
+    }
+    build(&input, &temp.output()).unwrap();
+    let bundle = azeroth_ingest::pack::v2::read_verified(&temp.output()).unwrap();
+    assert_eq!(bundle.assets.len(), 3);
+    for asset in &bundle.assets {
+        assert_eq!(
+            asset.bytes,
+            fs::read(input.join(asset.path.as_str())).unwrap()
+        );
+    }
+    let target = temp.output().join(bundle.assets[0].path.as_str());
+    fs::write(target, b"not png").unwrap();
+    assert!(azeroth_ingest::pack::v2::read_verified(&temp.output()).is_err());
+}
