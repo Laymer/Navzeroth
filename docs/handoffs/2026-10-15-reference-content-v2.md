@@ -50,3 +50,9 @@ records while preserving typed maps; duplicate JSON keys remain Rust's boundary.
 `node scripts/validate-content-v2-schema.mjs` is the repeatable structural check.
 The earlier missing-generated-schema limitation is resolved by this follow-up;
 full-capacity and app/pack integration limitations remain.
+
+Semantic follow-up rejects known reset facts contradicting the base quest's
+completion semantics and acquisition origins contradicting the base source kind.
+Nine focused tests now pass (one generator ignored); strict Clippy/fmt/diff pass.
+This adds no fields or format changes. Both base and extension observations may
+remain unknown; absence is never substituted with a compatible factual default.
