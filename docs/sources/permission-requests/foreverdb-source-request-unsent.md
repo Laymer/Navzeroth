@@ -1,7 +1,19 @@
-# ForeverDB corresponding-source/export inquiry — UNSENT
+# ForeverDB corresponding-source/export inquiry — SENT
 
-Prepared 2026-10-15. No message has been sent. Use the publisher's
-[contact page](https://foreverdb.net/contact) if the owner chooses to contact them.
+Prepared and submitted 2026-10-15 through the publisher's
+[contact form](https://foreverdb.net/contact), following explicit user authorization.
+Submission confirmed at `2026-10-15T14:57:45.307Z`: HTTP201, response `ok: true`
+and visible confirmation “Thanks, your message has been sent.”
+Public logging was disabled. The supplied reply address and full browser receipt
+are retained privately and omitted from Git. No attachments were submitted.
+The initial click was blocked by a cookie dialog; after selecting “Do not consent”,
+one submission reached the server. No automatic resend was performed.
+The historical `-unsent` filename is retained to preserve existing links.
+
+Sent plain-text message SHA-256:
+`709ba578dc37fd381226b38418994bcae9ca8e7d64e0ea3eb231461dfa6e352c`.
+No publisher reply has been received; submission does not establish data admission,
+target coverage or additional rights.
 
 Subject: ForeverDB GPL source and versioned data exports for Navzeroth
 
@@ -29,4 +41,5 @@ We are requesting no artwork, personal player data or uploader access. A source
 link and a description of the supported export are enough to begin.
 
 Thank you,
-[Project contact]
+Navzeroth project
+https://github.com/Laymer/Navzeroth

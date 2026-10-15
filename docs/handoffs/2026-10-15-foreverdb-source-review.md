@@ -42,7 +42,7 @@ check passes. This is documentation/research only, so no product test suite was
 rerun. Actual 70374 data validation and Windows/live checks remain unverified.
 
 Next: resolve the narrow source/export questions in the
-[unsent inquiry](../sources/permission-requests/foreverdb-source-request-unsent.md),
+[inquiry](../sources/permission-requests/foreverdb-source-request-unsent.md),
 admit specific files/fields/transforms, and implement bounded inert staging.
 No publisher contact was sent or authorized by this review.
 
@@ -56,3 +56,24 @@ and recorded modified-work/date, attribution, same-licence and preferred-source
 obligations. PR143 initially failed the Windows 20-second first-start store check;
 the rerun of the same commit passed. No product change or gate relaxation was
 made to obtain that result. Follow-up docs require their own hosted checks.
+
+
+Authorized contact continuation (baseline `73688d9`, owner `/root`): the user
+approved public-form submission and supplied the reply address. Submitted the
+prepared inquiry on2026-10-15 at14:57:45Z, with public logging off and no
+attachments. The first click was blocked by a cookie dialog and did not reach
+submission; selecting “Do not consent” allowed one actual submission. HTTP201,
+JSON `ok: true` and the visible sent confirmation independently agree. The
+[inquiry record](../sources/permission-requests/foreverdb-source-request-unsent.md)
+contains the sanitized receipt and exact message; address/full browser receipt
+stay outside Git. Earlier no-contact statements describe the original review.
+No reply or new source grant is inferred. The ordinary authorized contact form
+uses its own backend; no data API extraction was performed.
+
+Validation: inspected the live form and submitted through its normal controls;
+verified private logging, form validity and empty honeypot before submission,
+then checked response and visible confirmation. Documentation-only receipt update;
+no product suite rerun. PR143's previous head `73688d9` passed all nine checks
+on its packaging rerun; this documentation head requires fresh hosted checks.
+Next: await publisher source/export information, assess specific GPL-covered files
+and retain target70374 completeness and live/Windows acceptance as unverified.
