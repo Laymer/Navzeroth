@@ -544,3 +544,59 @@ fn git_lfs_material_inputs_require_hydrated_exact_bytes() {
         RAW
     );
 }
+
+#[test]
+fn v2_catalog_materials_are_verified_delivered_and_do_not_waive_missing_domains() {
+    let temp = Temp::new(true);
+    let old = temp.read("content/material-test/manifest.json");
+    let dataset_path = old["entries"][0]["dataset"]["path"].as_str().unwrap();
+    let reference = temp.read(&format!("content/material-test/{dataset_path}"));
+    let content = json!({"format":"navzeroth-reference-content","schema_version":2,
+        "reference":reference,"models":[],"equipment":[],"quest_facts":[],
+        "acquisition_facts":[],"dungeons":[]});
+    temp.json("pack-v2-input/catalog.json", &content);
+    temp.write(
+        "pack-v2-input/sources.json",
+        &fs::read(temp.0.join("content/material-test/sources.json")).unwrap(),
+    );
+    let built = pack::v2::build(
+        &temp.0.join("pack-v2-input"),
+        &temp.0.join("content/v2-test"),
+    )
+    .unwrap();
+    assert_eq!(built.coverage_gaps, 0);
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["packs"][0]["manifest"] = temp.reference("content/v2-test/manifest.json");
+    temp.json(EVIDENCE, &evidence);
+    temp.commit();
+    let selected = materials::plan(&temp.options()).unwrap();
+    assert!(
+        selected
+            .files
+            .iter()
+            .any(|f| f.input.path.as_str() == "content/v2-test/catalog.json")
+    );
+    assert!(
+        selected
+            .files
+            .iter()
+            .any(|f| f.input.path.as_str() == "content/v2-test/sources.json")
+    );
+    assert!(
+        !selected
+            .files
+            .iter()
+            .any(|f| f.input.path.as_str().contains("private-proof"))
+    );
+    let readiness = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(!readiness.readiness.stable_ready);
+    assert!(
+        readiness
+            .readiness
+            .blockers
+            .iter()
+            .any(|b| b.contains("mandatory domain"))
+    );
+    temp.write("content/v2-test/catalog.json", b"{}");
+    assert!(materials::plan(&temp.options()).is_err());
+}

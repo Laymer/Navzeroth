@@ -695,7 +695,6 @@ struct PackV2 {
 }
 fn bind_v2_pack(
     root: &Path,
-    pack_root: &Path,
     pack: &release::PackRef,
     inventory: &Inventory,
     tree: &Tree,
@@ -703,6 +702,8 @@ fn bind_v2_pack(
     catalog: &mut Catalog,
     bytes: &[u8],
 ) -> Result<()> {
+    let manifest_path = root.join(pack.manifest.path.as_str());
+    let pack_root = manifest_path.parent().ok_or("Invalid v2 pack location")?;
     let manifest: PackV2 = serde_json::from_slice(bytes).map_err(|_| "Invalid v2 pack manifest")?;
     for file in std::iter::once(&manifest.sources)
         .chain(std::iter::once(&manifest.catalog))
@@ -848,7 +849,6 @@ fn packs(
         {
             bind_v2_pack(
                 root,
-                pack_root,
                 pack,
                 inventory,
                 tree,
