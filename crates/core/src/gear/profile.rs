@@ -8,11 +8,12 @@ use crate::{
     error::{Result, Validate, Validated, invalid},
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// Where a profile's weights come from. `SyntheticTest` weights are an
 /// engineering assumption for tests, not game truth.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum WeightSource {
     UserPreference,
@@ -23,7 +24,7 @@ pub enum WeightSource {
 
 /// Weights are integer thousandths (1.000 is stored as 1000), so scoring is
 /// exact integer arithmetic that a later Lua evaluator can reproduce.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct RoleProfileData {
     pub role: RoleId,
     pub version: ScoreModelVersion,
