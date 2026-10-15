@@ -101,6 +101,9 @@ jobs:
           $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { 'v' + (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version }
           $candidate = $env:ACCEPTANCE_CANDIDATE -eq 'true'
           ./scripts/windows/Build-Windows.ps1 -SkipTests -ExpectedVersion $expected -OutputDirectory dist/windows -AcceptanceCandidate:$candidate
+      - name: Test first-start observation harness
+        shell: pwsh
+        run: ./scripts/windows/Test-FirstStartSmoke.ps1
       - name: Silent install, first start and uninstall
         shell: pwsh
         run: |
@@ -139,15 +142,9 @@ jobs:
           $bundledLicense = Get-Content -Raw -LiteralPath (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')
           if ($bundledLicense -ne (Get-Content -Raw addons/AzerothNavigator/LICENSE)) { throw 'Bundled addon license differs from source' }
 
-          # First start: the process must stay up and create its SQLite store.
-          $app = Start-Process -FilePath $exe -PassThru
-          Start-Sleep -Seconds 20
-          $alive = -not $app.HasExited
-          $exitCode = if ($alive) { $null } else { $app.ExitCode }
-          if ($alive) { Stop-Process -Id $app.Id -Force; $app.WaitForExit() }
-          if (-not $alive) { throw "The application exited during its first 20 s (exit code $exitCode)" }
-          if (-not (Test-Path -LiteralPath (Join-Path $data 'snapshots.sqlite3'))) { throw "No snapshot store in $data" }
-          "first start: running after 20 s; store created in $data"
+          # Bound initialization separately from the minimum liveness observation.
+          . ./scripts/windows/First-StartSmoke.ps1
+          Invoke-FirstStartSmoke -Executable $exe -DataDirectory $data
 
           # Silent uninstall. The NSIS uninstaller re-launches itself from TEMP, so wait for its effect.
           Start-Process -FilePath (Join-Path $installDir 'uninstall.exe') -ArgumentList '/S' -Wait

@@ -198,8 +198,14 @@ certificate or a cloud signing account is an owner decision (AGENTS.md).
 The workflow [`package-windows.yml`](../../.github/workflows/package-windows.yml) runs on
 pull requests targeting main, pushes to main, manual dispatch and version tags. Each
 run tests the addon helper with Windows PowerShell 5.1 and PowerShell 7, builds with
-Windows PowerShell 5.1, installs silently, starts the application for 20 s, uninstalls,
-and uploads the release files as a workflow artifact (kept 14 days).
+Windows PowerShell 5.1, tests the first-start observation harness and installs silently.
+First start requires a fresh, nonempty SQLite store within a bounded 120 s
+observation, at least 20 s of process survival and 5 s with the store present.
+Early process exit fails immediately. A preexisting store or journal fails without
+deletion. Failures report process, WebView, app-data and Windows error-event
+diagnostics before stopping the process. File presence does not prove completed
+migrations or interactive readiness. The workflow then uninstalls, checks retained
+user/addon data and uploads the release files as a workflow artifact (kept 14 days).
 
 Tag runs also require version-specific release notes and draft a release containing
 the five normal files. Versions beginning `0.` or containing `-` are marked
