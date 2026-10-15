@@ -1,5 +1,6 @@
 //! Pure v1 compiler. Only the application recomputes and supplies the report;
 //! frontend results are never trusted. No clock, clipboard, filesystem or Lua I/O.
+use crate::catalog::CatalogView;
 use crate::planning::PlanningReport;
 use azeroth_core::{
     contract::{AnyExchange, Envelope, decode_envelope},
@@ -9,7 +10,6 @@ use azeroth_core::{
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     types::{PlanId, UtcMillis},
 };
-use azeroth_storage::content::ContentRevision;
 use serde::Serialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -79,7 +79,7 @@ fn lua_limits(value: &Value, depth: usize, nodes: &mut usize) -> Result<()> {
 pub(crate) fn compile(
     report: &PlanningReport,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<PlanExport> {
     if report.result.selected.is_empty() {
@@ -109,9 +109,7 @@ pub(crate) fn compile(
         ));
     }
     let snapshot_hash = azeroth_storage::snapshot_content_hash(snapshot)?;
-    let content_bytes =
-        serde_json::to_vec(content).map_err(|_| invalid("Cannot canonicalize content identity"))?;
-    let content_hash = format!("{:x}", Sha256::digest(content_bytes));
+    let content_hash = content.content_hash()?;
     let canonical = serde_json::to_vec(&json!({
         "request": report.request, "result": report.result,
         "context": report.context, "fixture": report.fixture,
@@ -121,7 +119,7 @@ pub(crate) fn compile(
     .map_err(|_| invalid("Cannot canonicalize planning inputs"))?;
     let digest = format!("{:x}", Sha256::digest(canonical));
     let plan_id = PlanId::new(format!("plan-{digest}"))?;
-    let dataset = &content.envelope.payload;
+    let dataset = &content.reference();
     let mut route_predicates = Vec::new();
     let mut travel = Vec::new();
     let mut travel_assumptions = Vec::new();

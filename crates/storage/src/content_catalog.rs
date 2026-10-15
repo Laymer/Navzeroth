@@ -136,6 +136,7 @@ fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
     drop(encoded);
     input.content.validate()?;
     let content = content_v2::decode(encode(&input.content)?.as_bytes())?;
+    catalog_content_sha256(&content)?;
     let registry = SourceRegistry::try_from(input.sources.clone())?;
     let data = &content.reference.payload;
     for evidence in &data.evidence {

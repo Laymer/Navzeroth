@@ -1,3 +1,4 @@
+use crate::catalog::CatalogView;
 use azeroth_core::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use azeroth_core::{
     contract::Envelope,
@@ -13,7 +14,6 @@ use azeroth_core::{
     travel::RouteOptions,
     types::*,
 };
-use azeroth_storage::content::ContentRevision;
 use serde::Serialize;
 use std::collections::BTreeSet;
 pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
@@ -47,7 +47,7 @@ fn invalid(message: &'static str) -> AppError {
 pub(crate) fn calculate(
     request: PlanningRequest,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<PlanningReport> {
     calculate_controlled(request, snapshot, content, clock, &mut NoopSearchControl)
@@ -55,7 +55,7 @@ pub(crate) fn calculate(
 pub(crate) fn calculate_controlled(
     mut request: PlanningRequest,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
     control: &mut dyn SearchControl,
 ) -> Result<PlanningReport> {
@@ -68,7 +68,7 @@ pub(crate) fn calculate_controlled(
     request
         .candidates
         .sort_by(|a, b| a.objective.cmp(&b.objective));
-    let dataset = &content.envelope.payload;
+    let dataset = &content.reference();
     if request
         .excluded
         .iter()

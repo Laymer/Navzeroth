@@ -18,17 +18,15 @@ use azeroth_core::{
     travel::{RouteOptions, RouteOutcome, RouteSearch, shortest_route},
     types::*,
 };
-use azeroth_storage::{
-    ProfileKey, SnapshotStore, SqliteStore,
-    content::{ContentRevision, ContentScope},
-};
+use azeroth_storage::content::ActiveContentRevision;
+use azeroth_storage::{ProfileKey, SnapshotStore, SqliteStore, content::ContentScope};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
     time::Instant,
 };
 
-mod json;
+pub(crate) mod json;
 pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
 pub const MAX_REPORT_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_SECTION_RECORDS: usize = 32;
@@ -96,6 +94,9 @@ pub struct PreparationRequest {
     pub schema_version: u32,
     pub subject: PreparationSubject,
     pub package: Option<LocalPreparationPackage>,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub authored: Option<crate::authored_content::AuthoredSelection>,
     /// Manually declared shared starting node; never inferred from labels.
     pub origin: Option<NodeId>,
 }
@@ -172,6 +173,8 @@ pub struct PreparationReport {
     pub fixture: bool,
     pub revision: Option<DatasetRevision>,
     pub package: Option<LocalPreparationPackage>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub authored: Option<crate::authored_content::AuthoredSelection>,
     pub members: Vec<MemberPreparation>,
     pub evidence: Vec<PreparationEvidence>,
     pub gaps: Vec<PreparationGap>,
@@ -326,7 +329,7 @@ fn validate_package(
 struct Captured {
     keys: Vec<ProfileKey>,
     snapshots: Vec<Option<Envelope<CharacterSnapshot>>>,
-    content: Option<ContentRevision>,
+    content: Option<ActiveContentRevision>,
     disposition: Option<azeroth_storage::content_dispositions::DispositionGuard>,
     party: Option<PartyId>,
 }
@@ -341,7 +344,7 @@ fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -
             return Err(invalid("Preparation members mix synthetic status"));
         }
     }
-    let content = store.active_content_revision(&ContentScope {
+    let content = store.active_catalog_revision(&ContentScope {
         context: keys[0].context.clone(),
         fixture: keys[0].fixture,
     })?;
@@ -352,7 +355,7 @@ fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -
     let disposition = content
         .as_ref()
         .map(|c| {
-            store.usable_content_revision(&c.key()).and_then(|v| {
+            store.usable_catalog_revision(&c.key()).and_then(|v| {
                 v.map(|(_, d)| d.guard()).ok_or_else(|| {
                     AppError::new(
                         ErrorCode::SnapshotOutdated,
@@ -377,7 +380,7 @@ fn snapshot_hash(snapshot: &Option<Envelope<CharacterSnapshot>>) -> Result<Optio
         .map(azeroth_storage::snapshot_content_hash)
         .transpose()
 }
-fn content_hash(content: &Option<ContentRevision>) -> Result<Option<String>> {
+fn content_hash(content: &Option<ActiveContentRevision>) -> Result<Option<String>> {
     use sha2::{Digest, Sha256};
     content
         .as_ref()
@@ -463,14 +466,8 @@ impl SnapshotApplication {
         before_publication: impl FnOnce() -> Result<()>,
     ) -> Result<PreparationReport> {
         let started = Instant::now();
-        let request = json::request(text)?;
+        let mut request = json::request(text)?;
         let mut gaps = Vec::new();
-        let evidence_ids = request
-            .package
-            .as_ref()
-            .map(|p| validate_package(p, &mut gaps))
-            .transpose()?
-            .unwrap_or_default();
         let captured = match &request.subject {
             PreparationSubject::Character { profile_id } => {
                 self.with_profile_store_mut(profile_id, |store, key| {
@@ -486,6 +483,26 @@ impl SnapshotApplication {
                 })
             })?,
         };
+        if let Some(selection) = &request.authored {
+            if request.package.is_some() {
+                return Err(invalid(
+                    "Choose either authored dungeon content or a local package",
+                ));
+            }
+            let content = captured
+                .content
+                .as_ref()
+                .ok_or_else(|| invalid("No active authored dungeon content"))?;
+            request.package = Some(crate::authored_content::dungeon_package(
+                selection, content,
+            )?);
+        }
+        let evidence_ids = request
+            .package
+            .as_ref()
+            .map(|p| validate_package(p, &mut gaps))
+            .transpose()?
+            .unwrap_or_default();
         let hashes = captured
             .snapshots
             .iter()
@@ -559,7 +576,7 @@ impl SnapshotApplication {
                     }
                     current_snapshots.push(current);
                 }
-                let current = store.active_content_revision(&ContentScope {
+                let current = store.active_catalog_revision(&ContentScope {
                     context: captured.keys[0].context.clone(),
                     fixture: captured.keys[0].fixture,
                 })?;
@@ -567,7 +584,7 @@ impl SnapshotApplication {
                     return Err(outdated());
                 }
                 if let Some(disposition) = &captured.disposition
-                    && let Err(e) = store.validate_usable_content_guard(disposition)
+                    && let Err(e) = store.validate_usable_catalog_guard(disposition)
                 {
                     if e.code == ErrorCode::StorageError {
                         return Err(e);
@@ -623,17 +640,19 @@ fn evaluate_inputs(
                 "Preparation package synthetic status differs from selected members",
             ));
         }
-        gap(&mut gaps, GapCode::LocalPackageUnverified, "package");
+        if request.authored.is_none() {
+            gap(&mut gaps, GapCode::LocalPackageUnverified, "package");
+        }
         gap(
             &mut gaps,
             GapCode::ConsumableInventoryUnavailable,
             "consumables",
         );
         if let Some(content) = &captured.content {
-            if content.envelope.payload.revision != package.revision {
+            if content.reference().revision != package.revision {
                 return Err(outdated());
             }
-            let dataset = &content.envelope.payload;
+            let dataset = &content.reference();
             if let Some(entrance) = package.entrance.observation.value()
                 && !dataset
                     .nodes
@@ -670,7 +689,7 @@ fn evaluate_inputs(
                     .find(|e| &e.id == id)
                     .ok_or_else(|| invalid("Preparation evidence is absent from exact content"))?;
                 let source = content
-                    .sources
+                    .sources()
                     .iter()
                     .find(|s| s.id == record.source)
                     .ok_or_else(|| invalid("Preparation evidence source is unregistered"))?;
@@ -744,21 +763,32 @@ fn evaluate_inputs(
         };
         if let (Some(package), Some(content)) = (&request.package, &captured.content) {
             member.access = Some(condition(&package.access.observation, evaluation.as_ref())?);
-            let dataset = &content.envelope.payload;
+            let dataset = &content.reference();
             for quest in package.quests.observation.value().into_iter().flatten() {
                 let definition = dataset
                     .quests
                     .iter()
                     .find(|q| &q.id == quest)
                     .expect("validated quest");
+                let authored = content
+                    .content_v2()
+                    .map(|c| crate::authored_content::quest_facts(definition, c))
+                    .transpose()?;
+                let definition = authored
+                    .as_ref()
+                    .map(|v| &v.definition)
+                    .unwrap_or(definition);
                 let assessment = evaluation
                     .as_ref()
                     .map(|context| {
                         evaluate_participant(
                             &EligibilityInputs {
                                 definition,
-                                access: None,
-                                exclusive_groups: &[],
+                                access: authored.as_ref().and_then(|v| v.access.as_ref()),
+                                exclusive_groups: authored
+                                    .as_ref()
+                                    .map(|v| v.exclusive_groups.as_slice())
+                                    .unwrap_or(&[]),
                                 facts: &facts,
                                 freshness: &clock,
                                 stale_policy: StalePolicy::Reject,
@@ -792,6 +822,16 @@ fn evaluate_inputs(
                     .iter()
                     .find(|a| a.id == reward.source)
                     .expect("validated acquisition");
+                let effective_item = content
+                    .content_v2()
+                    .map(|c| crate::authored_content::item_facts(item, c))
+                    .transpose()?;
+                let item = effective_item.as_ref().map(|v| &v.0).unwrap_or(item);
+                let effective_source = content
+                    .content_v2()
+                    .map(|c| crate::authored_content::acquisition_facts(source, &reward.item, c))
+                    .transpose()?;
+                let source = effective_source.as_ref().unwrap_or(source);
                 member.rewards.push(RewardPreparation {
                     item: reward.item.clone(),
                     source: reward.source.clone(),
@@ -811,13 +851,7 @@ fn evaluate_inputs(
             (None, _) => gap(&mut gaps, GapCode::OriginMissing, "route"),
             (_, None) => gap(&mut gaps, GapCode::EntranceUnavailable, "route"),
             (Some(origin), Some(entrance)) => {
-                if !content
-                    .envelope
-                    .payload
-                    .nodes
-                    .iter()
-                    .any(|n| &n.id == origin)
-                {
+                if !content.reference().nodes.iter().any(|n| &n.id == origin) {
                     return Err(invalid("Preparation origin is absent from exact content"));
                 }
                 if !capture_freshness
@@ -839,7 +873,7 @@ fn evaluate_inputs(
                         })
                         .collect::<Vec<_>>();
                     let mut edges = Vec::new();
-                    for edge in &content.envelope.payload.edges {
+                    for edge in &content.reference().edges {
                         let mut usable = true;
                         for context in &contexts {
                             let assessment = condition(&edge.requirements, Some(context))?;
@@ -877,7 +911,7 @@ fn evaluate_inputs(
                         }
                     }
                     let search = shortest_route(
-                        &content.envelope.payload.nodes,
+                        &content.reference().nodes,
                         &edges,
                         origin,
                         &entrance.id,
@@ -899,8 +933,9 @@ fn evaluate_inputs(
         revision: captured
             .content
             .as_ref()
-            .map(|c| c.envelope.payload.revision.clone()),
+            .map(|c| c.reference().revision.clone()),
         package: request.package,
+        authored: request.authored,
         members,
         evidence,
         gaps,

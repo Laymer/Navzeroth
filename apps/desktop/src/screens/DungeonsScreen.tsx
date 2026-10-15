@@ -1,3 +1,5 @@
+import {AuthoredContentPicker} from "./AuthoredContentPicker";
+import type {AuthoredSelection} from "../commands/authoredContent";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { ProfileSummary } from "../commands/contract";
@@ -11,15 +13,16 @@ export function DungeonsScreen({client,refreshKey}:{client:CommandClient;refresh
   const [parties,setParties]=useState<string[]>([]);
   const [kind,setKind]=useState<"character"|"party">("character");
   const [selected,setSelected]=useState("");
+  const [authored,setAuthored]=useState<AuthoredSelection|null>(null);
   const [text,setText]=useState("");
   const [origin,setOrigin]=useState("");
   const [error,setError]=useState("");
   const [busy,setBusy]=useState<number|null>(null);
   const [report,setReport]=useState<{ticket:number;value:PreparationReport}|null>(null);
   const epoch=useRef(0);
-  const owner=useRef({client,refreshKey,kind,selected,text,origin});
-  if(owner.current.client!==client || owner.current.refreshKey!==refreshKey || owner.current.kind!==kind || owner.current.selected!==selected || owner.current.text!==text || owner.current.origin!==origin) {
-    owner.current={client,refreshKey,kind,selected,text,origin};epoch.current++;
+  const owner=useRef({client,refreshKey,kind,selected,text,origin,authored});
+  if(owner.current.client!==client || owner.current.refreshKey!==refreshKey || owner.current.kind!==kind || owner.current.selected!==selected || owner.current.text!==text || owner.current.origin!==origin || owner.current.authored!==authored) {
+    owner.current={client,refreshKey,kind,selected,text,origin,authored};epoch.current++;
   }
   useEffect(()=>{let live=true;
     void Promise.all([client.listProfiles(),client.listParties()]).then(([p,g])=>{
@@ -38,17 +41,18 @@ setSelected(old=>options.includes(old)?old:options[0]??"");
     if(text.trim()){try{parsed=JSON.parse(text);}catch{setError("Preparation package JSON is invalid.");return;}}
     const ticket=++epoch.current;setBusy(ticket);setReport(null);setError("");
     const subject=kind==="party"?{kind,party_id:selected}:{kind,profile_id:selected};
-    const result=await client.getDungeonPreparation(JSON.stringify({schema_version:1,subject,package:parsed,origin:origin.trim()||null}));
+    const result=await client.getDungeonPreparation(JSON.stringify({schema_version:1,subject,package:parsed,authored,origin:origin.trim()||null}));
     if(ticket!==epoch.current)return;
     if(result.ok)setReport({ticket,value:result.value});else setError(result.error.message);
     if(ticket===epoch.current)setBusy(null);
   }
   return <section className="dungeon-preparation" aria-labelledby="dungeons-heading">
     <h2 id="dungeons-heading">Dungeon preparation</h2>
-    <p>No verified Deadmines package is installed. Local references and synthetic examples do not establish dungeon access, useful rewards or encounter facts.</p>
+    <p>Select an installed authored dungeon or inspect a local reference. Missing sections remain unavailable; synthetic examples do not establish gameplay facts.</p>
     <label>Preparation members <select value={kind} onChange={e=>{const next=e.target.value as "character"|"party";setKind(next);setSelected(next==="party"?parties[0]??"":profiles.find(p=>p.data_mode==="stored")?.id??"");setError("");}}><option value="character">Imported character</option><option value="party">Local party</option></select></label>
     <label>Selected {kind} <select value={selected} onChange={e=>{setSelected(e.target.value);setError("");}}><option value="">Select stored {kind}</option>{kind==="party"?parties.map(id=><option key={id} value={id}>{id}</option>):profiles.filter(p=>p.data_mode==="stored").map(p=><option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
     {!stored&&<p>Import a character snapshot and optionally create a local party. Browser demo profiles cannot supply current preparation assessments.</p>}
+    <AuthoredContentPicker client={client} kind="dungeons" subject={kind==="party"?{kind,party_id:selected}:{kind,profile_id:selected}} refreshKey={refreshKey} value={authored} onChange={v=>{setAuthored(v);setText("");setError("");}}/>
     <details><summary>Advanced local reference editor</summary><p>Local declarations require exact content references. Loading an example does not install verified dungeon coverage.</p>
     <label>Local preparation package JSON <textarea value={text} maxLength={1048576} rows={8} onChange={e=>{setText(e.target.value);setError("");}}/></label>
     <button type="button" onClick={()=>{setText(JSON.stringify(example,null,2));setOrigin("demo-node-1");setError("");}}>Load synthetic preparation reference</button>
@@ -77,7 +81,7 @@ function Preparation({value}:{value:PreparationReport}) {
   return <div>
     {value.fixture&&<p className="demo-label">SYNTHETIC — engineering reference, not verified gameplay coverage</p>}
     <p>Context: {value.context.build.edition}/{value.context.build.build}/{value.context.build.interface}; {value.context.namespace}. Content: {value.revision??"unavailable"}.</p>
-    {packageValue&&<><h3>{packageValue.title}</h3><p>Explicit local declaration; cited evidence categories do not independently verify this package.</p>
+    {packageValue&&<><h3>{packageValue.title}</h3><p>{value.authored?"Authored record resolved from the exact active revision; review cited evidence and missing sections.":"Explicit local declaration; cited evidence categories do not independently verify this package."}</p>
       <p>Declared entrance: {packageValue.entrance.observation.status==="known"?packageValue.entrance.observation.value.id:packageValue.entrance.observation.status}.</p>
       <p>Declared group formation: {describeObservation(packageValue.formation_ms.observation,v=>`${v.min_ms} to ${v.max_ms} ms`)}. Declared run estimate: {describeObservation(packageValue.run_ms.observation,v=>`${v.min_ms} to ${v.max_ms} ms`)}. These are separate from measured personal history.</p>
       <List title="Before departure" section={packageValue.before_departure} checklist/><List title="Before entry" section={packageValue.before_entry} checklist/><List title="Reference encounter notes" section={packageValue.encounter_notes}/>

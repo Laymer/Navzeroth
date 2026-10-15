@@ -1,12 +1,12 @@
 //! Explicit local allowlisted diagnostic metadata. Imported strings are never logs.
+use crate::catalog::CatalogView;
 use azeroth_core::{
     contract::Envelope,
-    coverage::{CoverageClass, content_report},
+    coverage::CoverageClass,
     entities::{CapabilityStatus, CharacterSnapshot, GameBuild},
     error::{AppError, ErrorCode, Result},
     observation::{Freshness, FreshnessContext, ObservationStatus, freshness},
 };
-use azeroth_storage::content::ContentRevision;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::{
@@ -200,7 +200,7 @@ fn decimal(value: &str) -> Option<u32> {
 /// Every exported text field is a fixed label, trusted producer version or digest.
 pub fn build(
     snapshot: Option<&Envelope<CharacterSnapshot>>,
-    content: Option<&ContentRevision>,
+    content: Option<&dyn CatalogView>,
     telemetry: Option<&DiagnosticTelemetry>,
 ) -> Result<DiagnosticReport> {
     build_with_context(snapshot, content, telemetry, None, None)
@@ -208,7 +208,7 @@ pub fn build(
 /// Optional measured clock/capability inputs; unavailable collectors remain unknown.
 pub fn build_with_context(
     snapshot: Option<&Envelope<CharacterSnapshot>>,
-    content: Option<&ContentRevision>,
+    content: Option<&dyn CatalogView>,
     telemetry: Option<&DiagnosticTelemetry>,
     clock: Option<&FreshnessContext>,
     capability_build: Option<&GameBuild>,
@@ -223,18 +223,18 @@ pub fn build_with_context(
         interface: decimal(s.payload.context.build.interface.as_str()),
         fixture: s.fixture,
     });
-    let mismatch = snapshot.zip(content).is_some_and(|(s, c)| {
-        s.data_context() != c.envelope.data_context() || s.fixture != c.envelope.fixture
-    });
+    let mismatch = snapshot
+        .zip(content)
+        .is_some_and(|(s, c)| s.data_context() != c.context() || s.fixture != c.fixture());
     let dataset = if mismatch {
         None
     } else {
         content.map(|content| {
-            let report = content_report(&content.envelope);
+            let report = content.report();
             Dataset {
                 revision_fingerprint_sha256: format!(
                     "{:x}",
-                    Sha256::digest(content.envelope.payload.revision.as_str().as_bytes())
+                    Sha256::digest(content.reference().revision.as_str().as_bytes())
                 ),
                 coverage_class: report
                     .dataset

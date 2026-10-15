@@ -13,6 +13,7 @@ export interface LocalPreparationPackage {
   before_departure: Declared<string[]>; before_entry: Declared<string[]>; encounter_notes: Declared<string[]>;
 }
 export interface PreparationReport {
+  authored?: import("./authoredContent").AuthoredSelection | null;
   schema_version: 1; context: DataContext; fixture: boolean; revision: string | null; package: LocalPreparationPackage | null;
   members: { profile_id: string; character: string; snapshot_id: string | null; freshness: Freshness | null;
     access: ConditionAssessment | null;

@@ -1,4 +1,5 @@
 //! Local manual planning over a consistent party/content/snapshot view.
+use crate::catalog::CatalogView;
 use crate::snapshots::{SnapshotApplication, context, profile_id};
 use azeroth_core::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use azeroth_core::{
@@ -13,10 +14,8 @@ use azeroth_core::{
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
     types::*,
 };
-use azeroth_storage::{
-    SnapshotStore, SqliteStore,
-    content::{ContentRevision, ContentScope},
-};
+use azeroth_storage::content::ActiveContentRevision;
+use azeroth_storage::{SnapshotStore, SqliteStore, content::ContentScope};
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 #[derive(Clone, Debug, Serialize)]
@@ -58,7 +57,7 @@ fn invalid(message: &'static str) -> AppError {
 type JointView = (
     JointPlanningCatalog,
     Vec<Option<Envelope<CharacterSnapshot>>>,
-    Option<ContentRevision>,
+    Option<ActiveContentRevision>,
 );
 pub(crate) fn view(store: &SqliteStore, id: &PartyId, now: Option<UtcMillis>) -> Result<JointView> {
     view_controlled(store, id, now, &mut NoopSearchControl)
@@ -77,7 +76,7 @@ fn view_controlled(
         return Err(invalid("Joint planning requires at least two participants"));
     }
     let first = &party.participants[0];
-    let content = store.active_content_revision(&ContentScope {
+    let content = store.active_catalog_revision(&ContentScope {
         context: first.context.clone(),
         fixture: first.fixture,
     })?;
@@ -104,17 +103,15 @@ fn view_controlled(
     let catalog = JointPlanningCatalog {
         context: first.context.clone(),
         fixture: first.fixture,
-        revision: content
-            .as_ref()
-            .map(|c| c.envelope.payload.revision.clone()),
+        revision: content.as_ref().map(|c| c.reference().revision.clone()),
         participants,
         nodes: content
             .as_ref()
-            .map(|c| c.envelope.payload.nodes.clone())
+            .map(|c| c.reference().nodes.clone())
             .unwrap_or_default(),
         objectives: content
             .as_ref()
-            .map(|c| c.envelope.payload.objectives.clone())
+            .map(|c| c.reference().objectives.clone())
             .unwrap_or_default(),
     };
     Ok((catalog, snapshots, content))
@@ -144,7 +141,7 @@ impl SnapshotApplication {
             JointPlanningRequest,
             JointPlanningCatalog,
             Vec<Envelope<CharacterSnapshot>>,
-            &ContentRevision,
+            &dyn CatalogView,
         ) -> Result<T>,
     ) -> Result<T> {
         self.with_joint_planning_controlled(
@@ -165,7 +162,7 @@ impl SnapshotApplication {
             JointPlanningRequest,
             JointPlanningCatalog,
             Vec<Envelope<CharacterSnapshot>>,
-            &ContentRevision,
+            &dyn CatalogView,
             &mut dyn SearchControl,
         ) -> Result<T>,
     ) -> Result<T> {
@@ -187,7 +184,7 @@ impl SnapshotApplication {
             JointPlanningRequest,
             JointPlanningCatalog,
             Vec<Envelope<CharacterSnapshot>>,
-            &ContentRevision,
+            &dyn CatalogView,
             &mut dyn SearchControl,
             &crate::planning_job_service::PublicationGuard,
         ) -> Result<T>,
@@ -256,7 +253,7 @@ impl SnapshotApplication {
                 .into_iter()
                 .map(|s| s.expect("expected snapshot checked"))
                 .collect::<Vec<_>>();
-            let guard=crate::planning_job_service::PublicationGuard::new(Some(request.party_id.clone()),&snapshots,&content,&context(now))?.bind_disposition(store.usable_content_revision(&content.key())?.ok_or_else(||invalid("Active content unavailable"))?.1.guard())?;
+            let guard=crate::planning_job_service::PublicationGuard::new(Some(request.party_id.clone()),&snapshots,&content,&context(now))?.bind_disposition(store.usable_catalog_revision(&content.key())?.ok_or_else(||invalid("Active content unavailable"))?.1.guard())?;
             Ok((catalog,snapshots,content,guard))
         }))?;
         let result = calculate(request, catalog, snapshots, &content, control, &guard)?;
@@ -272,7 +269,7 @@ pub(crate) fn calculate(
     request: JointPlanningRequest,
     catalog: JointPlanningCatalog,
     snapshots: Vec<Envelope<CharacterSnapshot>>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     now: Option<UtcMillis>,
 ) -> Result<JointPlanningReport> {
     calculate_controlled(
@@ -288,7 +285,7 @@ pub(crate) fn calculate_controlled(
     request: JointPlanningRequest,
     catalog: JointPlanningCatalog,
     snapshots: Vec<Envelope<CharacterSnapshot>>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     now: Option<UtcMillis>,
     control: &mut dyn SearchControl,
 ) -> Result<JointPlanningReport> {
@@ -299,7 +296,7 @@ pub(crate) fn calculate_controlled(
     {
         return Err(invalid("Joint planning input exceeds bounds"));
     }
-    let dataset = &content.envelope.payload;
+    let dataset = &content.reference();
     if request
         .excluded
         .iter()

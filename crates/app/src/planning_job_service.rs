@@ -1,4 +1,5 @@
 //! Owned input calculation and atomic current-state publication for planning.
+use crate::catalog::CatalogView;
 use crate::{
     joint_planning::JointPlanningReport,
     planning::PlanningReport,
@@ -16,12 +17,8 @@ use azeroth_core::{
     search_control::{SearchControl, SearchPhase},
     types::{MAX_SAFE_INTEGER, PartyId, Sha256Hex, UtcMillis},
 };
-use azeroth_storage::{
-    ProfileKey, SnapshotStore, SqliteStore,
-    content::{ContentRevision, ContentRevisionKey},
-};
+use azeroth_storage::{ProfileKey, SnapshotStore, SqliteStore, content::ContentRevisionKey};
 use serde::Serialize;
-use sha2::{Digest, Sha256};
 use std::time::Duration;
 #[derive(Serialize)]
 #[serde(untagged)]
@@ -190,15 +187,8 @@ fn outdated() -> AppError {
         false,
     )
 }
-fn content_hash(content: &ContentRevision) -> Result<String> {
-    let bytes = serde_json::to_vec(content).map_err(|_| {
-        AppError::new(
-            ErrorCode::InvalidInput,
-            "Planning input cannot be hashed",
-            false,
-        )
-    })?;
-    Ok(format!("{:x}", Sha256::digest(bytes)))
+fn content_hash(content: &dyn CatalogView) -> Result<String> {
+    content.content_hash()
 }
 pub(crate) fn advanced_now(now: Option<UtcMillis>, elapsed: Duration) -> Option<UtcMillis> {
     now.and_then(|n| {
@@ -211,7 +201,7 @@ impl PublicationGuard {
     pub(crate) fn new(
         party: Option<PartyId>,
         snapshots: &[Envelope<CharacterSnapshot>],
-        content: &ContentRevision,
+        content: &dyn CatalogView,
         clock: &FreshnessContext,
     ) -> Result<Self> {
         Ok(Self {
@@ -249,7 +239,7 @@ impl PublicationGuard {
         mut publication_now: impl FnMut() -> Option<UtcMillis>,
     ) -> Result<()> {
         let disposition = self.disposition.as_ref().ok_or_else(outdated)?;
-        if let Err(e) = store.validate_usable_content_guard(disposition) {
+        if let Err(e) = store.validate_usable_catalog_guard(disposition) {
             if e.code == ErrorCode::StorageError {
                 return Err(e);
             }
@@ -276,7 +266,7 @@ impl PublicationGuard {
             snapshots.push(snapshot);
         }
         let content = store
-            .active_content_revision(&self.content.scope)?
+            .active_catalog_revision(&self.content.scope)?
             .ok_or_else(outdated)?;
         if content.key() != self.content || content_hash(&content)? != self.content_hash {
             return Err(outdated());
@@ -433,7 +423,7 @@ impl PublicationGuard {
             return Err(outdated());
         }
         let content = store
-            .active_content_revision(&descriptor.content.scope)?
+            .active_catalog_revision(&descriptor.content.scope)?
             .ok_or_else(outdated)?;
         if content.key() != descriptor.content
             || content_hash(&content)? != descriptor.content_hash.as_str()
@@ -542,6 +532,7 @@ mod tests {
     use super::*;
     use crate::demo_snapshot;
     use azeroth_core::{search_control::NoopSearchControl, types::DatasetRevision};
+    use azeroth_storage::content::ContentRevision;
     use serde_json::{Value, json};
 
     #[test]

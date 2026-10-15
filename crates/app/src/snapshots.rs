@@ -313,7 +313,7 @@ impl SnapshotApplication {
         &self,
     ) -> Result<(
         Option<Envelope<CharacterSnapshot>>,
-        Option<azeroth_storage::content::ContentRevision>,
+        Option<azeroth_storage::content::ActiveContentRevision>,
     )> {
         let state = self.lock()?;
         let Some(id) = &state.selected else {
@@ -324,7 +324,7 @@ impl SnapshotApplication {
         let content =
             state
                 .store
-                .active_content_revision(&azeroth_storage::content::ContentScope {
+                .active_catalog_revision(&azeroth_storage::content::ContentScope {
                     context: key.context,
                     fixture: key.fixture,
                 })?;
@@ -443,22 +443,20 @@ impl SnapshotApplication {
         let content =
             state
                 .store
-                .active_content_revision(&azeroth_storage::content::ContentScope {
+                .active_catalog_revision(&azeroth_storage::content::ContentScope {
                     context: key.context,
                     fixture: key.fixture,
                 })?;
         Ok(crate::planning::PlanningCatalog {
             snapshot_id: snapshot.map(|s| s.payload.id.clone()),
             fixture: key.fixture,
-            revision: content
-                .as_ref()
-                .map(|c| c.envelope.payload.revision.clone()),
+            revision: content.as_ref().map(|c| c.reference().revision.clone()),
             nodes: content
                 .as_ref()
-                .map(|c| c.envelope.payload.nodes.clone())
+                .map(|c| c.reference().nodes.clone())
                 .unwrap_or_default(),
             objectives: content
-                .map(|c| c.envelope.payload.objectives.clone())
+                .map(|c| c.reference().objectives.clone())
                 .unwrap_or_default(),
         })
     }
@@ -486,7 +484,7 @@ impl SnapshotApplication {
         calculate: impl FnOnce(
             crate::planning::PlanningRequest,
             &Envelope<CharacterSnapshot>,
-            &azeroth_storage::content::ContentRevision,
+            &dyn crate::catalog::CatalogView,
             &FreshnessContext,
         ) -> Result<T>,
     ) -> Result<T> {
@@ -501,7 +499,7 @@ impl SnapshotApplication {
         calculate: impl FnOnce(
             crate::planning::PlanningRequest,
             &Envelope<CharacterSnapshot>,
-            &azeroth_storage::content::ContentRevision,
+            &dyn crate::catalog::CatalogView,
             &FreshnessContext,
             &crate::planning_job_service::PublicationGuard,
         ) -> Result<T>,
@@ -534,7 +532,7 @@ impl SnapshotApplication {
                 ));
             }
             let content = store
-                .active_content_revision(&azeroth_storage::content::ContentScope {
+                .active_catalog_revision(&azeroth_storage::content::ContentScope {
                     context: key.context.clone(),
                     fixture: key.fixture,
                 })?
@@ -544,7 +542,7 @@ impl SnapshotApplication {
                         "No active content for this profile",
                     )
                 })?;
-            if content.envelope.payload.revision != request.revision {
+            if content.reference().revision != request.revision {
                 return Err(invalid("Active content changed; refresh planning inputs"));
             }
             let guard = crate::planning_job_service::PublicationGuard::new(
@@ -555,7 +553,7 @@ impl SnapshotApplication {
             )?
             .bind_disposition(
                 store
-                    .usable_content_revision(&content.key())?
+                    .usable_catalog_revision(&content.key())?
                     .ok_or_else(|| invalid("Active content unavailable"))?
                     .1
                     .guard(),
@@ -604,16 +602,37 @@ impl SnapshotApplication {
         )
     }
     pub fn stage_content(&self, text: &str) -> Result<crate::content::ContentInspection> {
-        if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
+        if text.len() > azeroth_core::content_v2::MAX_CONTENT_BYTES {
             return Err(error(
                 ErrorCode::ImportTooLarge,
                 "Content revision limit exceeded",
             ));
         }
-        let content: azeroth_storage::content::ContentRevision =
-            serde_json::from_str(text).map_err(|_| invalid("Invalid content revision JSON"))?;
-        self.lock()?.store.stage_content_revision(&content)?;
-        Ok(crate::content::inspect(content))
+        let value = crate::dungeon_preparation::json::strict_value(text)?;
+        if value.get("content").is_some() {
+            let mut content: azeroth_storage::content::ContentRevisionV2 =
+                serde_json::from_value(value.clone())
+                    .map_err(|_| invalid("Invalid v2 content revision JSON"))?;
+            content.content = azeroth_core::content_v2::decode(
+                &serde_json::to_vec(&value["content"])
+                    .map_err(|_| invalid("Invalid v2 content"))?,
+            )?;
+            self.lock()?.store.stage_content_v2_revision(&content)?;
+            Ok(crate::content::inspect(
+                azeroth_storage::content::ActiveContentRevision::V2(std::sync::Arc::new(content)),
+            ))
+        } else {
+            if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
+                return Err(error(
+                    ErrorCode::ImportTooLarge,
+                    "V1 content revision limit exceeded",
+                ));
+            }
+            let content: azeroth_storage::content::ContentRevision = serde_json::from_value(value)
+                .map_err(|_| invalid("Invalid content revision JSON"))?;
+            self.lock()?.store.stage_content_revision(&content)?;
+            Ok(crate::content::inspect(content))
+        }
     }
     pub fn active_content(
         &self,
@@ -627,7 +646,7 @@ impl SnapshotApplication {
         };
         Ok(state
             .store
-            .active_content_revision(&scope)?
+            .active_catalog_revision(&scope)?
             .map(crate::content::inspect))
     }
     pub fn activate_content(
@@ -647,8 +666,9 @@ impl SnapshotApplication {
         state.store.activate_content_revision(&key)?;
         let content = state
             .store
-            .content_revision(&key)?
-            .ok_or_else(|| invalid("Content revision is not stored"))?;
+            .active_catalog_revision(&key.scope)?
+            .filter(|c| c.key() == key)
+            .ok_or_else(|| invalid("Content revision is not active"))?;
         Ok(crate::content::inspect(content))
     }
     pub fn rollback_content(&self, profile_id: &str) -> Result<crate::content::ContentRollback> {
@@ -666,7 +686,7 @@ impl SnapshotApplication {
             changed,
             active: state
                 .store
-                .active_content_revision(&scope)?
+                .active_catalog_revision(&scope)?
                 .map(crate::content::inspect),
         })
     }
@@ -681,22 +701,13 @@ impl SnapshotApplication {
             context: key.context.clone(),
             fixture: key.fixture,
         };
-        let content = state.store.active_content_revision(&scope)?;
+        let content = state.store.active_catalog_revision(&scope)?;
         Ok(crate::party::PartyQuestCatalog {
             context: key.context.clone(),
             fixture: key.fixture,
-            revision: content
-                .as_ref()
-                .map(|c| c.envelope.payload.revision.clone()),
+            revision: content.as_ref().map(|c| c.reference().revision.clone()),
             quests: content
-                .map(|c| {
-                    c.envelope
-                        .payload
-                        .quests
-                        .iter()
-                        .map(|q| q.id.clone())
-                        .collect()
-                })
+                .map(|c| c.reference().quests.iter().map(|q| q.id.clone()).collect())
                 .unwrap_or_default(),
         })
     }
@@ -726,23 +737,30 @@ impl SnapshotApplication {
         };
         let content = state
             .store
-            .active_content_revision(&scope)?
+            .active_catalog_revision(&scope)?
             .ok_or_else(|| {
                 error(
                     ErrorCode::DatasetIncomplete,
                     "No active content for this party",
                 )
             })?;
-        if &content.envelope.payload.revision != revision {
+        if &content.reference().revision != revision {
             return Err(invalid("Active content changed; refresh the quest list"));
         }
         let definition = content
-            .envelope
-            .payload
+            .reference()
             .quests
             .iter()
             .find(|q| &q.id == quest)
             .ok_or_else(|| invalid("Quest is not in the active content"))?;
+        let authored = content
+            .content_v2()
+            .map(|c| crate::authored_content::quest_facts(definition, c))
+            .transpose()?;
+        let definition = authored
+            .as_ref()
+            .map(|v| &v.definition)
+            .unwrap_or(definition);
         let snapshots = party
             .participants
             .iter()
@@ -766,8 +784,11 @@ impl SnapshotApplication {
         let facts = std::collections::BTreeMap::new();
         let inputs = EligibilityInputs {
             definition,
-            access: None,
-            exclusive_groups: &[],
+            access: authored.as_ref().and_then(|v| v.access.as_ref()),
+            exclusive_groups: authored
+                .as_ref()
+                .map(|v| v.exclusive_groups.as_slice())
+                .unwrap_or(&[]),
             facts: &facts,
             freshness: &clock,
             stale_policy: StalePolicy::Reject,
