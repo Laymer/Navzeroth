@@ -1,5 +1,9 @@
 # Wowhead data permission request — UNSENT DRAFT
 
+**Superseded:** the user selected ForeverDB instead of Wowhead on 2026-10-15.
+Keep this unsent draft only as historical research; the active provider review is
+[ForeverDB](../foreverdb.md).
+
 Prepared 2026-10-15. No recipient, grant or delivery is recorded. The user's
 verbal report identifies Wowhead as a potential permission source; it does not
 establish a scope-bearing grant or authorize sending this draft.

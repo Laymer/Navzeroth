@@ -1,0 +1,882 @@
+[
+  {
+    "path": "ForeverDB/Armory.lua",
+    "bytes": 29549,
+    "sha256": "8d1294d6f03e8f0fc429158c3b5f410169ef76496407b63f75b822e4771bab4d"
+  },
+  {
+    "path": "ForeverDB/Arrow3D.lua",
+    "bytes": 30395,
+    "sha256": "97c18dbebc84b970b43b6d466569cc9724225926fa3d2378963884be21595951"
+  },
+  {
+    "path": "ForeverDB/Assist.lua",
+    "bytes": 27127,
+    "sha256": "6a995bbe0b141d288d307565f0ec8f169945e4915e116690bae03af36cb89b9b"
+  },
+  {
+    "path": "ForeverDB/Auctions.lua",
+    "bytes": 32206,
+    "sha256": "bb7826e547ba64d59357cf66c49228bae0af57a95e45871a11b8033416d904db"
+  },
+  {
+    "path": "ForeverDB/Auto.lua",
+    "bytes": 53799,
+    "sha256": "9653e5165e9cf3820a2fd0ba3feaee9860a8a4e404048826ac6f7966058e9385"
+  },
+  {
+    "path": "ForeverDB/Bindings.xml",
+    "bytes": 338,
+    "sha256": "9c9a154333a25fbf3a60906687ec0b9e3c62ed014431fa830850cca0ed3a81a6"
+  },
+  {
+    "path": "ForeverDB/Bots.lua",
+    "bytes": 76819,
+    "sha256": "7ff89bf053f82c4cb5a3f1a3d387e8061f288164d582b824b81319689860bca3"
+  },
+  {
+    "path": "ForeverDB/BuffData.lua",
+    "bytes": 1542,
+    "sha256": "dbe99e933bae547b7add9fb4495d36c55b0f43e1cb4f7c069acd9bcf9f5287fc"
+  },
+  {
+    "path": "ForeverDB/Coach.lua",
+    "bytes": 54585,
+    "sha256": "ba35de316c1324193a6798cbdfd39306d8f4380e29db053f44040796cc6cf135"
+  },
+  {
+    "path": "ForeverDB/CoachPage.lua",
+    "bytes": 7186,
+    "sha256": "cc40d17931b98c1603d4bd7fe68d77650230604dfeb9e2a1ce6d26ee1c5d5b9f"
+  },
+  {
+    "path": "ForeverDB/Collections.lua",
+    "bytes": 15918,
+    "sha256": "4cdb0fabf27f8fd0e1d9fe5d03089e74896ea45dac0d995610c8daf13723cd64"
+  },
+  {
+    "path": "ForeverDB/CollectionsPage.lua",
+    "bytes": 5699,
+    "sha256": "cc7153fdc4e1d0d3c50bdd12a915d6fb063bf638a52ddb34d75182a6c3e23d6d"
+  },
+  {
+    "path": "ForeverDB/Comfort.lua",
+    "bytes": 35135,
+    "sha256": "f162a227651973d00d85e2a8ef73e3a1d55d04b6bfb59e3e924dfc9785199e56"
+  },
+  {
+    "path": "ForeverDB/ComfortPage.lua",
+    "bytes": 15177,
+    "sha256": "9c0049a55fb182e2e89a18d6fd31b364fcf6e56fa5a2dbc84a2b7d0bc9a895a4"
+  },
+  {
+    "path": "ForeverDB/Data/Assist.lua",
+    "bytes": 26755,
+    "sha256": "238a5a149b53816e200605cbf8f3290f857485bf2c08d3750e742cbdb49bb7b8"
+  },
+  {
+    "path": "ForeverDB/Data/Camp.lua",
+    "bytes": 9924,
+    "sha256": "b87951b8b423b387c21793d665a8b66febf391acf597215b1d028bff3fb66c4d"
+  },
+  {
+    "path": "ForeverDB/Data/Coach.lua",
+    "bytes": 149059,
+    "sha256": "0b4c20e9f006dbac5cf7855a241e90813e3b131e754a0cad94521d2279a22fa3"
+  },
+  {
+    "path": "ForeverDB/Data/Collections.lua",
+    "bytes": 27043,
+    "sha256": "fcc3e69222e683f9c1b96e15fe04c2c8d330d1c6741f9d1b245a79ca521ba1bf"
+  },
+  {
+    "path": "ForeverDB/Data/Consumables.lua",
+    "bytes": 55187,
+    "sha256": "48c148f25b7490e7f5ebfa0d82eeab5f5a42edbb1c23d6862094ea36ef68afbd"
+  },
+  {
+    "path": "ForeverDB/Data/DungeonMaps.lua",
+    "bytes": 61272,
+    "sha256": "e775731d4a086028ea365f276471791f2669864678aaefeb26e8049e444dba95"
+  },
+  {
+    "path": "ForeverDB/Data/Dungeons.lua",
+    "bytes": 41278,
+    "sha256": "de4cbb2ba3383d98e0c5b6169abe90cc9b05624af0acbde3a6abfbae79412f92"
+  },
+  {
+    "path": "ForeverDB/Data/Enhance.lua",
+    "bytes": 66341,
+    "sha256": "f9f6ca5fa84658aae9d6da6ad580eaf43dc9f2c970902ea5c0f261cc893eb713"
+  },
+  {
+    "path": "ForeverDB/Data/Gather.lua",
+    "bytes": 219315,
+    "sha256": "f8a9bdb3f21ba444ed88b01b0bd3998d0d1dcfb23aec07b2de9bf3c6d74c6ca9"
+  },
+  {
+    "path": "ForeverDB/Data/Gear.lua",
+    "bytes": 366793,
+    "sha256": "c975eb79ca177fb59cf6df58c2b8a0eae506f28ed8f98579cd5b865c650cccfd"
+  },
+  {
+    "path": "ForeverDB/Data/GearFinder.lua",
+    "bytes": 191356,
+    "sha256": "5c8ffd7724cbaa93e4190b3499cb1e8bf45f1bb472c697ab63e671a56bfee481"
+  },
+  {
+    "path": "ForeverDB/Data/GearSources.lua",
+    "bytes": 465257,
+    "sha256": "80839f85849c391e2d0009b90f32be54d8b7cb36dcbcf8b5e165cfd107524fe3"
+  },
+  {
+    "path": "ForeverDB/Data/Helper.lua",
+    "bytes": 104,
+    "sha256": "b2a125abb51ab8ac6d1f3a1bac45d6477947f4b44f6490599a59ca2008d36375"
+  },
+  {
+    "path": "ForeverDB/Data/Items.lua",
+    "bytes": 462181,
+    "sha256": "8637501059cb6a2f4ccda6d61ea9917f0e78b5f3cd9a6c1291c4f224112a4e3f"
+  },
+  {
+    "path": "ForeverDB/Data/Live.lua",
+    "bytes": 3314,
+    "sha256": "72d738b27e060909cecbe01f482aca7d6ce2a0e908d557f3b94d7627999d58a4"
+  },
+  {
+    "path": "ForeverDB/Data/Loot.lua",
+    "bytes": 83041,
+    "sha256": "210a4d2ddc8bfc69f10139ade2c66ff733acffc0e921423f2cdbeb2105cf0da8"
+  },
+  {
+    "path": "ForeverDB/Data/MapOverlays.lua",
+    "bytes": 20679,
+    "sha256": "5eb110ef2bbe6948f634e5dfb69272f343c8114b079a59453a6c6d82ce3de64a"
+  },
+  {
+    "path": "ForeverDB/Data/Meta.lua",
+    "bytes": 149,
+    "sha256": "bb4734a7542048b844495260d6f9bd6527b453fd7d126fa379b9145d57754a57"
+  },
+  {
+    "path": "ForeverDB/Data/NPCs.lua",
+    "bytes": 236936,
+    "sha256": "5a1abbdb1e4f0a003154b596e8ff125c5ea3f60cccae7870cc6d749dc9c109c3"
+  },
+  {
+    "path": "ForeverDB/Data/QuestClassic.lua",
+    "bytes": 562451,
+    "sha256": "5b2f95d0134c28509cdfbb32a7553e6c692b408da955855868af9ce3c51861da"
+  },
+  {
+    "path": "ForeverDB/Data/QuestForever.lua",
+    "bytes": 145415,
+    "sha256": "4c26c1187cc9c42c075ec2f614b8c369ececd2822a9d6a3668dbc468af199cfd"
+  },
+  {
+    "path": "ForeverDB/Data/QuestGuide.lua",
+    "bytes": 557939,
+    "sha256": "e6f6397e2d5706327447280227b99d2413d6586213ebd192f12877fa4907ab03"
+  },
+  {
+    "path": "ForeverDB/Data/QuestXP.lua",
+    "bytes": 43650,
+    "sha256": "af6c659be2ca8313c1ea62bc2eb223333d21aa4da2b14cf3f9a2745278d6bff2"
+  },
+  {
+    "path": "ForeverDB/Data/Quests.lua",
+    "bytes": 9843,
+    "sha256": "839845afe129e0067b962ed738221dbcc273af4fca6ef03aa4bd1f164da10c83"
+  },
+  {
+    "path": "ForeverDB/Data/Rares.lua",
+    "bytes": 42451,
+    "sha256": "a509f8c1db4f3dde3ec2fba5f8534ca1dcc500bfc6e2fe43d29a7db721bf6f72"
+  },
+  {
+    "path": "ForeverDB/Data/Recipes.lua",
+    "bytes": 379216,
+    "sha256": "c138eef6263f944869238c6cdc3134becdcd88cb0908ef5a9c625fefc2cacbcb"
+  },
+  {
+    "path": "ForeverDB/Data/Reserves.lua",
+    "bytes": 120,
+    "sha256": "f7902ee23e9c2c368a03c113a772777c0fc9cd0441317e9417a7f3856d1d5e9f"
+  },
+  {
+    "path": "ForeverDB/Data/RouteMaps.lua",
+    "bytes": 11237,
+    "sha256": "e6709c8f8b27d46ba209287a19de83e19b5c003a43af496ff8cdf857aece1d80"
+  },
+  {
+    "path": "ForeverDB/Data/Routes_0.lua",
+    "bytes": 672958,
+    "sha256": "9fee84e81cc9322d6ac4c6ffe43ae6e2ee948684d1575c05c30dc445867c99ca"
+  },
+  {
+    "path": "ForeverDB/Data/Routes_1.lua",
+    "bytes": 705955,
+    "sha256": "e527ee0f4dfb13448a99571cdf02b7b14904fe5ab680dd9e948525fb8908e8c9"
+  },
+  {
+    "path": "ForeverDB/Data/Routes_2991.lua",
+    "bytes": 53407,
+    "sha256": "bd20cc01bee867292700a09c8569e8589902c1feb8cbed53dbde21695d9bf51a"
+  },
+  {
+    "path": "ForeverDB/Data/Spells.lua",
+    "bytes": 78395,
+    "sha256": "ac4e13b3270f98bfd789938245af2f62b5408135b4d101ebca3c9c64d0d362e0"
+  },
+  {
+    "path": "ForeverDB/Data/Talents.lua",
+    "bytes": 24734,
+    "sha256": "094ce45812f6c89333d9a5de71056a671b1b188fbdf2687e0a3e1ad63ce06b70"
+  },
+  {
+    "path": "ForeverDB/Data/Travel.lua",
+    "bytes": 31896,
+    "sha256": "63c81b7fca88173035933781c2d84c4a878e5ec4a528bf800fc6ec7187c74a00"
+  },
+  {
+    "path": "ForeverDB/Data/UploadAck.lua",
+    "bytes": 152,
+    "sha256": "1720018eb0658dd549d1e75ddc0f8262697a2cb90e07cacf56105b5255c2086b"
+  },
+  {
+    "path": "ForeverDB/Data/Zones.lua",
+    "bytes": 11724,
+    "sha256": "6d054816c73d1df01ca5046ebee6cb165ca0b58e17d951c2c2ef6eb1f6391b22"
+  },
+  {
+    "path": "ForeverDB/DungeonHelper.lua",
+    "bytes": 22244,
+    "sha256": "23bd26758c6ea774e4c963079bb25536d75579f21c5006730081909f739642af"
+  },
+  {
+    "path": "ForeverDB/DungeonMap.lua",
+    "bytes": 23082,
+    "sha256": "7aeca8a011190731ed77661fca291697bb48c3b377e7740b8a04971e9cb11df6"
+  },
+  {
+    "path": "ForeverDB/Encounters.lua",
+    "bytes": 33642,
+    "sha256": "37c7cf79ab0e7a6fdc62f1497a832427f486462205b881289e35136e31b08c55"
+  },
+  {
+    "path": "ForeverDB/FlightTimes.lua",
+    "bytes": 14133,
+    "sha256": "f5837c83f03809d76445be2c6752c9edd7f0dcb458bed17ac4488f235173f35e"
+  },
+  {
+    "path": "ForeverDB/ForeverDB.lua",
+    "bytes": 76780,
+    "sha256": "2b3447d3cfc0d15c7ed63164ee303107f754978062b774422516326e6c0ff9f8"
+  },
+  {
+    "path": "ForeverDB/ForeverDB.toc",
+    "bytes": 3048,
+    "sha256": "0d6cb84015a0d7c3247aa0f4f83e599043348b4cac17953313afadfa54db99ec"
+  },
+  {
+    "path": "ForeverDB/ForeverDB_Camelot.toc",
+    "bytes": 3048,
+    "sha256": "0d6cb84015a0d7c3247aa0f4f83e599043348b4cac17953313afadfa54db99ec"
+  },
+  {
+    "path": "ForeverDB/Gathering.lua",
+    "bytes": 76230,
+    "sha256": "d2e18ede9dbbad39c432d1e6f32a853e0b9773d016c5e28c5b60c84e3a1ef9f1"
+  },
+  {
+    "path": "ForeverDB/GearFinder.lua",
+    "bytes": 40887,
+    "sha256": "aac02ed853f7abde1a9aa2fdc6ba22665306ee0829ef80ee38ff7e96949a4a93"
+  },
+  {
+    "path": "ForeverDB/GearFinderPage.lua",
+    "bytes": 25043,
+    "sha256": "cf8b5c74b4c2f4a2896c7ac8ae5627ad4c7f81c81bfd628cc03fa6b18df60e02"
+  },
+  {
+    "path": "ForeverDB/GearSheet.lua",
+    "bytes": 6701,
+    "sha256": "b9eec6e3ce5e9dc958c119bd194acaf7a77ebc483c3a3d267858622dc7c58dfa"
+  },
+  {
+    "path": "ForeverDB/GearTrack.lua",
+    "bytes": 21484,
+    "sha256": "4747b47604d2b80770fdc2a134575cb433b3d9801037ccc0da89970a24ffa21a"
+  },
+  {
+    "path": "ForeverDB/LiveMap.lua",
+    "bytes": 4204,
+    "sha256": "f4b26d7f8ad53f7111a5e3c3ffd912c922fa01e620209844827b1e8244cbc3e3"
+  },
+  {
+    "path": "ForeverDB/LivePage.lua",
+    "bytes": 20969,
+    "sha256": "ebb5b522fe16d29b0aad59e8d02ecf0985f510a5e048c964d8c17293b00092ff"
+  },
+  {
+    "path": "ForeverDB/LootBrowser.lua",
+    "bytes": 50514,
+    "sha256": "ed77c8cc46e919b54fae946f221403da7edef26f05f2d41e91d1125f509325ed"
+  },
+  {
+    "path": "ForeverDB/MapFade.lua",
+    "bytes": 5803,
+    "sha256": "43bf2ff2684092a51eb67fd9e024ca30f9754c4af8cf8ebf50213695b8b4acd5"
+  },
+  {
+    "path": "ForeverDB/MapFilter.lua",
+    "bytes": 13618,
+    "sha256": "1291df0f017c1c3d2dfb9a2089314fcc83b1da9353d7a8dd62847d21eab33a3a"
+  },
+  {
+    "path": "ForeverDB/MapPins.lua",
+    "bytes": 13764,
+    "sha256": "4b9e04817e766cb1d26a9089eb7e44468f4329eeb8ebc1873277b713a07fa411"
+  },
+  {
+    "path": "ForeverDB/MapReveal.lua",
+    "bytes": 6971,
+    "sha256": "7deb00ed17223abb5d022324cc72e4fb04b1a9296dc82ad0cf20015b83a0c653"
+  },
+  {
+    "path": "ForeverDB/Media/ArrowArrive.tga",
+    "bytes": 262162,
+    "sha256": "7f094f8cc16c2f2fdb987ed9584a4f604cce56625fb70a8412b63e514ec35a4b"
+  },
+  {
+    "path": "ForeverDB/Media/ArrowBody.tga",
+    "bytes": 1048594,
+    "sha256": "a9608f3d596331c0a85bce48c8b9199647f68e60e13259f04c673810407b5b06"
+  },
+  {
+    "path": "ForeverDB/Media/ArrowGlow.tga",
+    "bytes": 262162,
+    "sha256": "081d052b098a8ed7e8ac3c59deb3d7a1d96969332a44b34e164194932091d617"
+  },
+  {
+    "path": "ForeverDB/Media/PinArea.tga",
+    "bytes": 16428,
+    "sha256": "ce929487aaba1a3406d1def4f5c00c7e71b91cb612a2bcb1131a93885797fbc0"
+  },
+  {
+    "path": "ForeverDB/Media/logo.tga",
+    "bytes": 16428,
+    "sha256": "3e5f833c8535fda80840310be5c9f5e210bca178135502ffd8c018a4d2a259c8"
+  },
+  {
+    "path": "ForeverDB/NextZone.lua",
+    "bytes": 21877,
+    "sha256": "1434a424a62332c66d841279dd8f77c9e03cfa3420773ee27c27d89c4e7536da"
+  },
+  {
+    "path": "ForeverDB/Observations.lua",
+    "bytes": 37635,
+    "sha256": "f60c14dbad84a0751e3b153fc10358637a50800ad8926e1e88c6fc4e43159004"
+  },
+  {
+    "path": "ForeverDB/OtherAddons.lua",
+    "bytes": 19260,
+    "sha256": "91ade6f2079da4a0d7bd45f1b0a76fd87ec286e914f2d3f27007358b45277613"
+  },
+  {
+    "path": "ForeverDB/PlanMap.lua",
+    "bytes": 12546,
+    "sha256": "27d4edac85f0bec7a01b3a0d875393151e61147678046b0a3b0653f7b8cd4b27"
+  },
+  {
+    "path": "ForeverDB/PlanPage.lua",
+    "bytes": 24180,
+    "sha256": "7d94a5f144cf16aab2af6d57d5ad6869037a612c774762b224681c5d6695eb34"
+  },
+  {
+    "path": "ForeverDB/Planner.lua",
+    "bytes": 65466,
+    "sha256": "0be544d739e16c008af99aac5316f701091f2e98db15084db064b2becac8318d"
+  },
+  {
+    "path": "ForeverDB/PlannerCalib.lua",
+    "bytes": 18774,
+    "sha256": "c05cc4a6697677c83e2bc3e292591e642285f96987700eb3970d4f7117d84cf6"
+  },
+  {
+    "path": "ForeverDB/PvP.lua",
+    "bytes": 20161,
+    "sha256": "20f30f2c2b987cb3d6107aad860846b29e05d673b999e83a5c655762cc05e5c9"
+  },
+  {
+    "path": "ForeverDB/PvPPage.lua",
+    "bytes": 7074,
+    "sha256": "b4b747358461570c1eb6052832635cace9bb31174f52ae36704e90a40c32ec8c"
+  },
+  {
+    "path": "ForeverDB/QuestBlizzard.lua",
+    "bytes": 23134,
+    "sha256": "bf54ceaa9c801fe9bee0d8b9ac5f794ff21e9a9aaee106896c4b8e70402bfdb7"
+  },
+  {
+    "path": "ForeverDB/QuestCapture.lua",
+    "bytes": 18850,
+    "sha256": "b5092b8923849bdc55aaf055c4708dca3d7f48dd3166c20e3639317262513b9e"
+  },
+  {
+    "path": "ForeverDB/QuestData.lua",
+    "bytes": 46120,
+    "sha256": "01a97a466600459f3cb992e2ef622bdf966b1ece34c11266e97ae9e06cc1c5bb"
+  },
+  {
+    "path": "ForeverDB/QuestGuide.lua",
+    "bytes": 77132,
+    "sha256": "2f44926a3a0c0594264fe9481b13f133bf8f784b41d8483e8717c2519d1a0604"
+  },
+  {
+    "path": "ForeverDB/QuestGuidePage.lua",
+    "bytes": 68688,
+    "sha256": "49321879cbeddfbb5b9fa6cccdc85ff6a443eb813838a845bfb68e1213359bae"
+  },
+  {
+    "path": "ForeverDB/QuestMap.lua",
+    "bytes": 26905,
+    "sha256": "b2b1d38c39d0fa32842f096f9b13bbb6f0d770b7d1941cb848ea24e140807d99"
+  },
+  {
+    "path": "ForeverDB/QuestNotes.lua",
+    "bytes": 25136,
+    "sha256": "21fd486ed13290b98fd6cc838f884df009254866dfecf7cb5084377352960469"
+  },
+  {
+    "path": "ForeverDB/QuestSidePane.lua",
+    "bytes": 24299,
+    "sha256": "8476c29dec9e7bbb555da1eb6cd003d651da3bdfddafb5df3bf7360e892278c9"
+  },
+  {
+    "path": "ForeverDB/QuestTracker.lua",
+    "bytes": 15660,
+    "sha256": "a6d7643f6f5177c19fbaaea198af437a3d81846324a1b2b31f5c942416191270"
+  },
+  {
+    "path": "ForeverDB/Raid.lua",
+    "bytes": 51872,
+    "sha256": "85e9d3a3d16457f78a44f162cf4d53b564fdda642f675ade943e4958ac25e5d6"
+  },
+  {
+    "path": "ForeverDB/RaidPage.lua",
+    "bytes": 7416,
+    "sha256": "80d355b3ab520c6262cbbf98555919aa0cc578ae7260df324636cdca3e3647ca"
+  },
+  {
+    "path": "ForeverDB/RareMap.lua",
+    "bytes": 5700,
+    "sha256": "4a6494109b1ca203db0c92a2fcf82e6095077116be5292196357018775326a24"
+  },
+  {
+    "path": "ForeverDB/Rares.lua",
+    "bytes": 48702,
+    "sha256": "50e11064f3528faed1177429d10cb60412bf19d4f3354ebdec9d6788121d0da6"
+  },
+  {
+    "path": "ForeverDB/RaresPage.lua",
+    "bytes": 12053,
+    "sha256": "6f9957903571e6b13c574d375f07a69457b38ba066398857370166ee7912e2e0"
+  },
+  {
+    "path": "ForeverDB/Relay.lua",
+    "bytes": 29369,
+    "sha256": "fff632a6c396f700a6977c53e2ca17dd4d744e52c7fa5b8d445b6cd341d135df"
+  },
+  {
+    "path": "ForeverDB/Reserves.lua",
+    "bytes": 11138,
+    "sha256": "08fc52e40bfcd46072cc0b42297a0a2112bf1ba3399fc7651a091ac7e99fdc62"
+  },
+  {
+    "path": "ForeverDB/RotationData.lua",
+    "bytes": 136519,
+    "sha256": "1f563ec67bdce613af79c3549b3da7fc3053fd03fd0e7b30d20672ec51d0ccf3"
+  },
+  {
+    "path": "ForeverDB/RouteDraw.lua",
+    "bytes": 18938,
+    "sha256": "2216f90df91a9ec20535cb7eadf709409712243bb1ba58eb213d3a545c59515b"
+  },
+  {
+    "path": "ForeverDB/RouteFollow.lua",
+    "bytes": 16601,
+    "sha256": "683366205ad02902c35358f0aff7c1b65b79b626d32a6e3b864774f45594c758"
+  },
+  {
+    "path": "ForeverDB/Routes.lua",
+    "bytes": 44473,
+    "sha256": "3ae163410f6bc9172685ce2b019a8c01d6fbaecaaccc27174674dc326587e325"
+  },
+  {
+    "path": "ForeverDB/RoutesPage.lua",
+    "bytes": 19929,
+    "sha256": "b1c9b3ac7c37e561ccc8fc07e5eda3a0b33de275bd9ba7611674147954d0141d"
+  },
+  {
+    "path": "ForeverDB/Settings.lua",
+    "bytes": 69938,
+    "sha256": "3c0507e8cd7e977fd77b42468f2a3c20e34c2aee8fdf6aa3305169ebc79de38a"
+  },
+  {
+    "path": "ForeverDB/Setup.lua",
+    "bytes": 19056,
+    "sha256": "5b5d4aae2a608ab18dcb6e260d0e305dfc023a771f7953fe2ecdc28558fa2e58"
+  },
+  {
+    "path": "ForeverDB/Share.lua",
+    "bytes": 10087,
+    "sha256": "ef86ab9605d27d0474138f465afadda7af0b4fbf7ace8acbff3f0dd07a137a02"
+  },
+  {
+    "path": "ForeverDB/Tooltips.lua",
+    "bytes": 8179,
+    "sha256": "53e62b3bf50ede2880aa8130ec16c0526cdc94fe262da0b37bf402cb969a31b6"
+  },
+  {
+    "path": "ForeverDB/Trails.lua",
+    "bytes": 15497,
+    "sha256": "d95bfa1fad9b31af02d9c738703e88c982c00237d076304ed2b08b40ab742c6f"
+  },
+  {
+    "path": "ForeverDB/TravelPage.lua",
+    "bytes": 20755,
+    "sha256": "64ceb4272a477cb5961e2bc86d446ab6a740ba6358cb57777301180169bdb2c3"
+  },
+  {
+    "path": "ForeverDB/Trip.lua",
+    "bytes": 38652,
+    "sha256": "b433dfdd598ef0234aa290b127b072e9fc4ad800787f0995b72c43e2be6f2ccd"
+  },
+  {
+    "path": "ForeverDB/TripFollow.lua",
+    "bytes": 14198,
+    "sha256": "e02cfbcc40d27d560f0fa83d49924e9ab29321ee782d910f4fa7de88a453c15e"
+  },
+  {
+    "path": "ForeverDB/UI.lua",
+    "bytes": 99982,
+    "sha256": "ecb75efb69375f3abab4c7480f0f10b70a6d72e9a8d6e99ed6ae11de6082d9f0"
+  },
+  {
+    "path": "ForeverDB/VersionCheck.lua",
+    "bytes": 14471,
+    "sha256": "5dc7fbb1579d39a982be9028b97e47c196b1a430bf98ebc5408215f04e8ee7db"
+  },
+  {
+    "path": "ForeverDB/ZoneLevels.lua",
+    "bytes": 7327,
+    "sha256": "9994fd83f40fdcae74bba4c8768d0961d11c50c4763cb057dc2186ca4dcb0a3f"
+  },
+  {
+    "path": "ForeverDB_Helper/Arrow.lua",
+    "bytes": 7948,
+    "sha256": "ae071f7f1c5a491fce783ae53f8dfe63c0b6febd85113a18b445582aec7e0544"
+  },
+  {
+    "path": "ForeverDB_Helper/BestGear.lua",
+    "bytes": 12966,
+    "sha256": "42d05fecc58347de2f5a4ffcba55c9b7e4e6d9a077dff302f7fd777885084daf"
+  },
+  {
+    "path": "ForeverDB_Helper/Bindings.xml",
+    "bytes": 201,
+    "sha256": "7e185e91024c087be06f375b002cef5c00da74c9640107273c15a4acf396321a"
+  },
+  {
+    "path": "ForeverDB_Helper/Core.lua",
+    "bytes": 12326,
+    "sha256": "ff2f0712fc69c0ec4235aee106c3bb06f3b36289c2b78067117f3c6fefd6ad66"
+  },
+  {
+    "path": "ForeverDB_Helper/Data.lua",
+    "bytes": 21422,
+    "sha256": "9483e85f8417ef44c23daafac0f715234cb5a5cc713ae222f4380286dbc41b67"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Classic.lua",
+    "bytes": 328551,
+    "sha256": "d73b8ecf20b9988a051c205e7de941674c68ee362b3f80c82be5f3d3ed7748fa"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Dungeons.lua",
+    "bytes": 48644,
+    "sha256": "6200a4077d4f4ab06f00accf1a834cbcddf8408926f9437c191ce751575b9e9f"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Gear.lua",
+    "bytes": 273909,
+    "sha256": "3ce6b041e845006021728d5f43f4668ccfb6c811ea58b5a2343a32bb0c0b147a"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Items.lua",
+    "bytes": 55181,
+    "sha256": "bf0e80d930a98499d492c25fa92db6315cb2db8907deb2cc83f0f4ededd39c96"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Professions.lua",
+    "bytes": 139104,
+    "sha256": "3c76e1c459a876ff994e495988aafe7deb2498098c5806c8b115dcd1e40dba3b"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Scrolls.lua",
+    "bytes": 8438,
+    "sha256": "39ac20c7cc6c629f1a99d858984109ebe309b0ff5ea3dea483a94621e50de6e8"
+  },
+  {
+    "path": "ForeverDB_Helper/Data/Upload.lua",
+    "bytes": 475,
+    "sha256": "bd51708df9c69b514b5d224fa7c2ce162da211e7bfaddb0a3d8591d67f1a81b9"
+  },
+  {
+    "path": "ForeverDB_Helper/ForeverDB_Helper.toc",
+    "bytes": 1646,
+    "sha256": "ec2759a4987052457e5d8fdd42b21aed139c8f1f9f3f90a384f79ffe0492869b"
+  },
+  {
+    "path": "ForeverDB_Helper/Goals.lua",
+    "bytes": 16374,
+    "sha256": "fedf8a7bcd2893494f53dbb517a00f402619315363207866b6ac249edd418ac1"
+  },
+  {
+    "path": "ForeverDB_Helper/Init.lua",
+    "bytes": 2469,
+    "sha256": "0e40b2f347f783f73faddc01d11eccd120d4fd8758fa7889add30e252120358c"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/Inter-ExtraBold.ttf",
+    "bytes": 66836,
+    "sha256": "a2be3de90d1f7a14e5488884b50eb1254e4dba45c2ec7f635acab1cebd427dfd"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/Inter-OFL.txt",
+    "bytes": 4587,
+    "sha256": "2004a68b6ffa76dc6f0f0798adc36cc43b3391865bc00ad4a59106b79e840625"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/Inter-Regular.ttf",
+    "bytes": 66460,
+    "sha256": "4ef7803f07e61edcf285129b547c3f10dd24bd91fd4cd90b6abb178bd78dd5b8"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/Inter-SemiBold.ttf",
+    "bytes": 66640,
+    "sha256": "0d6d98ce9e33c9cfd3166164b48f472a01e1cce7fa9b7001686ffa01f5d831a2"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/arrow.tga",
+    "bytes": 16428,
+    "sha256": "1dded68bfb553e6f2a12b9a4bb80fc3d2bbfc5b4084163404d5fdead9f16cbe2"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/check.tga",
+    "bytes": 4140,
+    "sha256": "e8e3ccc348d988dab9c243b58a5ded7368a20b6bcb1d8dc86b3a8840a0cd265c"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/close.tga",
+    "bytes": 4140,
+    "sha256": "70a12ce1c4c0f9db2fd42413fbb398de6f5ab33ac60f28e8fcb49533e50cfc5f"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-dungeons.tga",
+    "bytes": 4140,
+    "sha256": "04abf3350be36ae192777704148b1feb28ef5eec7407095e360b4799a9069828"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-gear.tga",
+    "bytes": 4140,
+    "sha256": "1edd4748626657f6418395a8a38de2ba8b32df08c9d76aa0c095a56369eb514a"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-goals.tga",
+    "bytes": 4140,
+    "sha256": "6c8d2b1f7452ea331ac93dafb28575ce1e20a8b8682a1cc70665b1cae4a814a9"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-notes.tga",
+    "bytes": 4140,
+    "sha256": "cda6f6a17cd3a1748aeea05825fe5d2138d38670eff7b11255fdd04fc08c027b"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-professions.tga",
+    "bytes": 4140,
+    "sha256": "22bed54d18b1a50c925a5320cab7055bd40dc01a42ca36b62d422435758f4423"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-runs.tga",
+    "bytes": 4140,
+    "sha256": "a62347323948e1c580f8cc1c5b74477613b8ebb8739c2123fe28b1e80765c731"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-scrolls.tga",
+    "bytes": 4140,
+    "sha256": "79e18c8f83b491635bbb106271b4cd474dcb75f407a34aa7ea7f1591e5e0ea55"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-settings.tga",
+    "bytes": 4140,
+    "sha256": "183884e6ee12cd849d58def5190d4a938d42e48056579de794265d3e2018d016"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-today.tga",
+    "bytes": 4140,
+    "sha256": "ce47308ead2d3d9f137a3a97cecb3783cc61d6a6663ee7c678e539bc63beb685"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/icon-wishlist.tga",
+    "bytes": 4140,
+    "sha256": "e33ccea4ea17bfe3b7e5bbe978aa1dffc16d61092179655a44397df38eb0b013"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/logo.tga",
+    "bytes": 65580,
+    "sha256": "add7e264d846488870d1118e209a86e2312ad61d2c830c3fd67226f297f978bb"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/ring.tga",
+    "bytes": 16428,
+    "sha256": "adb802b38333f393dcb8fc107caddcd8ea59bec111735e37aa7a338a43f1df24"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/round.tga",
+    "bytes": 16428,
+    "sha256": "12feba29135dbcbf5eac4b95b677b1d84d65ff84b63bd9235b9ee45c2407632f"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/star.tga",
+    "bytes": 16428,
+    "sha256": "5a6de2c7566a2855be80d89c15d868fdbe789b1ba517f279ab02929390629038"
+  },
+  {
+    "path": "ForeverDB_Helper/Media/starline.tga",
+    "bytes": 16428,
+    "sha256": "9a30dfa1c159da589944116ad772be2a0b65acfadd0d6c974232486753d64fc3"
+  },
+  {
+    "path": "ForeverDB_Helper/Minimap.lua",
+    "bytes": 2989,
+    "sha256": "35f64ceaf6d753f36b0585e633b72f65a1261241225d90ffcfd190b958144239"
+  },
+  {
+    "path": "ForeverDB_Helper/Notes.lua",
+    "bytes": 5077,
+    "sha256": "55e83914c252fa58741a37fdfd71d9af9ba2c17dd69ab012a0cdce1b44a7ee4f"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/BestGear.lua",
+    "bytes": 8599,
+    "sha256": "c4935801e8b8c78a5c1ddfdd59e5d90d3c99b091cd352480b7b32e13e34410e6"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Dungeons.lua",
+    "bytes": 36291,
+    "sha256": "b0c5fec0d24226ab33ee8f3bd5c6fafe46605f07bd4ba370e4b594b3651570b6"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Goals.lua",
+    "bytes": 18929,
+    "sha256": "004fe170f48eabcfa915f869f605a391bb872ad986e4e2e4f4e82665c11efa2f"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Notes.lua",
+    "bytes": 8842,
+    "sha256": "a056f713bec9e2d328ffc983e027e122b89c59b8d95fc9729823e6c6a3074e38"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Professions.lua",
+    "bytes": 28780,
+    "sha256": "a59b0c20882e69f93c91e819dd043607073fd18c54f39b83f086d45e4ab8bdbb"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Runs.lua",
+    "bytes": 6241,
+    "sha256": "f52415cb8a47b5e84e839a9b1d308f50b648c2f38e0e77301976ccb500fe1d4c"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Scrolls.lua",
+    "bytes": 4904,
+    "sha256": "274c3feab2748c65df81885001f60bc0ecd94bd0769093379f2348329653e310"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Send.lua",
+    "bytes": 9115,
+    "sha256": "c806eb55a8587fd9bd51ea52f9f231f8fa4a5fad87aab031d1a107565bfcbce2"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Settings.lua",
+    "bytes": 8929,
+    "sha256": "5d06d7f6bd0d21159e638c141ea02f1ceca16a8a5558d822be805245486b9f92"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Today.lua",
+    "bytes": 12302,
+    "sha256": "755bb3dae332f02de003ba4a2e28a99f91392f37f31e209579358cbff2465ee7"
+  },
+  {
+    "path": "ForeverDB_Helper/Pages/Wishlist.lua",
+    "bytes": 5604,
+    "sha256": "86fe05526aeb6d88314e27dfb0630f41920d3b22132d88d877be59035d734459"
+  },
+  {
+    "path": "ForeverDB_Helper/Panel.lua",
+    "bytes": 10654,
+    "sha256": "d3f00a206689047d5d336dda326b8e6eb2f5842161dc4fbdaff8402dc7a7d81a"
+  },
+  {
+    "path": "ForeverDB_Helper/Professions.lua",
+    "bytes": 32202,
+    "sha256": "b002bb0e6c7ded789cbe8ef0f16be1887bf50577e1b776ec1004fa1f8a1f58dc"
+  },
+  {
+    "path": "ForeverDB_Helper/Runs.lua",
+    "bytes": 11009,
+    "sha256": "10ff112c8153c810955b54e0f4e02855976b3f7832c446b825d9b36765abda81"
+  },
+  {
+    "path": "ForeverDB_Helper/Scrolls.lua",
+    "bytes": 8018,
+    "sha256": "81f2a09e5670c73cee80d2bbea6ff93120c1243c6db3f12f2da23a579cfe0b77"
+  },
+  {
+    "path": "ForeverDB_Helper/SendCode.lua",
+    "bytes": 13909,
+    "sha256": "8b2cf7e4d007711d94c89715ea0637bdc7d106a2c8d76d42e9da553563112e6d"
+  },
+  {
+    "path": "ForeverDB_Helper/Settings.lua",
+    "bytes": 12069,
+    "sha256": "64ae0dd6a268d0f005ac5830eff016db0b6982ffa3f54ce7d14aa6479e40edc4"
+  },
+  {
+    "path": "ForeverDB_Helper/Share.lua",
+    "bytes": 15467,
+    "sha256": "5d05b3e90cfea79150b8368cf5b4c0e8b0783d1cde785234b57e813f678eef85"
+  },
+  {
+    "path": "ForeverDB_Helper/Sync.lua",
+    "bytes": 9830,
+    "sha256": "8e71b5bd7b97e434fb68eab74981060cd8876f8c8fc01c7443abede668f4b6d3"
+  },
+  {
+    "path": "ForeverDB_Helper/UI.lua",
+    "bytes": 42670,
+    "sha256": "a775585f1d38a37454139005ad2031475e9ba10a8cdc669b40900834b87a754b"
+  },
+  {
+    "path": "ForeverDB_Helper/Window.lua",
+    "bytes": 14590,
+    "sha256": "1897ff3ddb8d6f35976361f4a20abe2977986b1e30f551ec44be1c26e30b44d2"
+  },
+  {
+    "path": "ForeverDB_Helper/Wishlist.lua",
+    "bytes": 12374,
+    "sha256": "9fcd51e2c4e74e69fe27aa15ce1d1ee1c417062f116e284312d699b3ceed0f87"
+  }
+]
