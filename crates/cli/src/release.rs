@@ -1,5 +1,6 @@
 //! Release gate I/O: bounded evidence, exact Git/source binding and verified packs.
 //! All referenced game/source material is data; no Lua or SQL is executed.
+mod admission;
 pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -437,6 +438,7 @@ struct PackSources {
 }
 #[derive(Default)]
 struct Catalog {
+    admitted: BTreeMap<String, azeroth_core::source_admission::Source>,
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
     sources: BTreeSet<String>,
@@ -547,6 +549,7 @@ fn bind_v2_pack(
     )?)
     .map_err(|_| "Invalid v2 sources")?;
     for source in sources.sources {
+        admission::pack_source(&source, &catalog.admitted)?;
         let accepted = inventory
             .sources
             .iter()
@@ -629,7 +632,10 @@ fn packs(
         .iter()
         .map(|s| (s.id.as_str(), s.revision.as_str()))
         .collect();
-    let mut catalog = Catalog::default();
+    let mut catalog = Catalog {
+        admitted: admission::load(root, inventory, evidence, budget)?,
+        ..Catalog::default()
+    };
     let mut count = 0;
     for pack in &evidence.packs {
         let manifest_path = root.join(pack.manifest.path.as_str());
@@ -716,6 +722,7 @@ fn packs(
         )?)
         .map_err(|_| "Invalid pack sources")?;
         for source in sources.sources {
+            admission::pack_source(&source, &catalog.admitted)?;
             let Some(revision) = accepted.get(source.id.as_str()) else {
                 return Err("Pack source is not in the accepted inventory");
             };

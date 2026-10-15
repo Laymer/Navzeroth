@@ -1,0 +1,13 @@
+# Offline source admission release gate
+
+Owner: source_admission worker; claim 9c52cd8; baseline 0a68234 after NodeFacts. Root explicitly transferred core release and CLI release/material binding. Worktree `/tmp/navzeroth-release-admission-gate`, branch `feat/release-admission-gate`.
+
+Added optional, empty-omitted `Evidence.admission_registry` FileRef. Existing evidence decodes unchanged; accepted sources require the pin for both candidate and publication readiness. Offline verification parses the bounded registry, requires admitted compatible rights with exact accepted IDs/revisions and origin, binds every rights/access proof hash to verified permission evidence, and matches original file paths/hashes/lengths. Pack publisher/license/attribution/revision must match, and allowed fields and known nonempty transformation declarations must be subsets of selected original-file permissions. Catalog transformations are not compared byte-for-byte with original input. No production fingerprint change or network retrieval.
+
+Registry paths explicitly equal repository-relative original source-material paths; no unreviewed remapping. The registry joins private proof closure and cannot ship even via a public-notice alias. Existing release material fixture helpers now create clearly synthetic admissions; public-permission-notice and Git LFS fixtures re-pin their exact grants/files. The committed real registry still admits zero sources.
+
+Checks: core release 15 tests; CLI library 11 tests; release materials 11 tests; readiness 14 tests pass. Both environment-dependent material tests were explicitly run with PS7/Git LFS and passed. Strict core+CLI all-target Clippy, Rustfmt and diff checks pass. PS7 candidate transport 14, release packaging 29, material delivery 19 checks pass. Negative tests cover missing/unreviewed/NC/unknown/revision/source/grant/origin/metadata/field/path/hash mismatches, including wrong/unknown transformations, valid multiple-file transformation declarations, borrowing fields from an unselected file and relabelling private registry bytes. Candidate deferral never waives missing admission. No real Windows install/live session or rights acceptance claimed.
+
+Next: coordinator independent review and merge into pack/release branch. Future acquisition adapters still need admission enforced before retrieval. Registry hashes identify reviewed bytes and cannot authenticate a rights holder or replace independent legal/content review.
+
+Coordinator review found a missing declared-transformation check; fixed before commit with exact selected-file transformation subset checks and regressions.
