@@ -22,8 +22,10 @@ will be recorded after push. Initial shell lacked Cargo on PATH; the installed
 
 Independent read-only review by `/root/source_admission` found no blocker in
 core/CLI defer and I/O predicates and requested CLI/default-marker regressions;
-both were added and pass. Packaging positive candidate transport still requires
-synthetic integration and hosted review before merge.
+both were added and pass. Independent packaging review and 14 positive/negative synthetic transport tests
+are recorded in [transport review](2026-10-15-candidate-transport-review.md).
+Root repeated those 14 checks on PowerShell 7. Both Windows shells now run them
+in hosted packaging; fresh nine-check completion is still required before merge.
 
 Next: complete packaging review and nine checks; integrate independently completed
 PR1–3; implement frozen v2 contracts/consumers, capacity and party evidence matrix.
