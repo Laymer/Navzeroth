@@ -44,7 +44,7 @@ fn gaps() -> Vec<ReminderGap> {
 }
 fn delivery(
     rule: &ContextRule,
-    content: &azeroth_storage::content::ContentRevision,
+    content: &dyn crate::catalog::CatalogView,
     fixture: bool,
 ) -> RuleDelivery {
     if fixture {
@@ -55,8 +55,7 @@ fn delivery(
     }
     for id in &rule.evidence {
         let Some(e) = content
-            .envelope
-            .payload
+            .reference()
             .evidence
             .iter()
             .find(|e| e.id == *id && e.context == rule.context)
@@ -65,7 +64,7 @@ fn delivery(
         };
         if !e.conflicts.is_empty()
             || content
-                .conflicts
+                .conflicts()
                 .iter()
                 .any(|c| c.preferred == *id || c.others.contains(id))
         {
@@ -74,10 +73,10 @@ fn delivery(
         if e.confidence != Confidence::VerifiedOnBuild {
             return RuleDelivery::UnverifiedEvidence;
         }
-        let Some(source) = content.sources.iter().find(|s| s.id == e.source) else {
+        let Some(source) = content.sources().iter().find(|s| s.id == e.source) else {
             return RuleDelivery::MissingEvidence;
         };
-        if source.verified_revision.value() != Some(&content.envelope.payload.revision) {
+        if source.verified_revision.value() != Some(&content.reference().revision) {
             return RuleDelivery::SourceRevisionUnknown;
         }
     }
@@ -136,13 +135,13 @@ fn evaluate(
     now: Option<UtcMillis>,
 ) -> Result<(ReminderView, Vec<ContextRule>)> {
     let snapshot = store.current_snapshot(key)?;
-    let content = store.active_content_revision(&ContentScope {
+    let content = store.active_catalog_revision(&ContentScope {
         context: key.context.clone(),
         fixture: key.fixture,
     })?;
     let rules = content
         .as_ref()
-        .map(|c| c.envelope.payload.rules.clone())
+        .map(|c| c.reference().rules.clone())
         .unwrap_or_default();
     let deliveries = rules
         .iter()
@@ -167,9 +166,7 @@ fn evaluate(
         })
         .cloned()
         .collect::<Vec<_>>();
-    let revision = content
-        .as_ref()
-        .map(|c| c.envelope.payload.revision.clone());
+    let revision = content.as_ref().map(|c| c.reference().revision.clone());
     let state = store.reminder_state(key)?;
     let clock = context(now);
     let plan = if state.enabled {

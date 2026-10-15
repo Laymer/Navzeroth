@@ -66,6 +66,16 @@ impl<'de> Deserialize<'de> for Strict {
         d.deserialize_any(V)
     }
 }
+pub(crate) fn strict_value(text: &str) -> Result<Value> {
+    let Strict(value) = serde_json::from_str(text).map_err(|_| {
+        AppError::new(
+            ErrorCode::InvalidInput,
+            "Invalid or duplicate-key JSON",
+            false,
+        )
+    })?;
+    Ok(value)
+}
 pub(super) fn request(text: &str) -> Result<super::PreparationRequest> {
     if text.len() > super::MAX_REQUEST_BYTES {
         return Err(AppError::new(

@@ -156,7 +156,9 @@ impl DatabaseHost {
         ));
         crate::diagnostics::build_with_context(
             snapshot.as_ref(),
-            content.as_ref(),
+            content
+                .as_ref()
+                .map(|c| c as &dyn crate::catalog::CatalogView),
             Some(&telemetry),
             Some(&clock),
             None,

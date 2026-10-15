@@ -1,0 +1,4 @@
+.authored-content-picker { min-inline-size: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; }
+.authored-content-picker label { display: block; min-width: 0; }
+.authored-content-picker select, .authored-content-picker button { max-width: 100%; box-sizing: border-box; font: inherit; }
+.authored-content-picker button { overflow-wrap: anywhere; }

@@ -1,3 +1,5 @@
+import {AuthoredContentPicker} from "./AuthoredContentPicker";
+import type {AuthoredSelection} from "../commands/authoredContent";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { ProfileSummary } from "../commands/contract";
@@ -11,15 +13,16 @@ export function DungeonsScreen({client,refreshKey}:{client:CommandClient;refresh
   const [parties,setParties]=useState<string[]>([]);
   const [kind,setKind]=useState<"character"|"party">("character");
   const [selected,setSelected]=useState("");
+  const [authored,setAuthored]=useState<AuthoredSelection|null>(null);
   const [text,setText]=useState("");
   const [origin,setOrigin]=useState("");
   const [error,setError]=useState("");
   const [busy,setBusy]=useState<number|null>(null);
   const [report,setReport]=useState<{ticket:number;value:PreparationReport}|null>(null);
   const epoch=useRef(0);
-  const owner=useRef({client,refreshKey,kind,selected,text,origin});
-  if(owner.current.client!==client || owner.current.refreshKey!==refreshKey || owner.current.kind!==kind || owner.current.selected!==selected || owner.current.text!==text || owner.current.origin!==origin) {
-    owner.current={client,refreshKey,kind,selected,text,origin};epoch.current++;
+  const owner=useRef({client,refreshKey,kind,selected,text,origin,authored});
+  if(owner.current.client!==client || owner.current.refreshKey!==refreshKey || owner.current.kind!==kind || owner.current.selected!==selected || owner.current.text!==text || owner.current.origin!==origin || owner.current.authored!==authored) {
+    owner.current={client,refreshKey,kind,selected,text,origin,authored};epoch.current++;
   }
   useEffect(()=>{let live=true;
     void Promise.all([client.listProfiles(),client.listParties()]).then(([p,g])=>{
@@ -38,17 +41,18 @@ setSelected(old=>options.includes(old)?old:options[0]??"");
     if(text.trim()){try{parsed=JSON.parse(text);}catch{setError("Preparation package JSON is invalid.");return;}}
     const ticket=++epoch.current;setBusy(ticket);setReport(null);setError("");
     const subject=kind==="party"?{kind,party_id:selected}:{kind,profile_id:selected};
-    const result=await client.getDungeonPreparation(JSON.stringify({schema_version:1,subject,package:parsed,origin:origin.trim()||null}));
+    const result=await client.getDungeonPreparation(JSON.stringify({schema_version:1,subject,package:parsed,authored,origin:origin.trim()||null}));
     if(ticket!==epoch.current)return;
     if(result.ok)setReport({ticket,value:result.value});else setError(result.error.message);
     if(ticket===epoch.current)setBusy(null);
   }
   return <section className="dungeon-preparation" aria-labelledby="dungeons-heading">
     <h2 id="dungeons-heading">Dungeon preparation</h2>
-    <p>No verified Deadmines package is installed. Local references and synthetic examples do not establish dungeon access, useful rewards or encounter facts.</p>
+    <p>Select an installed authored dungeon or inspect a local reference. Missing sections remain unavailable; synthetic examples do not establish gameplay facts.</p>
     <label>Preparation members <select value={kind} onChange={e=>{const next=e.target.value as "character"|"party";setKind(next);setSelected(next==="party"?parties[0]??"":profiles.find(p=>p.data_mode==="stored")?.id??"");setError("");}}><option value="character">Imported character</option><option value="party">Local party</option></select></label>
     <label>Selected {kind} <select value={selected} onChange={e=>{setSelected(e.target.value);setError("");}}><option value="">Select stored {kind}</option>{kind==="party"?parties.map(id=><option key={id} value={id}>{id}</option>):profiles.filter(p=>p.data_mode==="stored").map(p=><option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
     {!stored&&<p>Import a character snapshot and optionally create a local party. Browser demo profiles cannot supply current preparation assessments.</p>}
+    <AuthoredContentPicker client={client} kind="dungeons" subject={kind==="party"?{kind,party_id:selected}:{kind,profile_id:selected}} refreshKey={refreshKey} value={authored} onChange={v=>{setAuthored(v);setText("");setError("");}}/>
     <details><summary>Advanced local reference editor</summary><p>Local declarations require exact content references. Loading an example does not install verified dungeon coverage.</p>
     <label>Local preparation package JSON <textarea value={text} maxLength={1048576} rows={8} onChange={e=>{setText(e.target.value);setError("");}}/></label>
     <button type="button" onClick={()=>{setText(JSON.stringify(example,null,2));setOrigin("demo-node-1");setError("");}}>Load synthetic preparation reference</button>
@@ -77,7 +81,7 @@ function Preparation({value}:{value:PreparationReport}) {
   return <div>
     {value.fixture&&<p className="demo-label">SYNTHETIC — engineering reference, not verified gameplay coverage</p>}
     <p>Context: {value.context.build.edition}/{value.context.build.build}/{value.context.build.interface}; {value.context.namespace}. Content: {value.revision??"unavailable"}.</p>
-    {packageValue&&<><h3>{packageValue.title}</h3><p>Explicit local declaration; cited evidence categories do not independently verify this package.</p>
+    {packageValue&&<><h3>{packageValue.title}</h3><p>{value.authored?"Authored record resolved from the exact active revision; review cited evidence and missing sections.":"Explicit local declaration; cited evidence categories do not independently verify this package."}</p>
       <p>Declared entrance: {packageValue.entrance.observation.status==="known"?packageValue.entrance.observation.value.id:packageValue.entrance.observation.status}.</p>
       <p>Declared group formation: {describeObservation(packageValue.formation_ms.observation,v=>`${v.min_ms} to ${v.max_ms} ms`)}. Declared run estimate: {describeObservation(packageValue.run_ms.observation,v=>`${v.min_ms} to ${v.max_ms} ms`)}. These are separate from measured personal history.</p>
       <List title="Before departure" section={packageValue.before_departure} checklist/><List title="Before entry" section={packageValue.before_entry} checklist/><List title="Reference encounter notes" section={packageValue.encounter_notes}/>
@@ -90,6 +94,7 @@ function Preparation({value}:{value:PreparationReport}) {
       <p>Consumable inventory is unavailable in current snapshots; possession is not inferred.</p>
       <h4>Declared reward references</h4><ul>{member.rewards.map(reward=><li key={`${reward.source}-${reward.item.item_id}`}>{reward.item.item_id} via {reward.source}; declared role label <RewardRole packageValue={packageValue} reward={reward}/>; item requirements <Condition value={reward.item_requirement}/>; source requirements <Condition value={reward.acquisition_requirement}/>; source probability {describeObservation(reward.probability)}; cost {describeObservation(reward.cost)}. No drop guarantee or role benefit is inferred.</li>)}</ul>
     </details>)}
+    {value.authored_travel&&<section aria-label="Authored travel dependencies"><h3>Authored travel dependencies</h3><p>Availability: {value.authored_travel.declaration.observation.status}. These directed connections are reference facts, not an ordered route or proof of current member access.</p>{value.authored_travel.declaration.observation.status==="known"&&value.authored_travel.edges.length===0&&<p>The authored list is explicitly empty.</p>}<ul>{value.authored_travel.edges.map(edge=><li key={edge.id}>{edge.id}: {edge.from.id} → {edge.to.id} ({edge.mode})</li>)}</ul><details><summary>Travel facts and provenance</summary><pre>{JSON.stringify(value.authored_travel,null,2)}</pre></details></section>}
     <h3>Declared entrance travel</h3>{value.route?.outcome.status==="complete"?<p>Estimated shared stateless route: {value.route.outcome.route?.total_ms} ms. Entrance association remains a local declaration.</p>:<p>No actionable supported route is available.</p>}
     <ul>{value.route_exclusions.map((e,index)=><li key={index}>{e.edge}: {e.character??"shared route"}; {e.reason.replaceAll("_"," ")} {e.condition&&<Condition value={e.condition}/>}</li>)}</ul>
     <h3>Referenced evidence and source policy</h3><ul>{value.evidence.map(e=><li key={e.id}>{e.id}: {e.confidence}; source {e.source}; license {describeObservation(e.license)}; redistribution {describeObservation(e.redistribution)}; offline use {describeObservation(e.offline_usable)}.</li>)}</ul>

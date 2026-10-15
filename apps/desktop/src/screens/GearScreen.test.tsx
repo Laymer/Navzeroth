@@ -14,6 +14,7 @@ function adapter(compare: (request: GearRequest) => Promise<GearReport>, fixture
   return { invoke: vi.fn((command, input) => {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic profile", fixture }] as never);
     if (command === "get_planning_catalog") return Promise.resolve({snapshot_id:"s",revision:"r",fixture,nodes:[],objectives:[]} as never);
+    if (command === "get_authored_catalog") return Promise.resolve({revision:"r",records:[],total:0,next_offset:null} as never);
     if (command === "get_gear_catalog") return Promise.resolve({ ...catalog, fixture } as never);
     if (command === "compare_gear") return compare(JSON.parse((input as {text:string}).text) as GearRequest) as Promise<never>;
     return Promise.reject(new Error("unexpected command"));
@@ -73,6 +74,7 @@ it("retains model edits while pruning removed candidate and hand references", as
   const client = createClient({ invoke: vi.fn((command) => {
     if (command === "list_profiles") return Promise.resolve([{id:"p",display_name:"Synthetic",fixture:true}] as never);
     if (command === "get_planning_catalog") return Promise.resolve({snapshot_id:"s",revision:"r",fixture:true,nodes:[],objectives:[]} as never);
+    if (command === "get_authored_catalog") return Promise.resolve({revision:"r",records:[],total:0,next_offset:null} as never);
     if (command === "get_gear_catalog") return Promise.resolve(currentCatalog as never);
     return Promise.reject(new Error("unexpected"));
   }) });
