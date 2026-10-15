@@ -40,6 +40,12 @@ correction completeness, resolved conflicts or a complete target inventory.
 
 ## Current research disposition (2026-10-15)
 
+- **ForeverDB is the preferred candidate**, replacing Wowhead at the user's request.
+  Its advertised addon GPLv3 licence fits the selected licence families, but archive
+  scope, exact file pins, acquisition permission and target validation are pending.
+  Preserve Forever extraction, player observation and Classic inference separately.
+  See the [provider review](foreverdb.md) and [audit metadata](foreverdb-review.json).
+
 - Wowhead is research-only. [Fanbyte terms](https://corp.fanbyte.com/legal/terms)
   sections 4 and 8 restrict redistribution and automated extraction. No applicable
   grant is recorded. The page was read during this task; no source rows retrieved.

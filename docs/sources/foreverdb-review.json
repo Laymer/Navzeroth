@@ -1,0 +1,109 @@
+{
+  "audit_format": "navzeroth-provider-selection",
+  "audit_schema_version": 1,
+  "reviewed_on": "2026-10-15",
+  "owner": "Codex /root",
+  "project_baseline": "32c5e2d9c3cb3f374001ef7a45b16d5b4da2508d",
+  "preferred_candidate": "foreverdb",
+  "supersedes_candidate": "wowhead",
+  "admitted": false,
+  "target": {
+    "edition": "wow_forever",
+    "build": "1.60.1.70374",
+    "interface": "16001"
+  },
+  "publisher_metadata": {
+    "url": "https://foreverdb.net/llms.txt",
+    "origin_build": "1.60.1.70338",
+    "extracted_on": "2026-10-14",
+    "target_validation": "unverified",
+    "counts_are_completeness_evidence": false
+  },
+  "release_candidate": {
+    "name": "ForeverDB 0.34.0",
+    "curseforge_project_id": 1725334,
+    "curseforge_file_id": 9150774,
+    "filename": "ForeverDB-0.34.0-store.zip",
+    "file_page": "https://www.curseforge.com/wow/addons/foreverdb/files/9150774",
+    "advertised_license": "GPL-3.0",
+    "license_page": "https://www.curseforge.com/wow/addons/foreverdb/license",
+    "artifact_sha256": "197af97c02444077e8edd7883eeeb6328828cf9b2f06c540d5708d89894a17d0",
+    "archive_inspected": true,
+    "bytes": 3680905,
+    "member_count": 176,
+    "uncompressed_bytes": 11215661,
+    "downloaded_from": "Wago publisher-linked beta release 0.34.0, ordinary public download",
+    "wago_release_page": "https://addons.wago.io/addons/foreverdb/versions",
+    "archive_build": "1.60.1.70338",
+    "archive_data_version": "2026-10-12.1bcd12db",
+    "interface": "16001",
+    "meta_path": "ForeverDB/Data/Meta.lua",
+    "root_gpl_license_file_present": false
+  },
+  "source_strata": [
+    "forever_client_extraction",
+    "forever_player_observations",
+    "classic_cmangos_inference"
+  ],
+  "rights_disposition": "Advertised GPL-3.0 is compatible. Canonical GPL text is retained; no fresh permission is needed for covered GPL material. Establish exact covered scope, preferred form for modification and applicable corresponding source; absence of named generators alone does not determine what must be delivered. Preserve attribution, modification dates/notices, same-licence obligations and corresponding source for covered transformed data. Website/media scope is not inferred.",
+  "access_disposition": {
+    "website_api": "excluded by published robots policy; not requested",
+    "curseforge_download": "HTTP 403 on ordinary published download page; no bypass attempted",
+    "wago_project_url": "https://addons.wago.io/addons/kGr9ReKy",
+    "publisher_contacted": false,
+    "wago_download": "Succeeded through normal browser beta-release download; no access-control bypass."
+  },
+  "research_evidence": [
+    {
+      "url": "https://foreverdb.net/robots.txt",
+      "bytes": 820,
+      "sha256": "985529cf3a29ad83897d4221331c06b6da747bdbe1952cc31c093f6c46ec0d4a",
+      "inspection": "bounded research fetch; metadata only; not admitted source content"
+    },
+    {
+      "url": "https://foreverdb.net/llms.txt",
+      "bytes": 19930,
+      "sha256": "f7f5016f66356183831d5a1c11e5b1206b8d759501e1aa9b3cabd095ea77fc05",
+      "inspection": "bounded research fetch; metadata only; not admitted source content"
+    },
+    {
+      "url": "https://foreverdb.net/about",
+      "bytes": 46753,
+      "sha256": "6e5560ead905eb98523f818eac472dda594c74f7667ba072c56e3afcbe4441bc",
+      "inspection": "bounded research fetch; metadata only; not admitted source content"
+    },
+    {
+      "url": "https://foreverdb.net/addons",
+      "bytes": 56181,
+      "sha256": "99a756b78830f6138712dc6c93a4ee259609cc284e532f89e843886e8b453bc0",
+      "inspection": "bounded research fetch; metadata only; not admitted source content"
+    },
+    {
+      "url": "https://foreverdb.net/verify",
+      "bytes": 43734,
+      "sha256": "86960add4928d0e885f996bca35b14ea62cec62e105ba649ed56e9ddb26142c9",
+      "inspection": "bounded research fetch; metadata only; not admitted source content"
+    },
+    {
+      "url": "https://foreverdb.net/contact",
+      "bytes": 44101,
+      "sha256": "51742cbb6498cea7b1f811ac4f415bc832bd6e3235f6a6dc35b5031c2d1f66c4",
+      "inspection": "bounded research fetch; metadata only; not admitted source content"
+    }
+  ],
+  "required_next_inputs": [
+    "reproducible retrieval declaration for the pinned archive (ordinary Wago download verified; existing automated registry URL subset does not permit signed query URLs)",
+    "file-level licence, copyright and attribution review",
+    "allowed file/field/transform lists and supported retrieval method",
+    "per-record origin and 70374 validation",
+    "independent target inventory; complete corresponding source when required"
+  ],
+  "archive_member_manifest": "foreverdb-0.34.0-members.json",
+  "license_text": {
+    "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+    "path": "licenses/GPL-3.0.txt",
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "scope": "Verbatim canonical licence text; not an upstream data-scope grant"
+  }
+}
