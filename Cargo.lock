@@ -154,6 +154,7 @@ name = "azeroth-storage"
 version = "0.8.1"
 dependencies = [
  "azeroth-core",
+ "image",
  "rusqlite",
  "serde",
  "serde_json",

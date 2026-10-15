@@ -9,7 +9,7 @@ use rusqlite::{Connection, OpenFlags, params_from_iter, types::Value};
 use serde::Serialize;
 use std::{collections::BTreeMap, path::Path};
 
-pub const MAX_BACKUP_BYTES: u64 = 512 * 1024 * 1024;
+pub const MAX_BACKUP_BYTES: u64 = 4 * 1024 * 1024 * 1024;
 const MAX_ROWS: usize = 1_000_000;
 const MAX_CELL: usize = 32 * 1024 * 1024;
 const TABLES: &[&str] = &[
@@ -22,6 +22,8 @@ const TABLES: &[&str] = &[
     "source_records",
     "source_conflicts",
     "dataset_manifests",
+    "catalog_asset_blobs",
+    "catalog_asset_layers",
     "active_datasets",
     "party_profiles",
     "party_participants",
@@ -451,6 +453,7 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     }
     for id in ids(conn, "SELECT id FROM dataset_revisions")? {
         let revision = crate::content::load(conn, id)?;
+        crate::catalog_assets::validate_revision_assets(conn, id, &revision)?;
         let context = revision.context();
         let columns:(String,String,String,String,bool,String)=conn.query_row("SELECT edition,build,interface,namespace,is_fixture,revision FROM dataset_revisions WHERE id=?1",[id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).db()?;
         let namespace =
