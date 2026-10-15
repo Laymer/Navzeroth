@@ -100,3 +100,25 @@ They do not update aggregate release acceptance rows, establish complete
 inventories/rights or bind a frozen1.0.0candidate. Windows PowerShell5.1 helper
 checks passed separately with synthetic inputs; no interactive desktop acceptance
 is inferred.
+
+
+## Checked completion-reader update — 2026-10-15
+
+After main840939f passed all nine hosted checks and the three source jobs, the
+operator confirmed WoW closed; the coordinator also checked no WowB process was
+running. Prior addon and project SavedVariables were backed up privately. The
+existing installer installed all21addon files from840939f, verified against exact
+Git bytes with no extras; the project SavedVariables SHA stayed unchanged. The
+operator then saved/reloaded without errors on another character, confirmed
+visible level13, and confirmed the exact exported5completed/9incomplete quest
+counts. Actual strict inspection reports fixturefalse, target70374tuple, Known
+level13,14quest records with all14completion booleans readable,19equipment slots
+with10known and0objectives; clockuncertain. This is narrow development verification
+of the separate getter, not turn-in/history/objective or final acceptance evidence.
+The earlier level30capture remains historical; use different anonymous profiles
+for distinct characters. Raw exports remain private.
+
+The operator reports C_EventUtils.IsEventValid and IsCallbackEvent as functions,
+and IsEventValid returned true for QUEST_TURNED_IN and QUEST_LOG_UPDATE. This is
+only reported event availability; callback dispatch and payload remain unverified.
+The opt-in recorder implementation uses only QUEST_TURNED_IN, with no log polling.

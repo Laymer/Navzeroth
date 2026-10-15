@@ -37,6 +37,8 @@ pub struct Snapshot {
     pub clock_trust: azeroth_core::observation::ClockTrust,
     pub quest_records: usize,
     pub quests_with_readable_completion: usize,
+    pub completed_quests: usize,
+    pub incomplete_quests: usize,
     pub equipment_slots: usize,
     pub known_equipment_slots: usize,
     pub objective_records: usize,
@@ -47,6 +49,7 @@ pub struct Session {
     pub fixture: bool,
     pub target_tuple_matches: bool,
     pub events: usize,
+    pub quest_turn_in_events: usize,
     pub maximum_elapsed_ms: Option<u64>,
 }
 
@@ -66,6 +69,17 @@ fn session(text: &str) -> Result<Session, &'static str> {
             && build.build.as_str() == "1.60.1.70374"
             && build.interface.as_str() == "16001",
         events: document.batch.events.len(),
+        quest_turn_in_events: document
+            .batch
+            .events
+            .iter()
+            .filter(|event| {
+                matches!(
+                    event.kind,
+                    azeroth_core::sessions::SessionEventKind::QuestTurnIn { .. }
+                )
+            })
+            .count(),
         maximum_elapsed_ms: document
             .batch
             .events
@@ -99,6 +113,16 @@ fn snapshot(text: &str) -> Result<Snapshot, &'static str> {
             .quests
             .values()
             .filter(|q| q.completed.value().is_some())
+            .count(),
+        completed_quests: data
+            .quests
+            .values()
+            .filter(|q| q.completed.value() == Some(&true))
+            .count(),
+        incomplete_quests: data
+            .quests
+            .values()
+            .filter(|q| q.completed.value() == Some(&false))
             .count(),
         equipment_slots: data.equipment.len(),
         known_equipment_slots: data

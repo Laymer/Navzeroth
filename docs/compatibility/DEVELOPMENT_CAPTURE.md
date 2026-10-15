@@ -28,9 +28,9 @@ capability status vocabulary refuses rather than accepting a claimed pass.
 Output contains the diagnostic build tuple and counts, plus an optional validated
 snapshot summary: fixture marker, target-tuple match, level status/value, clock
 trust and counts of quest/equipment/objective records, including readable
-completion flags and known equipment-slot observations. A present session export
+completion flags, separate true/false completion counts and known equipment-slot observations. A present session export
 also passes the existing bounded session contract and yields only fixture/target
-markers, event count and maximum session-relative elapsed milliseconds. This
+markers, event count, quest turn-in event count and maximum session-relative elapsed milliseconds. This
 maximum is not active play time or a total across sessions. Missing exports remain
 explicit. Raw strings, character/account identifiers, item/quest identities,
 locations, paths and arbitrary diagnostic details are not copied into the report.
@@ -47,3 +47,19 @@ and precise limitations. Final release acceptance still uses
 [Start-AcceptanceSession.ps1](../../scripts/windows/Start-AcceptanceSession.ps1)
 and the [release runbook](V1_ACCEPTANCE_RUNBOOK.md) against the frozen full-content
 candidate, including its inventory and production fingerprint.
+
+
+For opt-in turn-in observations, use `/anavsession start-quests <anonymous-profile-id>`
+only on an identified checked build. `/anavsession start` retains manual-only behavior.
+The addon requires supported normal event registration. It observes only the bounded
+quest identity from `QUEST_TURNED_IN` while this mode is recording; it ignores
+rewards and does not observe events while paused/stopped. Build changes or unreadable
+identities stop the recording with a fixed diagnostic. Time before a turn-in remains
+unclassified; the event establishes no objective mapping, loot, productive duration,
+quest history or automatic plan advancement. Capacity refusal retains the prior valid
+batch. Stop/export/reload remain manual; recordings never resume across reload.
+
+For an operator check, start this mode, turn in one available quest yourself, then
+stop, export and reload. Compare the observed event count with your actions. If no
+quest is available, leave actual dispatch/payload behavior unverified. Keep raw
+exports private and do not promote a development observation into final acceptance.

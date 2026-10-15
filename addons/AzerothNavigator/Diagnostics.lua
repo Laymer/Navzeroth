@@ -644,6 +644,22 @@ function Diagnostics.attach(env)
     if type(env.GetTime) == 'function' then return env.GetTime() end
   end, function() return clock:capture() end)
   state.session_recorder = recorder
+  local recordingBuild, questEventsEnabled
+  local function buildIdentity(build)
+    return build.version .. '/' .. build.build .. '/' .. build.interface
+  end
+  local function questTurnIn(questId)
+    if not questEventsEnabled or recorder:status().phase~='recording' then return end
+    local ok,result,code=pcall(function()
+      local build=Capabilities.probe(env).build
+      if not Capabilities.isCaptureTarget(build) or buildIdentity(build)~=recordingBuild then
+        return recorder:unavailable()
+      end
+      return recorder:questTurnIn(questId)
+    end)
+    if not ok then recorder:unavailable();code='session_observation_unavailable' end
+    if not ok or not result then say('quest milestone recording stopped (' .. code .. ')') end
+  end
   local function sessionSlash(message)
     local command, profile = '', nil
     if type(message) == 'string' then
@@ -657,6 +673,10 @@ function Diagnostics.attach(env)
         '; clock consistency=' ..
         (status.clock_warning or 'no detected inconsistency; trust not implied') ..
         '; observation=' .. (status.observation_warning or 'none'))
+      say(questEventsEnabled and 'Quest turn-in mode enabled for this recording' or
+        'Manual recording mode; quest turn-in events are not collected')
+      say(state.quest_turn_in_event_available and 'Quest turn-in event registration available' or
+        'Quest turn-in event registration unavailable')
       return
     end
     if command == 'export' then
@@ -669,17 +689,26 @@ function Diagnostics.attach(env)
         ' bytes); reload/logout, then import AzerothNavigatorDB / session_export') end
       return
     end
-    if not ({start=true, sample=true, pause=true, resume=true, stop=true})[command] then
-      say('/anavsession start <anonymous-profile-id> | sample | pause | resume | stop | ' ..
-        'export | status')
+    local actions={start=true, ['start-quests']=true, sample=true,
+      pause=true, resume=true, stop=true}
+    if not actions[command] then
+      say('/anavsession start|start-quests <anonymous-profile-id> | sample | pause | ' ..
+        'resume | stop | export | status')
       return
     end
     local build = Capabilities.probe(env).build
     if not Capabilities.isCaptureTarget(build) then
       say('session unavailable: build is not an enabled experimental target'); return
     end
+    if command~='start' and command~='start-quests' and recordingBuild and
+      buildIdentity(build)~=recordingBuild then
+      recorder:unavailable();say('session stopped: recorded build context changed');return
+    end
     local result, code
-    if command == 'start' then
+    if command == 'start' or command == 'start-quests' then
+      if command=='start-quests' and not state.quest_turn_in_event_available then
+        say('session quest mode unavailable: event support not established');return
+      end
       if not state.persist then say('session start failed: saved variables unavailable'); return end
       if type(profile) ~= 'string' or #profile < 1 or #profile > 80 or
         not profile:match('^[A-Za-z0-9_-]+$') then
@@ -697,7 +726,13 @@ function Diagnostics.attach(env)
         character=profile, fixture=false, context={namespace='reference',
           build={edition=Version.edition, build=build.version .. '.' .. build.build,
             interface=build.interface}}})
-      if result then state.db.session_recording_sequence = sequence end
+      if result then
+        state.db.session_recording_sequence = sequence
+        recordingBuild,questEventsEnabled=buildIdentity(build),command=='start-quests'
+        say(questEventsEnabled and
+          'Quest turn-ins record only while recording; surrounding time remains unclassified' or
+          'Manual recording mode; quest turn-in events are not collected')
+      end
     elseif command == 'sample' then
       result, code = recorder:sample(function(metadata)
         local getter
@@ -736,6 +771,8 @@ function Diagnostics.attach(env)
         end
         frame:SetScript("OnEvent", function(self, event, ...)
           if event == 'PLAYER_REGEN_ENABLED' then resumeHud()
+          elseif event == 'QUEST_TURNED_IN' and state.quest_turn_in_event_available then
+            questTurnIn(...)
           else onEvent(self, event, ...) end
         end)
       end)
@@ -744,6 +781,17 @@ function Diagnostics.attach(env)
         state.hud_resume_event_available = pcall(function()
           frame:RegisterEvent('PLAYER_REGEN_ENABLED')
         end)
+        local eventApi=type(env.C_EventUtils)=='table' and env.C_EventUtils or {}
+        local checked,valid=pcall(function()
+          if type(eventApi.IsEventValid)~='function' then return false end
+          return eventApi.IsEventValid('QUEST_TURNED_IN')
+        end)
+        if checked and valid==true then
+          local registered,result=pcall(function()
+            return frame:RegisterEvent('QUEST_TURNED_IN')
+          end)
+          state.quest_turn_in_event_available=registered and (result==nil or result==true)
+        end
       end
     end
   end

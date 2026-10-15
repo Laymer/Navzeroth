@@ -198,3 +198,222 @@ fn manually_stopping_recording_never_claims_game_logout() {
         assert_eq!(summary.totals.gap_ms.get(), if paused { 10000 } else { 0 });
     }
 }
+
+#[test]
+fn quest_milestones_preserve_unclassified_time_bounds_and_manual_gaps() {
+    let sandbox = common::strict_core();
+    initialize(&sandbox);
+    let text: String = sandbox
+        .run(
+            "quest-milestones",
+            r#"
+      local t=ns.recorder_test;local r=t.newRecorder();assert(r:start(t.spec))
+      t.mono=10;assert(r:questTurnIn(123))
+      t.mono=15;assert(r:pause());assert(not r:questTurnIn(456))
+      t.mono=20;assert(r:resume());t.mono=30;assert(r:questTurnIn(789))
+      t.mono=40;assert(r:stop());assert(not r:questTurnIn(999))
+      return assert(r:export(t.db))
+    "#,
+        )
+        .unwrap();
+    let document = azeroth_ingest::session::decode_text(&text).unwrap();
+    let sessions = azeroth_core::sessions::build_sessions(
+        &document.batch,
+        &azeroth_ingest::session::build_config(),
+    )
+    .unwrap();
+    let build = &sessions[&SessionId::new("manual-1").unwrap()];
+    assert_eq!(
+        build
+            .summary
+            .observed_quests
+            .iter()
+            .map(|q| q.as_str())
+            .collect::<Vec<_>>(),
+        ["123", "789"]
+    );
+    assert!(
+        document
+            .batch
+            .events
+            .iter()
+            .filter(|e| matches!(
+                e.kind,
+                azeroth_core::sessions::SessionEventKind::QuestTurnIn { .. }
+            ))
+            .count()
+            == 2
+    );
+    let app = SnapshotApplication::in_memory().unwrap();
+    let snapshot = include_str!("../../../fixtures/contracts/v1/character-snapshot.json");
+    let profile = app
+        .import_text(&format!("ANAV1:{snapshot}"), None)
+        .unwrap()
+        .profile_id;
+    app.import_session_text(&profile, &text).unwrap();
+    let detail = app
+        .get_session_detail(&profile, &SessionId::new("manual-1").unwrap())
+        .unwrap();
+    assert_eq!(detail.analytics.timing.totals.observed_ms.get(), 0);
+    assert_eq!(detail.analytics.timing.totals.unclassified_ms.get(), 35000);
+    assert_eq!(detail.analytics.timing.totals.gap_ms.get(), 5000);
+}
+
+#[test]
+fn unreadable_quest_payload_and_event_overflow_stop_before_partial_append() {
+    let sandbox = common::strict_core();
+    initialize(&sandbox);
+    sandbox
+        .run::<()>(
+            "quest-refusal",
+            r#"
+      local t=ns.recorder_test
+      for index,value in ipairs({0,-1,1.5,4294967296,'123',false,math.huge}) do
+        local r=t.newRecorder();t.spec.session='bad-quest-'..index;assert(r:start(t.spec))
+        local ok,code=r:questTurnIn(value);assert(not ok and code=='session_quest_unreadable')
+        assert(r:status().events==1 and r:status().phase=='stopped')
+      end
+      local r=t.newRecorder();t.spec.session='quest-cap';assert(r:start(t.spec))
+      local limit=ns.Session.MAX_EVENTS;ns.Session.MAX_EVENTS=5
+      for i=1,3 do t.mono=i;local ok,code=r:questTurnIn(i)
+        if i<3 then assert(ok) else assert(not ok and code=='session_event_limit') end
+      end
+      ns.Session.MAX_EVENTS=limit
+      assert(r:status().events==5 and r:status().phase=='stopped')
+      assert(r:export(t.db));local prior=t.db.session_export
+      t.spec.session='quest-context';assert(r:start(t.spec));r:unavailable()
+      assert(r:status().reason=='session_observation_unavailable' and t.db.session_export==prior)
+    "#,
+        )
+        .unwrap();
+}
+
+#[test]
+fn explicit_quest_mode_binds_only_active_turn_ins_in_matching_context() {
+    let sandbox = common::stub_client("1.60.1", "70374", 16001);
+    sandbox
+        .run::<()>(
+            "quest-event-support",
+            r#"
+      mono=0;function GetTime() return mono end
+      function GetServerTime() return 100000+math.floor(mono) end
+      C_EventUtils={IsEventValid=function(event) return event=='QUEST_TURNED_IN' end}
+    "#,
+        )
+        .unwrap();
+    sandbox.load_toc_files().unwrap();
+    let text: String = sandbox.run("quest-event-binding", r#"
+      local state=ns.Diagnostics.state
+      state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+      assert(state.quest_turn_in_event_available)
+      local function event(id) state.frame.scripts.OnEvent(state.frame,'QUEST_TURNED_IN',id,'ignored-reward') end
+      state.onSessionSlash('start profile');mono=1;event(111)
+      assert(state.session_recorder:status().events==1)
+      state.onSessionSlash('stop');state.onSessionSlash('export')
+      local prior=AzerothNavigatorDB.session_export
+      state.onSessionSlash('start-quests profile');mono=5;event(222)
+      assert(state.session_recorder:status().events==3)
+      mono=6;state.onSessionSlash('pause');event(333)
+      assert(state.session_recorder:status().events==5)
+      mono=7;state.onSessionSlash('resume');mono=8;event(444)
+      assert(state.session_recorder:status().events==8)
+      install_build_info('1.60.1','70338',16001);event(555)
+      assert(state.session_recorder:status().phase=='stopped')
+      assert(state.session_recorder:status().reason=='session_observation_unavailable')
+      assert(state.session_recorder:status().events==8 and AzerothNavigatorDB.session_export==prior)
+      state.onSessionSlash('export');event(666)
+      return AzerothNavigatorDB.session_export
+    "#).unwrap();
+    let document = azeroth_ingest::session::decode_text(&text).unwrap();
+    assert!(!document.fixture);
+    assert_eq!(document.batch.context.build.build.as_str(), "1.60.1.70374");
+    let quests: Vec<_> = document
+        .batch
+        .events
+        .iter()
+        .filter_map(|event| match &event.kind {
+            azeroth_core::sessions::SessionEventKind::QuestTurnIn { quest } => Some(quest.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(quests, ["222", "444"]);
+}
+
+#[test]
+fn unavailable_or_failed_event_support_refuses_opt_in_without_mutation() {
+    for setup in [
+        "C_EventUtils=nil",
+        "C_EventUtils={IsEventValid=function() return false end}",
+        "C_EventUtils={IsEventValid=function() return 'true' end}",
+        "C_EventUtils={IsEventValid=function() error('Private-Error') end}",
+        r#"C_EventUtils={IsEventValid=function() return true end};local create=CreateFrame
+        function CreateFrame(...) local f=create(...);local register=f.RegisterEvent
+          function f:RegisterEvent(event) if event=='QUEST_TURNED_IN' then return false end;return register(self,event) end
+          return f end"#,
+        r#"C_EventUtils={IsEventValid=function() return true end};local create=CreateFrame
+        function CreateFrame(...) local f=create(...);local register=f.RegisterEvent
+          function f:RegisterEvent(event) if event=='QUEST_TURNED_IN' then error('Private-Error') end;return register(self,event) end
+          return f end"#,
+        r#"C_EventUtils={IsEventValid=function() return true end};local create=CreateFrame
+        function CreateFrame(...) local f=create(...);local register=f.RegisterEvent
+          function f:RegisterEvent(event) if event=='QUEST_TURNED_IN' then return 'unexpected' end;return register(self,event) end
+          return f end"#,
+    ] {
+        let sandbox = common::stub_client("1.60.1", "70374", 16001);
+        sandbox
+            .run::<()>(
+                "unavailable-support",
+                &format!(
+                    r#"
+          mono=0;function GetTime() return mono end;function GetServerTime() return 100000 end
+          {setup}
+        "#
+                ),
+            )
+            .unwrap();
+        sandbox.load_toc_files().unwrap();
+        sandbox.run::<()>("refuse-quest-mode", r#"
+          local state=ns.Diagnostics.state;state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+          state.onSessionSlash('start profile');state.onSessionSlash('stop');state.onSessionSlash('export')
+          local prior=AzerothNavigatorDB.session_export;local count=AzerothNavigatorDB.session_recording_sequence
+          state.onSessionSlash('start-quests profile')
+          assert(not state.quest_turn_in_event_available)
+          assert(state.session_recorder:status().phase=='stopped')
+          assert(AzerothNavigatorDB.session_export==prior and AzerothNavigatorDB.session_recording_sequence==count)
+        "#).unwrap();
+    }
+}
+
+#[test]
+fn malformed_callback_stops_without_reading_rewards_or_appending_partial_event() {
+    let sandbox = common::stub_client("1.60.1", "70374", 16001);
+    sandbox
+        .run::<()>(
+            "event-support",
+            r#"
+      mono=0;function GetTime() return mono end;function GetServerTime() return 100000 end
+      C_EventUtils={IsEventValid=function() return true end}
+    "#,
+        )
+        .unwrap();
+    sandbox.load_toc_files().unwrap();
+    let text: String = sandbox.run("malformed-event", r#"
+      local state=ns.Diagnostics.state;state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+      state.onSessionSlash('start-quests profile')
+      local unreadable=setmetatable({},{__tostring=function() error('Private-Reward') end})
+      state.frame.scripts.OnEvent(state.frame,'QUEST_TURNED_IN','Private-Quest',unreadable,unreadable)
+      assert(state.session_recorder:status().phase=='stopped')
+      assert(state.session_recorder:status().reason=='session_quest_unreadable')
+      assert(state.session_recorder:status().events==1)
+      state.onSessionSlash('export');return AzerothNavigatorDB.session_export
+    "#).unwrap();
+    assert!(!text.contains("Private-"));
+    assert_eq!(
+        azeroth_ingest::session::decode_text(&text)
+            .unwrap()
+            .batch
+            .events
+            .len(),
+        1
+    );
+}
