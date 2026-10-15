@@ -17,6 +17,7 @@ fn row_limit(table: &str) -> usize {
         "dataset_revisions" | "dataset_manifests" => {
             azeroth_core::content_v2::MAX_CONTENT_BYTES + 16 * 1024
         }
+        "catalog_asset_blobs" => crate::catalog_assets::MAX_ASSET_BYTES + 16 * 1024,
         _ => MAX_CELL,
     }
 }
@@ -458,6 +459,10 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
             return Err(storage("Backup snapshot identity or hash disagrees"));
         }
         crate::sqlite::validate_recovery_snapshot(conn, id, &envelope)?;
+    }
+    let orphan_assets: bool = conn.query_row("SELECT EXISTS(SELECT 1 FROM catalog_asset_blobs b WHERE NOT EXISTS(SELECT 1 FROM catalog_asset_layers l WHERE l.sha256=b.sha256))", [], |r| r.get(0)).db()?;
+    if orphan_assets {
+        return Err(storage("Backup contains unreferenced catalog asset bytes"));
     }
     for id in ids(conn, "SELECT id FROM dataset_revisions")? {
         let revision = crate::content::load(conn, id)?;

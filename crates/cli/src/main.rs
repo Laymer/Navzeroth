@@ -18,7 +18,8 @@ use std::{
 const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
-    release-readiness --root <repository> --version <version> [--evidence <relative-file>]; \
+    inventory-report --root <repository> --input <relative-file>; \
+    (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]; \
     release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
     stage-questiedb <raw-file options>. See README.md.";
 
@@ -218,7 +219,7 @@ fn main() -> ExitCode {
             println!(
                 "Implemented subcommands: doctor; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
-                 release-readiness --root <repository> --version <version> [--evidence <relative-file>]. \
+                 (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
                  release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
                  stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md). \
                  Other commands are planned; see README.md and plan section 19.3."
@@ -271,19 +272,50 @@ fn main() -> ExitCode {
                 ExitCode::FAILURE
             }
         }
-        [command, rest @ ..] if command == "release-readiness" => {
+        [command, rest @ ..] if command == "inventory-report" => {
+            let Some(options) = azeroth_cli::release_inventory::Options::parse(rest) else {
+                eprintln!("{USAGE}");
+                return ExitCode::from(2);
+            };
+            match azeroth_cli::release_inventory::report(&options) {
+                Ok(report) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&report)
+                            .expect("inventory report serialization")
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("inventory-report: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [command, rest @ ..]
+            if command == "release-readiness" || command == "candidate-readiness" =>
+        {
             let Some(options) = azeroth_cli::release::Options::parse(rest) else {
                 eprintln!("{USAGE}");
                 return ExitCode::from(2);
             };
             match azeroth_cli::release::report(&options) {
-                Ok(report) => {
+                Ok(mut report) => {
+                    let candidate = command == "candidate-readiness";
+                    let allowed = if candidate {
+                        report.readiness.candidate_ready
+                    } else {
+                        report.readiness.publication_allowed
+                    };
+                    if candidate {
+                        report.readiness.publication_allowed = false;
+                    }
                     println!(
                         "{}",
                         serde_json::to_string_pretty(&report)
                             .expect("release report serialization")
                     );
-                    if report.readiness.publication_allowed {
+                    if allowed {
                         ExitCode::SUCCESS
                     } else {
                         ExitCode::FAILURE

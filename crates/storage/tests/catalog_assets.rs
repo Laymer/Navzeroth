@@ -144,3 +144,26 @@ fn matching_hash_non_png_and_wrong_dimensions_cannot_be_installed() {
     revision.content = decode(&serde_json::to_vec(&value).unwrap()).unwrap();
     assert!(store.stage_content_v2_bundle(&revision, &assets).is_err());
 }
+
+#[test]
+fn orphan_blob_refuses_recovery_and_staged_catalog_getter_preserves_v2() {
+    let db = TempDb::new("asset-orphan");
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let (revision, _, _) = bundle();
+    store.stage_content_v2_revision(&revision).unwrap();
+    assert!(
+        store
+            .catalog_revision(&revision.key())
+            .unwrap()
+            .unwrap()
+            .content_v2()
+            .is_some()
+    );
+    raw(&db.path)
+        .execute(
+            "INSERT INTO catalog_asset_blobs(sha256,bytes) VALUES (?1,x'00')",
+            ["0".repeat(64)],
+        )
+        .unwrap();
+    assert!(azeroth_storage::recovery::validate(&store).is_err());
+}

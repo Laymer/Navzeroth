@@ -53,6 +53,30 @@ fn verify_png(bytes: &[u8], layer: &ImageLayer) -> Result<()> {
     }
     Ok(())
 }
+fn closure_budget(revision: &impl Serialize, total: usize, limit: usize) -> Result<()> {
+    struct Budget {
+        used: usize,
+        limit: usize,
+    }
+    impl std::io::Write for Budget {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            if bytes.len() > self.limit.saturating_sub(self.used) {
+                return Err(std::io::Error::other("closure exceeds bound"));
+            }
+            self.used += bytes.len();
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let used = total
+        .checked_add(1)
+        .filter(|n| *n <= limit)
+        .ok_or_else(|| invalid("Catalog material closure exceeds capacity"))?;
+    serde_json::to_writer_pretty(&mut Budget { used, limit }, revision)
+        .map_err(|_| invalid("Catalog material closure exceeds capacity"))
+}
 impl SqliteStore {
     /// Stage every declared image-layer file with the immutable catalog in one transaction.
     /// This does not activate the catalog or turn source rights into a grant.
@@ -81,22 +105,7 @@ impl SqliteStore {
             }
         }
         let revision = content_catalog::canonical(input)?;
-        struct Budget(usize);
-        impl std::io::Write for Budget {
-            fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
-                if bytes.len() > MAX_CLOSURE_BYTES.saturating_sub(self.0) {
-                    return Err(std::io::Error::other("closure exceeds bound"));
-                }
-                self.0 += bytes.len();
-                Ok(bytes.len())
-            }
-            fn flush(&mut self) -> std::io::Result<()> {
-                Ok(())
-            }
-        }
-        let mut budget = Budget(total + 1);
-        serde_json::to_writer_pretty(&mut budget, &revision)
-            .map_err(|_| invalid("Catalog material closure exceeds capacity"))?;
+        closure_budget(&revision, total, MAX_CLOSURE_BYTES)?;
 
         let mut expected = BTreeMap::<&AssetPath, &ImageLayer>::new();
         let mut layer_count = 0usize;
@@ -106,13 +115,12 @@ impl SqliteStore {
                 if layer_count > 250_000 {
                     return Err(invalid("Catalog layer mapping capacity exceeded"));
                 }
-                if let Some(previous) = expected.insert(&layer.file, layer) {
-                    if previous.sha256 != layer.sha256
+                if let Some(previous) = expected.insert(&layer.file, layer)
+                    && (previous.sha256 != layer.sha256
                         || previous.width_px != layer.width_px
-                        || previous.height_px != layer.height_px
-                    {
-                        return Err(invalid("Catalog asset declarations conflict"));
-                    }
+                        || previous.height_px != layer.height_px)
+                {
+                    return Err(invalid("Catalog asset declarations conflict"));
                 }
             }
         }
@@ -303,6 +311,8 @@ pub(crate) fn validate_revision_assets(
             "Stored catalog asset closure is partial or oversized",
         ));
     }
+    let mut files = BTreeMap::new();
+    let mut total = 0usize;
     let mut verified = std::collections::BTreeSet::new();
     for image in &content.reference.payload.map_images {
         for layer in &image.layers {
@@ -310,10 +320,36 @@ pub(crate) fn validate_revision_assets(
             if sha != layer.sha256.as_str() {
                 return Err(storage("Stored catalog asset binding differs"));
             }
+            if let Some(previous) =
+                files.insert(&layer.file, (sha.clone(), layer.width_px, layer.height_px))
+            {
+                if previous != (sha.clone(), layer.width_px, layer.height_px) {
+                    return Err(storage("Stored asset declarations conflict"));
+                }
+            } else {
+                total = total
+                    .checked_add(bytes.len())
+                    .ok_or_else(|| storage("Stored closure overflow"))?;
+                if files.len() > MAX_ASSETS || total > MAX_CLOSURE_BYTES {
+                    return Err(storage("Stored closure exceeds capacity"));
+                }
+            }
             if verified.insert((sha, layer.width_px.get(), layer.height_px.get())) {
                 verify_png(&bytes, layer)?;
             }
         }
     }
+    closure_budget(revision, total, MAX_CLOSURE_BYTES)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn closure_budget_counts_catalog_and_newline_without_allocating_assets() {
+        assert!(closure_budget(&"x", 4, 8).is_ok());
+        assert!(closure_budget(&"x", 5, 8).is_err());
+        assert!(closure_budget(&"x", usize::MAX, 8).is_err());
+    }
 }

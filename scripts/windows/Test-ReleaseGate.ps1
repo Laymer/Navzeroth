@@ -97,6 +97,20 @@ exit 37
         Check "$relative refusal retains previous artifacts" (([IO.File]::ReadAllText($sentinel)) -eq 'preserve previous artifact')
         Remove-Item -LiteralPath (Join-Path $testRoot $relative)
     }
+    # Candidate is never a fallback around a failed full-content gate.
+    Set-Version '0.8.1'
+    $output = Join-Path $testRoot 'candidate-refusal'
+    New-Item -ItemType Directory -Path $output | Out-Null
+    $sentinel = Join-Path $output 'SHA256SUMS.txt'
+    [IO.File]::WriteAllText($sentinel, 'preserve previous artifact')
+    $saved = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $result = & $Shell -NoProfile -NonInteractive -File (Join-Path $testRoot 'scripts/windows/Build-Windows.ps1') -AddonOnly -AllowDirty -AcceptanceCandidate -OutputDirectory $output 2>&1 | Out-String
+        $code = $LASTEXITCODE
+    } finally { $ErrorActionPreference = $saved }
+    Check 'candidate refusal is nonzero even for preview AddonOnly AllowDirty' ($code -ne 0)
+    Check 'candidate refusal preserves existing output' (([IO.File]::ReadAllText($sentinel)) -eq 'preserve previous artifact')
     Write-Host "All $count release packaging checks passed."
 } finally {
     $env:PATH = $oldPath
