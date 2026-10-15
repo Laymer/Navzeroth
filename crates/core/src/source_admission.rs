@@ -130,12 +130,29 @@ fn revision(s: &str) -> bool {
             .all(|c| c.is_ascii_digit() || (b'a'..=b'f').contains(&c))
 }
 fn url(s: &str) -> bool {
-    text(s) && s.starts_with("https://") && s.len() > 8 && !s.contains(['@', '#', '?', '\\', ' '])
+    let Some(rest) = s.strip_prefix("https://") else {
+        return false;
+    };
+    if !text(s) || !s.is_ascii() || s.contains(['@', '#', '?', '\\', ' ', '%']) {
+        return false;
+    }
+    let authority = rest.split('/').next().unwrap_or("");
+    // Deliberately narrow: DNS names only, default HTTPS port, no credentials,
+    // encoded authority, IP literals, trailing dot or alternate parser forms.
+    authority.len() <= 253
+        && authority.contains('.')
+        && authority.split('.').all(|label| {
+            !label.is_empty()
+                && label.len() <= 63
+                && label.as_bytes()[0].is_ascii_alphanumeric()
+                && label.as_bytes()[label.len() - 1].is_ascii_alphanumeric()
+                && label
+                    .bytes()
+                    .all(|c| c.is_ascii_alphanumeric() || c == b'-')
+        })
 }
 fn path(s: &str) -> bool {
-    text(s)
-        && !s.contains(['\\', ':', '*', '?', '%'])
-        && s.split('/').all(|p| !p.is_empty() && p != "." && p != "..")
+    crate::types::AssetPath::new(s.to_ascii_lowercase()).is_ok()
 }
 fn evidence(e: &Evidence) -> bool {
     url(&e.url) && revision(&e.revision) && hash(&e.sha256) && text(&e.reviewed_scope)
@@ -208,7 +225,7 @@ impl Registry {
             let mut total = 0u64;
             for f in &s.files {
                 if !path(&f.path)
-                    || !paths.insert(&f.path)
+                    || !paths.insert(f.path.to_ascii_lowercase())
                     || !url(&f.url)
                     || !hash(&f.sha256)
                     || f.bytes == 0

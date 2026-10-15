@@ -144,3 +144,39 @@ fn round_trip_and_committed_registry_admit_no_source() {
         Err(Rejection::UnknownSource)
     ));
 }
+
+#[test]
+fn rejects_ambiguous_urls_and_windows_path_aliases() {
+    for value in [
+        "https:///file",
+        "https://:443/file",
+        "https://host:443/file",
+        "https://host./file",
+        "https://a..invalid/file",
+        "https://-a.invalid/file",
+        "https://a.invalid%2fother/file",
+    ] {
+        let mut r = registry();
+        r.sources[0].files[0].url = value.into();
+        assert!(r.validate().is_err(), "{value}");
+    }
+    for value in [
+        "data/con.lua",
+        "data/CON.lua",
+        "data/nul",
+        "data/file.",
+        "data/file ",
+        "data /file",
+        "data/com1.txt",
+    ] {
+        let mut r = registry();
+        r.sources[0].files[0].path = value.into();
+        assert!(r.validate().is_err(), "{value}");
+    }
+    let mut r = registry();
+    let mut duplicate = r.sources[0].files[0].clone();
+    duplicate.path = "DATA/Quests.lua".into();
+    r.sources[0].files.push(duplicate);
+    r.sources[0].retrieval.max_requests = 2;
+    assert!(r.validate().is_err());
+}

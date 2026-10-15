@@ -35,3 +35,10 @@ adapter or the stable release evaluator; it cannot relax existing release gates.
 Existing audit-only staging intentionally remains available without pretending
 its data is admitted. Future release integration must evaluate actual admitted
 source and target evidence together. Preserve preview until prerequisites exist.
+
+Coordinator review identified permissive URL syntax and Windows filename aliases.
+Follow-up narrows URLs to ASCII HTTPS DNS authority on the default port (no
+credentials, percent escapes or trailing dot), reuses AssetPath portability rules
+case-insensitively and rejects case-colliding file names. Exact upstream path case
+is retained. Six focused tests now pass, including malformed authorities and
+reserved/trailing-dot/space paths; strict Clippy/fmt/whitespace checks pass.

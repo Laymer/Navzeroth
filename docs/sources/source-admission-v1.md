@@ -61,3 +61,9 @@ correction completeness, resolved conflicts or a complete target inventory.
 Next: obtain reviewed grants and independently evidenced target inventory, then
 add narrowly scoped inert-data acquisition adapters. Unresolved corrections,
 conflicts or permissions continue to block affected gameplay records.
+
+Portable file paths reuse AssetPath character/reserved-name rules, preserving
+upstream case while rejecting case-colliding names. Retrieval/evidence URLs use a
+narrow ASCII HTTPS DNS-host subset on the default port: no user information,
+explicit ports, query/fragment, percent encoding or trailing DNS dot. Sources that
+need other access forms require a reviewed contract extension, not URL rewriting.
