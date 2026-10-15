@@ -62,3 +62,36 @@ out of combat and return the selectable diagnostic output. The candidate still
 displays `0.8.1`; version text alone cannot distinguish it from the published ZIP.
 No reply or observation for this new candidate is recorded yet. All mandatory
 aggregate release rows remain unverified.
+
+## Source-identified development checks — 2026-10-15
+
+The operator exited the game and authorized the guided update. The coordinator
+backed up the prior addon and project SavedVariables privately, installed main
+`e45eed1b2bde95b9a565f144ec81d49758c05c90` through its existing installer and
+verified all21 installed addon files against Git blobs, no extra files and
+unchanged SavedVariables hashes. Version text remains0.8.1.
+
+The operator then ran the requested probe/status/snapshot/reload sequence and
+reported `/dump GetBuildInfo()` as1.60.1,70374,Oct12th2026,16001; visible level30,
+no bugs and matching values. The actual selected persisted file passes bounded
+inert parsing and the existing character snapshot contract: fixturefalse,
+matching target tuple, Known level30,30quest records,19equipment slots,
+16known equipment observations and0objective records. All30quest completion
+flags remain unreadable; this is a binding investigation, not evidence of
+incomplete quests. Diagnostic capability statuses remain16untested/0failed.
+Raw files and backups remain private.
+
+The operator also completed manual recorder start/two samples/stop/export/reload
+and reported all commands successful. The persisted session validates against
+the existing session contract: fixturefalse, matching70374tuple,7events and
+maximum relative elapsed time46,102ms. This is a manual unclassified recording;
+it does not establish quest turn-ins, automatic advancement/deviation, active
+play time, full session analysis or final candidate acceptance.
+
+Clock confirmation was reported successful; inspection of a new trusted capture
+and subsequent reload reset is pending. The first snapshot's clock is uncertain.
+These are narrow development observations with an inspected source revision.
+They do not update aggregate release acceptance rows, establish complete
+inventories/rights or bind a frozen1.0.0candidate. Windows PowerShell5.1 helper
+checks passed separately with synthetic inputs; no interactive desktop acceptance
+is inferred.

@@ -51,7 +51,8 @@ these do not establish interactive Windows acceptance. With the game closed, the
 operator-authorized addon update installed all 21 files from checked main
 `e45eed1`; prior addon/data were backed up and SavedVariables hashes stayed
 unchanged. A permitted persisted 70374 snapshot now parses (level 30, 30 quest
-records, 19 equipment slots, uncertain clock); visual comparison is pending.
+records, 19 equipment slots, uncertain clock). The operator confirmed displayed build/level and no
+errors after probe, snapshot and reload; manual recorder checks are in progress.
 The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
 the new bounded inspection command. No release acceptance row is promoted.
 

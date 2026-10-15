@@ -10,6 +10,7 @@ pub struct Report {
     pub report_version: u32,
     pub diagnostic: Option<Diagnostic>,
     pub snapshot: Option<Snapshot>,
+    pub session: Option<Session>,
     pub snapshot_export_present: bool,
     pub session_export_present: bool,
     pub live_acceptance_verified: bool,
@@ -35,8 +36,43 @@ pub struct Snapshot {
     pub level: Option<u16>,
     pub clock_trust: azeroth_core::observation::ClockTrust,
     pub quest_records: usize,
+    pub quests_with_readable_completion: usize,
     pub equipment_slots: usize,
+    pub known_equipment_slots: usize,
     pub objective_records: usize,
+}
+
+#[derive(Debug, Serialize)]
+pub struct Session {
+    pub fixture: bool,
+    pub target_tuple_matches: bool,
+    pub events: usize,
+    pub maximum_elapsed_ms: Option<u64>,
+}
+
+fn session(text: &str) -> Result<Session, &'static str> {
+    let document = azeroth_ingest::session::decode_text(text)
+        .map_err(|_| "Invalid session export contract")?;
+    let json = text
+        .trim_matches([' ', '\t', '\r', '\n'])
+        .strip_prefix(azeroth_ingest::session::PREFIX)
+        .ok_or("Invalid session export transport")?;
+    azeroth_core::strict_json::value(json.as_bytes(), 32768)
+        .map_err(|_| "Invalid bounded session JSON")?;
+    let build = &document.batch.context.build;
+    Ok(Session {
+        fixture: document.fixture,
+        target_tuple_matches: build.edition.as_str() == "wow_forever"
+            && build.build.as_str() == "1.60.1.70374"
+            && build.interface.as_str() == "16001",
+        events: document.batch.events.len(),
+        maximum_elapsed_ms: document
+            .batch
+            .events
+            .iter()
+            .map(|e| e.elapsed_ms.get())
+            .max(),
+    })
 }
 
 fn snapshot(text: &str) -> Result<Snapshot, &'static str> {
@@ -59,7 +95,17 @@ fn snapshot(text: &str) -> Result<Snapshot, &'static str> {
         level: data.level.value().map(|level| level.get()),
         clock_trust: data.capture.clock_trust,
         quest_records: data.quests.len(),
+        quests_with_readable_completion: data
+            .quests
+            .values()
+            .filter(|q| q.completed.value().is_some())
+            .count(),
         equipment_slots: data.equipment.len(),
+        known_equipment_slots: data
+            .equipment
+            .values()
+            .filter(|slot| slot.value().is_some())
+            .count(),
         objective_records: data.objectives.len(),
     })
 }
@@ -137,6 +183,7 @@ pub fn inspect(text: &str) -> Result<Report, &'static str> {
         report_version: 1,
         diagnostic,
         snapshot: export("snapshot_export")?.map(snapshot).transpose()?,
+        session: export("session_export")?.map(session).transpose()?,
         snapshot_export_present: export("snapshot_export")?.is_some_and(|s| !s.is_empty()),
         session_export_present: export("session_export")?.is_some_and(|s| !s.is_empty()),
         live_acceptance_verified: false,

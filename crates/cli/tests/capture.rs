@@ -23,7 +23,7 @@ fn diagnostic() -> Value {
 fn saved(value: &str) -> String {
     // JSON quotes/backslash escapes are in the accepted Lua string subset.
     format!(
-        "AzerothNavigatorDB = {{ diagnostic_export = {}, session_export = 'Private-Name', private = 'Private-Name' }}",
+        "AzerothNavigatorDB = {{ diagnostic_export = {}, private = 'Private-Name' }}",
         serde_json::to_string(value).unwrap()
     )
 }
@@ -49,7 +49,7 @@ fn allowlist_never_echoes_raw_exports_paths_details_or_unknown_fields() {
     assert_eq!(report["diagnostic"]["untested_capabilities"], 1);
     assert_eq!(report["diagnostic"]["failed_capabilities"], 1);
     assert_eq!(report["snapshot_export_present"], false);
-    assert_eq!(report["session_export_present"], true);
+    assert_eq!(report["session_export_present"], false);
     assert_eq!(report["live_acceptance_verified"], false);
     assert_eq!(report["installed_revision_verified"], false);
     assert_eq!(std::fs::read_to_string(path).unwrap(), original);
@@ -146,6 +146,38 @@ fn actual_snapshot_contract_is_validated_without_exposing_identities() {
     assert!(!summary.target_tuple_matches);
     assert!(
         azeroth_cli::capture::inspect("AzerothNavigatorDB = {snapshot_export='Private-Name'}")
+            .is_err()
+    );
+}
+
+#[test]
+fn session_summary_validates_transport_and_retains_zero_without_identities() {
+    let mut fixture: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/sessions/v1/unclassified-span.json"
+    ))
+    .unwrap();
+    fixture.as_object_mut().unwrap().remove("config");
+    fixture["events"].as_array_mut().unwrap().truncate(1);
+    let document =
+        json!({"format":"anav-session-events","version":1,"fixture":true,"batch":fixture});
+    let saved = |value: &Value| {
+        format!(
+            "AzerothNavigatorDB = {{ session_export = {} }}",
+            serde_json::to_string(&format!("ANAVSESSION1:{value}")).unwrap()
+        )
+    };
+    let report = azeroth_cli::capture::inspect(&saved(&document)).unwrap();
+    assert!(report.session_export_present);
+    let session = report.session.unwrap();
+    assert!(session.fixture);
+    assert!(!session.target_tuple_matches);
+    assert_eq!(session.events, 1);
+    assert_eq!(session.maximum_elapsed_ms, Some(0));
+    let mut invalid = document;
+    invalid["version"] = json!(2);
+    assert!(azeroth_cli::capture::inspect(&saved(&invalid)).is_err());
+    assert!(
+        azeroth_cli::capture::inspect("AzerothNavigatorDB = {session_export='Private-Name'}")
             .is_err()
     );
 }
