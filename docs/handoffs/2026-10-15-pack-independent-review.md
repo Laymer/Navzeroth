@@ -31,3 +31,20 @@ checkout's own target directory; the stale artifact is not a product finding.
 No full licensed 70374 corpus, native Windows, actual game observations or gated
 1.0.0 candidate was claimed. Await exact source-admission gate commit for focused
 follow-up review; coordinator retains protected-main integration ownership.
+
+Follow-up: independently reviewed frozen offline admission gate 0205765 in its own
+isolated worktree. No remaining important finding. Both candidate and publication
+require the registry pin for accepted sources; the registry validates admitted
+rights and access grants, exact original bytes and paths, origin, selected-file
+field/transform permissions and pack source metadata. Grant hashes identify
+reviewed evidence; they cannot authenticate rights holders. Private registry bytes
+cannot be shipped through a public-notice alias. Omitted optional pins preserve
+preview document decoding but cannot authorize a production corpus.
+
+Exact-head checks passed: 11 CLI library, 11 release materials, 14 readiness,
+15 core release and 15 core library tests. Both normally ignored material tests
+also passed explicitly with PowerShell7 and Git LFS. No network acquisition,
+real-source admission, Windows-native or live game acceptance was performed.
+Coordinator owns integration; future acquisition adapters must enforce admission
+before retrieval and actual content remains blocked on independently reviewed
+rights and complete target evidence.
