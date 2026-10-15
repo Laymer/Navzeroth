@@ -109,6 +109,9 @@ try {
     $null = Write-ReleaseArtifactManifest $root '0.8.1' $output $true $selection
     Set-Checksums $output
     Refuses 'tampered material fails despite rebuilt outer manifests' { Assert-ReleaseArtifacts $root '0.8.1' $output $true }
+    Write-Text (Join-Path $output 'ACCEPTANCE_CANDIDATE.json') '{"kind":"acceptance_candidate"}'
+    Set-Checksums $output
+    Refuses 'candidate marker refuses publication despite rebuilt checksums' { Assert-ReleaseArtifacts $root '0.8.1' $output $true }
     Write-Host "All $count material delivery checks passed."
 } finally {
     if (Test-Path -LiteralPath $root) { Remove-Item -LiteralPath $root -Recurse -Force }

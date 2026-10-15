@@ -5,3 +5,5 @@ pub mod pack;
 pub mod questiedb;
 pub mod release;
 pub mod replay;
+
+pub mod release_inventory;
