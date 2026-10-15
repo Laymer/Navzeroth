@@ -1,3 +1,4 @@
+import "./authoredContent.css";
 import {useEffect,useRef,useState} from "react";
 import type {CommandClient} from "../commands";
 import type {AuthoredCatalog,AuthoredSelection} from "../commands/authoredContent";
@@ -12,7 +13,7 @@ export function AuthoredContentPicker({client,kind,subject,refreshKey,value,onCh
   },[client,identity,kind,refreshKey,selectedId]);
   async function changePage(next:number){if(!page)return;const ticket=++generation.current;setError("");const result=await client.getAuthoredCatalog(JSON.stringify({subject,kind,revision:page.revision,offset:next}));if(ticket!==generation.current)return;if(result.ok){setPage(result.value);setOffset(next);}else{setPage(null);setError(result.error.message);}}
   const label=kind==="models"?"Authored gear model":"Authored dungeon";
-  return <fieldset><legend>{label}</legend><p>Selections use the exact active content revision and its cited evidence. Missing facts remain unavailable.</p>
+  return <fieldset className="authored-content-picker"><legend>{label}</legend><p>Selections use the exact active content revision and its cited evidence. Missing facts remain unavailable.</p>
     <label>{label} selection <select value={value?.id??""} onChange={e=>onChange(e.target.value&&page?.revision?{id:e.target.value,revision:page.revision}:null)}><option value="">Manual / no authored selection</option>{value&&!page?.records.some(r=>r.id===value.id)&&<option value={value.id}>{value.id} (selected revision {value.revision})</option>}{page?.records.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select></label>
     {page&&<p>{page.total} records; revision {page.revision??"unavailable"}. {page.records.length===0&&"No authored records on this page."}</p>}
     {value&&page&&value.revision!==page.revision&&<p role="alert">Selected revision changed. Select the model or dungeon again before evaluating.</p>}
