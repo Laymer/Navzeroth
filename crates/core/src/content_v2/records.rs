@@ -192,6 +192,25 @@ pub fn content_records(
             .map(|id| evidence.get(id).cloned().ok_or("Unresolved v2 provenance"))
             .collect()
     };
+    for row in &content.node_facts {
+        let row_sources = sources(&row.evidence)?;
+        // Base nodes have no provenance field. Only this exact node's additive
+        // evidence supplies its source binding; neighboring records never do.
+        let key = serde_json::to_string(&json!([revision, "nodes", row.node]))
+            .map_err(|_| "Invalid node identity")?;
+        let binding = catalog
+            .records
+            .get_mut("travel")
+            .and_then(|records| records.get_mut(&key))
+            .ok_or("Unresolved node provenance")?;
+        *binding = row_sources.clone();
+        add_record(
+            &mut catalog,
+            "travel",
+            json!([revision, "node_facts", row.node]),
+            &row_sources,
+        )?;
+    }
     for row in &content.models {
         add_record(
             &mut catalog,

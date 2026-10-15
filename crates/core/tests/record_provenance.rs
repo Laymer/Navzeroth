@@ -91,3 +91,33 @@ fn image_provenance_includes_own_facts_but_pins_do_not_inherit_it() {
         BTreeSet::from(["pin-source".into()])
     );
 }
+
+#[test]
+fn v2_node_bindings_use_only_the_exact_declared_node_evidence() {
+    let mut value: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v2/reference-content.json"
+    ))
+    .unwrap();
+    let old = azeroth_core::content_v2::decode(&serde_json::to_vec(&value).unwrap()).unwrap();
+    let old_records = azeroth_core::content_v2::records::content_records(&old).unwrap();
+    assert!(old_records["travel"]["[\"demo-r1\",\"nodes\",\"demo-node-1\"]"].is_empty());
+    let mut second = value["reference"]["payload"]["evidence"][0].clone();
+    second["id"] = json!("node-proof");
+    second["source"] = json!("node-source");
+    value["reference"]["payload"]["evidence"]
+        .as_array_mut()
+        .unwrap()
+        .push(second);
+    value["node_facts"] = json!([{"node":"demo-node-1","evidence":["node-proof"]}]);
+    let content = azeroth_core::content_v2::decode(&serde_json::to_vec(&value).unwrap()).unwrap();
+    let found = azeroth_core::content_v2::records::content_records(&content).unwrap();
+    assert_eq!(
+        found["travel"]["[\"demo-r1\",\"nodes\",\"demo-node-1\"]"],
+        BTreeSet::from(["node-source".into()])
+    );
+    assert_eq!(
+        found["travel"]["[\"demo-r1\",\"node_facts\",\"demo-node-1\"]"],
+        BTreeSet::from(["node-source".into()])
+    );
+    assert!(found["travel"]["[\"demo-r1\",\"nodes\",\"demo-node-2\"]"].is_empty());
+}
