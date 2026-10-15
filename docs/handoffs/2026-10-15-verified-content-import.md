@@ -31,3 +31,12 @@ snapshot Content stage/active/rollback inspect-result plumbing, so merge stays
 separate. Coordinator owns frozen Atlas PR136/main integration; source worker owns
 Dungeon travel followup. Next: merge their reviewed corrections and latest pack
 contracts, then rerun affected checks and hand off draft PR.
+
+Follow-up integration: preserved coordinator's shared verifier PNG regression by
+normal Atlas merge (it was added after this task's implementation baseline).
+Merged reviewed authored Dungeon travel fix e274b0c, combining both additive tests;
+all8 authored/inspection integration checks pass. Merged consumer browser
+mock/narrow-width fix dc0783f; all40 Playwright browser tests pass (24.5seconds).
+Directory paths now have an explicit4096byte app boundary. Independent coordinator
+review of bd3d4a4 found no important issue. Pending only coordinated Atlas consistent
+read correction before final integrated test run and draft handoff.
