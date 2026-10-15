@@ -395,7 +395,7 @@ fn verified_fixture_pack_still_blocks_stable_content_acceptance() {
         .join("content/offline-synthetic/entries/0000/dataset.json");
     fs::write(path, b"{}").unwrap();
     let result = report(&temp.options("1.0.0")).unwrap();
-    assert!(blocked(&result, "Pack size or digest mismatch"));
+    assert!(blocked(&result, "Evidence file size does not match"));
 }
 #[test]
 fn packs_in_evidence_only_paths_cannot_evade_production_fingerprint() {

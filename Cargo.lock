@@ -133,6 +133,7 @@ name = "azeroth-ingest"
 version = "0.8.1"
 dependencies = [
  "azeroth-core",
+ "image",
  "serde",
  "serde_json",
  "sha2",

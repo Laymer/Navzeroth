@@ -1,6 +1,7 @@
 //! Additive v2 content contract. Never an alternate snapshot/plan decoder.
 //! Context, revision and fixture identity come exclusively from `reference`.
 mod json;
+pub mod records;
 pub mod schema;
 use crate::{
     contract::{CatalogDataset, Envelope, MAX_CATALOG_IDENTITIES},
