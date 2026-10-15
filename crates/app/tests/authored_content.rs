@@ -109,10 +109,10 @@ fn catalog_pages_are_bounded_and_revision_bound() {
     let mut data = bundle();
     let model = data["content"]["models"][0].clone();
     data["content"]["models"] = Value::Array(
-        (0..205)
+        (0..1205)
             .map(|i| {
                 let mut v = model.clone();
-                v["id"] = json!(format!("model-{i:03}"));
+                v["id"] = json!(format!("model-{i:04}"));
                 v
             })
             .collect(),
@@ -125,6 +125,15 @@ fn catalog_pages_are_bounded_and_revision_bound() {
     request["offset"] = json!(200);
     assert!(app.authored_catalog(&request.to_string()).is_err());
     request["revision"] = json!("demo-r1");
+    request["catalog_sha256"] = json!(page.catalog_sha256);
+    assert_eq!(
+        app.authored_catalog(&request.to_string())
+            .unwrap()
+            .records
+            .len(),
+        200
+    );
+    request["offset"] = json!(1200);
     assert_eq!(
         app.authored_catalog(&request.to_string())
             .unwrap()
@@ -156,4 +165,27 @@ fn strict_staging_preserves_prior_active_revision_on_malformed_or_duplicate_cont
             .as_str(),
         "demo-r1"
     );
+}
+
+#[test]
+fn generic_catalog_pages_bind_hash_scope_and_reject_unbounded_requests() {
+    let (app, profile, _) = setup(&bundle());
+    let first = app.gear_catalog(&profile).unwrap();
+    let info = &first.pages[&azeroth_core::catalog::Collection::Items];
+    let mut request = json!({"subject":{"kind":"character","profile_id":profile},"collection":"items","revision":info.revision,"catalog_sha256":info.catalog_sha256,"offset":0});
+    let page = app.catalog_page(&request.to_string()).unwrap();
+    assert_eq!(page.records.len(), first.items.len());
+    assert_eq!(
+        page.records[0],
+        serde_json::to_value(&first.items[0]).unwrap()
+    );
+    request["limit"] = json!(1000);
+    assert!(app.catalog_page(&request.to_string()).is_err());
+    request.as_object_mut().unwrap().remove("limit");
+    request["catalog_sha256"] = json!("0".repeat(64));
+    assert!(app.catalog_page(&request.to_string()).is_err());
+    request["catalog_sha256"] = json!(info.catalog_sha256);
+    request["offset"] = json!(1000);
+    assert!(app.catalog_page(&request.to_string()).is_err());
+    assert!(app.catalog_page(&" ".repeat(4097)).is_err());
 }

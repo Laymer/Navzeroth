@@ -1,3 +1,4 @@
+import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import { useEffect, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { AppError, CatchUp, PartyQuestCatalog, PartyQuestReport } from "../commands/contract";
@@ -55,12 +56,13 @@ export function PartyEligibility({ client, partyId, refreshKey }: { client: Comm
     {loading && <p role="status">Checking quest eligibility…</p>}
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
     {catalog?.revision === null && <p>No active content matches this party. Install and activate a compatible content revision first.</p>}
-    {catalog?.revision && catalog.quests.length === 0 && <p>The active content contains no quest definitions.</p>}
+    <CatalogPager client={client} subject={{kind:"party",party_id:partyId}} page={catalog?.pages?.quests} label="quests" onPage={p=>{setCatalog(old=>old?{...old,quests:p.records.map(r=>(r as {id:string}).id),pages:{...old.pages,quests:p}}:old);}}/>
+{catalog?.revision && catalog.quests.length === 0 && <p>The active content contains no quest definitions.</p>}
     {catalog?.revision && catalog.quests.length > 0 && <>
       {catalog.fixture && <p className="demo-label">SYNTHETIC — engineering quest rules, not verified gameplay advice</p>}
       <p>Content revision: {catalog.revision}. Evaluates declared quest predicates only. Sharing, class/race/faction restrictions and exclusive choices require separate verified data.</p>
       <label>Quest to check <select value={quest} onChange={(event) => { setQuest(event.target.value); setReport(null); setError(null); setLoading(true); }}>
-        {catalog.quests.map((id) => <option key={id}>{id}</option>)}
+        <OffPageOptions selected={[quest]} visible={catalog.quests}/>{catalog.quests.map((id) => <option key={id}>{id}</option>)}
       </select></label>
     </>}
     {report && report.quest === quest && report.revision === catalog?.revision && <>

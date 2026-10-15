@@ -275,6 +275,7 @@ struct CatalogRequest {
     subject: PreparationSubject,
     kind: CatalogKind,
     revision: Option<DatasetRevision>,
+    catalog_sha256: Option<azeroth_core::types::Sha256Hex>,
     offset: usize,
 }
 #[derive(Serialize)]
@@ -286,11 +287,12 @@ pub struct AuthoredChoice {
 #[derive(Serialize)]
 pub struct AuthoredCatalog {
     pub revision: Option<DatasetRevision>,
+    pub catalog_sha256: Option<azeroth_core::types::Sha256Hex>,
     pub records: Vec<AuthoredChoice>,
     pub total: usize,
     pub next_offset: Option<usize>,
 }
-fn selected_catalog(
+pub(crate) fn selected_catalog(
     store: &SqliteStore,
     subject: &PreparationSubject,
 ) -> Result<Option<ActiveContentRevision>> {
@@ -325,23 +327,54 @@ impl SnapshotApplication {
         }
         let request: CatalogRequest =
             serde_json::from_str(text).map_err(|_| invalid("Invalid authored catalog request"))?;
-        if request.offset > 0 && request.revision.is_none() {
-            return Err(invalid("Subsequent pages require the exact revision"));
+        use azeroth_core::catalog::{Collection, MAX_PAGE_ROWS, PageRequest};
+        if request.offset > 0 && (request.revision.is_none() || request.catalog_sha256.is_none()) {
+            return Err(invalid(
+                "Subsequent pages require the exact revision and hash",
+            ));
         }
         self.with_store_mut(|store| {
             let content = selected_catalog(store, &request.subject)?;
-            let revision = content.as_ref().map(|c| c.revision().clone());
-            if request.revision.is_some() && request.revision != revision {
-                return Err(invalid(
-                    "Authored catalog revision changed; refresh selection",
-                ));
-            }
-            let mut records = Vec::new();
-            if let Some(content) = content.as_ref().and_then(|c| c.content_v2()) {
-                match request.kind {
+            let Some(content) = content else {
+                if request.offset != 0
+                    || request.revision.is_some()
+                    || request.catalog_sha256.is_some()
+                {
+                    return Err(invalid("Authored catalog changed; refresh selection"));
+                }
+                return Ok(AuthoredCatalog {
+                    revision: None,
+                    catalog_sha256: None,
+                    records: vec![],
+                    total: 0,
+                    next_offset: None,
+                });
+            };
+            let collection = match request.kind {
+                CatalogKind::Models => Collection::Models,
+                CatalogKind::Dungeons => Collection::Dungeons,
+            };
+            let binding = match (request.revision, request.catalog_sha256) {
+                (Some(revision), Some(catalog_sha256)) => Some(PageRequest {
+                    revision,
+                    catalog_sha256,
+                    collection,
+                    offset: request.offset,
+                    limit: MAX_PAGE_ROWS,
+                }),
+                (None, None) => None,
+                _ => return Err(invalid("Catalog binding requires both revision and hash")),
+            };
+            let page = crate::catalog_pages::page(store, &content, collection, binding.as_ref())?;
+            let records = page
+                .records
+                .into_iter()
+                .map(|record| match request.kind {
                     CatalogKind::Models => {
-                        records.extend(content.models.iter().map(|m| AuthoredChoice {
-                            id: m.id.clone(),
+                        let m: ClassRoleModel = serde_json::from_value(record)
+                            .map_err(|_| invalid("Invalid model page"))?;
+                        Ok(AuthoredChoice {
+                            id: m.id,
                             label: format!(
                                 "{} / {} / levels {}–{}",
                                 m.class.as_str(),
@@ -349,34 +382,27 @@ impl SnapshotApplication {
                                 m.minimum_level.get(),
                                 m.maximum_level.get()
                             ),
-                            evidence: m.evidence.clone(),
-                        }))
+                            evidence: m.evidence,
+                        })
                     }
                     CatalogKind::Dungeons => {
-                        records.extend(content.dungeons.iter().map(|d| AuthoredChoice {
-                            id: d.id.clone(),
+                        let d: azeroth_core::content_v2::Dungeon =
+                            serde_json::from_value(record)
+                                .map_err(|_| invalid("Invalid dungeon page"))?;
+                        Ok(AuthoredChoice {
+                            id: d.id,
                             label: d.title.as_str().into(),
-                            evidence: d.evidence.clone(),
-                        }))
+                            evidence: d.evidence,
+                        })
                     }
-                }
-            }
-            records.sort_by(|a, b| a.id.cmp(&b.id));
-            let total = records.len();
-            if request.offset > total {
-                return Err(invalid("Authored catalog offset is outside this revision"));
-            }
-            let records = records
-                .into_iter()
-                .skip(request.offset)
-                .take(200)
-                .collect::<Vec<_>>();
-            let next = request.offset + records.len();
+                })
+                .collect::<Result<Vec<_>>>()?;
             Ok(AuthoredCatalog {
-                revision,
+                revision: Some(page.page.revision),
+                catalog_sha256: Some(page.page.catalog_sha256),
                 records,
-                total,
-                next_offset: (next < total).then_some(next),
+                total: page.page.total,
+                next_offset: page.page.next_offset,
             })
         })
     }

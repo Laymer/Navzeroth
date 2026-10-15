@@ -455,17 +455,27 @@ impl SnapshotApplication {
                     context: key.context,
                     fixture: key.fixture,
                 })?;
+        let mut pages = crate::catalog_pages::Pages::new();
+        let nodes = crate::catalog_pages::first(
+            &state.store,
+            content.as_ref(),
+            azeroth_core::catalog::Collection::Nodes,
+            &mut pages,
+        )?;
+        let objectives = crate::catalog_pages::first(
+            &state.store,
+            content.as_ref(),
+            azeroth_core::catalog::Collection::Objectives,
+            &mut pages,
+        )?;
         Ok(crate::planning::PlanningCatalog {
+            pages,
+
             snapshot_id: snapshot.map(|s| s.payload.id.clone()),
             fixture: key.fixture,
             revision: content.as_ref().map(|c| c.reference().revision.clone()),
-            nodes: content
-                .as_ref()
-                .map(|c| c.reference().nodes.clone())
-                .unwrap_or_default(),
-            objectives: content
-                .map(|c| c.reference().objectives.clone())
-                .unwrap_or_default(),
+            nodes,
+            objectives,
         })
     }
     pub fn plan_session(
@@ -710,13 +720,21 @@ impl SnapshotApplication {
             fixture: key.fixture,
         };
         let content = state.store.active_catalog_revision(&scope)?;
+        let mut pages = crate::catalog_pages::Pages::new();
+        let definitions: Vec<azeroth_core::entities::QuestDefinition> =
+            crate::catalog_pages::first(
+                &state.store,
+                content.as_ref(),
+                azeroth_core::catalog::Collection::Quests,
+                &mut pages,
+            )?;
         Ok(crate::party::PartyQuestCatalog {
+            pages,
+
             context: key.context.clone(),
             fixture: key.fixture,
             revision: content.as_ref().map(|c| c.reference().revision.clone()),
-            quests: content
-                .map(|c| c.reference().quests.iter().map(|q| q.id.clone()).collect())
-                .unwrap_or_default(),
+            quests: definitions.into_iter().map(|q| q.id.clone()).collect(),
         })
     }
     pub fn party_eligibility(

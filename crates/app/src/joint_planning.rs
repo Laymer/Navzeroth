@@ -27,6 +27,7 @@ pub struct JointMember {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct JointPlanningCatalog {
+    pub pages: crate::catalog_pages::Pages,
     pub context: DataContext,
     pub fixture: bool,
     pub revision: Option<DatasetRevision>,
@@ -100,19 +101,28 @@ fn view_controlled(
         });
         snapshots.push(snapshot);
     }
+    let mut pages = crate::catalog_pages::Pages::new();
+    let nodes = crate::catalog_pages::first(
+        store,
+        content.as_ref(),
+        azeroth_core::catalog::Collection::Nodes,
+        &mut pages,
+    )?;
+    let objectives = crate::catalog_pages::first(
+        store,
+        content.as_ref(),
+        azeroth_core::catalog::Collection::Objectives,
+        &mut pages,
+    )?;
     let catalog = JointPlanningCatalog {
+        pages,
+
         context: first.context.clone(),
         fixture: first.fixture,
         revision: content.as_ref().map(|c| c.reference().revision.clone()),
         participants,
-        nodes: content
-            .as_ref()
-            .map(|c| c.reference().nodes.clone())
-            .unwrap_or_default(),
-        objectives: content
-            .as_ref()
-            .map(|c| c.reference().objectives.clone())
-            .unwrap_or_default(),
+        nodes,
+        objectives,
     };
     Ok((catalog, snapshots, content))
 }

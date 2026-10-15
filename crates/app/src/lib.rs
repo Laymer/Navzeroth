@@ -6,6 +6,7 @@
 pub mod atlas;
 pub mod authored_content;
 pub mod catalog;
+pub mod catalog_pages;
 pub mod clustering;
 pub mod content;
 pub mod content_dispositions;

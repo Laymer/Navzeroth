@@ -4,6 +4,7 @@ export interface JointMember {
   profile_id: string; character: string; snapshot_id: string | null; freshness: Freshness | null;
 }
 export interface JointPlanningCatalog {
+  pages?: import("../commands/catalogPages").CatalogPages;
   context: DataContext; fixture: boolean; revision: string | null;
   participants: JointMember[]; nodes: TravelNode[]; objectives: Objective[];
 }

@@ -91,6 +91,7 @@ export interface StoredParty {
   }[];
 }
 export interface PartyQuestCatalog {
+  pages?: import("./catalogPages").CatalogPages;
   context: DataContext;
   fixture: boolean;
   revision: string | null;
@@ -248,6 +249,7 @@ export interface SnapshotMarker {
 }
 
 export interface PlanningCatalog {
+  pages?: import("./catalogPages").CatalogPages;
   snapshot_id: string | null; revision: string | null; fixture: boolean;
   nodes: TravelNode[]; objectives: Objective[];
 }
@@ -283,6 +285,7 @@ export interface CommandMap {
   clear_current_plan:{input:{expected_revision:number};output:number};
   get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
   change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
+  get_catalog_page: { input: { text: string }; output: import("./catalogPages").CatalogRecordPage };
   get_authored_catalog: { input: { text: string }; output: import("./authoredContent").AuthoredCatalog };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
