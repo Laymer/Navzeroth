@@ -62,3 +62,10 @@ test("changing local input discards pending results",async()=>{
   expect(screen.queryByText(/Imported member assessments/)).toBeNull();
   view.unmount();expect(client.getDungeonPreparation).toHaveBeenCalledTimes(1);
 });
+test.each(["restricted","unknown","known"] as const)("authored travel displays %s without inventing an ordered route",async status=>{
+  const client=mock();client.getDungeonPreparation.mockResolvedValue({ok:true,value:{...report,authored_travel:{declaration:{observation:status==="known"?{status,value:[]}:{status},evidence:["travel-evidence"]},edges:[]}}} as {ok:true;value:PreparationReport});
+  render(<DungeonsScreen client={client as unknown as CommandClient} refreshKey={0}/>);await ready();fireEvent.click(screen.getByRole("button",{name:"Inspect preparation gaps"}));
+  expect(await screen.findByRole("region",{name:"Authored travel dependencies"})).toHaveTextContent(`Availability: ${status}`);
+  if(status==="known")expect(screen.getByText('The authored list is explicitly empty.')).toBeInTheDocument();
+  else expect(screen.queryByText('The authored list is explicitly empty.')).not.toBeInTheDocument();
+});

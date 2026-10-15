@@ -167,6 +167,12 @@ pub struct PreparationGap {
     pub availability: Option<ObservationStatus>,
 }
 #[derive(Clone, Debug, Serialize)]
+pub struct AuthoredTravel {
+    pub declaration: Declared<Vec<EdgeId>>,
+    // Directed reference dependencies, not an ordered route or inferred geometry.
+    pub edges: Vec<azeroth_core::entities::TravelEdge>,
+}
+#[derive(Clone, Debug, Serialize)]
 pub struct PreparationReport {
     pub schema_version: u16,
     pub context: DataContext,
@@ -175,6 +181,8 @@ pub struct PreparationReport {
     pub package: Option<LocalPreparationPackage>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub authored: Option<crate::authored_content::AuthoredSelection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub authored_travel: Option<AuthoredTravel>,
     pub members: Vec<MemberPreparation>,
     pub evidence: Vec<PreparationEvidence>,
     pub gaps: Vec<PreparationGap>,
@@ -626,6 +634,55 @@ fn evaluate_inputs(
     now: Option<UtcMillis>,
 ) -> Result<PreparationReport> {
     let key = &captured.keys[0];
+    let mut evidence_ids = evidence_ids.clone();
+    let authored_travel = if let Some(selection) = &request.authored {
+        let content = captured
+            .content
+            .as_ref()
+            .ok_or_else(|| invalid("No active authored travel content"))?;
+        let authored = content
+            .content_v2()
+            .ok_or_else(|| invalid("Authored travel requires v2 content"))?;
+        let dungeon = authored
+            .dungeons
+            .iter()
+            .find(|d| d.id == selection.id)
+            .ok_or_else(|| invalid("Authored dungeon travel does not resolve"))?;
+        let declaration_value = Declared {
+            observation: dungeon.travel_edges.clone(),
+            evidence: dungeon.evidence.clone(),
+        };
+        declaration(
+            &declaration_value,
+            "authored_travel",
+            &mut gaps,
+            &mut evidence_ids,
+        )?;
+        let selected = dungeon
+            .travel_edges
+            .value()
+            .map(|ids| ids.iter().collect::<BTreeSet<_>>())
+            .unwrap_or_default();
+        let edges = content
+            .reference()
+            .edges
+            .iter()
+            .filter(|edge| selected.contains(&edge.id))
+            .cloned()
+            .collect::<Vec<_>>();
+        if edges.len() != selected.len() {
+            return Err(invalid("Authored travel edge does not resolve"));
+        }
+        for edge in &edges {
+            evidence_ids.extend(edge.evidence.iter().cloned());
+        }
+        Some(AuthoredTravel {
+            declaration: declaration_value,
+            edges,
+        })
+    } else {
+        None
+    };
     if request.package.is_none() {
         gap(&mut gaps, GapCode::PackageMissing, "package");
     }
@@ -682,7 +739,7 @@ fn evaluate_inputs(
                     }
                 }
             }
-            for id in evidence_ids {
+            for id in &evidence_ids {
                 let record = dataset
                     .evidence
                     .iter()
@@ -936,6 +993,7 @@ fn evaluate_inputs(
             .map(|c| c.reference().revision.clone()),
         package: request.package,
         authored: request.authored,
+        authored_travel,
         members,
         evidence,
         gaps,
