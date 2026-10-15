@@ -385,6 +385,8 @@ pub struct AtlasView {
     pub revision: DatasetRevision,
     pub namespace: DatasetNamespace,
     pub images: Vec<AtlasImage>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub page: Option<crate::stored_atlas::AtlasPage>,
 }
 
 /// A position placed on an image, or the explicit reason it was not.
@@ -467,17 +469,29 @@ fn atlas_image(
     image: &MapImage,
     style: SchemeStyle,
 ) -> Result<AtlasImage, AppError> {
-    let confidence = calibration_confidence(image, &atlas.dataset);
+    catalog_image(&atlas.dataset, &atlas.context, image, style, &|layer| {
+        atlas
+            .integrity
+            .get(&(image.id.clone(), layer.id.clone()))
+            .copied()
+            .unwrap_or(LayerCheck::NotEmbedded)
+    })
+}
+
+fn catalog_image(
+    dataset: &ReferenceDataset,
+    context: &DataContext,
+    image: &MapImage,
+    style: SchemeStyle,
+    integrity: &dyn Fn(&ImageLayer) -> LayerCheck,
+) -> Result<AtlasImage, AppError> {
+    let confidence = calibration_confidence(image, dataset);
     let layers = image
         .layers
         .iter()
         .map(|layer| {
             let url = style.layer_url(&image.id, &layer.id);
-            let check = atlas
-                .integrity
-                .get(&(image.id.clone(), layer.id.clone()))
-                .copied()
-                .unwrap_or(LayerCheck::NotEmbedded);
+            let check = integrity(layer);
             let availability = match (&url, check) {
                 (None, _) => LayerAvailability::UnservableId,
                 (Some(_), LayerCheck::Verified) => LayerAvailability::Available,
@@ -515,7 +529,7 @@ fn atlas_image(
         calibration_confidence: confidence,
         approximate: is_approximate(image, confidence),
         gaps: image.gaps.clone(),
-        attribution: attribution(image, atlas.context.namespace)?,
+        attribution: attribution(image, context.namespace)?,
     })
 }
 
@@ -548,6 +562,7 @@ pub fn query_atlas_with(image: Option<&str>, style: SchemeStyle) -> Result<Atlas
         revision: atlas.dataset.revision.clone(),
         namespace: atlas.context.namespace,
         images,
+        page: None,
     })
 }
 
@@ -578,6 +593,15 @@ fn marker_for(
     snapshot: &azeroth_core::contract::Envelope<CharacterSnapshot>,
     now_utc_ms: Option<UtcMillis>,
 ) -> Result<SnapshotMarker, AppError> {
+    catalog_marker(&atlas.dataset, &atlas.context, snapshot, now_utc_ms)
+}
+
+pub(crate) fn catalog_marker(
+    dataset: &ReferenceDataset,
+    data_context: &DataContext,
+    snapshot: &azeroth_core::contract::Envelope<CharacterSnapshot>,
+    now_utc_ms: Option<UtcMillis>,
+) -> Result<SnapshotMarker, AppError> {
     let payload = &snapshot.payload;
     let location: &Observation<Position> = &payload.location;
     let metadata = location.metadata();
@@ -594,10 +618,15 @@ fn marker_for(
     };
     // Only a known location is projected; unknown, unsupported, restricted and
     // not-applicable locations never become a pixel.
-    let projection = location.value().map(|position| project(atlas, position));
+    let projection =
+        location.value().map(
+            |position| match project_position(position, data_context, dataset) {
+                Ok(value) => ProjectedPosition::Placed(value),
+                Err(gap) => ProjectedPosition::Gap(gap),
+            },
+        );
     let approximate = match &projection {
-        Some(ProjectedPosition::Placed(placed)) => atlas
-            .dataset
+        Some(ProjectedPosition::Placed(placed)) => dataset
             .map_images
             .iter()
             .find(|i| i.id == placed.image)
@@ -635,4 +664,28 @@ pub fn snapshot_marker_for(
     now_utc_ms: Option<UtcMillis>,
 ) -> Result<SnapshotMarker, AppError> {
     marker_for(demo_atlas()?, snapshot, now_utc_ms)
+}
+
+/// Without a selected catalog an observed location remains unprojected.
+pub(crate) fn marker_without_catalog(
+    snapshot: &azeroth_core::contract::Envelope<CharacterSnapshot>,
+    now: Option<UtcMillis>,
+) -> Result<SnapshotMarker, AppError> {
+    let mut marker = snapshot_marker_for(snapshot, now)?;
+    marker.projection = None;
+    marker.approximate = None;
+    Ok(marker)
+}
+pub(crate) fn stored_image(
+    dataset: &ReferenceDataset,
+    context: &DataContext,
+    image: &MapImage,
+) -> Result<AtlasImage, AppError> {
+    catalog_image(
+        dataset,
+        context,
+        image,
+        SchemeStyle::for_platform(),
+        &|_| LayerCheck::NotEmbedded,
+    )
 }

@@ -419,6 +419,14 @@ impl SnapshotApplication {
     pub fn party_ids(&self) -> Result<Vec<PartyId>> {
         self.lock()?.store.party_ids()
     }
+    pub(crate) fn with_selected_store<T>(
+        &self,
+        call: impl FnOnce(&SqliteStore, Option<&str>) -> Result<T>,
+    ) -> Result<T> {
+        let state = self.lock()?;
+        call(&state.store, state.selected.as_deref())
+    }
+
     /// Serialize multi-profile operations against one consistent store state.
     pub(crate) fn with_store_mut<T>(
         &self,
@@ -986,7 +994,26 @@ impl SnapshotApplication {
         let Some(snapshot) = self.current(&id, now)? else {
             return Ok(vec![]);
         };
-        let mut marker = atlas::snapshot_marker_for(&snapshot.envelope, now)?;
+        let mut marker = self.with_selected_store(|store, selected| {
+            if selected != Some(id.as_str()) {
+                return Err(error(ErrorCode::InvalidInput, "Selected profile changed"));
+            }
+            let key = resolve(store, &id)?;
+            let content =
+                store.active_catalog_revision(&azeroth_storage::content::ContentScope {
+                    context: key.context,
+                    fixture: key.fixture,
+                })?;
+            match content {
+                Some(content) => atlas::catalog_marker(
+                    content.reference(),
+                    &content.context(),
+                    &snapshot.envelope,
+                    now,
+                ),
+                None => atlas::marker_without_catalog(&snapshot.envelope, now),
+            }
+        })?;
         marker.data_mode = DataMode::Stored;
         marker.profile_id = id;
         Ok(vec![marker])

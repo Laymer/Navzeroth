@@ -351,3 +351,23 @@ it("bounds dense map/list pages and keeps global keyboard focus across pages", a
   await screen.findByText(/Dataset trimmed/);
   expect(screen.getByText("The selected pin is no longer present in this atlas revision.")).toBeInTheDocument();
 });
+
+it("binds stored image paging and markers to the catalog token and hides failed stale content",async()=>{
+ const token={profile_id:"p",revision:"stored-r1",catalog_sha256:"a".repeat(64)};
+ const calls:unknown[]=[];let count=0;
+ const adapter:CommandAdapter={invoke:(command,input)=>{
+  if(command==="query_atlas") {
+   calls.push(input);count++;
+   if(count===2)return Promise.reject({code:"INVALID_INPUT",message:"Selected atlas revision changed; refresh",retryable:false});
+   return Promise.resolve({data_mode:"stored",fixture:true,revision:"stored-r1",namespace:"demo",images:[],page:{token,total:201,offset:0,next_offset:200}} as never);
+  }
+  if(command==="get_snapshot_markers"){expect(input).toEqual({page:token});return Promise.resolve([] as never);}
+  return demoAdapter.invoke(command,input);
+ }};
+ renderAtlas(adapter);
+ expect(await screen.findByText(/Dataset stored-r1/)).toBeInTheDocument();
+ fireEvent.click(screen.getByRole("button",{name:"Next image page"}));
+ expect(await screen.findByRole("alert")).toHaveTextContent("Selected atlas revision changed");
+ expect(screen.queryByText(/Dataset stored-r1/)).not.toBeInTheDocument();
+ expect(calls[1]).toEqual({image:null,page:token,offset:200});
+});

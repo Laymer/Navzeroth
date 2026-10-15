@@ -88,7 +88,7 @@ const imageShape = object<AtlasImage>({
   attribution: str,
 });
 
-export const atlasViewShape = object<AtlasView>({
+export const atlasViewShape = object<Omit<AtlasView, "page">>({
   data_mode: oneOf("demo", "stored"),
   fixture: bool,
   revision: str,

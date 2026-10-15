@@ -191,7 +191,10 @@ export interface AtlasImage {
   attribution: string;
 }
 
+export interface AtlasToken { profile_id: string; revision: string; catalog_sha256: string }
+export interface AtlasPage { token: AtlasToken; offset: number; total: number; next_offset: number | null }
 export interface AtlasView {
+  page?: AtlasPage;
   data_mode: DataMode;
   fixture: boolean;
   revision: string;
@@ -348,10 +351,10 @@ export interface CommandMap {
   select_profile: { input: { profile_id: string }; output: null };
   get_stored_snapshot: { input: { profile_id: string }; output: StoredSnapshot | null };
   get_snapshot_history: { input: { profile_id: string; limit: number }; output: HistoryEntry[] };
-  query_atlas: { input: { image: string | null }; output: AtlasView };
+  query_atlas: { input: { image: string | null; page?: AtlasToken; offset?: number }; output: AtlasView };
   /** One to 64 positions. */
-  project_positions: { input: { positions: Position[] }; output: ProjectedPosition[] };
-  get_snapshot_markers: { input: undefined; output: SnapshotMarker[] };
+  project_positions: { input: { positions: Position[]; page?: AtlasToken }; output: ProjectedPosition[] };
+  get_snapshot_markers: { input: {page?: AtlasToken} | undefined; output: SnapshotMarker[] };
 }
 
 export type CommandName = keyof CommandMap;

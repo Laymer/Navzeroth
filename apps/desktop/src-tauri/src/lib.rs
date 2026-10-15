@@ -580,18 +580,37 @@ async fn get_snapshot_watch(state: State<'_, Application>) -> Result<WatchState,
     blocking(state, |app| app.watch_status()).await
 }
 #[tauri::command]
-fn query_atlas(image: Option<String>) -> Result<AtlasView, AppError> {
-    azeroth_app::atlas::query_atlas(image.as_deref())
+async fn query_atlas(
+    state: State<'_, Application>,
+    image: Option<String>,
+    page: Option<azeroth_app::stored_atlas::AtlasToken>,
+    offset: Option<usize>,
+) -> Result<AtlasView, AppError> {
+    blocking(state, move |app| {
+        app.stored_atlas(image.as_deref(), page.as_ref(), offset.unwrap_or(0))
+    })
+    .await
 }
 #[tauri::command]
-fn project_positions(positions: Vec<Position>) -> Result<Vec<ProjectedPosition>, AppError> {
-    azeroth_app::atlas::project_positions(&positions)
+async fn project_positions(
+    state: State<'_, Application>,
+    positions: Vec<Position>,
+    page: azeroth_app::stored_atlas::AtlasToken,
+) -> Result<Vec<ProjectedPosition>, AppError> {
+    blocking(state, move |app| {
+        app.stored_project_positions(&positions, &page)
+    })
+    .await
 }
 #[tauri::command]
 async fn get_snapshot_markers(
     state: State<'_, Application>,
+    page: Option<azeroth_app::stored_atlas::AtlasToken>,
 ) -> Result<Vec<SnapshotMarker>, AppError> {
-    blocking(state, |app| app.markers(system_now())).await
+    blocking(state, move |app| {
+        app.atlas_markers(page.as_ref(), system_now())
+    })
+    .await
 }
 #[tauri::command(rename_all = "snake_case")]
 async fn import_session_text(
@@ -669,8 +688,15 @@ pub fn run() {
             app.manage(service);
             Ok(())
         })
-        .register_uri_scheme_protocol(atlas_protocol::SCHEME, |_ctx, request| {
-            atlas_protocol::respond(&request)
+        .register_uri_scheme_protocol(atlas_protocol::SCHEME, |ctx, request| {
+            if request.uri().path().starts_with("/stored/") {
+                atlas_protocol::respond_stored(
+                    &request,
+                    ctx.app_handle().state::<Application>().inner(),
+                )
+            } else {
+                atlas_protocol::respond(&request)
+            }
         })
         .manage(reference_window::Controller::default())
         .invoke_handler({
