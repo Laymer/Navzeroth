@@ -162,6 +162,16 @@ impl Temp {
             "redistribution":"permitted","files":[self.reference("vendor/raw.lua")],
             "license_files":[self.reference("vendor/license.txt")],"attribution_files":[self.reference("vendor/attribution.txt")],
             "permission_evidence":[self.reference("docs/private-proof.txt")],"target_validation":"pass","target_evidence":[self.reference("docs/private-proof.txt")]}]);
+        let proof = json!({"url":"https://example.invalid/synthetic-proof","revision":"1".repeat(40),"sha256":digest(&fs::read(self.0.join("docs/private-proof.txt")).unwrap()),"reviewed_scope":"Synthetic fixture only; no gameplay rights"});
+        let source = &sources["sources"][0];
+        self.json("docs/admission-registry.json", &json!({"schema_version":1,"sources":[{
+            "id":"demo-source-1","revision":"1".repeat(40),"publisher":source["publisher"],
+            "origin":{"edition":"synthetic-test-only","build":null},
+            "rights":{"status":"admitted","license":"permissive","license_identifier":source["license"]["value"],"reviewer":"synthetic-test","attribution":source["attribution"]["value"],"obligations":"Retain synthetic notices","evidence":[proof]},
+            "retrieval":{"method":"manual_local","max_total_bytes":RAW.len(),"minimum_interval_ms":1000,"max_requests":1,"access_evidence":proof},
+            "files":[{"path":"vendor/raw.lua","url":"https://example.invalid/raw.lua","sha256":digest(RAW),"bytes":RAW.len(),"fields":source["allowed_fields"]["value"],"transformation":"canonical_typed_serialization"}]
+        }]}));
+        evidence["admission_registry"] = self.reference("docs/admission-registry.json");
         evidence["packs"] = json!([{"manifest":self.reference("content/material-test/manifest.json"),"dataset_revisions":["synthetic-material-test-r1"]}]);
         self.json(EVIDENCE, &evidence);
         self.bind_inventory();
@@ -187,6 +197,7 @@ fn selected_closure_is_deterministic_inert_exact_and_private_proofs_are_excluded
     assert_eq!(bytes, materials::plan(&options).unwrap().bytes().unwrap());
     assert!(!String::from_utf8_lossy(&bytes).contains("private-proof"));
     assert!(!String::from_utf8_lossy(&bytes).contains("permission_evidence"));
+    assert!(!String::from_utf8_lossy(&bytes).contains("admission-registry"));
     let stage = temp.0.join("dist");
     fs::create_dir(&stage).unwrap();
     let output = stage.join("materials");
@@ -239,6 +250,12 @@ fn declared_public_notices_can_also_support_permission_without_selecting_proof_c
             };
             let mut evidence = temp.read(EVIDENCE);
             evidence["sources"][0]["permission_evidence"] = json!([temp.reference(proof_path)]);
+            let mut registry = temp.read("docs/admission-registry.json");
+            let hash = temp.reference(proof_path)["sha256"].clone();
+            registry["sources"][0]["rights"]["evidence"][0]["sha256"] = hash.clone();
+            registry["sources"][0]["retrieval"]["access_evidence"]["sha256"] = hash;
+            temp.json("docs/admission-registry.json", &registry);
+            evidence["admission_registry"] = temp.reference("docs/admission-registry.json");
             temp.json(EVIDENCE, &evidence);
             temp.commit();
 
@@ -515,6 +532,10 @@ fn git_lfs_material_inputs_require_hydrated_exact_bytes() {
     temp.write("vendor/lfs-source.lua", RAW);
     let mut evidence = temp.read(EVIDENCE);
     evidence["sources"][0]["files"] = json!([temp.reference("vendor/lfs-source.lua")]);
+    let mut registry = temp.read("docs/admission-registry.json");
+    registry["sources"][0]["files"][0]["path"] = json!("vendor/lfs-source.lua");
+    temp.json("docs/admission-registry.json", &registry);
+    evidence["admission_registry"] = temp.reference("docs/admission-registry.json");
     temp.json(EVIDENCE, &evidence);
     temp.commit();
     let pointer = temp.git(&["show", "HEAD:vendor/lfs-source.lua"]);
@@ -599,4 +620,107 @@ fn v2_catalog_materials_are_verified_delivered_and_do_not_waive_missing_domains(
     );
     temp.write("content/v2-test/catalog.json", b"{}");
     assert!(materials::plan(&temp.options()).is_err());
+}
+
+#[test]
+fn offline_admission_blocks_unreviewed_noncommercial_mismatched_and_missing_claims() {
+    for case in [
+        "missing",
+        "hash",
+        "noncommercial",
+        "unknown_license",
+        "unreviewed",
+        "source",
+        "revision",
+        "unselected_fields",
+        "transformation",
+        "grant",
+        "origin",
+        "publisher",
+        "license",
+        "attribution",
+        "fields",
+        "file_path",
+        "file_hash",
+    ] {
+        let temp = Temp::new(true);
+        let mut evidence = temp.read(EVIDENCE);
+        let mut registry = temp.read("docs/admission-registry.json");
+        let source = &mut registry["sources"][0];
+        match case {
+            "missing" => {
+                evidence
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("admission_registry");
+            }
+            "hash" => evidence["admission_registry"]["sha256"] = json!("0".repeat(64)),
+            "noncommercial" => source["rights"]["license"] = json!("noncommercial"),
+            "unknown_license" => source["rights"]["license"] = json!("unknown"),
+            "unreviewed" => source["rights"]["status"] = json!("unreviewed"),
+            "source" => source["id"] = json!("unrelated"),
+            "revision" => source["revision"] = json!("2".repeat(40)),
+            "unselected_fields" => {
+                let mut other = source["files"][0].clone();
+                other["path"] = json!("vendor/not-selected.lua");
+                source["files"][0]["fields"] = json!(["unrelated"]);
+                source["files"].as_array_mut().unwrap().push(other);
+                source["retrieval"]["max_requests"] = json!(2);
+                source["retrieval"]["max_total_bytes"] = json!(RAW.len() * 2);
+            }
+            "grant" => source["rights"]["evidence"][0]["sha256"] = json!("0".repeat(64)),
+            "origin" => source["origin"]["edition"] = json!("unrelated"),
+            "publisher" => source["publisher"] = json!("unrelated"),
+            "license" => source["rights"]["license_identifier"] = json!("unrelated"),
+            "attribution" => source["rights"]["attribution"] = json!("unrelated"),
+            "fields" => source["files"][0]["fields"] = json!(["unrelated"]),
+            "transformation" => source["files"][0]["transformation"] = json!("unrelated"),
+            "file_path" => source["files"][0]["path"] = json!("vendor/unrelated.lua"),
+            "file_hash" => source["files"][0]["sha256"] = json!("0".repeat(64)),
+            _ => unreachable!(),
+        }
+        if !matches!(case, "missing" | "hash") {
+            temp.json("docs/admission-registry.json", &registry);
+            evidence["admission_registry"] = temp.reference("docs/admission-registry.json");
+        }
+        temp.json(EVIDENCE, &evidence);
+        temp.commit();
+        assert!(materials::plan(&temp.options()).is_err(), "{case}");
+        let report = azeroth_cli::release::report(&temp.options()).unwrap();
+        assert!(!report.readiness.candidate_ready, "{case}");
+        assert!(!report.readiness.stable_ready, "{case}");
+        assert!(
+            report
+                .readiness
+                .blockers
+                .iter()
+                .any(|b| b.to_ascii_lowercase().contains("admission")
+                    || b.contains("admitted")
+                    || b.contains("transformations")
+                    || b.contains("original")
+                    || b.contains("Original")
+                    || b.contains("bytes changed")
+                    || b.contains("hash")),
+            "{case}: {:?}",
+            report.readiness.blockers
+        );
+    }
+}
+
+#[test]
+fn admission_registry_remains_private_even_if_relabelled_as_a_public_notice() {
+    let temp = Temp::new(true);
+    temp.write(
+        "vendor/registry-copy.json",
+        &fs::read(temp.0.join("docs/admission-registry.json")).unwrap(),
+    );
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["sources"][0]["license_files"] = json!([temp.reference("vendor/registry-copy.json")]);
+    temp.json(EVIDENCE, &evidence);
+    temp.commit();
+    assert!(
+        materials::plan(&temp.options())
+            .unwrap_err()
+            .contains("Private admission registry")
+    );
 }
