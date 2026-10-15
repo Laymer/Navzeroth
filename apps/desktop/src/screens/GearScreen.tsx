@@ -1,3 +1,5 @@
+import {AuthoredContentPicker} from "./AuthoredContentPicker";
+import type {AuthoredSelection} from "../commands/authoredContent";
 import { AcquisitionDetails, BaselineSlots, EligibilityDetails, RankingDetails, ScoreDetails, formatMilli } from "./GearExplanations";
 import { RouteAcquisitionPanel } from "./RouteAcquisitionPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -20,6 +22,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
   const [profile, setProfile] = useState("");
   const [catalog, setCatalog] = useState<GearCatalog | null>(null);
+  const [authored,setAuthored]=useState<AuthoredSelection|null>(null);
   const [inputs, setInputs] = useState<GearInput[]>([]);
   const [role, setRole] = useState("manual-role");
   const [weights, setWeights] = useState("{}");
@@ -53,7 +56,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     const changedScope = scope.current?.client !== client || scope.current?.profile !== profile;
     scope.current = { client, profile };
     if (changedScope) {
-      setInputs([]); setSynthetic(false); setWeights("{}"); setRole("manual-role"); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
+      setInputs([]); setAuthored(null); setSynthetic(false); setWeights("{}"); setRole("manual-role"); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
       setTimes({ travel: "", formation: "", attempt: "", stopping: "", budget: "", copper: "", attempts: "1" }); setIndependent(false); setPerAttempt(false);
     }
     if (profile) void client.getGearCatalog(profile).then((result) => {
@@ -80,7 +83,9 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   }
   function gearRequest(): GearRequest {
     if (!catalog?.snapshot_id || !catalog.revision) throw new Error("Import a capture and activate content first.");
+    if(authored && authored.revision!==catalog.revision) throw new Error("Authored model revision changed; select it again.");
     return {
+        authored_model: authored?.id??null,
         profile_id: profile, snapshot_id: catalog.snapshot_id, revision: catalog.revision,
         model: { role, version: "gear-model-v1", weight_source: { type: synthetic ? "synthetic_test" : "user_preference" }, weights: JSON.parse(weights) as Record<string, number>, known_unmodeled: [] },
         layout: { slots, hands: mainHand || offHand ? { main_hand: mainHand, off_hand: offHand } : null },
@@ -96,7 +101,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     const ticket = ++generation.current; setBusy(true); setReport(null); setError("");
     try {
       const request = gearRequest();
-      if (inputs.length === 0 || times.budget.trim() === "" || !Object.keys(request.model.weights).length) throw new Error("Select candidates and explicitly supply weights and session budget.");
+      if (inputs.length === 0 || times.budget.trim() === "" || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and explicitly supply weights and session budget.");
       const result = await client.compareGear(JSON.stringify(request));
       if (ticket !== generation.current) return;
       if (!result.ok) setError(result.error.message); else { setReport(result.value); setReportBasis("manual"); }
@@ -104,13 +109,15 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     finally { if (ticket === generation.current) setBusy(false); }
   }
   return <section aria-label="Gear"><h2>Gear comparisons</h2>
-    <p>Model scores use your explicit assumptions. No class, proficiency, category or weight table is supplied. Unknown acquisition or baseline inputs prevent a practical recommendation.</p>
+    <p>Model scores use your explicit assumptions. Select an installed authored model or supply a manual model. Class is an explicit assumption because imported snapshots do not contain class facts. Unknown acquisition or baseline inputs prevent a practical recommendation.</p>
     {catalog?.fixture && <p role="note">SYNTHETIC — engineering fixture, not live game advice.</p>}
     {error && <p role="alert">{error}</p>}
     <label>Gear profile <select value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
     <p>Snapshot: {catalog?.snapshot_id ?? "none"}; revision: {catalog?.revision ?? "none — activate Content first"}</p>
-    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
-      gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || !Object.keys(request.model.weights).length) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
+    <AuthoredContentPicker client={client} kind="models" subject={{kind:"character",profile_id:profile}} refreshKey={refreshKey} value={authored} onChange={v=>{invalidate();setAuthored(v);}}/>
+    {authored&&<p>Authored weights, proficiency, layout and item facts are resolved by the backend from this revision; unavailable applicability blocks comparison.</p>}
+    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({authored,weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
+      gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
       onGearReport={routeReport} onBusyChange={setBusy} externalBusy={busy} opportunities={inputs.flatMap(input=>input.acquisition?[{source:input.acquisition.source,target:input.item,formation_ms:numberObservation(times.formation),attempt_ms:numberObservation(times.attempt),available_copper:times.copper.trim()?known(times.copper):unknown<string>(),max_attempts:Number(times.attempts),independent_player_attempts:independent,cost_per_attempt:perAttempt}]:[])} />
     <button type="button" disabled={!catalog?.fixture} onClick={example}>Load labelled synthetic example</button>
     {synthetic && <p>Engineering example: all readable attributes have equal weight 1; categories are explicitly assumed inapplicable, effort is fictional and sources remain unselected. Edit each assumption before use.</p>}
