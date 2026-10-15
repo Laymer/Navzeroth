@@ -60,3 +60,17 @@ Retain the MIT copyright and permission notices with the selected source and der
 
 
 - `LICENSE` → [`09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd`](objects/09adfc10507b7166fc8997b10e361668b05d04077c28ad5e8dbb454313304acd); [immutable upstream](https://raw.githubusercontent.com/wowsims/classic/7779ebbf79dc7f1341e6ab939b28a3402c9a730a/LICENSE).
+
+
+## allthethings-forever-riverglades
+
+Origin: ATTWoWAddon/AllTheThings at `bf97402174a017c1ffe2b710e0ba9ac9eb7c169b`.
+
+Licence: MIT. Copyright (c) 2026 AllTheThings WoW Addon.
+
+Retain exact MIT copyright/permission/warranty notices with original source and derived declarations. Preserve upstream URL, raw symbolic fields and unknown build. No media, external generated database, inferred flight edges or target70374 validation is included.
+
+- Original `.contrib/.db/forever/zones/eastern kingdoms/riverglades.lua` → [`1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae`](objects/1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae); [immutable upstream](https://raw.githubusercontent.com/ATTWoWAddon/AllTheThings/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b/.contrib/.db/forever/zones/eastern%20kingdoms/riverglades.lua). Registry path is the exact retained repository object, not an invented upstream filename.
+- `LICENSE` → [`955281b9174e0f66b08c8e83d31e0f38b2fcaa247ca3af92d1723d81a13cddfb`](objects/955281b9174e0f66b08c8e83d31e0f38b2fcaa247ca3af92d1723d81a13cddfb); [immutable upstream](https://raw.githubusercontent.com/ATTWoWAddon/AllTheThings/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b/LICENSE).
+
+Navzeroth explicitly maps four literal declaration fields on 2026-10-15; imported code is never executed. Raw symbols and unknown origin build are preserved. This is neither a directed travel edge nor calibrated geography or verified target content.

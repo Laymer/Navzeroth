@@ -18,3 +18,13 @@ explicit hash-bound inert transformation, deterministic offline convergence and
 complete material closure. Origin Forever/buildunknown stays separate from
 verified70374 and all independent inventories stayunknown. No Lua execution,
 media retrieval, contacts or publication of personal exports.
+
+Pre-admission freshness check found default headbf97402174a017c1ffe2b710e0ba9ac9eb7c169b
+explicitly reverts649f90 and removes the proposed Ashenvale file. Drop that
+provisional mapping/material from production scope, retaining the research record.
+Use the unchanged Riverglades flight-point3276 declaration at current head
+instead (7434byte source, SHA1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae;
+same MIT licence). Support canonical `%20` only in source HTTPS URL paths,
+with explicit traversal/authority/other-encoding refusal tests; leave shared
+AssetPath/exchange formats unchanged. Document this validation extension. Four
+raw declarations only, unknown originbuild, no directed-edge or target inference.

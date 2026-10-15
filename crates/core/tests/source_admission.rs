@@ -149,7 +149,8 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
         [
             "atlasloot-classic-areas",
             "mapzeroth-retail-ek",
-            "wowsims-classic-paladin-model"
+            "wowsims-classic-paladin-model",
+            "allthethings-forever-riverglades"
         ]
     );
     assert!(r.sources.iter().all(|s| s.origin.build.is_none()));
@@ -205,4 +206,24 @@ fn rejects_ambiguous_urls_and_windows_path_aliases() {
     r.sources[0].files.push(duplicate);
     r.sources[0].retrieval.max_requests = 2;
     assert!(r.validate().is_err());
+}
+
+#[test]
+fn canonical_encoded_spaces_only_in_https_path_preserve_authority_guards() {
+    let mut r = registry();
+    r.sources[0].files[0].url =
+        "https://example.invalid/pinned/eastern%20kingdoms/source.lua".into();
+    r.validate().unwrap();
+    for value in [
+        "https://example.invalid%20.evil/file",
+        "https://example.invalid/a%2fb",
+        "https://example.invalid/%2e%2e/file",
+        "https://example.invalid/a%5cb",
+        "https://example.invalid/a%2520b",
+        "https://example.invalid/a%3fb",
+        "https://example.invalid/a b",
+    ] {
+        r.sources[0].files[0].url = value.into();
+        assert!(r.validate().is_err(), "{value}");
+    }
 }

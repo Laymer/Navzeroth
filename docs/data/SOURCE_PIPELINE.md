@@ -38,7 +38,7 @@ Unreviewed/rejected candidates are reported and never fetched. Lua is parsed as
 bounded data; imported code is never executed. No addon installation, game-data
 API scraping, uploader or credential is needed.
 
-A separate optional metadata permission permits three public GitHub latest-commit
+A separate optional metadata permission permits four public GitHub latest-commit
 queries, with 1-second spacing, 256 KiB per response and 768 KiB total:
 
 ```sh
@@ -86,11 +86,12 @@ material closure. Overflow fails; records are never truncated.
 | AtlasLootClassic selected original data declarations (GPLv2) | Classic, build unknown | 66 area/instance declarations and 718 NPC/normal-loot declarations |
 | Mapzeroth Eastern Kingdoms node literals (MIT) | Retail, build unknown | 896 map/coordinate/interior facts |
 | WoWSims paladin implementation pointer (MIT) | Classic, build unknown | 1 source reference; no coefficients or simulation |
+| AllTheThings Riverglades point declarations (MIT) | Forever, build unknown | 4 raw point/NPC/coordinate/access-symbol fields; no inferred flight edge |
 
-Total: 1,681 reference facts, including 258 unknown and 26 unsupported fields.
+Total: 1,685 reference facts, including 258 unknown and 26 unsupported fields.
 There are **zero verified target-usable facts** for Forever build 70374. The
 catalog reports all nine domains with unknown independently required inventory
-counts. Quests, equipment, travel, party and reminders have no admitted facts in
+counts. Quests, equipment, party and reminders have no admitted facts in
 this plan. An upstream source group is not proof of an available Forever dungeon;
 legacy area IDs are not modern UI map IDs. Loot declarations establish no drop
 rates, quantities, availability, prerequisites or player entitlement.
@@ -107,7 +108,7 @@ still require evidence. See the [source strategy](../sources/independent-source-
 
 A successful build publishes a fresh directory atomically: `catalog.json`,
 `build.json`, `closure.json`, exact `registry.json` and `plan.json`, `NOTICES.txt`
-and the seven original/licence objects in `materials/objects`. The closure is
+and the nine original/licence objects in `materials/objects`. The closure is
 sufficient for another offline build. The build report binds input, catalog,
 material and selected generator-source hashes. `publication_authorized` is always
 false. This artifact cannot pass the stable release gate as a playable pack.
@@ -128,3 +129,11 @@ scheduled/manual Linux job performs the separately permitted metadata check.
 Stable packaging still requires full release readiness. Real permitted addon
 observations, independently evidenced target inventories and operator-driven
 live/native acceptance remain necessary to close production gaps.
+
+
+The current ATT revision bf974021 explicitly reverts the initially investigated
+quest-data commit `649f90`. Bounded metadata discovery caught that change before
+admission. Its removed Ashenvale declaration is not included. The selected
+Riverglades point remains byte-identical at the newer revision. This establishes
+source retention, not 70374 validation or a gameplay observation date. Immutable
+source changes still require admission/adapter review; builds retain their pins.
