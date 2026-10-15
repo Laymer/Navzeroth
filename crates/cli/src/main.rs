@@ -18,6 +18,7 @@ use std::{
 const USAGE: &str = "Unsupported command or options. Implemented: doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
+    inventory-report --root <repository> --input <relative-file>; \
     release-readiness --root <repository> --version <version> [--evidence <relative-file>]; \
     release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
     stage-questiedb <raw-file options>. See README.md.";
@@ -259,6 +260,26 @@ fn main() -> ExitCode {
                 ExitCode::SUCCESS
             } else {
                 ExitCode::FAILURE
+            }
+        }
+        [command, rest @ ..] if command == "inventory-report" => {
+            let Some(options) = azeroth_cli::release_inventory::Options::parse(rest) else {
+                eprintln!("{USAGE}");
+                return ExitCode::from(2);
+            };
+            match azeroth_cli::release_inventory::report(&options) {
+                Ok(report) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&report)
+                            .expect("inventory report serialization")
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("inventory-report: {message}");
+                    ExitCode::FAILURE
+                }
             }
         }
         [command, rest @ ..] if command == "release-readiness" => {
