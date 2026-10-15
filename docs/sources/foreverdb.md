@@ -53,12 +53,17 @@ The [publisher's licence listing](https://www.curseforge.com/wow/addons/foreverd
 provides an advertised compatible copyleft basis. `QuestClassic.lua`, `QuestXP.lua`
 and Helper `Data/Classic.lua` include explicit GPL notices for CMaNGOS-derived
 material. The archive has an OFL font notice but no root GPL licence text.
-Several data headers name generator scripts absent from this archive. Establish
-the corresponding source, exact covered files and required attribution/licence
-delivery before publishing a transformed pack. Do not treat a missing root text
-as proof that the advertised licence is invalid; the remaining task is to satisfy
-and evidence its scope and obligations. No general website or image licence is
-inferred from the addon listing.
+The [canonical GPLv3 text](licenses/GPL-3.0.txt) is now retained verbatim from the
+[FSF source](https://www.gnu.org/licenses/gpl-3.0.txt), with a pinned hash in the
+review metadata. No fresh permission is required for material already covered by
+the GPL. Preserve copyright/attribution and licence notices; mark modifications
+and their dates, apply the relevant same-licence terms to covered transformed
+works, and deliver the applicable corresponding source in its preferred form for
+modification. Several headers name absent generators, but that alone does not
+establish which generator scripts or upstream inputs must be provided: assess
+GPL section1's source-form distinction for each selected file. Missing root text
+is not proof of an invalid grant. Exact covered file scope and compliant delivery
+remain to be evidenced. No website or image licence is inferred.
 
 The [publisher's provenance description](https://foreverdb.net/about) distinguishes
 client extraction, player observations and CMaNGOS Classic fallback. Keep those
