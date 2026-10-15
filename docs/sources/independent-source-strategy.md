@@ -110,3 +110,20 @@ Forever observations for the inventory queue. The existing ForeverDB staging and
 QuestieDB adapters remain optional comparison inputs. None of these steps waits
 for the inquiry reply. Full-content publication still waits for actual coverage
 and operator evidence, not correspondence.
+
+## Database material-closure follow-up
+
+The pinned VMaNGOS [database workflow](https://github.com/vmangos/core/blob/53d24d5c748bef5e0cde7b1155bcb3d979af614c/.github/workflows/development-db-dump.yaml)
+uses a separately retrieved base archive, as shown by its
+[preparation script](https://github.com/vmangos/core/blob/53d24d5c748bef5e0cde7b1155bcb3d979af614c/.github/scripts/prepare-sql-test-environment.sh).
+The inspected `brotalnia/database` revision contains ten archive files and no
+root licence/notice. This does not establish the licence inside an archive;
+no archive was downloaded or inspected. The script fetches mutable `master`, so
+the research pin does not bind exact base bytes to a published dump. Current
+moving-tag release metadata is recorded only as an investigation lead, not
+verified payload or rights evidence. The separate database remains unadmitted.
+See [bounded review metadata](vmangos-closure-review.json) for exact research
+hashes, observed release metadata, uncertainty and independent review limits.
+Permitted licence/provenance research may continue without production admission
+or a required email; production extraction/redistribution requires its own
+established material scope. No server, SQL, converter or upstream script ran.

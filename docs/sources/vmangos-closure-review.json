@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-15",
+  "purpose": "Trace separate database material closure; no production source admission",
+  "source_pins": [
+    {
+      "repository": "vmangos/core",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/vmangos/core/53d24d5c748bef5e0cde7b1155bcb3d979af614c/README.md",
+      "bytes": 2200,
+      "sha256": "15fc7d78edb333ee43cae73b750ff352495f861fe6c1a0c614c877dc72016826"
+    },
+    {
+      "repository": "vmangos/core",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "path": ".github/workflows/development-db-dump.yaml",
+      "url": "https://raw.githubusercontent.com/vmangos/core/53d24d5c748bef5e0cde7b1155bcb3d979af614c/.github/workflows/development-db-dump.yaml",
+      "bytes": 4488,
+      "sha256": "71b105c81a02df006192a5980c01d4505f98e70063485d2c732d294497b739b9"
+    },
+    {
+      "repository": "vmangos/core",
+      "revision": "53d24d5c748bef5e0cde7b1155bcb3d979af614c",
+      "path": ".github/scripts/prepare-sql-test-environment.sh",
+      "url": "https://raw.githubusercontent.com/vmangos/core/53d24d5c748bef5e0cde7b1155bcb3d979af614c/.github/scripts/prepare-sql-test-environment.sh",
+      "bytes": 3399,
+      "sha256": "d7e3ea1f499486509a488a189fd13d6904628898418e89ed27c184d116d80dc6"
+    }
+  ],
+  "base_database": {
+    "repository": "brotalnia/database",
+    "revision": "fc4af4870578efa63b36824bfd48fca7933f7362",
+    "tree_url": "https://api.github.com/repos/brotalnia/database/git/trees/fc4af4870578efa63b36824bfd48fca7933f7362",
+    "tree_truncated": false,
+    "root_entries": 10,
+    "all_root_entries": "7z database archives; no root README, licence or notice",
+    "selected_archive": "world_full_14_june_2021.7z",
+    "selected_archive_bytes": 16898241,
+    "archive_downloaded_or_inspected": false,
+    "version_binding": "Inspected script retrieves mutable master. This pinned current tree is research evidence, not a verified input binding for any published dump. Archive internals/bytes have not been inspected."
+  },
+  "release_metadata_observed": {
+    "tag": "db_latest",
+    "moving_tag": true,
+    "resolved_commit": "464179081673cfd240f7ffe7f0daf96bca0b5a70",
+    "published_at": "2026-09-28T12:29:04Z",
+    "mysql_archive": {
+      "name": "db-4641790.zip",
+      "bytes": 30511447,
+      "publisher_digest": "sha256:9e178f1d70363e92a7b8c259000102dc9739333d79ca00c99ea32dd1fb43e904"
+    },
+    "sqlite_archive": {
+      "name": "db-sqlite-4641790.zip",
+      "bytes": 42482870,
+      "publisher_digest": "sha256:bb2f1dd69171043a52657574f54948fd30941530fdc6eec12bce62c655428501"
+    },
+    "payload_downloaded_or_inspected": false,
+    "source_binding": "Current moving-tag resolution and publisher metadata only; no proof that the separately inspected workflow revision or base bytes generated this payload."
+  },
+  "decision": "Remain unadmitted. GPL2-or-later notices cover inspected preparation code; a core-code grant is not evidence of the separate database archive grant. No licence conclusion about archive internals is claimed without inspecting them. Supported origin builds are historical1.5-1.12, not target70374. No SQL, scripts, server or converters executed.",
+  "next": "Continue permitted bounded licence/provenance research without requiring prior production admission or a personal reply; automated production extraction/redistribution must wait for an exact published grant and source-material closure. Parse any later admitted SQL as inert data only.",
+  "independent_review": "Three research text hashes/sizes and qualified conclusion confirmed; archive internals and API tree response not independently reopened by reviewer."
+}

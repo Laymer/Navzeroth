@@ -80,10 +80,13 @@ These results do not establish interactive native Windows acceptance.
 
 Integration at this record: PR143 merged as `bbd5140`, PR144 as `a845127`;
 all nine resulting-main checks passed for each. PR145 passed all nine and merged
-as `06503c9`; its resulting-main checks are pending. PR146 updated against that
-main. The pipeline is PR147, with independently reviewed implementation and
-source workflow passing. Existing hosted checks and protected integration remain
-pending on the current exact head; then verify resulting main. Native
+as `06503c9`; all nine resulting-main checks passed. PR146 passed all nine and
+merged as `d9c4fab`; its resulting-main checks are pending. Pipeline PR147 head
+`654a1e9` passed all nine existing checks and all three source workflow jobs.
+This continuation incorporates main plus documentation synchronization and the
+independently reviewed VMaNGOS material-closure research. No implementation or
+retained input changed. Current head needs its own checks before protected
+integration, then resulting-main verification. Native
 interactive Windows and real70374 gameplay acceptance remain **unverified**.
 Preview0.8.1 and all release gates remain unchanged; do not publish1.0.
 
@@ -93,3 +96,15 @@ scopes and original permitted70374 captures with an independently evidenced
 inventory. Use the uniform contract for additional admitted adapters; never
 substitute historical reference counts for target completeness. Product content
 consumption/acceptance is separate work once target facts are evidenced.
+
+
+Additional bounded research while checks ran: three pinned VMaNGOS text files
+(10,087 bytes) trace the separate base-database dependency. Public metadata/tree
+inspection showed ten archives and no root licence/notice; archive internals and
+release payloads were not downloaded or independently verified. Mutable master
+and moving-tag metadata do not bind exact base bytes. Independent source review
+confirmed text hashes and the qualified conclusion; root tree response was not
+independently reopened. Kept source unadmitted without creating a new required
+permission reply. Recorded details in `docs/sources/vmangos-closure-review.json`.
+The admission-contract documentation now reflects three current scopes rather
+than its original empty baseline; coordinator ownership explicitly recorded.

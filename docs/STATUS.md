@@ -1,7 +1,8 @@
 # Project status
 
 Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-15.
-Current task: acquire evidenced target content and complete live/native prerequisites.
+Current task: automate independent sources/builds, acquire evidenced target content
+and complete live/native prerequisites.
 Owner and integration writer: Codex `/root`; implementation baseline `d59aa91`.
 See the [integration handoff](handoffs/2026-10-15-v1-foundation-integration.md)
 for exact merged commits, hosted checks, local verification and remaining work.
