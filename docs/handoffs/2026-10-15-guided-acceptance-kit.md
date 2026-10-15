@@ -52,3 +52,7 @@ tooling directory to equal the candidate root's ordinary `scripts/windows` direc
 reparse paths refuse, and the candidate gate then checks those tracked bytes.
 Added matching/foreign-checkout regressions. All 18 synthetic PS7 checks now pass;
 `git diff --check` passes. Real native/live environments remain unverified.
+
+Independent re-review of `bef88ae` by `/root/inventory` closed that finding and
+reran all 18 portable checks successfully. No remaining blocker/important finding
+within this scope; integrated candidate/native/live runs remain unverified.
