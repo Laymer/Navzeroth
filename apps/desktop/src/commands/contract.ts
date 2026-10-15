@@ -99,6 +99,7 @@ export interface PartyQuestCatalog {
 }
 type Policy<T> = { status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable" };
 export interface ContentInspection {
+  pages?: {content_sha256:string;sources:number;conflicts:number;gaps:number;errors:number};
   key: { scope: { context: DataContext; fixture: boolean }; revision: string };
   report: {
     passes: boolean;
@@ -332,6 +333,8 @@ export interface CommandMap {
   get_compatibility_report: { input: { profile_id: string | null }; output: CompatibilityReport };
   get_app_status: { input: undefined; output: AppStatus };
   list_profiles: { input: undefined; output: ProfileSummary[] };
+  stage_verified_content_bundle: {input:{path:string};output:ContentInspection};
+  get_content_inspection_page: {input:{text:string};output:ContentInspectionPage};
   stage_content: { input: { text: string }; output: ContentInspection };
   get_active_content: { input: { profile_id: string }; output: ContentInspection | null };
   activate_content: { input: { profile_id: string; revision: string }; output: ContentInspection };
@@ -371,3 +374,5 @@ export interface CommandAdapter {
 }
 
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
+
+export interface ContentInspectionPage { key:ContentInspection["key"];content_sha256:string;collection:"sources"|"conflicts"|"gaps"|"errors";offset:number;total:number;next_offset:number|null;records:unknown[] }

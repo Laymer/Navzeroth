@@ -410,6 +410,23 @@ async fn list_parties(state: State<'_, Application>) -> Result<Vec<PartyId>, App
     blocking(state, |app| app.party_ids()).await
 }
 #[tauri::command]
+async fn stage_verified_content_bundle(
+    state: State<'_, Application>,
+    path: String,
+) -> Result<azeroth_app::content::ContentInspection, AppError> {
+    observed_blocking(state, DiagnosticOperation::ContentImport, move |app| {
+        app.stage_verified_content_bundle(std::path::Path::new(&path))
+    })
+    .await
+}
+#[tauri::command]
+async fn get_content_inspection_page(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::content::InspectionPage, AppError> {
+    blocking(state, move |app| app.content_inspection_page(&text)).await
+}
+#[tauri::command]
 async fn stage_content(
     state: State<'_, Application>,
     text: String,
@@ -767,6 +784,8 @@ pub fn run() {
                 get_app_status,
                 list_profiles,
                 stage_content,
+                stage_verified_content_bundle,
+                get_content_inspection_page,
                 get_active_content,
                 activate_content,
                 rollback_content,
