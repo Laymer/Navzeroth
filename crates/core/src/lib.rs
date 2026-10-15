@@ -27,3 +27,5 @@ pub mod joint_planner;
 pub mod search_control;
 
 pub mod submissions;
+
+pub mod content_v2;
