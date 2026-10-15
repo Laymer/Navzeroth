@@ -18,6 +18,10 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
+pub use crate::content_catalog::{
+    ActiveContentRevision, ContentRevisionV2, catalog_content_sha256,
+};
+
 pub const MAX_CONTENT_REVISIONS: usize = 1024;
 pub const MAX_CONTENT_RECORDS: usize = 1024;
 /// Envelope plus bounded source-policy/conflict records; no archive or Lua input.
@@ -205,7 +209,7 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
     }
     Ok(revision)
 }
-pub(crate) fn hash(revision: &ContentRevision) -> Result<Sha256Hex> {
+pub(crate) fn hash<T: Serialize>(revision: &T) -> Result<Sha256Hex> {
     let value =
         serde_json::to_value(revision).map_err(|_| storage("Content cannot be serialized"))?;
     let mut bytes = Vec::new();
@@ -258,10 +262,28 @@ pub(crate) fn load_sql_error(e: rusqlite::Error) -> LoadFailure {
         _ => LoadFailure::Database(crate::error::from_sqlite(e)),
     }
 }
-pub(crate) fn load(conn: &Connection, id: i64) -> Result<ContentRevision> {
+pub(crate) fn load(conn: &Connection, id: i64) -> Result<ActiveContentRevision> {
     load_checked(conn, id).map_err(LoadFailure::error)
 }
 pub(crate) fn load_checked(
+    conn: &Connection,
+    id: i64,
+) -> std::result::Result<ActiveContentRevision, LoadFailure> {
+    let version: i64 = conn
+        .query_row(
+            "SELECT content_version FROM dataset_revisions WHERE id=?1",
+            [id],
+            |r| r.get(0),
+        )
+        .map_err(load_sql_error)?;
+    match version {
+        1 => load_v1_checked(conn, id).map(|r| ActiveContentRevision::V1(std::sync::Arc::new(r))),
+        2 => crate::content_catalog::load_checked(conn, id)
+            .map(|r| ActiveContentRevision::V2(std::sync::Arc::new(r))),
+        _ => Err(storage("Unsupported stored content version").into()),
+    }
+}
+fn load_v1_checked(
     conn: &Connection,
     id: i64,
 ) -> std::result::Result<ContentRevision, LoadFailure> {
@@ -421,7 +443,7 @@ impl SqliteStore {
         if revision.key() != *key {
             return Err(storage("Stored content identity disagrees"));
         }
-        Ok(Some(revision))
+        Ok(Some(revision.into_v1()?))
     }
     /// Revalidate the stored candidate under an immediate transaction before
     /// moving the full-context pointer. Failure preserves the previous pointer.
@@ -443,6 +465,14 @@ impl SqliteStore {
         Ok(outcome)
     }
     pub fn active_content_revision(&self, scope: &ContentScope) -> Result<Option<ContentRevision>> {
+        self.active_catalog_revision(scope)?
+            .map(ActiveContentRevision::into_v1)
+            .transpose()
+    }
+    pub fn active_catalog_revision(
+        &self,
+        scope: &ContentScope,
+    ) -> Result<Option<ActiveContentRevision>> {
         let get = |s: &Self| {
             let Some((id, _)) = pointers(&s.conn, scope)? else {
                 return Ok(None);
@@ -451,7 +481,7 @@ impl SqliteStore {
                 return Ok(None);
             };
             let disposition = crate::content_dispositions::ensure_eligible(&s.conn, id)?;
-            let revision = load(&s.conn, id)?;
+            let revision = s.cached_catalog(id)?;
             if disposition.key.scope != *scope || revision.key() != disposition.key {
                 return Err(storage("Stored content identity disagrees"));
             }
