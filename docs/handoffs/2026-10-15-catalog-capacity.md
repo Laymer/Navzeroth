@@ -40,3 +40,8 @@ independent review, all nine hosted checks on final integration and main. Root
 owns pack/material1GiB enforcement and source worker owns UI pages. Backend-only
 engineering is not full-corpus acceptance. Actual licensed content, native Windows
 performance and live target validation remain unavailable/unverified.
+
+UI coordination follow-up adds cached `catalog_first_page`, so an initial page
+request does not require serializing the full catalog to obtain its hash. The
+storage page test now verifies the returned first-page identity; all three storage
+v2 tests and strict core/storage Clippy pass after this change.

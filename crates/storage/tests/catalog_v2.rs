@@ -114,6 +114,11 @@ fn v2_pages_reject_stale_tokens_and_external_tampering_invalidates_cache() {
         offset: 0,
         limit: 200,
     };
+    let initial = store
+        .catalog_first_page(&next.key().scope, Collection::Items, 200)
+        .unwrap();
+    assert_eq!(initial.catalog_sha256, req.catalog_sha256);
+    assert_eq!(initial.revision, req.revision);
     let first = store.catalog_page(&next.key().scope, &req).unwrap();
     assert_eq!(first.rows.len(), 200);
     req.offset = 200;
