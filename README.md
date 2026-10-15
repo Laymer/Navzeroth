@@ -16,7 +16,8 @@ The authorized v1.0.0 target is full enumerated content for **Forever
 interface 16001 on Windows 11, out of combat, with 0.8.1 diagnostics reporting no
 errors; the installed source commit was not inspected. This limited report does
 not establish full compatibility. Missing mandatory content, source permissions or
-real acceptance evidence keeps v1.0.0 at candidate status; see the
+real acceptance evidence blocks v1.0.0 publication. Acceptance candidates also
+require complete licensed content and static validation; see the
 [v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
 
 ## Try the current preview
@@ -48,6 +49,8 @@ and reports unsupported corrections. The [pinned source audit](docs/sources/v1-p
 accepts neither QuestieDB nor historical CMaNGOS for shipped assets. Unknown
 content inventory, source rights, real class/role models and live/Windows acceptance
 continue to block v1.0.0.
+
+[Repository identity gallery](docs/brand/README.md) — planned after the verified 1.0.0 release.
 
 ## Development
 
