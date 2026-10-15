@@ -1,5 +1,6 @@
 //! Release gate I/O: bounded evidence, exact Git/source binding and verified packs.
 //! All referenced game/source material is data; no Lua or SQL is executed.
+mod admission;
 pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -8,7 +9,7 @@ use azeroth_core::{
     types::{AssetPath, DatasetNamespace},
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -140,7 +141,8 @@ fn relative(root: &Path, path: &Path) -> Result<AssetPath> {
 #[derive(Default)]
 struct Budget {
     bytes: u64,
-    verified: BTreeMap<String, (u64, String)>,
+    verified: BTreeMap<PathBuf, (u64, String)>,
+    charged: BTreeMap<PathBuf, u64>,
 }
 impl Budget {
     fn add(&mut self, bytes: u64) -> Result<()> {
@@ -153,6 +155,18 @@ impl Budget {
         }
         Ok(())
     }
+    fn charge(&mut self, path: &Path, bytes: u64) -> Result<()> {
+        if let Some(old) = self.charged.get(path) {
+            return if *old == bytes {
+                Ok(())
+            } else {
+                Err("Release input size changed")
+            };
+        }
+        self.add(bytes)?;
+        self.charged.insert(path.to_owned(), bytes);
+        Ok(())
+    }
     fn read(&mut self, path: &Path, limit: usize) -> Result<Vec<u8>> {
         checked_path(path, false)?;
         let file = File::open(path).map_err(|_| "Release file cannot be opened")?;
@@ -163,7 +177,7 @@ impl Budget {
         if size > limit as u64 {
             return Err("Release file exceeds its size limit");
         }
-        self.add(size)?;
+        self.charge(path, size)?;
         let mut bytes = Vec::new();
         file.take(limit as u64 + 1)
             .read_to_end(&mut bytes)
@@ -174,8 +188,9 @@ impl Budget {
         Ok(bytes)
     }
     fn verify(&mut self, root: &Path, reference: &FileRef) -> Result<()> {
+        let path = root.join(reference.path.as_str());
         let expected = (reference.bytes, reference.sha256.as_str().to_owned());
-        if let Some(previous) = self.verified.get(reference.path.as_str()) {
+        if let Some(previous) = self.verified.get(&path) {
             return if *previous == expected {
                 Ok(())
             } else {
@@ -185,9 +200,8 @@ impl Budget {
         if reference.bytes == 0 || reference.bytes > MAX_FILE_BYTES {
             return Err("Evidence file exceeds its size limit");
         }
-        let path = root.join(reference.path.as_str());
         checked_path(&path, false)?;
-        let mut file = File::open(path).map_err(|_| "Evidence file cannot be opened")?;
+        let mut file = File::open(&path).map_err(|_| "Evidence file cannot be opened")?;
         let size = file
             .metadata()
             .map_err(|_| "Evidence metadata is unavailable")?
@@ -195,7 +209,7 @@ impl Budget {
         if size != reference.bytes {
             return Err("Evidence file size does not match");
         }
-        self.add(size)?;
+        self.charge(&path, size)?;
         let mut digest = Sha256::new();
         let mut read = 0u64;
         let mut buffer = [0u8; 64 * 1024];
@@ -217,8 +231,7 @@ impl Budget {
         {
             return Err("Evidence file hash or size does not match");
         }
-        self.verified
-            .insert(reference.path.as_str().to_owned(), expected);
+        self.verified.insert(path, expected);
         Ok(())
     }
 }
@@ -425,157 +438,34 @@ struct PackSources {
 }
 #[derive(Default)]
 struct Catalog {
+    admitted: BTreeMap<String, azeroth_core::source_admission::Source>,
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
     sources: BTreeSet<String>,
     files: BTreeMap<String, FileRef>,
 }
-fn add_record(
-    catalog: &mut Catalog,
-    domain: &str,
-    key: Value,
-    sources: &BTreeSet<String>,
-) -> Result<()> {
-    let key = serde_json::to_string(&key).map_err(|_| "Record identity cannot be encoded")?;
-    if catalog
-        .records
-        .entry(domain.into())
-        .or_default()
-        .insert(key, sources.clone())
-        .is_some()
+fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
+    if !catalog
+        .revisions
+        .insert(dataset.payload.revision.as_str().to_owned())
     {
-        return Err("Duplicate record identity across release packs");
+        return Err("Duplicate dataset revision across release packs");
+    }
+    for (domain, rows) in azeroth_core::content_v2::records::reference_records(&dataset.payload)? {
+        for (identity, sources) in rows {
+            if catalog
+                .records
+                .entry(domain.clone())
+                .or_default()
+                .insert(identity, sources)
+                .is_some()
+            {
+                return Err("Duplicate record identity across release packs");
+            }
+        }
     }
     if catalog.records.values().map(BTreeMap::len).sum::<usize>() > release::MAX_RECORDS {
         return Err("Release catalog exceeds record limit");
-    }
-    Ok(())
-}
-fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
-    let data = &dataset.payload;
-    let revision = data.revision.as_str();
-    if !catalog.revisions.insert(revision.to_owned()) {
-        return Err("Duplicate dataset revision across release packs");
-    }
-    let sources: BTreeSet<String> = data
-        .evidence
-        .iter()
-        .map(|e| e.source.as_str().to_owned())
-        .chain(data.map_images.iter().map(|i| i.source.as_str().to_owned()))
-        .collect();
-    if sources.is_empty() {
-        return Err("Release dataset has no recorded sources");
-    }
-    for quest in &data.quests {
-        add_record(
-            catalog,
-            "quests",
-            json!([revision, "quests", quest.id]),
-            &sources,
-        )?;
-        for stage in &quest.stages {
-            add_record(
-                catalog,
-                "quests",
-                json!([revision, "quest_stages", quest.id, stage]),
-                &sources,
-            )?;
-        }
-    }
-    for item in &data.items {
-        add_record(
-            catalog,
-            "equipment",
-            json!([revision, "items", item.key.item_id, item.key.variant]),
-            &sources,
-        )?;
-    }
-    for source in &data.acquisitions {
-        add_record(
-            catalog,
-            "acquisition",
-            json!([revision, "acquisitions", source.id]),
-            &sources,
-        )?;
-    }
-    for map in &data.map_spaces {
-        add_record(
-            catalog,
-            "geography",
-            json!([
-                revision,
-                "map_spaces",
-                map.key.map_id,
-                map.key.floor,
-                map.key.instance
-            ]),
-            &sources,
-        )?;
-    }
-    for image in &data.map_images {
-        add_record(
-            catalog,
-            "geography",
-            json!([revision, "map_images", image.id]),
-            &sources,
-        )?;
-        for pin in &image.pins {
-            add_record(
-                catalog,
-                "geography",
-                json!([revision, "map_pins", image.id, pin.id]),
-                &sources,
-            )?;
-        }
-    }
-    for map in &data.map_embeddings {
-        add_record(
-            catalog,
-            "geography",
-            json!([
-                revision,
-                "map_embeddings",
-                map.child.map_id,
-                map.child.floor,
-                map.child.instance,
-                map.parent.map_id,
-                map.parent.floor,
-                map.parent.instance
-            ]),
-            &sources,
-        )?;
-    }
-    for node in &data.nodes {
-        add_record(
-            catalog,
-            "travel",
-            json!([revision, "nodes", node.id]),
-            &sources,
-        )?;
-    }
-    for edge in &data.edges {
-        add_record(
-            catalog,
-            "travel",
-            json!([revision, "edges", edge.id]),
-            &sources,
-        )?;
-    }
-    for objective in &data.objectives {
-        add_record(
-            catalog,
-            "quests",
-            json!([revision, "objectives", objective.id]),
-            &sources,
-        )?;
-    }
-    for rule in &data.rules {
-        add_record(
-            catalog,
-            "reminders",
-            json!([revision, "rules", rule.id]),
-            &sources,
-        )?;
     }
     Ok(())
 }
@@ -599,6 +489,11 @@ fn production_file(root: &Path, pack_root: &Path, reference: &FileRef, tree: &Tr
     }
     checked_path(&path, false)
 }
+pub(crate) fn v2_catalog_records(
+    content: &azeroth_core::content_v2::ReferenceContent,
+) -> Result<azeroth_core::release_party::ConcreteCatalog> {
+    azeroth_core::content_v2::records::content_records(content)
+}
 fn pack_file(
     root: &Path,
     pack_root: &Path,
@@ -618,6 +513,113 @@ fn pack_file(
     }
     Ok(())
 }
+#[derive(Deserialize)]
+struct PackV2 {
+    sources: FileRef,
+    catalog: FileRef,
+    assets: Vec<FileRef>,
+    party_support: Option<FileRef>,
+    supporting_files: Vec<FileRef>,
+}
+fn bind_v2_pack(
+    root: &Path,
+    pack: &release::PackRef,
+    inventory: &Inventory,
+    tree: &Tree,
+    budget: &mut Budget,
+    catalog: &mut Catalog,
+    bytes: &[u8],
+) -> Result<()> {
+    let manifest_path = root.join(pack.manifest.path.as_str());
+    let pack_root = manifest_path.parent().ok_or("Invalid v2 pack location")?;
+    let manifest: PackV2 = serde_json::from_slice(bytes).map_err(|_| "Invalid v2 pack manifest")?;
+    for file in std::iter::once(&manifest.sources)
+        .chain(std::iter::once(&manifest.catalog))
+        .chain(&manifest.assets)
+        .chain(&manifest.party_support)
+        .chain(&manifest.supporting_files)
+    {
+        pack_file(root, pack_root, file, tree, catalog)?;
+    }
+    let sources: PackSources = serde_json::from_slice(&checked_ref_bytes(
+        budget,
+        pack_root,
+        &manifest.sources,
+        crate::pack::MAX_SOURCES_BYTES,
+    )?)
+    .map_err(|_| "Invalid v2 sources")?;
+    for source in sources.sources {
+        admission::pack_source(&source, &catalog.admitted)?;
+        let accepted = inventory
+            .sources
+            .iter()
+            .find(|s| s.id == source.id.as_str())
+            .ok_or("V2 source is not accepted")?;
+        if source.verified_revision.value().map(|r| r.as_str()) != Some(accepted.revision.as_str())
+            || source.offline_usable.value() != Some(&true)
+        {
+            return Err("V2 source revision or offline permission differs");
+        }
+        catalog.sources.insert(source.id.as_str().to_owned());
+    }
+    let content = azeroth_core::content_v2::decode(&checked_ref_bytes(
+        budget,
+        pack_root,
+        &manifest.catalog,
+        crate::pack::v2::MAX_CATALOG_BYTES,
+    )?)
+    .map_err(|_| "Invalid release v2 catalog")?;
+    let data = &content.reference;
+    if data.fixture
+        || data.namespace != DatasetNamespace::Reference
+        || data.game.edition.as_str() != inventory.target.edition
+        || data.game.build.as_str()
+            != format!("{}.{}", inventory.target.version, inventory.target.build)
+        || data.game.interface.as_str() != inventory.target.interface.to_string()
+    {
+        return Err("V2 catalog target differs or contains fixtures");
+    }
+    if pack.dataset_revisions != [data.payload.revision.as_str()]
+        || !catalog
+            .revisions
+            .insert(data.payload.revision.as_str().to_owned())
+    {
+        return Err("V2 catalog revisions differ or duplicate another pack");
+    }
+    require_complete_v2_facts(&content)?;
+    let mut records = v2_catalog_records(&content)?;
+    if let Some(support) = &manifest.party_support {
+        let matrix = azeroth_core::release_party::SupportMatrix::decode(&checked_ref_bytes(
+            budget,
+            pack_root,
+            support,
+            release::MAX_RELEASE_BYTES,
+        )?)
+        .map_err(|_| "Invalid release party support")?;
+        let rows = matrix
+            .bind(manifest.catalog.sha256.as_str(), &records)
+            .map_err(|_| "Party support does not bind actual catalog dependencies")?;
+        records.insert("party".into(), rows);
+    }
+    for (domain, rows) in records {
+        for (identity, sources) in rows {
+            if catalog
+                .records
+                .entry(domain.clone())
+                .or_default()
+                .insert(identity, sources)
+                .is_some()
+            {
+                return Err("Duplicate record across v2 release packs");
+            }
+        }
+    }
+    if catalog.records.values().map(BTreeMap::len).sum::<usize>() > release::MAX_RECORDS {
+        return Err("Release catalog exceeds record limit");
+    }
+    Ok(())
+}
+
 fn packs(
     root: &Path,
     inventory: &Inventory,
@@ -630,7 +632,10 @@ fn packs(
         .iter()
         .map(|s| (s.id.as_str(), s.revision.as_str()))
         .collect();
-    let mut catalog = Catalog::default();
+    let mut catalog = Catalog {
+        admitted: admission::load(root, inventory, evidence, budget)?,
+        ..Catalog::default()
+    };
     let mut count = 0;
     for pack in &evidence.packs {
         let manifest_path = root.join(pack.manifest.path.as_str());
@@ -646,22 +651,68 @@ fn packs(
         let pack_root = manifest_path.parent().ok_or("Invalid pack location")?;
         pack_file(root, root, &pack.manifest, tree, &mut catalog)?;
         budget.verify(root, &pack.manifest)?;
-        let manifest: PackManifest = serde_json::from_slice(&checked_ref_bytes(
+        let manifest_bytes = checked_ref_bytes(
             budget,
             root,
             &pack.manifest,
             crate::pack::MAX_MANIFEST_BYTES,
-        )?)
-        .map_err(|_| "Invalid pack manifest")?;
+        )?;
+        // Charge each distinct material before invoking the full verifier. Multiple
+        // passes over the same bounded bytes do not shrink the 1 GiB closure limit.
+        let version = serde_json::from_slice::<Value>(&manifest_bytes)
+            .map_err(|_| "Invalid pack manifest")?
+            .get("schema_version")
+            .and_then(Value::as_u64);
+        if version == Some(2) {
+            let manifest: PackV2 =
+                serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid v2 manifest")?;
+            for file in std::iter::once(&manifest.sources)
+                .chain(std::iter::once(&manifest.catalog))
+                .chain(&manifest.assets)
+                .chain(&manifest.party_support)
+                .chain(&manifest.supporting_files)
+            {
+                budget.verify(pack_root, file)?;
+            }
+        } else {
+            let manifest: PackManifest =
+                serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid manifest")?;
+            budget.verify(pack_root, &manifest.sources)?;
+            for entry in &manifest.entries {
+                for file in std::iter::once(&entry.dataset).chain(&entry.assets) {
+                    budget.verify(pack_root, file)?;
+                }
+            }
+        }
         // Existing verifier is authoritative for strict fields, canonical bytes,
         // exact trees, distribution, coordinates/references and PNG verification.
         let report = crate::pack::verify(pack_root)?;
-        budget.add(report.total_bytes as u64)?;
+
         if report.fixtures != 0 || report.coverage_gaps != 0 || !report.distribution_eligible {
             return Err(
                 "Release pack has fixture content, coverage gaps or ineligible distribution",
             );
         }
+        if serde_json::from_slice::<Value>(&manifest_bytes)
+            .map_err(|_| "Invalid pack manifest")?
+            .get("schema_version")
+            .and_then(Value::as_u64)
+            == Some(2)
+        {
+            bind_v2_pack(
+                root,
+                pack,
+                inventory,
+                tree,
+                budget,
+                &mut catalog,
+                &manifest_bytes,
+            )?;
+            count += 1;
+            continue;
+        }
+        let manifest: PackManifest =
+            serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid pack manifest")?;
         pack_file(root, pack_root, &manifest.sources, tree, &mut catalog)?;
         let sources: PackSources = serde_json::from_slice(&checked_ref_bytes(
             budget,
@@ -671,6 +722,7 @@ fn packs(
         )?)
         .map_err(|_| "Invalid pack sources")?;
         for source in sources.sources {
+            admission::pack_source(&source, &catalog.admitted)?;
             let Some(revision) = accepted.get(source.id.as_str()) else {
                 return Err("Pack source is not in the accepted inventory");
             };
@@ -746,6 +798,12 @@ fn bind_records(
                 for id in ids {
                     required.insert(id.as_str());
                     if let Some(record_sources) = records.get(id) {
+                        if record_sources.is_empty() {
+                            report.block(format!(
+                                "Required record lacks source provenance: {}",
+                                unit.id
+                            ));
+                        }
                         sources.extend(record_sources.iter().map(String::as_str));
                     } else {
                         report.block(format!(
@@ -756,7 +814,6 @@ fn bind_records(
                 }
             }
             if let Some(row) = coverage.get(unit.id.as_str())
-                && !sources.is_empty()
                 && sources != row.source_ids.iter().map(String::as_str).collect()
             {
                 report.block(format!(
@@ -915,15 +972,39 @@ pub fn report(options: &Options) -> Result<Report> {
     })
 }
 
+fn require_complete_v2_facts(
+    content: &azeroth_core::content_v2::ReferenceContent,
+) -> std::result::Result<(), &'static str> {
+    // Full target coverage requires a fact declaration per base record, even
+    // when the record cannot currently supply a known fact. Unknowns are gaps.
+    if content.node_facts.len() != content.reference.payload.nodes.len()
+        || content.equipment.len() != content.reference.payload.items.len()
+        || content.quest_facts.len() != content.reference.payload.quests.len()
+        || content.acquisition_facts.len() != content.reference.payload.acquisitions.len()
+    {
+        return Err("V2 catalog lacks mandatory node, equipment, quest or acquisition facts");
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use azeroth_core::release::{Completeness, DomainInventory, Status, Unit, UnitCoverage};
+    use serde_json::json;
     fn sample() -> (Catalog, Inventory, Evidence) {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
         let text =
             fs::read_to_string(root.join("fixtures/contracts/v1/reference-dataset.json")).unwrap();
-        let dataset = decode_envelope::<ReferenceDataset>(&text).unwrap();
+        // This isolated mapping fixture explicitly attributes quest/objective
+        // facts; the shared v1 example deliberately leaves their provenance empty.
+        let mut value: Value = serde_json::from_str(&text).unwrap();
+        for collection in ["quests", "objectives"] {
+            for record in value["payload"][collection].as_array_mut().unwrap() {
+                record["evidence"] = json!(["demo-evidence-1"]);
+            }
+        }
+        let dataset = decode_envelope::<ReferenceDataset>(&value.to_string()).unwrap();
         let mut catalog = Catalog::default();
         catalog_dataset(&mut catalog, &dataset).unwrap();
         let records = &catalog.records["quests"];
@@ -970,11 +1051,61 @@ mod tests {
         }
     }
     #[test]
+    fn full_v2_requires_node_facts_and_source_less_claims_cannot_borrow_other_records() {
+        let mut raw: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/contracts/v2/reference-content.json"
+        ))
+        .unwrap();
+        let content = azeroth_core::content_v2::decode(&serde_json::to_vec(&raw).unwrap()).unwrap();
+        assert!(require_complete_v2_facts(&content).is_err());
+        raw["node_facts"] = Value::Array(
+            raw["reference"]["payload"]["nodes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| json!({"node":n["id"],"evidence":["demo-evidence-1"]}))
+                .collect(),
+        );
+        let content = azeroth_core::content_v2::decode(&serde_json::to_vec(&raw).unwrap()).unwrap();
+        require_complete_v2_facts(&content).unwrap();
+        let (mut catalog, inventory, evidence) = sample();
+        catalog
+            .records
+            .get_mut("quests")
+            .unwrap()
+            .values_mut()
+            .next()
+            .unwrap()
+            .clear();
+        let mut result = mapping_report();
+        bind_records(&mut result, &inventory, &evidence, &catalog);
+        assert!(
+            result
+                .blockers
+                .iter()
+                .any(|v| v.contains("lacks source provenance"))
+        );
+    }
+    #[test]
+    fn repeated_material_reads_charge_distinct_closure_bytes_once() {
+        let mut budget = Budget::default();
+        let path = Path::new("/synthetic/catalog.json");
+        budget.charge(path, MAX_TOTAL_BYTES).unwrap();
+        budget.charge(path, MAX_TOTAL_BYTES).unwrap();
+        assert_eq!(budget.bytes, MAX_TOTAL_BYTES);
+        assert!(budget.charge(path, MAX_TOTAL_BYTES - 1).is_err());
+        assert!(
+            budget
+                .charge(Path::new("/synthetic/extra.json"), 1)
+                .is_err()
+        );
+    }
+    #[test]
     fn canonical_record_mapping_matches_actual_typed_identity_and_source_sets() {
         let (catalog, inventory, evidence) = sample();
         let mut result = mapping_report();
         bind_records(&mut result, &inventory, &evidence, &catalog);
-        assert!(result.blockers.is_empty());
+        assert!(result.blockers.is_empty(), "{:?}", result.blockers);
         assert!(
             catalog.records["equipment"]
                 .keys()

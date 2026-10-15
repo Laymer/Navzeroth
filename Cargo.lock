@@ -133,6 +133,7 @@ name = "azeroth-ingest"
 version = "0.8.1"
 dependencies = [
  "azeroth-core",
+ "image",
  "serde",
  "serde_json",
  "sha2",
@@ -154,6 +155,7 @@ name = "azeroth-storage"
 version = "0.8.1"
 dependencies = [
  "azeroth-core",
+ "image",
  "rusqlite",
  "serde",
  "serde_json",

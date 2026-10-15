@@ -1,4 +1,5 @@
 //! Explicit manual source locations and guarded independent route opportunities.
+use crate::catalog::CatalogView;
 use crate::{
     gear::{self, AcquisitionInput, EffortInput, GearReport, GearRequest},
     planning::{self, PlanningReport, PlanningRequest},
@@ -18,7 +19,6 @@ use azeroth_core::{
     travel::{Route, RouteOptions, RouteOutcome, RouteSearch, shortest_route},
     types::*,
 };
-use azeroth_storage::content::ContentRevision;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
@@ -159,25 +159,28 @@ fn sum(a: u64, b: u64) -> Result<Millis> {
 fn fingerprint(
     report: &PlanningReport,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
 ) -> Result<Sha256Hex> {
     // Hash exact captured bytes and route result, not generated time/hardware timing.
-    let bytes = serde_json::to_vec(&(
+    let mut bytes = serde_json::to_vec(&(
         &report.request,
         &report.context,
         report.fixture,
         &report.result.selected,
         &report.result.stopping,
         snapshot,
-        content,
     ))
     .map_err(|_| invalid("Route identity cannot be encoded"))?;
+    bytes.pop(); // tuple closing bracket; retain the legacy v1 byte identity
+    bytes.push(b',');
+    bytes.extend(content.encoded()?);
+    bytes.push(b']');
     Sha256Hex::new(format!("{:x}", Sha256::digest(bytes)))
 }
 fn baseline(
     request: PlanningRequest,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<RouteAcquisitionBaseline> {
     let report = planning::calculate(request, snapshot, content, clock)?;
@@ -214,7 +217,7 @@ fn detour(
     input: &RouteOpportunityInput,
     leg: &AcquisitionRouteLeg,
     baseline: &RouteAcquisitionBaseline,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     context: &EvaluationContext<'_>,
 ) -> Result<DetourOutcome> {
     let Some(node) = &input.node else {
@@ -224,7 +227,7 @@ fn detour(
             rejoin: None,
         });
     };
-    let data = &content.envelope.payload;
+    let data = &content.reference();
     context
         .snapshot
         .context
@@ -314,11 +317,11 @@ fn detour(
 }
 fn counted_rewards(
     baseline: &RouteAcquisitionBaseline,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
 ) -> Result<(BTreeSet<ItemKey>, bool)> {
     let mut items = BTreeSet::new();
     let mut known = true;
-    let data = &content.envelope.payload;
+    let data = &content.reference();
     for choice in &baseline.planning_report.result.selected {
         let objective = data
             .objectives
@@ -357,7 +360,7 @@ fn counted_rewards(
 fn calculate(
     request: RouteAcquisitionRequest,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<RouteAcquisitionReport> {
     let base = baseline(request.planning.clone(), snapshot, content, clock)?;
@@ -391,8 +394,7 @@ fn calculate(
             .get(input.leg_index)
             .ok_or_else(|| invalid("Selected route leg is absent"))?;
         let source = content
-            .envelope
-            .payload
+            .reference()
             .acquisitions
             .iter()
             .find(|s| s.id == input.source)
@@ -422,8 +424,17 @@ fn calculate(
                 CostSchedule::Once
             },
         };
-        let mut assessment =
-            assess_acquisition(source, &input.target, &effort, &counted, &evaluation)?;
+        let effective_source = content
+            .content_v2()
+            .map(|c| crate::authored_content::acquisition_facts(source, &input.target, c))
+            .transpose()?;
+        let mut assessment = assess_acquisition(
+            effective_source.as_ref().unwrap_or(source),
+            &input.target,
+            &effort,
+            &counted,
+            &evaluation,
+        )?;
         if !coverage_complete {
             assessment.credited_reward = None;
             if assessment.status != azeroth_core::gear::AcquisitionStatus::Unavailable {

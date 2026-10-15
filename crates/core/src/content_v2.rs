@@ -1,9 +1,10 @@
 //! Additive v2 content contract. Never an alternate snapshot/plan decoder.
 //! Context, revision and fixture identity come exclusively from `reference`.
 mod json;
+pub mod records;
 pub mod schema;
 use crate::{
-    contract::{Envelope, ReferenceDataset},
+    contract::{CatalogDataset, Envelope, MAX_CATALOG_IDENTITIES},
     coverage::content_report,
     eligibility::{AccessRequirements, ChoiceTaken},
     entities::{AcquisitionKind, CompletionSemantics, Confidence, NodeRef, bounded, unique},
@@ -17,19 +18,27 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
-/// Intermediate contract ceiling; PR5 introduces the full v2 catalog capacity.
-pub const MAX_CONTENT_BYTES: usize = 16 * 1024 * 1024;
+/// V2 encoded catalog bound; ordinary v1 envelopes retain their smaller bound.
+pub const MAX_CONTENT_BYTES: usize = 256 * 1024 * 1024;
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceContent {
     pub format: String,
     pub schema_version: u32,
-    pub reference: Envelope<ReferenceDataset>,
+    pub reference: Envelope<CatalogDataset>,
     pub models: Vec<ClassRoleModel>,
     pub equipment: Vec<EquipmentFacts>,
     pub quest_facts: Vec<QuestFacts>,
     pub acquisition_facts: Vec<AcquisitionFacts>,
     pub dungeons: Vec<Dungeon>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub node_facts: Vec<NodeFacts>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct NodeFacts {
+    pub node: NodeId,
+    pub evidence: Vec<EvidenceId>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -258,11 +267,27 @@ impl Graph<'_> {
         Ok(())
     }
 }
+impl ReferenceContent {
+    /// Matches release canonical record bindings; evidence has a separate budget.
+    pub fn identity_count(&self) -> usize {
+        self.reference.payload.identity_count()
+            + self.models.len()
+            + self.equipment.len()
+            + self.quest_facts.len()
+            + self.acquisition_facts.len()
+            + self.dungeons.len()
+            + self.node_facts.len()
+    }
+}
 impl Validate for ReferenceContent {
     fn validate(&self) -> Result<()> {
         if self.format != "navzeroth-reference-content" || self.schema_version != 2 {
             return Err(invalid("Unsupported v2 content or party matrix version"));
         }
+        crate::contract::validate_catalog_capacity(
+            self.identity_count(),
+            self.reference.payload.evidence.len(),
+        )?;
         self.reference.validate()?;
         if !self.reference.extensions.is_empty() {
             return Err(invalid("V2 content excludes untyped exchange extensions"));
@@ -276,14 +301,18 @@ impl Validate for ReferenceContent {
             self.quest_facts.len(),
             self.acquisition_facts.len(),
             self.dungeons.len(),
+            self.node_facts.len(),
         ] {
-            bounded(n)?;
+            if n > MAX_CATALOG_IDENTITIES {
+                return Err(invalid("V2 catalog collection capacity exceeded"));
+            }
         }
-        unique(self.models.iter().map(|r| &r.id))?;
-        unique(self.equipment.iter().map(|r| &r.item))?;
-        unique(self.quest_facts.iter().map(|r| &r.quest))?;
-        unique(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
-        unique(self.dungeons.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.models.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.equipment.iter().map(|r| &r.item))?;
+        crate::contract::unique_catalog(self.quest_facts.iter().map(|r| &r.quest))?;
+        crate::contract::unique_catalog(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
+        crate::contract::unique_catalog(self.dungeons.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.node_facts.iter().map(|r| &r.node))?;
         let data = &self.reference.payload;
         let g = Graph {
             context: self.reference.data_context(),
@@ -316,6 +345,12 @@ impl Validate for ReferenceContent {
         let acquisitions: BTreeSet<_> = acquisition_index.keys().copied().collect();
         let dungeons: BTreeSet<_> = self.dungeons.iter().map(|d| &d.id).collect();
         let edges: BTreeSet<_> = data.edges.iter().map(|e| &e.id).collect();
+        for facts in &self.node_facts {
+            if !g.nodes.contains_key(&facts.node) {
+                return Err(invalid("V2 node fact does not resolve"));
+            }
+            g.evidence(&facts.evidence)?;
+        }
         for m in &self.models {
             g.evidence(&m.evidence)?;
             m.profile.validate()?;

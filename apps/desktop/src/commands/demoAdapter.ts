@@ -91,6 +91,9 @@ export const demoAdapter: CommandAdapter = {
         case "submit_local_observation":
         case "change_local_submission":
         case "export_local_submission":
+        case "get_authored_catalog":
+          return { revision: null, records: [], total: 0, next_offset: null };
+        case "get_catalog_page":
         case "get_dungeon_preparation":
           throw { code: "PROVIDER_UNAVAILABLE", message: "Preparation assessments require imported stored snapshots in the native application.", retryable: false } satisfies AppError;
         case "get_character_snapshot": {

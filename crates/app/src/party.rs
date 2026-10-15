@@ -12,6 +12,7 @@ use serde::Serialize;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct PartyQuestCatalog {
+    pub pages: crate::catalog_pages::Pages,
     pub context: DataContext,
     pub fixture: bool,
     pub revision: Option<DatasetRevision>,

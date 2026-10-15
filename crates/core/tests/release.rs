@@ -28,7 +28,7 @@ fn complete() -> (Inventory, Evidence) {
         })
         .collect();
     let evidence = json!({"schema_version":1,"target":Target::forever_70374(),
-        "inventory_sha256":HASH,"tested_source_commit":COMMIT,"production_sha256":HASH,
+        "inventory_sha256":HASH,"admission_registry":file(),"tested_source_commit":COMMIT,"production_sha256":HASH,
         "checks":checks,"coverage": DOMAINS.map(|unit_id| json!({"unit_id":unit_id,
             "status":"pass","included_record_ids":["synthetic:1"],"source_ids":["synthetic"],
             "unresolved_conflicts":0,"unsupported_corrections":0,"validation_evidence":[file()]})),
@@ -296,4 +296,28 @@ fn candidate_never_waives_content_rights_or_claimed_pass_binding() {
     e.sources[0].redistribution = Permission::Permitted;
     e.inventory_sha256 = serde_json::from_value(json!("c".repeat(64))).unwrap();
     assert!(!check("1.0.0", &i, Some(&e)).candidate_ready);
+}
+
+#[test]
+fn source_admission_pin_is_mandatory_for_both_candidate_and_publication() {
+    let (inventory, mut evidence) = complete();
+    evidence.admission_registry = None;
+    let publication = check("1.0.0", &inventory, Some(&evidence));
+    assert!(!publication.publication_allowed && !publication.candidate_ready);
+    assert!(
+        publication
+            .blockers
+            .iter()
+            .any(|v| v.contains("admission registry"))
+    );
+    evidence.tested_source_commit = None;
+    evidence.production_sha256 = None;
+    let candidate = check("1.0.0", &inventory, Some(&evidence));
+    assert!(!candidate.candidate_ready);
+    assert!(
+        candidate
+            .blockers
+            .iter()
+            .any(|v| v.contains("admission registry"))
+    );
 }

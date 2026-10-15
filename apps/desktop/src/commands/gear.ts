@@ -2,6 +2,7 @@
 import type { AcquisitionSource, ConfigurationItem, DataContext, ItemDefinition, ItemKey, ObservationMetadata, Observation_EquipmentSlot } from "../../../../schemas/v1/exchange";
 export type GearObservation<T> = ({ status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable" }) & ObservationMetadata;
 export interface GearCatalog {
+  pages?: import("./catalogPages").CatalogPages;
   snapshot_id: string | null;
   revision: string | null;
   fixture: boolean;
@@ -28,6 +29,7 @@ export interface GearInput {
 }
 export type WeightSource = { type: "user_preference" | "synthetic_test" } | { type: "documented_model" | "permitted_guide"; source: string };
 export interface GearRequest {
+  authored_model?: string | null;
   profile_id: string;
   snapshot_id: string;
   revision: string;

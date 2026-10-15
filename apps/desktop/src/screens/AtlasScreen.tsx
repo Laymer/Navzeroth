@@ -29,19 +29,22 @@ type Load =
   | { phase: "ready"; view: AtlasView; markers: SnapshotMarker[] };
 
 export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient; refreshKey?: number }) {
+  const [pageRequest, setPageRequest] = useState<{token: import("../commands/contract").AtlasToken; offset: number} | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [load, setLoad] = useState<Load>({ phase: "loading" });
   const [refreshError, setRefreshError] = useState<AppError | null>(null);
 
   useEffect(() => {
     let live = true;
+    setLoad(previous => previous.phase === "ready" && previous.view.data_mode === "demo" ? previous : {phase:"loading"});
     void (async () => {
-      const [view, markers] = await Promise.all([client.queryAtlas(null), client.getSnapshotMarkers()]);
+      const view = await client.queryAtlas(null,pageRequest?.token,pageRequest?.offset);
+      const markers = view.ok ? await client.getSnapshotMarkers(view.value.page?.token) : {ok:true as const,value:[]};
       if (!live) return;
       const error = !view.ok ? view.error : !markers.ok ? markers.error : null;
       if (error !== null) {
         setRefreshError(error);
-        setLoad((previous) => previous.phase === "ready" ? previous : { phase: "error", error });
+        setLoad(previous => previous.phase === "ready" && previous.view.data_mode === "demo" ? previous : { phase: "error", error });
         return;
       }
       if (!view.ok || !markers.ok) return;
@@ -51,12 +54,12 @@ export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient;
     return () => {
       live = false;
     };
-  }, [client, refreshKey, refresh]);
+  }, [client, refreshKey, refresh, pageRequest]);
 
   return (
     <section aria-labelledby="atlas-heading" className="atlas">
       <h2 id="atlas-heading">Atlas</h2>
-      <button type="button" onClick={() => setRefresh((n) => n + 1)}>Refresh atlas</button>
+      <button type="button" onClick={() => {setPageRequest(null);setRefresh((n) => n + 1);}}>Refresh atlas</button>
       {load.phase === "loading" && <p role="status">Loading the atlas…</p>}
       {load.phase === "error" && (
         <p role="alert">
@@ -67,6 +70,7 @@ export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient;
       {load.phase === "ready" && refreshError !== null && <p role="alert">
         Atlas refresh error {refreshError.code}: {refreshError.message} The previous atlas remains displayed. Refresh again to retry.
       </p>}
+      {load.phase === "ready" && load.view.page && <div role="group" aria-label="Atlas image pages"><p>{load.view.page.total} images in the selected revision; showing {load.view.images.length}.</p><button type="button" disabled={load.view.page.offset===0} onClick={()=>{const page=load.view.page;if(page)setPageRequest({token:page.token,offset:Math.max(0,page.offset-200)});}}>Previous image page</button><button type="button" disabled={load.view.page.next_offset===null} onClick={()=>{const page=load.view.page;if(page&&page.next_offset!==null)setPageRequest({token:page.token,offset:page.next_offset});}}>Next image page</button></div>}
       {load.phase === "ready" && <AtlasReady view={load.view} markers={load.markers} />}
     </section>
   );

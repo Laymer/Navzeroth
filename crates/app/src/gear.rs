@@ -1,4 +1,5 @@
 //! Explicit manual model assumptions over exact active content and captured state.
+use crate::catalog::CatalogView;
 use crate::snapshots::SnapshotApplication;
 use azeroth_core::{
     contract::Envelope,
@@ -11,7 +12,7 @@ use azeroth_core::{
     types::*,
 };
 use azeroth_storage::SnapshotStore;
-use azeroth_storage::content::{ContentRevision, ContentScope};
+use azeroth_storage::content::ContentScope;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -21,6 +22,7 @@ pub const PRACTICAL_MODEL_VERSION: &str = "gear-practical-v1";
 
 #[derive(Clone, Debug, Serialize)]
 pub struct GearCatalog {
+    pub pages: crate::catalog_pages::Pages,
     pub snapshot_id: Option<SnapshotId>,
     pub revision: Option<DatasetRevision>,
     pub fixture: bool,
@@ -86,6 +88,9 @@ pub struct GearRequest {
     pub profile_id: String,
     pub snapshot_id: SnapshotId,
     pub revision: DatasetRevision,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub authored_model: Option<SourceId>,
     pub model: RoleProfileData,
     pub layout: SlotLayoutData,
     pub class: Observation<SourceId>,
@@ -135,27 +140,35 @@ impl SnapshotApplication {
     pub fn gear_catalog(&self, profile_id: &str) -> Result<GearCatalog> {
         self.with_profile_store_mut(profile_id, |store, key| {
             let snapshot = store.current_snapshot(key)?;
-            let content = store.active_content_revision(&ContentScope {
+            let content = store.active_catalog_revision(&ContentScope {
                 context: key.context.clone(),
                 fixture: key.fixture,
             })?;
+            let mut pages = crate::catalog_pages::Pages::new();
+            let items = crate::catalog_pages::first(
+                store,
+                content.as_ref(),
+                azeroth_core::catalog::Collection::Items,
+                &mut pages,
+            )?;
+            let acquisitions = crate::catalog_pages::first(
+                store,
+                content.as_ref(),
+                azeroth_core::catalog::Collection::Acquisitions,
+                &mut pages,
+            )?;
             Ok(GearCatalog {
+                pages,
+
                 snapshot_id: snapshot.as_ref().map(|s| s.payload.id.clone()),
-                revision: content
-                    .as_ref()
-                    .map(|c| c.envelope.payload.revision.clone()),
+                revision: content.as_ref().map(|c| c.reference().revision.clone()),
                 fixture: key.fixture,
                 context: key.context.clone(),
                 equipment: snapshot
                     .map(|s| s.payload.equipment.clone())
                     .unwrap_or_default(),
-                items: content
-                    .as_ref()
-                    .map(|c| c.envelope.payload.items.clone())
-                    .unwrap_or_default(),
-                acquisitions: content
-                    .map(|c| c.envelope.payload.acquisitions.clone())
-                    .unwrap_or_default(),
+                items,
+                acquisitions,
             })
         })
     }
@@ -177,7 +190,7 @@ impl SnapshotApplication {
                 return Err(invalid("Snapshot changed; refresh gear inputs"));
             }
             let content = store
-                .active_content_revision(&ContentScope {
+                .active_catalog_revision(&ContentScope {
                     context: key.context.clone(),
                     fixture: key.fixture,
                 })?
@@ -188,7 +201,7 @@ impl SnapshotApplication {
                         false,
                     )
                 })?;
-            if content.envelope.payload.revision != request.revision {
+            if content.reference().revision != request.revision {
                 return Err(invalid("Active content changed; refresh gear inputs"));
             }
             calculate(
@@ -204,7 +217,7 @@ impl SnapshotApplication {
 pub fn calculate(
     request: GearRequest,
     snapshot: &Envelope<CharacterSnapshot>,
-    content: &ContentRevision,
+    content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<GearReport> {
     if request.candidates.len() > MAX_CANDIDATES {
@@ -212,14 +225,26 @@ pub fn calculate(
     }
     snapshot
         .data_context()
-        .ensure_compatible(&content.envelope.data_context())?;
-    if snapshot.fixture != content.envelope.fixture {
+        .ensure_compatible(&content.context())?;
+    if snapshot.fixture != content.fixture() {
         return Err(invalid("Fixture identity mismatch"));
     }
     if request.snapshot_id != snapshot.payload.id
-        || request.revision != content.envelope.payload.revision
+        || request.revision != content.reference().revision
     {
         return Err(invalid("Gear inputs changed"));
+    }
+    let mut request = request;
+    if let Some(id) = &request.authored_model {
+        let authored = content
+            .content_v2()
+            .ok_or_else(|| invalid("No authored model catalog is active"))?;
+        let model = authored
+            .models
+            .iter()
+            .find(|m| &m.id == id)
+            .ok_or_else(|| invalid("Selected authored model is absent from this revision"))?;
+        crate::authored_content::apply_model(&mut request, model, &snapshot.payload, clock)?;
     }
     let model = RoleProfile::try_new(request.model.clone())?;
     let layout = SlotLayout::try_new(request.layout.clone())?;
@@ -241,16 +266,17 @@ pub fn calculate(
     let mut candidates = Vec::new();
     for input in &inputs {
         let item = content
-            .envelope
-            .payload
+            .reference()
             .items
             .iter()
             .find(|i| i.key == input.item)
             .ok_or_else(|| invalid("Gear candidate is absent from active content"))?;
-        candidates.push(GearCandidate {
-            item: item.clone(),
-            category: input.category.clone(),
-        });
+        let (item, category) = if let Some(authored) = content.content_v2() {
+            crate::authored_content::item_facts(item, authored)?
+        } else {
+            (item.clone(), input.category.clone())
+        };
+        candidates.push(GearCandidate { item, category });
     }
     let context = snapshot.data_context();
     let scenario = GearScenario {
@@ -317,14 +343,23 @@ pub fn calculate(
             .as_ref()
             .map(|a| {
                 let source = content
-                    .envelope
-                    .payload
+                    .reference()
                     .acquisitions
                     .iter()
                     .find(|s| s.id == a.source)
                     .ok_or_else(|| invalid("Acquisition source is absent from active content"))?;
+                let effective = content
+                    .content_v2()
+                    .map(|authored| {
+                        crate::authored_content::acquisition_facts(
+                            source,
+                            candidate.key(),
+                            authored,
+                        )
+                    })
+                    .transpose()?;
                 assess_acquisition(
-                    source,
+                    effective.as_ref().unwrap_or(source),
                     candidate.key(),
                     &a.effort.effort(),
                     &BTreeSet::new(),

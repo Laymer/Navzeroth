@@ -4,9 +4,9 @@ Owner: Codex `/root/source_admission`; baseline `d59aa91`.
 
 The [registry](source-admission-v1.json) intentionally admits **zero sources**.
 The pure Rust `azeroth_core::source_admission` contract is an explicit prerequisite
-for a future acquisition adapter. It does not change existing audit-only Questie
-staging, source policies, pack activation or the independent stable release gate.
-Do not treat this additive API as proof those consumers enforce admission yet.
+for a future acquisition adapter. The release gate now binds accepted sources to
+a pinned registry and local permission evidence (below). Audit-only Questie
+staging and ordinary pack activation do not imply source admission.
 
 `Registry::parse` checks the byte ceiling before strict deserialization, then
 validates version, nested limits, duplicate identities and exact lists.
@@ -67,3 +67,37 @@ upstream case while rejecting case-colliding names. Retrieval/evidence URLs use 
 narrow ASCII HTTPS DNS-host subset on the default port: no user information,
 explicit ports, query/fragment, percent encoding or trailing DNS dot. Sources that
 need other access forms require a reviewed contract extension, not URL rewriting.
+
+
+## Offline release binding
+
+Release evidence may select `admission_registry` as a bounded `FileRef`; it is
+mandatory when accepted sources exist. Both candidate and publication checks
+require each accepted source ID/revision to be admitted under the compatible
+license policy. Registry origin edition/build must exactly match the source
+provenance declaration; target validation remains independent. Every rights and
+access-proof digest must occur in checked permission evidence. Pack publisher,
+license identifier, attribution and revision must match the reviewed admission,
+and its declared allowed fields must be a subset of the selected original files'
+permissions. Pack transformations must be known, nonempty, and drawn from the
+selected permitted files’ exact `transformation` strings. Each string is a reviewed
+transformation identifier/declaration; it is compared literally, never executed
+or inferred. Multiple selected files may permit distinct transformation strings.
+Missing or unreviewed admission, noncommercial/unknown policy and
+mismatches block readiness.
+
+For this binding, each `PermittedFile.path` is the exact repository-relative path
+of its original source-material `FileRef`, with matching length and SHA-256.
+Choose that staging destination explicitly during admission; no suffix matching,
+implicit prefix rewrite or transformed-file substitution is permitted. Permitted
+files not selected in the release do not supply field permissions. Generated
+catalog and pack bytes are transformations and are not compared to raw source
+bytes. Reviewers still verify the stated transformations and obligations.
+
+The pinned registry is private review evidence and is excluded from public
+release materials, including copies relabelled as license/attribution notices.
+The existing production fingerprint excludes `docs/` and `release/` as before;
+registry integrity is bound by the current evidence file reference and independent
+review, just like permission proofs. No network retrieval or grant authentication
+is performed by the gate. Preview repositories with no accepted sources retain
+their existing behavior, and the committed registry still admits zero sources.

@@ -17,6 +17,27 @@ pub fn reference_content_schema() -> Value {
     );
     value["properties"]["format"] = json!({"const":"navzeroth-reference-content"});
     value["properties"]["schema_version"] = json!({"const":2});
+    for collection in [
+        "models",
+        "equipment",
+        "quest_facts",
+        "acquisition_facts",
+        "dungeons",
+        "node_facts",
+    ] {
+        value["properties"][collection]["maxItems"] =
+            json!(crate::contract::MAX_CATALOG_IDENTITIES);
+    }
+    if let Some(properties) = value["$defs"]["ReferenceDataset"]["properties"].as_object_mut() {
+        for property in properties.values_mut() {
+            if property["type"] == "array" {
+                property["maxItems"] = json!(crate::contract::MAX_CATALOG_IDENTITIES);
+            }
+        }
+    }
+    value["$defs"]["NodeFacts"]["properties"]["evidence"]["minItems"] = json!(1);
+    value["$defs"]["NodeFacts"]["properties"]["evidence"]["maxItems"] = json!(1024);
+    value["$defs"]["NodeFacts"]["properties"]["evidence"]["uniqueItems"] = json!(true);
     close_records(&mut value);
     value
 }

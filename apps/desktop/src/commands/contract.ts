@@ -91,6 +91,7 @@ export interface StoredParty {
   }[];
 }
 export interface PartyQuestCatalog {
+  pages?: import("./catalogPages").CatalogPages;
   context: DataContext;
   fixture: boolean;
   revision: string | null;
@@ -191,7 +192,10 @@ export interface AtlasImage {
   attribution: string;
 }
 
+export interface AtlasToken { profile_id: string; revision: string; catalog_sha256: string }
+export interface AtlasPage { token: AtlasToken; offset: number; total: number; next_offset: number | null }
 export interface AtlasView {
+  page?: AtlasPage;
   data_mode: DataMode;
   fixture: boolean;
   revision: string;
@@ -245,6 +249,7 @@ export interface SnapshotMarker {
 }
 
 export interface PlanningCatalog {
+  pages?: import("./catalogPages").CatalogPages;
   snapshot_id: string | null; revision: string | null; fixture: boolean;
   nodes: TravelNode[]; objectives: Objective[];
 }
@@ -280,6 +285,8 @@ export interface CommandMap {
   clear_current_plan:{input:{expected_revision:number};output:number};
   get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
   change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
+  get_catalog_page: { input: { text: string }; output: import("./catalogPages").CatalogRecordPage };
+  get_authored_catalog: { input: { text: string }; output: import("./authoredContent").AuthoredCatalog };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
   get_reference_window_state: {input:undefined;output:import("./reference").ReferenceWindowState};
@@ -347,10 +354,10 @@ export interface CommandMap {
   select_profile: { input: { profile_id: string }; output: null };
   get_stored_snapshot: { input: { profile_id: string }; output: StoredSnapshot | null };
   get_snapshot_history: { input: { profile_id: string; limit: number }; output: HistoryEntry[] };
-  query_atlas: { input: { image: string | null }; output: AtlasView };
+  query_atlas: { input: { image: string | null; page?: AtlasToken; offset?: number }; output: AtlasView };
   /** One to 64 positions. */
-  project_positions: { input: { positions: Position[] }; output: ProjectedPosition[] };
-  get_snapshot_markers: { input: undefined; output: SnapshotMarker[] };
+  project_positions: { input: { positions: Position[]; page?: AtlasToken }; output: ProjectedPosition[] };
+  get_snapshot_markers: { input: {page?: AtlasToken} | undefined; output: SnapshotMarker[] };
 }
 
 export type CommandName = keyof CommandMap;
