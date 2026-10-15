@@ -15,3 +15,13 @@ Validation performed:
 - Native `cargo check --locked --manifest-path apps/desktop/src-tauri/Cargo.toml` blocked by missing system D-Bus development library (`libdbus-sys` build failure). Native Windows interactive/scale measurements remain unverified.
 
 No gameplay dataset, permissions, or operator evidence has been invented. This change makes lists accessible at catalog scale; full-corpus Windows performance and live acceptance still require the real accepted corpus and operator environment. Atlas and verified bundle import continue in separately owned work. Next: independent review, hosted checks, integration with Atlas command blocks, and native acceptance.
+
+Independent review: coordinator and acceptance worker reviewed c808a7c with no important blocker. Core/main fb6303b merged normally at bc30147, resolving only the core module registration union. PR135 targets main for hosted checks; dependency PRs still integrate first. Acceptance's Atlas branch has merged this pagination implementation.
+
+Coordinator integration correction: root owns the frozen branch at abd918f.
+Applied the independently reviewed Atlas consistency fix to the generic catalog
+page command itself, so selecting the active catalog and reading its page share
+one SQLite read transaction. This keeps PR135 independently safe before Atlas
+integration. All six authored-content/pagination tests pass. An initial command
+used a nonexistent test-target name and ran no tests; the corrected target above
+passed. Native interactive acceptance remains unverified.
