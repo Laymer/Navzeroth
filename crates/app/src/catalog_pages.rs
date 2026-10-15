@@ -200,20 +200,22 @@ impl SnapshotApplication {
         let r: Request =
             serde_json::from_str(text).map_err(|_| invalid("Invalid catalog page request"))?;
         self.with_store_mut(|store| {
-            let content = crate::authored_content::selected_catalog(store, &r.subject)?
-                .ok_or_else(|| invalid("No active catalog"))?;
-            page(
-                store,
-                &content,
-                r.collection,
-                Some(&PageRequest {
-                    revision: r.revision,
-                    catalog_sha256: r.catalog_sha256,
-                    collection: r.collection,
-                    offset: r.offset,
-                    limit: MAX_PAGE_ROWS,
-                }),
-            )
+            store.with_immediate_read(|store| {
+                let content = crate::authored_content::selected_catalog(store, &r.subject)?
+                    .ok_or_else(|| invalid("No active catalog"))?;
+                page(
+                    store,
+                    &content,
+                    r.collection,
+                    Some(&PageRequest {
+                        revision: r.revision,
+                        catalog_sha256: r.catalog_sha256,
+                        collection: r.collection,
+                        offset: r.offset,
+                        limit: MAX_PAGE_ROWS,
+                    }),
+                )
+            })
         })
     }
 }
