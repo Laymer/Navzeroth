@@ -3,7 +3,7 @@
 mod json;
 pub mod schema;
 use crate::{
-    contract::{Envelope, ReferenceDataset},
+    contract::{CatalogDataset, Envelope, MAX_CATALOG_IDENTITIES},
     coverage::content_report,
     eligibility::{AccessRequirements, ChoiceTaken},
     entities::{AcquisitionKind, CompletionSemantics, Confidence, NodeRef, bounded, unique},
@@ -17,14 +17,14 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
-/// Intermediate contract ceiling; PR5 introduces the full v2 catalog capacity.
-pub const MAX_CONTENT_BYTES: usize = 16 * 1024 * 1024;
+/// V2 encoded catalog bound; ordinary v1 envelopes retain their smaller bound.
+pub const MAX_CONTENT_BYTES: usize = 256 * 1024 * 1024;
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceContent {
     pub format: String,
     pub schema_version: u32,
-    pub reference: Envelope<ReferenceDataset>,
+    pub reference: Envelope<CatalogDataset>,
     pub models: Vec<ClassRoleModel>,
     pub equipment: Vec<EquipmentFacts>,
     pub quest_facts: Vec<QuestFacts>,
@@ -263,6 +263,10 @@ impl Validate for ReferenceContent {
         if self.format != "navzeroth-reference-content" || self.schema_version != 2 {
             return Err(invalid("Unsupported v2 content or party matrix version"));
         }
+        crate::contract::validate_catalog_capacity(
+            self.reference.payload.identity_count() + self.models.len() + self.dungeons.len(),
+            self.reference.payload.evidence.len(),
+        )?;
         self.reference.validate()?;
         if !self.reference.extensions.is_empty() {
             return Err(invalid("V2 content excludes untyped exchange extensions"));
@@ -277,13 +281,15 @@ impl Validate for ReferenceContent {
             self.acquisition_facts.len(),
             self.dungeons.len(),
         ] {
-            bounded(n)?;
+            if n > MAX_CATALOG_IDENTITIES {
+                return Err(invalid("V2 catalog collection capacity exceeded"));
+            }
         }
-        unique(self.models.iter().map(|r| &r.id))?;
-        unique(self.equipment.iter().map(|r| &r.item))?;
-        unique(self.quest_facts.iter().map(|r| &r.quest))?;
-        unique(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
-        unique(self.dungeons.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.models.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.equipment.iter().map(|r| &r.item))?;
+        crate::contract::unique_catalog(self.quest_facts.iter().map(|r| &r.quest))?;
+        crate::contract::unique_catalog(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
+        crate::contract::unique_catalog(self.dungeons.iter().map(|r| &r.id))?;
         let data = &self.reference.payload;
         let g = Graph {
             context: self.reference.data_context(),
