@@ -110,6 +110,8 @@ export function createClient(adapter: CommandAdapter) {
       run(() => adapter.invoke("get_app_status", undefined)),
     listProfiles: (): Promise<Result<ProfileSummary[]>> =>
       run(() => adapter.invoke("list_profiles", undefined)),
+    stageVerifiedContentBundle: (path:string) => run(()=>adapter.invoke("stage_verified_content_bundle",{path})),
+    getContentInspectionPage: (text:string)=>run(()=>adapter.invoke("get_content_inspection_page",{text})),
     stageContent: (text: string) => run(() => adapter.invoke("stage_content", { text })),
     getActiveContent: (profileId: string) => run(() => adapter.invoke("get_active_content", { profile_id: profileId })),
     activateContent: (profileId: string, revision: string) => run(() => adapter.invoke("activate_content", { profile_id: profileId, revision })),

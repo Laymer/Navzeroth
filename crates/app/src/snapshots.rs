@@ -636,8 +636,8 @@ impl SnapshotApplication {
                     .map_err(|_| invalid("Invalid v2 content"))?,
             )?;
             self.lock()?.store.stage_content_v2_revision(&content)?;
-            Ok(crate::content::inspect(
-                azeroth_storage::content::ActiveContentRevision::V2(std::sync::Arc::new(content)),
+            crate::content::inspect(azeroth_storage::content::ActiveContentRevision::V2(
+                std::sync::Arc::new(content),
             ))
         } else {
             if text.len() > azeroth_storage::content::MAX_CONTENT_REVISION_BYTES {
@@ -649,7 +649,7 @@ impl SnapshotApplication {
             let content: azeroth_storage::content::ContentRevision = serde_json::from_value(value)
                 .map_err(|_| invalid("Invalid content revision JSON"))?;
             self.lock()?.store.stage_content_revision(&content)?;
-            Ok(crate::content::inspect(content))
+            crate::content::inspect(content)
         }
     }
     pub fn active_content(
@@ -662,10 +662,11 @@ impl SnapshotApplication {
             context: key.context,
             fixture: key.fixture,
         };
-        Ok(state
+        state
             .store
             .active_catalog_revision(&scope)?
-            .map(crate::content::inspect))
+            .map(crate::content::inspect)
+            .transpose()
     }
     pub fn activate_content(
         &self,
@@ -687,7 +688,7 @@ impl SnapshotApplication {
             .active_catalog_revision(&key.scope)?
             .filter(|c| c.key() == key)
             .ok_or_else(|| invalid("Content revision is not active"))?;
-        Ok(crate::content::inspect(content))
+        crate::content::inspect(content)
     }
     pub fn rollback_content(&self, profile_id: &str) -> Result<crate::content::ContentRollback> {
         let mut state = self.lock()?;
@@ -705,7 +706,8 @@ impl SnapshotApplication {
             active: state
                 .store
                 .active_catalog_revision(&scope)?
-                .map(crate::content::inspect),
+                .map(crate::content::inspect)
+                .transpose()?,
         })
     }
     pub fn party_quests(&self, id: &PartyId) -> Result<crate::party::PartyQuestCatalog> {
