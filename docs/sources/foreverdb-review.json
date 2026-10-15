@@ -45,7 +45,7 @@
     "forever_player_observations",
     "classic_cmangos_inference"
   ],
-  "rights_disposition": "Advertised GPL-3.0 is compatible with selected licence families. Archive includes explicit GPL notices for some Classic-derived files and a font OFL notice; no root GPL licence text. Review corresponding-source availability and scope for generated data before admission; no website/media blanket grant inferred.",
+  "rights_disposition": "Advertised GPL-3.0 is compatible. Canonical GPL text is retained; no fresh permission is needed for covered GPL material. Establish exact covered scope, preferred form for modification and applicable corresponding source; absence of named generators alone does not determine what must be delivered. Preserve attribution, modification dates/notices, same-licence obligations and corresponding source for covered transformed data. Website/media scope is not inferred.",
   "access_disposition": {
     "website_api": "excluded by published robots policy; not requested",
     "curseforge_download": "HTTP 403 on ordinary published download page; no bypass attempted",
@@ -98,5 +98,12 @@
     "per-record origin and 70374 validation",
     "independent target inventory; complete corresponding source when required"
   ],
-  "archive_member_manifest": "foreverdb-0.34.0-members.json"
+  "archive_member_manifest": "foreverdb-0.34.0-members.json",
+  "license_text": {
+    "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+    "path": "licenses/GPL-3.0.txt",
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "scope": "Verbatim canonical licence text; not an upstream data-scope grant"
+  }
 }

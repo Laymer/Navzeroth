@@ -45,3 +45,14 @@ Next: resolve the narrow source/export questions in the
 [unsent inquiry](../sources/permission-requests/foreverdb-source-request-unsent.md),
 admit specific files/fields/transforms, and implement bounded inert staging.
 No publisher contact was sent or authorized by this review.
+
+Independent continuation review: the source-admission worker verified the archive
+and every member hash and found no important audit/staging blocker. Clarified
+that covered GPL material needs no fresh permission; absent generators alone do
+not establish the complete corresponding-source requirement. Pinned the canonical
+35,149-byte GPL text, SHA-256
+`3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986`,
+and recorded modified-work/date, attribution, same-licence and preferred-source
+obligations. PR143 initially failed the Windows 20-second first-start store check;
+the rerun of the same commit passed. No product change or gate relaxation was
+made to obtain that result. Follow-up docs require their own hosted checks.
