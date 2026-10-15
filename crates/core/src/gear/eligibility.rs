@@ -14,18 +14,19 @@ use crate::{
     predicate::PredicateNode,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Categories a class may (`allowed`) or may not (`disallowed`) use. A category
 /// in neither set is unmapped, which is unknown rather than disallowed.
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ClassProficiency {
     pub allowed: BTreeSet<SourceId>,
     pub disallowed: BTreeSet<SourceId>,
 }
 /// Caller-supplied proficiency data keyed by class; core defines no table.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ProficiencyTableData {
     pub classes: RecordMap<SourceId, ClassProficiency>,
 }

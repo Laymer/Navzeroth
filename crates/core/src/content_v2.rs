@@ -1,8 +1,9 @@
 //! Additive v2 content contract. Never an alternate snapshot/plan decoder.
 //! Context, revision and fixture identity come exclusively from `reference`.
 mod json;
+pub mod schema;
 use crate::{
-    contract::{Envelope, ReferenceDataset},
+    contract::{CatalogDataset, Envelope, MAX_CATALOG_IDENTITIES},
     coverage::content_report,
     eligibility::{AccessRequirements, ChoiceTaken},
     entities::{Confidence, NodeRef, bounded, unique},
@@ -12,24 +13,25 @@ use crate::{
     predicate::{Field, Predicate, PredicateNode},
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
-/// Intermediate contract ceiling; PR5 introduces the full v2 catalog capacity.
-pub const MAX_CONTENT_BYTES: usize = 16 * 1024 * 1024;
-#[derive(Clone, Debug, Serialize, Deserialize)]
+/// V2 encoded catalog bound; ordinary v1 envelopes retain their smaller bound.
+pub const MAX_CONTENT_BYTES: usize = 256 * 1024 * 1024;
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceContent {
     pub format: String,
     pub schema_version: u32,
-    pub reference: Envelope<ReferenceDataset>,
+    pub reference: Envelope<CatalogDataset>,
     pub models: Vec<ClassRoleModel>,
     pub equipment: Vec<EquipmentFacts>,
     pub quest_facts: Vec<QuestFacts>,
     pub acquisition_facts: Vec<AcquisitionFacts>,
     pub dungeons: Vec<Dungeon>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ClassRoleModel {
     pub id: SourceId,
@@ -43,7 +45,7 @@ pub struct ClassRoleModel {
     pub layout: Observation<SlotLayout>,
     pub exclusions: Observation<Vec<Predicate>>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct EquipmentFacts {
     pub item: ItemKey,
@@ -51,7 +53,7 @@ pub struct EquipmentFacts {
     pub category: Observation<SourceId>,
     pub configuration: Observation<Predicate>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct QuestFacts {
     pub quest: QuestId,
@@ -63,13 +65,13 @@ pub struct QuestFacts {
     pub shareable: Observation<bool>,
     pub sharing_conditions: Observation<Predicate>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ExclusiveBranch {
     pub quests: Vec<QuestId>,
     pub taken_when: ChoiceTaken,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ResetRule {
     Never,
@@ -77,7 +79,7 @@ pub enum ResetRule {
     Timed { period_ms: Millis },
     ServerReset { identifier: SourceId },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct AcquisitionFacts {
     pub acquisition: AcquisitionId,
@@ -89,7 +91,7 @@ pub struct AcquisitionFacts {
     pub prerequisites: Observation<Predicate>,
     pub entitlement: Observation<LootEntitlement>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum AcquisitionOrigin {
     Quest {
@@ -108,7 +110,7 @@ pub enum AcquisitionOrigin {
         dungeon: Option<SourceId>,
     },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Reward {
     pub item: ItemKey,
@@ -116,14 +118,14 @@ pub struct Reward {
     /// None means unconditional; matching IDs identify mutually exclusive choices.
     pub choice_group: Option<SourceId>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Cost {
     Copper { amount: Copper },
     Item { item: ItemKey, quantity: u32 },
     Currency { currency: SourceId, quantity: u32 },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum LootEntitlement {
     Individual,
@@ -131,7 +133,7 @@ pub enum LootEntitlement {
     GroupChoice,
     MasterAssigned,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Dungeon {
     pub id: SourceId,
@@ -145,7 +147,7 @@ pub struct Dungeon {
     pub rewards: Observation<Vec<AcquisitionId>>,
     pub checklist: Observation<Vec<DungeonCheck>>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct DungeonCheck {
     pub id: SourceId,
@@ -261,6 +263,11 @@ impl Validate for ReferenceContent {
         if self.format != "navzeroth-reference-content" || self.schema_version != 2 {
             return Err(invalid("Unsupported v2 content or party matrix version"));
         }
+        if self.reference.payload.identity_count() + self.models.len() + self.dungeons.len()
+            > MAX_CATALOG_IDENTITIES
+        {
+            return Err(invalid("V2 catalog identity capacity exceeded"));
+        }
         self.reference.validate()?;
         if !self.reference.extensions.is_empty() {
             return Err(invalid("V2 content excludes untyped exchange extensions"));
@@ -275,13 +282,15 @@ impl Validate for ReferenceContent {
             self.acquisition_facts.len(),
             self.dungeons.len(),
         ] {
-            bounded(n)?;
+            if n > MAX_CATALOG_IDENTITIES {
+                return Err(invalid("V2 catalog collection capacity exceeded"));
+            }
         }
-        unique(self.models.iter().map(|r| &r.id))?;
-        unique(self.equipment.iter().map(|r| &r.item))?;
-        unique(self.quest_facts.iter().map(|r| &r.quest))?;
-        unique(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
-        unique(self.dungeons.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.models.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.equipment.iter().map(|r| &r.item))?;
+        crate::contract::unique_catalog(self.quest_facts.iter().map(|r| &r.quest))?;
+        crate::contract::unique_catalog(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
+        crate::contract::unique_catalog(self.dungeons.iter().map(|r| &r.id))?;
         let data = &self.reference.payload;
         let g = Graph {
             context: self.reference.data_context(),

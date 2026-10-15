@@ -15,7 +15,7 @@
 //! references are not modelled.
 use crate::{
     atlas::{ProjectionGap, project_position},
-    contract::{Envelope, ReferenceDataset, decode_envelope},
+    contract::{Envelope, Payload, ReferenceDataset, decode_envelope},
     entities::{Confidence, EdgeStatus},
     error::ErrorCode,
     observation::{Observation, ObservationStatus},
@@ -584,9 +584,11 @@ fn cyclic_components(adjacency: &[BTreeSet<usize>]) -> Vec<Vec<usize>> {
 
 /// Build the report for a decoded dataset. Deterministic: every collection is
 /// ordered and nothing reads a clock or random source.
-pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
+pub fn content_report<P: Payload + AsRef<ReferenceDataset>>(
+    envelope: &Envelope<P>,
+) -> ContentReport {
     let context = envelope.data_context();
-    let dataset = &envelope.payload;
+    let dataset = envelope.payload.as_ref();
     let header = DatasetHeader {
         revision: dataset.revision.clone(),
         namespace: envelope.namespace,
@@ -913,8 +915,9 @@ pub fn content_report(envelope: &Envelope<ReferenceDataset>) -> ContentReport {
             quests: names(component),
         });
     }
+    let definite_members: BTreeSet<_> = definite.iter().flat_map(|c| c.iter().copied()).collect();
     for component in cyclic_components(&all_edges) {
-        if !definite.iter().any(|d| component.contains(&d[0])) {
+        if !component.iter().any(|id| definite_members.contains(id)) {
             b.gaps
                 .insert(CoverageFinding::PossibleQuestPrerequisiteCycle {
                     quests: names(&component),

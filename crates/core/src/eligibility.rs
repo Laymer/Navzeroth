@@ -14,12 +14,13 @@ use crate::{
     predicate::*,
     types::*,
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Class, race and faction allow-lists. `None` means "no restriction". The
 /// contract cannot express these in `Predicate`, so this is a local input type.
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct AccessRequirementsData {
     #[serde(default)]
     pub classes: Option<BTreeSet<SourceId>>,
@@ -66,7 +67,7 @@ impl ParticipantFacts {
 }
 
 /// When another group member counts as "choice already made".
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ChoiceTaken {
     #[default]
@@ -75,7 +76,7 @@ pub enum ChoiceTaken {
     Accepted,
 }
 /// Mutually exclusive quests. There is no such field in `QuestDefinition`.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ExclusiveGroupData {
     pub quests: BTreeSet<QuestId>,
     #[serde(default)]

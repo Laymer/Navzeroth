@@ -106,7 +106,9 @@ fn transition(current: &ContentDisposition, m: &DispositionMutation) -> Result<u
         .filter(|n| *n <= MAX_SAFE_INTEGER)
         .ok_or_else(|| invalid("Content disposition counter is exhausted"))
 }
-use crate::content::{self, ContentRevision, ContentScope, MAX_CONTENT_REVISIONS};
+use crate::content::{
+    self, ActiveContentRevision, ContentRevision, ContentScope, MAX_CONTENT_REVISIONS,
+};
 use crate::{
     SqliteStore,
     error::{SqliteResult, storage},
@@ -228,16 +230,16 @@ impl SqliteStore {
         ids.into_iter().map(|id| read(&self.conn, id)).collect()
     }
     /// Use this for fresh eligibility+identity guards. No confidence/rights are inferred.
-    pub fn usable_content_revision(
+    pub fn usable_catalog_revision(
         &self,
         key: &ContentRevisionKey,
-    ) -> Result<Option<(ContentRevision, ContentDisposition)>> {
+    ) -> Result<Option<(ActiveContentRevision, ContentDisposition)>> {
         let get = |s: &Self| {
             let Some(id) = content::find(&s.conn, key)? else {
                 return Ok(None);
             };
             let d = ensure_eligible(&s.conn, id)?;
-            let revision = content::load(&s.conn, id)?;
+            let revision = s.cached_catalog(id)?;
             if d.key != *key || revision.key() != *key {
                 return Err(storage("Content disposition identity disagrees"));
             }
@@ -249,13 +251,27 @@ impl SqliteStore {
             get(self)
         }
     }
+    pub fn usable_content_revision(
+        &self,
+        key: &ContentRevisionKey,
+    ) -> Result<Option<(ContentRevision, ContentDisposition)>> {
+        self.usable_catalog_revision(key)?
+            .map(|(r, d)| Ok((r.into_v1()?, d)))
+            .transpose()
+    }
     pub fn validate_usable_content_guard(
         &self,
         guard: &DispositionGuard,
     ) -> Result<ContentRevision> {
+        self.validate_usable_catalog_guard(guard)?.into_v1()
+    }
+    pub fn validate_usable_catalog_guard(
+        &self,
+        guard: &DispositionGuard,
+    ) -> Result<ActiveContentRevision> {
         let get = |store: &Self| {
             let (revision, d) = store
-                .usable_content_revision(&guard.key)?
+                .usable_catalog_revision(&guard.key)?
                 .ok_or_else(|| invalid("Content revision is not stored"))?;
             if d.guard() != *guard {
                 return Err(invalid("Content eligibility changed; refresh inputs"));
