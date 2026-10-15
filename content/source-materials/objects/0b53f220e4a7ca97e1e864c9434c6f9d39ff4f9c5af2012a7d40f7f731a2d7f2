@@ -1,0 +1,56 @@
+## Interface: 120100
+## Title: Mapzeroth
+## Notes: Intelligent travel routing addon
+## Author: tr0tsky
+## Version: 1.6.0
+## SavedVariables: MapzerothDB
+## AddonCompartmentFunc: Mapzeroth_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: Mapzeroth_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: Mapzeroth_OnAddonCompartmentLeave
+## IconTexture: Interface\AddOns\Mapzeroth\Mapzeroth_Logo
+
+# Libraries (must load first)
+Libs\LibStub.lua
+Libs\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0.lua
+
+# Core data and systems
+Constants.lua
+Data\Mapzeroth_Data_Nodes_EK.lua
+Data\Mapzeroth_Data_Nodes_Kalimdor.lua
+Data\Mapzeroth_Data_Nodes_Outlands.lua
+Data\Mapzeroth_Data_Nodes_Northrend.lua
+Data\Mapzeroth_Data_Nodes_Pandaria.lua
+Data\Mapzeroth_Data_Nodes_BrokenIsles.lua
+Data\Mapzeroth_Data_Nodes_DragonIsles.lua
+Data\Mapzeroth_Data_Nodes_KhazAlgar.lua
+Data\Mapzeroth_Data_Nodes_Shadowlands.lua
+Data\Mapzeroth_Data_Nodes_IsolatedMaps.lua
+Data\Mapzeroth_Data_Nodes_BfA.lua
+Data\Mapzeroth_Data_Nodes_Draenor.lua
+Data\Mapzeroth_Data_Nodes_Zandalar.lua
+Data\Mapzeroth_Data_Nodes_Argus.lua
+Data\Mapzeroth_Data_Edges.lua
+PetTrainers.lua
+MapNames.lua
+PlayerAbilities.lua
+TravelGraph.lua
+EdgeRequirements.lua
+Pathfinder.lua
+MultiRoute.lua
+LocationService.lua
+WaypointService.lua
+
+# UI components
+StepUtils.lua
+GPSNavigator.lua
+SettingsPanel.lua
+DestinationSelector.lua
+RouteExecutionFrame.lua
+GUI.lua
+MinimapButton.lua
+
+# Commands and initialization
+Commands.lua
+Mapzeroth.lua

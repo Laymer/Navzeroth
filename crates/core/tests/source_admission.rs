@@ -132,13 +132,36 @@ fn rejects_mutable_revision_traversal_wildcards_and_overflow() {
     assert_eq!(r.validate(), Err(Rejection::Capacity));
 }
 #[test]
-fn round_trip_and_committed_registry_admit_no_source() {
+fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidates() {
     Registry::parse(&serde_json::to_vec(&registry()).unwrap()).unwrap();
     let r = Registry::parse(include_bytes!(
         "../../../docs/sources/source-admission-v1.json"
     ))
     .unwrap();
-    assert!(r.sources.is_empty());
+    let accepted: Vec<_> = r
+        .sources
+        .iter()
+        .filter(|s| s.rights.status == Status::Admitted)
+        .map(|s| s.id.as_str())
+        .collect();
+    assert_eq!(
+        accepted,
+        [
+            "atlasloot-classic-areas",
+            "mapzeroth-retail-ek",
+            "wowsims-classic-paladin-model"
+        ]
+    );
+    assert!(r.sources.iter().all(|s| s.origin.build.is_none()));
+    assert!(matches!(
+        r.authorize(
+            "questiedb-forever-candidate",
+            "data",
+            &["id"],
+            Method::ManualLocal
+        ),
+        Err(Rejection::RightsNotAdmitted)
+    ));
     assert!(matches!(
         r.authorize("questiedb", "data", &["id"], Method::HttpsPinned),
         Err(Rejection::UnknownSource)

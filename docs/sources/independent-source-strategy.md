@@ -13,7 +13,10 @@ Forever70374 catalog. There are useful open-source components requiring no
 personal approval. Their published licences and upstream source are sufficient
 starting points for scoped reuse; target validation remains a separate question.
 The [audit manifest](independent-source-review.json) pins the files actually read.
-These are research candidates, not an addition to the admitted-source registry.
+These entries describe the research baseline. The subsequent
+[offline pipeline](../data/SOURCE_PIPELINE.md) admits three narrowly reviewed
+scopes, retains their original/licence material and automates convergence. It
+does not admit the other candidates or establish complete target coverage.
 
 | Source | Published licence inspected | Useful scope | Limitation / decision |
 | --- | --- | --- | --- |
@@ -88,8 +91,9 @@ No blanket licence change to existing Navzeroth code or third-party data is made
 This removes provider replies, private APIs and single-provider uptime from the
 required acquisition/build design. Source updates, parsing, validation, reporting,
 pack assembly and repeat builds can be automated after specific inputs are accepted.
-The accepted-source registry is still empty today: this is an actionable selection
-and architecture decision, not a claim that the mirror or complete catalog exists.
+At this research baseline the accepted-source registry was empty. The
+[implementation continuation](../data/SOURCE_PIPELINE.md) now retains three narrow
+scopes and builds them offline. A complete target catalog remains unavailable.
 
 Live game actions, visual comparisons and real Windows acceptance remain human
 operator tasks under the release plan. A model cannot establish unobserved
@@ -106,3 +110,20 @@ Forever observations for the inventory queue. The existing ForeverDB staging and
 QuestieDB adapters remain optional comparison inputs. None of these steps waits
 for the inquiry reply. Full-content publication still waits for actual coverage
 and operator evidence, not correspondence.
+
+## Database material-closure follow-up
+
+The pinned VMaNGOS [database workflow](https://github.com/vmangos/core/blob/53d24d5c748bef5e0cde7b1155bcb3d979af614c/.github/workflows/development-db-dump.yaml)
+uses a separately retrieved base archive, as shown by its
+[preparation script](https://github.com/vmangos/core/blob/53d24d5c748bef5e0cde7b1155bcb3d979af614c/.github/scripts/prepare-sql-test-environment.sh).
+The inspected `brotalnia/database` revision contains ten archive files and no
+root licence/notice. This does not establish the licence inside an archive;
+no archive was downloaded or inspected. The script fetches mutable `master`, so
+the research pin does not bind exact base bytes to a published dump. Current
+moving-tag release metadata is recorded only as an investigation lead, not
+verified payload or rights evidence. The separate database remains unadmitted.
+See [bounded review metadata](vmangos-closure-review.json) for exact research
+hashes, observed release metadata, uncertainty and independent review limits.
+Permitted licence/provenance research may continue without production admission
+or a required email; production extraction/redistribution requires its own
+established material scope. No server, SQL, converter or upstream script ran.

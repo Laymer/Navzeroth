@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-15",
+  "build": {
+    "generator_version": "0.8.1",
+    "generator_sha256": "837e665fd907e8d73ac6514d49ba7448e13cfd656ad8bee4e87e4f1192bbca26",
+    "format": "navzeroth-source-build",
+    "schema_version": 1,
+    "registry_sha256": "2e0946e6c87fb3b0cf53cf79d15b28ef1fdc2a2b9eac39d7cdcd0ae381d672cd",
+    "plan_sha256": "c707fa1bdbb86c00759f88d5e36e2d8bfab7b03d6394cb99c493a028a653f7a7",
+    "catalog_sha256": "ac2d4ecac0a62082aef56830abc2bcc9f59ceda10f2a8c6f594ab1c574bca00c",
+    "source_closure_sha256": "df63a700e0e50881137154c546dfc46f406266f9cba3a99ec6f48963a0776c26",
+    "publication_authorized": false,
+    "facts": 1681
+  },
+  "comparison": {
+    "platform": "Linux local PowerShell7 and hosted Linux/Windows",
+    "byte_identical_files": 13,
+    "hosted_windows_parity": "passed",
+    "workflow_run": "https://github.com/Laymer/Navzeroth/actions/runs/38767261441",
+    "tested_source_commit": "fbf540b2e03b65bb0b5edff0bbcc642d2fd589a2",
+    "artifact_material_and_transformation_source": "Knowledge documents, originals/licences and selected transformation code verified; pre-fix full source archives withdrawn because git archive expanded LFS images. Fixed archive workflow pending hosted confirmation.",
+    "withdrawn_pre_fix_artifacts": 8
+  },
+  "domains": [
+    {
+      "domain": "quests",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "equipment",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "acquisition",
+      "source_facts": 718,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "geography",
+      "source_facts": 896,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "travel",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "dungeons",
+      "source_facts": 66,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "class_roles",
+      "source_facts": 1,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "party",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    },
+    {
+      "domain": "reminders",
+      "source_facts": 0,
+      "target_facts": 0,
+      "conflicts": 0,
+      "required_inventory": null
+    }
+  ],
+  "limitations": [
+    "Historical source knowledge only; no playable pack activation",
+    "All independent target inventory counts unknown",
+    "Native Windows interactive and live 70374 checks unverified"
+  ]
+}

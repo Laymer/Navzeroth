@@ -354,10 +354,20 @@ impl NormalizedRecord {
     }
 }
 /// `Less` means `a` takes precedence: higher effective category first, then the
-/// lower `EvidenceId`, then the lower `SourceId`. Total and input-order independent.
+/// newer trusted evidence time, then lower `EvidenceId` and lower `SourceId`. Total and input-order independent.
 pub fn compare_precedence(a: &NormalizedRecord, b: &NormalizedRecord) -> Ordering {
     precedence_rank(b.effective_confidence)
         .cmp(&precedence_rank(a.effective_confidence))
+        .then_with(|| {
+            // An uncertain producer clock is not evidence of freshness.
+            let time = |r: &NormalizedRecord| {
+                (r.evidence.observed_at_utc_ms.metadata().clock_trust
+                    == crate::observation::ClockTrust::Trusted)
+                    .then(|| r.evidence.observed_at_utc_ms.value().copied())
+                    .flatten()
+            };
+            time(b).cmp(&time(a))
+        })
         .then_with(|| a.evidence.id.cmp(&b.evidence.id))
         .then_with(|| a.evidence.source.cmp(&b.evidence.source))
 }

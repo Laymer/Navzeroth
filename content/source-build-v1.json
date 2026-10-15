@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "target": {
+    "edition": "wow_forever",
+    "build": "1.60.1.70374"
+  },
+  "as_of_utc_ms": 1792022400000,
+  "inputs": [
+    {
+      "source": "atlasloot-classic-areas",
+      "file": "AtlasLootClassic_DungeonsAndRaids/data.lua",
+      "adapter": "atlasloot_areas_v1"
+    },
+    {
+      "source": "mapzeroth-retail-ek",
+      "file": "Data/Mapzeroth_Data_Nodes_EK.lua",
+      "adapter": "mapzeroth_nodes_v1"
+    },
+    {
+      "source": "wowsims-classic-paladin-model",
+      "file": "sim/paladin/paladin.go",
+      "adapter": "model_source_v1"
+    }
+  ]
+}

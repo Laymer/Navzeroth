@@ -904,3 +904,24 @@ fn evidence_can_support_multiple_records_but_cannot_change_its_content() {
     let changed: Candidate = serde_json::from_value(changed).unwrap();
     assert!(state.ingest(&registry(), [changed]).is_err());
 }
+
+#[test]
+fn equal_quality_prefers_newer_trusted_evidence_not_ids_or_uncertain_clocks() {
+    let context = forever();
+    let row = |id: &str, time: i64, trust: &str| {
+        let mut evidence = evidence_json(
+            id,
+            &context,
+            "src-synthetic-forever",
+            "publisher_documented",
+        );
+        evidence["observed_at_utc_ms"] = json!({"status":"known","value":time,"clock_trust":trust});
+        candidate(item(&context, "item-fresh", false, id), &context, evidence)
+    };
+    let catalog = state(vec![
+        row("a-old", 1, "trusted"),
+        row("z-new", 2, "trusted"),
+        row("0-uncertain", 99, "uncertain"),
+    ]);
+    assert_eq!(catalog.entries()[0].preferred, id("z-new"));
+}

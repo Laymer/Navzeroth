@@ -76,6 +76,15 @@ acceptance remain prerequisites. Party messaging, combat-log analysis, official 
 access and hosted distribution remain explicitly deferred or blocked. See the
 [task ledger](docs/IMPLEMENTATION_TASKS.md) for individual dispositions.
 
+### Independent source builds
+
+The [source pipeline](docs/data/SOURCE_PIPELINE.md) rebuilds a uniform,
+provenance-bearing knowledge catalog offline from retained licensed inputs.
+After provisioning the Rust toolchain/dependencies, run
+`./scripts/Build-SourceKnowledge.ps1` in PowerShell 7. Reliability ranks before
+trusted freshness; different builds and unresolved coverage remain explicit.
+This research catalog does not establish complete Forever content.
+
 ### Development checks
 
 Use the pinned Rust toolchain, Node version and pnpm version in the repository.

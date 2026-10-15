@@ -1,10 +1,16 @@
 # Source admission v1
 
-Owner: Codex `/root/source_admission`; baseline `d59aa91`.
+Owner: Codex `/root` (implementation/integration ownership transferred from the
+source-admission worker); original contract baseline `d59aa91`.
+Continuation claim: `24646a6`, pipeline PR147.
 
-The [registry](source-admission-v1.json) intentionally admits **zero sources**.
-The pure Rust `azeroth_core::source_admission` contract is an explicit prerequisite
-for a future acquisition adapter. The release gate now binds accepted sources to
+The [registry](source-admission-v1.json) admits **three narrow source scopes**:
+AtlasLootClassic original declarations (GPL2), Mapzeroth Retail EK node literals
+(MIT) and a WoWSims paladin implementation pointer (MIT). Seven exact original
+and licence objects are retained for the [offline pipeline](../data/SOURCE_PIPELINE.md).
+Eight other candidate/exclusion entries remain unavailable to acquisition.
+The pure Rust `azeroth_core::source_admission` contract is a prerequisite
+for every acquisition adapter. The release gate now binds accepted sources to
 a pinned registry and local permission evidence (below). Audit-only Questie
 staging and ordinary pack activation do not imply source admission.
 
@@ -12,12 +18,18 @@ staging and ordinary pack activation do not imply source admission.
 validates version, nested limits, duplicate identities and exact lists.
 `Registry::authorize(source_id, file_path, fields, method)` revalidates even a
 programmatically constructed registry and returns the exact file/source policy.
-No downloader is supplied while no source is admitted. Future adapters must call
-this before I/O, bound streamed bytes, enforce the total request/byte budget and
-minimum request interval, reject redirects, verify actual SHA-256 bytes, retain
-only permitted immutable snapshots and apply the named reviewed transformation.
+The CLI `source-sync` adapter now calls
+this policy before acquisition, bounds streamed bytes to the remaining permitted
+capacity, enforces the total request/byte budget and
+minimum request interval, rejects redirects, verifies actual SHA-256 bytes, retains
+only permitted immutable snapshots and applies the named reviewed transformation.
 An authorization is not a consumable budget token: adapters must account for all
 requests, including retries, themselves. Imported Lua must remain inert data.
+
+Optional upstream metadata discovery has its own bounded
+[access policy](source-updates-v1.json), bound to the registry hash. It cannot
+fetch new source revisions or authorize content. Pinned source retrieval and
+offline builds do not require that metadata service.
 
 The contract limits the JSON to 1 MiB, sources to 128, files per source to 1,024,
 fields per file to 256, rights evidence entries to 64 and strings to 4,096 bytes.
@@ -64,8 +76,9 @@ correction completeness, resolved conflicts or a complete target inventory.
   the same grant/attribution, exact scope and target validation records. None are
   fabricated here.
 
-Next: obtain reviewed grants and independently evidenced target inventory, then
-add narrowly scoped inert-data acquisition adapters. Unresolved corrections,
+Next: extend the existing narrow inert-data adapters only for further reviewed
+grants, and obtain an independently evidenced target inventory. The accepted
+historical scopes do not establish any verified70374 target facts. Unresolved corrections,
 conflicts or permissions continue to block affected gameplay records.
 
 Portable file paths reuse AssetPath character/reserved-name rules, preserving
