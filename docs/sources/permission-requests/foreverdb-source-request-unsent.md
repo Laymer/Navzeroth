@@ -8,7 +8,10 @@ Public logging was disabled. The supplied reply address and full browser receipt
 are retained privately and omitted from Git. No attachments were submitted.
 The initial click was blocked by a cookie dialog; after selecting “Do not consent”,
 one submission reached the server. No automatic resend was performed.
-The historical `-unsent` filename is retained to preserve existing links.
+The historical `-unsent` filename is retained to preserve existing links. Note
+(2026-10-16): despite the filename, the request was sent on 2026-10-15; the title
+and this record are authoritative, and no reply had been recorded when this note
+was written.
 
 Sent plain-text message SHA-256:
 `709ba578dc37fd381226b38418994bcae9ca8e7d64e0ea3eb231461dfa6e352c`.

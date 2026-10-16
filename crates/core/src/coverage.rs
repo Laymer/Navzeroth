@@ -4,9 +4,11 @@
 //! ranks evidence, computes a probability, reads a clock or does I/O, and the
 //! report carries identifiers only, never imported free text.
 //!
-//! Prerequisite cycles use positive references in `prerequisites` only: a
-//! `quest_state` (or `equals` on a quest field) that must hold, counted after
-//! cancelling `not` pairs. A reference that is optional (inside `any`, or inside
+//! Quest cycles use positive references in the `prerequisites` and `eligibility`
+//! predicates: a `quest_state` (or `equals` on a quest field) that must hold,
+//! counted after cancelling `not` pairs. A positive objective reference adds an
+//! edge to each quest whose stages own that objective (unconditional only when
+//! exactly one quest owns it). A reference that is optional (inside `any`, or inside
 //! `all` under an odd number of `not`) is conditional. Cycles made of
 //! unconditional edges are errors. A cycle that needs a conditional edge is
 //! reported as a possible cycle and is a gap. A predicate objective reference

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_on": "2026-10-15",
+  "checked_on": "2026-10-16",
   "build": {
     "generator_version": "0.9.0",
     "generator_sha256": "f0b11ab2affdb641dc993d9ecee00cea590a4d07cbf6b08d4b9290df2575359b",
@@ -14,13 +14,13 @@
     "facts": 1685
   },
   "comparison": {
-    "platform": "Linux PowerShell7, release0.9.0; hosted parity pending",
+    "platform": "Linux PowerShell7, release0.9.0 (original two-build comparison); hosted ubuntu-24.04 and windows-2025 parity passed on 0.9.1 sources",
     "byte_identical_files": 15,
-    "hosted_windows_parity": "pending",
-    "workflow_run": null,
-    "tested_source_commit": null,
+    "hosted_windows_parity": "passed",
+    "workflow_run": "38894373036",
+    "tested_source_commit": "92f3f512a68481163e3d44600e3938d07592af4e",
     "baseline_source_commit": "cefc3cfcb38dc67231f39feeb3cb18da39bba4f2",
-    "artifact_material_and_transformation_source": "Two actual offline 0.9.0 builds match, retaining all nine source/licence objects. Hosted artifacts require exact-source verification before publication."
+    "artifact_material_and_transformation_source": "Two actual offline 0.9.0 builds match, retaining all nine source/licence objects. Hosted parity passed in Independent source knowledge run 38892199064 (pull request head a0e2ae9a7674453cf08f711e63b4ae91278d3328) and run 38894373036 (resulting main 92f3f512a68481163e3d44600e3938d07592af4e): the Linux and Windows jobs and the platform parity job succeeded. For run 38894373036 the downloaded Linux and Windows artifacts have byte-identical catalog, plan, registry, closure and NOTICES files, and their registry, plan, catalog and closure SHA-256 values equal the build values recorded above; only build.json generator_version differs (0.9.1 there, 0.9.0 above)."
   },
   "domains": [
     {
