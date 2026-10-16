@@ -2,7 +2,8 @@
 
 These modules execute only repository-owned logic. JSON imports are data;
 there is no evaluation of imported Lua, network bridge or client API binding.
-The existing diagnostic entry point does not yet offer a plan-import UI.
+Plan import is explicit: `/anavplan import`, the paste dialog, or the Plan tab of the
+in-game window (`Core/Gui.lua`, see docs/compatibility/ADDON_GUI.md).
 
 `Decode.decode(text)` returns a value or `nil, code`. JSON null is
 `Decode.null`, distinct from absent members, false and zero. Object/array kind
@@ -204,3 +205,19 @@ only bounded status diagnostics and never constructs a snapshot location. Even
 readable zero coordinates cannot supply missing floor, instance or coordinate
 meaning. No position values, item links, raw client errors or character names are
 stored in diagnostics. Live/restricted-context checks remain unverified.
+
+## In-game window (G3)
+
+`GuiText.lua` holds every label and tooltip keyed by id (ready for localization).
+`GuiWidgets.lua` is the guarded widget factory: each templated `CreateFrame` runs under
+`pcall` and falls back to a plain frame with a color texture; tooltips use `GameTooltip`
+or an inline help line. `Gui.lua` has the pure view model (`Gui.model`, `Gui.inspect`,
+`Gui.validProfile`, `Gui.combatGate`) and the controller `Gui.new(env, state, actions)`,
+which builds nothing until it is first opened and calls only the `actions` table that
+`Diagnostics.lua` exposes. These modules take `env` as an argument and never touch the
+global table. `Clock.status()` is a pure read of the pending probe and trust.
+`Capabilities.admission(build)` labels an admitted build `release_target`,
+`development_unverified` (70425), `previous_recorded` or nil. Settings gained
+`minimap_button`, `minimap_angle` (finite, 0 to 360) and `gui_last_tab` (a tab id) with
+validators; `db_version` stays 1 and a 0.9.1 addon drops those keys on its next merge.
+Live behavior of every template, tooltip, minimap and options call is UNVERIFIED.

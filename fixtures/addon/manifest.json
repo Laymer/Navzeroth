@@ -3,7 +3,7 @@
   "package": "M0.3 diagnostic addon",
   "synthetic": true,
   "fixture": true,
-  "note": "Every file is synthetic. Exports come from the azeroth-lua-harness stub client (edition wow_forever, build SYNTHETIC, interface 99999); none was observed in a real client. They are golden outputs of Core/Capabilities.lua and Core/Export.lua, compared byte for byte by crates/lua-harness/tests/template_and_fixtures.rs. This manifest is not part of fixtures/contracts/v1/manifest.json.",
+  "note": "Every file is synthetic. Exports come from the azeroth-lua-harness stub client (edition wow_forever, build SYNTHETIC, interface 99999); none was observed in a real client. They are golden outputs of Core/Capabilities.lua and Core/Export.lua, compared byte for byte by crates/lua-harness/tests/template_and_fixtures.rs. Regenerate them with UPDATE_ADDON_FIXTURES=1 cargo test -p azeroth-lua-harness --test template_and_fixtures. This manifest is not part of fixtures/contracts/v1/manifest.json.",
   "files": [
     {
       "file": "export-synthetic-all-present.json",

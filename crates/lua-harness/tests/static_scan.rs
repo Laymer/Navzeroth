@@ -66,3 +66,90 @@ fn addon_never_writes_the_global_table_outside_the_declared_names() {
     assert!(luacheckrc.contains("\"AzerothNavigatorDB\""));
     assert!(luacheckrc.contains("max_line_length"));
 }
+
+fn code_lines(text: &str) -> impl Iterator<Item = (usize, &str)> {
+    text.lines()
+        .enumerate()
+        .filter(|(_, line)| !line.trim_start().starts_with("--"))
+        .map(|(index, line)| (index + 1, line))
+}
+
+#[test]
+fn addon_lines_stay_within_the_lint_limit_and_the_declared_globals_match() {
+    // luacheck is authoritative in CI; this keeps the line limit checked locally.
+    for file in lua_files_on_disk().unwrap() {
+        let text = read_text(&addon_dir().join(&file)).unwrap();
+        for (number, line) in text.lines().enumerate() {
+            assert!(
+                line.len() <= 100,
+                "{file}:{} is {} columns",
+                number + 1,
+                line.len()
+            );
+        }
+    }
+    let luacheckrc = read_text(&path(".luacheckrc")).unwrap();
+    for name in [
+        "AzerothNavigatorDB",
+        "SLASH_ANAV1",
+        "SLASH_ANAVDIAG1",
+        "SLASH_ANAVPLAN1",
+        "SLASH_ANAVSESSION1",
+    ] {
+        assert!(luacheckrc.contains(&format!("\"{name}\"")), "{name}");
+    }
+    assert!(luacheckrc.contains("read_globals = {}"));
+}
+
+#[test]
+fn core_patterns_avoid_locale_dependent_character_classes() {
+    // %w, %a, %l, %u, %p and %c follow the C library locale; a client locale could widen
+    // them past ASCII. Explicit ranges keep redaction and escaping deterministic.
+    for file in lua_files_on_disk().unwrap() {
+        let text = read_text(&addon_dir().join(&file)).unwrap();
+        for (number, line) in code_lines(&text) {
+            for class in [
+                "%w", "%W", "%a", "%A", "%l", "%L", "%u", "%U", "%p", "%P", "%c", "%C",
+            ] {
+                assert!(!line.contains(class), "{file}:{number} uses {class}");
+            }
+        }
+    }
+}
+
+#[test]
+fn the_window_never_takes_the_keyboard_the_focus_or_protected_ui() {
+    // Plan section 12.4: no focus stealing, no keyboard capture, no protected UI.
+    let banned = [
+        "EnableKeyboard",
+        "SetPropagateKeyboardInput",
+        "StaticPopupDialogs",
+        "StaticPopup_Show",
+        "HideUIPanel",
+        "ShowUIPanel",
+        "SettingsPanel",
+        "ReloadUI",
+        "OnUpdate",
+        "C_Timer",
+        "SetAutoFocus(true)",
+        "RunScript",
+        "SecureActionButtonTemplate",
+        "SetOverrideBinding",
+    ];
+    for file in lua_files_on_disk().unwrap() {
+        let text = read_text(&addon_dir().join(&file)).unwrap();
+        for (number, line) in code_lines(&text) {
+            for name in banned {
+                assert!(!line.contains(name), "{file}:{number} uses {name}");
+            }
+        }
+    }
+    // Only the explicit "Select text" button of the copy view moves focus; the window
+    // modules never do.
+    for file in ["Core/Gui.lua", "Core/GuiWidgets.lua", "Core/GuiText.lua"] {
+        let text = read_text(&addon_dir().join(file)).unwrap();
+        for (number, line) in code_lines(&text) {
+            assert!(!line.contains("SetFocus"), "{file}:{number}");
+        }
+    }
+}

@@ -279,3 +279,77 @@ fn expected_settings(auto_probe: bool) -> Value {
       "hud_width":420,"hud_height":220,"hud_font_percent":100,"hud_contrast":"default",
       "hud_position":{"anchor":"TOP","relative":"TOP","x":0,"y":-120}})
 }
+
+#[test]
+fn window_settings_are_validated_and_invalid_saved_values_fall_back_to_defaults() {
+    let sandbox = strict_core();
+    sandbox
+        .run::<()>(
+            "window-settings",
+            r#"
+      local S = ns.Settings
+      for _, angle in ipairs({0, 1, 225, 359.5, 360}) do
+        assert(S.validate('minimap_angle', angle), angle)
+        assert(S.merge({minimap_angle = angle}).minimap_angle == angle)
+      end
+      for _, angle in ipairs({-1, 361, 0/0, math.huge, -math.huge, '90', true}) do
+        assert(not S.validate('minimap_angle', angle))
+        assert(S.merge({minimap_angle = angle}).minimap_angle == 225)
+      end
+      for _, tab in ipairs(ns.GuiText.tab_ids) do
+        assert(S.validate('gui_last_tab', tab))
+        assert(S.merge({gui_last_tab = tab}).gui_last_tab == tab)
+      end
+      for _, tab in ipairs({'', 'Overview', 'help', 5, true, 'overview '}) do
+        assert(not S.validate('gui_last_tab', tab))
+        assert(S.merge({gui_last_tab = tab}).gui_last_tab == 'overview')
+      end
+      assert(S.validate('minimap_button', false) and not S.validate('minimap_button', 'no'))
+      assert(S.merge({minimap_button = 0}).minimap_button == true)
+      assert(S.merge({minimap_button = false}).minimap_button == false)
+      assert(not S.validate('unknown_key', true) and not S.validate('hud_width', 100))
+      assert(S.validate('hud_width', 420))
+    "#,
+        )
+        .unwrap();
+}
+
+#[test]
+fn a_0_9_1_saved_variables_table_loads_with_defaults_for_the_window_keys() {
+    // The exact 0.9.1 layout: no minimap or tab keys, db_version stays 1.
+    let sandbox = synthetic_client();
+    sandbox
+        .run::<()>(
+            "restore",
+            r#"AzerothNavigatorDB = {
+              db_version = 1,
+              diagnostic_export = "{\"kept\":true}",
+              settings = {auto_probe = false, chat_summary = true, hud_visible = false,
+                hud_width = 500, hud_height = 300, hud_font_percent = 150,
+                hud_contrast = "high",
+                hud_position = {anchor = "TOP", relative = "TOP", x = 0, y = -120}},
+            }"#,
+        )
+        .unwrap();
+    sandbox.load_toc_files().unwrap();
+    let settings: String = sandbox
+        .run(
+            "reload",
+            r#"
+      local state = ns.Diagnostics.state
+      state.onEvent(nil, 'ADDON_LOADED', 'AzerothNavigator')
+      assert(state.persist and AzerothNavigatorDB.db_version == 1)
+      assert(AzerothNavigatorDB.diagnostic_export == '{"kept":true}')
+      local s = AzerothNavigatorDB.settings
+      assert(s.auto_probe == false and s.hud_visible == false and s.hud_width == 500)
+      assert(s.hud_contrast == 'high' and s.hud_font_percent == 150)
+      return assert(ns.Json.encode(s))
+    "#,
+        )
+        .unwrap();
+    let value: Value = serde_json::from_str(&settings).unwrap();
+    assert_eq!(value["minimap_button"], true);
+    assert_eq!(value["minimap_angle"], 225);
+    assert_eq!(value["gui_last_tab"], "overview");
+    assert_eq!(value["hud_width"], 500);
+}

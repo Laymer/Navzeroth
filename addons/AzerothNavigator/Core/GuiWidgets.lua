@@ -83,7 +83,7 @@ function Widgets:create(kind, parent, template, name)
   return create(kind, name, parent), false
 end
 
-function Widgets:background(frame, r, g, b, a)
+function Widgets.background(_, frame, r, g, b, a)
   local ok, texture = pcall(function() return frame:CreateTexture(nil, 'BACKGROUND') end)
   if not ok or not texture then return nil end
   call(texture, 'SetAllPoints', frame)
@@ -110,7 +110,7 @@ end
 
 -- A text line. Returns a widget whose set() redraws; a missing FontString degrades to
 -- a widget that only remembers its text, so state is never lost.
-function Widgets:fontString(parent, width, template)
+function Widgets.fontString(_, parent, width, template)
   local widget = setmetatable({kind = 'text', text = ''}, Widget)
   local ok, fs = pcall(function()
     return parent:CreateFontString(nil, 'OVERLAY', template or FONT_LIGHT)
@@ -127,7 +127,7 @@ function Widgets:fontString(parent, width, template)
   return widget
 end
 
-function Widgets:place(widget, parent, x, y)
+function Widgets.place(_, widget, parent, x, y)
   local frame = widget.frame or widget.fs
   call(frame, 'ClearAllPoints')
   call(frame, 'SetPoint', 'TOPLEFT', parent, 'TOPLEFT', x, -y)
@@ -198,9 +198,9 @@ function Widgets:checkbox(parent, id, onToggle)
     checked = false, templated = templated, caption = ''}, Widget)
   if not templated then self:background(frame, 0.2, 0.2, 0.32, 0.95) end
   widget.line = self:fontString(parent, 520, FONT)
-  function widget.refreshLabel(self)
-    local mark = self.checked and 'ON' or 'OFF'
-    widget.line:set(self.caption .. ': ' .. mark)
+  function widget.refreshLabel(box)
+    local mark = box.checked and 'ON' or 'OFF'
+    box.line:set(box.caption .. ': ' .. mark)
   end
   call(frame, 'SetScript', 'OnClick', function()
     if not widget.enabled then return end
@@ -262,11 +262,11 @@ end
 function Widgets:numberField(parent, id, width, low, high, onChange)
   local widget = self:editbox(parent, id, width, 24, {max = 5, onChange = onChange})
   widget.low, widget.high = low, high
-  function widget.value(self)
-    local text = self:getText()
+  function widget.value(field)
+    local text = field:getText()
     if not text:match('^%d+$') then return nil end
     local number = tonumber(text)
-    if number < self.low or number > self.high then return nil end
+    if number < field.low or number > field.high then return nil end
     return number
   end
   return widget
@@ -281,14 +281,14 @@ function Widgets:cycleButton(parent, id, width, values, onChange)
     if onChange then onChange(widget, values[widget.index]) end
   end)
   widget.values, widget.index, widget.caption = values, 1, ''
-  function widget.show(self)
-    self:setLabel(self.caption .. ': ' .. tostring(values[self.index]) .. '%')
+  function widget.show(cycle)
+    cycle:setLabel(cycle.caption .. ': ' .. tostring(values[cycle.index]) .. '%')
   end
-  function widget.select(self, value)
+  function widget.select(cycle, value)
     for index, candidate in ipairs(values) do
-      if candidate == value then self.index = index end
+      if candidate == value then cycle.index = index end
     end
-    self:show()
+    cycle:show()
   end
   return widget
 end
@@ -304,12 +304,12 @@ function Widgets:scrollText(parent, id, width, height)
   local line = self:fontString(content, width - 28, FONT_LIGHT)
   call(line.fs, 'SetPoint', 'TOPLEFT', content, 'TOPLEFT', 0, 0)
   widget.frame, widget.fs, widget.content, widget.height = scroll, line.fs, content, height
-  function widget.set(self, value)
-    self.text = value
-    call(self.fs, 'SetText', value)
-    local ok, tall = call(self.fs, 'GetStringHeight')
+  function widget.set(area, value)
+    area.text = value
+    call(area.fs, 'SetText', value)
+    local ok, tall = call(area.fs, 'GetStringHeight')
     if ok and type(tall) == 'number' then
-      call(self.content, 'SetHeight', math.max(self.height, tall + 4))
+      call(area.content, 'SetHeight', math.max(area.height, tall + 4))
     end
   end
   return widget
@@ -353,10 +353,10 @@ function Widgets:minimapButton(options)
   call(widget.fs.fs, 'SetPoint', 'CENTER', frame, 'CENTER', 0, 0)
   widget.fs:set('AN')
   widget.fs = widget.fs.fs
-  function widget.place(self, angle)
+  function widget.place(button, angle)
     local radians = math.rad(angle)
-    call(self.frame, 'ClearAllPoints')
-    call(self.frame, 'SetPoint', 'CENTER', minimap, 'CENTER',
+    call(button.frame, 'ClearAllPoints')
+    call(button.frame, 'SetPoint', 'CENTER', minimap, 'CENTER',
       math.floor(math.cos(radians) * RIM + 0.5), math.floor(math.sin(radians) * RIM + 0.5))
   end
   call(frame, 'SetMovable', true)

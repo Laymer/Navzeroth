@@ -5,15 +5,18 @@ The addon can show an already stored export in a selectable window:
 ```text
 /anavdiag copy
 /anavdiag copy snapshot
+/anavdiag copy session
 ```
 
 `copy` selects `AzerothNavigatorDB.diagnostic_export`, the diagnostic JSON report.
 Run `/anavdiag probe` explicitly first if no report exists. `copy snapshot` selects
-`snapshot_export`, an existing ANAV1 character snapshot. It never creates a new
+`snapshot_export`, an existing ANAV1 character snapshot. `copy session` selects
+`session_export`, a stored `ANAVSESSION1:` recording (at most 13 + 16384 bytes, shape
+checked as `anav-session-events` version 1 before it is shown). It never creates a new
 capture: the existing `/anavdiag snapshot <anonymous-profile-id>` command and its
 recorded-build gate still govern capture. After integration of the separate
 70374 adapter, exact `1.60.1.70338` and `1.60.1.70374` tuples with interface
-`16001` are enabled experimentally. Copying diagnostics never changes that gate
+`16001` are enabled experimentally (and, UNVERIFIED and for development only, `70425`). Copying diagnostics never changes that gate
 or establishes readable gameplay fields. Published 0.8.1 lacks the copy commands.
 
 Open the window out of combat, choose **Select text**, and press **Ctrl+C** yourself.
@@ -31,7 +34,12 @@ capture counters, clock trust and loaded plans are never changed. No clipboard A
 automatic capture, automatic probe, background copying or imported execution exists.
 Inspect personal data before sharing; do not commit raw character exports.
 
-Diagnostic text is capped at 12,288 bytes and snapshots at 32,768 bytes. Bounded
+The Capture and Session tabs of the in-game window ([ADDON_GUI.md](ADDON_GUI.md)) open
+this same view through **Copy snapshot export**, **Copy diagnostic export** and **Copy
+session export**; each is enabled only while a valid stored export exists and refuses in
+combat or when the combat state is unknown.
+
+Diagnostic text is capped at 12,288 bytes, sessions at 16,397 bytes and snapshots at 32,768 bytes. Bounded
 JSON/format checks reject missing, malformed, wrong-kind, unsupported-version and
 oversized stored strings without truncation. These checks do not establish game
 truth, freshness or current-client compatibility. Existing exports remain untouched

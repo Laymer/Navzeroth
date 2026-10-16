@@ -7,9 +7,13 @@ snapshots, plan import and HUD controls, and manual session recording. These are
 experimental client bindings. It runs inside the permitted addon environment;
 desktop exchange uses explicit files or pasted text.
 
-Current source enables the exact experimental tuples `1.60.1.70338` and
-`1.60.1.70374`, both with interface `16001`. Both tuples are enabled experimentally in 0.9.1.
-Limited user-reported
+Current source enables the exact experimental tuples `1.60.1.70338`,
+`1.60.1.70374` and `1.60.1.70425`, each with interface `16001`. The first two were
+enabled in 0.9.1; **70425 is admitted for development capture only and is UNVERIFIED**:
+the owner's installation metadata reports it (see
+[BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md#client-160170425-development-admission)),
+and no addon run on it is recorded. The 1.0 release target and every LIVE acceptance
+row stay bound to 70374. Limited user-reported
 diagnostic retrieval, level capture and clock-age results are recorded in
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,
 HUD, plan, session and reload acceptance remains unverified.
@@ -67,6 +71,15 @@ The TOC declares interface `16001`, matching both the earlier 70338 diagnostic a
 the user's 70374 report. A matching interface does not establish addon compatibility.
 If the client marks the addon out of date, record that result and the actual build
 before changing anything; do not hide it with compatibility tools or client edits.
+
+## The in-game window
+
+`/anav` opens a window with every addon feature behind buttons and fields, each with a
+tooltip. The same window opens from a minimap button and from Options > AddOns when the
+client offers them. It calls the same guarded code as the slash commands, which all keep
+working. See [the in-game window](ADDON_GUI.md) for the tabs, the combat policy, the
+fallbacks and the controls that are deliberately absent. Its behaviour on the real client
+is UNVERIFIED.
 
 ## Record the client first
 

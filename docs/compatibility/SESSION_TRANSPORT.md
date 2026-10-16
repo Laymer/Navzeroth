@@ -14,6 +14,10 @@ batches, conflicting event sequence reuse, wrong format/version and unknown
 fields on document/batch/event structs are rejected. This is JSON, despite the
 illustrative unquoted property names in the shape above.
 
+The addon stores a recording with `/anavsession export` (or the Export button on the
+Session tab of the in-game window). It encodes at most 13 + 16,384 bytes, well inside
+the 32 KiB document bound, and `/anavdiag copy session` can show the stored text.
+
 SavedVariables imports use the existing literal-only parser (8 MiB whole-file
 bound, table depth 32) and `AzerothNavigatorDB / session_export`; the extracted
 session document still has the 32 KiB bound. `snapshot_export` is a separate

@@ -6,7 +6,7 @@ mod common;
 
 use azeroth_lua_harness::Sandbox;
 use common::ui::{ui_client, ui_client_unloaded};
-use serde_json::Value;
+use serde_json::{Value, json};
 
 fn run(sandbox: &Sandbox, code: &str) {
     sandbox.run::<()>("gui", code).unwrap();
@@ -882,6 +882,176 @@ fn the_reason_inspector_reflects_the_hud_model_after_a_pasted_import() {
       assert(table.concat(ui.texts(state.gui.pages.plan), '\n'):find('larger than 32 KiB', 1, true))
       assert(ui.click(W.plan_clear.frame))
       assert(state.plan_receipt == nil and inspector():find('no plan loaded', 1, true))
+    "#,
+    );
+}
+
+fn fixture(name: &str) -> Value {
+    serde_json::from_str(
+        &std::fs::read_to_string(common::path(&format!("fixtures/contracts/v1/{name}"))).unwrap(),
+    )
+    .unwrap()
+}
+
+/// The synthetic HUD replay of plan_hud.rs: a route plan, one snapshot and a live HUD.
+fn replay() -> Sandbox {
+    let sandbox = common::strict_core();
+    sandbox
+        .ns()
+        .set(
+            "plan_text",
+            serde_json::to_string(&fixture("route-plan.json")).unwrap(),
+        )
+        .unwrap();
+    let mut snapshot = fixture("character-snapshot.json")["payload"].clone();
+    snapshot["objectives"] = json!({});
+    sandbox
+        .ns()
+        .set("snapshot_text", snapshot.to_string())
+        .unwrap();
+    run(
+        &sandbox,
+        r#"
+      local envelope = assert(ns.Decode.decode(ns.plan_text))
+      ns.plans = ns.Plan.new({context=envelope.payload.context, fixture=true})
+      assert(ns.plans:importText(ns.plan_text))
+      envelope = ns.plans:get()
+      local first = envelope.payload.steps[1]
+      first.prerequisite = {status='not_applicable'}
+      first.invalidation = {status='not_applicable'}
+      first.alternatives = {'alternative-a', 'alternative-b', 'undefined-alternative'}
+      local function step(id, objective)
+        return {id=id, objective=objective, participants=first.participants,
+          alternatives={}, prerequisite={status='not_applicable'},
+          invalidation={status='not_applicable'}, required_fields={},
+          explanation='Synthetic replay', evidence={},
+          expected_ms={status='not_applicable'}, estimate={status='not_applicable'}}
+      end
+      envelope.payload.steps = {first, step('step-a', 'alternative-a'),
+        step('step-b', 'alternative-b')}
+      ns.document = envelope
+      local function plain(value)
+        if value == ns.Decode.null then return nil end
+        if type(value) ~= 'table' then return value end
+        local copy = {}
+        for k, v in pairs(value) do copy[k] = plain(v) end
+        return copy
+      end
+      ns.encode = function() return assert(ns.Json.encode(plain(ns.document), 16384)) end
+      assert(ns.plans:importText(ns.encode()))
+      ns.context = {snapshot=assert(ns.Decode.decode(ns.snapshot_text)), fixture=true,
+        stale_policy='allow_stale', freshness={clock_trust='trusted',
+          now_utc_ms=1791792000000, max_age_ms=60000}}
+      ns.known = function(value)
+        return {status='known', value=value, clock_trust='trusted',
+          observed_at_utc_ms=1791792000000}
+      end
+      ns.hud = ns.Hud.new(ns.plans, function() return ns.context end, function() end)
+      ns.primary = first.objective
+    "#,
+    );
+    sandbox
+}
+
+#[test]
+fn the_inspector_lists_prerequisite_reasons_and_rejected_alternatives_in_words() {
+    let sandbox = replay();
+    run(
+        &sandbox,
+        r#"
+      local function text(model) return table.concat(ns.Gui.inspect(model), '\n') end
+      assert(text(nil):find('No plan has been evaluated', 1, true))
+      -- A restricted level is shown as restricted, never as false or zero.
+      ns.document.payload.steps[1].prerequisite = {status='known',
+        value={op='level_at_least', level=100}}
+      assert(ns.plans:importText(ns.encode()))
+      ns.context.snapshot.level = {status='restricted'}
+      local uncertain = ns.hud:refresh()
+      assert(uncertain.status == 'uncertain')
+      local shown = text(uncertain)
+      assert(shown:find('Status: uncertain (step demo-step-1)', 1, true), shown)
+      assert(shown:find('Prerequisite: unknown', 1, true), shown)
+      assert(shown:find('field level: unavailable / restricted', 1, true), shown)
+      assert(shown:find('Invalidation: true', 1, true) == nil)
+      assert(shown:find('Objective completion mapping unavailable', 1, true))
+      -- A known low level blocks the primary, so a ready alternative is selected.
+      ns.context.snapshot.level = ns.known(10)
+      local function setObjective(id, value)
+        ns.context.snapshot.objectives[id] = ns.known(value)
+      end
+      for _, id in ipairs({ns.primary, 'alternative-a', 'alternative-b'}) do
+        setObjective(id, false)
+      end
+      local selected = ns.hud:refresh()
+      assert(selected.status == 'ready' and selected.selected_alternative)
+      shown = text(selected)
+      assert(shown:find('Status: ready (step step-a)', 1, true), shown)
+      assert(shown:find('An alternative objective is selected', 1, true), shown)
+      -- Once the level is known and enough, the primary is back and rejected
+      -- alternatives stay listed with their reasons.
+      ns.context.snapshot.level = ns.known(100)
+      setObjective('alternative-a', true)
+      setObjective('alternative-b', true)
+      local primary = ns.hud:refresh()
+      assert(primary.status == 'ready' and primary.step_id == 'demo-step-1')
+      shown = text(primary)
+      assert(shown:find('Prerequisite: true', 1, true), shown)
+      assert(shown:find('Rejected alternatives:', 1, true), shown)
+      assert(shown:find('undefined-alternative: readiness_not_declared', 1, true), shown)
+      -- Imported ids cannot start a client escape sequence or break the layout.
+      local hostile = {status = 'ready', step_id = 'a|cffff0000b\nc', objective = 'x|r'}
+      shown = text(hostile)
+      assert(shown:find('a||cffff0000b c', 1, true) and shown:find('x||r', 1, true), shown)
+      assert(not shown:find('|c', 1, true) or shown:find('||c', 1, true))
+      -- every reason line is bounded
+      local many = {status = 'blocked', prerequisite = {truth = 'false', reasons = {}}}
+      for index = 1, 30 do
+        many.prerequisite.reasons[index] = {input = {input = 'field',
+          field = {field = 'level'}}, reason = {reason = 'stale'}}
+      end
+      assert(#ns.Gui.inspect(many) <= 14)
+    "#,
+    );
+}
+
+#[test]
+fn a_stored_session_is_copied_by_slash_and_by_the_window_without_a_new_capture() {
+    let sandbox = ui_client("70374");
+    run(
+        &sandbox,
+        r#"
+      local state = ui.state()
+      state.onSessionSlash('start copy-profile')
+      ui.mono = ui.mono + 2; ui.wall = ui.wall + 2
+      state.onSessionSlash('sample'); state.onSessionSlash('stop')
+      state.onSessionSlash('export')
+      local original = AzerothNavigatorDB.session_export
+      assert(original and original:sub(1, 13) == 'ANAVSESSION1:')
+      local levelReads = 0
+      function UnitLevel() levelReads = levelReads + 1; return 12 end
+      state.onSlash('copy session')
+      local view = state.copy_view
+      assert(state.copy_ui_code == 'copy_shown' and view.frame.shown)
+      assert(view.input:GetText() == original and view.input.max == ns.Session.MAX_BYTES)
+      assert(view.title.text:find('Stored session export', 1, true))
+      assert(AzerothNavigatorDB.session_export == original and levelReads == 0)
+      view.close.scripts.OnClick()
+      -- the window button reuses the same view
+      state.actions.gui.open(); state.gui.select('session')
+      local frames = #ui.frames
+      assert(ui.click(state.gui.widgets.session_copy.frame))
+      assert(#ui.frames == frames and view.frame.shown and levelReads == 0)
+      -- a damaged stored session is refused with a reason and nothing is shown
+      view.close.scripts.OnClick()
+      AzerothNavigatorDB.session_export = 'ANAVSESSION1:{"format":"other"}'
+      state.onSlash('copy session')
+      assert(not view.frame.shown)
+      assert(state.messages[#state.messages]:find('copy_export_invalid', 1, true))
+      state.gui.refresh()
+      assert(not ui.click(state.gui.widgets.session_copy.frame))
+      state.onSlash('copy sessions')
+      assert(state.messages[#state.messages]:find('usage: /anavdiag copy [snapshot|session]',
+        1, true))
     "#,
     );
 }

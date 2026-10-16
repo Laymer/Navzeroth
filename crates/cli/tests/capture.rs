@@ -60,6 +60,12 @@ fn mismatched_unknown_build_and_missing_exports_remain_explicit() {
     value["build"]["build"] = json!("70338");
     let report = azeroth_cli::capture::inspect(&saved(&value.to_string())).unwrap();
     assert!(!report.diagnostic.unwrap().target_tuple_matches);
+    // 70425 is admitted for development capture in the addon, never as the release target.
+    value["build"]["build"] = json!("70425");
+    let report = azeroth_cli::capture::inspect(&saved(&value.to_string())).unwrap();
+    let development = report.diagnostic.unwrap();
+    assert!(!development.target_tuple_matches);
+    assert_eq!(development.client_build, "70425");
     value["build"]["build"] = json!("unknown");
     let report = azeroth_cli::capture::inspect(&saved(&value.to_string())).unwrap();
     assert_eq!(report.diagnostic.unwrap().client_build, "unknown");

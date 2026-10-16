@@ -28,8 +28,10 @@ require complete licensed content and static validation; see the
 2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md), including
    the separate, explicit addon installation into the client-selected AddOns folder.
 3. Use [addon setup](docs/compatibility/ADDON_INSTALL.md) to record the actual client
-   build. The 0.9.1 snapshot, clock, position, plan and recording adapters admit
-   `1.60.1.70338` and `1.60.1.70374`, both with interface `16001`, experimentally.
+   build. The snapshot, clock, position, plan and recording adapters admit
+   `1.60.1.70338` and `1.60.1.70374`, and for development capture only (UNVERIFIED)
+   `1.60.1.70425`, each with interface `16001`, experimentally. `/anav` opens the
+   in-game window described in [the addon window guide](docs/compatibility/ADDON_GUI.md).
    Selectable exports and opt-in quest-turn-in recording are included. Full live
    acceptance remains required. A matching TOC interface alone does not establish compatibility.
 4. Imported profiles remain local. The browser demo and bundled reference imagery
@@ -42,6 +44,7 @@ require complete licensed content and static validation; see the
 | Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
 | Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; source-identified development capture/turn-in checks, with full acceptance still unverified |
+| Forever 1.60.1.70425 / interface 16001 | Development capture only, UNVERIFIED: installation metadata, no addon-run evidence; never the 1.0 target |
 
 Current source includes a bounded QuestieDB raw-table staging adapter and
 [versioned release checks](release/v1/README.md). Staging preserves partial facts

@@ -22,11 +22,19 @@ The TOC directive `## SavedVariables: AzerothNavigatorDB` declares one global ta
 | `settings` | table | Settings | Only the keys below. Unknown or mistyped saved keys are dropped on load. |
 | `settings.auto_probe` | boolean, default `true` | Settings | Run the probe on `PLAYER_LOGIN`. |
 | `settings.chat_summary` | boolean, default `true` | Settings | Print one summary line per probe. |
+| `settings.hud_visible` | boolean, default `true` | `/anavplan show\|hide`, window | Whether the plan HUD card is requested. |
+| `settings.hud_*` | see [HUD_APPEARANCE.md](HUD_APPEARANCE.md) | `/anavplan`, window | HUD size, text size, contrast and saved position. |
+| `settings.minimap_button` | boolean, default `true` | Window (Settings tab) | Show the minimap button (0.9.2). |
+| `settings.minimap_angle` | finite number 0 to 360, default `225` | Minimap drag | Button position on the minimap rim, whole degrees (0.9.2). A value outside the range is dropped to the default. |
+| `settings.gui_last_tab` | one of `overview`, `plan`, `hud`, `capture`, `session`, `diagnostics`, `settings`; default `overview` | Window | The tab last selected out of combat (0.9.2). Any other string is dropped. |
 | `diagnostic_export` | string | Export | One JSON document (below), at most 12288 bytes. Absent until a probe has stored one. |
 | `diagnostic_export_error` | string | Export | Error code of the last failed store (closed list below). Cleared by the next success. |
 
 Rules:
 
+- The three window keys were added in 0.9.2 **without** changing `db_version`: a 0.9.1
+  table loads with their defaults, and a 0.9.1 addon drops them on its next merge, so a
+  downgrade silently loses the minimap position and remembered tab. That is harmless.
 - The settings merge never touches `diagnostic_export` or `diagnostic_export_error`.
 - A failed store never writes a partial string and keeps the previous
   `diagnostic_export` unchanged.

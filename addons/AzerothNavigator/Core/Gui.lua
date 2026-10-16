@@ -255,9 +255,12 @@ function Gui.model(env, state, inputs)
     diag_clock_trust = clock.status ~= nil and clock.status.confirmable == true,
     capture_snapshot = model.capture_valid,
   }
+  -- Checking a stored export decodes it, so only the pages that show it pay for it.
   model.copy = {}
+  local wantCopy = inputs.tab == nil or inputs.tab == 'capture' or inputs.tab == 'session'
   for _, kind in ipairs({'diagnostic', 'snapshot', 'session'}) do
-    local selected, code = ns.CopyExport.select(db, kind)
+    local selected, code = nil, 'copy_not_checked'
+    if wantCopy then selected, code = ns.CopyExport.select(db, kind) end
     model.copy[kind] = {ok = selected ~= nil, code = code}
   end
   if not model.session_valid then
@@ -598,6 +601,7 @@ function Gui.new(env, state, actions)
   local function inputs()
     local values = {}
     for key, read in pairs(ctx.inputs) do values[key] = read() end
+    values.tab = gui.tab
     return values
   end
 

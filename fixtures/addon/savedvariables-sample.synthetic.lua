@@ -7,5 +7,8 @@ AzerothNavigatorDB = {
 	["settings"] = {
 		["auto_probe"] = true,
 		["chat_summary"] = true,
+		["gui_last_tab"] = "overview",
+		["minimap_angle"] = 225,
+		["minimap_button"] = true,
 	},
 }
