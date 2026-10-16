@@ -427,9 +427,17 @@ pub(crate) fn extract(
                         InventoryDisposition::UnavailableEncrypted,
                         "unavailable_encrypted",
                     ),
+                    ReadFailure::Unsupported => (
+                        InventoryDisposition::UnavailableEncrypted,
+                        "unsupported_archive_encoding_not_retained",
+                    ),
+                    ReadFailure::Unavailable => (
+                        InventoryDisposition::UnavailableEncrypted,
+                        "local_archive_read_unavailable",
+                    ),
                     ReadFailure::Capacity => (
                         InventoryDisposition::ExcludedByPolicy,
-                        "logical_file_exceeds_capacity_not_retained",
+                        "logical_file_or_allocation_exceeds_capacity_not_retained",
                     ),
                     ReadFailure::Invalid => (
                         InventoryDisposition::InvalidCorrupt,

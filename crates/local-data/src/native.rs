@@ -50,6 +50,8 @@ unsafe extern "C" {
 pub(crate) enum ReadFailure {
     Missing,
     Encrypted,
+    Unsupported,
+    Unavailable,
     Invalid,
     Capacity,
 }
@@ -137,9 +139,9 @@ impl Archive {
         let mut error = if let Some(id) = id {
             unsafe { nav_casc_file_open(self.handle.as_ptr(), id, &mut file, &mut size) }
         } else {
-            2
+            1
         };
-        if error == 2 || error == 3 {
+        if error == 1 {
             let name = CString::new(format!("DBFilesClient\\{name}.{extension}"))
                 .map_err(|_| ReadFailure::Invalid)?;
             // SAFETY: static virtual prefix and reviewed table identifier, NUL-terminated.
@@ -172,10 +174,12 @@ impl Archive {
 }
 fn classify(error: u32) -> ReadFailure {
     match error {
-        2 | 3 => ReadFailure::Missing,
-        // CascLib uses a private POSIX code and Windows ERROR_FILE_ENCRYPTED.
-        1005 | 6002 => ReadFailure::Encrypted,
-        _ => ReadFailure::Invalid,
+        1 => ReadFailure::Missing,
+        2 => ReadFailure::Encrypted,
+        3 => ReadFailure::Unsupported,
+        4 => ReadFailure::Invalid,
+        5 => ReadFailure::Capacity,
+        _ => ReadFailure::Unavailable,
     }
 }
 struct NativeFile(NonNull<c_void>);

@@ -87,6 +87,10 @@ the intended nonrecursive builder configuration explicit on both platforms.
 Cancellation also treats a worker exiting between try_wait/kill as already
 stopped. Fresh replacement-head checks are required; no failed/superseded check
 is counted as a pass.
+Native file failures are normalized inside the C++ shim using native constants,
+so POSIX and Windows error numbers cannot change catalog meaning. Missing,
+encrypted, unsupported, unavailable, corrupt and capacity outcomes stay separate;
+an unrecognized native error is unavailable, not automatically corrupt.
 
 Actual selected-installation extraction used only archive/build/config/index
 inputs for `wow_classic_beta`1.60.1.70425, declared enUS. Private artifacts and
