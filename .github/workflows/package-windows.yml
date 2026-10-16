@@ -71,6 +71,12 @@ jobs:
       - name: Guided acceptance kit tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-AcceptanceKit.ps1
+      - name: Native smoke helper tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./scripts/windows/Test-NativeSmokeHelpers.ps1
+      - name: Native smoke helper tests (PowerShell 7)
+        shell: pwsh
+        run: ./scripts/windows/Test-NativeSmokeHelpers.ps1
       - run: rustup show
       - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
@@ -89,6 +95,9 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
+      - name: Native smoke pure-helper tests (synthetic, not native acceptance)
+        shell: bash
+        run: node --test scripts/windows/native-smoke-lib.test.mjs
       - name: Install isolated Corepack
         shell: bash
         run: |
@@ -164,12 +173,121 @@ jobs:
           if (-not (Test-Path -LiteralPath (Join-Path $data 'snapshots.sqlite3'))) { throw 'Silent uninstall removed user data' }
           if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent uninstall removed the game addon' }
           "user data and existing addon kept: $data"
+      - name: Native WebView2 smoke over CDP (regression evidence only, not WIN-* acceptance)
+        shell: pwsh
+        run: |
+          . ./scripts/windows/Native-Smoke-Helpers.ps1
+          $evidence = Join-Path $env:RUNNER_TEMP 'native-smoke'
+          New-Item -ItemType Directory -Path $evidence -Force | Out-Null
+          $setup = Get-NativeSmokeSetup -Directory dist/windows
+          $installDir = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
+          $exe = Join-Path $installDir 'azeroth-desktop.exe'
+          $data = Join-Path $env:APPDATA 'io.github.laymer.azeroth-navigator'
+          Stop-NativeSmokeProcesses
+          # The first-start step left its own store; this smoke needs an empty database.
+          if (Test-Path -LiteralPath $data) { Remove-Item -LiteralPath $data -Recurse -Force }
+          Install-NativeSmokeSetup -SetupPath $setup.FullName
+          try {
+            Invoke-NativeSmokeNode @('scripts/windows/Native-Smoke.mjs', '--mode', 'smoke', '--label', 'candidate-smoke',
+              '--exe', $exe, '--port', '9222', '--db', (Join-Path $data 'snapshots.sqlite3'),
+              '--out', (Join-Path $evidence 'smoke\report.json'))
+          } finally {
+            Stop-NativeSmokeProcesses
+            Uninstall-NativeSmokeApp -InstallDirectory $installDir
+          }
+      - name: Native upgrade smoke from the published baseline (regression evidence only)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASELINE_TAG: v0.9.1
+        run: |
+          . ./scripts/windows/Native-Smoke-Helpers.ps1
+          $evidence = Join-Path $env:RUNNER_TEMP 'native-smoke'
+          $baselineDir = Join-Path $env:RUNNER_TEMP 'native-baseline'
+          New-Item -ItemType Directory -Path $evidence, $baselineDir -Force | Out-Null
+          $installDir = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
+          $exe = Join-Path $installDir 'azeroth-desktop.exe'
+          $data = Join-Path $env:APPDATA 'io.github.laymer.azeroth-navigator'
+          $db = Join-Path $data 'snapshots.sqlite3'
+          $candidateSetup = Get-NativeSmokeSetup -Directory dist/windows
+          $candidate = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $baseline = $env:BASELINE_TAG.TrimStart('v')
+
+          # 1. Download the published baseline and verify it against its own checksum file.
+          gh release download $env:BASELINE_TAG --repo $env:GITHUB_REPOSITORY --dir $baselineDir --pattern '*-x64-setup.exe' --pattern 'SHA256SUMS.txt'
+          if ($LASTEXITCODE -ne 0) { throw "Could not download $($env:BASELINE_TAG) assets" }
+          $baselineSetup = Get-NativeSmokeSetup -Directory $baselineDir
+          Invoke-NativeSmokeNode @('scripts/windows/Native-Smoke.mjs', '--mode', 'check-download', '--label', 'baseline-download',
+            '--file', $baselineSetup.FullName, '--sums', (Join-Path $baselineDir 'SHA256SUMS.txt'),
+            '--name', $baselineSetup.Name, '--out', (Join-Path $evidence 'upgrade\baseline-download.json'))
+
+          $kind = if ([version]$baseline -lt [version]$candidate) { 'upgrade' } elseif ([version]$baseline -eq [version]$candidate) { 'reinstall_same_version' } else { 'baseline_newer_than_candidate' }
+          "upgrade kind: $kind (baseline $baseline, candidate $candidate)"
+          if ($kind -eq 'baseline_newer_than_candidate') { throw "Baseline $baseline is newer than candidate $candidate" }
+
+          Stop-NativeSmokeProcesses
+          if (Test-Path -LiteralPath $data) { Remove-Item -LiteralPath $data -Recurse -Force }
+          try {
+            # 2. Install the baseline and populate it through CDP.
+            Install-NativeSmokeSetup -SetupPath $baselineSetup.FullName
+            if ((Get-InstalledDisplayVersion) -ne $baseline) { throw "Installed version is $(Get-InstalledDisplayVersion), expected baseline $baseline" }
+            Invoke-NativeSmokeNode @('scripts/windows/Native-Smoke.mjs', '--mode', 'populate', '--label', 'baseline-populate',
+              '--exe', $exe, '--port', '9223', '--out', (Join-Path $evidence 'upgrade\populate.json'))
+            Stop-NativeSmokeProcesses
+            Invoke-NativeSmokeNode @('scripts/windows/Native-Smoke.mjs', '--mode', 'db-summary', '--label', 'db-before',
+              '--db', $db, '--out', (Join-Path $evidence 'upgrade\db-before.json'))
+
+            # 3. Install the candidate over it.
+            Install-NativeSmokeSetup -SetupPath $candidateSetup.FullName
+            if ((Get-InstalledDisplayVersion) -ne $candidate) { throw "Installed version is $(Get-InstalledDisplayVersion), expected candidate $candidate" }
+
+            # 4. Launch the candidate: data kept, migrations only moved forward.
+            Invoke-NativeSmokeNode @('scripts/windows/Native-Smoke.mjs', '--mode', 'verify', '--label', 'candidate-verify',
+              '--exe', $exe, '--port', '9224', '--db', $db, '--out', (Join-Path $evidence 'upgrade\verify.json'))
+            Stop-NativeSmokeProcesses
+            $before = Get-Content -Raw (Join-Path $evidence 'upgrade\db-before.json') | ConvertFrom-Json
+            $after = Get-Content -Raw (Join-Path $evidence 'upgrade\verify.json') | ConvertFrom-Json
+            $beforeDb = $before.db; $afterDb = $after.db
+            if ($afterDb.max_migration_version -lt $beforeDb.max_migration_version) { throw 'Schema version went backwards after the candidate started' }
+            $lost = @($beforeDb.tables | Where-Object { $afterDb.tables -notcontains $_ })
+            if ($lost.Count -gt 0) { throw "Tables lost across the install: $($lost -join ', ')" }
+            "schema_migrations: baseline max $($beforeDb.max_migration_version) ($($beforeDb.migrations) rows) -> candidate max $($afterDb.max_migration_version) ($($afterDb.migrations) rows)"
+
+            # 5. Downgrade attempt (allowDowngrades is false): record the outcome; the installed version must not move.
+            $downgrade = [ordered]@{ kind = $kind; baseline = $baseline; candidate = $candidate; attempted = $false }
+            if ($kind -eq 'upgrade') {
+              $result = Invoke-BoundedProcess -FilePath $baselineSetup.FullName -ArgumentList @('/S') -TimeoutSeconds 120
+              Stop-NativeSmokeProcesses
+              $downgrade.attempted = $true
+              $downgrade.exit_code = $result.ExitCode
+              $downgrade.timed_out = $result.TimedOut
+              $downgrade.installed_version_after = Get-InstalledDisplayVersion
+              $downgrade | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence 'upgrade\downgrade.json')
+              "downgrade attempt: exit code $($result.ExitCode), timed out $($result.TimedOut), installed $(Get-InstalledDisplayVersion)"
+              if ((Get-InstalledDisplayVersion) -ne $candidate) { throw "Downgrade was not refused: installed version is $(Get-InstalledDisplayVersion)" }
+            } else {
+              $downgrade.reason = 'Candidate and baseline versions are equal, so a downgrade cannot be attempted; this run exercised a reinstall over existing data, not an upgrade.'
+              $downgrade | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence 'upgrade\downgrade.json')
+              $downgrade.reason
+            }
+          } finally {
+            Stop-NativeSmokeProcesses
+            Uninstall-NativeSmokeApp -InstallDirectory $installDir
+          }
       - run: git diff --exit-code
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_candidate && github.ref_type != 'tag' && 'azeroth-navigator-acceptance-candidate' || 'azeroth-navigator-windows' }}-${{ github.sha }}
           path: dist/windows/
           if-no-files-found: error
+          retention-days: 14
+      - name: Upload native smoke evidence (regression evidence, not a release asset)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-smoke-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/native-smoke/
+          if-no-files-found: warn
           retention-days: 14
 
   draft-release:
