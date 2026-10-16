@@ -163,14 +163,18 @@ pub struct WorkerControl(Arc<Mutex<Child>>);
 impl WorkerControl {
     pub fn cancel(&self) -> Result<()> {
         let mut child = self.0.lock().map_err(|_| "Worker control unavailable")?;
-        if child
+        let running = child
             .try_wait()
             .map_err(|_| "Cannot inspect worker state")?
-            .is_none()
+            .is_none();
+        if running
+            && child.kill().is_err()
+            && child
+                .try_wait()
+                .map_err(|_| "Cannot inspect worker state")?
+                .is_none()
         {
-            child
-                .kill()
-                .map_err(|_| "Cannot cancel extraction worker")?;
+            return Err("Cannot cancel extraction worker");
         }
         let _ = child.wait();
         Ok(())

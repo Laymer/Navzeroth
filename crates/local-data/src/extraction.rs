@@ -545,6 +545,7 @@ mod tests {
         let root =
             std::env::temp_dir().join(format!("navzeroth-store-quota-{}", std::process::id()));
         let mut builder = fs::DirBuilder::new();
+        builder.recursive(false);
         #[cfg(unix)]
         {
             use std::os::unix::fs::DirBuilderExt;

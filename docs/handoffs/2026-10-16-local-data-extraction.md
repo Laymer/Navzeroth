@@ -81,6 +81,12 @@ Windows packaging38874189920. The pull-request Draft GitHub release job skipped
 because publication was not requested; it is not a required PR check. Superseded
 c4f4740 runs were cancelled on new pushes; those are not counted as passes.
 New continuation head needs its own hosted results; no resulting-main claim.
+Implementation4c06203 passed both hosted source builds and parity. Its first
+Windows Clippy run rejected a test builder mutated only under cfg(unix); made
+the intended nonrecursive builder configuration explicit on both platforms.
+Cancellation also treats a worker exiting between try_wait/kill as already
+stopped. Fresh replacement-head checks are required; no failed/superseded check
+is counted as a pass.
 
 Actual selected-installation extraction used only archive/build/config/index
 inputs for `wow_classic_beta`1.60.1.70425, declared enUS. Private artifacts and
