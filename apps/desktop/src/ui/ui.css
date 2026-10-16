@@ -1,0 +1,167 @@
+/* Design-system primitives: Button, Panel, Field, HelpTip, StatusBadge. */
+
+/* Button. Layered borders, shadows and insets draw the bevel; corner ornaments are
+ * content:"" pseudo-elements, so they never change the accessible name. */
+.ui-button {
+  position: relative;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.45rem 1.1rem;
+  border-radius: var(--radius);
+  border: 2px solid var(--control-edge);
+  color: var(--text);
+  cursor: pointer;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ui-button:disabled { cursor: not-allowed; opacity: 0.6; }
+.ui-button--primary {
+  background: linear-gradient(var(--ember-hi), var(--ember) 55%, var(--ember-shade));
+  color: var(--on-ember);
+  border-color: var(--gold);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), inset 0 -2px 0 var(--ember-shade), 0 0 0 1px var(--gold-shade), 0 0.15rem 0.4rem rgb(0 0 0 / 0.5);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.5);
+}
+.ui-button--primary::before, .ui-button--primary::after {
+  content: "";
+  position: absolute;
+  width: 0.35rem;
+  height: 0.35rem;
+  border: 2px solid var(--gold-hi);
+  pointer-events: none;
+}
+.ui-button--primary::before { top: 0.15rem; left: 0.15rem; border-right: 0; border-bottom: 0; }
+.ui-button--primary::after { bottom: 0.15rem; right: 0.15rem; border-left: 0; border-top: 0; }
+.ui-button--secondary {
+  background: linear-gradient(var(--surface-raised), var(--surface));
+  border-color: var(--control-edge);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 0 0 1px var(--gold-shade), 0 0.1rem 0.3rem rgb(0 0 0 / 0.5);
+}
+.ui-button--ghost { background: transparent; border-color: transparent; color: var(--gold-hi); }
+.ui-button--ghost:hover:not(:disabled) { border-color: var(--control-edge); }
+.ui-button--danger {
+  background: linear-gradient(var(--danger), var(--danger-shade));
+  color: var(--on-danger);
+  border-color: var(--tone-danger);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 0.1rem 0.3rem rgb(0 0 0 / 0.5);
+}
+.ui-button:hover:not(:disabled) { border-color: var(--gold-hi); }
+.ui-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ui-button:active:not(:disabled) { box-shadow: inset 0 0.2rem 0.4rem rgb(0 0 0 / 0.6); transform: translateY(1px); }
+
+/* Panel. */
+.ui-panel {
+  position: relative;
+  margin: var(--space-4) 0;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  background: linear-gradient(color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  border: 1px solid var(--gold-shade);
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 2px var(--ground), inset 0 0 0 3px var(--gold-shade), 0 0.3rem 1rem rgb(0 0 0 / 0.45);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ui-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0.35rem;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 0 0, var(--gold-hi) 0 0.14rem, transparent 0.16rem) top left / 0.6rem 0.6rem no-repeat,
+    radial-gradient(circle at 100% 0, var(--gold-hi) 0 0.14rem, transparent 0.16rem) top right / 0.6rem 0.6rem no-repeat,
+    radial-gradient(circle at 0 100%, var(--gold-hi) 0 0.14rem, transparent 0.16rem) bottom left / 0.6rem 0.6rem no-repeat,
+    radial-gradient(circle at 100% 100%, var(--gold-hi) 0 0.14rem, transparent 0.16rem) bottom right / 0.6rem 0.6rem no-repeat;
+}
+.ui-panel__title { margin: 0 0 var(--space-3); font-size: 1.15rem; }
+.ui-panel__title::after { content: ""; display: block; height: 1px; margin-top: var(--space-2); background: linear-gradient(90deg, var(--gold), transparent); }
+.ui-panel__body > :first-child { margin-top: 0; }
+.ui-panel__body > :last-child { margin-bottom: 0; }
+
+/* Field and HelpTip. */
+.ui-field { display: grid; gap: var(--space-1); margin: var(--space-3) 0; min-width: 0; }
+.ui-field__head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.ui-field__head label { font-weight: 600; }
+.ui-field__hint { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+.ui-field__error { margin: 0; color: var(--tone-danger); font-weight: 600; }
+.ui-field [aria-invalid="true"] { border-color: var(--tone-danger); }
+.ui-helptip { position: relative; display: inline-flex; }
+.ui-helptip__trigger {
+  box-sizing: border-box;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--control-edge);
+  background: var(--surface-raised);
+  color: var(--gold-hi);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  cursor: help;
+}
+.ui-helptip__trigger[aria-expanded="true"] { border-color: var(--gold); background: var(--mist); }
+.ui-helptip__bubble {
+  position: absolute;
+  z-index: 20;
+  inset-block-start: calc(100% + 0.4rem);
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius);
+  box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 0.6);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* StatusBadge: a shape and text, never colour alone. */
+.ui-badge { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.15rem 0.6rem; border: 1px solid currentColor; border-radius: 999px; font-weight: 600; font-size: 0.9rem; background: var(--surface); }
+.ui-badge--ok { color: var(--tone-ok); }
+.ui-badge--warn { color: var(--tone-warn); }
+.ui-badge--danger { color: var(--tone-danger); }
+.ui-badge--info { color: var(--tone-info); }
+.ui-badge--neutral { color: var(--text-muted); }
+
+/* High contrast: flat, outlined, no bevel or gradient. */
+:root[data-contrast="high"] .ui-button { background: var(--surface); background-image: none; color: var(--text); border: 2px solid var(--text); box-shadow: none; text-shadow: none; }
+:root[data-contrast="high"] .ui-button--primary { background: var(--ember); border: 3px solid var(--gold); }
+:root[data-contrast="high"] .ui-button--primary::before, :root[data-contrast="high"] .ui-button--primary::after { display: none; }
+:root[data-contrast="high"] .ui-button--danger { background: var(--danger); border-color: var(--text); text-decoration: underline; }
+:root[data-contrast="high"] .ui-button--ghost { border-color: var(--text); color: var(--gold-hi); }
+:root[data-contrast="high"] .ui-panel { background: var(--surface); border: 2px solid var(--text); box-shadow: none; }
+:root[data-contrast="high"] .ui-panel::before { display: none; }
+:root[data-contrast="high"] .ui-panel__title::after { background: var(--text); }
+:root[data-contrast="high"] .ui-helptip__trigger, :root[data-contrast="high"] .ui-helptip__bubble { background: var(--surface); border-color: var(--text); box-shadow: none; }
+:root[data-contrast="high"] .ui-badge { border: 2px solid var(--text); background: var(--surface); }
+:root[data-contrast="high"] .ui-field [aria-invalid="true"] { border-color: var(--text); border-style: dashed; }
+
+/* Forced colours: system colours only. */
+@media (forced-colors: active) {
+  .ui-button, .ui-button--primary, .ui-button--secondary, .ui-button--danger, .ui-button--ghost { background: ButtonFace; background-image: none; color: ButtonText; border: 2px solid ButtonText; box-shadow: none; text-shadow: none; }
+  .ui-button--primary { border-width: 3px; }
+  .ui-button--primary::before, .ui-button--primary::after { border-color: ButtonText; }
+  .ui-button--danger { text-decoration: underline; }
+  .ui-button:disabled { color: GrayText; border-color: GrayText; opacity: 1; }
+  .ui-panel { background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
+  .ui-panel::before { display: none; }
+  .ui-panel__title::after { background: CanvasText; }
+  .ui-helptip__trigger, .ui-helptip__bubble { background: Canvas; color: CanvasText; border: 2px solid CanvasText; box-shadow: none; }
+  .ui-badge { background: Canvas; color: CanvasText; border: 1px solid CanvasText; }
+  .ui-field__error { color: CanvasText; }
+}
+
+/* Reduced motion. */
+:root[data-motion="reduced"] .ui-button:active:not(:disabled) { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ui-button:active:not(:disabled) { transform: none; }
+}

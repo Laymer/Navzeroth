@@ -1,0 +1,18 @@
+/* Self-hosted, unmodified upstream font files (see apps/desktop/THIRD_PARTY.md).
+ * Both are SIL OFL 1.1; the notices ship beside the files and in the installer.
+ * The relative urls are bundled by Vite as hashed files, never inlined, so the
+ * native CSP (default-src 'self') allows them without a font-src exception. */
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cinzel";
+  src: url("./fonts/Cinzel-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}

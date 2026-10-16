@@ -75,3 +75,17 @@ test("the fixed reference page runs under the native CSP", async ({ page }) => {
   await collectViolations(page, problems);
   expect(problems).toEqual({ violations: [], consoleErrors: [], pageErrors: [], failed: [] });
 });
+
+test("the self-hosted Inter and Cinzel faces load under the native CSP", async ({ page }) => {
+  const problems = watch(page);
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Azeroth Navigator", exact: true })).toBeVisible();
+  const faces = await page.evaluate(async () => {
+    await document.fonts.ready;
+    return Array.from(document.fonts).map((face) => `${face.family}:${face.status}`);
+  });
+  // Both families are used on the first screen (Inter for body text, Cinzel for headings).
+  expect(faces.sort()).toEqual(["Cinzel:loaded", "Inter:loaded"]);
+  await collectViolations(page, problems);
+  expect(problems).toEqual({ violations: [], consoleErrors: [], pageErrors: [], failed: [] });
+});
