@@ -8,7 +8,7 @@ the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 [PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
 client are not fully verified. The current published download is the
-[0.9.0 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.0).
+[0.9.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1).
 It does not contain a verified playable-content catalog. Full-content v1.0.0 targets
 Forever 1.60.1.70374 and remains subject to the
 [v1 release gates](../releases/V1_RELEASE_PROCESS.md).
@@ -23,7 +23,7 @@ Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Window
 | `SOURCE_COMMIT.txt` | Exact packaged source commit |
 | `CANDIDATE_NOTES.md` | Version-specific notes when present |
 
-The 0.9.0 release has all five files. Its checksum manifest covers the
+The 0.9.1 release has all five files. Its checksum manifest covers the
 four payload files, not itself. A local `-AddonOnly` build omits the installer;
 an untagged version without notes also omits `CANDIDATE_NOTES.md`. Neither is the
 complete Windows release asset set. The current packager does not include a
@@ -35,7 +35,7 @@ production content pack or corresponding third-party source archives.
 
 1. Download the setup file, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes from the
    linked project's release page. Check the version and evidence limitations.
-2. Compare `Get-FileHash .\AzerothNavigator-0.9.0-x64-setup.exe -Algorithm SHA256`
+2. Compare `Get-FileHash .\AzerothNavigator-0.9.1-x64-setup.exe -Algorithm SHA256`
    with its line in `SHA256SUMS.txt` (substitute the chosen version). A matching
    checksum shows the download is intact; it does
    not prove who published it (plan §8.7). Download only from the project's release page.
@@ -86,7 +86,7 @@ that `AddOns\AzerothNavigator\AzerothNavigator.toc` exists, as described in
 [ADDON_INSTALL.md](ADDON_INSTALL.md).
 
 Then start the game and enable *Azeroth Navigator Diagnostics* in the AddOns list.
-Record the actual client build before capture. The 0.9.0 adapters experimentally admit
+Record the actual client build before capture. The 0.9.1 adapters experimentally admit
 70338 and 70374/interface 16001; full acceptance for the frozen v1 target is not enabled by this installer.
 
 ### Update

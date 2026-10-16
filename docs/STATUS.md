@@ -1,5 +1,17 @@
 # Project status
 
+Current release task: publish user-requested **0.9.1 developer prerelease**.
+Owner and sole writer: Codex `/root`; baseline main
+`d74d3d292adbb61f30466ae1994e7c6678a505af`, branch `release/v0.9.1`, claim
+`5346e50`. See the [release handoff](handoffs/2026-10-16-v0.9.1-release.md).
+The interrupted 0.9.0 publication is superseded by 0.9.1; no 0.9.0 publication
+is claimed. Latest published version remains 0.8.1 until 0.9.1 is verified and
+published. Main includes PR #154; its exact-main CI, Windows package and offline
+source workflows passed. Private research catalogs remain outside public assets.
+Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
+
+The following records describe preceding implementation and release preparation.
+
 Plan: 1.0 plus ADRs 0001–0004 and [local-data contract](../localdata.md).
 Updated: 2026-10-16. Current task: independent private local-client-data subsystem.
 Owner and sole writer: Codex `/root`; continuation baseline
@@ -23,7 +35,7 @@ Frozen implementation `af31f5d` processed 1,346 table candidates and decoded 505
 from 70425/enUS. All four presets produced the same private semantic catalog;
 the handoff records its hash, measured workload, exact hosted checks and gaps.
 
-Separate outstanding task: complete verified 0.9.0 prerelease publication.
+Historical interrupted task: 0.9.0 prerelease publication (superseded above).
 Read-only GitHub reconciliation at the baseline found source workflow38803371318
 and Windows package38803371406 successful, CI38803371336 cancelled, latest
 published release still0.8.1. Cancellation is not a passed resulting-main gate.

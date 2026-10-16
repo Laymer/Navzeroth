@@ -1,5 +1,10 @@
 # Claude Code continuation prompt: Navzeroth 0.9.0 → 1.0.0
 
+> Release continuation: the user subsequently requested 0.9.1, superseding
+> interrupted 0.9.0 publication. Read `docs/STATUS.md` and
+> `docs/handoffs/2026-10-16-v0.9.1-release.md` first; use the current release
+> version for readiness checks. The original 1.0.0 execution contract follows.
+
 Copy this entire file into Claude Code in the Navzeroth repository. This is an
 execution prompt, not a promise that complete licensed game data exists. Its
 success condition is a verified, published 1.0.0 release; if a prerequisite cannot
