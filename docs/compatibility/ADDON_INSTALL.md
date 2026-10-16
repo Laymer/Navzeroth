@@ -1,6 +1,6 @@
 # Addon: install, capture and remove
 
-The current release is the **0.9.0 developer preview**, with copyable exports and
+The current release is the **0.9.1 developer preview**, with copyable exports and
 guarded 70374 support. Use its exact artifact/source identity when testing it. The AddOns entry is
 still named **Azeroth Navigator Diagnostics**, but the addon now includes manual
 snapshots, plan import and HUD controls, and manual session recording. These are
@@ -8,7 +8,7 @@ experimental client bindings. It runs inside the permitted addon environment;
 desktop exchange uses explicit files or pasted text.
 
 Current source enables the exact experimental tuples `1.60.1.70338` and
-`1.60.1.70374`, both with interface `16001`. Both tuples are enabled experimentally in 0.9.0.
+`1.60.1.70374`, both with interface `16001`. Both tuples are enabled experimentally in 0.9.1.
 Limited user-reported
 diagnostic retrieval, level capture and clock-age results are recorded in
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,
@@ -29,8 +29,8 @@ a 70338 export or edit a guard to claim 70374 evidence.
 ## Install
 
 1. Close the game client.
-2. Download `AzerothNavigator-addon-0.9.0.zip` and `SHA256SUMS.txt` from the
-   [0.9.0 release](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.0). Verify
+2. Download `AzerothNavigator-addon-0.9.1.zip` and `SHA256SUMS.txt` from the
+   [0.9.1 release](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1). Verify
    the ZIP's SHA-256. Extract its `AzerothNavigator` folder into the directory the
    client actually uses for addons, so that this file exists:
 
@@ -119,7 +119,7 @@ Current source also provides `/anavdiag copy` for an existing diagnostic report
 and `/anavdiag copy snapshot` for an existing ANAV1 capture. Open out of combat,
 choose **Select text**, press **Ctrl+C**, and paste a snapshot into **Snapshot
 export text** / **Import text**. Copying does not capture again or change freshness.
-These commands are included in the 0.9.0 ZIP; see
+These commands are included in the 0.9.1 ZIP; see
 [copy behavior and acceptance limits](ADDON_COPY_EXPORT.md).
 
 ### Capture age
@@ -188,7 +188,7 @@ CI also runs Lua static checks. These do not establish real-client behavior; see
 evidence before stable publication.
 
 
-The 0.9.0 preview includes `/anavsession start-quests <anonymous-profile-id>`
+The 0.9.1 preview includes `/anavsession start-quests <anonymous-profile-id>`
 for explicit quest-turn-in recording; ordinary `start` stays manual-only. Use a
 distinct anonymous profile per character. Stop/export/reload manually. The recorder
 returns to idle after reload, and milestone timing stays unclassified. See the
