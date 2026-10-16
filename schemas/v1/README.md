@@ -180,9 +180,12 @@ are skipped. Limits: 8 MiB per file, 32 nested tables, strings up to 4 MiB plus
 
 The extractor takes the global name and key as parameters. The assumed layout
 `AzerothNavigatorDB = { ["export"] = "ANAV1:{...}" }` is an engineering
-assumption owned by the addon (`docs/compatibility/ADDON_SAVEDVARIABLES.md`,
-when it lands). The real serialization (escape style, key order, number formats
-such as `1e+15`, comments, line endings) is UNVERIFIED until a live client run
+assumption of the extractor's caller. The addon's actual layout is documented in
+`docs/compatibility/ADDON_SAVEDVARIABLES.md`: `AzerothNavigatorDB.diagnostic_export`
+holds the diagnostic JSON report (not an ANAV1 envelope), and the separate ANAV1
+character snapshot is stored under `AzerothNavigatorDB.snapshot_export`. The
+`["export"]` key above is used by the ingest fixtures only. The real serialization (escape style, key order,
+number formats such as `1e+15`, comments, line endings) is UNVERIFIED until a live client run
 at M0.5, and the accepted subset may need widening then.
 
 Synthetic cases live in `../../fixtures/transport/` with their own

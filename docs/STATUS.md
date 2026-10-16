@@ -1,19 +1,43 @@
 # Project status
 
-Current release task: publish user-requested **0.9.1 developer prerelease**.
-Owner and sole writer: Codex `/root`; baseline main
-`d74d3d292adbb61f30466ae1994e7c6678a505af`, branch `release/v0.9.1`, claim
-`5346e50`. See the [release handoff](handoffs/2026-10-16-v0.9.1-release.md).
-The interrupted 0.9.0 publication is superseded by 0.9.1; no 0.9.0 publication
-is claimed. Latest published version remains 0.8.1 until 0.9.1 is verified and
-published. Main includes PR #154; its exact-main CI, Windows package and offline
-source workflows passed. Private research catalogs remain outside public assets.
-Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
+Updated: 2026-10-16.
 
-The following records describe preceding implementation and release preparation.
+## Current task
+
+**0.9.2 program, task G1: reconcile the 0.9.1 publication records.** Owner and
+sole writer of this task: Claude Code workflow agent; baseline main `92f3f51`,
+branch `docs/g1-reconcile`, claim
+[2026-10-16-g1-reconcile](claims/2026-10-16-g1-reconcile.md). The program (addon GUI,
+desktop redesign, end-to-end coverage, the 0.9.2 release and a 1.0.0 `TODO.md`) is
+recorded in [ADR 0005](decisions/0005-v092-program.md). G1 changes documentation and
+production doc-comments only.
+
+**Latest published version: 0.9.1**, a developer prerelease published
+2026-10-16T11:58:04Z from tag `v0.9.1` (tag object `dbaab3a`, commit `92f3f51`).
+Its receipt, with asset SHA-256 values and CI run IDs, is
+[the 0.9.1 publication record](handoffs/2026-10-16-v0.9.1-publication.md); the
+[release handoff](handoffs/2026-10-16-v0.9.1-release.md) holds the preparation
+record. The interrupted 0.9.0 publication was superseded by 0.9.1 and is not
+claimed. Release readiness reports publication allowed, stable and candidate
+readiness false, 66 blockers, zero verified evidence files and zero verified
+content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
+Private research catalogs remain outside public assets.
+
+GitHub branch protection enforces only five checks: Rust format, Rust Linux,
+Rust Windows, pnpm Linux and pnpm Windows. The other CI jobs (Lua static checks,
+Desktop shell Windows, Windows package, source knowledge) pass by process
+convention only. Earlier records that say "all nine required checks" mean that
+convention, not branch protection. Some earlier commits use the `release:`
+subject prefix, which predates the plan 21.4 task-ID convention.
+
+## Preceding work
+
+The following records describe preceding implementation and release preparation. They
+are historical; where they say 0.8.1 or 0.9.0 is the latest published version, the
+current section above governs.
 
 Plan: 1.0 plus ADRs 0001–0004 and [local-data contract](../localdata.md).
-Updated: 2026-10-16. Current task: independent private local-client-data subsystem.
+Preceding task (completed by PR #154): independent private local-client-data subsystem.
 Owner and sole writer: Codex `/root`; continuation baseline
 `789f39272dc00c3f72ec6881a4a69fc1383a1948`, continuation branch
 `feat/local-data-extraction`, claim `96a29d0`. The continuation was fast-forwarded
@@ -35,13 +59,13 @@ Frozen implementation `af31f5d` processed 1,346 table candidates and decoded 505
 from 70425/enUS. All four presets produced the same private semantic catalog;
 the handoff records its hash, measured workload, exact hosted checks and gaps.
 
-Historical interrupted task: 0.9.0 prerelease publication (superseded above).
+Historical interrupted task: 0.9.0 prerelease publication (superseded by 0.9.1).
 Read-only GitHub reconciliation at the baseline found source workflow38803371318
 and Windows package38803371406 successful, CI38803371336 cancelled, latest
 published release still0.8.1. Cancellation is not a passed resulting-main gate.
 See the [0.9.0 release handoff](handoffs/2026-10-15-v0.9.0-release.md) for actual
 checks and publication state. Preparation alone is not publication; the previous
-published preview remains 0.8.1 until the verified draft is published.
+published preview was 0.8.1 until 0.9.1 was published.
 The [integration handoff](handoffs/2026-10-15-v1-foundation-integration.md) and
 [development evidence closure](handoffs/2026-10-15-development-evidence-closure.md)
 record the preceding work. No final 1.0.0 acceptance is inferred from this release.
@@ -106,7 +130,8 @@ The [integration closure](handoffs/2026-10-15-development-evidence-closure.md) r
 actual checks and artifacts. The [development capture guide](compatibility/DEVELOPMENT_CAPTURE.md) explains
 the new bounded inspection command. No release acceptance row is promoted.
 
-Version 0.8.1 remains the published developer preview. Complete licensed content,
+Version 0.8.1 was the published developer preview when this paragraph was written;
+0.9.1 has since been published. Complete licensed content,
 remaining live advancement/deviation bindings, complete session milestone
 observations, final operator acceptance
 and full-corpus Windows measurements remain unavailable. The Linux development
@@ -119,7 +144,7 @@ a published and verified 1.0.0 release, as authorized in the release plan.
 
 ## Previous program closure (historical scope)
 
-Owner: Codex /root. Latest published preview v0.8.1 atd11853e,
+Owner: Codex /root. Latest published preview at that time was v0.8.1 atd11853e,
 published2026-10-14T18:02:38Z after reviewed isolated task/release PRs,
 allnine exact-source PR/main gates, both tag jobs and verified five-file assets.
 Actual822 portable Rust/195desktop/40 mocked browser tests and strict/schema/
@@ -171,12 +196,12 @@ PR #37 supplies the final documentation. The original worktree and .claude/ rema
 | M6 | IN_PROGRESS | Atlas search/keyboard navigation and bounded200-pin pages, dense synthetic measurements and narrow/text/forced-color checks implemented; candidate route hop selection/pages and exact-frame endpoint fit preserve geometry gaps. Native interaction and verified real road geometry remain. |
 | M7 | IN_PROGRESS | Pure reminders, local parties and per-participant declared-quest eligibility/catch-up with missing/stale gates; manual joint planning, local proposal/acceptance and reminder controls are implemented; bounded preparation infrastructure is implemented; verified records, real rules and live workflows remain. |
 | M8 | IN_PROGRESS | Session interval/analytics model, bounded local imports, immutable migration-v5 history, opt-in manual recorder and Sessions screen implemented. Conditional comparison/calibration engineering is implemented; complete real samples and consolidated live checks remain. |
-| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.8.1 is the latest published preview. Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
+| M9 | IN_PROGRESS | Recovery/diagnostics, cancelable guarded planning and scoped synthetic performance checks implemented; v0.9.1 is the latest published preview (0.8.1 when this row was written). Native/live acceptance, ordinary Windows performance and final coverage consolidation remain. |
 | M10 | IMPLEMENTED_UNVERIFIED | Ordinary read-only native reference window and saved-plan projection implemented; candidate opt-in focused-main shortcut/interaction control is implemented, native display acceptance remains unverified. |
 | M11 | DEFERRED_WITH_REASON | No verified official Forever API capability. |
 | M12 | BLOCKED | Focused-release/source/coverage prerequisites remain unmet; local submission foundations exist, hosting is deferred. |
 
-## Wave-1 review (2026-10-13)
+## Wave-1 review (2026-10-13; resolved)
 
 The wave-1 PRs (9-22, main 8cca94d..08f6daa) had no review before merging: the
 planned review workflow failed on a spend limit. A read-only review then ran
@@ -190,32 +215,36 @@ At 08f6daa all checks passed (397 Rust tests, 56 desktop unit tests, contract,
 fixture and pointer checks; main run 38298517870 green on all seven jobs). The
 ADR 0003 frozen files were untouched and the dependency rules held.
 
-Verified findings and their state on c357bf1:
+Verified findings and their state. The "State on c357bf1" column is the original
+record; the "Resolved in code" column (added 2026-10-16, re-checked against main
+`92f3f51`) gives the current location of each fix. The blocker and all 12
+important findings are fixed in code:
 
-| Severity | Finding | State on c357bf1 |
-| --- | --- | --- |
-| Blocker | Gear: an item of unknown handedness in the off-hand slot makes a configuration Valid, Complete and definitive (`gear/configuration.rs`) | Open |
-| Blocker | Desktop: the UI sent `profile_id` while the native command expected `profileId`, so the native app never reached the Atlas screen | Fixed in wave 2 |
-| Important | Gear: `recommendation_data` publishes scores as Known while unknown attributes count as 0 | Open |
-| Important | Eligibility: unknown access, choice or sibling prerequisites are reported as Behind with a catch-up path | Open |
-| Important | Eligibility: progress NotStarted and turn-in NotReady while turned-in/completed are Unknown | Open |
-| Important | Eligibility: a reset-bound quest known turned in is Eligible with no reason | Open |
-| Important | Eligibility: `ParticipantFacts` has no DataContext, so another namespace or build can supply class and race | Open |
-| Important | Reminders: the default fingerprint repeats unchanged advice on every new export | Open |
-| Important | Reminders: a reminder shown without a trusted clock stays suppressed forever | Open |
-| Important | Sessions: the summary merge key omits DataContext, so a demo summary blocks a real one | Open |
-| Important | Sources: evidence is keyed by EvidenceId alone, so one record cannot support two records | Open |
-| Important | Coverage: cycle detection ignores eligibility and objective-state predicates | Open |
-| Important | Storage: a snapshot from a new session with an uncertain clock can never become current, and no explicit promotion exists | Open |
+| Severity | Finding | State on c357bf1 | Resolved in code |
+| --- | --- | --- | --- |
+| Blocker | Gear: an item of unknown handedness in the off-hand slot makes a configuration Valid, Complete and definitive (`gear/configuration.rs`) | Open | Fixed: `gear/configuration.rs` (`UnknownTwoHanded` check on main-hand and off-hand slots, about lines 228-241); tests in `crates/core/tests/gear_configuration.rs` |
+| Blocker | Desktop: the UI sent `profile_id` while the native command expected `profileId`, so the native app never reached the Atlas screen | Fixed in wave 2 | Fixed in wave 2 |
+| Important | Gear: `recommendation_data` publishes scores as Known while unknown attributes count as 0 | Open | Fixed: `gear/configuration.rs` `recommendation_data` (baseline score Known only when the resolution is complete and certainty is Complete) |
+| Important | Eligibility: unknown access, choice or sibling prerequisites are reported as Behind with a catch-up path | Open | Fixed: `eligibility.rs` acceptance outcome (about 806-827) yields Unknown while any component or reason is unresolved |
+| Important | Eligibility: progress NotStarted and turn-in NotReady while turned-in/completed are Unknown | Open | Fixed: `eligibility.rs` progress derivation (about 830-858) |
+| Important | Eligibility: a reset-bound quest known turned in is Eligible with no reason | Open | Fixed: `eligibility.rs` records `ResetStateUnknown` (about line 720) |
+| Important | Eligibility: `ParticipantFacts` has no DataContext, so another namespace or build can supply class and race | Open | Fixed: `ParticipantFacts.context` (`eligibility.rs:50-56`) |
+| Important | Reminders: the default fingerprint repeats unchanged advice on every new export | Open | Fixed: default `FingerprintBasis::OutcomeOnly` (`reminders.rs` about line 89) |
+| Important | Reminders: a reminder shown without a trusted clock stays suppressed forever | Open | Fixed: `reminders.rs` `cooldown_gate` (session-relative cooldown, re-arm, new-session release) |
+| Important | Sessions: the summary merge key omits DataContext, so a demo summary blocks a real one | Open | Fixed: `SessionKey = (DataContext, CharacterId, SessionId)` (`sessions.rs` about line 610) |
+| Important | Sources: evidence is keyed by EvidenceId alone, so one record cannot support two records | Open | Fixed: records keyed `(RecordKey, EvidenceId)` (`sources.rs` about line 458) |
+| Important | Coverage: cycle detection ignores eligibility and objective-state predicates | Open | Fixed: `coverage.rs` builds cycle edges from `Prerequisites` and `Eligibility` sites, including objective owners (about 840-878) |
+| Important | Storage: a snapshot from a new session with an uncertain clock can never become current, and no explicit promotion exists | Open | Fixed: `SqliteStore::promote_snapshot` (compare-and-swap, with audit) (`crates/storage/src/sqlite.rs` about line 86) |
 
 One finding was refuted (travel: final return hop readiness). 32 optional
 findings are listed in the record unverified. The review's stale-record
 findings for STATUS and README were resolved by PR 37.
 
 Status corrections from the review: M4.2, M5.2, M7.1, M3.2, M3.5 and the M2.4
-ordering rules stay IMPLEMENTED_UNVERIFIED until their findings above are fixed.
+ordering rules stay IMPLEMENTED_UNVERIFIED for live gameplay (their findings above are
+now fixed in code; only live verification remains).
 M5.1 (structure only), M5.3, M8.3 pure intervals and the M2.5 Rust corpus met
-their declared wave-1 scope, but M8.3 now has the open session-key finding. No
+their declared wave-1 scope; the M8.3 session-key finding is fixed in code. No
 wave-1 task is VERIFIED for live gameplay; M0.3 and M6.1 need the client and
 the native window.
 
