@@ -113,7 +113,25 @@ async function waitForEndpoint(timeoutMs) {
     } catch (error) { last = String(error?.cause?.code ?? error?.message ?? error); }
     await sleep(500);
   }
+  evidence.diagnostics = diagnoseCdp();
   throw new Error(`CDP endpoint 127.0.0.1:${port} did not answer within ${timeoutMs} ms (${last})`);
+}
+
+/** Best-effort facts for a failed attach; printed and stored, never used to pass. */
+function diagnoseCdp() {
+  const out = {};
+  const ps = (name, script) => {
+    if (process.platform !== "win32") return;
+    const r = spawnSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], { encoding: "utf8", timeout: 60000 });
+    out[name] = `${r.stdout ?? ""}${r.stderr ?? ""}`.trim().slice(0, 12000);
+    console.log(`--- diagnostic: ${name}\n${out[name]}`);
+  };
+  ps("processes", "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'azeroth|msedgewebview2' } | Select-Object ProcessId,ParentProcessId,Name,CommandLine | Format-List | Out-String -Width 400");
+  ps("listening_tcp", "Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Select-Object LocalAddress,LocalPort,OwningProcess | Sort-Object LocalPort | Format-Table -AutoSize | Out-String -Width 200");
+  ps("webview_folders", "Get-ChildItem -Recurse -Depth 2 -Force -ErrorAction SilentlyContinue (Join-Path $env:LOCALAPPDATA 'io.github.laymer.azeroth-navigator') | Select-Object -First 80 FullName,Length | Format-Table -AutoSize | Out-String -Width 300; Get-ChildItem -Recurse -Filter DevToolsActivePort -Force -ErrorAction SilentlyContinue $env:LOCALAPPDATA | ForEach-Object { $_.FullName; Get-Content $_.FullName }");
+  ps("webview_runtime", "Get-ItemProperty 'HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\*' -ErrorAction SilentlyContinue | Where-Object { $_.name -match 'WebView2' } | Select-Object name,pv | Format-List | Out-String");
+  ps("env", "[Environment]::GetEnvironmentVariable('WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS'); Get-Process -Name azeroth-desktop -ErrorAction SilentlyContinue | Select-Object Id,Responding,MainWindowHandle,MainWindowTitle,SessionId | Format-List | Out-String");
+  return out;
 }
 
 async function findMainPage(browser, timeoutMs) {
