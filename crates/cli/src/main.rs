@@ -15,7 +15,7 @@ use std::{
     process::ExitCode,
 };
 
-const USAGE: &str = "Unsupported command or options. Implemented: inspect-capture --input <SavedVariables-file>; doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
+const USAGE: &str = "Unsupported command or options. Implemented: local-data (inspect|plan) <options, see docs/data/LOCAL_DATA.md>; inspect-capture --input <SavedVariables-file>; doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
     inventory-report --root <repository> --input <relative-file>; \
@@ -210,6 +210,7 @@ fn pack_result(result: Result<azeroth_cli::pack::Report, &'static str>) -> ExitC
 fn main() -> ExitCode {
     let args: Vec<_> = std::env::args_os().skip(1).collect();
     match args.as_slice() {
+        [command, rest @ ..] if command == "local-data" => azeroth_cli::local_data::run(rest),
         [command, flag, input] if command == "inspect-capture" && flag == "--input" => {
             match azeroth_cli::capture::inspect_file(Path::new(input)) {
                 Ok(report) => {

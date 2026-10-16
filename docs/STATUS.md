@@ -1,10 +1,23 @@
 # Project status
 
-Plan: 1.0 plus ADRs 0001–0004. Updated: 2026-10-15.
-Current task: publish the user-requested 0.9.0 developer prerelease and provide
-`initial.md`, a detailed Claude Code continuation prompt for gated 1.0.0 delivery.
+Plan: 1.0 plus ADRs 0001–0004 and [local-data contract](../localdata.md).
+Updated: 2026-10-16. Current task: independent private local-client-data subsystem.
 Owner and sole writer: Codex `/root`; baseline main
-`cefc3cfcb38dc67231f39feeb3cb18da39bba4f2`, branch `release/v0.9.0`.
+`0e04042ec1397887df008c153aa5f0c568831e6d`, branch `feat/local-data-foundation`;
+claim `77f1bf1`. No subagents. See the
+[local-data handoff](handoffs/2026-10-16-local-data-foundation.md) and
+[implemented CLI scope](data/LOCAL_DATA.md). Standalone prompt, new workspace crate,
+pure resource/metadata contracts, bounded read-only inspection and preliminary
+planning are implemented. Archive extraction, admitted parser metadata, worker,
+decoders, desktop integration and release-contract redesign remain incomplete.
+Actual selected-installation metadata reports70425/enUS; this is not live
+acceptance or70374 content. The target remains unchanged. Private client data
+must stay outside Git/public artifacts. Existing release gates remain active.
+
+Separate outstanding task: complete verified 0.9.0 prerelease publication.
+Read-only GitHub reconciliation at the baseline found source workflow38803371318
+and Windows package38803371406 successful, CI38803371336 cancelled, latest
+published release still0.8.1. Cancellation is not a passed resulting-main gate.
 See the [0.9.0 release handoff](handoffs/2026-10-15-v0.9.0-release.md) for actual
 checks and publication state. Preparation alone is not publication; the previous
 published preview remains 0.8.1 until the verified draft is published.
@@ -14,8 +27,9 @@ record the preceding work. No final 1.0.0 acceptance is inferred from this relea
 
 The target remains Forever `1.60.1 / 70374 / interface 16001`, across all nine
 content domains. The user selected ForeverDB instead of Wowhead on 2026-10-15;
-see the [provider review](sources/foreverdb.md). ForeverDB is the preferred source
-candidate. Addon 0.34.0 was retrieved from the publisher-linked Wago release and inspected
+the new local-data direction supersedes it as an extraction dependency. ForeverDB
+is a capability/provenance reference, not an upstream dependency. See the
+[historical provider review](sources/foreverdb.md). Addon 0.34.0 was retrieved from the publisher-linked Wago release and inspected
 as inert files. It advertises GPLv3; corresponding-source/file scope and 70374
 validation are still pending. Publisher metadata currently names origin build
 70338, with separate Classic-derived and player-observed facts. The unsent

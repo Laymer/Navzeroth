@@ -6,6 +6,7 @@ members = [
     "crates/cli",
     "crates/ingest",
     "crates/lua-harness",
+    "crates/local-data",
     "crates/storage",
     "apps/desktop/src-tauri",
 ]

@@ -46,6 +46,7 @@ impl Temp {
             "azeroth-desktop",
             "azeroth-ingest",
             "azeroth-lua-harness",
+            "azeroth-local-data",
             "azeroth-storage",
         ]
         .map(|name| format!("[[package]]\nname = \"{name}\"\nversion = \"{version}\"\n"))

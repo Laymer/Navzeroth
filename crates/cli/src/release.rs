@@ -402,6 +402,7 @@ fn versions(root: &Path, version: &str, budget: &mut Budget) -> Result<()> {
         "azeroth-desktop",
         "azeroth-ingest",
         "azeroth-lua-harness",
+        "azeroth-local-data",
         "azeroth-storage",
     ]);
     let mut packages = BTreeSet::new();

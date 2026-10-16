@@ -10,4 +10,5 @@ pub mod replay;
 
 pub mod release_inventory;
 
+pub mod local_data;
 pub mod source_pipeline;

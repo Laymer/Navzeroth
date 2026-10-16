@@ -123,6 +123,10 @@ The CLI accepts `doctor`, `export-schemas`, `prepare-atlas`, `validate-fixtures`
 [`stage-questiedb`](docs/data/QUESTIEDB_STAGING.md) and bounded synthetic
 `replay --fixture <file>`. Replay format/examples/limits are documented in
 [PLANNER_REPLAY.md](docs/data/PLANNER_REPLAY.md).
+[`local-data inspect` and `local-data plan`](docs/data/LOCAL_DATA.md) provide
+read-only selected-installation metadata inspection and preliminary resource
+planning. Archive extraction and desktop local catalogs are not implemented yet;
+[localdata.md](localdata.md) records the full implementation contract.
 `cargo run --locked -p azeroth-cli -- doctor --json` reports this binary's version,
 OS/architecture, pinned development requirements and tool presence on PATH. Presence
 is not runtime-version verification, and missing development tools do not prevent
