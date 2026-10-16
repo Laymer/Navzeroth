@@ -1,0 +1,11 @@
+{
+  "source_commit": "92f3f512a68481163e3d44600e3938d07592af4e",
+  "addon_files": 21,
+  "verified_files": 5,
+  "sha256": {
+    "AzerothNavigator-0.9.1-x64-setup.exe": "874c80b5a96abb6da9aa7c27232b2354cbd2e7bf1e31d2c0e330f02d8f2848bd",
+    "AzerothNavigator-addon-0.9.1.zip": "62ef8385b9f230e7fb3b19c788b57bbfcfce3dab228eea4ce991e5aa61b3d9b6",
+    "CANDIDATE_NOTES.md": "235af868bd2160e400f65c6829d09ec56f8193d04fef7f46982823e44410dbc0",
+    "SOURCE_COMMIT.txt": "87b0db5e00784ee0a661ad524ebcb4c884c932a18f9dc01834fd3e29be544f16"
+  }
+}

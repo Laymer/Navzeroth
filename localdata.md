@@ -21,14 +21,16 @@ Use small coherent PRs. Claim one task, owner, exact baseline and isolated branc
 before implementation; one writer per task, no subagents without explicit
 authorization. Preserve unrelated changes. Record checks, limitations and the
 next concrete task in a handoff. Review merge candidates and resulting main with
-all nine required checks plus applicable source checks; cancelled/skipped jobs
+every applicable CI and source check (GitHub branch protection enforces only five; the rest are a process convention); cancelled/skipped jobs
 do not pass. Main pushes, merges and releases need applicable user authorization.
 
 Planning baseline: main `0e04042ec1397887df008c153aa5f0c568831e6d`, after PR153's
 0.9.0 preparation. Reconciliation on 2026-10-16 found latest published v0.8.1,
-baseline Windows packaging/source workflows successful and CI cancelled. Keep
-0.9.0's outstanding publication procedure separate; recheck actual release state.
-Version declarations alone do not establish release publication.
+baseline Windows packaging/source workflows successful and CI cancelled. That
+state is historical: 0.9.0 was superseded and v0.9.1 was published later the same
+day (see `docs/handoffs/2026-10-16-v0.9.1-publication.md`). Always recheck the
+actual release state with `gh release list`. Version declarations alone do not
+establish release publication.
 
 Authorized 1.0.0 target: **Forever 1.60.1 / build70374 / interface16001**.
 Planning installation metadata reports **1.60.1.70425**, product
@@ -266,7 +268,7 @@ stale fingerprints, build/policy mismatch, incomplete inventory/results and curr
 candidate failures. Hosted CI verifies binding/signatures, not private raw data.
 Historical formats retain original rules; unknown versions/modes fail closed.
 No packaging bypass flags. Update policy, candidate/final packaging/verifiers,
-runbooks and initial.md together. Keep0.9.0 procedure separate.70374 remains
+runbooks and initial.md together. Keep the historical 0.9.0 procedure separate.70374 remains
 blocked without actual private70374 inputs, complete evidence and bound acceptance.
 
 ## Sequence, tests and completion

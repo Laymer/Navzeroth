@@ -1,14 +1,16 @@
 # Full-content v1.0.0 release process
 
 This is the release contract for the authorized v1 program, starting from
-`bb3782cbac13b5fb3e6ca8196278ba7fcc427474`. The published product remains the
-[0.8.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.8.1).
-Current packaging, its verified artifacts and its acceptance limits are recorded
-in the [final preview audit](../handoffs/2026-10-14-final-program-audit.md).
+`bb3782cbac13b5fb3e6ca8196278ba7fcc427474`. The latest published product is the
+[0.9.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)
+(receipt: [0.9.1 publication record](../handoffs/2026-10-16-v0.9.1-publication.md)).
+Determine the latest published tag with `gh release list` rather than trusting this
+sentence. Packaging of the 0.8.1 baseline and its acceptance limits are recorded in
+the [final preview audit](../handoffs/2026-10-14-final-program-audit.md).
 
 The target is Windows desktop support and all enumerated content available in
 **Forever 1.60.1.70374**. The user's 2026-10-14 Windows 11 report identifies that
-build/interface 16001 and addon 0.8.1 diagnostics without errors while out of combat.
+build/interface 16001 and addon 0.8.1 diagnostics (a historical report) without errors while out of combat.
 Exact installed source and the remaining real acceptance are unverified. Bind every
 acceptance run to the actual client and installed source. Neither the older 70338 reports nor the historical
 70205 atlas establishes 70374 compatibility. Keep application, exchange schema,
@@ -24,7 +26,7 @@ is needed for work already authorized here.
 The coordinator owns the canonical contract under `release/v1/`: `README.md`,
 `coverage-inventory.json` and `acceptance-evidence.json`. Current source includes
 these contracts and CLI/Windows/workflow enforcement in separate reviewed tasks.
-The published 0.8.1 baseline does not include that enforcement. Incomplete real
+The 0.8.1 baseline did not include that enforcement; 0.9.x releases do. Incomplete real
 inventory/evidence and the remaining delivery contracts still block stable output.
 
 The inventory must enumerate quest, equipment, acquisition, geography, directed
@@ -70,7 +72,7 @@ review. Shared interfaces have one writer. After each batch, reconcile protected
 main, re-audit every implementation-plan task and continue independent work while
 external checks remain unavailable.
 
-Run affected checks for each PR and all nine required checks on the exact merge
+Run affected checks for each PR and every CI check on the exact merge
 candidate: Rust format, Rust Linux, Rust Windows, Lua static checks, pnpm Linux,
 pnpm Windows, Desktop shell Windows, Mocked desktop Chromium, and Windows installer
 and addon package. Reconcile normally and rerun affected checks after conflicts.
@@ -102,9 +104,11 @@ Current enforcement deliberately blocks stable output while validated offline
 content, license/attribution and corresponding-source delivery are unimplemented.
 The existing five-file package cannot satisfy that requirement merely by filling
 the evidence manifest. Three mandatory domains (dungeons, class/role models and
-party coverage) also lack validated pack record bindings. These are explicit
-implementation prerequisites in addition to missing content rights and real
-acceptance. Current preview allowance is never a stable-readiness result.
+party coverage) have binding support through the v2 pack path
+(`content_v2/records.rs`, `crates/cli/src/release.rs`), but no validated pack
+supplies those records, and the CLI still blocks their absence (it never turns an
+absent contract into a pass). Supplying real, validated packs is an explicit
+prerequisite in addition to missing content rights and real acceptance. Current preview allowance is never a stable-readiness result.
 
 ## Candidate, tag and publication
 

@@ -122,12 +122,14 @@ source IDs must match the union of sources cited by the datasets supplying its
 records. Every pack registry source must be accepted at exactly its pinned revision,
 and the union of shipped registry sources must equal the accepted inventory.
 
-Current reference datasets have no complete class/role, party-scenario or dungeon
-preparation record contract. The CLI explicitly blocks those mandatory domains;
+No validated pack yet supplies class/role, party-scenario or dungeon preparation
+records, although the v2 pack path (`crates/core/src/content_v2/records.rs`,
+`crates/cli/src/release.rs`) can now bind them. The CLI explicitly blocks those
+mandatory domains when they are absent;
 a dungeon acquisition row is insufficient to stand in for a verified dungeon
-package. Future binding support requires actual existing/approved contracts and
-representative tests, never invented models. Passing pure declaration tests does
-not imply the full CLI can accept these missing formats.
+package. Real binding requires actual existing/approved contracts and representative
+tests, never invented models. Passing pure declaration tests does not imply the
+full CLI can accept records that no validated pack provides.
 
 The [release material delivery boundary](../../docs/releases/RELEASE_MATERIALS.md)
 selects verified pack closures and declared raw source/license/attribution files,
@@ -156,8 +158,8 @@ replacement is outside this local release workflow.
 `release-readiness` emits JSON; exit 0 means publication is allowed for the supplied
 version, exit 1 means a failed gate or invalid input, and exit 2 means invalid CLI
 options. For previews, `stable_ready=false` and the blocker list remain visible even
-when publication is allowed. The six source declarations and seven internal
-Cargo.lock versions must match the requested version. Stable packaging calls the
+when publication is allowed. The six source declarations and eight internal
+`azeroth-*` Cargo.lock versions must match the requested version. Stable packaging calls the
 gate before touching output files, including with `-AddonOnly` or `-AllowDirty`.
 It rejects ignored/untracked addon inputs and symlink/reparse entries because the
 ZIP and installer recursively package that directory; an ignored file cannot

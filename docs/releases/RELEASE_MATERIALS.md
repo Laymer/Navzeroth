@@ -1,13 +1,14 @@
 # Verified release materials
 
 The release-only material manifest is separate from the version-1 exchange,
-source registry and content-pack contracts. It does not accept a source or
+source registry and content-pack contracts. `<version>` below is the version being
+prepared (for example `0.9.1`). It does not accept a source or
 establish live gameplay or Windows acceptance. Current inventory and evidence
 still block stable publication.
 
 ```sh
-cargo run --locked -p azeroth-cli -- release-materials --root . --version 0.8.1
-cargo run --locked -p azeroth-cli -- release-materials --root . --version 0.8.1 --output /existing/parent/new-material-directory
+cargo run --locked -p azeroth-cli -- release-materials --root . --version <version>
+cargo run --locked -p azeroth-cli -- release-materials --root . --version <version> --output /existing/parent/new-material-directory
 ```
 
 The first command emits a deterministic JSON plan without writing files. The
@@ -73,7 +74,7 @@ file layout and addon-only use without Cargo. They do not acquire playable data
 or a stable-readiness claim. A nonempty selection requires the locked Rust CLI.
 
 ```powershell
-./scripts/windows/Verify-ReleaseArtifacts.ps1 -Version 0.8.1 -Directory dist/windows
+./scripts/windows/Verify-ReleaseArtifacts.ps1 -Version <version> -Directory dist/windows
 ```
 
 Use `-AddonOnly` when verifying an addon-only package. The verifier recomputes the
@@ -85,7 +86,8 @@ checksums cannot hide a changed material payload. It runs after packaging and
 again against downloaded artifacts before creating a tag draft.
 
 This delivery support replaces the temporary generic “asset delivery is not
-implemented” blocker. Actual mandatory coverage, source permissions, missing
-class/role/party/dungeon contracts and recorded client/Windows acceptance still
+implemented” blocker. Actual mandatory coverage, source permissions, absent
+class/role/party/dungeon pack records (the v2 pack path can bind them, but no
+validated pack provides them) and recorded client/Windows acceptance still
 block stable readiness. No upstream source or raw dataset is accepted by this
 implementation or its synthetic transport tests.

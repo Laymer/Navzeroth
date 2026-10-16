@@ -25,11 +25,15 @@
 //!   snapshot ID, truth and the sorted evaluation reasons) is recorded when an
 //!   item is presented; an equal fingerprint is not presented again, even after
 //!   the cooldown. A definite `False` clears the fingerprint so a later `True`
-//!   is new. No hash is used, so persisted fingerprints are stable.
-//! - Cooldown. `cooldown_ms` blocks re-presentation until it has elapsed on a
-//!   trusted clock. An untrusted or missing clock, a clock that went backwards
-//!   and a record made without a trusted clock all block (conservative).
-//!   A zero cooldown never depends on the clock.
+//!   is new. No hash is used, so persisted fingerprints are stable. The default
+//!   basis is `OutcomeOnly` (the fingerprint excludes the snapshot ID), so a new
+//!   export with unchanged advice is not repeated.
+//! - Cooldown. `cooldown_ms` blocks re-presentation until it has elapsed, measured
+//!   on a trusted UTC clock or, failing that, on the same session's relative
+//!   clock. When neither can be measured the reminder is held as
+//!   `CooldownUnverifiable`, except that a record without a fingerprint (re-armed)
+//!   or one shown in a different session is released rather than suppressed
+//!   forever. A zero cooldown never depends on the clock.
 //! - Dismissal. `Session` applies while the session ID is unchanged,
 //!   `UntilRulesetChanges` while the ruleset revision is unchanged and
 //!   `Permanent` always. A dismissal stays in force unless the new session or
