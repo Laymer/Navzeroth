@@ -375,9 +375,9 @@ async function smoke(page, response) {
     const result = page.getByRole("region", { name: "Planning result" });
     await result.waitFor({ timeout: 60000 });
     const resultText = (await result.innerText()).trim();
-    await page.getByRole("button", { name: "Inspect route", exact: true }).click();
+    await activate(page.getByRole("button", { name: "Inspect route", exact: true }), "inspect_plan_route");
     await page.getByRole("region", { name: "Route inspection", exact: true }).waitFor({ timeout: 30000 });
-    await page.getByRole("button", { name: "Export plan", exact: true }).click();
+    await activate(page.getByRole("button", { name: "Export plan", exact: true }), "export_plan");
     const text = await page.getByLabel("Plan export text").inputValue();
     if (!text.startsWith("ANAV1:")) throw new Error(`Export does not start with ANAV1: ${text.slice(0, 20)}`);
     return { activation, planning_result: resultText.slice(0, 300), export_bytes: text.length, alerts: await alertTexts(page) };
