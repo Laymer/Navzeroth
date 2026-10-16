@@ -1,6 +1,7 @@
 // Native WebView2 smoke for the installed Azeroth Navigator (task G2b).
 //
-// Launches the installed executable with a WebView2 remote debugging port and attaches
+// Launches the installed executable with a WebView2 remote debugging port (via the documented
+// AdditionalBrowserArguments policy) and attaches
 // Playwright over CDP. This observes the real UI under Tauri's actual CSP over real IPC.
 // It is hosted-runner REGRESSION EVIDENCE ONLY: it cannot satisfy any WIN-* acceptance row
 // (release/v1/README.md). It never touches the game, adds no socket bridge to the addon,
@@ -15,7 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
-  verifyAgainstSums, cspFromHeaders, parseCsp, Recorder,
+  verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -86,12 +87,25 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let child = null;
 let childExit = null;
 
+// Spike result (G2b run 38949898107): WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS is ignored by this app on
+// the hosted runner (Tauri sets browser arguments through the API); the documented
+// Edge\WebView2\AdditionalBrowserArguments machine policy for this exe name is honoured.
+// This changes only the ephemeral runner, is removed in `finally`, and never touches the game.
+function setDebugPolicy() {
+  if (process.platform !== "win32") return;
+  const exeName = args.exe.split(/[\\/]/).pop();
+  const r = spawnSync("reg", policyAddArgs(exeName, port), { encoding: "utf8" });
+  if (r.status !== 0) throw new Error(`Could not write the WebView2 debugging policy (administrator required): ${r.stdout}${r.stderr}`);
+  evidence.debug_policy = { key: "Edge\\WebView2\\AdditionalBrowserArguments", value_name: exeName, port };
+}
+
+function clearDebugPolicy() {
+  if (process.platform === "win32") spawnSync("reg", policyDeleteArgs(), { encoding: "utf8" });
+}
+
 function launch() {
-  child = spawn(args.exe, [], {
-    env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${port} --remote-allow-origins=*` },
-    stdio: "ignore",
-    windowsHide: false,
-  });
+  setDebugPolicy();
+  child = spawn(args.exe, [], { stdio: "ignore", windowsHide: false });
   child.on("exit", (code, signal) => { childExit = { code, signal }; });
 }
 
@@ -186,7 +200,7 @@ async function stageAndActivate(page) {
 async function run() {
   launch();
   const version = await waitForEndpoint(90000);
-  evidence.cdp = { browser: version.Browser, protocol: version["Protocol-Version"], attach: "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS remote-debugging-port + playwright connectOverCDP" };
+  evidence.cdp = { browser: version.Browser, protocol: version["Protocol-Version"], attach: "WebView2 AdditionalBrowserArguments machine policy (remote-debugging-port) + playwright connectOverCDP" };
   rec.add("attach over CDP (WebView2 remote debugging)", "passed", evidence.cdp);
   const browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`);
   try {
@@ -352,6 +366,7 @@ try {
   rec.add("native smoke run", "failed", { error: String(error?.stack ?? error) });
 } finally {
   killTree();
+  clearDebugPolicy();
   await sleep(1500);
   if (args.db && existsSync(args.db)) {
     await rec.run("database schema_migrations summary after run", async () => {

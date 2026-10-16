@@ -173,17 +173,6 @@ jobs:
           if (-not (Test-Path -LiteralPath (Join-Path $data 'snapshots.sqlite3'))) { throw 'Silent uninstall removed user data' }
           if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent uninstall removed the game addon' }
           "user data and existing addon kept: $data"
-      - name: Spike - WebView2 remote debugging launch variants (diagnostic only)
-        shell: pwsh
-        continue-on-error: true
-        run: |
-          . ./scripts/windows/Native-Smoke-Helpers.ps1
-          $setup = Get-NativeSmokeSetup -Directory dist/windows
-          $installDir = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
-          Stop-NativeSmokeProcesses
-          Install-NativeSmokeSetup -SetupPath $setup.FullName
-          try { ./scripts/windows/Probe-WebView2Cdp.ps1 -Executable (Join-Path $installDir 'azeroth-desktop.exe') -DataDirectory (Join-Path $env:APPDATA 'io.github.laymer.azeroth-navigator') }
-          finally { Stop-NativeSmokeProcesses; Uninstall-NativeSmokeApp -InstallDirectory $installDir }
       - name: Native WebView2 smoke over CDP (regression evidence only, not WIN-* acceptance)
         shell: pwsh
         run: |

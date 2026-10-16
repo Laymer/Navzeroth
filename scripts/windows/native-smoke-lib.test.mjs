@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   SCREEN_LABELS, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, compareVersions, classifyUpgrade, cspFromHeaders, parseCsp, Recorder,
+  debugPolicyValue, policyAddArgs, policyDeleteArgs, WEBVIEW2_POLICY_KEY,
 } from "./native-smoke-lib.mjs";
 
 const H = "a".repeat(64);
@@ -70,4 +71,16 @@ test("Recorder keeps failed and skipped distinct from passed", async () => {
   assert.deepEqual(r.summary(), { passed: 1, failed: 1, skipped: 1, ok: false });
   assert.equal(r.steps[1].error, "boom");
   assert.throws(() => r.add("x", "maybe"), /Bad status/);
+});
+
+test("debugging policy arguments are bounded and target one exe name", () => {
+  assert.equal(debugPolicyValue(9222), "--remote-debugging-port=9222 --remote-allow-origins=*");
+  assert.throws(() => debugPolicyValue(80), /Bad debugging port/);
+  assert.throws(() => debugPolicyValue(99999), /Bad debugging port/);
+  assert.throws(() => debugPolicyValue("9222"), /Bad debugging port/);
+  const add = policyAddArgs("azeroth-desktop.exe", 9223);
+  assert.deepEqual(add.slice(0, 4), ["add", WEBVIEW2_POLICY_KEY, "/v", "azeroth-desktop.exe"]);
+  assert.ok(add.includes("--remote-debugging-port=9223 --remote-allow-origins=*"));
+  assert.deepEqual(policyDeleteArgs(), ["delete", WEBVIEW2_POLICY_KEY, "/f"]);
+  assert.match(WEBVIEW2_POLICY_KEY, /^HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\\WebView2\\AdditionalBrowserArguments$/);
 });

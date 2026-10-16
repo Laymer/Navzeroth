@@ -120,3 +120,20 @@ export class Recorder {
     return { passed: count("passed"), failed: count("failed"), skipped: count("skipped"), ok: count("failed") === 0 };
   }
 }
+
+/** Registry location of the documented WebView2 AdditionalBrowserArguments policy. */
+export const WEBVIEW2_POLICY_KEY = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\\WebView2\\AdditionalBrowserArguments";
+
+/** Arguments for one exe name. The WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS variable is ignored by this app (spike, G2b). */
+export function debugPolicyValue(port) {
+  if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error(`Bad debugging port ${port}`);
+  return `--remote-debugging-port=${port} --remote-allow-origins=*`;
+}
+
+export function policyAddArgs(exeName, port) {
+  return ["add", WEBVIEW2_POLICY_KEY, "/v", exeName, "/t", "REG_SZ", "/d", debugPolicyValue(port), "/f"];
+}
+
+export function policyDeleteArgs() {
+  return ["delete", WEBVIEW2_POLICY_KEY, "/f"];
+}
