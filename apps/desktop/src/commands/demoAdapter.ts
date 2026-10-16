@@ -128,6 +128,12 @@ export const demoAdapter: CommandAdapter = {
         case "get_active_content":
           return null;
         case "preview_diagnostics":
+        case "select_local_installation":
+        case "preview_local_data":
+        case "start_local_data":
+        case "get_local_data_job":
+        case "cancel_local_data_job":
+        case "get_local_data_inventory":
         case "export_diagnostics":
         case "preview_acquisition_route":
         case "assess_route_acquisition":

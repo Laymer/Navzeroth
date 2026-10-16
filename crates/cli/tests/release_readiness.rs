@@ -46,6 +46,7 @@ impl Temp {
             "azeroth-desktop",
             "azeroth-ingest",
             "azeroth-lua-harness",
+            "azeroth-local-data",
             "azeroth-storage",
         ]
         .map(|name| format!("[[package]]\nname = \"{name}\"\nversion = \"{version}\"\n"))
@@ -167,6 +168,27 @@ fn exact_tested_ancestor_survives_doc_only_commit_but_not_product_changes() {
     let changed = report(&temp.options("1.0.0")).unwrap();
     assert!(blocked(&changed, "Tested source"));
     assert_ne!(changed.production_sha256, initial.production_sha256);
+}
+
+#[test]
+fn explicit_delivery_policy_is_fingerprinted_and_unknown_modes_never_bypass_gates() {
+    let temp = Temp::new("0.8.1");
+    let before = report(&temp.options("0.8.1")).unwrap();
+    let mut policy = json!({"format_version":1,"delivery_mode":"bundled_content","target":{"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001},"trusted_signers":{}});
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    let bundled = report(&temp.options("0.8.1")).unwrap();
+    assert_ne!(before.production_sha256, bundled.production_sha256);
+    policy["delivery_mode"] = json!("local_catalog");
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    let local = report(&temp.options("0.8.1")).unwrap();
+    assert!(blocked(&local, "Local-catalog delivery requires"));
+    assert!(!local.readiness.stable_ready);
+    policy["delivery_mode"] = json!("unknown");
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    assert!(report(&temp.options("0.8.1")).is_err());
 }
 #[test]
 fn untracked_product_and_staged_product_are_blockers() {

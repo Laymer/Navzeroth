@@ -402,6 +402,7 @@ fn versions(root: &Path, version: &str, budget: &mut Budget) -> Result<()> {
         "azeroth-desktop",
         "azeroth-ingest",
         "azeroth-lua-harness",
+        "azeroth-local-data",
         "azeroth-storage",
     ]);
     let mut packages = BTreeSet::new();
@@ -917,6 +918,15 @@ pub fn report(options: &Options) -> Result<Report> {
         },
     )?;
     let status = production_status(&root)?;
+    // Historical repositories without a delivery policy retain their original
+    // bundled rules. An explicit policy is strict and production-fingerprinted.
+    if root.join("config/release-delivery-v1.json").exists() {
+        let bytes = budget.read(&root.join("config/release-delivery-v1.json"), 128 * 1024)?;
+        let policy = azeroth_local_data::receipts::policy(&bytes)?;
+        if policy.delivery_mode == azeroth_core::local_data_release::DeliveryMode::LocalCatalog {
+            readiness.block("Local-catalog delivery requires private inventory, receipt and packaging integration; unavailable in this release-policy version");
+        }
+    }
     if !status.is_empty() {
         readiness.block("Production working tree contains tracked or untracked changes");
     }

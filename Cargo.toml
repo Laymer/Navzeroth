@@ -1,11 +1,13 @@
 [workspace]
 resolver = "3"
+exclude = ["vendor/wowdbdefs-rs"]
 members = [
     "crates/app",
     "crates/core",
     "crates/cli",
     "crates/ingest",
     "crates/lua-harness",
+    "crates/local-data",
     "crates/storage",
     "apps/desktop/src-tauri",
 ]

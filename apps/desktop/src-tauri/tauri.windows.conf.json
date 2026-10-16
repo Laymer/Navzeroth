@@ -2,7 +2,9 @@
   "$schema": "https://schema.tauri.app/config/2",
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
+    "targets": [
+      "nsis"
+    ],
     "publisher": "Igor K",
     "copyright": "Copyright (c) 2026, Igor K",
     "license": "BSD-3-Clause",
@@ -13,11 +15,22 @@
     "longDescription": "Desktop companion for World of Warcraft Forever: imported snapshots, atlas and planning. Works offline; never reads game memory.",
     "resources": {
       "../../../addons/AzerothNavigator/": "addon/AzerothNavigator/",
-      "../../../scripts/windows/Install-AzerothNavigatorAddon.ps1": "addon/Install-AzerothNavigatorAddon.ps1"
+      "../../../scripts/windows/Install-AzerothNavigatorAddon.ps1": "addon/Install-AzerothNavigatorAddon.ps1",
+      "../../../crates/local-data/THIRD_PARTY.md": "local-data-notices/THIRD_PARTY.md",
+      "../../../crates/local-data/vendor/casclib/LICENSE": "local-data-notices/CASCLIB-LICENSE.txt",
+      "../../../crates/local-data/vendor/casclib/src/zlib/zlib.h": "local-data-notices/ZLIB-LICENSE-AND-HEADER.txt",
+      "../../../crates/local-data/vendor/casclib/src/hashes/md5.cpp": "local-data-notices/MD5-NOTICE-AND-SOURCE.txt",
+      "../../../crates/local-data/vendor/wowdbdefs/LICENSE.md": "local-data-notices/WOWDBDEFS-LICENSE.md",
+      "../../../vendor/wowdbdefs-rs/LICENSE-MIT": "local-data-notices/WOWDBDEFS-RS-LICENSE-MIT.txt",
+      "../../../vendor/wowdbdefs-rs/LICENSE-APACHE": "local-data-notices/WOWDBDEFS-RS-LICENSE-APACHE.txt",
+      "../../../crates/local-data/notices/": "local-data-notices/"
     },
     "windows": {
       "allowDowngrades": false,
-      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": true },
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      },
       "nsis": {
         "installMode": "currentUser",
         "installerHooks": "windows/installer-hooks.nsh",

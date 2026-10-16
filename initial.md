@@ -6,6 +6,19 @@ success condition is a verified, published 1.0.0 release; if a prerequisite cann
 be established, leave the preview published and report the exact unresolved gate.
 Do not manufacture evidence to make the plan appear complete.
 
+## Current local-data continuation (2026-10-16)
+
+Read [localdata.md](localdata.md) alongside this prompt. The user now requires
+independent installed-client extraction and private local catalogs, with a
+separately reviewed `local_catalog` delivery contract. ForeverDB is a capability
+reference, not an extraction dependency. The local-data prompt supersedes older
+source/delivery choices where they differ; the existing release gates remain
+enforced until the versioned replacement is implemented and reviewed. Preserve
+the complete nine-domain independently evidenced inventory and actual acceptance
+requirements. 70425 development extraction cannot satisfy the 70374 release target.
+See [actual implementation scope](docs/data/LOCAL_EXTRACTION.md) and the latest handoff.
+0.9.0 preparation is still not publication; verify actual release state.
+
 ---
 
 You are taking over Navzeroth (Azeroth Navigator), a Rust domain/services,

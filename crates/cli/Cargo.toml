@@ -13,6 +13,7 @@ azeroth-core = { path = "../core" }
 azeroth-app = { path = "../app" }
 azeroth-storage = { path = "../storage" }
 azeroth-ingest = { path = "../ingest" }
+azeroth-local-data = { path = "../local-data" }
 # Image decoding and hashing live here, never in core (plan section 4.3).
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
 serde = { version = "1", features = ["derive"] }
