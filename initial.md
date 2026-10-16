@@ -16,7 +16,7 @@ source/delivery choices where they differ; the existing release gates remain
 enforced until the versioned replacement is implemented and reviewed. Preserve
 the complete nine-domain independently evidenced inventory and actual acceptance
 requirements. 70425 development extraction cannot satisfy the 70374 release target.
-See [actual implementation scope](docs/data/LOCAL_DATA.md) and the latest handoff.
+See [actual implementation scope](docs/data/LOCAL_EXTRACTION.md) and the latest handoff.
 0.9.0 preparation is still not publication; verify actual release state.
 
 ---

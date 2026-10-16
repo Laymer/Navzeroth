@@ -93,7 +93,7 @@ fn preliminary_plan_refuses_related_destinations_and_preserves_unknown_estimates
     assert!(!result.activation_automatic);
     assert_eq!(result.actual_workers, 0);
     assert_eq!(result.required_storage_bytes, None);
-    assert_eq!(result.available_storage_bytes, None);
+    assert!(result.available_storage_bytes.is_some());
     assert_eq!(result.limits.workers, 1);
     assert!(!result.blockers.is_empty());
     assert_eq!(fs::read_dir(destination).unwrap().count(), 0);

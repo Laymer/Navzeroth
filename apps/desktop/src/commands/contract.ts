@@ -273,6 +273,12 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  select_local_installation:{input:undefined;output:import("./localData").LocalInstallation|null};
+  preview_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataPlan};
+  start_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataJob};
+  get_local_data_job:{input:{job_id:string};output:import("./localData").LocalDataJob};
+  cancel_local_data_job:{input:{job_id:string};output:import("./localData").LocalDataJob};
+  get_local_data_inventory:{input:{revision:string;offset:number;limit:number};output:import("./localData").LocalDataInventoryPage};
   toggle_reference_window: {input:{always_on_top:boolean;interaction_mode:import("./reference").InteractionMode};output:import("./reference").ReferenceControlReceipt};
   set_reference_interaction: {input:{interaction_mode:import("./reference").InteractionMode};output:import("./reference").ReferenceControlReceipt};
   list_local_submissions: { input: { after: string | null; limit: number }; output: import("./localSubmissions").SubmissionPage };

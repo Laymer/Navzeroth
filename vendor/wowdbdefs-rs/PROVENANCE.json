@@ -1,0 +1,61 @@
+{
+  "crate": "wowdbdefs-rs",
+  "version": "0.1.0",
+  "local_patch": "navzeroth-dbd-v1",
+  "changes": "Widen builds to u32; retain EOF layout and every build/layout list element; parse mixed build ranges; exclude upstream fixture-only tests from workspace ownership; suppress unrelated const lint",
+  "files": [
+    {
+      "path": "Cargo.toml",
+      "sha256": "34f6701e01bccebecdd2625dd25fe33ee67d80a27a6d9dc88146e80747c1367e"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "sha256": "4aa06cef7707edf26cceed00c567f45597e780d44e8ed9198de4f6c91882b767"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "sha256": "6d8cffe77f7525ace5fe58b7bd38cd85c7aab3bc2b5f9132a5d99c23dd70cbbb"
+    },
+    {
+      "path": "README.md",
+      "sha256": "91490715416459c6771d259a9ebb32cd3074fa7977df799cc44855bedde60977"
+    },
+    {
+      "path": "src/error.rs",
+      "sha256": "12014eec46f368d91071b9acc7f23d52ac3d02ddceb96e2e2f424aa1c0ffdb15"
+    },
+    {
+      "path": "src/lib.rs",
+      "sha256": "d23b5dac422f05fd7566a1ba4cea4495fc1d63eb57683ecdd0c0e6ce57eb1c27"
+    },
+    {
+      "path": "src/parser.rs",
+      "sha256": "a204444947eb44f5a8373222c8feb85ac75a41fcfe25b068ec8657b0ae0aec98"
+    },
+    {
+      "path": "src/types.rs",
+      "sha256": "4402a099d066dfbbd479ca61adf06fa8596718e4518ee95f21354338813286d0"
+    },
+    {
+      "path": "src/write_to_file.rs",
+      "sha256": "4feb82c808a36c2c43ceb1c59c0e48e426839354699ff3cd689b07b6633fe836"
+    },
+    {
+      "path": "src/writer.rs",
+      "sha256": "22af9eb736a22687c3bbb125933e105a201d2641d99247e1c3b69ac119ade823"
+    },
+    {
+      "path": "upstream/Cargo.toml.original",
+      "sha256": "9d80987ac9d389d632d5b2694fab7db9acba060c8afc7ef734812cc70db4a4ef"
+    },
+    {
+      "path": "upstream/parser.rs.original",
+      "sha256": "15085f02bc1761e4f9a2e324e03236058db57d789d0e17d1bb8aecbc9112fdba"
+    },
+    {
+      "path": "upstream/types.rs.original",
+      "sha256": "979579cc9182c04c7de69ec7d392cfe734e979f28eaee4caf281dda18f5852a8"
+    }
+  ],
+  "original_crate_sha256": "c02f4fb54bda9c36549f2aba12db90f345ca84c69ebf253e4fe3b9fa9340a93c"
+}

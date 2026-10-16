@@ -12,6 +12,7 @@ pub mod content;
 pub mod content_dispositions;
 pub mod dungeon_preparation;
 pub mod gear;
+pub mod local_data;
 pub mod party;
 pub mod plan_export;
 pub mod planning;

@@ -3,13 +3,17 @@
 Plan: 1.0 plus ADRs 0001–0004 and [local-data contract](../localdata.md).
 Updated: 2026-10-16. Current task: independent private local-client-data subsystem.
 Owner and sole writer: Codex `/root`; baseline main
-`0e04042ec1397887df008c153aa5f0c568831e6d`, branch `feat/local-data-foundation`;
-claim `77f1bf1`. No subagents. See the
-[local-data handoff](handoffs/2026-10-16-local-data-foundation.md) and
-[implemented CLI scope](data/LOCAL_DATA.md). Standalone prompt, new workspace crate,
-pure resource/metadata contracts, bounded read-only inspection and preliminary
-planning are implemented. Archive extraction, admitted parser metadata, worker,
-decoders, desktop integration and release-contract redesign remain incomplete.
+`789f39272dc00c3f72ec6881a4a69fc1383a1948`, continuation branch
+`feat/local-data-extraction`, claim `96a29d0`. No subagents. See the
+[extraction handoff](handoffs/2026-10-16-local-data-extraction.md) and
+[implemented workflow](data/LOCAL_EXTRACTION.md). Retained pinned native/parser
+sources and metadata, static offline archive access, isolated resource-limited
+self-worker, bounded WDC research readers, private content-addressed catalogs,
+CLI extraction/verification/coverage and desktop inventory flow are implemented.
+Canonical signed-receipt primitives and delivery-policy contracts exist; full
+private-inventory release integration remains blocked. Cache/media/tooltip and
+gameplay projection work remains, together with durable settings/checkpoints,
+installer choices and opt-in update detection. No complete extractor/release claim.
 Actual selected-installation metadata reports70425/enUS; this is not live
 acceptance or70374 content. The target remains unchanged. Private client data
 must stay outside Git/public artifacts. Existing release gates remain active.

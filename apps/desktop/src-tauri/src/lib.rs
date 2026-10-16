@@ -18,6 +18,79 @@ use azeroth_core::{
 use std::sync::Arc;
 use tauri::{Manager, State};
 type Application = Arc<azeroth_app::recovery::DatabaseHost>;
+type LocalData = Arc<azeroth_app::local_data::LocalDataService>;
+async fn local_data_blocking<T: Send + 'static>(
+    state: State<'_, LocalData>,
+    call: impl FnOnce(LocalData) -> Result<T, AppError> + Send + 'static,
+) -> Result<T, AppError> {
+    let service = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || call(service))
+        .await
+        .map_err(|_| {
+            AppError::new(
+                ErrorCode::ProviderUnavailable,
+                "Local data worker unavailable",
+                false,
+            )
+        })?
+}
+#[tauri::command]
+async fn select_local_installation(
+    state: State<'_, LocalData>,
+) -> Result<Option<azeroth_app::local_data::SelectionView>, AppError> {
+    local_data_blocking(state, |service| {
+        match rfd::FileDialog::new()
+            .set_title("Select World of Warcraft installation")
+            .pick_folder()
+        {
+            Some(path) => service.select(&path).map(Some),
+            None => Ok(None),
+        }
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn preview_local_data(
+    state: State<'_, LocalData>,
+    selection_id: String,
+    preset: azeroth_core::local_data::PerformancePreset,
+) -> Result<azeroth_local_data::ExtractionPlan, AppError> {
+    local_data_blocking(state, move |service| service.preview(&selection_id, preset)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn start_local_data(
+    state: State<'_, LocalData>,
+    selection_id: String,
+    preset: azeroth_core::local_data::PerformancePreset,
+) -> Result<azeroth_app::local_data::JobView, AppError> {
+    local_data_blocking(state, move |service| service.start(&selection_id, preset)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_data_job(
+    state: State<'_, LocalData>,
+    job_id: String,
+) -> Result<azeroth_app::local_data::JobView, AppError> {
+    local_data_blocking(state, move |service| service.status(&job_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn cancel_local_data_job(
+    state: State<'_, LocalData>,
+    job_id: String,
+) -> Result<azeroth_app::local_data::JobView, AppError> {
+    local_data_blocking(state, move |service| service.cancel(&job_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_data_inventory(
+    state: State<'_, LocalData>,
+    revision: String,
+    offset: u32,
+    limit: u32,
+) -> Result<azeroth_app::local_data::InventoryPage, AppError> {
+    local_data_blocking(state, move |service| {
+        service.inventory(&revision, offset, limit)
+    })
+    .await
+}
 async fn blocking<T: Send + 'static>(
     state: State<'_, Application>,
     call: impl FnOnce(&SnapshotApplication) -> Result<T, AppError> + Send + 'static,
@@ -710,6 +783,9 @@ pub fn run() {
             let database = directory.join("snapshots.sqlite3");
             let service = azeroth_app::recovery::DatabaseHost::start(&database);
             app.manage(service);
+            app.manage(Arc::new(azeroth_app::local_data::LocalDataService::new(
+                directory.join("local-data-v1"),
+            )));
             Ok(())
         })
         .register_uri_scheme_protocol(atlas_protocol::SCHEME, |ctx, request| {
@@ -725,6 +801,12 @@ pub fn run() {
         .manage(reference_window::Controller::default())
         .invoke_handler({
             let generated: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+                select_local_installation,
+                preview_local_data,
+                start_local_data,
+                get_local_data_job,
+                cancel_local_data_job,
+                get_local_data_inventory,
                 list_local_submissions,
                 submit_local_observation,
                 change_local_submission,

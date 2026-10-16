@@ -1,4 +1,7 @@
-# Private local client data
+# Private local client data — historical foundation scope
+
+For the current implemented workflow, read [local archive extraction](LOCAL_EXTRACTION.md).
+The following records the initial foundation before archive access was added.
 
 The standalone [implementation prompt](../../localdata.md) defines the complete
 intended subsystem. This first implementation supports read-only installation

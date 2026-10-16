@@ -1,0 +1,367 @@
+{
+  "repository": "https://github.com/ladislav-zezula/CascLib",
+  "revision": "38a34665624b8775bb875274b36191b21c38d97b",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 6544,
+      "sha256": "f2738382d6f3961f44bd8814b96bbdf42db143ee8c1c11f19b25d4b4615dfdb0"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1101,
+      "sha256": "2bcedca5b74c03ddd6492990bc18261cb749c40e85c89b4e54fc3f98cdb6b6bf"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2711,
+      "sha256": "b0e6af7772a57a9561342da91fbef60dfc3f74668fc0ec8c88c76a3ba88865d8"
+    },
+    {
+      "path": "src/CascCommon.h",
+      "bytes": 26513,
+      "sha256": "340b4a6bc530565efe52df6cf53099fc06dbd4913cd886e0b4c9a46c756c1713"
+    },
+    {
+      "path": "src/CascDecompress.cpp",
+      "bytes": 2025,
+      "sha256": "ddcdf77a3d9a052fae185b687f32b3ac8b9865c55e5de6a75e86de60c9a4a65f"
+    },
+    {
+      "path": "src/CascDecrypt.cpp",
+      "bytes": 98218,
+      "sha256": "3ae0fb3f947912d4b31b6008fcd3087c84dbdf1105ec733f626c28bd3a98f632"
+    },
+    {
+      "path": "src/CascDumpData.cpp",
+      "bytes": 19853,
+      "sha256": "e5392a403ddb045fbb07bcf8c05b73c84bda32a66ceb06769d05c71ee2919da8"
+    },
+    {
+      "path": "src/CascFiles.cpp",
+      "bytes": 66047,
+      "sha256": "4464da5d9b7325e1ab7c3957f5a32cd5fa74c1d539ac4f02a498032c4f46658b"
+    },
+    {
+      "path": "src/CascFindFile.cpp",
+      "bytes": 8397,
+      "sha256": "8daef5e206c8e9bc5a5e6c3ac8d30f12fdcc1fbcac0cd5986af4b7b8b91a859c"
+    },
+    {
+      "path": "src/CascIndexFiles.cpp",
+      "bytes": 29946,
+      "sha256": "dd80cc09755cec5b017efa15e31835a821b2486b65513ba76cd499ec63c1e082"
+    },
+    {
+      "path": "src/CascLib.h",
+      "bytes": 22387,
+      "sha256": "166cee30c5fecfdd3896047a424e22672a12224238c55314a7cfb7fa019887d9"
+    },
+    {
+      "path": "src/CascOpenFile.cpp",
+      "bytes": 13809,
+      "sha256": "d2e159e7d43007400107115601aa48e807d0df709781a757ee0d88847bfbd136"
+    },
+    {
+      "path": "src/CascOpenStorage.cpp",
+      "bytes": 58034,
+      "sha256": "37aefab1e17d23e4af2a7302966f99deeaf6ff2fe0c28694337c3c240feef334"
+    },
+    {
+      "path": "src/CascPort.h",
+      "bytes": 11939,
+      "sha256": "96eeda4e5d9b71f535fe6d8cb0791ff175d34db302da0cc14c882ac03deef0c5"
+    },
+    {
+      "path": "src/CascReadFile.cpp",
+      "bytes": 49212,
+      "sha256": "823f8474bf388e50dae7ed5ca55c7595ec41437e6357c1475d9f020546415ab4"
+    },
+    {
+      "path": "src/CascRootFile_Diablo3.cpp",
+      "bytes": 32635,
+      "sha256": "25b76e712220c7e546afff5044733569bce9c879cd74cfd29de4656fb4d46ec6"
+    },
+    {
+      "path": "src/CascRootFile_Install.cpp",
+      "bytes": 4399,
+      "sha256": "f0a8f8907b6eeb5b8f7f140c08d20cda55668844a93842486b2ba1812f5b1b38"
+    },
+    {
+      "path": "src/CascRootFile_MNDX.cpp",
+      "bytes": 105066,
+      "sha256": "05b7371875547b9b208b7ec4ec737f01c522b4af9d3d0751f2c4f91f83d85cd2"
+    },
+    {
+      "path": "src/CascRootFile_TVFS.cpp",
+      "bytes": 44044,
+      "sha256": "2e4163408d682155b5eca4ab7810573bd778d5c5d334393cbd8ca308c09c6c73"
+    },
+    {
+      "path": "src/CascRootFile_Text.cpp",
+      "bytes": 4489,
+      "sha256": "8b6c748ac52ef431a78992778562ced28c880ab0d1fbba1218d3643d12416481"
+    },
+    {
+      "path": "src/CascRootFile_WoW.cpp",
+      "bytes": 27728,
+      "sha256": "9561d59f44267cbe018550318fe6013471696e9a9d3d90f43474b1f555b04337"
+    },
+    {
+      "path": "src/CascStructs.h",
+      "bytes": 12959,
+      "sha256": "330ea2f69c70b6c72cd5427d137e8a4cba6e788d2dbdd67cb68f6c734d7df534"
+    },
+    {
+      "path": "src/DllMain.c",
+      "bytes": 1070,
+      "sha256": "2968546ada33e4d06d146105a227b0fcdcd2737b983e9669a33469a633dd1b96"
+    },
+    {
+      "path": "src/DllMain.def",
+      "bytes": 763,
+      "sha256": "1185296399bccc8c1957a9d20d0af408278764b276eed51ce0559b672ef1b7a3"
+    },
+    {
+      "path": "src/DllMain.rc",
+      "bytes": 2617,
+      "sha256": "f5cdaa59f234e45ec81d305f8d3f8e6b792042f5e527caa043ae7582204be2f3"
+    },
+    {
+      "path": "src/common/Array.h",
+      "bytes": 6658,
+      "sha256": "d96ed91d13e10ad07bb20855579cdba9466f0d4937ba22edb8ab2e8e33e4dfe3"
+    },
+    {
+      "path": "src/common/ArraySparse.h",
+      "bytes": 8779,
+      "sha256": "490ff7761e9ebd75c4180a507d30f892164e585e9629d3b266cac7e6fb4616e3"
+    },
+    {
+      "path": "src/common/Common.cpp",
+      "bytes": 20162,
+      "sha256": "96d53de7aeaec79ce7c03b4ae742fa4f5eb92c2b649bae22d8f2b31819d45309"
+    },
+    {
+      "path": "src/common/Common.h",
+      "bytes": 21827,
+      "sha256": "ed9da313d8b3f62e222c7bee5f0d2f5d04d33130882b5ed3dbc62076e967345a"
+    },
+    {
+      "path": "src/common/Csv.cpp",
+      "bytes": 9948,
+      "sha256": "9ff1661decbacbe5cdb04fc3d29da0f2e04eda8c8674826d926d3010e5a0564b"
+    },
+    {
+      "path": "src/common/Csv.h",
+      "bytes": 3612,
+      "sha256": "457451f8fc111edb5b0976076b38bbd40e9f20a7710b66c50b3edf298b21f16d"
+    },
+    {
+      "path": "src/common/Directory.cpp",
+      "bytes": 3708,
+      "sha256": "a00f7d23cc0ba21b56ce99ea26295de1be03a24c7b80502c07de48659b75ae99"
+    },
+    {
+      "path": "src/common/Directory.h",
+      "bytes": 1429,
+      "sha256": "cbb36e2a46ab370ddd83b8b231b308f202bc6239bc377d05e02383d280441b5a"
+    },
+    {
+      "path": "src/common/FileStream.cpp",
+      "bytes": 100536,
+      "sha256": "c97b4912f3d30a45f1330713f959f9b14cec46389f290e14b3761e5d3199ffc5"
+    },
+    {
+      "path": "src/common/FileStream.h",
+      "bytes": 13371,
+      "sha256": "3c755dc07ede4bcc7b24d19c8f145d69774e7daaddcc55e4bdb21978133a3047"
+    },
+    {
+      "path": "src/common/FileTree.cpp",
+      "bytes": 23749,
+      "sha256": "eca960d4a443aaeb911624941648259d225074fa21ec2abea856f170dea152a5"
+    },
+    {
+      "path": "src/common/FileTree.h",
+      "bytes": 6357,
+      "sha256": "5024c96141ab9405fc0fc2bd8476a6b7fad431168aa1b729e40aa3b078777ecd"
+    },
+    {
+      "path": "src/common/IndexMap.h",
+      "bytes": 3938,
+      "sha256": "1af93a202a7826e117757214ad917ae1eb45c312b28006c251b4e9adc2ca905d"
+    },
+    {
+      "path": "src/common/ListFile.cpp",
+      "bytes": 10105,
+      "sha256": "2653cd647b8201f38c2b35cd0e3bf16ed3c5faa443081a235cb9ead29f32bd9b"
+    },
+    {
+      "path": "src/common/ListFile.h",
+      "bytes": 1446,
+      "sha256": "93646b180b3156b1e4b23a397587273505c598606e2ce5237349789d5f557fe2"
+    },
+    {
+      "path": "src/common/Map.h",
+      "bytes": 11616,
+      "sha256": "919451fa2b68c273fcef7225a99a2cc6b4b409bb233710f0e2b064ef5da91548"
+    },
+    {
+      "path": "src/common/Mime.cpp",
+      "bytes": 21206,
+      "sha256": "67aa063869da8d5bb2c46ef50064f1720e4d9773373f526f399d2ad9e3f2542f"
+    },
+    {
+      "path": "src/common/Mime.h",
+      "bytes": 4329,
+      "sha256": "ac7768ddddb9796ffa246c5c7aa3cf31d949bc5107e020feceb4b8e97282c950"
+    },
+    {
+      "path": "src/common/Path.h",
+      "bytes": 7087,
+      "sha256": "a7d26ae1aa058f3eba69b82447120f86e467ccc63d6547cc5726aeab2172805a"
+    },
+    {
+      "path": "src/common/RootHandler.cpp",
+      "bytes": 4936,
+      "sha256": "168dd71375c154e90f6af8e66526658bc55de275f87e3007c9ff5abceaa561d5"
+    },
+    {
+      "path": "src/common/RootHandler.h",
+      "bytes": 4797,
+      "sha256": "e64e0d6b442daffca49217f7aa50d095c14cc22d8b970ff0a486101f39ec4b1e"
+    },
+    {
+      "path": "src/common/Sockets.cpp",
+      "bytes": 15237,
+      "sha256": "5bcd783f3e60a0b7e491e4cd04f351d81ad2fc252a84f02ddccad71caf5f6c73"
+    },
+    {
+      "path": "src/common/Sockets.h",
+      "bytes": 4022,
+      "sha256": "dbc0dc4cf43dd62bedfc2877a49032a4576deffc5fd0a7e57d086b145aea122f"
+    },
+    {
+      "path": "src/hashes/md5.cpp",
+      "bytes": 8799,
+      "sha256": "ea7433a1b88bd5c9e5445fb95a4f5261a94f57f937306de502c7fd5d306f2fd5"
+    },
+    {
+      "path": "src/hashes/md5.h",
+      "bytes": 1389,
+      "sha256": "9e152bca264a92c85c2feeab27d8a50f1610b66deb80e1d2d1af36d52507698c"
+    },
+    {
+      "path": "src/jenkins/lookup.h",
+      "bytes": 465,
+      "sha256": "22d971e6926e0705e346a2bd80f18f63336133e6605e0a09bb47bd77db6e7b75"
+    },
+    {
+      "path": "src/jenkins/lookup3.c",
+      "bytes": 35554,
+      "sha256": "b5a57ba3b6475edf9930792412d9c4936aebc3f834bedfbd2f87eb98d378c508"
+    },
+    {
+      "path": "src/resource.h",
+      "bytes": 389,
+      "sha256": "c42bea12ee800b1a9775c676ea59521f107f3250d11108aba2147ec971848ef3"
+    },
+    {
+      "path": "src/zlib/adler32.c",
+      "bytes": 5204,
+      "sha256": "d7f1b6e44fee20ab41cef1d650776a039a2348935eb96bcbd294a4096139be3a"
+    },
+    {
+      "path": "src/zlib/crc32.c",
+      "bytes": 14053,
+      "sha256": "a04af273e83ecc351bf3794974ab2098d8d960df4044b7b44734c41443ee26d0"
+    },
+    {
+      "path": "src/zlib/crc32.h",
+      "bytes": 30562,
+      "sha256": "407af59d0abfea84a6507c603eb29809411797f98249614fe76a661def783ce1"
+    },
+    {
+      "path": "src/zlib/deflate.c",
+      "bytes": 78889,
+      "sha256": "11fd6b0328b65c4ad4b5c204d892a97a9083628a7e77dc47836c8e0c799f8da0"
+    },
+    {
+      "path": "src/zlib/deflate.h",
+      "bytes": 13150,
+      "sha256": "0ca7fb0cf1dd63001c6e9e4ff93c8dbff2fe521199be51a4dda38a11b44919f6"
+    },
+    {
+      "path": "src/zlib/gzguts.h",
+      "bytes": 6819,
+      "sha256": "1ef4741cf10441feeca5c8dde2b6c754f0cbd96fcae697d54a604757289a5e9b"
+    },
+    {
+      "path": "src/zlib/inffast.c",
+      "bytes": 12978,
+      "sha256": "4d496ab2a3d29df5fadc3dbff6067e039806aaceae6cfcd09ea77d46c2b848fd"
+    },
+    {
+      "path": "src/zlib/inffast.h",
+      "bytes": 427,
+      "sha256": "7d8c1c873ce9bc346ad6005bb9d75cce5c6352aaf7395385be216a9452a34908"
+    },
+    {
+      "path": "src/zlib/inffixed.h",
+      "bytes": 6332,
+      "sha256": "237ba710f090e432b62ebf963bee8b302867e9691406b2d3f8ee89ee7bfef9b0"
+    },
+    {
+      "path": "src/zlib/inflate.c",
+      "bytes": 54800,
+      "sha256": "8b6c599c3563c14c447c47db0d7dc9a16e8c246a078ec95a169ddcebaaebd811"
+    },
+    {
+      "path": "src/zlib/inflate.h",
+      "bytes": 6688,
+      "sha256": "47d24966cadc58031c1cc7bf3fb63073447d7dac5ac927a5350d2a2999dcd96e"
+    },
+    {
+      "path": "src/zlib/inftrees.c",
+      "bytes": 12999,
+      "sha256": "1960ca67384376f65b6ce8c08fdb501f8eb33923e11ef5f61a855708c6cb0a8a"
+    },
+    {
+      "path": "src/zlib/inftrees.h",
+      "bytes": 2999,
+      "sha256": "98c72fc56f2d6a0bee8a75a9b8d1d883a7b95f70e1e613ed297041a9e0922fb7"
+    },
+    {
+      "path": "src/zlib/trees.c",
+      "bytes": 43761,
+      "sha256": "f2a5f949ea70dde7c23a54c793aeed630a03df4bb72417cd3aa008000c44699b"
+    },
+    {
+      "path": "src/zlib/trees.h",
+      "bytes": 8472,
+      "sha256": "bb0a9d3ca88ee00c81adb7c636e73b97085f6ef1b52d6d58edbe2b6dc3adeb4d"
+    },
+    {
+      "path": "src/zlib/zconf.h",
+      "bytes": 16298,
+      "sha256": "9c0087f31cd45fe4bfa0ca79b51df2c69d67c44f2fbb2223d7cf9ab8d971c360"
+    },
+    {
+      "path": "src/zlib/zlib.h",
+      "bytes": 96239,
+      "sha256": "4ddc82b4af931ab55f44d977bde81bfbc4151b5dcdccc03142831a301b5ec3c8"
+    },
+    {
+      "path": "src/zlib/zutil.c",
+      "bytes": 7304,
+      "sha256": "f7fdc9ef326a2683eb33c794face54e83c751ec17f3d1ba581847a62af36ddcd"
+    },
+    {
+      "path": "src/zlib/zutil.h",
+      "bytes": 7127,
+      "sha256": "9a63f6690fac1620aa3cecee5752af618806da438a256b4a047fbcd289cac159"
+    }
+  ],
+  "scope": "WoW reader subset; Overwatch and unused SHA1 excluded before compilation and distribution"
+}

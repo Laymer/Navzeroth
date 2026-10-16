@@ -95,3 +95,74 @@ fn inspect_and_plan_exit_codes_preserve_unknown_and_unavailable_capabilities() {
     assert!(!String::from_utf8(bad.stdout).unwrap().contains(selected));
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn oversized_internal_worker_frame_exits_before_parsing_or_touching_inputs() {
+    use std::io::Write;
+    use std::process::Stdio;
+    let mut worker = Command::new(env!("CARGO_BIN_EXE_azeroth-cli"))
+        .arg(azeroth_local_data::worker::WORKER_ARGUMENT)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    worker
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(&u32::MAX.to_le_bytes())
+        .unwrap();
+    let output = worker.wait_with_output().unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
+    assert!(output.stderr.is_empty());
+}
+
+#[test]
+fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
+    use azeroth_local_data::worker::{ExtractionRequest, ExtractionWorker, WorkerEvent};
+    let root = std::env::temp_dir().join(format!(
+        "navzeroth-worker-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&root).unwrap();
+    let source = root.join("source");
+    let destination = root.join("private");
+    fs::create_dir(&source).unwrap();
+    fs::create_dir(&destination).unwrap();
+    let original = b"previous active state, never extraction output";
+    fs::write(destination.join("active-marker"), original).unwrap();
+    let request = ExtractionRequest {
+        protocol_version: 1,
+        request_id: "worker-test".into(),
+        installation: source.clone(),
+        product: "wow_classic_beta".into(),
+        destination: destination.clone(),
+        preset: azeroth_core::local_data::PerformancePreset::Small,
+        tables: vec![],
+    };
+    let mut worker = ExtractionWorker::start_executable(
+        std::path::Path::new(env!("CARGO_BIN_EXE_azeroth-cli")),
+        &request,
+    )
+    .unwrap();
+    let event = worker.next_event().unwrap();
+    assert!(matches!(event, WorkerEvent::Failed { .. }));
+    let text = serde_json::to_string(&event).unwrap();
+    assert!(!text.contains(&root.to_string_lossy().to_string()));
+    let mut worker = ExtractionWorker::start_executable(
+        std::path::Path::new(env!("CARGO_BIN_EXE_azeroth-cli")),
+        &request,
+    )
+    .unwrap();
+    worker.control().cancel().unwrap();
+    worker.cancel().unwrap();
+    assert_eq!(
+        fs::read(destination.join("active-marker")).unwrap(),
+        original
+    );
+    assert_eq!(fs::read_dir(&source).unwrap().count(), 0);
+    fs::remove_dir_all(root).unwrap();
+}

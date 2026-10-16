@@ -48,6 +48,12 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    selectLocalInstallation:()=>run(()=>adapter.invoke("select_local_installation",undefined)),
+    previewLocalData:(selectionId:string,preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("preview_local_data",{selection_id:selectionId,preset})),
+    startLocalData:(selectionId:string,preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("start_local_data",{selection_id:selectionId,preset})),
+    getLocalDataJob:(jobId:string)=>run(()=>adapter.invoke("get_local_data_job",{job_id:jobId})),
+    cancelLocalDataJob:(jobId:string)=>run(()=>adapter.invoke("cancel_local_data_job",{job_id:jobId})),
+    getLocalDataInventory:(revision:string,offset:number)=>run(()=>adapter.invoke("get_local_data_inventory",{revision,offset,limit:200})),
     listLocalSubmissions: (after: string | null = null, limit = 32) => run(() => adapter.invoke("list_local_submissions", { after, limit })),
     submitLocalObservation: (text: string, opt_in: boolean) => run(() => adapter.invoke("submit_local_observation", { text, opt_in })),
     changeLocalSubmission: (expected: import("./localSubmissions").SubmissionGuard, action: import("./localSubmissions").SubmissionAction) => run(() => adapter.invoke("change_local_submission", { text: JSON.stringify({ expected, action }) })),

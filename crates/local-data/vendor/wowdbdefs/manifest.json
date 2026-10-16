@@ -1,0 +1,7034 @@
+[
+  {
+    "tableName": "AccountStoreCategory",
+    "tableHash": "1B5BAF01",
+    "db2FileDataID": 6220124
+  },
+  {
+    "tableName": "AccountStoreItem",
+    "tableHash": "58EFC38B",
+    "db2FileDataID": 6197817
+  },
+  {
+    "tableName": "Achievement",
+    "tableHash": "D2EE2CA7",
+    "dbcFileDataID": 841607,
+    "db2FileDataID": 1260179
+  },
+  {
+    "tableName": "Achievement_Category",
+    "tableHash": "231B414D",
+    "dbcFileDataID": 841639,
+    "db2FileDataID": 1324299
+  },
+  {
+    "tableName": "Achievement_Criteria",
+    "tableHash": "E3614CCD"
+  },
+  {
+    "tableName": "ActionBarGroup",
+    "tableHash": "7937C8E5",
+    "db2FileDataID": 4572795
+  },
+  {
+    "tableName": "ActionBarGroupEntry",
+    "tableHash": "77A74EDB",
+    "db2FileDataID": 4572797
+  },
+  {
+    "tableName": "AdventureJournal",
+    "tableHash": "8EEF1A97",
+    "db2FileDataID": 1115949
+  },
+  {
+    "tableName": "AdventureJournalItem",
+    "tableHash": "4B8E0320",
+    "db2FileDataID": 5599873
+  },
+  {
+    "tableName": "AdventureMapPOI",
+    "tableHash": "6275EEF7",
+    "db2FileDataID": 1267070
+  },
+  {
+    "tableName": "AlliedRace",
+    "tableHash": "A40F98B8",
+    "db2FileDataID": 1710672
+  },
+  {
+    "tableName": "AlliedRaceRacialAbility",
+    "tableHash": "90D2B610",
+    "db2FileDataID": 1720145
+  },
+  {
+    "tableName": "AltMinimap",
+    "tableHash": "DF5A4201",
+    "db2FileDataID": 5156218
+  },
+  {
+    "tableName": "AltMinimapFiledata",
+    "tableHash": "F35E30CD",
+    "db2FileDataID": 5156219
+  },
+  {
+    "tableName": "AltMinimapWMO",
+    "tableHash": "980EDD21",
+    "db2FileDataID": 5156220
+  },
+  {
+    "tableName": "AnimaCable",
+    "tableHash": "7DC5B8C8",
+    "db2FileDataID": 3286805
+  },
+  {
+    "tableName": "AnimaCylinder",
+    "tableHash": "7B71E218",
+    "db2FileDataID": 3286804
+  },
+  {
+    "tableName": "AnimaMaterial",
+    "tableHash": "6BB9D6E9",
+    "db2FileDataID": 3153990
+  },
+  {
+    "tableName": "AnimationData",
+    "tableHash": "9CAF5A21",
+    "dbcFileDataID": 803403,
+    "db2FileDataID": 1375431
+  },
+  {
+    "tableName": "AnimationNames",
+    "tableHash": "865FA03F"
+  },
+  {
+    "tableName": "AnimKit",
+    "tableHash": "B3AF6ECA",
+    "dbcFileDataID": 801555,
+    "db2FileDataID": 1304323
+  },
+  {
+    "tableName": "AnimKitBoneSet",
+    "tableHash": "A88C80F8",
+    "dbcFileDataID": 801556,
+    "db2FileDataID": 1375433
+  },
+  {
+    "tableName": "AnimKitBoneSetAlias",
+    "tableHash": "37804DEA",
+    "dbcFileDataID": 801557,
+    "db2FileDataID": 1266937
+  },
+  {
+    "tableName": "AnimKitConfig",
+    "tableHash": "141DB817",
+    "dbcFileDataID": 801558,
+    "db2FileDataID": 1300872
+  },
+  {
+    "tableName": "AnimKitConfigBoneSet",
+    "tableHash": "5D9F4EB1",
+    "dbcFileDataID": 801559,
+    "db2FileDataID": 1300873
+  },
+  {
+    "tableName": "AnimKitPriority",
+    "tableHash": "51FD492D",
+    "dbcFileDataID": 801560,
+    "db2FileDataID": 1266540
+  },
+  {
+    "tableName": "AnimKitReplacement",
+    "tableHash": "34E01B0C",
+    "db2FileDataID": 1559807
+  },
+  {
+    "tableName": "AnimKitSegment",
+    "tableHash": "3E988108",
+    "dbcFileDataID": 801561,
+    "db2FileDataID": 1304324
+  },
+  {
+    "tableName": "AnimReplacement",
+    "tableHash": "536AA9E9",
+    "dbcFileDataID": 801562,
+    "db2FileDataID": 1301100
+  },
+  {
+    "tableName": "AnimReplacementSet",
+    "tableHash": "E970BB7B",
+    "dbcFileDataID": 801563,
+    "db2FileDataID": 1284817
+  },
+  {
+    "tableName": "AoiBox",
+    "tableHash": "8CB226B0",
+    "db2FileDataID": 2140223
+  },
+  {
+    "tableName": "AreaAssignment",
+    "tableHash": "E0CF039C",
+    "dbcFileDataID": 801564,
+    "db2FileDataID": 1121442
+  },
+  {
+    "tableName": "AreaConditionalData",
+    "tableHash": "6178959B",
+    "db2FileDataID": 2123730
+  },
+  {
+    "tableName": "AreaFarClipOverride",
+    "tableHash": "7E5932DE",
+    "db2FileDataID": 1537162
+  },
+  {
+    "tableName": "AreaGroup",
+    "tableHash": "F6DB5F8B",
+    "dbcFileDataID": 801565,
+    "db2FileDataID": 1093405
+  },
+  {
+    "tableName": "AreaGroupMember",
+    "tableHash": "09626FB2",
+    "db2FileDataID": 1093406
+  },
+  {
+    "tableName": "AreaMIDIAmbiences",
+    "tableHash": "0039B8B3"
+  },
+  {
+    "tableName": "AreaPOI",
+    "tableHash": "DF3F054A",
+    "dbcFileDataID": 841602,
+    "db2FileDataID": 1000630
+  },
+  {
+    "tableName": "AreaPOISortedWorldState",
+    "tableHash": "71A51928"
+  },
+  {
+    "tableName": "AreaPOIState",
+    "tableHash": "49EFF4C0",
+    "db2FileDataID": 1000631
+  },
+  {
+    "tableName": "AreaPOIUiWidgetSet",
+    "tableHash": "FE3DEFC9",
+    "db2FileDataID": 5634691
+  },
+  {
+    "tableName": "AreaTable",
+    "tableHash": "7253EB43",
+    "dbcFileDataID": 841649,
+    "db2FileDataID": 1353545
+  },
+  {
+    "tableName": "AreaTrigger",
+    "tableHash": "1A5081E1",
+    "dbcFileDataID": 801566,
+    "db2FileDataID": 1354401
+  },
+  {
+    "tableName": "AreaTriggerActionSet",
+    "tableHash": "5C4BBB1F",
+    "dbcFileDataID": 801567,
+    "db2FileDataID": 1352378
+  },
+  {
+    "tableName": "AreaTriggerBoundedPlane",
+    "tableHash": "27E864FB",
+    "db2FileDataID": 4266572
+  },
+  {
+    "tableName": "AreaTriggerBox",
+    "tableHash": "490CDD72",
+    "dbcFileDataID": 801568,
+    "db2FileDataID": 1332554
+  },
+  {
+    "tableName": "AreaTriggerCreateProperties",
+    "tableHash": "D4E75AA2",
+    "db2FileDataID": 1937227
+  },
+  {
+    "tableName": "AreaTriggerCylinder",
+    "tableHash": "AC92E4AD",
+    "dbcFileDataID": 962609,
+    "db2FileDataID": 1121943
+  },
+  {
+    "tableName": "AreaTriggerDisk",
+    "tableHash": "80F5D8D0",
+    "db2FileDataID": 4223661
+  },
+  {
+    "tableName": "AreaTriggerSphere",
+    "tableHash": "93073B25",
+    "dbcFileDataID": 801569,
+    "db2FileDataID": 1315630
+  },
+  {
+    "tableName": "ArenaCcItem",
+    "tableHash": "38890118",
+    "db2FileDataID": 3849793
+  },
+  {
+    "tableName": "ArenaTrackedItem",
+    "tableHash": "77CC91ED",
+    "db2FileDataID": 5226140
+  },
+  {
+    "tableName": "ArmorLocation",
+    "tableHash": "B1911544",
+    "dbcFileDataID": 801570,
+    "db2FileDataID": 1284818
+  },
+  {
+    "tableName": "Artifact",
+    "tableHash": "0165E45F",
+    "db2FileDataID": 1007934
+  },
+  {
+    "tableName": "ArtifactAppearance",
+    "tableHash": "ACE08AE7",
+    "db2FileDataID": 1116407
+  },
+  {
+    "tableName": "ArtifactAppearanceSet",
+    "tableHash": "E7121BA1",
+    "db2FileDataID": 1116408
+  },
+  {
+    "tableName": "ArtifactCategory",
+    "tableHash": "C572B485",
+    "db2FileDataID": 1376210
+  },
+  {
+    "tableName": "ArtifactItemToTransmog",
+    "tableHash": "6765AB7D",
+    "db2FileDataID": 2029780
+  },
+  {
+    "tableName": "ArtifactPower",
+    "tableHash": "F3AB984A",
+    "db2FileDataID": 1007937
+  },
+  {
+    "tableName": "ArtifactPowerLink",
+    "tableHash": "36787E77",
+    "db2FileDataID": 1133731
+  },
+  {
+    "tableName": "ArtifactPowerPicker",
+    "tableHash": "2F657D46",
+    "db2FileDataID": 1597467
+  },
+  {
+    "tableName": "ArtifactPowerRank",
+    "tableHash": "15E3C63B",
+    "db2FileDataID": 1261405
+  },
+  {
+    "tableName": "ArtifactQuestXP",
+    "tableHash": "CA31E679",
+    "db2FileDataID": 1036203
+  },
+  {
+    "tableName": "ArtifactTier",
+    "tableHash": "80E45C48",
+    "db2FileDataID": 1600114
+  },
+  {
+    "tableName": "ArtifactUnlock",
+    "tableHash": "57D1CB68",
+    "db2FileDataID": 1094540
+  },
+  {
+    "tableName": "AssistedCombat",
+    "tableHash": "A4A21680",
+    "db2FileDataID": 6698666
+  },
+  {
+    "tableName": "AssistedCombatRule",
+    "tableHash": "C1B4F680",
+    "db2FileDataID": 6698667
+  },
+  {
+    "tableName": "AssistedCombatStep",
+    "tableHash": "790BCC4F",
+    "db2FileDataID": 6698668
+  },
+  {
+    "tableName": "AttackAnimKits",
+    "tableHash": "7855FB5A",
+    "dbcFileDataID": 801571
+  },
+  {
+    "tableName": "AttackAnimTypes",
+    "tableHash": "DDF27C68",
+    "dbcFileDataID": 801572
+  },
+  {
+    "tableName": "AuctionHouse",
+    "tableHash": "B8F96456",
+    "dbcFileDataID": 841625,
+    "db2FileDataID": 1237439
+  },
+  {
+    "tableName": "AuctionHouseCategory",
+    "tableHash": "4F4F7EFA",
+    "db2FileDataID": 4366440
+  },
+  {
+    "tableName": "AuctionHouseRedirect",
+    "tableHash": "891BE7B6",
+    "db2FileDataID": 8426136
+  },
+  {
+    "tableName": "AvailableSuperDistrict",
+    "tableHash": "45952E6E",
+    "db2FileDataID": 8208798
+  },
+  {
+    "tableName": "AzeriteEmpoweredItem",
+    "tableHash": "AFB1B60F",
+    "db2FileDataID": 1846046
+  },
+  {
+    "tableName": "AzeriteEssence",
+    "tableHash": "A4475DBB",
+    "db2FileDataID": 2829665
+  },
+  {
+    "tableName": "AzeriteEssencePower",
+    "tableHash": "2A86CF91",
+    "db2FileDataID": 2829666
+  },
+  {
+    "tableName": "AzeriteItem",
+    "tableHash": "F8BBB475",
+    "db2FileDataID": 1846048
+  },
+  {
+    "tableName": "AzeriteItemMilestonePower",
+    "tableHash": "6BB71E97",
+    "db2FileDataID": 1915395
+  },
+  {
+    "tableName": "AzeriteKnowledgeMultiplier",
+    "tableHash": "D30E8514",
+    "db2FileDataID": 3148050
+  },
+  {
+    "tableName": "AzeriteLevelInfo",
+    "tableHash": "74F07695",
+    "db2FileDataID": 3147968
+  },
+  {
+    "tableName": "AzeritePower",
+    "tableHash": "ABB94742",
+    "db2FileDataID": 1846044
+  },
+  {
+    "tableName": "AzeritePowerSetMember",
+    "tableHash": "2D8CB267",
+    "db2FileDataID": 1846040
+  },
+  {
+    "tableName": "AzeriteTierUnlock",
+    "tableHash": "E80BFE27",
+    "db2FileDataID": 1846043
+  },
+  {
+    "tableName": "AzeriteTierUnlockSet",
+    "tableHash": "AE13B5E1",
+    "db2FileDataID": 2446322
+  },
+  {
+    "tableName": "AzeriteUnlockMapping",
+    "tableHash": "75FA15E1",
+    "db2FileDataID": 2564314
+  },
+  {
+    "tableName": "BankBagSlotPrices",
+    "tableHash": "DEEC5A60",
+    "dbcFileDataID": 801573,
+    "db2FileDataID": 1284819
+  },
+  {
+    "tableName": "BankTab",
+    "tableHash": "D8761C11",
+    "db2FileDataID": 5242411
+  },
+  {
+    "tableName": "BannedAddons",
+    "tableHash": "3B7DA145",
+    "dbcFileDataID": 801574,
+    "db2FileDataID": 1373459
+  },
+  {
+    "tableName": "BarberShopStyle",
+    "tableHash": "8F09B48B",
+    "dbcFileDataID": 841603,
+    "db2FileDataID": 1237437
+  },
+  {
+    "tableName": "BarrageEffect",
+    "tableHash": "9E4FB781",
+    "db2FileDataID": 2499852
+  },
+  {
+    "tableName": "BattlemasterList",
+    "tableHash": "558D704E",
+    "dbcFileDataID": 841627,
+    "db2FileDataID": 1360265
+  },
+  {
+    "tableName": "BattlemasterListXMap",
+    "tableHash": "DB250876",
+    "db2FileDataID": 5916746
+  },
+  {
+    "tableName": "BattlepayCurrency",
+    "tableHash": "FE9A961D",
+    "db2FileDataID": 5549327
+  },
+  {
+    "tableName": "BattlePetAbility",
+    "tableHash": "CBA43BD7",
+    "db2FileDataID": 841610
+  },
+  {
+    "tableName": "BattlePetAbilityEffect",
+    "tableHash": "DD8B690E",
+    "db2FileDataID": 801575
+  },
+  {
+    "tableName": "BattlePetAbilityState",
+    "tableHash": "3C556E43",
+    "db2FileDataID": 801576
+  },
+  {
+    "tableName": "BattlePetAbilityTurn",
+    "tableHash": "ECD8ECDC",
+    "db2FileDataID": 801577
+  },
+  {
+    "tableName": "BattlePetBreedQuality",
+    "tableHash": "1B5A4EA6",
+    "db2FileDataID": 801578
+  },
+  {
+    "tableName": "BattlePetBreedState",
+    "tableHash": "6AFB3206",
+    "db2FileDataID": 801579
+  },
+  {
+    "tableName": "BattlePetDisplayOverride",
+    "tableHash": "CD90B586",
+    "db2FileDataID": 1802988
+  },
+  {
+    "tableName": "BattlePetEffectProperties",
+    "tableHash": "63B4C4BA",
+    "db2FileDataID": 801580
+  },
+  {
+    "tableName": "BattlePetNPCTeamMember",
+    "tableHash": "F2059DFA",
+    "db2FileDataID": 841648
+  },
+  {
+    "tableName": "BattlePetSpecies",
+    "tableHash": "6C93F9B1",
+    "db2FileDataID": 841622
+  },
+  {
+    "tableName": "BattlePetSpeciesState",
+    "tableHash": "15D87DD0",
+    "db2FileDataID": 801581
+  },
+  {
+    "tableName": "BattlePetSpeciesXAbility",
+    "tableHash": "44237314",
+    "db2FileDataID": 801582
+  },
+  {
+    "tableName": "BattlePetSpeciesXCovenant",
+    "tableHash": "EB6A88E4",
+    "db2FileDataID": 3669304
+  },
+  {
+    "tableName": "BattlePetState",
+    "tableHash": "8F447330",
+    "db2FileDataID": 801583
+  },
+  {
+    "tableName": "BattlePetTypeModifier",
+    "tableHash": "2CC4E8A5",
+    "db2FileDataID": 7871289
+  },
+  {
+    "tableName": "BattlePetVisual",
+    "tableHash": "C3ADEB43",
+    "db2FileDataID": 801584
+  },
+  {
+    "tableName": "BattlePetXP",
+    "tableHash": "DA814D0F",
+    "db2FileDataID": 7877962
+  },
+  {
+    "tableName": "BeamEffect",
+    "tableHash": "017FAEA0",
+    "db2FileDataID": 1525607
+  },
+  {
+    "tableName": "BeckonTrigger",
+    "tableHash": "E5A45F1D",
+    "db2FileDataID": 3491563
+  },
+  {
+    "tableName": "BoneWindModifierModel",
+    "tableHash": "15D0EFA4",
+    "db2FileDataID": 1467254
+  },
+  {
+    "tableName": "BoneWindModifiers",
+    "tableHash": "6519F1A9",
+    "db2FileDataID": 1416756
+  },
+  {
+    "tableName": "BonusRoll",
+    "tableHash": "5A24AA65",
+    "db2FileDataID": 1983274
+  },
+  {
+    "tableName": "Bounty",
+    "tableHash": "5B476B7C",
+    "db2FileDataID": 1367866
+  },
+  {
+    "tableName": "BountySet",
+    "tableHash": "CBD2A10A",
+    "db2FileDataID": 1367865
+  },
+  {
+    "tableName": "BroadcastText",
+    "tableHash": "021826BB",
+    "db2FileDataID": 841604
+  },
+  {
+    "tableName": "BroadcastTextDuration",
+    "tableHash": "DB405B2C",
+    "db2FileDataID": 2166900
+  },
+  {
+    "tableName": "BroadcastTextSoundState",
+    "tableHash": "217E1B81",
+    "db2FileDataID": 1983637
+  },
+  {
+    "tableName": "BroadcastTextVOState",
+    "tableHash": "9C836EA8",
+    "db2FileDataID": 1983638
+  },
+  {
+    "tableName": "CameraEffect",
+    "tableHash": "4FA1379D",
+    "db2FileDataID": 1117695
+  },
+  {
+    "tableName": "CameraEffectEntry",
+    "tableHash": "9D41DE06",
+    "db2FileDataID": 1117696
+  },
+  {
+    "tableName": "CameraMode",
+    "tableHash": "FD872EBD",
+    "dbcFileDataID": 801585,
+    "db2FileDataID": 1343308
+  },
+  {
+    "tableName": "CameraShakes",
+    "tableHash": "48B883A1",
+    "dbcFileDataID": 801586,
+    "db2FileDataID": 1279414
+  },
+  {
+    "tableName": "Campaign",
+    "tableHash": "D9F1B527",
+    "db2FileDataID": 2031607
+  },
+  {
+    "tableName": "CampaignXCondition",
+    "tableHash": "041E4D95",
+    "db2FileDataID": 2031611
+  },
+  {
+    "tableName": "CampaignXQuestLine",
+    "tableHash": "00CB59F4",
+    "db2FileDataID": 2036722
+  },
+  {
+    "tableName": "CastableRaidBuffs",
+    "tableHash": "F7361166",
+    "dbcFileDataID": 801587,
+    "db2FileDataID": 1283018
+  },
+  {
+    "tableName": "CatalogShopGameTitleInfo",
+    "tableHash": "37D001EF",
+    "db2FileDataID": 7388251
+  },
+  {
+    "tableName": "CelestialBody",
+    "tableHash": "56E34FFB",
+    "db2FileDataID": 1592470
+  },
+  {
+    "tableName": "Cfg_Categories",
+    "tableHash": "C7ED797D",
+    "dbcFileDataID": 841654,
+    "db2FileDataID": 1068162
+  },
+  {
+    "tableName": "Cfg_Configs",
+    "tableHash": "091F6599",
+    "dbcFileDataID": 801588,
+    "db2FileDataID": 1080949
+  },
+  {
+    "tableName": "Cfg_DatacenterLocality",
+    "tableHash": "1A8564D4",
+    "db2FileDataID": 7928017
+  },
+  {
+    "tableName": "Cfg_GameRules",
+    "tableHash": "AA0ECB1C",
+    "db2FileDataID": 6841377
+  },
+  {
+    "tableName": "Cfg_Languages",
+    "tableHash": "B0ABD69D"
+  },
+  {
+    "tableName": "Cfg_Realms",
+    "tableHash": "FBF87240"
+  },
+  {
+    "tableName": "Cfg_Regions",
+    "tableHash": "A77E7F0D",
+    "dbcFileDataID": 801589,
+    "db2FileDataID": 1082876
+  },
+  {
+    "tableName": "Cfg_SuperDistrict",
+    "tableHash": "FFD9D676",
+    "db2FileDataID": 7929271
+  },
+  {
+    "tableName": "Cfg_TimeEventRegionGroup",
+    "tableHash": "3362F848",
+    "db2FileDataID": 3055692
+  },
+  {
+    "tableName": "ChallengeModeItemBonusOverride",
+    "tableHash": "0DDC77B6",
+    "db2FileDataID": 2965645
+  },
+  {
+    "tableName": "ChallengeModeReward",
+    "tableHash": "9F5D4FC2",
+    "db2FileDataID": 6982016
+  },
+  {
+    "tableName": "ChallengeModeXReward",
+    "tableHash": "C51BCE6F",
+    "db2FileDataID": 6984186
+  },
+  {
+    "tableName": "CharacterCreateCameras",
+    "tableHash": "C3642F0A"
+  },
+  {
+    "tableName": "CharacterFaceBoneSet",
+    "tableHash": "4D62306F",
+    "db2FileDataID": 1028733
+  },
+  {
+    "tableName": "CharacterFacialHairStyles",
+    "tableHash": "212303C2",
+    "dbcFileDataID": 801590,
+    "db2FileDataID": 1369752
+  },
+  {
+    "tableName": "CharacterLoadout",
+    "tableHash": "E00A47FB",
+    "dbcFileDataID": 801591,
+    "db2FileDataID": 1344281
+  },
+  {
+    "tableName": "CharacterLoadoutItem",
+    "tableHash": "65C39BA7",
+    "dbcFileDataID": 801592,
+    "db2FileDataID": 1302846
+  },
+  {
+    "tableName": "CharacterLoadoutPet",
+    "tableHash": "71D74615",
+    "db2FileDataID": 3724843
+  },
+  {
+    "tableName": "CharacterServiceInfo",
+    "tableHash": "56AA902B",
+    "db2FileDataID": 1815417
+  },
+  {
+    "tableName": "CharBaseInfo",
+    "tableHash": "3067A8F8",
+    "dbcFileDataID": 801593,
+    "db2FileDataID": 1343386
+  },
+  {
+    "tableName": "CharBaseSection",
+    "tableHash": "5DA4CF6C",
+    "dbcFileDataID": 879263,
+    "db2FileDataID": 1375798
+  },
+  {
+    "tableName": "CharComponentTextureLayouts",
+    "tableHash": "A77C3E7B",
+    "dbcFileDataID": 801594,
+    "db2FileDataID": 1360262
+  },
+  {
+    "tableName": "CharComponentTextureSections",
+    "tableHash": "FAA98CF5",
+    "dbcFileDataID": 801595,
+    "db2FileDataID": 1360263
+  },
+  {
+    "tableName": "CharHairGeosets",
+    "tableHash": "11D3EE9C",
+    "dbcFileDataID": 801596,
+    "db2FileDataID": 1256914
+  },
+  {
+    "tableName": "CharHairTextures",
+    "tableHash": "F862B186"
+  },
+  {
+    "tableName": "CharSectionCondition",
+    "tableHash": "AE97B6BE",
+    "db2FileDataID": 2388725
+  },
+  {
+    "tableName": "CharSections",
+    "tableHash": "36304853",
+    "dbcFileDataID": 801597,
+    "db2FileDataID": 1365366
+  },
+  {
+    "tableName": "CharShipment",
+    "tableHash": "B032B557",
+    "db2FileDataID": 972425
+  },
+  {
+    "tableName": "CharShipmentContainer",
+    "tableHash": "A7894FE7",
+    "db2FileDataID": 972405
+  },
+  {
+    "tableName": "CharStartKit",
+    "tableHash": "E3E3AC3E",
+    "db2FileDataID": 3055696
+  },
+  {
+    "tableName": "CharStartOutfit",
+    "tableHash": "7B41F581",
+    "dbcFileDataID": 801598,
+    "db2FileDataID": 1237591
+  },
+  {
+    "tableName": "CharTextureVariationsV2",
+    "tableHash": "E7B2A727"
+  },
+  {
+    "tableName": "CharTitles",
+    "tableHash": "85DF9E8E",
+    "dbcFileDataID": 841628,
+    "db2FileDataID": 1349054
+  },
+  {
+    "tableName": "CharVariations",
+    "tableHash": "43C47DDA"
+  },
+  {
+    "tableName": "ChatChannels",
+    "tableHash": "CCFF87ED",
+    "dbcFileDataID": 841605,
+    "db2FileDataID": 1345278
+  },
+  {
+    "tableName": "ChatProfanity",
+    "tableHash": "23F759C7",
+    "dbcFileDataID": 801599,
+    "db2FileDataID": 1117084
+  },
+  {
+    "tableName": "ChrClasses",
+    "tableHash": "F5889D8C",
+    "dbcFileDataID": 841634,
+    "db2FileDataID": 1361031
+  },
+  {
+    "tableName": "ChrClassesXPowerTypes",
+    "tableHash": "C0315ACF",
+    "dbcFileDataID": 801600,
+    "db2FileDataID": 1121420
+  },
+  {
+    "tableName": "ChrClassRaceSex",
+    "tableHash": "31DAFEBF",
+    "db2FileDataID": 1306188
+  },
+  {
+    "tableName": "ChrClassTitle",
+    "tableHash": "C0DC0837",
+    "db2FileDataID": 1267497
+  },
+  {
+    "tableName": "ChrClassUIChrModelInfo",
+    "tableHash": "BEA39888",
+    "db2FileDataID": 3754770
+  },
+  {
+    "tableName": "ChrClassUIDisplay",
+    "tableHash": "B0E2632B",
+    "db2FileDataID": 1316515
+  },
+  {
+    "tableName": "ChrClassVillain",
+    "tableHash": "359587F6",
+    "db2FileDataID": 1267498
+  },
+  {
+    "tableName": "ChrCreateClassAnimTarget",
+    "tableHash": "569E7BAB",
+    "db2FileDataID": 3671168
+  },
+  {
+    "tableName": "ChrCreateClassAnimTargetInfo",
+    "tableHash": "7179EAF6",
+    "db2FileDataID": 3671169
+  },
+  {
+    "tableName": "ChrCustClientChoiceConversion",
+    "tableHash": "A44C5F16",
+    "db2FileDataID": 3590348
+  },
+  {
+    "tableName": "ChrCustGeoComponentLink",
+    "tableHash": "486AB905",
+    "db2FileDataID": 5387095
+  },
+  {
+    "tableName": "ChrCustItemGeoModify",
+    "tableHash": "7FA857F8",
+    "db2FileDataID": 3952714
+  },
+  {
+    "tableName": "ChrCustomization",
+    "tableHash": "E9238D0A",
+    "db2FileDataID": 1611874
+  },
+  {
+    "tableName": "ChrCustomizationBoneSet",
+    "tableHash": "BF080731",
+    "db2FileDataID": 3460181
+  },
+  {
+    "tableName": "ChrCustomizationCategory",
+    "tableHash": "BAED6522",
+    "db2FileDataID": 3526439
+  },
+  {
+    "tableName": "ChrCustomizationChoice",
+    "tableHash": "681D0F3D",
+    "db2FileDataID": 3450554
+  },
+  {
+    "tableName": "ChrCustomizationCondModel",
+    "tableHash": "94304760",
+    "db2FileDataID": 3460182
+  },
+  {
+    "tableName": "ChrCustomizationConversion",
+    "tableHash": "92FA4852",
+    "db2FileDataID": 3463337
+  },
+  {
+    "tableName": "ChrCustomizationDisplayInfo",
+    "tableHash": "EE1BAF5C",
+    "db2FileDataID": 3593032
+  },
+  {
+    "tableName": "ChrCustomizationElement",
+    "tableHash": "D6D051EC",
+    "db2FileDataID": 3512765
+  },
+  {
+    "tableName": "ChrCustomizationGeoset",
+    "tableHash": "59769CB8",
+    "db2FileDataID": 3456171
+  },
+  {
+    "tableName": "ChrCustomizationGlyphPet",
+    "tableHash": "85367F8B",
+    "db2FileDataID": 5347591
+  },
+  {
+    "tableName": "ChrCustomizationMaterial",
+    "tableHash": "B58D84F3",
+    "db2FileDataID": 3459652
+  },
+  {
+    "tableName": "ChrCustomizationOption",
+    "tableHash": "2FB7905B",
+    "db2FileDataID": 3384247
+  },
+  {
+    "tableName": "ChrCustomizationReq",
+    "tableHash": "61431A65",
+    "db2FileDataID": 3450453
+  },
+  {
+    "tableName": "ChrCustomizationReqChoice",
+    "tableHash": "9B1BEE48",
+    "db2FileDataID": 3580359
+  },
+  {
+    "tableName": "ChrCustomizationSkinnedModel",
+    "tableHash": "559CECEC",
+    "db2FileDataID": 3460183
+  },
+  {
+    "tableName": "ChrCustomizationVisReq",
+    "tableHash": "792F71F4",
+    "db2FileDataID": 4724136
+  },
+  {
+    "tableName": "ChrCustomizationVoice",
+    "tableHash": "69BC7931",
+    "db2FileDataID": 4672833
+  },
+  {
+    "tableName": "ChrModel",
+    "tableHash": "49349C6E",
+    "db2FileDataID": 3384313
+  },
+  {
+    "tableName": "ChrModelAltVariant",
+    "tableHash": "8E636A9B",
+    "db2FileDataID": 8068383
+  },
+  {
+    "tableName": "ChrModelAltVariantChoice",
+    "tableHash": "F4A6DC16",
+    "db2FileDataID": 8068384
+  },
+  {
+    "tableName": "ChrModelAltVariantOption",
+    "tableHash": "65FD1ED8",
+    "db2FileDataID": 8068385
+  },
+  {
+    "tableName": "ChrModelMaterial",
+    "tableHash": "FA82A022",
+    "db2FileDataID": 3566562
+  },
+  {
+    "tableName": "ChrModelTextureLayer",
+    "tableHash": "49F2F8AF",
+    "db2FileDataID": 3548976
+  },
+  {
+    "tableName": "ChrModelTextureTarget",
+    "tableHash": "C7022602",
+    "db2FileDataID": 3536417
+  },
+  {
+    "tableName": "ChrProficiency",
+    "tableHash": "24F1DC08"
+  },
+  {
+    "tableName": "ChrRaceRacialAbility",
+    "tableHash": "550E7513",
+    "db2FileDataID": 3507821
+  },
+  {
+    "tableName": "ChrRaces",
+    "tableHash": "53F1783C",
+    "dbcFileDataID": 841613,
+    "db2FileDataID": 1305311
+  },
+  {
+    "tableName": "ChrRacesCreateScreenIcon",
+    "tableHash": "17AFDFCF",
+    "db2FileDataID": 4566929
+  },
+  {
+    "tableName": "ChrRacesPing",
+    "tableHash": "BA35D585",
+    "db2FileDataID": 5320971
+  },
+  {
+    "tableName": "ChrRaceXChrModel",
+    "tableHash": "A7E150FE",
+    "db2FileDataID": 3490304
+  },
+  {
+    "tableName": "ChrSelectBackgroundCDI",
+    "tableHash": "EE42F172",
+    "db2FileDataID": 4195187
+  },
+  {
+    "tableName": "ChrSpecialization",
+    "tableHash": "A00F8E60",
+    "dbcFileDataID": 841657,
+    "db2FileDataID": 1343390
+  },
+  {
+    "tableName": "ChrUpgradeBucket",
+    "tableHash": "DDBC25B7",
+    "db2FileDataID": 984529
+  },
+  {
+    "tableName": "ChrUpgradeBucketSpell",
+    "tableHash": "C6426A90",
+    "db2FileDataID": 984528
+  },
+  {
+    "tableName": "ChrUpgradeTier",
+    "tableHash": "99F5DC12",
+    "db2FileDataID": 984530
+  },
+  {
+    "tableName": "Cinematic",
+    "tableHash": "FDC6CA78"
+  },
+  {
+    "tableName": "CinematicCamera",
+    "tableHash": "C2CEFDF9",
+    "dbcFileDataID": 801601,
+    "db2FileDataID": 1294214
+  },
+  {
+    "tableName": "CinematicSequences",
+    "tableHash": "55EC00F0",
+    "dbcFileDataID": 801602,
+    "db2FileDataID": 1134583
+  },
+  {
+    "tableName": "CinematicSubtitle",
+    "tableHash": "8EF49F90"
+  },
+  {
+    "tableName": "ClientSceneEffect",
+    "tableHash": "F7047F31",
+    "db2FileDataID": 1939843
+  },
+  {
+    "tableName": "ClientSettings",
+    "tableHash": "5139503A",
+    "db2FileDataID": 5874295
+  },
+  {
+    "tableName": "CloakDampening",
+    "tableHash": "DCC61EF0",
+    "db2FileDataID": 1465903
+  },
+  {
+    "tableName": "CloneEffect",
+    "tableHash": "E67166E8",
+    "db2FileDataID": 2175218
+  },
+  {
+    "tableName": "CollectableSourceEncounter",
+    "tableHash": "5313B2C6",
+    "db2FileDataID": 5152111
+  },
+  {
+    "tableName": "CollectableSourceEncounterSparse",
+    "tableHash": "066232CE",
+    "db2FileDataID": 5152908
+  },
+  {
+    "tableName": "CollectableSourceInfo",
+    "tableHash": "EF425734",
+    "db2FileDataID": 5152112
+  },
+  {
+    "tableName": "CollectableSourceQuest",
+    "tableHash": "CBB62A64",
+    "db2FileDataID": 5205183
+  },
+  {
+    "tableName": "CollectableSourceQuestSparse",
+    "tableHash": "CB62F9AC",
+    "db2FileDataID": 5205600
+  },
+  {
+    "tableName": "CollectableSourceVendor",
+    "tableHash": "53F85D8C",
+    "db2FileDataID": 5163410
+  },
+  {
+    "tableName": "CollectableSourceVendorSparse",
+    "tableHash": "42E42070",
+    "db2FileDataID": 5159897
+  },
+  {
+    "tableName": "ColorBanding",
+    "tableHash": "DC41FA54",
+    "db2FileDataID": 3595239
+  },
+  {
+    "tableName": "CombatCondition",
+    "tableHash": "15F55B6D",
+    "dbcFileDataID": 801603,
+    "db2FileDataID": 1120958
+  },
+  {
+    "tableName": "CommentatorIndirectSpell",
+    "tableHash": "7FC4D023",
+    "db2FileDataID": 3067644
+  },
+  {
+    "tableName": "CommentatorStartLocation",
+    "tableHash": "6ADB274E",
+    "db2FileDataID": 1664251
+  },
+  {
+    "tableName": "CommentatorTrackedCooldown",
+    "tableHash": "16942FCB",
+    "db2FileDataID": 1661584
+  },
+  {
+    "tableName": "CommunityIcon",
+    "tableHash": "805D2025",
+    "db2FileDataID": 2098645
+  },
+  {
+    "tableName": "ComponentModelFileData",
+    "tableHash": "BE6AED26",
+    "db2FileDataID": 1349053
+  },
+  {
+    "tableName": "ComponentTextureFileData",
+    "tableHash": "82408B8D",
+    "db2FileDataID": 1278239
+  },
+  {
+    "tableName": "CompositeSpellsUIRedirect",
+    "tableHash": "83DD353C",
+    "db2FileDataID": 7556242
+  },
+  {
+    "tableName": "ConditionalChrModel",
+    "tableHash": "1B2419F3",
+    "db2FileDataID": 5211412
+  },
+  {
+    "tableName": "ConditionalContentTuning",
+    "tableHash": "7214CB47",
+    "db2FileDataID": 3501965
+  },
+  {
+    "tableName": "ConditionalCreatureModelData",
+    "tableHash": "1D2C33DA",
+    "db2FileDataID": 5525474
+  },
+  {
+    "tableName": "ConditionalItemAppearance",
+    "tableHash": "746D33FC",
+    "db2FileDataID": 5345180
+  },
+  {
+    "tableName": "ConfigurationWarning",
+    "tableHash": "6C7910A2",
+    "db2FileDataID": 1709409
+  },
+  {
+    "tableName": "ConsoleScripts",
+    "tableHash": "948B11F0",
+    "db2FileDataID": 1138619
+  },
+  {
+    "tableName": "ContentPush",
+    "tableHash": "7817197D",
+    "db2FileDataID": 5742435
+  },
+  {
+    "tableName": "ContentRestrictionRule",
+    "tableHash": "648BCCBB",
+    "db2FileDataID": 4668112
+  },
+  {
+    "tableName": "ContentRestrictionRuleSet",
+    "tableHash": "93141E4D",
+    "db2FileDataID": 4281307
+  },
+  {
+    "tableName": "ContentTuning",
+    "tableHash": "BD3635FF",
+    "db2FileDataID": 1962930
+  },
+  {
+    "tableName": "ContentTuningDescription",
+    "tableHash": "7AC0083F",
+    "db2FileDataID": 2130654
+  },
+  {
+    "tableName": "ContentTuningXDifficulty",
+    "tableHash": "E85DC4E3",
+    "db2FileDataID": 7001981
+  },
+  {
+    "tableName": "ContentTuningXExpected",
+    "tableHash": "E2526D09",
+    "db2FileDataID": 2976765
+  },
+  {
+    "tableName": "ContentTuningXExpectedStatMod",
+    "tableHash": "C7F0E778",
+    "db2FileDataID": 2960257
+  },
+  {
+    "tableName": "ContentTuningXLabel",
+    "tableHash": "AA03C366",
+    "db2FileDataID": 4659576
+  },
+  {
+    "tableName": "Contribution",
+    "tableHash": "2A8CB268",
+    "db2FileDataID": 1587153
+  },
+  {
+    "tableName": "ContributionStyle",
+    "tableHash": "B7DE6B4E",
+    "db2FileDataID": 2143633
+  },
+  {
+    "tableName": "ContributionStyleContainer",
+    "tableHash": "4E576E6A",
+    "db2FileDataID": 2143634
+  },
+  {
+    "tableName": "ConversationLine",
+    "tableHash": "C794A036",
+    "db2FileDataID": 1260801
+  },
+  {
+    "tableName": "CooldownSet",
+    "tableHash": "C68BE365",
+    "db2FileDataID": 6405756
+  },
+  {
+    "tableName": "CooldownSetLinkedSpell",
+    "tableHash": "6AB0078F",
+    "db2FileDataID": 6422327
+  },
+  {
+    "tableName": "CooldownSetSpell",
+    "tableHash": "4BF2FC04",
+    "db2FileDataID": 6405757
+  },
+  {
+    "tableName": "CooldownViewerItemSpell",
+    "tableHash": "BC8023E3",
+    "db2FileDataID": 7939216
+  },
+  {
+    "tableName": "CorruptionEffects",
+    "tableHash": "B18F44BB",
+    "db2FileDataID": 3220711
+  },
+  {
+    "tableName": "Covenant",
+    "tableHash": "96852C56",
+    "db2FileDataID": 3384973
+  },
+  {
+    "tableName": "CraftingData",
+    "tableHash": "971037D6",
+    "db2FileDataID": 4545611
+  },
+  {
+    "tableName": "CraftingDataEnchantQuality",
+    "tableHash": "F783A84D",
+    "db2FileDataID": 4659601
+  },
+  {
+    "tableName": "CraftingDataItemQuality",
+    "tableHash": "0490D46E",
+    "db2FileDataID": 4545612
+  },
+  {
+    "tableName": "CraftingDifficulty",
+    "tableHash": "F001E266",
+    "db2FileDataID": 4373536
+  },
+  {
+    "tableName": "CraftingDifficultyQuality",
+    "tableHash": "FDFFCFC0",
+    "db2FileDataID": 4373537
+  },
+  {
+    "tableName": "CraftingItem",
+    "tableHash": "B134B886"
+  },
+  {
+    "tableName": "CraftingItemQuality",
+    "tableHash": "82CE757E"
+  },
+  {
+    "tableName": "CraftingOrder",
+    "tableHash": "64CF867A",
+    "db2FileDataID": 4529122
+  },
+  {
+    "tableName": "CraftingOrderHouse",
+    "tableHash": "5A606E11",
+    "db2FileDataID": 4688652
+  },
+  {
+    "tableName": "CraftingOrderXLabel",
+    "tableHash": "96090551",
+    "db2FileDataID": 5875491
+  },
+  {
+    "tableName": "CraftingQuality",
+    "tableHash": "F544670A",
+    "db2FileDataID": 4373538
+  },
+  {
+    "tableName": "CraftingQualityAtlasSet",
+    "tableHash": "284224BE",
+    "db2FileDataID": 7012110
+  },
+  {
+    "tableName": "CraftingReagentEffect",
+    "tableHash": "18E0243D",
+    "db2FileDataID": 4541803
+  },
+  {
+    "tableName": "CraftingReagentQuality",
+    "tableHash": "4F9D237F",
+    "db2FileDataID": 4382197
+  },
+  {
+    "tableName": "CraftingReagentRequirement",
+    "tableHash": "B205515D",
+    "db2FileDataID": 5049814
+  },
+  {
+    "tableName": "Creature",
+    "tableHash": "C9D6B6B3",
+    "db2FileDataID": 841631
+  },
+  {
+    "tableName": "CreatureDifficulty",
+    "tableHash": "C9E0A749",
+    "db2FileDataID": 879282
+  },
+  {
+    "tableName": "CreatureDifficultyTreasure",
+    "tableHash": "D5A4E33A",
+    "db2FileDataID": 4044373
+  },
+  {
+    "tableName": "CreatureDisplayInfo",
+    "tableHash": "BFDAF9F1",
+    "dbcFileDataID": 801605,
+    "db2FileDataID": 1108759
+  },
+  {
+    "tableName": "CreatureDisplayInfoCond",
+    "tableHash": "1183FBF1",
+    "db2FileDataID": 1332686
+  },
+  {
+    "tableName": "CreatureDisplayInfoCondXChoice",
+    "tableHash": "3F7B5E64",
+    "db2FileDataID": 3670439
+  },
+  {
+    "tableName": "CreatureDisplayInfoEvt",
+    "tableHash": "664E0116",
+    "db2FileDataID": 1586882
+  },
+  {
+    "tableName": "CreatureDisplayInfoExtra",
+    "tableHash": "66A5C5B7",
+    "dbcFileDataID": 801606,
+    "db2FileDataID": 1264997
+  },
+  {
+    "tableName": "CreatureDisplayInfoGeosetData",
+    "tableHash": "A82DCC8C",
+    "db2FileDataID": 1720141
+  },
+  {
+    "tableName": "CreatureDisplayInfoOption",
+    "tableHash": "88C61AE6",
+    "db2FileDataID": 3692043
+  },
+  {
+    "tableName": "CreatureDisplayInfoTrn",
+    "tableHash": "FD09B803",
+    "db2FileDataID": 1146698
+  },
+  {
+    "tableName": "CreatureDisplayXUIModelScene",
+    "tableHash": "9D692570",
+    "db2FileDataID": 5551196
+  },
+  {
+    "tableName": "CreatureDispXUiCamera",
+    "tableHash": "3B5B6503",
+    "db2FileDataID": 1146692
+  },
+  {
+    "tableName": "CreatureFamily",
+    "tableHash": "369F469F",
+    "dbcFileDataID": 841606,
+    "db2FileDataID": 1351351
+  },
+  {
+    "tableName": "CreatureFamilyXUIModelScene",
+    "tableHash": "9BCE24EA",
+    "db2FileDataID": 5551197
+  },
+  {
+    "tableName": "CreatureImmunities",
+    "tableHash": "211E2DEF",
+    "dbcFileDataID": 801607,
+    "db2FileDataID": 1131322
+  },
+  {
+    "tableName": "CreatureLabel",
+    "tableHash": "6F771411",
+    "db2FileDataID": 3055733
+  },
+  {
+    "tableName": "CreatureModelData",
+    "tableHash": "7F695FA5",
+    "dbcFileDataID": 801608,
+    "db2FileDataID": 1365368
+  },
+  {
+    "tableName": "CreatureMovementInfo",
+    "tableHash": "CF156785",
+    "dbcFileDataID": 801609,
+    "db2FileDataID": 1125666
+  },
+  {
+    "tableName": "CreatureSoundData",
+    "tableHash": "91C188C0",
+    "dbcFileDataID": 801610,
+    "db2FileDataID": 1344466
+  },
+  {
+    "tableName": "CreatureSoundFidget",
+    "tableHash": "3B57C0A1",
+    "db2FileDataID": 4178576
+  },
+  {
+    "tableName": "CreatureSpellData",
+    "tableHash": "1432E3ED",
+    "dbcFileDataID": 801611,
+    "db2FileDataID": 3032554
+  },
+  {
+    "tableName": "CreatureType",
+    "tableHash": "1F80AD3F",
+    "dbcFileDataID": 841661,
+    "db2FileDataID": 1131315
+  },
+  {
+    "tableName": "CreatureXContribution",
+    "tableHash": "62926565",
+    "db2FileDataID": 1587158
+  },
+  {
+    "tableName": "CreatureXDisplayInfo",
+    "tableHash": "23CBE682",
+    "db2FileDataID": 1864302
+  },
+  {
+    "tableName": "CreatureXUiWidgetSet",
+    "tableHash": "1CDC8CD2",
+    "db2FileDataID": 3055738
+  },
+  {
+    "tableName": "Criteria",
+    "tableHash": "EF23DC80",
+    "dbcFileDataID": 801612,
+    "db2FileDataID": 1263817
+  },
+  {
+    "tableName": "CriteriaTree",
+    "tableHash": "4AD4429C",
+    "dbcFileDataID": 841637,
+    "db2FileDataID": 1263818
+  },
+  {
+    "tableName": "CriteriaTreeXEffect",
+    "tableHash": "E85A9D09",
+    "dbcFileDataID": 801613,
+    "db2FileDataID": 1345969
+  },
+  {
+    "tableName": "CurrencyCategory",
+    "tableHash": "D3C46981",
+    "dbcFileDataID": 841608,
+    "db2FileDataID": 1125667
+  },
+  {
+    "tableName": "CurrencyContainer",
+    "tableHash": "3C6CEA27",
+    "db2FileDataID": 1934603
+  },
+  {
+    "tableName": "CurrencySource",
+    "tableHash": "60383AA0",
+    "db2FileDataID": 4528719
+  },
+  {
+    "tableName": "CurrencyTypes",
+    "tableHash": "2F51378E",
+    "dbcFileDataID": 841642,
+    "db2FileDataID": 1095531
+  },
+  {
+    "tableName": "Curve",
+    "tableHash": "4BD9DF7A",
+    "db2FileDataID": 892585
+  },
+  {
+    "tableName": "CurvePoint",
+    "tableHash": "700ECA3A",
+    "db2FileDataID": 892586
+  },
+  {
+    "tableName": "DamageMeterOverride",
+    "tableHash": "BCB4DFE9",
+    "db2FileDataID": 7580602
+  },
+  {
+    "tableName": "DanceMoves",
+    "tableHash": "B73BF73F"
+  },
+  {
+    "tableName": "DataTagGroup",
+    "tableHash": "29BE1948",
+    "db2FileDataID": 6653645
+  },
+  {
+    "tableName": "DataTagGroupXDataTag",
+    "tableHash": "B56B1E7A",
+    "db2FileDataID": 6653584
+  },
+  {
+    "tableName": "DataTagInfo",
+    "tableHash": "6470AD86",
+    "db2FileDataID": 6652252
+  },
+  {
+    "tableName": "DataTagXHouseDecorRecord",
+    "tableHash": "D99D1A0B",
+    "db2FileDataID": 7570371
+  },
+  {
+    "tableName": "DataTagXRecord",
+    "tableHash": "D8F6C288",
+    "db2FileDataID": 6860787
+  },
+  {
+    "tableName": "DBData_M2Light",
+    "tableHash": "F3CCF5A9",
+    "db2FileDataID": 7813613
+  },
+  {
+    "tableName": "DeathThudLookups",
+    "tableHash": "4237038F",
+    "dbcFileDataID": 801614,
+    "db2FileDataID": 1279415
+  },
+  {
+    "tableName": "DecalProperties",
+    "tableHash": "C7B7E435",
+    "db2FileDataID": 1278176
+  },
+  {
+    "tableName": "DeclinedWord",
+    "tableHash": "2032D85F",
+    "dbcFileDataID": 849447,
+    "db2FileDataID": 1279100
+  },
+  {
+    "tableName": "DeclinedWordCases",
+    "tableHash": "A4495A4A",
+    "dbcFileDataID": 849448,
+    "db2FileDataID": 1279099
+  },
+  {
+    "tableName": "DecorCategory",
+    "tableHash": "67E4E1DC",
+    "db2FileDataID": 6247348
+  },
+  {
+    "tableName": "DecorDyeSlot",
+    "tableHash": "1CC37660",
+    "db2FileDataID": 6254050
+  },
+  {
+    "tableName": "DecorSubcategory",
+    "tableHash": "CA1E213D",
+    "db2FileDataID": 6247357
+  },
+  {
+    "tableName": "DecorXDecorSubcategory",
+    "tableHash": "D94B42D9",
+    "db2FileDataID": 6247358
+  },
+  {
+    "tableName": "DelvesSeason",
+    "tableHash": "C08ECCC7",
+    "db2FileDataID": 5920079
+  },
+  {
+    "tableName": "DelvesSeasonXSpell",
+    "tableHash": "849773B2",
+    "db2FileDataID": 5920080
+  },
+  {
+    "tableName": "DestructibleModelData",
+    "tableHash": "7A74425D",
+    "dbcFileDataID": 801615,
+    "db2FileDataID": 1122116
+  },
+  {
+    "tableName": "DeviceBlacklist",
+    "tableHash": "3A9E3494",
+    "db2FileDataID": 922722
+  },
+  {
+    "tableName": "DeviceDefaultSettings",
+    "tableHash": "D007E829",
+    "db2FileDataID": 925422
+  },
+  {
+    "tableName": "Difficulty",
+    "tableHash": "CB297E3A",
+    "dbcFileDataID": 841615,
+    "db2FileDataID": 1352127
+  },
+  {
+    "tableName": "DisplaySeason",
+    "tableHash": "0107D01B",
+    "db2FileDataID": 4279827
+  },
+  {
+    "tableName": "DissolveEffect",
+    "tableHash": "8FDAC9B4",
+    "db2FileDataID": 1304325
+  },
+  {
+    "tableName": "DriveCapability",
+    "tableHash": "8AD39905",
+    "db2FileDataID": 6320418
+  },
+  {
+    "tableName": "DriveCapabilityTier",
+    "tableHash": "C719DFFA",
+    "db2FileDataID": 6336219
+  },
+  {
+    "tableName": "DriverBlacklist",
+    "tableHash": "4F10F976",
+    "db2FileDataID": 922720
+  },
+  {
+    "tableName": "DungeonEncounter",
+    "tableHash": "FB6E72FC",
+    "dbcFileDataID": 841666,
+    "db2FileDataID": 1347279
+  },
+  {
+    "tableName": "DungeonMap",
+    "tableHash": "4E8538DF",
+    "dbcFileDataID": 801616,
+    "db2FileDataID": 1347271
+  },
+  {
+    "tableName": "DungeonMapChunk",
+    "tableHash": "8FC85876",
+    "dbcFileDataID": 801617,
+    "db2FileDataID": 1294215
+  },
+  {
+    "tableName": "DurabilityCosts",
+    "tableHash": "B8CE321B",
+    "dbcFileDataID": 801618,
+    "db2FileDataID": 1283019
+  },
+  {
+    "tableName": "DurabilityQuality",
+    "tableHash": "F7808C05",
+    "dbcFileDataID": 801619,
+    "db2FileDataID": 1130268
+  },
+  {
+    "tableName": "DyeColor",
+    "tableHash": "EB8DD794",
+    "db2FileDataID": 6254051
+  },
+  {
+    "tableName": "DyeColorCategory",
+    "tableHash": "28A4538B",
+    "db2FileDataID": 6254052
+  },
+  {
+    "tableName": "EdgeGlowEffect",
+    "tableHash": "803704B6",
+    "db2FileDataID": 1387381
+  },
+  {
+    "tableName": "EmoteAnims",
+    "tableHash": "15B8D313"
+  },
+  {
+    "tableName": "Emotes",
+    "tableHash": "21091B9A",
+    "dbcFileDataID": 801620,
+    "db2FileDataID": 1343602
+  },
+  {
+    "tableName": "EmotesText",
+    "tableHash": "ED4E8758",
+    "dbcFileDataID": 801621,
+    "db2FileDataID": 1347273
+  },
+  {
+    "tableName": "EmotesTextData",
+    "tableHash": "7765D867",
+    "dbcFileDataID": 841638,
+    "db2FileDataID": 1283024
+  },
+  {
+    "tableName": "EmotesTextSound",
+    "tableHash": "1D3AC587",
+    "dbcFileDataID": 801622,
+    "db2FileDataID": 1286524
+  },
+  {
+    "tableName": "EncounterEvent",
+    "tableHash": "998530D6",
+    "db2FileDataID": 7571075
+  },
+  {
+    "tableName": "EntryNode",
+    "tableHash": "3B9CE40A",
+    "db2FileDataID": 5609253
+  },
+  {
+    "tableName": "EntryTemplate",
+    "tableHash": "DCA8CE9E",
+    "db2FileDataID": 5609255
+  },
+  {
+    "tableName": "EnumeratedString",
+    "tableHash": "F6A28872",
+    "db2FileDataID": 3055749
+  },
+  {
+    "tableName": "EnvironmentalDamage",
+    "tableHash": "6E5CA398",
+    "dbcFileDataID": 801623,
+    "db2FileDataID": 1278398
+  },
+  {
+    "tableName": "EventSchedulerCategory",
+    "tableHash": "994BD2AC",
+    "db2FileDataID": 7499494
+  },
+  {
+    "tableName": "EventSchedulerEvent",
+    "tableHash": "16308F61",
+    "db2FileDataID": 7499495
+  },
+  {
+    "tableName": "Exhaustion",
+    "tableHash": "3386B543",
+    "dbcFileDataID": 841609,
+    "db2FileDataID": 1343313
+  },
+  {
+    "tableName": "ExpectedStat",
+    "tableHash": "27A7E77F",
+    "db2FileDataID": 1937326
+  },
+  {
+    "tableName": "ExpectedStatMod",
+    "tableHash": "280851FB",
+    "db2FileDataID": 1969773
+  },
+  {
+    "tableName": "ExteriorComponent",
+    "tableHash": "6FF1C5BA",
+    "db2FileDataID": 6931305
+  },
+  {
+    "tableName": "ExteriorComponentExitPoint",
+    "tableHash": "A16AF1A0",
+    "db2FileDataID": 6931306
+  },
+  {
+    "tableName": "ExteriorComponentGroup",
+    "tableHash": "E4A74567",
+    "db2FileDataID": 7280847
+  },
+  {
+    "tableName": "ExteriorComponentGroupXHook",
+    "tableHash": "FF2CC7AC",
+    "db2FileDataID": 7280848
+  },
+  {
+    "tableName": "ExteriorComponentHook",
+    "tableHash": "4DE8FA20",
+    "db2FileDataID": 6931307
+  },
+  {
+    "tableName": "ExteriorComponentType",
+    "tableHash": "3A5F0B25",
+    "db2FileDataID": 6931308
+  },
+  {
+    "tableName": "ExteriorComponentXGroup",
+    "tableHash": "D02F12DA",
+    "db2FileDataID": 7412982
+  },
+  {
+    "tableName": "ExtraAbilityInfo",
+    "tableHash": "FC29A007",
+    "db2FileDataID": 3527889
+  },
+  {
+    "tableName": "Faction",
+    "tableHash": "06F624D7",
+    "dbcFileDataID": 841669,
+    "db2FileDataID": 1361972
+  },
+  {
+    "tableName": "FactionGroup",
+    "tableHash": "7A55B55D",
+    "dbcFileDataID": 841646,
+    "db2FileDataID": 1343595
+  },
+  {
+    "tableName": "FactionTemplate",
+    "tableHash": "1018ADD5",
+    "dbcFileDataID": 801624,
+    "db2FileDataID": 1361579
+  },
+  {
+    "tableName": "FFTTile",
+    "tableHash": "43B03B3C",
+    "db2FileDataID": 7489860
+  },
+  {
+    "tableName": "FileData",
+    "tableHash": "EEF11C65",
+    "dbcFileDataID": 801625
+  },
+  {
+    "tableName": "FileDataComplete",
+    "tableHash": "2DB50883",
+    "dbcFileDataID": 1096626,
+    "db2FileDataID": 1375799
+  },
+  {
+    "tableName": "FilePaths",
+    "tableHash": "853D3075",
+    "db2FileDataID": 1712174
+  },
+  {
+    "tableName": "FlightCapability",
+    "tableHash": "D81AFA61",
+    "db2FileDataID": 4501047
+  },
+  {
+    "tableName": "FlightCapabilityXGlideEvent",
+    "tableHash": "D3A18D56",
+    "db2FileDataID": 4644249
+  },
+  {
+    "tableName": "FootprintTextures",
+    "tableHash": "2BBD5BA1",
+    "dbcFileDataID": 801626,
+    "db2FileDataID": 1308056
+  },
+  {
+    "tableName": "FootstepTerrainLookup",
+    "tableHash": "52AC9461",
+    "dbcFileDataID": 801627,
+    "db2FileDataID": 1267647
+  },
+  {
+    "tableName": "FriendshipRepReaction",
+    "tableHash": "13315BF9",
+    "dbcFileDataID": 841612,
+    "db2FileDataID": 1237638
+  },
+  {
+    "tableName": "FriendshipReputation",
+    "tableHash": "0DF61E79",
+    "dbcFileDataID": 841650,
+    "db2FileDataID": 1237639
+  },
+  {
+    "tableName": "FullScreenEffect",
+    "tableHash": "85401935",
+    "db2FileDataID": 1348282
+  },
+  {
+    "tableName": "GameClockDebug",
+    "tableHash": "C10BB601",
+    "db2FileDataID": 2922072
+  },
+  {
+    "tableName": "GameMode",
+    "tableHash": "BE1ECA27",
+    "db2FileDataID": 5008306
+  },
+  {
+    "tableName": "GameObjectAnimGroupMember",
+    "tableHash": "D678A307",
+    "db2FileDataID": 3565753
+  },
+  {
+    "tableName": "GameObjectArtKit",
+    "tableHash": "0024BCED",
+    "dbcFileDataID": 801628,
+    "db2FileDataID": 1266737
+  },
+  {
+    "tableName": "GameObjectDiffAnimMap",
+    "tableHash": "174228A6",
+    "dbcFileDataID": 801629,
+    "db2FileDataID": 1302847
+  },
+  {
+    "tableName": "GameObjectDisplayCondition",
+    "tableHash": "4BA4A16A",
+    "db2FileDataID": 5634246
+  },
+  {
+    "tableName": "GameObjectDisplayInfo",
+    "tableHash": "6D100DCB",
+    "dbcFileDataID": 801630,
+    "db2FileDataID": 1266277
+  },
+  {
+    "tableName": "GameObjectDisplayInfoXSoundKit",
+    "tableHash": "DB23FBD9",
+    "db2FileDataID": 1345272
+  },
+  {
+    "tableName": "GameObjectLabel",
+    "tableHash": "55D668A7",
+    "db2FileDataID": 4621877
+  },
+  {
+    "tableName": "GameObjects",
+    "tableHash": "13C403A5",
+    "db2FileDataID": 841620
+  },
+  {
+    "tableName": "GameObjectsClient",
+    "tableHash": "7D063873"
+  },
+  {
+    "tableName": "GameParameter",
+    "tableHash": "0B4345FC",
+    "db2FileDataID": 3405438
+  },
+  {
+    "tableName": "GameTables",
+    "tableHash": "0053FD87",
+    "dbcFileDataID": 801631,
+    "db2FileDataID": 1138116
+  },
+  {
+    "tableName": "GameTips",
+    "tableHash": "8978228D",
+    "dbcFileDataID": 841675,
+    "db2FileDataID": 1368021
+  },
+  {
+    "tableName": "GarrAbility",
+    "tableHash": "E47316B8",
+    "db2FileDataID": 966238
+  },
+  {
+    "tableName": "GarrAbilityCategory",
+    "tableHash": "32D73CE8",
+    "db2FileDataID": 1020248
+  },
+  {
+    "tableName": "GarrAbilityEffect",
+    "tableHash": "A41CF54F",
+    "db2FileDataID": 966241
+  },
+  {
+    "tableName": "GarrAutoCombatant",
+    "tableHash": "B278C47F",
+    "db2FileDataID": 3305399
+  },
+  {
+    "tableName": "GarrAutoSpell",
+    "tableHash": "D0CCA9AA",
+    "db2FileDataID": 3305400
+  },
+  {
+    "tableName": "GarrAutoSpellEffect",
+    "tableHash": "F90F50C9",
+    "db2FileDataID": 3307335
+  },
+  {
+    "tableName": "GarrBuilding",
+    "tableHash": "345B0DB7",
+    "db2FileDataID": 929747
+  },
+  {
+    "tableName": "GarrBuildingDoodadSet",
+    "tableHash": "9EBC6471",
+    "db2FileDataID": 943937
+  },
+  {
+    "tableName": "GarrBuildingPlotInst",
+    "tableHash": "94A9BA1E",
+    "db2FileDataID": 983298
+  },
+  {
+    "tableName": "GarrClassSpec",
+    "tableHash": "4575BF0F",
+    "db2FileDataID": 981570
+  },
+  {
+    "tableName": "GarrClassSpecPlayerCond",
+    "tableHash": "DB01B862",
+    "db2FileDataID": 1380674
+  },
+  {
+    "tableName": "GarrEncounter",
+    "tableHash": "A753AC92",
+    "db2FileDataID": 975304
+  },
+  {
+    "tableName": "GarrEncounterSetXEncounter",
+    "tableHash": "9EF63764",
+    "db2FileDataID": 1354772
+  },
+  {
+    "tableName": "GarrEncounterXMechanic",
+    "tableHash": "46C53A0B",
+    "db2FileDataID": 967961
+  },
+  {
+    "tableName": "GarrFamilyName",
+    "tableHash": "6E3CDF63",
+    "db2FileDataID": 968469
+  },
+  {
+    "tableName": "GarrFollItemSet",
+    "tableHash": "5E456D3E",
+    "db2FileDataID": 981564
+  },
+  {
+    "tableName": "GarrFollItemSetMember",
+    "tableHash": "2A41D721",
+    "db2FileDataID": 981569
+  },
+  {
+    "tableName": "GarrFollower",
+    "tableHash": "A8D85D45",
+    "db2FileDataID": 949906
+  },
+  {
+    "tableName": "GarrFollowerLevelXP",
+    "tableHash": "DE342443",
+    "db2FileDataID": 970979
+  },
+  {
+    "tableName": "GarrFollowerQuality",
+    "tableHash": "4205184C",
+    "db2FileDataID": 1027793
+  },
+  {
+    "tableName": "GarrFollowerSetXFollower",
+    "tableHash": "C1F2B6A1",
+    "db2FileDataID": 1361029
+  },
+  {
+    "tableName": "GarrFollowerType",
+    "tableHash": "BFCD2376",
+    "db2FileDataID": 1118784
+  },
+  {
+    "tableName": "GarrFollowerUICreature",
+    "tableHash": "9E19CD04",
+    "db2FileDataID": 1412636
+  },
+  {
+    "tableName": "GarrFollowerXAbility",
+    "tableHash": "914D7D9B",
+    "db2FileDataID": 968468
+  },
+  {
+    "tableName": "GarrFollSupportSpell",
+    "tableHash": "76BC8305",
+    "db2FileDataID": 1345970
+  },
+  {
+    "tableName": "GarrGivenName",
+    "tableHash": "F9D066F3",
+    "db2FileDataID": 968470
+  },
+  {
+    "tableName": "GarrItemLevelUpgradeData",
+    "tableHash": "77BB7AE0",
+    "db2FileDataID": 1572314
+  },
+  {
+    "tableName": "GarrMechanic",
+    "tableHash": "63AA03A4",
+    "db2FileDataID": 967963
+  },
+  {
+    "tableName": "GarrMechanicSetXMechanic",
+    "tableHash": "0DFE316B",
+    "db2FileDataID": 1391531
+  },
+  {
+    "tableName": "GarrMechanicType",
+    "tableHash": "A91F6CA8",
+    "db2FileDataID": 967964
+  },
+  {
+    "tableName": "GarrMission",
+    "tableHash": "0DF5FA28",
+    "db2FileDataID": 967962
+  },
+  {
+    "tableName": "GarrMissionReward",
+    "tableHash": "8584C1F2",
+    "db2FileDataID": 1001908
+  },
+  {
+    "tableName": "GarrMissionSet",
+    "tableHash": "8953B846",
+    "db2FileDataID": 3055759
+  },
+  {
+    "tableName": "GarrMissionTexture",
+    "tableHash": "37FC4173",
+    "db2FileDataID": 1125220
+  },
+  {
+    "tableName": "GarrMissionType",
+    "tableHash": "D8D9D218",
+    "db2FileDataID": 984174
+  },
+  {
+    "tableName": "GarrMissionXEncounter",
+    "tableHash": "6294C01F",
+    "db2FileDataID": 967960
+  },
+  {
+    "tableName": "GarrMissionXFollower",
+    "tableHash": "BB693A32",
+    "db2FileDataID": 1359096
+  },
+  {
+    "tableName": "GarrMssnBonusAbility",
+    "tableHash": "C3369DE5",
+    "db2FileDataID": 1138458
+  },
+  {
+    "tableName": "GarrPlot",
+    "tableHash": "2CD8C002",
+    "db2FileDataID": 937634
+  },
+  {
+    "tableName": "GarrPlotBuilding",
+    "tableHash": "73F2572B",
+    "db2FileDataID": 929743
+  },
+  {
+    "tableName": "GarrPlotInstance",
+    "tableHash": "F3F86C96",
+    "db2FileDataID": 929742
+  },
+  {
+    "tableName": "GarrPlotUICategory",
+    "tableHash": "0FC6FEC6",
+    "db2FileDataID": 937635
+  },
+  {
+    "tableName": "GarrSiteLevel",
+    "tableHash": "22C7158E",
+    "db2FileDataID": 939295
+  },
+  {
+    "tableName": "GarrSiteLevelPlotInst",
+    "tableHash": "69B2A3AC",
+    "db2FileDataID": 940404
+  },
+  {
+    "tableName": "GarrSpecialization",
+    "tableHash": "1EE674BD",
+    "db2FileDataID": 937647
+  },
+  {
+    "tableName": "GarrString",
+    "tableHash": "E4FACA3A",
+    "db2FileDataID": 1416758
+  },
+  {
+    "tableName": "GarrTalent",
+    "tableHash": "2400895C",
+    "db2FileDataID": 1361032
+  },
+  {
+    "tableName": "GarrTalentCost",
+    "tableHash": "CF5E3E17",
+    "db2FileDataID": 3514438
+  },
+  {
+    "tableName": "GarrTalentMapPOI",
+    "tableHash": "63309E13",
+    "db2FileDataID": 3534056
+  },
+  {
+    "tableName": "GarrTalentRank",
+    "tableHash": "8363B2E0",
+    "db2FileDataID": 3069763
+  },
+  {
+    "tableName": "GarrTalentRankGroupEntry",
+    "tableHash": "8D0CC8E0",
+    "db2FileDataID": 4382239
+  },
+  {
+    "tableName": "GarrTalentRankGroupResearchMod",
+    "tableHash": "68A95A32",
+    "db2FileDataID": 4389481
+  },
+  {
+    "tableName": "GarrTalentResearch",
+    "tableHash": "62906315",
+    "db2FileDataID": 3195518
+  },
+  {
+    "tableName": "GarrTalentSocketProperties",
+    "tableHash": "BCE0466E",
+    "db2FileDataID": 3612617
+  },
+  {
+    "tableName": "GarrTalentTree",
+    "tableHash": "9D6A097A",
+    "db2FileDataID": 1361030
+  },
+  {
+    "tableName": "GarrTalTreeXGarrTalResearch",
+    "tableHash": "49E468EE",
+    "db2FileDataID": 3195601
+  },
+  {
+    "tableName": "GarrType",
+    "tableHash": "D16A730B",
+    "db2FileDataID": 1333161
+  },
+  {
+    "tableName": "GarrUiAnimClassInfo",
+    "tableHash": "025C3B70",
+    "dbcFileDataID": 976991,
+    "db2FileDataID": 976037
+  },
+  {
+    "tableName": "GarrUiAnimRaceInfo",
+    "tableHash": "4C59D8A6",
+    "dbcFileDataID": 976990,
+    "db2FileDataID": 976035
+  },
+  {
+    "tableName": "GemProperties",
+    "tableHash": "9C00EA6D",
+    "dbcFileDataID": 801632,
+    "db2FileDataID": 1343604
+  },
+  {
+    "tableName": "GlideEvent",
+    "tableHash": "8552D9C3",
+    "db2FileDataID": 4644012
+  },
+  {
+    "tableName": "GlideEventBlendTimes",
+    "tableHash": "9A3EB64F",
+    "db2FileDataID": 4682325
+  },
+  {
+    "tableName": "GlobalColor",
+    "tableHash": "B8BA5FB3",
+    "db2FileDataID": 4328468
+  },
+  {
+    "tableName": "GlobalCurve",
+    "tableHash": "E7826E8C",
+    "db2FileDataID": 3752002
+  },
+  {
+    "tableName": "GlobalGameContentTuning",
+    "tableHash": "C1E96786",
+    "db2FileDataID": 3756368
+  },
+  {
+    "tableName": "GlobalPlayerCondition",
+    "tableHash": "B5F3BE31",
+    "db2FileDataID": 4082838
+  },
+  {
+    "tableName": "GlobalPlayerConditionSet",
+    "tableHash": "AF1ABEA3",
+    "db2FileDataID": 4082839
+  },
+  {
+    "tableName": "GlobalStrings",
+    "tableHash": "BF0BC27A",
+    "db2FileDataID": 1394440
+  },
+  {
+    "tableName": "GlobalTable_PlayerCondition",
+    "tableHash": "BDAFBB39",
+    "db2FileDataID": 3476011
+  },
+  {
+    "tableName": "GlueScreenEmote",
+    "tableHash": "D4569E2F",
+    "dbcFileDataID": 801633,
+    "db2FileDataID": 1375800
+  },
+  {
+    "tableName": "GlyphBindableSpell",
+    "tableHash": "0D3BA0F3",
+    "db2FileDataID": 1270147
+  },
+  {
+    "tableName": "GlyphExclusiveCategory",
+    "tableHash": "E122AC03",
+    "db2FileDataID": 948546
+  },
+  {
+    "tableName": "GlyphProperties",
+    "tableHash": "FAF454A9",
+    "dbcFileDataID": 801634,
+    "db2FileDataID": 1345274
+  },
+  {
+    "tableName": "GlyphRequiredSpec",
+    "tableHash": "8E304E55",
+    "db2FileDataID": 948496
+  },
+  {
+    "tableName": "GlyphSlot",
+    "tableHash": "161B1DE4",
+    "dbcFileDataID": 801635,
+    "db2FileDataID": 1130095
+  },
+  {
+    "tableName": "GMSurveyAnswers",
+    "tableHash": "4405A1CA",
+    "dbcFileDataID": 841645,
+    "db2FileDataID": 1283025
+  },
+  {
+    "tableName": "GMSurveyCurrentSurvey",
+    "tableHash": "907149C9",
+    "dbcFileDataID": 801636,
+    "db2FileDataID": 1278177
+  },
+  {
+    "tableName": "GMSurveyQuestions",
+    "tableHash": "FEAFC1B9",
+    "dbcFileDataID": 841614,
+    "db2FileDataID": 1278178
+  },
+  {
+    "tableName": "GMSurveySurveys",
+    "tableHash": "0C0B722F",
+    "dbcFileDataID": 801637,
+    "db2FileDataID": 1283020
+  },
+  {
+    "tableName": "GMTicketCategory",
+    "tableHash": "273D74BF",
+    "dbcFileDataID": 841680
+  },
+  {
+    "tableName": "GossipNPCOption",
+    "tableHash": "936188F9",
+    "db2FileDataID": 4278503
+  },
+  {
+    "tableName": "GossipNPCOptionDisplayInfo",
+    "tableHash": "388DD47D",
+    "db2FileDataID": 4335720
+  },
+  {
+    "tableName": "GossipOptionXUIWidgetSet",
+    "tableHash": "2ECB23C0",
+    "db2FileDataID": 5746391
+  },
+  {
+    "tableName": "GossipUIDisplayInfoCondition",
+    "tableHash": "D69E0D2F",
+    "db2FileDataID": 5902977
+  },
+  {
+    "tableName": "GossipXGarrTalentTrees",
+    "tableHash": "8BA95B41",
+    "db2FileDataID": 4407361
+  },
+  {
+    "tableName": "GossipXUIDisplayInfo",
+    "tableHash": "DF74686B",
+    "db2FileDataID": 3622253
+  },
+  {
+    "tableName": "GradientEffect",
+    "tableHash": "0B685935",
+    "db2FileDataID": 2433582
+  },
+  {
+    "tableName": "GroundEffectDoodad",
+    "tableHash": "A5945ACA",
+    "dbcFileDataID": 801638,
+    "db2FileDataID": 1308057
+  },
+  {
+    "tableName": "GroundEffectTexture",
+    "tableHash": "8108D98D",
+    "dbcFileDataID": 801639,
+    "db2FileDataID": 1308499
+  },
+  {
+    "tableName": "GroupFinderActivity",
+    "tableHash": "AF32E8CA",
+    "db2FileDataID": 974813
+  },
+  {
+    "tableName": "GroupFinderActivityGrp",
+    "tableHash": "357024D6",
+    "db2FileDataID": 974814
+  },
+  {
+    "tableName": "GroupFinderActivityXPvpBracket",
+    "tableHash": "40061D9E",
+    "db2FileDataID": 4206623
+  },
+  {
+    "tableName": "GroupFinderCategory",
+    "tableHash": "2FE6EF1A",
+    "db2FileDataID": 974812
+  },
+  {
+    "tableName": "gtArmorMitigationByLvl",
+    "tableHash": "9E3856B9",
+    "dbcFileDataID": 934905
+  },
+  {
+    "tableName": "gtBarberShopCostBase",
+    "tableHash": "A2E3BA12",
+    "dbcFileDataID": 801640
+  },
+  {
+    "tableName": "gtBattlePetTypeDamageMod",
+    "tableHash": "335C5BEE",
+    "dbcFileDataID": 801641
+  },
+  {
+    "tableName": "gtBattlePetXP",
+    "tableHash": "1CCA77A9",
+    "dbcFileDataID": 801642
+  },
+  {
+    "tableName": "gtChanceToMeleeCrit",
+    "tableHash": "5DF51BF5",
+    "dbcFileDataID": 801643
+  },
+  {
+    "tableName": "gtChanceToMeleeCritBase",
+    "tableHash": "2B370B67",
+    "dbcFileDataID": 801644
+  },
+  {
+    "tableName": "gtChanceToSpellCrit",
+    "tableHash": "300FDEBA",
+    "dbcFileDataID": 801645
+  },
+  {
+    "tableName": "gtChanceToSpellCritBase",
+    "tableHash": "4C1825D3",
+    "dbcFileDataID": 801646
+  },
+  {
+    "tableName": "gtCombatRatings",
+    "tableHash": "95C51F6D",
+    "dbcFileDataID": 801647
+  },
+  {
+    "tableName": "gtItemSocketCostPerLevel",
+    "tableHash": "05C292B0",
+    "dbcFileDataID": 801648
+  },
+  {
+    "tableName": "gtMasteryMultipliers",
+    "tableHash": "F282BC9F"
+  },
+  {
+    "tableName": "gtNPCManaCostScaler",
+    "tableHash": "788B9FBC",
+    "dbcFileDataID": 801649
+  },
+  {
+    "tableName": "gtOCTBaseHPByClass",
+    "tableHash": "35BC9A09",
+    "dbcFileDataID": 801650
+  },
+  {
+    "tableName": "gtOCTBaseMPByClass",
+    "tableHash": "16A0284A",
+    "dbcFileDataID": 801651
+  },
+  {
+    "tableName": "gtOCTClassCombatRatingScalar",
+    "tableHash": "F8C093F1",
+    "dbcFileDataID": 801652
+  },
+  {
+    "tableName": "gtOCTHpPerStamina",
+    "tableHash": "CD8A1742",
+    "dbcFileDataID": 801653
+  },
+  {
+    "tableName": "gtOCTLevelExperience",
+    "tableHash": "B9DB8A50",
+    "dbcFileDataID": 929748
+  },
+  {
+    "tableName": "gtOCTRegenHP",
+    "tableHash": "4E5BA384"
+  },
+  {
+    "tableName": "gtOCTRegenMP",
+    "tableHash": "DB6EFF67"
+  },
+  {
+    "tableName": "gtRegenHPPerSpt",
+    "tableHash": "310E6F3C"
+  },
+  {
+    "tableName": "gtRegenMPPerSpt",
+    "tableHash": "DDE3563D",
+    "dbcFileDataID": 801654
+  },
+  {
+    "tableName": "gtResilienceDR",
+    "tableHash": "805EC0DC",
+    "dbcFileDataID": 841944
+  },
+  {
+    "tableName": "gtSpellScaling",
+    "tableHash": "AA2319FA",
+    "dbcFileDataID": 801655
+  },
+  {
+    "tableName": "GuildColorBackground",
+    "tableHash": "7E831D78",
+    "dbcFileDataID": 801656,
+    "db2FileDataID": 1286526
+  },
+  {
+    "tableName": "GuildColorBorder",
+    "tableHash": "13BE3875",
+    "dbcFileDataID": 801657,
+    "db2FileDataID": 1286527
+  },
+  {
+    "tableName": "GuildColorEmblem",
+    "tableHash": "1B8B472E",
+    "dbcFileDataID": 801658,
+    "db2FileDataID": 1286525
+  },
+  {
+    "tableName": "GuildEmblem",
+    "tableHash": "08158DF0",
+    "db2FileDataID": 2734754
+  },
+  {
+    "tableName": "GuildPerkSpells",
+    "tableHash": "01956414",
+    "dbcFileDataID": 801659,
+    "db2FileDataID": 1135238
+  },
+  {
+    "tableName": "GuildShirtBackground",
+    "tableHash": "7515EC04",
+    "db2FileDataID": 2921008
+  },
+  {
+    "tableName": "GuildShirtBorder",
+    "tableHash": "42E34967",
+    "db2FileDataID": 2921475
+  },
+  {
+    "tableName": "GuildTabardBackground",
+    "tableHash": "C043B7B0",
+    "db2FileDataID": 2909769
+  },
+  {
+    "tableName": "GuildTabardBorder",
+    "tableHash": "7CE1DCC9",
+    "db2FileDataID": 2920485
+  },
+  {
+    "tableName": "GuildTabardEmblem",
+    "tableHash": "DB72FF0A",
+    "db2FileDataID": 2910470
+  },
+  {
+    "tableName": "Heirloom",
+    "tableHash": "2E7BAFAE",
+    "db2FileDataID": 1097696
+  },
+  {
+    "tableName": "HelmetAnimScaling",
+    "tableHash": "3C808B5A",
+    "dbcFileDataID": 801660,
+    "db2FileDataID": 1348283
+  },
+  {
+    "tableName": "HelmetGeosetData",
+    "tableHash": "240C1F15",
+    "db2FileDataID": 2821752
+  },
+  {
+    "tableName": "HelmetGeosetVisData",
+    "tableHash": "380E19DF",
+    "dbcFileDataID": 801661,
+    "db2FileDataID": 1294216
+  },
+  {
+    "tableName": "HighlightColor",
+    "tableHash": "52191C0A",
+    "db2FileDataID": 996358
+  },
+  {
+    "tableName": "HolidayDescriptions",
+    "tableHash": "2927A4BF",
+    "dbcFileDataID": 841652,
+    "db2FileDataID": 996360
+  },
+  {
+    "tableName": "HolidayNames",
+    "tableHash": "5499185A",
+    "dbcFileDataID": 841619,
+    "db2FileDataID": 996359
+  },
+  {
+    "tableName": "Holidays",
+    "tableHash": "758E7BCC",
+    "dbcFileDataID": 801662,
+    "db2FileDataID": 996357
+  },
+  {
+    "tableName": "HolidayXTimeEvent",
+    "tableHash": "3012BC0C",
+    "db2FileDataID": 6905813
+  },
+  {
+    "tableName": "Hotfix",
+    "tableHash": "8FC30063",
+    "db2FileDataID": 1590224
+  },
+  {
+    "tableName": "Hotfixes",
+    "tableHash": "07209136",
+    "db2FileDataID": 1995523
+  },
+  {
+    "tableName": "House",
+    "tableHash": "6DCF2809",
+    "db2FileDataID": 5149690
+  },
+  {
+    "tableName": "HouseDecor",
+    "tableHash": "137145D0",
+    "db2FileDataID": 5149691
+  },
+  {
+    "tableName": "HouseDecorMaterial",
+    "tableHash": "F70BBDD4",
+    "db2FileDataID": 6855863
+  },
+  {
+    "tableName": "HouseDecorThemeSet",
+    "tableHash": "8A777AA0",
+    "db2FileDataID": 6860900
+  },
+  {
+    "tableName": "HouseExteriorWmoData",
+    "tableHash": "24EE8F09",
+    "db2FileDataID": 6931309
+  },
+  {
+    "tableName": "HouseLevelData",
+    "tableHash": "CD85A790",
+    "db2FileDataID": 7149539
+  },
+  {
+    "tableName": "HouseLevelRewardInfo",
+    "tableHash": "6DCA2D4D",
+    "db2FileDataID": 7495433
+  },
+  {
+    "tableName": "HouseRoom",
+    "tableHash": "BBA2E8F8",
+    "db2FileDataID": 5163003
+  },
+  {
+    "tableName": "HouseTheme",
+    "tableHash": "EAAA527C",
+    "db2FileDataID": 6998392
+  },
+  {
+    "tableName": "ImportPriceArmor",
+    "tableHash": "3E372864",
+    "dbcFileDataID": 801663,
+    "db2FileDataID": 1121229
+  },
+  {
+    "tableName": "ImportPriceQuality",
+    "tableHash": "3C615C13",
+    "dbcFileDataID": 801664,
+    "db2FileDataID": 1121228
+  },
+  {
+    "tableName": "ImportPriceShield",
+    "tableHash": "2BDE6A98",
+    "dbcFileDataID": 801665,
+    "db2FileDataID": 1121227
+  },
+  {
+    "tableName": "ImportPriceWeapon",
+    "tableHash": "976C8F98",
+    "dbcFileDataID": 801666,
+    "db2FileDataID": 1121230
+  },
+  {
+    "tableName": "InitiativeCycle",
+    "tableHash": "1457292F",
+    "db2FileDataID": 6880277
+  },
+  {
+    "tableName": "InitiativeCyclePriority",
+    "tableHash": "A8030A99",
+    "db2FileDataID": 6880278
+  },
+  {
+    "tableName": "InitiativeMilestone",
+    "tableHash": "884D6D3E",
+    "db2FileDataID": 6880279
+  },
+  {
+    "tableName": "InitiativeReward",
+    "tableHash": "B3047FC5",
+    "db2FileDataID": 6880280
+  },
+  {
+    "tableName": "InitiativeRewardXMilestone",
+    "tableHash": "DE9B0694",
+    "db2FileDataID": 6914777
+  },
+  {
+    "tableName": "InitiativeTask",
+    "tableHash": "5373CFEB",
+    "db2FileDataID": 6880281
+  },
+  {
+    "tableName": "InitiativeXTask",
+    "tableHash": "C72C611D",
+    "db2FileDataID": 6880282
+  },
+  {
+    "tableName": "InvasionClientData",
+    "tableHash": "18791515",
+    "db2FileDataID": 1336651
+  },
+  {
+    "tableName": "Item",
+    "tableHash": "50238EC2",
+    "db2FileDataID": 841626
+  },
+  {
+    "tableName": "Item-sparse",
+    "tableHash": "6A7C6E76",
+    "db2FileDataID": 841677
+  },
+  {
+    "tableName": "ItemAppearance",
+    "tableHash": "42261B89",
+    "db2FileDataID": 982462
+  },
+  {
+    "tableName": "ItemAppearanceXUiCamera",
+    "tableHash": "8C3E04CB",
+    "db2FileDataID": 1248126
+  },
+  {
+    "tableName": "ItemArmorQuality",
+    "tableHash": "B94A5807",
+    "dbcFileDataID": 801667,
+    "db2FileDataID": 1283021
+  },
+  {
+    "tableName": "ItemArmorShield",
+    "tableHash": "FFBB8DC2",
+    "dbcFileDataID": 801668,
+    "db2FileDataID": 1277741
+  },
+  {
+    "tableName": "ItemArmorTotal",
+    "tableHash": "029D50FE",
+    "dbcFileDataID": 801669,
+    "db2FileDataID": 1283022
+  },
+  {
+    "tableName": "ItemBagFamily",
+    "tableHash": "11301D47",
+    "dbcFileDataID": 841683,
+    "db2FileDataID": 1278179
+  },
+  {
+    "tableName": "ItemBonus",
+    "tableHash": "8318900A",
+    "db2FileDataID": 959070
+  },
+  {
+    "tableName": "ItemBonusList",
+    "tableHash": "96232523",
+    "db2FileDataID": 1805807
+  },
+  {
+    "tableName": "ItemBonusListGroup",
+    "tableHash": "44898C51",
+    "db2FileDataID": 3755382
+  },
+  {
+    "tableName": "ItemBonusListGroupEntry",
+    "tableHash": "8B8247E8",
+    "db2FileDataID": 3025306
+  },
+  {
+    "tableName": "ItemBonusListLevelDelta",
+    "tableHash": "39606286",
+    "db2FileDataID": 1320358
+  },
+  {
+    "tableName": "ItemBonusListWarforgeLevelDelta",
+    "tableHash": "12A76EFD",
+    "db2FileDataID": 2924997
+  },
+  {
+    "tableName": "ItemBonusSeason",
+    "tableHash": "C56CE3C4",
+    "db2FileDataID": 5155639
+  },
+  {
+    "tableName": "ItemBonusSeasonBonusListGroup",
+    "tableHash": "3DACFB8B",
+    "db2FileDataID": 5155640
+  },
+  {
+    "tableName": "ItemBonusSeasonUpgradeCost",
+    "tableHash": "CD7BD3AB",
+    "db2FileDataID": 5155641
+  },
+  {
+    "tableName": "ItemBonusSequenceSpell",
+    "tableHash": "B467299C",
+    "db2FileDataID": 3026822
+  },
+  {
+    "tableName": "ItemBonusTree",
+    "tableHash": "4E9D31DC",
+    "db2FileDataID": 3055768
+  },
+  {
+    "tableName": "ItemBonusTreeGroupEntry",
+    "tableHash": "D0A6AF77",
+    "db2FileDataID": 4407505
+  },
+  {
+    "tableName": "ItemBonusTreeNode",
+    "tableHash": "A67E0631",
+    "db2FileDataID": 987134
+  },
+  {
+    "tableName": "ItemChildEquipment",
+    "tableHash": "1E8E6583",
+    "db2FileDataID": 1247926
+  },
+  {
+    "tableName": "ItemClass",
+    "tableHash": "B977271E",
+    "dbcFileDataID": 841655,
+    "db2FileDataID": 1140189
+  },
+  {
+    "tableName": "ItemCondExtCosts",
+    "tableHash": "B972108B"
+  },
+  {
+    "tableName": "ItemCondition",
+    "tableHash": "A65C929D",
+    "db2FileDataID": 5128111
+  },
+  {
+    "tableName": "ItemContextPickerEntry",
+    "tableHash": "96A8C4D6",
+    "db2FileDataID": 1405665
+  },
+  {
+    "tableName": "ItemConversion",
+    "tableHash": "F5D19E56",
+    "db2FileDataID": 4337196
+  },
+  {
+    "tableName": "ItemConversionEntry",
+    "tableHash": "8E677918",
+    "db2FileDataID": 4337197
+  },
+  {
+    "tableName": "ItemCreationContext",
+    "tableHash": "445E4A95",
+    "db2FileDataID": 7152830
+  },
+  {
+    "tableName": "ItemCreationContextGroup",
+    "tableHash": "035219F5",
+    "db2FileDataID": 7152831
+  },
+  {
+    "tableName": "ItemCurrencyCost",
+    "tableHash": "6FE05AE9",
+    "db2FileDataID": 801670
+  },
+  {
+    "tableName": "ItemCurrencyValue",
+    "tableHash": "5E8735EC",
+    "db2FileDataID": 3755770
+  },
+  {
+    "tableName": "ItemDamageAmmo",
+    "tableHash": "9790C2EE",
+    "dbcFileDataID": 801671,
+    "db2FileDataID": 1277740
+  },
+  {
+    "tableName": "ItemDamageOneHand",
+    "tableHash": "E0A6BB08",
+    "dbcFileDataID": 801672,
+    "db2FileDataID": 1277743
+  },
+  {
+    "tableName": "ItemDamageOneHandCaster",
+    "tableHash": "F2972767",
+    "dbcFileDataID": 801673,
+    "db2FileDataID": 1277739
+  },
+  {
+    "tableName": "ItemDamageRanged",
+    "tableHash": "30E32F7A",
+    "dbcFileDataID": 801674,
+    "db2FileDataID": 6156256
+  },
+  {
+    "tableName": "ItemDamageThrown",
+    "tableHash": "72FD7ADB",
+    "dbcFileDataID": 801675,
+    "db2FileDataID": 6156257
+  },
+  {
+    "tableName": "ItemDamageTwoHand",
+    "tableHash": "D8C5FD43",
+    "dbcFileDataID": 801676,
+    "db2FileDataID": 1277738
+  },
+  {
+    "tableName": "ItemDamageTwoHandCaster",
+    "tableHash": "80A1A0FA",
+    "dbcFileDataID": 801677,
+    "db2FileDataID": 1277742
+  },
+  {
+    "tableName": "ItemDamageWand",
+    "tableHash": "C2C866AF",
+    "dbcFileDataID": 801678,
+    "db2FileDataID": 6156258
+  },
+  {
+    "tableName": "ItemDisenchantLoot",
+    "tableHash": "66A4506E",
+    "dbcFileDataID": 801679,
+    "db2FileDataID": 1134087
+  },
+  {
+    "tableName": "ItemDisplayInfo",
+    "tableHash": "986F8CD0",
+    "dbcFileDataID": 801680,
+    "db2FileDataID": 1266429
+  },
+  {
+    "tableName": "ItemDisplayInfoMaterialRes",
+    "tableHash": "F35AF3DB",
+    "db2FileDataID": 1280614
+  },
+  {
+    "tableName": "ItemDisplayInfoModelMatRes",
+    "tableHash": "14320F31",
+    "db2FileDataID": 4050937
+  },
+  {
+    "tableName": "ItemDisplayXUiCamera",
+    "tableHash": "E5973CC6",
+    "db2FileDataID": 1146690
+  },
+  {
+    "tableName": "ItemEffect",
+    "tableHash": "4002A5B1",
+    "db2FileDataID": 969941
+  },
+  {
+    "tableName": "ItemExtendedCost",
+    "tableHash": "BB858355",
+    "db2FileDataID": 801681
+  },
+  {
+    "tableName": "ItemFallbackVisual",
+    "tableHash": "78BC2E20",
+    "db2FileDataID": 2358574
+  },
+  {
+    "tableName": "ItemFixup",
+    "tableHash": "63BDEE35",
+    "db2FileDataID": 5152256
+  },
+  {
+    "tableName": "ItemFixupAction",
+    "tableHash": "D9C629E9",
+    "db2FileDataID": 5475699
+  },
+  {
+    "tableName": "ItemGroupIlvlScalingEntry",
+    "tableHash": "FB5ADE9D",
+    "db2FileDataID": 5015219
+  },
+  {
+    "tableName": "ItemGroupSounds",
+    "tableHash": "9F4206C9",
+    "dbcFileDataID": 801682,
+    "db2FileDataID": 1283023
+  },
+  {
+    "tableName": "ItemLevelSelector",
+    "tableHash": "F2C15394",
+    "db2FileDataID": 1588911
+  },
+  {
+    "tableName": "ItemLevelSelectorQuality",
+    "tableHash": "F135848A",
+    "db2FileDataID": 1624937
+  },
+  {
+    "tableName": "ItemLevelSelectorQualitySet",
+    "tableHash": "6E85AD38",
+    "db2FileDataID": 1624933
+  },
+  {
+    "tableName": "ItemLevelWatermark",
+    "tableHash": "55EAE470",
+    "db2FileDataID": 6914796
+  },
+  {
+    "tableName": "ItemLimitCategory",
+    "tableHash": "7BBA1EB1",
+    "dbcFileDataID": 841618,
+    "db2FileDataID": 1237440
+  },
+  {
+    "tableName": "ItemLimitCategoryCondition",
+    "tableHash": "D80883F0",
+    "db2FileDataID": 1378590
+  },
+  {
+    "tableName": "ItemLogicalCost",
+    "tableHash": "B83E1C38",
+    "db2FileDataID": 4677533
+  },
+  {
+    "tableName": "ItemLogicalCostGroup",
+    "tableHash": "CA10A3FE",
+    "db2FileDataID": 4677534
+  },
+  {
+    "tableName": "ItemModifiedAppearance",
+    "tableHash": "E491AC55",
+    "db2FileDataID": 982457
+  },
+  {
+    "tableName": "ItemModifiedAppearanceExtra",
+    "tableHash": "D94C9544",
+    "db2FileDataID": 1278399
+  },
+  {
+    "tableName": "ItemNameDescription",
+    "tableHash": "70C2E7FD",
+    "dbcFileDataID": 841689,
+    "db2FileDataID": 1332559
+  },
+  {
+    "tableName": "ItemNameSlotOverride",
+    "tableHash": "D79BE510",
+    "db2FileDataID": 3723474
+  },
+  {
+    "tableName": "ItemOffsetCurve",
+    "tableHash": "899363A4",
+    "db2FileDataID": 7322704
+  },
+  {
+    "tableName": "ItemPetFood",
+    "tableHash": "30DE185C",
+    "dbcFileDataID": 841659,
+    "db2FileDataID": 1302240
+  },
+  {
+    "tableName": "ItemPriceBase",
+    "tableHash": "2DE09E95",
+    "dbcFileDataID": 801683,
+    "db2FileDataID": 1121231
+  },
+  {
+    "tableName": "ItemPurchaseGroup",
+    "tableHash": "D2253A36",
+    "dbcFileDataID": 841621
+  },
+  {
+    "tableName": "ItemRandomProperties",
+    "tableHash": "04BD338F",
+    "dbcFileDataID": 841687,
+    "db2FileDataID": 1237441
+  },
+  {
+    "tableName": "ItemRandomSuffix",
+    "tableHash": "E6811147",
+    "dbcFileDataID": 841633,
+    "db2FileDataID": 1237592
+  },
+  {
+    "tableName": "ItemRangedDisplayInfo",
+    "tableHash": "88EAC09B",
+    "db2FileDataID": 1270315
+  },
+  {
+    "tableName": "ItemRecraft",
+    "tableHash": "813EF9BB",
+    "db2FileDataID": 5150118
+  },
+  {
+    "tableName": "ItemReforge",
+    "tableHash": "45DB8932",
+    "db2FileDataID": 5633983
+  },
+  {
+    "tableName": "ItemSalvage",
+    "tableHash": "E605AA45",
+    "db2FileDataID": 4548446
+  },
+  {
+    "tableName": "ItemSalvageLoot",
+    "tableHash": "639E429E",
+    "db2FileDataID": 4549058
+  },
+  {
+    "tableName": "ItemScalingConfig",
+    "tableHash": "F6AA409E",
+    "db2FileDataID": 7322705
+  },
+  {
+    "tableName": "ItemSearchName",
+    "tableHash": "198E28B5",
+    "db2FileDataID": 1273408
+  },
+  {
+    "tableName": "ItemSet",
+    "tableHash": "8E741A98",
+    "dbcFileDataID": 841693,
+    "db2FileDataID": 1343609
+  },
+  {
+    "tableName": "ItemSetSpell",
+    "tableHash": "8645BB79",
+    "dbcFileDataID": 942651,
+    "db2FileDataID": 1314689
+  },
+  {
+    "tableName": "ItemSparse",
+    "tableHash": "919BE54E",
+    "db2FileDataID": 1572924
+  },
+  {
+    "tableName": "ItemSpec",
+    "tableHash": "08DA6E2A",
+    "dbcFileDataID": 801685,
+    "db2FileDataID": 1135120
+  },
+  {
+    "tableName": "ItemSpecOverride",
+    "tableHash": "149AAE79",
+    "dbcFileDataID": 801686,
+    "db2FileDataID": 1134576
+  },
+  {
+    "tableName": "ItemSquishEra",
+    "tableHash": "ACAAF53B",
+    "db2FileDataID": 7322706
+  },
+  {
+    "tableName": "ItemSubClass",
+    "tableHash": "95D8638F",
+    "dbcFileDataID": 841660,
+    "db2FileDataID": 1261604
+  },
+  {
+    "tableName": "ItemSubClassMask",
+    "tableHash": "E5F0B775",
+    "dbcFileDataID": 841623,
+    "db2FileDataID": 1302852
+  },
+  {
+    "tableName": "ItemToBattlePet",
+    "tableHash": "5D2EF1A8",
+    "db2FileDataID": 942616
+  },
+  {
+    "tableName": "ItemToMountSpell",
+    "tableHash": "55DE4AC0",
+    "db2FileDataID": 942638
+  },
+  {
+    "tableName": "ItemUpgrade",
+    "tableHash": "7006463B",
+    "db2FileDataID": 801687
+  },
+  {
+    "tableName": "ItemUpgradePath",
+    "tableHash": "6B0A8293",
+    "dbcFileDataID": 801688
+  },
+  {
+    "tableName": "ItemVisualEffects",
+    "tableHash": "926C975E",
+    "dbcFileDataID": 801689,
+    "db2FileDataID": 1302238
+  },
+  {
+    "tableName": "ItemVisuals",
+    "tableHash": "77F6CC65",
+    "dbcFileDataID": 801690,
+    "db2FileDataID": 1343605
+  },
+  {
+    "tableName": "ItemVisualsXEffect",
+    "tableHash": "DCF582C3",
+    "db2FileDataID": 3043873
+  },
+  {
+    "tableName": "ItemXBonusTree",
+    "tableHash": "325582EA",
+    "db2FileDataID": 987133
+  },
+  {
+    "tableName": "ItemXItemEffect",
+    "tableHash": "00CB674F",
+    "db2FileDataID": 3177687
+  },
+  {
+    "tableName": "ItemXTraitSystem",
+    "tableHash": "BB6B85F7",
+    "db2FileDataID": 7001629
+  },
+  {
+    "tableName": "JournalEncounter",
+    "tableHash": "57382070",
+    "dbcFileDataID": 841698,
+    "db2FileDataID": 1240336
+  },
+  {
+    "tableName": "JournalEncounterCreature",
+    "tableHash": "ACF3ADCB",
+    "dbcFileDataID": 841665,
+    "db2FileDataID": 1301155
+  },
+  {
+    "tableName": "JournalEncounterItem",
+    "tableHash": "F7ED685F",
+    "dbcFileDataID": 801691,
+    "db2FileDataID": 1344467
+  },
+  {
+    "tableName": "JournalEncounterSection",
+    "tableHash": "7956786C",
+    "dbcFileDataID": 841630,
+    "db2FileDataID": 1134413
+  },
+  {
+    "tableName": "JournalEncounterXDifficulty",
+    "tableHash": "A83B4856",
+    "dbcFileDataID": 897523,
+    "db2FileDataID": 1121901
+  },
+  {
+    "tableName": "JournalEncounterXMapLoc",
+    "tableHash": "CD576702",
+    "db2FileDataID": 1722928
+  },
+  {
+    "tableName": "JournalInstance",
+    "tableHash": "713E1C99",
+    "dbcFileDataID": 841695,
+    "db2FileDataID": 1237438
+  },
+  {
+    "tableName": "JournalInstanceEntrance",
+    "tableHash": "9F874B96",
+    "db2FileDataID": 5228481
+  },
+  {
+    "tableName": "JournalInstanceQueueLoc",
+    "tableHash": "E2952FEE",
+    "db2FileDataID": 5228217
+  },
+  {
+    "tableName": "JournalItemXDifficulty",
+    "tableHash": "286E3E37",
+    "dbcFileDataID": 897485,
+    "db2FileDataID": 1277744
+  },
+  {
+    "tableName": "JournalSectionXDifficulty",
+    "tableHash": "0B051170",
+    "dbcFileDataID": 897502,
+    "db2FileDataID": 1121900
+  },
+  {
+    "tableName": "JournalTier",
+    "tableHash": "26D91FF9",
+    "dbcFileDataID": 841641,
+    "db2FileDataID": 1349056
+  },
+  {
+    "tableName": "JournalTierXInstance",
+    "tableHash": "23612F8C",
+    "dbcFileDataID": 801692,
+    "db2FileDataID": 1285009
+  },
+  {
+    "tableName": "Keychain",
+    "tableHash": "6D8A2694",
+    "db2FileDataID": 801693
+  },
+  {
+    "tableName": "KeystoneAffix",
+    "tableHash": "C2E384E5",
+    "db2FileDataID": 1344761
+  },
+  {
+    "tableName": "LabelXContentRestrictRuleSet",
+    "tableHash": "5260510B",
+    "db2FileDataID": 4281309
+  },
+  {
+    "tableName": "Languages",
+    "tableHash": "F3D3E512",
+    "dbcFileDataID": 841703,
+    "db2FileDataID": 1135325
+  },
+  {
+    "tableName": "LanguageWords",
+    "tableHash": "E849437C",
+    "dbcFileDataID": 801694,
+    "db2FileDataID": 984702
+  },
+  {
+    "tableName": "LevelExperience",
+    "tableHash": "D80405C3",
+    "db2FileDataID": 7880197
+  },
+  {
+    "tableName": "LFGDungeonExpansion",
+    "tableHash": "F1FFC748",
+    "dbcFileDataID": 801695,
+    "db2FileDataID": 1343606
+  },
+  {
+    "tableName": "LFGDungeonGroup",
+    "tableHash": "23F64598",
+    "dbcFileDataID": 841667,
+    "db2FileDataID": 1135058
+  },
+  {
+    "tableName": "LFGDungeons",
+    "tableHash": "999BB9C2",
+    "dbcFileDataID": 841629,
+    "db2FileDataID": 1361033
+  },
+  {
+    "tableName": "LfgDungeonsGroupingMap",
+    "tableHash": "D6D21146",
+    "dbcFileDataID": 801696,
+    "db2FileDataID": 1339818
+  },
+  {
+    "tableName": "LFGRoleRequirement",
+    "tableHash": "7187CA05",
+    "db2FileDataID": 982805
+  },
+  {
+    "tableName": "Light",
+    "tableHash": "5CCAA0BA",
+    "dbcFileDataID": 801697,
+    "db2FileDataID": 1375579
+  },
+  {
+    "tableName": "LightData",
+    "tableHash": "0AD67EBF",
+    "dbcFileDataID": 801698,
+    "db2FileDataID": 1375580
+  },
+  {
+    "tableName": "LightDataGlobalVolumeFog",
+    "tableHash": "7E319A3D",
+    "db2FileDataID": 7492879
+  },
+  {
+    "tableName": "LightFloatBand",
+    "tableHash": "9690EE14"
+  },
+  {
+    "tableName": "LightIntBand",
+    "tableHash": "1AAC4283"
+  },
+  {
+    "tableName": "Lightning",
+    "tableHash": "E5945573",
+    "db2FileDataID": 2003383
+  },
+  {
+    "tableName": "LightParams",
+    "tableHash": "C67F0D98",
+    "dbcFileDataID": 801699,
+    "db2FileDataID": 1334669
+  },
+  {
+    "tableName": "LightParamsLightShaft",
+    "tableHash": "5BBFE5D4",
+    "db2FileDataID": 5350588
+  },
+  {
+    "tableName": "LightShaft",
+    "tableHash": "56DE315D",
+    "db2FileDataID": 5350589
+  },
+  {
+    "tableName": "LightSkybox",
+    "tableHash": "D364D557",
+    "dbcFileDataID": 801700,
+    "db2FileDataID": 1308501
+  },
+  {
+    "tableName": "LightWorldShadow",
+    "tableHash": "F1824A00",
+    "db2FileDataID": 4680119
+  },
+  {
+    "tableName": "Link",
+    "tableHash": "AC87AAFC",
+    "db2FileDataID": 5609261
+  },
+  {
+    "tableName": "LiquidMaterial",
+    "tableHash": "8C379329",
+    "dbcFileDataID": 801701,
+    "db2FileDataID": 1132538
+  },
+  {
+    "tableName": "LiquidObject",
+    "tableHash": "FC2A0DFF",
+    "dbcFileDataID": 801702,
+    "db2FileDataID": 1308058
+  },
+  {
+    "tableName": "LiquidType",
+    "tableHash": "6613BED3",
+    "dbcFileDataID": 801703,
+    "db2FileDataID": 1371380
+  },
+  {
+    "tableName": "LiquidTypeXFFTTile",
+    "tableHash": "34E07616",
+    "db2FileDataID": 7489861
+  },
+  {
+    "tableName": "LiquidTypeXTexture",
+    "tableHash": "0849EFA9",
+    "db2FileDataID": 2261065
+  },
+  {
+    "tableName": "LivingWorldObjectTemplate",
+    "tableHash": "1021D9A6",
+    "db2FileDataID": 4276965
+  },
+  {
+    "tableName": "LivingWorldObjectTemplateModel",
+    "tableHash": "9E00A08F",
+    "db2FileDataID": 4276966
+  },
+  {
+    "tableName": "LoadingScreens",
+    "tableHash": "EF9DC6FF",
+    "dbcFileDataID": 801704,
+    "db2FileDataID": 1266541
+  },
+  {
+    "tableName": "LoadingScreenSkin",
+    "tableHash": "109D8BD5",
+    "db2FileDataID": 2478235
+  },
+  {
+    "tableName": "LoadingScreenTaxiSplines",
+    "tableHash": "E6AE2B07",
+    "dbcFileDataID": 801705,
+    "db2FileDataID": 1302239
+  },
+  {
+    "tableName": "Locale",
+    "tableHash": "3F85ABB7",
+    "db2FileDataID": 801706
+  },
+  {
+    "tableName": "Location",
+    "tableHash": "394C3727",
+    "db2FileDataID": 801707
+  },
+  {
+    "tableName": "Lock",
+    "tableHash": "E9BECB23",
+    "dbcFileDataID": 801708,
+    "db2FileDataID": 1343608
+  },
+  {
+    "tableName": "LockType",
+    "tableHash": "9349B344",
+    "dbcFileDataID": 841709,
+    "db2FileDataID": 1284823
+  },
+  {
+    "tableName": "LookAtController",
+    "tableHash": "5D20CF07",
+    "db2FileDataID": 1098785
+  },
+  {
+    "tableName": "LoreText",
+    "tableHash": "D84DBD75",
+    "db2FileDataID": 3311370
+  },
+  {
+    "tableName": "LoreTextPublic",
+    "tableHash": "0156B3BA",
+    "db2FileDataID": 3479846
+  },
+  {
+    "tableName": "MailTemplate",
+    "tableHash": "E3C5B7D1",
+    "dbcFileDataID": 841672,
+    "db2FileDataID": 1240344
+  },
+  {
+    "tableName": "ManagedWorldState",
+    "tableHash": "F12D2A8B",
+    "db2FileDataID": 1587159
+  },
+  {
+    "tableName": "ManagedWorldStateBuff",
+    "tableHash": "E7C00D95",
+    "db2FileDataID": 1587155
+  },
+  {
+    "tableName": "ManagedWorldStateInput",
+    "tableHash": "2FB53BC7",
+    "db2FileDataID": 1587151
+  },
+  {
+    "tableName": "ManifestInterfaceActionIcon",
+    "tableHash": "12A21181",
+    "dbcFileDataID": 929749,
+    "db2FileDataID": 1375803
+  },
+  {
+    "tableName": "ManifestInterfaceData",
+    "tableHash": "FEBBA57C",
+    "dbcFileDataID": 929750,
+    "db2FileDataID": 1375801
+  },
+  {
+    "tableName": "ManifestInterfaceItemIcon",
+    "tableHash": "022B23D6",
+    "dbcFileDataID": 929744,
+    "db2FileDataID": 1375804
+  },
+  {
+    "tableName": "ManifestInterfaceTOCData",
+    "tableHash": "E50FD32C",
+    "dbcFileDataID": 929745,
+    "db2FileDataID": 1267335
+  },
+  {
+    "tableName": "ManifestMP3",
+    "tableHash": "353E4F0C",
+    "dbcFileDataID": 1060964,
+    "db2FileDataID": 1375802
+  },
+  {
+    "tableName": "Map",
+    "tableHash": "BD84CD62",
+    "dbcFileDataID": 841636,
+    "db2FileDataID": 1349477
+  },
+  {
+    "tableName": "MapCelestialBody",
+    "tableHash": "96647E3A",
+    "db2FileDataID": 1597466
+  },
+  {
+    "tableName": "MapChallengeMode",
+    "tableHash": "383B4C27",
+    "db2FileDataID": 801709
+  },
+  {
+    "tableName": "MapChallengeModeAffixCriteria",
+    "tableHash": "917E9CD2",
+    "db2FileDataID": 6374834
+  },
+  {
+    "tableName": "MapDifficulty",
+    "tableHash": "9265F70D",
+    "dbcFileDataID": 841702,
+    "db2FileDataID": 1367868
+  },
+  {
+    "tableName": "MapDifficultyRedirect",
+    "tableHash": "7EDE088D",
+    "db2FileDataID": 4913557
+  },
+  {
+    "tableName": "MapDifficultyXCondition",
+    "tableHash": "B7A2B3BD",
+    "db2FileDataID": 1375435
+  },
+  {
+    "tableName": "MapLoadingScreen",
+    "tableHash": "78F378E7",
+    "db2FileDataID": 1719707
+  },
+  {
+    "tableName": "MapRenderScale",
+    "tableHash": "04828F33",
+    "db2FileDataID": 4633656
+  },
+  {
+    "tableName": "MarketingPromotionsXLocale",
+    "tableHash": "A1D3F1AD",
+    "db2FileDataID": 801710
+  },
+  {
+    "tableName": "Material",
+    "tableHash": "A4C11069",
+    "dbcFileDataID": 801711,
+    "db2FileDataID": 1294217
+  },
+  {
+    "tableName": "MawPower",
+    "tableHash": "FC41A589",
+    "db2FileDataID": 2991315
+  },
+  {
+    "tableName": "MawPowerRarity",
+    "tableHash": "41C6428F",
+    "db2FileDataID": 2997952
+  },
+  {
+    "tableName": "MCRCurrency",
+    "tableHash": "5D4C45C2",
+    "db2FileDataID": 7449895
+  },
+  {
+    "tableName": "MCRSlotXMCRCategory",
+    "tableHash": "129B8233",
+    "db2FileDataID": 3390955
+  },
+  {
+    "tableName": "MinorTalent",
+    "tableHash": "25A192A7",
+    "dbcFileDataID": 948099,
+    "db2FileDataID": 1347274
+  },
+  {
+    "tableName": "MissileTargeting",
+    "tableHash": "3C059242",
+    "db2FileDataID": 1710117
+  },
+  {
+    "tableName": "MobileStrings",
+    "tableHash": "41E2A51C"
+  },
+  {
+    "tableName": "ModelAnimCloakDampening",
+    "tableHash": "115B0A10",
+    "db2FileDataID": 1465904
+  },
+  {
+    "tableName": "ModelFileData",
+    "tableHash": "A161E42C",
+    "dbcFileDataID": 986976,
+    "db2FileDataID": 1337833
+  },
+  {
+    "tableName": "ModelManifest",
+    "tableHash": "C6253ECC",
+    "db2FileDataID": 969314
+  },
+  {
+    "tableName": "ModelNameToManifest",
+    "tableHash": "730F0635",
+    "db2FileDataID": 969309
+  },
+  {
+    "tableName": "ModelProperties",
+    "tableHash": "1A6B0C40",
+    "db2FileDataID": 2060639
+  },
+  {
+    "tableName": "ModelRibbonQuality",
+    "tableHash": "326D6E8F",
+    "db2FileDataID": 1399953
+  },
+  {
+    "tableName": "ModelSound",
+    "tableHash": "3734C5A2",
+    "db2FileDataID": 5393273
+  },
+  {
+    "tableName": "ModelSoundAnimEntry",
+    "tableHash": "82D76F47",
+    "db2FileDataID": 5393274
+  },
+  {
+    "tableName": "ModelSoundEntry",
+    "tableHash": "E665B4DD",
+    "db2FileDataID": 5393275
+  },
+  {
+    "tableName": "ModelSoundOverride",
+    "tableHash": "66D2AD5D",
+    "db2FileDataID": 5393276
+  },
+  {
+    "tableName": "ModelSoundOverrideName",
+    "tableHash": "80D60C42",
+    "db2FileDataID": 5512584
+  },
+  {
+    "tableName": "ModelSoundSettings",
+    "tableHash": "BB58C4DA",
+    "db2FileDataID": 5682517
+  },
+  {
+    "tableName": "ModelSoundTagEntry",
+    "tableHash": "30B4EA1C",
+    "db2FileDataID": 5393277
+  },
+  {
+    "tableName": "ModifiedCraftingCategory",
+    "tableHash": "F24979A5",
+    "db2FileDataID": 3386486
+  },
+  {
+    "tableName": "ModifiedCraftingItem",
+    "tableHash": "CE88EDCA",
+    "db2FileDataID": 4530643
+  },
+  {
+    "tableName": "ModifiedCraftingReagentItem",
+    "tableHash": "E598C085",
+    "db2FileDataID": 3386487
+  },
+  {
+    "tableName": "ModifiedCraftingReagentSlot",
+    "tableHash": "3F2D1AB1",
+    "db2FileDataID": 3386488
+  },
+  {
+    "tableName": "ModifiedCraftingSpellSlot",
+    "tableHash": "C9FF6C36",
+    "db2FileDataID": 3390956
+  },
+  {
+    "tableName": "ModifiedReagentItem",
+    "tableHash": "E66E15EE",
+    "db2FileDataID": 3386490
+  },
+  {
+    "tableName": "ModifierTree",
+    "tableHash": "7E692D56",
+    "dbcFileDataID": 801712,
+    "db2FileDataID": 1267645
+  },
+  {
+    "tableName": "Mount",
+    "tableHash": "96737A41",
+    "db2FileDataID": 921760
+  },
+  {
+    "tableName": "MountCapability",
+    "tableHash": "F66E0076",
+    "dbcFileDataID": 801713,
+    "db2FileDataID": 1114709
+  },
+  {
+    "tableName": "MountEquipment",
+    "tableHash": "FB4E6E91",
+    "db2FileDataID": 2923510
+  },
+  {
+    "tableName": "MountType",
+    "tableHash": "C5B875A8",
+    "dbcFileDataID": 801714,
+    "db2FileDataID": 1114674
+  },
+  {
+    "tableName": "MountTypeXCapability",
+    "tableHash": "28D9DEA9",
+    "db2FileDataID": 1114715
+  },
+  {
+    "tableName": "MountXDisplay",
+    "tableHash": "7900AC49",
+    "db2FileDataID": 1576117
+  },
+  {
+    "tableName": "MountXSpellVisualKitPicker",
+    "tableHash": "90E92D5D",
+    "db2FileDataID": 3989477
+  },
+  {
+    "tableName": "Movie",
+    "tableHash": "032DFA13",
+    "dbcFileDataID": 801715,
+    "db2FileDataID": 1332556
+  },
+  {
+    "tableName": "MovieFileData",
+    "tableHash": "B8B69B3D",
+    "dbcFileDataID": 801716,
+    "db2FileDataID": 1301154
+  },
+  {
+    "tableName": "MovieOverlays",
+    "tableHash": "2FB20D83",
+    "dbcFileDataID": 801717
+  },
+  {
+    "tableName": "MovieVariation",
+    "tableHash": "12D121A8",
+    "dbcFileDataID": 801718,
+    "db2FileDataID": 1339819
+  },
+  {
+    "tableName": "MultiStateProperties",
+    "tableHash": "BA6773DE",
+    "db2FileDataID": 1965592
+  },
+  {
+    "tableName": "MultiTransitionProperties",
+    "tableHash": "AA96F0F2",
+    "db2FileDataID": 1965589
+  },
+  {
+    "tableName": "MusicOverride",
+    "tableHash": "1E2104CF",
+    "db2FileDataID": 5161908
+  },
+  {
+    "tableName": "MythicPlusSeason",
+    "tableHash": "2AD89A7A",
+    "db2FileDataID": 2400282
+  },
+  {
+    "tableName": "MythicPlusSeasonKeyFloor",
+    "tableHash": "363706E1",
+    "db2FileDataID": 6684235
+  },
+  {
+    "tableName": "MythicPlusSeasonRewardLevels",
+    "tableHash": "E8152640",
+    "db2FileDataID": 2123783
+  },
+  {
+    "tableName": "MythicPlusSeasonTrackedAffix",
+    "tableHash": "5F4760B4",
+    "db2FileDataID": 4067473
+  },
+  {
+    "tableName": "MythicPlusSeasonTrackedMap",
+    "tableHash": "4DB743E6",
+    "db2FileDataID": 4521365
+  },
+  {
+    "tableName": "NameGen",
+    "tableHash": "F5FA849B",
+    "dbcFileDataID": 801719,
+    "db2FileDataID": 1122117
+  },
+  {
+    "tableName": "NamesProfanity",
+    "tableHash": "DA82D96C",
+    "dbcFileDataID": 801720,
+    "db2FileDataID": 1117086
+  },
+  {
+    "tableName": "NamesReserved",
+    "tableHash": "25C1CB13",
+    "dbcFileDataID": 801721,
+    "db2FileDataID": 1117085
+  },
+  {
+    "tableName": "NamesReservedLocale",
+    "tableHash": "3ACAE305",
+    "dbcFileDataID": 841945,
+    "db2FileDataID": 1117087
+  },
+  {
+    "tableName": "NeighborhoodInitiative",
+    "tableHash": "52FC8F46",
+    "db2FileDataID": 6699736
+  },
+  {
+    "tableName": "NeighborhoodInitiativeReward",
+    "tableHash": "80E34F4C",
+    "db2FileDataID": 6702594
+  },
+  {
+    "tableName": "NeighborhoodInitiativeTask",
+    "tableHash": "D5A21553",
+    "db2FileDataID": 6702595
+  },
+  {
+    "tableName": "NeighborhoodInitiativeXTask",
+    "tableHash": "EB5ED856",
+    "db2FileDataID": 6708736
+  },
+  {
+    "tableName": "NeighborhoodMap",
+    "tableHash": "680164E5",
+    "db2FileDataID": 5550624
+  },
+  {
+    "tableName": "NeighborhoodNameGen",
+    "tableHash": "0CE3308A",
+    "db2FileDataID": 6237720
+  },
+  {
+    "tableName": "NeighborhoodPlot",
+    "tableHash": "6571052E",
+    "db2FileDataID": 5550625
+  },
+  {
+    "tableName": "Node",
+    "tableHash": "22CC4E7C",
+    "db2FileDataID": 5609263
+  },
+  {
+    "tableName": "NodeGraphParam",
+    "tableHash": "D5F2CD11",
+    "db2FileDataID": 7183970
+  },
+  {
+    "tableName": "NodeGraphParamValue",
+    "tableHash": "0459946A",
+    "db2FileDataID": 7183971
+  },
+  {
+    "tableName": "NodeTemplate",
+    "tableHash": "22C58347",
+    "db2FileDataID": 5609279
+  },
+  {
+    "tableName": "NodeTemplateXPinTemplate",
+    "tableHash": "540CC309",
+    "db2FileDataID": 5609267
+  },
+  {
+    "tableName": "NPCCraftingOrderCustomer",
+    "tableHash": "DD1C1F79",
+    "db2FileDataID": 5875492
+  },
+  {
+    "tableName": "NPCCraftingOrderCustomerXLabel",
+    "tableHash": "931D0C68",
+    "db2FileDataID": 5875493
+  },
+  {
+    "tableName": "NPCCraftingOrderSet",
+    "tableHash": "A6859B1E",
+    "db2FileDataID": 5875494
+  },
+  {
+    "tableName": "NPCCraftingOrderSetXCraftOrder",
+    "tableHash": "E5D06985",
+    "db2FileDataID": 5875495
+  },
+  {
+    "tableName": "NPCCraftingOrderSetXCustomer",
+    "tableHash": "0703421C",
+    "db2FileDataID": 5875496
+  },
+  {
+    "tableName": "NPCCraftingOrderSetXTreasure",
+    "tableHash": "5499CC67",
+    "db2FileDataID": 5912882
+  },
+  {
+    "tableName": "NPCModelItemSlotDisplayInfo",
+    "tableHash": "76C04C97",
+    "db2FileDataID": 1340661
+  },
+  {
+    "tableName": "NPCSounds",
+    "tableHash": "495495DF",
+    "dbcFileDataID": 801722,
+    "db2FileDataID": 1282621
+  },
+  {
+    "tableName": "NumTalentsAtLevel",
+    "tableHash": "0FA07331",
+    "db2FileDataID": 1953326
+  },
+  {
+    "tableName": "ObjectEffect",
+    "tableHash": "67660235",
+    "dbcFileDataID": 801723,
+    "db2FileDataID": 1090577
+  },
+  {
+    "tableName": "ObjectEffectGroup",
+    "tableHash": "4C6EBA83",
+    "dbcFileDataID": 801724,
+    "db2FileDataID": 1090581
+  },
+  {
+    "tableName": "ObjectEffectModifier",
+    "tableHash": "62C90BAB",
+    "dbcFileDataID": 801725,
+    "db2FileDataID": 1090575
+  },
+  {
+    "tableName": "ObjectEffectPackage",
+    "tableHash": "5E3E8F24",
+    "dbcFileDataID": 801726,
+    "db2FileDataID": 1090574
+  },
+  {
+    "tableName": "ObjectEffectPackageElem",
+    "tableHash": "CB2273C2",
+    "dbcFileDataID": 801727,
+    "db2FileDataID": 1090578
+  },
+  {
+    "tableName": "ObjectEffectStateName",
+    "tableHash": "3D373FA3"
+  },
+  {
+    "tableName": "Occluder",
+    "tableHash": "15FF1ECC",
+    "db2FileDataID": 2066958
+  },
+  {
+    "tableName": "OccluderCurtain",
+    "tableHash": "C8EC32E4",
+    "db2FileDataID": 3850529
+  },
+  {
+    "tableName": "OccluderLocation",
+    "tableHash": "0E82664C",
+    "db2FileDataID": 2115224
+  },
+  {
+    "tableName": "OccluderNode",
+    "tableHash": "5CE8B5E8",
+    "db2FileDataID": 2066959
+  },
+  {
+    "tableName": "OutlineEffect",
+    "tableHash": "B94046AE",
+    "db2FileDataID": 1279739
+  },
+  {
+    "tableName": "OverrideSpellData",
+    "tableHash": "CA75DF1C",
+    "dbcFileDataID": 801728,
+    "db2FileDataID": 1002186
+  },
+  {
+    "tableName": "Package",
+    "tableHash": "241D609A",
+    "dbcFileDataID": 841647
+  },
+  {
+    "tableName": "PageTextMaterial",
+    "tableHash": "D243819F",
+    "dbcFileDataID": 801729,
+    "db2FileDataID": 1271600
+  },
+  {
+    "tableName": "PaperDollItemFrame",
+    "tableHash": "ADDB889C",
+    "dbcFileDataID": 801730,
+    "db2FileDataID": 1252503
+  },
+  {
+    "tableName": "ParagonReputation",
+    "tableHash": "20491F05",
+    "db2FileDataID": 1581183
+  },
+  {
+    "tableName": "ParticleColor",
+    "tableHash": "E89BEFDA",
+    "dbcFileDataID": 801731,
+    "db2FileDataID": 1284820
+  },
+  {
+    "tableName": "Particulate",
+    "tableHash": "A95269FC",
+    "db2FileDataID": 3396285
+  },
+  {
+    "tableName": "ParticulateSound",
+    "tableHash": "80F398B9",
+    "db2FileDataID": 2053913
+  },
+  {
+    "tableName": "Path",
+    "tableHash": "94F46395",
+    "db2FileDataID": 801732
+  },
+  {
+    "tableName": "PathEdge",
+    "tableHash": "C9BCB028",
+    "db2FileDataID": 2428705
+  },
+  {
+    "tableName": "PathNode",
+    "tableHash": "3B9E4CA2",
+    "db2FileDataID": 801733
+  },
+  {
+    "tableName": "PathNodeProperty",
+    "tableHash": "FE21C024",
+    "db2FileDataID": 801734
+  },
+  {
+    "tableName": "PathProperty",
+    "tableHash": "08E54F60",
+    "db2FileDataID": 801735
+  },
+  {
+    "tableName": "PerksActivity",
+    "tableHash": "C5DE3E5D",
+    "db2FileDataID": 4519766
+  },
+  {
+    "tableName": "PerksActivityCondition",
+    "tableHash": "7E3DDBA4",
+    "db2FileDataID": 5524226
+  },
+  {
+    "tableName": "PerksActivityTag",
+    "tableHash": "28C17380",
+    "db2FileDataID": 4694317
+  },
+  {
+    "tableName": "PerksActivityThreshold",
+    "tableHash": "641DE81C",
+    "db2FileDataID": 4519767
+  },
+  {
+    "tableName": "PerksActivityThresholdGroup",
+    "tableHash": "A8CC6B0E",
+    "db2FileDataID": 4519768
+  },
+  {
+    "tableName": "PerksActivityXHolidays",
+    "tableHash": "E78E20AE",
+    "db2FileDataID": 5330797
+  },
+  {
+    "tableName": "PerksActivityXInterval",
+    "tableHash": "8343C44E",
+    "db2FileDataID": 4519781
+  },
+  {
+    "tableName": "PerksActivityXTag",
+    "tableHash": "66CC3CB1",
+    "db2FileDataID": 4694318
+  },
+  {
+    "tableName": "PerksUITheme",
+    "tableHash": "703133E4",
+    "db2FileDataID": 5389878
+  },
+  {
+    "tableName": "PerksVendorCategory",
+    "tableHash": "C60C970F",
+    "db2FileDataID": 4281310
+  },
+  {
+    "tableName": "PerksVendorItem",
+    "tableHash": "C2D5BA4C",
+    "db2FileDataID": 4281311
+  },
+  {
+    "tableName": "PerksVendorItemUIGroup",
+    "tableHash": "60CBF42A",
+    "db2FileDataID": 5386256
+  },
+  {
+    "tableName": "PerksVendorItemUIInfo",
+    "tableHash": "DB2364B4",
+    "db2FileDataID": 4281312
+  },
+  {
+    "tableName": "PerksVendorItemXInterval",
+    "tableHash": "1A2C5539",
+    "db2FileDataID": 4872513
+  },
+  {
+    "tableName": "PetitionType",
+    "tableHash": "CE8B2688"
+  },
+  {
+    "tableName": "PetLoyalty",
+    "tableHash": "15427D8F",
+    "db2FileDataID": 2179604
+  },
+  {
+    "tableName": "PetPersonality",
+    "tableHash": "29A92016",
+    "db2FileDataID": 2179609
+  },
+  {
+    "tableName": "Phase",
+    "tableHash": "F0D11963",
+    "dbcFileDataID": 801736,
+    "db2FileDataID": 1348558
+  },
+  {
+    "tableName": "PhaseShiftZoneSounds",
+    "tableHash": "7BB16543",
+    "dbcFileDataID": 801737,
+    "db2FileDataID": 1267336
+  },
+  {
+    "tableName": "PhaseXPhaseGroup",
+    "tableHash": "25CC2A59",
+    "dbcFileDataID": 801738,
+    "db2FileDataID": 987581
+  },
+  {
+    "tableName": "Pin",
+    "tableHash": "0CF18E25",
+    "db2FileDataID": 5609269
+  },
+  {
+    "tableName": "PingType",
+    "tableHash": "0D88E2D7",
+    "db2FileDataID": 5152358
+  },
+  {
+    "tableName": "PinTemplate",
+    "tableHash": "066BD46D",
+    "db2FileDataID": 5609270
+  },
+  {
+    "tableName": "PlayerCompanionInfo",
+    "tableHash": "192B936F",
+    "db2FileDataID": 5922429
+  },
+  {
+    "tableName": "PlayerCondition",
+    "tableHash": "B94C2807",
+    "dbcFileDataID": 841717,
+    "db2FileDataID": 1045411
+  },
+  {
+    "tableName": "PlayerDataElementAccount",
+    "tableHash": "604AA08C",
+    "db2FileDataID": 5715394
+  },
+  {
+    "tableName": "PlayerDataElementCharacter",
+    "tableHash": "49C37449",
+    "db2FileDataID": 5715395
+  },
+  {
+    "tableName": "PlayerDataFlagAccount",
+    "tableHash": "E41AA24D",
+    "db2FileDataID": 5426706
+  },
+  {
+    "tableName": "PlayerDataFlagCharacter",
+    "tableHash": "05236D80",
+    "db2FileDataID": 5426708
+  },
+  {
+    "tableName": "PlayerExpectedStat",
+    "tableHash": "C012F724",
+    "db2FileDataID": 7667204
+  },
+  {
+    "tableName": "PlayerInteractionInfo",
+    "tableHash": "C031D32E",
+    "db2FileDataID": 5346849
+  },
+  {
+    "tableName": "PointLightConditionMap",
+    "tableHash": "4ADB9D29",
+    "db2FileDataID": 5735564
+  },
+  {
+    "tableName": "Positioner",
+    "tableHash": "240D864E",
+    "db2FileDataID": 1251523
+  },
+  {
+    "tableName": "PositionerState",
+    "tableHash": "60C46E9D",
+    "db2FileDataID": 1251506
+  },
+  {
+    "tableName": "PositionerStateEntry",
+    "tableHash": "461FDC45",
+    "db2FileDataID": 1251533
+  },
+  {
+    "tableName": "PowerDisplay",
+    "tableHash": "61A51B8E",
+    "dbcFileDataID": 801739,
+    "db2FileDataID": 1332557
+  },
+  {
+    "tableName": "PowerType",
+    "tableHash": "8D899A57",
+    "db2FileDataID": 1266022
+  },
+  {
+    "tableName": "PrestigeLevelInfo",
+    "tableHash": "51322141",
+    "db2FileDataID": 1275869
+  },
+  {
+    "tableName": "Profession",
+    "tableHash": "D710631F",
+    "db2FileDataID": 4508544
+  },
+  {
+    "tableName": "ProfessionEffect",
+    "tableHash": "2E61D016",
+    "db2FileDataID": 4505297
+  },
+  {
+    "tableName": "ProfessionEffectType",
+    "tableHash": "FFD9CA51",
+    "db2FileDataID": 4556715
+  },
+  {
+    "tableName": "ProfessionExpansion",
+    "tableHash": "83A25C2E",
+    "db2FileDataID": 5662322
+  },
+  {
+    "tableName": "ProfessionPropPoints",
+    "tableHash": "460565A8",
+    "db2FileDataID": 4452078
+  },
+  {
+    "tableName": "ProfessionRating",
+    "tableHash": "471B9D19",
+    "db2FileDataID": 4623413
+  },
+  {
+    "tableName": "ProfessionTrait",
+    "tableHash": "C06B1D19",
+    "db2FileDataID": 4505298
+  },
+  {
+    "tableName": "ProfessionTraitXEffect",
+    "tableHash": "6333E6AB",
+    "db2FileDataID": 4505494
+  },
+  {
+    "tableName": "ProfessionTraitXLabel",
+    "tableHash": "DC860060",
+    "db2FileDataID": 4505299
+  },
+  {
+    "tableName": "ProfessionXRating",
+    "tableHash": "E60C5289",
+    "db2FileDataID": 4868299
+  },
+  {
+    "tableName": "ProfTraitPathNode",
+    "tableHash": "117D5E46",
+    "db2FileDataID": 4542069
+  },
+  {
+    "tableName": "ProfTraitPerkNode",
+    "tableHash": "BED4875F",
+    "db2FileDataID": 4542084
+  },
+  {
+    "tableName": "ProfTraitTree",
+    "tableHash": "3FE02FAF",
+    "db2FileDataID": 4542085
+  },
+  {
+    "tableName": "ProfTraitTreeHighlight",
+    "tableHash": "81A6B8E9",
+    "db2FileDataID": 4999865
+  },
+  {
+    "tableName": "PVPBracketTypes",
+    "tableHash": "F7879101",
+    "db2FileDataID": 1394275
+  },
+  {
+    "tableName": "PvpBrawl",
+    "tableHash": "2807816E",
+    "db2FileDataID": 1585723
+  },
+  {
+    "tableName": "PVPDifficulty",
+    "tableHash": "CA844445",
+    "dbcFileDataID": 801740,
+    "db2FileDataID": 1339820
+  },
+  {
+    "tableName": "PVPItem",
+    "tableHash": "F996FA59",
+    "db2FileDataID": 972287
+  },
+  {
+    "tableName": "PvpRating",
+    "tableHash": "06033101",
+    "db2FileDataID": 4699082
+  },
+  {
+    "tableName": "PvpReward",
+    "tableHash": "8B1B4749",
+    "db2FileDataID": 1307154
+  },
+  {
+    "tableName": "PvpScalingEffect",
+    "tableHash": "D1AB1F8A",
+    "db2FileDataID": 1591100
+  },
+  {
+    "tableName": "PvpScalingEffectType",
+    "tableHash": "4D89AB67",
+    "db2FileDataID": 1591098
+  },
+  {
+    "tableName": "PVPScoreboardCellInfo",
+    "tableHash": "DD8001FF",
+    "db2FileDataID": 2992916
+  },
+  {
+    "tableName": "PVPScoreboardColumnHeader",
+    "tableHash": "11F4C69A",
+    "db2FileDataID": 2992917
+  },
+  {
+    "tableName": "PVPScoreboardLayout",
+    "tableHash": "F47FF62F",
+    "db2FileDataID": 2992918
+  },
+  {
+    "tableName": "PvpSeason",
+    "tableHash": "A51D9A01",
+    "db2FileDataID": 2966426
+  },
+  {
+    "tableName": "PvpSeasonRewardLevels",
+    "tableHash": "B241F007",
+    "db2FileDataID": 2470695
+  },
+  {
+    "tableName": "PVPStat",
+    "tableHash": "34A151DB",
+    "db2FileDataID": 2992919
+  },
+  {
+    "tableName": "PvpTalent",
+    "tableHash": "63AE91A1",
+    "db2FileDataID": 1302853
+  },
+  {
+    "tableName": "PvpTalentCategory",
+    "tableHash": "3C675144",
+    "db2FileDataID": 1891534
+  },
+  {
+    "tableName": "PvpTalentSlotUnlock",
+    "tableHash": "50947C47",
+    "db2FileDataID": 1950197
+  },
+  {
+    "tableName": "PvpTalentUnlock",
+    "tableHash": "38F4D4E2",
+    "db2FileDataID": 1302848
+  },
+  {
+    "tableName": "PvpTier",
+    "tableHash": "EBD6690A",
+    "db2FileDataID": 2066871
+  },
+  {
+    "tableName": "QuestDrivenScenario",
+    "tableHash": "F44988FD",
+    "db2FileDataID": 5917361
+  },
+  {
+    "tableName": "QuestFactionReward",
+    "tableHash": "BFB87048",
+    "dbcFileDataID": 801741,
+    "db2FileDataID": 1282622
+  },
+  {
+    "tableName": "QuestFeedbackEffect",
+    "tableHash": "79C72909",
+    "dbcFileDataID": 801742,
+    "db2FileDataID": 1343388
+  },
+  {
+    "tableName": "QuestHub",
+    "tableHash": "71C894AF",
+    "db2FileDataID": 5905413
+  },
+  {
+    "tableName": "QuestInfo",
+    "tableHash": "2D11D732",
+    "dbcFileDataID": 841674,
+    "db2FileDataID": 1120960
+  },
+  {
+    "tableName": "QuestLabel",
+    "tableHash": "C687987A",
+    "db2FileDataID": 5202058
+  },
+  {
+    "tableName": "QuestLine",
+    "tableHash": "EB57A423",
+    "db2FileDataID": 973430
+  },
+  {
+    "tableName": "QuestLineXQuest",
+    "tableHash": "8CC17856",
+    "db2FileDataID": 973441
+  },
+  {
+    "tableName": "QuestMoneyReward",
+    "tableHash": "CF096091",
+    "dbcFileDataID": 876864,
+    "db2FileDataID": 1139047
+  },
+  {
+    "tableName": "QuestObjective",
+    "tableHash": "01325CA0",
+    "db2FileDataID": 1251960
+  },
+  {
+    "tableName": "QuestPackageItem",
+    "tableHash": "CC2F84F0",
+    "db2FileDataID": 801743
+  },
+  {
+    "tableName": "QuestPOIBlob",
+    "tableHash": "AE1CA308",
+    "dbcFileDataID": 801744,
+    "db2FileDataID": 1251882
+  },
+  {
+    "tableName": "QuestPOIPoint",
+    "tableHash": "83467FEB",
+    "dbcFileDataID": 801745,
+    "db2FileDataID": 1251883
+  },
+  {
+    "tableName": "QuestSort",
+    "tableHash": "5479CB09",
+    "dbcFileDataID": 841635,
+    "db2FileDataID": 1134585
+  },
+  {
+    "tableName": "QuestV2",
+    "tableHash": "3AC83109",
+    "dbcFileDataID": 801746,
+    "db2FileDataID": 1139443
+  },
+  {
+    "tableName": "QuestV2CliTask",
+    "tableHash": "0F992211",
+    "db2FileDataID": 1028735
+  },
+  {
+    "tableName": "QuestXGroupActivity",
+    "tableHash": "827BFAAE",
+    "db2FileDataID": 1573634
+  },
+  {
+    "tableName": "QuestXP",
+    "tableHash": "3D89A572",
+    "dbcFileDataID": 801747,
+    "db2FileDataID": 1139378
+  },
+  {
+    "tableName": "QuestXUIQuestDetailsTheme",
+    "tableHash": "16A619C3",
+    "db2FileDataID": 3448517
+  },
+  {
+    "tableName": "QuestXUiWidgetSet",
+    "tableHash": "07DA21DD",
+    "db2FileDataID": 3923421
+  },
+  {
+    "tableName": "RaceStat",
+    "tableHash": "4D07E2FC",
+    "db2FileDataID": 7722633
+  },
+  {
+    "tableName": "RacialMounts",
+    "tableHash": "426026C2",
+    "dbcFileDataID": 937765,
+    "db2FileDataID": 1146691
+  },
+  {
+    "tableName": "RafActivity",
+    "tableHash": "D6C606C8",
+    "db2FileDataID": 3081207
+  },
+  {
+    "tableName": "RandPropPoints",
+    "tableHash": "5D8CEFA6",
+    "dbcFileDataID": 801748,
+    "db2FileDataID": 1310245
+  },
+  {
+    "tableName": "RecipeProgressionGroupEntry",
+    "tableHash": "426A1F53",
+    "db2FileDataID": 3671785
+  },
+  {
+    "tableName": "RelicSlotTierRequirement",
+    "tableHash": "8F035664",
+    "db2FileDataID": 1716803
+  },
+  {
+    "tableName": "RelicTalent",
+    "tableHash": "FC6C17A8",
+    "db2FileDataID": 1671256
+  },
+  {
+    "tableName": "RenownRewards",
+    "tableHash": "65F2637D",
+    "db2FileDataID": 3743117
+  },
+  {
+    "tableName": "RenownRewardsPlunderstorm",
+    "tableHash": "CEBF1288",
+    "db2FileDataID": 5662591
+  },
+  {
+    "tableName": "ResearchBranch",
+    "tableHash": "420F9A85",
+    "dbcFileDataID": 841718,
+    "db2FileDataID": 1133729
+  },
+  {
+    "tableName": "ResearchField",
+    "tableHash": "DDE2C5CF",
+    "dbcFileDataID": 841679,
+    "db2FileDataID": 1133711
+  },
+  {
+    "tableName": "ResearchProject",
+    "tableHash": "81560FC3",
+    "dbcFileDataID": 841643,
+    "db2FileDataID": 1134090
+  },
+  {
+    "tableName": "ResearchSite",
+    "tableHash": "9C31AE60",
+    "dbcFileDataID": 841710,
+    "db2FileDataID": 1134091
+  },
+  {
+    "tableName": "Resistances",
+    "tableHash": "91BB4526",
+    "dbcFileDataID": 841651,
+    "db2FileDataID": 1135072
+  },
+  {
+    "tableName": "RetroactiveDecorReward",
+    "tableHash": "9DD357BE",
+    "db2FileDataID": 7439104
+  },
+  {
+    "tableName": "RetroactiveDecorRewardCriteria",
+    "tableHash": "59FEA664",
+    "db2FileDataID": 7507122
+  },
+  {
+    "tableName": "RewardPack",
+    "tableHash": "CEF864BC",
+    "db2FileDataID": 1307156
+  },
+  {
+    "tableName": "RewardPackXCurrencyType",
+    "tableHash": "D3DCF67F",
+    "db2FileDataID": 1307153
+  },
+  {
+    "tableName": "RewardPackXItem",
+    "tableHash": "7F87A2C7",
+    "db2FileDataID": 1307155
+  },
+  {
+    "tableName": "RibbonQuality",
+    "tableHash": "8E858136",
+    "db2FileDataID": 1398908
+  },
+  {
+    "tableName": "RolodexType",
+    "tableHash": "DA556D7C",
+    "db2FileDataID": 5936950
+  },
+  {
+    "tableName": "RoomComponent",
+    "tableHash": "E5F16D06",
+    "db2FileDataID": 5503432
+  },
+  {
+    "tableName": "RoomComponentOption",
+    "tableHash": "3CC17DDB",
+    "db2FileDataID": 5503433
+  },
+  {
+    "tableName": "RoomComponentOptionTexture",
+    "tableHash": "EF115AA7",
+    "db2FileDataID": 5503564
+  },
+  {
+    "tableName": "RoomComponentTexture",
+    "tableHash": "892FF471",
+    "db2FileDataID": 5503573
+  },
+  {
+    "tableName": "RoomGridLine",
+    "tableHash": "03333B7E",
+    "db2FileDataID": 6378467
+  },
+  {
+    "tableName": "RoomWmoData",
+    "tableHash": "485E51AC",
+    "db2FileDataID": 5503435
+  },
+  {
+    "tableName": "RopeEffect",
+    "tableHash": "AF250C95",
+    "db2FileDataID": 3256786
+  },
+  {
+    "tableName": "RTPC",
+    "tableHash": "9BAC8B69",
+    "db2FileDataID": 3405439
+  },
+  {
+    "tableName": "RTPCData",
+    "tableHash": "FC12A206",
+    "db2FileDataID": 3405440
+  },
+  {
+    "tableName": "RulesetItemUpgrade",
+    "tableHash": "6DB7086C",
+    "db2FileDataID": 801749
+  },
+  {
+    "tableName": "RulesetRaidLootUpgrade",
+    "tableHash": "ED1FBB4D",
+    "db2FileDataID": 879567
+  },
+  {
+    "tableName": "RulesetRaidOverride",
+    "tableHash": "9B5F2FA2",
+    "dbcFileDataID": 801750,
+    "db2FileDataID": 1137422
+  },
+  {
+    "tableName": "RuneforgeLegendaryAbility",
+    "tableHash": "873B0D9E",
+    "db2FileDataID": 3500241
+  },
+  {
+    "tableName": "SandboxScaling",
+    "tableHash": "39545106",
+    "db2FileDataID": 1776833
+  },
+  {
+    "tableName": "ScalingStatDistribution",
+    "tableHash": "45D2FA27",
+    "dbcFileDataID": 801751,
+    "db2FileDataID": 1141728
+  },
+  {
+    "tableName": "ScalingStatValues",
+    "tableHash": "DCADDCF6",
+    "dbcFileDataID": 801752,
+    "db2FileDataID": 4719537
+  },
+  {
+    "tableName": "Scenario",
+    "tableHash": "830F3A66",
+    "dbcFileDataID": 841728,
+    "db2FileDataID": 1139062
+  },
+  {
+    "tableName": "ScenarioEventEntry",
+    "tableHash": "C194468C",
+    "dbcFileDataID": 801753,
+    "db2FileDataID": 1141065
+  },
+  {
+    "tableName": "ScenarioStep",
+    "tableHash": "96679B72",
+    "dbcFileDataID": 841682,
+    "db2FileDataID": 1132761
+  },
+  {
+    "tableName": "SceneScript",
+    "tableHash": "D4B163CC",
+    "db2FileDataID": 801754
+  },
+  {
+    "tableName": "SceneScriptGlobalText",
+    "tableHash": "CED92897",
+    "db2FileDataID": 1758036
+  },
+  {
+    "tableName": "SceneScriptPackage",
+    "tableHash": "E8CB5E09",
+    "db2FileDataID": 801755
+  },
+  {
+    "tableName": "SceneScriptPackageMember",
+    "tableHash": "E44DB71C",
+    "db2FileDataID": 801756
+  },
+  {
+    "tableName": "SceneScriptText",
+    "tableHash": "200C31A7",
+    "db2FileDataID": 1758037
+  },
+  {
+    "tableName": "ScheduledInterval",
+    "tableHash": "B2BB19EB",
+    "db2FileDataID": 1327082
+  },
+  {
+    "tableName": "ScheduledWorldState",
+    "tableHash": "3853E6B7",
+    "db2FileDataID": 1327083
+  },
+  {
+    "tableName": "ScheduledWorldStateGroup",
+    "tableHash": "57D3B0F1",
+    "db2FileDataID": 1327084
+  },
+  {
+    "tableName": "ScheduledWorldStateXUniqCat",
+    "tableHash": "9716FC4C",
+    "db2FileDataID": 1388724
+  },
+  {
+    "tableName": "ScreenEffect",
+    "tableHash": "B33F3964",
+    "dbcFileDataID": 801757,
+    "db2FileDataID": 1302849
+  },
+  {
+    "tableName": "ScreenEffectType",
+    "tableHash": "15CEBEA1",
+    "db2FileDataID": 3063174
+  },
+  {
+    "tableName": "ScreenLocation",
+    "tableHash": "6CBB84DF",
+    "dbcFileDataID": 801758,
+    "db2FileDataID": 1279416
+  },
+  {
+    "tableName": "SDReplacementModel",
+    "tableHash": "893F6889",
+    "db2FileDataID": 1712172
+  },
+  {
+    "tableName": "SeamlessSite",
+    "tableHash": "1EF95B83",
+    "db2FileDataID": 1328719
+  },
+  {
+    "tableName": "ServerMessages",
+    "tableHash": "BD158365",
+    "dbcFileDataID": 841644,
+    "db2FileDataID": 1301141
+  },
+  {
+    "tableName": "ShadowyEffect",
+    "tableHash": "ADACD19B",
+    "db2FileDataID": 1239844
+  },
+  {
+    "tableName": "SharedString",
+    "tableHash": "111D4849",
+    "db2FileDataID": 4620073
+  },
+  {
+    "tableName": "SheatheSoundLookups",
+    "tableHash": "D2F7CE7B"
+  },
+  {
+    "tableName": "SiegeableProperties",
+    "tableHash": "8A297852",
+    "db2FileDataID": 1954391
+  },
+  {
+    "tableName": "SkillCostsData",
+    "tableHash": "2B8B4267"
+  },
+  {
+    "tableName": "SkillLine",
+    "tableHash": "B53DC9D6",
+    "dbcFileDataID": 841726,
+    "db2FileDataID": 1240935
+  },
+  {
+    "tableName": "SkillLineAbility",
+    "tableHash": "FF4446F6",
+    "dbcFileDataID": 801759,
+    "db2FileDataID": 1266278
+  },
+  {
+    "tableName": "SkillLineAbilitySortedSpell",
+    "tableHash": "7D6D3155",
+    "dbcFileDataID": 801760
+  },
+  {
+    "tableName": "SkillLineCategory",
+    "tableHash": "E9300AAA",
+    "db2FileDataID": 2179610
+  },
+  {
+    "tableName": "SkillLineXTraitTree",
+    "tableHash": "A6E64E40",
+    "db2FileDataID": 4505477
+  },
+  {
+    "tableName": "SkillRaceClassInfo",
+    "tableHash": "06ADE420",
+    "dbcFileDataID": 801761,
+    "db2FileDataID": 1240406
+  },
+  {
+    "tableName": "SkillTiers",
+    "tableHash": "D59FB01A",
+    "dbcFileDataID": 801762
+  },
+  {
+    "tableName": "SkySceneXPlayerCondition",
+    "tableHash": "D66221C4",
+    "db2FileDataID": 3581893
+  },
+  {
+    "tableName": "Soulbind",
+    "tableHash": "8FFAF8FA",
+    "db2FileDataID": 3488583
+  },
+  {
+    "tableName": "SoulbindConduit",
+    "tableHash": "88F1F0A0",
+    "db2FileDataID": 3594380
+  },
+  {
+    "tableName": "SoulbindConduitEnhancedSocket",
+    "tableHash": "8B8AAB21",
+    "db2FileDataID": 4069554
+  },
+  {
+    "tableName": "SoulbindConduitItem",
+    "tableHash": "4201319B",
+    "db2FileDataID": 3604984
+  },
+  {
+    "tableName": "SoulbindConduitRank",
+    "tableHash": "D40FA9E9",
+    "db2FileDataID": 3620681
+  },
+  {
+    "tableName": "SoulbindConduitRankProperties",
+    "tableHash": "86EBDC62",
+    "db2FileDataID": 3858895
+  },
+  {
+    "tableName": "SoulbindUIDisplayInfo",
+    "tableHash": "DCFADFEB",
+    "db2FileDataID": 3490472
+  },
+  {
+    "tableName": "SoundAmbience",
+    "tableHash": "35F9DE58",
+    "dbcFileDataID": 801763,
+    "db2FileDataID": 1310628
+  },
+  {
+    "tableName": "SoundAmbienceFlavor",
+    "tableHash": "2691DC13",
+    "dbcFileDataID": 801764,
+    "db2FileDataID": 1267065
+  },
+  {
+    "tableName": "SoundBus",
+    "tableHash": "072CA15A",
+    "dbcFileDataID": 926000,
+    "db2FileDataID": 1310246
+  },
+  {
+    "tableName": "SoundBusName",
+    "tableHash": "4AF60401",
+    "dbcFileDataID": 929746,
+    "db2FileDataID": 1308502
+  },
+  {
+    "tableName": "SoundBusOverride",
+    "tableHash": "2F9FF8DF",
+    "db2FileDataID": 1598732
+  },
+  {
+    "tableName": "SoundCharacterMacroLines",
+    "tableHash": "D9705513"
+  },
+  {
+    "tableName": "SoundEmitterPillPoints",
+    "tableHash": "D8A1D70C",
+    "dbcFileDataID": 801765,
+    "db2FileDataID": 1092317
+  },
+  {
+    "tableName": "SoundEmitters",
+    "tableHash": "C638B8D4",
+    "dbcFileDataID": 801766,
+    "db2FileDataID": 1092316
+  },
+  {
+    "tableName": "SoundEntries",
+    "tableHash": "FA661215",
+    "dbcFileDataID": 801767,
+    "db2FileDataID": 1092318
+  },
+  {
+    "tableName": "SoundEntriesAdvanced",
+    "tableHash": "AC33039E",
+    "dbcFileDataID": 801768,
+    "db2FileDataID": 1092319
+  },
+  {
+    "tableName": "SoundEntriesFallbacks",
+    "tableHash": "2CFC2E52",
+    "dbcFileDataID": 801769
+  },
+  {
+    "tableName": "SoundEnvelope",
+    "tableHash": "588DE300",
+    "db2FileDataID": 1693131
+  },
+  {
+    "tableName": "SoundFilter",
+    "tableHash": "0EF0A657",
+    "dbcFileDataID": 801770,
+    "db2FileDataID": 1271601
+  },
+  {
+    "tableName": "SoundFilterElem",
+    "tableHash": "A17FA21E",
+    "dbcFileDataID": 801771,
+    "db2FileDataID": 1267066
+  },
+  {
+    "tableName": "SoundKit",
+    "tableHash": "36237731",
+    "db2FileDataID": 1237434
+  },
+  {
+    "tableName": "SoundKitAdvanced",
+    "tableHash": "C0A5F8C6",
+    "db2FileDataID": 1237436
+  },
+  {
+    "tableName": "SoundKitChild",
+    "tableHash": "2BE0E266",
+    "db2FileDataID": 1307289
+  },
+  {
+    "tableName": "SoundKitEntry",
+    "tableHash": "C2B150C7",
+    "db2FileDataID": 1237435
+  },
+  {
+    "tableName": "SoundKitFallback",
+    "tableHash": "E98312F8",
+    "db2FileDataID": 1307288
+  },
+  {
+    "tableName": "SoundKitName",
+    "tableHash": "35566A52",
+    "db2FileDataID": 1665033
+  },
+  {
+    "tableName": "SoundMixGroup",
+    "tableHash": "CFD670A2",
+    "db2FileDataID": 4618887
+  },
+  {
+    "tableName": "SoundOverride",
+    "tableHash": "8E8053CC",
+    "dbcFileDataID": 937651,
+    "db2FileDataID": 1266542
+  },
+  {
+    "tableName": "SoundParameter",
+    "tableHash": "C65FA378",
+    "db2FileDataID": 3405441
+  },
+  {
+    "tableName": "SoundProviderPreferences",
+    "tableHash": "BAA71EA8",
+    "dbcFileDataID": 801772,
+    "db2FileDataID": 1279417
+  },
+  {
+    "tableName": "SoundSamplePreferences",
+    "tableHash": "7CBAAA06"
+  },
+  {
+    "tableName": "SoundWaterfallEmitter",
+    "tableHash": "51F276E3",
+    "db2FileDataID": 4756178
+  },
+  {
+    "tableName": "SoundWaterType",
+    "tableHash": "5A4E5555"
+  },
+  {
+    "tableName": "SourceInfo",
+    "tableHash": "3C34F90F",
+    "db2FileDataID": 1313612
+  },
+  {
+    "tableName": "SpamMessages",
+    "tableHash": "91AB8126",
+    "dbcFileDataID": 801773,
+    "db2FileDataID": 1117088
+  },
+  {
+    "tableName": "SpecializationSpells",
+    "tableHash": "4FBA0E5C",
+    "dbcFileDataID": 841688,
+    "db2FileDataID": 1240335
+  },
+  {
+    "tableName": "SpecializationSpellsDisplay",
+    "tableHash": "1C6C1D1E",
+    "db2FileDataID": 2067238
+  },
+  {
+    "tableName": "SpecSetMember",
+    "tableHash": "25DF572E",
+    "db2FileDataID": 2057624
+  },
+  {
+    "tableName": "Spell",
+    "tableHash": "E111669E",
+    "dbcFileDataID": 841662,
+    "db2FileDataID": 1140089
+  },
+  {
+    "tableName": "SpellActionBarPref",
+    "tableHash": "84B0BDD7",
+    "db2FileDataID": 1019373
+  },
+  {
+    "tableName": "SpellActivationOverlay",
+    "tableHash": "F8685781",
+    "dbcFileDataID": 801774,
+    "db2FileDataID": 1261603
+  },
+  {
+    "tableName": "SpellAuraNames",
+    "tableHash": "AB7AB119",
+    "db2FileDataID": 3055890
+  },
+  {
+    "tableName": "SpellAuraOptions",
+    "tableHash": "F42FC065",
+    "dbcFileDataID": 801775,
+    "db2FileDataID": 1139952
+  },
+  {
+    "tableName": "SpellAuraRestrictions",
+    "tableHash": "BA978F4E",
+    "dbcFileDataID": 801776,
+    "db2FileDataID": 981566
+  },
+  {
+    "tableName": "SpellAuraRestrictionsDifficulty",
+    "tableHash": "F9DD616B",
+    "db2FileDataID": 981565
+  },
+  {
+    "tableName": "SpellAuraVisibility",
+    "tableHash": "E86AED45",
+    "dbcFileDataID": 801777,
+    "db2FileDataID": 1280616
+  },
+  {
+    "tableName": "SpellAuraVisXChrSpec",
+    "tableHash": "7CF13280",
+    "dbcFileDataID": 801778,
+    "db2FileDataID": 1280615
+  },
+  {
+    "tableName": "SpellAuraVisXTalentTab",
+    "tableHash": "0F992FEA",
+    "db2FileDataID": 5634801
+  },
+  {
+    "tableName": "SpellCastingRequirements",
+    "tableHash": "61025756",
+    "dbcFileDataID": 801779,
+    "db2FileDataID": 1002166
+  },
+  {
+    "tableName": "SpellCastTimes",
+    "tableHash": "FDBA5A66",
+    "dbcFileDataID": 801780,
+    "db2FileDataID": 1134089
+  },
+  {
+    "tableName": "SpellCategories",
+    "tableHash": "DBE7F829",
+    "dbcFileDataID": 801781,
+    "db2FileDataID": 1139939
+  },
+  {
+    "tableName": "SpellCategory",
+    "tableHash": "D0C3D18E",
+    "dbcFileDataID": 841716,
+    "db2FileDataID": 1280619
+  },
+  {
+    "tableName": "SpellChainEffects",
+    "tableHash": "1EDACEA1",
+    "dbcFileDataID": 801782,
+    "db2FileDataID": 1343310
+  },
+  {
+    "tableName": "SpellClassOptions",
+    "tableHash": "288EAB81",
+    "dbcFileDataID": 801783,
+    "db2FileDataID": 979663
+  },
+  {
+    "tableName": "SpellClutterAreaEffectCounts",
+    "tableHash": "2939542C",
+    "db2FileDataID": 2428696
+  },
+  {
+    "tableName": "SpellClutterFrameRates",
+    "tableHash": "3FD7818B",
+    "db2FileDataID": 2428707
+  },
+  {
+    "tableName": "SpellClutterImpactModelCounts",
+    "tableHash": "6C9473C6",
+    "db2FileDataID": 2428708
+  },
+  {
+    "tableName": "SpellClutterKitDistances",
+    "tableHash": "D1BA6DEC",
+    "db2FileDataID": 2428697
+  },
+  {
+    "tableName": "SpellClutterMissileDist",
+    "tableHash": "F4286119",
+    "db2FileDataID": 2428733
+  },
+  {
+    "tableName": "SpellClutterWeaponTrailDist",
+    "tableHash": "89FB22B5",
+    "db2FileDataID": 2428698
+  },
+  {
+    "tableName": "SpellCooldowns",
+    "tableHash": "F9F37C57",
+    "dbcFileDataID": 801784,
+    "db2FileDataID": 1139924
+  },
+  {
+    "tableName": "SpellCraftUI",
+    "tableHash": "DCF5DECC",
+    "db2FileDataID": 2620904
+  },
+  {
+    "tableName": "SpellDescriptionVariables",
+    "tableHash": "3CC89C00",
+    "dbcFileDataID": 801785,
+    "db2FileDataID": 1140004
+  },
+  {
+    "tableName": "SpellDifficulty",
+    "tableHash": "99561693"
+  },
+  {
+    "tableName": "SpellDiminish",
+    "tableHash": "DC886E69",
+    "db2FileDataID": 3055891
+  },
+  {
+    "tableName": "SpellDispelType",
+    "tableHash": "2B7C0063",
+    "dbcFileDataID": 841656,
+    "db2FileDataID": 1137829
+  },
+  {
+    "tableName": "SpellDuration",
+    "tableHash": "B423FA7A",
+    "dbcFileDataID": 801786,
+    "db2FileDataID": 1137828
+  },
+  {
+    "tableName": "SpellEffect",
+    "tableHash": "F04238A5",
+    "dbcFileDataID": 801787,
+    "db2FileDataID": 1140088
+  },
+  {
+    "tableName": "SpellEffectAutoDescription",
+    "tableHash": "EB793831",
+    "db2FileDataID": 1888495
+  },
+  {
+    "tableName": "SpellEffectCameraShakes",
+    "tableHash": "73985069",
+    "db2FileDataID": 897950
+  },
+  {
+    "tableName": "SpellEffectEmission",
+    "tableHash": "C327CDC8",
+    "db2FileDataID": 1310248
+  },
+  {
+    "tableName": "SpellEffectGroupSize",
+    "tableHash": "23BF7E10",
+    "db2FileDataID": 959875
+  },
+  {
+    "tableName": "SpellEffectNames",
+    "tableHash": "F9ADFD6D",
+    "db2FileDataID": 3055892
+  },
+  {
+    "tableName": "SpellEffectScaling",
+    "tableHash": "9DADE032",
+    "dbcFileDataID": 801789,
+    "db2FileDataID": 1139989
+  },
+  {
+    "tableName": "SpellEmpower",
+    "tableHash": "99E93AE7",
+    "db2FileDataID": 4507381
+  },
+  {
+    "tableName": "SpellEmpowerStage",
+    "tableHash": "4C9273E6",
+    "db2FileDataID": 4871072
+  },
+  {
+    "tableName": "SpellEquippedItems",
+    "tableHash": "E44ABBD4",
+    "dbcFileDataID": 801790,
+    "db2FileDataID": 1140011
+  },
+  {
+    "tableName": "SpellFlyout",
+    "tableHash": "B4BC3BE6",
+    "dbcFileDataID": 841737,
+    "db2FileDataID": 1146819
+  },
+  {
+    "tableName": "SpellFlyoutItem",
+    "tableHash": "D0BEE46B",
+    "dbcFileDataID": 801791,
+    "db2FileDataID": 1134085
+  },
+  {
+    "tableName": "SpellFocusObject",
+    "tableHash": "B99DB712",
+    "dbcFileDataID": 841690,
+    "db2FileDataID": 1280620
+  },
+  {
+    "tableName": "SpellIcon",
+    "tableHash": "00E38DEC",
+    "dbcFileDataID": 801792,
+    "db2FileDataID": 1280617
+  },
+  {
+    "tableName": "SpellImplicitTargeting",
+    "tableHash": "CF622413",
+    "db2FileDataID": 3055896
+  },
+  {
+    "tableName": "SpellInterrupts",
+    "tableHash": "668FAE03",
+    "dbcFileDataID": 801793,
+    "db2FileDataID": 1139906
+  },
+  {
+    "tableName": "SpellItemEnchantment",
+    "tableHash": "E05AC589",
+    "dbcFileDataID": 841653,
+    "db2FileDataID": 1362771
+  },
+  {
+    "tableName": "SpellItemEnchantmentCondition",
+    "tableHash": "F9513930",
+    "dbcFileDataID": 801794,
+    "db2FileDataID": 1121834
+  },
+  {
+    "tableName": "SpellKeyboundOverride",
+    "tableHash": "D4B64DCD",
+    "dbcFileDataID": 801795,
+    "db2FileDataID": 1127327
+  },
+  {
+    "tableName": "SpellLabel",
+    "tableHash": "30769020",
+    "db2FileDataID": 1347275
+  },
+  {
+    "tableName": "SpellLearnSpell",
+    "tableHash": "DBEDF603",
+    "dbcFileDataID": 801796,
+    "db2FileDataID": 1001907
+  },
+  {
+    "tableName": "SpellLevels",
+    "tableHash": "1DDEC5E6",
+    "dbcFileDataID": 801797,
+    "db2FileDataID": 1140079
+  },
+  {
+    "tableName": "SpellMastery",
+    "tableHash": "EE4E3D41"
+  },
+  {
+    "tableName": "SpellMechanic",
+    "tableHash": "726D2B3E",
+    "dbcFileDataID": 841733,
+    "db2FileDataID": 1014438
+  },
+  {
+    "tableName": "SpellMemorizeCost",
+    "tableHash": "E02B0714",
+    "db2FileDataID": 3549053
+  },
+  {
+    "tableName": "SpellMisc",
+    "tableHash": "C603EE28",
+    "dbcFileDataID": 801798,
+    "db2FileDataID": 1003144
+  },
+  {
+    "tableName": "SpellMiscDifficulty",
+    "tableHash": "7FC0A695",
+    "db2FileDataID": 1003143
+  },
+  {
+    "tableName": "SpellMissile",
+    "tableHash": "688F7A07",
+    "db2FileDataID": 897956
+  },
+  {
+    "tableName": "SpellMissileMotion",
+    "tableHash": "37717679",
+    "db2FileDataID": 897955
+  },
+  {
+    "tableName": "SpellName",
+    "tableHash": "46C66698",
+    "db2FileDataID": 1990283
+  },
+  {
+    "tableName": "SpellOverrideName",
+    "tableHash": "BCEAB606",
+    "db2FileDataID": 2618823
+  },
+  {
+    "tableName": "SpellPower",
+    "tableHash": "A1ACE1DF",
+    "dbcFileDataID": 801801,
+    "db2FileDataID": 982806
+  },
+  {
+    "tableName": "SpellPowerDifficulty",
+    "tableHash": "7EA08450",
+    "db2FileDataID": 982804
+  },
+  {
+    "tableName": "SpellProceduralEffect",
+    "tableHash": "F6BC85DF",
+    "db2FileDataID": 1140477
+  },
+  {
+    "tableName": "SpellProcsPerMinute",
+    "tableHash": "D0768C6C",
+    "dbcFileDataID": 895900,
+    "db2FileDataID": 1133526
+  },
+  {
+    "tableName": "SpellProcsPerMinuteMod",
+    "tableHash": "EB24B92C",
+    "dbcFileDataID": 895901,
+    "db2FileDataID": 1133525
+  },
+  {
+    "tableName": "SpellRadius",
+    "tableHash": "AB7E4841",
+    "dbcFileDataID": 801802,
+    "db2FileDataID": 1134584
+  },
+  {
+    "tableName": "SpellRange",
+    "tableHash": "E051A69C",
+    "dbcFileDataID": 841696,
+    "db2FileDataID": 1146820
+  },
+  {
+    "tableName": "SpellRangeVisualization",
+    "tableHash": "9C6F05CB",
+    "db2FileDataID": 7871438
+  },
+  {
+    "tableName": "SpellReagents",
+    "tableHash": "AB66C99F",
+    "db2FileDataID": 841946
+  },
+  {
+    "tableName": "SpellReagentsCurrency",
+    "tableHash": "2049B60C",
+    "db2FileDataID": 1135239
+  },
+  {
+    "tableName": "SpellReplacement",
+    "tableHash": "2E726017",
+    "db2FileDataID": 4674394
+  },
+  {
+    "tableName": "SpellRuneCost",
+    "tableHash": "1A27961E",
+    "dbcFileDataID": 801804,
+    "db2FileDataID": 1014437
+  },
+  {
+    "tableName": "SpellScaling",
+    "tableHash": "40E92D65",
+    "dbcFileDataID": 801805,
+    "db2FileDataID": 1139940
+  },
+  {
+    "tableName": "SpellScript",
+    "tableHash": "4553E9F7",
+    "db2FileDataID": 3055899
+  },
+  {
+    "tableName": "SpellScriptText",
+    "tableHash": "12A212A9",
+    "db2FileDataID": 3055901
+  },
+  {
+    "tableName": "SpellShapeshift",
+    "tableHash": "BC91EA17",
+    "dbcFileDataID": 801806,
+    "db2FileDataID": 1139929
+  },
+  {
+    "tableName": "SpellShapeshiftForm",
+    "tableHash": "F952B945",
+    "dbcFileDataID": 841671,
+    "db2FileDataID": 1280618
+  },
+  {
+    "tableName": "SpellSpecialUnitEffect",
+    "tableHash": "AFADE934",
+    "dbcFileDataID": 801807,
+    "db2FileDataID": 1268903
+  },
+  {
+    "tableName": "SpellTargetRestrictions",
+    "tableHash": "E064A75C",
+    "dbcFileDataID": 801808,
+    "db2FileDataID": 1139993
+  },
+  {
+    "tableName": "SpellTgtFilterRuleNode",
+    "tableHash": "F77F396F",
+    "db2FileDataID": 6031283
+  },
+  {
+    "tableName": "SpellTgtFilterRuleSetNode",
+    "tableHash": "4C3A6C7E",
+    "db2FileDataID": 6031284
+  },
+  {
+    "tableName": "SpellTgtFilterRuleTemplate",
+    "tableHash": "9EA2218D",
+    "db2FileDataID": 6031285
+  },
+  {
+    "tableName": "SpellTgtGatherNode",
+    "tableHash": "00E5AFA6",
+    "db2FileDataID": 6031286
+  },
+  {
+    "tableName": "SpellTgtGatherTemplate",
+    "tableHash": "DC26F2F6",
+    "db2FileDataID": 6031287
+  },
+  {
+    "tableName": "SpellTooltip",
+    "tableHash": "CB61BC48"
+  },
+  {
+    "tableName": "SpellTotems",
+    "tableHash": "A50F8A31",
+    "dbcFileDataID": 801809,
+    "db2FileDataID": 1002162
+  },
+  {
+    "tableName": "SpellVisual",
+    "tableHash": "F72496D9",
+    "db2FileDataID": 897952
+  },
+  {
+    "tableName": "SpellVisualAnim",
+    "tableHash": "3334A75E",
+    "db2FileDataID": 1140479
+  },
+  {
+    "tableName": "SpellVisualAnimName",
+    "tableHash": "870ECE1A"
+  },
+  {
+    "tableName": "SpellVisualColorEffect",
+    "tableHash": "58E72946",
+    "db2FileDataID": 1094006
+  },
+  {
+    "tableName": "SpellVisualEffectName",
+    "tableHash": "02E18F32",
+    "db2FileDataID": 897948
+  },
+  {
+    "tableName": "SpellVisualEvent",
+    "tableHash": "CC284D0F",
+    "db2FileDataID": 1685317
+  },
+  {
+    "tableName": "SpellVisualKit",
+    "tableHash": "F483EADB",
+    "db2FileDataID": 897949
+  },
+  {
+    "tableName": "SpellVisualKitAreaModel",
+    "tableHash": "208AB51D",
+    "db2FileDataID": 897951
+  },
+  {
+    "tableName": "SpellVisualKitDecalAttach",
+    "tableHash": "2D4E187F",
+    "db2FileDataID": 7412806
+  },
+  {
+    "tableName": "SpellVisualKitEffect",
+    "tableHash": "4666ED42",
+    "db2FileDataID": 1140480
+  },
+  {
+    "tableName": "SpellVisualKitModelAttach",
+    "tableHash": "F07194C3",
+    "db2FileDataID": 897953
+  },
+  {
+    "tableName": "SpellVisualKitPicker",
+    "tableHash": "7EA5EFCF",
+    "db2FileDataID": 3989478
+  },
+  {
+    "tableName": "SpellVisualKitPickerEntry",
+    "tableHash": "534AED83",
+    "db2FileDataID": 3989479
+  },
+  {
+    "tableName": "SpellVisualMissile",
+    "tableHash": "51A28350",
+    "db2FileDataID": 897954
+  },
+  {
+    "tableName": "SpellVisualPrecastTransitions",
+    "tableHash": "7A488A27"
+  },
+  {
+    "tableName": "SpellVisualScreenEffect",
+    "tableHash": "735A9FC0",
+    "db2FileDataID": 3607312
+  },
+  {
+    "tableName": "SpellXDescriptionVariables",
+    "tableHash": "F3D99F2D",
+    "db2FileDataID": 1724949
+  },
+  {
+    "tableName": "SpellXSpellVisual",
+    "tableHash": "27B7A01A",
+    "db2FileDataID": 1101657
+  },
+  {
+    "tableName": "SpotLightConditionMap",
+    "tableHash": "8E789275",
+    "db2FileDataID": 5735565
+  },
+  {
+    "tableName": "SSAOSettings",
+    "tableHash": "7671711A",
+    "db2FileDataID": 2056369
+  },
+  {
+    "tableName": "StableSlotPrices",
+    "tableHash": "12F89E8D",
+    "db2FileDataID": 2179613
+  },
+  {
+    "tableName": "Startup_Strings",
+    "tableHash": "FB0657CD",
+    "dbcFileDataID": 841724,
+    "db2FileDataID": 1375805
+  },
+  {
+    "tableName": "StartupFiles",
+    "tableHash": "41F7A336",
+    "db2FileDataID": 1604265
+  },
+  {
+    "tableName": "Stationery",
+    "tableHash": "AF0DC253",
+    "dbcFileDataID": 801815,
+    "db2FileDataID": 1140758
+  },
+  {
+    "tableName": "StringLookups",
+    "tableHash": "4A5D42EB",
+    "dbcFileDataID": 801816,
+    "db2FileDataID": 1266427
+  },
+  {
+    "tableName": "SubgraphNode",
+    "tableHash": "AC9A75B8",
+    "db2FileDataID": 5636015
+  },
+  {
+    "tableName": "SummonProperties",
+    "tableHash": "33C9E1A8",
+    "dbcFileDataID": 801817,
+    "db2FileDataID": 1345276
+  },
+  {
+    "tableName": "SuperDistrictSet",
+    "tableHash": "E4CDB5CF",
+    "db2FileDataID": 8279681
+  },
+  {
+    "tableName": "SuperDistrictSetCollection",
+    "tableHash": "90204B0A",
+    "db2FileDataID": 8279682
+  },
+  {
+    "tableName": "SuperDistrictSetXAvailableSD",
+    "tableHash": "08014697",
+    "db2FileDataID": 8281618
+  },
+  {
+    "tableName": "SuperDistrictTransfer",
+    "tableHash": "94F0D5CC",
+    "db2FileDataID": 8279874
+  },
+  {
+    "tableName": "TabardBackgroundTextures",
+    "tableHash": "3219839F"
+  },
+  {
+    "tableName": "TabardEmblemTextures",
+    "tableHash": "2A5B05D3"
+  },
+  {
+    "tableName": "TactKey",
+    "tableHash": "DF2F53CF",
+    "db2FileDataID": 1302850
+  },
+  {
+    "tableName": "TactKeyLookup",
+    "tableHash": "AFC190D1",
+    "db2FileDataID": 1302851
+  },
+  {
+    "tableName": "Talent",
+    "tableHash": "F9A4265F",
+    "dbcFileDataID": 841663,
+    "db2FileDataID": 1369062
+  },
+  {
+    "tableName": "TalentTab",
+    "tableHash": "425D88C8",
+    "db2FileDataID": 2178102
+  },
+  {
+    "tableName": "TalentTreePrimarySpells",
+    "tableHash": "DEA4E266",
+    "db2FileDataID": 5581887
+  },
+  {
+    "tableName": "TaxiNodes",
+    "tableHash": "50D91A78",
+    "dbcFileDataID": 841746,
+    "db2FileDataID": 1068100
+  },
+  {
+    "tableName": "TaxiPath",
+    "tableHash": "AB30A45C",
+    "dbcFileDataID": 801818,
+    "db2FileDataID": 1067802
+  },
+  {
+    "tableName": "TaxiPathNode",
+    "tableHash": "E5E988BC",
+    "dbcFileDataID": 801819,
+    "db2FileDataID": 1000437
+  },
+  {
+    "tableName": "TeamContributionPoints",
+    "tableHash": "4DC2A1B0"
+  },
+  {
+    "tableName": "TerrainColorGradingRamp",
+    "tableHash": "725154DB",
+    "db2FileDataID": 3501705
+  },
+  {
+    "tableName": "TerrainMaterial",
+    "tableHash": "32573345",
+    "dbcFileDataID": 801820,
+    "db2FileDataID": 1307290
+  },
+  {
+    "tableName": "TerrainType",
+    "tableHash": "8F38A4B1",
+    "dbcFileDataID": 801821,
+    "db2FileDataID": 1310249
+  },
+  {
+    "tableName": "TerrainTypeSounds",
+    "tableHash": "F3EB5A27",
+    "dbcFileDataID": 801822,
+    "db2FileDataID": 1284822
+  },
+  {
+    "tableName": "TextureBlendSet",
+    "tableHash": "95C24ED7",
+    "db2FileDataID": 1328721
+  },
+  {
+    "tableName": "TextureFileData",
+    "tableHash": "1A473014",
+    "db2FileDataID": 982459
+  },
+  {
+    "tableName": "TieredEntrance",
+    "tableHash": "4DDF13A4",
+    "db2FileDataID": 7833678
+  },
+  {
+    "tableName": "TieredEntranceTierProg",
+    "tableHash": "F9023EDF",
+    "db2FileDataID": 8513805
+  },
+  {
+    "tableName": "TieredEntranceTierProgSet",
+    "tableHash": "46984799",
+    "db2FileDataID": 8513806
+  },
+  {
+    "tableName": "TierTransition",
+    "tableHash": "DDD6E213",
+    "db2FileDataID": 3076928
+  },
+  {
+    "tableName": "TimeEventData",
+    "tableHash": "D055D7B5",
+    "db2FileDataID": 3055910
+  },
+  {
+    "tableName": "TotemCategory",
+    "tableHash": "A7A2F29A",
+    "dbcFileDataID": 841697,
+    "db2FileDataID": 1134586
+  },
+  {
+    "tableName": "Toy",
+    "tableHash": "7B03245C",
+    "db2FileDataID": 988200
+  },
+  {
+    "tableName": "TradeSkillCategory",
+    "tableHash": "253A9B6B",
+    "dbcFileDataID": 841658,
+    "db2FileDataID": 1301101
+  },
+  {
+    "tableName": "TradeSkillItem",
+    "tableHash": "B50CA635",
+    "db2FileDataID": 1329070
+  },
+  {
+    "tableName": "TraitCond",
+    "tableHash": "8D6A552D",
+    "db2FileDataID": 4543085
+  },
+  {
+    "tableName": "TraitCondAccountElement",
+    "tableHash": "4BF71A2A",
+    "db2FileDataID": 5890759
+  },
+  {
+    "tableName": "TraitCost",
+    "tableHash": "266BF08E",
+    "db2FileDataID": 4420295
+  },
+  {
+    "tableName": "TraitCostDefinition",
+    "tableHash": "DD0246F8",
+    "db2FileDataID": 4420296
+  },
+  {
+    "tableName": "TraitCurrency",
+    "tableHash": "837C91E2",
+    "db2FileDataID": 4524216
+  },
+  {
+    "tableName": "TraitCurrencySource",
+    "tableHash": "94A4ED3B",
+    "db2FileDataID": 4539393
+  },
+  {
+    "tableName": "TraitDefinition",
+    "tableHash": "B292AC80",
+    "db2FileDataID": 4420327
+  },
+  {
+    "tableName": "TraitDefinitionEffectPoints",
+    "tableHash": "16D47A01",
+    "db2FileDataID": 4536895
+  },
+  {
+    "tableName": "TraitEdge",
+    "tableHash": "94D0AF81",
+    "db2FileDataID": 4420308
+  },
+  {
+    "tableName": "TraitNode",
+    "tableHash": "E1432D63",
+    "db2FileDataID": 4420297
+  },
+  {
+    "tableName": "TraitNodeEntry",
+    "tableHash": "82E8D5D6",
+    "db2FileDataID": 4420298
+  },
+  {
+    "tableName": "TraitNodeEntryXTraitCond",
+    "tableHash": "98300A33",
+    "db2FileDataID": 4543088
+  },
+  {
+    "tableName": "TraitNodeEntryXTraitCost",
+    "tableHash": "31518C84",
+    "db2FileDataID": 4420299
+  },
+  {
+    "tableName": "TraitNodeGroup",
+    "tableHash": "601B98C1",
+    "db2FileDataID": 4420300
+  },
+  {
+    "tableName": "TraitNodeGroupDisplayInfo",
+    "tableHash": "34B4B384",
+    "db2FileDataID": 7935808
+  },
+  {
+    "tableName": "TraitNodeGroupXTraitCond",
+    "tableHash": "BDC77325",
+    "db2FileDataID": 4543090
+  },
+  {
+    "tableName": "TraitNodeGroupXTraitCost",
+    "tableHash": "14A67696",
+    "db2FileDataID": 4420301
+  },
+  {
+    "tableName": "TraitNodeGroupXTraitNode",
+    "tableHash": "1AA6B3DB",
+    "db2FileDataID": 4420302
+  },
+  {
+    "tableName": "TraitNodeXTraitCond",
+    "tableHash": "8CCCDE25",
+    "db2FileDataID": 4543092
+  },
+  {
+    "tableName": "TraitNodeXTraitCost",
+    "tableHash": "25FCD896",
+    "db2FileDataID": 4420303
+  },
+  {
+    "tableName": "TraitNodeXTraitNodeEntry",
+    "tableHash": "A4379E4E",
+    "db2FileDataID": 4420304
+  },
+  {
+    "tableName": "TraitSubTree",
+    "tableHash": "4171C94A",
+    "db2FileDataID": 5534447
+  },
+  {
+    "tableName": "TraitSystem",
+    "tableHash": "53E0E2E4",
+    "db2FileDataID": 4635649
+  },
+  {
+    "tableName": "TraitTree",
+    "tableHash": "964B11D9",
+    "db2FileDataID": 4420305
+  },
+  {
+    "tableName": "TraitTreeLoadout",
+    "tableHash": "1068236A",
+    "db2FileDataID": 4669507
+  },
+  {
+    "tableName": "TraitTreeLoadoutEntry",
+    "tableHash": "3860D84A",
+    "db2FileDataID": 4669509
+  },
+  {
+    "tableName": "TraitTreeXTraitCost",
+    "tableHash": "53A96E5F",
+    "db2FileDataID": 4420306
+  },
+  {
+    "tableName": "TraitTreeXTraitCurrency",
+    "tableHash": "373BEE7B",
+    "db2FileDataID": 4524218
+  },
+  {
+    "tableName": "TransformMatrix",
+    "tableHash": "0A5DF5FA",
+    "db2FileDataID": 1338702
+  },
+  {
+    "tableName": "TransmogDefaultLevel",
+    "tableHash": "AF81CD66",
+    "db2FileDataID": 2399695
+  },
+  {
+    "tableName": "TransmogHoliday",
+    "tableHash": "5481AF88",
+    "db2FileDataID": 1589454
+  },
+  {
+    "tableName": "TransmogIllusion",
+    "tableHash": "0A9717CF",
+    "db2FileDataID": 3580450
+  },
+  {
+    "tableName": "TransmogOutfitEntry",
+    "tableHash": "2A7DDD13",
+    "db2FileDataID": 7320164
+  },
+  {
+    "tableName": "TransmogOutfitSlotInfo",
+    "tableHash": "A9238470",
+    "db2FileDataID": 7300046
+  },
+  {
+    "tableName": "TransmogOutfitSlotOption",
+    "tableHash": "3F8AD2CC",
+    "db2FileDataID": 7299793
+  },
+  {
+    "tableName": "TransmogSet",
+    "tableHash": "15393898",
+    "db2FileDataID": 1376213
+  },
+  {
+    "tableName": "TransmogSetGroup",
+    "tableHash": "24DB5CAE",
+    "db2FileDataID": 1576116
+  },
+  {
+    "tableName": "TransmogSetItem",
+    "tableHash": "1E21AFB4",
+    "db2FileDataID": 1376212
+  },
+  {
+    "tableName": "TransmogSituation",
+    "tableHash": "BB44C026",
+    "db2FileDataID": 7211446
+  },
+  {
+    "tableName": "TransmogSituationGroup",
+    "tableHash": "41E7B692",
+    "db2FileDataID": 7212733
+  },
+  {
+    "tableName": "TransmogSituationTrigger",
+    "tableHash": "E3C88808",
+    "db2FileDataID": 7210468
+  },
+  {
+    "tableName": "TransportAnimation",
+    "tableHash": "6B9AEBE5",
+    "dbcFileDataID": 801823,
+    "db2FileDataID": 1140686
+  },
+  {
+    "tableName": "TransportPhysics",
+    "tableHash": "D04684DD",
+    "dbcFileDataID": 801824,
+    "db2FileDataID": 1121973
+  },
+  {
+    "tableName": "TransportRotation",
+    "tableHash": "9645753D",
+    "dbcFileDataID": 801825,
+    "db2FileDataID": 1140687
+  },
+  {
+    "tableName": "Treasure",
+    "tableHash": "589A6F58"
+  },
+  {
+    "tableName": "Trophy",
+    "tableHash": "F13B375C",
+    "db2FileDataID": 975024
+  },
+  {
+    "tableName": "TrophyInstance",
+    "tableHash": "65C9EA50",
+    "db2FileDataID": 975023
+  },
+  {
+    "tableName": "TrophyType",
+    "tableHash": "6F7681CB",
+    "db2FileDataID": 975025
+  },
+  {
+    "tableName": "UIArrowCallout",
+    "tableHash": "25CC7A52",
+    "db2FileDataID": 5011999
+  },
+  {
+    "tableName": "UIButton",
+    "tableHash": "8F1FC18A",
+    "db2FileDataID": 6237799
+  },
+  {
+    "tableName": "UiCamera",
+    "tableHash": "F6A91AC1",
+    "db2FileDataID": 1120287
+  },
+  {
+    "tableName": "UiCameraType",
+    "tableHash": "36886009",
+    "db2FileDataID": 1120288
+  },
+  {
+    "tableName": "UiCamFbackTalkingHeadChrRace",
+    "tableHash": "BC4C22AB",
+    "db2FileDataID": 3055924
+  },
+  {
+    "tableName": "UiCamFbackTransmogChrRace",
+    "tableHash": "4D4AF767",
+    "db2FileDataID": 1261406
+  },
+  {
+    "tableName": "UiCamFbackTransmogWeapon",
+    "tableHash": "4193DD76",
+    "db2FileDataID": 1261407
+  },
+  {
+    "tableName": "UiCanvas",
+    "tableHash": "488F4625",
+    "db2FileDataID": 1989363
+  },
+  {
+    "tableName": "UIChromieTimeExpansionInfo",
+    "tableHash": "8C74E78E",
+    "db2FileDataID": 3488582
+  },
+  {
+    "tableName": "UICinematicIntroInfo",
+    "tableHash": "5287DBFD",
+    "db2FileDataID": 6155772
+  },
+  {
+    "tableName": "UICovenantAbility",
+    "tableHash": "505E0645",
+    "db2FileDataID": 3502042
+  },
+  {
+    "tableName": "UiCovenantDisplayInfo",
+    "tableHash": "E64AD7AA",
+    "db2FileDataID": 3509132
+  },
+  {
+    "tableName": "UICovenantHighlight",
+    "tableHash": "7C55CC7F",
+    "db2FileDataID": 7265906
+  },
+  {
+    "tableName": "UICovenantPreview",
+    "tableHash": "049F9343",
+    "db2FileDataID": 3502043
+  },
+  {
+    "tableName": "UIDeadlyDebuff",
+    "tableHash": "C9E6F073",
+    "db2FileDataID": 4579858
+  },
+  {
+    "tableName": "UIDungeonScoreRarity",
+    "tableHash": "3AA35607",
+    "db2FileDataID": 4065278
+  },
+  {
+    "tableName": "UIEventToast",
+    "tableHash": "3A4DD2CA",
+    "db2FileDataID": 3946498
+  },
+  {
+    "tableName": "UIExpansionDisplayInfo",
+    "tableHash": "5CBEF3A2",
+    "db2FileDataID": 1729547
+  },
+  {
+    "tableName": "UIExpansionDisplayInfoIcon",
+    "tableHash": "6C38B1D2",
+    "db2FileDataID": 1729546
+  },
+  {
+    "tableName": "UIGenericWidgetDisplay",
+    "tableHash": "10A932E0",
+    "db2FileDataID": 4861207
+  },
+  {
+    "tableName": "UiItemInteraction",
+    "tableHash": "D3E39492",
+    "db2FileDataID": 3182424
+  },
+  {
+    "tableName": "UiMap",
+    "tableHash": "89927BF7",
+    "db2FileDataID": 1957206
+  },
+  {
+    "tableName": "UiMapArt",
+    "tableHash": "05089A9C",
+    "db2FileDataID": 1957202
+  },
+  {
+    "tableName": "UiMapArtStyleLayer",
+    "tableHash": "382DB23A",
+    "db2FileDataID": 1957208
+  },
+  {
+    "tableName": "UiMapArtTile",
+    "tableHash": "9C7EC549",
+    "db2FileDataID": 1957210
+  },
+  {
+    "tableName": "UiMapAssignment",
+    "tableHash": "5153A338",
+    "db2FileDataID": 1957219
+  },
+  {
+    "tableName": "UiMapFogOfWar",
+    "tableHash": "B7FD2DC0",
+    "db2FileDataID": 2006972
+  },
+  {
+    "tableName": "UiMapFogOfWarVisualization",
+    "tableHash": "0F1B5442",
+    "db2FileDataID": 2006973
+  },
+  {
+    "tableName": "UiMapGroup",
+    "tableHash": "5EB37AD8",
+    "db2FileDataID": 6033745
+  },
+  {
+    "tableName": "UiMapGroupMember",
+    "tableHash": "84EEB993",
+    "db2FileDataID": 1957204
+  },
+  {
+    "tableName": "UiMapLink",
+    "tableHash": "5578EDE9",
+    "db2FileDataID": 2030690
+  },
+  {
+    "tableName": "UIMapPinInfo",
+    "tableHash": "FCD19F82",
+    "db2FileDataID": 6237800
+  },
+  {
+    "tableName": "UiMapPOI",
+    "tableHash": "BA5C035B",
+    "db2FileDataID": 1445708
+  },
+  {
+    "tableName": "UiMapXMapArt",
+    "tableHash": "ADB3FC8C",
+    "db2FileDataID": 1957217
+  },
+  {
+    "tableName": "UiModelScene",
+    "tableHash": "01476A10",
+    "db2FileDataID": 1548215
+  },
+  {
+    "tableName": "UiModelSceneActor",
+    "tableHash": "AEB11490",
+    "db2FileDataID": 1548214
+  },
+  {
+    "tableName": "UiModelSceneActorDisplay",
+    "tableHash": "5600380F",
+    "db2FileDataID": 1548216
+  },
+  {
+    "tableName": "UiModelSceneCamera",
+    "tableHash": "96FB48D9",
+    "db2FileDataID": 1548213
+  },
+  {
+    "tableName": "UIModifiedInstance",
+    "tableHash": "60E75B42",
+    "db2FileDataID": 4530951
+  },
+  {
+    "tableName": "UiPartyPose",
+    "tableHash": "2F52B0F4",
+    "db2FileDataID": 1993323
+  },
+  {
+    "tableName": "UiQuestDetailsTheme",
+    "tableHash": "770BDC1F",
+    "db2FileDataID": 3448518
+  },
+  {
+    "tableName": "UIScenarioDisplayInfo",
+    "tableHash": "11ECD7F8",
+    "db2FileDataID": 7725784
+  },
+  {
+    "tableName": "UIScriptedAnimationEffect",
+    "tableHash": "054A746E",
+    "db2FileDataID": 3556601
+  },
+  {
+    "tableName": "UISoundLookups",
+    "tableHash": "D95F5C77"
+  },
+  {
+    "tableName": "UISplashScreen",
+    "tableHash": "7E78032D",
+    "db2FileDataID": 2960122
+  },
+  {
+    "tableName": "UiTextureAtlas",
+    "tableHash": "894D3B63",
+    "db2FileDataID": 897470
+  },
+  {
+    "tableName": "UiTextureAtlasElement",
+    "tableHash": "306150EA",
+    "db2FileDataID": 1989276
+  },
+  {
+    "tableName": "UiTextureAtlasElementOverride",
+    "tableHash": "7BA71B7B",
+    "db2FileDataID": 3765186
+  },
+  {
+    "tableName": "UiTextureAtlasElementSliceData",
+    "tableHash": "9DC93F38",
+    "db2FileDataID": 5319042
+  },
+  {
+    "tableName": "UiTextureAtlasMember",
+    "tableHash": "B5307A56",
+    "db2FileDataID": 897532
+  },
+  {
+    "tableName": "UiTextureAtlasSet",
+    "tableHash": "946A268D",
+    "db2FileDataID": 7939471
+  },
+  {
+    "tableName": "UiTextureKit",
+    "tableHash": "15EC48BB",
+    "db2FileDataID": 939159
+  },
+  {
+    "tableName": "UiWeeklyReward",
+    "tableHash": "54DC3D9F",
+    "db2FileDataID": 4737221
+  },
+  {
+    "tableName": "UiWidget",
+    "tableHash": "8DEBC608",
+    "db2FileDataID": 1983278
+  },
+  {
+    "tableName": "UiWidgetConstantSource",
+    "tableHash": "B7287796",
+    "db2FileDataID": 1983639
+  },
+  {
+    "tableName": "UiWidgetDataSource",
+    "tableHash": "B4B5E047",
+    "db2FileDataID": 1983640
+  },
+  {
+    "tableName": "UiWidgetMap",
+    "tableHash": "706DC50B",
+    "db2FileDataID": 2322531
+  },
+  {
+    "tableName": "UiWidgetSet",
+    "tableHash": "8915D376",
+    "db2FileDataID": 3055925
+  },
+  {
+    "tableName": "UiWidgetStringSource",
+    "tableHash": "140A5855",
+    "db2FileDataID": 1983641
+  },
+  {
+    "tableName": "UiWidgetVisTypeDataReq",
+    "tableHash": "3135DDCB",
+    "db2FileDataID": 2740907
+  },
+  {
+    "tableName": "UiWidgetVisualization",
+    "tableHash": "F769D25D",
+    "db2FileDataID": 1983276
+  },
+  {
+    "tableName": "UiWidgetXWidgetSet",
+    "tableHash": "529C3DD9",
+    "db2FileDataID": 3386363
+  },
+  {
+    "tableName": "UnitBlood",
+    "tableHash": "DB7B2578",
+    "dbcFileDataID": 801826,
+    "db2FileDataID": 1284821
+  },
+  {
+    "tableName": "UnitBloodLevels",
+    "tableHash": "0B19E2A8",
+    "dbcFileDataID": 801827,
+    "db2FileDataID": 1268904
+  },
+  {
+    "tableName": "UnitCondition",
+    "tableHash": "0E540EFD",
+    "dbcFileDataID": 801828,
+    "db2FileDataID": 1120959
+  },
+  {
+    "tableName": "UnitPowerBar",
+    "tableHash": "4541CDC7",
+    "dbcFileDataID": 841739,
+    "db2FileDataID": 1237753
+  },
+  {
+    "tableName": "UnitTest",
+    "tableHash": "D4D9EBF9"
+  },
+  {
+    "tableName": "UnitTestSparse",
+    "tableHash": "08A9013D",
+    "db2FileDataID": 1608484
+  },
+  {
+    "tableName": "Vehicle",
+    "tableHash": "0A9F6ABF",
+    "dbcFileDataID": 801829,
+    "db2FileDataID": 1368621
+  },
+  {
+    "tableName": "VehiclePOIType",
+    "tableHash": "2E2984FD",
+    "db2FileDataID": 3311405
+  },
+  {
+    "tableName": "VehicleSeat",
+    "tableHash": "D4A85CEB",
+    "dbcFileDataID": 801830,
+    "db2FileDataID": 1345447
+  },
+  {
+    "tableName": "VehicleUIIndicator",
+    "tableHash": "81D11838",
+    "dbcFileDataID": 801831,
+    "db2FileDataID": 1279740
+  },
+  {
+    "tableName": "VehicleUIIndSeat",
+    "tableHash": "739EAFD1",
+    "dbcFileDataID": 801832,
+    "db2FileDataID": 1279741
+  },
+  {
+    "tableName": "VideoHardware",
+    "tableHash": "404980FC",
+    "dbcFileDataID": 801833,
+    "db2FileDataID": 1347277
+  },
+  {
+    "tableName": "Vignette",
+    "tableHash": "EFB13552",
+    "db2FileDataID": 892861
+  },
+  {
+    "tableName": "VignetteUiWidgetSet",
+    "tableHash": "C36579F6",
+    "db2FileDataID": 5634692
+  },
+  {
+    "tableName": "VirtualAttachment",
+    "tableHash": "541E0F42",
+    "db2FileDataID": 1634482
+  },
+  {
+    "tableName": "VirtualAttachmentCustomization",
+    "tableHash": "A6B90817",
+    "db2FileDataID": 1634480
+  },
+  {
+    "tableName": "VocalUISounds",
+    "tableHash": "5223195A",
+    "dbcFileDataID": 801834,
+    "db2FileDataID": 1267067
+  },
+  {
+    "tableName": "VoiceOverPriority",
+    "tableHash": "2C68290B",
+    "db2FileDataID": 4211372
+  },
+  {
+    "tableName": "VolumeFogCondition",
+    "tableHash": "DF619690",
+    "db2FileDataID": 3587230
+  },
+  {
+    "tableName": "VW_MobileSpell",
+    "tableHash": "3D0F8786"
+  },
+  {
+    "tableName": "WarbandPlacementDisplayInfo",
+    "tableHash": "3C5856D5",
+    "db2FileDataID": 6655794
+  },
+  {
+    "tableName": "WarbandScene",
+    "tableHash": "AB1CB538",
+    "db2FileDataID": 5736126
+  },
+  {
+    "tableName": "WarbandSceneAnimation",
+    "tableHash": "BF5256B5",
+    "db2FileDataID": 5754555
+  },
+  {
+    "tableName": "WarbandSceneAnimChrSpec",
+    "tableHash": "BE40A116",
+    "db2FileDataID": 6238760
+  },
+  {
+    "tableName": "WarbandScenePlacement",
+    "tableHash": "A1A4FF1E",
+    "db2FileDataID": 5736130
+  },
+  {
+    "tableName": "WarbandScenePlacementFilterReq",
+    "tableHash": "A19FF769",
+    "db2FileDataID": 6251586
+  },
+  {
+    "tableName": "WarbandScenePlacementOption",
+    "tableHash": "0BC16617",
+    "db2FileDataID": 6316088
+  },
+  {
+    "tableName": "WarbandScenePlcmntAnimOverride",
+    "tableHash": "D2C26591",
+    "db2FileDataID": 5756286
+  },
+  {
+    "tableName": "WarbandSceneSourceInfo",
+    "tableHash": "D8B7147A",
+    "db2FileDataID": 6388961
+  },
+  {
+    "tableName": "WaterfallData",
+    "tableHash": "8F605DBF",
+    "db2FileDataID": 2565222
+  },
+  {
+    "tableName": "WaypointEdge",
+    "tableHash": "AA34F730",
+    "db2FileDataID": 2565258
+  },
+  {
+    "tableName": "WaypointMapVolume",
+    "tableHash": "4A319214",
+    "db2FileDataID": 6367989
+  },
+  {
+    "tableName": "WaypointNode",
+    "tableHash": "8C3B7192",
+    "db2FileDataID": 2565265
+  },
+  {
+    "tableName": "WaypointSafeLocs",
+    "tableHash": "8FB55FD4",
+    "db2FileDataID": 2820850
+  },
+  {
+    "tableName": "WbAccessControlList",
+    "tableHash": "580B4EF3",
+    "db2FileDataID": 879634
+  },
+  {
+    "tableName": "WbCertBlacklist",
+    "tableHash": "CDAB90DF",
+    "db2FileDataID": 879593
+  },
+  {
+    "tableName": "WbCertWhitelist",
+    "tableHash": "885585BD",
+    "db2FileDataID": 879591
+  },
+  {
+    "tableName": "WbPermissions",
+    "tableHash": "F827ECFB",
+    "db2FileDataID": 879328
+  },
+  {
+    "tableName": "WeaponImpactSounds",
+    "tableHash": "AE23C39A",
+    "dbcFileDataID": 801835,
+    "db2FileDataID": 1267648
+  },
+  {
+    "tableName": "WeaponSwingSounds2",
+    "tableHash": "C809AA0D",
+    "dbcFileDataID": 801836,
+    "db2FileDataID": 1267068
+  },
+  {
+    "tableName": "WeaponTrail",
+    "tableHash": "A42476ED",
+    "db2FileDataID": 982461
+  },
+  {
+    "tableName": "WeaponTrailModelDef",
+    "tableHash": "A0E73181",
+    "db2FileDataID": 1239843
+  },
+  {
+    "tableName": "WeaponTrailParam",
+    "tableHash": "3CEEC8C5",
+    "db2FileDataID": 1239842
+  },
+  {
+    "tableName": "Weather",
+    "tableHash": "C3062B9A",
+    "dbcFileDataID": 801837,
+    "db2FileDataID": 1343311
+  },
+  {
+    "tableName": "WeatherXParticulate",
+    "tableHash": "6046B96B",
+    "db2FileDataID": 1965591
+  },
+  {
+    "tableName": "WeeklyRewardChestActivityTier",
+    "tableHash": "F7312266",
+    "db2FileDataID": 5390446
+  },
+  {
+    "tableName": "WeeklyRewardChestThreshold",
+    "tableHash": "91FF62C1",
+    "db2FileDataID": 3580962
+  },
+  {
+    "tableName": "WindSettings",
+    "tableHash": "72B25981",
+    "db2FileDataID": 943871
+  },
+  {
+    "tableName": "WMOAreaTable",
+    "tableHash": "C74FBDEB",
+    "dbcFileDataID": 841704,
+    "db2FileDataID": 1355528
+  },
+  {
+    "tableName": "WmoMaxScale",
+    "tableHash": "72825104",
+    "db2FileDataID": 7836461
+  },
+  {
+    "tableName": "WMOMinimapTexture",
+    "tableHash": "B1C5A0F8",
+    "db2FileDataID": 1323241
+  },
+  {
+    "tableName": "World_PVP_Area",
+    "tableHash": "AFE24F5A",
+    "dbcFileDataID": 801847,
+    "db2FileDataID": 1310255
+  },
+  {
+    "tableName": "WorldBossLockout",
+    "tableHash": "F416A54C",
+    "db2FileDataID": 975279
+  },
+  {
+    "tableName": "WorldChunkSounds",
+    "tableHash": "9959835E",
+    "dbcFileDataID": 801838,
+    "db2FileDataID": 1267069
+  },
+  {
+    "tableName": "WorldEffect",
+    "tableHash": "DA728027",
+    "dbcFileDataID": 801839,
+    "db2FileDataID": 1343312
+  },
+  {
+    "tableName": "WorldElapsedTimer",
+    "tableHash": "C7A973A1",
+    "dbcFileDataID": 841676,
+    "db2FileDataID": 1135240
+  },
+  {
+    "tableName": "WorldLayerMapSet",
+    "tableHash": "07A530B9",
+    "db2FileDataID": 4550228
+  },
+  {
+    "tableName": "WorldMapArea",
+    "tableHash": "53B09981",
+    "dbcFileDataID": 801840,
+    "db2FileDataID": 1374382
+  },
+  {
+    "tableName": "WorldMapContinent",
+    "tableHash": "8BD32359",
+    "dbcFileDataID": 801841,
+    "db2FileDataID": 1343594
+  },
+  {
+    "tableName": "WorldMapOverlay",
+    "tableHash": "1D740E72",
+    "dbcFileDataID": 801842,
+    "db2FileDataID": 1134579
+  },
+  {
+    "tableName": "WorldMapOverlayTile",
+    "tableHash": "AC599725",
+    "db2FileDataID": 1957212
+  },
+  {
+    "tableName": "WorldMapTransforms",
+    "tableHash": "1621F58B",
+    "dbcFileDataID": 801843,
+    "db2FileDataID": 1310630
+  },
+  {
+    "tableName": "WorldSafeLocs",
+    "tableHash": "A51428EA",
+    "dbcFileDataID": 841731,
+    "db2FileDataID": 1369425
+  },
+  {
+    "tableName": "WorldShadow",
+    "tableHash": "5045DC96",
+    "db2FileDataID": 4680120
+  },
+  {
+    "tableName": "WorldState",
+    "tableHash": "C842493A",
+    "dbcFileDataID": 801844,
+    "db2FileDataID": 1374383
+  },
+  {
+    "tableName": "WorldStateExpression",
+    "tableHash": "1D53EB74",
+    "dbcFileDataID": 801845,
+    "db2FileDataID": 1332558
+  },
+  {
+    "tableName": "WorldStateUI",
+    "tableHash": "31314060",
+    "dbcFileDataID": 841670,
+    "db2FileDataID": 1343596
+  },
+  {
+    "tableName": "WorldStateZoneSounds",
+    "tableHash": "4DABD3FB",
+    "dbcFileDataID": 801846,
+    "db2FileDataID": 1266941
+  },
+  {
+    "tableName": "WowError_Strings",
+    "tableHash": "FB2EAB8D",
+    "dbcFileDataID": 841755
+  },
+  {
+    "tableName": "ZoneIntroMusicTable",
+    "tableHash": "21497AB7",
+    "dbcFileDataID": 801848,
+    "db2FileDataID": 1310251
+  },
+  {
+    "tableName": "ZoneLight",
+    "tableHash": "59F2EB50",
+    "dbcFileDataID": 801849,
+    "db2FileDataID": 1310253
+  },
+  {
+    "tableName": "ZoneLightPoint",
+    "tableHash": "1CF9216D",
+    "dbcFileDataID": 801850,
+    "db2FileDataID": 1310256
+  },
+  {
+    "tableName": "ZoneMusic",
+    "tableHash": "F2A7C540",
+    "dbcFileDataID": 801851,
+    "db2FileDataID": 1310254
+  },
+  {
+    "tableName": "ZoneStory",
+    "tableHash": "6D57DA9B",
+    "db2FileDataID": 1797864
+  }
+]

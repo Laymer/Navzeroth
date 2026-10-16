@@ -1,6 +1,12 @@
-//! Explicit local-data CLI dispatch. Only implemented operations are accepted.
+//! Explicit local-data CLI dispatch. No operation implicitly activates or signs.
 use azeroth_core::local_data::PerformancePreset;
-use std::{ffi::OsString, path::Path, process::ExitCode};
+use azeroth_local_data::worker::{ExtractionRequest, ExtractionWorker, WorkerEvent};
+use std::{
+    collections::BTreeMap,
+    ffi::{OsStr, OsString},
+    path::Path,
+    process::ExitCode,
+};
 
 fn emit<T: serde::Serialize>(result: Result<T, &'static str>) -> ExitCode {
     match result {
@@ -17,44 +23,78 @@ fn emit<T: serde::Serialize>(result: Result<T, &'static str>) -> ExitCode {
         }
     }
 }
+fn preset(value: Option<&&OsStr>) -> Option<PerformancePreset> {
+    match value.map(|s| s.to_str()) {
+        None | Some(Some("max")) => Some(PerformancePreset::Max),
+        Some(Some("small")) => Some(PerformancePreset::Small),
+        Some(Some("balanced")) => Some(PerformancePreset::Balanced),
+        Some(Some("large")) => Some(PerformancePreset::Large),
+        _ => None,
+    }
+}
 
 pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data plan --installation <directory> --product <product> --destination <existing-directory> [--preset small|balanced|large|max]"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>"})
         );
         ExitCode::from(2)
     };
     let Some(command) = args.first().and_then(|s| s.to_str()) else {
         return usage();
     };
-    if !matches!(command, "inspect" | "plan") {
-        return usage();
-    }
-    let (mut installation, mut product, mut destination, mut preset) = (None, None, None, None);
+    let allowed: &[&str] = match command {
+        "inspect" => &["--installation", "--product"],
+        "plan" => &["--installation", "--product", "--destination", "--preset"],
+        "extract" => &[
+            "--installation",
+            "--product",
+            "--destination",
+            "--preset",
+            "--tables",
+        ],
+        "verify" | "coverage" | "status" => &["--destination", "--catalog"],
+        _ => return usage(),
+    };
     let (pairs, remainder) = args[1..].as_chunks::<2>();
-    for pair in pairs {
-        let slot = match pair[0].to_str() {
-            Some("--installation") => &mut installation,
-            Some("--product") => &mut product,
-            Some("--destination") if command == "plan" => &mut destination,
-            Some("--preset") if command == "plan" => &mut preset,
-            _ => return usage(),
-        };
-        if slot.is_some()
-            || pair[1].is_empty()
-            || pair[1].to_str().is_some_and(|s| s.starts_with("--"))
-        {
-            return usage();
-        }
-        *slot = Some(pair[1].as_os_str());
-    }
+    let mut options = BTreeMap::new();
     if !remainder.is_empty() {
         return usage();
     }
-    let (Some(installation), Some(product)) = (installation, product.and_then(|s| s.to_str()))
-    else {
+    for pair in pairs {
+        let Some(key) = pair[0].to_str() else {
+            return usage();
+        };
+        if !allowed.contains(&key)
+            || pair[1].is_empty()
+            || pair[1].to_str().is_some_and(|s| s.starts_with("--"))
+            || options.insert(key, pair[1].as_os_str()).is_some()
+        {
+            return usage();
+        }
+    }
+    if matches!(command, "verify" | "coverage" | "status") {
+        let (Some(destination), Some(digest)) = (
+            options.get("--destination"),
+            options.get("--catalog").and_then(|s| s.to_str()),
+        ) else {
+            return usage();
+        };
+        let result = azeroth_local_data::verify_catalog(Path::new(destination), digest);
+        if command == "coverage" {
+            return emit(result.map(|catalog|{
+                let mut dispositions=BTreeMap::<String,u32>::new();
+                for table in &catalog.tables {let key=serde_json::to_value(table.disposition).unwrap().as_str().unwrap().to_owned();*dispositions.entry(key).or_default()+=1;}
+                serde_json::json!({"format_version":1,"catalog_sha256":digest,"build":catalog.installation.build,"dispositions":dispositions,"gaps":catalog.gaps,"gameplay_projection_available":false,"complete_target_inventory":null})
+            }));
+        }
+        return emit(result);
+    }
+    let (Some(installation), Some(product)) = (
+        options.get("--installation"),
+        options.get("--product").and_then(|s| s.to_str()),
+    ) else {
         return usage();
     };
     if command == "inspect" {
@@ -63,28 +103,58 @@ pub fn run(args: &[OsString]) -> ExitCode {
             product,
         ));
     }
-    let Some(destination) = destination else {
+    let (Some(destination), Some(preset)) = (
+        options.get("--destination"),
+        preset(options.get("--preset")),
+    ) else {
         return usage();
     };
-    let preset = match preset.map(|s| s.to_str()) {
-        None | Some(Some("max")) => PerformancePreset::Max,
-        Some(Some("small")) => PerformancePreset::Small,
-        Some(Some("balanced")) => PerformancePreset::Balanced,
-        Some(Some("large")) => PerformancePreset::Large,
-        _ => return usage(),
+    if command == "plan" {
+        return match azeroth_local_data::plan(
+            Path::new(installation),
+            product,
+            Path::new(destination),
+            preset,
+        ) {
+            Ok(plan) => {
+                let _ = emit(Ok(plan));
+                ExitCode::from(3)
+            }
+            Err(error) => emit::<()>(Err(error)),
+        };
+    }
+    let tables = match options.get("--tables") {
+        None => Vec::new(),
+        Some(value) => match value.to_str() {
+            Some(text) => text.split(',').map(str::to_owned).collect(),
+            None => return usage(),
+        },
     };
-    // A valid preliminary plan is useful structured output but is not an
-    // executable extraction plan. Exit 3 explicitly distinguishes this gap.
-    match azeroth_local_data::plan(
-        Path::new(installation),
-        product,
-        Path::new(destination),
+    let request = ExtractionRequest {
+        protocol_version: 1,
+        request_id: "cli-extract".into(),
+        installation: Path::new(installation).to_path_buf(),
+        product: product.into(),
+        destination: Path::new(destination).to_path_buf(),
         preset,
-    ) {
-        Ok(plan) => {
-            let _ = emit(Ok(plan));
-            ExitCode::from(3)
+        tables,
+    };
+    let mut worker = match ExtractionWorker::start(&request) {
+        Ok(worker) => worker,
+        Err(error) => return emit::<()>(Err(error)),
+    };
+    loop {
+        match worker.next_event() {
+            Ok(WorkerEvent::Progress { .. }) => {}
+            Ok(WorkerEvent::Complete { summary, .. }) => {
+                let _ = emit(Ok(summary));
+                return ExitCode::from(3);
+            }
+            Ok(WorkerEvent::Failed { code, .. }) => {
+                println!("{}", serde_json::json!({"format_version":1,"error":code}));
+                return ExitCode::from(1);
+            }
+            Err(error) => return emit::<()>(Err(error)),
         }
-        Err(error) => emit::<()>(Err(error)),
     }
 }

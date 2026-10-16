@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import {LocalDataPanel} from "./LocalDataPanel";
 import type { CommandClient } from "../commands";
 import type { CompatibilityReport, EvidenceState } from "../commands/compatibility";
 const LABELS: Record<EvidenceState, string> = { reported_flow: "Limited user-reported flow", function_present_only: "Function present; usability untested", reported_missing: "Reported missing in that diagnostic", unverified: "Unverified", assumed_reference: "Reference assumption; no client session" };
@@ -15,6 +16,7 @@ export function CompatibilityPanel({ client, profileId, refreshKey }: { client: 
   }
   return <section aria-labelledby="compatibility-title">
     <h2 id="compatibility-title">Compatibility and source coverage</h2>
+    <LocalDataPanel client={client}/>
     <p>Inspect finite recorded client evidence and the exact active dataset. Function presence, synthetic checks and historical user reports do not establish that the installed addon or every game context works.</p>
     <button type="button" disabled={busy} onClick={() => void load()}>Inspect compatibility and coverage</button>
     {busy && <p role="status">Reading local evidence…</p>}{message && <p role="alert">{message}</p>}

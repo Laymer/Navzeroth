@@ -2,7 +2,19 @@
 //!
 //! This initial adapter inspects build metadata only. Archive consistency, readable
 //! locales, edition applicability and gameplay availability remain unverified.
-#![forbid(unsafe_code)]
+#![deny(unsafe_code)]
+#![deny(unsafe_op_in_unsafe_fn)]
+
+mod extraction;
+#[allow(unsafe_code)]
+mod isolation;
+pub mod metadata;
+#[allow(unsafe_code)]
+mod native;
+pub mod receipts;
+pub mod tables;
+pub mod worker;
+pub use extraction::verify_catalog;
 
 use azeroth_core::local_data::{
     FORMAT_VERSION, InstallationMetadata, MAX_BUILD_INFO_BYTES, MAX_METADATA_BYTES, MetadataBundle,
@@ -39,6 +51,40 @@ pub enum InspectionConsistency {
 
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
+}
+
+fn bounded_json<T: serde::Serialize>(value: &T, maximum: usize) -> Result<Vec<u8>> {
+    struct Output {
+        bytes: Vec<u8>,
+        maximum: usize,
+    }
+    impl std::io::Write for Output {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            if self
+                .bytes
+                .len()
+                .checked_add(bytes.len())
+                .is_none_or(|v| v > self.maximum)
+            {
+                return Err(std::io::ErrorKind::OutOfMemory.into());
+            }
+            self.bytes
+                .try_reserve(bytes.len())
+                .map_err(|_| std::io::Error::from(std::io::ErrorKind::OutOfMemory))?;
+            self.bytes.extend_from_slice(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut output = Output {
+        bytes: Vec::new(),
+        maximum,
+    };
+    serde_json::to_writer(&mut output, value)
+        .map_err(|_| "Encoded output exceeds capacity or is invalid")?;
+    Ok(output.bytes)
 }
 
 fn linked(metadata: &Metadata) -> bool {
@@ -159,6 +205,43 @@ fn read_file(path: &Path, maximum: usize) -> Result<(Vec<u8>, Stamp)> {
     Ok((bytes, before))
 }
 
+fn hash_file(path: &Path, maximum: usize) -> Result<(u64, String)> {
+    let canonical = checked_path(path)?;
+    let metadata = fs::metadata(&canonical).map_err(|_| "Object metadata unavailable")?;
+    if !metadata.is_file() || metadata.len() > maximum as u64 {
+        return Err("Object exceeds size or file-kind bounds");
+    }
+    let before = stamp(&metadata)?;
+    let mut file = File::open(&canonical).map_err(|_| "Cannot open retained object")?;
+    if stamp(&file.metadata().map_err(|_| "Object metadata unavailable")?)? != before {
+        return Err("Retained object changed");
+    }
+    let mut digest = Sha256::new();
+    let mut buffer = [0; 64 * 1024];
+    let mut total = 0u64;
+    loop {
+        let size = file
+            .read(&mut buffer)
+            .map_err(|_| "Cannot read retained object")?;
+        if size == 0 {
+            break;
+        }
+        total += size as u64;
+        if total > maximum as u64 {
+            return Err("Retained object exceeds capacity");
+        }
+        digest.update(&buffer[..size]);
+    }
+    if total != before.bytes
+        || stamp(&file.metadata().map_err(|_| "Object metadata unavailable")?)? != before
+        || checked_path(path)? != canonical
+        || stamp(&fs::metadata(&canonical).map_err(|_| "Object disappeared")?)? != before
+    {
+        return Err("Retained object changed");
+    }
+    Ok((total, format!("{:x}", digest.finalize())))
+}
+
 /// Reads exactly .build.info under the explicitly selected installation.
 pub fn inspect(installation: &Path, product: &str) -> Result<Inspection> {
     inspect_with_stability_check(installation, product, || {
@@ -232,16 +315,16 @@ pub fn plan(
         preset,
         limits: preset.limits(),
         required_storage_bytes: None,
-        available_storage_bytes: None,
+        available_storage_bytes: isolation::available_space(&output).ok(),
         actual_workers: 0,
         extraction_ready: false,
         activation_automatic: false,
         blockers: vec![
-            "native_archive_backend_not_implemented",
-            "isolated_worker_not_implemented",
-            "no_admitted_metadata_bundle",
+            "archive_inventory_estimate_pending",
+            "research_tables_only_no_gameplay_projection",
+            "media_extraction_pending",
             "storage_estimate_unknown",
-            "destination_write_and_free_space_unverified",
+            "destination_write_permissions_unverified",
         ],
     })
 }

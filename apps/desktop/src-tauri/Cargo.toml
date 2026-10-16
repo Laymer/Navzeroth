@@ -18,4 +18,6 @@ tauri-build = { version = "=2.7.2", features = [] }
 [dependencies]
 azeroth-app = { path = "../../../crates/app" }
 azeroth-core = { path = "../../../crates/core" }
+azeroth-local-data = { path = "../../../crates/local-data" }
+rfd = { version = "=0.17.2", default-features = false, features = ["xdg-portal"] }
 tauri = { version = "=2.12.3", features = [] }

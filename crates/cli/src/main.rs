@@ -209,6 +209,13 @@ fn pack_result(result: Result<azeroth_cli::pack::Report, &'static str>) -> ExitC
 
 fn main() -> ExitCode {
     let args: Vec<_> = std::env::args_os().skip(1).collect();
+    if args.as_slice()
+        == [std::ffi::OsString::from(
+            azeroth_local_data::worker::WORKER_ARGUMENT,
+        )]
+    {
+        return ExitCode::from(azeroth_local_data::worker::entry() as u8);
+    }
     match args.as_slice() {
         [command, rest @ ..] if command == "local-data" => azeroth_cli::local_data::run(rest),
         [command, flag, input] if command == "inspect-capture" && flag == "--input" => {

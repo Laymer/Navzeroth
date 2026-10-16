@@ -13,3 +13,14 @@ azeroth-core = { path = "../core" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "=0.10.9"
+libc = "0.2"
+wowdbdefs-rs = { version = "=0.1.0", path = "../../vendor/wowdbdefs-rs" }
+ed25519-dalek = "=2.2.0"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_JobObjects", "Win32_System_Threading"] }
+
+[build-dependencies]
+cc = "=1.8.0"
+sha2 = "=0.10.9"
+serde_json = "1"
