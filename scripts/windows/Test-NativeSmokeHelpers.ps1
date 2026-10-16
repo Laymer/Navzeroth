@@ -32,8 +32,13 @@ try {
     $result = Invoke-BoundedProcess -FilePath $exe -ArgumentList $argv -TimeoutSeconds 2
     Check 'a hung process is killed and reported as timed out' ($result.TimedOut -and $null -eq $result.ExitCode -and $timer.Elapsed.TotalSeconds -lt 30)
 
-    $exe, $argv = Start-Synthetic 'exit 5'
-    Refuses 'installer failure is surfaced' 'exit code 5' { Install-NativeSmokeSetup -SetupPath $exe -TimeoutSeconds 60 }
+    # The installer is always run as `setup /S`; a .cmd stand-in exits with a chosen code.
+    $fakeSetup = Join-Path $temp 'fake-setup.cmd'
+    [IO.File]::WriteAllText($fakeSetup, "@exit /b 5`r`n")
+    Refuses 'installer failure is surfaced' 'exit code 5' { Install-NativeSmokeSetup -SetupPath $fakeSetup -TimeoutSeconds 60 }
+    [IO.File]::WriteAllText($fakeSetup, "@exit /b 0`r`n")
+    Install-NativeSmokeSetup -SetupPath $fakeSetup -TimeoutSeconds 60
+    Check 'installer success is accepted' $true
 
     Stop-NativeSmokeProcesses -TimeoutSeconds 5
     Check 'stopping with nothing running succeeds' $true
