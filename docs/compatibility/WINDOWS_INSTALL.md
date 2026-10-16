@@ -3,7 +3,8 @@
 Task M9.4 (packaging automation) with the installation and removal instructions
 of M9.5. Status: IMPLEMENTED_UNVERIFIED. The hosted Windows runner builds the
 installer, installs it silently, starts the application and uninstalls it (see
-the [0.8.1 publication evidence](../handoffs/2026-10-14-final-program-audit.md),
+the [0.9.1 publication record](../handoffs/2026-10-16-v0.9.1-publication.md)
+(earlier: [0.8.1 evidence](../handoffs/2026-10-14-final-program-audit.md)),
 the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 [PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
@@ -217,7 +218,7 @@ For the authorized v1.0.0 program, follow the
 verify source rights and actual client/Windows behavior, pass stable-readiness
 enforcement, then create the reviewed version PR and tag. The baseline workflow
 only builds and drafts; the new stable-evidence gate and content/source-asset
-packaging are separate required implementation work. A successful 0.8.1-style
+packaging are separate required implementation work. A successful 0.9.x-style
 five-file package alone cannot satisfy full-content v1 release acceptance.
 
 Publication is already authorized for this program once all mandatory gates pass.

@@ -1,8 +1,14 @@
 # Implementation task ledger — recurring release program
 
-Published baseline: tag/main `d11853e`, `v0.8.1`. Owner: Codex /root.
+Published baseline at the time of the last ledger update: tag/main `d11853e`, `v0.8.1` (latest published version is now 0.9.1; see [STATUS](STATUS.md)). Owner: Codex /root.
 Fresh released-source audit: [final publication audit](handoffs/2026-10-14-final-program-audit.md).
 Exact0.8.1 source checks: [candidate reconciliation](handoffs/2026-10-14-v0.8.1-release.md).
+
+Ledger currency: the rows below were last reconciled at 0.8.1. The 0.9.x subscopes
+(content v2, catalog capacity and pagination, the source pipeline, the quest
+completion getter, turn-in milestones, candidate gating, the acceptance kit and
+local data) are recorded in [STATUS](STATUS.md) and the dated handoffs, not as rows
+here. The 1.0.0 remaining-work inventory is a separate 0.9.2 program deliverable.
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 
