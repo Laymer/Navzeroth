@@ -157,3 +157,87 @@ implement research row indexing and validated field/domain projections without
 inventing server availability. Finish durable job/settings and the separately
 reviewed private-release validation/receipt/packaging contract. Require fresh
 exact-head checks and independent review before any authorized protected merge.
+
+## Frozen implementation verification addendum
+
+The continuation contains implementation commit `4c062036c0322bbe96efa27c641c9779bb889bb0`,
+Windows/cancellation correction `0b1bc198298e1c5ff83b418526c2d52361252e45`,
+and native error normalization `af31f5d67065d02a927f6f993c67c03cef1791f6`.
+The isolated continuation was fast-forwarded onto `feat/local-data-foundation`
+and pushed to existing draft [PR #154](https://github.com/Laymer/Navzeroth/pull/154).
+No main merge, release or protected-branch push was performed. The baseline
+`789f39272dc00c3f72ec6881a4a69fc1383a1948` was the preceding feature head,
+not main; original main remains `0e04042ec1397887df008c153aa5f0c568831e6d`.
+
+A fixed CLI executable built from `af31f5d` has SHA256
+`6fc925e8ad39cdeeb40ea367c51d651e9b886d63a19fe4a943ace3c9fff925ba`.
+Its code/profile hash is
+`2d45d884765d609d3dfe538448447872448693e09fe8da8dd81395a67b5ca3b4`.
+All four final runs produced semantic catalog
+`24c063c7f8c103123a09c913327f906b2ac475e0535c383c734720dd6a171aaa`.
+This supersedes the earlier development-profile measurement above; it is not a
+cross-platform extraction claim. All runs returned the documented partial exit 3.
+
+| Preset | Elapsed seconds | Actual extraction concurrency |
+|---|---:|---:|
+| Max | 33.465 | 1 |
+| Small | 33.913 | 1 |
+| Balanced | 33.467 | 1 |
+| Large | 33.361 | 1 |
+
+The same Linux x86_64/32-logical-CPU warm-cache/reused-store workload covered
+all 1,346 pinned table candidates for 70425/enUS. Cumulative child maximum RSS
+across the run sequence was 638,364 KiB. The manifest/object verification command
+passed. Final coverage: 505 decoded, 550 retained unsupported, 185 not locally
+present, 106 invalid/corrupt. Strict archive verification failures remain gaps;
+no checksum bypass was used. Hotfix state is unknown, media is not extracted,
+no gameplay projection exists and target completeness is unknown. Private
+catalogs, retained client inputs and run logs remain outside Git in task-owned
+private temporary storage; no portable manifest contains absolute source paths.
+
+Actual local checks:
+
+- `cargo test --locked --workspace --exclude azeroth-desktop`: 1,059 passed,
+  zero failed, four existing ignored tests across 152 test-result summaries.
+  This full local run preceded the two focused portability/error fixes; focused
+  worker/table/CLI regressions and strict portable Clippy were rerun afterward.
+- `cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings`,
+  `cargo fmt --all --check` and authored-file `git diff --check`: passed.
+  Original retained third-party whitespace is deliberately preserved and hashed.
+- Fixture validation: 73 contract cases (10 valid / 63 rejected), 33 transport cases
+  (five valid / 28 rejected), passed with expected outcomes.
+- Desktop `typecheck`, `lint`, `test:unit` and `build`: passed; 209 unit tests
+  across 36 files. Mocked Chromium: 40 passed in 27.2s. These are mocked UI checks,
+  not native operator acceptance.
+- Native Linux desktop build: unavailable development packages as recorded
+  above; passwordless sudo is unavailable. No environment check is promoted.
+
+Readiness was rerun against exact `af31f5d` with the current declared version 0.9.0:
+`stable_ready=false`, `candidate_ready=false`, 66 blockers, zero verified content
+packs and zero verified evidence files. Preview `publication_allowed=true` is
+existing preview policy, not 1.0.0 permission. Production fingerprint:
+`52d30b2a2de2ffdfc71a446a55d04ce98b3680b5cb58582b7173570f432c74dc`.
+An attempted 1.0.0 query correctly refused the mismatched application/addon/lock
+version rather than implying the version was frozen.
+
+Hosted source run [38883059832](https://github.com/Laymer/Navzeroth/actions/runs/38883059832)
+passed Linux, Windows and platform parity. Downloaded artifacts contain 17 files
+per platform; all bytes match except LF/CRLF in `source-commit.txt`. Both name
+synthetic merge `f86207f62686d9b0e715f45b1cd2b47814909791`, whose Git tree
+matches `af31f5d`. All 2,374 regular source-tar files were compared byte-for-byte
+with that Git revision and matched. No private local catalog/input was added.
+
+Windows package run [38883059792](https://github.com/Laymer/Navzeroth/actions/runs/38883059792)
+passed. Downloaded installer, addon ZIP, candidate notes and source marker all
+match `SHA256SUMS.txt`; all 21 addon ZIP files match Git exactly. This verifies
+packaging and bytes, not interactive installation or runtime acceptance. The
+nonrequired draft-release job was skipped because publication was not requested.
+
+All nine required hosted checks for implementation `af31f5d` passed: the eight
+jobs in [CI 38883059995](https://github.com/Laymer/Navzeroth/actions/runs/38883059995)
+and Windows packaging above. Windows Rust finished successfully after cache
+upload at 2026-10-16T10:05:50Z; completed tests were not counted as a job pass
+before that result. Together with the three source jobs, all 12 relevant jobs
+passed. No cancelled, failed or skipped job is counted as passing. A subsequent
+handoff-only commit must have fresh exact-head checks before merge. Resulting-main
+verification remains unperformed because this draft has not been merged.

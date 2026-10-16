@@ -2,9 +2,11 @@
 
 Plan: 1.0 plus ADRs 0001–0004 and [local-data contract](../localdata.md).
 Updated: 2026-10-16. Current task: independent private local-client-data subsystem.
-Owner and sole writer: Codex `/root`; baseline main
+Owner and sole writer: Codex `/root`; continuation baseline
 `789f39272dc00c3f72ec6881a4a69fc1383a1948`, continuation branch
-`feat/local-data-extraction`, claim `96a29d0`. No subagents. See the
+`feat/local-data-extraction`, claim `96a29d0`. The continuation was fast-forwarded
+onto `feat/local-data-foundation` for draft PR #154; main was not changed. No
+subagents. See the
 [extraction handoff](handoffs/2026-10-16-local-data-extraction.md) and
 [implemented workflow](data/LOCAL_EXTRACTION.md). Retained pinned native/parser
 sources and metadata, static offline archive access, isolated resource-limited
@@ -17,6 +19,9 @@ installer choices and opt-in update detection. No complete extractor/release cla
 Actual selected-installation metadata reports70425/enUS; this is not live
 acceptance or70374 content. The target remains unchanged. Private client data
 must stay outside Git/public artifacts. Existing release gates remain active.
+Frozen implementation `af31f5d` processed 1,346 table candidates and decoded 505
+from 70425/enUS. All four presets produced the same private semantic catalog;
+the handoff records its hash, measured workload, exact hosted checks and gaps.
 
 Separate outstanding task: complete verified 0.9.0 prerelease publication.
 Read-only GitHub reconciliation at the baseline found source workflow38803371318
