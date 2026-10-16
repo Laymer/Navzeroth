@@ -1,0 +1,27 @@
+name: G2b WebView2 probe (temporary)
+on:
+  push:
+    branches: [test/g2b-native-smoke]
+    paths: ['scripts/windows/Probe-WebView2Cdp.ps1', '.github/workflows/g2b-probe.yml']
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Probe against the published v0.9.1 installer
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'base'
+          New-Item -ItemType Directory -Path $dir | Out-Null
+          gh release download v0.9.1 --repo $env:GITHUB_REPOSITORY --dir $dir --pattern '*-x64-setup.exe'
+          . ./scripts/windows/Native-Smoke-Helpers.ps1
+          $setup = Get-NativeSmokeSetup -Directory $dir
+          $installDir = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
+          Install-NativeSmokeSetup -SetupPath $setup.FullName
+          try { ./scripts/windows/Probe-WebView2Cdp.ps1 -Executable (Join-Path $installDir 'azeroth-desktop.exe') -DataDirectory (Join-Path $env:APPDATA 'io.github.laymer.azeroth-navigator') }
+          finally { Stop-NativeSmokeProcesses; Uninstall-NativeSmokeApp -InstallDirectory $installDir }
