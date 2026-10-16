@@ -173,7 +173,16 @@ function watchIpc(page) {
   const commandOf = (url) => { try { return new URL(url).pathname.replace(/^\//, ""); } catch { return url; } };
   const push = (line) => { ipcLog.push(line); if (ipcLog.length > 600) ipcLog.shift(); };
   page.on("request", (request) => { if (request.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms -> ${commandOf(request.url())} (${request.method()})`); });
-  page.on("response", (response) => { if (response.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms <- ${commandOf(response.url())} HTTP ${response.status()}`); });
+  page.on("response", async (response) => {
+    if (!response.url().includes("ipc.localhost")) return;
+    const command = commandOf(response.url());
+    let body = "";
+    // Bodies only for the planning job protocol (synthetic fixture data); never for imports or settings.
+    if (/^(start_planning_job|get_planning_job|take_planning_job_result|cancel_planning_job)$/.test(command)) {
+      body = await response.text().then((t) => ` body=${t.slice(0, 240)}`).catch(() => " body=<unreadable>");
+    }
+    push(`${Date.now() - t0}ms <- ${command} HTTP ${response.status()}${body}`);
+  });
   page.on("requestfailed", (request) => { if (request.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms !! ${commandOf(request.url())} ${request.failure()?.errorText ?? ""}`); });
 }
 
@@ -259,6 +268,7 @@ async function run() {
     });
     page.on("console", (m) => {
       const text = m.text();
+      if (m.type() === "warning") consoleErrors.push(`warning: ${text}`);
       if (isCspViolationText(text)) violations.push(`console: ${text}`);
       else if (m.type() === "error") consoleErrors.push(text);
     });
@@ -369,6 +379,12 @@ async function smoke(page, response) {
     await page.getByLabel("utility", { exact: true }).fill("10");
     await page.getByLabel("completion_ms", { exact: true }).fill("1000");
     const activation = await activate(page.getByRole("button", { name: "Plan session", exact: true }), "start_planning_job");
+    const trace = [];
+    for (let i = 0; i < 6; i += 1) {
+      await sleep(500);
+      trace.push({ at_ms: (i + 1) * 500, statuses: (await page.getByRole("status").allInnerTexts()).map((t) => t.trim()).filter(Boolean), alerts: await alertTexts(page), busy_controls: await page.getByRole("button", { name: "Cancel planning" }).count() });
+    }
+    evidence.planning_trace = trace;
     const result = page.getByRole("region", { name: "Planning result" });
     await result.waitFor({ timeout: 40000 });
     const resultText = (await result.innerText()).trim();
