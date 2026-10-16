@@ -1,6 +1,9 @@
 -- Opt-in recorder with manual lifecycle. Pure injected clocks/reads; no timer.
 local _, ns = ...
 local Session, V = {MAX_EVENTS=128}, ns.Predicate.validation
+Session.PREFIX = 'ANAVSESSION1:'
+-- The encoder is bounded by the JSON output cap, so a stored export never exceeds this.
+Session.MAX_BYTES = #Session.PREFIX + ns.Json.limits.max_output_bytes
 local SAFE = 9007199254740991
 local function check(ok) if not ok then error('session_invalid',0) end end
 local function plain(value)

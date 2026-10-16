@@ -86,7 +86,7 @@ local function quote(text)
   if not isValidUtf8(text) then
     return nil, "json_invalid_utf8"
   end
-  return '"' .. (text:gsub('[%c"\\]', escapeChar)) .. '"'
+  return '"' .. (text:gsub('[%z\1-\31\127"\\]', escapeChar)) .. '"'
 end
 
 local function formatNumber(value)

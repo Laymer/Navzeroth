@@ -175,7 +175,25 @@ fn bounded_selection_rejects_malformed_executable_wrong_kind_and_preserves_unico
       local base='{"format":"anav-diagnostic","version":1}'
       db.diagnostic_export=base..string.rep(' ',12288-#base)
       assert(c.select(db,'diagnostic').bytes==12288)
-      refused(db,'session','copy_kind_invalid')
+      refused(db,'bogus','copy_kind_invalid')
+      refused(db,nil,'copy_kind_invalid')
+      -- The session kind: stored text with the ANAVSESSION1: prefix and its own limit.
+      refused(db,'session','copy_export_missing')
+      local limit=ns.Session.MAX_BYTES
+      assert(limit==#'ANAVSESSION1:'+ns.Json.limits.max_output_bytes)
+      refused({db_version=1,session_export=string.rep('x',limit+1)},
+        'session','copy_export_too_large')
+      for _,bad in ipairs({'x','{"format":"anav-session-events","version":1,"batch":{}}',
+        'ANAVSESSION1:{"format":"anav-session-events","version":2,"batch":{"a":1}}',
+        'ANAVSESSION1:{"format":"anav-diagnostic","version":1,"batch":{"a":1}}',
+        'ANAVSESSION1:{"format":"anav-session-events","version":1,"batch":[]}',
+        'ANAVSESSION1:{'}) do
+        refused({db_version=1,session_export=bad},'session','copy_export_invalid')
+      end
+      local session='ANAVSESSION1:{"batch":{"character":"p"},"fixture":false,'..
+        '"format":"anav-session-events","version":1}'
+      local picked=assert(c.select({db_version=1,session_export=session},'session'))
+      assert(picked.kind=='session' and picked.text==session and picked.limit==limit)
     "#,
         )
         .unwrap();

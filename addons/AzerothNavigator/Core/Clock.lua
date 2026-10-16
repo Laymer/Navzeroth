@@ -61,6 +61,23 @@ function Clock.new(utc, monotonic)
     return {clock_trust=trust, observed_at_utc_ms=value.utc * 1000}
   end
   state.clear = function(_) pending, anchor, previous = nil, nil, nil end
+  -- Read-only view for display: unlike capture() it never changes trust or the
+  -- pending probe. available=false means the clock APIs could not be read now.
+  state.status = function(_)
+    local result = {available=false, pending=pending ~= nil, trusted=false,
+      confirmable=false}
+    local value = sample()
+    if not value then return result end
+    result.available = true
+    if pending then
+      result.pending_utc_seconds = pending.utc
+      if value.mono >= pending.mono then result.age_seconds = value.mono - pending.mono end
+      result.confirmable = result.age_seconds ~= nil and result.age_seconds <= 120 and
+        coherent(pending, value)
+    end
+    result.trusted = anchor ~= nil and coherent(anchor, value) and coherent(previous, value)
+    return result
+  end
   return state
 end
 ns.provide('Clock', Clock)

@@ -67,14 +67,14 @@ local function excerpt(message)
   text = text:gsub("%S*%-%S*", "<id>")
   text = text:gsub("'[^']*'", "'?'")
   text = text:gsub('"[^"]*"', '"?"')
-  text = text:gsub("[^%w %.:_%(%)<>'\"]", "?")
+  text = text:gsub("[^A-Za-z0-9 %.:_%(%)<>'\"]", "?")
   text = text:gsub("%?%?+", "?")
   return text:sub(1, MAX_DETAIL_BYTES)
 end
 
 local function cleanToken(value)
   if type(value) == "string" and #value >= 1 and #value <= MAX_TOKEN_BYTES
-    and value:match("^[%w%._%-]+$") then
+    and value:match("^[A-Za-z0-9%._%-]+$") then
     return value
   end
   return nil
@@ -182,20 +182,37 @@ local function evaluate(env, entry, build)
   return record
 end
 
--- Probes env (a table standing in for the client globals). Always returns a report;
--- a missing or failing API only affects its own capability.
 -- An explicit experimental adapter allowlist, not capability verification.
 -- 70374 identification/diagnostic flow was reported by the operator; field
 -- readability and native/live acceptance still require separate evidence.
 -- Keep previously supported 70338 distinct, and never admit an unknown build.
-function Capabilities.isCaptureTarget(build)
-  local ok, supported = pcall(function()
-    return type(build) == 'table' and build.version == '1.60.1' and
-      (build.build == '70338' or build.build == '70374') and build.interface == '16001'
+-- 70425 is admitted for development capture only: the owner's installation metadata
+-- reports it, but no addon run on that build is recorded (UNVERIFIED). The 1.0
+-- release target stays 70374. ASCII classes keep the checks locale independent.
+local ADMISSION = {
+  ['70338'] = 'previous_recorded',
+  ['70374'] = 'release_target',
+  ['70425'] = 'development_unverified',
+}
+
+-- Returns release_target, development_unverified, previous_recorded or nil.
+function Capabilities.admission(build)
+  local ok, kind = pcall(function()
+    if type(build) == 'table' and build.version == '1.60.1' and
+      build.interface == '16001' and type(build.build) == 'string' then
+      return ADMISSION[build.build]
+    end
   end)
-  return ok and supported == true
+  if ok then return kind end
+  return nil
 end
 
+function Capabilities.isCaptureTarget(build)
+  return Capabilities.admission(build) ~= nil
+end
+
+-- Probes env (a table standing in for the client globals). Always returns a report;
+-- a missing or failing API only affects its own capability.
 function Capabilities.probe(env)
   if type(env) ~= "table" then
     env = {}
