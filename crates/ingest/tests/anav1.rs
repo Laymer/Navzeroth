@@ -1,8 +1,8 @@
 //! ANAV1 text transport grammar (M2.2).
 mod common;
 use azeroth_core::{
-    contract::{MAX_ENVELOPE_BYTES, decode_any},
-    error::ErrorCode,
+    contract::{AnyExchange, Extensions, MAX_ENVELOPE_BYTES, decode_any},
+    error::{ErrorCode, Validated},
 };
 use azeroth_ingest::anav1::{
     MAX_DOCUMENT_BYTES, MAX_JSON_DEPTH, MAX_TEXT_BYTES, PREFIX, decode_text, encode_text,
@@ -154,4 +154,37 @@ fn truncated_text_is_a_structured_error_for_every_prefix() {
         // A following complete document imports.
         assert!(azeroth_ingest::import::import_text(&text, &options).is_ok());
     }
+}
+
+#[test]
+fn encode_refuses_exchange_nested_beyond_the_decode_limit() {
+    // `decode_any` bounds depth, but `Extensions::new` only checks size, so a typed
+    // exchange built in memory can serialise deeper than the transport accepts. Encode
+    // must refuse it rather than emit text that decode would reject.
+    let manifest: serde_json::Value = serde_json::from_str(&contract("manifest.json")).unwrap();
+    let plan = manifest["fixtures"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|entry| entry["expect"] == "valid")
+        .find_map(
+            |entry| match decode_any(&contract(entry["file"].as_str().unwrap())) {
+                Ok(AnyExchange::RoutePlan(plan)) => Some(plan),
+                _ => None,
+            },
+        )
+        .expect("a valid route plan fixture exists");
+    let with_depth = |levels: usize| {
+        let mut nested = serde_json::json!(1);
+        for _ in 0..levels {
+            nested = serde_json::json!([nested]);
+        }
+        let mut data = plan.clone().into_inner();
+        data.extensions = Extensions::new([("x_deep".to_owned(), nested)]).unwrap();
+        AnyExchange::RoutePlan(Box::new(Validated::try_new(data).unwrap()))
+    };
+    // Control: a shallow extension encodes, so the refusal below is caused by depth.
+    assert!(encode_text(&with_depth(3)).is_ok());
+    let error = encode_text(&with_depth(MAX_JSON_DEPTH + 8)).expect_err("too deep to encode");
+    assert_eq!(error.code, ErrorCode::InvalidInput);
 }

@@ -48,9 +48,18 @@ fn the_crate_has_no_lua_engine_dependency() {
         .take_while(|l| l.starts_with(' '))
         .map(|l| l.trim().trim_matches(|c| c == '"' || c == ',').to_owned())
         .collect();
+    // `proptest` is the pinned, test-only property-testing dev-dependency (G2);
+    // Cargo.lock lists dev-dependencies alongside normal ones.
     assert_eq!(
         locked,
-        ["azeroth-core", "image", "serde", "serde_json", "sha2"]
+        [
+            "azeroth-core",
+            "image",
+            "proptest",
+            "serde",
+            "serde_json",
+            "sha2"
+        ]
     );
     // No Lua engine is reachable from this crate, directly or transitively.
     // The dev-only `azeroth-lua-harness` crate (ADR 0003) may lock a Lua

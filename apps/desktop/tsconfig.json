@@ -26,11 +26,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src",
     "vite.config.ts",
+    "csp.ts",
     "eslint.config.js",
     "playwright.config.ts",
     "e2e"

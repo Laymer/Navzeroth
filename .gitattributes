@@ -22,3 +22,7 @@ Cargo.lock text eol=lf
 **/Cargo.toml text eol=lf
 docs/sources/source-admission-v1.json text eol=lf
 docs/sources/source-updates-v1.json text eol=lf
+
+# Lua and SQL are hashed or byte-compared by tests; keep LF on every platform.
+*.lua text eol=lf
+*.sql text eol=lf
