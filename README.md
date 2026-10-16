@@ -9,7 +9,7 @@ The published build is the **[0.9.1 developer preview](https://github.com/Laymer
 It contains tested engineering foundations, but no verified playable quest, item,
 acquisition or travel catalog. Interactive Windows and complete live-game acceptance
 remain unverified. See the [release notes](docs/releases/0.9.1.md) and
-[publication evidence](docs/handoffs/2026-10-16-v0.9.1-release.md).
+[publication evidence](docs/handoffs/2026-10-16-v0.9.1-publication.md).
 
 The authorized v1.0.0 target is full enumerated content for **Forever
 1.60.1.70374**, with Windows desktop support. The user reports that build and

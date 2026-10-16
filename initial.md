@@ -1,9 +1,10 @@
-# Claude Code continuation prompt: Navzeroth 0.9.0 → 1.0.0
+# Claude Code continuation prompt: Navzeroth 0.9.x → 1.0.0
 
-> Release continuation: the user subsequently requested 0.9.1, superseding
-> interrupted 0.9.0 publication. Read `docs/STATUS.md` and
-> `docs/handoffs/2026-10-16-v0.9.1-release.md` first; use the current release
-> version for readiness checks. The original 1.0.0 execution contract follows.
+> Version-agnostic prompt. The 0.9.0 publication was interrupted and superseded;
+> 0.9.1 was published as a developer prerelease on 2026-10-16 (receipt:
+> `docs/handoffs/2026-10-16-v0.9.1-publication.md`). Read `docs/STATUS.md` first,
+> resolve the latest published tag with `gh release list`, and use the current
+> release version for readiness checks. The 1.0.0 execution contract follows.
 
 Copy this entire file into Claude Code in the Navzeroth repository. This is an
 execution prompt, not a promise that complete licensed game data exists. Its
@@ -22,7 +23,7 @@ enforced until the versioned replacement is implemented and reviewed. Preserve
 the complete nine-domain independently evidenced inventory and actual acceptance
 requirements. 70425 development extraction cannot satisfy the 70374 release target.
 See [actual implementation scope](docs/data/LOCAL_EXTRACTION.md) and the latest handoff.
-0.9.0 preparation is still not publication; verify actual release state.
+Preparation is never publication; verify the actual release state with `gh`.
 
 ---
 
@@ -34,7 +35,9 @@ integration and gated publication. Do not stop after proposing another plan.
 ## 1. Establish your actual baseline before editing
 
 1. Read `AGENTS.md`, `docs/STATUS.md`, this file, and
-   `docs/handoffs/2026-10-15-v0.9.0-release.md`.
+   the latest release handoff named in `docs/STATUS.md` (for 0.9.1:
+   `docs/handoffs/2026-10-16-v0.9.1-publication.md`); the interrupted
+   `docs/handoffs/2026-10-15-v0.9.0-release.md` is historical.
 2. Read `docs/handoffs/2026-10-15-development-evidence-closure.md`,
    `docs/handoffs/2026-10-15-v1-foundation-integration.md`,
    `AZEROTH_NAVIGATOR_IMPLEMENTATION_PLAN.md` (relevant architecture, data,
@@ -59,15 +62,17 @@ integration and gated publication. Do not stop after proposing another plan.
    git status --short
    git fetch origin --tags
    git log -8 --oneline origin/main
-   git rev-parse 'v0.9.0^{commit}'
-   gh release view v0.9.0 --json tagName,isDraft,isPrerelease,publishedAt,assets
+   gh release list --limit 5
+   TAG=$(gh release list --exclude-drafts --limit 1 --json tagName --jq '.[0].tagName')
+   git rev-parse "$TAG^{commit}"
+   gh release view "$TAG" --json tagName,isDraft,isPrerelease,publishedAt,assets
    ```
 
    Resolve the actual published tag; do not guess its commit from this document.
    Compare release `SOURCE_COMMIT.txt`, all checksum entries and the exact addon
    payload with that commit. Establish whether newer main changes supersede the
-   release. If 0.9.0 publication is interrupted, finish its verified draft first
-   using the release handoff; do not create a second competing tag.
+   release. If a publication is interrupted (as 0.9.0 was), finish or supersede its
+   verified draft per its handoff; do not create a second competing tag.
 5. Record task owner, current baseline and one-writer ownership in a claim before
    implementing. Use isolated branches/worktrees. Preserve unrelated work.
    Do not spawn agents without an explicit current authorization. Existing task
@@ -106,7 +111,7 @@ integration and gated publication. Do not stop after proposing another plan.
   BSD licence does not relicense upstream works. Do not treat a code-only licence
   or another maintainer's permission as a general dataset redistribution grant.
 
-## 3. What 0.9.0 actually provides
+## 3. What the 0.9.x line actually provides
 
 Verify these claims against the tag; do not rebuild completed foundations merely
 because the original high-level plan listed them as future work.
@@ -133,12 +138,12 @@ because the original high-level plan listed them as future work.
   nine incomplete), matching the operator's log. One actual turn-in produced a
   valid five-event session; isolated Linux service import recorded 41,604 ms
   unclassified, zero observed activity, no gaps. Status was idle after reload.
-  These observations are not acceptance of the changed 0.9.0 or frozen 1.0.0.
+  These observations are not acceptance of the changed 0.9.x line or frozen 1.0.0.
 - Current `PlanControls.lua` still declares objective mapping unavailable.
   `Diagnostics.ensurePlanControls` supplies the last snapshot; `Hud.lua` requires
   positive `objective_state` evidence. The recorder is **not** automatic plan
   advancement or deviation detection. Do not conflate these features.
-- 0.9.0 is a developer prerelease. No final live/Windows acceptance row is passed
+- 0.9.x releases are developer prereleases. No final live/Windows acceptance row is passed
   merely because a build, helper test, browser mock or development capture passed.
 
 ## 4. Establish a reproducible blocker ledger
@@ -147,7 +152,7 @@ Run from the repository root with the pinned toolchain:
 
 ```sh
 cargo run --locked -p azeroth-cli -- inventory-report --root . --input release/v1/inventory-investigation.json
-cargo run --locked -p azeroth-cli -- release-readiness --root . --version 0.9.0
+cargo run --locked -p azeroth-cli -- release-readiness --root . --version <current>
 ```
 
 Use the current actual version if main has moved. A 0.x preview publication flag
@@ -436,7 +441,7 @@ A production change requires a new candidate and renewed affected acceptance.
 5. Publish only that verified draft as a stable release. Re-download public assets,
    compare bytes/hashes with the verified draft and record public URLs, tag/source,
    workflow runs, checksums, actual checks and limitations in the release handoff.
-   Preserve all published history. If any gate fails, retain 0.9.0; do not publish
+   Preserve all published history. If any gate fails, retain the latest published 0.9.x prerelease; do not publish
    a “complete” 1.0.0 with placeholders or mandatory blockers.
 6. After 1.0.0 is published and verified, use the available imagegen skill for an
    original fantasy-cartography identity featuring compass, plotted route and
@@ -456,6 +461,6 @@ publishes or the budget is running low. Completion means the exact full target
 content/rights, runtime behavior, all required candidate-bound acceptance,
 zero-blocker stable gate and verified public 1.0.0 artifacts actually exist.
 If that is externally blocked, leave completed work integrated and draft work
-reviewable, keep 0.9.0 published, and report the concrete unmet records/grants/
+reviewable, keep the latest 0.9.x prerelease published, and report the concrete unmet records/grants/
 observations plus the next permitted action. No false completion or endless
 replanning is an acceptable substitute.
