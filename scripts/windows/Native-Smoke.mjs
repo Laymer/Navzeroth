@@ -170,14 +170,11 @@ const ipcLog = [];
 /** Observes native IPC from outside the page (http://ipc.localhost/<command>); the page is never patched. */
 function watchIpc(page) {
   const t0 = Date.now();
-  page.on("response", (response) => {
-    const url = response.url();
-    if (!url.includes("ipc.localhost")) return;
-    let command = url;
-    try { command = new URL(url).pathname.replace(/^\//, ""); } catch { /* keep the raw url */ }
-    ipcLog.push(`${Date.now() - t0}ms ${command} HTTP ${response.status()}`);
-    if (ipcLog.length > 400) ipcLog.shift();
-  });
+  const commandOf = (url) => { try { return new URL(url).pathname.replace(/^\//, ""); } catch { return url; } };
+  const push = (line) => { ipcLog.push(line); if (ipcLog.length > 600) ipcLog.shift(); };
+  page.on("request", (request) => { if (request.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms -> ${commandOf(request.url())} (${request.method()})`); });
+  page.on("response", (response) => { if (response.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms <- ${commandOf(response.url())} HTTP ${response.status()}`); });
+  page.on("requestfailed", (request) => { if (request.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms !! ${commandOf(request.url())} ${request.failure()?.errorText ?? ""}`); });
 }
 
 async function settle(page) {
@@ -202,7 +199,7 @@ async function withDiagnostics(page, label, fn) {
       const controls = await page.evaluate(() => [...document.querySelectorAll("main select, main input, main button")].slice(0, 400)
         .filter((e) => e.matches("select, input") || /^(Plan session|Inspect route|Export plan)$/.test(e.textContent.trim()))
         .map((e) => `${e.tagName}:${(e.labels?.[0]?.textContent ?? e.textContent).trim().slice(0, 40)}=${e.value ?? ""}${e.disabled ? " [disabled]" : ""}`));
-      const ipc = ipcLog.slice(-60);
+      const ipc = ipcLog.filter((l) => !l.includes("get_snapshot_watch")).slice(-80);
       extra0 = `\ncontrols=${JSON.stringify(controls)}\nipc_tail=${JSON.stringify(ipc)}`;
       await page.screenshot({ path: join(outDir, `failure-${label}.png`) }).catch(() => {});
       extra = `${extra0}\nalerts=${JSON.stringify(alerts)}\nstatuses=${JSON.stringify(statuses)}\nmain=${main}`;
@@ -277,7 +274,7 @@ async function run() {
     else if (mode === "populate") await populate(page);
     else await verify(page);
 
-    evidence.ipc_tail = ipcLog.slice(-200);
+    evidence.ipc_tail = ipcLog.filter((l) => !l.includes("get_snapshot_watch")).slice(-300);
     const inPage = await page.evaluate(() => window.__anavCsp ?? []);
     for (const v of inPage) violations.push(`securitypolicyviolation: ${v}`);
     await rec.run("no CSP violations, uncaught page errors or PROVIDER_UNAVAILABLE alerts were observed", async () => {
@@ -373,7 +370,7 @@ async function smoke(page, response) {
     await page.getByLabel("completion_ms", { exact: true }).fill("1000");
     const activation = await activate(page.getByRole("button", { name: "Plan session", exact: true }), "start_planning_job");
     const result = page.getByRole("region", { name: "Planning result" });
-    await result.waitFor({ timeout: 60000 });
+    await result.waitFor({ timeout: 40000 });
     const resultText = (await result.innerText()).trim();
     await activate(page.getByRole("button", { name: "Inspect route", exact: true }), "inspect_plan_route");
     await page.getByRole("region", { name: "Route inspection", exact: true }).waitFor({ timeout: 30000 });
