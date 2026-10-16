@@ -211,6 +211,22 @@ async function withDiagnostics(page, label, fn) {
   }
 }
 
+/** Click a control that may sit at the window edge; if the app issues no IPC call, fall back to keyboard activation. */
+async function activate(locator, ipcName) {
+  await locator.scrollIntoViewIfNeeded();
+  const seen = () => ipcLog.some((line, i) => i >= before && line.includes(` ${ipcName} `));
+  let before = ipcLog.length;
+  await locator.click();
+  for (let i = 0; i < 20 && !seen(); i += 1) await sleep(250);
+  if (seen()) return "click";
+  before = ipcLog.length;
+  await locator.focus();
+  await locator.press("Enter");
+  for (let i = 0; i < 20 && !seen(); i += 1) await sleep(250);
+  if (seen()) return "focus+Enter fallback (the click issued no IPC call)";
+  throw new Error(`Neither click nor Enter on the control issued ${ipcName}`);
+}
+
 async function go(page, name) {
   await page.getByRole("navigation", { name: "Primary" }).getByRole("button", { name, exact: true }).click();
   await settle(page);
@@ -355,7 +371,7 @@ async function smoke(page, response) {
     await page.getByRole("combobox", { name: "Objective node", exact: true }).selectOption("demo-node-2");
     await page.getByLabel("utility", { exact: true }).fill("10");
     await page.getByLabel("completion_ms", { exact: true }).fill("1000");
-    await page.getByRole("button", { name: "Plan session", exact: true }).click();
+    const activation = await activate(page.getByRole("button", { name: "Plan session", exact: true }), "start_planning_job");
     const result = page.getByRole("region", { name: "Planning result" });
     await result.waitFor({ timeout: 60000 });
     const resultText = (await result.innerText()).trim();
@@ -364,7 +380,7 @@ async function smoke(page, response) {
     await page.getByRole("button", { name: "Export plan", exact: true }).click();
     const text = await page.getByLabel("Plan export text").inputValue();
     if (!text.startsWith("ANAV1:")) throw new Error(`Export does not start with ANAV1: ${text.slice(0, 20)}`);
-    return { planning_result: resultText.slice(0, 300), export_bytes: text.length, alerts: await alertTexts(page) };
+    return { activation, planning_result: resultText.slice(0, 300), export_bytes: text.length, alerts: await alertTexts(page) };
   }));
 
   await rec.run("reference window state query works and reports the window closed", async () => {
