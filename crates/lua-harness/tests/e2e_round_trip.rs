@@ -385,6 +385,21 @@ fn full_addon_round_trip(build: &str) {
     "#,
         )
         .unwrap();
+    // Positive control: on the original build a reloaded addon accepts the same plan,
+    // so the refusal below can only come from the build guard.
+    sandbox
+        .run::<()>(
+            "same-build-control",
+            r#"
+      local reloaded = ns.Diagnostics.attach(ns.Diagnostics.state.env)
+      reloaded.onEvent(nil, 'ADDON_LOADED', 'AzerothNavigator')
+      reloaded.onPlanSlash('import ' .. ns.plan_text)
+      assert(reloaded.plan_controls, 'plan controls missing on the original build')
+      assert(reloaded.plan_controls:status().plan_id == 'demo-plan-001',
+        'same-build plan was not accepted after reload')
+    "#,
+        )
+        .unwrap();
     // A cached capture from one admitted build is never accepted on another.
     let other_build = ADMITTED_BUILDS.iter().find(|b| **b != build).unwrap();
     sandbox
@@ -399,8 +414,7 @@ fn full_addon_round_trip(build: &str) {
       local model = reloaded.plan_controls and reloaded.plan_controls:status() or {{}}
       assert(model.status ~= 'ready' and not model.cached_snapshot,
         'build ' .. tostring(model.status) .. ' accepted a capture from {build}')
-      assert(reloaded.plan_controls == nil or reloaded.plan_controls:status().plan_id == nil,
-        'a plan for {build} loaded on {other_build}')
+      assert(model.plan_id == nil, 'a plan for {build} loaded on {other_build}')
       function GetBuildInfo() return '1.60.1', '{build}', '', 16001 end
     "#
             ),

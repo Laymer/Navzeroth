@@ -42,6 +42,9 @@ for (const width of WIDTHS) {
           const nav = page.getByRole("navigation", { name: "Primary" });
           await nav.getByRole("button", { name: screen, exact: true }).click();
           await expect(nav.getByRole("button", { name: screen, exact: true })).toHaveAttribute("aria-current", "page");
+          // The nav state is set synchronously; wait for the screen to leave its loading
+          // placeholders so axe scans the settled state, not a transient one.
+          await expect(page.getByRole("main").getByRole("status").filter({ hasText: /^(Loading|Checking)/ })).toHaveCount(0);
         }
         if (mode === "high-contrast") await page.evaluate(() => { document.documentElement.dataset.contrast = "high"; });
         const { violations } = await new AxeBuilder({ page }).analyze();
