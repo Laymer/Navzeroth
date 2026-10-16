@@ -180,12 +180,17 @@ async function alertTexts(page) {
 async function withDiagnostics(page, label, fn) {
   try { return await fn(); } catch (error) {
     let extra = "";
+    let extra0 = "";
     try {
       const alerts = await alertTexts(page);
       const statuses = (await page.getByRole("status").allInnerTexts()).map((t) => t.trim()).filter(Boolean);
       const main = (await page.locator("main").innerText()).replace(/\s+/g, " ").slice(0, 2500);
+      const controls = await page.evaluate(() => [...document.querySelectorAll("main select, main input, main button")].slice(0, 400)
+        .filter((e) => e.matches("select, input") || /^(Plan session|Inspect route|Export plan)$/.test(e.textContent.trim()))
+        .map((e) => `${e.tagName}:${(e.labels?.[0]?.textContent ?? e.textContent).trim().slice(0, 40)}=${e.value ?? ""}${e.disabled ? " [disabled]" : ""}`));
+      extra0 = `\ncontrols=${JSON.stringify(controls)}`;
       await page.screenshot({ path: join(outDir, `failure-${label}.png`) }).catch(() => {});
-      extra = `\nalerts=${JSON.stringify(alerts)}\nstatuses=${JSON.stringify(statuses)}\nmain=${main}`;
+      extra = `${extra0}\nalerts=${JSON.stringify(alerts)}\nstatuses=${JSON.stringify(statuses)}\nmain=${main}`;
     } catch (inner) { extra = `\n(diagnostics unavailable: ${inner?.message})`; }
     throw new Error(`${error?.message ?? error}${extra}`);
   }
@@ -319,6 +324,10 @@ async function smoke(page, response) {
   }));
 
   await rec.run("plan, inspect route and export produce ANAV1:", () => withDiagnostics(page, "plan", async () => {
+    // The app requeries imported views every 60 s by design and that discards an in-flight planner
+    // result. Reload so the planner steps start right after a fresh interval (state is in the database).
+    await page.reload({ waitUntil: "load" });
+    await settle(page);
     await go(page, "Planner");
     await page.getByRole("combobox", { name: "Origin", exact: true }).selectOption("demo-node-1");
     await page.getByRole("combobox", { name: "Stopping node", exact: true }).selectOption("demo-node-1");
