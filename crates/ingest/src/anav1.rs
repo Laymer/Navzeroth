@@ -34,12 +34,17 @@ fn is_transport_whitespace(c: char) -> bool {
 }
 
 /// Encode a validated exchange as `ANAV1:` plus its compact canonical JSON, with
-/// no trailing newline. Fails with `IMPORT_TOO_LARGE` above the 4 MiB ceiling.
+/// no trailing newline. Fails with `IMPORT_TOO_LARGE` above the 4 MiB ceiling and with an invalid-input
+/// error above the JSON nesting limit.
 pub fn encode_text(exchange: &AnyExchange) -> Result<String> {
     let json = serde_json::to_string(exchange)
         .map_err(|_| invalid("Exchange document cannot be serialized"))?;
     if json.len() > MAX_DOCUMENT_BYTES {
         return Err(too_large("Exchange document exceeds the transport limit"));
+    }
+    // Symmetric with decode: never emit text that this transport would refuse.
+    if !json_depth_within(&json, MAX_JSON_DEPTH) {
+        return Err(invalid("Exchange JSON nesting depth exceeded"));
     }
     let mut text = String::with_capacity(PREFIX.len() + json.len());
     text.push_str(PREFIX);

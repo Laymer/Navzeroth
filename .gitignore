@@ -38,3 +38,6 @@ apps/desktop/src-tauri/gen/
 # Browser verification artifacts
 apps/desktop/test-results/
 apps/desktop/playwright-report/
+
+# Playwright review screenshots (uploaded by CI, never committed)
+apps/desktop/screenshots/

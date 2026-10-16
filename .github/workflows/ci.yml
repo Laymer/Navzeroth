@@ -5,11 +5,15 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Nightly: every job above runs, plus the stability job below.
+    - cron: '17 3 * * *'
 permissions:
   contents: read
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  # Superseded pull request pushes are cancelled; main and scheduled runs never are.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   format:
     name: Rust format
@@ -30,7 +34,8 @@ jobs:
           - platform: Windows
             os: windows-2025
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    # Recent Windows runs took 15.7 to 18.9 minutes and run 38803371336 hit the old 20.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -45,6 +50,10 @@ jobs:
           key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
       - run: cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings
       - run: cargo test --locked --workspace --exclude azeroth-desktop
+      - name: Golden drift (every Rust-written golden regenerates byte for byte)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: scripts/check-golden-drift.sh
       - name: Contract and transport fixture validation
         run: cargo run --locked -p azeroth-cli -- validate-fixtures
       - name: Reference content validation and explicit coverage gaps
@@ -171,7 +180,55 @@ jobs:
       - run: pnpm --dir apps/desktop lint
       - run: pnpm --dir apps/desktop test:unit
       - run: pnpm --dir apps/desktop build
+      - name: Production bundle has no data URIs or remote assets
+        run: node scripts/check-dist.mjs
       - name: Install browser and system libraries
         run: pnpm --dir apps/desktop exec playwright install --with-deps chromium
+      # Both Playwright projects: "dev" (every spec, vite dev server) and "prod-csp"
+      # (the built bundle served with the native CSP). Retries are 0 in the config.
       - run: pnpm --dir apps/desktop test:e2e
+      - name: Upload screen captures for human review (not pixel assertions)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: desktop-screens
+          path: apps/desktop/screenshots/
+          if-no-files-found: warn
+          retention-days: 14
+      - run: git diff --exit-code
+
+  stability:
+    name: Stability (repeat runs)
+    # Nightly and on demand only. A flake shows up here as a failure, never as a rerun.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      - run: rustup show
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: pnpm install --frozen-lockfile
+      - name: Install browser and system libraries
+        run: pnpm --dir apps/desktop exec playwright install --with-deps chromium
+      - name: Playwright, both projects, three times each
+        run: pnpm --dir apps/desktop exec playwright test --repeat-each=3
+      - name: Full Rust test suite, twice
+        run: |
+          cargo test --locked --workspace --exclude azeroth-desktop
+          cargo test --locked --workspace --exclude azeroth-desktop
+      - name: Lua harness, three times
+        run: |
+          for run in 1 2 3; do
+            cargo test --locked -p azeroth-lua-harness
+          done
       - run: git diff --exit-code
