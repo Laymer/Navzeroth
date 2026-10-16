@@ -15,6 +15,7 @@ read_globals = {}
 -- table in Diagnostics.lua (unverified directive and slash-command mechanics).
 globals = {
   "AzerothNavigatorDB",
+  "SLASH_ANAV1",
   "SLASH_ANAVDIAG1",
   "SLASH_ANAVSESSION1",
   "SLASH_ANAVPLAN1",

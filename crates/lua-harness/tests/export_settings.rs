@@ -275,6 +275,7 @@ fn settings_apply_refuses_unknown_layouts_and_leaves_them_untouched() {
 
 fn expected_settings(auto_probe: bool) -> Value {
     json!({"auto_probe": auto_probe, "chat_summary": true, "hud_visible": true,
+      "minimap_button":true,"minimap_angle":225,"gui_last_tab":"overview",
       "hud_width":420,"hud_height":220,"hud_font_percent":100,"hud_contrast":"default",
       "hud_position":{"anchor":"TOP","relative":"TOP","x":0,"y":-120}})
 }

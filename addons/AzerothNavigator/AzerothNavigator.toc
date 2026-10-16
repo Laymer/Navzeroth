@@ -12,6 +12,7 @@
 # Core files stay pure; only Diagnostics.lua binds to the client environment.
 Core\Bootstrap.lua
 Core\Version.lua
+Core\GuiText.lua
 Core\Json.lua
 Core\Decode.lua
 Core\Predicate.lua
@@ -27,4 +28,6 @@ Core\HudAppearance.lua
 Core\Settings.lua
 Core\PlanControls.lua
 Core\CopyExport.lua
+Core\GuiWidgets.lua
+Core\Gui.lua
 Diagnostics.lua

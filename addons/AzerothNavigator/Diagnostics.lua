@@ -9,10 +9,15 @@ local Version = ns.Version
 local Capabilities = ns.Capabilities
 local Export = ns.Export
 local Settings = ns.Settings
+local GuiText = ns.GuiText
 
 local SLASH_KEY = "ANAVDIAG"
 local SLASH_COMMAND = "/anavdiag"
 local EVENTS = { "ADDON_LOADED", "PLAYER_LOGIN" }
+local MESSAGE_LIMIT = 20
+-- Settings the window may change. Appearance keys go through the plan actions.
+local GUI_SETTABLE = {auto_probe = true, chat_summary = true, minimap_button = true,
+  minimap_angle = true, gui_last_tab = true}
 
 local Diagnostics = {}
 
@@ -46,6 +51,8 @@ function Diagnostics.attach(env)
     persist = false,
     report = nil,
     last_code = nil,
+    stored = false,
+    messages = {},
   }
 
   local clock = ns.Clock.new(function()
@@ -54,11 +61,26 @@ function Diagnostics.attach(env)
     if type(env.GetTime) == 'function' then return env.GetTime() end
   end)
 
-  local function say(message)
+  -- A bounded ring of what the addon said, so the window shows feedback without chat.
+  local function note(message)
+    local list = state.messages
+    list[#list + 1] = tostring(message):sub(1, 200)
+    if #list > MESSAGE_LIMIT then table.remove(list, 1) end
+  end
+
+  local function chat(message)
     if type(env.print) == "function" then
       pcall(env.print, "AzerothNavigator: " .. message)
     end
   end
+
+  local function say(message)
+    note(message)
+    chat(message)
+  end
+
+  -- Read-only clock status for display; unlike clock:capture() it never changes trust.
+  state.clock = {status = function() return clock:status() end}
 
   local Appearance = ns.HudAppearance
   local function uiGate()
@@ -247,10 +269,16 @@ function Diagnostics.attach(env)
 
   local function planImport(text)
     local controls, code = ensurePlanControls()
-    if not controls then say('plan unavailable: ' .. code); return end
+    if not controls then
+      state.plan_import_code = code
+      say('plan unavailable: ' .. code); return nil, code
+    end
     local receipt, importCode = controls:import(text)
-    if not receipt then say('plan import failed (' .. importCode .. '); prior plan retained')
+    if not receipt then
+      state.plan_import_code = importCode
+      say('plan import failed (' .. importCode .. '); prior plan retained')
     else
+      state.plan_receipt, state.plan_import_code = receipt, 'plan_imported'
       say('plan imported; runtime only, reload clears it')
       say(controls:describe():gsub("|", "||"))
     end
@@ -294,7 +322,7 @@ function Diagnostics.attach(env)
   local function copyExport(kind)
     local selected, code = ns.CopyExport.select(state.db, kind)
     if not selected then
-      say('copy unavailable (' .. code .. '); saved exports unchanged'); return
+      say('copy unavailable (' .. code .. '); saved exports unchanged'); return nil, code
     end
     local checked, allowed, reason = pcall(function()
       if type(env.InCombatLockdown) ~= 'function' then return false, 'copy_combat_unknown' end
@@ -306,10 +334,11 @@ function Diagnostics.attach(env)
     if not checked or not allowed then
       state.copy_ui_code = checked and reason or 'copy_combat_unknown'
       say('copy unavailable (' .. state.copy_ui_code .. '); retry explicitly out of combat')
-      return
+      return nil, state.copy_ui_code
     end
     if type(env.CreateFrame) ~= 'function' then
-      say('copy unavailable (copy_ui_unavailable); saved exports unchanged'); return
+      say('copy unavailable (copy_ui_unavailable); saved exports unchanged')
+      return nil, 'copy_ui_unavailable'
     end
     state.copy_view = state.copy_view or {}
     local view = state.copy_view
@@ -398,10 +427,49 @@ function Diagnostics.attach(env)
       state.copy_ui_code = 'copy_ui_unavailable'
       if view.frame and has(view.frame, {'Hide'}) then pcall(function() view.frame:Hide() end) end
       say('copy unavailable (copy_ui_unavailable); saved exports unchanged')
-      return
+      return nil, 'copy_ui_unavailable'
     end
     state.copy_ui_code = 'copy_shown'
     say('stored ' .. selected.kind .. ' export shown; select text and press Ctrl+C yourself')
+    return true
+  end
+
+  local function applyAppearance(controls, command, tail)
+    local prefs, errorCode = Appearance.command(command, tail, state.settings)
+    if not prefs then say('HUD preference refused (' .. errorCode .. ')'); return nil, errorCode end
+    if command == 'reset' then state.hud_reset_position = true end
+    for key, value in pairs(prefs) do state.settings[key] = value end
+    if state.persist then
+      for key, value in pairs(Appearance.copy(prefs)) do state.db.settings[key] = value end
+    end
+    controls:refresh()
+    say('HUD requested; application status=' .. (state.plan_ui_code or 'unknown'))
+    return true
+  end
+
+  local function setHudVisible(controls, visible)
+    state.settings.hud_visible = visible
+    if state.persist then state.db.settings.hud_visible = state.settings.hud_visible end
+    controls:refresh()
+    return true
+  end
+
+  local function clearPlan(controls)
+    controls:clear(); state.plan_receipt, state.plan_import_code = nil, nil
+    say('loaded plan cleared')
+    return true
+  end
+
+  local function planStatus(controls)
+    resumeHud()
+    local model = controls:status()
+    say(controls:describe(model):gsub("|", "||"))
+    local prefs = Appearance.copy(state.settings)
+    say('HUD requested=' .. prefs.hud_width .. 'x' .. prefs.hud_height ..
+      ', font=' .. prefs.hud_font_percent .. ', contrast=' .. prefs.hud_contrast ..
+      '; last application=' .. (state.plan_ui_code or 'unknown') ..
+      '; movement=' .. (state.hud_movement_code or 'hud_movement_not_observed'))
+    return model
   end
 
   local function planSlash(message)
@@ -415,28 +483,10 @@ function Diagnostics.attach(env)
     local controls, code = ensurePlanControls()
     if not controls then say('plan unavailable: ' .. code); return end
     if command == 'size' or command == 'font' or command == 'contrast' or command == 'reset' then
-      local prefs, errorCode = Appearance.command(command, tail, state.settings)
-      if not prefs then say('HUD preference refused (' .. errorCode .. ')'); return end
-      if command == 'reset' then state.hud_reset_position = true end
-      for key, value in pairs(prefs) do state.settings[key] = value end
-      if state.persist then
-        for key, value in pairs(Appearance.copy(prefs)) do state.db.settings[key] = value end
-      end
-      controls:refresh()
-      say('HUD requested; application status=' .. (state.plan_ui_code or 'unknown'))
-    elseif command == 'clear' then controls:clear(); say('loaded plan cleared')
-    elseif command == 'status' then
-      resumeHud()
-      say(controls:describe(controls:status()):gsub("|", "||"))
-      local prefs = Appearance.copy(state.settings)
-      say('HUD requested=' .. prefs.hud_width .. 'x' .. prefs.hud_height ..
-        ', font=' .. prefs.hud_font_percent .. ', contrast=' .. prefs.hud_contrast ..
-        '; last application=' .. (state.plan_ui_code or 'unknown') ..
-        '; movement=' .. (state.hud_movement_code or 'hud_movement_not_observed'))
-    elseif command == 'show' or command == 'hide' then
-      state.settings.hud_visible = command == 'show'
-      if state.persist then state.db.settings.hud_visible = state.settings.hud_visible end
-      controls:refresh()
+      applyAppearance(controls, command, tail)
+    elseif command == 'clear' then clearPlan(controls)
+    elseif command == 'status' then planStatus(controls)
+    elseif command == 'show' or command == 'hide' then setHudVisible(controls, command == 'show')
     else say('/anavplan paste | import ANAV1:... | status | show | hide | clear | size W H | ' ..
       'font 100/125/150/175/200 | contrast default/high | reset') end
   end
@@ -449,6 +499,7 @@ function Diagnostics.attach(env)
     end
     state.report = report
     state.last_code = code
+    state.stored = stored == true
     if state.settings.chat_summary then
       say(summarize(report, stored, code))
     end
@@ -471,11 +522,67 @@ function Diagnostics.attach(env)
     end
   end
 
+  -- The window is built on first use. Nothing here creates a frame.
+  local gui
+  local function getGui()
+    if gui then return gui end
+    local ok, created = pcall(ns.Gui.new, env, state, state.actions)
+    if ok and created then gui, state.gui = created, created end
+    return gui
+  end
+
+  local function minimapAngle()
+    local angle = state.settings.minimap_angle
+    if Settings.validate('minimap_angle', angle) then return angle end
+    return 225
+  end
+
+  local function applyMinimap()
+    local button = state.minimap
+    if not button then return end
+    button:setShown(state.settings.minimap_button == true)
+    button:place(minimapAngle())
+  end
+
+  -- Silent by design: a missing minimap or options API only sets a status code, so the
+  -- one-line login output and an auto_probe=false login are both unaffected.
+  local function registerEntryPoints()
+    if state.entry_points_registered then return end
+    state.entry_points_registered = true
+    local widgets = ns.GuiWidgets.new(env, GuiText)
+    local ok, button, code = pcall(widgets.minimapButton, widgets, {
+      angle = minimapAngle,
+      onClick = function()
+        local window = getGui()
+        if window then window.toggle() end
+      end,
+      canDrag = function() return ns.Gui.combatGate(env) end,
+      onAngle = function(angle) state.actions.setSetting('minimap_angle', angle) end,
+    })
+    if ok and button then
+      state.minimap, state.gui_minimap_code = button, 'gui_minimap_registered'
+      applyMinimap()
+    else
+      state.gui_minimap_code = ok and code or 'gui_minimap_unavailable'
+    end
+    local fine, panel, failure = pcall(widgets.optionsPanel, widgets,
+      GuiText.options_intro, function()
+        local window = getGui()
+        if window then window.open() end
+      end)
+    if fine and panel then
+      state.options_panel, state.gui_options_code = panel, 'gui_options_registered'
+    else
+      state.gui_options_code = fine and failure or 'gui_options_unavailable'
+    end
+  end
+
   local function handleEvent(_, event, loadedAddon)
     if event == "ADDON_LOADED" and loadedAddon == addonName then
       bindSavedVariables()
-    elseif event == "PLAYER_LOGIN" and state.settings.auto_probe then
-      run()
+    elseif event == "PLAYER_LOGIN" then
+      pcall(registerEntryPoints)
+      if state.settings.auto_probe then run() end
     end
   end
 
@@ -489,24 +596,31 @@ function Diagnostics.attach(env)
     end
   end
 
+  local function refuse(message, code)
+    say(message)
+    return nil, code
+  end
+
   local function snapshot(profile)
-    if not state.persist then say('snapshot failed: saved variables unavailable'); return end
-    if type(profile) ~= 'string' or #profile < 1 or #profile > 80 or
-      not profile:match('^[A-Za-z0-9_-]+$') then
-      say('usage: /anavdiag snapshot <anonymous-profile-id> (1-80 letters, digits, _ or -)')
-      return
+    if not state.persist then
+      return refuse('snapshot failed: saved variables unavailable', 'snapshot_no_storage')
+    end
+    if not ns.Gui.validProfile(profile) then
+      return refuse('usage: /anavdiag snapshot <anonymous-profile-id> ' ..
+        '(1-80 letters, digits, _ or -)', 'snapshot_profile_invalid')
     end
     local report = Capabilities.probe(env)
     local build = report.build
     -- Admission enables guarded experimental reads; it does not verify capabilities.
     if not Capabilities.isCaptureTarget(build) then
-      say('snapshot failed: build is not an enabled experimental target'); return
+      return refuse('snapshot failed: build is not an enabled experimental target',
+        'snapshot_build_unrecorded')
     end
     local sequence = state.db.snapshot_sequence
     if sequence == nil then sequence = 0 end
     if type(sequence) ~= 'number' or sequence ~= math.floor(sequence) or
       sequence < 0 or sequence >= 1000000000 then
-      say('snapshot failed: invalid capture sequence'); return
+      return refuse('snapshot failed: invalid capture sequence', 'snapshot_sequence_invalid')
     end
     sequence = sequence + 1
     local stream = 'snapshot-stream-' .. profile
@@ -522,7 +636,7 @@ function Diagnostics.attach(env)
     local questApi = type(env.C_QuestLog) == 'table' and env.C_QuestLog or {}
     local quests, questDiagnostics = ns.Snapshot.readQuests(questApi.GetNumQuestLogEntries,
       questApi.GetInfo, context, metadata, questApi.IsComplete)
-    if not quests then say('snapshot failed: ' .. questDiagnostics); return end
+    if not quests then return refuse('snapshot failed: ' .. questDiagnostics, questDiagnostics) end
     local inventoryGetter
     if type(env.GetInventoryItemLink) == 'function' then
       inventoryGetter = function(slot) return env.GetInventoryItemLink('player', slot) end
@@ -539,10 +653,10 @@ function Diagnostics.attach(env)
         equipment={context=context, status='verified_available'}}}
     local captured, errorCode = ns.Snapshot.capture(spec, {level=function() return level end,
       quests=function() return quests end, equipment=function() return equipment end})
-    if not captured then say('snapshot failed: ' .. errorCode); return end
+    if not captured then return refuse('snapshot failed: ' .. errorCode, errorCode) end
     local text, storeCode = ns.Snapshot.store(state.db, captured,
       {fixture=false, locale=spec.locale})
-    if not text then say('snapshot failed: ' .. storeCode); return end
+    if not text then return refuse('snapshot failed: ' .. storeCode, storeCode) end
     state.db.snapshot_sequence = sequence
     state.db.snapshot_quest_diagnostics = questDiagnostics
     state.db.snapshot_equipment_diagnostics = equipmentDiagnostics
@@ -555,25 +669,72 @@ function Diagnostics.attach(env)
     if clockCode or metadata.clock_trust ~= 'trusted' then
       say('capture clock uncertain; use /anavdiag clock to inspect it before confirming trust')
     end
+    return true
   end
 
   local function clockCommand(action)
     local build = Capabilities.probe(env).build
     if not Capabilities.isCaptureTarget(build) then
-      say('clock unavailable: build is not an enabled experimental target'); return
+      return refuse('clock unavailable: build is not an enabled experimental target',
+        'clock_build_unrecorded')
     end
-    if action == 'clear' then clock:clear(); say('clock trust cleared'); return end
-    if action and action ~= 'trust' then say('usage: /anavdiag clock [trust|clear]'); return end
+    if action == 'clear' then clock:clear(); say('clock trust cleared'); return true end
+    if action and action ~= 'trust' then
+      return refuse('usage: /anavdiag clock [trust|clear]', 'clock_usage')
+    end
     local result, code
     if action == 'trust' then result, code = clock:confirm()
     else result, code = clock:probe() end
-    if not result then say('clock remains uncertain (' .. code .. ')'); return end
+    if not result then return refuse('clock remains uncertain (' .. code .. ')', code) end
     say('UTC epoch seconds: ' .. string.format('%.0f', result.utc_seconds) ..
       '; clock ' .. result.clock_trust)
     if action ~= 'trust' then
       say('Compare with trusted UTC on your PC. Only if it agrees, run ' ..
         '/anavdiag clock trust within 120 seconds. Trust resets on reload.')
     end
+    return true
+  end
+
+  local function runClock(action)
+    local ok, result, code = pcall(clockCommand, action)
+    if ok then return result, code end
+    clock:clear(); say('clock remains uncertain (clock_internal)')
+    return nil, 'clock_internal'
+  end
+
+  local function positionCommand()
+    local ok, result, code = pcall(function()
+      local build = Capabilities.probe(env).build
+      if not Capabilities.isCaptureTarget(build) then
+        return refuse('position unavailable: build is not an enabled experimental target',
+          'position_build_unrecorded')
+      end
+      local mapApi = type(env.C_Map) == 'table' and env.C_Map or {}
+      local getMap, getPoint
+      if type(mapApi.GetBestMapForUnit) == 'function' then
+        getMap = function() return mapApi.GetBestMapForUnit('player') end
+      end
+      if type(mapApi.GetPlayerMapPosition) == 'function' then
+        getPoint = function(map) return mapApi.GetPlayerMapPosition(map, 'player') end
+      end
+      local diagnostic = ns.Snapshot.positionDiagnostics(getMap, getPoint)
+      state.position_diagnostics = diagnostic
+      if state.persist then state.db.position_diagnostics = diagnostic end
+      say('position diagnostic: ' .. diagnostic.code ..
+        '; snapshot location unknown (map/floor/instance/coordinate meaning unverified)')
+      return true
+    end)
+    if ok then return result, code end
+    say('position diagnostic failed (position_internal)')
+    return nil, 'position_internal'
+  end
+
+  local function copyAction(kind)
+    local ok, result, code = pcall(copyExport, kind)
+    if ok then return result, code end
+    state.copy_ui_code = 'copy_ui_unavailable'
+    say('copy unavailable (copy_ui_unavailable); saved exports unchanged')
+    return nil, 'copy_ui_unavailable'
   end
 
   local function onSlash(message)
@@ -586,34 +747,12 @@ function Diagnostics.attach(env)
     elseif command == 'copy' then
       local kind = message:match('^%s*%S+%s*(.-)%s*$')
       if kind == '' then kind = 'diagnostic' end
-      if kind ~= 'diagnostic' and kind ~= 'snapshot' then
-        say('usage: /anavdiag copy [snapshot]'); return
+      if kind ~= 'diagnostic' and kind ~= 'snapshot' and kind ~= 'session' then
+        say('usage: /anavdiag copy [snapshot|session]'); return
       end
-      if not pcall(copyExport, kind) then
-        state.copy_ui_code = 'copy_ui_unavailable'
-        say('copy unavailable (copy_ui_unavailable); saved exports unchanged')
-      end
+      copyAction(kind)
     elseif command == 'position' then
-      local ok = pcall(function()
-        local build = Capabilities.probe(env).build
-        if not Capabilities.isCaptureTarget(build) then
-          say('position unavailable: build is not an enabled experimental target'); return
-        end
-        local mapApi = type(env.C_Map) == 'table' and env.C_Map or {}
-        local getMap, getPoint
-        if type(mapApi.GetBestMapForUnit) == 'function' then
-          getMap = function() return mapApi.GetBestMapForUnit('player') end
-        end
-        if type(mapApi.GetPlayerMapPosition) == 'function' then
-          getPoint = function(map) return mapApi.GetPlayerMapPosition(map, 'player') end
-        end
-        local result = ns.Snapshot.positionDiagnostics(getMap, getPoint)
-        state.position_diagnostics = result
-        if state.persist then state.db.position_diagnostics = result end
-        say('position diagnostic: ' .. result.code ..
-          '; snapshot location unknown (map/floor/instance/coordinate meaning unverified)')
-      end)
-      if not ok then say('position diagnostic failed (position_internal)') end
+      positionCommand()
     elseif command == "clock" then
       local action = type(message) == 'string' and message:match('^%s*%S+%s+(%S+)%s*$')
       if type(message) == 'string' and
@@ -621,21 +760,19 @@ function Diagnostics.attach(env)
         say('usage: /anavdiag clock [trust|clear]'); return
       end
       if action then action = action:lower() end
-      if not pcall(clockCommand, action) then
-        clock:clear(); say('clock remains uncertain (clock_internal)')
-      end
+      runClock(action)
     elseif command == "snapshot" then
       local profile = type(message) == 'string' and message:match('^%s*%S+%s+(%S+)%s*$')
       if not pcall(snapshot, profile) then say('snapshot failed: capture_internal') end
     elseif command == "status" then
       if state.report then
-        say(summarize(state.report, state.persist, state.last_code))
+        say(summarize(state.report, state.stored, state.last_code))
       else
         say("no probe has run yet")
       end
     else
       say(Version.addon .. " usage: " .. SLASH_COMMAND ..
-        " probe | status | copy [snapshot] | position | clock [trust|clear] | " ..
+        " probe | status | copy [snapshot|session] | position | clock [trust|clear] | " ..
         "snapshot <anonymous-profile-id>")
     end
   end
@@ -660,12 +797,7 @@ function Diagnostics.attach(env)
     if not ok then recorder:unavailable();code='session_observation_unavailable' end
     if not ok or not result then say('quest milestone recording stopped (' .. code .. ')') end
   end
-  local function sessionSlash(message)
-    local command, profile = '', nil
-    if type(message) == 'string' then
-      command, profile = message:match('^%s*(%S+)%s*(.-)%s*$')
-      command = command and command:lower() or ''
-    end
+  local function sessionAct(command, profile)
     if command == 'status' then
       local status = recorder:status()
       say('session ' .. status.phase .. '; events=' .. status.events ..
@@ -677,49 +809,57 @@ function Diagnostics.attach(env)
         'Manual recording mode; quest turn-in events are not collected')
       say(state.quest_turn_in_event_available and 'Quest turn-in event registration available' or
         'Quest turn-in event registration unavailable')
-      return
+      return status
     end
     if command == 'export' then
       if not state.persist then
-        say('session export failed: saved variables unavailable'); return
+        return refuse('session export failed: saved variables unavailable',
+          'session_no_storage')
       end
       local text, code = recorder:export(state.db)
-      if not text then say('session export failed (' .. code .. '); prior export retained')
-      else say('session export stored (' .. #text ..
-        ' bytes); reload/logout, then import AzerothNavigatorDB / session_export') end
-      return
+      if not text then
+        return refuse('session export failed (' .. code .. '); prior export retained', code)
+      end
+      say('session export stored (' .. #text ..
+        ' bytes); reload/logout, then import AzerothNavigatorDB / session_export')
+      return true
     end
-    local actions={start=true, ['start-quests']=true, sample=true,
+    local known={start=true, ['start-quests']=true, sample=true,
       pause=true, resume=true, stop=true}
-    if not actions[command] then
-      say('/anavsession start|start-quests <anonymous-profile-id> | sample | pause | ' ..
-        'resume | stop | export | status')
-      return
+    if not known[command] then
+      return refuse('/anavsession start|start-quests <anonymous-profile-id> | sample | ' ..
+        'pause | resume | stop | export | status', 'session_usage')
     end
     local build = Capabilities.probe(env).build
     if not Capabilities.isCaptureTarget(build) then
-      say('session unavailable: build is not an enabled experimental target'); return
+      return refuse('session unavailable: build is not an enabled experimental target',
+        'session_build_unrecorded')
     end
     if command~='start' and command~='start-quests' and recordingBuild and
       buildIdentity(build)~=recordingBuild then
-      recorder:unavailable();say('session stopped: recorded build context changed');return
+      recorder:unavailable()
+      return refuse('session stopped: recorded build context changed', 'session_build_changed')
     end
     local result, code
     if command == 'start' or command == 'start-quests' then
       if command=='start-quests' and not state.quest_turn_in_event_available then
-        say('session quest mode unavailable: event support not established');return
+        return refuse('session quest mode unavailable: event support not established',
+          'session_quest_unavailable')
       end
-      if not state.persist then say('session start failed: saved variables unavailable'); return end
-      if type(profile) ~= 'string' or #profile < 1 or #profile > 80 or
-        not profile:match('^[A-Za-z0-9_-]+$') then
-        say('usage: /anavsession start <anonymous-profile-id> (1-80 letters, digits, _ or -)')
-        return
+      if not state.persist then
+        return refuse('session start failed: saved variables unavailable',
+          'session_no_storage')
+      end
+      if not ns.Gui.validProfile(profile) then
+        return refuse('usage: /anavsession start <anonymous-profile-id> ' ..
+          '(1-80 letters, digits, _ or -)', 'session_profile_invalid')
       end
       local sequence = state.db.session_recording_sequence
       if sequence == nil then sequence = 0 end
       if type(sequence) ~= 'number' or sequence ~= math.floor(sequence) or
         sequence < 0 or sequence >= 1000000000 then
-        say('session start failed: invalid recording sequence'); return
+        return refuse('session start failed: invalid recording sequence',
+          'session_sequence_invalid')
       end
       sequence = sequence + 1
       result, code = recorder:start({session='recording-' .. profile .. '-' .. sequence,
@@ -749,6 +889,126 @@ function Diagnostics.attach(env)
     if status.clock_warning then say('session clock warning: ' .. status.clock_warning) end
     if status.observation_warning then
       say('session observation warning: ' .. status.observation_warning)
+    end
+    return result, code
+  end
+
+  local function sessionSlash(message)
+    local command, profile = '', nil
+    if type(message) == 'string' then
+      command, profile = message:match('^%s*(%S+)%s*(.-)%s*$')
+      command = command and command:lower() or ''
+    end
+    return sessionAct(command, profile)
+  end
+
+  -- Changes one window-settable preference; every value is validated first.
+  local function setSetting(key, value)
+    if not GUI_SETTABLE[key] or not Settings.validate(key, value) then
+      return nil, 'setting_invalid'
+    end
+    state.settings[key] = value
+    if state.persist then state.db.settings[key] = value end
+    if key == 'minimap_button' or key == 'minimap_angle' then applyMinimap() end
+    if type(value) == 'boolean' then note(key .. ' set to ' .. tostring(value)) end
+    return true
+  end
+
+  -- What the window calls. Each action returns a result (or nil and a code), says what
+  -- happened through say, and raises nothing.
+  local function safe(code, fn)
+    return function(...)
+      local ok, first, second = pcall(fn, ...)
+      if ok then return first, second end
+      say('action failed (' .. code .. ')')
+      return nil, code
+    end
+  end
+  local function withPlan(fn)
+    return safe('plan_internal', function(...)
+      local controls, code = ensurePlanControls()
+      if not controls then say('plan unavailable: ' .. code); return nil, code end
+      return fn(controls, ...)
+    end)
+  end
+  local function sessionAction(command)
+    return safe('session_internal', function(profile) return sessionAct(command, profile) end)
+  end
+  state.actions = {
+    note = note,
+    probe = safe('probe_internal', function()
+      local _, _, code = run()
+      return true, code
+    end),
+    status = function()
+      local text = state.report and summarize(state.report, state.stored, state.last_code) or
+        'no probe has run yet'
+      say(text)
+      return text
+    end,
+    copy = copyAction,
+    position = positionCommand,
+    snapshot = function(profile)
+      local ok, result, code = pcall(snapshot, profile)
+      if ok then return result, code end
+      say('snapshot failed: capture_internal')
+      return nil, 'capture_internal'
+    end,
+    clock = {
+      check = function() return runClock(nil) end,
+      trust = function() return runClock('trust') end,
+      clear = function() return runClock('clear') end,
+    },
+    plan = {
+      paste = safe('plan_internal', function() pastePlan(); return true end),
+      import = safe('plan_internal', planImport),
+      clear = withPlan(clearPlan),
+      show = withPlan(function(controls) return setHudVisible(controls, true) end),
+      hide = withPlan(function(controls) return setHudVisible(controls, false) end),
+      size = withPlan(function(controls, width, height)
+        return applyAppearance(controls, 'size', tostring(width) .. ' ' .. tostring(height))
+      end),
+      font = withPlan(function(controls, percent)
+        return applyAppearance(controls, 'font', tostring(percent))
+      end),
+      contrast = withPlan(function(controls, mode)
+        return applyAppearance(controls, 'contrast', tostring(mode))
+      end),
+      reset = withPlan(function(controls) return applyAppearance(controls, 'reset', '') end),
+      status = withPlan(planStatus),
+    },
+    session = {
+      start = sessionAction('start'),
+      startQuests = sessionAction('start-quests'),
+      sample = sessionAction('sample'),
+      pause = sessionAction('pause'),
+      resume = sessionAction('resume'),
+      stop = sessionAction('stop'),
+      export = sessionAction('export'),
+      status = sessionAction('status'),
+    },
+    setSetting = setSetting,
+    gui = {
+      toggle = function() local window = getGui(); return window and window.toggle() end,
+      open = function() local window = getGui(); return window and window.open() end,
+      close = function() local window = getGui(); return window and window.close() end,
+    },
+  }
+
+  -- /anav toggles the window; /anav help lists every command in chat.
+  state.onGuiSlash = function(message)
+    local command = ''
+    if type(message) == 'string' then command = message:lower():match('^%s*(%S*)') or '' end
+    if command == 'help' then
+      chat(Version.addon .. ' window: /anav toggles it. Commands:')
+      for _, line in ipairs(GuiText.help_lines) do chat(line) end
+    elseif command == '' then
+      local window = getGui()
+      if not window or not pcall(window.toggle) then
+        say('window unavailable (gui_ui_unavailable)')
+      end
+    else
+      chat('usage: /anav [help]')
     end
   end
 
@@ -803,6 +1063,8 @@ function Diagnostics.attach(env)
     env.SLASH_ANAVPLAN1 = '/anavplan'
     env.SlashCmdList.ANAVSESSION = state.onSessionSlash
     env.SLASH_ANAVSESSION1 = '/anavsession'
+    env.SlashCmdList.ANAV = state.onGuiSlash
+    env.SLASH_ANAV1 = '/anav'
   end
 
   return state

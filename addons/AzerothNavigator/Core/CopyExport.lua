@@ -3,10 +3,13 @@ local _, ns = ...
 local Copy = {}
 
 function Copy.select(db, kind)
-  if kind ~= 'diagnostic' and kind ~= 'snapshot' then return nil, 'copy_kind_invalid' end
+  local keys = {diagnostic = 'diagnostic_export', snapshot = 'snapshot_export',
+    session = 'session_export'}
+  local limits = {diagnostic = ns.Export.MAX_BYTES, snapshot = ns.Snapshot.MAX_BYTES,
+    session = ns.Session.MAX_BYTES}
+  if type(kind) ~= 'string' or not keys[kind] then return nil, 'copy_kind_invalid' end
   if type(db) ~= 'table' or db.db_version ~= 1 then return nil, 'copy_db_unavailable' end
-  local key = kind == 'snapshot' and 'snapshot_export' or 'diagnostic_export'
-  local limit = kind == 'snapshot' and ns.Snapshot.MAX_BYTES or ns.Export.MAX_BYTES
+  local key, limit = keys[kind], limits[kind]
   local text = db[key]
   if text == nil then return nil, 'copy_export_missing' end
   if type(text) ~= 'string' or #text == 0 then return nil, 'copy_export_invalid' end
@@ -15,6 +18,11 @@ function Copy.select(db, kind)
   if kind == 'snapshot' then
     if text:sub(1, 6) ~= 'ANAV1:' then return nil, 'copy_export_invalid' end
     json = text:sub(7)
+  elseif kind == 'session' then
+    if text:sub(1, #ns.Session.PREFIX) ~= ns.Session.PREFIX then
+      return nil, 'copy_export_invalid'
+    end
+    json = text:sub(#ns.Session.PREFIX + 1)
   end
   local value = ns.Decode.decode(json, {bytes=limit})
   if type(value) ~= 'table' or ns.Decode.kind(value) ~= 'object' then
@@ -23,6 +31,9 @@ function Copy.select(db, kind)
   if kind == 'snapshot' then
     if value.kind ~= 'character_snapshot' or value.schema_version ~= 1 or
       ns.Decode.kind(value.payload) ~= 'object' then return nil, 'copy_export_invalid' end
+  elseif kind == 'session' then
+    if value.format ~= 'anav-session-events' or value.version ~= 1 or
+      ns.Decode.kind(value.batch) ~= 'object' then return nil, 'copy_export_invalid' end
   elseif value.format ~= ns.Version.format or value.version ~= ns.Version.format_version then
     return nil, 'copy_export_invalid'
   end
