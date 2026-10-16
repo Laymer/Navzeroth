@@ -83,6 +83,26 @@ fn run(app: &SnapshotApplication, input: &Value) -> Value {
     )
     .unwrap()
 }
+/// Every golden that TypeScript consumes is compared here, not only `report.json`.
+/// `UPDATE_ROUTE_ACQUISITION_GOLDENS` rewrites them; otherwise any drift fails.
+fn check_golden(name: &str, value: &Value) {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/desktop/route-acquisition");
+    let path = dir.join(format!("{name}.json"));
+    let text = format!("{}\n", serde_json::to_string_pretty(value).unwrap());
+    if std::env::var_os("UPDATE_ROUTE_ACQUISITION_GOLDENS").is_some() {
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(&path, text).unwrap();
+        return;
+    }
+    let committed = std::fs::read_to_string(&path).unwrap_or_else(|_| {
+        panic!("missing golden {name}; run with UPDATE_ROUTE_ACQUISITION_GOLDENS=1")
+    });
+    assert_eq!(
+        committed, text,
+        "{name} drifted; rerun with UPDATE_ROUTE_ACQUISITION_GOLDENS=1 and review the diff"
+    );
+}
 #[test]
 fn detour_rejoins_selected_route_and_reserves_baseline_return_once() {
     let (app, input, _content) = setup(|_| {});
@@ -99,10 +119,7 @@ fn detour_rejoins_selected_route_and_reserves_baseline_return_once() {
     assert_eq!(r["assessment"]["budgeted_effort_ms"], 37000);
     assert_eq!(r["total_with_reservation_ms"], 98000);
     assert_eq!(output, run(&app, &input));
-    if std::env::var_os("UPDATE_ROUTE_ACQUISITION_GOLDENS").is_some() {
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../fixtures/desktop/route-acquisition");
-        std::fs::create_dir_all(&dir).unwrap();
+    {
         for (name, value) in [
             ("baseline", output["baseline"].clone()),
             ("report", output.clone()),
@@ -132,11 +149,7 @@ fn detour_rejoins_selected_route_and_reserves_baseline_return_once() {
                 .unwrap(),
             ),
         ] {
-            std::fs::write(
-                dir.join(format!("{name}.json")),
-                format!("{}\n", serde_json::to_string_pretty(&value).unwrap()),
-            )
-            .unwrap();
+            check_golden(name, &value);
         }
     }
     let committed: Value = serde_json::from_str(include_str!(
@@ -252,18 +265,12 @@ fn optional_gear_receives_only_authoritative_derived_effort() {
     input["opportunities"][0]["formation_ms"] = json!({"status":"known","value":2000});
     input["opportunities"][0]["attempt_ms"] = json!({"status":"known","value":10000});
     let r = run(&app, &input);
-    if std::env::var_os("UPDATE_ROUTE_ACQUISITION_GOLDENS").is_some() {
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../fixtures/desktop/route-acquisition");
+    {
         for (name, value) in [
             ("report-with-gear", r.clone()),
             ("gear-request", input["gear"].clone()),
         ] {
-            std::fs::write(
-                dir.join(format!("{name}.json")),
-                format!("{}\n", serde_json::to_string_pretty(&value).unwrap()),
-            )
-            .unwrap();
+            check_golden(name, &value);
         }
     }
     assert_eq!(
