@@ -33,16 +33,14 @@ shared checkout was not touched. Documentation and production doc-comments only.
 
 ## Checks run
 
-See the PR description; exact commands and counts are repeated here.
-
-- `cargo test --locked -p azeroth-cli`: all suites passed, 0 failed (3 ignored in total
-  across suites), run with `CARGO_TARGET_DIR=/home/laymer/Devel/cargo-targets/g1`.
+- `cargo test --locked -p azeroth-cli`: 141 passed, 0 failed, 3 ignored (summed over all
+  suites), run with `CARGO_TARGET_DIR=/home/laymer/Devel/cargo-targets/g1`.
 - `cargo run --locked -p azeroth-cli -- release-readiness --root . --version 0.9.1`
   on the committed tree: exit 0, publication allowed, stable and candidate not
   ready, 66 blockers, 26 pending, 0 verified evidence files and packs. A dirty tree
   reports 67 (extra "working tree contains changes" blocker).
 - `cargo fmt --all --check` and `cargo clippy --locked -p azeroth-core --all-targets
-  -- -D warnings` for the doc-comment edits (results in the PR description).
+  -- -D warnings` for the doc-comment edits: both clean.
 - Relative-link check (node script) over all changed markdown.
 - `gh release view`, `gh release download`, `sha256sum -c`, `gh run view`, `gh api`
   (read-only) for every published fact.
