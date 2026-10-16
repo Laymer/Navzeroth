@@ -129,6 +129,24 @@
       ]
     }
   ],
+  "pages": {
+    "nodes": {
+      "catalog_sha256": "843c7cd8a0fc88f53ef3f14f5613519243bc8d914bc4ceed2ac3311ddd9f64a7",
+      "collection": "nodes",
+      "next_offset": null,
+      "offset": 0,
+      "revision": "synthetic-planning-v1",
+      "total": 3
+    },
+    "objectives": {
+      "catalog_sha256": "843c7cd8a0fc88f53ef3f14f5613519243bc8d914bc4ceed2ac3311ddd9f64a7",
+      "collection": "objectives",
+      "next_offset": null,
+      "offset": 0,
+      "revision": "synthetic-planning-v1",
+      "total": 1
+    }
+  },
   "revision": "synthetic-planning-v1",
   "snapshot_id": "demo-snapshot-001"
 }
