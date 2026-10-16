@@ -6,6 +6,17 @@ use azeroth_lua_harness::read_text;
 use common::*;
 use serde_json::Value;
 use std::collections::BTreeSet;
+use std::sync::Mutex;
+
+/// Both tests that touch the SavedVariables sample hold this, so update mode never
+/// lets the reader see a truncated file.
+static SAMPLE_LOCK: Mutex<()> = Mutex::new(());
+
+fn sample_guard() -> std::sync::MutexGuard<'static, ()> {
+    SAMPLE_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
 
 const STATUS_VOCABULARY: [&str; 5] = [
     "verified available",
@@ -155,22 +166,85 @@ fn failing_client() -> azeroth_lua_harness::Sandbox {
     sandbox
 }
 
+/// `UPDATE_ADDON_FIXTURES=1 cargo test -p azeroth-lua-harness --test template_and_fixtures`
+/// regenerates the three golden exports and the export line of the SavedVariables
+/// sample from the addon sources. Without it the files are only compared.
+fn update_requested() -> bool {
+    std::env::var_os("UPDATE_ADDON_FIXTURES").is_some()
+}
+
+fn write_fixture(name: &str, text: &str) {
+    std::fs::write(path(&format!("fixtures/addon/{name}")), format!("{text}\n")).unwrap();
+}
+
+/// The Lua string literal the SavedVariables writer would emit for `text`.
+fn lua_literal(text: &str) -> String {
+    format!("\"{}\"", text.replace('\\', "\\\\").replace('"', "\\\""))
+}
+
+/// Replaces the `["diagnostic_export"]` line of the sample with the given export.
+fn sample_with_export(sample: &str, export: &str) -> String {
+    let mut replaced = false;
+    let lines: Vec<String> = sample
+        .lines()
+        .map(|line| {
+            if line.trim_start().starts_with("[\"diagnostic_export\"] = ") {
+                replaced = true;
+                format!("\t[\"diagnostic_export\"] = {},", lua_literal(export))
+            } else {
+                line.to_owned()
+            }
+        })
+        .collect();
+    assert!(replaced, "the sample has an export line");
+    format!("{}\n", lines.join("\n"))
+}
+
 #[test]
 fn golden_exports_match_the_probe_byte_for_byte() {
+    let _guard = sample_guard();
     let sandbox = synthetic_client();
     sandbox.load_toc_files().unwrap();
     let probe = "return assert(ns.Export.encode(ns.Capabilities.probe(_G)))";
     let present: String = sandbox.run("present", probe).unwrap();
-    assert_eq!(present, golden("export-synthetic-all-present.json"));
     let empty: String = strict_core()
         .run(
             "empty",
             "return assert(ns.Export.encode(ns.Capabilities.probe({})))",
         )
         .unwrap();
-    assert_eq!(empty, golden("export-synthetic-empty-environment.json"));
     let failed: String = failing_client().run("failed", probe).unwrap();
+    if update_requested() {
+        write_fixture("export-synthetic-all-present.json", &present);
+        write_fixture("export-synthetic-empty-environment.json", &empty);
+        write_fixture("export-synthetic-build-call-failed.json", &failed);
+        let sample_path = path("fixtures/addon/savedvariables-sample.synthetic.lua");
+        let sample = read_text(&sample_path).unwrap();
+        std::fs::write(&sample_path, sample_with_export(&sample, &present)).unwrap();
+    }
+    assert_eq!(present, golden("export-synthetic-all-present.json"));
+    assert_eq!(empty, golden("export-synthetic-empty-environment.json"));
     assert_eq!(failed, golden("export-synthetic-build-call-failed.json"));
+}
+
+#[test]
+fn the_fixture_writer_is_deterministic_and_reproduces_the_committed_sample() {
+    let _guard = sample_guard();
+    // Regenerating from the current sources must be a no-op on a clean tree.
+    let sandbox = synthetic_client();
+    sandbox.load_toc_files().unwrap();
+    let present: String = sandbox
+        .run(
+            "present",
+            "return assert(ns.Export.encode(ns.Capabilities.probe(_G)))",
+        )
+        .unwrap();
+    let sample = read_text(&path("fixtures/addon/savedvariables-sample.synthetic.lua")).unwrap();
+    assert_eq!(sample_with_export(&sample, &present), sample);
+    assert_eq!(
+        sample_export_string(&sample_with_export(&sample, &present)),
+        present
+    );
 }
 
 #[test]
@@ -229,6 +303,7 @@ fn sample_export_string(sample: &str) -> String {
 
 #[test]
 fn savedvariables_sample_embeds_the_all_present_export_and_is_marked_unverified() {
+    let _guard = sample_guard();
     let sample = read_text(&path("fixtures/addon/savedvariables-sample.synthetic.lua")).unwrap();
     assert!(sample.contains("SYNTHETIC") && sample.contains("UNVERIFIED"));
     assert!(sample.contains("never execute"));

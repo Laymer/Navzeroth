@@ -5,6 +5,12 @@ interface16001. Frame methods and an actual boolean combat query are required.
 Synthetic harness checks establish engineering behavior; real-client UI, taint,
 focus, action-bar and display acceptance remains unverified.
 
+The same controls are on the HUD and Plan tabs of the in-game window (`/anav`, see
+[ADDON_GUI.md](ADDON_GUI.md)); each button calls the matching action below, refuses in
+combat or when the combat state is unknown, and shows the requested versus applied
+values and the application code in words. The window adds no anchor control: it has no
+slash equivalent, and dragging plus reset already cover position.
+
 Use explicit commands:
 
 - `/anavplan size 420 220`: width280–960, height160–720 logical UI units.

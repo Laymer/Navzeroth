@@ -80,3 +80,23 @@ confirmation and uncertain-age display after reload for the previously recorded
 flow results. No raw exports, inspected addon revision, exact displayed values,
 combat/zone conditions or broader restriction evidence were supplied here.
 Earlier unverified statements remain historical; other bindings remain unverified.
+
+## Client 1.60.1.70425 development admission
+
+On 2026-10-16 the owner's selected installation's `.build.info` reported product
+`wow_classic_beta`, version `1.60.1.70425` (see
+[LOCAL_DATA.md](../data/LOCAL_DATA.md)). That is **installation metadata only, with no
+addon-run evidence**: no `GetBuildInfo` result, probe export, capture or live check on
+70425 has been recorded. `Capabilities.isCaptureTarget` and `Capabilities.admission`
+therefore admit the exact tuple `1.60.1` / `70425` / `16001` for **development capture
+only**, labelled `development_unverified` in the addon and its window.
+
+- The admission enables the same guarded experimental reads as the other admitted
+  builds; it verifies no capability. Every probe row stays `untested` and no status in
+  this document is promoted.
+- Every export and snapshot records the exact build string, so 70425 data is never
+  relabelled 70374 and the two are never mixed silently.
+- The 1.0 release target and all LIVE acceptance rows stay bound to 1.60.1.70374.
+  `azeroth-cli capture` keeps reporting `target_tuple_matches=false` for 70425, which is
+  correct. The guided acceptance kit still requires 70374.
+- Neighbouring builds (70424, 70426) are rejected; only exact tuples are admitted.

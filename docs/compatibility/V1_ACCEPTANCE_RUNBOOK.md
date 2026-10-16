@@ -433,6 +433,45 @@ memory growth across repeated equal workloads. Profile representative addon even
 bursts on the recorded client using only permitted profiling; retain this as
 supporting `LIVE-HUD` evidence. Missing measurement stays unverified.
 
+## LIVE-GUI — the in-game window (UNVERIFIED; supporting evidence, not a release gate row)
+
+This section is **not** in `release/v1/acceptance-evidence.json` and no release gate
+reads it. It lists what the synthetic widget mock in `crates/lua-harness/tests/common/ui.rs`
+cannot establish about the window described in
+[ADDON_GUI.md](ADDON_GUI.md). Until an operator runs it on the recorded client, every
+item is **unverified**. The slash-command steps of LIVE-HUD and LIVE-PLAN stay valid and
+are not replaced by the window. Record the exact build first: a result on 70425 is
+development evidence for the `development_unverified` label only and never satisfies a
+70374 row.
+
+1. **Entry points.** Run `/anav`; click the minimap button if one appears; open
+   Options > AddOns and use **Open Azeroth Navigator**. Record which of the three exist,
+   the status codes from `/dump` if you can read them, and whether Escape closes the
+   window and does not leave the game menu blocked.
+2. **Templates.** Look at the window: panel, tabs, buttons, check boxes, edit boxes and
+   the scrolling plan box. Record any control that falls back to a plain colour frame
+   and any missing texture or unreadable text. Check every text is readable without colour.
+3. **Tooltips.** Hover every control on every tab. Each must show a title, a body, a
+   `Slash command:` line and a `Gate:` line, and hide on leave. Record controls without a
+   tooltip and any tooltip that stays shown or is clipped.
+4. **Combat.** Out of combat open the window, then enter combat. Every action button must
+   refuse and say so in the footer; closing and switching tabs still work. `/anav` and the
+   minimap button must refuse to open during combat. Record any error or taint message.
+5. **Taint, focus and action bars.** Opening must not take keyboard focus: movement keys
+   and action-bar keys keep working while the window is open and no edit box is focused.
+   Record any "action blocked" message, changed keybinding, or spell/action-bar change
+   during and after use.
+6. **Minimap.** Drag the button around the rim, release, confirm the drag does not also
+   open the window, `/reload` and confirm the angle persists; hide it with the Minimap button check box and confirm it returns on enable.
+7. **Plan box.** Paste a real exported ANAV1 plan (up to 32 KiB) with Ctrl+V into the Plan
+   tab, import it, scroll the reason inspector, and confirm an oversize paste is refused
+   rather than truncated. Do not record private plan contents.
+8. **Clock.** Use Check clock and Trust clock on the Diagnostics tab following the same
+   compare-then-confirm rule as LIVE-CAPTURE, and confirm Trust clock is unavailable
+   without a check and after 120 seconds.
+9. **Settings.** Toggle each Settings check box, `/reload`, and confirm the values persist
+   in `AzerothNavigatorDB.settings` and `Probe at login` still behaves as described.
+
 ## Expand the rows to every mandatory inventory unit
 
 The original paladin/mage duo is a required integrated scenario, not a substitute

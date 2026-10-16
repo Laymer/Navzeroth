@@ -3,6 +3,8 @@
 //! says anything about real Forever behaviour.
 #![allow(dead_code)]
 
+pub mod ui;
+
 use azeroth_lua_harness::{EnvMode, Sandbox, repo_root};
 use serde_json::Value;
 use std::path::PathBuf;

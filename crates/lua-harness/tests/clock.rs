@@ -171,3 +171,65 @@ fn confirmed_capture_is_fresh_in_desktop_and_reload_requires_new_confirmation() 
         )
         .unwrap();
 }
+
+#[test]
+fn status_is_read_only_and_reports_pending_age_and_trust_without_changing_either() {
+    let sandbox = common::strict_core();
+    sandbox
+        .run::<()>(
+            "status",
+            r#"
+      local wall, mono = 1791792000, 100
+      local clock = ns.Clock.new(function() return wall end, function() return mono end)
+      local s = clock:status()
+      assert(s.available and not s.pending and not s.trusted and not s.confirmable)
+      assert(s.age_seconds == nil and s.pending_utc_seconds == nil)
+      assert(clock:probe())
+      wall, mono = wall + 30, mono + 30
+      for _ = 1, 3 do -- repeated reads change nothing
+        s = clock:status()
+        assert(s.pending and s.age_seconds == 30 and s.confirmable and not s.trusted)
+        assert(s.pending_utc_seconds == 1791792000)
+      end
+      wall, mono = wall + 91, mono + 91 -- 121 seconds old: pending, no longer confirmable
+      s = clock:status()
+      assert(s.pending and s.age_seconds == 121 and not s.confirmable)
+      wall, mono = 1791792030, 130
+      assert(clock:status().confirmable)
+      assert(clock:confirm().clock_trust == 'trusted')
+      s = clock:status()
+      assert(s.trusted and not s.pending and not s.confirmable)
+      -- a jump hides trust in the read-only view without clearing it; undoing it restores
+      wall = wall + 100
+      assert(not clock:status().trusted)
+      wall = wall - 100
+      assert(clock:status().trusted)
+      assert(clock:capture().clock_trust == 'trusted')
+      -- capture() is the only call that revokes trust on a jump
+      wall = wall + 100
+      assert(clock:status().trusted == false)
+      assert(clock:capture().clock_trust == 'uncertain')
+      wall = wall - 100
+      assert(clock:status().trusted == false)
+      -- an incoherent pending probe is not confirmable and has no age
+      assert(clock:probe())
+      mono = mono - 5
+      s = clock:status()
+      assert(s.pending and s.age_seconds == nil and not s.confirmable)
+      -- unavailable sources are reported, not guessed
+      s = ns.Clock.new(nil, nil):status()
+      assert(not s.available and not s.pending and not s.trusted)
+      s = ns.Clock.new(function() error('private error') end, function() return 1 end):status()
+      assert(not s.available)
+      -- zero is a reading, not a missing value
+      local zero = ns.Clock.new(function() return 0 end, function() return 0 end)
+      assert(zero:probe())
+      s = zero:status()
+      assert(s.available and s.pending and s.pending_utc_seconds == 0 and s.age_seconds == 0)
+      assert(s.confirmable)
+      zero:clear()
+      assert(not zero:status().pending)
+    "#,
+        )
+        .unwrap();
+}
