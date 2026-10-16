@@ -17,6 +17,7 @@ import { fileURLToPath } from "node:url";
 import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
+  IpcLog, freshenSnapshotText, migrationSummary,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -60,7 +61,9 @@ async function dbSummary(db) {
   try {
     const m = conn.prepare("SELECT COUNT(*) AS n, MAX(version) AS v FROM schema_migrations").get();
     const tables = conn.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all().map((r) => r.name);
-    return { migrations: Number(m.n), max_migration_version: Number(m.v), tables };
+    const summary = migrationSummary(m.n, m.v);
+    if (summary.max_migration_version === null) throw new Error("schema_migrations is empty: the migration version is unknown");
+    return { ...summary, tables };
   } finally { conn.close(); }
 }
 
@@ -81,7 +84,11 @@ const outDir = resolve(args.out ? dirname(args.out) : join(process.cwd(), "nativ
 mkdirSync(outDir, { recursive: true });
 const requirePw = createRequire(join(repoRoot, "apps", "desktop", "package.json"));
 const { chromium } = requirePw("@playwright/test");
-const snapshotText = readFileSync(join(repoRoot, "fixtures", "transport", "anav1-character-snapshot.txt"), "utf8").trim();
+const fixtureText = readFileSync(join(repoRoot, "fixtures", "transport", "anav1-character-snapshot.txt"), "utf8").trim();
+// The committed fixture has fixed capture times, so the backend correctly calls it stale and refuses to
+// plan it. The driver re-times only the three capture-time fields to the runner's clock (still
+// fixture:true, still labelled synthetic) so planning, route inspection and export run natively.
+const snapshotText = freshenSnapshotText(fixtureText, Date.now());
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let child = null;
@@ -166,12 +173,13 @@ const violations = [];
 const consoleErrors = [];
 const pageErrors = [];
 
-const ipcLog = [];
+const ipcLog = new IpcLog(600);
+const nonNativeAlerts = [];
 /** Observes native IPC from outside the page (http://ipc.localhost/<command>); the page is never patched. */
 function watchIpc(page) {
   const t0 = Date.now();
   const commandOf = (url) => { try { return new URL(url).pathname.replace(/^\//, ""); } catch { return url; } };
-  const push = (line) => { ipcLog.push(line); if (ipcLog.length > 600) ipcLog.shift(); };
+  const push = (line) => ipcLog.push(line);
   page.on("request", (request) => { if (request.url().includes("ipc.localhost")) push(`${Date.now() - t0}ms -> ${commandOf(request.url())} (${request.method()})`); });
   page.on("response", async (response) => {
     if (!response.url().includes("ipc.localhost")) return;
@@ -193,7 +201,9 @@ async function settle(page) {
 }
 
 async function alertTexts(page) {
-  return (await page.getByRole("alert").allInnerTexts()).map((t) => t.trim()).filter(Boolean);
+  const texts = (await page.getByRole("alert").allInnerTexts()).map((t) => t.trim()).filter(Boolean);
+  for (const t of texts) if (isNonNativeAlert(t) && !nonNativeAlerts.includes(t)) nonNativeAlerts.push(t);
+  return texts;
 }
 
 /** Run fn; on failure attach the visible alerts, status text, main text and a screenshot to the error. */
@@ -208,7 +218,7 @@ async function withDiagnostics(page, label, fn) {
       const controls = await page.evaluate(() => [...document.querySelectorAll("main select, main input, main button")].slice(0, 400)
         .filter((e) => e.matches("select, input") || /^(Plan session|Inspect route|Export plan)$/.test(e.textContent.trim()))
         .map((e) => `${e.tagName}:${(e.labels?.[0]?.textContent ?? e.textContent).trim().slice(0, 40)}=${e.value ?? ""}${e.disabled ? " [disabled]" : ""}`));
-      const ipc = ipcLog.filter((l) => !l.includes("get_snapshot_watch")).slice(-80);
+      const ipc = ipcLog.lines().filter((l) => !l.includes("get_snapshot_watch")).slice(-80);
       extra0 = `\ncontrols=${JSON.stringify(controls)}\nipc_tail=${JSON.stringify(ipc)}`;
       await page.screenshot({ path: join(outDir, `failure-${label}.png`) }).catch(() => {});
       extra = `${extra0}\nalerts=${JSON.stringify(alerts)}\nstatuses=${JSON.stringify(statuses)}\nmain=${main}`;
@@ -220,12 +230,14 @@ async function withDiagnostics(page, label, fn) {
 /** Click a control that may sit at the window edge; if the app issues no IPC call, fall back to keyboard activation. */
 async function activate(locator, ipcName) {
   await locator.scrollIntoViewIfNeeded();
-  const seen = () => ipcLog.some((line, i) => i >= before && line.includes(` ${ipcName} `));
-  let before = ipcLog.length;
+  // Sequence marks, not array indices: the log is a bounded window and old entries are dropped.
+  const seen = () => ipcLog.seenSince(before, ` ${ipcName} `);
+  let before = ipcLog.mark();
   await locator.click();
   for (let i = 0; i < 20 && !seen(); i += 1) await sleep(250);
   if (seen()) return "click";
-  before = ipcLog.length;
+  // Fixes review finding 1: restart the observation window with a sequence mark (not an array length).
+  before = ipcLog.mark();
   await locator.focus();
   await locator.press("Enter");
   for (let i = 0; i < 20 && !seen(); i += 1) await sleep(250);
@@ -284,14 +296,16 @@ async function run() {
     else if (mode === "populate") await populate(page);
     else await verify(page);
 
-    evidence.ipc_tail = ipcLog.filter((l) => !l.includes("get_snapshot_watch")).slice(-300);
+    evidence.ipc_tail = ipcLog.lines().filter((l) => !l.includes("get_snapshot_watch")).slice(-300);
     const inPage = await page.evaluate(() => window.__anavCsp ?? []);
     for (const v of inPage) violations.push(`securitypolicyviolation: ${v}`);
+    await alertTexts(page).catch(() => []);
     await rec.run("no CSP violations, uncaught page errors or PROVIDER_UNAVAILABLE alerts were observed", async () => {
       evidence.consoleErrors = consoleErrors;
+      if (nonNativeAlerts.length > 0) throw new Error(`Non-native alerts observed: ${nonNativeAlerts.join(" | ")}`);
       if (violations.length > 0) throw new Error(`CSP violations: ${violations.join(" | ")}`);
       if (pageErrors.length > 0) throw new Error(`Page errors: ${pageErrors.join(" | ")}`);
-      return { csp_violations: 0, page_errors: 0, console_errors_recorded: consoleErrors.length };
+      return { csp_violations: 0, page_errors: 0, non_native_alerts: 0, console_errors_recorded: consoleErrors.length };
     });
   } finally {
     await browser.close().catch(() => {});
@@ -368,7 +382,7 @@ async function smoke(page, response) {
 
   let planned = false;
   let planRefusal = null;
-  await rec.run("plan session over real IPC surfaces the backend verdict", () => withDiagnostics(page, "plan", async () => {
+  await rec.run("plan session over real IPC plans the re-timed synthetic snapshot", () => withDiagnostics(page, "plan", async () => {
     // The app requeries imported views every 60 s by design and that discards an in-flight planner
     // result. Reload so the planner steps start right after a fresh interval (state is in the database).
     await page.reload({ waitUntil: "load" });
@@ -390,11 +404,10 @@ async function smoke(page, response) {
       }
       const alerts = await alertTexts(page);
       if (alerts.length > 0) {
-        // A synthetic snapshot carries no trusted capture age, so the backend must refuse. That refusal
-        // is the verdict being checked; any other alert is a failure.
+        // The snapshot was re-timed to the runner clock, so a capture-age refusal is a failure, not a pass.
         if (alerts.every((a) => /fresh capture with trusted age/.test(a))) {
           planRefusal = alerts;
-          return { activation, outcome: "refused_by_backend", alerts };
+          throw new Error(`Backend refused the freshly re-timed synthetic snapshot: ${JSON.stringify(alerts)}`);
         }
         throw new Error(`Unexpected planning alert: ${JSON.stringify(alerts)}`);
       }
@@ -414,8 +427,7 @@ async function smoke(page, response) {
     }));
   } else if (planRefusal !== null) {
     rec.add("inspect route and export plan produce ANAV1:", "skipped", {
-      reason: "Not run: the backend refused to plan the synthetic fixture snapshot because it has no trusted capture age "
-        + "(unknown is not treated as fresh). A snapshot with a trusted age is needed to exercise route inspection and export natively.",
+      reason: "Not run: planning did not produce a result.",
       backend_alerts: planRefusal,
     });
   }

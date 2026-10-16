@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   SCREEN_LABELS, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, compareVersions, classifyUpgrade, cspFromHeaders, parseCsp, Recorder,
-  debugPolicyValue, policyAddArgs, policyDeleteArgs, WEBVIEW2_POLICY_KEY,
+  debugPolicyValue, IpcLog, freshenSnapshotText, migrationSummary, policyAddArgs, policyDeleteArgs, WEBVIEW2_POLICY_KEY,
 } from "./native-smoke-lib.mjs";
 
 const H = "a".repeat(64);
@@ -83,4 +83,36 @@ test("debugging policy arguments are bounded and target one exe name", () => {
   assert.ok(add.includes("--remote-debugging-port=9223 --remote-allow-origins=*"));
   assert.deepEqual(policyDeleteArgs(), ["delete", WEBVIEW2_POLICY_KEY, "/f"]);
   assert.match(WEBVIEW2_POLICY_KEY, /^HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\\WebView2\\AdditionalBrowserArguments$/);
+});
+
+test("IpcLog sequence marks keep working after the window is full", () => {
+  const log = new IpcLog(3);
+  for (let i = 0; i < 10; i += 1) log.push(`noise ${i}`);
+  const mark = log.mark();
+  assert.equal(log.seenSince(mark, "start_planning_job"), false);
+  for (let i = 0; i < 5; i += 1) log.push(`more ${i}`);
+  log.push("1ms -> start_planning_job (POST)");
+  assert.equal(log.entries.length, 3);
+  assert.equal(log.seenSince(mark, " start_planning_job "), true);
+  assert.equal(log.seenSince(log.mark(), " start_planning_job "), false);
+});
+
+test("freshenSnapshotText re-times capture fields only and stays synthetic", () => {
+  const text = `ANAV1:${JSON.stringify({ fixture: true, provenance: { created_at_utc_ms: 1 }, payload: { capture: { observed_at_utc_ms: 2, received_at_utc_ms: 3, clock_trust: "trusted" }, list: [{ observed_at_utc_ms: 2 }] } })}`;
+  const now = 1_800_000_000_000;
+  const out = JSON.parse(freshenSnapshotText(text, now).slice(6));
+  assert.equal(out.fixture, true);
+  assert.equal(out.provenance.created_at_utc_ms, now);
+  assert.equal(out.payload.capture.observed_at_utc_ms, now - 10000);
+  assert.equal(out.payload.capture.received_at_utc_ms, now - 5000);
+  assert.equal(out.payload.capture.clock_trust, "trusted");
+  assert.equal(out.payload.list[0].observed_at_utc_ms, now - 10000);
+  assert.throws(() => freshenSnapshotText("{}", now), /Not an ANAV1/);
+  assert.throws(() => freshenSnapshotText("ANAV1:{}", now), /No capture times/);
+  assert.throws(() => freshenSnapshotText(text, 0), /Bad current time/);
+});
+
+test("migrationSummary reports an empty table as unknown, not zero", () => {
+  assert.deepEqual(migrationSummary(0, null), { migrations: 0, max_migration_version: null });
+  assert.deepEqual(migrationSummary(12, 12), { migrations: 12, max_migration_version: 12 });
 });

@@ -9,6 +9,8 @@ on:
   push:
     branches: [main]
     tags: ['v[0-9]*']
+  schedule:
+    - cron: '17 4 * * *'
   workflow_dispatch:
     inputs:
       acceptance_candidate:
@@ -173,7 +175,16 @@ jobs:
           if (-not (Test-Path -LiteralPath (Join-Path $data 'snapshots.sqlite3'))) { throw 'Silent uninstall removed user data' }
           if (-not (Test-Path -LiteralPath $sentinel)) { throw 'Silent uninstall removed the game addon' }
           "user data and existing addon kept: $data"
-      - name: Native WebView2 smoke over CDP (regression evidence only, not WIN-* acceptance)
+      - run: git diff --exit-code
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_candidate && github.ref_type != 'tag' && 'azeroth-navigator-acceptance-candidate' || 'azeroth-navigator-windows' }}-${{ github.sha }}
+          path: dist/windows/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Native WebView2 smoke over CDP (blocking regression check, not WIN-* acceptance)
+        id: native_smoke
+        continue-on-error: true
         shell: pwsh
         run: |
           . ./scripts/windows/Native-Smoke-Helpers.ps1
@@ -195,7 +206,9 @@ jobs:
             Stop-NativeSmokeProcesses
             Uninstall-NativeSmokeApp -InstallDirectory $installDir
           }
-      - name: Native upgrade smoke from the published baseline (regression evidence only)
+      - name: Native upgrade smoke from the published baseline (blocking regression check, not WIN-* acceptance)
+        id: native_upgrade
+        continue-on-error: true
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -274,13 +287,6 @@ jobs:
             Stop-NativeSmokeProcesses
             Uninstall-NativeSmokeApp -InstallDirectory $installDir
           }
-      - run: git diff --exit-code
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_candidate && github.ref_type != 'tag' && 'azeroth-navigator-acceptance-candidate' || 'azeroth-navigator-windows' }}-${{ github.sha }}
-          path: dist/windows/
-          if-no-files-found: error
-          retention-days: 14
       - name: Upload native smoke evidence (regression evidence, not a release asset)
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -289,6 +295,14 @@ jobs:
           path: ${{ runner.temp }}/native-smoke/
           if-no-files-found: warn
           retention-days: 14
+      # The installer artifact above is already uploaded, so a smoke failure cannot lose the release
+      # inputs; this gate still fails the job (and so skips draft-release) when either smoke failed.
+      - name: Native smoke gate
+        if: always()
+        shell: bash
+        run: |
+          echo "smoke=${{ steps.native_smoke.outcome }} upgrade=${{ steps.native_upgrade.outcome }}"
+          [ "${{ steps.native_smoke.outcome }}" != failure ] && [ "${{ steps.native_upgrade.outcome }}" != failure ]
 
   draft-release:
     name: Draft GitHub release
