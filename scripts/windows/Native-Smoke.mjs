@@ -166,8 +166,27 @@ const violations = [];
 const consoleErrors = [];
 const pageErrors = [];
 
+/** Records command names, timing and outcome (never payloads) of native IPC calls made by the page. */
+async function traceIpc(page) {
+  await page.evaluate(() => {
+    const internals = window.__TAURI_INTERNALS__;
+    if (!internals || internals.__anavTraced) return;
+    const original = internals.invoke.bind(internals);
+    window.__anavIpc = window.__anavIpc ?? [];
+    internals.invoke = async (command, ...rest) => {
+      const entry = { command, at: Math.round(performance.now()) };
+      window.__anavIpc.push(entry);
+      if (window.__anavIpc.length > 400) window.__anavIpc.shift();
+      try { const value = await original(command, ...rest); entry.ms = Math.round(performance.now()) - entry.at; entry.ok = true; return value; }
+      catch (error) { entry.ms = Math.round(performance.now()) - entry.at; entry.ok = false; entry.error = String(error?.code ?? error?.message ?? error).slice(0, 80); throw error; }
+    };
+    internals.__anavTraced = true;
+  }).catch(() => {});
+}
+
 async function settle(page) {
   await page.waitForLoadState("load");
+  await traceIpc(page);
   await page.getByRole("status").filter({ hasText: /^Loading/ }).first().waitFor({ state: "detached", timeout: 15000 }).catch(() => {});
   await sleep(600);
 }
@@ -188,7 +207,8 @@ async function withDiagnostics(page, label, fn) {
       const controls = await page.evaluate(() => [...document.querySelectorAll("main select, main input, main button")].slice(0, 400)
         .filter((e) => e.matches("select, input") || /^(Plan session|Inspect route|Export plan)$/.test(e.textContent.trim()))
         .map((e) => `${e.tagName}:${(e.labels?.[0]?.textContent ?? e.textContent).trim().slice(0, 40)}=${e.value ?? ""}${e.disabled ? " [disabled]" : ""}`));
-      extra0 = `\ncontrols=${JSON.stringify(controls)}`;
+      const ipc = await page.evaluate(() => (window.__anavIpc ?? []).slice(-60).map((e) => `${e.at}ms ${e.command} ${e.ok === undefined ? "pending" : e.ok ? "ok" : `ERR ${e.error}`} ${e.ms ?? ""}`)).catch(() => []);
+      extra0 = `\ncontrols=${JSON.stringify(controls)}\nipc_tail=${JSON.stringify(ipc)}`;
       await page.screenshot({ path: join(outDir, `failure-${label}.png`) }).catch(() => {});
       extra = `${extra0}\nalerts=${JSON.stringify(alerts)}\nstatuses=${JSON.stringify(statuses)}\nmain=${main}`;
     } catch (inner) { extra = `\n(diagnostics unavailable: ${inner?.message})`; }
