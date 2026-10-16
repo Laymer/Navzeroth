@@ -1055,3 +1055,92 @@ fn a_stored_session_is_copied_by_slash_and_by_the_window_without_a_new_capture()
     "#,
     );
 }
+
+#[test]
+fn reset_and_apply_resync_the_size_fields_even_when_the_saved_request_is_unchanged() {
+    let sandbox = ui_client("70374");
+    run(
+        &sandbox,
+        r#"
+      ui.login()
+      local state = ui.state()
+      state.actions.gui.open()
+      local gui, W = state.gui, state.gui.widgets
+      gui.select('hud')
+      local width = W.hud_width:getText()
+      -- invalid text, saved request still the default
+      ui.type(W.hud_width.frame, '5000')
+      assert(not ui.click(W.hud_size_apply.frame))
+      assert(ui.click(W.hud_reset.frame))
+      assert(W.hud_width:getText() == width, 'Reset restores the field')
+      assert(ui.click(W.hud_size_apply.frame) == true, 'Apply is enabled again')
+      -- typing is still never replaced by a plain refresh
+      ui.type(W.hud_width.frame, '4000')
+      gui.refresh()
+      assert(W.hud_width:getText() == '4000')
+    "#,
+    );
+}
+
+#[test]
+fn clock_trust_state_is_re_evaluated_on_every_refresh_and_on_open() {
+    let sandbox = ui_client("70374");
+    run(
+        &sandbox,
+        r#"
+      ui.login()
+      local state = ui.state()
+      state.actions.gui.open()
+      local gui, W = state.gui, state.gui.widgets
+      gui.select('diagnostics')
+      assert(ui.click(W.diag_clock_check.frame))
+      assert(state.clock.status().confirmable and W.diag_clock_trust.enabled)
+      -- no timers exist; time passes and the next refresh re-evaluates the clock
+      ui.mono = ui.mono + 130
+      ui.wall = ui.wall + 130
+      assert(not state.clock.status().confirmable)
+      gui.refresh()
+      assert(not W.diag_clock_trust.enabled, 'Trust is disabled after the window expires')
+      assert(table.concat(ui.texts(AzerothNavigatorFrame), '\n'):find('expired', 1, true))
+      -- reopening re-evaluates a fresh pending check too
+      assert(ui.click(W.diag_clock_check.frame))
+      assert(W.diag_clock_trust.enabled)
+      gui.close()
+      ui.mono = ui.mono + 130
+      ui.wall = ui.wall + 130
+      state.actions.gui.open()
+      assert(not W.diag_clock_trust.enabled, 'open re-evaluates the expired window')
+    "#,
+    );
+}
+
+#[test]
+fn a_failed_build_releases_the_partial_frame_and_a_retry_starts_clean() {
+    let sandbox = ui_client("70374");
+    run(
+        &sandbox,
+        r#"
+      ui.login()
+      local state = ui.state()
+      local real, count = CreateFrame, 0
+      CreateFrame = function(...)
+        count = count + 1
+        if count >= 4 then error('boom') end
+        return real(...)
+      end
+      state.actions.gui.open()
+      assert(state.gui_code == 'gui_ui_unavailable', tostring(state.gui_code))
+      assert(AzerothNavigatorFrame == nil, 'the orphan is no longer reachable by name')
+      for _, name in ipairs(UISpecialFrames) do assert(name ~= 'AzerothNavigatorFrame') end
+      CreateFrame = real
+      state.actions.gui.open()
+      assert(state.gui_code == 'gui_shown', tostring(state.gui_code))
+      assert(AzerothNavigatorFrame ~= nil)
+      local seen = 0
+      for _, name in ipairs(UISpecialFrames) do
+        if name == 'AzerothNavigatorFrame' then seen = seen + 1 end
+      end
+      assert(seen == 1)
+    "#,
+    );
+}

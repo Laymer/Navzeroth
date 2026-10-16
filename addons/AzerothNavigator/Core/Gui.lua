@@ -401,6 +401,7 @@ local function buildHud(ctx, page)
         ctx.actions.note('HUD size refused: width 280-960 and height 160-720, whole numbers')
         return nil, 'hud_size_invalid'
       end
+      ctx.hudResync = true
       return ctx.actions.plan.size(w, h)
     end)
   end)
@@ -417,15 +418,20 @@ local function buildHud(ctx, page)
     end)
   end)
   button(ctx, page, 'hud_reset', 0, 136, 150, function()
-    ctx.act('hud_reset', function() return ctx.actions.plan.reset() end)
+    ctx.act('hud_reset', function()
+      ctx.hudResync = true
+      return ctx.actions.plan.reset()
+    end)
   end)
   local status = ctx.f:label(page, 0, 176, PAGE_W)
   local last
   ctx.updaters.hud = function(model)
-    -- Fields follow the saved request only when it changes, so typing is never replaced.
+    -- Fields follow the saved request when it changes or after Apply/Reset ran, so
+    -- typing is never replaced but a successful Reset always clears invalid text.
     local request = model.requested
-    if not last or last.hud_width ~= request.hud_width or
+    if ctx.hudResync or not last or last.hud_width ~= request.hud_width or
       last.hud_height ~= request.hud_height then
+      ctx.hudResync = false
       last = request
       width:setText(tostring(request.hud_width))
       height:setText(tostring(request.hud_height))
@@ -627,6 +633,7 @@ function Gui.new(env, state, actions)
       frameCall(self, 'StopMovingOrSizing')
     end)
     frameCall(frame, 'Hide')
+    ctx.partial = frame
     gui.frame = frame
     local title = ctx.f:label(frame, 24, 14, 520, 'GameFontNormal')
     title:set(Text.title .. ' ' .. ns.Version.addon .. ' (client binding UNVERIFIED)')
@@ -659,8 +666,32 @@ function Gui.new(env, state, actions)
       end
       if not present then table.insert(specials, 'AzerothNavigatorFrame') end
     end
+    ctx.partial = nil
   end
 
+  -- Releases whatever a failed build created, so a retry starts from nothing: hidden,
+  -- detached from the parent and no longer reachable under the global name.
+  local function discardPartial()
+    local frame = ctx.partial or gui.frame
+    ctx.partial = nil
+    if frame then
+      frameCall(frame, 'Hide')
+      frameCall(frame, 'ClearAllPoints')
+      frameCall(frame, 'SetParent', nil)
+      if env.AzerothNavigatorFrame == frame then env.AzerothNavigatorFrame = nil end
+      local specials = env.UISpecialFrames
+      if type(specials) == 'table' then
+        for index = #specials, 1, -1 do
+          if specials[index] == 'AzerothNavigatorFrame' then table.remove(specials, index) end
+        end
+      end
+    end
+  end
+
+  -- Every refresh rebuilds the model, and the model re-reads the clock status through
+  -- clockInfo, a pure function of the clock state at that moment; nothing about the
+  -- clock is cached between refreshes. The plan forbids timers and OnUpdate in the
+  -- window, so the page catches up on the next refresh, tab change or open.
   gui.refresh = function()
     if not gui.frame or not gui.tab then return false end
     local ok = pcall(function()
@@ -700,6 +731,7 @@ function Gui.new(env, state, actions)
     if not gui.frame then
       local built = pcall(build)
       if not built or not gui.frame then
+        discardPartial()
         gui.frame, gui.tab, gui.widgets, gui.pages = nil, nil, {}, {}
         ctx.updaters, ctx.inputs = {}, {}
         state.gui_code = 'gui_ui_unavailable'

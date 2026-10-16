@@ -6,6 +6,17 @@ use azeroth_lua_harness::read_text;
 use common::*;
 use serde_json::Value;
 use std::collections::BTreeSet;
+use std::sync::Mutex;
+
+/// Both tests that touch the SavedVariables sample hold this, so update mode never
+/// lets the reader see a truncated file.
+static SAMPLE_LOCK: Mutex<()> = Mutex::new(());
+
+fn sample_guard() -> std::sync::MutexGuard<'static, ()> {
+    SAMPLE_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
 
 const STATUS_VOCABULARY: [&str; 5] = [
     "verified available",
@@ -191,6 +202,7 @@ fn sample_with_export(sample: &str, export: &str) -> String {
 
 #[test]
 fn golden_exports_match_the_probe_byte_for_byte() {
+    let _guard = sample_guard();
     let sandbox = synthetic_client();
     sandbox.load_toc_files().unwrap();
     let probe = "return assert(ns.Export.encode(ns.Capabilities.probe(_G)))";
@@ -217,6 +229,7 @@ fn golden_exports_match_the_probe_byte_for_byte() {
 
 #[test]
 fn the_fixture_writer_is_deterministic_and_reproduces_the_committed_sample() {
+    let _guard = sample_guard();
     // Regenerating from the current sources must be a no-op on a clean tree.
     let sandbox = synthetic_client();
     sandbox.load_toc_files().unwrap();
@@ -290,6 +303,7 @@ fn sample_export_string(sample: &str) -> String {
 
 #[test]
 fn savedvariables_sample_embeds_the_all_present_export_and_is_marked_unverified() {
+    let _guard = sample_guard();
     let sample = read_text(&path("fixtures/addon/savedvariables-sample.synthetic.lua")).unwrap();
     assert!(sample.contains("SYNTHETIC") && sample.contains("UNVERIFIED"));
     assert!(sample.contains("never execute"));
