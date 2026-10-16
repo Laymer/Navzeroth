@@ -176,6 +176,21 @@ async function alertTexts(page) {
   return (await page.getByRole("alert").allInnerTexts()).map((t) => t.trim()).filter(Boolean);
 }
 
+/** Run fn; on failure attach the visible alerts, status text, main text and a screenshot to the error. */
+async function withDiagnostics(page, label, fn) {
+  try { return await fn(); } catch (error) {
+    let extra = "";
+    try {
+      const alerts = await alertTexts(page);
+      const statuses = (await page.getByRole("status").allInnerTexts()).map((t) => t.trim()).filter(Boolean);
+      const main = (await page.locator("main").innerText()).replace(/\s+/g, " ").slice(0, 2500);
+      await page.screenshot({ path: join(outDir, `failure-${label}.png`) }).catch(() => {});
+      extra = `\nalerts=${JSON.stringify(alerts)}\nstatuses=${JSON.stringify(statuses)}\nmain=${main}`;
+    } catch (inner) { extra = `\n(diagnostics unavailable: ${inner?.message})`; }
+    throw new Error(`${error?.message ?? error}${extra}`);
+  }
+}
+
 async function go(page, name) {
   await page.getByRole("navigation", { name: "Primary" }).getByRole("button", { name, exact: true }).click();
   await settle(page);
@@ -298,12 +313,12 @@ async function smoke(page, response) {
     return { bytes: snapshotText.length };
   });
 
-  await rec.run("synthetic planning content stages and activates", async () => {
+  await rec.run("synthetic planning content stages and activates", () => withDiagnostics(page, "stage", async () => {
     await stageAndActivate(page);
     return {};
-  });
+  }));
 
-  await rec.run("plan, inspect route and export produce ANAV1:", async () => {
+  await rec.run("plan, inspect route and export produce ANAV1:", () => withDiagnostics(page, "plan", async () => {
     await go(page, "Planner");
     await page.getByRole("combobox", { name: "Origin", exact: true }).selectOption("demo-node-1");
     await page.getByRole("combobox", { name: "Stopping node", exact: true }).selectOption("demo-node-1");
@@ -321,7 +336,7 @@ async function smoke(page, response) {
     const text = await page.getByLabel("Plan export text").inputValue();
     if (!text.startsWith("ANAV1:")) throw new Error(`Export does not start with ANAV1: ${text.slice(0, 20)}`);
     return { planning_result: resultText.slice(0, 300), export_bytes: text.length, alerts: await alertTexts(page) };
-  });
+  }));
 
   await rec.run("reference window state query works and reports the window closed", async () => {
     await go(page, "Today");
