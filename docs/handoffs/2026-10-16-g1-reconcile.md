@@ -52,6 +52,23 @@ shared checkout was not touched. Documentation and production doc-comments only.
 - Code line numbers in the wave-1 table are approximate ("about") and were checked
   by reading, not by running the original regression tests.
 
+## Review resolution
+
+Review of head `d13efb5` against base `92f3f51` (record:
+[2026-10-16-g1-review](../reviews/2026-10-16-g1-review.md)). No blockers; two
+important findings (one reported twice) and two optional ones, all resolved.
+
+| Finding | Action | Evidence |
+| --- | --- | --- |
+| important: gear doc comment said unknown `two_handed` is Uncertain only with two or more items | Rewrote the bullets in `crates/core/src/gear/configuration.rs` to match `classify()`: the hand-slot rule has no item-count condition; only the `unique_group` rule needs `placed.len() >= 2`, and it leaves the configuration Valid | Compared with `classify()` lines 228-250; `cargo test --locked -p azeroth-core` (361 passed, 0 failed), fmt, Clippy and release-readiness (exit 0) re-run |
+| important: publication record said all receipts "agree" though `main-package-receipt.json` has a different installer hash | Investigated: two "Windows package" runs built `92f3f51` (main push 38894373306, tag push 38896174846); re-downloaded both and hashed: `ecf8e0c2...` (6,871,442 B) vs `874c80b5...` (6,868,991 B). Release published the tag run's installer. Claim corrected and cause stated; added to Unverified | `gh run download` + `sha256sum` |
+| optional: same mismatch in the evidence README | README now states the difference and cause | as above |
+| optional: `verify.py` not re-runnable | README says it hard-codes `/tmp/navzeroth-release-v091` and that receipts are recorded output. (The "four of five assets" wording was checked and is consistent: `SHA256SUMS.txt` is the fifth file; clarified.) | Read of `verify.py` |
+
+## Limitations
+
+- The reason the two installer builds differ was not investigated.
+
 ## Next
 
 G2 (end-to-end harness), G2b (native smoke) and G3 (addon GUI) per the program plan;

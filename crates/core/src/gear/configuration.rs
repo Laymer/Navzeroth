@@ -13,10 +13,12 @@
 //!   two-handed item outside the main hand, two items with the same known
 //!   unique group) make it `Rejected`, with reasons;
 //! - an unknown `two_handed` on an item placed in either hand slot (the main hand
-//!   or the off hand) of a configuration with two or more items is `Uncertain`
-//!   and is kept out of the known-valid results, never assumed one-handed;
-//! - an unknown `unique_group` in a configuration of two or more items keeps it
-//!   valid but lowers the certainty of its score.
+//!   or the off hand) makes the configuration `Uncertain`, whatever the number of
+//!   items placed, and keeps it out of the known-valid results; it is never
+//!   assumed one-handed;
+//! - an unknown `unique_group`, only when two or more items are placed, adds an
+//!   uncertainty reason that lowers the certainty of the score and leaves the
+//!   configuration `Valid`.
 //!
 //! Assignments with the same item set are one configuration: a valid
 //! arrangement wins over an uncertain one, which wins over a rejected one.
