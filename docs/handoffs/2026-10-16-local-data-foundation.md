@@ -5,6 +5,10 @@ Owner and sole writer: Codex `/root`. Clean baseline main
 `feat/local-data-foundation` in the original worktree. Claim `77f1bf1` precedes
 implementation; standalone prompt commit `5af9450`. No subagents or independent
 review claimed. No main integration, release, game action or addon update.
+Implementation commit: `c4f4740fed1bd731f438d7a770ec510fb5313cdf`.
+Pushed the isolated feature branch and opened draft
+[PR154](https://github.com/Laymer/Navzeroth/pull/154). This remains a first
+implementation slice, not completion of the whole supplied plan.
 
 ## Delivered scope
 
@@ -58,6 +62,11 @@ format/parser support. No production transforms or metadata have been admitted.
   it with `as_chunks::<2>()` and reran successfully.
 - `validate-fixtures`:73 contract fixtures (10 valid/63 rejected),33 transport
   fixtures (5 valid/28 rejected) passed. `git diff --check` passed.
+- Committed-source `release-readiness --root . --version 0.9.0` passed version
+  enumeration with the new package and reports66 mandatory blockers,
+  `stable_ready=false`, `candidate_ready=false`, zero verified evidence files,
+  zero verified gameplay packs. Preview-only `publication_allowed=true` remains
+  unchanged; no release was published or authorized by this result.
 - New tests cover malformed/ambiguous/oversize/versioned metadata, exact build
   preservation, preset limits, unknown estimates, no activation/writes, Unicode,
   links, source mutation between reads, strict JSON, compiled transform refusal,
