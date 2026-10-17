@@ -2,7 +2,8 @@
 //! filesystem timestamps, worker count and run IDs. No gameplay activation here.
 use crate::{
     Result, Stamp, checked_path, hash, inspect, metadata,
-    native::{Archive, ReadFailure},
+    native::{Archive, Logical, ReadFailure},
+    partial::PartialFile,
     read_file, stamp, tables,
     worker::ExtractionRequest,
 };
@@ -20,6 +21,9 @@ use std::{
 const MAX_TABLE_BYTES: usize = 64 * 1024 * 1024;
 pub const MAX_DECODED_BYTES: usize = 256 * 1024 * 1024;
 const MAX_MANIFEST_BYTES: usize = 16 * 1024 * 1024;
+/// A partially available file whose header, field, pallet, common or section
+/// directory bytes lie in an encrypted frame: no section can be located.
+const UNAVAILABLE_METADATA: &str = "unavailable_encrypted_frames_in_table_metadata";
 
 struct SourceState {
     stamps: BTreeMap<String, Stamp>,
@@ -359,10 +363,25 @@ pub(crate) fn extract(
             candidate.extension,
             MAX_TABLE_BYTES,
         ) {
-            Ok(bytes) => {
-                entry.encoded_bytes = Some(bytes.len() as u64);
-                entry.retained_sha256 = Some(store.put("objects", &bytes)?);
-                match tables::header(&bytes) {
+            Ok(logical) => {
+                // A partial file keeps only its verified plain frames; its retained
+                // form lists the encrypted ranges as gaps and holds no bytes for them.
+                let (input, partial) = match &logical {
+                    Logical::Whole(bytes) => {
+                        entry.retained_sha256 = Some(store.put("objects", bytes)?);
+                        (tables::Input::whole(bytes), None)
+                    }
+                    Logical::Partial(file) => {
+                        entry.retained_sha256 = Some(store.put("objects", &file.retained_bytes())?);
+                        (file.input(), Some(file))
+                    }
+                };
+                entry.encoded_bytes = Some(input.len() as u64);
+                match tables::header_of(&input) {
+                    Err(tables::UNAVAILABLE_RANGE) => {
+                        entry.disposition = InventoryDisposition::UnavailableEncrypted;
+                        entry.reason = UNAVAILABLE_METADATA.into();
+                    }
                     Err(reason) => entry.reason = reason.into(),
                     Ok(header) => {
                         entry.layout_hash = Some(format!("{:08x}", header.layout_hash));
@@ -388,9 +407,28 @@ pub(crate) fn extract(
                                         InventoryDisposition::RetainedUnsupported
                                     };
                                 }
-                                Ok(definition) => match tables::decode(&bytes, &definition) {
+                                Ok(definition) => match tables::decode_input(&input, &definition) {
+                                    Err(tables::UNAVAILABLE_RANGE) => {
+                                        entry.disposition =
+                                            InventoryDisposition::UnavailableEncrypted;
+                                        entry.reason = UNAVAILABLE_METADATA.into();
+                                    }
+                                    Err(
+                                        reason @ (tables::STRING_IN_UNAVAILABLE_SECTION
+                                        | tables::COPY_SOURCE_IN_UNAVAILABLE_SECTION),
+                                    ) => {
+                                        entry.disposition =
+                                            InventoryDisposition::UnavailableEncrypted;
+                                        entry.reason = reason.into();
+                                    }
                                     Err(reason) => entry.reason = reason.into(),
-                                    Ok(decoded) => {
+                                    Ok(mut decoded) => {
+                                        if let Some(file) = partial {
+                                            decoded
+                                                .gaps
+                                                .extend(file.unavailable().iter().map(|r| r.gap()));
+                                            decoded.gaps.sort();
+                                        }
                                         let output =
                                             crate::bounded_json(&decoded, MAX_DECODED_BYTES)?;
                                         if output.len() > MAX_DECODED_BYTES {
@@ -398,7 +436,9 @@ pub(crate) fn extract(
                                         }
                                         entry.decoded_sha256 = Some(store.put("objects", &output)?);
                                         entry.disposition = InventoryDisposition::Decoded;
-                                        entry.reason = if decoded.gaps.is_empty() {
+                                        entry.reason = if partial.is_some() {
+                                            "research_decoded_from_plain_frames"
+                                        } else if decoded.gaps.is_empty() {
                                             "research_decoded"
                                         } else {
                                             "research_decoded_with_encrypted_gaps"
@@ -415,6 +455,11 @@ pub(crate) fn extract(
                             }
                         }
                     }
+                }
+                if let Some(file) = partial
+                    && entry.disposition != InventoryDisposition::Decoded
+                {
+                    record_undecoded_partial(&mut entry, file, &mut gaps);
                 }
             }
             Err(error) => {
@@ -518,6 +563,27 @@ pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalo
         }
     }
     Ok(manifest)
+}
+
+/// Reason suffix of a partially read table that was not decoded: its retained
+/// object is a partial container, not the client file.
+const PARTIAL_SUFFIX: &str = "partial_plain_frames";
+
+/// A partially read table that was not decoded keeps its encrypted ranges as
+/// catalog gaps, and its reason says that only plain frames were read.
+fn record_undecoded_partial(
+    entry: &mut TableInventory,
+    file: &PartialFile,
+    gaps: &mut Vec<String>,
+) {
+    if entry.reason != UNAVAILABLE_METADATA {
+        entry.reason = format!("{}:{PARTIAL_SUFFIX}", entry.reason);
+    }
+    gaps.extend(
+        file.unavailable()
+            .iter()
+            .map(|r| format!("{}:{}", entry.table, r.gap())),
+    );
 }
 
 /// Catalog disposition and reason for a failed strict logical read. Causes stay
@@ -631,6 +697,71 @@ mod tests {
             ReadFailure::ShortRead,
         ] {
             assert_ne!(read_failure_disposition(failure).0, InvalidCorrupt);
+        }
+    }
+    #[test]
+    fn undecoded_partial_tables_keep_encrypted_ranges_and_say_partial() {
+        use crate::partial::FrameLayout;
+        let layout = [
+            FrameLayout {
+                start: 0,
+                length: 8,
+                encrypted: false,
+            },
+            FrameLayout {
+                start: 8,
+                length: 4,
+                encrypted: true,
+            },
+        ];
+        let file = PartialFile::assemble(12, &layout, |offset, length| {
+            assert!(offset + length <= 8, "reader asked for encrypted bytes");
+            Ok::<_, ()>(vec![0; length])
+        })
+        .unwrap();
+        let entry = |disposition, reason: &str| TableInventory {
+            table: "Synthetic".into(),
+            locale: None,
+            file_data_id: Some(1),
+            disposition,
+            reason: reason.into(),
+            retained_sha256: None,
+            decoded_sha256: None,
+            encoded_bytes: None,
+            records: None,
+            layout_hash: None,
+        };
+        for (disposition, reason, expected) in [
+            (
+                InventoryDisposition::InvalidCorrupt,
+                "table_hash_mismatch",
+                "table_hash_mismatch:partial_plain_frames",
+            ),
+            (
+                InventoryDisposition::DefinitionMissing,
+                "definition_missing",
+                "definition_missing:partial_plain_frames",
+            ),
+            (
+                InventoryDisposition::RetainedUnsupported,
+                "cyclic_or_missing_copy_source",
+                "cyclic_or_missing_copy_source:partial_plain_frames",
+            ),
+            (
+                InventoryDisposition::UnavailableEncrypted,
+                UNAVAILABLE_METADATA,
+                UNAVAILABLE_METADATA,
+            ),
+        ] {
+            let mut table = entry(disposition, reason);
+            let mut gaps = Vec::new();
+            record_undecoded_partial(&mut table, &file, &mut gaps);
+            assert_eq!(table.reason, expected);
+            assert_eq!(table.disposition, disposition);
+            assert_eq!(
+                gaps,
+                vec!["Synthetic:unavailable_encrypted_frames:1-1:bytes:8+4".to_string()]
+            );
         }
     }
     #[test]

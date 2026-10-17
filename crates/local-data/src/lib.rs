@@ -11,11 +11,18 @@ mod isolation;
 pub mod metadata;
 #[allow(unsafe_code)]
 mod native;
+pub mod partial;
 pub mod projection;
 pub mod receipts;
 pub mod tables;
 pub mod worker;
 pub use extraction::verify_catalog;
+
+/// True when the linked native reader never decrypts (see `native/offline.cpp`).
+/// Every archive open also checks this and refuses otherwise.
+pub fn native_decryption_disabled() -> bool {
+    native::decryption_disabled()
+}
 
 use azeroth_core::local_data::{
     FORMAT_VERSION, InstallationMetadata, MAX_BUILD_INFO_BYTES, MAX_METADATA_BYTES, MetadataBundle,

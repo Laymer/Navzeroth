@@ -392,3 +392,27 @@ fn signed_compression_preserves_unsigned_logical_bit_patterns() {
         Cell::Unsigned(u32::MAX.into())
     );
 }
+
+#[test]
+fn decoded_cell_capacity_is_exactly_four_million() {
+    assert_eq!(tables::MAX_CELLS, 4_000_000);
+    // 1 ID cell + 249 array cells = 250 cells per row; 16,000 rows (one record
+    // plus copies) is exactly the bound, one more row is over it.
+    let def = definition("int Value", "Value<u8>[249]");
+    let record: Vec<u8> = (0..249u32).map(|i| i as u8).collect();
+    let rows = |n: u32| {
+        let copies: Vec<_> = (2..=n).map(|id| (id, 1)).collect();
+        fixture(&[field(8, 0)], &record, 1, &[], &copies, &[], false)
+    };
+    let decoded = tables::decode(&rows(16_000), &def).unwrap();
+    assert_eq!(decoded.rows.len(), 16_000);
+    assert_eq!(
+        decoded.rows[15_999].fields["Value"],
+        Cell::Array((0..249u64).map(Cell::Unsigned).collect())
+    );
+    drop(decoded);
+    assert_eq!(
+        tables::decode(&rows(16_001), &def).unwrap_err(),
+        "decoded_cell_capacity"
+    );
+}
