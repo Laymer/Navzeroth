@@ -3,6 +3,7 @@
 use crate::{
     Result, Stamp, checked_path, hash, inspect, metadata,
     native::{Archive, Logical, ReadFailure},
+    partial::PartialFile,
     read_file, stamp, tables,
     worker::ExtractionRequest,
 };
@@ -447,6 +448,11 @@ pub(crate) fn extract(
                         }
                     }
                 }
+                if let Some(file) = partial
+                    && entry.disposition != InventoryDisposition::Decoded
+                {
+                    record_undecoded_partial(&mut entry, file, &mut gaps);
+                }
             }
             Err(error) => {
                 let (disposition, reason) = read_failure_disposition(error);
@@ -554,6 +560,23 @@ pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalo
 /// Catalog disposition and reason for a failed strict logical read. Causes stay
 /// distinct: encryption is never reported as corruption and an unexplained short
 /// read is never asserted to be corruption.
+/// Reason suffix of a partially read table that was not decoded: its retained
+/// object is a partial container, not the client file.
+const PARTIAL_SUFFIX: &str = "partial_plain_frames";
+
+/// A partially read table that was not decoded keeps its encrypted ranges as
+/// catalog gaps, and its reason says that only plain frames were read.
+fn record_undecoded_partial(entry: &mut TableInventory, file: &PartialFile, gaps: &mut Vec<String>) {
+    if entry.reason != UNAVAILABLE_METADATA {
+        entry.reason = format!("{}:{PARTIAL_SUFFIX}", entry.reason);
+    }
+    gaps.extend(
+        file.unavailable()
+            .iter()
+            .map(|r| format!("{}:{}", entry.table, r.gap())),
+    );
+}
+
 fn read_failure_disposition(error: ReadFailure) -> (InventoryDisposition, &'static str) {
     match error {
         ReadFailure::Missing => (
@@ -662,6 +685,71 @@ mod tests {
             ReadFailure::ShortRead,
         ] {
             assert_ne!(read_failure_disposition(failure).0, InvalidCorrupt);
+        }
+    }
+    #[test]
+    fn undecoded_partial_tables_keep_encrypted_ranges_and_say_partial() {
+        use crate::partial::FrameLayout;
+        let layout = [
+            FrameLayout {
+                start: 0,
+                length: 8,
+                encrypted: false,
+            },
+            FrameLayout {
+                start: 8,
+                length: 4,
+                encrypted: true,
+            },
+        ];
+        let file = PartialFile::assemble(12, &layout, |offset, length| {
+            assert!(offset + length <= 8, "reader asked for encrypted bytes");
+            Ok::<_, ()>(vec![0; length])
+        })
+        .unwrap();
+        let entry = |disposition, reason: &str| TableInventory {
+            table: "Synthetic".into(),
+            locale: None,
+            file_data_id: Some(1),
+            disposition,
+            reason: reason.into(),
+            retained_sha256: None,
+            decoded_sha256: None,
+            encoded_bytes: None,
+            records: None,
+            layout_hash: None,
+        };
+        for (disposition, reason, expected) in [
+            (
+                InventoryDisposition::InvalidCorrupt,
+                "table_hash_mismatch",
+                "table_hash_mismatch:partial_plain_frames",
+            ),
+            (
+                InventoryDisposition::DefinitionMissing,
+                "definition_missing",
+                "definition_missing:partial_plain_frames",
+            ),
+            (
+                InventoryDisposition::RetainedUnsupported,
+                "cyclic_or_missing_copy_source",
+                "cyclic_or_missing_copy_source:partial_plain_frames",
+            ),
+            (
+                InventoryDisposition::UnavailableEncrypted,
+                UNAVAILABLE_METADATA,
+                UNAVAILABLE_METADATA,
+            ),
+        ] {
+            let mut table = entry(disposition, reason);
+            let mut gaps = Vec::new();
+            record_undecoded_partial(&mut table, &file, &mut gaps);
+            assert_eq!(table.reason, expected);
+            assert_eq!(table.disposition, disposition);
+            assert_eq!(
+                gaps,
+                vec!["Synthetic:unavailable_encrypted_frames:1-1:bytes:8+4".to_string()]
+            );
         }
     }
     #[test]
