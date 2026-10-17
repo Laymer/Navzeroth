@@ -3,11 +3,10 @@ import { expect, test, type Page } from "@playwright/test";
 // App.tsx bumps a revision every 60 s so backend freshness is requeried. Plan 12.6
 // says unsaved user input must survive that. Each case types into one field, lets
 // the 60 s tick fire on a controlled clock, and expects the text to be untouched.
-// A case is marked fixme only after its reset was reproduced; G5b fixes the tick and
-// removes the marks.
+// A case may be marked fixme only after its reset was reproduced (none is now: G5b fixed Settings).
 interface Case { screen: string; field: string; value: string; open?: string; fixme?: string }
 const CASES: readonly Case[] = [
-  { screen: "Settings", field: "Manual goal identifier", value: "unsaved-goal", fixme: "Reproduced: SettingsScreen re-initialises its draft on the tick (SettingsScreen.tsx:9). G5b fixes it and removes this mark." },
+  { screen: "Settings", field: "Manual goal identifier", value: "unsaved-goal" },
   { screen: "Local diagnostics", field: "New diagnostic file path", value: "C:\\unsaved\\diagnostic.json" },
   { screen: "Backup and recovery", field: "New backup file path", value: "C:\\unsaved\\backup.sqlite3" },
   { screen: "Atlas", field: "Search reference pins", value: "unsaved search" },

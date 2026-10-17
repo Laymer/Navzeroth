@@ -1,3 +1,4 @@
+import "./dataScreens.css";
 import { LocalSubmissionsPanel } from "./LocalSubmissionsPanel";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
@@ -6,6 +7,7 @@ import { ContentDispositionPanel } from "./ContentDispositionPanel";
 import { describeObservation } from "../observation";
 import planningExample from "../../../../fixtures/desktop/planning/synthetic-revision.json";
 import example from "../../../../fixtures/desktop/content/demo-revision.json";
+import { Button, Field, Panel } from "../ui";
 
 export function ContentScreen({ client, onChanged, refreshKey }: { client: CommandClient; onChanged: () => void; refreshKey: number }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
@@ -62,33 +64,32 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
   }
   const selected = profiles.find((p) => p.id === profile);
   const compatible = staged !== null && selected?.fixture === staged.key.scope.fixture && selected.context?.namespace === staged.key.scope.context.namespace && selected.context.build.edition === staged.key.scope.context.build.edition && selected.context.build.build === staged.key.scope.context.build.build && selected.context.build.interface === staged.key.scope.context.build.interface;
-  return <section className="snapshot-import" aria-labelledby="content-title">
-    <h2 id="content-title">Content</h2>
+  return <div className="snapshot-import"><Panel title="Content">
     <p>Stage a local data revision, inspect coverage and source policies, then activate it for a matching character context.</p>
     {!loading && !native && <p className="demo-label">DEMO — content changes require the desktop application.</p>}
     {loading && <p role="status">Loading content profiles…</p>}
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
     {message && <p role="status">{message}</p>}
-    <button type="button" disabled={busy} onClick={() => { setError(null); setRevision((n) => n + 1); }}>Refresh content</button>
-    {profiles.length === 0 ? <p>Import a character before activating content.</p> : <label>Content profile <select value={profile} disabled={busy} onChange={(event) => { setProfile(event.target.value); setActive(null); setError(null); }}>
+    <Button disabled={busy} onClick={() => { setError(null); setRevision((n) => n + 1); }}>Refresh content</Button>
+    {profiles.length === 0 ? <p>Import a character before activating content.</p> : <Field label="Content profile" help="Content is activated per character context: edition, build, interface and namespace must match.">{(c) => <select {...c} value={profile} disabled={busy} onChange={(event) => { setProfile(event.target.value); setActive(null); setError(null); }}>
       {profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name} — {p.context?.build.build ?? "demo"}, {p.context?.namespace ?? "demo"}{p.fixture ? ", synthetic" : ""}</option>)}
-    </select></label>}
+    </select>}</Field>}
     {native&&<ContentDispositionPanel client={client} profileId={profile} refreshKey={refreshKey+revision} disabled={busy} onBusyChange={setBusy} onChanged={()=>{setActive(null);setStaged(null);setRevision(n=>n+1);onChanged();}}/>}
     <h3>Active revision</h3>
     {active ? <Inspection client={client} value={active} /> : <p>No active content for this profile.</p>}
-    <button type="button" disabled={!native || busy || !active} onClick={() => void mutate("rollback")}>Restore previous revision</button>
-    <form onSubmit={event=>{event.preventDefault();void mutate("bundle");}}><label>Verified content pack directory <input value={bundlePath} maxLength={4096} disabled={busy} onChange={event=>{setBundlePath(event.target.value);setStaged(null);}}/></label><p>Choose an extracted content pack directory. The desktop verifies the catalog, source registry and declared image files before staging them together.</p><button type="submit" disabled={!native||busy||!bundlePath.trim()}>Verify and stage content pack</button></form>
+    <Button disabled={!native || busy || !active} onClick={() => void mutate("rollback")}>Restore previous revision</Button>
+    <form onSubmit={event=>{event.preventDefault();void mutate("bundle");}}><Field label="Verified content pack directory" help="An extracted content pack folder. The desktop checks the catalog, source registry and declared images before staging; staging does not activate.">{(c)=><input {...c} value={bundlePath} maxLength={4096} disabled={busy} onChange={event=>{setBundlePath(event.target.value);setStaged(null);}}/>}</Field><p>Choose an extracted content pack directory. The desktop verifies the catalog, source registry and declared image files before staging them together.</p><Button type="submit" variant="primary" disabled={!native||busy||!bundlePath.trim()}>Verify and stage content pack</Button></form>
     <form onSubmit={(event) => { event.preventDefault(); void mutate("stage"); }}>
-      <label>Content revision JSON <textarea value={text} onChange={(event) => { setText(event.target.value); setStaged(null); }} rows={8} disabled={busy} /></label>
-      <button type="button" disabled={busy} onClick={() => { setText(JSON.stringify(example, null, 2)); setStaged(null); }}>Load synthetic example</button>
-      <button type="button" disabled={busy} onClick={() => setText(JSON.stringify(planningExample, null, 2))}>Load synthetic planning example</button>
-      <button type="submit" disabled={!native || busy || !text.trim()}>Validate and stage content</button>
+      <Field label="Content revision JSON" help="A data revision as JSON. It is validated as bounded data and staged only; activation is a separate step.">{(c) => <textarea {...c} value={text} onChange={(event) => { setText(event.target.value); setStaged(null); }} rows={8} disabled={busy} />}</Field>
+      <Button disabled={busy} onClick={() => { setText(JSON.stringify(example, null, 2)); setStaged(null); }}>Load synthetic example</Button>
+      <Button disabled={busy} onClick={() => setText(JSON.stringify(planningExample, null, 2))}>Load synthetic planning example</Button>
+      <Button type="submit" variant="primary" disabled={!native || busy || !text.trim()}>Validate and stage content</Button>
     </form>
     {staged && <><h3>Staged revision</h3><Inspection client={client} value={staged} />
       {!compatible && <p>This revision does not match the selected profile’s edition, build, interface, namespace and synthetic status.</p>}
-      <button type="button" disabled={!native || busy || !compatible} onClick={() => void mutate("activate")}>Activate staged revision</button></>}
+      <Button disabled={!native || busy || !compatible} onClick={() => void mutate("activate")}>Activate staged revision</Button></>}
     <LocalSubmissionsPanel client={client} enabled={native} refreshKey={refreshKey + revision} />
-  </section>;
+  </Panel></div>;
 }
 function Inspection({ client, value }: { client:CommandClient; value: ContentInspection }) {
   const scope = value.key.scope;
@@ -117,6 +118,6 @@ function InspectionList({client,value,collection}:{client:CommandClient;value:Co
  const total=value.pages?.[collection]??initial.length;
  async function move(offset:number){if(!value.pages||busy)return;const request=++ticket.current;setBusy(true);setError("");const result=await client.getContentInspectionPage(JSON.stringify({key:value.key,content_sha256:value.pages.content_sha256,collection,offset}));if(request!==ticket.current)return;setBusy(false);if(!result.ok){setError(result.error.message);return;}const p=result.value;if(JSON.stringify(p.key)!==JSON.stringify(value.key)||p.content_sha256!==value.pages.content_sha256||p.collection!==collection||p.offset!==offset||p.total!==total||p.records.length>200){setError("Inspection changed; refresh content.");return;}setLoaded({identity,offset,records:p.records});}
  return <details><summary>{collection==="sources"?"Source policies":collection.replaceAll("_"," ")} ({total})</summary>
- {total>200&&<nav aria-label={`${collection} inspection pages`}><button type="button" disabled={busy||page.offset===0} onClick={()=>void move(Math.max(0,page.offset-200))}>Previous {collection}</button><span>{page.offset+1}–{Math.min(page.offset+200,total)} of {total}</span><button type="button" disabled={busy||page.offset+200>=total} onClick={()=>void move(page.offset+200)}>Next {collection}</button></nav>}
+ {total>200&&<nav aria-label={`${collection} inspection pages`}><Button disabled={busy||page.offset===0} onClick={()=>void move(Math.max(0,page.offset-200))}>Previous {collection}</Button><span>{page.offset+1}–{Math.min(page.offset+200,total)} of {total}</span><Button disabled={busy||page.offset+200>=total} onClick={()=>void move(page.offset+200)}>Next {collection}</Button></nav>}
  {error&&<p role="alert">{error}</p>}<ul>{page.records.map((record,n)=>{if(collection==="sources"){const source=record as ContentInspection["sources"][number];return <li key={source.id}>{source.publisher} ({source.id})<p>License: {describeObservation(source.license)}. Redistribution: {describeObservation(source.redistribution)}. Offline use: {describeObservation(source.offline_usable)}.</p><p>Attribution: {describeObservation(source.attribution)}</p></li>;}const finding=record as {code?:string};return <li key={n}>{finding.code?.replaceAll("_"," ")??JSON.stringify(record)}</li>;})}</ul></details>;
 }
