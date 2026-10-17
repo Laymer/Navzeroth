@@ -49,6 +49,78 @@ A key file is 64 lowercase hex characters (32 bytes), optionally followed by a
 newline; keep it private and outside the repository. `receipt-assemble` prints the
 canonical compact receipt, which is the only encoding `verify` accepts.
 
+## Research-only projections (task V2.2)
+
+`project` turns one verified catalog into typed records for one declared locale;
+`projection-verify` checks a sealed projection:
+
+```sh
+cargo run --locked -p azeroth-cli -- local-data project --destination <private-directory> --catalog <catalog-sha256> --locale enUS
+cargo run --locked -p azeroth-cli -- local-data projection-verify --destination <private-directory> --projection <projection-sha256>
+```
+
+`project` verifies the catalog closure, reads the hash-verified decoded objects
+and seals the canonical projection bytes at `projections/<sha256>` in the same
+private store, under its writer lock (a concurrent extraction or projection
+refuses). It refuses, without creating anything, when the catalog is not
+already in the store. Its storage quota is the Max preset's, whatever preset
+produced the catalog. It prints a summary (digest,
+catalog digest, build, locale, per-domain counts and source completeness, gaps)
+and exits3: the projection is research-only, `activated` and
+`verified_for_planning` are always false, and nothing consumes it yet.
+`projection-verify` checks the projection hash, canonical encoding, structural
+invariants, the source catalog closure and each bound decoded object
+(`integrity_verified`). When the sealed projector profile equals the current
+one it re-projects and requires identical bytes: `reproduction: "reproduced"`,
+`verified: true`, exit0. A projection sealed by a different projector profile
+is integrity-checked only: `reproduction: "skipped_profile_mismatch"`,
+`verified: false`, exit4; re-run `project` with the current binary to verify.
+Any refusal (including a same-profile projection that does not re-derive)
+exits1.
+
+The projector profile hash covers only the projector code
+(`crates/local-data/src/projection.rs` and
+`crates/core/src/local_data_projection.rs`, which holds the record types,
+validation, slot mapping and `PROJECTION_PROFILE`), not the rest of the
+extractor, so unrelated extractor edits don't invalidate projections.
+`PROJECTION_PROFILE` and the slot-mapping identifier are bumped whenever the
+mapping's meaning changes.
+
+Domains and sources (each pinned to the one layout WoWDBDefs lists for
+70374/70425; any other layout is a `projection_layout_unsupported` gap; no
+70374 catalog has been projected yet):
+
+| Domain | Tables | Records |
+| --- | --- | --- |
+| equipment | ItemSparse, Item | item identity, name, quality, item level, required level, inventory type, candidate slots, class/subclass, class/race masks, required skill/rank, bonding, raw stat-budget slots |
+| geography | Map, UiMap, UiMapAssignment | map, UI map and assignment identities; parents; raw UI/world coordinate frames |
+| travel | TaxiNodes, TaxiPath, TaxiPathNode | flight nodes; directed paths with cost and ordered waypoints |
+| class_roles | ChrClasses, ChrRaces | class and race identities and their input facts |
+
+Every value is a `Fact`: `known` (zero is `known` 0), `unknown` (the decoder
+reported it unknown), `missing` (field or joined row absent, including every
+fact from a source table that is a whole-table gap; `sources` says which) or
+`unsupported` (type/range refused, or ItemSparse and Item disagree). ItemSparse
+is authoritative for inventory type; Item only fills a value ItemSparse lacks,
+never an unknown or refused one. Tables that are absent,
+encrypted, undecoded or in an unsupported layout appear in `sources` as gaps
+with the catalog disposition and reason; encrypted sections inside decoded
+tables are gaps too, and either makes the domain's `sources_complete` false.
+Join and reference problems (items in only one table, unmapped inventory
+types, paths with unresolved endpoints or unordered waypoints, waypoints for
+unknown paths) are counted gaps. Slots are authored candidates
+(`navzeroth-inventory-type-v1`) without proficiency or dual-wield rules; stat
+amounts, coordinate-frame interpretation, unlocks/costs/waits and role models
+are standing gaps.
+
+The projection binds the catalog digest, product, version, build, locale,
+catalog extractor/metadata/profile hashes and the projector version/profile
+hash. Record order is canonical (by identity), so the bytes and digest do not
+depend on stored row order; duplicate identities refuse. The budget is1million
+decoded rows across projected sources (waypoints included) and the encoding is
+bounded at256MiB. Activation, rollback,
+cache/hotfix import, desktop display and planner consumption remain open.
+
 ## Worker, storage and formats
 
 CLI and desktop launch their own executable's internal version1 worker entry
@@ -79,8 +151,11 @@ regular-file checks reject unsafe selections. These checks do not establish an
 OS sandbox against hostile concurrent directory replacement; native read-only
 restrictions and post-read consistency checks are additional layers.
 
-Private storage contains content-addressed `objects/`, immutable `catalogs/` and
-an OS writer lock. Per-installation locks also serialize alternate destinations.
+Private storage contains content-addressed `objects/`, immutable `catalogs/`,
+sealed research `projections/` and an OS writer lock. Opening a store (extract
+or project) now creates `projections/`; binaries before task V2.2 refuse a store
+containing it, so this is a one-way upgrade. Per-installation locks also
+serialize alternate destinations.
 Quota accounting includes existing objects/catalogs and staging. Free space is
 checked before writing; no quota is preallocated. Writes sync staging before
 atomic sealing, and extraction never changes active gameplay state. Cancellation
@@ -149,7 +224,7 @@ fingerprint, with its private catalog among the declared digests. The committed
 policy is still `bundled_content`; switching it is a later, reviewed change.
 
 Remaining engineering: cache/hotfix import, full media and tooltip evaluation,
-gameplay projections/activation/rollback, row search and indexes, durable jobs/
+projection activation/rollback and consumers, row search and indexes, durable jobs/
 checkpoints, persistent presets/selection and installer choices, opt-in update
 detection, receipt preparation and the completed private-inventory packaging/readiness
 contracts. All nine complete target inventories and actual candidate-bound

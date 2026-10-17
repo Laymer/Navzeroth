@@ -75,7 +75,7 @@ impl SourceState {
     }
 }
 
-struct Store {
+pub(crate) struct Store {
     root: PathBuf,
     quota: u64,
     used: u64,
@@ -107,7 +107,7 @@ fn total_size(directory: &Path, depth: usize, count: &mut usize) -> Result<u64> 
 }
 
 impl Store {
-    fn open(destination: &Path, quota: u64) -> Result<Self> {
+    pub(crate) fn open(destination: &Path, quota: u64) -> Result<Self> {
         let root = checked_path(destination)?;
         if !root.is_dir() {
             return Err("Private destination must be a directory");
@@ -116,7 +116,7 @@ impl Store {
             let name = entry
                 .map_err(|_| "Private destination inaccessible")?
                 .file_name();
-            if !["writer.lock", "objects", "catalogs"]
+            if !["writer.lock", "objects", "catalogs", "projections"]
                 .iter()
                 .any(|allowed| name == *allowed)
             {
@@ -156,7 +156,7 @@ impl Store {
         if used > quota {
             return Err("Existing private store exceeds configured quota");
         }
-        for name in ["objects", "catalogs"] {
+        for name in ["objects", "catalogs", "projections"] {
             let path = root.join(name);
             if !path.exists() {
                 fs::create_dir(&path).map_err(|_| "Cannot create private store")?;
@@ -170,7 +170,7 @@ impl Store {
             _lock: lock,
         })
     }
-    fn put(&mut self, namespace: &str, bytes: &[u8]) -> Result<String> {
+    pub(crate) fn put(&mut self, namespace: &str, bytes: &[u8]) -> Result<String> {
         let digest = hash(bytes);
         let path = self.root.join(namespace).join(&digest);
         if path.exists() {

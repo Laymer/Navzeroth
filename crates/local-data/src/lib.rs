@@ -11,6 +11,7 @@ mod isolation;
 pub mod metadata;
 #[allow(unsafe_code)]
 mod native;
+pub mod projection;
 pub mod receipts;
 pub mod tables;
 pub mod worker;

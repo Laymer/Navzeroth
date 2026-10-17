@@ -166,3 +166,195 @@ fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
     assert_eq!(fs::read_dir(&source).unwrap().count(), 0);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn projection_commands_require_explicit_options_and_refuse_unknown_catalogs() {
+    for args in [
+        vec!["local-data", "project", "--destination", "private-input"],
+        vec![
+            "local-data",
+            "project",
+            "--destination",
+            "private-input",
+            "--catalog",
+            "x",
+        ],
+        vec!["local-data", "projection-verify", "--projection", "x"],
+        vec![
+            "local-data",
+            "project",
+            "--destination",
+            "d",
+            "--catalog",
+            "x",
+            "--locale",
+            "enUS",
+            "--preset",
+            "max",
+        ],
+    ] {
+        let output = cli(&args);
+        assert_eq!(output.status.code(), Some(2));
+        let value: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(value["error"], "usage");
+    }
+    let root = std::env::temp_dir().join(format!(
+        "navzeroth-local-cli-projection-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&root).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    let dest = root.to_str().unwrap();
+    let digest = "0".repeat(64);
+    for args in [
+        vec![
+            "local-data",
+            "project",
+            "--destination",
+            dest,
+            "--catalog",
+            &digest,
+            "--locale",
+            "enUS",
+        ],
+        vec![
+            "local-data",
+            "projection-verify",
+            "--destination",
+            dest,
+            "--projection",
+            &digest,
+        ],
+    ] {
+        let output = cli(&args);
+        assert_eq!(output.status.code(), Some(1));
+        let text = String::from_utf8(output.stdout).unwrap();
+        assert!(!text.contains(dest));
+        let value: serde_json::Value = serde_json::from_str(&text).unwrap();
+        assert!(value["error"].is_string());
+    }
+    // A refused projection never initialises a store.
+    assert_eq!(fs::read_dir(&root).unwrap().count(), 0);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn project_and_projection_verify_succeed_on_a_synthetic_store() {
+    use azeroth_core::{
+        local_data::{CASCLIB_REVISION, InstallationMetadata, InventoryDisposition},
+        local_data_catalog::{DistributionClass, ResearchCatalog, TableInventory},
+    };
+    use azeroth_local_data::tables::{Cell, DecodedTable, ResearchRow, TableHeader};
+    use sha2::{Digest, Sha256};
+    let hash = |bytes: &[u8]| format!("{:x}", Sha256::digest(bytes));
+    let root = std::env::temp_dir().join(format!(
+        "navzeroth-local-cli-projected-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&root).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    fs::create_dir(root.join("objects")).unwrap();
+    fs::create_dir(root.join("catalogs")).unwrap();
+    let decoded = DecodedTable {
+        format_version: 1,
+        header: TableHeader {
+            format: "WDC5".into(),
+            records: 1,
+            fields: 1,
+            record_bytes: 4,
+            table_hash: 0,
+            layout_hash: 0,
+            locale_mask: 2,
+            sections: 1,
+        },
+        rows: vec![ResearchRow {
+            id: 1,
+            fields: [("Name_lang".to_owned(), Cell::Text("Synthetic".into()))].into(),
+            copied_from: None,
+        }],
+        gaps: vec![],
+    };
+    let raw = b"synthetic raw".to_vec();
+    let json = serde_json::to_vec(&decoded).unwrap();
+    fs::write(root.join("objects").join(hash(&raw)), &raw).unwrap();
+    fs::write(root.join("objects").join(hash(&json)), &json).unwrap();
+    let catalog = ResearchCatalog {
+        format_version: 1,
+        classification: DistributionClass::LocalOnly,
+        installation: InstallationMetadata {
+            product: "wow_classic_beta".into(),
+            version: "1.60.1.70425".into(),
+            build: 70425,
+            build_key: "a".repeat(32),
+            cdn_key: "b".repeat(32),
+            declared_locales: vec!["enUS".into()],
+        },
+        build_info_sha256: "c".repeat(64),
+        extractor_version: "synthetic".into(),
+        native_revision: CASCLIB_REVISION.into(),
+        metadata_sha256: azeroth_local_data::metadata::METADATA_SHA256.into(),
+        parser_profile: "synthetic".into(),
+        extractor_profile_sha256: None,
+        archive_statistics: None,
+        input_hashes: Default::default(),
+        tables: vec![TableInventory {
+            table: "ChrClasses".into(),
+            locale: Some("enUS".into()),
+            file_data_id: Some(1),
+            disposition: InventoryDisposition::Decoded,
+            reason: "research_decoded".into(),
+            retained_sha256: Some(hash(&raw)),
+            decoded_sha256: Some(hash(&json)),
+            encoded_bytes: Some(raw.len() as u64),
+            records: Some(1),
+            layout_hash: Some("afc9b0c2".into()),
+        }],
+        gaps: vec![],
+        gameplay_projection_sha256: None,
+    };
+    let manifest = serde_json::to_vec(&catalog).unwrap();
+    let digest = hash(&manifest);
+    fs::write(root.join("catalogs").join(&digest), &manifest).unwrap();
+    let dest = root.to_str().unwrap();
+    let output = cli(&[
+        "local-data",
+        "project",
+        "--destination",
+        dest,
+        "--catalog",
+        &digest,
+        "--locale",
+        "enUS",
+    ]);
+    assert_eq!(output.status.code(), Some(3));
+    let summary: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(summary["catalog_sha256"], digest.as_str());
+    assert_eq!(summary["status"], "research_only");
+    assert_eq!(summary["activated"], false);
+    assert_eq!(summary["counts"]["class_roles_classes"], 1);
+    let projection = summary["projection_sha256"].as_str().unwrap();
+    assert!(root.join("projections").join(projection).is_file());
+    let output = cli(&[
+        "local-data",
+        "projection-verify",
+        "--destination",
+        dest,
+        "--projection",
+        projection,
+    ]);
+    assert_eq!(output.status.code(), Some(0));
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(report["verified"], true);
+    assert_eq!(report["reproduction"], "reproduced");
+    fs::remove_dir_all(root).unwrap();
+}
