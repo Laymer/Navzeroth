@@ -55,7 +55,7 @@ function Get-AcceptanceProcedures([string] $Root, [string] $ScenarioPath) {
     $manifest = (Read-BoundedReleaseText (Join-Path $Root 'release/v1/acceptance-evidence.json')) | ConvertFrom-Json
     $inventory = (Read-BoundedReleaseText (Join-Path $Root 'release/v1/coverage-inventory.json')) | ConvertFrom-Json
     $runbook = Read-BoundedReleaseText (Join-Path $Root 'docs/compatibility/V1_ACCEPTANCE_RUNBOOK.md')
-    if ($manifest.schema_version -ne 1 -or $inventory.schema_version -ne 1) { throw 'Unsupported acceptance or inventory schema.' }
+    if ($inventory.schema_version -notin 1, 2 -or $manifest.schema_version -ne $inventory.schema_version) { throw 'Unsupported acceptance or inventory schema.' }
     $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
     $rows = @()
     foreach ($check in $manifest.checks) {

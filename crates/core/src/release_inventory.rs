@@ -125,7 +125,7 @@ impl Input {
         if self.schema_version != 1 || self.inventory.schema_version != 1 {
             return Err("unsupported inventory input version");
         }
-        if self.inventory.target != Target::forever_70374() {
+        if self.inventory.target != Some(Target::forever_70374()) {
             return Err("unsupported inventory target");
         }
         if !nonempty(&self.inventory.inventory_id)
@@ -194,7 +194,7 @@ impl Input {
         for review in &self.enumeration_reviews {
             if !domain(&review.domain)
                 || !reviews.insert(&review.domain)
-                || review.target != self.inventory.target
+                || Some(&review.target) != self.inventory.target.as_ref()
                 || !nonempty(&review.reviewer)
                 || review.evidence.is_empty()
                 || !files(&review.evidence)
@@ -233,7 +233,7 @@ impl Input {
                 || !nonempty(&record.record_id)
                 || !nonempty(&record.origin_edition)
                 || record.origin_build.as_ref().is_some_and(|b| !nonempty(b))
-                || record.target != self.inventory.target
+                || Some(&record.target) != self.inventory.target.as_ref()
                 || sources.get(&record.source_id) != Some(&&record.source_revision)
                 || !records.insert((&record.domain, &record.record_id, &record.source_id))
                 || !files(&record.evidence)
@@ -516,7 +516,7 @@ mod tests {
             d.units[0].required_record_ids = Some(vec![]);
             i.enumeration_reviews.push(EnumerationReview {
                 domain: d.domain.clone(),
-                target: i.inventory.target.clone(),
+                target: i.inventory.target.clone().unwrap(),
                 reviewer: "independent-reviewer".into(),
                 method: EnumerationMethod::IndependentTargetReview,
                 evidence: d.enumeration_evidence.clone(),

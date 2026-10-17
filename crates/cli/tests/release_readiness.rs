@@ -259,7 +259,8 @@ fn wrong_target_inventory_hash_and_source_version_are_not_promoted() {
     let temp = Temp::new("0.8.1");
     temp.bind("0.8.1");
     let mut evidence = temp.json(EVIDENCE);
-    evidence["target"]["build"] = json!("70338");
+    evidence["target"] =
+        json!({"edition":"wow_forever","version":"1.60.1","build":"70338","interface":16001});
     evidence["inventory_sha256"] = json!("f".repeat(64));
     temp.json_write(EVIDENCE, &evidence);
     let result = report(&temp.options("0.8.1")).unwrap();
@@ -278,16 +279,16 @@ fn future_unknown_duplicate_and_oversized_manifests_fail_even_for_preview() {
     let temp = Temp::new("0.8.1");
     let original = fs::read(temp.0.join(EVIDENCE)).unwrap();
     let mut value = temp.json(EVIDENCE);
-    value["schema_version"] = json!(2);
+    value["schema_version"] = json!(3);
     temp.json_write(EVIDENCE, &value);
     assert!(report(&temp.options("0.8.1")).is_err());
-    value["schema_version"] = json!(1);
+    value["schema_version"] = json!(2);
     value["unexpected"] = json!(true);
     temp.json_write(EVIDENCE, &value);
     assert!(report(&temp.options("0.8.1")).is_err());
     let duplicate = String::from_utf8(original).unwrap().replacen(
-        "\"schema_version\": 1",
-        "\"schema_version\": 1, \"schema_version\": 1",
+        "\"schema_version\": 2",
+        "\"schema_version\": 2, \"schema_version\": 2",
         1,
     );
     temp.write(EVIDENCE, &duplicate);

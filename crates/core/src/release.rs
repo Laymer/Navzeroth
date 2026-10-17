@@ -67,6 +67,20 @@ impl Target {
         }
     }
 }
+/// ADR 0006: the 1.0.0 target is the first stable live build after the
+/// 4 Nov 2026 launch. Until task V4.2 freezes it here, schema 2 manifests must
+/// declare `"target": null` and every release gate blocks. A manifest cannot
+/// choose its own target.
+pub fn frozen_release_target() -> Option<Target> {
+    None
+}
+/// The target a manifest of this schema version must declare.
+pub fn expected_target(schema_version: u32) -> Option<Target> {
+    match schema_version {
+        1 => Some(Target::forever_70374()),
+        _ => frozen_release_target(),
+    }
+}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FileRef {
@@ -110,6 +124,15 @@ pub struct Unit {
     /// None is an unknown inventory; [] is an explicitly enumerated empty unit.
     pub required_record_ids: Option<Vec<String>>,
 }
+/// Schema 2: content deliberately outside the declared slice. This is neither
+/// `unknown` (unassessed) nor `unsupported`; release notes list every boundary.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Boundary {
+    pub id: String,
+    pub scope: String,
+    pub reason: String,
+}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DomainInventory {
@@ -117,6 +140,22 @@ pub struct DomainInventory {
     pub completeness: Completeness,
     pub enumeration_evidence: Vec<FileRef>,
     pub units: Vec<Unit>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub out_of_scope: Vec<Boundary>,
+}
+/// Schema 2: the declared release slice (ADR 0006 section 2).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Slice {
+    pub id: String,
+    pub races: Vec<String>,
+    pub zones: Vec<String>,
+    pub dungeons: Vec<String>,
+    pub level_min: u8,
+    pub level_max: u8,
+    /// None until the launch class list is known.
+    pub classes: Option<Vec<String>>,
+    pub party_sizes: Vec<u8>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -129,7 +168,10 @@ pub struct SourceRequirement {
 pub struct Inventory {
     pub schema_version: u32,
     pub inventory_id: String,
-    pub target: Target,
+    /// Always present; null (schema 2 only) means the target is pending.
+    pub target: Option<Target>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub slice: Option<Slice>,
     pub domains: Vec<DomainInventory>,
     pub sources: Vec<SourceRequirement>,
 }
@@ -194,7 +236,8 @@ pub struct Deferral {
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
     pub schema_version: u32,
-    pub target: Target,
+    /// Always present; must equal the inventory target, including null.
+    pub target: Option<Target>,
     pub inventory_sha256: Sha256Hex,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub admission_registry: Option<FileRef>,
@@ -300,14 +343,21 @@ pub fn is_stable(version: &str) -> Result<bool, &'static str> {
 
 pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
     let inventory: Inventory = decode(bytes)?;
-    if inventory.schema_version != 1 {
+    let shape_matches = match inventory.schema_version {
+        1 => {
+            inventory.slice.is_none() && inventory.domains.iter().all(|d| d.out_of_scope.is_empty())
+        }
+        2 => inventory.slice.is_some(),
+        _ => false,
+    };
+    if !shape_matches {
         return Err("Unsupported inventory version");
     }
     Ok(inventory)
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     let evidence: Evidence = decode(bytes)?;
-    if evidence.schema_version != 1 {
+    if !matches!(evidence.schema_version, 1 | 2) {
         return Err("Unsupported evidence version");
     }
     Ok(evidence)
@@ -317,7 +367,69 @@ fn decode<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, &'static st
         return Err("Release manifest exceeds size limit");
     }
     // Typed structs reject duplicate and unknown fields. Arrays are checked below.
-    serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")
+    let value = serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")?;
+    // An optional target would otherwise default to null when the key is omitted.
+    #[derive(Deserialize)]
+    struct TargetPresent {
+        #[allow(dead_code)]
+        target: serde::de::IgnoredAny,
+    }
+    serde_json::from_slice::<TargetPresent>(bytes).map_err(|_| "Invalid release manifest")?;
+    Ok(value)
+}
+
+/// Explicit v1 to v2 migration (task V1.1): the target becomes pending, the
+/// slice is declared and each domain receives its out-of-scope boundaries.
+/// Units, evidence references and sources are kept unchanged.
+pub fn upgrade_inventory(
+    mut inventory: Inventory,
+    slice: Slice,
+    mut boundaries: BTreeMap<String, Vec<Boundary>>,
+) -> Result<Inventory, &'static str> {
+    if inventory.schema_version != 1 || inventory.slice.is_some() {
+        return Err("Only a schema 1 inventory can be upgraded");
+    }
+    if boundaries.keys().any(|k| !DOMAINS.contains(&k.as_str())) {
+        return Err("Boundaries name an unsupported domain");
+    }
+    inventory.schema_version = 2;
+    inventory.target = frozen_release_target();
+    inventory.slice = Some(slice);
+    for domain in &mut inventory.domains {
+        domain.out_of_scope = boundaries.remove(&domain.domain).unwrap_or_default();
+    }
+    Ok(inventory)
+}
+pub fn upgrade_evidence(
+    mut evidence: Evidence,
+    inventory_sha256: Sha256Hex,
+) -> Result<Evidence, &'static str> {
+    if evidence.schema_version != 1 {
+        return Err("Only schema 1 evidence can be upgraded");
+    }
+    evidence.schema_version = 2;
+    evidence.target = frozen_release_target();
+    evidence.inventory_sha256 = inventory_sha256;
+    Ok(evidence)
+}
+
+fn slice_valid(slice: &Slice) -> bool {
+    let names = |values: &[String]| {
+        !values.is_empty() && values.len() <= MAX_UNITS && unique(values.iter().map(String::as_str))
+    };
+    let mut sizes = BTreeSet::new();
+    bounded_text(&slice.id)
+        && names(&slice.races)
+        && names(&slice.zones)
+        && (slice.dungeons.is_empty() || names(&slice.dungeons))
+        && slice.classes.as_deref().is_none_or(names)
+        && (1..=slice.level_max).contains(&slice.level_min)
+        && slice.level_max <= 60
+        && !slice.party_sizes.is_empty()
+        && slice
+            .party_sizes
+            .iter()
+            .all(|n| (1..=5).contains(n) && sizes.insert(*n))
 }
 
 fn check_limits(inventory: &Inventory, evidence: Option<&Evidence>) -> Result<(), &'static str> {
@@ -325,6 +437,12 @@ fn check_limits(inventory: &Inventory, evidence: Option<&Evidence>) -> Result<()
     if inventory.domains.len() > DOMAINS.len()
         || inventory.sources.len() > MAX_UNITS
         || units.clone().count() > MAX_UNITS
+        || inventory
+            .domains
+            .iter()
+            .map(|d| d.out_of_scope.len())
+            .sum::<usize>()
+            > MAX_UNITS
         || units
             .map(|u| u.required_record_ids.as_ref().map_or(0, Vec::len))
             .sum::<usize>()
@@ -361,7 +479,9 @@ pub fn assess(
 ) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
     check_limits(inventory, evidence)?;
-    if inventory.schema_version != 1 || evidence.is_some_and(|e| e.schema_version != 1) {
+    if !matches!(inventory.schema_version, 1 | 2)
+        || evidence.is_some_and(|e| !matches!(e.schema_version, 1 | 2))
+    {
         return Err("Unsupported release manifest version");
     }
     let mut report = Readiness {
@@ -374,11 +494,51 @@ pub fn assess(
         publication_allowed: true,
         blockers: vec![],
     };
-    if inventory.schema_version != 1
-        || inventory.target != Target::forever_70374()
+    if inventory.target != expected_target(inventory.schema_version)
         || !bounded_text(&inventory.inventory_id)
     {
         report.block("Inventory version, identifier or frozen target does not match");
+    }
+    if inventory.schema_version == 2 {
+        if frozen_release_target().is_none() {
+            report.block(
+                "Release target is pending the first stable live build after launch (ADR 0006)",
+            );
+        }
+        match &inventory.slice {
+            Some(slice) if slice_valid(slice) => {
+                if slice.classes.is_none() {
+                    report.block("Release slice classes are unknown");
+                }
+            }
+            _ => report.block("Release slice is missing or invalid"),
+        }
+    }
+    // A slice always leaves content outside it; an omitted or empty list would
+    // merge "not declared" into "nothing outside" (ADR 0006 section 2).
+    if inventory.schema_version == 2 {
+        for domain in inventory
+            .domains
+            .iter()
+            .filter(|d| d.out_of_scope.is_empty())
+        {
+            report.block(format!(
+                "Out-of-scope boundaries are not declared: {}",
+                domain.domain
+            ));
+        }
+    }
+    let boundaries: Vec<_> = inventory
+        .domains
+        .iter()
+        .flat_map(|d| &d.out_of_scope)
+        .collect();
+    if !unique(boundaries.iter().map(|b| b.id.as_str()))
+        || boundaries
+            .iter()
+            .any(|b| !bounded_text(&b.scope) || !bounded_text(&b.reason))
+    {
+        report.block("Out-of-scope boundaries are invalid, duplicated or unexplained");
     }
     let domains: BTreeSet<_> = inventory
         .domains
@@ -443,7 +603,7 @@ pub fn assess(
     if !inventory.sources.is_empty() && evidence.admission_registry.is_none() {
         report.block("Accepted sources require a pinned admission registry");
     }
-    if evidence.schema_version != 1 || evidence.target != inventory.target {
+    if evidence.schema_version != inventory.schema_version || evidence.target != inventory.target {
         report.block("Acceptance version or target differs from inventory");
     }
     if evidence.inventory_sha256.as_str() != bindings.inventory_sha256 {
