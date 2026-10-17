@@ -1,3 +1,5 @@
+import "./play.css";
+import { Button, Field } from "../ui";
 import { useEffect, useRef, useState } from "react";
 import type { AppError, CommandClient, ProfileSummary } from "../commands";
 import type { FileInputFormat } from "../commands/contract";
@@ -77,29 +79,29 @@ export function SessionsScreen({ client, refreshKey, onChanged }: { client: Comm
     setDetail(null); setRevision((value) => value + 1); onChanged();
   }
   const selected = profiles.find((p) => p.id === profile);
-  return <section className="snapshot-import" aria-labelledby="sessions-title">
+  return <section className="snapshot-import play-screen" aria-labelledby="sessions-title">
     <h2 id="sessions-title">Sessions</h2>
     <p>Manually recorded observations. Monotonic coverage measures intervals between samples; it does not prove active play or wall-clock duration.</p>
-    {!native && <p className="demo-label">DEMO — importing and storing session history requires the desktop application.</p>}
+    {!native && <p className="demo-label play-note">DEMO — importing and storing session history requires the desktop application.</p>}
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
     {message && <p role="status">{message}</p>}
-    {profiles.length ? <label>Session profile <select value={profile} disabled={busy} onChange={(event) => select(event.target.value)}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name} — {p.context?.build.build ?? "demo"}, {p.context?.namespace ?? "demo"}{p.fixture ? ", synthetic" : ""}</option>)}</select></label> : <p>Import a character snapshot before importing matching sessions.</p>}
-    {selected?.fixture && <p className="demo-label">SYNTHETIC — engineering examples, not live gameplay evidence.</p>}
+    {profiles.length ? <Field label="Session profile" help="Sessions are stored per exact profile. Importing adds to this profile's history only.">{(c) => <select {...c} value={profile} disabled={busy} onChange={(event) => select(event.target.value)}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name} — {p.context?.build.build ?? "demo"}, {p.context?.namespace ?? "demo"}{p.fixture ? ", synthetic" : ""}</option>)}</select>}</Field> : <p>Import a character snapshot before importing matching sessions.</p>}
+    {selected?.fixture && <p className="demo-label play-note">SYNTHETIC — engineering examples, not live gameplay evidence.</p>}
     <form onSubmit={(event) => { event.preventDefault(); void mutate("text"); }}>
-      <label>Session export text <textarea rows={6} value={text} disabled={busy} onChange={(event) => setText(event.target.value)} placeholder="ANAVSESSION1:…" /></label>
-      <button type="submit" disabled={!native || !profile || busy || !text.trim()}>Import session text</button>
+      <Field label="Session export text" help="Paste the ANAVSESSION1 text the addon exported. Nothing is read from the game; this is a manual import.">{(c) => <textarea {...c} rows={6} value={text} disabled={busy} onChange={(event) => setText(event.target.value)} placeholder="ANAVSESSION1:…" />}</Field>
+      <Button variant="primary" type="submit" disabled={!native || !profile || busy || !text.trim()}>Import session text</Button>
     </form>
     <form onSubmit={(event) => { event.preventDefault(); void mutate("file"); }}>
-      <label>Selected session file path <input value={path} disabled={busy} onChange={(event) => setPath(event.target.value)} /></label>
-      <label>Session file format <select value={saved ? "saved_variables" : "text"} disabled={busy} onChange={(event) => setSaved(event.target.value === "saved_variables")}><option value="saved_variables">SavedVariables: AzerothNavigatorDB / session_export</option><option value="text">ANAVSESSION1 text file</option></select></label>
-      <button type="submit" disabled={!native || !profile || busy || !path.trim()}>Import selected session file</button>
+      <Field label="Selected session file path" help="Full path of the file you saved from the game. The desktop reads it once when you import.">{(c) => <input {...c} value={path} disabled={busy} onChange={(event) => setPath(event.target.value)} />}</Field>
+      <Field label="Session file format" help="SavedVariables files hold the export under AzerothNavigatorDB / session_export; a text file holds the raw ANAVSESSION1 line.">{(c) => <select {...c} value={saved ? "saved_variables" : "text"} disabled={busy} onChange={(event) => setSaved(event.target.value === "saved_variables")}><option value="saved_variables">SavedVariables: AzerothNavigatorDB / session_export</option><option value="text">ANAVSESSION1 text file</option></select>}</Field>
+      <Button variant="primary" type="submit" disabled={!native || !profile || busy || !path.trim()}>Import selected session file</Button>
     </form>
     <p>History retains at most 128 sessions per exact profile. Capacity refusal preserves history; delete an entry explicitly to make space. Identical exports do not add entries.</p>
-    <button type="button" disabled={!native || !profile || busy} onClick={() => { setError(null); setRevision((value) => value + 1); }}>Refresh sessions</button>
+    <Button disabled={!native || !profile || busy} onClick={() => { setError(null); setRevision((value) => value + 1); }}>Refresh sessions</Button>
     <h3>Session history ({rows.length})</h3>
     {rows.length === 0 ? <p>No stored sessions for this profile.</p> : <ul>{rows.map((row) => <li key={row.session_id}>{row.session_id} — coverage {duration(row.analytics.timing.covered_ms)}
-      <button type="button" disabled={busy} onClick={() => void inspect(row.session_id)}>Inspect {row.session_id}</button>
-      <button type="button" disabled={busy} onClick={() => void mutate("delete", row.session_id)}>Delete {row.session_id}</button>
+      <Button disabled={busy} onClick={() => void inspect(row.session_id)}>Inspect {row.session_id}</Button>
+      <Button variant="danger" disabled={busy} onClick={() => void mutate("delete", row.session_id)}>Delete {row.session_id}</Button>
     </li>)}</ul>}
     {detail && <><h3>Session detail: {detail.analytics.summary.session}</h3><Analytics value={detail.analytics} />
       <details><summary>Recorded events ({detail.batch.events.length})</summary><pre>{JSON.stringify(detail.batch.events, null, 2)}</pre></details></>}

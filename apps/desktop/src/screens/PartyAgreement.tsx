@@ -1,3 +1,4 @@
+import { Button, Field, Panel } from "../ui";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { AppError, CommandMap } from "../commands/contract";
@@ -63,13 +64,12 @@ export function PartyAgreement({ client, partyId, refreshKey, planning }: { clie
     if (refreshed.ok) { setReadReady(true); setProposal(refreshed.value); }
     else { setReadReady(false); setProposal((old) => old ? { ...old, state: "invalidated", reasons: [...old.reasons, "Agreement could not be refreshed after the failed export"] } : null); }
   }
-  return <section aria-labelledby="party-agreement-title">
-    <h3 id="party-agreement-title">Local plan proposal and agreement</h3>
+  return <Panel title="Local plan proposal and agreement" level={3}>
     <p>Record each participant's explicit agreement locally. These declarations do not confirm a remote identity or synchronize with the game. Proposing never accepts for another participant.</p>
     {loading && <p role="status">Loading local agreement…</p>}
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
-    <label>Proposing participant <select value={proposer} disabled={busy || loading || !planning} onChange={(e) => setProposer(e.target.value)}><option value="">Choose who proposes</option>{planning?.participants.map((p) => <option key={p.profile_id} value={p.profile_id}>{p.character}</option>)}</select></label>
-    <button type="button" disabled={busy || loading || !readReady || !canPropose} onClick={() => void mutate("propose")}>{proposal ? "Replace proposal with this estimate" : "Propose this estimate"}</button>
+    <Field label="Proposing participant" help="The member who proposes this local plan. Agreement is recorded locally; nothing is sent to the game or other players.">{(c) => <select {...c} value={proposer} disabled={busy || loading || !planning} onChange={(e) => setProposer(e.target.value)}><option value="">Choose who proposes</option>{planning?.participants.map((p) => <option key={p.profile_id} value={p.profile_id}>{p.character}</option>)}</select>}</Field>
+    <Button variant="primary" disabled={busy || loading || !readReady || !canPropose} onClick={() => void mutate("propose")}>{proposal ? "Replace proposal with this estimate" : "Propose this estimate"}</Button>
     {!proposal && !loading && readReady && <p>No local proposal. Calculate a jointly feasible estimate to propose a plan.</p>}
     {proposal && <div aria-label="Local agreement">
       <p>Plan {proposal.guard.proposal_id}; schema {proposal.schema_version}; agreement revision {proposal.guard.revision}.</p>
@@ -82,14 +82,14 @@ export function PartyAgreement({ client, partyId, refreshKey, planning }: { clie
         <h4>{p.profile_id}</h4>
         <p>{p.accepted ? "Local acceptance recorded" : "No local acceptance"}; expected snapshot {p.expected_snapshot_id}; current {p.current_snapshot_id ?? "missing"}.</p>
         <ul>{p.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
-        <button type="button" disabled={busy || loading || !readReady || p.accepted || proposal.state === "invalidated"} onClick={() => void mutate("accept", p.profile_id, true)}>Record acceptance for {p.profile_id}</button>
-        <button type="button" disabled={busy || loading || !readReady || !p.accepted} onClick={() => void mutate("accept", p.profile_id, false)}>Withdraw acceptance for {p.profile_id}</button>
+        <Button disabled={busy || loading || !readReady || p.accepted || proposal.state === "invalidated"} onClick={() => void mutate("accept", p.profile_id, true)}>Record acceptance for {p.profile_id}</Button>
+        <Button disabled={busy || loading || !readReady || !p.accepted} onClick={() => void mutate("accept", p.profile_id, false)}>Withdraw acceptance for {p.profile_id}</Button>
         {p.progress_changes.length > 0 && <details><summary>Imported quest observation changes for {p.profile_id}</summary><pre>{JSON.stringify(p.progress_changes, null, 2)}</pre></details>}
       </div>)}
-      <label>Export recipient <select value={recipient} disabled={busy || loading || !readReady || proposal.state !== "agreed"} onChange={(e) => { setRecipient(e.target.value); setExported(null); }}><option value="">Choose who receives this plan</option>{proposal.participants.map((p) => <option key={p.profile_id} value={p.profile_id}>{p.profile_id}</option>)}</select></label>
-      <button type="button" disabled={busy || loading || !readReady || proposal.state !== "agreed" || !proposal.participants.some((p) => p.profile_id === recipient)} onClick={() => void exportForRecipient()}>Export agreed plan for recipient</button>
+      <Field label="Export recipient" help="The member who will copy the agreed plan into their own addon by hand.">{(c) => <select {...c} value={recipient} disabled={busy || loading || !readReady || proposal.state !== "agreed"} onChange={(e) => { setRecipient(e.target.value); setExported(null); }}><option value="">Choose who receives this plan</option>{proposal.participants.map((p) => <option key={p.profile_id} value={p.profile_id}>{p.profile_id}</option>)}</select>}</Field>
+      <Button disabled={busy || loading || !readReady || proposal.state !== "agreed" || !proposal.participants.some((p) => p.profile_id === recipient)} onClick={() => void exportForRecipient()}>Export agreed plan for recipient</Button>
       {exported && <section aria-label="Agreed recipient plan export"><p>Recipient {recipient}; {exported.byte_count} bytes; plan {exported.plan_id}. Expires at UTC epoch ms {exported.expires_at_utc_ms}.</p><p>Copy this bounded plan into the recipient's addon manually. It follows the agreed joint choices and advances only that character's observed progress. Re-import and agree again if another member's progress diverges.</p><label>Recipient plan text <textarea readOnly value={exported.text} rows={6} /></label></section>}
       <details><summary>Review exact proposed assumptions and participant inputs</summary><pre>{JSON.stringify(proposal.request, null, 2)}</pre></details>
     </div>}
-  </section>;
+  </Panel>;
 }

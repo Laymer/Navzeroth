@@ -1,3 +1,4 @@
+import { Button } from "../ui";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { AtlasImage, AtlasLayer } from "../commands/contract";
 import { APPROXIMATE_LABEL, describePin } from "./describe";
@@ -119,18 +120,18 @@ export function MapView({ image, layer, onLayerError, marker, markerStale, selec
   return (
     <div className="map">
       <div className="map-toolbar" role="toolbar" aria-label="Map view controls">
-        <button type="button" onClick={() => act({ type: "zoom", factor: ZOOM_STEP })}>
+        <Button onClick={() => act({ type: "zoom", factor: ZOOM_STEP })}>
           Zoom in
-        </button>
-        <button type="button" onClick={() => act({ type: "zoom", factor: 1 / ZOOM_STEP })}>
+        </Button>
+        <Button onClick={() => act({ type: "zoom", factor: 1 / ZOOM_STEP })}>
           Zoom out
-        </button>
-        <button type="button" onClick={() => act({ type: "fit" })}>
+        </Button>
+        <Button onClick={() => act({ type: "fit" })}>
           Fit to frame
-        </button>
-        <button type="button" disabled={marker === null} onClick={() => act({ type: "centre" })}>
+        </Button>
+        <Button disabled={marker === null} onClick={() => act({ type: "centre" })}>
           Centre on marker
-        </button>
+        </Button>
       </div>
       {layer === null && (
         <p className="map-note" role="status">

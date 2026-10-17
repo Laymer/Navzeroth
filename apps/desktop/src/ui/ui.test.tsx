@@ -83,6 +83,16 @@ describe("HelpTip", () => {
     expect(screen.getByText("Hover only.")).not.toBeVisible();
   });
 
+  it("stays reachable and operable inside a disabled fieldset", () => {
+    render(<fieldset disabled><HelpTip>Still readable.</HelpTip></fieldset>);
+    const trigger = screen.getByRole("button", { name: "Help" });
+    expect(trigger).toHaveAttribute("tabindex", "0");
+    fireEvent.keyDown(trigger, { key: "Enter" });
+    expect(screen.getByText("Still readable.")).toBeVisible();
+    fireEvent.keyDown(trigger, { key: " " });
+    expect(screen.getByText("Still readable.")).not.toBeVisible();
+  });
+
   it("closes a pinned bubble on an outside pointer press", () => {
     render(<><HelpTip>Pinned.</HelpTip><p>elsewhere</p></>);
     fireEvent.click(screen.getByRole("button", { name: "Help" }));

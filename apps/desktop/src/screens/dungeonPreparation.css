@@ -4,4 +4,4 @@
 .dungeon-preparation textarea { display: block; width: 100%; resize: vertical; }
 .dungeon-preparation pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .dungeon-preparation button { margin: 0.25rem; overflow-wrap: anywhere; }
-.dungeon-preparation :focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
+.dungeon-preparation :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }

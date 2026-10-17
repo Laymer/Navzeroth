@@ -76,8 +76,10 @@ export function HelpTip({ children }: HelpTipProps) {
       }}
       onMouseLeave={() => setHover(false)}
     >
-      <button
-        type="button"
+      {/* A span with role=button, not a <button>: a surrounding <fieldset disabled> must not make help unreachable. */}
+      <span
+        role="button"
+        tabIndex={0}
         className="ui-helptip__trigger"
         aria-label="Help"
         aria-expanded={open}
@@ -89,9 +91,16 @@ export function HelpTip({ children }: HelpTipProps) {
         }}
         onBlur={() => setFocus(false)}
         onClick={() => (pinned ? close() : setPinned(true))}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            if (pinned) close();
+            else setPinned(true);
+          }
+        }}
       >
         <span aria-hidden="true">?</span>
-      </button>
+      </span>
       {/* Always mounted so aria-describedby resolves when the trigger gains focus; hidden while closed. */}
       <span id={id} className="ui-helptip__bubble" role="tooltip" hidden={!open} ref={bubble} style={shift === 0 ? undefined : { transform: `translateX(${shift}px)` }}>
         {children}

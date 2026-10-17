@@ -1,3 +1,4 @@
+import { Button } from "../ui";
 import {useEffect,useRef,useState} from 'react';
 import type {CatalogPageClient,CatalogPageInfo,CatalogRecordPage,CatalogSubject} from '../commands/catalogPages';
 export function CatalogPager({client,subject,page,label,onPage,disabled=false}:{client:CatalogPageClient;subject:CatalogSubject;page?:CatalogPageInfo|undefined;label:string;disabled?:boolean;onPage:(page:CatalogRecordPage)=>void}) {
@@ -14,6 +15,6 @@ export function CatalogPager({client,subject,page,label,onPage,disabled=false}:{
   if(value.revision!==page.revision||value.catalog_sha256!==page.catalog_sha256||value.collection!==page.collection||value.offset!==offset||value.records.length>200||value.total!==page.total){setError('Catalog page changed; refresh this view.');return;}
   onPage(value);
  }
- return <nav aria-label={`${label} pages`}><span>{label}: {page.offset+1}–{Math.min(page.offset+200,page.total)} of {page.total}. Selections on other pages are retained.</span> <button type="button" disabled={disabled||busy||page.offset===0} onClick={()=>void move(Math.max(0,page.offset-200))}>Previous {label}</button> <button type="button" disabled={disabled||busy||page.next_offset===null} onClick={()=>page.next_offset!==null&&void move(page.next_offset)}>Next {label}</button>{error&&<p role="alert">{error}</p>}</nav>;
+ return <nav aria-label={`${label} pages`}><span>{label}: {page.offset+1}–{Math.min(page.offset+200,page.total)} of {page.total}. Selections on other pages are retained.</span> <Button variant="ghost" disabled={disabled||busy||page.offset===0} onClick={()=>void move(Math.max(0,page.offset-200))}>Previous {label}</Button> <Button variant="ghost" disabled={disabled||busy||page.next_offset===null} onClick={()=>page.next_offset!==null&&void move(page.next_offset)}>Next {label}</Button>{error&&<p role="alert">{error}</p>}</nav>;
 }
 export function OffPageOptions({selected,visible}:{selected:string[];visible:string[]}){return <>{[...new Set(selected)].filter(id=>id&&!visible.includes(id)).map(id=><option key={id} value={id}>{id} (selected on another page)</option>)}</>;}
