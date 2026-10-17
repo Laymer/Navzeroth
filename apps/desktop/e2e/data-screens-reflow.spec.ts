@@ -25,5 +25,14 @@ for (const screen of SCREENS) {
     await page.waitForTimeout(200);
     const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
     expect(widths.scroll).toBeLessThanOrEqual(widths.client);
+    // G5b O7: every control fits too (the Compatibility "Extraction resources" select once measured 798 px).
+    const controls = await page.evaluate(() => Array.from(document.querySelectorAll("main select, main input, main textarea")).map((el) => {
+      const r = el.getBoundingClientRect();
+      return { name: el.getAttribute("id") ?? el.tagName, left: r.left, right: r.right, width: r.width };
+    }).filter((c) => c.width > 0));
+    for (const control of controls) {
+      expect(control.left, control.name).toBeGreaterThanOrEqual(0);
+      expect(control.right, control.name).toBeLessThanOrEqual(widths.client);
+    }
   });
 }
