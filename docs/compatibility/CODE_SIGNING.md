@@ -72,7 +72,7 @@ they fit and adjust to the form's actual fields.
 | Description | Offline Windows desktop planner and in-game addon for World of Warcraft: Forever: imports addon snapshots, plans quest routes, compares gear, and records sessions. The app makes no network connections; the installer downloads Microsoft's WebView2 bootstrapper only if WebView2 is missing. No memory reading, injection or input automation. |
 | What to sign | One NSIS installer per release, `AzerothNavigator-<version>-x64-setup.exe`, built by GitHub Actions (`.github/workflows/package-windows.yml`) on a version tag |
 | Build system | GitHub Actions on GitHub-hosted `windows-2025` runners, from tagged source |
-| Team | Laymer: author, reviewer and approver. All team members use MFA on GitHub and SignPath (**owner to confirm before applying**). |
+| Team | Laymer: author, reviewer and approver. The owner confirmed MFA on GitHub (2026-10-17); enable it on SignPath too. |
 | Privacy | The program transfers no information to other networked systems unless the user requests it |
 | Uninstall | The installer registers an uninstaller (Apps & features); install and removal are documented in `docs/compatibility/WINDOWS_INSTALL.md` |
 
