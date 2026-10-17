@@ -17,7 +17,7 @@
 .play-screen textarea { width: min(100%, 50rem); }
 .play-screen pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .play-screen .ui-button { margin: var(--space-1) var(--space-2) var(--space-1) 0; }
-.play-screen .ui-panel { margin: var(--space-4) 0; }
+.play-screen .ui-panel:not(.ui-panel--nested) { margin: var(--space-4) 0; padding-inline: var(--space-3); }
 .play-screen .ui-field { margin: var(--space-3) 0; }
 .play-screen .ui-field select, .play-screen .ui-field input, .play-screen .ui-field textarea { justify-self: start; }
 

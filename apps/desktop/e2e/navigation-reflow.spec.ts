@@ -22,3 +22,23 @@ for (const width of [320, 640]) {
     });
   }
 }
+
+// G4 review #4: the rail/bar switch follows the Settings text size, not the browser's fixed 16 px.
+for (const [fontSize, layout] of [[16, "rail"], [32, "bar"]] as const) {
+  test(`a 1100px window shows the ${layout} at ${fontSize}px root text`, async ({ page }) => {
+    await page.setViewportSize({ width: 1100, height: 900 });
+    await page.goto("/");
+    await page.evaluate((size) => { document.documentElement.style.fontSize = String(size) + "px"; }, fontSize);
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    await expect(nav.getByRole("button")).toHaveCount(14);
+    const boxes = await page.evaluate(() => {
+      const n = document.querySelector(".app-nav")?.getBoundingClientRect();
+      const c = document.querySelector(".app-content")?.getBoundingClientRect();
+      return { navRight: n?.right ?? 0, navBottom: n?.bottom ?? 0, contentLeft: c?.left ?? 0, contentTop: c?.top ?? 0 };
+    });
+    if (layout === "rail") expect(boxes.contentLeft).toBeGreaterThanOrEqual(boxes.navRight);
+    else expect(boxes.contentTop).toBeGreaterThanOrEqual(boxes.navBottom);
+    const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
+    expect(widths.scroll).toBeLessThanOrEqual(widths.client);
+  });
+}

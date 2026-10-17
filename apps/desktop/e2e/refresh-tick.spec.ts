@@ -33,7 +33,7 @@ for (const { screen, field, value, open, fixme } of CASES) {
     await page.getByRole("navigation", { name: "Primary" }).getByRole("button", { name: screen, exact: true }).click();
     if (open !== undefined) await page.getByText(open, { exact: true }).click();
     // Not exact: a label wrapping a textarea includes the typed text in its name.
-    const input = page.getByLabel(field);
+    const input = page.getByLabel(field, { exact: true });
     await input.fill(value);
     await tick(page);
     await expect(input).toHaveValue(value);

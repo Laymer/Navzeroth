@@ -47,11 +47,11 @@ function RouteView({ value }: { value: Inspection }) {
       <Button variant="ghost" disabled={start + ROUTE_PAGE_SIZE >= value.hops.length} onClick={() => movePage(page + 1)}>Next route hop page</Button>
     </>}
     <ol start={start + 1}>{displayed.map((h, offset) => { const index = start + offset; return <li key={index}>
-      <button type="button" className="ui-button ui-button--secondary" ref={(el) => { if (el) buttons.current.set(index, el); else buttons.current.delete(index); }} aria-pressed={selected === index} onClick={() => choose(index, false)} onKeyDown={(event) => {
+      <Button ref={(el) => { if (el) buttons.current.set(index, el); else buttons.current.delete(index); }} aria-pressed={selected === index} onClick={() => choose(index, false)} onKeyDown={(event) => {
         if (event.ctrlKey || event.metaKey || event.altKey) return;
         const target = event.key === "ArrowUp" ? Math.max(0, index - 1) : event.key === "ArrowDown" ? Math.min(value.hops.length - 1, index + 1) : event.key === "Home" ? 0 : event.key === "End" ? value.hops.length - 1 : event.key === "PageUp" ? Math.max(0, index - ROUTE_PAGE_SIZE) : event.key === "PageDown" ? Math.min(value.hops.length - 1, index + ROUTE_PAGE_SIZE) : null;
         if (target !== null) { event.preventDefault(); choose(target, true); }
-      }}>Select hop {index + 1}: {h.hop.from.id} → {h.hop.to.id}</button>
+      }}>Select hop {index + 1}: {h.hop.from.id} → {h.hop.to.id}</Button>
       <p>{h.stopping ? "Final stopping route" : `Selected leg ${h.leg + 1}`}: {h.hop.from.id} → {h.hop.to.id}; {h.hop.mode}; {h.hop.cost_ms} ms; {h.hop.status}.</p>
       {h.geometry_gap && <p>{h.geometry_gap}</p>}
       {!h.geometry_gap && (!frame || endpoints(value, frame, h) === null) && <p>No schematic connection is displayed for this hop in the current frame.</p>}

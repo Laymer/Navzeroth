@@ -5,6 +5,10 @@
  * WCAG ratio of each pair in all three modes: default, high contrast and forced
  * colours. Add a declaration whenever a new foreground/background pair is introduced.
  *
+ * Compositions (gradient stops, ::selection, text over the translucent shell sheet above the
+ * backdrop art) are checked in composite.test.ts. --text-muted on --mist is 4.31:1, so that pair
+ * is intentionally not declared; do not place muted text on --mist.
+ *
  * Sizes are rem/em only so the Settings text-size choice scales every surface.
  *
  * contrast: --text on --ground 4.5

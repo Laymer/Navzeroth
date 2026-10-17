@@ -28,7 +28,7 @@ export function Field({ label, hint, help, error, children }: FieldProps) {
     <div className="ui-field">
       <div className="ui-field__head">
         <label htmlFor={id}>{label}</label>
-        {help !== undefined && <HelpTip>{help}</HelpTip>}
+        {help !== undefined && <HelpTip label={label}>{help}</HelpTip>}
       </div>
       {children({ id, "aria-describedby": describedBy === "" ? undefined : describedBy, "aria-invalid": error === undefined ? undefined : true })}
       {hint !== undefined && (

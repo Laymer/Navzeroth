@@ -94,27 +94,27 @@ test.beforeEach(async ({ page }) => { await page.clock.install(); await mockComm
 test("manual party keeps stale and missing participants separate across navigation", async ({ page }) => {
   await page.getByRole("button", { name: "Imports", exact: true }).click();
   for (const name of ["one", "two"]) {
-    await page.getByLabel("Snapshot export text").fill(`ANAV1:valid-${name}`);
+    await page.getByLabel("Snapshot export text", { exact: true }).fill(`ANAV1:valid-${name}`);
     await page.getByRole("button", { name: "Import text", exact: true }).click();
     await expect(page.getByText("Stored as the current snapshot.")).toBeVisible();
   }
   await page.getByRole("button", { name: "Party", exact: true }).click();
   await page.getByRole("button", { name: "New party", exact: true }).click();
-  await page.getByLabel("Party name").fill("Duo");
+  await page.getByLabel("Party name", { exact: true }).fill("Duo");
   await page.getByLabel(/^profile-one —/).check();
   await page.getByLabel(/^profile-two —/).check();
   await page.getByRole("button", { name: "Save membership", exact: true }).click();
   await expect(page.getByText("Last imported: captured 1 h ago (stale)")).toBeVisible();
   await expect(page.getByText(/Missing imported snapshot/)).toBeVisible();
   await page.clock.fastForward(60000);
-  await expect(page.getByLabel("Selected party")).toHaveValue("Duo");
+  await expect(page.getByLabel("Selected party", { exact: true })).toHaveValue("Duo");
   await page.getByRole("button", { name: "Today", exact: true }).click();
   await page.getByRole("button", { name: "Party", exact: true }).click();
   await expect(page.getByText(/Missing imported snapshot/)).toBeVisible();
   await page.getByRole("button", { name: "Remove local party", exact: true }).click();
   await expect(page.getByText("No local parties yet.")).toBeVisible();
   await page.getByRole("button", { name: "Imports", exact: true }).click();
-  await expect(page.getByLabel("Selected profile").locator("option")).toHaveCount(2);
+  await expect(page.getByLabel("Selected profile", { exact: true }).locator("option")).toHaveCount(2);
   const calls = await page.evaluate(() => (window as unknown as { __MOCK_CALLS__: { command: string; args: object }[] }).__MOCK_CALLS__);
   expect(calls).toContainEqual({ command: "save_party", args: { party_id: "Duo", profile_ids: ["profile-one", "profile-two"] } });
   expect(calls).toContainEqual({ command: "delete_party", args: { party_id: "Duo" } });
@@ -123,18 +123,18 @@ test("manual party keeps stale and missing participants separate across navigati
 test("imports recover from failure and preserve duplicate/history-only current state", async ({ page }) => {
   await expect(page.getByText("No character snapshot has been imported.")).toBeVisible();
   await page.getByRole("button", { name: "Imports", exact: true }).click();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:{");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:{");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("INVALID_INPUT");
   await expect(page.getByText("No stored profiles yet.")).toBeVisible();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-one");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-one");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await expect(page.getByText("Stored as the current snapshot.")).toBeVisible();
   await expect(page.getByRole("alert")).toHaveCount(0);
   await expect(page.getByText(/SYNTHETIC — fixture/)).toBeVisible();
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await expect(page.getByText("Already stored: the current snapshot is unchanged.")).toBeVisible();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-older");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-older");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await expect(page.getByText(/Stored in history only.*older/)).toBeVisible();
   await page.getByRole("button", { name: "Today", exact: true }).click();
@@ -144,18 +144,18 @@ test("imports recover from failure and preserve duplicate/history-only current s
 
 test("profile selection, explicit file import and watch cancellation use command DTOs", async ({ page }) => {
   await page.getByRole("button", { name: "Imports", exact: true }).click();
-  await page.getByLabel("Export file path").fill("/selected/synthetic-export.txt");
+  await page.getByLabel("Export file path", { exact: true }).fill("/selected/synthetic-export.txt");
   await page.getByRole("button", { name: "Import selected file", exact: true }).click();
   await expect(page.getByText("Stored as the current snapshot.")).toBeVisible();
   await page.getByRole("button", { name: "Watch selected file", exact: true }).click();
   await expect(page.getByText("Waiting for a complete, stable save.")).toBeVisible();
   await page.getByRole("button", { name: "Stop watching", exact: true }).click();
   await expect(page.getByText("Watching stopped.")).toBeVisible();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-two");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-two");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
-  await expect(page.getByLabel("Selected profile")).toHaveValue("profile-two");
-  await page.getByLabel("Selected profile").selectOption("profile-one");
-  await expect(page.getByLabel("Selected profile")).toHaveValue("profile-one");
+  await expect(page.getByLabel("Selected profile", { exact: true })).toHaveValue("profile-two");
+  await page.getByLabel("Selected profile", { exact: true }).selectOption("profile-one");
+  await expect(page.getByLabel("Selected profile", { exact: true })).toHaveValue("profile-one");
   await page.getByRole("button", { name: "Today", exact: true }).click();
   await expect(page.getByText("current-profile-one", { exact: true })).toBeVisible();
   const calls = await page.evaluate(() => (window as unknown as { __MOCK_CALLS__: { command: string; args: object }[] }).__MOCK_CALLS__);
@@ -166,9 +166,9 @@ test("profile selection, explicit file import and watch cancellation use command
 test("dense atlas filters and keyboard navigation retain selection after completed refresh", async ({ page }) => {
   await page.getByRole("button", { name: "Atlas", exact: true }).click();
   await expect(page.getByText("150 of 150 reference pins match these filters.")).toBeVisible();
-  await page.getByLabel("Point type").selectOption("landmark");
+  await page.getByLabel("Point type", { exact: true }).selectOption("landmark");
   await expect(page.getByText("75 of 150 reference pins match these filters.")).toBeVisible();
-  await page.getByLabel("Search reference pins").fill("Reference 148");
+  await page.getByLabel("Search reference pins", { exact: true }).fill("Reference 148");
   const pin = page.getByRole("button", { name: "Show Reference 148 on the map" });
   await pin.focus(); await pin.press("Enter");
   await expect(pin).toHaveAttribute("aria-pressed", "true");
@@ -177,7 +177,7 @@ test("dense atlas filters and keyboard navigation retain selection after complet
   await page.getByRole("button", { name: "Refresh atlas" }).click();
   await expect(dataset).not.toHaveText(before ?? "");
   await expect(pin).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByLabel("Search reference pins")).toHaveValue("Reference 148");
+  await expect(page.getByLabel("Search reference pins", { exact: true })).toHaveValue("Reference 148");
   const map = page.getByRole("group", { name: /Atlas map/ });
   const frame = map.locator("rect.frame");
   const initialWidth = await frame.getAttribute("width");
@@ -187,14 +187,14 @@ test("dense atlas filters and keyboard navigation retain selection after complet
   await map.press("ArrowDown");
   await expect(frame).not.toHaveAttribute("y", initialY ?? "");
   await expect(map).toBeFocused();
-  await page.getByLabel("Search reference pins").fill("nothing matches");
+  await page.getByLabel("Search reference pins", { exact: true }).fill("nothing matches");
   await expect(page.getByText("No reference pins match these filters.")).toBeVisible();
 });
 
 
 test("open imported views requery backend freshness without local age calculations", async ({ page }) => {
   await page.getByRole("button", { name: "Imports", exact: true }).click();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-one");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-one");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await expect(page.getByText("Stored as the current snapshot.")).toBeVisible();
   await page.getByRole("button", { name: "Today", exact: true }).click();
@@ -208,18 +208,18 @@ test("open imported views requery backend freshness without local age calculatio
 
 test("explicit promotion previews and confirms the expected current snapshot", async ({ page }) => {
   await page.getByRole("button", { name: "Imports", exact: true }).click();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-one");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-one");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await page.getByRole("button", { name: "Preview historical", exact: true }).click();
   await expect(page.getByRole("region", { name: "Promotion preview" })).toBeVisible();
-  await page.getByLabel("Selection reason").fill("New session manually selected");
+  await page.getByLabel("Selection reason", { exact: true }).fill("New session manually selected");
   await page.getByRole("button", { name: "Confirm promotion" }).click();
   await expect(page.getByText(/historical \(current\)/)).toBeVisible();
 });
 
 test("content activation enables explicit planning and editing invalidates the result", async ({ page }) => {
   await page.getByRole("button", { name: "Imports", exact: true }).click();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-one");
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-one");
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await page.getByRole("button", { name: "Content", exact: true }).click();
   await page.getByRole("button", { name: "Load synthetic planning example" }).click();
@@ -229,7 +229,7 @@ test("content activation enables explicit planning and editing invalidates the r
   await page.getByRole("button", { name: "Planner", exact: true }).click();
   await page.getByRole("combobox", { name: "Origin", exact: true }).selectOption("demo-node-1");
   await page.getByRole("combobox", { name: "Stopping node", exact: true }).selectOption("demo-node-1");
-  await page.getByLabel("Consider objective").check();
+  await page.getByLabel("Consider objective", { exact: true }).check();
   await page.getByRole("combobox", { name: "Objective node", exact: true }).selectOption("demo-node-2");
   await page.getByLabel("utility", { exact: true }).fill("10");
   await page.getByLabel("completion_ms", { exact: true }).fill("1000");
@@ -242,7 +242,7 @@ test("content activation enables explicit planning and editing invalidates the r
   await expect(page.getByLabel("Plan export text")).toHaveValue("ANAV1:synthetic-command-mock");
   await page.getByRole("button", { name: "Copy plan", exact: true }).click();
   await expect(page.getByRole("region", { name: "Plan export", exact: true }).getByRole("status")).not.toBeEmpty();
-  await page.getByLabel("Budget (ms)").fill("100");
+  await page.getByLabel("Budget (ms)", { exact: true }).fill("100");
   await expect(page.getByLabel("Plan export text")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Planning result" })).toHaveCount(0);
 });
@@ -251,7 +251,7 @@ test("content activation enables explicit planning and editing invalidates the r
 test("route segment keyboard selection retains the tail and fits only schematic frame endpoints", async ({page}) => {
   await page.evaluate(()=>Reflect.set(window,"__DENSE_ROUTE_MOCK__",true));
   await page.getByRole("button",{name:"Imports",exact:true}).click();
-  await page.getByLabel("Snapshot export text").fill("ANAV1:valid-one");await page.getByRole("button",{name:"Import text",exact:true}).click();
+  await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:valid-one");await page.getByRole("button",{name:"Import text",exact:true}).click();
   await page.getByRole("button",{name:"Content",exact:true}).click();await page.getByRole("button",{name:"Load synthetic planning example"}).click();await page.getByRole("button",{name:"Validate and stage content"}).click();await page.getByRole("button",{name:"Activate staged revision"}).click();
   await page.getByRole("button",{name:"Planner",exact:true}).click();await page.getByRole("combobox",{name:"Origin",exact:true}).selectOption("demo-node-1");await page.getByRole("combobox",{name:"Stopping node",exact:true}).selectOption("demo-node-1");await page.getByRole("button",{name:"Plan session",exact:true}).click();await page.getByRole("button",{name:"Inspect route",exact:true}).click();
   const route=page.getByRole("region",{name:"Route inspection",exact:true});
@@ -267,5 +267,5 @@ test("route segment keyboard selection retains the tail and fits only schematic 
   await route.getByRole("button",{name:"Previous route hop page",exact:true}).click();await expect(route.getByRole("button",{name:/Select hop 51:/})).toBeFocused();
   await route.getByRole("button",{name:/Select hop 51:/}).press("Home");await expect(route.getByRole("button",{name:/Select hop 1:/})).toBeFocused();
   await route.getByRole("button",{name:"Next route frame",exact:true}).click();await expect(route.getByRole("group",{name:"Schematic route frame synthetic-other-floor"})).toBeVisible();await expect(route.locator('[data-route-hop]')).toHaveCount(0);await expect(route.getByRole("button",{name:"Fit route endpoints in this frame"})).toBeDisabled();
-  await page.getByLabel("Budget (ms)").fill("100");await expect(route).toHaveCount(0);
+  await page.getByLabel("Budget (ms)", { exact: true }).fill("100");await expect(route).toHaveCount(0);
 });

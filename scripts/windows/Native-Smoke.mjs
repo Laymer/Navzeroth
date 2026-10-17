@@ -252,7 +252,7 @@ async function go(page, name) {
 
 async function importSnapshot(page) {
   await go(page, "Imports");
-  await page.getByLabel("Snapshot export text").fill(snapshotText);
+  await page.getByLabel("Snapshot export text", { exact: true }).fill(snapshotText);
   await page.getByRole("button", { name: "Import text", exact: true }).click();
   await page.getByText("Stored as the current snapshot.").waitFor({ timeout: 30000 });
 }
@@ -453,7 +453,7 @@ async function verify(page) {
   await rec.run("verify: imported profile survived and is selectable", async () => {
     await go(page, "Imports");
     if ((await page.getByText("No stored profiles yet.").count()) !== 0) throw new Error("Imports reports no stored profiles; data was lost");
-    const options = await page.getByLabel("Selected profile").locator("option").allInnerTexts();
+    const options = await page.getByLabel("Selected profile", { exact: true }).locator("option").allInnerTexts();
     if (options.length < 1) throw new Error("Selected profile list is empty");
     return { profiles: options };
   });

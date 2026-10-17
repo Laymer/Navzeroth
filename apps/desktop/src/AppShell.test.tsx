@@ -1,5 +1,5 @@
-import { render, screen, within } from "@testing-library/react";
-import { App } from "./App";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import { App, navSlug } from "./App";
 import { createClient } from "./commands";
 import { demoAdapter } from "./commands/demoAdapter";
 import { SettingsScreen } from "./screens/SettingsScreen";
@@ -26,6 +26,22 @@ describe("app shell", () => {
     expect(within(groups[0] as HTMLElement).getAllByRole("button").map((b) => b.textContent)).toEqual(PLAY);
     expect(within(groups[1] as HTMLElement).getAllByRole("button").map((b) => b.textContent)).toEqual(SYSTEM);
     expect(within(nav).getByRole("button", { name: "Today" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("derives unique, instance-scoped group ids from the whole title, not its first letter", async () => {
+    expect(navSlug("Data & system")).toBe("data-system");
+    expect(navSlug("Data views")).not.toBe(navSlug("Data & system")); // same initial, no collision
+    const { unmount } = render(<App client={createClient(demoAdapter)} />);
+    await screen.findByRole("button", { name: "Atlas" });
+    const first = (within(screen.getByRole("navigation", { name: "Primary" })).getAllByRole("group")).map((g) => g.getAttribute("aria-labelledby") ?? "");
+    expect(new Set(first).size).toBe(2);
+    expect(first.every((id) => id.endsWith("-play") || id.endsWith("-data-system"))).toBe(true);
+    expect(first.some((id) => id.includes("nav-group-P"))).toBe(false);
+    render(<App client={createClient(demoAdapter)} />);
+    await waitFor(() => expect(screen.getAllByRole("button", { name: "Atlas" })).toHaveLength(2));
+    const all = (screen.getAllByRole("navigation", { name: "Primary" }).flatMap((nav) => within(nav).getAllByRole("group"))).map((g) => g.getAttribute("aria-labelledby") ?? "");
+    expect(new Set(all).size).toBe(4); // two shells on one page do not share ids
+    unmount();
   });
 
   it("states non-affiliation on Settings", async () => {

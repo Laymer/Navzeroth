@@ -33,5 +33,5 @@ test("planning progress and cancellation keep navigation available and preserve 
   await page.evaluate(() => (window as unknown as { __PLANNING_MODE__: (value: string) => void }).__PLANNING_MODE__("stale"));await page.getByRole("button", { name: "Plan session" }).click();await expect(page.getByText("Imported snapshot changed")).toBeVisible();await expect(page.getByRole("region", { name: "Planning result" })).toHaveCount(0);
   await page.evaluate(() => (window as unknown as { __PLANNING_MODE__: (value: string) => void }).__PLANNING_MODE__("deferred"));await page.getByRole("button", { name: "Plan session" }).click();await expect(page.getByText("Registering planning job…")).toBeVisible();await page.getByRole("button", { name: "Today", exact: true }).click();await page.evaluate(() => (window as unknown as { __COMPLETE_REGISTRATION__: () => void }).__COMPLETE_REGISTRATION__());
   await expect.poll(() => page.evaluate(() => (window as unknown as { __PLANNING_CALLS__: { command: string; args: Record<string, unknown> }[] }).__PLANNING_CALLS__.filter((call) => call.command === "cancel_planning_job").map((call) => call.args.job_id))).toEqual(["job-2", "job-4"]);
-  await expect(page.getByLabel("Planning job progress")).toHaveCount(0);
+  await expect(page.getByLabel("Planning job progress", { exact: true })).toHaveCount(0);
 });

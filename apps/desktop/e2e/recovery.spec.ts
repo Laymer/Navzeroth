@@ -19,11 +19,11 @@ test("startup failure permits explicit inspected recovery and preserves normal n
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Database backup and recovery" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Create consistent backup" })).toBeDisabled();
-  await page.getByLabel("Backup file to restore").fill("selected-backup.sqlite3");
+  await page.getByLabel("Backup file to restore", { exact: true }).fill("selected-backup.sqlite3");
   await page.getByRole("button", { name: "Inspect backup" }).click();
   await expect(page.getByText("Character profiles: 2")).toBeVisible();
   await expect(page.getByRole("button", { name: "Restore inspected backup" })).toBeDisabled();
-  await page.getByLabel("Replace all local database state with this inspected backup").check();
+  await page.getByLabel("Replace all local database state with this inspected backup", { exact: true }).check();
   await page.getByRole("button", { name: "Restore inspected backup" }).click();
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
   await page.getByRole("button", { name: "Backup and recovery", exact: true }).click();
