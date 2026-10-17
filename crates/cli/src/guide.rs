@@ -10,7 +10,7 @@ use azeroth_ingest::{
 use std::{ffi::OsString, path::PathBuf};
 
 pub const USAGE: &str = "guide verify --guide <file> --facts <file> [--race <Race>] [--class <Class>]. \
-    The character defaults to the first guide's #defaultfor. Exit 0 only when no error, unverified or unsupported finding remains. \
+    The character defaults to the first guide's #defaultfor. Exit 0: clean replay (no error, unverified, unsupported or asserted finding) against facts that claim evidence; 3: clean against synthetic facts; 1: otherwise. \
     See docs/data/GUIDE_VERIFIER.md.";
 
 #[derive(Debug)]

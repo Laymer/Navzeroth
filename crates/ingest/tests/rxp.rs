@@ -30,6 +30,8 @@ struct Mem {
     capacity: Option<u16>,
     spells: BTreeMap<u32, BTreeSet<Class>>,
     level_xp: Option<Vec<u32>>,
+    edition: Option<Edition>,
+    build: Option<String>,
 }
 impl FactSource for Mem {
     fn quest(&self, id: u32) -> QuestRecord {
@@ -56,6 +58,12 @@ impl FactSource for Mem {
             .as_ref()
             .and_then(|t| t.get(usize::from(level) - 1).copied())
             .into()
+    }
+    fn edition(&self) -> Fact<Edition> {
+        self.edition.into()
+    }
+    fn client_build(&self) -> Fact<String> {
+        self.build.clone().into()
     }
 }
 
@@ -86,6 +94,8 @@ fn world() -> Mem {
         capacity: Some(20),
         spells: [(100, [Class::Warrior].into())].into(),
         level_xp: Some(vec![400; 59]),
+        edition: Some(Edition::Forever),
+        build: Some("0.0.0.1".into()),
     }
 }
 
@@ -113,7 +123,7 @@ fn has(report: &Report, check: Check, status: Status) -> bool {
 #[track_caller]
 fn clean(report: &Report) {
     assert!(
-        report.passes && report.totals.warnings == 0,
+        report.replay_clean && report.totals.warnings == 0,
         "unexpected findings: {:?}",
         findings(report)
     );
@@ -158,7 +168,7 @@ fn parses_every_directive_note_and_step_tag() {
     let text = guide(
         "step << Warrior/Paladin\n    #optional\n    #sticky\n    #label a\n    #completewith next\n    #requires a\n    #level 4\n    #xprate <1.5\n\
          .accept 1 >>Accept\n    .accept -2\n    .turnin 1,2 >>Turn in\n    .turnin -3\n    .complete 1,1 --Label\n    .abandon 1\n\
-         .goto Test Vale,48.17,42.94\n    .goto Test Vale,1,2,60,0\n    .waypoint Test Vale,3,4\n    .fly Testford >>Fly\n    .fp Testford\n    .zone Sample Hills\n\
+         .goto Test Vale,12.34,56.78\n    .goto Test Vale,1,2,60,0\n    .waypoint Test Vale,3,4\n    .fly Testford >>Fly\n    .fp Testford\n    .zone Sample Hills\n\
          .train 100\n    .trainer\n    .xp 6\n    .xp 6.5,1\n    .xp <9,1\n    .xp 7+200\n    .xp 7-300\n    .maxlevel 12\n    .home\n    .hs\n    .vendor\n    .mob Practice Dummy\n\
          .use 7\n    .collect 7,4\n    .collect 7,4,1,1,-1\n    .gossipoption 55\n    .deathskip\n    .isOnQuest 1,2\n    .isQuestComplete 1\n    .isQuestTurnedIn 1\n    .isQuestAvailable 1\n\
          .unitscan Someone\n    .accept x\n    .goto Test Vale\n    .xp level\n    .trainer extra\n    >>A note\n    *Window note\n    +Objective note\n    -- comment\n    stray text\n\
@@ -219,7 +229,7 @@ fn parses_every_directive_note_and_step_tag() {
             objective: 1,
         },
         D::Abandon(1),
-        goto(48.17, 42.94),
+        goto(12.34, 56.78),
         goto(1.0, 2.0),
         goto(3.0, 4.0),
         D::Fly("Testford".into()),
@@ -444,6 +454,18 @@ fn a_fully_known_route_passes() {
         !report.facts_are_evidence,
         "synthetic facts are never evidence"
     );
+    assert!(
+        !report.passes,
+        "a clean replay on synthetic facts is not a pass"
+    );
+    let file = rxp::parse(guide("step\n    .zone Test Vale").as_bytes()).unwrap();
+    let evidence = rxp_verify::verify(
+        &file,
+        &world(),
+        HUMAN_WARRIOR,
+        Some(FactOrigin::LocalObservation),
+    );
+    assert!(evidence.replay_clean && evidence.passes && evidence.facts_are_evidence);
     assert_eq!(report.max_log, 1);
     assert!(report.left_in_log.is_empty());
 }
@@ -547,7 +569,13 @@ fn required_level_uses_gates_section_names_and_the_xp_estimate() {
     );
     // `#name 4-6 ...` declares the section start level.
     let named = guide(&body("")).replace("#name 1-5", "#name 4-6");
-    clean(&run(&named, &facts));
+    let named = run(&named, &facts);
+    assert!(has(&named, Check::RequiredLevel, Status::Asserted));
+    assert!(
+        !named.replay_clean && named.totals.asserted == 1,
+        "asserted is not ok"
+    );
+    assert_eq!(named.level_gate, 1, "section names are no gate");
     // Reached only through the XP estimate: a warning, not a pass.
     facts.quests.get_mut(&1).unwrap().xp = Fact::Known(2000);
     facts.level_xp = Some(vec![400; 59]);
@@ -676,7 +704,10 @@ fn objectives_and_rewards() {
         has(&partial, Check::ObjectivesMarked, Status::Warning),
         "1 of 2 marked"
     );
-    assert!(partial.passes, "warnings alone do not fail the replay");
+    assert!(
+        partial.replay_clean,
+        "warnings alone do not fail the replay"
+    );
     let full = run(
         &guide(
             "step\n    .goto Test Vale,1,1\n    .accept 1\n    .complete 1,1\n    .complete 1,2\n    .turnin 1,2",
@@ -866,15 +897,17 @@ fn optional_and_conditional_quest_lines() {
 
 #[test]
 fn placeholder_text_and_step_location() {
-    let report = run(
-        &guide("step\n    .accept 1 >>Talk to the <TXT>\n    >>Doodad here"),
-        &world(),
-    );
+    let text = guide("step\n    .accept 1 >>Talk to the <TXT>\n    >>Doodad here\n    .mob Doodad\nstep << Mage\n    .mob [PH] mob")
+        .replace("#version 1", "#version 1\n#displayname <TXT>");
+    let report = run(&text, &world());
     let placeholders = findings(&report)
         .iter()
         .filter(|f| **f == (Check::PlaceholderText, Status::Error))
         .count();
-    assert_eq!(placeholders, 2);
+    assert_eq!(
+        placeholders, 5,
+        "every raw line, header and filtered steps included"
+    );
     assert!(has(&report, Check::StepLocation, Status::Warning));
 }
 
@@ -895,7 +928,7 @@ fn reports_never_contain_guide_text() {
 
 fn facts_json(body: &str) -> String {
     format!(
-        "{{\"format\":\"navzeroth-guide-facts\",\"version\":1,\"origin\":\"local_observation\"{body}}}"
+        "{{\"format\":\"navzeroth-guide-facts\",\"version\":1,\"origin\":\"local_observation\",\"edition\":\"forever\"{body}}}"
     )
 }
 
@@ -1050,4 +1083,211 @@ fn json_facts_are_strict_and_bounded() {
         ))),
         FactsRejection::Capacity
     );
+}
+
+// ---------------------------------------------------------------------------
+// Review fixes (PR #176)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn conditional_and_optional_turn_ins_from_the_log_gain_xp() {
+    let mut facts = world();
+    facts.quests.get_mut(&1).unwrap().xp = Fact::Known(2000);
+    facts.quests.get_mut(&5).unwrap().required_level = Fact::Known(4);
+    for turnin in [
+        "step\n    .goto Test Vale,1,1\n    .turnin -1",
+        "step\n    #optional\n    .goto Test Vale,1,1\n    .turnin 1",
+    ] {
+        let text = guide(&format!(
+            "step\n    .goto Test Vale,1,1\n    .accept 1\n{turnin}\nstep\n    .goto Test Vale,1,1\n    .accept 5\n    .turnin 5"
+        ));
+        let report = run(&text, &facts);
+        assert_eq!(report.estimated_level, Some(12), "{turnin}");
+        assert!(
+            !has(&report, Check::RequiredLevel, Status::Error),
+            "{turnin}"
+        );
+        assert!(
+            has(&report, Check::RequiredLevel, Status::Warning),
+            "{turnin}"
+        );
+        assert!(report.left_in_log.is_empty());
+    }
+}
+
+#[test]
+fn line_filters_apply_before_step_conditions() {
+    let mut facts = world();
+    facts.quests.get_mut(&2).unwrap().classes = Fact::Known(Allowed::Only([Class::Mage].into()));
+    // The Mage-only condition does not apply to a Warrior, so the step is shown
+    // and its accept is checked.
+    let report = run(
+        &guide("step\n    .goto Test Vale,1,1\n    .isOnQuest 9 << Mage\n    .accept 2"),
+        &facts,
+    );
+    assert_eq!(report.steps[0].state, rxp_verify::StepState::Replayed);
+    assert!(has(&report, Check::ClassAllowed, Status::Error));
+    // A condition that does apply still skips the step.
+    let report = run(
+        &guide("step\n    .goto Test Vale,1,1\n    .isOnQuest 9 << Warrior\n    .accept 2"),
+        &facts,
+    );
+    assert_eq!(report.steps[0].state, rxp_verify::StepState::Conditional);
+}
+
+#[test]
+fn facts_edition_and_build_are_compared_never_mixed() {
+    let text = guide("step\n    .zone Test Vale");
+    clean(&run(&text, &world()));
+    let classic = run(&text.replace("#forever", "#classic"), &world());
+    assert!(has(&classic, Check::FactsEdition, Status::Error));
+    let mut unknown = world();
+    unknown.edition = None;
+    assert!(has(
+        &run(&text, &unknown),
+        Check::FactsEdition,
+        Status::Unverified
+    ));
+    let mut no_build = world();
+    no_build.build = None;
+    let report = run(&text, &no_build);
+    assert!(has(&report, Check::FactsBuild, Status::Unverified));
+    assert!(!report.replay_clean && report.facts_build.is_none());
+    // A guide without any edition tag is still flagged.
+    let untagged = run(&text.replace("#forever\n", ""), &world());
+    assert!(has(&untagged, Check::Edition, Status::Error));
+}
+
+#[test]
+fn json_facts_require_an_edition_and_treat_null_as_unknown() {
+    let reject = |text: &str| JsonFacts::parse(text.as_bytes()).unwrap_err();
+    assert_eq!(
+        reject("{\"format\":\"navzeroth-guide-facts\",\"version\":1,\"origin\":\"synthetic\"}"),
+        FactsRejection::Json,
+        "edition is required"
+    );
+    assert_eq!(
+        reject(&facts_json(",\"client_build\":\"\"")),
+        FactsRejection::Value
+    );
+    assert_eq!(
+        reject(&facts_json(",\"client_build\":\"1 2\"")),
+        FactsRejection::Value
+    );
+    let facts = JsonFacts::parse(
+        facts_json(
+            ",\"client_build\":null,\"quest_log_capacity\":null,\
+             \"quests\":{\"complete\":false,\"records\":{\"1\":{\"required_level\":null,\"races\":null}}}",
+        )
+        .as_bytes(),
+    )
+    .unwrap();
+    assert_eq!(facts.edition(), Fact::Known(Edition::Forever));
+    assert_eq!(facts.client_build(), Fact::Unknown);
+    assert_eq!(facts.quest_log_capacity(), Fact::Unknown);
+    let QuestRecord::Known(q) = facts.quest(1) else {
+        panic!()
+    };
+    assert_eq!((q.required_level, q.races), (Fact::Unknown, Fact::Unknown));
+    let built =
+        JsonFacts::parse(facts_json(",\"client_build\":\"1.60.1.70425\"").as_bytes()).unwrap();
+    assert_eq!(built.client_build(), Fact::Known("1.60.1.70425".into()));
+}
+
+#[test]
+fn conditional_accept_and_negative_coordinates() {
+    let report = run(
+        &guide("step\n    .goto Test Vale,1,1\n    .accept 1\n    .accept -1\n    .turnin 1"),
+        &world(),
+    );
+    clean(&report);
+    assert!(!has(&report, Check::DoubleAccept, Status::Error));
+    clean(&run(&guide("step\n    .goto Test Vale,-10,-20"), &world()));
+    let one = run(&guide("step\n    .goto Test Vale,-10,20"), &world());
+    assert!(has(&one, Check::Coordinate, Status::Error));
+    let far = run(&guide("step\n    .goto Test Vale,-101,-20"), &world());
+    assert!(has(&far, Check::Coordinate, Status::Error));
+}
+
+#[test]
+fn extra_arguments_are_parsed_or_unsupported_never_dropped() {
+    let file = rxp::parse(
+        guide(
+            "step\n    .accept 1,2,3\n    .accept 1,junk\n    .accept 1,2,3,4\n    .turnin 1,x\n    .turnin 1,2,3\n    .complete 1,1,2\n    .collect 7,4,1,1,-1\n    .collect 7,4,x\n    .collect 7,4,1,1,1,1",
+        )
+        .as_bytes(),
+    )
+    .unwrap();
+    let directives: Vec<_> = file.guides[0].steps[0]
+        .lines
+        .iter()
+        .map(|l| match &l.item {
+            Item::Directive { directive, .. } => directive.clone(),
+            _ => panic!(),
+        })
+        .collect();
+    use Directive as D;
+    assert_eq!(
+        directives,
+        [
+            D::Accept {
+                quest: 1,
+                conditional: false
+            },
+            D::Unsupported,
+            D::Unsupported,
+            D::Unsupported,
+            D::Unsupported,
+            D::Unsupported,
+            D::Collect { item: 7, count: 4 },
+            D::Unsupported,
+            D::Unsupported,
+        ]
+    );
+}
+
+#[test]
+fn level_requires_and_completewith_tags_are_effective_or_unsupported() {
+    // `#level n` is decidable only below an `.xp` gate.
+    let gated = run(
+        &guide(
+            "step\n    .goto Test Vale,1,1\n    .xp 5\nstep\n    #level 4\n    .goto Test Vale,1,1",
+        ),
+        &world(),
+    );
+    clean(&gated);
+    let ungated = run(
+        &guide("step\n    #level 4\n    .goto Test Vale,1,1"),
+        &world(),
+    );
+    assert!(has(&ungated, Check::StepTag, Status::Unsupported));
+    // `#requires label` shows the step only after the labelled step replayed.
+    let text = guide(
+        "step\n    #requires a\n    .goto Test Vale,1,1\n    .accept 1\nstep\n    #label a\n    .goto Test Vale,1,1\nstep\n    #requires a\n    .goto Test Vale,1,1\n    .accept 2\n    .turnin 2",
+    );
+    let report = run(&text, &world());
+    use rxp_verify::StepState as S;
+    let states: Vec<_> = report.steps.iter().map(|s| s.state).collect();
+    assert_eq!(states, [S::Conditional, S::Replayed, S::Replayed]);
+    clean(&report);
+    let missing = run(
+        &guide("step\n    #requires nowhere\n    .goto Test Vale,1,1"),
+        &world(),
+    );
+    assert!(
+        has(&missing, Check::StepTag, Status::Error),
+        "undefined label"
+    );
+    // `#completewith` is fine for travel, unsupported around quest-state lines.
+    clean(&run(
+        &guide("step\n    #completewith next\n    .zone Test Vale"),
+        &world(),
+    ));
+    let quest = run(
+        &guide(
+            "step\n    #completewith next\n    .goto Test Vale,1,1\n    .accept 1\nstep\n    .goto Test Vale,1,1\n    .turnin 1",
+        ),
+        &world(),
+    );
+    assert!(has(&quest, Check::StepTag, Status::Unsupported));
 }

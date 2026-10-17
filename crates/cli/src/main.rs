@@ -468,8 +468,12 @@ fn main() -> ExitCode {
                         eprintln!("Guide report cannot be written");
                         return ExitCode::FAILURE;
                     }
+                    // 0: clean replay against facts that claim evidence; 3: clean
+                    // replay against synthetic facts (never a pass); 1: not clean.
                     if report.passes {
                         ExitCode::SUCCESS
+                    } else if report.replay_clean {
+                        ExitCode::from(3)
                     } else {
                         ExitCode::FAILURE
                     }

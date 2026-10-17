@@ -10,7 +10,7 @@
 //!
 //! Facts are typed and may be unknown. A check whose fact is unknown is reported
 //! as `unverified`, never as `ok`. A directive, tag or filter the importer does not
-//! interpret is `unsupported`. A report passes only with zero errors, unverified
+//! interpret is `unsupported`. A replay is clean only with zero errors, unverified
 //! and unsupported findings. Guide text (names, notes) never appears in a report;
 //! findings carry line numbers, quest IDs and static check names only.
 use crate::rxp::{
@@ -116,6 +116,10 @@ pub trait FactSource {
     fn spell_trainable(&self, spell: u32, class: Class) -> Fact<bool>;
     /// Experience needed to go from `level` to `level + 1`.
     fn level_xp(&self, level: u8) -> Fact<u32>;
+    /// The game edition these facts describe. Never mixed silently with another.
+    fn edition(&self) -> Fact<Edition>;
+    /// The client build these facts were taken from (`.build.info` label).
+    fn client_build(&self) -> Fact<String>;
 }
 
 /// Where a facts file says its facts came from (ADR 0006 §3; owner decision
@@ -215,6 +219,9 @@ struct FactsJson {
     format: String,
     version: u32,
     origin: FactOrigin,
+    edition: Edition,
+    /// `null` or absent: the build is unknown.
+    client_build: Option<String>,
     quest_log_capacity: Option<u16>,
     level_xp: Option<Vec<u32>>,
     zones: Option<NameSet>,
@@ -227,7 +234,11 @@ struct FactsJson {
 /// A fact source read from a `navzeroth-guide-facts` v1 JSON document.
 #[derive(Debug, Clone)]
 pub struct JsonFacts {
+    /// Self-declared by the file. An evidence claim still needs binding to
+    /// real observation or extraction records before it counts.
     pub origin: FactOrigin,
+    pub edition: Edition,
+    pub client_build: Option<String>,
     quest_log_capacity: Option<u16>,
     level_xp: Option<Vec<u32>>,
     zones: Option<(BTreeSet<String>, bool)>,
@@ -300,6 +311,15 @@ impl JsonFacts {
         }
         let raw: FactsJson = serde_json::from_value(value).map_err(|_| FactsRejection::Json)?;
         debug_assert!(raw.format == FACTS_FORMAT && raw.version == FACTS_VERSION);
+        if let Some(build) = &raw.client_build
+            && (build.is_empty()
+                || build.len() > 64
+                || !build
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b"._-".contains(&b)))
+        {
+            return Err(FactsRejection::Value);
+        }
         if raw.quest_log_capacity == Some(0) {
             return Err(FactsRejection::Value);
         }
@@ -354,6 +374,8 @@ impl JsonFacts {
         }
         Ok(Self {
             origin: raw.origin,
+            edition: raw.edition,
+            client_build: raw.client_build,
             quest_log_capacity: raw.quest_log_capacity,
             level_xp: raw.level_xp,
             zones: names(raw.zones)?,
@@ -403,6 +425,12 @@ impl FactSource for JsonFacts {
             .and_then(|t| t.get(usize::from(level).checked_sub(1)?).copied())
             .into()
     }
+    fn edition(&self) -> Fact<Edition> {
+        Fact::Known(self.edition)
+    }
+    fn client_build(&self) -> Fact<String> {
+        self.client_build.clone().into()
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -417,6 +445,9 @@ pub enum Status {
     Warning,
     Unverified,
     Unsupported,
+    /// Holds only because the guide says so (the `N-M` section-name level), with
+    /// no fact behind it. Not ok, and it blocks a clean replay.
+    Asserted,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
@@ -429,6 +460,8 @@ pub enum Check {
     HeaderTag,
     HeaderLine,
     Edition,
+    FactsEdition,
+    FactsBuild,
     GuideName,
     NextGuide,
     GuideFilter,
@@ -513,6 +546,7 @@ pub struct Totals {
     pub warnings: usize,
     pub unverified: usize,
     pub unsupported: usize,
+    pub asserted: usize,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Report {
@@ -520,9 +554,15 @@ pub struct Report {
     pub version: u32,
     pub character: Character,
     pub facts_origin: Option<FactOrigin>,
-    /// Facts are route-design evidence only when they come from a local or
-    /// admitted origin; synthetic facts never are.
+    pub facts_edition: Option<Edition>,
+    pub facts_build: Option<String>,
+    /// The facts declare a local or admitted origin; synthetic facts never do.
+    /// The origin is self-declared by the facts file, so this is a claim that
+    /// still needs binding to real observation or extraction records.
     pub facts_are_evidence: bool,
+    /// Zero error, unverified, unsupported and asserted findings.
+    pub replay_clean: bool,
+    /// `replay_clean` with facts that claim evidence. Synthetic facts never pass.
     pub passes: bool,
     pub totals: Totals,
     pub file_findings: Vec<Finding>,
@@ -541,14 +581,6 @@ pub const REPORT_VERSION: u32 = 1;
 /// Kill/rested-XP multiplier on quest XP in the owner's level model (`gen.py`).
 pub const KILL_FACTOR: f64 = 2.2;
 pub const MAX_LEVEL: u8 = 60;
-/// Placeholder fragments the owner's verifier rejects in guide text.
-const PLACEHOLDERS: [&str; 5] = [
-    "doodad",
-    "<txt>",
-    "[ph]",
-    "or do a dungeon/side quest",
-    "visit a class trainer at the next town",
-];
 
 // ---------------------------------------------------------------------------
 // Replay
@@ -593,9 +625,14 @@ struct Replay<'f> {
     character: Character,
     log: BTreeMap<QuestId, BTreeSet<u8>>,
     done: BTreeSet<QuestId>,
+    /// Level guaranteed by `.xp` gates (the addon makes the player reach them).
     level: u8,
+    /// Level the guide only declares through `N-M` section names.
+    declared: u8,
     estimate: Estimate,
     max_log: usize,
+    /// Labels of replayed steps, for `#requires`.
+    labels_done: BTreeSet<String>,
 }
 
 impl Replay<'_> {
@@ -705,13 +742,12 @@ impl Replay<'_> {
         }
         let level = match facts.required_level {
             Fact::Known(required) if required <= self.level => Status::Ok,
-            Fact::Known(required) if self.estimate.complete => {
-                if required <= self.estimate.level {
-                    Status::Warning // reached only by the XP estimate
-                } else {
-                    Status::Error
-                }
+            Fact::Known(required) if self.estimate.complete && required <= self.estimate.level => {
+                Status::Warning // reached only by the XP estimate
             }
+            // Only the section name claims the level: not a verified pass.
+            Fact::Known(required) if required <= self.declared => Status::Asserted,
+            Fact::Known(_) if self.estimate.complete => Status::Error,
             Fact::Known(_) => Status::Unverified,
             Fact::Unknown => Status::Unverified,
         };
@@ -826,8 +862,10 @@ impl Replay<'_> {
                 Fact::Unknown => Status::Unverified,
             };
             sink.push(Check::ObjectivesMarked, status, line, q);
-            self.gain(&facts);
         }
+        // The replay treats this turn-in as done (the quest leaves the log), so it
+        // also gains its XP, as verify2.py does for every turn-in from the log.
+        self.gain(&facts);
         self.done.insert(quest);
     }
 
@@ -845,28 +883,65 @@ impl Replay<'_> {
     }
 
     /// Evaluate step conditions; `false` when the addon would skip the step.
+    /// Lines excluded by their own `<< filter` don't apply and are not evaluated.
     fn conditions_hold(&self, step: &Step) -> bool {
-        step.lines.iter().all(|l| match &l.item {
-            Item::Directive { directive, .. } => match directive {
-                Directive::IsOnQuest(qs) => qs.iter().all(|q| self.log.contains_key(q)),
-                // Objective progress is not modelled: in the log counts as complete.
-                Directive::IsQuestComplete(q) => self.log.contains_key(q),
-                Directive::IsQuestTurnedIn(q) => self.done.contains(q),
-                Directive::IsQuestAvailable(q) => {
-                    !self.log.contains_key(q) && !self.done.contains(q)
-                }
-                _ => true,
-            },
+        let requires = step.tags.iter().all(|(_, t)| match t {
+            StepTag::Requires(label) => self.labels_done.contains(label),
             _ => true,
-        })
+        });
+        let applies = |l: &&crate::rxp::StepLine| {
+            l.filter
+                .as_ref()
+                .is_none_or(|f| f.applies(self.character) != Applies::No)
+        };
+        requires
+            && step.lines.iter().filter(applies).all(|l| match &l.item {
+                Item::Directive { directive, .. } => match directive {
+                    Directive::IsOnQuest(qs) => qs.iter().all(|q| self.log.contains_key(q)),
+                    // Objective progress is not modelled: in the log counts as complete.
+                    Directive::IsQuestComplete(q) => self.log.contains_key(q),
+                    Directive::IsQuestTurnedIn(q) => self.done.contains(q),
+                    Directive::IsQuestAvailable(q) => {
+                        !self.log.contains_key(q) && !self.done.contains(q)
+                    }
+                    _ => true,
+                },
+                _ => true,
+            })
     }
 
     fn step(&mut self, step: &Step, sink: &mut Sink) {
         let optional = step.optional();
         let mut has_command = false;
         let mut has_location = false;
+        let quest_state = step.lines.iter().any(|l| {
+            matches!(
+                l.item,
+                Item::Directive {
+                    directive: Directive::Accept { .. }
+                        | Directive::TurnIn { .. }
+                        | Directive::Complete { .. }
+                        | Directive::Abandon(_),
+                    ..
+                }
+            )
+        });
         for (line, tag) in &step.tags {
-            if matches!(tag, StepTag::Unsupported | StepTag::Level(None)) {
+            let unsupported = match tag {
+                StepTag::Unsupported | StepTag::Level(None) => true,
+                // `#level n` shows the step only from level n: decidable only when
+                // an `.xp` gate already guarantees n.
+                StepTag::Level(Some(n)) => *n > self.level,
+                // A `#completewith` step may complete before its own lines run, so
+                // its quest-state lines may or may not happen.
+                StepTag::CompleteWith(_) => quest_state,
+                StepTag::Label(label) => {
+                    self.labels_done.insert(label.clone());
+                    false
+                }
+                StepTag::Optional | StepTag::Sticky | StepTag::Requires(_) => false,
+            };
+            if unsupported {
                 sink.push(Check::StepTag, Status::Unsupported, *line, None);
             }
         }
@@ -880,27 +955,21 @@ impl Replay<'_> {
                     }
                 }
             }
-            let (directive, note) = match &l.item {
-                Item::Directive { directive, note } => (directive, note.as_deref()),
-                Item::Note(_, text) => {
-                    self.placeholder(sink, l.line, text);
-                    continue;
-                }
-                Item::Comment => continue,
+            let directive = match &l.item {
+                Item::Directive { directive, .. } => directive,
+                Item::Note(..) | Item::Comment => continue,
                 Item::UnsupportedText => {
                     sink.push(Check::Text, Status::Unsupported, l.line, None);
                     continue;
                 }
             };
-            if let Some(text) = note {
-                self.placeholder(sink, l.line, text);
-            }
             has_command = true;
             let line = l.line;
             match directive {
                 Directive::Accept { quest, conditional } => {
-                    let skip = optional || (*conditional && !self.log.contains_key(quest));
-                    self.accept(sink, line, *quest, skip);
+                    // `-id` applies `.isOnQuest`: shown only while already on the
+                    // quest, where accepting is a no-op. Either way no log change.
+                    self.accept(sink, line, *quest, optional || *conditional);
                 }
                 Directive::TurnIn {
                     quest,
@@ -921,7 +990,10 @@ impl Replay<'_> {
                 Directive::Goto { zone, x, y } => {
                     has_location = true;
                     self.place(sink, Check::Zone, line, zone);
-                    let inside = (0.0..=100.0).contains(x) && (0.0..=100.0).contains(y);
+                    // Both negative is documented RXP (a dashed map line).
+                    let range = 0.0..=100.0;
+                    let inside = (range.contains(x) && range.contains(y))
+                        || (*x < 0.0 && *y < 0.0 && range.contains(&-x) && range.contains(&-y));
                     sink.push(
                         Check::Coordinate,
                         if inside { Status::Ok } else { Status::Error },
@@ -970,13 +1042,6 @@ impl Replay<'_> {
         }
         if has_command && !has_location {
             sink.push(Check::StepLocation, Status::Warning, step.line, None);
-        }
-    }
-
-    fn placeholder(&self, sink: &mut Sink, line: usize, text: &str) {
-        let lower = text.to_ascii_lowercase();
-        if PLACEHOLDERS.iter().any(|p| lower.contains(p)) {
-            sink.push(Check::PlaceholderText, Status::Error, line, None);
         }
     }
 }
@@ -1068,6 +1133,9 @@ fn header_checks(guide: &Guide, names: &BTreeMap<String, usize>, sink: &mut Sink
     for &line in &guide.unsupported_header_lines {
         sink.push(Check::HeaderLine, Status::Unsupported, line, None);
     }
+    for &line in &guide.placeholder_lines {
+        sink.push(Check::PlaceholderText, Status::Error, line, None);
+    }
     if guide.filters.len() > 1 {
         sink.push(Check::GuideFilter, Status::Error, guide.filters[1].0, None);
     }
@@ -1110,7 +1178,10 @@ pub fn verify(
         version: REPORT_VERSION,
         character,
         facts_origin: origin,
+        facts_edition: facts.edition().known().copied(),
+        facts_build: facts.client_build().known().cloned(),
         facts_are_evidence: origin.is_some_and(|o| o != FactOrigin::Synthetic),
+        replay_clean: false,
         passes: false,
         totals: Totals::default(),
         file_findings: Vec::new(),
@@ -1138,6 +1209,11 @@ pub fn verify(
         if editions(file).len() > 1 {
             sink.push(Check::Edition, Status::Error, 1, None);
         }
+        let build = match facts.client_build() {
+            Fact::Known(_) => Status::Ok,
+            Fact::Unknown => Status::Unverified,
+        };
+        sink.push(Check::FactsBuild, build, 1, None);
     }
     let mut names = BTreeMap::new();
     for (index, guide) in file.guides.iter().enumerate() {
@@ -1152,18 +1228,30 @@ pub fn verify(
             });
         }
     }
+    let all_labels: BTreeSet<&str> = file
+        .guides
+        .iter()
+        .flat_map(|g| &g.steps)
+        .flat_map(|s| &s.tags)
+        .filter_map(|(_, t)| match t {
+            StepTag::Label(l) => Some(l.as_str()),
+            _ => None,
+        })
+        .collect();
     let mut replay = Replay {
         facts,
         character,
         log: BTreeMap::new(),
         done: BTreeSet::new(),
         level: 1,
+        declared: 1,
         estimate: Estimate {
             level: 1,
             xp: 0.0,
             complete: true,
         },
         max_log: 0,
+        labels_done: BTreeSet::new(),
     };
     let mut totals = Totals {
         guides: file.guides.len(),
@@ -1184,6 +1272,26 @@ pub fn verify(
             ok: &mut g.ok,
         };
         header_checks(guide, &names, &mut sink);
+        // The guide's edition must be the facts' edition (verify2.py required
+        // `#forever`; here the facts name the target edition).
+        let guide_editions: BTreeSet<Edition> = guide
+            .header
+            .iter()
+            .filter_map(|h| match h.tag {
+                HeaderTag::Edition(e) => Some(e),
+                _ => None,
+            })
+            .collect();
+        if let Some(edition) = guide_editions.first() {
+            let status = match facts.edition() {
+                Fact::Known(target) if guide_editions.len() == 1 && *edition == target => {
+                    Status::Ok
+                }
+                Fact::Known(_) => Status::Error,
+                Fact::Unknown => Status::Unverified,
+            };
+            sink.push(Check::FactsEdition, status, guide.line, None);
+        }
         g.applies = match guide.filters.first() {
             None => Applies::Yes,
             Some((line, None)) => {
@@ -1201,7 +1309,7 @@ pub fn verify(
         if g.applies != Applies::No
             && let Some(level) = guide.name().and_then(declared_start_level)
         {
-            replay.gate(level);
+            replay.declared = replay.declared.max(level);
         }
         totals.steps += guide.steps.len();
         for (si, step) in guide.steps.iter().enumerate() {
@@ -1237,6 +1345,13 @@ pub fn verify(
                 s.state = StepState::Filtered;
             } else if !replay.conditions_hold(step) {
                 s.state = StepState::Conditional;
+                for (line, tag) in &step.tags {
+                    if let StepTag::Requires(label) = tag
+                        && !all_labels.contains(label.as_str())
+                    {
+                        step_sink.push(Check::StepTag, Status::Error, *line, None);
+                    }
+                }
             } else {
                 replay.step(step, &mut step_sink);
             }
@@ -1269,11 +1384,16 @@ pub fn verify(
             Status::Warning => totals.warnings += 1,
             Status::Unverified => totals.unverified += 1,
             Status::Unsupported => totals.unsupported += 1,
+            Status::Asserted => totals.asserted += 1,
         }
     }
     totals.ok += report.guides.iter().map(|g| g.ok).sum::<usize>()
         + report.steps.iter().map(|s| s.ok).sum::<usize>();
-    report.passes = totals.errors == 0 && totals.unverified == 0 && totals.unsupported == 0;
+    report.replay_clean = totals.errors == 0
+        && totals.unverified == 0
+        && totals.unsupported == 0
+        && totals.asserted == 0;
+    report.passes = report.replay_clean && report.facts_are_evidence;
     report.totals = totals;
     report.left_in_log = replay.log.keys().copied().collect();
     report.max_log = replay.max_log;

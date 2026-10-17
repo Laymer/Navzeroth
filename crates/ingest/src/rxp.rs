@@ -28,6 +28,16 @@ pub const MAX_ISSUES: usize = 4096;
 /// Header values and names (zone, flight node) are short labels.
 pub const MAX_LABEL_BYTES: usize = 160;
 
+/// Placeholder fragments the owner's verifier (`verify2.py`) rejects anywhere in
+/// a guide line, compared ASCII case-insensitively.
+pub const PLACEHOLDERS: [&str; 5] = [
+    "doodad",
+    "<txt>",
+    "[ph]",
+    "or do a dungeon/side quest",
+    "visit a class trainer at the next town",
+];
+
 const OPENER: &str = "RXPGuides.RegisterGuide([[";
 const CLOSER: &str = "]]";
 
@@ -307,7 +317,7 @@ pub struct Issue {
     pub issue: StructureIssue,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Edition {
     Classic,
@@ -362,6 +372,9 @@ pub struct Guide {
     pub filters: Vec<(usize, Option<Filter>)>,
     /// Header lines that are neither a tag, a filter nor blank.
     pub unsupported_header_lines: Vec<usize>,
+    /// Every body line (header or step, any item kind) containing a
+    /// [`PLACEHOLDERS`] fragment, as the owner's verifier scans raw lines.
+    pub placeholder_lines: Vec<usize>,
     pub steps: Vec<Step>,
 }
 impl Guide {
@@ -667,6 +680,7 @@ fn parse_guide(start: usize, body: &[(usize, &str)]) -> Result<Guide, Rejection>
         header: Vec::new(),
         filters: Vec::new(),
         unsupported_header_lines: Vec::new(),
+        placeholder_lines: Vec::new(),
         steps: Vec::new(),
     };
     let mut header_lines = 0;
@@ -674,6 +688,10 @@ fn parse_guide(start: usize, body: &[(usize, &str)]) -> Result<Guide, Rejection>
         let line = raw.trim();
         if line.is_empty() {
             continue;
+        }
+        let lower = line.to_ascii_lowercase();
+        if PLACEHOLDERS.iter().any(|p| lower.contains(p)) {
+            guide.placeholder_lines.push(number);
         }
         if line == "step" || line.starts_with("step ") || line.starts_with("step\t") {
             if guide.steps.len() >= MAX_STEPS_PER_GUIDE {
@@ -761,7 +779,7 @@ fn parse_step_line(number: usize, line: &str) -> StepLine {
     };
     // Split off the `>>` note, then a ` << filter` (before the note, or trailing the
     // note when every token is supported), then a `--` label comment
-    // (`.complete 7,1 --Kobold Vermin`).
+    // (`.complete 900001,1 --Practice Dummy`).
     let (mut command, mut note) = match rest.split_once(">>") {
         Some((c, n)) => (c, Some(n.trim())),
         None => (rest, None),
@@ -823,29 +841,54 @@ fn coordinate(text: &str) -> Option<f64> {
         .filter(|v| v.is_finite())
 }
 
+/// A whole (possibly negative) integer, for documented numeric extra arguments.
+fn integer(text: &str) -> bool {
+    small_number::<u32>(text.strip_prefix('-').unwrap_or(text)).is_some()
+}
+
+/// Extra arguments: at most `documented` of them, all integers, or the directive
+/// is unsupported (kept, never silently trimmed).
+fn extras(parts: &[&str], documented: usize, parsed: Directive) -> Directive {
+    if parts.len() <= documented && parts.iter().all(|p| integer(p)) {
+        parsed
+    } else {
+        Directive::Unsupported
+    }
+}
+
 fn parse_directive(name: &str, args: &str) -> Directive {
     let parts: Vec<&str> = args.split(',').map(str::trim).collect();
     let single = || (parts.len() == 1).then(|| parts[0]);
     let parsed = match name {
-        "accept" => {
-            quest_id(parts[0]).map(|(quest, conditional)| Directive::Accept { quest, conditional })
-        }
-        "turnin" => quest_id(parts[0]).and_then(|(quest, conditional)| {
-            let reward = match parts.get(1) {
-                None => None,
-                Some(r) => Some(small_number::<u8>(r)?),
-            };
-            (parts.len() <= 2).then_some(Directive::TurnIn {
-                quest,
-                reward,
-                conditional,
-            })
-        }),
+        // `.accept id[,n[,nid]]` (RXP documentation); the extras have no replay effect.
+        "accept" => match quest_id(parts[0]) {
+            Some((quest, conditional)) => {
+                return extras(&parts[1..], 2, Directive::Accept { quest, conditional });
+            }
+            None => None,
+        },
+        // `.turnin id[,n]`: n selects the nth reward.
+        "turnin" => match quest_id(parts[0]) {
+            Some((quest, conditional)) => {
+                let reward = parts.get(1).and_then(|r| small_number::<u8>(r));
+                if parts.len() > 2 || (parts.len() == 2 && reward.is_none()) {
+                    return Directive::Unsupported;
+                }
+                return Directive::TurnIn {
+                    quest,
+                    reward,
+                    conditional,
+                };
+            }
+            None => None,
+        },
         "complete" => match parts.as_slice() {
-            [q, o] => quest_id(q)
-                .filter(|(_, c)| !c)
-                .zip(small_number::<u8>(o))
-                .map(|((quest, _), objective)| Directive::Complete { quest, objective }),
+            [q, o, rest @ ..] => match quest_id(q).filter(|(_, c)| !c).zip(small_number::<u8>(o)) {
+                Some(((quest, _), objective)) => {
+                    return extras(rest, 0, Directive::Complete { quest, objective });
+                }
+                None => None,
+            },
             _ => None,
         },
         "abandon" => single()
@@ -871,10 +914,12 @@ fn parse_directive(name: &str, args: &str) -> Directive {
         "maxlevel" => single().and_then(small_number).map(Directive::MaxLevel),
         "use" => single().and_then(small_number).map(Directive::Use),
         "gossipoption" => single().and_then(small_number).map(Directive::Gossip),
+        // `.collect itemId,n[,questId[,objectiveBitMask[,-1]]]`
         "collect" => match parts.as_slice() {
-            [item, count, ..] if parts.len() <= 5 => small_number(item)
-                .zip(small_number(count))
-                .map(|(item, count)| Directive::Collect { item, count }),
+            [item, count, rest @ ..] => match small_number(item).zip(small_number(count)) {
+                Some((item, count)) => return extras(rest, 3, Directive::Collect { item, count }),
+                None => None,
+            },
             _ => None,
         },
         "isOnQuest" => parts

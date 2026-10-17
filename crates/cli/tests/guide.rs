@@ -66,14 +66,18 @@ fn the_synthetic_route_passes_against_its_synthetic_facts() {
         &fixture("synthetic-facts.json"),
         &[],
     );
-    assert!(
-        output.status.success(),
+    assert_eq!(
+        output.status.code(),
+        Some(3),
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
     let r = report(&output);
     assert_eq!(r["format"], "navzeroth-guide-verify");
-    assert_eq!(r["passes"], true);
+    assert_eq!(r["replay_clean"], true);
+    assert_eq!(r["passes"], false, "synthetic facts never pass");
+    assert_eq!(r["facts_edition"], "forever");
+    assert_eq!(r["facts_build"], "0.0.0.1-synthetic");
     assert_eq!(r["facts_origin"], "synthetic");
     assert_eq!(r["facts_are_evidence"], false);
     assert_eq!(r["character"]["race"], "Human");
@@ -114,7 +118,7 @@ fn unknown_facts_fail_as_unverified() {
     let temp = Temp::new();
     let facts = temp.write(
         "facts.json",
-        r#"{"format":"navzeroth-guide-facts","version":1,"origin":"local_observation"}"#,
+        r#"{"format":"navzeroth-guide-facts","version":1,"origin":"local_observation","edition":"forever","client_build":"0.0.0.1"}"#,
     );
     let output = verify(&fixture("synthetic-route.lua"), &facts, &[]);
     assert_eq!(output.status.code(), Some(1));
@@ -201,8 +205,9 @@ fn bad_inputs_are_refused_with_static_messages() {
         &facts,
         &["--race", "Human", "--class", "Priest"],
     );
-    assert!(
-        output.status.success(),
+    assert_eq!(
+        output.status.code(),
+        Some(3),
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
@@ -231,4 +236,25 @@ fn symlinked_inputs_are_refused() {
     let output = verify(&link, &fixture("synthetic-facts.json"), &[]);
     assert_eq!(output.status.code(), Some(1));
     assert!(String::from_utf8_lossy(&output.stderr).contains("Symlink"));
+}
+
+#[test]
+fn exit_0_needs_facts_that_claim_evidence() {
+    let temp = Temp::new();
+    let synthetic = fs::read_to_string(fixture("synthetic-facts.json")).unwrap();
+    let claimed = synthetic.replace(
+        "\"origin\": \"synthetic\"",
+        "\"origin\": \"local_observation\"",
+    );
+    assert_ne!(synthetic, claimed);
+    let facts = temp.write("claimed.json", claimed);
+    let output = verify(&fixture("synthetic-route.lua"), &facts, &[]);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let r = report(&output);
+    assert_eq!(r["passes"], true);
+    assert_eq!(r["facts_are_evidence"], true);
 }
