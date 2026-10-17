@@ -219,8 +219,9 @@ unavailable key, the extractor reads the file frame by frame instead:
    and reports each frame's logical range from CascLib's frame records.
 2. For every BLTE frame it reads the encoded bytes and checks them against the
    frame table's MD5 (strict). A mismatch is `archive_verification_failed`, and
-   so is a file opened without integrity checking or a frame whose expected MD5
-   is all zero (CascLib would accept any bytes for it). A frame whose verified
+   so is a frame whose expected MD5 is all zero (CascLib would accept any bytes
+   for it). A file opened without integrity checking is refused as
+   `local_archive_read_unavailable` (unreachable today: every open is strict). A frame whose verified
    encoded bytes start with mode `E` is marked encrypted; it is never decoded or
    decrypted, and its bytes are released at once.
 3. Rust checks that the frames cover the logical file contiguously, with at

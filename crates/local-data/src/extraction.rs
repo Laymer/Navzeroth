@@ -565,9 +565,6 @@ pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalo
     Ok(manifest)
 }
 
-/// Catalog disposition and reason for a failed strict logical read. Causes stay
-/// distinct: encryption is never reported as corruption and an unexplained short
-/// read is never asserted to be corruption.
 /// Reason suffix of a partially read table that was not decoded: its retained
 /// object is a partial container, not the client file.
 const PARTIAL_SUFFIX: &str = "partial_plain_frames";
@@ -589,6 +586,9 @@ fn record_undecoded_partial(
     );
 }
 
+/// Catalog disposition and reason for a failed strict logical read. Causes stay
+/// distinct: encryption is never reported as corruption and an unexplained short
+/// read is never asserted to be corruption.
 fn read_failure_disposition(error: ReadFailure) -> (InventoryDisposition, &'static str) {
     match error {
         ReadFailure::Missing => (
