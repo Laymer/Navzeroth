@@ -145,6 +145,34 @@ directory creation and writes. No encrypted zero-fill option or key-management
 interface is exposed. All retained originals and the small Rust DBD parser patch
 have hashes, provenance and [third-party notices](../../crates/local-data/THIRD_PARTY.md).
 
+### Archive read failures
+
+A strict logical read either returns the whole verified file or one cause. CascLib
+can stop part-way through a file and still report success with a short count; the
+wrapper then reports the error CascLib recorded for the frame that stopped it,
+not a generic failure. The partial buffer is discarded, never retained or
+zero-filled. Catalog disposition and reason per cause:
+
+| Cause | Disposition | Reason |
+|---|---|---|
+| No local file/name entry | `not_locally_present` | `not_locally_present` |
+| End-of-data or missing file part before the declared size | `not_locally_present` | `archive_span_incomplete` |
+| First frame encrypted with a key that is not available | `unavailable_encrypted` | `unavailable_encrypted` |
+| Verified frames read, then a frame encrypted with an unavailable key | `unavailable_encrypted` | `unavailable_encrypted_frames` |
+| Unsupported BLTE/encryption encoding | `unavailable_encrypted` | `unsupported_archive_encoding_not_retained` |
+| Unrecognized native failure | `unavailable_encrypted` | `local_archive_read_unavailable` |
+| Short read with no recorded cause | `unavailable_encrypted` | `archive_short_read_unexplained` |
+| `ERROR_FILE_CORRUPT`: frame checksum mismatch, malformed BLTE/encryption header or failed decompression | `invalid_corrupt` | `archive_verification_failed` |
+| Logical size or allocation above the table limit | `excluded_by_policy` | `logical_file_or_allocation_exceeds_capacity_not_retained` |
+
+Only `archive_verification_failed` (and the decoder's `table_hash_mismatch`)
+assert corruption. Encryption and incomplete local data are gaps. Until task
+V2.2c (build 70450 catalogs before it), every short read was reported as
+`invalid_corrupt`/`archive_verification_failed`. On the owner's 70450 client those
+106 tables were all `unavailable_encrypted_frames`: DB2 files whose trailing BLTE
+frames carry encrypted sections with unavailable keys (see
+[the V2.2c handoff](../handoffs/2026-10-17-v2.2c.md)).
+
 Before and after extraction, relevant build/config/index fingerprints and archive
 file identities/sizes/times are compared. Inspection must match the captured
 build-info fingerprint. Changes refuse sealing. Symlink/reparse preflight and
