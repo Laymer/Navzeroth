@@ -80,5 +80,68 @@ uint32_t nav_casc_read(void * file, void * buffer, uint32_t length, uint32_t * d
     DWORD error = GetCascError();
     return error == ERROR_SUCCESS ? 8 : read_status(error);
 }
+// Frame-aware partial read (V2.2d). Frame tables are loaded through the public
+// span-info query; each frame's layout comes from CascLib's own frame records.
+static PCASC_FILE_FRAME frame_at(TCascFile * hf, uint32_t index, DWORD * flags, TFileStream ** stream) {
+    for(DWORD span = 0; span < hf->SpanCount; span++) {
+        PCASC_FILE_SPAN pSpan = hf->pFileSpan + span;
+        if(pSpan->pFrames == NULL) return NULL;
+        if(index < pSpan->FrameCount) {
+            *flags = hf->pCKeyEntry[span].Flags;
+            *stream = pSpan->pStream;
+            return pSpan->pFrames + index;
+        }
+        index -= pSpan->FrameCount;
+    }
+    return NULL;
+}
+uint32_t nav_casc_frame_count(void * file, uint32_t * count) {
+    *count = 0;
+    TCascFile * hf = TCascFile::IsValid(file);
+    if(hf == NULL || hf->SpanCount == 0 || hf->SpanCount > 256) return 6;
+    static CASC_FILE_SPAN_INFO spans[256]; // Serialized native access; scratch only.
+    if(!CascGetFileInfo(file, CascFileSpanInfo, spans, sizeof(spans), NULL)) return read_status(GetCascError());
+    ULONGLONG total = 0;
+    for(DWORD span = 0; span < hf->SpanCount; span++) {
+        if(hf->pFileSpan[span].pFrames == NULL) return 6;
+        total += hf->pFileSpan[span].FrameCount;
+    }
+    if(total > 0xFFFFFFFFull) return 5;
+    *count = (uint32_t)total;
+    return 0;
+}
+// One frame's logical range and whether it is BLTE mode 'E'. The frame's encoded
+// bytes are first MD5-checked against the frame table (strict). An 'E' frame is
+// only identified, never decoded or decrypted; its bytes are released here.
+uint32_t nav_casc_frame(void * file, uint32_t index, uint64_t * start, uint32_t * length, uint32_t * encrypted) {
+    *start = 0; *length = 0; *encrypted = 0;
+    TCascFile * hf = TCascFile::IsValid(file);
+    if(hf == NULL) return 6;
+    DWORD flags = 0; TFileStream * stream = NULL;
+    PCASC_FILE_FRAME frame = frame_at(hf, index, &flags, &stream);
+    if(frame == NULL || frame->EndOffset < frame->StartOffset || frame->EndOffset - frame->StartOffset != frame->ContentSize) return 6;
+    *start = frame->StartOffset;
+    *length = frame->ContentSize;
+    // Plain and raw-ZLIB spans are not BLTE-framed and cannot be encrypted.
+    if(flags & (CASC_CE_PLAIN_DATA | CASC_CE_ZLIB_DATA)) return 0;
+    if(stream == NULL || frame->EncodedSize == 0) return 4;
+    if(frame->EncodedSize > 64u * 1024u * 1024u) return 5;
+    LPBYTE encoded = CASC_ALLOC<BYTE>(frame->EncodedSize);
+    if(encoded == NULL) return 5;
+    ULONGLONG offset = frame->DataFileOffset;
+    uint32_t status = 0;
+    if(!FileStream_Read(stream, &offset, encoded, frame->EncodedSize)) status = 6;
+    else if(hf->bVerifyIntegrity && !CascVerifyDataBlockHash(encoded, frame->EncodedSize, frame->FrameHash.Value)) status = 4;
+    else *encrypted = encoded[0] == 'E' ? 1 : 0;
+    CASC_FREE(encoded);
+    return status;
+}
+// Strict read of [offset, offset + length). The caller passes only runs of frames
+// identified as not encrypted. Same status contract as nav_casc_read.
+uint32_t nav_casc_read_at(void * file, uint64_t offset, void * buffer, uint32_t length, uint32_t * done) {
+    *done = 0;
+    if(offset > 0x7FFFFFFFFFFFFFFFull || !CascSetFilePointer64(file, (LONGLONG)offset, NULL, FILE_BEGIN)) return 6;
+    return nav_casc_read(file, buffer, length, done);
+}
 void nav_casc_file_close(void * file) { CascCloseFile(file); }
 }
