@@ -23,11 +23,11 @@ the slice classes are known". Re-run it before trusting any count here.
 | --- | ---: | --- |
 | A, B Inventory incomplete / required records unknown (per domain) | 18 | V1.1, V2.5 |
 | C Required record inventory empty or excessive | 1 | V2.5 |
-| D Accepted source revisions missing | 1 | V0.6, V2.1 |
+| D Accepted source revisions missing | 1 | V2.5, V2.6 (local-only sources, ADR 0006 §11) |
 | E Tested source revision and production fingerprint pending | 1 | V5.1 |
 | F, G 15 `LIVE-*` and 10 `WIN-*` observations pending | 25 | V5.2 to V5.4 |
 | H, I Unit coverage missing / not passed | 10 | V2.5 |
-| J, K Validated packs missing / no pack record binding | 10 | V2.1 to V2.6 |
+| J, K Validated packs missing / no pack record binding | 10 | V2.2 to V2.6 |
 
 ## Phase 0: housekeeping
 
@@ -51,10 +51,7 @@ the slice classes are known". Re-run it before trusting any count here.
   startup race, fixed in PR #172 ([handoff](docs/handoffs/2026-10-17-v0.5.md)); it
   passes on later heads. Branch protection still requires the nine checks (owner to
   confirm they are the permanent set).
-- [ ] **V0.6 Grant intake** (Owner → Eng). Owner exports the written grants from
-  ForeverDB, Questie/QuestieDB, foreverchanges.pro and Olympus News Network. Eng
-  stores them as private hashed admission evidence and records scope per source in
-  [source-admission-v1.md](docs/sources/source-admission-v1.md) (ADR 0006 §4).
+- [~] **V0.6 Grant intake**: dropped 2026-10-17 (ADR 0006 §11, local-only sources).
 
 ## Phase 1: contract and gate (one writer on `release.rs`, in order)
 
@@ -79,10 +76,8 @@ the slice classes are known". Re-run it before trusting any count here.
 
 ## Phase 2: content (up to three parallel worktree streams)
 
-- [ ] **V2.1 Granted-source adapters** (Eng, after V0.6). Promote the QuestieDB
-  adapter and `stage-foreverdb` staging; inert adapters for retained
-  foreverchanges.pro and Olympus News Network snapshots (fetch stays a separate
-  opt-in step); admission entries in `content/forever/sources.json`.
+- [~] **V2.1 Granted-source adapters**: dropped 2026-10-17 (ADR 0006 §11). Quest,
+  NPC and objective facts come from the owner's own in-game observations instead.
 - [ ] **V2.2 Local extraction projections** (Eng). Equipment, geography, travel and
   class/role projections from decoded tables; cache/hotfix import; activation and
   rollback; other installed locales; deterministic digest.
@@ -149,5 +144,5 @@ the slice classes are known". Re-run it before trusting any count here.
   tag `v1.0.0`; verify every downloaded asset; publish stable; re-verify; receipt
   ([process](docs/releases/V1_RELEASE_PROCESS.md)).
 
-Order: V0 → V1.1 → V1.2-V1.4 in parallel with V2.1-V2.4 → V2.5 → V2.6 and V3 →
+Order: V0 → V1.1 → V1.2-V1.4 in parallel with V2.2-V2.4 → V2.5 → V2.6 and V3 →
 launch → V4 → V5 → V6.
