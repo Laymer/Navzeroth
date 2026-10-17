@@ -614,6 +614,9 @@ fn bind_v2_pack(
             release::MAX_RELEASE_BYTES,
         )?)
         .map_err(|_| "Invalid release party support")?;
+        if matrix.target.as_ref() != Some(target) {
+            return Err("Party support target differs from the frozen target");
+        }
         let rows = matrix
             .bind(manifest.catalog.sha256.as_str(), &records)
             .map_err(|_| "Party support does not bind actual catalog dependencies")?;

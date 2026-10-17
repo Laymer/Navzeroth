@@ -190,10 +190,13 @@ fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBun
             &mut budget,
         )?;
         let matrix = SupportMatrix::decode(&bytes).map_err(|_| "Invalid party support matrix")?;
-        if content.reference.game.edition.as_str() != matrix.target.edition
-            || content.reference.game.build.as_str()
-                != format!("{}.{}", matrix.target.version, matrix.target.build)
-            || content.reference.game.interface.as_str() != matrix.target.interface.to_string()
+        // A pending (schema 2, `null`) target binds no build here; the release
+        // gate refuses it until the target is frozen and then requires equality.
+        if let Some(target) = &matrix.target
+            && (content.reference.game.edition.as_str() != target.edition
+                || content.reference.game.build.as_str()
+                    != format!("{}.{}", target.version, target.build)
+                || content.reference.game.interface.as_str() != target.interface.to_string())
         {
             return Err("Party support target differs from content catalog");
         }
