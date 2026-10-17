@@ -42,9 +42,15 @@ pub struct Definition {
     pub layout: RawDefinition,
 }
 
+/// Exact `1.60.1` builds admitted as local extraction and projection input.
+/// All are development inputs (ADR 0005 §3, ADR 0006 §1): none is the release
+/// target, and an artifact of one build is never relabelled as another. Any
+/// other build is refused; there is no nearest-build fallback.
+pub const ADMITTED_BUILDS: &[u32] = &[70374, 70425, 70450];
+
 /// Exact explicit build plus layout selection. Ambiguous matches fail closed.
 pub fn definition(name: &str, build: u32, layout: u32) -> Result<Definition, &'static str> {
-    if !matches!(build, 70374 | 70425) {
+    if !ADMITTED_BUILDS.contains(&build) {
         return Err("unsupported_build");
     }
     let text = DEFINITIONS

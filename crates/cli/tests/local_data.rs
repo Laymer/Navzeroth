@@ -167,6 +167,65 @@ fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
     fs::remove_dir_all(root).unwrap();
 }
 
+/// Extraction admits exactly 70374, 70425 and 70450. An admitted build passes the
+/// build gate and stops at the next check (an unreviewed table, before any
+/// archive is opened); an unknown build stops at the gate with no fallback.
+#[test]
+fn extraction_admits_70450_as_development_input_and_refuses_unknown_builds() {
+    use azeroth_local_data::worker::{ExtractionRequest, ExtractionWorker, WorkerEvent};
+    for (build, expected) in [
+        (70374, "Requested table is absent from reviewed metadata"),
+        (70425, "Requested table is absent from reviewed metadata"),
+        (70450, "Requested table is absent from reviewed metadata"),
+        (70449, "Build unsupported; no nearest-build fallback"),
+        (70451, "Build unsupported; no nearest-build fallback"),
+    ] {
+        let root = std::env::temp_dir().join(format!(
+            "navzeroth-admission-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let source = root.join("source");
+        let destination = root.join("private");
+        fs::create_dir_all(&source).unwrap();
+        fs::create_dir_all(&destination).unwrap();
+        fs::write(
+            source.join(".build.info"),
+            format!(
+                "Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.{build}|{}|{}|enUS text\n",
+                "a".repeat(32),
+                "b".repeat(32)
+            ),
+        )
+        .unwrap();
+        let request = ExtractionRequest {
+            protocol_version: 1,
+            request_id: format!("admission-{build}"),
+            installation: source.clone(),
+            product: "wow_classic_beta".into(),
+            destination: destination.clone(),
+            preset: azeroth_core::local_data::PerformancePreset::Small,
+            tables: vec!["NotAReviewedTable".into()],
+        };
+        let mut worker = ExtractionWorker::start_executable(
+            std::path::Path::new(env!("CARGO_BIN_EXE_azeroth-cli")),
+            &request,
+        )
+        .unwrap();
+        match worker.next_event().unwrap() {
+            WorkerEvent::Failed { code, .. } => assert_eq!(code, expected, "build {build}"),
+            other => panic!("build {build}: unexpected {other:?}"),
+        }
+        // Nothing was written to the private destination for any build.
+        assert_eq!(
+            fs::read_dir(&destination).unwrap().count(),
+            0,
+            "build {build}"
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
+}
+
 #[test]
 fn projection_commands_require_explicit_options_and_refuse_unknown_catalogs() {
     for args in [
