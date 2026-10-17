@@ -765,3 +765,86 @@ fn admission_registry_remains_private_even_if_relabelled_as_a_public_notice() {
             .contains("Private admission registry")
     );
 }
+
+/// Turns a content-bearing schema 1 fixture into schema 2 with a pending target.
+fn pending_v2(temp: &Temp) {
+    let mut inventory = temp.read(INVENTORY);
+    inventory["schema_version"] = json!(2);
+    inventory["target"] = Value::Null;
+    inventory["slice"] = json!({"id":"synthetic-slice","races":["human"],"zones":["elwynn_forest"],
+        "dungeons":[],"level_min":1,"level_max":20,"classes":null,"party_sizes":[1,2]});
+    for domain in inventory["domains"].as_array_mut().unwrap() {
+        let name = domain["domain"].as_str().unwrap().to_owned();
+        domain["out_of_scope"] = json!([{"id":format!("{name}-outside"),
+            "scope":"Synthetic outside","reason":"Synthetic boundary"}]);
+    }
+    temp.json(INVENTORY, &inventory);
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["schema_version"] = json!(2);
+    evidence["target"] = Value::Null;
+    temp.json(EVIDENCE, &evidence);
+    temp.bind_inventory();
+    temp.commit();
+}
+
+#[test]
+fn content_cannot_be_selected_or_bound_while_the_target_is_pending() {
+    let temp = Temp::new(true);
+    pending_v2(&temp);
+    let error = materials::plan(&temp.options()).unwrap_err();
+    assert!(error.contains("target is pending"), "{error}");
+    let output = temp.0.join("untouched");
+    assert!(materials::stage(&temp.options(), &output).is_err());
+    assert!(!output.exists());
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(
+        report
+            .readiness
+            .blockers
+            .iter()
+            .any(|b| b.contains("Release target is pending; content cannot be bound")),
+        "{:?}",
+        report.readiness.blockers
+    );
+    assert_eq!(report.verified_content_packs, 0);
+}
+
+#[test]
+fn a_self_chosen_schema_2_target_cannot_bind_content() {
+    let temp = Temp::new(true);
+    pending_v2(&temp);
+    let frozen =
+        json!({"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001});
+    let mut inventory = temp.read(INVENTORY);
+    inventory["target"] = frozen.clone();
+    temp.json(INVENTORY, &inventory);
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["target"] = frozen;
+    temp.json(EVIDENCE, &evidence);
+    temp.bind_inventory();
+    temp.commit();
+    assert!(materials::plan(&temp.options()).is_err());
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    let blockers = &report.readiness.blockers;
+    assert!(
+        blockers
+            .iter()
+            .any(|b| b.contains("frozen target does not match"))
+    );
+    assert!(
+        blockers
+            .iter()
+            .any(|b| b.contains("differs from the frozen target"))
+    );
+    assert_eq!(report.verified_content_packs, 0);
+}
+
+#[test]
+fn mixed_inventory_and_evidence_schema_versions_are_refused() {
+    let temp = Temp::new(true);
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["schema_version"] = json!(2);
+    temp.json(EVIDENCE, &evidence);
+    temp.commit();
+    assert!(materials::plan(&temp.options()).is_err());
+}

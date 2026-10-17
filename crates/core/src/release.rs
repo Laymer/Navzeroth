@@ -514,6 +514,20 @@ pub fn assess(
             _ => report.block("Release slice is missing or invalid"),
         }
     }
+    // A slice always leaves content outside it; an omitted or empty list would
+    // merge "not declared" into "nothing outside" (ADR 0006 section 2).
+    if inventory.schema_version == 2 {
+        for domain in inventory
+            .domains
+            .iter()
+            .filter(|d| d.out_of_scope.is_empty())
+        {
+            report.block(format!(
+                "Out-of-scope boundaries are not declared: {}",
+                domain.domain
+            ));
+        }
+    }
     let boundaries: Vec<_> = inventory
         .domains
         .iter()

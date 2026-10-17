@@ -185,6 +185,28 @@ fn boundaries_must_be_unique_and_explained() {
 }
 
 #[test]
+fn every_schema_2_domain_must_declare_its_boundaries() {
+    let (_, e) = complete();
+    let mut value = inventory_value();
+    value["domains"][2]
+        .as_object_mut()
+        .unwrap()
+        .remove("out_of_scope");
+    let report = check(&decode(&value).unwrap(), &e);
+    assert!(has(
+        &report,
+        "Out-of-scope boundaries are not declared: acquisition"
+    ));
+    let mut value = inventory_value();
+    value["domains"][4]["out_of_scope"] = json!([]);
+    let report = check(&decode(&value).unwrap(), &e);
+    assert!(has(
+        &report,
+        "Out-of-scope boundaries are not declared: travel"
+    ));
+}
+
+#[test]
 fn a_boundary_is_not_a_known_unit_and_unknown_units_still_block() {
     let (_, e) = complete();
     let mut value = inventory_value();
