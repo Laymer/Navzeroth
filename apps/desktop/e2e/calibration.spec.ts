@@ -29,12 +29,12 @@ test("explicit session association and conditional comparison retain excluded ev
   await page.goto("/");
   await page.getByRole("button",{name:"Sessions",exact:true}).click();
   await page.getByRole("button",{name:"Inspect synthetic-session"}).click();
-  await page.getByLabel("Route or quest stage").fill("declared-stage");
-  await page.getByLabel("Declared level").fill("12");
-  await page.getByLabel("Declared role").fill("healer");
-  await page.getByLabel("Declared party size").fill("2");
-  await page.getByLabel("Baseline source or assumption").fill("documented user assumption");
-  await page.getByLabel("Terminal observed quest ID").fill("quest-a");
+  await page.getByLabel("Route or quest stage", { exact: true }).fill("declared-stage");
+  await page.getByLabel("Declared level", { exact: true }).fill("12");
+  await page.getByLabel("Declared role", { exact: true }).fill("healer");
+  await page.getByLabel("Declared party size", { exact: true }).fill("2");
+  await page.getByLabel("Baseline source or assumption", { exact: true }).fill("documented user assumption");
+  await page.getByLabel("Terminal observed quest ID", { exact: true }).fill("quest-a");
   await page.getByLabel("I declare this whole session").check();
   await page.getByRole("button",{name:"Save association for synthetic-session"}).click();
   await expect(page.getByRole("status")).toContainText("Explicit association saved");
@@ -42,6 +42,6 @@ test("explicit session association and conditional comparison retain excluded ev
   await expect(page.getByText(/Complete comparable samples: 0/)).toContainText("SYNTHETIC");
   await expect(page.getByText(/synthetic-session: excluded/)).toContainText("gaps or uncovered time");
   await expect(page.getByText(/Observed session median:/)).toContainText("unavailable");
-  await page.getByLabel("Declared party size").fill("3");
+  await page.getByLabel("Declared party size", { exact: true }).fill("3");
   await expect(page.getByText(/Complete comparable samples:/)).toHaveCount(0);
 });

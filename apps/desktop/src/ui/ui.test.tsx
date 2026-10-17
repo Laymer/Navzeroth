@@ -112,7 +112,7 @@ describe("Field", () => {
     const input = screen.getByRole("textbox", { name: "Budget" });
     expect(input).toHaveAccessibleDescription("Minutes.");
     const label = screen.getByText("Budget", { selector: "label" });
-    expect(label).not.toContainElement(screen.getByRole("button", { name: "Help" }));
+    expect(label).not.toContainElement(screen.getByRole("button", { name: "Help: Budget" }));
   });
 
   it("marks the control invalid and describes the error", () => {
@@ -124,7 +124,7 @@ describe("Field", () => {
 
   it("omits Help when no help text is declared", () => {
     render(<Field label="Name">{(control) => <input {...control} />}</Field>);
-    expect(screen.queryByRole("button", { name: "Help" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Help/ })).toBeNull();
   });
 });
 

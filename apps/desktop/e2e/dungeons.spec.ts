@@ -23,8 +23,8 @@ test("local dungeon reference keeps stale members and unknown source evidence ex
   await page.getByRole("button",{name:"Dungeons",exact:true}).click();
   await expect(page.getByRole("heading",{name:"Dungeon preparation",exact:true})).toBeVisible();
   await expect(page.getByText("No authored records on this page.",{exact:false})).toBeVisible();
-  await expect(page.getByLabel("Local preparation package JSON")).not.toBeVisible();
-  await page.getByLabel("Preparation members").selectOption("party");
+  await expect(page.getByLabel("Local preparation package JSON", { exact: true })).not.toBeVisible();
+  await page.getByLabel("Preparation members", { exact: true }).selectOption("party");
   await page.getByText("Advanced local reference editor",{exact:true}).click();
   await page.getByRole("button",{name:"Load synthetic preparation reference"}).click();
   await page.getByRole("button",{name:"Inspect preparation gaps"}).click();

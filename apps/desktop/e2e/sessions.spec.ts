@@ -22,10 +22,10 @@ test("Sessions manual import, duplicate, analytics and deletion at command bound
   await page.goto("/");
   await page.getByRole("button", { name: "Sessions", exact: true }).click();
   await expect(page.getByText(/SYNTHETIC — engineering examples/)).toBeVisible();
-  await page.getByLabel("Session export text").fill("invalid");
+  await page.getByLabel("Session export text", { exact: true }).fill("invalid");
   await page.getByRole("button", { name: "Import session text" }).click();
   await expect(page.getByRole("alert")).toContainText("Invalid session framing");
-  await page.getByLabel("Session export text").fill("ANAVSESSION1:synthetic-command-mock");
+  await page.getByLabel("Session export text", { exact: true }).fill("ANAVSESSION1:synthetic-command-mock");
   await page.getByRole("button", { name: "Import session text" }).click();
   await expect(page.getByText("Imported 1 session(s); 0 already stored.")).toBeVisible();
   await page.getByRole("button", { name: "Inspect synthetic-session" }).click();

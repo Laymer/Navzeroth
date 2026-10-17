@@ -25,7 +25,7 @@ test("local diagnostics require explicit preview/export and expose only fixed fa
   await page.getByRole("button", {name:"Preview diagnostic metadata"}).click();
   await expect(page.getByText("Recorded imports: 0.")).toBeVisible();
   expect((await calls()).filter(c=>c.command==="export_diagnostics")).toEqual([]);
-  await page.getByLabel("New diagnostic file path").fill("selected-new-diagnostics.json");
+  await page.getByLabel("New diagnostic file path", { exact: true }).fill("selected-new-diagnostics.json");
   await page.getByRole("button", {name:"Create local diagnostic file"}).click();
   await expect(page.getByText("Local diagnostic file created (123 bytes).")).toBeVisible();
   await page.getByRole("button", {name:"Create local diagnostic file"}).click();

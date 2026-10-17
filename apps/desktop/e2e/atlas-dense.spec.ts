@@ -68,13 +68,13 @@ for (const width of [320, 640]) {
     await expect(first).toBeFocused();
     await expect(page.getByText("The selected pin is on another page. Change pages or search to show it.")).toBeVisible();
     await first.press("ArrowUp"); await expect(last).toBeFocused();
-    await page.getByLabel("Search reference pins").fill("09999");
+    await page.getByLabel("Search reference pins", { exact: true }).fill("09999");
     await expect(last).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("g.pin")).toHaveCount(1);
-    await page.getByLabel("Point type").selectOption("landmark");
+    await page.getByLabel("Point type", { exact: true }).selectOption("landmark");
     await expect(page.getByText("The selected pin is hidden by the current filters.")).toBeVisible();
     await expect(page.getByText("No reference pins match these filters.")).toBeVisible();
-    await page.getByLabel("Point type").selectOption("all");
+    await page.getByLabel("Point type", { exact: true }).selectOption("all");
     const map = page.getByRole("group", { name: /Atlas map/ });
     await map.focus();
     const frame = map.locator("rect.frame");

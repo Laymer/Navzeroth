@@ -19,9 +19,9 @@ test("imported synthetic profile reminder hide restore acknowledgment and checkl
   }}});
  },{snapshot});
  await page.goto("/");await page.getByRole("button",{name:"Imports",exact:true}).click();
- await page.getByLabel("Snapshot export text").fill("ANAV1:synthetic-command-mock");await page.getByRole("button",{name:"Import text",exact:true}).click();
+ await page.getByLabel("Snapshot export text", { exact: true }).fill("ANAV1:synthetic-command-mock");await page.getByRole("button",{name:"Import text",exact:true}).click();
  await page.getByRole("button",{name:"Reminders",exact:true}).click();await expect(page.getByText("Synthetic reminder")).toBeVisible();
  await page.getByRole("button",{name:"Hide r"}).click();await page.getByRole("button",{name:"Restore r"}).click();
  await page.getByRole("button",{name:"Mark r as read"}).click();await expect(page.getByText(/No new advice/)).toBeVisible();
- await page.getByLabel("Add a bag-space checklist").check();await page.getByLabel("I checked bag space manually").check();await expect(page.getByLabel("I checked bag space manually")).toBeChecked();
+ await page.getByLabel("Add a bag-space checklist", { exact: true }).check();await page.getByLabel("I checked bag space manually", { exact: true }).check();await expect(page.getByLabel("I checked bag space manually", { exact: true })).toBeChecked();
 });

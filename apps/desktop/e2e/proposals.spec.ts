@@ -39,7 +39,7 @@ test("local proposal retains per-member acceptance and invalidates after refresh
   await expect(page.getByRole("button", { name: "Record acceptance for two" })).toBeEnabled();
   await page.getByRole("button", { name: "Record acceptance for two" }).click();
   await expect(page.getByText("Every participant explicitly accepted this current proposal.")).toBeVisible();
-  await page.getByLabel("Export recipient").selectOption("two");
+  await page.getByLabel("Export recipient", { exact: true }).selectOption("two");
   await page.getByRole("button", { name: "Export agreed plan for recipient" }).click();
   await expect(page.getByLabel("Recipient plan text")).toHaveValue("ANAV1:explicit-recipient-two");
   await page.getByRole("button", { name: "Refresh parties" }).click();

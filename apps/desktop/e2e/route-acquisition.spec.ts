@@ -26,13 +26,13 @@ test("explicit Gear route opportunities use Rust fixture detour/residual budget 
  await page.getByRole("button",{name:"Load labelled synthetic example"}).click();
  await page.getByLabel("Role identifier",{exact:true}).fill("manual");
  await page.getByLabel("formation (ms)",{exact:true}).fill("2000");await page.getByLabel("attempt (ms)",{exact:true}).fill("10000");
- await page.getByLabel("Spending ceiling (copper)",{exact:true}).fill("");await page.getByLabel("Maximum trials (1–1024)").fill("3");
- await page.getByLabel("Assume independent identical player acquisition trials").check();
+ await page.getByLabel("Spending ceiling (copper)",{exact:true}).fill("");await page.getByLabel("Maximum trials (1–1024)", { exact: true }).fill("3");
+ await page.getByLabel("Assume independent identical player acquisition trials", { exact: true }).check();
  await page.getByRole("combobox",{name:"Acquisition source for synthetic-upgrade",exact:true}).selectOption("synthetic-source");
  const panel=page.getByRole("region",{name:"Route-aware acquisition"});
- await panel.getByLabel("Route goal",{exact:true}).fill("manual");await panel.getByLabel("Route session budget (ms)").fill("100000");
+ await panel.getByLabel("Route goal",{exact:true}).fill("manual");await panel.getByLabel("Route session budget (ms)", { exact: true }).fill("100000");
  await panel.getByRole("combobox",{name:"Route origin",exact:true}).selectOption("demo-node-1");await panel.getByRole("combobox",{name:"Route ending",exact:true}).selectOption("demo-node-1");
- await panel.getByLabel("Include synthetic-service in route").check();await panel.getByRole("combobox",{name:"Objective node for synthetic-service",exact:true}).selectOption("demo-node-2");
+ await panel.getByLabel("Include synthetic-service in route", { exact: true }).check();await panel.getByRole("combobox",{name:"Objective node for synthetic-service",exact:true}).selectOption("demo-node-2");
  await panel.getByLabel("utility for synthetic-service",{exact:true}).fill("10");await panel.getByLabel("completion for synthetic-service",{exact:true}).fill("1000");await panel.getByLabel("service for synthetic-service",{exact:true}).fill("0");
  await panel.getByRole("button",{name:"Preview reserved route"}).click();await expect(panel.getByText("Reserved route: 61000 ms. Remaining budget: 39000 ms.")).toBeVisible();
  await panel.getByRole("combobox",{name:"Source node for synthetic-upgrade",exact:true}).selectOption("synthetic-source-node");await panel.getByRole("button",{name:"Assess independent route opportunities"}).click();
@@ -47,5 +47,5 @@ test("explicit Gear route opportunities use Rust fixture detour/residual budget 
  const preview=calls.find(c=>c.command==="preview_acquisition_route");const assessment=calls.find(c=>c.command==="assess_route_acquisition");expect(preview).toBeDefined();expect(assessment).toBeDefined();
  expect(JSON.parse(preview?.args.text??"{}")).toEqual(baseline.planning_report.request);
  const request=JSON.parse(assessment?.args.text??"{}");expect(request.expected_route_fingerprint).toBe(baseline.route_fingerprint);expect(request.opportunities[0].node.id).toBe("synthetic-source-node");expect(request.gear.candidates[0].acquisition).toBeNull();expect(request.opportunities[0]).not.toHaveProperty("incremental_travel_ms");
- await panel.getByLabel("Route session budget (ms)").fill("110000");await expect(panel.getByText(/Reserved route:/)).toHaveCount(0);await expect(page.getByRole("region",{name:"Gear result"})).toHaveCount(0);
+ await panel.getByLabel("Route session budget (ms)", { exact: true }).fill("110000");await expect(panel.getByText(/Reserved route:/)).toHaveCount(0);await expect(page.getByRole("region",{name:"Gear result"})).toHaveCount(0);
 });

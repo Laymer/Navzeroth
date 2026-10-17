@@ -1,17 +1,26 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 interface HelpTipProps {
   children: ReactNode;
+  /** Names the field this help belongs to. The accessible name becomes "Help: <label>"; without it, exactly "Help". */
+  label?: string;
+}
+
+/** Horizontal shift that keeps a bubble with natural left edge `natural` and width `width` inside the viewport. */
+export function clampShift(natural: number, width: number, viewport: number, margin = 8): number {
+  if (natural < margin) return margin - natural;
+  if (natural + width > viewport - margin) return Math.min(0, viewport - margin - width - natural);
+  return 0;
 }
 
 /**
- * A toggletip. The trigger is a "?" button whose accessible name is just "Help"; it is
+ * A toggletip. The trigger is a "?" button whose accessible name is "Help" (or "Help: <label>" when a label is given); it is
  * rendered next to a field, never inside its label, so it cannot change the field's name.
  * The bubble is always mounted (hidden while closed) and linked with aria-describedby. It opens on
  * hover, focus or click; Escape or a second click closes it.
  */
-export function HelpTip({ children }: HelpTipProps) {
+export function HelpTip({ children, label }: HelpTipProps) {
   const id = useId();
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
@@ -44,21 +53,25 @@ export function HelpTip({ children }: HelpTipProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Keep the bubble inside the viewport (320 px wide windows, 200 % text).
+  // Keep the bubble inside the viewport (320 px wide windows, 200 % text), and again after a resize.
+  const shiftNow = useRef(0);
+  const measure = useCallback(() => {
+    const box = bubble.current?.getBoundingClientRect();
+    if (box === undefined || box.width === 0) return; // not laid out (tests); nothing to measure
+    const next = clampShift(box.left - shiftNow.current, box.width, document.documentElement.clientWidth);
+    shiftNow.current = next;
+    setShift(next);
+  }, []);
   useLayoutEffect(() => {
-    if (!open || bubble.current === null) {
+    if (!open) {
+      shiftNow.current = 0;
       setShift(0);
       return;
     }
-    const box = bubble.current.getBoundingClientRect();
-    if (box.width === 0) return; // not laid out (tests); nothing to measure
-    const margin = 8;
-    const width = document.documentElement.clientWidth;
-    const natural = box.left - shift;
-    if (natural < margin) setShift(margin - natural);
-    else if (natural + box.width > width - margin) setShift(Math.min(0, width - margin - box.width - natural));
-    else setShift(0);
-  }, [open]);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [open, measure]);
 
   function close() {
     setPinned(false);
@@ -81,7 +94,7 @@ export function HelpTip({ children }: HelpTipProps) {
         role="button"
         tabIndex={0}
         className="ui-helptip__trigger"
-        aria-label="Help"
+        aria-label={label === undefined || label === "" ? "Help" : `Help: ${label}`}
         aria-expanded={open}
         aria-controls={id}
         aria-describedby={id}
