@@ -6,7 +6,7 @@ use azeroth_core::{
 };
 use azeroth_local_data::{
     metadata::METADATA_SHA256,
-    projection::{self, SOURCES},
+    projection::{self, Reproduction, SOURCES},
     tables::{Cell, DecodedTable, ResearchRow, TableHeader},
 };
 use sha2::{Digest, Sha256};
@@ -462,9 +462,8 @@ fn private_store(name: &str) -> PathBuf {
     root
 }
 
-#[test]
-fn sealed_projection_verifies_reproduces_and_detects_tampering() {
-    let root = private_store("seal");
+fn seeded_store(name: &str) -> (PathBuf, String, ResearchCatalog) {
+    let root = private_store(name);
     let (catalog, objects) = catalog(&tables());
     fs::create_dir(root.join("objects")).unwrap();
     fs::create_dir(root.join("catalogs")).unwrap();
@@ -474,7 +473,23 @@ fn sealed_projection_verifies_reproduces_and_detects_tampering() {
     let manifest = serde_json::to_vec(&catalog).unwrap();
     let catalog_sha256 = hash(&manifest);
     fs::write(root.join("catalogs").join(&catalog_sha256), &manifest).unwrap();
+    (root, catalog_sha256, catalog)
+}
 
+/// Re-seal an edited projection under its new canonical digest.
+fn reseal(root: &std::path::Path, digest: &str, edit: impl FnOnce(&mut LocalProjection)) -> String {
+    let bytes = fs::read(root.join("projections").join(digest)).unwrap();
+    let mut projection: LocalProjection = serde_json::from_slice(&bytes).unwrap();
+    edit(&mut projection);
+    let bytes = serde_json::to_vec(&projection).unwrap();
+    let digest = hash(&bytes);
+    fs::write(root.join("projections").join(&digest), bytes).unwrap();
+    digest
+}
+
+#[test]
+fn sealed_projection_verifies_reproduces_and_detects_tampering() {
+    let (root, catalog_sha256, _) = seeded_store("seal");
     let summary = projection::project_catalog(&root, &catalog_sha256, "enUS").unwrap();
     assert_eq!(summary.catalog_sha256, catalog_sha256);
     assert!(!summary.activated && !summary.verified_for_planning);
@@ -485,7 +500,12 @@ fn sealed_projection_verifies_reproduces_and_detects_tampering() {
     assert_eq!(again.projection_sha256, summary.projection_sha256);
 
     let verified = projection::verify_projection(&root, &summary.projection_sha256).unwrap();
-    assert!(verified.verified && verified.reproduced);
+    assert!(verified.verified && verified.integrity_verified);
+    assert_eq!(verified.reproduction, Reproduction::Reproduced);
+    assert_eq!(
+        verified.projector_profile_sha256,
+        projection::PROJECTOR_PROFILE_SHA256
+    );
     assert!(projection::project_catalog(&root, &catalog_sha256, "frFR").is_err());
 
     let sealed = root.join("projections").join(&summary.projection_sha256);
@@ -498,4 +518,197 @@ fn sealed_projection_verifies_reproduces_and_detects_tampering() {
         "Projection hash mismatch"
     );
     fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn other_projector_profiles_are_integrity_checked_but_not_verified() {
+    let (root, catalog_sha256, _) = seeded_store("profile");
+    let summary = projection::project_catalog(&root, &catalog_sha256, "enUS").unwrap();
+    let foreign = reseal(&root, &summary.projection_sha256, |p| {
+        p.projector_profile_sha256 = "e".repeat(64);
+    });
+    let report = projection::verify_projection(&root, &foreign).unwrap();
+    assert!(report.integrity_verified && !report.verified);
+    assert_eq!(report.reproduction, Reproduction::SkippedProfileMismatch);
+    // Same profile, different records: re-derivation refuses rather than skips.
+    let altered = reseal(&root, &summary.projection_sha256, |p| {
+        p.equipment.items[0].item_level = Fact::Known(999);
+    });
+    assert_eq!(
+        projection::verify_projection(&root, &altered).unwrap_err(),
+        "Projection is not reproducible from its catalog"
+    );
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn verification_refuses_tampered_or_rebound_decoded_objects() {
+    let (root, catalog_sha256, catalog) = seeded_store("rebind");
+    let summary = projection::project_catalog(&root, &catalog_sha256, "enUS").unwrap();
+    // Point the Map source at another decoded object that is in the catalog.
+    let other = catalog
+        .tables
+        .iter()
+        .find(|e| e.table == "UiMap")
+        .and_then(|e| e.decoded_sha256.clone())
+        .unwrap();
+    let rebound = reseal(&root, &summary.projection_sha256, |p| {
+        let source = p.sources.iter_mut().find(|s| s.table == "Map").unwrap();
+        source.decoded_sha256 = Some(other);
+    });
+    assert_eq!(
+        projection::verify_projection(&root, &rebound).unwrap_err(),
+        "Projection source is not bound to its catalog"
+    );
+    let decoded = catalog
+        .tables
+        .iter()
+        .find(|e| e.table == "Map")
+        .and_then(|e| e.decoded_sha256.clone())
+        .unwrap();
+    let object = root.join("objects").join(&decoded);
+    let mut bytes = fs::read(&object).unwrap();
+    bytes[0] ^= 1;
+    fs::write(&object, &bytes).unwrap();
+    assert_eq!(
+        projection::verify_projection(&root, &summary.projection_sha256).unwrap_err(),
+        "Retained object hash mismatch"
+    );
+    assert!(projection::project_catalog(&root, &catalog_sha256, "enUS").is_err());
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn a_held_writer_lock_refuses_a_second_projection() {
+    let (root, catalog_sha256, _) = seeded_store("lock");
+    let lock = fs::OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .read(true)
+        .write(true)
+        .open(root.join("writer.lock"))
+        .unwrap();
+    lock.lock().unwrap();
+    assert_eq!(
+        projection::project_catalog(&root, &catalog_sha256, "enUS").unwrap_err(),
+        "Another extraction owns the destination"
+    );
+    assert!(!root.join("projections").exists());
+    lock.unlock().unwrap();
+    assert!(projection::project_catalog(&root, &catalog_sha256, "enUS").is_ok());
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn duplicate_identities_and_record_budget_refuse_projection() {
+    let (catalog, objects) = catalog(&tables());
+    let load = |entry: &TableInventory| -> Result<DecodedTable, &'static str> {
+        Ok(serde_json::from_slice(&objects[entry.decoded_sha256.as_ref().unwrap()]).unwrap())
+    };
+    let duplicated = projection::project(&catalog, CATALOG, "enUS", |entry| {
+        let mut table = load(entry)?;
+        if let Some(first) = table.rows.first().cloned() {
+            table.rows.push(first);
+        }
+        Ok(table)
+    });
+    assert_eq!(duplicated.unwrap_err(), "Duplicate decoded record identity");
+    // The synthetic catalog has 21 decoded rows in projected sources.
+    assert!(projection::project_within(&catalog, CATALOG, "enUS", 21, load).is_ok());
+    assert_eq!(
+        projection::project_within(&catalog, CATALOG, "enUS", 20, load).unwrap_err(),
+        "Projection exceeds record capacity"
+    );
+    // A larger request never raises the production cap.
+    assert!(projection::project_within(&catalog, CATALOG, "enUS", usize::MAX, load).is_ok());
+}
+
+#[test]
+fn undecoded_encrypted_and_closure_gaps_keep_catalog_reasons() {
+    let (mut catalog, objects) = catalog(&tables());
+    let set = |catalog: &mut ResearchCatalog, table: &str, d, reason: &str| {
+        let entry = catalog
+            .tables
+            .iter_mut()
+            .find(|e| e.table == table)
+            .unwrap();
+        entry.disposition = d;
+        entry.reason = reason.into();
+    };
+    set(
+        &mut catalog,
+        "Item",
+        InventoryDisposition::UnavailableEncrypted,
+        "unavailable_encrypted",
+    );
+    set(
+        &mut catalog,
+        "UiMap",
+        InventoryDisposition::LayoutMismatch,
+        "layout_mismatch",
+    );
+    set(
+        &mut catalog,
+        "TaxiPath",
+        InventoryDisposition::RetainedUnsupported,
+        "unsupported_sparse_storage",
+    );
+    catalog
+        .tables
+        .iter_mut()
+        .find(|e| e.table == "TaxiNodes")
+        .unwrap()
+        .decoded_sha256 = None;
+    let p = run(&catalog, &objects);
+    for gap in [
+        "equipment:Item:unavailable_encrypted:unavailable_encrypted",
+        "geography:UiMap:layout_mismatch:layout_mismatch",
+        "travel:TaxiPath:retained_unsupported:unsupported_sparse_storage",
+        "travel:TaxiNodes:decoded_object_missing",
+    ] {
+        assert!(p.gaps.iter().any(|g| g == gap), "{gap}");
+    }
+    assert!(!p.equipment.sources_complete && !p.travel.sources_complete);
+    // With Item a whole-table gap, Item-derived facts are missing, and no
+    // per-row join counts are reported.
+    assert!(
+        p.equipment
+            .items
+            .iter()
+            .all(|i| i.class_id == Fact::Missing)
+    );
+    assert!(
+        !p.gaps
+            .iter()
+            .any(|g| g.starts_with("equipment:item_sparse_rows_without_item"))
+    );
+    assert!(p.travel.nodes.is_empty() && p.travel.paths.is_empty());
+    assert!(
+        p.gaps
+            .iter()
+            .any(|g| g == "travel:waypoints_for_unprojected_paths:5")
+    );
+}
+
+#[test]
+fn item_inventory_type_never_overrides_an_unknown_or_refused_item_sparse_value() {
+    let mut decoded = tables();
+    let sparse = decoded.get_mut("ItemSparse").unwrap();
+    sparse.rows[0]
+        .fields
+        .insert("InventoryType".into(), Cell::Unknown);
+    sparse.rows[1]
+        .fields
+        .insert("InventoryType".into(), Cell::Text("x".into()));
+    sparse.rows[3].fields.remove("InventoryType");
+    let (catalog, objects) = catalog(&decoded);
+    let p = run(&catalog, &objects);
+    let items: BTreeMap<_, _> = p.equipment.items.iter().map(|i| (i.item_id, i)).collect();
+    assert_eq!(items[&10].inventory_type, Fact::Unknown);
+    assert_eq!(items[&10].slots, Fact::Unknown);
+    assert_eq!(items[&11].inventory_type, Fact::Unsupported);
+    // Absent in ItemSparse and no Item row: still missing.
+    assert_eq!(items[&13].inventory_type, Fact::Missing);
+    // Item 14 exists only in Item, whose value fills the absent one.
+    assert_eq!(items[&14].inventory_type, Fact::Known(0));
 }

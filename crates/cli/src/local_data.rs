@@ -194,9 +194,20 @@ fn projection(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
             Err(error) => emit::<()>(Err(error)),
         };
     }
-    emit((|| {
-        projection::verify_projection(destination, text("--projection")?)
-    })())
+    // Exit 4: integrity checked, but a different projector sealed it, so the
+    // records were not re-derived and the projection is not verified.
+    match (|| projection::verify_projection(destination, text("--projection")?))() {
+        Ok(report) => {
+            let verified = report.verified;
+            let _ = emit(Ok(report));
+            if verified {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::from(4)
+            }
+        }
+        Err(error) => emit::<()>(Err(error)),
+    }
 }
 
 /// Bounded regular-file read for explicitly named receipt inputs.

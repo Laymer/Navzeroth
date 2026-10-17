@@ -23,6 +23,8 @@ pub enum Fact<T> {
     /// The decoder reported the cell unknown (for example a missing relationship).
     Unknown,
     /// The decoded row has no such field, or the joined source row is absent.
+    /// This includes whole-table source gaps (for example every ItemSparse fact
+    /// when ItemSparse is a gap); `LocalProjection::sources` says which applies.
     Missing,
     /// The decoded value has a type, range or disagreement this projection refuses.
     Unsupported,

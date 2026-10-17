@@ -61,19 +61,34 @@ cargo run --locked -p azeroth-cli -- local-data projection-verify --destination 
 
 `project` verifies the catalog closure, reads the hash-verified decoded objects
 and seals the canonical projection bytes at `projections/<sha256>` in the same
-private store, under its writer lock. It refuses, without creating anything,
-when the catalog is not already in the store. It prints a summary (digest,
+private store, under its writer lock (a concurrent extraction or projection
+refuses). It refuses, without creating anything, when the catalog is not
+already in the store. Its storage quota is the Max preset's, whatever preset
+produced the catalog. It prints a summary (digest,
 catalog digest, build, locale, per-domain counts and source completeness, gaps)
 and exits3: the projection is research-only, `activated` and
 `verified_for_planning` are always false, and nothing consumes it yet.
-`projection-verify` exits0 after checking the projection hash, canonical
-encoding, structural invariants, the source catalog and each bound decoded
-object. When the current projector profile matches the sealed one it also
-re-projects and requires identical bytes (`reproduced: true`).
+`projection-verify` checks the projection hash, canonical encoding, structural
+invariants, the source catalog closure and each bound decoded object
+(`integrity_verified`). When the sealed projector profile equals the current
+one it re-projects and requires identical bytes: `reproduction: "reproduced"`,
+`verified: true`, exit0. A projection sealed by a different projector profile
+is integrity-checked only: `reproduction: "skipped_profile_mismatch"`,
+`verified: false`, exit4; re-run `project` with the current binary to verify.
+Any refusal (including a same-profile projection that does not re-derive)
+exits1.
 
-Domains and sources (each pinned to the one decoded layout the profile was
-written against for 70374/70425; any other layout is a
-`projection_layout_unsupported` gap):
+The projector profile hash covers only the projector code
+(`crates/local-data/src/projection.rs` and
+`crates/core/src/local_data_projection.rs`, which holds the record types,
+validation, slot mapping and `PROJECTION_PROFILE`), not the rest of the
+extractor, so unrelated extractor edits don't invalidate projections.
+`PROJECTION_PROFILE` and the slot-mapping identifier are bumped whenever the
+mapping's meaning changes.
+
+Domains and sources (each pinned to the one layout WoWDBDefs lists for
+70374/70425; any other layout is a `projection_layout_unsupported` gap; no
+70374 catalog has been projected yet):
 
 | Domain | Tables | Records |
 | --- | --- | --- |
@@ -83,8 +98,11 @@ written against for 70374/70425; any other layout is a
 | class_roles | ChrClasses, ChrRaces | class and race identities and their input facts |
 
 Every value is a `Fact`: `known` (zero is `known` 0), `unknown` (the decoder
-reported it unknown), `missing` (field or joined row absent) or `unsupported`
-(type/range refused, or ItemSparse and Item disagree). Tables that are absent,
+reported it unknown), `missing` (field or joined row absent, including every
+fact from a source table that is a whole-table gap; `sources` says which) or
+`unsupported` (type/range refused, or ItemSparse and Item disagree). ItemSparse
+is authoritative for inventory type; Item only fills a value ItemSparse lacks,
+never an unknown or refused one. Tables that are absent,
 encrypted, undecoded or in an unsupported layout appear in `sources` as gaps
 with the catalog disposition and reason; encrypted sections inside decoded
 tables are gaps too, and either makes the domain's `sources_complete` false.
@@ -98,8 +116,9 @@ are standing gaps.
 The projection binds the catalog digest, product, version, build, locale,
 catalog extractor/metadata/profile hashes and the projector version/profile
 hash. Record order is canonical (by identity), so the bytes and digest do not
-depend on stored row order. The total record budget is1million (including
-waypoints) and the encoding is bounded at256MiB. Activation, rollback,
+depend on stored row order; duplicate identities refuse. The budget is1million
+decoded rows across projected sources (waypoints included) and the encoding is
+bounded at256MiB. Activation, rollback,
 cache/hotfix import, desktop display and planner consumption remain open.
 
 ## Worker, storage and formats
@@ -133,8 +152,10 @@ OS sandbox against hostile concurrent directory replacement; native read-only
 restrictions and post-read consistency checks are additional layers.
 
 Private storage contains content-addressed `objects/`, immutable `catalogs/`,
-sealed research `projections/` and an OS writer lock. Per-installation locks
-also serialize alternate destinations.
+sealed research `projections/` and an OS writer lock. Opening a store (extract
+or project) now creates `projections/`; binaries before task V2.2 refuse a store
+containing it, so this is a one-way upgrade. Per-installation locks also
+serialize alternate destinations.
 Quota accounting includes existing objects/catalogs and staging. Free space is
 checked before writing; no quota is preallocated. Writes sync staging before
 atomic sealing, and extraction never changes active gameplay state. Cancellation

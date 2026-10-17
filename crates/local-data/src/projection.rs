@@ -27,6 +27,11 @@ use std::{
 };
 
 pub const MAX_PROJECTION_BYTES: usize = MAX_DECODED_BYTES;
+/// Hash of the projector code only: this module and the core projection module
+/// (record types, validation, slot mapping and `PROJECTION_PROFILE`). Edits to
+/// unrelated local-data code don't change it. Bump `PROJECTION_PROFILE` (and the
+/// slot-mapping identifier) whenever the mapping's meaning changes.
+pub const PROJECTOR_PROFILE_SHA256: &str = env!("NAVZEROTH_PROJECTOR_PROFILE_SHA256");
 
 /// Source tables and the exact decoded layouts whose field semantics this
 /// projection profile was written against. Other layouts are explicit gaps.
@@ -115,13 +120,16 @@ fn identity(fact: &Fact<i64>) -> Option<u32> {
     fact.known().and_then(|v| u32::try_from(*v).ok())
 }
 
-struct Budget(usize);
+struct Budget {
+    used: usize,
+    limit: usize,
+}
 impl Budget {
     fn take(&mut self, count: usize) -> Result<()> {
-        self.0 = self
-            .0
+        self.used = self
+            .used
             .checked_add(count)
-            .filter(|n| *n <= MAX_PROJECTED_RECORDS)
+            .filter(|n| *n <= self.limit)
             .ok_or("Projection exceeds record capacity")?;
         Ok(())
     }
@@ -301,8 +309,8 @@ fn equipment<F: FnMut(&TableInventory) -> Result<DecodedTable>>(
                 disagreements += 1;
                 Fact::Unsupported
             }
-            (Fact::Known(_), _) => item.inventory_type.clone(),
-            (_, Fact::Known(b)) => Fact::Known(b),
+            // ItemSparse is authoritative when present; Item only fills an
+            // absent value and never overrides an unknown or refused one.
             (Fact::Missing, b) => b,
             (a, _) => a.clone(),
         };
@@ -544,6 +552,19 @@ pub fn project(
     locale: &str,
     load: impl FnMut(&TableInventory) -> Result<DecodedTable>,
 ) -> Result<LocalProjection> {
+    project_within(catalog, catalog_sha256, locale, MAX_PROJECTED_RECORDS, load)
+}
+
+/// `project` with a smaller decoded-row budget, for exercising the capacity
+/// refusal. The budget can only be lowered below `MAX_PROJECTED_RECORDS`.
+#[doc(hidden)]
+pub fn project_within(
+    catalog: &ResearchCatalog,
+    catalog_sha256: &str,
+    locale: &str,
+    max_records: usize,
+    load: impl FnMut(&TableInventory) -> Result<DecodedTable>,
+) -> Result<LocalProjection> {
     if !azeroth_core::local_data::is_sha256(catalog_sha256) {
         return Err("Invalid catalog identity");
     }
@@ -562,7 +583,10 @@ pub fn project(
         sources: Vec::new(),
         gaps: STANDING_GAPS.iter().map(|g| (*g).to_owned()).collect(),
         partial: BTreeSet::new(),
-        budget: Budget(0),
+        budget: Budget {
+            used: 0,
+            limit: max_records.min(MAX_PROJECTED_RECORDS),
+        },
     };
     if catalog.gaps.iter().any(|g| g == "explicit_table_subset") {
         context.gaps.insert("explicit_table_subset".into());
@@ -586,7 +610,7 @@ pub fn project(
         catalog_metadata_sha256: catalog.metadata_sha256.clone(),
         catalog_extractor_profile_sha256: catalog.extractor_profile_sha256.clone(),
         projector_version: env!("CARGO_PKG_VERSION").into(),
-        projector_profile_sha256: env!("NAVZEROTH_LOCAL_DATA_PROFILE_SHA256").into(),
+        projector_profile_sha256: PROJECTOR_PROFILE_SHA256.into(),
         sources: context.sources,
         equipment,
         geography,
@@ -648,13 +672,25 @@ pub fn project_catalog(
     Ok(projection.summary(&digest))
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Reproduction {
+    /// The current projector re-derived byte-identical output from the catalog.
+    Reproduced,
+    /// A different projector profile sealed it; integrity was checked but the
+    /// records were not re-derived, so `verified` is false.
+    SkippedProfileMismatch,
+}
+
 #[derive(Debug, serde::Serialize)]
 pub struct ProjectionVerification {
     pub format_version: u32,
+    /// True only when the projection was re-derived (`reproduced`).
     pub verified: bool,
-    /// The current projector reproduced identical bytes. `false` when the sealed
-    /// projection came from a different projector profile and was not re-run.
-    pub reproduced: bool,
+    /// Hash, canonical encoding, invariants, catalog closure and source bindings.
+    pub integrity_verified: bool,
+    pub reproduction: Reproduction,
+    pub projector_profile_sha256: &'static str,
     pub projection: ProjectionSummary,
 }
 
@@ -695,23 +731,26 @@ pub fn verify_projection(destination: &Path, digest: &str) -> Result<ProjectionV
             }
         }
     }
-    let reproduced =
-        projection.projector_profile_sha256 == env!("NAVZEROTH_LOCAL_DATA_PROFILE_SHA256") && {
-            let again = project(
-                &catalog,
-                &projection.catalog_sha256,
-                &projection.locale,
-                |entry| load_decoded(&root, entry),
-            )?;
-            if encode(&again)? != bytes {
-                return Err("Projection is not reproducible from its catalog");
-            }
-            true
-        };
+    let reproduction = if projection.projector_profile_sha256 == PROJECTOR_PROFILE_SHA256 {
+        let again = project(
+            &catalog,
+            &projection.catalog_sha256,
+            &projection.locale,
+            |entry| load_decoded(&root, entry),
+        )?;
+        if encode(&again)? != bytes {
+            return Err("Projection is not reproducible from its catalog");
+        }
+        Reproduction::Reproduced
+    } else {
+        Reproduction::SkippedProfileMismatch
+    };
     Ok(ProjectionVerification {
         format_version: 1,
-        verified: true,
-        reproduced,
+        verified: reproduction == Reproduction::Reproduced,
+        integrity_verified: true,
+        reproduction,
+        projector_profile_sha256: PROJECTOR_PROFILE_SHA256,
         projection: projection.summary(digest),
     })
 }
