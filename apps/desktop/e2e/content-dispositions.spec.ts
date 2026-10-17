@@ -16,6 +16,8 @@ test("explicit content restriction and guarded release retain no-active fallback
  },flow);
  await page.goto("/");await page.getByRole("button",{name:"Content",exact:true}).click();
  await expect(page.getByText(/Eligibility: eligible. Decision revision: 1/)).toBeVisible();
+ // The final absence check uses this same locator, so prove it matches while revisions are shown (G6 O6).
+ await expect(page.getByLabel("Stored revision", { exact: true })).toBeVisible();
  const calls=()=>page.evaluate(()=>(window as unknown as {__DISPOSITION_CALLS__:{command:string;args:Record<string,unknown>}[]}).__DISPOSITION_CALLS__);
  expect((await calls()).filter(c=>c.command==="change_content_disposition")).toEqual([]);
  await expect(page.getByRole("button",{name:"Quarantine selected revision"})).toBeDisabled();

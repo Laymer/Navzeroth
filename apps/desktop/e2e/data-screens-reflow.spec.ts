@@ -30,6 +30,14 @@ for (const screen of SCREENS) {
       const r = el.getBoundingClientRect();
       return { name: el.getAttribute("id") ?? el.tagName, left: r.left, right: r.right, width: r.width };
     }).filter((c) => c.width > 0));
+    // The loop below must measure something on every screen.
+    expect(controls.length, `visible controls on ${screen}`).toBeGreaterThan(0);
+    if (screen === "Compatibility and coverage") {
+      const extraction = page.getByLabel("Extraction resources", { exact: true });
+      await expect(extraction).toBeVisible();
+      const id = await extraction.getAttribute("id");
+      expect(controls.map((c) => c.name), "Extraction resources is among the measured controls").toContain(id);
+    }
     for (const control of controls) {
       expect(control.left, control.name).toBeGreaterThanOrEqual(0);
       expect(control.right, control.name).toBeLessThanOrEqual(widths.client);
