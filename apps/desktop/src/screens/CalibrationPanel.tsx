@@ -1,3 +1,4 @@
+import { Button, Field, Panel } from "../ui";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { CalibrationConditions, CalibrationReport } from "../commands/calibration";
@@ -26,25 +27,24 @@ export function CalibrationPanel({client, profile, detail, refreshKey, disabled}
       else setReport(result.value as CalibrationReport);
     } finally { setBusy(false); }
   }
-  return <section aria-labelledby="calibration-title">
-    <h3 id="calibration-title">Conditional personal estimate comparison</h3>
+  return <Panel title="Conditional personal estimate comparison" level={3}>
     <p>Declare a whole-session route/stage association and conditions. This declaration is not proof the route occupied the session. Comparison requires a recorded session start, terminal matching quest turn-in, and complete explicitly observed activity intervals. Unclassified time and gaps are excluded.</p>
     <fieldset disabled={disabled || busy} onChange={invalidate}>
       <legend>Exact comparable conditions</legend>
-      <label>Route or quest stage <input value={route} maxLength={128} onChange={e=>setRoute(e.target.value)} /></label>
-      <label>Declared level <input type="number" min={1} max={1000} value={level} onChange={e=>setLevel(e.target.value)} /></label>
-      <label>Declared role <input value={role} maxLength={64} onChange={e=>setRole(e.target.value)} /></label>
-      <label>Declared party size <input type="number" min={1} max={40} value={party} onChange={e=>setParty(e.target.value)} /></label>
-      <label>Baseline seconds <input type="number" min={0.001} max={86400} step="any" value={baseline} onChange={e=>setBaseline(e.target.value)} /></label>
-      <label>Baseline source or assumption <input value={source} maxLength={256} onChange={e=>setSource(e.target.value)} /></label>
-      {detail && <><label>Terminal observed quest ID <input value={quest} maxLength={128} onChange={e=>setQuest(e.target.value)} /></label>
+      <Field label="Route or quest stage" help="Names the route or stage your whole session covered. Sessions only compare when this matches exactly.">{(c) => <input {...c} value={route} maxLength={128} onChange={e=>setRoute(e.target.value)} />}</Field>
+      <Field label="Declared level" help="The character level you declare for these conditions. Sessions only compare when it matches exactly.">{(c) => <input {...c} type="number" min={1} max={1000} value={level} onChange={e=>setLevel(e.target.value)} />}</Field>
+      <Field label="Declared role" help="The role you declare, for example tank. Sessions only compare when it matches exactly.">{(c) => <input {...c} value={role} maxLength={64} onChange={e=>setRole(e.target.value)} />}</Field>
+      <Field label="Declared party size" help="How many players you declare were present. Sessions only compare when it matches exactly.">{(c) => <input {...c} type="number" min={1} max={40} value={party} onChange={e=>setParty(e.target.value)} />}</Field>
+      <Field label="Baseline seconds" help="Your own estimate in seconds for the same route. Differences are measured against it; it is not a game value.">{(c) => <input {...c} type="number" min={0.001} max={86400} step="any" value={baseline} onChange={e=>setBaseline(e.target.value)} />}</Field>
+      <Field label="Baseline source or assumption" help="Say where the baseline came from, for example a manual guess, so the comparison stays honest.">{(c) => <input {...c} value={source} maxLength={256} onChange={e=>setSource(e.target.value)} />}</Field>
+      {detail && <><Field label="Terminal observed quest ID" help="The quest turn-in the addon recorded at the end of the session. It is saved as entered; when sessions are compared, a session whose last quest turn-in differs from this ID is excluded.">{(c) => <input {...c} value={quest} maxLength={128} onChange={e=>setQuest(e.target.value)} />}</Field>
         <label><input type="checkbox" checked={complete} onChange={e=>setComplete(e.target.checked)} />I declare this whole session covers the completed route/stage under these conditions</label>
-        <button type="button" onClick={()=>void run(true)}>Save association for {detail.analytics.summary.session}</button></>}
-      <button type="button" onClick={()=>void run(false)}>Compare retained sessions</button>
+        <Button variant="primary" onClick={()=>void run(true)}>Save association for {detail.analytics.summary.session}</Button></>}
+      <Button onClick={()=>void run(false)}>Compare retained sessions</Button>
     </fieldset>
     {message && <p role="status">{message}</p>}
     {report && <><p>{report.fixture ? "SYNTHETIC — engineering example. " : ""}Complete comparable samples: {report.sample_count}. Uncertainty: {report.uncertainty.replaceAll("_", " ")}. Conditional blended estimate: {(report.blended_ms/1000).toFixed(1)} s.</p>
       <p>Observed session median: {report.median_ms === null ? "unavailable" : `${report.median_ms/1000} s`}; range: {report.minimum_ms === null ? "unavailable" : `${report.minimum_ms/1000}–${(report.maximum_ms ?? 0)/1000} s`}. Baseline: {report.request.baseline_ms/1000} s ({report.request.baseline_source}).</p>
       <ul>{report.comparisons.map(row=><li key={row.session_id}>{row.session_id}: {row.exclusion ? `excluded — ${row.exclusion.replaceAll("_", " ")}` : `${(row.observed_ms ?? 0)/1000} s; difference from baseline ${(row.difference_ms ?? 0)/1000} s${row.outlier ? "; retained outlier" : ""}`}{row.annotation && <span> — declared {row.annotation.conditions.route_stage}, level {row.annotation.conditions.level}, {row.annotation.conditions.role}, party {row.annotation.conditions.party_size}; terminal quest {row.annotation.completion_quest}; completion {row.annotation.complete ? "declared" : "not declared"}</span>}</li>)}</ul><p>{report.methodology}</p></>}
-  </section>;
+  </Panel>;
 }

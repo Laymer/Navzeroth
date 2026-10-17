@@ -1,3 +1,4 @@
+import { Button } from "../ui";
 import { useState, type ReactNode } from "react";
 import type { GearAcquisition, GearEligibility, GearObservation, GearRanking, GearReason, GearReport, GearScore } from "../commands/gear";
 import type { AcquisitionRouteTrace } from "../commands/routeAcquisition";
@@ -95,7 +96,7 @@ function Paged<T>({ label, rows, children, limit = 32 }: { label: string; rows: 
   const [page, setPage] = useState(0); const last = Math.max(0, Math.ceil(rows.length / limit) - 1); const current = Math.min(page, last); const start = current * limit;
   return <div className="gear-explanation" aria-label={label}>
     {rows.slice(start, start + limit).map((row, index) => <div key={start + index}>{children(row, start + index)}</div>)}
-    {rows.length > limit && <div className="explanation-pages"><p>{label}: {start + 1}–{Math.min(start + limit, rows.length)} of {rows.length}.</p><button type="button" disabled={current === 0} onClick={() => setPage(current - 1)}>Previous {label}</button><button type="button" disabled={current === last} onClick={() => setPage(current + 1)}>Next {label}</button></div>}
+    {rows.length > limit && <div className="explanation-pages"><p>{label}: {start + 1}–{Math.min(start + limit, rows.length)} of {rows.length}.</p><Button variant="ghost" disabled={current === 0} onClick={() => setPage(current - 1)}>Previous {label}</Button><Button variant="ghost" disabled={current === last} onClick={() => setPage(current + 1)}>Next {label}</Button></div>}
   </div>;
 }
 function Reasons({ reasons, label }: { reasons: GearReason[]; label: string }) {

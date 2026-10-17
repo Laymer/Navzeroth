@@ -1,3 +1,4 @@
+import { Button, Field } from "../ui";
 import "./authoredContent.css";
 import {useEffect,useRef,useState} from "react";
 import type {CommandClient} from "../commands";
@@ -14,11 +15,11 @@ export function AuthoredContentPicker({client,kind,subject,refreshKey,value,onCh
   async function changePage(next:number){if(!page)return;const ticket=++generation.current;setError("");const result=await client.getAuthoredCatalog(JSON.stringify({subject,kind,revision:page.revision,catalog_sha256:page.catalog_sha256,offset:next}));if(ticket!==generation.current)return;if(result.ok){setPage(result.value);setOffset(next);}else{setPage(null);setError(result.error.message);}}
   const label=kind==="models"?"Authored gear model":"Authored dungeon";
   return <fieldset className="authored-content-picker"><legend>{label}</legend><p>Selections use the exact active content revision and its cited evidence. Missing facts remain unavailable.</p>
-    <label>{label} selection <select value={value?.id??""} onChange={e=>onChange(e.target.value&&page?.revision?{id:e.target.value,revision:page.revision}:null)}><option value="">Manual / no authored selection</option>{value&&!page?.records.some(r=>r.id===value.id)&&<option value={value.id}>{value.id} (selected revision {value.revision})</option>}{page?.records.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select></label>
+    <Field label={`${label} selection`} help="Pick an installed authored record, or leave it on manual. The selection is tied to the exact active content revision.">{(c) => <select {...c} value={value?.id??""} onChange={e=>onChange(e.target.value&&page?.revision?{id:e.target.value,revision:page.revision}:null)}><option value="">Manual / no authored selection</option>{value&&!page?.records.some(r=>r.id===value.id)&&<option value={value.id}>{value.id} (selected revision {value.revision})</option>}{page?.records.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select>}</Field>
     {page&&<p>{page.total} records; revision {page.revision??"unavailable"}. {page.records.length===0&&"No authored records on this page."}</p>}
     {value&&page&&value.revision!==page.revision&&<p role="alert">Selected revision changed. Select the model or dungeon again before evaluating.</p>}
     {value&&page?.records.find(r=>r.id===value.id)&&<p>Evidence: {page.records.find(r=>r.id===value.id)?.evidence.join(", ")}</p>}
-    {page&&<><button type="button" disabled={offset===0} onClick={()=>void changePage(Math.max(0,offset-200))}>Previous authored records</button><button type="button" disabled={page.next_offset===null} onClick={()=>void changePage(page.next_offset??offset)}>Next authored records</button></>}
+    {page&&<><Button variant="ghost" disabled={offset===0} onClick={()=>void changePage(Math.max(0,offset-200))}>Previous authored records</Button><Button variant="ghost" disabled={page.next_offset===null} onClick={()=>void changePage(page.next_offset??offset)}>Next authored records</Button></>}
     {error&&<p role="alert">{error}</p>}
   </fieldset>;
 }

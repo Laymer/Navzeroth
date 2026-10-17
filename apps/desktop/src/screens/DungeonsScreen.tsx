@@ -1,3 +1,5 @@
+import "./play.css";
+import { Button, Field } from "../ui";
 import {AuthoredContentPicker} from "./AuthoredContentPicker";
 import type {AuthoredSelection} from "../commands/authoredContent";
 import { useEffect, useRef, useState } from "react";
@@ -46,20 +48,20 @@ setSelected(old=>options.includes(old)?old:options[0]??"");
     if(result.ok)setReport({ticket,value:result.value});else setError(result.error.message);
     if(ticket===epoch.current)setBusy(null);
   }
-  return <section className="dungeon-preparation" aria-labelledby="dungeons-heading">
+  return <section className="dungeon-preparation play-screen" aria-labelledby="dungeons-heading">
     <h2 id="dungeons-heading">Dungeon preparation</h2>
     <p>Select an installed authored dungeon or inspect a local reference. Missing sections remain unavailable; synthetic examples do not establish gameplay facts.</p>
-    <label>Preparation members <select value={kind} onChange={e=>{const next=e.target.value as "character"|"party";setKind(next);setSelected(next==="party"?parties[0]??"":profiles.find(p=>p.data_mode==="stored")?.id??"");setError("");}}><option value="character">Imported character</option><option value="party">Local party</option></select></label>
-    <label>Selected {kind} <select value={selected} onChange={e=>{setSelected(e.target.value);setError("");}}><option value="">Select stored {kind}</option>{kind==="party"?parties.map(id=><option key={id} value={id}>{id}</option>):profiles.filter(p=>p.data_mode==="stored").map(p=><option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
+    <Field label="Preparation members" help="Inspect one imported character or a local party you created in Party.">{(c) => <select {...c} value={kind} onChange={e=>{const next=e.target.value as "character"|"party";setKind(next);setSelected(next==="party"?parties[0]??"":profiles.find(p=>p.data_mode==="stored")?.id??"");setError("");}}><option value="character">Imported character</option><option value="party">Local party</option></select>}</Field>
+    <Field label={`Selected ${kind}`} help="Only stored imports can be inspected; demo entries have no imported state.">{(c) => <select {...c} value={selected} onChange={e=>{setSelected(e.target.value);setError("");}}><option value="">Select stored {kind}</option>{kind==="party"?parties.map(id=><option key={id} value={id}>{id}</option>):profiles.filter(p=>p.data_mode==="stored").map(p=><option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     {!stored&&<p>Import a character snapshot and optionally create a local party. Browser demo profiles cannot supply current preparation assessments.</p>}
     <AuthoredContentPicker client={client} kind="dungeons" subject={kind==="party"?{kind,party_id:selected}:{kind,profile_id:selected}} refreshKey={refreshKey} value={authored} onChange={v=>{setAuthored(v);setText("");setError("");}}/>
     <details><summary>Advanced local reference editor</summary><p>Local declarations require exact content references. Loading an example does not install verified dungeon coverage.</p>
-    <label>Local preparation package JSON <textarea value={text} maxLength={1048576} rows={8} onChange={e=>{setText(e.target.value);setError("");}}/></label>
-    <button type="button" onClick={()=>{setText(JSON.stringify(example,null,2));setOrigin("demo-node-1");setError("");}}>Load synthetic preparation reference</button>
-    <button type="button" onClick={()=>{setText("");setError("");}}>Clear package</button>
-    <label>Manually declared shared origin node <input value={origin} onChange={e=>{setOrigin(e.target.value);setError("");}}/></label>
+    <Field label="Local preparation package JSON" help="A local reference you write or load. It is your declaration, not verified dungeon data, and is limited to 1 MiB.">{(c) => <textarea {...c} value={text} maxLength={1048576} rows={8} onChange={e=>{setText(e.target.value);setError("");}}/>}</Field>
+    <Button onClick={()=>{setText(JSON.stringify(example,null,2));setOrigin("demo-node-1");setError("");}}>Load synthetic preparation reference</Button>
+    <Button variant="ghost" onClick={()=>{setText("");setError("");}}>Clear package</Button>
+    <Field label="Manually declared shared origin node" help="Where the group starts, used only to estimate shared travel to the entrance. Leave empty if you declare none.">{(c) => <input {...c} value={origin} onChange={e=>{setOrigin(e.target.value);setError("");}}/>}</Field>
     </details>
-    <button type="button" disabled={!stored||pending} onClick={()=>void inspect()}>Inspect preparation gaps</button>
+    <Button variant="primary" disabled={!stored||pending} onClick={()=>void inspect()}>Inspect preparation gaps</Button>
     {pending&&<p role="status">Inspecting imported preparation inputs…</p>}
     {error&&<p role="alert">{error}</p>}
     {visible&&<Preparation value={visible} key={report?.ticket}/>}
@@ -79,7 +81,7 @@ function List({title,section,checklist=false}:{title:string;section:Declared<str
 function Preparation({value}:{value:PreparationReport}) {
   const packageValue=value.package;
   return <div>
-    {value.fixture&&<p className="demo-label">SYNTHETIC — engineering reference, not verified gameplay coverage</p>}
+    {value.fixture&&<p className="demo-label play-note">SYNTHETIC — engineering reference, not verified gameplay coverage</p>}
     <p>Context: {value.context.build.edition}/{value.context.build.build}/{value.context.build.interface}; {value.context.namespace}. Content: {value.revision??"unavailable"}.</p>
     {packageValue&&<><h3>{packageValue.title}</h3><p>{value.authored?"Authored record resolved from the exact active revision; review cited evidence and missing sections.":"Explicit local declaration; cited evidence categories do not independently verify this package."}</p>
       <p>Declared entrance: {packageValue.entrance.observation.status==="known"?packageValue.entrance.observation.value.id:packageValue.entrance.observation.status}.</p>

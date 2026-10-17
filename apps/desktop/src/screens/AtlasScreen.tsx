@@ -1,3 +1,5 @@
+import "../screens/play.css";
+import { Button, Field, HelpTip, Panel } from "../ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AppError, AtlasView, CommandClient, SnapshotMarker } from "../commands";
 import type { AtlasImage } from "../commands/contract";
@@ -57,9 +59,9 @@ export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient;
   }, [client, refreshKey, refresh, pageRequest]);
 
   return (
-    <section aria-labelledby="atlas-heading" className="atlas">
+    <section aria-labelledby="atlas-heading" className="atlas play-screen">
       <h2 id="atlas-heading">Atlas</h2>
-      <button type="button" onClick={() => {setPageRequest(null);setRefresh((n) => n + 1);}}>Refresh atlas</button>
+      <Button onClick={() => {setPageRequest(null);setRefresh((n) => n + 1);}}>Refresh atlas</Button>
       {load.phase === "loading" && <p role="status">Loading the atlas…</p>}
       {load.phase === "error" && (
         <p role="alert">
@@ -70,7 +72,7 @@ export function AtlasScreen({ client, refreshKey = 0 }: { client: CommandClient;
       {load.phase === "ready" && refreshError !== null && <p role="alert">
         Atlas refresh error {refreshError.code}: {refreshError.message} The previous atlas remains displayed. Refresh again to retry.
       </p>}
-      {load.phase === "ready" && load.view.page && <div role="group" aria-label="Atlas image pages"><p>{load.view.page.total} images in the selected revision; showing {load.view.images.length}.</p><button type="button" disabled={load.view.page.offset===0} onClick={()=>{const page=load.view.page;if(page)setPageRequest({token:page.token,offset:Math.max(0,page.offset-200)});}}>Previous image page</button><button type="button" disabled={load.view.page.next_offset===null} onClick={()=>{const page=load.view.page;if(page&&page.next_offset!==null)setPageRequest({token:page.token,offset:page.next_offset});}}>Next image page</button></div>}
+      {load.phase === "ready" && load.view.page && <div role="group" aria-label="Atlas image pages"><p>{load.view.page.total} images in the selected revision; showing {load.view.images.length}.</p><Button variant="ghost" disabled={load.view.page.offset===0} onClick={()=>{const page=load.view.page;if(page)setPageRequest({token:page.token,offset:Math.max(0,page.offset-200)});}}>Previous image page</Button><Button variant="ghost" disabled={load.view.page.next_offset===null} onClick={()=>{const page=load.view.page;if(page&&page.next_offset!==null)setPageRequest({token:page.token,offset:page.next_offset});}}>Next image page</Button></div>}
       {load.phase === "ready" && <AtlasReady view={load.view} markers={load.markers} />}
     </section>
   );
@@ -84,7 +86,7 @@ function AtlasReady({ view, markers }: { view: AtlasView; markers: SnapshotMarke
   return (
     <>
       {view.data_mode === "demo" && (
-        <p className="demo-label" role="note">
+        <p className="demo-label play-note" role="note">
           {DEMO_LABEL}
         </p>
       )}
@@ -92,16 +94,13 @@ function AtlasReady({ view, markers }: { view: AtlasView; markers: SnapshotMarke
         Dataset {view.revision} ({view.namespace} namespace{view.fixture ? ", fixture" : ""})
       </p>
       {view.images.length > 1 && (
-        <label>
-          Image{" "}
-          <select value={image?.id ?? ""} onChange={(event) => setImageId(event.target.value)}>
+        <Field label="Image" help="Each image is a separate map of the active dataset revision.">{(c) => <select {...c} value={image?.id ?? ""} onChange={(event) => setImageId(event.target.value)}>
             {view.images.map((i) => (
               <option key={i.id} value={i.id}>
                 {i.id}
               </option>
             ))}
-          </select>
-        </label>
+          </select>}</Field>
       )}
       <MarkerPanel marker={marker} />
       {image === null ? (
@@ -148,6 +147,7 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
     <>
       <fieldset className="layers">
         <legend>Layers</legend>
+        <HelpTip>Each layer is a full map image. Turning one on may replace another; the note below says which layer is shown.</HelpTip>
         <label>
           <input
             type="checkbox"
@@ -187,16 +187,15 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
         selectedPin={selectedPin}
         focus={focus}
       />
-      <section aria-labelledby="pins-heading">
-        <h3 id="pins-heading">Reference pins</h3>
+      <Panel title="Reference pins" level={3}>
         <p>Reference geography; these pins do not indicate player unlocks.</p>
-        <label>Search reference pins <input value={search} maxLength={256} onChange={(event) => { setSearch(event.target.value); setPage(0); }} /></label>
-        <label>Point type <select value={kind} onChange={(event) => { setKind(event.target.value); setPage(0); }}>
+        <Field label="Search reference pins" help="Matches pin names and ids as you type. Reference pins show geography only and say nothing about what you have unlocked.">{(c) => <input {...c} value={search} maxLength={256} onChange={(event) => { setSearch(event.target.value); setPage(0); }} />}</Field>
+        <Field label="Point type" help="Filters the pins by kind. The count below shows how many pins match.">{(c) => <select {...c} value={kind} onChange={(event) => { setKind(event.target.value); setPage(0); }}>
           <option value="all">All types</option>
           {kind !== "all" && !image.pins.some((pin) => pin.kind.kind === kind) &&
             <option value={kind}>{kind.replace(/_/g, " ")} (absent in this revision)</option>}
           {[...new Set(image.pins.map((pin) => pin.kind.kind))].sort().map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
-        </select></label>
+        </select>}</Field>
         <p role="status">{pins.length} of {image.pins.length} reference pins match these filters.</p>
         {selectedPin !== null && !image.pins.some((pin) => pin.id === selectedPin)
           ? <p role="note">The selected pin is no longer present in this atlas revision.</p>
@@ -206,9 +205,9 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
           <p role="note">The selected pin is on another page. Change pages or search to show it.</p>}
         {pageCount > 1 && <div className="pin-pagination" role="group" aria-label="Reference pin pages">
           <p role="status">Map and list display pins {pageStart + 1}–{Math.min(pageStart + PIN_PAGE_SIZE, pins.length)} of {pins.length} matches. Other reference pins are on the remaining pages.</p>
-          <button type="button" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous pin page</button>
+          <Button variant="ghost" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous pin page</Button>
           <span>Page {currentPage + 1} of {pageCount}</span>
-          <button type="button" disabled={currentPage === pageCount - 1} onClick={() => setPage(currentPage + 1)}>Next pin page</button>
+          <Button variant="ghost" disabled={currentPage === pageCount - 1} onClick={() => setPage(currentPage + 1)}>Next pin page</Button>
         </div>}
         {pins.length === 0 ? (
           <p>{image.pins.length === 0 ? "This image has no pins." : "No reference pins match these filters."}</p>
@@ -220,6 +219,7 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
                 {describePinAccess(pin) !== null && <> {describePinAccess(pin)}.</>}{" "}
                 <button
                   type="button"
+                  className="ui-button ui-button--ghost"
                   ref={(node) => { if (node) pinButtons.current.set(pin.id, node); else pinButtons.current.delete(pin.id); }}
                   onKeyDown={(event) => {
                     const index = pageStart + pageIndex;
@@ -247,9 +247,8 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
             ))}
           </ul>
         )}
-      </section>
-      <section aria-labelledby="coverage-heading">
-        <h3 id="coverage-heading">Coverage and sources</h3>
+      </Panel>
+      <Panel title="Coverage and sources" level={3}>
         <p>
           Calibration: {image.calibration_status}
           {image.calibration_confidence === null ? "" : `, confidence ${image.calibration_confidence.replace(/_/g, " ")}`}
@@ -257,7 +256,7 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
         </p>
         <p>Not verified or not shown: {image.gaps}</p>
         <p>{image.attribution}</p>
-      </section>
+      </Panel>
     </>
   );
 }
@@ -266,14 +265,13 @@ function MarkerPanel({ marker }: { marker: SnapshotMarker | null }) {
   const state = markerState(marker);
   const projection = marker?.projection ?? null;
   return (
-    <section aria-labelledby="marker-heading" className="marker-panel">
-      <h3 id="marker-heading">Snapshot position</h3>
+    <Panel title="Snapshot position" level={3}>
       <p className="badge" role="status">
         {marker === null ? "No snapshot imported" : `Last imported: ${describeAge(marker.freshness)}`}
       </p>
       <p>{MARKER_STATE_LABELS[state]}</p>
       {marker !== null && marker.freshness.status === "stale" && (
-        <p role="note" className="stale-note">
+        <p role="note" className="stale-note play-note">
           Stale: this position is older than 30 minutes and may no longer be where the character is.
         </p>
       )}
@@ -291,6 +289,6 @@ function MarkerPanel({ marker }: { marker: SnapshotMarker | null }) {
       {marker !== null && marker.observed_at_utc_ms !== null && (
         <p>Captured (UTC): {describeUtc(marker.observed_at_utc_ms)}</p>
       )}
-    </section>
+    </Panel>
   );
 }
