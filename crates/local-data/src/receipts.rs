@@ -108,7 +108,19 @@ pub fn sign(
     })
 }
 
+/// Local-catalog receipts. Hybrid receipts must go through `verify_hybrid`,
+/// which adds the policy's extractor and declared-digest checks.
 pub fn verify(
+    bytes: &[u8],
+    policy: &DeliveryPolicy,
+    expected: &ExpectedBindings<'_>,
+) -> Result<SignedReceipt> {
+    if policy.delivery_mode == DeliveryMode::Hybrid {
+        return Err("Hybrid receipts require verify_hybrid");
+    }
+    verify_signed(bytes, policy, expected)
+}
+fn verify_signed(
     bytes: &[u8],
     policy: &DeliveryPolicy,
     expected: &ExpectedBindings<'_>,
@@ -191,7 +203,7 @@ pub fn verify_hybrid(
     if local.expected_catalogs.is_empty() {
         return Err("Hybrid delivery has no declared expected local catalog digests");
     }
-    let receipt = verify(
+    let receipt = verify_signed(
         bytes,
         policy,
         &ExpectedBindings {
@@ -206,12 +218,13 @@ pub fn verify_hybrid(
     if receipt.payload.extractor_version != local.extractor_version {
         return Err("Receipt extractor differs from the tested extractor");
     }
-    if !local
-        .expected_catalogs
-        .iter()
-        .any(|c| c.catalog_sha256 == receipt.payload.private_catalog_sha256)
-    {
-        return Err("Receipt catalog is not a declared tested-content digest");
+    // The release is tested with the enUS catalog; other declared locales are
+    // digests users compare locally.
+    if !local.expected_catalogs.iter().any(|c| {
+        c.locale == contract::REQUIRED_LOCALE
+            && c.catalog_sha256 == receipt.payload.private_catalog_sha256
+    }) {
+        return Err("Receipt catalog is not the declared enUS tested-content digest");
     }
     Ok(receipt)
 }

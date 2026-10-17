@@ -445,13 +445,13 @@ fn verify_hybrid(receipt: &SignedReceipt, policy: &DeliveryPolicy) -> Result<(),
 }
 #[test]
 fn hybrid_receipts_bind_the_declared_tested_content_digest() {
-    let (policy, receipt) = hybrid_fixture(vec![catalog("70425", "enUS", &"a".repeat(64))]);
+    let (policy, receipt) = hybrid_fixture(vec![catalog("70374", "enUS", &"a".repeat(64))]);
     assert_eq!(verify_hybrid(&receipt, &policy), Ok(()));
 
-    let (policy, receipt) = hybrid_fixture(vec![catalog("70425", "enUS", &"d".repeat(64))]);
+    let (policy, receipt) = hybrid_fixture(vec![catalog("70374", "enUS", &"d".repeat(64))]);
     assert_eq!(
         verify_hybrid(&receipt, &policy),
-        Err("Receipt catalog is not a declared tested-content digest")
+        Err("Receipt catalog is not the declared enUS tested-content digest")
     );
     let (policy, receipt) = hybrid_fixture(vec![]);
     assert_eq!(
@@ -460,7 +460,7 @@ fn hybrid_receipts_bind_the_declared_tested_content_digest() {
     );
 
     // The extractor identity comes from the policy, not from the receipt.
-    let (mut policy, receipt) = hybrid_fixture(vec![catalog("70425", "enUS", &"a".repeat(64))]);
+    let (mut policy, receipt) = hybrid_fixture(vec![catalog("70374", "enUS", &"a".repeat(64))]);
     policy.local_content.as_mut().unwrap().extractor_version = "1.0.0".into();
     let mut receipt = receipt;
     receipt.payload.release_policy_sha256 = receipts::policy_hash(&policy).unwrap();
@@ -469,15 +469,41 @@ fn hybrid_receipts_bind_the_declared_tested_content_digest() {
         verify_hybrid(&receipt, &policy),
         Err("Receipt extractor differs from the tested extractor")
     );
-    let (mut policy, mut receipt) = hybrid_fixture(vec![catalog("70425", "enUS", &"a".repeat(64))]);
+    let (mut policy, mut receipt) = hybrid_fixture(vec![catalog("70374", "enUS", &"a".repeat(64))]);
     policy.local_content.as_mut().unwrap().profile_sha256 = "d".repeat(64);
     receipt.payload.release_policy_sha256 = receipts::policy_hash(&policy).unwrap();
     assert!(resign(&mut receipt, &policy));
     assert!(verify_hybrid(&receipt, &policy).is_err());
 }
 #[test]
+fn only_the_enus_digest_clears_a_hybrid_receipt() {
+    // The fixture catalog ("a" digest) is declared, but only for deDE.
+    let (policy, receipt) = hybrid_fixture(vec![
+        catalog("70374", "enUS", &"d".repeat(64)),
+        catalog("70374", "deDE", &"a".repeat(64)),
+    ]);
+    assert_eq!(
+        verify_hybrid(&receipt, &policy),
+        Err("Receipt catalog is not the declared enUS tested-content digest")
+    );
+    // The plain verifier refuses hybrid policies outright.
+    let bytes = serde_json::to_vec(&receipt).unwrap();
+    let expected = ExpectedBindings {
+        candidate_source_commit: &"b".repeat(40),
+        production_sha256: &"a".repeat(64),
+        release_policy_sha256: &receipt.payload.release_policy_sha256,
+        native_reader_revision: &"c".repeat(40),
+        profile_sha256: &"a".repeat(64),
+        metadata_sha256: &"a".repeat(64),
+    };
+    assert_eq!(
+        receipts::verify(&bytes, &policy, &expected).map(|_| ()),
+        Err("Hybrid receipts require verify_hybrid")
+    );
+}
+#[test]
 fn hybrid_receipts_are_bound_to_the_tested_candidate_and_hybrid_mode() {
-    let (policy, receipt) = hybrid_fixture(vec![catalog("70425", "enUS", &"a".repeat(64))]);
+    let (policy, receipt) = hybrid_fixture(vec![catalog("70374", "enUS", &"a".repeat(64))]);
     let bytes = serde_json::to_vec(&receipt).unwrap();
     assert!(receipts::verify_hybrid(&bytes, &policy, &"d".repeat(40), &"a".repeat(64)).is_err());
     assert!(receipts::verify_hybrid(&bytes, &policy, &"b".repeat(40), &"d".repeat(64)).is_err());
@@ -492,7 +518,7 @@ fn hybrid_receipts_are_bound_to_the_tested_candidate_and_hybrid_mode() {
 }
 #[test]
 fn hybrid_policies_are_strict() {
-    let (policy, _) = hybrid_fixture(vec![catalog("70425", "enUS", &"a".repeat(64))]);
+    let (policy, _) = hybrid_fixture(vec![catalog("70374", "enUS", &"a".repeat(64))]);
     assert!(validate_policy(&policy).is_ok());
     let mut v1 = policy.clone();
     v1.format_version = 1;
@@ -504,13 +530,23 @@ fn hybrid_policies_are_strict() {
     bundled.delivery_mode = DeliveryMode::BundledContent;
     assert!(validate_policy(&bundled).is_err());
     for bad in [
-        vec![catalog("70425", "en-US", &"a".repeat(64))],
+        vec![catalog("70374", "en-US", &"a".repeat(64))],
         vec![catalog("build", "enUS", &"a".repeat(64))],
-        vec![catalog("70425", "enUS", "short")],
+        vec![catalog("70374", "enUS", "short")],
         vec![
-            catalog("70425", "enUS", &"a".repeat(64)),
-            catalog("70425", "enUS", &"b".repeat(64)),
+            catalog("70374", "enUS", &"a".repeat(64)),
+            catalog("70374", "enUS", &"b".repeat(64)),
         ],
+    ] {
+        let (policy, _) = hybrid_fixture(vec![]);
+        let mut policy = policy;
+        policy.local_content.as_mut().unwrap().expected_catalogs = bad;
+        assert!(validate_policy(&policy).is_err());
+    }
+    // Every catalog must be for the target build, and enUS is required.
+    for bad in [
+        vec![catalog("70425", "enUS", &"a".repeat(64))],
+        vec![catalog("70374", "deDE", &"a".repeat(64))],
     ] {
         let (policy, _) = hybrid_fixture(vec![]);
         let mut policy = policy;
@@ -520,8 +556,8 @@ fn hybrid_policies_are_strict() {
     // Two locales of one build are distinct tested-content digests.
     let mut locales = policy;
     locales.local_content.as_mut().unwrap().expected_catalogs = vec![
-        catalog("70425", "enUS", &"a".repeat(64)),
-        catalog("70425", "deDE", &"b".repeat(64)),
+        catalog("70374", "enUS", &"a".repeat(64)),
+        catalog("70374", "deDE", &"b".repeat(64)),
     ];
     assert!(validate_policy(&locales).is_ok());
 }

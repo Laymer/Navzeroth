@@ -117,7 +117,7 @@ fn owner_signs_assembles_and_verifies_a_hybrid_receipt_explicitly() {
             profile_sha256: "a".repeat(64),
             metadata_sha256: "a".repeat(64),
             expected_catalogs: vec![ExpectedCatalog {
-                build: "70425".into(),
+                build: "70374".into(),
                 locale: "enUS".into(),
                 catalog_sha256: "a".repeat(64),
             }],
@@ -174,8 +174,9 @@ fn owner_signs_assembles_and_verifies_a_hybrid_receipt_explicitly() {
         .output()
         .unwrap();
     assert!(output.status.success());
-    let receipt = String::from_utf8(output.stdout).unwrap();
-    fs::write(dir.join("receipt.json"), receipt.trim_end()).unwrap();
+    // Written exactly as `receipt-assemble > receipt.json` would.
+    assert!(!output.stdout.ends_with(b"\n"));
+    fs::write(dir.join("receipt.json"), &output.stdout).unwrap();
     let verify = |candidate: &str| {
         cli(&[
             "receipt-verify",

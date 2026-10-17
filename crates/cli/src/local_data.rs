@@ -171,11 +171,28 @@ pub fn run(args: &[OsString]) -> ExitCode {
 
 /// Bounded regular-file read for explicitly named receipt inputs.
 fn read_small(path: &OsStr, limit: u64) -> Result<Vec<u8>, &'static str> {
-    let metadata = std::fs::symlink_metadata(path).map_err(|_| "Receipt input cannot be read")?;
-    if !metadata.is_file() || metadata.len() > limit {
+    use std::io::Read;
+    let named = std::fs::symlink_metadata(path).map_err(|_| "Receipt input cannot be read")?;
+    if !named.is_file() {
         return Err("Receipt input must be a small regular file");
     }
-    std::fs::read(path).map_err(|_| "Receipt input cannot be read")
+    // Check the opened handle too and bound the actual read, so a file swapped
+    // after the first check can't grow, block or redirect the read.
+    let file = std::fs::File::open(path).map_err(|_| "Receipt input cannot be read")?;
+    let opened = file
+        .metadata()
+        .map_err(|_| "Receipt input cannot be read")?;
+    if !opened.is_file() || opened.len() > limit {
+        return Err("Receipt input must be a small regular file");
+    }
+    let mut bytes = Vec::new();
+    file.take(limit + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|_| "Receipt input cannot be read")?;
+    if bytes.len() as u64 > limit {
+        return Err("Receipt input must be a small regular file");
+    }
+    Ok(bytes)
 }
 /// Explicit receipt steps (task V1.2). Signing uses a caller-supplied key file
 /// and a policy that already trusts it; nothing is generated or activated.
@@ -207,7 +224,12 @@ fn receipt(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
             match result {
                 // Canonical compact bytes: `verify` refuses any other encoding.
                 Ok(bytes) => {
-                    println!("{}", String::from_utf8(bytes).expect("receipt JSON"));
+                    use std::io::Write;
+                    // Exact bytes, no trailing newline, so `> file` verifies.
+                    let mut out = std::io::stdout().lock();
+                    if out.write_all(&bytes).and_then(|()| out.flush()).is_err() {
+                        return ExitCode::from(1);
+                    }
                     ExitCode::SUCCESS
                 }
                 Err(error) => emit::<()>(Err(error)),

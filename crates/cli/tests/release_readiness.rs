@@ -217,7 +217,7 @@ fn hybrid_delivery_blocks_until_digests_and_a_valid_receipt_exist() {
     ));
     assert!(!undeclared.readiness.stable_ready);
     policy["local_content"]["expected_catalogs"] =
-        json!([{"build":"70425","locale":"enUS","catalog_sha256":"a".repeat(64)}]);
+        json!([{"build":"70374","locale":"enUS","catalog_sha256":"a".repeat(64)}]);
     temp.json_write("config/release-delivery-v1.json", &policy);
     temp.commit();
     assert!(blocked(
@@ -520,4 +520,146 @@ fn candidate_command_defers_initial_binding_without_waiving_content_or_integrity
             .iter()
             .any(|v| v.contains("Tested source"))
     );
+}
+
+/// A receipt payload bound to `candidate` and `production`, for `catalog`.
+fn hybrid_payload(
+    policy_sha256: &str,
+    candidate: &str,
+    production: &str,
+    catalog: &str,
+) -> azeroth_core::local_data_release::ReceiptPayload {
+    use azeroth_core::{local_data_release::*, release::*};
+    let digest = "a".repeat(64);
+    let proof = InventoryProof {
+        records: 1,
+        units: 1,
+        private_inventory_sha256: digest.clone(),
+        independent_enumeration_sha256: digest.clone(),
+        reference_graph_validation_sha256: digest.clone(),
+        source_transform_closure_sha256: digest.clone(),
+        coverage_review_sha256: digest.clone(),
+    };
+    let pass = |method| AcceptanceProof {
+        method,
+        status: Status::Pass,
+        evidence_sha256: digest.clone(),
+    };
+    ReceiptPayload {
+        format_version: 2,
+        candidate_source_commit: candidate.into(),
+        production_sha256: production.into(),
+        release_policy_sha256: policy_sha256.into(),
+        target: Target::forever_70374(),
+        extractor_version: "0.9.2".into(),
+        native_reader_revision: "c".repeat(40),
+        profile_sha256: digest.clone(),
+        metadata_sha256: digest.clone(),
+        private_input_closure_sha256: digest.clone(),
+        private_inventory_sha256: digest.clone(),
+        private_catalog_sha256: catalog.into(),
+        private_media_sha256: digest.clone(),
+        validation_results_sha256: digest.clone(),
+        scenario_dependencies_sha256: digest.clone(),
+        performance_workload_sha256: digest.clone(),
+        performance_results_sha256: digest.clone(),
+        independent_review_sha256: Some("e".repeat(64)),
+        domains: DOMAINS.map(|d| (d.into(), proof.clone())).into(),
+        acceptance: LIVE_CHECKS
+            .map(|c| (c.to_owned(), pass(Method::LiveGame)))
+            .into_iter()
+            .chain(WINDOWS_CHECKS.map(|c| (c.to_owned(), pass(Method::InteractiveWindows))))
+            .collect(),
+    }
+}
+fn signed_receipt(
+    policy: &azeroth_core::local_data_release::DeliveryPolicy,
+    payload: azeroth_core::local_data_release::ReceiptPayload,
+) -> Vec<u8> {
+    use azeroth_local_data::receipts;
+    let operator = receipts::sign(&payload, policy, "operator", &[1; 32]).unwrap();
+    let reviewer = receipts::sign(&payload, policy, "reviewer", &[2; 32]).unwrap();
+    receipts::assemble(payload, operator, reviewer).unwrap()
+}
+#[test]
+fn a_valid_receipt_for_the_tested_commit_clears_the_hybrid_blockers() {
+    use azeroth_local_data::receipts;
+    let temp = Temp::new("0.8.1");
+    let signers: serde_json::Map<String, Value> = [
+        ("operator", "operator", [1u8; 32]),
+        ("reviewer", "reviewer", [2u8; 32]),
+    ]
+    .into_iter()
+    .map(|(id, role, secret)| {
+        (
+            id.to_owned(),
+            json!({"identity":"project-owner","role":role,
+                "public_key_hex":receipts::public_key_hex(&secret),"revoked":false}),
+        )
+    })
+    .collect();
+    let policy_value = json!({"format_version":2,"delivery_mode":"hybrid",
+        "target":{"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001},
+        "trusted_signers":signers,
+        "local_content":{"extractor_version":"0.9.2","native_reader_revision":"c".repeat(40),
+            "profile_sha256":"a".repeat(64),"metadata_sha256":"a".repeat(64),
+            "expected_catalogs":[{"build":"70374","locale":"enUS","catalog_sha256":"a".repeat(64)},
+                {"build":"70374","locale":"deDE","catalog_sha256":"d".repeat(64)}]}});
+    temp.json_write("config/release-delivery-v1.json", &policy_value);
+    temp.commit();
+    let policy =
+        receipts::policy(&fs::read(temp.0.join("config/release-delivery-v1.json")).unwrap())
+            .unwrap();
+    let policy_sha256 = receipts::policy_hash(&policy).unwrap();
+    let before = report(&temp.options("0.8.1")).unwrap();
+    let tested = before.candidate_source_commit.clone();
+    temp.bind("0.8.1");
+    let head = temp.git(&["rev-parse", "HEAD"]);
+    assert_ne!(
+        tested, head,
+        "evidence commit moves HEAD past the tested commit"
+    );
+    let hybrid = |text: &str| {
+        text.contains("receipt") || text.contains("Receipt") || text.contains("Hybrid")
+    };
+    let receipt = |candidate: &str, catalog: &str| {
+        signed_receipt(
+            &policy,
+            hybrid_payload(
+                &policy_sha256,
+                candidate,
+                &before.production_sha256,
+                catalog,
+            ),
+        )
+    };
+    let write = |bytes: &[u8]| {
+        fs::write(temp.0.join("release/v1/local-catalog-receipt.json"), bytes).unwrap()
+    };
+
+    write(&receipt(&tested, &"a".repeat(64)));
+    let valid = report(&temp.options("0.8.1")).unwrap();
+    assert!(
+        !valid.readiness.blockers.iter().any(|b| hybrid(b)),
+        "{:?}",
+        valid.readiness.blockers
+    );
+
+    write(&receipt(&head, &"a".repeat(64)));
+    let stale = report(&temp.options("0.8.1")).unwrap();
+    assert!(blocked(&stale, "Stale candidate or policy binding"));
+
+    write(&receipt(&tested, &"d".repeat(64)));
+    let wrong_locale = report(&temp.options("0.8.1")).unwrap();
+    assert!(blocked(
+        &wrong_locale,
+        "not the declared enUS tested-content digest"
+    ));
+
+    write(&receipt(&tested, &"f".repeat(64)));
+    let undeclared = report(&temp.options("0.8.1")).unwrap();
+    assert!(blocked(
+        &undeclared,
+        "not the declared enUS tested-content digest"
+    ));
 }
