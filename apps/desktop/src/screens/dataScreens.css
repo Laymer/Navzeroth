@@ -1,7 +1,8 @@
-/* Data and system screens: controls inside Field lay out as a column under their label. */
-.snapshot-import .ui-field > :where(input, select, textarea) { margin-left: 0; max-width: 100%; box-sizing: border-box; }
-.snapshot-import .ui-field > :where(input, select) { width: min(100%, 40rem); }
-.snapshot-import .ui-field > textarea { width: min(100%, 50rem); }
+/* Data and system screens: controls inside Field lay out as a column under their label and
+ * never size the track from their intrinsic width (320 px wide windows, 200 % text). */
+.ui-field { grid-template-columns: minmax(0, 1fr); }
+.ui-field > :where(input, select, textarea) { margin-left: 0; max-width: 100%; min-width: 0; box-sizing: border-box; }
+.ui-field > :where(input, select) { width: min(100%, 40rem); }
+.ui-field > textarea { width: min(100%, 50rem); }
 .snapshot-import .ui-field label { margin: 0; }
 .snapshot-import .ui-panel .ui-panel { margin-inline: 0; }
-.ui-field > :where(input, select, textarea) { max-width: 100%; box-sizing: border-box; }

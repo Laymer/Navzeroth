@@ -1,3 +1,4 @@
+import "./dataScreens.css";
 import {useEffect,useRef,useState} from "react";
 import type {CommandClient} from "../commands";
 import type {LocalDataInventoryPage,LocalDataJob,LocalDataPlan,LocalDataPreset,LocalInstallation} from "../commands/localData";

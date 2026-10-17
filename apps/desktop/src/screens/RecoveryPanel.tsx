@@ -1,3 +1,4 @@
+import "./dataScreens.css";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { BackupPreview, DatabaseStatus, RestoreReceipt } from "../commands/recovery";

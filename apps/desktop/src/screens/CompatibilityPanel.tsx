@@ -1,3 +1,4 @@
+import "./dataScreens.css";
 import { useEffect, useRef, useState } from "react";
 import {LocalDataPanel} from "./LocalDataPanel";
 import type { CommandClient } from "../commands";

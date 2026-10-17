@@ -1,3 +1,4 @@
+import "./dataScreens.css";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { SubmissionAction, SubmissionPage, SubmissionRecord, LocalSubmissionExport } from "../commands/localSubmissions";
@@ -65,8 +66,8 @@ export function LocalSubmissionsPanel({ client, enabled, refreshKey }: { client:
       <p>{record.base.revision}, {record.base.scope.context.build.edition}/{record.base.scope.context.build.build}/{record.base.scope.context.build.interface}, {record.base.scope.context.namespace}{record.base.scope.fixture ? ", synthetic" : ""}: {record.state}, revision {record.guard.revision}</p>
       <details><summary>Declaration and opaque fingerprint</summary><p>{record.guard.id}</p><pre>{record.document ? JSON.stringify(record.document, null, 2) : "Payload erased; fingerprint, source, base and local decision retained."}</pre></details>
       {record.state === "pending" && <><Button disabled={busy || !enabled} onClick={() => void run("accept", record)}>Accept local declaration</Button><Button disabled={busy || !enabled} onClick={() => void run("reject", record)}>Reject local declaration</Button></>}
-      {["pending", "accepted", "rejected"].includes(record.state) && <><Button disabled={busy || !enabled} onClick={() => void run("withdraw", record)}>Withdraw and erase payload</Button><Button disabled={busy || !enabled} onClick={() => void run("revoke", record)}>Revoke local declaration</Button></>}
-      {record.state === "revoked" && record.document && <Button disabled={busy || !enabled} onClick={() => void run("erase_revoked", record)}>Erase revoked payload</Button>}
+      {["pending", "accepted", "rejected"].includes(record.state) && <><Button variant="danger" disabled={busy || !enabled} onClick={() => void run("withdraw", record)}>Withdraw and erase payload</Button><Button variant="danger" disabled={busy || !enabled} onClick={() => void run("revoke", record)}>Revoke local declaration</Button></>}
+      {record.state === "revoked" && record.document && <Button variant="danger" disabled={busy || !enabled} onClick={() => void run("erase_revoked", record)}>Erase revoked payload</Button>}
       {record.state === "accepted" && <Button disabled={busy || !enabled} onClick={() => void run("export", record)}>Prepare permission-gated local export</Button>}
     </li>)}</ul>
       <Button disabled={busy || !enabled || cursor === null} onClick={() => { setOutput(null); setCursor(null); }}>First local page</Button><Button disabled={busy || !enabled || page.next === null} onClick={() => { setOutput(null); setCursor(page.next); }}>Next local page</Button>

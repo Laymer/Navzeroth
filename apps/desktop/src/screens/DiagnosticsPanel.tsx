@@ -1,3 +1,4 @@
+import "./dataScreens.css";
 import { useEffect, useRef, useState } from "react";
 import type { DiagnosticsClient, DiagnosticReport } from "../commands/diagnostics";
 import { Button, Field, Panel } from "../ui";
