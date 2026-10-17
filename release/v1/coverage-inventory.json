@@ -1,11 +1,28 @@
 {
-  "schema_version": 1,
-  "inventory_id": "forever-1.60.1.70374-full-content-v1",
-  "target": {
-    "edition": "wow_forever",
-    "version": "1.60.1",
-    "build": "70374",
-    "interface": 16001
+  "schema_version": 2,
+  "inventory_id": "forever-1.0.0-human-1-20-v2",
+  "target": null,
+  "slice": {
+    "id": "human-1-20",
+    "races": [
+      "human"
+    ],
+    "zones": [
+      "northshire_valley",
+      "elwynn_forest",
+      "westfall",
+      "redridge_mountains"
+    ],
+    "dungeons": [
+      "the_deadmines"
+    ],
+    "level_min": 1,
+    "level_max": 20,
+    "classes": null,
+    "party_sizes": [
+      1,
+      2
+    ]
   },
   "domains": [
     {
@@ -15,8 +32,15 @@
       "units": [
         {
           "id": "quests-inventory-pending",
-          "scope": "Every available Forever quest and objective stage, prerequisites, faction/race/class/level eligibility and rewards; partition by audited regions.",
+          "scope": "Every quest and objective stage available to Human characters of every slice class at levels 1-20 in Northshire Valley, Elwynn Forest, Westfall and Redridge Mountains, including the Deadmines quests, with prerequisites, eligibility and rewards.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "quests-outside-human-1-20",
+          "scope": "Quests of other races and starting zones, of zones outside the slice, and above level 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -27,8 +51,15 @@
       "units": [
         {
           "id": "equipment-inventory-pending",
-          "scope": "Every available equippable item and its supported attributes, requirements and variants.",
+          "scope": "Every equippable item a slice character can obtain at levels 1-20 from slice quests, vendors, trainers, crafting and the Deadmines, with supported attributes, requirements and variants.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "equipment-outside-human-1-20",
+          "scope": "Items obtainable only outside the slice zones or above level 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -39,8 +70,15 @@
       "units": [
         {
           "id": "acquisition-inventory-pending",
-          "scope": "All available quest rewards, vendors, dungeon drops, crafting and other acquisition paths with prerequisites and currencies.",
+          "scope": "Every acquisition path in the slice: quest rewards, vendors, Deadmines drops, crafting and other sources with prerequisites and currencies.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "acquisition-outside-human-1-20",
+          "scope": "Acquisition paths located outside the slice zones or requiring more than level 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -51,8 +89,15 @@
       "units": [
         {
           "id": "geography-inventory-pending",
-          "scope": "Both continents and every further available region, maps/floors, coordinates and calibrated imagery with usage rights.",
+          "scope": "Maps, floors, coordinates and calibrated imagery with usage rights for Northshire Valley, Elwynn Forest, Westfall, Redridge Mountains, the Deadmines and the capital and travel points the slice routes use.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "geography-outside-human-1-20",
+          "scope": "Every other zone, city interior, continent and dungeon.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -63,8 +108,15 @@
       "units": [
         {
           "id": "travel-inventory-pending",
-          "scope": "All supported directed walk, flight, boat, portal and access connections; unlocks and costs remain explicit.",
+          "scope": "Every directed walk, flight, boat and access connection the slice routes use, with unlocks and costs explicit.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "travel-outside-human-1-20",
+          "scope": "Connections that neither start nor end in the slice and are not used by slice routes.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -75,8 +127,15 @@
       "units": [
         {
           "id": "dungeons-inventory-pending",
-          "scope": "Every available dungeon, entry/access requirements, preparation quest chains, travel and rewards.",
+          "scope": "The Deadmines: entry and access requirements, preparation quest chains, travel and rewards for levels 1-20 slice characters.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "dungeons-outside-human-1-20",
+          "scope": "Every dungeon and raid other than the Deadmines, including the Stormwind Stockade.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -87,8 +146,15 @@
       "units": [
         {
           "id": "class_roles-inventory-pending",
-          "scope": "Every available faction/race/class/role/level model with documented weights and representative scenarios.",
+          "scope": "A documented role model with weights and representative scenarios for every slice class at levels 1-20.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "class_roles-outside-human-1-20",
+          "scope": "Classes not open to Human, other races' racial traits, and levels above 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -99,8 +165,15 @@
       "units": [
         {
           "id": "party-inventory-pending",
-          "scope": "Every supported party size and differing-progress workflow across the complete available content inventory.",
+          "scope": "Solo and duo workflows, including differing progress between the two characters, across the complete slice inventory.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "party-outside-human-1-20",
+          "scope": "Parties of three to five players and raids.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     },
@@ -111,8 +184,15 @@
       "units": [
         {
           "id": "reminders-inventory-pending",
-          "scope": "Every declared reminder rule and its source-backed conditions, suppression and unknown-state behavior.",
+          "scope": "Every declared reminder rule that applies to the slice, with source-backed conditions, suppression and unknown-state behaviour.",
           "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "reminders-outside-human-1-20",
+          "scope": "Reminder rules that only concern content outside the slice.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
         }
       ]
     }

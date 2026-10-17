@@ -1,14 +1,39 @@
-# Frozen Forever release requirements (manifest version 1)
+# Forever release requirements (manifest versions 1 and 2)
 
-> **Superseded in part by [ADR 0006](../../docs/decisions/0006-v1-program.md)
-> (2026-10-17).** The 1.0.0 target becomes the first stable live build after the
-> 4 Nov 2026 launch, and the inventory scope becomes the declared Human 1-20 slice
-> with recorded out-of-scope boundaries. The manifests below stay at version 1
-> until task V1.1 migrates them; until then the gate reports the original blockers.
+> **Schema 2 is in effect ([ADR 0006](../../docs/decisions/0006-v1-program.md),
+> task V1.1, 2026-10-17).** The committed manifests declare the 1.0.0 slice and a
+> **pending target** (`"target": null`): the target becomes the first stable live
+> build after the 4 Nov 2026 launch, frozen in code by task V4.2. Schema 1 (frozen
+> 70374 target, whole-world scope) remains readable for historical manifests and tests.
 
-Target: `wow_forever / 1.60.1 / 70374 / 16001`. The user reported these client
-values on 2026-10-14. This identifies the client; it does not establish addon,
-content or Windows acceptance. The developer preview application version is 0.9.2.
+## Schema 2 (task V1.1)
+
+- `target` is always present. `null` means pending. A manifest can't choose its own
+  target: `release::expected_target` returns 70374 for schema 1, and
+  `release::frozen_release_target()` (currently `None`) for schema 2. While it is
+  `None`, every gate reports "Release target is pending the first stable live build
+  after launch (ADR 0006)", and no content can bind to it. Evidence must carry the
+  same schema version and target, including `null`.
+- `slice` (required) declares races, zones, dungeons, level band, classes and party
+  sizes (1 to 5). `classes: null` means the launch class list is unknown and blocks
+  separately from an invalid slice.
+- Each domain may list `out_of_scope` boundaries (`id`, `scope`, `reason`). A
+  boundary is neither `unknown` nor `unsupported`, and it never satisfies a unit:
+  units inside the slice still need exact required records and passing coverage.
+- `release::upgrade_inventory` and `upgrade_evidence` are the explicit v1 to v2
+  migration. Units, sources and evidence rows are kept; the target becomes pending.
+- Other release modules (party matrix, local-data delivery policy, inventory
+  investigation) still name 70374. Task V4.2 moves them to the frozen target.
+
+Committed slice: Human; Northshire Valley, Elwynn Forest, Westfall, Redridge
+Mountains; the Deadmines; levels 1 to 20; classes pending launch; solo and duo.
+
+The sections below describe the shared rules. Where they say 70374, read the frozen
+target of the manifest's schema.
+
+Historical schema 1 target: `wow_forever / 1.60.1 / 70374 / 16001`, reported by the
+user on 2026-10-14. It identified the client; it did not establish addon, content or
+Windows acceptance. The developer preview application version is 0.9.2.
 
 `coverage-inventory.json` and `acceptance-evidence.json` are release contracts,
 separate from exchange schema v1. Their initial contents deliberately block a
