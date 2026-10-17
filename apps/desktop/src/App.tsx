@@ -5,7 +5,7 @@ import { ReferenceWindowControls } from "./screens/ReferenceWindowControls";
 import { CompatibilityPanel } from "./screens/CompatibilityPanel";
 import { DiagnosticsPanel } from "./screens/DiagnosticsPanel";
 import { RecoveryPanel } from "./screens/RecoveryPanel";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { AppError, AppStatus, CommandClient } from "./commands";
 import type { CharacterSnapshotEnvelope } from "../../../schemas/v1/exchange";
 import { describeObservation } from "./observation";
@@ -50,9 +50,15 @@ type Load =
   | { phase: "error"; error: AppError }
   | { phase: "ready"; status: AppStatus; snapshot: CharacterSnapshotEnvelope | null; freshness: Freshness | null };
 
+/** A DOM-safe slug of a group title: "Data & system" becomes "data-system". */
+export function navSlug(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export function App({ client }: { client: CommandClient }) {
   const [load, setLoad] = useState<Load>({ phase: "loading" });
   const [screen, setScreen] = useState<Screen>("today");
+  const navIds = useId();
 
   const [revision, setRevision] = useState(0);
   const [savedTopmost,setSavedTopmost]=useState(false);
@@ -110,14 +116,15 @@ export function App({ client }: { client: CommandClient }) {
         <span className="app-ornament" aria-hidden="true" />
         <details><summary>Optional reference window</summary><ReferenceWindowControls client={client} initialTopmost={savedTopmost}/></details>
       </header>
+      <div className="app-body">
       {navigable && (
         <nav className="app-nav" aria-label="Primary">
           {NAV_GROUPS.map(({ title, ids }) => {
             const items = offered.filter(({ id }) => ids.includes(id));
             if (items.length === 0) return null;
             return (
-              <div className="app-nav-group" role="group" aria-labelledby={`nav-group-${title.charAt(0)}`} key={title}>
-                <p className="app-nav-title" id={`nav-group-${title.charAt(0)}`}>{title}</p>
+              <div className="app-nav-group" role="group" aria-labelledby={`${navIds}-${navSlug(title)}`} key={title}>
+                <p className="app-nav-title" id={`${navIds}-${navSlug(title)}`}>{title}</p>
                 <ul className="app-nav-list">
                   {items.map(({ id, label }) => (
                     <li key={id}>
@@ -160,6 +167,7 @@ export function App({ client }: { client: CommandClient }) {
       {load.phase === "ready" && screen === "sessions" && <SessionsScreen client={client} refreshKey={revision} onChanged={changed} />}
       {load.phase === "ready" && screen === "reminders" && <ReminderScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "content" && <ContentScreen client={client} onChanged={changed} refreshKey={revision} />}
+      </div>
       </div>
     </main>
   );
