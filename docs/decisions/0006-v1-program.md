@@ -59,10 +59,9 @@ preserved and each fact validated against the frozen target:
 - Original authoring and operator observation through the permitted addon.
 - The owner's own RXP-style leveling guides and guide generator (kept outside the
   repo at the owner's machine). The owner holds the rights and grants full use.
-- **Owner-reported written grants** from ForeverDB, Questie/QuestieDB,
-  foreverchanges.pro and Olympus News Network (full dataset; retrieval of the
-  website pages permitted). Each grant becomes admissible only after task V0.6
-  records it (§4).
+- ~~Owner-reported written grants from ForeverDB, Questie/QuestieDB,
+  foreverchanges.pro and Olympus News Network.~~ **Withdrawn 2026-10-17** (see
+  §11): no third-party website data or grants are used.
 
 Retrieval from websites remains a separate, bounded, rate-limited, opt-in fetch step
 with retained snapshots and inert parsing. Builds and tests never use the network.
@@ -131,6 +130,23 @@ prereleases, and, **once `release-readiness --version 1.0.0` reports
 authorize skipping or retrying away a failing check, force-pushing main, rewriting
 published history, purchases or account creation. Parallel worktree-isolated
 agents are allowed under ADR 0005 §1 rules (one writer per task).
+
+### 11. Amendment 2026-10-17: local-only sources
+
+The owner withdrew the grant path (§3 fourth bullet, §4). 1.0.0 content comes only
+from data the project can gather itself:
+
+- the user's own installed client, through local extraction (hybrid delivery, §5);
+- the user's own in-game observations through the permitted addon (quests, NPCs,
+  objectives and turn-ins, which the client tables don't contain);
+- published-licence material already admitted and retained in the repository;
+- original authoring, including the owner's guide designs (their quest and
+  coordinate references are route design inputs, confirmed by observation before
+  they count as content).
+
+No website retrieval, scraping or provider correspondence is part of the program.
+Task V0.6 (grant intake) and V2.1 (granted-source adapters) are dropped. §4 no
+longer applies; no grant evidence was admitted or stored.
 
 ## Consequences
 
