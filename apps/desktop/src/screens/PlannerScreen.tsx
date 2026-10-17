@@ -1,5 +1,6 @@
 import "./play.css";
 import { Button, Field, HelpTip } from "../ui";
+import { OBJECTIVE_NODE_HELP } from "./playHelp";
 import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
@@ -132,7 +133,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     <p>Manual utility and time estimates. No inferred quest unlocks or transport links. Expected durations are uncertain.</p>
     {visibleCatalog?.fixture && <p role="note" className="play-note">SYNTHETIC — engineering fixture, not live game advice.</p>}
     {error && <p role="alert">{error}</p>}
-    <Field label="Planning profile" help="The imported character whose saved snapshot supplies the planner inputs. Changing it discards the current estimate.">{(c) => <select {...c} value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
+    <Field label="Planning profile" help="The imported character whose saved snapshot supplies the planner inputs. Changing it discards the current estimate, the considered objectives with their numbers, the exclusions, and the chosen origin and stopping node.">{(c) => <select {...c} value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     <p>Snapshot: {visibleCatalog?.snapshot_id ?? "none"}; revision: {visibleCatalog?.revision ?? "none — activate Content first"}</p>
     <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={visibleCatalog?.pages?.nodes} label="nodes" onPage={p=>{setCatalog(old=>old?{...old,nodes:p.records as NonNullable<typeof catalog>["nodes"],pages:{...old.pages,nodes:p}}:old);}}/>
 <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={visibleCatalog?.pages?.objectives} label="objectives" onPage={p=>{setCatalog(old=>old?{...old,objectives:p.records as NonNullable<typeof catalog>["objectives"],pages:{...old.pages,objectives:p}}:old);}}/>
@@ -142,14 +143,14 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     <Button disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</Button>
     <Field label="Budget (ms)" help="Session time limit in milliseconds; 1000 ms is one second. The budget must cover travel to the stopping node plus the stopping service, or planning fails with a Stopping point exceeds session budget error.">{(c) => <input {...c} type="number" min="0" step="1" value={budget} onChange={(e) => { invalidate(); setBudget(e.target.valueAsNumber); }} />}</Field>
     <Field label="Stopping service (ms)" help="Extra time in milliseconds you expect to spend after arriving at the stopping node. 0 means you declared none.">{(c) => <input {...c} type="number" min="0" step="1" value={stoppingService} onChange={(e) => { invalidate(); setStoppingService(e.target.valueAsNumber); }} />}</Field>
-    <p>{candidates.length} selected objectives; {excluded.length} exclusions (maximum 128 each).</p><Button variant="ghost" onClick={()=>{invalidate();setCandidates([]);setExcluded([]);}}>Clear objective selections</Button> <HelpTip>Clear empties both your ticked objectives and your exclusions. Planner estimates use only ticked objectives; unticked ones add no assumed reward. At most 128 can be selected.</HelpTip>
+    <p>{candidates.length} selected objectives; {excluded.length} exclusions (maximum 128 each).</p><Button variant="ghost" onClick={()=>{invalidate();setCandidates([]);setExcluded([]);}}>Clear objective selections</Button> <HelpTip label="Clear objective selections">Clear removes every considered objective, with the node, utility, completion and service values you entered, and every exclusion. Planner estimates use only considered objectives; the others add no assumed reward, and excluded ones are never planned. At most 128 of each.</HelpTip>
     {visibleCatalog?.objectives.map((objective) => {
       const candidate = candidates.find((c) => c.objective === objective.id);
       const update = (key: "node" | "utility" | "completion_ms" | "service_ms", value: string | number) => { invalidate(); setCandidates((old) => old.map((c) => c.objective === objective.id ? { ...c, [key]: value } : c)); };
       return <fieldset key={objective.id}><legend>{objective.id}</legend>
         <label><input type="checkbox" checked={candidate !== undefined} disabled={!candidate&&candidates.length>=128} onChange={(e) => { invalidate(); setCandidates((old) => e.target.checked ? [...old, { objective: objective.id, node: "", utility: 0, completion_ms: 0, service_ms: 0 }] : old.filter((c) => c.objective !== objective.id)); }} />Consider objective</label>
         <label><input type="checkbox" checked={excluded.includes(objective.id)} disabled={!excluded.includes(objective.id)&&excluded.length>=128} onChange={(e) => { invalidate(); setExcluded((old) => e.target.checked ? [...old, objective.id] : old.filter((id) => id !== objective.id)); }} />Exclude objective</label>
-        {candidate && <><label>Objective node <select value={candidate.node} onChange={(e) => update("node", e.target.value)}>{nodeOptions}</select></label>
+        {candidate && <><span className="play-inline"><label>Objective node <select value={candidate.node} onChange={(e) => update("node", e.target.value)}>{nodeOptions}</select></label><HelpTip label={`Objective node for ${objective.id}`}>{OBJECTIVE_NODE_HELP}</HelpTip></span>
           {(["utility", "completion_ms", "service_ms"] as const).map((key) => <label key={key}>{key} <input type="number" min="0" step="1" value={candidate[key]} onChange={(e) => update(key, e.target.valueAsNumber)} /></label>)}</>}
       </fieldset>;
     })}
