@@ -261,7 +261,7 @@ fn one_owner_may_hold_both_roles_only_with_format_2_and_a_bound_review() {
     v1_policy.format_version = 1;
     assert!(validate_policy(&v1_policy).is_err());
 
-    // A format 1 receipt under the format 2 policy keeps the distinct-identity rule.
+    // A format 2 policy accepts format 2 receipts only.
     let mut v1 = receipt.clone();
     v1.format_version = 1;
     v1.payload.format_version = 1;
@@ -317,6 +317,84 @@ fn format_2_still_requires_distinct_keys_roles_and_unrevoked_signers() {
     let mut revoked = policy.clone();
     revoked.trusted_signers.get_mut("reviewer").unwrap().revoked = true;
     assert!(!verify(&receipt, &revoked));
+}
+#[test]
+fn a_format_1_policy_refuses_format_2_receipts_even_with_distinct_signers() {
+    let (policy, receipt) = fixture();
+    let mut v2 = receipt;
+    v2.format_version = 2;
+    v2.payload.format_version = 2;
+    v2.payload.independent_review_sha256 = Some("e".repeat(64));
+    assert!(resign(&mut v2, &policy));
+    assert!(!verify(&v2, &policy));
+    // The same distinct signers under a format 2 policy are accepted.
+    let mut v2_policy = policy;
+    v2_policy.format_version = 2;
+    v2.payload.release_policy_sha256 = receipts::policy_hash(&v2_policy).unwrap();
+    assert!(resign(&mut v2, &v2_policy));
+    assert!(verify(&v2, &v2_policy));
+}
+#[test]
+fn format_2_refuses_untrusted_signers_and_noncanonical_review_fields() {
+    let (policy, receipt) = owner_fixture();
+    let mut untrusted = receipt.clone();
+    untrusted.signatures[1].key_id = "untrusted".into();
+    assert!(!verify(&untrusted, &policy));
+    let text = serde_json::to_string(&receipt).unwrap();
+    let field = format!("\"independent_review_sha256\":\"{}\",", "e".repeat(64));
+    assert!(text.contains(&field));
+    let expected = ExpectedBindings {
+        candidate_source_commit: &receipt.payload.candidate_source_commit,
+        production_sha256: &receipt.payload.production_sha256,
+        release_policy_sha256: &receipt.payload.release_policy_sha256,
+        native_reader_revision: &"c".repeat(40),
+        profile_sha256: &"a".repeat(64),
+        metadata_sha256: &"a".repeat(64),
+    };
+    let moved = text.replacen(&field, "", 1).replacen(
+        "\"payload\":{",
+        &format!("\"payload\":{{{field}"),
+        1,
+    );
+    assert!(receipts::verify(moved.as_bytes(), &policy, &expected).is_err());
+    let (plain_policy, plain) = fixture();
+    let plain_text = serde_json::to_string(&plain).unwrap().replacen(
+        "\"domains\":",
+        "\"independent_review_sha256\":null,\"domains\":",
+        1,
+    );
+    let plain_expected = ExpectedBindings {
+        release_policy_sha256: &plain.payload.release_policy_sha256,
+        ..expected
+    };
+    assert!(receipts::verify(plain_text.as_bytes(), &plain_policy, &plain_expected).is_err());
+}
+/// Hand-built messages isolate the domain tag: each format verifies only under
+/// its own tag (the payload JSON also differs by format_version).
+#[test]
+fn signatures_verify_only_under_their_own_domain_tag() {
+    use ed25519_dalek::Signer;
+    const V1: &[u8] = b"NAVZEROTH\0LOCAL-CATALOG-RECEIPT\0V1\0";
+    const V2: &[u8] = b"NAVZEROTH\0LOCAL-CATALOG-RECEIPT\0V2\0";
+    fn signed_under(receipt: &SignedReceipt, tag: &[u8]) -> SignedReceipt {
+        let bytes = serde_json::to_vec(&receipt.payload).unwrap();
+        let mut message = tag.to_vec();
+        message.extend_from_slice(&(bytes.len() as u64).to_le_bytes());
+        message.extend(bytes);
+        let mut out = receipt.clone();
+        for (signature, seed) in out.signatures.iter_mut().zip([1u8, 2]) {
+            signature.signature_hex = hex(&SigningKey::from_bytes(&[seed; 32])
+                .sign(&message)
+                .to_bytes());
+        }
+        out
+    }
+    let (policy, receipt) = owner_fixture();
+    assert!(verify(&signed_under(&receipt, V2), &policy));
+    assert!(!verify(&signed_under(&receipt, V1), &policy));
+    let (policy, receipt) = fixture();
+    assert!(verify(&signed_under(&receipt, V1), &policy));
+    assert!(!verify(&signed_under(&receipt, V2), &policy));
 }
 #[test]
 fn format_1_receipts_cannot_reuse_format_2_signatures() {

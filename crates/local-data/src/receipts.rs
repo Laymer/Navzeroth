@@ -110,7 +110,10 @@ pub fn verify(
 ) -> Result<SignedReceipt> {
     contract::validate_policy(policy)?;
     let receipt: SignedReceipt = canonical(bytes)?;
+    // A policy accepts receipts of its own format only, so a format 1 policy
+    // refuses everything it refused before.
     if !matches!(receipt.format_version, 1 | 2)
+        || receipt.format_version != policy.format_version
         || receipt.payload.format_version != receipt.format_version
         || receipt.signatures.len() != 2
         || policy.delivery_mode != DeliveryMode::LocalCatalog
@@ -134,9 +137,9 @@ pub fn verify(
         return Err("Stale candidate or policy binding");
     }
     let message = payload_bytes(payload)?;
-    // One owner may hold both roles only under a format 2 policy and a format 2
-    // receipt, whose payload binds the independent review record.
-    let shared_identity_allowed = policy.format_version == 2 && receipt.format_version == 2;
+    // One owner may hold both roles only under format 2, whose payload binds
+    // the independent review record.
+    let shared_identity_allowed = receipt.format_version == 2;
     let mut roles = BTreeSet::new();
     let mut identities = BTreeSet::new();
     let mut keys = BTreeSet::new();
