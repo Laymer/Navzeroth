@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from "react";
 import type {CommandClient} from "../commands";
 import type {LocalDataInventoryPage,LocalDataJob,LocalDataPlan,LocalDataPreset,LocalInstallation} from "../commands/localData";
+import { Button, Field, Panel } from "../ui";
 
 export function LocalDataPanel({client}:{client:CommandClient}) {
   const [selection,setSelection]=useState<LocalInstallation|null>(null);
@@ -41,23 +42,22 @@ export function LocalDataPanel({client}:{client:CommandClient}) {
     if(result.ok)setPage(result.value);else setMessage(`Catalog verification unavailable: ${result.error.code}.`);
   }
   const running=job?.state==="running";
-  return <section aria-labelledby="local-data-title">
-    <h3 id="local-data-title">Local Data</h3>
+  return <Panel title="Local Data" level={3}>
     <p>Read installed client tables into private research storage. Client records do not prove playable availability. Research catalogs cannot generate routes or recommendations.</p>
-    <button type="button" disabled={busy||running} onClick={()=>void choose()}>Select game installation</button>
+    <Button disabled={busy||running} onClick={()=>void choose()}>Select game installation</Button>
     {selection&&<p>Selected product {selection.inspection.metadata.product}, version {selection.inspection.metadata.version}; declared locales {selection.inspection.metadata.declared_locales.join(", ")||"unknown"}. The release target remains build 70374.</p>}
-    <label>Extraction resources <select value={preset} disabled={busy||running} onChange={event=>{setPreset(event.target.value as LocalDataPreset);setPlan(null);}}>
+    <Field label="Extraction resources" help="Upper limits for workers, memory and storage. Extraction currently uses one worker whichever preset you pick.">{(c)=><select {...c} value={preset} disabled={busy||running} onChange={event=>{setPreset(event.target.value as LocalDataPreset);setPlan(null);}}>
       <option value="small">Small — 1 worker, 1 GiB memory, 8 GiB storage</option><option value="balanced">Balanced — 2 workers, 2 GiB memory, 32 GiB storage</option><option value="large">Large — 4 workers, 4 GiB memory, 64 GiB storage</option><option value="max">Max — 8 workers, 8 GiB memory, 128 GiB storage</option>
-    </select></label>
-    <button type="button" disabled={!selection||busy||running} onClick={()=>void preview()}>Review extraction limits</button>
+    </select>}</Field>
+    <Button disabled={!selection||busy||running} onClick={()=>void preview()}>Review extraction limits</Button>
     {plan&&<div><p>Storage stays in this application's private local-data area. Limits include retained originals, decoded data, indexes and staging. Extraction currently uses one worker. Required storage: {plan.required_storage_bytes===null?"unknown":`${plan.required_storage_bytes} bytes`}; available storage: {plan.available_storage_bytes===null?"unverified":`${plan.available_storage_bytes} bytes`}.</p>
       <p>Scope: reviewed table inventory and supported research decoding. Media, hotfix integration and gameplay projections are pending.</p>
-      <button type="button" disabled={busy||running} onClick={()=>void start()}>Extract research tables</button></div>}
-    {job&&<div><p role="status">Extraction {job.state}: {job.completed} of {job.total||"unknown"} tables processed.</p>{running&&<button type="button" onClick={()=>void cancel()}>Cancel extraction</button>}
+      <Button variant="primary" disabled={busy||running} onClick={()=>void start()}>Extract research tables</Button></div>}
+    {job&&<div><p role="status">Extraction {job.state}: {job.completed} of {job.total||"unknown"} tables processed.</p>{running&&<Button onClick={()=>void cancel()}>Cancel extraction</Button>}
       {job.error&&<p role="alert">Extraction failed: {job.error}</p>}
-      {job.summary&&<><p>Build {job.summary.build}: {job.summary.tables_decoded} decoded of {job.summary.tables_processed} candidates. Research only; no gameplay catalog activated.</p><button type="button" disabled={busy} onClick={()=>void inventory(0)}>Verify and inspect inventory</button></>}
+      {job.summary&&<><p>Build {job.summary.build}: {job.summary.tables_decoded} decoded of {job.summary.tables_processed} candidates. Research only; no gameplay catalog activated.</p><Button disabled={busy} onClick={()=>void inventory(0)}>Verify and inspect inventory</Button></>}
     </div>}
-    {page&&<><p>Catalog {page.revision}; {page.total} table and locale candidates.</p><table><thead><tr><th>Table</th><th>Locale</th><th>Disposition</th><th>Details</th></tr></thead><tbody>{page.rows.map(row=><tr key={`${row.table}:${row.locale}`}><td>{row.table}</td><td>{row.locale??"unknown"}</td><td>{row.disposition.replaceAll("_"," ")}</td><td>{row.reason.replaceAll("_"," ")}</td></tr>)}</tbody></table>{page.next_offset!==null&&<button type="button" disabled={busy} onClick={()=>{if(page.next_offset!==null)void inventory(page.next_offset);}}>Next inventory page</button>}</>}
+    {page&&<><p>Catalog {page.revision}; {page.total} table and locale candidates.</p><table><thead><tr><th>Table</th><th>Locale</th><th>Disposition</th><th>Details</th></tr></thead><tbody>{page.rows.map(row=><tr key={`${row.table}:${row.locale}`}><td>{row.table}</td><td>{row.locale??"unknown"}</td><td>{row.disposition.replaceAll("_"," ")}</td><td>{row.reason.replaceAll("_"," ")}</td></tr>)}</tbody></table>{page.next_offset!==null&&<Button disabled={busy} onClick={()=>{if(page.next_offset!==null)void inventory(page.next_offset);}}>Next inventory page</Button>}</>}
     {busy&&<p role="status">Reading local data…</p>}{message&&<p role="alert">{message}</p>}
-  </section>;
+  </Panel>;
 }

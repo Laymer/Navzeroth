@@ -1,8 +1,10 @@
+import "./dataScreens.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AppError, CommandClient, ProfileSummary } from "../commands";
 import type { FileInputFormat, HistoryEntry, ImportReceipt, StoredSnapshot, WatchState, WatchStatus } from "../commands/contract";
 import { describeAge } from "../atlas/describe";
 import { describeObservation } from "../observation";
+import { Button, Field, Panel } from "../ui";
 
 const WATCH_LABELS: Record<WatchStatus, string> = {
   waiting_for_stable_file: "Waiting for a complete, stable save.", imported: "The saved snapshot was imported.",
@@ -140,27 +142,26 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     else setError(result.error);
     setBusy(false);
   }
-  return <section aria-labelledby="import-heading" className="snapshot-import">
-    <h2 id="import-heading">Snapshot imports</h2>
+  return <div className="snapshot-import"><Panel title="Snapshot imports">
     <p>Desktop state is a saved snapshot. Choose the export for your installation, account and character. Watching follows only the selected file.</p>
     <p>ANAV1 snapshot exports are accepted. For the experimental addon capture, use /anavdiag snapshot with a unique anonymous profile ID, then save with /reload or logout. Diagnostic probe reports are separate.</p>
     {error !== null && <p role="alert">Error {error.code}: {error.message}</p>}
-    <label>Snapshot export text<textarea value={text} onChange={(e) => setText(e.target.value)} rows={5} /></label>
-    <button type="button" disabled={busy || text.trim() === ""} onClick={() => void importSnapshot("text")}>Import text</button>
+    <Field label="Snapshot export text" help="Paste an ANAV1 snapshot export. It is parsed as bounded data and never executed.">{(c) => <textarea {...c} value={text} onChange={(e) => setText(e.target.value)} rows={5} />}</Field>
+    <Button variant="primary" disabled={busy || text.trim() === ""} onClick={() => void importSnapshot("text")}>Import text</Button>
     <fieldset disabled={busy}>
       <legend>Selected export file</legend>
-      <button type="button" onClick={()=>void useSavedFile()}>Use saved export-file choice</button>
-      <label>Export file path<input value={path} onChange={(e) => {savedPathToken.current++;setPath(e.target.value);}} /></label>
-      <label>File format<select value={formatKind} onChange={(e) => {savedPathToken.current++;setFormatKind(e.target.value as typeof formatKind);}}>
+      <Button onClick={()=>void useSavedFile()}>Use saved export-file choice</Button>
+      <Field label="Export file path" help="Full path to the export or SavedVariables file on this computer. Nothing is read until you import or watch.">{(c) => <input {...c} value={path} onChange={(e) => {savedPathToken.current++;setPath(e.target.value);}} />}</Field>
+      <Field label="File format">{(c) => <select {...c} value={formatKind} onChange={(e) => {savedPathToken.current++;setFormatKind(e.target.value as typeof formatKind);}}>
         <option value="anav1_text">ANAV1 text</option><option value="saved_variables">SavedVariables export string</option>
-      </select></label>
+      </select>}</Field>
       {formatKind === "saved_variables" && <>
-        <label>SavedVariables global<input value={global} onChange={(e) => {savedPathToken.current++;setGlobal(e.target.value);}} /></label>
-        <label>Snapshot export key<input value={key} onChange={(e) => {savedPathToken.current++;setKey(e.target.value);}} /></label>
+        <Field label="SavedVariables global" help="Name of the addon's saved global table.">{(c) => <input {...c} value={global} onChange={(e) => {savedPathToken.current++;setGlobal(e.target.value);}} />}</Field>
+        <Field label="Snapshot export key" help="Key inside that table that holds the snapshot export string.">{(c) => <input {...c} value={key} onChange={(e) => {savedPathToken.current++;setKey(e.target.value);}} />}</Field>
       </>}
-      <button type="button" disabled={!fileReady} onClick={() => void importSnapshot("file")}>Import selected file</button>
-      <button type="button" disabled={!fileReady || watch.active} onClick={() => void controlWatch(true)}>Watch selected file</button>
-      <button type="button" disabled={!watch.active} onClick={() => void controlWatch(false)}>Stop watching</button>
+      <Button disabled={!fileReady} onClick={() => void importSnapshot("file")}>Import selected file</Button>
+      <Button disabled={!fileReady || watch.active} onClick={() => void controlWatch(true)}>Watch selected file</Button>
+      <Button disabled={!watch.active} onClick={() => void controlWatch(false)}>Stop watching</Button>
     </fieldset>
     <p role="status">{watch.status === null ? "File watching is off." : WATCH_LABELS[watch.status]}</p>
     {receipt !== null && <div role="status">
@@ -168,9 +169,9 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
       <p>Imported {receipt.snapshot_id}: {describeAge(receipt.freshness)} ({receipt.namespace}{receipt.fixture ? ", synthetic fixture" : ""}).</p>
     </div>}
     <h3>Profiles</h3>
-    {profiles.length === 0 ? <p>No stored profiles yet.</p> : <label>Selected profile<select value={selected} disabled={busy} onChange={(e) => void select(e.target.value)}>
+    {profiles.length === 0 ? <p>No stored profiles yet.</p> : <Field label="Selected profile" help="Changes which imported character the whole app shows.">{(c) => <select {...c} value={selected} disabled={busy} onChange={(e) => void select(e.target.value)}>
       {profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}{p.context ? ` · ${p.context.build.edition}/${p.context.build.build}/${p.context.build.interface} · ${p.context.namespace}` : ""}{p.fixture || p.data_mode === "demo" ? " · synthetic" : ""}</option>)}
-    </select></label>}
+    </select>}</Field>}
     {current !== null && <>
       <h3>{current.data_mode === "demo" ? "Demo snapshot" : "Current stored snapshot"}</h3>
       {(current.envelope.fixture || current.envelope.namespace === "demo") && <p role="note" className="demo-label">SYNTHETIC — fixture or demo data, not from your game</p>}
@@ -185,11 +186,11 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
       <p>Select {preview.snapshot.envelope.payload.id} instead of {preview.expected}. This explicitly changes imported desktop state. A provably older capture is rejected.</p>
       <p>{describeAge(preview.snapshot.freshness)}</p>
       <pre>{JSON.stringify({ capture: preview.snapshot.envelope.payload.capture, level: preview.snapshot.envelope.payload.level }, null, 2)}</pre>
-      <label>Selection reason <input value={promotionReason} maxLength={1024} onChange={(e) => setPromotionReason(e.target.value)} /></label>
-      <button type="button" disabled={busy || promotionReason.trim() === ""} onClick={() => void promote()}>Confirm promotion</button>
-      <button type="button" onClick={() => { previewRequest.current++; setPreview(null); }}>Cancel</button>
+      <Field label="Selection reason" help="Recorded with the snapshot selection history. Required before confirming.">{(c) => <input {...c} value={promotionReason} maxLength={1024} onChange={(e) => setPromotionReason(e.target.value)} />}</Field>
+      <Button variant="primary" disabled={busy || promotionReason.trim() === ""} onClick={() => void promote()}>Confirm promotion</Button>
+      <Button onClick={() => { previewRequest.current++; setPreview(null); }}>Cancel</Button>
     </section>}
-    {history.length === 0 ? <p>No stored snapshot history.</p> : <ul>{history.map((entry) => <li key={entry.snapshot_id}>{entry.snapshot_id}{entry.is_current ? " (current)" : " (history only)"}: {describeAge(entry.freshness)} {!entry.is_current && <button type="button" disabled={busy} onClick={() => void previewPromotion(entry.snapshot_id)}>Preview {entry.snapshot_id}</button>}</li>)}</ul>}
-    <button type="button" disabled={busy} onClick={() => { setError(null); void refresh().then(onChanged); }}>Refresh stored state</button>
-  </section>;
+    {history.length === 0 ? <p>No stored snapshot history.</p> : <ul>{history.map((entry) => <li key={entry.snapshot_id}>{entry.snapshot_id}{entry.is_current ? " (current)" : " (history only)"}: {describeAge(entry.freshness)} {!entry.is_current && <Button disabled={busy} onClick={() => void previewPromotion(entry.snapshot_id)}>Preview {entry.snapshot_id}</Button>}</li>)}</ul>}
+    <Button disabled={busy} onClick={() => { setError(null); void refresh().then(onChanged); }}>Refresh stored state</Button>
+  </Panel></div>;
 }

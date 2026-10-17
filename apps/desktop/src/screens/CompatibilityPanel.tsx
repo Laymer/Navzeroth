@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {LocalDataPanel} from "./LocalDataPanel";
 import type { CommandClient } from "../commands";
 import type { CompatibilityReport, EvidenceState } from "../commands/compatibility";
+import { Button, Panel } from "../ui";
 const LABELS: Record<EvidenceState, string> = { reported_flow: "Limited user-reported flow", function_present_only: "Function present; usability untested", reported_missing: "Reported missing in that diagnostic", unverified: "Unverified", assumed_reference: "Reference assumption; no client session" };
 function Counts({ entries }: { entries: Record<string, number> }) { return <ul>{Object.entries(entries).map(([name, count]) => <li key={name}>{name.replaceAll("_", " ")}: {count}</li>)}</ul>; }
 export function CompatibilityPanel({ client, profileId, refreshKey }: { client: CommandClient; profileId: string | null; refreshKey: number }) {
@@ -14,11 +15,10 @@ export function CompatibilityPanel({ client, profileId, refreshKey }: { client: 
     if (ticket !== serial.current) return;
     setBusy(false); if (result.ok) setReport(result.value); else setMessage(`Report unavailable: ${result.error.code}.`);
   }
-  return <section aria-labelledby="compatibility-title">
-    <h2 id="compatibility-title">Compatibility and source coverage</h2>
+  return <Panel title="Compatibility and source coverage">
     <LocalDataPanel client={client}/>
     <p>Inspect finite recorded client evidence and the exact active dataset. Function presence, synthetic checks and historical user reports do not establish that the installed addon or every game context works.</p>
-    <button type="button" disabled={busy} onClick={() => void load()}>Inspect compatibility and coverage</button>
+    <Button variant="primary" disabled={busy} onClick={() => void load()}>Inspect compatibility and coverage</Button>
     {busy && <p role="status">Reading local evidence…</p>}{message && <p role="alert">{message}</p>}
     {report && <>
       <p>{report.limitations}</p>
@@ -46,5 +46,5 @@ export function CompatibilityPanel({ client, profileId, refreshKey }: { client: 
       <h3>Checks still unverified</h3><ul>{report.unverified_checks.map((check) => <li key={check.check}>{check.check.replaceAll("_", " ")}: {check.required_evidence}</li>)}</ul>
       <h3>Official API evidence</h3><p>{report.official_api}</p>
     </>}
-  </section>;
+  </Panel>;
 }

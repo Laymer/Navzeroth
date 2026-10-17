@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { SubmissionAction, SubmissionPage, SubmissionRecord, LocalSubmissionExport } from "../commands/localSubmissions";
 import example from "../../../../fixtures/desktop/submissions/synthetic-price.json";
+import { Button, Field, Panel } from "../ui";
 export function LocalSubmissionsPanel({ client, enabled, refreshKey }: { client: CommandClient; enabled: boolean; refreshKey: number }) {
   const [page, setPage] = useState<SubmissionPage | null>(null);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -46,31 +47,30 @@ export function LocalSubmissionsPanel({ client, enabled, refreshKey }: { client:
       }
     } finally { lock.current = false; setBusy(false); }
   }
-  return <section aria-labelledby="local-submissions-title">
-    <h3 id="local-submissions-title">Local observation review</h3>
+  return <Panel title="Local observation review" level={3}>
     <p>Opt in to store a minimal declaration on this device. No names, chat, account paths or credentials. Local acceptance does not verify gameplay, activate content or grant redistribution permission.</p>
     <p>The queue spans all local dataset contexts. Each declaration retains its exact edition, build, interface and synthetic status.</p>
     <p>Use registered dataset, source, evidence and quest/item identities. Unknown counts remain unknown; one success does not establish a drop rate. Withdrawal erases the payload and keeps a disclosed fingerprint tombstone to prevent duplicate recreation.</p>
     {!enabled && <p>Local submissions require the desktop application.</p>}
     {error && <p role="alert">{error}</p>}{message && <p role="status">{message}</p>}
     <form onSubmit={(event) => { event.preventDefault(); void run("submit"); }}>
-      <label>Minimal local observation JSON <textarea rows={8} value={text} disabled={busy || !enabled} onChange={(event) => { setText(event.target.value); setOutput(null); }} /></label>
-      <button type="button" disabled={busy || !enabled} onClick={() => { setText(JSON.stringify(example, null, 2)); setOptIn(false); }}>Load synthetic price declaration</button>
+      <Field label="Minimal local observation JSON" help="A small declaration using registered dataset, source and evidence identities. Unknown counts stay unknown.">{(c) => <textarea {...c} rows={8} value={text} disabled={busy || !enabled} onChange={(event) => { setText(event.target.value); setOutput(null); }} />}</Field>
+      <Button disabled={busy || !enabled} onClick={() => { setText(JSON.stringify(example, null, 2)); setOptIn(false); }}>Load synthetic price declaration</Button>
       <p>The example requires the matching staged demo-r1 revision; its zero price is synthetic.</p>
       <label><input type="checkbox" checked={optIn} disabled={busy || !enabled} onChange={(event) => setOptIn(event.target.checked)} /> I opt in to local storage of this declaration and its deduplication fingerprint.</label>
-      <button type="submit" disabled={busy || !enabled || !optIn || !text.trim()}>Submit locally</button>
+      <Button type="submit" disabled={busy || !enabled || !optIn || !text.trim()}>Submit locally</Button>
     </form>
-    <button type="button" disabled={busy || !enabled} onClick={() => { setOutput(null); setError(""); setRevision((n) => n + 1); }}>Refresh local queue</button>
+    <Button disabled={busy || !enabled} onClick={() => { setOutput(null); setError(""); setRevision((n) => n + 1); }}>Refresh local queue</Button>
     {page && <><p>{page.total} local records including erased tombstones; {page.rows.length} on this page.</p><ul>{page.rows.map((record) => <li key={record.guard.id}>
       <p>{record.base.revision}, {record.base.scope.context.build.edition}/{record.base.scope.context.build.build}/{record.base.scope.context.build.interface}, {record.base.scope.context.namespace}{record.base.scope.fixture ? ", synthetic" : ""}: {record.state}, revision {record.guard.revision}</p>
       <details><summary>Declaration and opaque fingerprint</summary><p>{record.guard.id}</p><pre>{record.document ? JSON.stringify(record.document, null, 2) : "Payload erased; fingerprint, source, base and local decision retained."}</pre></details>
-      {record.state === "pending" && <><button disabled={busy || !enabled} onClick={() => void run("accept", record)}>Accept local declaration</button><button disabled={busy || !enabled} onClick={() => void run("reject", record)}>Reject local declaration</button></>}
-      {["pending", "accepted", "rejected"].includes(record.state) && <><button disabled={busy || !enabled} onClick={() => void run("withdraw", record)}>Withdraw and erase payload</button><button disabled={busy || !enabled} onClick={() => void run("revoke", record)}>Revoke local declaration</button></>}
-      {record.state === "revoked" && record.document && <button disabled={busy || !enabled} onClick={() => void run("erase_revoked", record)}>Erase revoked payload</button>}
-      {record.state === "accepted" && <button disabled={busy || !enabled} onClick={() => void run("export", record)}>Prepare permission-gated local export</button>}
+      {record.state === "pending" && <><Button disabled={busy || !enabled} onClick={() => void run("accept", record)}>Accept local declaration</Button><Button disabled={busy || !enabled} onClick={() => void run("reject", record)}>Reject local declaration</Button></>}
+      {["pending", "accepted", "rejected"].includes(record.state) && <><Button disabled={busy || !enabled} onClick={() => void run("withdraw", record)}>Withdraw and erase payload</Button><Button disabled={busy || !enabled} onClick={() => void run("revoke", record)}>Revoke local declaration</Button></>}
+      {record.state === "revoked" && record.document && <Button disabled={busy || !enabled} onClick={() => void run("erase_revoked", record)}>Erase revoked payload</Button>}
+      {record.state === "accepted" && <Button disabled={busy || !enabled} onClick={() => void run("export", record)}>Prepare permission-gated local export</Button>}
     </li>)}</ul>
-      <button disabled={busy || !enabled || cursor === null} onClick={() => { setOutput(null); setCursor(null); }}>First local page</button><button disabled={busy || !enabled || page.next === null} onClick={() => { setOutput(null); setCursor(page.next); }}>Next local page</button>
+      <Button disabled={busy || !enabled || cursor === null} onClick={() => { setOutput(null); setCursor(null); }}>First local page</Button><Button disabled={busy || !enabled || page.next === null} onClick={() => { setOutput(null); setCursor(page.next); }}>Next local page</Button>
     </>}
     {output && <><p>Local JSON export: {output.byte_count} bytes. Recorded source policy permits this shape; independent permission authentication remains unverified.</p><label>Local observation export <textarea readOnly rows={8} value={output.text} /></label></>}
-  </section>;
+  </Panel>;
 }
