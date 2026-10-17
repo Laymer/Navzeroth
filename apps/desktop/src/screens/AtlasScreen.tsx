@@ -217,9 +217,8 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
               <li key={pin.id}>
                 <strong>{pin.label}</strong>. {describePin(pin)}.
                 {describePinAccess(pin) !== null && <> {describePinAccess(pin)}.</>}{" "}
-                <button
-                  type="button"
-                  className="ui-button ui-button--ghost"
+                <Button
+                  variant="ghost"
                   ref={(node) => { if (node) pinButtons.current.set(pin.id, node); else pinButtons.current.delete(pin.id); }}
                   onKeyDown={(event) => {
                     const index = pageStart + pageIndex;
@@ -242,7 +241,7 @@ function ImageSection({ image, marker }: { image: AtlasImage; marker: SnapshotMa
                   }}
                 >
                   Show {pin.label} on the map
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
