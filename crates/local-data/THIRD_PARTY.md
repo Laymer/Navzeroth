@@ -18,7 +18,8 @@ remove the unused SHA1 helper, and fix upstream's Linux LPDWORD typo. Original
 retained files are unmodified; derived copies exist only under Cargo OUT_DIR.
 
 WoWDBDefs: wowdev and contributors, source https://github.com/wowdev/WoWDBDefs
-at996e53f029c0213b223aecb94d754f6b4b9efb49. Original selected definitions,
+at b9a63096cdd99b26967f17f9515377ae62cadfd7 (2026-10-16). Original selected definitions
+(those explicitly listing 1.60.1.70374, 1.60.1.70425 or 1.60.1.70450), the
 manifest, attribution/readme and full licences retained under vendor/wowdbdefs/;
 UPSTREAM.json binds every file. Data definitions are CC BY-SA 4.0; code has a
 separate BSD-3-Clause licence. The CC licence and attribution apply to the

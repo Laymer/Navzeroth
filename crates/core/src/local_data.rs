@@ -10,7 +10,7 @@ pub const MAX_BUILD_INFO_ROWS: usize = 64;
 pub const MAX_METADATA_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_TABLES: usize = 16_384;
 pub const CASCLIB_REVISION: &str = "38a34665624b8775bb875274b36191b21c38d97b";
-pub const WOWDBDEFS_REVISION: &str = "996e53f029c0213b223aecb94d754f6b4b9efb49";
+pub const WOWDBDEFS_REVISION: &str = "b9a63096cdd99b26967f17f9515377ae62cadfd7";
 pub const DBCD_ORACLE_REVISION: &str = "e732093f8864240fc5884bd1bba6b02f3dfc0d56";
 const GIB: u64 = 1024 * 1024 * 1024;
 
