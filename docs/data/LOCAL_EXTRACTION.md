@@ -32,8 +32,22 @@ a preliminary plan or completed research-only extraction. An extracted research
 catalog never becomes gameplay-ready or active simply because decoding succeeds.
 `status` takes the same destination/catalog options as `verify`. `coverage`
 reports dispositions and unknown target completeness, not an imported-count
-completeness percentage. Receipt CLI preparation/signing and durable CLI job
-control/resume/diff/activation are not implemented; those commands fail closed.
+completeness percentage. Durable CLI job control/resume/diff/activation and
+receipt *preparation* are not implemented; those commands fail closed.
+
+Explicit receipt steps (task V1.2) take named files only; nothing is generated,
+searched for, activated or printed from a key:
+
+```sh
+cargo run --locked -p azeroth-cli -- local-data receipt-public-key --secret-key <key-file>
+cargo run --locked -p azeroth-cli -- local-data receipt-sign --payload <payload.json> --policy <policy.json> --key-id <id> --secret-key <key-file>
+cargo run --locked -p azeroth-cli -- local-data receipt-assemble --payload <payload.json> --operator <operator.sig> --reviewer <reviewer.sig>
+cargo run --locked -p azeroth-cli -- local-data receipt-verify --receipt <receipt.json> --policy <policy.json> --candidate <tested-commit> --production <sha256>
+```
+
+A key file is 64 lowercase hex characters (32 bytes), optionally followed by a
+newline; keep it private and outside the repository. `receipt-assemble` prints the
+canonical compact receipt, which is the only encoding `verify` accepts.
 
 ## Worker, storage and formats
 
@@ -124,10 +138,20 @@ refuse. `local_catalog` vocabulary exists, but selecting it adds a mandatory
 release blocker until private validation, receipt preparation and packaging
 integration are complete. Existing bundled gates are not made permissive.
 
+Hybrid delivery (ADR 0006 §5, task V1.2) is policy format 2 with
+`delivery_mode: "hybrid"` and a `local_content` binding: the extractor version,
+native reader revision, profile and metadata hashes, and `expected_catalogs`,
+one semantic catalog digest per build and locale that a user's local build must
+reproduce. `release-readiness` then blocks until the digests are declared (they
+are frozen after launch, task V4.2) and `release/v1/local-catalog-receipt.json`
+verifies against the policy, the tested source commit and the production
+fingerprint, with its private catalog among the declared digests. The committed
+policy is still `bundled_content`; switching it is a later, reviewed change.
+
 Remaining engineering: cache/hotfix import, full media and tooltip evaluation,
 gameplay projections/activation/rollback, row search and indexes, durable jobs/
 checkpoints, persistent presets/selection and installer choices, opt-in update
-detection, receipt CLI and the completed private-inventory packaging/readiness
+detection, receipt preparation and the completed private-inventory packaging/readiness
 contracts. All nine complete target inventories and actual candidate-bound
 70374 live/interactive acceptance remain missing.70425 development extraction
 cannot substitute for those inputs or reviews.
