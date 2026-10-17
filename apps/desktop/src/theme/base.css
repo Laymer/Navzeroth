@@ -80,7 +80,7 @@ pre { max-width: 100%; overflow: auto; padding: var(--space-3); background: var(
 /* The shell is a size container, so the rail/bar switch below is measured in em of the shell's own
  * font size. That honours the Settings text scale; a media query would use the browser's fixed 16px. */
 .app-shell { container-type: inline-size; max-width: var(--measure); margin: 0 auto; padding: var(--space-4); box-sizing: border-box; background: color-mix(in srgb, var(--surface) 90%, transparent); }
-.reference-shell { padding: var(--space-4); }
+.reference-shell { padding: var(--space-4); background: color-mix(in srgb, var(--surface) 90%, transparent); }
 .app-header { margin-bottom: var(--space-3); }
 .app-header h1 { margin: 0; font-size: 1.75rem; color: var(--gold-hi); text-shadow: 0 0.1rem 0 rgb(0 0 0 / 0.6); overflow-wrap: anywhere; }
 .app-ornament { display: block; height: 0.5rem; margin: var(--space-2) 0 var(--space-3); background: linear-gradient(90deg, var(--gold) 0, var(--gold-shade) 40%, transparent 100%); clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
@@ -104,7 +104,7 @@ pre { max-width: 100%; overflow: auto; padding: var(--space-3); background: var(
 
 /* Contrast, forced colours and motion for every shell and backdrop surface. */
 :root[data-contrast="high"] .backdrop { display: none; }
-:root[data-contrast="high"] .app-shell { background: var(--surface); }
+:root[data-contrast="high"] :where(.app-shell, .reference-shell) { background: var(--surface); }
 :root[data-contrast="high"] :where(button, input, select, textarea) { background: var(--surface); color: var(--text); border-color: var(--text); background-image: none; box-shadow: none; }
 :root[data-contrast="high"] :where(fieldset, details, pre) , :root[data-contrast="high"] .app-nav { background: var(--surface); border: 2px solid var(--text); box-shadow: none; }
 :root[data-contrast="high"] .app-nav-button[aria-current="page"] { background: var(--surface); border-color: var(--gold); box-shadow: none; text-decoration: underline; text-underline-offset: 0.25em; }
@@ -113,7 +113,7 @@ pre { max-width: 100%; overflow: auto; padding: var(--space-3); background: var(
 :root[data-contrast="high"] :where(main, .reference-shell) :where(h2)::after { background: var(--text); }
 @media (forced-colors: active) {
   .backdrop { display: none; }
-  .app-shell { background: Canvas; }
+  :where(.app-shell, .reference-shell) { background: Canvas; }
   .app-ornament, :where(main, .reference-shell) :where(h2)::after { background: CanvasText; }
   :where(button, input, select, textarea) { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; background-image: none; }
   :where(fieldset, details, pre) { border: 1px solid CanvasText; background: Canvas; }

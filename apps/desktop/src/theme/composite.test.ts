@@ -76,6 +76,12 @@ describe("text over the backdrop", () => {
   // Every colour the SVG draws, taken as fully opaque: a conservative bound on any pixel under the sheet.
   const colours = [...new Set([...backdrop.matchAll(/#[0-9a-fA-F]{6}\b/g)].map((m) => m[0].toLowerCase()))];
 
+  it("puts the reference window on the same translucent token sheet", () => {
+    const ref = /^\.reference-shell \{[^}]*background:\s*color-mix\(in srgb, var\((--[\w-]+)\) (\d+)%, transparent\)/m.exec(baseCss);
+    expect(ref?.[1]).toBe(sheet?.[1]);
+    expect(ref?.[2]).toBe(sheet?.[2]);
+  });
+
   it("puts the app shell on a translucent token sheet", () => {
     expect(sheet).not.toBeNull();
     expect(Number(sheet?.[2])).toBeGreaterThanOrEqual(85);
