@@ -13,9 +13,11 @@ needed is in Git history (`TODO.md` at `3b19812`).
 
 ## Gate snapshot
 
-`release-readiness --root . --version 0.9.2` on `3b19812`: 66 blockers (same set
-as 0.9.1), `stable_ready: false`, `candidate_ready: false`, 0 verified evidence
-files, 0 verified content packs. Re-run it before trusting any count here.
+`release-readiness --root . --version 0.9.2` after V1.1 (schema 2 manifests): 68
+blockers, `stable_ready: false`, `candidate_ready: false`, 0 verified evidence files,
+0 verified content packs. That's the 66 from `3b19812` plus two from V1.1: "Release
+target is pending" (cleared by V4.2) and "Release slice classes are unknown"
+(cleared after launch). Re-run it before trusting any count here.
 
 | Category | Count | Cleared by |
 | --- | ---: | --- |
@@ -50,10 +52,10 @@ files, 0 verified content packs. Re-run it before trusting any count here.
 
 ## Phase 1: contract and gate (one writer on `release.rs`, in order)
 
-- [ ] **V1.1 Release manifest schema v2** (Eng). Explicit v1 → v2 migration in
-  `crates/core/src/release.rs` and `crates/cli/src/release.rs`: declared slice,
-  per-domain out-of-scope boundaries distinct from `unknown`, and a
-  `pending_launch` target that keeps stable gates blocked until frozen.
+- [x] **V1.1 Release manifest schema v2** (Eng). Done
+  ([handoff](docs/handoffs/2026-10-17-v1.1.md)): declared slice, per-domain
+  out-of-scope boundaries distinct from `unknown`, and a `null` (pending) target
+  that blocks every gate until V4.2 freezes it in code.
 - [ ] **V1.2 Hybrid delivery** (Eng). New delivery-policy format with a `hybrid`
   mode: tested-content digest (extractor profile, metadata revision, expected
   catalog digest per build/locale), receipt CLI (prepare/sign/verify) on
