@@ -115,6 +115,11 @@ uint32_t nav_casc_read(void * file, void * buffer, uint32_t length, uint32_t * d
 }
 // Frame-aware partial read (V2.2d). Frame tables are loaded through the public
 // span-info query; each frame's layout comes from CascLib's own frame records.
+// These functions depend on CascLib internals (TCascFile, CASC_FILE_SPAN,
+// CASC_FILE_FRAME, FileStream_Read, CascVerifyDataBlockHash) of the pinned
+// revision. The guard is build.rs: it asserts the pinned revision and every
+// retained source hash, so any CascLib change fails the build until this file
+// is re-reviewed.
 static PCASC_FILE_FRAME frame_at(TCascFile * hf, uint32_t index, DWORD * flags, TFileStream ** stream) {
     for(DWORD span = 0; span < hf->SpanCount; span++) {
         PCASC_FILE_SPAN pSpan = hf->pFileSpan + span;
@@ -149,7 +154,8 @@ uint32_t nav_casc_frame_count(void * file, uint32_t * count) {
 uint32_t nav_casc_frame(void * file, uint32_t index, uint64_t * start, uint32_t * length, uint32_t * encrypted) {
     *start = 0; *length = 0; *encrypted = 0;
     TCascFile * hf = TCascFile::IsValid(file);
-    if(hf == NULL) return 6;
+    // Fail closed: the partial path is only defined for strict reads.
+    if(hf == NULL || !hf->bVerifyIntegrity) return 6;
     DWORD flags = 0; TFileStream * stream = NULL;
     PCASC_FILE_FRAME frame = frame_at(hf, index, &flags, &stream);
     if(frame == NULL || frame->EndOffset < frame->StartOffset || frame->EndOffset - frame->StartOffset != frame->ContentSize) return 6;
@@ -158,13 +164,16 @@ uint32_t nav_casc_frame(void * file, uint32_t index, uint64_t * start, uint32_t 
     // Plain and raw-ZLIB spans are not BLTE-framed and cannot be encrypted.
     if(flags & (CASC_CE_PLAIN_DATA | CASC_CE_ZLIB_DATA)) return 0;
     if(stream == NULL || frame->EncodedSize == 0) return 4;
+    // CascVerifyDataBlockHash accepts any block when the expected MD5 is all
+    // zero; such a frame has no checkable hash and is refused here.
+    if(!CascIsValidMD5(frame->FrameHash.Value)) return 4;
     if(frame->EncodedSize > 64u * 1024u * 1024u) return 5;
     LPBYTE encoded = CASC_ALLOC<BYTE>(frame->EncodedSize);
     if(encoded == NULL) return 5;
     ULONGLONG offset = frame->DataFileOffset;
     uint32_t status = 0;
     if(!FileStream_Read(stream, &offset, encoded, frame->EncodedSize)) status = 6;
-    else if(hf->bVerifyIntegrity && !CascVerifyDataBlockHash(encoded, frame->EncodedSize, frame->FrameHash.Value)) status = 4;
+    else if(!CascVerifyDataBlockHash(encoded, frame->EncodedSize, frame->FrameHash.Value)) status = 4;
     else *encrypted = encoded[0] == 'E' ? 1 : 0;
     CASC_FREE(encoded);
     return status;
