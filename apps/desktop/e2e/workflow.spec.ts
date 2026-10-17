@@ -256,6 +256,8 @@ test("route segment keyboard selection retains the tail and fits only schematic 
   await page.getByRole("button",{name:"Planner",exact:true}).click();await page.getByRole("combobox",{name:"Origin",exact:true}).selectOption("demo-node-1");await page.getByRole("combobox",{name:"Stopping node",exact:true}).selectOption("demo-node-1");await page.getByRole("button",{name:"Plan session",exact:true}).click();await page.getByRole("button",{name:"Inspect route",exact:true}).click();
   const route=page.getByRole("region",{name:"Route inspection",exact:true});
   await expect(route.getByRole("button",{name:/Select hop/})).toHaveCount(50);
+  // G6 O5: hop buttons are list buttons, so the play-screen form-button margin does not apply.
+  expect(await route.getByRole("button",{name:/Select hop 1:/}).evaluate(el=>getComputedStyle(el).margin)).toBe("0px");
   await expect(route.locator('[data-route-hop="0"]')).toHaveAttribute("data-selected","true");
   const line=route.locator('[data-route-hop="0"] line');
   const before=await line.evaluate(el=>Number(el.getAttribute("x2"))-Number(el.getAttribute("x1")));

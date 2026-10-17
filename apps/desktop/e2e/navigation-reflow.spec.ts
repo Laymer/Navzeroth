@@ -42,3 +42,59 @@ for (const [fontSize, layout] of [[16, "rail"], [32, "bar"]] as const) {
     expect(widths.scroll).toBeLessThanOrEqual(widths.client);
   });
 }
+
+// G6 O3: the rail appears exactly when the shell's content box reaches 58em of the shell's font size.
+type Layout = { rail: boolean; content: number; em: number };
+async function layoutAt(page: import("@playwright/test").Page, width: number): Promise<Layout> {
+  await page.setViewportSize({ width, height: 900 });
+  return page.evaluate(() => {
+    const shell = document.querySelector(".app-shell") as HTMLElement;
+    const s = getComputedStyle(shell);
+    const content = shell.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight);
+    const n = document.querySelector(".app-nav")?.getBoundingClientRect();
+    const c = document.querySelector(".app-content")?.getBoundingClientRect();
+    return { rail: (c?.left ?? 0) >= (n?.right ?? 0) && (c?.top ?? 0) < (n?.bottom ?? 0), content, em: parseFloat(s.fontSize) };
+  });
+}
+
+test("the rail switches on at 58em of shell content width, not before", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("button")).toHaveCount(14);
+  const probe = await layoutAt(page, 1100);
+  const threshold = 58 * probe.em;
+  // The viewport minus the shell's content width is fixed chrome (padding, scrollbar); aim either side of the threshold.
+  const chrome = 1100 - probe.content;
+  const below = await layoutAt(page, Math.floor(threshold + chrome) - 2);
+  const at = await layoutAt(page, Math.ceil(threshold + chrome) + 1);
+  expect(below.content).toBeLessThan(threshold);
+  expect(below.rail, `bar at ${below.content}px of content`).toBe(false);
+  expect(at.content).toBeGreaterThanOrEqual(threshold);
+  expect(at.rail, `rail at ${at.content}px of content`).toBe(true);
+});
+
+test("without container-query support the wrapping bar is used and stays usable", async ({ page }) => {
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await expect(nav.getByRole("button")).toHaveCount(14);
+  expect((await layoutAt(page, 1100)).rail).toBe(true);
+  // An engine without container queries drops the @container block; remove it the same way.
+  const removed = await page.evaluate(() => {
+    let count = 0;
+    for (const sheet of Array.from(document.styleSheets)) {
+      const rules = sheet.cssRules;
+      for (let i = rules.length - 1; i >= 0; i--) {
+        if (rules[i] instanceof CSSContainerRule) { sheet.deleteRule(i); count++; }
+      }
+    }
+    return count;
+  });
+  expect(removed).toBeGreaterThan(0);
+  expect((await layoutAt(page, 1100)).rail).toBe(false);
+  const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client);
+  const imports = nav.getByRole("button", { name: "Imports", exact: true });
+  await imports.focus(); await imports.press("Enter");
+  await expect(imports).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { name: "Snapshot imports", exact: true })).toBeVisible();
+});

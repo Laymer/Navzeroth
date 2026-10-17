@@ -152,6 +152,8 @@
 :root[data-contrast="high"] .ui-field [aria-invalid="true"] { border-color: var(--text); border-style: dashed; }
 
 :root[data-contrast="high"] .ui-panel.ui-panel--nested { background: none; border: 0; border-top: 2px solid var(--text); }
+/* The high-contrast .ui-button rule (0,3,0) outranks the pressed rule (0,2,0); restate the pressed edge. */
+:root[data-contrast="high"] .ui-button[aria-pressed="true"] { border-color: var(--gold); box-shadow: inset 0 -0.25rem 0 var(--gold); }
 
 /* Forced colours: system colours only. */
 @media (forced-colors: active) {
@@ -160,6 +162,10 @@
   .ui-button--primary::before, .ui-button--primary::after { border-color: ButtonText; }
   .ui-button--danger { text-decoration: underline; }
   .ui-button:disabled { color: GrayText; border-color: GrayText; opacity: 1; }
+  /* Pressed: the system selection pair (guaranteed legible) plus the bold and underline kept from the
+   * base pressed rule, so the state never rests on colour alone. Specificity (0,3,0) beats the
+   * base pressed rule and the forced button rule above. */
+  .ui-button[aria-pressed="true"]:not(:disabled) { background: Highlight; color: HighlightText; border-color: ButtonText; box-shadow: none; }
   .ui-panel { background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
   .ui-panel::before { display: none; }
   .ui-panel.ui-panel--nested { background: none; border: 0; border-top: 1px solid CanvasText; }
