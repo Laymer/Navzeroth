@@ -1,17 +1,17 @@
-/** The 14 primary screens, by their exact navigation label. */
+/** The 14 primary screens, by their exact navigation label, in navigation order (plan 12.1). */
 export const SCREENS = [
   "Today",
-  "Settings",
-  "Compatibility and coverage",
-  "Local diagnostics",
-  "Backup and recovery",
   "Atlas",
-  "Imports",
-  "Party",
-  "Dungeons",
-  "Content",
   "Planner",
   "Gear",
+  "Party",
+  "Dungeons",
   "Sessions",
   "Reminders",
+  "Imports",
+  "Content",
+  "Compatibility and coverage",
+  "Settings",
+  "Local diagnostics",
+  "Backup and recovery",
 ] as const;

@@ -145,7 +145,10 @@ jobs:
           foreach ($file in @($exe, (Join-Path $installDir 'uninstall.exe'),
                   (Join-Path $installDir 'addon\Install-AzerothNavigatorAddon.ps1'),
                   (Join-Path $installDir 'addon\AzerothNavigator\AzerothNavigator.toc'),
-                  (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')) + $shortcuts) {
+                  (Join-Path $installDir 'addon\AzerothNavigator\LICENSE'),
+                  (Join-Path $installDir 'font-notices\OFL-Inter.txt'),
+                  (Join-Path $installDir 'font-notices\OFL-Cinzel.txt'),
+                  (Join-Path $installDir 'font-notices\THIRD_PARTY.md')) + $shortcuts) {
             if (-not (Test-Path -LiteralPath $file)) { throw "Missing after install: $file" }
             "installed: $file"
           }
@@ -158,6 +161,14 @@ jobs:
           "Apps & features: $displayVersion"
           $bundledLicense = Get-Content -Raw -LiteralPath (Join-Path $installDir 'addon\AzerothNavigator\LICENSE')
           if ($bundledLicense -ne (Get-Content -Raw addons/AzerothNavigator/LICENSE)) { throw 'Bundled addon license differs from source' }
+          # The OFL notices for the bundled fonts must ship byte for byte.
+          foreach ($pair in @(
+              @('apps/desktop/src/theme/fonts/OFL-Inter.txt', 'font-notices\OFL-Inter.txt'),
+              @('apps/desktop/src/theme/fonts/OFL-Cinzel.txt', 'font-notices\OFL-Cinzel.txt'),
+              @('apps/desktop/THIRD_PARTY.md', 'font-notices\THIRD_PARTY.md'))) {
+            $installed = Join-Path $installDir $pair[1]
+            if ((Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $pair[0] -Algorithm SHA256).Hash) { throw "Bundled font notice differs from source: $($pair[1])" }
+          }
 
           # Bound initialization separately from the minimum liveness observation.
           . ./scripts/windows/First-StartSmoke.ps1

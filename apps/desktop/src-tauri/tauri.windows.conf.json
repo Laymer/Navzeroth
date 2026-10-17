@@ -23,7 +23,10 @@
       "../../../crates/local-data/vendor/wowdbdefs/LICENSE.md": "local-data-notices/WOWDBDEFS-LICENSE.md",
       "../../../vendor/wowdbdefs-rs/LICENSE-MIT": "local-data-notices/WOWDBDEFS-RS-LICENSE-MIT.txt",
       "../../../vendor/wowdbdefs-rs/LICENSE-APACHE": "local-data-notices/WOWDBDEFS-RS-LICENSE-APACHE.txt",
-      "../../../crates/local-data/notices/": "local-data-notices/"
+      "../../../crates/local-data/notices/": "local-data-notices/",
+      "../src/theme/fonts/OFL-Inter.txt": "font-notices/OFL-Inter.txt",
+      "../src/theme/fonts/OFL-Cinzel.txt": "font-notices/OFL-Cinzel.txt",
+      "../THIRD_PARTY.md": "font-notices/THIRD_PARTY.md"
     },
     "windows": {
       "allowDowngrades": false,

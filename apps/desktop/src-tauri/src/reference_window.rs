@@ -56,6 +56,9 @@ fn create_hidden(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, AppErro
         .focused(false)
         .focusable(true)
         .visible(false)
+        // Night War Table ground colour (theme/tokens.css --ground), so the window is not
+        // white before the page paints. Native avoidance of the flash is unverified.
+        .background_color(tauri::window::Color(0x16, 0x18, 0x26, 0xff))
         .always_on_top(false)
         .skip_taskbar(false)
         .build()

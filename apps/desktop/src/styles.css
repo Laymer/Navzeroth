@@ -1,21 +1,16 @@
-:root { color-scheme: light dark; font-family: system-ui, sans-serif; }
-main { max-width: 48rem; margin: 0 auto; padding: 1rem; }
 main :is(h1, h2, h3, h4, h5, h6) { overflow-wrap: anywhere; }
 .demo-label {
-  border: 2px solid currentColor;
+  border: 2px solid var(--gold);
+  background: var(--surface);
+  border-radius: var(--radius);
   padding: 0.5rem 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
 
-nav[aria-label="Primary"] { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 1rem; }
-nav[aria-label="Primary"] button { box-sizing: border-box; min-width: 0; max-width: 100%; overflow-wrap: anywhere; padding: 0.35rem 0.9rem; font: inherit; border: 2px solid currentColor; background: transparent; color: inherit; cursor: pointer; }
-nav[aria-label="Primary"] button:focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
-nav[aria-label="Primary"] button[aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 0.25em; }
-
-.badge { display: inline-block; border: 1px solid currentColor; padding: 0.25rem 0.6rem; font-weight: 600; }
+.badge { display: inline-block; border: 1px solid currentColor; border-radius: var(--radius); padding: 0.25rem 0.6rem; font-weight: 600; }
 .stale-note { border-left: 4px solid currentColor; padding-left: 0.6rem; font-weight: 600; }
-.layers { border: 1px solid currentColor; margin: 1rem 0; }
+.layers { border: 1px solid var(--control-edge); margin: 1rem 0; }
 .layers label { display: block; }
 .layer-note, .map-help, .map-note, .dataset-line { font-size: 0.9rem; }
 .map-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
@@ -58,4 +53,4 @@ nav[aria-label="Primary"] button[aria-current="page"] { font-weight: 700; text-d
 .party-screen button { margin: 0.25rem 0.5rem 0.25rem 0; }
 .party-screen input, .party-screen select { margin: 0 0.5rem; max-width: 100%; }
 .party-participants { list-style: none; padding: 0; }
-.party-participants > li { border: 1px solid currentColor; padding: 0.75rem; margin: 1rem 0; }
+.party-participants > li { border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); padding: 0.75rem; margin: 1rem 0; }

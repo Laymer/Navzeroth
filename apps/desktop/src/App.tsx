@@ -20,23 +20,29 @@ import { SessionsScreen } from "./screens/SessionsScreen";
 import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
 import { DungeonsScreen } from "./screens/DungeonsScreen";
+import { Button } from "./ui";
 
 type Screen = "compatibility" | "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics" | "dungeons" | "settings";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
-  { id: "settings", label: "Settings" },
-  { id: "compatibility", label: "Compatibility and coverage" },
-  { id: "diagnostics", label: "Local diagnostics" },
-  { id: "recovery", label: "Backup and recovery" },
   { id: "atlas", label: "Atlas" },
-  { id: "imports", label: "Imports" },
-  { id: "party", label: "Party" },
-  { id: "dungeons", label: "Dungeons" },
-  { id: "content", label: "Content" },
   { id: "planner", label: "Planner" },
   { id: "gear", label: "Gear" },
+  { id: "party", label: "Party" },
+  { id: "dungeons", label: "Dungeons" },
   { id: "sessions", label: "Sessions" },
   { id: "reminders", label: "Reminders" },
+  { id: "imports", label: "Imports" },
+  { id: "content", label: "Content" },
+  { id: "compatibility", label: "Compatibility and coverage" },
+  { id: "settings", label: "Settings" },
+  { id: "diagnostics", label: "Local diagnostics" },
+  { id: "recovery", label: "Backup and recovery" },
+];
+// Two labelled groups, following plan section 12.1. Together they hold all 14 screens.
+const NAV_GROUPS: { title: string; ids: Screen[] }[] = [
+  { title: "Play", ids: ["today", "atlas", "planner", "gear", "party", "dungeons", "sessions", "reminders"] },
+  { title: "Data & system", ids: ["imports", "content", "compatibility", "settings", "diagnostics", "recovery"] },
 ];
 
 type Load =
@@ -95,10 +101,43 @@ export function App({ client }: { client: CommandClient }) {
     return () => { live = false; window.clearInterval(timer); };
   }, [client, changed]);
 
+  const navigable = load.phase === "ready" || load.phase === "error";
+  const offered = SCREENS.filter(({ id }) => load.phase === "ready" || id === "recovery" || id === "diagnostics");
   return (
-    <main>
-      <h1>Azeroth Navigator</h1>
-      <details><summary>Optional reference window</summary><ReferenceWindowControls client={client} initialTopmost={savedTopmost}/></details>
+    <main className="app-shell" data-nav={navigable ? "true" : "false"}>
+      <header className="app-header">
+        <h1>Azeroth Navigator</h1>
+        <span className="app-ornament" aria-hidden="true" />
+        <details><summary>Optional reference window</summary><ReferenceWindowControls client={client} initialTopmost={savedTopmost}/></details>
+      </header>
+      {navigable && (
+        <nav className="app-nav" aria-label="Primary">
+          {NAV_GROUPS.map(({ title, ids }) => {
+            const items = offered.filter(({ id }) => ids.includes(id));
+            if (items.length === 0) return null;
+            return (
+              <div className="app-nav-group" role="group" aria-labelledby={`nav-group-${title.charAt(0)}`} key={title}>
+                <p className="app-nav-title" id={`nav-group-${title.charAt(0)}`}>{title}</p>
+                <ul className="app-nav-list">
+                  {items.map(({ id, label }) => (
+                    <li key={id}>
+                      <button
+                        type="button"
+                        className="app-nav-button"
+                        aria-current={screen === id ? "page" : undefined}
+                        onClick={() => setScreen(id)}
+                      >
+                        {label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </nav>
+      )}
+      <div className="app-content">
       {load.phase === "loading" && <p role="status">Loading…</p>}
       {load.phase === "error" && (
         <p role="alert">
@@ -106,22 +145,8 @@ export function App({ client }: { client: CommandClient }) {
           {load.error.retryable ? " (you can retry)" : ""}
         </p>
       )}
-      {load.phase === "error" && <button type="button" onClick={changed}>Retry loading</button>}
+      {load.phase === "error" && <Button variant="primary" onClick={changed}>Retry loading</Button>}
       {((load.phase === "error" && screen !== "diagnostics") || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} />}
-      {(load.phase === "ready" || load.phase === "error") && (
-        <nav aria-label="Primary">
-          {SCREENS.filter(({id}) => load.phase === "ready" || id === "recovery" || id === "diagnostics").map(({ id, label }) => (
-            <button
-              key={id}
-              type="button"
-              aria-current={screen === id ? "page" : undefined}
-              onClick={() => setScreen(id)}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
-      )}
       {(load.phase === "ready" || load.phase === "error") && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "compatibility" && <CompatibilityPanel client={client} profileId={load.status.active_profile} refreshKey={revision} />}
       {load.phase === "ready" && screen === "today" && <><TodayScreen client={client} refreshKey={revision}/><Today status={load.status} snapshot={load.snapshot} freshness={load.freshness}/></>}
@@ -135,6 +160,7 @@ export function App({ client }: { client: CommandClient }) {
       {load.phase === "ready" && screen === "sessions" && <SessionsScreen client={client} refreshKey={revision} onChanged={changed} />}
       {load.phase === "ready" && screen === "reminders" && <ReminderScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "content" && <ContentScreen client={client} onChanged={changed} refreshKey={revision} />}
+      </div>
     </main>
   );
 }

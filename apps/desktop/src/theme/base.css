@@ -1,0 +1,125 @@
+/* Base element styling and the app shell. Uses tokens.css only; rem/em sizes. */
+html { background: var(--ground); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* No body background: the html background is the canvas, and the z-index -1 backdrop paints over it. */
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+::selection { background: var(--select-bg); color: var(--select-fg); }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+hr { border: 0; border-top: 1px solid var(--rule); }
+code, pre, kbd { font-family: ui-monospace, "Cascadia Mono", "Consolas", monospace; font-size: 0.9em; }
+pre { max-width: 100%; overflow: auto; padding: var(--space-3); background: var(--ground); border: 1px solid var(--rule); border-radius: var(--radius); }
+:where(table) { border-collapse: collapse; max-width: 100%; }
+:where(th, td) { border: 1px solid var(--rule); padding: var(--space-1) var(--space-2); text-align: start; }
+:where(th) { color: var(--gold-hi); font-weight: 600; }
+:where(dt) { color: var(--text-muted); font-weight: 600; }
+:where(dd) { margin-inline-start: 0; margin-bottom: var(--space-2); }
+
+/* Headings: engraved Cinzel for h1-h3, with the site's fading rule under h2. */
+:where(h1, h2, h3) { font-family: var(--font-display); color: var(--gold-hi); font-weight: 600; letter-spacing: 0.02em; line-height: 1.25; }
+:where(h4, h5, h6) { color: var(--gold-hi); }
+:where(main, .reference-shell) :where(h2)::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: var(--space-2);
+  background: linear-gradient(90deg, var(--gold) 0, transparent 100%);
+}
+
+/* Controls: dark steel with a bronze edge. Zero specificity, so screen styles still win. */
+:where(button) {
+  font: inherit;
+  color: var(--text);
+  background: linear-gradient(var(--surface-raised), var(--surface));
+  border: 2px solid var(--control-edge);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 1px 0 rgb(0 0 0 / 0.5);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+:where(button:hover:not(:disabled)) { border-color: var(--gold); }
+:where(button:active:not(:disabled)) { box-shadow: inset 0 0.15rem 0.35rem rgb(0 0 0 / 0.6); }
+:where(button:disabled) { cursor: not-allowed; opacity: 0.6; }
+:where(input, select, textarea) {
+  font: inherit;
+  color: var(--text);
+  background: var(--ground);
+  border: 2px solid var(--control-edge);
+  border-radius: var(--radius);
+  padding: 0.3rem 0.5rem;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+:where(input[type="checkbox"], input[type="radio"]) { accent-color: var(--gold); padding: 0; }
+:where(input, select, textarea):disabled { opacity: 0.6; }
+:where(fieldset) { border: 1px solid var(--rule); border-radius: var(--radius); background: color-mix(in srgb, var(--surface) 70%, transparent); min-width: 0; }
+:where(legend) { font-family: var(--font-display); color: var(--gold-hi); padding: 0 var(--space-2); }
+:where(details) { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--space-2) var(--space-3); background: color-mix(in srgb, var(--surface) 70%, transparent); }
+:where(summary) { cursor: pointer; color: var(--gold-hi); font-weight: 600; }
+:where(summary)::marker { color: var(--gold); }
+
+/* Backdrop host. The art itself is inline SVG (theme/Backdrop.tsx). */
+.backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: clip; background: var(--ground); }
+.backdrop svg { display: block; width: 100%; height: 100%; }
+.backdrop-ember { opacity: 0.45; animation: ember-rise 10s ease-in infinite; transform-box: fill-box; }
+@keyframes ember-rise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: 0.85; }
+  100% { transform: translate(1.5rem, -14rem); opacity: 0; }
+}
+
+/* App shell: header, then a left rail (60rem and up) or a wrapping bar, then the screen. */
+.app-shell { max-width: var(--measure); margin: 0 auto; padding: var(--space-4); box-sizing: border-box; }
+.reference-shell { padding: var(--space-4); }
+.app-header { margin-bottom: var(--space-3); }
+.app-header h1 { margin: 0; font-size: 1.75rem; color: var(--gold-hi); text-shadow: 0 0.1rem 0 rgb(0 0 0 / 0.6); overflow-wrap: anywhere; }
+.app-ornament { display: block; height: 0.5rem; margin: var(--space-2) 0 var(--space-3); background: linear-gradient(90deg, var(--gold) 0, var(--gold-shade) 40%, transparent 100%); clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
+.app-content { min-width: 0; }
+.app-nav { margin: 0 0 var(--space-4); min-width: 0; }
+.app-nav-group { margin: 0 0 var(--space-3); }
+.app-nav-title { margin: 0 0 var(--space-1); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+.app-nav-list { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.app-nav-list li { min-width: 0; max-width: 100%; display: flex; }
+.app-nav-button { box-sizing: border-box; min-width: 0; max-width: 100%; overflow-wrap: anywhere; text-align: start; padding: 0.35rem 0.9rem; border-width: 2px; }
+.app-nav-button[aria-current="page"] { font-weight: 700; background: var(--mist); border-color: var(--gold); box-shadow: inset 0 -0.25rem 0 var(--gold); }
+@media (min-width: 60rem) {
+  .app-shell[data-nav="true"] { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: var(--space-5); align-items: start; }
+  .app-shell[data-nav="true"] > .app-header { grid-column: 1 / -1; }
+  .app-nav { position: sticky; top: var(--space-4); padding: var(--space-3); border: 1px solid var(--rule); border-radius: var(--radius); background: color-mix(in srgb, var(--surface) 88%, transparent); box-shadow: inset 0 0 0 1px var(--ground), inset 0 0 0 2px var(--gold-shade); }
+  .app-nav-list { flex-direction: column; flex-wrap: nowrap; gap: var(--space-1); }
+  .app-nav-list li { width: 100%; }
+  .app-nav-button { width: 100%; }
+  .app-nav-button[aria-current="page"] { box-shadow: inset 0.3rem 0 0 var(--gold); }
+}
+.affiliation-note { color: var(--text-muted); font-size: 0.9rem; }
+
+/* Contrast, forced colours and motion for every shell and backdrop surface. */
+:root[data-contrast="high"] .backdrop { display: none; }
+:root[data-contrast="high"] :where(button, input, select, textarea) { background: var(--surface); color: var(--text); border-color: var(--text); background-image: none; box-shadow: none; }
+:root[data-contrast="high"] :where(fieldset, details, pre) , :root[data-contrast="high"] .app-nav { background: var(--surface); border: 2px solid var(--text); box-shadow: none; }
+:root[data-contrast="high"] .app-nav-button[aria-current="page"] { background: var(--surface); border-color: var(--gold); box-shadow: none; text-decoration: underline; text-underline-offset: 0.25em; }
+:root[data-contrast="high"] .app-header h1 { text-shadow: none; }
+:root[data-contrast="high"] .app-ornament { background: var(--text); }
+:root[data-contrast="high"] :where(main, .reference-shell) :where(h2)::after { background: var(--text); }
+@media (forced-colors: active) {
+  .backdrop { display: none; }
+  .app-ornament, :where(main, .reference-shell) :where(h2)::after { background: CanvasText; }
+  :where(button, input, select, textarea) { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; background-image: none; }
+  :where(fieldset, details, pre) { border: 1px solid CanvasText; background: Canvas; }
+  .app-nav { border: 1px solid CanvasText; box-shadow: none; background: Canvas; }
+  .app-nav-button[aria-current="page"] { background: Highlight; color: HighlightText; border-color: ButtonText; box-shadow: none; text-decoration: underline; forced-color-adjust: none; }
+  :focus-visible { outline-color: Highlight; }
+}
+:root[data-motion="reduced"] .backdrop-ember { animation: none; opacity: 0.4; }
+@media (prefers-reduced-motion: reduce) {
+  .backdrop-ember { animation: none; opacity: 0.4; }
+  :where(button) { transition: none; }
+}
