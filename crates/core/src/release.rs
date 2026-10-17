@@ -249,6 +249,40 @@ pub struct Evidence {
     pub sources: Vec<SourceEvidence>,
     pub packs: Vec<PackRef>,
     pub optional_deferrals: Vec<Deferral>,
+    /// Schema 2 (task V1.4): live rows that cover the declared slice.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub matrix: Vec<MatrixRow>,
+}
+/// One live acceptance run inside the slice: a class in a level band, in a
+/// zone, at a party size. Coverage is derived in code from the slice.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MatrixRow {
+    pub id: String,
+    pub class: String,
+    pub level_min: u8,
+    pub level_max: u8,
+    pub zone: String,
+    pub party_size: u8,
+    pub status: Status,
+    pub method: Method,
+    pub operator: Option<String>,
+    pub recorded_at: Option<String>,
+    pub environment: Option<String>,
+    pub artifacts: Vec<FileRef>,
+}
+/// Ten-level bands of the slice's level range (1-10, 11-20, ...).
+pub fn level_bands(slice: &Slice) -> Vec<(u8, u8)> {
+    let (min, max) = (u16::from(slice.level_min), u16::from(slice.level_max));
+    let mut bands = vec![];
+    let mut start = min.max(1);
+    while start <= max {
+        let end = ((start - 1) / 10 * 10 + 10).min(max);
+        // Both values are at most `max`, which came from a u8.
+        bands.push((start as u8, end as u8));
+        start = end + 1;
+    }
+    bands
 }
 #[derive(Debug, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -357,7 +391,9 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     let evidence: Evidence = decode(bytes)?;
-    if !matches!(evidence.schema_version, 1 | 2) {
+    if !matches!(evidence.schema_version, 1 | 2)
+        || (evidence.schema_version == 1 && !evidence.matrix.is_empty())
+    {
         return Err("Unsupported evidence version");
     }
     Ok(evidence)
@@ -456,6 +492,7 @@ fn check_limits(inventory: &Inventory, evidence: Option<&Evidence>) -> Result<()
             || e.sources.len() > MAX_UNITS
             || e.packs.len() > MAX_UNITS
             || e.optional_deferrals.len() > 4
+            || e.matrix.len() > MAX_UNITS
             || e.coverage
                 .iter()
                 .map(|c| c.included_record_ids.len())
@@ -670,6 +707,9 @@ pub fn assess(
             ));
         }
     }
+    if inventory.schema_version == 2 {
+        assess_matrix(&mut report, inventory, evidence, initial_binding);
+    }
     if evidence.coverage.len() != units.len()
         || !unique(evidence.coverage.iter().map(|u| u.unit_id.as_str()))
     {
@@ -756,6 +796,94 @@ pub fn assess(
     Ok(report)
 }
 
+/// Every class must pass in every level band, and every zone and party size of
+/// the slice must appear in a passing row. Pristine rows are pending.
+fn assess_matrix(
+    report: &mut Readiness,
+    inventory: &Inventory,
+    evidence: &Evidence,
+    initial_binding: bool,
+) {
+    let Some(slice) = &inventory.slice else {
+        return;
+    };
+    let Some(classes) = &slice.classes else {
+        report.block("Slice acceptance matrix cannot be checked until the slice classes are known");
+        return;
+    };
+    let bands = level_bands(slice);
+    if !unique(evidence.matrix.iter().map(|r| r.id.as_str())) {
+        report.block("Slice acceptance matrix rows are invalid or duplicated");
+    }
+    for row in &evidence.matrix {
+        let inside = classes.contains(&row.class)
+            && slice.zones.contains(&row.zone)
+            && slice.party_sizes.contains(&row.party_size)
+            && bands.contains(&(row.level_min, row.level_max));
+        if !inside {
+            report.block(format!(
+                "Slice acceptance row is outside the slice: {}",
+                row.id
+            ));
+            continue;
+        }
+        if row.status == Status::Unverified
+            && row.method == Method::LiveGame
+            && row.operator.is_none()
+            && row.recorded_at.is_none()
+            && row.environment.is_none()
+            && row.artifacts.is_empty()
+        {
+            report.defer(
+                PendingRequirement::Observation {
+                    check_id: row.id.clone(),
+                },
+                format!("Slice acceptance observation is pending: {}", row.id),
+            );
+            continue;
+        }
+        if initial_binding
+            || row.status != Status::Pass
+            || row.method != Method::LiveGame
+            || [&row.operator, &row.recorded_at, &row.environment]
+                .into_iter()
+                .any(|s| !s.as_deref().is_some_and(bounded_text))
+            || !files_present(&row.artifacts)
+        {
+            report.block(format!(
+                "Slice acceptance has not passed with recorded environment evidence: {}",
+                row.id
+            ));
+        }
+    }
+    // Every row is pending, failed or passed and each non-pass blocks above, so
+    // coverage counts all rows and names only combinations no row addresses.
+    let planned: Vec<_> = evidence.matrix.iter().collect();
+    for class in classes {
+        for band in &bands {
+            if !planned
+                .iter()
+                .any(|r| &r.class == class && (r.level_min, r.level_max) == *band)
+            {
+                report.block(format!(
+                    "Slice acceptance matrix lacks {class} at levels {}-{}",
+                    band.0, band.1
+                ));
+            }
+        }
+    }
+    for zone in &slice.zones {
+        if !planned.iter().any(|r| &r.zone == zone) {
+            report.block(format!("Slice acceptance matrix lacks zone {zone}"));
+        }
+    }
+    for size in &slice.party_sizes {
+        if !planned.iter().any(|r| r.party_size == *size) {
+            report.block(format!("Slice acceptance matrix lacks party size {size}"));
+        }
+    }
+}
+
 /// All evidence files are checked by the CLI without executing their contents.
 pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a FileRef> {
     inventory
@@ -779,5 +907,6 @@ pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> V
         }))
         .chain(evidence.admission_registry.iter())
         .chain(evidence.packs.iter().map(|p| &p.manifest))
+        .chain(evidence.matrix.iter().flat_map(|r| &r.artifacts))
         .collect()
 }

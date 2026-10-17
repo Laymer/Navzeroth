@@ -66,9 +66,11 @@ target is pending" (cleared by V4.2) and "Release slice classes are unknown"
 - [x] **V1.3 Signer rule** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.3.md)):
   format 2 policies and receipts let the owner hold both keys when the payload binds
   `independent_review_sha256`; format 1 keeps distinct identities.
-- [ ] **V1.4 Slice acceptance matrix** (Eng). Class × level band × zone × party size
-  sampling rows plus the typed party support matrix in
-  `release/v1/acceptance-evidence.json`.
+- [x] **V1.4 Slice acceptance matrix** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.4.md)):
+  evidence `matrix` rows; every class in every level band, and every zone and
+  party size, must pass live. Blocks once until the slice classes are known. The
+  typed party support matrix (`release_party.rs`) already exists; aligning its
+  supported sizes with the slice is left to V2.4.
 
 ## Phase 2: content (up to three parallel worktree streams)
 

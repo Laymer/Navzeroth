@@ -474,6 +474,13 @@ development evidence for the `development_unverified` label only and never satis
 
 ## Expand the rows to every mandatory inventory unit
 
+For the 1.0.0 slice (ADR 0006), the evidence `matrix` records these runs: one live
+row per slice class per level band (1-10 and 11-20), spread so that every slice
+zone (Northshire Valley, Elwynn Forest, Westfall, Redridge Mountains) and both
+party sizes (solo, duo) appear. With six classes that's at least 12 rows; the gate
+names any missing class/band, zone or party size. Use the procedures below for each
+run and record the class, band, zone and party size of the character(s) used.
+
 The original paladin/mage duo is a required integrated scenario, not a substitute
 for full-content acceptance. Freeze this case matrix with the inventory hash;
 every unit needs linked source/validation evidence and the applicable live/native

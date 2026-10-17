@@ -24,6 +24,28 @@ fn inventory_value() -> Value {
                 "reason":"Later 1.x releases widen the slice"}]})),
         "sources":[{"id":"synthetic","revision":COMMIT}]})
 }
+const CLASSES: [&str; 6] = ["warrior", "paladin", "rogue", "priest", "mage", "warlock"];
+const ZONES: [&str; 4] = [
+    "northshire_valley",
+    "elwynn_forest",
+    "westfall",
+    "redridge_mountains",
+];
+/// 6 classes x 2 bands, cycling zones and party sizes so each appears.
+fn matrix() -> Vec<Value> {
+    let mut rows = vec![];
+    for (i, class) in CLASSES.iter().enumerate() {
+        for (j, (min, max)) in [(1, 10), (11, 20)].into_iter().enumerate() {
+            let n = i * 2 + j;
+            rows.push(json!({"id":format!("SLICE-{class}-{min}"),"class":class,
+                "level_min":min,"level_max":max,"zone":ZONES[n % 4],"party_size":n % 2 + 1,
+                "status":"pass","method":"live_game","operator":"synthetic-test",
+                "recorded_at":"2026-10-17T12:00:00Z",
+                "environment":"synthetic unit-test record, not actual acceptance","artifacts":[file()]}));
+        }
+    }
+    rows
+}
 fn evidence_value() -> Value {
     let checks: Vec<_> = LIVE_CHECKS
         .into_iter()
@@ -48,7 +70,8 @@ fn evidence_value() -> Value {
             "origin_build":null,"redistribution":"permitted","files":[file()],
             "license_files":[file()],"attribution_files":[file()],"permission_evidence":[file()],
             "target_validation":"pass","target_evidence":[file()]}],
-        "packs":[{"manifest":file(),"dataset_revisions":["synthetic-r1"]}],"optional_deferrals":[]})
+        "packs":[{"manifest":file(),"dataset_revisions":["synthetic-r1"]}],"optional_deferrals":[],
+        "matrix":matrix()})
 }
 fn decode(value: &Value) -> Result<Inventory, &'static str> {
     decode_inventory(&serde_json::to_vec(value).unwrap())
@@ -250,6 +273,7 @@ fn upgrade_keeps_units_and_sources_and_makes_the_target_pending() {
 fn evidence_upgrade_rebinds_the_inventory_hash() {
     let mut value = evidence_value();
     value["schema_version"] = json!(1);
+    value.as_object_mut().unwrap().remove("matrix");
     value["target"] = serde_json::to_value(Target::forever_70374()).unwrap();
     let v1 = decode_evidence(&serde_json::to_vec(&value).unwrap()).unwrap();
     let hash: azeroth_core::types::Sha256Hex = "c".repeat(64).try_into().unwrap();
@@ -257,4 +281,147 @@ fn evidence_upgrade_rebinds_the_inventory_hash() {
     assert_eq!((v2.schema_version, v2.target.clone()), (2, None));
     assert_eq!(v2.inventory_sha256, hash);
     assert!(upgrade_evidence(v2, hash).is_err());
+}
+
+fn evidence(value: &Value) -> Evidence {
+    decode_evidence(&serde_json::to_vec(value).unwrap()).unwrap()
+}
+
+#[test]
+fn level_bands_split_the_slice_at_ten_level_boundaries() {
+    let mut slice: Slice = serde_json::from_value(slice()).unwrap();
+    assert_eq!(level_bands(&slice), [(1, 10), (11, 20)]);
+    (slice.level_min, slice.level_max) = (5, 23);
+    assert_eq!(level_bands(&slice), [(5, 10), (11, 20), (21, 23)]);
+    (slice.level_min, slice.level_max) = (60, 60);
+    assert_eq!(level_bands(&slice), [(60, 60)]);
+}
+
+#[test]
+fn a_full_passing_matrix_adds_no_blocker() {
+    let (i, e) = complete();
+    assert_eq!(e.matrix.len(), 12);
+    assert!(
+        !check(&i, &e)
+            .blockers
+            .iter()
+            .any(|b| b.contains("Slice acceptance"))
+    );
+}
+
+#[test]
+fn every_class_band_zone_and_party_size_must_be_covered() {
+    let (i, _) = complete();
+    let mut value = evidence_value();
+    value["matrix"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|r| r["id"] != "SLICE-mage-11");
+    let report = check(&i, &evidence(&value));
+    assert!(has(
+        &report,
+        "Slice acceptance matrix lacks mage at levels 11-20"
+    ));
+
+    let mut value = evidence_value();
+    for row in value["matrix"].as_array_mut().unwrap() {
+        row["zone"] = json!("elwynn_forest");
+        row["party_size"] = json!(1);
+    }
+    let report = check(&i, &evidence(&value));
+    for zone in ["northshire_valley", "westfall", "redridge_mountains"] {
+        assert!(has(&report, &format!("lacks zone {zone}")), "{zone}");
+    }
+    assert!(has(&report, "lacks party size 2"));
+    assert!(!has(&report, "lacks zone elwynn_forest"));
+
+    let mut value = evidence_value();
+    value["matrix"] = json!([]);
+    let report = check(&i, &evidence(&value));
+    assert_eq!(
+        report
+            .blockers
+            .iter()
+            .filter(|b| b.contains("lacks"))
+            .count(),
+        12 + 4 + 2
+    );
+}
+
+#[test]
+fn rows_outside_the_slice_or_duplicated_block() {
+    let (i, _) = complete();
+    for (field, bad) in [
+        ("class", json!("druid")),
+        ("zone", json!("duskwood")),
+        ("party_size", json!(3)),
+        ("level_max", json!(9)),
+    ] {
+        let mut value = evidence_value();
+        value["matrix"][0][field] = bad;
+        let report = check(&i, &evidence(&value));
+        assert!(
+            has(
+                &report,
+                "Slice acceptance row is outside the slice: SLICE-warrior-1"
+            ),
+            "{field}"
+        );
+    }
+    let mut value = evidence_value();
+    let duplicate = value["matrix"][0].clone();
+    value["matrix"].as_array_mut().unwrap().push(duplicate);
+    assert!(has(
+        &check(&i, &evidence(&value)),
+        "rows are invalid or duplicated"
+    ));
+}
+
+#[test]
+fn pristine_rows_are_pending_and_partial_or_automated_claims_block() {
+    let (i, _) = complete();
+    let mut value = evidence_value();
+    value["matrix"][0] = json!({"id":"SLICE-warrior-1","class":"warrior","level_min":1,"level_max":10,
+        "zone":"northshire_valley","party_size":1,"status":"unverified","method":"live_game",
+        "operator":null,"recorded_at":null,"environment":null,"artifacts":[]});
+    let report = check(&i, &evidence(&value));
+    assert!(has(
+        &report,
+        "Slice acceptance observation is pending: SLICE-warrior-1"
+    ));
+    assert!(!report.stable_ready);
+    assert!(report.pending.iter().any(|p| matches!(p,
+        PendingRequirement::Observation { check_id } if check_id == "SLICE-warrior-1")));
+    for (field, bad) in [
+        ("method", json!("automated")),
+        ("status", json!("fail")),
+        ("operator", Value::Null),
+        ("artifacts", json!([])),
+    ] {
+        let mut value = evidence_value();
+        value["matrix"][1][field] = bad;
+        let report = check(&i, &evidence(&value));
+        assert!(
+            has(
+                &report,
+                "Slice acceptance has not passed with recorded environment evidence: SLICE-warrior-11"
+            ),
+            "{field}"
+        );
+    }
+}
+
+#[test]
+fn unknown_classes_block_the_matrix_and_schema_1_cannot_carry_one() {
+    let mut inventory = inventory_value();
+    inventory["slice"]["classes"] = Value::Null;
+    let (_, e) = complete();
+    let report = check(&decode(&inventory).unwrap(), &e);
+    assert!(has(
+        &report,
+        "matrix cannot be checked until the slice classes are known"
+    ));
+    let mut value = evidence_value();
+    value["schema_version"] = json!(1);
+    assert!(decode_evidence(&serde_json::to_vec(&value).unwrap()).is_err());
 }
