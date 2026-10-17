@@ -16,6 +16,8 @@ static uint32_t read_status(DWORD error) {
     if(error == ERROR_NOT_SUPPORTED || error == ERROR_BAD_FORMAT) return 3;
     if(error == ERROR_FILE_CORRUPT) return 4;
     if(error == ERROR_NOT_ENOUGH_MEMORY) return 5;
+    // Reached from the open stage (BLTE header reads); read-stage truncation is
+    // zero-filled by the local stream and fails the strict frame MD5 instead.
     if(error == ERROR_HANDLE_EOF || error == ERROR_FILE_INCOMPLETE) return 7;
     return 6; // Inaccessible/unrecognized failure, not an assertion of corruption.
 }

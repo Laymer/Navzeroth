@@ -63,10 +63,17 @@ pub(crate) enum ReadFailure {
     /// CascLib reported `ERROR_FILE_CORRUPT`: a frame checksum mismatch, a
     /// malformed BLTE/encryption header or failed decompression.
     Invalid,
-    /// The archive reported end-of-data or a missing file part before the
-    /// declared content size (local data incomplete, not asserted corrupt).
+    /// End-of-data or a missing file part reported while opening the file
+    /// (reading BLTE headers). Open stage only: local data streams zero-fill a
+    /// truncated span at read time, which then fails the strict frame MD5 and is
+    /// reported as `Invalid`. On Windows code 1006 is also the OS
+    /// `ERROR_FILE_INVALID`, so that OS error would land here too.
     Truncated,
-    /// The read returned fewer bytes than declared with no recorded cause.
+    /// The read returned fewer bytes than declared with no recorded cause. Most
+    /// likely a raw data read failure after verified frames (for example an I/O or
+    /// sharing error while the game runs): CascLib's frame reader overwrites such
+    /// errors with success. Not encryption; mapped to the unavailable/encrypted
+    /// disposition only because there is no unknown disposition.
     ShortRead,
     Capacity,
 }

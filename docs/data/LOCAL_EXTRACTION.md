@@ -156,14 +156,27 @@ zero-filled. Catalog disposition and reason per cause:
 | Cause | Disposition | Reason |
 |---|---|---|
 | No local file/name entry | `not_locally_present` | `not_locally_present` |
-| End-of-data or missing file part before the declared size | `not_locally_present` | `archive_span_incomplete` |
+| End-of-data or missing file part while opening the file (BLTE header reads; open stage only) | `not_locally_present` | `archive_span_incomplete` |
 | First frame encrypted with a key that is not available | `unavailable_encrypted` | `unavailable_encrypted` |
 | Verified frames read, then a frame encrypted with an unavailable key | `unavailable_encrypted` | `unavailable_encrypted_frames` |
 | Unsupported BLTE/encryption encoding | `unavailable_encrypted` | `unsupported_archive_encoding_not_retained` |
 | Unrecognized native failure | `unavailable_encrypted` | `local_archive_read_unavailable` |
-| Short read with no recorded cause | `unavailable_encrypted` | `archive_short_read_unexplained` |
+| Short read with no recorded cause: most likely a raw data read failure after verified frames (for example an I/O or sharing error while the game runs), not encryption | `unavailable_encrypted` (used only because there is no unknown disposition) | `archive_short_read_unexplained` |
 | `ERROR_FILE_CORRUPT`: frame checksum mismatch, malformed BLTE/encryption header or failed decompression | `invalid_corrupt` | `archive_verification_failed` |
 | Logical size or allocation above the table limit | `excluded_by_policy` | `logical_file_or_allocation_exceeds_capacity_not_retained` |
+
+Truncation found while reading (rather than opening) is not reported as
+incomplete: local data streams zero-fill a short span, which then fails the
+strict frame MD5 and is reported as `archive_verification_failed`. That is
+conservative, never silent. On Windows, status 1006 is also the OS
+`ERROR_FILE_INVALID`, so a genuine OS error 1006 at open would be reported as
+`archive_span_incomplete`.
+
+"Strict checksums" means CascLib's `CASC_STRICT_DATA_CHECK`: each BLTE frame's
+encoded bytes are checked against the frame table's MD5. There is no whole-file
+content-key check. Plain and raw-ZLIB spans have no frame hashes and are not
+hashed. CascLib zero-pads a `Z` frame that inflates to less than its declared size.
+These limits predate V2.2c.
 
 Only `archive_verification_failed` (and the decoder's `table_hash_mismatch`)
 assert corruption. Encryption and incomplete local data are gaps. Until task
