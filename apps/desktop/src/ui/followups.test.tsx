@@ -111,12 +111,26 @@ describe("HelpTip viewport clamp", () => {
   });
 
   it("stops listening for resize once closed", () => {
+    const add = vi.spyOn(window, "addEventListener");
     const remove = vi.spyOn(window, "removeEventListener");
-    mockLayout(200, { value: 320 });
+    const viewport = { value: 320 };
+    mockLayout(200, viewport);
     render(<HelpTip>Closing.</HelpTip>);
     const trigger = screen.getByRole("button", { name: "Help" });
+    const bubble = screen.getByText("Closing.");
     fireEvent.click(trigger);
+    const added = add.mock.calls.filter(([type]) => type === "resize").map(([, listener]) => listener);
+    expect(added).toHaveLength(1);
     fireEvent.click(trigger);
-    expect(remove.mock.calls.some(([type]) => type === "resize")).toBe(true);
+    expect(bubble).not.toBeVisible();
+    // The very listener that was added is the one removed, not merely some resize listener.
+    expect(remove.mock.calls.filter(([type]) => type === "resize").map(([, listener]) => listener)).toEqual(added);
+    // And a later resize no longer measures the closed bubble.
+    const rect = vi.mocked(Element.prototype.getBoundingClientRect);
+    rect.mockClear();
+    viewport.value = 200;
+    act(() => { window.dispatchEvent(new Event("resize")); });
+    expect(rect.mock.contexts.filter((el) => el === bubble)).toHaveLength(0);
+    expect(bubble.style.transform).toBe("");
   });
 });
