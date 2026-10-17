@@ -148,6 +148,17 @@ No website retrieval, scraping or provider correspondence is part of the program
 Task V0.6 (grant intake) and V2.1 (granted-source adapters) are dropped. §4 no
 longer applies; no grant evidence was admitted or stored.
 
+### 12. Amendment 2026-10-17: build 70450 as development input
+
+The owner's installed beta client updated from 70425 to `1.60.1.70450` (installation
+metadata read on 2026-10-17; Blizzard's public version list reports the same for
+`wow_classic_beta`). On the owner's request, task V2.2b admits 70450 for local
+extraction and projection on the same terms as 70425 (ADR 0005 §3): development
+input only, never a release target, never relabelled, `target_tuple_matches` false,
+no nearest-build fallback. The admitted local-data builds are listed once in
+`ADMITTED_BUILDS` (`crates/local-data/src/metadata.rs`). The in-game addon does not
+admit 70450 yet: its admission waits for the interface number read from the client.
+
 ## Consequences
 
 - The fingerprint invalidates all LIVE/WIN evidence on any production change, so

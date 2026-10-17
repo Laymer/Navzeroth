@@ -14,6 +14,26 @@ fn input(rows: &str) -> Vec<u8> {
 }
 
 #[test]
+fn selected_active_product_preserves_70450_exactly_without_nearest_build_mapping() {
+    // The updated beta install: its inactive 70425 row is never selected or merged.
+    let text = input(&format!(
+        "{}\n{}",
+        row(70425).replace("|1|", "|0|"),
+        row(70450)
+    ));
+    let metadata = inspect_build_info(&text, "wow_classic_beta").unwrap();
+    assert_eq!(metadata.build, 70450);
+    assert_eq!(metadata.version, "1.60.1.70450");
+    // Metadata parsing identifies the input build only; it neither admits nor
+    // maps it. An unknown build such as 70451 parses as itself.
+    let unknown = inspect_build_info(&input(&row(70451)), "wow_classic_beta").unwrap();
+    assert_eq!(
+        (unknown.build, unknown.version.as_str()),
+        (70451, "1.60.1.70451")
+    );
+}
+
+#[test]
 fn selected_active_product_preserves_70425_and_does_not_relabel_target() {
     let text = input(&format!(
         "{}\n{}",

@@ -74,7 +74,7 @@ fn main() {
     let inventory: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
     assert_eq!(
         inventory["revision"],
-        "996e53f029c0213b223aecb94d754f6b4b9efb49"
+        "b9a63096cdd99b26967f17f9515377ae62cadfd7"
     );
     let mut definitions = String::from("pub(crate) static DEFINITIONS: &[(&str, &str)] = &[\n");
     for entry in inventory["files"].as_array().unwrap() {

@@ -175,13 +175,22 @@ fn fixture(
 
 #[test]
 fn retained_definitions_support_exact_large_builds_without_remapping() {
+    // 70450 is admitted alongside 70374/70425 as development input only.
+    assert_eq!(metadata::ADMITTED_BUILDS, [70374, 70425, 70450]);
     for (table, layout) in [("Map", 0xd43afac3)] {
-        for build in [70374, 70425] {
+        for &build in metadata::ADMITTED_BUILDS {
             let d = metadata::definition(table, build, layout).unwrap();
             assert!(!d.layout.entries.is_empty());
         }
-        assert!(metadata::definition(table, 70373, layout).is_err());
+        // Neighbouring and unknown builds are refused, never mapped to the nearest.
+        for build in [70373, 70426, 70449, 70451, 0, u32::MAX] {
+            assert_eq!(
+                metadata::definition(table, build, layout).err(),
+                Some("unsupported_build")
+            );
+        }
         assert!(metadata::definition(table, 70425, 0).is_err());
+        assert!(metadata::definition(table, 70450, 0).is_err());
     }
     assert!(metadata::candidates().len() > 1024);
 }
