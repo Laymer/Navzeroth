@@ -111,7 +111,9 @@ the slice classes are known". Re-run it before trusting any count here.
 
 ## Phase 4: after launch (4 Nov 2026)
 
-- [ ] **V4.1 Live build tuple** (Owner) from `.build.info` and in game.
+- [ ] **V4.1 Live build tuple** (Owner) from `.build.info` and in game. A daily
+  [build watch](docs/compatibility/BUILD_WATCH.md) opens an issue when Blizzard's public
+  version list shows a new Forever build or product code.
 - [ ] **V4.2 Freeze the target** (Eng). Manifests, delivery policy, addon/edition
   data; re-extract; re-fetch snapshots; rebuild and verify packs; review deltas.
   Never relabel 70425 artifacts.
