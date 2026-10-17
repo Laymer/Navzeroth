@@ -26,6 +26,8 @@ test("local dungeon reference keeps stale members and unknown source evidence ex
   await expect(page.getByLabel("Local preparation package JSON", { exact: true })).not.toBeVisible();
   await page.getByLabel("Preparation members", { exact: true }).selectOption("party");
   await page.getByText("Advanced local reference editor",{exact:true}).click();
+  // The earlier not.toBeVisible() used this same locator; it must match once the editor opens (G6 O8).
+  await expect(page.getByLabel("Local preparation package JSON", { exact: true })).toBeVisible();
   await page.getByRole("button",{name:"Load synthetic preparation reference"}).click();
   await page.getByRole("button",{name:"Inspect preparation gaps"}).click();
   await expect(page.getByText(/Declared group formation: 0 to 0 ms/)).toBeVisible();

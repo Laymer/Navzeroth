@@ -6,6 +6,18 @@ import snapshot from "../../../fixtures/contracts/v1/character-snapshot.json" wi
 // screens that nest panels still do not overflow at 320 px and 200 % text.
 const SYNTHETIC_DATA_SCREENS = ["Compatibility and coverage", "Content"] as const;
 const DEMO_PLAY_SCREENS = ["Atlas", "Gear", "Planner", "Sessions", "Dungeons"] as const;
+// G6 O1: which of these screens render a Panel inside a Panel with this data. A screen listed as
+// nesting must still nest, so the flat-panel assertions below cannot pass vacuously; a screen
+// listed as not nesting must not start to without this list (and its assertions) being revisited.
+const NESTS: Record<(typeof SYNTHETIC_DATA_SCREENS)[number] | (typeof DEMO_PLAY_SCREENS)[number], boolean> = {
+  "Compatibility and coverage": true,
+  Content: true,
+  Atlas: false,
+  Gear: false,
+  Planner: false,
+  Sessions: false,
+  Dungeons: false,
+};
 
 async function measure(page: import("@playwright/test").Page) {
   return page.evaluate(() => {
@@ -41,6 +53,8 @@ for (const screen of SYNTHETIC_DATA_SCREENS) {
     await expect(page.getByRole("main").getByRole("heading").first()).toBeVisible();
     await page.waitForTimeout(200);
     const result = await measure(page);
+    if (NESTS[screen]) expect(result.nested.length, `expected a Panel nested in a Panel on ${screen}`).toBeGreaterThan(0);
+    else expect(result.nested, `${screen} now nests panels; update NESTS`).toHaveLength(0);
     expect(result.scroll).toBeLessThanOrEqual(result.client);
     for (const panel of result.nested) {
       expect(panel.left).toBe("0px");
@@ -59,6 +73,8 @@ for (const screen of DEMO_PLAY_SCREENS) {
     await expect(page.getByRole("main").getByRole("heading").first()).toBeVisible();
     await page.waitForTimeout(200);
     const result = await measure(page);
+    if (NESTS[screen]) expect(result.nested.length, `expected a Panel nested in a Panel on ${screen}`).toBeGreaterThan(0);
+    else expect(result.nested, `${screen} now nests panels; update NESTS`).toHaveLength(0);
     expect(result.scroll).toBeLessThanOrEqual(result.client);
     for (const panel of result.nested) {
       expect(panel.left).toBe("0px");

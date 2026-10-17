@@ -39,8 +39,8 @@ export function CalibrationPanel({client, profile, detail, refreshKey, disabled}
       <Field label="Baseline source or assumption" help="Say where the baseline came from, for example a manual guess, so the comparison stays honest.">{(c) => <input {...c} value={source} maxLength={256} onChange={e=>setSource(e.target.value)} />}</Field>
       {detail && <><Field label="Terminal observed quest ID" help="The quest turn-in the addon recorded at the end of the session. It is saved as entered; when sessions are compared, a session whose last quest turn-in differs from this ID is excluded.">{(c) => <input {...c} value={quest} maxLength={128} onChange={e=>setQuest(e.target.value)} />}</Field>
         <label><input type="checkbox" checked={complete} onChange={e=>setComplete(e.target.checked)} />I declare this whole session covers the completed route/stage under these conditions</label>
-        <Button variant="primary" onClick={()=>void run(true)}>Save association for {detail.analytics.summary.session}</Button></>}
-      <Button onClick={()=>void run(false)}>Compare retained sessions</Button>
+        <Button onClick={()=>void run(true)}>Save association for {detail.analytics.summary.session}</Button></>}
+      <Button variant="primary" onClick={()=>void run(false)}>Compare retained sessions</Button>
     </fieldset>
     {message && <p role="status">{message}</p>}
     {report && <><p>{report.fixture ? "SYNTHETIC — engineering example. " : ""}Complete comparable samples: {report.sample_count}. Uncertainty: {report.uncertainty.replaceAll("_", " ")}. Conditional blended estimate: {(report.blended_ms/1000).toFixed(1)} s.</p>

@@ -26,3 +26,11 @@ test("a previous profile response cannot restore a comparison",async()=>{
   await waitFor(()=>expect(screen.getByRole("button",{name:"Compare retained sessions"})).toBeEnabled());
   expect(screen.queryByText(/Complete comparable samples:/)).not.toBeInTheDocument();
 });
+test("comparing is the one primary action; saving an association is secondary (G5a #13)",()=>{
+  const adapter:CommandAdapter={invoke:async()=>report as never};
+  const detail={analytics:{summary:{session:"session-a"}}} as never;
+  const {container}=render(<CalibrationPanel client={createClient(adapter)} profile="a" detail={detail} refreshKey={0} disabled={false}/>);
+  expect(container.querySelectorAll(".ui-button--primary")).toHaveLength(1);
+  expect(screen.getByRole("button",{name:"Compare retained sessions"})).toHaveClass("ui-button--primary");
+  expect(screen.getByRole("button",{name:"Save association for session-a"})).toHaveClass("ui-button--secondary");
+});
