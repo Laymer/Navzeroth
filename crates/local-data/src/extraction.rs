@@ -574,7 +574,11 @@ const PARTIAL_SUFFIX: &str = "partial_plain_frames";
 
 /// A partially read table that was not decoded keeps its encrypted ranges as
 /// catalog gaps, and its reason says that only plain frames were read.
-fn record_undecoded_partial(entry: &mut TableInventory, file: &PartialFile, gaps: &mut Vec<String>) {
+fn record_undecoded_partial(
+    entry: &mut TableInventory,
+    file: &PartialFile,
+    gaps: &mut Vec<String>,
+) {
     if entry.reason != UNAVAILABLE_METADATA {
         entry.reason = format!("{}:{PARTIAL_SUFFIX}", entry.reason);
     }
