@@ -87,8 +87,9 @@ extractor, so unrelated extractor edits don't invalidate projections.
 mapping's meaning changes.
 
 Domains and sources (each pinned to the one layout WoWDBDefs lists for
-70374/70425; any other layout is a `projection_layout_unsupported` gap; no
-70374 catalog has been projected yet):
+70374/70425/70450, which is the same layout block for all three builds; any
+other layout is a `projection_layout_unsupported` gap; no 70374 or 70450
+catalog has been projected yet):
 
 | Domain | Tables | Records |
 | --- | --- | --- |
@@ -177,6 +178,24 @@ The pinned wowdbdefs-rs0.1.0 parser needed a retained local patch for u32 builds
 EOF layout retention and complete build/layout list parsing. Original changed
 files are preserved. Definitions without supported syntax/layout stay unsupported.
 Original metadata, licences and per-file hashes remain separate from client data.
+
+### Admitted builds and pinned metadata
+
+Extraction and DBD selection admit exactly `1.60.1.70374`, `1.60.1.70425` and
+`1.60.1.70450` (`metadata::ADMITTED_BUILDS`). All three are development inputs:
+none is the 1.0.0 release target, artifacts keep their exact build and are never
+relabelled, and any other build (for example 70449 or 70451) is refused with no
+nearest-build fallback. 70450 was admitted on 2026-10-17 after the owner's
+`wow_classic_beta` installation updated from 70425 (task V2.2b).
+
+WoWDBDefs is vendored at upstream `b9a63096cdd99b26967f17f9515377ae62cadfd7`
+(2026-10-16) with scope "manifest plus original definitions explicitly listing
+1.60.1.70374, 1.60.1.70425 or 1.60.1.70450": the manifest, README, licence and
+1,161 definitions, each bound by bytes and SHA-256 in
+`crates/local-data/vendor/wowdbdefs/UPSTREAM.json`. The fetch was a one-time
+maintenance step; builds and tests never access the network. Re-vendoring changes
+`METADATA_SHA256`, so catalogs sealed under the earlier revision no longer verify
+and must be re-extracted; that is the intended identity behaviour.
 
 Semantic catalogs omit run IDs, absolute paths, timestamps, presets and incidental
 indexes. They bind raw/decoded object hashes, source fingerprints, build/locales,

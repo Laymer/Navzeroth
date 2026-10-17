@@ -712,3 +712,180 @@ fn item_inventory_type_never_overrides_an_unknown_or_refused_item_sparse_value()
     // Item 14 exists only in Item, whose value fills the absent one.
     assert_eq!(items[&14].inventory_type, Fact::Known(0));
 }
+
+/// Every field the projector reads, with its WoWDBDefs column type and array
+/// length (`None` = scalar). Kept in step with `src/projection.rs` by hand.
+type FieldPin = (&'static str, char, Option<usize>);
+const PROJECTED_FIELDS: &[(&str, &[FieldPin])] = &[
+    (
+        "ItemSparse",
+        &[
+            ("Display_lang", 's', None),
+            ("OverallQualityID", 'i', None),
+            ("ItemLevel", 'i', None),
+            ("RequiredLevel", 'i', None),
+            ("InventoryType", 'i', None),
+            ("AllowableClass", 'i', None),
+            ("AllowableRace", 'i', Some(2)),
+            ("RequiredSkill", 'i', None),
+            ("RequiredSkillRank", 'i', None),
+            ("Bonding", 'i', None),
+            ("StatModifier_bonusStat", 'i', Some(10)),
+            ("StatPercentEditor", 'i', Some(10)),
+        ],
+    ),
+    (
+        "Item",
+        &[
+            ("ClassID", 'i', None),
+            ("SubclassID", 'i', None),
+            ("InventoryType", 'i', None),
+        ],
+    ),
+    (
+        "Map",
+        &[
+            ("MapName_lang", 's', None),
+            ("Directory", 's', None),
+            ("MapType", 'i', None),
+            ("InstanceType", 'i', None),
+            ("ExpansionID", 'i', None),
+            ("ParentMapID", 'i', None),
+            ("CosmeticParentMapID", 'i', None),
+            ("AreaTableID", 'i', None),
+            ("MaxPlayers", 'i', None),
+        ],
+    ),
+    (
+        "UiMap",
+        &[
+            ("Name_lang", 's', None),
+            ("ParentUiMapID", 'i', None),
+            ("Type", 'i', None),
+            ("System", 'i', None),
+            ("Flags", 'i', None),
+        ],
+    ),
+    (
+        "UiMapAssignment",
+        &[
+            ("UiMapID", 'i', None),
+            ("MapID", 'i', None),
+            ("AreaID", 'i', None),
+            ("OrderIndex", 'i', None),
+            ("WMODoodadPlacementID", 'i', None),
+            ("WMOGroupID", 'i', None),
+            ("UiMin", 'f', Some(2)),
+            ("UiMax", 'f', Some(2)),
+            ("Region", 'f', Some(6)),
+        ],
+    ),
+    (
+        "TaxiNodes",
+        &[
+            ("Name_lang", 's', None),
+            ("ContinentID", 'i', None),
+            ("Pos", 'f', Some(3)),
+            ("MapOffset", 'f', Some(2)),
+            ("FlightMapOffset", 'f', Some(2)),
+            ("Flags", 'i', None),
+            ("ConditionID", 'i', None),
+            ("VisibilityConditionID", 'i', None),
+            ("CharacterBitNumber", 'i', None),
+            ("MountCreatureID", 'i', Some(2)),
+        ],
+    ),
+    (
+        "TaxiPath",
+        &[
+            ("FromTaxiNode", 'i', None),
+            ("ToTaxiNode", 'i', None),
+            ("Cost", 'i', None),
+        ],
+    ),
+    (
+        "TaxiPathNode",
+        &[
+            ("PathID", 'i', None),
+            ("NodeIndex", 'i', None),
+            ("ContinentID", 'i', None),
+            ("Loc", 'f', Some(3)),
+            ("Flags", 'i', None),
+            ("Delay", 'i', None),
+        ],
+    ),
+    (
+        "ChrClasses",
+        &[
+            ("Name_lang", 's', None),
+            ("Filename", 's', None),
+            ("Flags", 'i', None),
+            ("RolesMask", 'i', None),
+            ("DisplayPower", 'i', None),
+            ("PrimaryStatPriority", 'i', None),
+            ("ArmorTypeMask", 'i', None),
+            ("StartingLevel", 'i', None),
+            ("DefaultSpec", 'i', None),
+            ("SpellClassSet", 'i', None),
+        ],
+    ),
+    (
+        "ChrRaces",
+        &[
+            ("Name_lang", 's', None),
+            ("ClientPrefix", 's', None),
+            ("ClientFileString", 's', None),
+            ("FactionID", 'i', None),
+            ("Alliance", 'i', None),
+            ("PlayableRaceBit", 'i', None),
+            ("DefaultClassID", 'i', None),
+            ("StartingLevel", 'i', None),
+            ("Flags", 'i', None),
+        ],
+    ),
+];
+
+#[test]
+fn pinned_layouts_hold_every_projected_field_for_every_admitted_build() {
+    use azeroth_local_data::metadata::{self, ADMITTED_BUILDS};
+    use wowdbdefs_rs::RawType;
+    assert_eq!(ADMITTED_BUILDS, [70374, 70425, 70450]);
+    assert_eq!(
+        SOURCES.iter().map(|(_, t, _)| *t).collect::<Vec<_>>(),
+        PROJECTED_FIELDS.iter().map(|(t, _)| *t).collect::<Vec<_>>()
+    );
+    for ((_, table, layouts), (_, fields)) in SOURCES.iter().zip(PROJECTED_FIELDS) {
+        // One pinned layout per table: WoWDBDefs lists the same layout block for
+        // 70374, 70425 and 70450, so 70450 needs no separate pin.
+        assert_eq!(layouts.len(), 1, "{table}");
+        let layout = u32::from_str_radix(layouts[0], 16).unwrap();
+        let mut entries_by_build = Vec::new();
+        for &build in ADMITTED_BUILDS {
+            let definition = metadata::definition(table, build, layout)
+                .unwrap_or_else(|e| panic!("{table} {build}: {e}"));
+            for (field, kind, length) in *fields {
+                let entry = definition
+                    .layout
+                    .entries
+                    .iter()
+                    .find(|e| e.name == *field)
+                    .unwrap_or_else(|| panic!("{table}.{field} missing for {build}"));
+                assert_eq!(entry.array_size, *length, "{table}.{field} {build}");
+                let actual = match definition.file.columns[*field].ty {
+                    RawType::Int => 'i',
+                    RawType::Float => 'f',
+                    RawType::String | RawType::LocString => 's',
+                };
+                assert_eq!(actual, *kind, "{table}.{field} {build}");
+            }
+            entries_by_build.push(definition.layout.entries);
+        }
+        // Identical entries for every admitted build: the same decoded meaning.
+        assert!(entries_by_build.windows(2).all(|w| w[0] == w[1]), "{table}");
+        // An unknown neighbouring build is refused, not mapped to this layout.
+        assert_eq!(
+            metadata::definition(table, 70451, layout).err(),
+            Some("unsupported_build")
+        );
+    }
+}

@@ -266,7 +266,7 @@ pub(crate) fn extract(
     }
     let _installation_lock = installation_lock(&root, &destination)?;
     let inspection = inspect(&root, &request.product)?;
-    if !matches!(inspection.metadata.build, 70374 | 70425) {
+    if !metadata::ADMITTED_BUILDS.contains(&inspection.metadata.build) {
         return Err("Build unsupported; no nearest-build fallback");
     }
     let candidates = metadata::candidates();

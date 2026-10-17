@@ -97,11 +97,12 @@ Pin and review, retaining originals/hashes/licences/notices:
   download callbacks. Audit unexpected writes/network fallbacks. Private RAII
   handles; serialize native calls unless thread safety is demonstrated. Restrict
   unsafe to documented FFI. No second production archive backend initially.
-- [WoWDBDefs](https://github.com/wowdev/WoWDBDefs/blob/996e53f029c0213b223aecb94d754f6b4b9efb49/LICENSE.md),
-  revision `996e53f029c0213b223aecb94d754f6b4b9efb49`; distinguish share-alike
+- [WoWDBDefs](https://github.com/wowdev/WoWDBDefs/blob/b9a63096cdd99b26967f17f9515377ae62cadfd7/LICENSE.md),
+  revision `b9a63096cdd99b26967f17f9515377ae62cadfd7` (task V2.2b, 2026-10-17;
+  previously `996e53f029c0213b223aecb94d754f6b4b9efb49`); distinguish share-alike
   definitions from BSD code. `wowdbdefs-rs =0.1.0` behind a bounded adapter.
   Validate actual syntax against retained definitions. Map, ItemSparse, SpellName,
-  UiMap and TaxiNodes listing70374/70425 does not prove all table support.
+  UiMap and TaxiNodes listing 70374/70425/70450 does not prove all table support.
 - [DBCD](https://github.com/wowdev/DBCD/tree/e732093f8864240fc5884bd1bba6b02f3dfc0d56),
   revision `e732093f8864240fc5884bd1bba6b02f3dfc0d56`, development differential
   oracle only; no production .NET dependency.
