@@ -2,7 +2,7 @@
 //! filesystem timestamps, worker count and run IDs. No gameplay activation here.
 use crate::{
     Result, Stamp, checked_path, hash, inspect, metadata,
-    native::{Archive, ReadFailure},
+    native::{Archive, Logical, ReadFailure},
     read_file, stamp, tables,
     worker::ExtractionRequest,
 };
@@ -20,6 +20,9 @@ use std::{
 const MAX_TABLE_BYTES: usize = 64 * 1024 * 1024;
 pub const MAX_DECODED_BYTES: usize = 256 * 1024 * 1024;
 const MAX_MANIFEST_BYTES: usize = 16 * 1024 * 1024;
+/// A partially available file whose header, field, pallet, common or section
+/// directory bytes lie in an encrypted frame: no section can be located.
+const UNAVAILABLE_METADATA: &str = "unavailable_encrypted_frames_in_table_metadata";
 
 struct SourceState {
     stamps: BTreeMap<String, Stamp>,
@@ -359,10 +362,25 @@ pub(crate) fn extract(
             candidate.extension,
             MAX_TABLE_BYTES,
         ) {
-            Ok(bytes) => {
-                entry.encoded_bytes = Some(bytes.len() as u64);
-                entry.retained_sha256 = Some(store.put("objects", &bytes)?);
-                match tables::header(&bytes) {
+            Ok(logical) => {
+                // A partial file keeps only its verified plain frames; its retained
+                // form lists the encrypted ranges as gaps and holds no bytes for them.
+                let (input, partial) = match &logical {
+                    Logical::Whole(bytes) => {
+                        entry.retained_sha256 = Some(store.put("objects", bytes)?);
+                        (tables::Input::whole(bytes), None)
+                    }
+                    Logical::Partial(file) => {
+                        entry.retained_sha256 = Some(store.put("objects", &file.retained_bytes())?);
+                        (file.input(), Some(file))
+                    }
+                };
+                entry.encoded_bytes = Some(input.len() as u64);
+                match tables::header_of(&input) {
+                    Err(tables::UNAVAILABLE_RANGE) => {
+                        entry.disposition = InventoryDisposition::UnavailableEncrypted;
+                        entry.reason = UNAVAILABLE_METADATA.into();
+                    }
                     Err(reason) => entry.reason = reason.into(),
                     Ok(header) => {
                         entry.layout_hash = Some(format!("{:08x}", header.layout_hash));
@@ -388,9 +406,20 @@ pub(crate) fn extract(
                                         InventoryDisposition::RetainedUnsupported
                                     };
                                 }
-                                Ok(definition) => match tables::decode(&bytes, &definition) {
+                                Ok(definition) => match tables::decode_input(&input, &definition) {
+                                    Err(tables::UNAVAILABLE_RANGE) => {
+                                        entry.disposition =
+                                            InventoryDisposition::UnavailableEncrypted;
+                                        entry.reason = UNAVAILABLE_METADATA.into();
+                                    }
                                     Err(reason) => entry.reason = reason.into(),
-                                    Ok(decoded) => {
+                                    Ok(mut decoded) => {
+                                        if let Some(file) = partial {
+                                            decoded
+                                                .gaps
+                                                .extend(file.unavailable().iter().map(|r| r.gap()));
+                                            decoded.gaps.sort();
+                                        }
                                         let output =
                                             crate::bounded_json(&decoded, MAX_DECODED_BYTES)?;
                                         if output.len() > MAX_DECODED_BYTES {
@@ -398,7 +427,9 @@ pub(crate) fn extract(
                                         }
                                         entry.decoded_sha256 = Some(store.put("objects", &output)?);
                                         entry.disposition = InventoryDisposition::Decoded;
-                                        entry.reason = if decoded.gaps.is_empty() {
+                                        entry.reason = if partial.is_some() {
+                                            "research_decoded_from_plain_frames"
+                                        } else if decoded.gaps.is_empty() {
                                             "research_decoded"
                                         } else {
                                             "research_decoded_with_encrypted_gaps"

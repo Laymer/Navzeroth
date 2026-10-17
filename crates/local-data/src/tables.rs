@@ -22,42 +22,98 @@ pub struct TableHeader {
     pub locale_mask: u32,
     pub sections: u32,
 }
-fn u16_at(bytes: &[u8], at: usize) -> Result<u16> {
+/// Decoder reason for any access that touches bytes outside the verified plain
+/// ranges of a partially available logical file. Such bytes do not exist here:
+/// they were never read, filled or synthesized.
+pub const UNAVAILABLE_RANGE: &str = "unavailable_encrypted_frame_range";
+
+/// The decoder's view of one logical file: its declared length and the verified
+/// plain byte ranges that are actually present. A whole file is one range. Every
+/// access must lie inside one range; anything else is refused, never zero-read.
+pub struct Input<'a> {
+    length: usize,
+    segments: Vec<(usize, &'a [u8])>,
+}
+impl<'a> Input<'a> {
+    pub fn whole(bytes: &'a [u8]) -> Self {
+        Self {
+            length: bytes.len(),
+            segments: vec![(0, bytes)],
+        }
+    }
+    /// Accepts only sorted, non-empty, non-overlapping ranges inside `length`.
+    pub fn partial(length: usize, segments: Vec<(usize, &'a [u8])>) -> Result<Self> {
+        let mut end = 0usize;
+        for (start, bytes) in &segments {
+            let stop = start
+                .checked_add(bytes.len())
+                .ok_or("table_offset_overflow")?;
+            if bytes.is_empty() || *start < end || stop > length {
+                return Err("invalid_partial_layout");
+            }
+            end = stop;
+        }
+        Ok(Self { length, segments })
+    }
+    pub fn len(&self) -> usize {
+        self.length
+    }
+    pub fn is_empty(&self) -> bool {
+        self.length == 0
+    }
+    /// Whether `[start, end)` lies entirely inside one verified range.
+    pub fn available(&self, start: usize, end: usize) -> bool {
+        self.find(start, end).is_some()
+    }
+    fn find(&self, start: usize, end: usize) -> Option<&'a [u8]> {
+        if end < start || end > self.length {
+            return None;
+        }
+        if start == end {
+            return Some(&[]);
+        }
+        let index = self
+            .segments
+            .partition_point(|(s, _)| *s <= start)
+            .checked_sub(1)?;
+        let (s, bytes) = self.segments[index];
+        (end <= s + bytes.len()).then(|| &bytes[start - s..end - s])
+    }
+    fn get(&self, start: usize, length: usize, outside: &'static str) -> Result<&'a [u8]> {
+        let end = start.checked_add(length).ok_or("table_offset_overflow")?;
+        if end > self.length {
+            return Err(outside);
+        }
+        self.find(start, end).ok_or(UNAVAILABLE_RANGE)
+    }
+}
+fn u16_at(bytes: &Input<'_>, at: usize) -> Result<u16> {
     Ok(u16::from_le_bytes(
-        bytes
-            .get(at..at + 2)
-            .ok_or("truncated_table")?
-            .try_into()
-            .unwrap(),
+        bytes.get(at, 2, "truncated_table")?.try_into().unwrap(),
     ))
 }
-fn u32_at(bytes: &[u8], at: usize) -> Result<u32> {
+fn u32_at(bytes: &Input<'_>, at: usize) -> Result<u32> {
     Ok(u32::from_le_bytes(
-        bytes
-            .get(at..at + 4)
-            .ok_or("truncated_table")?
-            .try_into()
-            .unwrap(),
+        bytes.get(at, 4, "truncated_table")?.try_into().unwrap(),
     ))
 }
-fn u64_at(bytes: &[u8], at: usize) -> Result<u64> {
+fn u64_at(bytes: &Input<'_>, at: usize) -> Result<u64> {
     Ok(u64::from_le_bytes(
-        bytes
-            .get(at..at + 8)
-            .ok_or("truncated_table")?
-            .try_into()
-            .unwrap(),
+        bytes.get(at, 8, "truncated_table")?.try_into().unwrap(),
     ))
 }
-fn range(bytes: &[u8], start: usize, length: usize) -> Result<&[u8]> {
-    bytes
-        .get(start..start.checked_add(length).ok_or("table_offset_overflow")?)
-        .ok_or("table_offset_outside_input")
+fn range<'a>(bytes: &Input<'a>, start: usize, length: usize) -> Result<&'a [u8]> {
+    bytes.get(start, length, "table_offset_outside_input")
 }
-fn base(bytes: &[u8]) -> Result<usize> {
-    match bytes.get(..4) {
-        Some(b"WDC3" | b"WDC4") => Ok(4),
-        Some(b"WDC5") => {
+fn base(bytes: &Input<'_>) -> Result<usize> {
+    let magic = match bytes.get(0, 4, "unsupported_table_format") {
+        Ok(magic) => magic,
+        Err(UNAVAILABLE_RANGE) => return Err(UNAVAILABLE_RANGE),
+        Err(_) => return Err("unsupported_table_format"),
+    };
+    match magic {
+        b"WDC3" | b"WDC4" => Ok(4),
+        b"WDC5" => {
             if u32_at(bytes, 4)? != 5 {
                 return Err("unsupported_wdc_schema");
             }
@@ -67,10 +123,15 @@ fn base(bytes: &[u8]) -> Result<usize> {
     }
 }
 pub fn header(bytes: &[u8]) -> Result<TableHeader> {
+    header_of(&Input::whole(bytes))
+}
+/// Header of a whole or partially available file. The header itself must lie in
+/// a verified plain range.
+pub fn header_of(bytes: &Input<'_>) -> Result<TableHeader> {
     let b = base(bytes)?;
     range(bytes, b, 68)?;
     let h = TableHeader {
-        format: std::str::from_utf8(&bytes[..4]).unwrap().into(),
+        format: std::str::from_utf8(range(bytes, 0, 4)?).unwrap().into(),
         records: u32_at(bytes, b)?,
         fields: u32_at(bytes, b + 4)?,
         record_bytes: u32_at(bytes, b + 8)?,
@@ -364,7 +425,25 @@ fn value(
 }
 
 pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
-    let h = header(bytes)?;
+    decode_input(&Input::whole(bytes), definition)
+}
+
+/// Why a section's records are not decoded. Each is an explicit gap.
+#[derive(Clone, Copy, PartialEq)]
+enum Skip {
+    /// The section's tact-key lookup is non-zero: encrypted, never recovered.
+    Encrypted,
+    /// The section is not key-flagged, but some of its bytes lie outside the
+    /// verified plain ranges of a partially available file.
+    Unavailable,
+}
+
+/// Decode a whole or partially available file. Header, field, pallet, common
+/// and section-directory bytes must be available, or the table is refused with
+/// [`UNAVAILABLE_RANGE`]. A section is decoded only when all of its records,
+/// strings, IDs, copies, sparse entries and relationships are available.
+pub fn decode_input(bytes: &Input<'_>, definition: &Definition) -> Result<DecodedTable> {
+    let h = header_of(bytes)?;
     let b = base(bytes)?;
     let field_count = h.fields as usize;
     let record_size = h.record_bytes as usize;
@@ -379,12 +458,6 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
             }
             sum.checked_add(count).ok_or("decoded_cell_capacity")
         })?;
-    if (h.records as usize)
-        .checked_mul(cells_per_record)
-        .is_none_or(|v| v > MAX_CELLS)
-    {
-        return Err("decoded_cell_capacity");
-    }
     if u32_at(bytes, b + 40)? != h.fields || u32_at(bytes, b + 52)? as usize != field_count * 24 {
         return Err("unsupported_column_layout");
     }
@@ -430,11 +503,7 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
     let mut columns = Vec::new();
     for i in 0..field_count {
         let at = storage + i * 24;
-        let bits = i16::from_le_bytes(
-            bytes[fields + i * 4..fields + i * 4 + 2]
-                .try_into()
-                .unwrap(),
-        );
+        let bits = u16_at(bytes, fields + i * 4)? as i16;
         let kind = u32_at(bytes, at + 8)?;
         let width = if kind == 0 {
             32i32 - i32::from(bits)
@@ -518,6 +587,7 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
     let mut pools = Vec::new();
     let mut pool_offset = 0usize;
     let mut occupied = Vec::new();
+    let mut skips = Vec::with_capacity(sections.len());
     for section in &sections {
         if section.offset < metadata_end {
             return Err("overlapping_table_sections");
@@ -526,6 +596,7 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
             pool_offset = pool_offset
                 .checked_add(section.strings)
                 .ok_or("table_offset_overflow")?;
+            skips.push(Some(Skip::Encrypted));
             continue;
         }
         let length = if sparse {
@@ -539,23 +610,53 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
                 .checked_mul(record_size)
                 .ok_or("table_offset_overflow")?
         };
-        range(bytes, section.offset, length)?;
-        let strings = range(bytes, section.offset + length, section.strings)?;
-        pools.push((pool_offset, strings));
-        pool_offset += strings.len();
-        let tail = section.offset + length + section.strings;
+        let tail = section
+            .offset
+            .checked_add(length)
+            .and_then(|n| n.checked_add(section.strings))
+            .ok_or("table_offset_overflow")?;
         let extra = section
             .ids
             .checked_add(section.copies * 8)
             .and_then(|n| n.checked_add(section.sparse * 10))
             .and_then(|n| n.checked_add(section.relations))
             .ok_or("table_offset_overflow")?;
-        range(bytes, tail, extra)?;
-        occupied.push((section.offset, tail + extra));
+        let end = tail.checked_add(extra).ok_or("table_offset_overflow")?;
+        if end > bytes.len() {
+            return Err("table_offset_outside_input");
+        }
+        // The declared extent stays structurally checked and claimed even when its
+        // bytes are unavailable, so overlap validation is unchanged.
+        occupied.push((section.offset, end));
+        if !bytes.available(section.offset, end) {
+            pool_offset = pool_offset
+                .checked_add(section.strings)
+                .ok_or("table_offset_overflow")?;
+            skips.push(Some(Skip::Unavailable));
+            continue;
+        }
+        let strings = range(bytes, section.offset + length, section.strings)?;
+        pools.push((pool_offset, strings));
+        pool_offset += strings.len();
+        skips.push(None);
     }
     occupied.sort();
     if occupied.windows(2).any(|w| w[0].1 > w[1].0) {
         return Err("overlapping_table_sections");
+    }
+    // The cell budget bounds what is materialized: records of skipped (encrypted
+    // or unavailable) sections are never decoded and hold no cells.
+    let decodable: usize = sections
+        .iter()
+        .zip(&skips)
+        .filter(|(_, skip)| skip.is_none())
+        .map(|(s, _)| s.count)
+        .sum();
+    if decodable
+        .checked_mul(cells_per_record)
+        .is_none_or(|v| v > MAX_CELLS)
+    {
+        return Err("decoded_cell_capacity");
     }
     let inline: Vec<_> = definition
         .layout
@@ -576,10 +677,16 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
     let mut copies = Vec::new();
     let mut global_record = 0usize;
     let mut gaps = Vec::new();
+    let (mut encrypted_records, mut unavailable_records) = (None, None);
     let mut allocated_text = 0usize;
-    for section in sections {
-        if section.key != 0 {
-            gaps.push(format!("encrypted_section_records:{}", section.count));
+    for (section, skip) in sections.into_iter().zip(skips) {
+        if let Some(skip) = skip {
+            // One total per reason: equal per-section counts must not collapse.
+            let total = match skip {
+                Skip::Encrypted => &mut encrypted_records,
+                Skip::Unavailable => &mut unavailable_records,
+            };
+            *total = Some(total.unwrap_or(0) + section.count);
             global_record += section.count;
             continue;
         }
@@ -778,6 +885,12 @@ pub fn decode(bytes: &[u8], definition: &Definition) -> Result<DecodedTable> {
             return Err("overlapping_sparse_records");
         }
         global_record += section.count;
+    }
+    if let Some(count) = encrypted_records {
+        gaps.push(format!("encrypted_section_records:{count}"));
+    }
+    if let Some(count) = unavailable_records {
+        gaps.push(format!("unavailable_frame_section_records:{count}"));
     }
     let mut pending: BTreeMap<u32, u32> = BTreeMap::new();
     for (destination, source) in copies {

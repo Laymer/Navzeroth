@@ -1,5 +1,6 @@
 //! The only archive FFI boundary. Handles never leave this module or move between
 //! threads. The worker is the sole production caller. All native access is serialized.
+use crate::partial::{AssembleError, FrameLayout, MAX_FRAMES, PartialFile};
 use std::{
     ffi::{CString, c_void},
     marker::PhantomData,
@@ -44,6 +45,29 @@ unsafe extern "C" {
         size: *mut u64,
     ) -> u32;
     fn nav_casc_file_close(file: *mut c_void);
+    fn nav_casc_frame_count(file: *mut c_void, count: *mut u32) -> u32;
+    fn nav_casc_frame(
+        file: *mut c_void,
+        index: u32,
+        start: *mut u64,
+        length: *mut u32,
+        encrypted: *mut u32,
+    ) -> u32;
+    fn nav_casc_read_at(
+        file: *mut c_void,
+        offset: u64,
+        buffer: *mut c_void,
+        length: u32,
+        done: *mut u32,
+    ) -> u32;
+}
+
+/// A strict logical read: the whole verified file, or only its verified plain
+/// frames when later frames are encrypted with keys that are not available.
+#[derive(Debug)]
+pub(crate) enum Logical {
+    Whole(Vec<u8>),
+    Partial(PartialFile),
 }
 
 /// Why a strict logical read did not produce the whole file. Each variant is a
@@ -152,7 +176,7 @@ impl Archive {
         name: &str,
         extension: &str,
         maximum: usize,
-    ) -> Result<Vec<u8>, ReadFailure> {
+    ) -> Result<Logical, ReadFailure> {
         if id == Some(0) {
             return Err(ReadFailure::Invalid);
         }
@@ -196,10 +220,90 @@ impl Archive {
             )
         };
         if error != 0 {
-            // The partial buffer is dropped here; only the cause is reported.
-            return Err(classify_read(error, done));
+            // The short buffer is dropped here; it is never retained or filled.
+            drop(bytes);
+            let failure = classify_read(error, done);
+            if failure == ReadFailure::EncryptedFrames {
+                return file.partial(size).map(Logical::Partial);
+            }
+            return Err(failure);
         }
-        Ok(bytes)
+        Ok(Logical::Whole(bytes))
+    }
+}
+impl NativeFile {
+    /// Frame-aware strict read after an encrypted frame stopped the whole read.
+    /// Every frame's encoded bytes are MD5-checked; frames in BLTE mode `E` are
+    /// gaps and never decoded; plain runs are strictly re-read and verified.
+    fn partial(&self, size: usize) -> Result<PartialFile, ReadFailure> {
+        let mut count = 0;
+        // SAFETY: owned live file handle and an initialized scalar output.
+        let error = unsafe { nav_casc_frame_count(self.0.as_ptr(), &mut count) };
+        if error != 0 {
+            return Err(classify(error));
+        }
+        let count = count as usize;
+        if count == 0 || count > MAX_FRAMES || count > size {
+            return Err(ReadFailure::Invalid);
+        }
+        let mut frames = Vec::new();
+        frames
+            .try_reserve_exact(count)
+            .map_err(|_| ReadFailure::Capacity)?;
+        for index in 0..count as u32 {
+            let (mut start, mut length, mut encrypted) = (0, 0, 0);
+            // SAFETY: owned live file handle; initialized scalar outputs. The shim
+            // bounds the index and frees the encoded frame copy before returning.
+            let error = unsafe {
+                nav_casc_frame(
+                    self.0.as_ptr(),
+                    index,
+                    &mut start,
+                    &mut length,
+                    &mut encrypted,
+                )
+            };
+            if error != 0 {
+                return Err(classify(error));
+            }
+            frames.push(FrameLayout {
+                start,
+                length,
+                encrypted: encrypted != 0,
+            });
+        }
+        PartialFile::assemble(size, &frames, |offset, length| {
+            let mut bytes = Vec::new();
+            bytes
+                .try_reserve_exact(length)
+                .map_err(|_| ReadFailure::Capacity)?;
+            bytes.resize(length, 0);
+            let mut done = 0;
+            // SAFETY: owned file and an initialized allocation of exactly `length`
+            // bytes (assemble bounds it by the logical size, below u32::MAX).
+            let error = unsafe {
+                nav_casc_read_at(
+                    self.0.as_ptr(),
+                    offset as u64,
+                    bytes.as_mut_ptr().cast(),
+                    length as u32,
+                    &mut done,
+                )
+            };
+            if error != 0 {
+                // A plain run cannot stop on encryption; any short read is its cause.
+                return Err(match classify_read(error, done) {
+                    ReadFailure::EncryptedFrames | ReadFailure::Encrypted => ReadFailure::ShortRead,
+                    failure => failure,
+                });
+            }
+            Ok(bytes)
+        })
+        .map_err(|error| match error {
+            AssembleError::Read(failure) => failure,
+            // An inconsistent frame layout is not a verified partial file.
+            AssembleError::Layout(_) => ReadFailure::Invalid,
+        })
     }
 }
 fn classify(error: u32) -> ReadFailure {
