@@ -1,16 +1,16 @@
 # Project status
 
-Updated: 2026-10-16.
+Updated: 2026-10-17.
 
 ## Current task
 
-**0.9.2 program, task G1: reconcile the 0.9.1 publication records.** Owner and
-sole writer of this task: Claude Code workflow agent; baseline main `92f3f51`,
-branch `docs/g1-reconcile`, claim
-[2026-10-16-g1-reconcile](claims/2026-10-16-g1-reconcile.md). The program (addon GUI,
-desktop redesign, end-to-end coverage, the 0.9.2 release and a 1.0.0 `TODO.md`) is
-recorded in [ADR 0005](decisions/0005-v092-program.md). G1 changes documentation and
-production doc-comments only.
+**0.9.2 program (ADR [0005](decisions/0005-v092-program.md)).** Tasks G1 to G5 are
+merged (G4 desktop design system, PR #160; G5a play screens, PR #161; G5b data and
+system screens, PR #162; earlier tasks in PRs #157 to #159). G6, the design-system
+follow-ups carried from the G4/G5 reviews, is in progress: owner and sole writer
+Claude Code (Sonnet 5.5), baseline main `b60193e`, branch `feat/g6-followups`, claim
+[2026-10-17-g6](claims/2026-10-17-g6.md), draft PR open. Remaining after G6: the
+0.9.2 release and the root `TODO.md` for 1.0.0.
 
 **Latest published version: 0.9.1**, a developer prerelease published
 2026-10-16T11:58:04Z from tag `v0.9.1` (tag object `dbaab3a`, commit `92f3f51`).
