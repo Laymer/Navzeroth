@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -55,6 +55,10 @@ pub fn run(args: &[OsString]) -> ExitCode {
             "--tables",
         ],
         "verify" | "coverage" | "status" => &["--destination", "--catalog"],
+        "receipt-public-key" => &["--secret-key"],
+        "receipt-sign" => &["--payload", "--policy", "--key-id", "--secret-key"],
+        "receipt-assemble" => &["--payload", "--operator", "--reviewer"],
+        "receipt-verify" => &["--receipt", "--policy", "--candidate", "--production"],
         _ => return usage(),
     };
     let (pairs, remainder) = args[1..].as_chunks::<2>();
@@ -73,6 +77,12 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if command.starts_with("receipt-") {
+        if options.len() != allowed.len() {
+            return usage();
+        }
+        return receipt(command, &options);
     }
     if matches!(command, "verify" | "coverage" | "status") {
         let (Some(destination), Some(digest)) = (
@@ -156,5 +166,84 @@ pub fn run(args: &[OsString]) -> ExitCode {
             }
             Err(error) => return emit::<()>(Err(error)),
         }
+    }
+}
+
+/// Bounded regular-file read for explicitly named receipt inputs.
+fn read_small(path: &OsStr, limit: u64) -> Result<Vec<u8>, &'static str> {
+    use std::io::Read;
+    let named = std::fs::symlink_metadata(path).map_err(|_| "Receipt input cannot be read")?;
+    if !named.is_file() {
+        return Err("Receipt input must be a small regular file");
+    }
+    // Check the opened handle too and bound the actual read, so a file swapped
+    // after the first check can't grow, block or redirect the read.
+    let file = std::fs::File::open(path).map_err(|_| "Receipt input cannot be read")?;
+    let opened = file
+        .metadata()
+        .map_err(|_| "Receipt input cannot be read")?;
+    if !opened.is_file() || opened.len() > limit {
+        return Err("Receipt input must be a small regular file");
+    }
+    let mut bytes = Vec::new();
+    file.take(limit + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|_| "Receipt input cannot be read")?;
+    if bytes.len() as u64 > limit {
+        return Err("Receipt input must be a small regular file");
+    }
+    Ok(bytes)
+}
+/// Explicit receipt steps (task V1.2). Signing uses a caller-supplied key file
+/// and a policy that already trusts it; nothing is generated or activated.
+fn receipt(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    use azeroth_local_data::receipts;
+    const LIMIT: u64 = 128 * 1024;
+    let file = |key: &str| read_small(options[key], LIMIT);
+    match command {
+        "receipt-public-key" => emit((|| {
+            let secret = receipts::read_secret_key(&read_small(options["--secret-key"], 1024)?)?;
+            Ok(
+                serde_json::json!({"format_version":1,"public_key_hex":receipts::public_key_hex(&secret)}),
+            )
+        })()),
+        "receipt-sign" => emit((|| {
+            let payload = receipts::read_payload(&file("--payload")?)?;
+            let policy = receipts::policy(&file("--policy")?)?;
+            let secret = receipts::read_secret_key(&read_small(options["--secret-key"], 1024)?)?;
+            let key_id = options["--key-id"].to_str().ok_or("Invalid key id")?;
+            receipts::sign(&payload, &policy, key_id, &secret)
+        })()),
+        "receipt-assemble" => {
+            let result = (|| {
+                let payload = receipts::read_payload(&file("--payload")?)?;
+                let operator = receipts::read_signature(&file("--operator")?)?;
+                let reviewer = receipts::read_signature(&file("--reviewer")?)?;
+                receipts::assemble(payload, operator, reviewer)
+            })();
+            match result {
+                // Canonical compact bytes: `verify` refuses any other encoding.
+                Ok(bytes) => {
+                    use std::io::Write;
+                    // Exact bytes, no trailing newline, so `> file` verifies.
+                    let mut out = std::io::stdout().lock();
+                    if out.write_all(&bytes).and_then(|()| out.flush()).is_err() {
+                        return ExitCode::from(1);
+                    }
+                    ExitCode::SUCCESS
+                }
+                Err(error) => emit::<()>(Err(error)),
+            }
+        }
+        _ => emit((|| {
+            let bytes = file("--receipt")?;
+            let policy = receipts::policy(&file("--policy")?)?;
+            let candidate = options["--candidate"].to_str().ok_or("Invalid candidate")?;
+            let production = options["--production"]
+                .to_str()
+                .ok_or("Invalid production")?;
+            receipts::verify_hybrid(&bytes, &policy, candidate, production)
+                .map(|r| serde_json::json!({"format_version":1,"verified":true,"private_catalog_sha256":r.payload.private_catalog_sha256}))
+        })()),
     }
 }

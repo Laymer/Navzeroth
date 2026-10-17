@@ -59,6 +59,13 @@ fn decode_hex<const N: usize>(text: &str) -> Result<[u8; N]> {
 fn encode_hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
 }
+/// Delivery modes whose local content is attested by signed receipts.
+fn signed_mode(policy: &DeliveryPolicy) -> bool {
+    matches!(
+        policy.delivery_mode,
+        DeliveryMode::LocalCatalog | DeliveryMode::Hybrid
+    )
+}
 pub fn policy(bytes: &[u8]) -> Result<DeliveryPolicy> {
     let policy: DeliveryPolicy =
         serde_json::from_value(azeroth_core::strict_json::value(bytes, MAX_RECEIPT)?)
@@ -81,9 +88,7 @@ pub fn sign(
     secret: &[u8; 32],
 ) -> Result<ReceiptSignature> {
     contract::validate_policy(policy)?;
-    if policy.delivery_mode != DeliveryMode::LocalCatalog
-        || payload.release_policy_sha256 != policy_hash(policy)?
-    {
+    if !signed_mode(policy) || payload.release_policy_sha256 != policy_hash(policy)? {
         return Err("Receipt does not match local-catalog policy");
     }
     let trusted = policy
@@ -103,7 +108,19 @@ pub fn sign(
     })
 }
 
+/// Local-catalog receipts. Hybrid receipts must go through `verify_hybrid`,
+/// which adds the policy's extractor and declared-digest checks.
 pub fn verify(
+    bytes: &[u8],
+    policy: &DeliveryPolicy,
+    expected: &ExpectedBindings<'_>,
+) -> Result<SignedReceipt> {
+    if policy.delivery_mode == DeliveryMode::Hybrid {
+        return Err("Hybrid receipts require verify_hybrid");
+    }
+    verify_signed(bytes, policy, expected)
+}
+fn verify_signed(
     bytes: &[u8],
     policy: &DeliveryPolicy,
     expected: &ExpectedBindings<'_>,
@@ -116,7 +133,7 @@ pub fn verify(
         || receipt.format_version != policy.format_version
         || receipt.payload.format_version != receipt.format_version
         || receipt.signatures.len() != 2
-        || policy.delivery_mode != DeliveryMode::LocalCatalog
+        || !signed_mode(policy)
     {
         return Err("Receipt requires local-catalog policy and two signatures");
     }
@@ -168,4 +185,89 @@ pub fn verify(
         return Err("Independent reviewer signature missing");
     }
     Ok(receipt)
+}
+
+/// Hybrid delivery (ADR 0006 section 5): the extractor identity comes from the
+/// production policy, never from the receipt, and the receipt's private catalog
+/// must be one of the declared tested-content digests.
+pub fn verify_hybrid(
+    bytes: &[u8],
+    policy: &DeliveryPolicy,
+    candidate_source_commit: &str,
+    production_sha256: &str,
+) -> Result<SignedReceipt> {
+    let local = match (policy.delivery_mode, &policy.local_content) {
+        (DeliveryMode::Hybrid, Some(local)) => local,
+        _ => return Err("Receipt requires a hybrid delivery policy"),
+    };
+    if local.expected_catalogs.is_empty() {
+        return Err("Hybrid delivery has no declared expected local catalog digests");
+    }
+    let receipt = verify_signed(
+        bytes,
+        policy,
+        &ExpectedBindings {
+            candidate_source_commit,
+            production_sha256,
+            release_policy_sha256: &policy_hash(policy)?,
+            native_reader_revision: &local.native_reader_revision,
+            profile_sha256: &local.profile_sha256,
+            metadata_sha256: &local.metadata_sha256,
+        },
+    )?;
+    if receipt.payload.extractor_version != local.extractor_version {
+        return Err("Receipt extractor differs from the tested extractor");
+    }
+    // The release is tested with the enUS catalog; other declared locales are
+    // digests users compare locally.
+    if !local.expected_catalogs.iter().any(|c| {
+        c.locale == contract::REQUIRED_LOCALE
+            && c.catalog_sha256 == receipt.payload.private_catalog_sha256
+    }) {
+        return Err("Receipt catalog is not the declared enUS tested-content digest");
+    }
+    Ok(receipt)
+}
+
+/// Strict, validated payload for the explicit receipt CLI. Duplicate keys,
+/// unknown fields and invalid bindings refuse.
+pub fn read_payload(bytes: &[u8]) -> Result<ReceiptPayload> {
+    let payload: ReceiptPayload =
+        serde_json::from_value(azeroth_core::strict_json::value(bytes, MAX_RECEIPT)?)
+            .map_err(|_| "Invalid receipt payload schema")?;
+    contract::validate_payload(&payload)?;
+    Ok(payload)
+}
+pub fn read_signature(bytes: &[u8]) -> Result<ReceiptSignature> {
+    serde_json::from_value(azeroth_core::strict_json::value(bytes, 4096)?)
+        .map_err(|_| "Invalid receipt signature schema")
+}
+/// A key file holds exactly 64 lowercase hexadecimal characters, optionally
+/// followed by one newline. Keys are never generated, searched for or printed.
+pub fn read_secret_key(bytes: &[u8]) -> Result<[u8; 32]> {
+    let text = bytes.strip_suffix(b"\n").unwrap_or(bytes);
+    let text = std::str::from_utf8(text).map_err(|_| "Invalid secret key file")?;
+    decode_hex::<32>(text).map_err(|_| "Invalid secret key file")
+}
+/// Canonical receipt bytes (operator signature first), as `verify` requires.
+pub fn assemble(
+    payload: ReceiptPayload,
+    operator: ReceiptSignature,
+    reviewer: ReceiptSignature,
+) -> Result<Vec<u8>> {
+    contract::validate_payload(&payload)?;
+    if operator.role != SignerRole::Operator || reviewer.role != SignerRole::Reviewer {
+        return Err("Operator and reviewer signatures are required in that order");
+    }
+    let receipt = SignedReceipt {
+        format_version: payload.format_version,
+        payload,
+        signatures: vec![operator, reviewer],
+    };
+    serde_json::to_vec(&receipt).map_err(|_| "Canonical encoding failed")
+}
+/// Public key (hex) for a caller-supplied secret key, so the owner can add it
+/// to the production policy's trusted signers. The secret is never printed.
+pub fn public_key_hex(secret: &[u8; 32]) -> String {
+    encode_hex(&SigningKey::from_bytes(secret).verifying_key().to_bytes())
 }

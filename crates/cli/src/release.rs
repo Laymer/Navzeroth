@@ -4,6 +4,7 @@ mod admission;
 pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
+    local_data_release::{DeliveryMode, DeliveryPolicy},
     release::{self, Bindings, Evidence, FileRef, Inventory, Readiness},
     sources::SourceRecord,
     types::{AssetPath, DatasetNamespace},
@@ -26,6 +27,8 @@ pub const MAX_TOTAL_BYTES: u64 = 1024 * 1024 * 1024;
 const MAX_GIT_BYTES: u64 = 32 * 1024 * 1024;
 const INVENTORY_PATH: &str = "release/v1/coverage-inventory.json";
 const EVIDENCE_PATH: &str = "release/v1/acceptance-evidence.json";
+/// Hybrid delivery evidence (ADR 0006 section 5); outside the production fingerprint.
+const RECEIPT_PATH: &str = "release/v1/local-catalog-receipt.json";
 
 #[derive(Debug)]
 pub struct Options {
@@ -893,6 +896,37 @@ fn inputs(options: &Options) -> Result<Inputs> {
         candidate,
     })
 }
+/// The receipt attests the tested candidate, like the acceptance evidence, so a
+/// later documentation-only commit keeps it valid.
+fn hybrid_receipt(
+    root: &Path,
+    budget: &mut Budget,
+    policy: &DeliveryPolicy,
+    tested: &str,
+    production_sha256: &str,
+) -> Result<()> {
+    if policy
+        .local_content
+        .as_ref()
+        .is_none_or(|l| l.expected_catalogs.is_empty())
+    {
+        return Err("Hybrid delivery has no declared expected local catalog digests");
+    }
+    let path = root.join(RECEIPT_PATH);
+    match fs::symlink_metadata(&path) {
+        Ok(_) => {}
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return Err("Hybrid delivery requires a signed local-catalog receipt");
+        }
+        Err(_) => return Err("Local-catalog receipt cannot be inspected"),
+    }
+    if tested.is_empty() {
+        return Err("Hybrid receipt requires a tested source binding");
+    }
+    let bytes = budget.read(&path, 128 * 1024)?;
+    azeroth_local_data::receipts::verify_hybrid(&bytes, policy, tested, production_sha256)?;
+    Ok(())
+}
 fn production_status(root: &Path) -> Result<Vec<u8>> {
     git(
         root,
@@ -938,8 +972,16 @@ pub fn report(options: &Options) -> Result<Report> {
     if root.join("config/release-delivery-v1.json").exists() {
         let bytes = budget.read(&root.join("config/release-delivery-v1.json"), 128 * 1024)?;
         let policy = azeroth_local_data::receipts::policy(&bytes)?;
-        if policy.delivery_mode == azeroth_core::local_data_release::DeliveryMode::LocalCatalog {
-            readiness.block("Local-catalog delivery requires private inventory, receipt and packaging integration; unavailable in this release-policy version");
+        match policy.delivery_mode {
+            DeliveryMode::LocalCatalog => readiness.block("Local-catalog delivery requires private inventory, receipt and packaging integration; unavailable in this release-policy version"),
+            DeliveryMode::Hybrid => {
+                if let Err(message) =
+                    hybrid_receipt(&root, &mut budget, &policy, tested, &candidate.fingerprint)
+                {
+                    readiness.block(message);
+                }
+            }
+            DeliveryMode::BundledContent => {}
         }
     }
     if !status.is_empty() {

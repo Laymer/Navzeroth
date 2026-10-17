@@ -13,6 +13,9 @@ use std::collections::{BTreeMap, BTreeSet};
 pub enum DeliveryMode {
     BundledContent,
     LocalCatalog,
+    /// ADR 0006 section 5: bundled packs plus content each user builds from
+    /// their own client, bound by `local_content` and a signed receipt.
+    Hybrid,
 }
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
@@ -35,6 +38,29 @@ pub struct DeliveryPolicy {
     pub delivery_mode: DeliveryMode,
     pub target: Target,
     pub trusted_signers: BTreeMap<String, TrustedSigner>,
+    /// Required for (and only for) hybrid delivery.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub local_content: Option<LocalContent>,
+}
+/// The tested-content digest of hybrid delivery: the pinned extractor identity
+/// and the semantic catalog digests a user's local build must reproduce.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct LocalContent {
+    pub extractor_version: String,
+    pub native_reader_revision: String,
+    pub profile_sha256: String,
+    pub metadata_sha256: String,
+    /// Empty means not yet declared (they are frozen after launch); the
+    /// release gate blocks until it is filled.
+    pub expected_catalogs: Vec<ExpectedCatalog>,
+}
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ExpectedCatalog {
+    pub build: String,
+    pub locale: String,
+    pub catalog_sha256: String,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -137,6 +163,56 @@ pub fn validate_policy(policy: &DeliveryPolicy) -> Result<(), &'static str> {
         {
             return Err("Invalid or duplicate trusted signer");
         }
+    }
+    match (policy.delivery_mode, &policy.local_content) {
+        (DeliveryMode::Hybrid, Some(local)) if policy.format_version == 2 => {
+            validate_local_content(local, &policy.target)
+        }
+        (DeliveryMode::Hybrid, _) => Err("Hybrid delivery requires format 2 and local content"),
+        (_, Some(_)) => Err("Local content binding requires hybrid delivery"),
+        (_, None) => Ok(()),
+    }
+}
+fn locale(text: &str) -> bool {
+    let b = text.as_bytes();
+    b.len() == 4
+        && b[..2].iter().all(u8::is_ascii_lowercase)
+        && b[2..].iter().all(u8::is_ascii_uppercase)
+}
+fn build(text: &str) -> bool {
+    !text.is_empty() && text.len() <= 9 && text.bytes().all(|b| b.is_ascii_digit())
+}
+/// The locale every hybrid release is tested with (ADR 0006 section 7).
+pub const REQUIRED_LOCALE: &str = "enUS";
+fn validate_local_content(local: &LocalContent, target: &Target) -> Result<(), &'static str> {
+    if !identity(&local.extractor_version)
+        || !hex(&local.native_reader_revision, 20)
+        || !is_sha256(&local.profile_sha256)
+        || !is_sha256(&local.metadata_sha256)
+        || local.expected_catalogs.len() > 64
+    {
+        return Err("Invalid local content binding");
+    }
+    let mut keys = BTreeSet::new();
+    for catalog in &local.expected_catalogs {
+        if !build(&catalog.build)
+            || catalog.build != target.build
+            || !locale(&catalog.locale)
+            || !is_sha256(&catalog.catalog_sha256)
+            || !keys.insert((&catalog.build, &catalog.locale))
+        {
+            return Err("Invalid or duplicate expected local catalog");
+        }
+    }
+    // Declared digests must include the tested enUS catalog; empty means
+    // undeclared and blocks at the release gate.
+    if !local.expected_catalogs.is_empty()
+        && !local
+            .expected_catalogs
+            .iter()
+            .any(|c| c.locale == REQUIRED_LOCALE)
+    {
+        return Err("Expected local catalogs must include the enUS catalog");
     }
     Ok(())
 }
