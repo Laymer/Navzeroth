@@ -160,6 +160,8 @@ zero-filled. Catalog disposition and reason per cause:
 | First frame encrypted with a key that is not available | `unavailable_encrypted` | `unavailable_encrypted` |
 | Verified frames read, then a frame encrypted with an unavailable key | handled by the [partial read](#partial-reads-of-partially-encrypted-files-task-v22d) | (`unavailable_encrypted_frames` before V2.2d) |
 | Partial read: header, field, pallet, common or section-directory bytes in an encrypted frame | `unavailable_encrypted` | `unavailable_encrypted_frames_in_table_metadata` |
+| Partial read not decoded for another reason | that reason's disposition | `<reason>:partial_plain_frames` |
+| String pointer into an undecoded section / copy source possibly in an unavailable section | `unavailable_encrypted` | `string_in_unavailable_section` / `copy_source_in_unavailable_section` |
 | Unsupported BLTE/encryption encoding | `unavailable_encrypted` | `unsupported_archive_encoding_not_retained` |
 | Unrecognized native failure | `unavailable_encrypted` | `local_archive_read_unavailable` |
 | Short read with no recorded cause: most likely a raw data read failure after verified frames (for example an I/O or sharing error while the game runs), not encryption | `unavailable_encrypted` (used only because there is no unknown disposition) | `archive_short_read_unexplained` |
@@ -173,11 +175,32 @@ conservative, never silent. On Windows, status 1006 is also the OS
 `ERROR_FILE_INVALID`, so a genuine OS error 1006 at open would be reported as
 `archive_span_incomplete`.
 
-"Strict checksums" means CascLib's `CASC_STRICT_DATA_CHECK`: each BLTE frame's
-encoded bytes are checked against the frame table's MD5. There is no whole-file
-content-key check. Plain and raw-ZLIB spans have no frame hashes and are not
-hashed. CascLib zero-pads a `Z` frame that inflates to less than its declared size.
-These limits predate V2.2c.
+"Strict checksums" means CascLib's `CASC_STRICT_DATA_CHECK`, and only that: each
+BLTE frame's encoded bytes are checked against the frame table's MD5. There is no
+whole-file content-key check, and the BLTE frame table itself is not checked
+against the file's encoding key. Plain and raw-ZLIB spans have no frame hashes
+and are not hashed. CascLib zero-pads a `Z` frame, or a raw-ZLIB span, that
+inflates to less than its declared size. These limits predate V2.2c and are
+unchanged.
+
+### Never decrypt (task V2.2d)
+
+Navzeroth never decrypts archive data, whether or not a key would be known.
+build.rs patches the `OUT_DIR` copy of `CascDecrypt.cpp`; the retained original
+stays hash-pinned and byte-identical. `CascLoadEncryptionKeys` loads nothing, so
+CascLib's built-in key table is never added to a storage. `CascDecrypt`, which
+is CascLib's only decrypt entry point (called only from `CascReadFile.cpp`),
+treats every key as unavailable, whatever the key map holds. This covers every
+read: the ENCODING, ROOT and other storage files read while opening, and every
+whole or partial table read. The wrapper calls no key-import API.
+`nav_casc_decryption_disabled` checks this at run time with a key name from
+CascLib's static table (no key material). Every archive open refuses unless the
+check passes, and a test asserts it. Each encrypted frame therefore stops the
+strict read: a leading one makes the table `unavailable_encrypted`, later ones
+take the partial read below. Before V2.2d a whole read could decrypt frames whose
+keys were in the built-in table. On build 70450 none did: apart from the 106
+partially encrypted tables, every table's retained bytes are identical before
+and after the change.
 
 Only `archive_verification_failed` (and the decoder's `table_hash_mismatch`)
 assert corruption. Encryption and incomplete local data are gaps. Until task
@@ -195,10 +218,11 @@ unavailable key, the extractor reads the file frame by frame instead:
 1. The wrapper loads the frame tables through CascLib's public span-info query
    and reports each frame's logical range from CascLib's frame records.
 2. For every BLTE frame it reads the encoded bytes and checks them against the
-   frame table's MD5 (strict). A mismatch is `archive_verification_failed`. A
-   frame whose verified encoded bytes start with mode `E` is marked encrypted;
-   it is never decoded or decrypted (not even with a key CascLib knows), and its
-   bytes are released at once.
+   frame table's MD5 (strict). A mismatch is `archive_verification_failed`, and
+   so is a file opened without integrity checking or a frame whose expected MD5
+   is all zero (CascLib would accept any bytes for it). A frame whose verified
+   encoded bytes start with mode `E` is marked encrypted; it is never decoded or
+   decrypted, and its bytes are released at once.
 3. Rust checks that the frames cover the logical file contiguously, with at
    least one plain and one encrypted frame (otherwise `archive_verification_failed`),
    merges consecutive frames into runs, and strictly re-reads only the plain runs
@@ -215,6 +239,21 @@ entries and relationships are plain. Otherwise the whole section is a gap:
 `unavailable_frame_section_records:<n>` when it is not key-flagged but lies in
 an encrypted frame. Gap counts are totals per reason and table.
 
+References from decoded records into sections that are not decoded are never
+resolved. They are not reported as corruption either:
+
+- A string pointer into such a section's string pool refuses the table as
+  `unavailable_encrypted`/`string_in_unavailable_section`.
+- A copy whose source chain starts at an ID listed for an encrypted section
+  (the WDC4/5 encrypted ID lists) is a gap, `encrypted_copy_source_records:<n>`,
+  and is never materialized.
+- Any other unresolved copy in a table with a section in unavailable frames
+  (whose IDs are unknown) refuses the table as
+  `unavailable_encrypted`/`copy_source_in_unavailable_section`.
+- A source that exists nowhere else stays `cyclic_or_missing_copy_source`.
+
+These rules apply to whole files too.
+
 Such a table is `decoded` with reason `research_decoded_from_plain_frames`. Its
 decoded object's gaps also name each encrypted run as
 `unavailable_encrypted_frames:<first>-<last>:bytes:<offset>+<length>` (frame
@@ -227,9 +266,28 @@ deterministic container, not the client file: magic
 first frame u32, frame count u32; plain ranges carry `u32::MAX` and 0), then
 the plain bytes in order. `encoded_bytes` is the logical length.
 
-The decoded-cell budget (4 million) counts records of the sections that are
-decoded (plus copies), not records of skipped encrypted or unavailable sections,
-which are never materialized.
+A partially read table that is not decoded (table hash, definition or layout
+mismatch, or a decoder refusal) also retains that container. Its catalog gaps
+still name every encrypted run, and its reason gains the suffix
+`:partial_plain_frames` (for example `duplicate_relationship:partial_plain_frames`).
+The exception is `unavailable_encrypted_frames_in_table_metadata`, which already
+says so.
+
+The decoded-cell budget (4,000,000, raised from 2,000,000 in V2.2d) counts the
+records of decoded sections plus copies. Records of skipped encrypted or
+unavailable sections are never materialized and do not count. The other bounds
+are unchanged: 64 MiB per logical table, 1 million rows, 64 MiB decoded text,
+and 256 MiB of encoded table output.
+
+Memory, measured on build 70450: ItemSparse (19,231 rows, 2,000,024 cells)
+encodes to 84 MiB of decoded JSON, inside the 256 MiB output bound. It decodes
+under the `small` preset's 1 GiB worker address-space limit, with a worker peak
+resident size of about 694 MiB; a full `max` run peaked at about 707 MiB. A
+decoded cell costs roughly 100 to 150 bytes in memory, counting the row map entry
+and its key. A worst-case table at the full 4,000,000 cells, with a large JSON
+output, may therefore exceed the `small` limit. The worker process then aborts on
+allocation failure and the extraction fails without sealing a catalog. The
+table is never truncated or silently accepted. Larger presets allow 2 to 8 GiB.
 
 Before and after extraction, relevant build/config/index fingerprints and archive
 file identities/sizes/times are compared. Inspection must match the captured
