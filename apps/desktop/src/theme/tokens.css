@@ -23,6 +23,8 @@
  * contrast: --gold-hi on --surface-raised 4.5
  * contrast: --text on --mist 4.5
  * contrast: --on-ember on --ember 4.5
+ * contrast: --on-ember on --ember-shade 4.5
+ * contrast: --select-fg on --select-bg 4.5
  * contrast: --on-danger on --danger 4.5
  * contrast: --tone-ok on --surface 4.5
  * contrast: --tone-warn on --surface 4.5
@@ -49,6 +51,8 @@
   --surface-raised: #2c2f40;
   --text: #e9e9ed;
   --text-muted: #b9bbc9;
+  --select-bg: var(--gold-shade);
+  --select-fg: var(--text);
   --accent: #a396e4; /* site accent #9184d9, lightened to hold 4.5:1 on raised surfaces */
 
   /* WoW-inspired additions: gilded bronze, ember and mist. */
@@ -101,6 +105,8 @@
   --surface-raised: #000000;
   --text: #ffffff;
   --text-muted: #ffffff;
+  --select-bg: #ffffff;
+  --select-fg: #000000;
   --accent: #b9d0ff;
   --gold: #ffd54a;
   --gold-hi: #ffe58a;
@@ -129,6 +135,8 @@
     --surface-raised: Canvas;
     --text: CanvasText;
     --text-muted: CanvasText;
+    --select-bg: Highlight;
+    --select-fg: HighlightText;
     --accent: LinkText;
     --gold: CanvasText;
     --gold-hi: CanvasText;

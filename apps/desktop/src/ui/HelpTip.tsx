@@ -8,7 +8,7 @@ interface HelpTipProps {
 /**
  * A toggletip. The trigger is a "?" button whose accessible name is just "Help"; it is
  * rendered next to a field, never inside its label, so it cannot change the field's name.
- * The bubble exists only while open and is linked with aria-describedby. It opens on
+ * The bubble is always mounted (hidden while closed) and linked with aria-describedby. It opens on
  * hover, focus or click; Escape or a second click closes it.
  */
 export function HelpTip({ children }: HelpTipProps) {
@@ -30,6 +30,19 @@ export function HelpTip({ children }: HelpTipProps) {
     document.addEventListener("pointerdown", away);
     return () => document.removeEventListener("pointerdown", away);
   }, [pinned]);
+
+  // Escape dismisses the bubble wherever focus is, so hover-only help can be closed (WCAG 1.4.13).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        close();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   // Keep the bubble inside the viewport (320 px wide windows, 200 % text).
   useLayoutEffect(() => {
@@ -68,28 +81,21 @@ export function HelpTip({ children }: HelpTipProps) {
         className="ui-helptip__trigger"
         aria-label="Help"
         aria-expanded={open}
-        aria-controls={open ? id : undefined}
-        aria-describedby={open ? id : undefined}
+        aria-controls={id}
+        aria-describedby={id}
         onFocus={() => {
           setDismissed(false);
           setFocus(true);
         }}
         onBlur={() => setFocus(false)}
         onClick={() => (pinned ? close() : setPinned(true))}
-        onKeyDown={(event) => {
-          if (event.key === "Escape" && open) {
-            event.stopPropagation();
-            close();
-          }
-        }}
       >
         <span aria-hidden="true">?</span>
       </button>
-      {open && (
-        <span id={id} className="ui-helptip__bubble" ref={bubble} style={shift === 0 ? undefined : { transform: `translateX(${shift}px)` }}>
-          {children}
-        </span>
-      )}
+      {/* Always mounted so aria-describedby resolves when the trigger gains focus; hidden while closed. */}
+      <span id={id} className="ui-helptip__bubble" role="tooltip" hidden={!open} ref={bubble} style={shift === 0 ? undefined : { transform: `translateX(${shift}px)` }}>
+        {children}
+      </span>
     </span>
   );
 }

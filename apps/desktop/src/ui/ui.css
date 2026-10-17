@@ -17,7 +17,7 @@
 }
 .ui-button:disabled { cursor: not-allowed; opacity: 0.6; }
 .ui-button--primary {
-  background: linear-gradient(var(--ember-hi), var(--ember) 55%, var(--ember-shade));
+  background: linear-gradient(var(--ember), var(--ember-shade));
   color: var(--on-ember);
   border-color: var(--gold);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), inset 0 -2px 0 var(--ember-shade), 0 0 0 1px var(--gold-shade), 0 0.15rem 0.4rem rgb(0 0 0 / 0.5);
@@ -104,6 +104,7 @@
   cursor: help;
 }
 .ui-helptip__trigger[aria-expanded="true"] { border-color: var(--gold); background: var(--mist); }
+.ui-helptip__bubble[hidden] { display: none; }
 .ui-helptip__bubble {
   position: absolute;
   z-index: 20;

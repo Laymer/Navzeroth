@@ -10,7 +10,7 @@ body {
   line-height: 1.5;
   overflow-wrap: break-word;
 }
-::selection { background: var(--gold-shade); color: var(--text); }
+::selection { background: var(--select-bg); color: var(--select-fg); }
 a { color: var(--accent); text-underline-offset: 0.2em; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 hr { border: 0; border-top: 1px solid var(--rule); }

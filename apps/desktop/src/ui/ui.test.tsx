@@ -40,12 +40,11 @@ describe("Panel", () => {
 });
 
 describe("HelpTip", () => {
-  it("is a button named exactly Help and renders no bubble while closed", () => {
+  it("is a button named exactly Help and hides the bubble while closed", () => {
     render(<HelpTip>Explains the field.</HelpTip>);
     const trigger = screen.getByRole("button", { name: "Help" });
     expect(trigger).toHaveAttribute("aria-expanded", "false");
-    expect(trigger).not.toHaveAttribute("aria-describedby");
-    expect(screen.queryByText("Explains the field.")).toBeNull();
+    expect(screen.getByText("Explains the field.")).not.toBeVisible();
   });
 
   it("opens on click, links the bubble with aria-describedby, and never uses a status role", () => {
@@ -58,29 +57,38 @@ describe("HelpTip", () => {
     expect(trigger.getAttribute("aria-controls")).toBe(bubble.id);
     expect(screen.queryByRole("status")).toBeNull();
     fireEvent.click(trigger);
-    expect(screen.queryByText("Explains the field.")).toBeNull();
+    expect(screen.getByText("Explains the field.")).not.toBeVisible();
   });
 
   it("opens on keyboard focus and hover, and Escape closes it", () => {
     render(<HelpTip>Hint text.</HelpTip>);
     const trigger = screen.getByRole("button", { name: "Help" });
     fireEvent.focus(trigger);
-    expect(screen.getByText("Hint text.")).toBeInTheDocument();
-    fireEvent.keyDown(trigger, { key: "Escape" });
-    expect(screen.queryByText("Hint text.")).toBeNull();
+    expect(screen.getByText("Hint text.")).toBeVisible();
+    fireEvent.keyDown(document.body, { key: "Escape" });
+    expect(screen.getByText("Hint text.")).not.toBeVisible();
     fireEvent.blur(trigger);
     fireEvent.mouseEnter(trigger.parentElement as HTMLElement);
-    expect(screen.getByText("Hint text.")).toBeInTheDocument();
+    expect(screen.getByText("Hint text.")).toBeVisible();
     fireEvent.mouseLeave(trigger.parentElement as HTMLElement);
-    expect(screen.queryByText("Hint text.")).toBeNull();
+    expect(screen.getByText("Hint text.")).not.toBeVisible();
+  });
+
+  it("closes on Escape pressed outside the trigger after hover-only opening", () => {
+    render(<HelpTip>Hover only.</HelpTip>);
+    const trigger = screen.getByRole("button", { name: "Help" });
+    fireEvent.mouseEnter(trigger.parentElement as HTMLElement);
+    expect(screen.getByText("Hover only.")).toBeVisible();
+    fireEvent.keyDown(document.body, { key: "Escape" });
+    expect(screen.getByText("Hover only.")).not.toBeVisible();
   });
 
   it("closes a pinned bubble on an outside pointer press", () => {
     render(<><HelpTip>Pinned.</HelpTip><p>elsewhere</p></>);
     fireEvent.click(screen.getByRole("button", { name: "Help" }));
-    expect(screen.getByText("Pinned.")).toBeInTheDocument();
+    expect(screen.getByText("Pinned.")).toBeVisible();
     fireEvent.pointerDown(screen.getByText("elsewhere"));
-    expect(screen.queryByText("Pinned.")).toBeNull();
+    expect(screen.getByText("Pinned.")).not.toBeVisible();
   });
 });
 
