@@ -163,6 +163,11 @@ updating and removing the application and addon:
 The full-content v1 publication gates and required content/source assets are in the
 [v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
 
+**Code signing policy:** free code signing provided by [SignPath.io](https://about.signpath.io/),
+certificate by [SignPath Foundation](https://signpath.org/), once the project's
+application is approved; until then installers are unsigned. Roles, privacy
+statement and setup: [CODE_SIGNING.md](docs/compatibility/CODE_SIGNING.md).
+
 ## Content and imagery
 
 Owner-supplied imagery under `content/forever/atlas/` uses Git LFS and separate

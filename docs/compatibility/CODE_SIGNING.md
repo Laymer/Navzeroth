@@ -1,0 +1,115 @@
+# Code signing
+
+Task V0.4 of the 1.0.0 program ([ADR 0006](../decisions/0006-v1-program.md) §9).
+Status: workflow and verifier implemented; **no signed build exists yet**. Signing
+starts once the owner's SignPath Foundation application is approved and the
+repository is configured (below). Until then every installer is unsigned, and a
+stable `v1.0.0` tag fails the package job on purpose.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate
+by [SignPath Foundation](https://signpath.org/).
+
+- Signed files: the Windows installer `AzerothNavigator-<version>-x64-setup.exe`,
+  built from this repository by the `Windows package` workflow on a version tag.
+  The application executable and uninstaller inside the installer aren't signed
+  separately (see Limitations).
+- Committers and reviewers: [the repository's collaborators](https://github.com/Laymer/Navzeroth/graphs/contributors).
+  Changes reach `main` only through pull requests with the required checks.
+- Approvers: the project owner, [Laymer](https://github.com/Laymer), approves every
+  release-signing request in SignPath by hand.
+- Privacy: this program will not transfer any information to other networked
+  systems unless specifically requested by the user or the person installing or
+  operating it. The desktop application has no network client; its content
+  security policy allows only local IPC and local map images. The in-game addon
+  stays inside the game's addon environment.
+
+## How the workflow signs
+
+In [`package-windows.yml`](../../.github/workflows/package-windows.yml), after
+`Build-Windows.ps1` writes the unsigned release files and before the silent-install
+and native smoke tests (so those tests run on the signed file):
+
+1. **Signing mode.** A version tag uses the `release-signing` policy when the
+   `SIGNPATH_ORGANIZATION_ID` variable is set. If it isn't set, a 0.x or prerelease
+   tag continues unsigned with a warning, and a stable tag fails. A manual run with
+   `test_signing` uses the `test-signing` policy. Pull requests and main pushes don't sign.
+2. The installer alone is uploaded as the artifact `unsigned-installer-<sha>`.
+3. `signpath/github-action-submit-signing-request` (pinned v3.0) submits it and waits
+   up to two hours for the owner's approval (15 minutes for test signing).
+4. [`Complete-SignedInstaller.ps1`](../../scripts/windows/Complete-SignedInstaller.ps1)
+   checks the returned file and then replaces the installer:
+   - It must equal the unsigned build byte for byte, except the PE CheckSum and
+     certificate-table entry, followed only by zero padding and one certificate
+     table ([`Signing.ps1`](../../scripts/windows/Signing.ps1)). So the signing
+     service can't have changed the program.
+   - It must carry an Authenticode signature. For release signing, the chain must
+     be `Valid` with a timestamp, and the signer subject must contain
+     `SIGNPATH_EXPECTED_SUBJECT` when that variable is set.
+   - Then `RELEASE_ASSETS.json` (when present) and `SHA256SUMS.txt` are regenerated,
+     and `Assert-ReleaseArtifacts` re-verifies the exact asset set against source.
+
+The draft-release job is unchanged; it drafts from the artifact that now holds the
+signed installer.
+
+## Owner setup (one time)
+
+Only the owner can do steps 1 to 3: they need your account, identity and acceptance
+of SignPath's terms.
+
+1. **Apply** at <https://signpath.org/> (SignPath Foundation, free for open source).
+   Use the public repository URL, the BSD-3-Clause licence, the release page
+   <https://github.com/Laymer/Navzeroth/releases> and this page as the code signing
+   policy. Use multi-factor authentication on your GitHub and SignPath accounts.
+2. After approval, in SignPath: create the project (slug `Navzeroth`, or set
+   `SIGNPATH_PROJECT_SLUG`), link the GitHub repository as a trusted build system,
+   and keep the two policies `test-signing` and `release-signing`. Release signing
+   requires manual approval by you; restrict it to version tags (`refs/tags/v*`).
+3. Add an artifact configuration (the default one, or set
+   `SIGNPATH_ARTIFACT_CONFIGURATION_SLUG`):
+
+   ```xml
+   <artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+     <zip-file>
+       <pe-file path="AzerothNavigator-*-x64-setup.exe" max-matches="1">
+         <authenticode-sign />
+       </pe-file>
+     </zip-file>
+   </artifact-configuration>
+   ```
+
+4. Create a SignPath API token for a CI user that may submit to the project. Then,
+   from this repository's checkout:
+
+   ```sh
+   gh secret set SIGNPATH_API_TOKEN            # paste the token when prompted
+   gh variable set SIGNPATH_ORGANIZATION_ID --body '<organization id>'
+   gh variable set SIGNPATH_EXPECTED_SUBJECT --body 'SignPath Foundation'
+   ```
+
+   Steps 4 and later can be done by an agent if you hand over the values, but the
+   token is a secret: setting it yourself keeps it out of any transcript.
+5. **Test** with a manual run: Actions → Windows package → Run workflow on `main`
+   with `test_signing` ticked. The test certificate is untrusted, so only the
+   signature's presence and the byte check are required. Record the run in a handoff.
+6. The next version tag is then signed through `release-signing`; approve the
+   request in SignPath while the job waits. Record SmartScreen behaviour of the
+   signed installer on a clean Windows machine (it feeds `WIN-INSTALL`).
+
+## Limitations
+
+- Only the outer installer is signed. Signing the application executable and the
+  NSIS uninstaller would need a two-stage build (sign the app, then bundle and sign
+  the installer); that isn't implemented.
+- The publisher shown by Windows is "SignPath Foundation", not the project owner.
+  SmartScreen reputation still builds up per certificate and download volume, so a
+  signed installer can warn for a while.
+- SignPath Foundation reviews applications and may refuse or withdraw signing. In
+  that case set no variables: prereleases stay unsigned, and ADR 0006 §9 needs a new
+  decision before a stable tag can pass.
+- Future content packs carry their sources' terms, not BSD-3-Clause. If SignPath
+  asks, explain that the signed installer contains the project's own open-source
+  code and declared third-party notices.
+- Local manual signing through `NAVZEROTH_SIGN_COMMAND` still works for builds on
+  your own machine ([install guide](WINDOWS_INSTALL.md#signing)).

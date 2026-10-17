@@ -190,9 +190,9 @@ a Developer PowerShell where `signtool` is on `PATH`:
 $env:NAVZEROTH_SIGN_COMMAND = 'signtool sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /sha1 <thumbprint> %1'
 ```
 
-In GitHub Actions, store the same value as the repository secret
-`NAVZEROTH_SIGN_COMMAND` (plus whatever credentials the signing tool reads). Obtaining a
-certificate or a cloud signing account is an owner decision (AGENTS.md).
+This hook is for local builds. Release builds in GitHub Actions are signed through
+SignPath Foundation after the build instead; see [code signing](CODE_SIGNING.md).
+Obtaining a certificate or a signing account is an owner decision (AGENTS.md).
 
 ## For maintainers: releases
 
