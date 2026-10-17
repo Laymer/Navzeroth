@@ -1,10 +1,13 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { createRef } from "react";
+import { createPortal } from "react-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Button } from "./Button";
 import { Field } from "./Field";
 import { HelpTip, clampShift } from "./HelpTip";
-import { Panel } from "./Panel";
+import { Panel, PanelBoundary } from "./Panel";
 
 describe("HelpTip label", () => {
   it("is named exactly Help without a label", () => {
@@ -58,6 +61,38 @@ describe("nested Panel", () => {
   it("does not mark a sibling Panel as nested", () => {
     render(<><Panel title="A">a</Panel><Panel title="B">b</Panel></>);
     expect(screen.getByRole("region", { name: "B" })).not.toHaveClass("ui-panel--nested");
+  });
+
+  // G6 O2: context crosses portals, so portal content needs a PanelBoundary.
+  it("treats a Panel in a portal as nested unless a PanelBoundary resets it", () => {
+    const host = document.createElement("div");
+    document.body.append(host);
+    render(
+      <Panel title="Opener">
+        {createPortal(<Panel title="Portal without boundary">a</Panel>, host)}
+        {createPortal(<PanelBoundary><Panel title="Dialog panel">b</Panel></PanelBoundary>, host)}
+      </Panel>,
+    );
+    expect(screen.getByRole("region", { name: "Portal without boundary" })).toHaveClass("ui-panel--nested");
+    expect(screen.getByRole("region", { name: "Dialog panel" })).not.toHaveClass("ui-panel--nested");
+    host.remove();
+  });
+
+  it("requires a PanelBoundary in every source file that opens a portal or dialog", () => {
+    const files: string[] = [];
+    const walk = (dir: string) => {
+      for (const entry of readdirSync(dir)) {
+        const path = join(dir, entry);
+        if (statSync(path).isDirectory()) walk(path);
+        else if (/\.tsx$/.test(path) && !/\.test\.tsx$/.test(path)) files.push(path);
+      }
+    };
+    walk(join(__dirname, ".."));
+    expect(files.length).toBeGreaterThan(20);
+    for (const file of files) {
+      const source = readFileSync(file, "utf8");
+      if (/createPortal\(|<dialog\b|role="dialog"|role="alertdialog"/.test(source)) expect(source, file).toMatch(/PanelBoundary/);
+    }
   });
 });
 
