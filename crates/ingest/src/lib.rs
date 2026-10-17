@@ -29,3 +29,7 @@ pub mod session;
 pub mod pack;
 
 pub mod source_adapters;
+
+/// Inert RXP-format guide importer and route replay verifier (task V2.3).
+pub mod rxp;
+pub mod rxp_verify;

@@ -1,0 +1,46 @@
+{
+  "format": "navzeroth-guide-facts",
+  "version": 1,
+  "origin": "synthetic",
+  "edition": "forever",
+  "client_build": "0.0.0.1-synthetic",
+  "quest_log_capacity": 20,
+  "level_xp": [400, 900, 1400, 2100, 2800],
+  "zones": { "known": ["Test Vale", "Sample Hills"], "complete": true },
+  "flight_nodes": { "known": ["Testford"], "complete": true },
+  "quests": {
+    "complete": true,
+    "absent": [],
+    "records": {
+      "900001": {
+        "required_level": 1, "level": 1, "prerequisites_any": [], "prerequisites_all": [],
+        "races": "any", "classes": "any", "repeatable": false, "seasonal": false,
+        "objectives": 2, "reward_choices": 2, "xp": 100
+      },
+      "900002": {
+        "required_level": 1, "level": 2, "prerequisites_any": [900001], "prerequisites_all": [],
+        "races": ["Human"], "classes": "any", "repeatable": false, "seasonal": false,
+        "objectives": 1, "reward_choices": 0, "xp": 150
+      },
+      "900003": {
+        "required_level": 1, "level": 1, "prerequisites_any": [], "prerequisites_all": [],
+        "races": "any", "classes": "any", "repeatable": false, "seasonal": false,
+        "objectives": 0, "reward_choices": 0, "xp": 50
+      },
+      "900004": {
+        "required_level": 3, "level": 3, "prerequisites_any": [], "prerequisites_all": [900002],
+        "races": "any", "classes": ["Warrior", "Paladin"], "repeatable": false, "seasonal": false,
+        "objectives": 0, "reward_choices": 0, "xp": 200
+      },
+      "900005": {},
+      "900050": {},
+      "900099": {
+        "required_level": 1, "classes": ["Mage"]
+      }
+    }
+  },
+  "spells": {
+    "100": { "classes": ["Warrior"] },
+    "200": { "classes": ["Mage"] }
+  }
+}

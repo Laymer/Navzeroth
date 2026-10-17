@@ -21,7 +21,8 @@ const USAGE: &str = "Unsupported command or options. Implemented: local-data (in
     inventory-report --root <repository> --input <relative-file>; \
     (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]; \
     release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
-    stage-questiedb <raw-file options>; stage-foreverdb --input <directory> --manifest <file>. See README.md.";
+    stage-questiedb <raw-file options>; stage-foreverdb --input <directory> --manifest <file>; \
+    guide verify --guide <file> --facts <file> [--race <Race>] [--class <Class>]. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
 /// This list is explicit on purpose: the command never globs `fixtures/**`.
@@ -244,7 +245,7 @@ fn main() -> ExitCode {
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
                  release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
-                 stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md); stage-foreverdb --input <dir> --manifest <file> (see docs/data/FOREVERDB_STAGING.md). \
+                 stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md); stage-foreverdb --input <dir> --manifest <file> (see docs/data/FOREVERDB_STAGING.md); guide verify --guide <file> --facts <file> (see docs/data/GUIDE_VERIFIER.md). \
                  Other commands are planned; see README.md and plan section 19.3."
             );
             ExitCode::SUCCESS
@@ -448,6 +449,37 @@ fn main() -> ExitCode {
                 }
                 Err(message) => {
                     eprintln!("stage-questiedb: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [command, rest @ ..] if command == "guide" => {
+            let Some(options) = azeroth_cli::guide::Options::parse(rest) else {
+                eprintln!("Unsupported options. {}", azeroth_cli::guide::USAGE);
+                return ExitCode::from(2);
+            };
+            match azeroth_cli::guide::verify(&options) {
+                Ok(report) => {
+                    use std::io::Write;
+                    let mut bytes =
+                        serde_json::to_vec_pretty(&report).expect("guide report serialization");
+                    bytes.push(b'\n');
+                    if std::io::stdout().lock().write_all(&bytes).is_err() {
+                        eprintln!("Guide report cannot be written");
+                        return ExitCode::FAILURE;
+                    }
+                    // 0: clean replay against facts that claim evidence; 3: clean
+                    // replay against synthetic facts (never a pass); 1: not clean.
+                    if report.passes {
+                        ExitCode::SUCCESS
+                    } else if report.replay_clean {
+                        ExitCode::from(3)
+                    } else {
+                        ExitCode::FAILURE
+                    }
+                }
+                Err(message) => {
+                    eprintln!("guide verify: {message}");
                     ExitCode::FAILURE
                 }
             }
