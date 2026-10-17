@@ -711,11 +711,11 @@ pnpm --dir apps/desktop test:e2e</code>
 </section>
 
 <section id="code-signing" aria-labelledby="code-signing-title" style="max-width: 1200px; margin: 0 auto; padding: 64px clamp(20px, 5vw, 72px) 24px;">
-  <h2 id="code-signing-title" style="margin: 0 0 16px; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.2; letter-spacing: -0.01em;">Code signing policy</h2>
+  <h2 id="code-signing-title" style="margin: 0 0 16px; font-size: clamp(30px, 3.6vw, 46px); text-wrap: balance; line-height: 1.1; letter-spacing: -0.015em;">Code signing policy</h2>
   <div style="display: flex; flex-direction: column; gap: 10px; max-width: 72ch; font-size: 15.5px; line-height: 26px; color: color-mix(in srgb, var(--color-text) 78%, transparent);">
     <p style="margin: 0;">Free code signing provided by <a href="https://about.signpath.io/">SignPath.io</a>, certificate by <a href="https://signpath.org/">SignPath Foundation</a>, once the project's application is approved. Until then the Windows installer is unsigned.</p>
-    <p style="margin: 0;">Signed files: the Windows installer built from this repository by its GitHub Actions workflow on a version tag. Committers and reviewers: the <a href="https://github.com/Laymer/Navzeroth/graphs/contributors">repository's contributors</a>; changes reach main only through reviewed pull requests with required checks. Approver: the project owner, <a href="https://github.com/Laymer">Laymer</a>, approves every release signing request.</p>
-    <p style="margin: 0;">Privacy: this program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.</p>
+    <p style="margin: 0;">Signed files: the Windows installer built from this repository by its GitHub Actions workflow on a version tag. Committers and reviewers: the <a href="https://github.com/Laymer/Navzeroth/graphs/contributors">repository's contributors</a>; changes reach main through pull requests that must pass the required checks and are reviewed by the owner. Approver: the project owner, <a href="https://github.com/Laymer">Laymer</a>, approves every release signing request.</p>
+    <p style="margin: 0;">Privacy: this program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. The one exception is installation: if Microsoft Edge WebView2 is missing, the installer downloads Microsoft's WebView2 bootstrapper, which is subject to Microsoft's terms.</p>
     <p style="margin: 0;">Details: <a href="https://github.com/Laymer/Navzeroth/blob/main/docs/compatibility/CODE_SIGNING.md">CODE_SIGNING.md</a>.</p>
   </div>
 </section>

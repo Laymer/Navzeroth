@@ -16,14 +16,17 @@ by [SignPath Foundation](https://signpath.org/).
   The application executable and uninstaller inside the installer aren't signed
   separately (see Limitations).
 - Committers and reviewers: [the repository's collaborators](https://github.com/Laymer/Navzeroth/graphs/contributors).
-  Changes reach `main` only through pull requests with the required checks.
+  Changes reach `main` through pull requests that must pass the nine required
+  checks; the owner reviews them (branch protection doesn't enforce reviews).
 - Approvers: the project owner, [Laymer](https://github.com/Laymer), approves every
   release-signing request in SignPath by hand.
 - Privacy: this program will not transfer any information to other networked
   systems unless specifically requested by the user or the person installing or
   operating it. The desktop application has no network client; its content
   security policy allows only local IPC and local map images. The in-game addon
-  stays inside the game's addon environment.
+  stays inside the game's addon environment. Exception: if Microsoft Edge WebView2
+  is missing, the installer downloads Microsoft's WebView2 bootstrapper
+  (`webviewInstallMode: downloadBootstrapper` in `tauri.windows.conf.json`).
 
 ## How the workflow signs
 
@@ -66,26 +69,44 @@ they fit and adjust to the form's actual fields.
 | Licence | BSD-3-Clause (OSI-approved), no commercial dual licence |
 | Home page | https://laymer.github.io/Navzeroth/ (has the "Code signing policy" section) |
 | Download page | https://github.com/Laymer/Navzeroth/releases (latest: 0.9.2 developer prerelease) |
-| Description | Offline Windows desktop planner and in-game addon for World of Warcraft: Forever: imports addon snapshots, plans quest routes, compares gear, and records sessions. No network access, memory reading, injection or input automation. |
+| Description | Offline Windows desktop planner and in-game addon for World of Warcraft: Forever: imports addon snapshots, plans quest routes, compares gear, and records sessions. The app makes no network connections; the installer downloads Microsoft's WebView2 bootstrapper only if WebView2 is missing. No memory reading, injection or input automation. |
 | What to sign | One NSIS installer per release, `AzerothNavigator-<version>-x64-setup.exe`, built by GitHub Actions (`.github/workflows/package-windows.yml`) on a version tag |
 | Build system | GitHub Actions on GitHub-hosted `windows-2025` runners, from tagged source |
-| Team | Laymer: author, reviewer and approver. All team members use MFA on GitHub and SignPath. |
+| Team | Laymer: author, reviewer and approver. All team members use MFA on GitHub and SignPath (**owner to confirm before applying**). |
 | Privacy | The program transfers no information to other networked systems unless the user requests it |
 | Uninstall | The installer registers an uninstaller (Apps & features); install and removal are documented in `docs/compatibility/WINDOWS_INSTALL.md` |
 
 Open question for the owner before applying. The terms forbid "any proprietary,
-non open-source component" in the signed software. Today's installer contains
-only the project's own BSD-3-Clause code, OFL fonts and the addon (BSD-3-Clause).
-ADR 0006 plans to bundle content packs from granted sources (ForeverDB, Questie,
-foreverchanges.pro, Olympus News Network) whose terms are not OSI licences. Either
-keep such packs out of the signed installer (deliver them as separate release
-materials or locally built content), or ask SignPath whether third-party data under
-a non-OSI grant is acceptable before relying on signing for 1.0.0.
+non open-source component" in the signed software. Today's installer contains the
+project's own BSD-3-Clause code and addon, OFL fonts, and third-party open-source
+components with their notices shipped (Tauri and other Rust crates, CascLib (MIT),
+zlib, wowdbdefs-rs, ed25519 and others; see `crates/local-data/THIRD_PARTY.md` and
+`apps/desktop/THIRD_PARTY.md`). It also compiles in the WoWDBDefs table
+`definitions` (`crates/local-data/build.rs`), which are data under **CC BY-SA 4.0**,
+a free licence but not an OSI-approved one. Mention that in the application and
+ask whether it's acceptable.
+
+The same question applies with more force to 1.0.0: ADR 0006 plans content packs
+from granted sources (ForeverDB, Questie, foreverchanges.pro, Olympus News
+Network) whose terms are not OSI licences. Either keep such packs out of the signed
+installer (deliver them as separate release materials or locally built content),
+or get SignPath's answer before relying on signing for 1.0.0.
+
+The terms also want the phrase "Code signing policy" on the download page. The
+current download page is the 0.9.2 release, which doesn't link it yet: before
+applying, add a line such as "Code signing policy:
+https://laymer.github.io/Navzeroth/#code-signing" to the 0.9.2 release description
+on GitHub (the description only; the release assets stay unchanged).
 
 After acceptance, also set on SignPath's side what its terms require: file metadata
 restrictions with product name "Azeroth Navigator", and manual approval for every
 release-signing request. Each stable release's notes should link the code signing
 policy, because the terms ask for it on the download page as well.
+
+Verified for these answers (2026-10-17, independent review of PR #173): the app's
+CSP and capabilities allow no remote origins and the Windows dependency tree has no
+HTTP client; the addon never calls its addon-message APIs; BSD-3-Clause licences;
+the per-user uninstaller and the removal documentation; the Pages URL.
 
 ## Owner setup (one time)
 
