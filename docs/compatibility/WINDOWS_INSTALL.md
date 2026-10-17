@@ -3,12 +3,12 @@
 Task M9.4 (packaging automation) with the installation and removal instructions
 of M9.5. Status: IMPLEMENTED_UNVERIFIED. The hosted Windows runner builds the
 installer, installs it silently, starts the application and uninstalls it (see
-the [0.9.1 publication record](../handoffs/2026-10-16-v0.9.1-publication.md)
-(earlier: [0.8.1 evidence](../handoffs/2026-10-14-final-program-audit.md)),
+the [0.9.2 publication record](../handoffs/2026-10-17-v0.9.2-publication.md)
+(earlier: [0.9.1](../handoffs/2026-10-16-v0.9.1-publication.md), [0.8.1 evidence](../handoffs/2026-10-14-final-program-audit.md)),
 the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 [PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
-client are not fully verified. The current download is the prepared
+client are not fully verified. The current download is the published
 [0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2).
 It does not contain a verified playable-content catalog. Full-content v1.0.0 targets
 Forever 1.60.1.70374 and remains subject to the

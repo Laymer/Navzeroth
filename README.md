@@ -6,15 +6,18 @@ explicitly imported snapshots; live game observations remain inside the permitte
 addon environment. Synthetic fixtures are always labelled.
 
 The current build is the **[0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2)**
-(prepared; the latest build published before it is [0.9.1](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)).
+(published 2026-10-17; the previous build is [0.9.1](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)).
 It contains tested engineering foundations, but no verified playable quest, item,
 acquisition or travel catalog. Interactive Windows and complete live-game acceptance
 remain unverified. See the [release notes](docs/releases/0.9.2.md),
 [preparation record](docs/handoffs/2026-10-17-v0.9.2-release.md) and the
-[0.9.1 publication evidence](docs/handoffs/2026-10-16-v0.9.1-publication.md).
+[0.9.2 publication evidence](docs/handoffs/2026-10-17-v0.9.2-publication.md).
 
-The authorized v1.0.0 target is full enumerated content for **Forever
-1.60.1.70374**, with Windows desktop support. The user reports that build and
+The v1.0.0 target ([ADR 0006](docs/decisions/0006-v1-program.md)) is a declared slice
+(Human, levels 1-20, Elwynn Forest, Westfall, Redridge Mountains and the Deadmines)
+on the **first stable live WoW Forever build after the 4 Nov 2026 launch**, with
+Windows desktop support; see [TODO.md](TODO.md). The earlier target was
+**Forever 1.60.1.70374**. The user reports that build and
 interface 16001 on Windows 11, out of combat, with pre-version-bump 0.8.1 diagnostics reporting no
 errors; source-identified development captures now verify quest completion flags and one
 opt-in turn-in/export flow. These limited observations do not establish full
@@ -42,7 +45,7 @@ require complete licensed content and static validation; see the
 
 | Identity | Current evidence |
 | --- | --- |
-| Application/addon 0.9.2 | Prepared developer preview; hashes and hosted Windows results are recorded at publication (latest published: 0.9.1) |
+| Application/addon 0.9.2 | Published developer preview; hashes and hosted Windows results are in the [publication record](docs/handoffs/2026-10-17-v0.9.2-publication.md) |
 | Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
 | Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; source-identified development capture/turn-in checks, with full acceptance still unverified |

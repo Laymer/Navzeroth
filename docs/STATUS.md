@@ -4,23 +4,24 @@ Updated: 2026-10-17.
 
 ## Current task
 
-**0.9.2 program (ADR [0005](decisions/0005-v092-program.md)).** Tasks G1 to G6 are
-merged (G6, design-system follow-ups, PR #163; G4 to G5b in PRs #160 to #162; G1, G2,
-G2b and G3 in PRs #157, #158, #156 and #159). G7 prepares the **0.9.2 developer
-prerelease**: owner and sole writer Claude Code (Sonnet 5.5), baseline main `1806028`,
-branch `release/v0.9.2`, claim [2026-10-17-g7](claims/2026-10-17-g7.md), draft PR open;
-see the [release handoff](handoffs/2026-10-17-v0.9.2-release.md) and
-[notes](releases/0.9.2.md). No tag or publication is part of G7. Remaining after it:
-tag and publish 0.9.2 on owner authorization, and the root `TODO.md` for 1.0.0.
+**1.0.0 program (ADR [0006](decisions/0006-v1-program.md), 2026-10-17).** The owner
+re-targeted 1.0.0 to the first stable live build after the 4 Nov 2026 launch and a
+declared slice (Human, levels 1-20, Northshire/Elwynn/Westfall/Redridge, the
+Deadmines, every Human class, solo and duo), with hybrid delivery and owner-reported
+source grants. Tasks V0.1 to V6.2 are tracked in the root [TODO.md](../TODO.md).
+V0 (owner and sole writer Claude Code, Opus 5.5; baseline `3b19812`; branch
+`docs/v1-program`; claim [2026-10-17-v0](claims/2026-10-17-v0.md)) published 0.9.2
+and recorded the ADR; see the [V0 handoff](handoffs/2026-10-17-v0.md). The 0.9.2
+program (ADR [0005](decisions/0005-v092-program.md), G1 to G8) is complete.
 
-**Latest published version: 0.9.1** (0.9.2 is prepared, not published), a developer prerelease published
-2026-10-16T11:58:04Z from tag `v0.9.1` (tag object `dbaab3a`, commit `92f3f51`).
-Its receipt, with asset SHA-256 values and CI run IDs, is
-[the 0.9.1 publication record](handoffs/2026-10-16-v0.9.1-publication.md); the
-[release handoff](handoffs/2026-10-16-v0.9.1-release.md) holds the preparation
-record. The interrupted 0.9.0 publication was superseded by 0.9.1 and is not
-claimed. Release readiness reports publication allowed, stable and candidate
-readiness false, 66 blockers (the same count at 0.9.1 and at the prepared 0.9.2 source),
+**Latest published version: 0.9.2**, a developer prerelease published
+2026-10-17T11:34:32Z from tag `v0.9.2` (tag object `fe63072`, commit `3b19812`);
+receipt: [0.9.2 publication record](handoffs/2026-10-17-v0.9.2-publication.md). The
+previous prerelease, 0.9.1 (2026-10-16, commit `92f3f51`), has its own
+[publication record](handoffs/2026-10-16-v0.9.1-publication.md). The interrupted 0.9.0
+publication was superseded by 0.9.1 and is not claimed. Release readiness reports
+publication allowed, stable and candidate readiness false, 66 blockers (the same
+count at 0.9.1 and 0.9.2),
 zero verified evidence files and zero verified content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
 Private research catalogs remain outside public assets.
 

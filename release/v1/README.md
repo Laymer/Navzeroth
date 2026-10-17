@@ -1,5 +1,11 @@
 # Frozen Forever release requirements (manifest version 1)
 
+> **Superseded in part by [ADR 0006](../../docs/decisions/0006-v1-program.md)
+> (2026-10-17).** The 1.0.0 target becomes the first stable live build after the
+> 4 Nov 2026 launch, and the inventory scope becomes the declared Human 1-20 slice
+> with recorded out-of-scope boundaries. The manifests below stay at version 1
+> until task V1.1 migrates them; until then the gate reports the original blockers.
+
 Target: `wow_forever / 1.60.1 / 70374 / 16001`. The user reported these client
 values on 2026-10-14. This identifies the client; it does not establish addon,
 content or Windows acceptance. The developer preview application version is 0.9.2.

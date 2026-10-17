@@ -8,7 +8,8 @@ Ledger currency: the rows below were last reconciled at 0.8.1. The 0.9.x subscop
 (content v2, catalog capacity and pagination, the source pipeline, the quest
 completion getter, turn-in milestones, candidate gating, the acceptance kit and
 local data) are recorded in [STATUS](STATUS.md) and the dated handoffs, not as rows
-here. The 1.0.0 remaining-work inventory is a separate 0.9.2 program deliverable.
+here. The 1.0.0 program's tasks (V0.1 to V6.2, [ADR 0006](decisions/0006-v1-program.md))
+are tracked in the root [TODO.md](../TODO.md), not as rows here.
 This ledger separates existing engineering implementations from whole-task acceptance.
 No task is promoted to live VERIFIED by source inspection or synthetic checks.
 

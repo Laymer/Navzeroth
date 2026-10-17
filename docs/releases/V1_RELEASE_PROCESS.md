@@ -1,5 +1,12 @@
 # Full-content v1.0.0 release process
 
+> **Superseded in part by [ADR 0006](../decisions/0006-v1-program.md) (2026-10-17):**
+> target (first stable post-launch live build), scope (declared Human 1-20 slice),
+> sources (owner-reported written grants, the owner's guides), hybrid delivery with
+> locally built content, the signer arrangement, `1.0.0-rc.N`-only prereleases,
+> signing, and authority (including stable publication once the gate passes). The
+> latest published version is 0.9.2. The task tracker is [TODO.md](../../TODO.md).
+
 This is the release contract for the authorized v1 program, starting from
 `bb3782cbac13b5fb3e6ca8196278ba7fcc427474`. The latest published product is the
 [0.9.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)
