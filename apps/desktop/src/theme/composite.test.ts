@@ -101,6 +101,33 @@ describe("text over the backdrop", () => {
   });
 });
 
+describe(".play-note edge", () => {
+  const playCss = read("screens", "play.css");
+  const body = rule(playCss, ".play-note");
+  const sheet = /^\.play-screen \{[^}]*background:\s*color-mix\(in srgb, var\((--[\w-]+)\) (\d+)%, transparent\)/m.exec(playCss);
+  const backdrop = read("theme", "Backdrop.tsx");
+  const colours = [...new Set([...backdrop.matchAll(/#[0-9a-fA-F]{6}\b/g)].map((m) => m[0].toLowerCase()))];
+
+  it("draws its border in --tone-warn", () => {
+    expect(varName(/border:[^;]*(var\(--[\w-]+\))/.exec(body)?.[1] ?? "")).toBe("--tone-warn");
+  });
+
+  it("holds 3:1 as a boundary on the play sheet over any backdrop colour and on every Panel surface", () => {
+    expect(sheet).not.toBeNull();
+    const opacity = Number(sheet?.[2]) / 100;
+    const surface = resolve(base, sheet?.[1] ?? "--surface");
+    const edge = resolve(base, "--tone-warn");
+    for (const colour of colours) {
+      expect(ratio(edge, over(surface, opacity, colour)), `over ${colour}`).toBeGreaterThanOrEqual(3);
+    }
+    for (const tokens of [base, high]) {
+      for (const name of ["--surface", "--surface-raised", "--ground"]) {
+        expect(ratio(resolve(tokens, "--tone-warn"), resolve(tokens, name)), name).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+});
+
 describe("--text-muted and --mist", () => {
   // --text-muted on --mist is 4.31:1, so the pair is deliberately not declared and must not be used.
   it("never places muted text on a --mist background", () => {

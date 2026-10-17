@@ -50,6 +50,8 @@ test("joint planning sends exact participant guards and hard exclusions, then in
   await page.getByLabel("Utility for two on demo-objective-1", { exact: true }).fill("3");
   await calculate.click();
   await expect(page.getByText("No jointly feasible objective fits the supplied inputs and stopping route.")).toBeVisible();
+  // The absence check after the refresh uses this same locator, so prove it matches first (G6 O8).
+  await expect(page.getByLabel("Joint estimate", { exact: true })).toBeVisible();
   const calls = await page.evaluate(() => (window as unknown as { __JOINT_CALLS__: { command: string; args: Record<string, unknown> }[] }).__JOINT_CALLS__);
   const invocation = calls.find((c) => c.command === "start_planning_job");
   expect(invocation?.args.kind).toBe("joint");

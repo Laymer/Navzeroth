@@ -1,4 +1,4 @@
 .settings fieldset{display:grid;gap:1rem;min-width:0}.settings .settings__check{display:flex;align-items:start;gap:.5rem;min-width:0}.settings input,.settings select{max-width:100%;min-width:0;box-sizing:border-box}.settings input[type=checkbox]{flex-shrink:0}
 :root[data-motion=reduced] *, :root[data-motion=reduced] *::before,:root[data-motion=reduced] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
-.today-screen,.saved-plan,.settings{overflow-wrap:anywhere;min-width:0;max-width:100%}.settings input,.settings select,.settings button,.today-screen button{font:inherit;max-width:100%;box-sizing:border-box}
+.today-screen,.settings{overflow-wrap:anywhere;min-width:0;max-width:100%}.settings input,.settings select,.settings button,.today-screen button{font:inherit;max-width:100%;box-sizing:border-box}
