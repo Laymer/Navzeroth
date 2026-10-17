@@ -13,11 +13,11 @@ needed is in Git history (`TODO.md` at `3b19812`).
 
 ## Gate snapshot
 
-`release-readiness --root . --version 0.9.2` after V1.1 (schema 2 manifests): 68
-blockers, `stable_ready: false`, `candidate_ready: false`, 0 verified evidence files,
+`release-readiness --root . --version 0.9.2` after V1.4: 69 blockers (V1.1 left 68), `stable_ready: false`, `candidate_ready: false`, 0 verified evidence files,
 0 verified content packs. That's the 66 from `3b19812` plus two from V1.1: "Release
 target is pending" (cleared by V4.2) and "Release slice classes are unknown"
-(cleared after launch). Re-run it before trusting any count here.
+(cleared after launch); V1.4 adds "Slice acceptance matrix cannot be checked until
+the slice classes are known". Re-run it before trusting any count here.
 
 | Category | Count | Cleared by |
 | --- | ---: | --- |
@@ -68,9 +68,11 @@ target is pending" (cleared by V4.2) and "Release slice classes are unknown"
 - [x] **V1.3 Signer rule** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.3.md)):
   format 2 policies and receipts let the owner hold both keys when the payload binds
   `independent_review_sha256`; format 1 keeps distinct identities.
-- [ ] **V1.4 Slice acceptance matrix** (Eng). Class × level band × zone × party size
-  sampling rows plus the typed party support matrix in
-  `release/v1/acceptance-evidence.json`.
+- [x] **V1.4 Slice acceptance matrix** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.4.md)):
+  evidence `matrix` rows; every class in every level band, and every zone and
+  party size, must pass live. Blocks once until the slice classes are known. The
+  typed party support matrix (`release_party.rs`) already exists; aligning its
+  supported sizes with the slice is left to V2.4.
 
 ## Phase 2: content (up to three parallel worktree streams)
 

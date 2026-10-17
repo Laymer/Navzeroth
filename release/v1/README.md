@@ -20,6 +20,14 @@
 - Each domain may list `out_of_scope` boundaries (`id`, `scope`, `reason`). A
   boundary is neither `unknown` nor `unsupported`, and it never satisfies a unit:
   units inside the slice still need exact required records and passing coverage.
+- Evidence `matrix` (task V1.4): live rows with `class`, `level_min`/`level_max`,
+  `zone`, `party_size` and the usual status/method/operator/time/environment/
+  artifacts. The gate derives the required coverage from the slice: every class
+  in every ten-level band (`release::level_bands`: 1-10 and 11-20), and every zone
+  and party size in at least one row. Rows outside the slice, duplicate IDs,
+  failed, automated or partial rows block; pristine `unverified` live rows are
+  pending observations. While `classes` is `null` the matrix can't be checked and
+  blocks once; the committed matrix is empty until the class list is known.
 - `release::upgrade_inventory` and `upgrade_evidence` are the explicit v1 to v2
   migration. Units, sources and evidence rows are kept; the target becomes pending.
 - Other release modules (party matrix, local-data delivery policy, inventory

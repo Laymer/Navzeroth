@@ -104,9 +104,10 @@ extracted locally. Bundled packs stay enUS.
 
 ### 8. Acceptance
 
-The 15 `LIVE-*` and 10 `WIN-*` rows stay. Representative rows cover each class ×
-level band (1-10, 10-20) × zone × party size in the slice, defined as a sampling
-matrix in the manifest (task V1.4). The owner is the operator, with two accounts
+The 15 `LIVE-*` and 10 `WIN-*` rows stay. Slice rows (task V1.4) cover every class
+in every level band (1-10, 11-20), and every zone and party size of the slice in at
+least one row; with six classes that's at least 12 live rows. The Deadmines is
+covered by the existing `LIVE-DUNGEON` row, not by a matrix dimension. The owner is the operator, with two accounts
 for duo rows, a second machine or clean VM for bare-machine Windows rows, and
 NVDA/Narrator for accessibility.
 
