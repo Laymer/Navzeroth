@@ -13,11 +13,11 @@ needed is in Git history (`TODO.md` at `3b19812`).
 
 ## Gate snapshot
 
-`release-readiness --root . --version 0.9.2` after V1.1 (schema 2 manifests): 68
-blockers, `stable_ready: false`, `candidate_ready: false`, 0 verified evidence files,
+`release-readiness --root . --version 0.9.2` after V1.4: 69 blockers (V1.1 left 68), `stable_ready: false`, `candidate_ready: false`, 0 verified evidence files,
 0 verified content packs. That's the 66 from `3b19812` plus two from V1.1: "Release
 target is pending" (cleared by V4.2) and "Release slice classes are unknown"
-(cleared after launch). Re-run it before trusting any count here.
+(cleared after launch); V1.4 adds "Slice acceptance matrix cannot be checked until
+the slice classes are known". Re-run it before trusting any count here.
 
 | Category | Count | Cleared by |
 | --- | ---: | --- |
