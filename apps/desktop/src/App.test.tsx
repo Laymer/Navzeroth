@@ -34,6 +34,28 @@ describe("non-demo and failure states", () => {
     expect(screen.queryByText(/DEMO/)).not.toBeInTheDocument();
   });
 
+  it("loads once a startup database check finishes before the recovery panel polls", async () => {
+    // The native smoke race: get_app_status fails while the startup check runs,
+    // and the check is already done when the recovery panel first asks.
+    let statusCalls = 0;
+    const racing: CommandAdapter = {
+      invoke: (c) => {
+        if (c === "get_app_status") {
+          statusCalls += 1;
+          return statusCalls === 1
+            ? Promise.reject({ code: "PROVIDER_UNAVAILABLE", message: "Database initialization is still checking", retryable: true })
+            : Promise.resolve({ version: "0.1.0", data_mode: "stored", active_profile: null, capabilities: {} } as never);
+        }
+        if (c === "get_database_status")
+          return Promise.resolve({ state: "ready", error: null, schema_version: 8, restore_limit_bytes: 1 } as never);
+        return Promise.reject(new Error("unexpected"));
+      },
+    };
+    render(<App client={createClient(racing)} />);
+    expect(await screen.findByText("No character snapshot has been imported.")).toBeInTheDocument();
+    expect(statusCalls).toBe(2);
+  });
+
   it("surfaces backend failures without leaking raw error text", async () => {
     const failing: CommandAdapter = { invoke: () => Promise.reject(new Error("secret path /home/x")) };
     render(<App client={createClient(failing)} />);
