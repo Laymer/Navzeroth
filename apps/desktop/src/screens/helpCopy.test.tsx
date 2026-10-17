@@ -37,6 +37,12 @@ it("puts Help on the Gear per-item labels without renaming the controls", async 
     expect(helpText(`Help: ${label}`), label).toMatch(/authored model/);
   }
   expect(helpText("Help: Assumed class identifier")).toMatch(/must match that model's class/);
+  // G5a #13: one primary per region. The route panel is its own region with its own main action.
+  const route = screen.getByRole("region", { name: "Route-aware acquisition" });
+  const primaries = [...document.querySelectorAll(".ui-button--primary")];
+  expect(primaries.map((b) => b.textContent)).toEqual(["Preview reserved route", "Compare gear"]);
+  expect(route.contains(primaries[0] ?? null)).toBe(true);
+  expect(route.contains(primaries[1] ?? null)).toBe(false);
 });
 
 it("states what the Planner profile change and Clear discard, and helps on each objective node", async () => {

@@ -44,6 +44,8 @@
  * contrast: --focus on --ground 3
  * contrast: --focus on --surface 3
  * contrast: --focus on --surface-raised 3
+ * The .play-note edge (play.css) is a 3:1 non-text boundary in --tone-warn:
+ * contrast: --tone-warn on --surface-raised 3
  */
 
 :root {
