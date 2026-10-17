@@ -4,30 +4,32 @@ Updated: 2026-10-17.
 
 ## Current task
 
-**0.9.2 program (ADR [0005](decisions/0005-v092-program.md)).** Tasks G1 to G5 are
-merged (G4 desktop design system, PR #160; G5a play screens, PR #161; G5b data and
-system screens, PR #162; earlier tasks G1, G2, G2b and G3 in PRs #157, #158, #156 and #159). G6, the design-system
-follow-ups carried from the G4/G5 reviews, is in progress: owner and sole writer
-Claude Code (Sonnet 5.5), baseline main `b60193e`, branch `feat/g6-followups`, claim
-[2026-10-17-g6](claims/2026-10-17-g6.md), draft PR open. Remaining after G6: the
-0.9.2 release and the root `TODO.md` for 1.0.0.
+**0.9.2 program (ADR [0005](decisions/0005-v092-program.md)).** Tasks G1 to G6 are
+merged (G6, design-system follow-ups, PR #163; G4 to G5b in PRs #160 to #162; G1, G2,
+G2b and G3 in PRs #157, #158, #156 and #159). G7 prepares the **0.9.2 developer
+prerelease**: owner and sole writer Claude Code (Sonnet 5.5), baseline main `1806028`,
+branch `release/v0.9.2`, claim [2026-10-17-g7](claims/2026-10-17-g7.md), draft PR open;
+see the [release handoff](handoffs/2026-10-17-v0.9.2-release.md) and
+[notes](releases/0.9.2.md). No tag or publication is part of G7. Remaining after it:
+tag and publish 0.9.2 on owner authorization, and the root `TODO.md` for 1.0.0.
 
-**Latest published version: 0.9.1**, a developer prerelease published
+**Latest published version: 0.9.1** (0.9.2 is prepared, not published), a developer prerelease published
 2026-10-16T11:58:04Z from tag `v0.9.1` (tag object `dbaab3a`, commit `92f3f51`).
 Its receipt, with asset SHA-256 values and CI run IDs, is
 [the 0.9.1 publication record](handoffs/2026-10-16-v0.9.1-publication.md); the
 [release handoff](handoffs/2026-10-16-v0.9.1-release.md) holds the preparation
 record. The interrupted 0.9.0 publication was superseded by 0.9.1 and is not
 claimed. Release readiness reports publication allowed, stable and candidate
-readiness false, 66 blockers, zero verified evidence files and zero verified
-content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
+readiness false, 66 blockers at 0.9.1 (67 when checked for the prepared 0.9.2 source),
+zero verified evidence files and zero verified content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
 Private research catalogs remain outside public assets.
 
-GitHub branch protection enforces only five checks: Rust format, Rust Linux,
-Rust Windows, pnpm Linux and pnpm Windows. The other CI jobs (Lua static checks,
-Desktop shell Windows, Windows package, source knowledge) pass by process
-convention only. Earlier records that say "all nine required checks" mean that
-convention, not branch protection. Some earlier commits use the `release:`
+GitHub branch protection on `main` (verified read-only with `gh api` on 2026-10-17)
+requires nine status checks with strict up-to-date branches: Rust format, Rust Linux,
+Rust Windows, pnpm Linux, pnpm Windows, Lua static checks, Desktop shell Windows,
+Mocked desktop Chromium and Windows installer and addon package. The source knowledge
+workflow is not among them and passes by process convention only. Earlier records that
+say "only five checks" were written before the setting changed. Some earlier commits use the `release:`
 subject prefix, which predates the plan 21.4 task-ID convention.
 
 ## Preceding work
