@@ -20,7 +20,7 @@ Its receipt, with asset SHA-256 values and CI run IDs, is
 [release handoff](handoffs/2026-10-16-v0.9.1-release.md) holds the preparation
 record. The interrupted 0.9.0 publication was superseded by 0.9.1 and is not
 claimed. Release readiness reports publication allowed, stable and candidate
-readiness false, 66 blockers at 0.9.1 (67 when checked for the prepared 0.9.2 source),
+readiness false, 66 blockers (the same count at 0.9.1 and at the prepared 0.9.2 source),
 zero verified evidence files and zero verified content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
 Private research catalogs remain outside public assets.
 
