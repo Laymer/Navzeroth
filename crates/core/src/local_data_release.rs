@@ -74,6 +74,10 @@ pub struct ReceiptPayload {
     pub scenario_dependencies_sha256: String,
     pub performance_workload_sha256: String,
     pub performance_results_sha256: String,
+    /// Format 2 (ADR 0006 section 6): SHA-256 of the independent review record
+    /// the reviewer signature attests to. Required in format 2, absent in 1.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub independent_review_sha256: Option<String>,
     pub domains: BTreeMap<String, InventoryProof>,
     pub acceptance: BTreeMap<String, AcceptanceProof>,
 }
@@ -105,20 +109,30 @@ fn hex(text: &str, bytes: usize) -> bool {
             .bytes()
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
+/// Format 1 requires distinct operator and reviewer identities. Format 2
+/// (ADR 0006 section 6) lets one owner identity hold one operator key and one
+/// reviewer key; keys are always distinct, and receipts must then bind an
+/// independent review record.
 pub fn validate_policy(policy: &DeliveryPolicy) -> Result<(), &'static str> {
-    if policy.format_version != 1
+    if !matches!(policy.format_version, 1 | 2)
         || policy.target != Target::forever_70374()
         || policy.trusted_signers.len() > 64
     {
         return Err("Unsupported delivery policy");
     }
+    let mut roles_by_identity = BTreeSet::new();
     let mut identities = BTreeSet::new();
     let mut keys = BTreeSet::new();
     for (id, key) in &policy.trusted_signers {
+        let identity_ok = if policy.format_version == 1 {
+            identities.insert(&key.identity)
+        } else {
+            roles_by_identity.insert((&key.identity, key.role))
+        };
         if !identity(id)
             || !identity(&key.identity)
             || !hex(&key.public_key_hex, 32)
-            || !identities.insert(&key.identity)
+            || !identity_ok
             || !keys.insert(&key.public_key_hex)
         {
             return Err("Invalid or duplicate trusted signer");
@@ -127,7 +141,12 @@ pub fn validate_policy(policy: &DeliveryPolicy) -> Result<(), &'static str> {
     Ok(())
 }
 pub fn validate_payload(payload: &ReceiptPayload) -> Result<(), &'static str> {
-    if payload.format_version != 1
+    let review_ok = match (payload.format_version, &payload.independent_review_sha256) {
+        (1, None) => true,
+        (2, Some(hash)) => is_sha256(hash),
+        _ => false,
+    };
+    if !review_ok
         || payload.target != Target::forever_70374()
         || !hex(&payload.candidate_source_commit, 20)
         || !identity(&payload.extractor_version)

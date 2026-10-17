@@ -106,8 +106,12 @@ Research-only/unavailable records cannot feed plans, gear or preparation claims.
 Native interactive Windows/Linux acceptance is separate from mocked UI checks.
 
 The private-catalog release redesign has versioned contracts and canonical,
-domain-separated Ed25519 primitives. Verification requires two distinct trusted
-operator/reviewer identities, exact candidate/policy/native/profile/metadata
+domain-separated Ed25519 primitives. Format 1 verification requires two distinct
+trusted operator/reviewer identities. Format 2 policies and receipts (ADR 0006 §6,
+task V1.3) let one owner identity hold one operator and one reviewer key; the keys
+stay distinct, the payload must bind `independent_review_sha256` (the hash of an
+independent review record), and signatures use a separate `V2` domain tag. That
+independence is weaker than two people. Verification also requires exact candidate/policy/native/profile/metadata
 bindings, all nine inventory-domain proof bindings and all25 mandatory acceptance
 proof bindings. Tampering, revocation, unknown/duplicate signers, unsupported
 versions/modes and noncanonical receipts refuse. Hashes/counts alone do not prove
