@@ -60,6 +60,7 @@ fn fixture() -> (DeliveryPolicy, SignedReceipt) {
         scenario_dependencies_sha256: digest.clone(),
         performance_workload_sha256: digest.clone(),
         performance_results_sha256: digest.clone(),
+        independent_review_sha256: None,
         domains: DOMAINS
             .into_iter()
             .map(|d| (d.into(), proof.clone()))
@@ -213,6 +214,118 @@ fn unknown_modes_versions_self_supplied_keys_and_duplicate_members_fail_closed()
     let text = serde_json::to_string(&policy).unwrap();
     assert!(receipts::policy(text.replace("local_catalog", "unknown").as_bytes()).is_err());
     let mut unknown = policy;
-    unknown.format_version = 2;
+    unknown.format_version = 3;
     assert!(validate_policy(&unknown).is_err());
+}
+
+/// ADR 0006 section 6: the owner holds both keys under format 2.
+fn owner_fixture() -> (DeliveryPolicy, SignedReceipt) {
+    let (mut policy, receipt) = fixture();
+    policy.format_version = 2;
+    for signer in policy.trusted_signers.values_mut() {
+        signer.identity = "project-owner".into();
+    }
+    let mut payload = receipt.payload;
+    payload.format_version = 2;
+    payload.release_policy_sha256 = receipts::policy_hash(&policy).unwrap();
+    payload.independent_review_sha256 = Some("e".repeat(64));
+    let signatures = vec![
+        receipts::sign(&payload, &policy, "operator", &[1; 32]).unwrap(),
+        receipts::sign(&payload, &policy, "reviewer", &[2; 32]).unwrap(),
+    ];
+    (
+        policy,
+        SignedReceipt {
+            format_version: 2,
+            payload,
+            signatures,
+        },
+    )
+}
+fn resign(receipt: &mut SignedReceipt, policy: &DeliveryPolicy) -> bool {
+    let signed = [("operator", [1; 32]), ("reviewer", [2; 32])]
+        .map(|(id, key)| receipts::sign(&receipt.payload, policy, id, &key));
+    if signed.iter().any(Result::is_err) {
+        return false;
+    }
+    receipt.signatures = signed.into_iter().map(Result::unwrap).collect();
+    true
+}
+#[test]
+fn one_owner_may_hold_both_roles_only_with_format_2_and_a_bound_review() {
+    let (policy, receipt) = owner_fixture();
+    assert!(verify(&receipt, &policy));
+
+    // The same shared identity under format 1 rules is refused.
+    let mut v1_policy = policy.clone();
+    v1_policy.format_version = 1;
+    assert!(validate_policy(&v1_policy).is_err());
+
+    // A format 1 receipt under the format 2 policy keeps the distinct-identity rule.
+    let mut v1 = receipt.clone();
+    v1.format_version = 1;
+    v1.payload.format_version = 1;
+    v1.payload.independent_review_sha256 = None;
+    assert!(resign(&mut v1, &policy));
+    assert!(!verify(&v1, &policy));
+
+    // Format 2 needs a review hash; format 1 must not carry one.
+    let mut missing = receipt.clone();
+    missing.payload.independent_review_sha256 = None;
+    assert!(!resign(&mut missing, &policy));
+    let mut bad = receipt.clone();
+    bad.payload.independent_review_sha256 = Some("not-a-hash".into());
+    assert!(!resign(&mut bad, &policy));
+    let (plain_policy, mut extra) = fixture();
+    extra.payload.independent_review_sha256 = Some("e".repeat(64));
+    assert!(!resign(&mut extra, &plain_policy));
+
+    // The review hash is signed: changing it breaks both signatures.
+    let mut swapped = receipt.clone();
+    swapped.payload.independent_review_sha256 = Some("f".repeat(64));
+    assert!(!verify(&swapped, &policy));
+
+    // Receipt and payload versions must agree.
+    let mut mixed = receipt.clone();
+    mixed.format_version = 1;
+    assert!(!verify(&mixed, &policy));
+}
+#[test]
+fn format_2_still_requires_distinct_keys_roles_and_unrevoked_signers() {
+    let (policy, receipt) = owner_fixture();
+    let mut same_key = policy.clone();
+    let operator_key = same_key.trusted_signers["operator"].public_key_hex.clone();
+    same_key
+        .trusted_signers
+        .get_mut("reviewer")
+        .unwrap()
+        .public_key_hex = operator_key;
+    assert!(validate_policy(&same_key).is_err());
+
+    let mut two_operators = policy.clone();
+    two_operators
+        .trusted_signers
+        .get_mut("reviewer")
+        .unwrap()
+        .role = SignerRole::Operator;
+    assert!(validate_policy(&two_operators).is_err());
+
+    let mut duplicated = receipt.clone();
+    duplicated.signatures[1] = duplicated.signatures[0].clone();
+    assert!(!verify(&duplicated, &policy));
+
+    let mut revoked = policy.clone();
+    revoked.trusted_signers.get_mut("reviewer").unwrap().revoked = true;
+    assert!(!verify(&receipt, &revoked));
+}
+#[test]
+fn format_1_receipts_cannot_reuse_format_2_signatures() {
+    let (policy, receipt) = owner_fixture();
+    // Reusing format 2 signatures on a format 1 payload must fail, even with a
+    // policy that has distinct identities.
+    let (plain_policy, plain) = fixture();
+    let mut forged = plain.clone();
+    forged.signatures = receipt.signatures.clone();
+    assert!(!verify(&forged, &plain_policy));
+    assert!(verify(&receipt, &policy));
 }

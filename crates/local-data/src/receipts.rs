@@ -10,6 +10,7 @@ use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
 use std::collections::BTreeSet;
 const MAX_RECEIPT: usize = 128 * 1024;
 const DOMAIN: &[u8] = b"NAVZEROTH\0LOCAL-CATALOG-RECEIPT\0V1\0";
+const DOMAIN_V2: &[u8] = b"NAVZEROTH\0LOCAL-CATALOG-RECEIPT\0V2\0";
 pub struct ExpectedBindings<'a> {
     pub candidate_source_commit: &'a str,
     pub production_sha256: &'a str,
@@ -30,7 +31,12 @@ fn canonical<T: serde::Serialize + serde::de::DeserializeOwned>(bytes: &[u8]) ->
 fn payload_bytes(payload: &ReceiptPayload) -> Result<Vec<u8>> {
     contract::validate_payload(payload)?;
     let bytes = crate::bounded_json(payload, MAX_RECEIPT)?;
-    let mut message = DOMAIN.to_vec();
+    let mut message = if payload.format_version == 2 {
+        DOMAIN_V2
+    } else {
+        DOMAIN
+    }
+    .to_vec();
     message.extend_from_slice(&(bytes.len() as u64).to_le_bytes());
     message.extend(bytes);
     Ok(message)
@@ -104,7 +110,8 @@ pub fn verify(
 ) -> Result<SignedReceipt> {
     contract::validate_policy(policy)?;
     let receipt: SignedReceipt = canonical(bytes)?;
-    if receipt.format_version != 1
+    if !matches!(receipt.format_version, 1 | 2)
+        || receipt.payload.format_version != receipt.format_version
         || receipt.signatures.len() != 2
         || policy.delivery_mode != DeliveryMode::LocalCatalog
     {
@@ -127,6 +134,9 @@ pub fn verify(
         return Err("Stale candidate or policy binding");
     }
     let message = payload_bytes(payload)?;
+    // One owner may hold both roles only under a format 2 policy and a format 2
+    // receipt, whose payload binds the independent review record.
+    let shared_identity_allowed = policy.format_version == 2 && receipt.format_version == 2;
     let mut roles = BTreeSet::new();
     let mut identities = BTreeSet::new();
     let mut keys = BTreeSet::new();
@@ -138,7 +148,7 @@ pub fn verify(
             .ok_or("Receipt signer untrusted or revoked")?;
         if trusted.role != signature.role
             || !roles.insert(signature.role)
-            || !identities.insert(&trusted.identity)
+            || !(identities.insert(&trusted.identity) || shared_identity_allowed)
             || !keys.insert(&trusted.public_key_hex)
         {
             return Err("Distinct trusted operator and reviewer required");

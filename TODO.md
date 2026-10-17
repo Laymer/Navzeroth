@@ -61,8 +61,9 @@ files, 0 verified content packs. Re-run it before trusting any count here.
   mode: tested-content digest (extractor profile, metadata revision, expected
   catalog digest per build/locale), receipt CLI (prepare/sign/verify) on
   `crates/local-data/src/receipts.rs`, and a desktop match/mismatch state.
-- [ ] **V1.3 Signer rule** (Eng). Two keys may share the owner identity when the
-  reviewer receipt binds a hashed independent review record (ADR 0006 §6).
+- [x] **V1.3 Signer rule** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.3.md)):
+  format 2 policies and receipts let the owner hold both keys when the payload binds
+  `independent_review_sha256`; format 1 keeps distinct identities.
 - [ ] **V1.4 Slice acceptance matrix** (Eng). Class × level band × zone × party size
   sampling rows plus the typed party support matrix in
   `release/v1/acceptance-evidence.json`.
