@@ -227,7 +227,7 @@ deterministic container, not the client file: magic
 first frame u32, frame count u32; plain ranges carry `u32::MAX` and 0), then
 the plain bytes in order. `encoded_bytes` is the logical length.
 
-The decoded-cell budget (2 million) counts records of the sections that are
+The decoded-cell budget (4 million) counts records of the sections that are
 decoded (plus copies), not records of skipped encrypted or unavailable sections,
 which are never materialized.
 
@@ -257,7 +257,7 @@ sparse inline strings. Exact build/layout metadata is required, with no nearest
 build fallback. Unavailable encrypted sections produce explicit gaps. Unsupported
 storage/layouts and failed checksum/offset/count/string validation never become
 normalized gameplay facts. Limits include64MiB per logical table,1million total
-rows,2million scalar/array cells,64MiB accumulated decoded text and256MiB encoded
+rows,4million scalar/array cells (2million before V2.2d),64MiB accumulated decoded text and256MiB encoded
 table output. Capacity refusal does not truncate data or replace an active catalog.
 
 The pinned wowdbdefs-rs0.1.0 parser needed a retained local patch for u32 builds,

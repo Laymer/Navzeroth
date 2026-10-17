@@ -6,7 +6,10 @@ use std::collections::{BTreeMap, VecDeque};
 use wowdbdefs_rs::{RawEntry, RawType};
 
 const MAX_RECORDS: usize = 1_000_000;
-const MAX_CELLS: usize = 2_000_000;
+/// Fixed bound on decoded scalar/array cells per table, copies included. Sized so
+/// build 70450 ItemSparse (2,000,024 cells in its plain sections) decodes; see
+/// docs/data/LOCAL_EXTRACTION.md for the memory reasoning.
+pub const MAX_CELLS: usize = 4_000_000;
 const MAX_TEXT_BYTES: usize = 64 * 1024 * 1024;
 type Result<T> = std::result::Result<T, &'static str>;
 
