@@ -54,6 +54,10 @@ impl Temp {
                     })
                     .collect::<Vec<_>>()
                     .join("[[package]]")
+            } else if (name == INVENTORY || name == EVIDENCE) && content {
+                // Content binds only to a frozen target; while the schema 2 target is
+                // pending, these material tests run on the still-supported schema 1.
+                frozen_v1(&source)
             } else if name == INVENTORY || name == EVIDENCE {
                 source
             } else {
@@ -202,6 +206,22 @@ impl Drop for Temp {
     fn drop(&mut self) {
         let _ = fs::remove_dir_all(&self.0);
     }
+}
+fn frozen_v1(source: &str) -> String {
+    let mut value: Value = serde_json::from_str(source).unwrap();
+    let object = value.as_object_mut().unwrap();
+    object.insert("schema_version".into(), json!(1));
+    object.insert(
+        "target".into(),
+        json!({"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001}),
+    );
+    object.remove("slice");
+    if let Some(domains) = object.get_mut("domains").and_then(Value::as_array_mut) {
+        for domain in domains {
+            domain.as_object_mut().unwrap().remove("out_of_scope");
+        }
+    }
+    serde_json::to_string_pretty(&value).unwrap() + "\n"
 }
 fn digest(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
@@ -401,7 +421,7 @@ fn future_manifest_oversized_source_and_duplicate_pack_are_refused() {
         let temp = Temp::new(true);
         let mut evidence = temp.read(EVIDENCE);
         match kind {
-            0 => evidence["schema_version"] = json!(2),
+            0 => evidence["schema_version"] = json!(3),
             1 => {
                 evidence["sources"][0]["files"][0]["bytes"] =
                     json!(azeroth_cli::release::MAX_FILE_BYTES + 1)

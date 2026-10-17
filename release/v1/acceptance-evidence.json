@@ -1,12 +1,7 @@
 {
-  "schema_version": 1,
-  "target": {
-    "edition": "wow_forever",
-    "version": "1.60.1",
-    "build": "70374",
-    "interface": 16001
-  },
-  "inventory_sha256": "1b7b7f1fd30a4a76e8bd363beaf31e505a61d6d648de030df9980eeee5d1ea21",
+  "schema_version": 2,
+  "target": null,
+  "inventory_sha256": "5ab72cef555964caa9c37d90016ce7761206c07e3a75eb1cb46447de71a7b7cc",
   "tested_source_commit": null,
   "production_sha256": null,
   "checks": [

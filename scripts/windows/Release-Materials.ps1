@@ -49,7 +49,8 @@ function Test-EmptyMaterialSelection([string] $Root) {
     if (-not (Test-Path -LiteralPath $inventory) -and -not (Test-Path -LiteralPath $evidence)) { return $true }
     $i = Read-BoundedReleaseText $inventory | ConvertFrom-Json
     $e = Read-BoundedReleaseText $evidence | ConvertFrom-Json
-    if ($i.schema_version -ne 1 -or $e.schema_version -ne 1) { throw 'Unsupported release material schema.' }
+    # Schema 2 (ADR 0006) keeps the material fields; both files must share a version.
+    if ($i.schema_version -notin 1, 2 -or $e.schema_version -ne $i.schema_version) { throw 'Unsupported release material schema.' }
     return @($i.sources).Count -eq 0 -and @($e.sources).Count -eq 0 -and @($e.packs).Count -eq 0
 }
 

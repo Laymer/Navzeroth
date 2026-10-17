@@ -46,7 +46,8 @@ pub struct Manifest {
     pub candidate_source_commit: String,
     pub production_sha256: String,
     pub inventory_sha256: String,
-    pub target: Target,
+    /// Null only for an empty selection while the release target is pending.
+    pub target: Option<Target>,
     pub packs: Vec<release::PackRef>,
     pub sources: Vec<SourceMaterial>,
     pub files: Vec<MaterialFile>,
@@ -302,11 +303,17 @@ pub fn plan(options: &Options) -> Result<Manifest> {
             tested_source_commit: evidence.tested_source_commit.as_deref().unwrap_or(""),
         },
     )?;
-    if inventory.target != Target::forever_70374() || evidence.target != inventory.target {
+    if evidence.schema_version != inventory.schema_version
+        || inventory.target != release::expected_target(inventory.schema_version)
+        || evidence.target != inventory.target
+    {
         return Err("Release material target differs from frozen build");
     }
     let empty =
         inventory.sources.is_empty() && evidence.sources.is_empty() && evidence.packs.is_empty();
+    if !empty && inventory.target.is_none() {
+        return Err("Release materials cannot be selected while the target is pending");
+    }
     if !empty && evidence.inventory_sha256.as_str() != hash(&inventory_bytes) {
         return Err("Material evidence refers to a different inventory revision");
     }

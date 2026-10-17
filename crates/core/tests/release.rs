@@ -150,7 +150,7 @@ fn every_mandatory_row_rejects_missing_failed_or_automated_live_results() {
 fn evidence_cannot_reuse_another_build_inventory_or_tested_revision() {
     let (i, e) = complete();
     let mut bad = e.clone();
-    bad.target.build = "70338".into();
+    bad.target.as_mut().unwrap().build = "70338".into();
     assert!(!check("1.0.0", &i, Some(&bad)).stable_ready);
     let mut bad = e.clone();
     bad.inventory_sha256 = "c".repeat(64).try_into().unwrap();
@@ -243,7 +243,7 @@ fn future_schema_and_excessive_collections_fail_even_for_prereleases() {
         production_sha256: HASH,
         tested_source_commit: COMMIT,
     };
-    i.schema_version = 2;
+    i.schema_version = 3;
     assert!(assess("1.0.0-rc.1", &i, Some(&e), &bindings).is_err());
     i.schema_version = 1;
     let mut excessive = e.clone();

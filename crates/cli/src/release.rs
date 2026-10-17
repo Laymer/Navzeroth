@@ -522,6 +522,13 @@ struct PackV2 {
     party_support: Option<FileRef>,
     supporting_files: Vec<FileRef>,
 }
+/// Content binds only to a frozen target; a pending (null) target blocks it.
+fn release_target(inventory: &Inventory) -> Result<&release::Target> {
+    inventory
+        .target
+        .as_ref()
+        .ok_or("Release target is pending; content cannot be bound to it")
+}
 fn bind_v2_pack(
     root: &Path,
     pack: &release::PackRef,
@@ -570,13 +577,14 @@ fn bind_v2_pack(
         crate::pack::v2::MAX_CATALOG_BYTES,
     )?)
     .map_err(|_| "Invalid release v2 catalog")?;
+    // Bound last, so integrity and fixture refusals still report first.
+    let target = release_target(inventory)?;
     let data = &content.reference;
     if data.fixture
         || data.namespace != DatasetNamespace::Reference
-        || data.game.edition.as_str() != inventory.target.edition
-        || data.game.build.as_str()
-            != format!("{}.{}", inventory.target.version, inventory.target.build)
-        || data.game.interface.as_str() != inventory.target.interface.to_string()
+        || data.game.edition.as_str() != target.edition
+        || data.game.build.as_str() != format!("{}.{}", target.version, target.build)
+        || data.game.interface.as_str() != target.interface.to_string()
     {
         return Err("V2 catalog target differs or contains fixtures");
     }
@@ -751,12 +759,12 @@ fn packs(
                 std::str::from_utf8(&bytes).map_err(|_| "Dataset is not UTF-8")?,
             )
             .map_err(|_| "Invalid release dataset")?;
+            let target = release_target(inventory)?;
             if dataset.fixture
                 || dataset.namespace != DatasetNamespace::Reference
-                || dataset.game.edition.as_str() != inventory.target.edition
-                || dataset.game.build.as_str()
-                    != format!("{}.{}", inventory.target.version, inventory.target.build)
-                || dataset.game.interface.as_str() != inventory.target.interface.to_string()
+                || dataset.game.edition.as_str() != target.edition
+                || dataset.game.build.as_str() != format!("{}.{}", target.version, target.build)
+                || dataset.game.interface.as_str() != target.interface.to_string()
             {
                 return Err("Release dataset differs from frozen target or contains fixtures");
             }
@@ -1029,6 +1037,7 @@ mod tests {
                 scope: "Isolated mapping test".into(),
                 required_record_ids: Some(records.keys().cloned().collect()),
             }],
+            out_of_scope: vec![],
         }];
         let mut evidence =
             release::decode_evidence(&fs::read(root.join(EVIDENCE_PATH)).unwrap()).unwrap();
