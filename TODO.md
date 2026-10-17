@@ -35,19 +35,22 @@ the slice classes are known". Re-run it before trusting any count here.
   verifying the assets; see the [receipt](docs/handoffs/2026-10-17-v0.9.2-publication.md).
 - [x] **V0.2 ADR 0006 and re-baseline** (Eng). This file, ADR 0006, STATUS, and
   supersession notes in the release contract.
-- [ ] **V0.3 glib alert** (Both). Eng check done: `glib` 0.18.5 is absent from the
-  `x86_64-pc-windows-msvc` tree and present on Linux only through tauri → muda/tao →
-  gtk ([V0 handoff](docs/handoffs/2026-10-17-v0.md)). Remaining: the owner dismisses
-  GHSA-wrw7-89jp-8q8g with that reasoning.
+- [x] **V0.3 glib alert** (Both). Done 2026-10-17: alert 1 (GHSA-wrw7-89jp-8q8g)
+  dismissed as `not_used` with the `cargo tree` reasoning from the
+  [V0 handoff](docs/handoffs/2026-10-17-v0.md).
 - [ ] **V0.4 Signing** (Owner → Eng). SignPath Foundation, chosen by the owner. Eng
   part done ([handoff](docs/handoffs/2026-10-17-v0.4.md)): tag signing in the package
   workflow, a byte-level and Authenticode verifier, and the code signing policy.
-  Remaining: the owner applies and configures SignPath
+  The home page now has the required "Code signing policy" section, and prepared
+  application answers are in [CODE_SIGNING.md](docs/compatibility/CODE_SIGNING.md#application-prepared-answers),
+  including an open question about non-OSI content packs. Remaining: the owner
+  applies and configures SignPath
   ([setup](docs/compatibility/CODE_SIGNING.md#owner-setup-one-time)); then a
   `test_signing` run, and SmartScreen on the first signed installer.
-- [ ] **V0.5 CI recheck** (Eng). The hosted "Native WebView2 smoke over CDP" result
-  on a head at or after `81aef88`; owner confirms the nine required checks are the
-  permanent set.
+- [x] **V0.5 CI recheck** (Eng). Done: the native smoke failed on PR #170 from a real
+  startup race, fixed in PR #172 ([handoff](docs/handoffs/2026-10-17-v0.5.md)); it
+  passes on later heads. Branch protection still requires the nine checks (owner to
+  confirm they are the permanent set).
 - [ ] **V0.6 Grant intake** (Owner → Eng). Owner exports the written grants from
   ForeverDB, Questie/QuestieDB, foreverchanges.pro and Olympus News Network. Eng
   stores them as private hashed admission evidence and records scope per source in
