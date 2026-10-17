@@ -53,6 +53,40 @@ and native smoke tests (so those tests run on the signed file):
 The draft-release job is unchanged; it drafts from the artifact that now holds the
 signed installer.
 
+## Application (prepared answers)
+
+Researched 2026-10-17 from <https://signpath.org/terms>. The form at
+<https://signpath.org/apply> could not be read by the agent; paste these where
+they fit and adjust to the form's actual fields.
+
+| Question | Answer |
+| --- | --- |
+| Project name | Azeroth Navigator (Navzeroth) |
+| Repository | https://github.com/Laymer/Navzeroth (public) |
+| Licence | BSD-3-Clause (OSI-approved), no commercial dual licence |
+| Home page | https://laymer.github.io/Navzeroth/ (has the "Code signing policy" section) |
+| Download page | https://github.com/Laymer/Navzeroth/releases (latest: 0.9.2 developer prerelease) |
+| Description | Offline Windows desktop planner and in-game addon for World of Warcraft: Forever: imports addon snapshots, plans quest routes, compares gear, and records sessions. No network access, memory reading, injection or input automation. |
+| What to sign | One NSIS installer per release, `AzerothNavigator-<version>-x64-setup.exe`, built by GitHub Actions (`.github/workflows/package-windows.yml`) on a version tag |
+| Build system | GitHub Actions on GitHub-hosted `windows-2025` runners, from tagged source |
+| Team | Laymer: author, reviewer and approver. All team members use MFA on GitHub and SignPath. |
+| Privacy | The program transfers no information to other networked systems unless the user requests it |
+| Uninstall | The installer registers an uninstaller (Apps & features); install and removal are documented in `docs/compatibility/WINDOWS_INSTALL.md` |
+
+Open question for the owner before applying. The terms forbid "any proprietary,
+non open-source component" in the signed software. Today's installer contains
+only the project's own BSD-3-Clause code, OFL fonts and the addon (BSD-3-Clause).
+ADR 0006 plans to bundle content packs from granted sources (ForeverDB, Questie,
+foreverchanges.pro, Olympus News Network) whose terms are not OSI licences. Either
+keep such packs out of the signed installer (deliver them as separate release
+materials or locally built content), or ask SignPath whether third-party data under
+a non-OSI grant is acceptable before relying on signing for 1.0.0.
+
+After acceptance, also set on SignPath's side what its terms require: file metadata
+restrictions with product name "Azeroth Navigator", and manual approval for every
+release-signing request. Each stable release's notes should link the code signing
+policy, because the terms ask for it on the download page as well.
+
 ## Owner setup (one time)
 
 Only the owner can do steps 1 to 3: they need your account, identity and acceptance
