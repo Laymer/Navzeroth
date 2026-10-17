@@ -78,12 +78,18 @@ the slice classes are known". Re-run it before trusting any count here.
 
 - [~] **V2.1 Granted-source adapters**: dropped 2026-10-17 (ADR 0006 §11). Quest,
   NPC and objective facts come from the owner's own in-game observations instead.
-- [ ] **V2.2 Local extraction projections** (Eng). Equipment, geography, travel and
-  class/role projections from decoded tables; cache/hotfix import; activation and
-  rollback; other installed locales; deterministic digest.
-- [ ] **V2.3 Guide port** (Eng). Inert RXP-format importer and route replay
-  verifier in Rust, ported from the owner's guide generator; per-class Human 1-20
-  routes with a Deadmines block; owner reviews them in play.
+- [~] **V2.2 Local extraction projections** (Eng). First part done (PR #175,
+  [handoff](docs/handoffs/2026-10-17-v2.2.md)): typed, sealed, reproducible
+  projections of items, maps/UI maps, flight nodes and paths, classes and races from
+  a verified research catalog (`local-data project` / `projection-verify`).
+  Remaining: run it on the private 70425 catalog (development evidence only), stat
+  amounts and slot rules, spells/talents, cache/hotfix import, activation/rollback,
+  binding projection digests into hybrid delivery.
+- [~] **V2.3 Guide port** (Eng). Importer and verifier done (PR #176,
+  [handoff](docs/handoffs/2026-10-17-v2.3.md), [GUIDE_VERIFIER.md](docs/data/GUIDE_VERIFIER.md)):
+  inert RXP importer, `verify2.py` replay checks with typed unknowns, `guide verify`.
+  Remaining: a facts builder from the owner's addon observations plus V2.2 client
+  projections, then per-class Human 1-20 routes with a Deadmines block (solo, duo).
 - [ ] **V2.4 Authored domains** (Eng). Deadmines preparation, Human class role
   models (WoWSims-derived, assumptions documented), solo/duo scenarios, reminder rules.
 - [ ] **V2.5 Inventory and review** (Both). Replace each `<domain>-inventory-pending`
@@ -95,19 +101,11 @@ the slice classes are known". Re-run it before trusting any count here.
 
 ## Phase 3: polish (before the RC freeze)
 
-- [ ] **V3.1 Optional review items** (Eng), all of them:
-  G4 #10 (handoff wording); G5a #5-7 (planner Clear help omits exclusions, profile
-  help understates discards, two Gear help texts), #12 (dropped `.saved-plan` /
-  `.marker-panel` hooks), #13 (several `primary` buttons on Gear and Calibration),
-  follow-ups (3:1 `--tone-warn` border, Help on per-item labels); G5b O5 (Help
-  triggers in busy disabled fieldsets), O7 (Compatibility baseline at 320 px/200%);
-  G6 O1 (nested-panel assertion per screen), O2 (`InsidePanel.Provider` across
-  portals), O3 (58em threshold and unsupported-engine tests), O4 (pressed-button
-  forced-colours specificity and test, redundant prop type), O5 (`.ui-button`
-  margin on Atlas pin and route hop buttons), O6/O8 (resize-listener assertions,
-  `toHaveCount(0)` vacuity). Sources: [G4](docs/reviews/2026-10-17-g4.md),
-  [G5a](docs/reviews/2026-10-17-g5a.md), [G5b](docs/reviews/2026-10-17-g5b.md),
-  [G6](docs/reviews/2026-10-17-g6.md).
+- [x] **V3.1 Optional review items** (Eng). Done (PR #177,
+  [handoff](docs/handoffs/2026-10-17-v3.1.md)): 14 fixed, 1 decided-not-to-fix with
+  a guard test. Native WebView2, Windows contrast themes and screen readers are left
+  for owner acceptance (V5.3). Open: whether Sessions, Content and Imports should
+  also follow "one primary button per region".
 - [ ] **V3.2 Locales in the desktop** (Eng) for extracted non-enUS catalogs.
 - [ ] **V3.3 Performance workload** (Eng) for the full slice (WIN-PERFORMANCE).
 
