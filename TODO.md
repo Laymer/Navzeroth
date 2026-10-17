@@ -59,10 +59,12 @@ target is pending" (cleared by V4.2) and "Release slice classes are unknown"
   ([handoff](docs/handoffs/2026-10-17-v1.1.md)): declared slice, per-domain
   out-of-scope boundaries distinct from `unknown`, and a `null` (pending) target
   that blocks every gate until V4.2 freezes it in code.
-- [ ] **V1.2 Hybrid delivery** (Eng). New delivery-policy format with a `hybrid`
-  mode: tested-content digest (extractor profile, metadata revision, expected
-  catalog digest per build/locale), receipt CLI (prepare/sign/verify) on
-  `crates/local-data/src/receipts.rs`, and a desktop match/mismatch state.
+- [x] **V1.2 Hybrid delivery** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.2.md)):
+  `hybrid` policy mode with a tested-content digest binding, a readiness gate that
+  needs declared digests and a valid receipt bound to the tested commit, and
+  explicit `local-data receipt-*` commands. Remaining for later tasks: receipt
+  preparation (V5.4), declaring the digests (V4.2), switching the committed policy,
+  and the desktop match/mismatch indicator (needs V2.2 projections).
 - [x] **V1.3 Signer rule** (Eng). Done ([handoff](docs/handoffs/2026-10-17-v1.3.md)):
   format 2 policies and receipts let the owner hold both keys when the payload binds
   `independent_review_sha256`; format 1 keeps distinct identities.

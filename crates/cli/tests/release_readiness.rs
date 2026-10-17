@@ -191,6 +191,61 @@ fn explicit_delivery_policy_is_fingerprinted_and_unknown_modes_never_bypass_gate
     assert!(report(&temp.options("0.8.1")).is_err());
 }
 #[test]
+fn hybrid_delivery_blocks_until_digests_and_a_valid_receipt_exist() {
+    let temp = Temp::new("0.8.1");
+    let target =
+        json!({"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001});
+    // Format 2 bundled delivery: signers stay irrelevant, nothing new blocks.
+    let mut policy = json!({"format_version":2,"delivery_mode":"bundled_content","target":target,"trusted_signers":{}});
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    let bundled = report(&temp.options("0.8.1")).unwrap();
+    assert!(!blocked(&bundled, "Hybrid"));
+    // Hybrid without a local content binding is an invalid policy.
+    policy["delivery_mode"] = json!("hybrid");
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    assert!(report(&temp.options("0.8.1")).is_err());
+    policy["local_content"] = json!({"extractor_version":"0.9.2","native_reader_revision":"c".repeat(40),
+        "profile_sha256":"a".repeat(64),"metadata_sha256":"a".repeat(64),"expected_catalogs":[]});
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    let undeclared = report(&temp.options("0.8.1")).unwrap();
+    assert!(blocked(
+        &undeclared,
+        "no declared expected local catalog digests"
+    ));
+    assert!(!undeclared.readiness.stable_ready);
+    policy["local_content"]["expected_catalogs"] =
+        json!([{"build":"70425","locale":"enUS","catalog_sha256":"a".repeat(64)}]);
+    temp.json_write("config/release-delivery-v1.json", &policy);
+    temp.commit();
+    assert!(blocked(
+        &report(&temp.options("0.8.1")).unwrap(),
+        "requires a signed local-catalog receipt"
+    ));
+    temp.bind("0.8.1");
+    temp.write(
+        "release/v1/local-catalog-receipt.json",
+        "{\"format_version\":2}",
+    );
+    let invalid = report(&temp.options("0.8.1")).unwrap();
+    assert!(!blocked(
+        &invalid,
+        "requires a signed local-catalog receipt"
+    ));
+    assert!(
+        invalid
+            .readiness
+            .blockers
+            .iter()
+            .any(|b| b.contains("receipt") || b.contains("Receipt")),
+        "{:?}",
+        invalid.readiness.blockers
+    );
+    assert!(!invalid.readiness.stable_ready);
+}
+#[test]
 fn untracked_product_and_staged_product_are_blockers() {
     let temp = Temp::new("0.8.1");
     temp.bind("0.8.1");
