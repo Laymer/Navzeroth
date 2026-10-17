@@ -158,7 +158,8 @@ zero-filled. Catalog disposition and reason per cause:
 | No local file/name entry | `not_locally_present` | `not_locally_present` |
 | End-of-data or missing file part while opening the file (BLTE header reads; open stage only) | `not_locally_present` | `archive_span_incomplete` |
 | First frame encrypted with a key that is not available | `unavailable_encrypted` | `unavailable_encrypted` |
-| Verified frames read, then a frame encrypted with an unavailable key | `unavailable_encrypted` | `unavailable_encrypted_frames` |
+| Verified frames read, then a frame encrypted with an unavailable key | handled by the [partial read](#partial-reads-of-partially-encrypted-files-task-v22d) | (`unavailable_encrypted_frames` before V2.2d) |
+| Partial read: header, field, pallet, common or section-directory bytes in an encrypted frame | `unavailable_encrypted` | `unavailable_encrypted_frames_in_table_metadata` |
 | Unsupported BLTE/encryption encoding | `unavailable_encrypted` | `unsupported_archive_encoding_not_retained` |
 | Unrecognized native failure | `unavailable_encrypted` | `local_archive_read_unavailable` |
 | Short read with no recorded cause: most likely a raw data read failure after verified frames (for example an I/O or sharing error while the game runs), not encryption | `unavailable_encrypted` (used only because there is no unknown disposition) | `archive_short_read_unexplained` |
@@ -185,6 +186,50 @@ V2.2c (build 70450 catalogs before it), every short read was reported as
 106 tables were all `unavailable_encrypted_frames`: DB2 files whose trailing BLTE
 frames carry encrypted sections with unavailable keys (see
 [the V2.2c handoff](../handoffs/2026-10-17-v2.2c.md)).
+
+### Partial reads of partially encrypted files (task V2.2d)
+
+When a strict whole-file read stops at a BLTE frame encrypted with an
+unavailable key, the extractor reads the file frame by frame instead:
+
+1. The wrapper loads the frame tables through CascLib's public span-info query
+   and reports each frame's logical range from CascLib's frame records.
+2. For every BLTE frame it reads the encoded bytes and checks them against the
+   frame table's MD5 (strict). A mismatch is `archive_verification_failed`. A
+   frame whose verified encoded bytes start with mode `E` is marked encrypted;
+   it is never decoded or decrypted (not even with a key CascLib knows), and its
+   bytes are released at once.
+3. Rust checks that the frames cover the logical file contiguously, with at
+   least one plain and one encrypted frame (otherwise `archive_verification_failed`),
+   merges consecutive frames into runs, and strictly re-reads only the plain runs
+   through `CascReadFile` (per-frame MD5 again).
+
+The result holds only verified plain bytes. Encrypted runs hold no bytes: they
+are never zero-filled, synthesized or retained. The decoder reads through a
+bounded view that refuses any access outside one plain range. Header, field,
+pallet, common data and section directory must be plain, or the table is
+`unavailable_encrypted`/`unavailable_encrypted_frames_in_table_metadata`. A
+section is decoded only when all of its records, strings, IDs, copies, sparse
+entries and relationships are plain. Otherwise the whole section is a gap:
+`encrypted_section_records:<n>` when its tact key is non-zero, or
+`unavailable_frame_section_records:<n>` when it is not key-flagged but lies in
+an encrypted frame. Gap counts are totals per reason and table.
+
+Such a table is `decoded` with reason `research_decoded_from_plain_frames`. Its
+decoded object's gaps also name each encrypted run as
+`unavailable_encrypted_frames:<first>-<last>:bytes:<offset>+<length>` (frame
+indices and logical byte range). Catalog gaps carry these strings prefixed with
+the table name. Projection gaps carry them prefixed with domain and table, and
+the domain's `sources_complete` is false. The retained original is a
+deterministic container, not the client file: magic
+`NAVZEROTH-PARTIAL-ORIGINAL-V1\0`, logical length (u64), range count (u32), one
+25-byte record per range (state 1 plain / 2 encrypted, offset u64, length u64,
+first frame u32, frame count u32; plain ranges carry `u32::MAX` and 0), then
+the plain bytes in order. `encoded_bytes` is the logical length.
+
+The decoded-cell budget (2 million) counts records of the sections that are
+decoded (plus copies), not records of skipped encrypted or unavailable sections,
+which are never materialized.
 
 Before and after extraction, relevant build/config/index fingerprints and archive
 file identities/sizes/times are compared. Inspection must match the captured
