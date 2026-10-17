@@ -17,6 +17,10 @@ on:
         description: 'Build non-publishable acceptance artifacts (complete licensed content required)'
         type: boolean
         default: false
+      test_signing:
+        description: 'Sign the installer with the SignPath test-signing policy (untrusted test certificate; not for release)'
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -26,7 +30,11 @@ jobs:
   package:
     name: Windows installer and addon package
     runs-on: windows-2025
-    timeout-minutes: 50
+    # A release-signing request waits for a manual SignPath approval.
+    timeout-minutes: ${{ github.ref_type == 'tag' && 170 || 50 }}
+    permissions:
+      contents: read
+      actions: read # the SignPath connector reads this job and downloads the unsigned artifact
     steps:
       - name: Preserve committed source bytes in packages
         shell: bash
@@ -79,6 +87,12 @@ jobs:
       - name: Native smoke helper tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-NativeSmokeHelpers.ps1
+      - name: Signing verifier tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./scripts/windows/Test-Signing.ps1
+      - name: Signing verifier tests (PowerShell 7)
+        shell: pwsh
+        run: ./scripts/windows/Test-Signing.ps1
       - run: rustup show
       - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
@@ -118,6 +132,65 @@ jobs:
           $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { 'v' + (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version }
           $candidate = $env:ACCEPTANCE_CANDIDATE -eq 'true'
           ./scripts/windows/Build-Windows.ps1 -SkipTests -ExpectedVersion $expected -OutputDirectory dist/windows -AcceptanceCandidate:$candidate
+      # Task V0.4 (ADR 0006 section 9): tags are signed through SignPath Foundation
+      # when the repository variables are set; a stable tag without signing fails.
+      - name: Signing mode
+        id: signing
+        shell: bash
+        env:
+          ORGANIZATION: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          TEST_SIGNING: ${{ github.event_name == 'workflow_dispatch' && inputs.test_signing && !inputs.acceptance_candidate }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          mode=none
+          if [ "$REF_TYPE" = tag ]; then
+            version="${REF_NAME#v}"
+            if [ -n "$ORGANIZATION" ]; then mode=release-signing
+            else
+              case "$version" in
+                0.*|*-*) echo "::warning::SignPath is not configured; the $version installer is unsigned." ;;
+                *) echo "::error::Stable release $version must be signed (ADR 0006); configure SignPath first."; exit 1 ;;
+              esac
+            fi
+          elif [ "$TEST_SIGNING" = true ]; then
+            [ -n "$ORGANIZATION" ] || { echo "::error::test_signing needs the SIGNPATH_ORGANIZATION_ID variable."; exit 1; }
+            mode=test-signing
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "signing mode: $mode"
+      - name: Upload the unsigned installer for signing
+        id: unsigned
+        if: steps.signing.outputs.mode != 'none'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: unsigned-installer-${{ github.sha }}
+          path: dist/windows/*-x64-setup.exe
+          if-no-files-found: error
+          retention-days: 1
+      - name: Sign the installer (SignPath)
+        if: steps.signing.outputs.mode != 'none'
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3.0
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'Navzeroth' }}
+          signing-policy-slug: ${{ steps.signing.outputs.mode }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: ${{ steps.signing.outputs.mode == 'release-signing' && 7200 || 900 }}
+          output-artifact-directory: ${{ runner.temp }}/signed
+      - name: Verify the signed installer and refresh checksums
+        if: steps.signing.outputs.mode != 'none'
+        shell: powershell
+        env:
+          MODE: ${{ steps.signing.outputs.mode }}
+          EXPECTED_SUBJECT: ${{ vars.SIGNPATH_EXPECTED_SUBJECT }}
+        run: |
+          $version = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $release = $env:MODE -eq 'release-signing'
+          ./scripts/windows/Complete-SignedInstaller.ps1 -Version $version -Directory dist/windows -SignedDirectory (Join-Path $env:RUNNER_TEMP 'signed') -RequireTrusted:$release -ExpectedSubject $env:EXPECTED_SUBJECT
       - name: Test first-start observation harness
         shell: pwsh
         run: ./scripts/windows/Test-FirstStartSmoke.ps1
