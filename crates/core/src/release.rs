@@ -812,15 +812,20 @@ fn assess_matrix(
         return;
     };
     let bands = level_bands(slice);
-    if !unique(evidence.matrix.iter().map(|r| r.id.as_str())) {
+    // The SLICE- prefix keeps pending matrix rows distinct from LIVE/WIN checks.
+    if !unique(evidence.matrix.iter().map(|r| r.id.as_str()))
+        || evidence.matrix.iter().any(|r| !r.id.starts_with("SLICE-"))
+    {
         report.block("Slice acceptance matrix rows are invalid or duplicated");
     }
-    for row in &evidence.matrix {
-        let inside = classes.contains(&row.class)
+    let inside = |row: &MatrixRow| {
+        classes.contains(&row.class)
             && slice.zones.contains(&row.zone)
             && slice.party_sizes.contains(&row.party_size)
-            && bands.contains(&(row.level_min, row.level_max));
-        if !inside {
+            && bands.contains(&(row.level_min, row.level_max))
+    };
+    for row in &evidence.matrix {
+        if !inside(row) {
             report.block(format!(
                 "Slice acceptance row is outside the slice: {}",
                 row.id
@@ -856,9 +861,9 @@ fn assess_matrix(
             ));
         }
     }
-    // Every row is pending, failed or passed and each non-pass blocks above, so
-    // coverage counts all rows and names only combinations no row addresses.
-    let planned: Vec<_> = evidence.matrix.iter().collect();
+    // Every inside row is pending, failed or passed and each non-pass blocks or
+    // defers above, so coverage counts the inside rows and names the gaps.
+    let planned: Vec<_> = evidence.matrix.iter().filter(|r| inside(r)).collect();
     for class in classes {
         for band in &bands {
             if !planned

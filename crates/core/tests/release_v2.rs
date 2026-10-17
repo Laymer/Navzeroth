@@ -375,6 +375,19 @@ fn rows_outside_the_slice_or_duplicated_block() {
         &check(&i, &evidence(&value)),
         "rows are invalid or duplicated"
     ));
+    let mut value = evidence_value();
+    value["matrix"][0]["id"] = json!("LIVE-BUILD");
+    assert!(has(
+        &check(&i, &evidence(&value)),
+        "rows are invalid or duplicated"
+    ));
+    // An outside row doesn't stand in for its class and band.
+    let mut value = evidence_value();
+    value["matrix"][0]["zone"] = json!("duskwood");
+    assert!(has(
+        &check(&i, &evidence(&value)),
+        "lacks warrior at levels 1-10"
+    ));
 }
 
 #[test]
@@ -390,6 +403,16 @@ fn pristine_rows_are_pending_and_partial_or_automated_claims_block() {
         "Slice acceptance observation is pending: SLICE-warrior-1"
     ));
     assert!(!report.stable_ready);
+    // A pristine row only defers: the matrix adds no blocking message.
+    let matrix: Vec<_> = report
+        .blockers
+        .iter()
+        .filter(|b| b.contains("Slice acceptance"))
+        .collect();
+    assert_eq!(
+        matrix,
+        ["Slice acceptance observation is pending: SLICE-warrior-1"]
+    );
     assert!(report.pending.iter().any(|p| matches!(p,
         PendingRequirement::Observation { check_id } if check_id == "SLICE-warrior-1")));
     for (field, bad) in [
