@@ -153,7 +153,7 @@ export function App({ client }: { client: CommandClient }) {
         </p>
       )}
       {load.phase === "error" && <Button variant="primary" onClick={changed}>Retry loading</Button>}
-      {((load.phase === "error" && screen !== "diagnostics") || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} />}
+      {((load.phase === "error" && screen !== "diagnostics") || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} awaitingStartup={load.phase === "error" && load.error.code === "PROVIDER_UNAVAILABLE" && load.error.retryable} />}
       {(load.phase === "ready" || load.phase === "error") && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "compatibility" && <CompatibilityPanel client={client} profileId={load.status.active_profile} refreshKey={revision} />}
       {load.phase === "ready" && screen === "today" && <><TodayScreen client={client} refreshKey={revision}/><Today status={load.status} snapshot={load.snapshot} freshness={load.freshness}/></>}

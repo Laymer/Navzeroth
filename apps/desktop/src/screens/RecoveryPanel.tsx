@@ -4,7 +4,11 @@ import type { CommandClient } from "../commands";
 import type { BackupPreview, DatabaseStatus, RestoreReceipt } from "../commands/recovery";
 import { Button, Field, Panel } from "../ui";
 const ROW_LABELS: Record<string, string> = { profiles: "Character profiles", snapshots: "Imported snapshots", snapshot_observations: "Imported observations", profile_preferences: "Profile preferences", imports: "Import history", dataset_revisions: "Content revisions", source_records: "Content sources", source_conflicts: "Source conflicts", dataset_manifests: "Content manifests", active_datasets: "Active content selections", party_profiles: "Local parties", party_participants: "Party participants", snapshot_promotions: "Snapshot selection history", sessions: "Recorded sessions", reminder_state: "Reminder preferences and history", session_calibration_annotations: "Session annotations", party_plan_proposals: "Local plan proposals" };
-export function RecoveryPanel({ client, onRestored, onChecked }: { client: CommandClient; onRestored: () => void; onChecked?: () => void }) {
+/** `awaitingStartup`: the app failed to load because the startup check was still
+ * running (the retryable PROVIDER_UNAVAILABLE of crates/app/src/recovery.rs
+ * `with_application`), so reaching "ready" must reload it even if this panel
+ * never saw "checking" itself (the check can finish before the first poll). */
+export function RecoveryPanel({ client, onRestored, onChecked, awaitingStartup = false }: { client: CommandClient; onRestored: () => void; onChecked?: () => void; awaitingStartup?: boolean }) {
   const [status, setStatus] = useState<DatabaseStatus | null>(null);
   const [backupPath, setBackupPath] = useState("");
   const [restorePath, setRestorePath] = useState("");
@@ -21,10 +25,10 @@ export function RecoveryPanel({ client, onRestored, onChecked }: { client: Comma
     let timer: ReturnType<typeof setTimeout> | undefined;
     const poll = () => { void client.getDatabaseStatus().then((result) => {
       if (token.current !== serial) return;
-      if (result.ok) { setStatus(result.value); if (result.value.state === "checking") timer = setTimeout(poll, 500); else if (timer !== undefined) (onChecked ?? onRestored)(); } else setError(result.error.message);
+      if (result.ok) { setStatus(result.value); if (result.value.state === "checking") timer = setTimeout(poll, 500); else if (timer !== undefined || (awaitingStartup && result.value.state === "ready")) (onChecked ?? onRestored)(); } else setError(result.error.message);
     }); }; poll();
     return () => { token.current += 1; if (timer !== undefined) clearTimeout(timer); };
-  }, [client, onRestored, onChecked]);
+  }, [client, onRestored, onChecked, awaitingStartup]);
   async function action(kind: "check" | "backup" | "inspect" | "restore") {
     if (working.current) return;
     if (kind === "restore" && (!preview || !confirmed)) return;
