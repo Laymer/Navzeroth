@@ -18,6 +18,12 @@ pub mod tables;
 pub mod worker;
 pub use extraction::verify_catalog;
 
+/// True when the linked native reader never decrypts (see `native/offline.cpp`).
+/// Every archive open also checks this and refuses otherwise.
+pub fn native_decryption_disabled() -> bool {
+    native::decryption_disabled()
+}
+
 use azeroth_core::local_data::{
     FORMAT_VERSION, InstallationMetadata, MAX_BUILD_INFO_BYTES, MAX_METADATA_BYTES, MetadataBundle,
     PerformancePreset, ResourceLimits, decode_metadata, inspect_build_info,

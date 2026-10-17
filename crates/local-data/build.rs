@@ -172,6 +172,24 @@ fn main() {
         ),
     )
     .unwrap();
+    // Navzeroth never decrypts (no key acquisition, no protected-content
+    // recovery): the built-in key table is never loaded, and the single decrypt
+    // entry point reports every encrypted frame as encrypted with an unavailable
+    // key, whatever the key map holds. CascDecrypt is CascLib's only caller of
+    // its Salsa20 routine; CascReadFile.cpp is its only caller.
+    let source = output.join("src/CascDecrypt.cpp");
+    let mut text = fs::read_to_string(&source).unwrap();
+    text = replace_once(
+        &text,
+        "DWORD CascLoadEncryptionKeys(TCascStorage * hs)\n{",
+        "DWORD CascLoadEncryptionKeys(TCascStorage * hs)\n{\n    // Navzeroth: built-in keys are never loaded.\n    (void)hs; return ERROR_SUCCESS;",
+    );
+    text = replace_once(
+        &text,
+        "    pbKey = hs->KeyMap.FindKey(KeyName);\n    if(pbKey == NULL)",
+        "    // Navzeroth: never decrypt; every key is unavailable.\n    pbKey = NULL;\n    if(pbKey == NULL)",
+    );
+    fs::write(source, text).unwrap();
 
     let cmake = fs::read_to_string(root.join("CMakeLists.txt")).unwrap();
     let sources = cmake

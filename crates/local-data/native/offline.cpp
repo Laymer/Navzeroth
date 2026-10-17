@@ -2,6 +2,8 @@
 #include "CascLib.h"
 #include "CascCommon.h"
 #include <stdint.h>
+#include <string.h>
+#include <new>
 
 // The out-of-scope Overwatch reader and its crypto sources are not linked.
 DWORD RootHandler_CreateOverwatch(TCascStorage *, CASC_BLOB &) { return ERROR_NOT_SUPPORTED; }
@@ -23,6 +25,36 @@ static uint32_t read_status(DWORD error) {
 }
 
 extern "C" {
+// Fail-closed check of the never-decrypt build patch (build.rs): after the
+// built-in keys would have loaded, the key map does not hold a key name that
+// CascLib's static table carries; and even with that name added to the map
+// (zero bytes, no key material here), an encrypted frame naming it is reported
+// as encrypted with an unavailable key and nothing is written to the output.
+// Returns 0 only when decryption is disabled.
+uint32_t nav_casc_decryption_disabled(void) {
+    const ULONGLONG name = 0x2C547F26A2613E01ULL; // First StaticCascKeys entry.
+    TCascStorage * hs = new(std::nothrow) TCascStorage();
+    if(hs == NULL) return 16;
+    uint32_t result = 0;
+    if(CascLoadEncryptionKeys(hs) != ERROR_SUCCESS) result |= 1;
+    if(hs->KeyMap.FindKey(name) != NULL) result |= 2;
+    BYTE zero[CASC_KEY_LENGTH] = {};
+    if(!hs->KeyMap.AddKey(name, zero)) result |= 16;
+    // BLTE 'E' frame body (mode byte stripped): key-name size, key name, IV size,
+    // IV, cipher 'S' (Salsa20), then the encrypted payload.
+    BYTE frame[1 + 8 + 1 + 4 + 1 + 16] = {};
+    frame[0] = 8;
+    memcpy(frame + 1, &name, 8);
+    frame[9] = 4;
+    frame[14] = 'S';
+    BYTE out[16];
+    memset(out, 0xEE, sizeof(out));
+    DWORD length = sizeof(out);
+    if(CascDecrypt(hs, out, &length, frame, sizeof(frame), 0) != ERROR_FILE_ENCRYPTED || hs->LastFailKeyName != name) result |= 4;
+    for(size_t i = 0; i < sizeof(out); i++) if(out[i] != 0xEE) result |= 8;
+    hs->Release();
+    return result;
+}
 uint32_t nav_casc_open(const TCHAR * path, const TCHAR * product, uint32_t locale, uint32_t expected_build, void ** result) {
     CASC_OPEN_STORAGE_ARGS args = {};
     args.Size = sizeof(args);
@@ -34,6 +66,7 @@ uint32_t nav_casc_open(const TCHAR * path, const TCHAR * product, uint32_t local
     args.dwFlags = 0; // No online, allow-download or force-download.
     args.PfnProgressCallback = reject_download;
     *result = NULL;
+    if(nav_casc_decryption_disabled() != 0) return ERROR_NOT_SUPPORTED;
     if(!CascOpenStorageEx(NULL, &args, false, result)) return GetCascError();
     CASC_STORAGE_PRODUCT actual = {};
     if(!CascGetStorageInfo(*result, CascStorageProduct, &actual, sizeof(actual), NULL) || actual.BuildNumber != expected_build || strcmp(actual.szCodeName,"wow_classic_beta") != 0) {

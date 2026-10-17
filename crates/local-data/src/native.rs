@@ -25,6 +25,7 @@ unsafe extern "C" {
         storage: *mut *mut c_void,
     ) -> u32;
     fn nav_casc_close(storage: *mut c_void);
+    fn nav_casc_decryption_disabled() -> u32;
     fn nav_casc_stats(
         storage: *mut c_void,
         features: *mut u32,
@@ -60,6 +61,22 @@ unsafe extern "C" {
         length: u32,
         done: *mut u32,
     ) -> u32;
+}
+
+fn decryption_disabled_locked() -> bool {
+    // SAFETY: no arguments; the shim allocates and releases its own scratch
+    // storage object and touches no shared state.
+    unsafe { nav_casc_decryption_disabled() == 0 }
+}
+
+/// Whether the linked CascLib build never decrypts: built-in keys are not
+/// loaded and an encrypted frame naming a key from CascLib's static table is
+/// still reported as encrypted, not decrypted. Serialized with other native calls.
+pub(crate) fn decryption_disabled() -> bool {
+    match NATIVE.lock() {
+        Ok(_serial) => decryption_disabled_locked(),
+        Err(_) => false,
+    }
 }
 
 /// A strict logical read: the whole verified file, or only its verified plain
@@ -147,6 +164,9 @@ impl Archive {
         expected_build: u32,
     ) -> Result<Self, &'static str> {
         let serial = NATIVE.lock().map_err(|_| "Native reader unavailable")?;
+        if !decryption_disabled_locked() {
+            return Err("Native reader can decrypt; refusing to open storage");
+        }
         let path = native_text(path.as_os_str())?;
         let product = native_text(std::ffi::OsStr::new(product))?;
         let mut handle = std::ptr::null_mut();
