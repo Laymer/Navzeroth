@@ -8,8 +8,14 @@ use std::{
 };
 
 fn root() -> PathBuf {
-    // The read boundary refuses `..` components, so resolve the checkout first.
-    fs::canonicalize(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")).unwrap()
+    // The read boundary refuses `..` components, so walk up from the absolute
+    // manifest directory instead. `fs::canonicalize` would return a verbatim
+    // `\\?\C:\...` path on Windows, whose bare prefix the boundary can't inspect.
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .unwrap()
+        .to_owned()
 }
 fn fixture(name: &str) -> PathBuf {
     root().join("fixtures/guides").join(name)
