@@ -307,6 +307,193 @@ fn interleaved_runs_merge_and_every_encrypted_run_is_named() {
     assert!(!input.available(20, 24));
 }
 
+fn string_definition() -> Definition {
+    let text = "COLUMNS\nint ID\nstring Value\nLAYOUT 11223344\nBUILD 1.60.1.70450\n$noninline,id$ID<32>\nValue\n";
+    let file = wowdbdefs_rs::load_file_from_string(text, "Synthetic.dbd").unwrap();
+    let layout = file.definitions[0].clone();
+    Definition { file, layout }
+}
+
+/// One section's records (one u32 field each), string pool and copies.
+struct Spec<'a> {
+    key: u64,
+    ids: &'a [u32],
+    values: &'a [u32],
+    strings: &'a [u8],
+    copies: &'a [(u32, u32)],
+}
+
+/// Two-section WDC5 file from specs. Returns the bytes and section 1's offset.
+fn build(specs: [Spec<'_>; 2]) -> (Vec<u8>, usize) {
+    let sections = 204;
+    let meta = sections + 80;
+    let storage = meta + 4;
+    let id_list = storage + 24;
+    let listed: usize = specs
+        .iter()
+        .filter(|s| s.key != 0)
+        .map(|s| 4 + s.ids.len() * 4)
+        .sum();
+    let mut offsets = Vec::new();
+    let mut at = id_list + listed;
+    for s in &specs {
+        offsets.push(at);
+        at += s.ids.len() * 8 + s.strings.len() + s.copies.len() * 8;
+    }
+    let mut b = vec![0; at];
+    b[..4].copy_from_slice(b"WDC5");
+    put32(&mut b, 4, 5);
+    let h = 136;
+    let records: usize = specs.iter().map(|s| s.ids.len()).sum();
+    put32(&mut b, h, records as u32);
+    put32(&mut b, h + 4, 1);
+    put32(&mut b, h + 8, 4);
+    put32(
+        &mut b,
+        h + 12,
+        specs.iter().map(|s| s.strings.len() as u32).sum(),
+    );
+    put32(&mut b, h + 16, 0xaabbccdd);
+    put32(&mut b, h + 20, 0x11223344);
+    put32(&mut b, h + 40, 1);
+    put32(&mut b, h + 52, 24);
+    put32(&mut b, h + 64, 2);
+    put16(&mut b, meta, 0);
+    put16(&mut b, storage, 0);
+    put16(&mut b, storage + 2, 32);
+    let mut list = id_list;
+    for (i, (s, offset)) in specs.iter().zip(&offsets).enumerate() {
+        let n = s.ids.len();
+        let e = sections + i * 40;
+        b[e..e + 8].copy_from_slice(&s.key.to_le_bytes());
+        put32(&mut b, e + 8, *offset as u32);
+        put32(&mut b, e + 12, n as u32);
+        put32(&mut b, e + 16, s.strings.len() as u32);
+        put32(&mut b, e + 20, (offset + n * 4 + s.strings.len()) as u32);
+        put32(&mut b, e + 24, n as u32 * 4);
+        put32(&mut b, e + 36, s.copies.len() as u32);
+        if s.key != 0 {
+            put32(&mut b, list, n as u32);
+            for (j, id) in s.ids.iter().enumerate() {
+                put32(&mut b, list + 4 + j * 4, *id);
+            }
+            list += 4 + n * 4;
+        }
+        let mut at = *offset;
+        for v in s.values {
+            put32(&mut b, at, *v);
+            at += 4;
+        }
+        b[at..at + s.strings.len()].copy_from_slice(s.strings);
+        at += s.strings.len();
+        for id in s.ids {
+            put32(&mut b, at, *id);
+            at += 4;
+        }
+        for (d, src) in s.copies {
+            put32(&mut b, at, *d);
+            put32(&mut b, at + 4, *src);
+            at += 8;
+        }
+    }
+    (b, offsets[1])
+}
+
+#[test]
+fn strings_in_sections_that_are_not_decoded_are_reported_as_unavailable() {
+    // Record 1 points at section 1's pool: (record - total) * 4 + v = 2 (pool 0
+    // is 2 bytes long), so v = 2 + 2 * 4. Record 101 has an empty string.
+    let specs = |key| {
+        [
+            Spec {
+                key: 0,
+                ids: &[1],
+                values: &[10],
+                strings: b"a\0",
+                copies: &[],
+            },
+            Spec {
+                key,
+                ids: &[101],
+                values: &[0],
+                strings: b"zz\0",
+                copies: &[],
+            },
+        ]
+    };
+    let (bytes, _) = build(specs(0));
+    let whole = tables::decode(&bytes, &string_definition()).unwrap();
+    assert_eq!(whole.rows[0].fields["Value"], Cell::Text("zz".into()));
+    // Encrypted section 1: its pool is never read.
+    let (bytes, _) = build(specs(7));
+    assert_eq!(
+        tables::decode(&bytes, &string_definition()).err(),
+        Some(tables::STRING_IN_UNAVAILABLE_SECTION)
+    );
+    // Unflagged section 1 in an encrypted frame.
+    let (bytes, s1) = build(specs(0));
+    let partial = assemble(&bytes, &frames(bytes.len(), s1, s1));
+    assert_eq!(
+        partial.decode(&string_definition()).err(),
+        Some(tables::STRING_IN_UNAVAILABLE_SECTION)
+    );
+}
+
+#[test]
+fn copies_of_records_in_sections_that_are_not_decoded() {
+    let specs = |key, copies| {
+        [
+            Spec {
+                key: 0,
+                ids: &[1],
+                values: &[10],
+                strings: &[],
+                copies,
+            },
+            Spec {
+                key,
+                ids: &[101],
+                values: &[MARKER],
+                strings: &[],
+                copies: &[],
+            },
+        ]
+    };
+    // Source 101 is listed for an encrypted section: the chain 101 -> 200 -> 201
+    // is an explicit gap and never materialized.
+    let chain: &[(u32, u32)] = &[(200, 101), (201, 200)];
+    let (bytes, s1) = build(specs(7, chain));
+    for decoded in [
+        tables::decode(&bytes, &definition()).unwrap(),
+        assemble(&bytes, &frames(bytes.len(), s1, s1))
+            .decode(&definition())
+            .unwrap(),
+    ] {
+        assert_eq!(values(&decoded), vec![(1, Cell::Signed(10))]);
+        assert!(
+            decoded
+                .gaps
+                .contains(&"encrypted_copy_source_records:2".to_owned())
+        );
+    }
+    // Unflagged section 1 in an encrypted frame: its IDs are unknown.
+    let (bytes, s1) = build(specs(0, &[(200, 101)]));
+    assert_eq!(
+        assemble(&bytes, &frames(bytes.len(), s1, s1))
+            .decode(&definition())
+            .err(),
+        Some(tables::COPY_SOURCE_IN_UNAVAILABLE_SECTION)
+    );
+    let whole = tables::decode(&bytes, &definition()).unwrap();
+    assert_eq!(whole.rows.len(), 3);
+    // A source that exists nowhere is still a refusal.
+    let (bytes, _) = build(specs(7, &[(200, 999)]));
+    assert_eq!(
+        tables::decode(&bytes, &definition()).err(),
+        Some("cyclic_or_missing_copy_source")
+    );
+}
+
 #[test]
 fn partial_inputs_refuse_overlaps_and_accesses_across_ranges() {
     let a = [1u8; 4];

@@ -2,7 +2,7 @@
 //! Format cross-check: pinned DBCD e732093f (development oracle only).
 use crate::metadata::Definition;
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use wowdbdefs_rs::{RawEntry, RawType};
 
 const MAX_RECORDS: usize = 1_000_000;
@@ -29,6 +29,13 @@ pub struct TableHeader {
 /// ranges of a partially available logical file. Such bytes do not exist here:
 /// they were never read, filled or synthesized.
 pub const UNAVAILABLE_RANGE: &str = "unavailable_encrypted_frame_range";
+/// A decoded record's string pointer resolves into the string pool of a section
+/// that is not decoded (encrypted or in unavailable frames).
+pub const STRING_IN_UNAVAILABLE_SECTION: &str = "string_in_unavailable_section";
+/// A copy's source record may lie in a section that is not decoded: either its
+/// ID is in an encrypted section's ID list, or some section's IDs are unknown
+/// because its frames are unavailable.
+pub const COPY_SOURCE_IN_UNAVAILABLE_SECTION: &str = "copy_source_in_unavailable_section";
 
 /// The decoder's view of one logical file: its declared length and the verified
 /// plain byte ranges that are actually present. A whole file is one range. Every
@@ -317,6 +324,8 @@ struct StringContext<'a> {
     total_records: usize,
     record_size: usize,
     pools: &'a [(usize, &'a [u8])],
+    /// String-pool address ranges `(start, length)` of sections not decoded.
+    skipped_pools: &'a [(usize, usize)],
     sparse: bool,
 }
 fn value(
@@ -332,6 +341,7 @@ fn value(
         total_records,
         record_size,
         pools,
+        skipped_pools,
         sparse,
     } = *context;
     let (v, width, offset) = raw;
@@ -401,6 +411,12 @@ fn value(
                     return Err("invalid_string_offset");
                 }
                 let address = address as usize;
+                if skipped_pools
+                    .iter()
+                    .any(|(start, length)| address >= *start && address - start < *length)
+                {
+                    return Err(STRING_IN_UNAVAILABLE_SECTION);
+                }
                 let index = pools
                     .partition_point(|(start, _)| *start <= address)
                     .checked_sub(1)
@@ -574,20 +590,26 @@ pub fn decode_input(bytes: &Input<'_>, definition: &Definition) -> Result<Decode
     }
     // WDC4/5 carry encrypted ID lists after common/pallet data. We never recover
     // those sections; still bound their directory before accepting section offsets.
+    // Their listed IDs only identify copies whose source is in such a section.
+    let mut encrypted_ids = BTreeSet::new();
     if matches!(h.format.as_str(), "WDC4" | "WDC5") {
         for section in &sections {
             if section.key != 0 {
                 let count = u32_at(bytes, at)? as usize;
-                if count > MAX_RECORDS {
+                if count > MAX_RECORDS || encrypted_ids.len() + count > MAX_RECORDS {
                     return Err("encrypted_id_capacity");
                 }
                 range(bytes, at + 4, count * 4)?;
+                for i in 0..count {
+                    encrypted_ids.insert(u32_at(bytes, at + 4 + i * 4)?);
+                }
                 at += 4 + count * 4;
             }
         }
     }
     let metadata_end = at;
     let mut pools = Vec::new();
+    let mut skipped_pools = Vec::new();
     let mut pool_offset = 0usize;
     let mut occupied = Vec::new();
     let mut skips = Vec::with_capacity(sections.len());
@@ -596,6 +618,7 @@ pub fn decode_input(bytes: &Input<'_>, definition: &Definition) -> Result<Decode
             return Err("overlapping_table_sections");
         }
         if section.key != 0 {
+            skipped_pools.push((pool_offset, section.strings));
             pool_offset = pool_offset
                 .checked_add(section.strings)
                 .ok_or("table_offset_overflow")?;
@@ -632,6 +655,7 @@ pub fn decode_input(bytes: &Input<'_>, definition: &Definition) -> Result<Decode
         // bytes are unavailable, so overlap validation is unchanged.
         occupied.push((section.offset, end));
         if !bytes.available(section.offset, end) {
+            skipped_pools.push((pool_offset, section.strings));
             pool_offset = pool_offset
                 .checked_add(section.strings)
                 .ok_or("table_offset_overflow")?;
@@ -831,6 +855,7 @@ pub fn decode_input(bytes: &Input<'_>, definition: &Definition) -> Result<Decode
                             total_records: h.records as usize,
                             record_size,
                             pools: &pools,
+                            skipped_pools: &skipped_pools,
                             sparse,
                         },
                         &mut cursor,
@@ -942,7 +967,30 @@ pub fn decode_input(bytes: &Input<'_>, definition: &Definition) -> Result<Decode
         }
     }
     if !dependents.is_empty() {
-        return Err("cyclic_or_missing_copy_source");
+        // Copies whose source chain starts at an ID listed for an encrypted
+        // section are an explicit gap; they are never materialized.
+        let mut unresolved: VecDeque<u32> = dependents
+            .keys()
+            .filter(|source| encrypted_ids.contains(source))
+            .copied()
+            .collect();
+        let mut dropped = 0usize;
+        while let Some(source) = unresolved.pop_front() {
+            for destination in dependents.remove(&source).unwrap_or_default() {
+                dropped += 1;
+                unresolved.push_back(destination);
+            }
+        }
+        if !dependents.is_empty() {
+            // Sections in unavailable frames have unknown IDs, so a missing
+            // source there is not evidence of a corrupt table.
+            return Err(if unavailable_records.is_some() {
+                COPY_SOURCE_IN_UNAVAILABLE_SECTION
+            } else {
+                "cyclic_or_missing_copy_source"
+            });
+        }
+        gaps.push(format!("encrypted_copy_source_records:{dropped}"));
     }
     Ok(DecodedTable {
         format_version: 1,

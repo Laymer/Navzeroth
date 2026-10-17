@@ -413,6 +413,14 @@ pub(crate) fn extract(
                                             InventoryDisposition::UnavailableEncrypted;
                                         entry.reason = UNAVAILABLE_METADATA.into();
                                     }
+                                    Err(
+                                        reason @ (tables::STRING_IN_UNAVAILABLE_SECTION
+                                        | tables::COPY_SOURCE_IN_UNAVAILABLE_SECTION),
+                                    ) => {
+                                        entry.disposition =
+                                            InventoryDisposition::UnavailableEncrypted;
+                                        entry.reason = reason.into();
+                                    }
                                     Err(reason) => entry.reason = reason.into(),
                                     Ok(mut decoded) => {
                                         if let Some(file) = partial {
