@@ -17,6 +17,8 @@
 .play-screen textarea { width: min(100%, 50rem); }
 .play-screen pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .play-screen .ui-button { margin: var(--space-1) var(--space-2) var(--space-1) 0; }
+/* List buttons (Atlas pins, route hops) keep the list's own rhythm; the form-button margin above does not apply. */
+.play-screen .pins .ui-button, .play-screen .route-hops .ui-button { margin: 0; }
 .play-screen .ui-panel:not(.ui-panel--nested) { margin: var(--space-4) 0; padding-inline: var(--space-3); }
 .play-screen .ui-field { margin: var(--space-3) 0; }
 .play-screen .ui-field select, .play-screen .ui-field input, .play-screen .ui-field textarea { justify-self: start; }

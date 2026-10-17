@@ -46,7 +46,7 @@ function RouteView({ value }: { value: Inspection }) {
       <Button variant="ghost" disabled={page === 0} onClick={() => movePage(page - 1)}>Previous route hop page</Button>
       <Button variant="ghost" disabled={start + ROUTE_PAGE_SIZE >= value.hops.length} onClick={() => movePage(page + 1)}>Next route hop page</Button>
     </>}
-    <ol start={start + 1}>{displayed.map((h, offset) => { const index = start + offset; return <li key={index}>
+    <ol className="route-hops" start={start + 1}>{displayed.map((h, offset) => { const index = start + offset; return <li key={index}>
       <Button ref={(el) => { if (el) buttons.current.set(index, el); else buttons.current.delete(index); }} aria-pressed={selected === index} onClick={() => choose(index, false)} onKeyDown={(event) => {
         if (event.ctrlKey || event.metaKey || event.altKey) return;
         const target = event.key === "ArrowUp" ? Math.max(0, index - 1) : event.key === "ArrowDown" ? Math.min(value.hops.length - 1, index + 1) : event.key === "Home" ? 0 : event.key === "End" ? value.hops.length - 1 : event.key === "PageUp" ? Math.max(0, index - ROUTE_PAGE_SIZE) : event.key === "PageDown" ? Math.min(value.hops.length - 1, index + ROUTE_PAGE_SIZE) : null;
