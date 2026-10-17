@@ -24,4 +24,7 @@ if (!validate(withNodes)) throw new Error(JSON.stringify(validate.errors));
 reject((v) => { v.node_facts = [{ node: "demo-node-1", evidence: [] }]; });
 reject((v) => { v.node_facts = [{ node: "demo-node-1", evidence: ["demo-evidence-1", "demo-evidence-1"] }]; });
 reject((v) => { v.node_facts = [{ node: "demo-node-1", evidence: ["demo-evidence-1"], unknown: true }]; });
-console.log("V2 schema: legacy and node-fact fixtures plus nine strict rejection cases passed");
+// Committed authored slice catalog (task V2.4), original authoring only.
+const authored = read("../content/authored/slice-v1/catalog.json");
+if (!validate(authored)) throw new Error(JSON.stringify(validate.errors));
+console.log("V2 schema: legacy and node-fact fixtures, the authored slice catalog and nine strict rejection cases passed");

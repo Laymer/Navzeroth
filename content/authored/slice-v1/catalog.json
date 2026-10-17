@@ -1,0 +1,937 @@
+{
+  "acquisition_facts": [],
+  "dungeons": [
+    {
+      "access": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "checklist": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "field": {
+                  "field": "role"
+                },
+                "op": "known"
+              }
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:roles-declared",
+            "label": "Every member has declared a role for the run"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": {
+                "key": "plan.deadmines",
+                "op": "user_preference",
+                "value": true
+              }
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:run-planned",
+            "label": "The run is marked as planned in the reminder preferences"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:level-readiness",
+            "label": "Each member's level suits the dungeon"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:entry-access",
+            "label": "Every member meets the instance access requirements"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:preparation-quests",
+            "label": "Preparation quests for the run are accepted"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:flight-point",
+            "label": "The flight point closest to the entrance is learned"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:trained",
+            "label": "Each member has visited their class trainer at their current level"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:repaired",
+            "label": "Equipment is repaired"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:restocked",
+            "label": "Food, drink and any class reagents are restocked"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:bag-space",
+            "label": "Bags have free space for loot"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:hearthstone",
+            "label": "Each hearthstone is set where the party will return afterwards"
+          },
+          {
+            "condition": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "evidence": [
+              "ev-authored-v1"
+            ],
+            "id": "deadmines:plan-agreed",
+            "label": "Duo: both members accepted the same plan before travel"
+          }
+        ]
+      },
+      "entrance": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "id": "dungeon:the-deadmines",
+      "map": {
+        "context": {
+          "build": {
+            "build": "1.60.1.70425",
+            "edition": "wow_forever",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "floor": "authored:pending",
+        "instance": null,
+        "map_id": "authored:the-deadmines"
+      },
+      "preparation_quests": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "rewards": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "title": "The Deadmines",
+      "travel_edges": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      }
+    }
+  ],
+  "equipment": [],
+  "format": "navzeroth-reference-content",
+  "models": [
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-melee-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Rage generation from weapon speed is not modelled."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-tank-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Threat generation and shield block are not modelled."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:armor": 20,
+          "stat:stamina": 1000,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-melee-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Seal and judgement scaling are not modelled."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 300,
+          "stat:intellect": 300,
+          "stat:stamina": 500,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-healer-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Healing power and mana regeneration rules are not modelled."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:rogue",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:rogue-melee-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Energy, combo points and off-hand weapon choice are not modelled."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:stamina": 400,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:priest",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:priest-healer-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Healing power and mana regeneration rules are not modelled."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 800,
+          "stat:stamina": 300
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:priest",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:priest-ranged-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Wand damage is not modelled."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:mage",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:mage-ranged-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Spell power and wand damage are not modelled."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 600,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:warlock",
+      "evidence": [
+        "ev-authored-v1"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warlock-ranged-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
+          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
+          "Item set bonuses, on-use and on-equip effects are not modelled.",
+          "Pet scaling, health-to-mana conversion and wand damage are not modelled."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 800
+        }
+      }
+    }
+  ],
+  "quest_facts": [],
+  "reference": {
+    "fixture": false,
+    "format": "azeroth-navigator",
+    "game": {
+      "build": "1.60.1.70425",
+      "edition": "wow_forever",
+      "interface": "16001",
+      "locale": "enUS"
+    },
+    "kind": "reference_dataset",
+    "namespace": "reference",
+    "payload": {
+      "acquisitions": [],
+      "edges": [],
+      "evidence": [
+        {
+          "confidence": "publisher_documented",
+          "conflicts": [],
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "id": "ev-authored-v1",
+          "license": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "BSD-3-Clause (repository LICENSE)"
+          },
+          "notes": "Original Navzeroth authoring for the 1.0.0 slice (task V2.4): role model assumptions, a Deadmines preparation checklist and reminder rules. No game facts are asserted; see content/authored/slice-v1/evidence/.",
+          "observed_at_utc_ms": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": 1792281600000
+          },
+          "source": "navzeroth-authored-v1"
+        }
+      ],
+      "items": [],
+      "map_spaces": [
+        {
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "key": {
+            "context": {
+              "build": {
+                "build": "1.60.1.70425",
+                "edition": "wow_forever",
+                "interface": "16001"
+              },
+              "namespace": "reference"
+            },
+            "floor": "authored:pending",
+            "instance": null,
+            "map_id": "authored:the-deadmines"
+          },
+          "transform": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "unknown"
+          }
+        }
+      ],
+      "nodes": [],
+      "objectives": [],
+      "quests": [],
+      "revision": "navzeroth-authored-slice-r1",
+      "rules": [
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 0,
+          "deduplication_key": "reminder:train-after-level-up",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:train-after-level-up",
+          "predicate": {
+            "level": 2,
+            "op": "level_at_least"
+          },
+          "priority": 20,
+          "result_template": "New level reached. Visit your class trainer before you move on and check what is offered at your level.",
+          "trigger": "level_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 0,
+          "deduplication_key": "reminder:deadmines-repair-restock",
+          "dismissal": "until_ruleset_changes",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:deadmines-repair-restock",
+          "predicate": {
+            "key": "plan.deadmines",
+            "op": "user_preference",
+            "value": true
+          },
+          "priority": 30,
+          "result_template": "Preparing for the Deadmines: repair your equipment, restock food and drink, and clear bag space before you travel.",
+          "trigger": "preference_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 0,
+          "deduplication_key": "reminder:deadmines-hearthstone",
+          "dismissal": "until_ruleset_changes",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:deadmines-hearthstone",
+          "predicate": {
+            "key": "plan.deadmines",
+            "op": "user_preference",
+            "value": true
+          },
+          "priority": 25,
+          "result_template": "Before the Deadmines: decide where you want to return afterwards and set your hearthstone there.",
+          "trigger": "preference_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:learn-flight-points",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:learn-flight-points",
+          "predicate": {
+            "key": "remind.flight-points",
+            "op": "user_preference",
+            "value": true
+          },
+          "priority": 10,
+          "result_template": "New area: if a flight master is nearby and you have not learned that flight point, talk to them now.",
+          "trigger": "location_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 0,
+          "deduplication_key": "reminder:slice-level-boundary",
+          "dismissal": "permanent",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:slice-level-boundary",
+          "predicate": {
+            "level": 20,
+            "op": "level_at_least"
+          },
+          "priority": 40,
+          "result_template": "Level 20 reached: the guided 1.0.0 range ends here. Models, checks and routes beyond level 20 are out of scope.",
+          "trigger": "level_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70425",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 0,
+          "deduplication_key": "reminder:duo-compare-progress",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:duo-compare-progress",
+          "predicate": {
+            "key": "party.duo",
+            "op": "user_preference",
+            "value": true
+          },
+          "priority": 15,
+          "result_template": "Duo: import fresh captures for both characters and compare quest progress before you agree on the next step.",
+          "trigger": "snapshot_changed"
+        }
+      ]
+    },
+    "producer": {
+      "component": "cli",
+      "version": "0.9.2"
+    },
+    "provenance": {
+      "clock_trust": "uncertain",
+      "source": "reference_data"
+    },
+    "schema_version": 1
+  },
+  "schema_version": 2
+}
