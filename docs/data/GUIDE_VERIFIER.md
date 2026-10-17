@@ -1,6 +1,6 @@
 # RXP guide importer and replay verifier
 
-Task V2.3 (ADR 0006 §2-3). Code: `crates/ingest/src/rxp.rs` (importer),
+Task V2.3 (ADR 0006 §2, §3 and §11). Code: `crates/ingest/src/rxp.rs` (importer),
 `crates/ingest/src/rxp_verify.rs` (verifier and fact sources),
 `crates/cli/src/guide.rs` (CLI). Ported from the owner's guide generator
 (`gen.py`, `verify2.py`, kept outside the repository), which the owner authored
@@ -9,7 +9,7 @@ and never executed.
 
 ## What the guide is, and what it is not
 
-Under the owner decision of 2026-10-17, 1.0.0 sources are local only: the user's
+Under ADR 0006 §11 (owner decision of 2026-10-17), 1.0.0 sources are local only: the user's
 own client data, the user's own in-game observations, admitted published-licence
 material and original authoring. The quest IDs, NPCs and coordinates in the
 owner's generated guides came from QuestieDB and a website scrape, so they are
