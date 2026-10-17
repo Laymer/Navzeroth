@@ -5,11 +5,13 @@ for World of Warcraft: Forever. Desktop character state comes from
 explicitly imported snapshots; live game observations remain inside the permitted
 addon environment. Synthetic fixtures are always labelled.
 
-The published build is the **[0.9.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)**.
+The current build is the **[0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2)**
+(prepared; the latest build published before it is [0.9.1](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)).
 It contains tested engineering foundations, but no verified playable quest, item,
 acquisition or travel catalog. Interactive Windows and complete live-game acceptance
-remain unverified. See the [release notes](docs/releases/0.9.1.md) and
-[publication evidence](docs/handoffs/2026-10-16-v0.9.1-publication.md).
+remain unverified. See the [release notes](docs/releases/0.9.2.md),
+[preparation record](docs/handoffs/2026-10-17-v0.9.2-release.md) and the
+[0.9.1 publication evidence](docs/handoffs/2026-10-16-v0.9.1-publication.md).
 
 The authorized v1.0.0 target is full enumerated content for **Forever
 1.60.1.70374**, with Windows desktop support. The user reports that build and
@@ -24,7 +26,7 @@ require complete licensed content and static validation; see the
 ## Try the current preview
 
 1. Download the Windows installer, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes
-   from the linked 0.9.1 release. Check the installer hash before running it.
+   from the linked 0.9.2 release. Check the installer hash before running it.
 2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md), including
    the separate, explicit addon installation into the client-selected AddOns folder.
 3. Use [addon setup](docs/compatibility/ADDON_INSTALL.md) to record the actual client
@@ -40,7 +42,7 @@ require complete licensed content and static validation; see the
 
 | Identity | Current evidence |
 | --- | --- |
-| Application/addon 0.9.1 | Published developer preview with verified release hashes and hosted Windows smoke checks |
+| Application/addon 0.9.2 | Prepared developer preview; hashes and hosted Windows results are recorded at publication (latest published: 0.9.1) |
 | Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
 | Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; source-identified development capture/turn-in checks, with full acceptance still unverified |
@@ -148,7 +150,7 @@ sources. They preserve exact dataset identities and verified PNG bytes, refuse
 overwrite, and report declared distribution eligibility separately from gaps.
 See [local reference pack format](docs/data/CONTENT_PACK.md). Real Forever content
 has a typed registry and can be built and verified as a `local_reference` pack in
-0.9.1, but its recorded source rights remain incomplete and
+0.9.2, but its recorded source rights remain incomplete and
 `distribution_eligible=false`. It is not a release asset or a playable-content pack.
 
 ## Windows installer

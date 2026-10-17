@@ -1,6 +1,8 @@
 # Claude Code continuation prompt: Navzeroth 0.9.x → 1.0.0
 
 > Version-agnostic prompt. The 0.9.0 publication was interrupted and superseded;
+> Release continuation: 0.9.2 is prepared (`docs/handoffs/2026-10-17-v0.9.2-release.md`);
+> until its tag is published, the latest published version is 0.9.1.
 > 0.9.1 was published as a developer prerelease on 2026-10-16 (receipt:
 > `docs/handoffs/2026-10-16-v0.9.1-publication.md`). Read `docs/STATUS.md` first,
 > resolve the latest published tag with `gh release list`, and use the current

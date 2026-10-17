@@ -2,7 +2,7 @@
 
 Target: `wow_forever / 1.60.1 / 70374 / 16001`. The user reported these client
 values on 2026-10-14. This identifies the client; it does not establish addon,
-content or Windows acceptance. The developer preview application version is 0.9.1.
+content or Windows acceptance. The developer preview application version is 0.9.2.
 
 `coverage-inventory.json` and `acceptance-evidence.json` are release contracts,
 separate from exchange schema v1. Their initial contents deliberately block a
