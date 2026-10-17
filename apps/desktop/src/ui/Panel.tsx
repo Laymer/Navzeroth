@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { createContext, useContext, useId } from "react";
 import type { ReactNode } from "react";
 
 interface PanelProps {
@@ -8,16 +8,25 @@ interface PanelProps {
   children: ReactNode;
 }
 
-/** Dark slate surface with a double bronze rule and an engraved heading. */
+const InsidePanel = createContext(false);
+
+/**
+ * Dark slate surface with a double bronze rule and an engraved heading. A Panel inside another
+ * Panel is drawn flat (a top rule, no frame, no side padding) so nesting does not eat the
+ * width of narrow windows or large text.
+ */
 export function Panel({ title, level = 2, children }: PanelProps) {
   const id = useId();
+  const nested = useContext(InsidePanel);
   const Heading = `h${level}` as const;
   return (
-    <section className="ui-panel" aria-labelledby={id}>
+    <section className={nested ? "ui-panel ui-panel--nested" : "ui-panel"} aria-labelledby={id}>
       <Heading id={id} className="ui-panel__title">
         {title}
       </Heading>
-      <div className="ui-panel__body">{children}</div>
+      <InsidePanel.Provider value={true}>
+        <div className="ui-panel__body">{children}</div>
+      </InsidePanel.Provider>
     </section>
   );
 }

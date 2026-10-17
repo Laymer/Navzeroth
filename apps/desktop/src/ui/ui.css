@@ -47,6 +47,7 @@
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 0.1rem 0.3rem rgb(0 0 0 / 0.5);
 }
 .ui-button:hover:not(:disabled) { border-color: var(--gold-hi); }
+.ui-button[aria-pressed="true"] { border-color: var(--gold); box-shadow: inset 0 -0.25rem 0 var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 0.2em; }
 .ui-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .ui-button:active:not(:disabled) { box-shadow: inset 0 0.2rem 0.4rem rgb(0 0 0 / 0.6); transform: translateY(1px); }
 
@@ -73,6 +74,10 @@
     radial-gradient(circle at 0 100%, var(--gold-hi) 0 0.14rem, transparent 0.16rem) bottom left / 0.6rem 0.6rem no-repeat,
     radial-gradient(circle at 100% 100%, var(--gold-hi) 0 0.14rem, transparent 0.16rem) bottom right / 0.6rem 0.6rem no-repeat;
 }
+/* A Panel nested in a Panel: flat, framed only by a top rule, no horizontal padding. */
+.ui-panel.ui-panel--nested { padding: var(--space-3) 0 0; background: none; border: 0; border-top: 1px solid var(--gold-shade); border-radius: 0; box-shadow: none; margin: var(--space-3) 0; }
+.ui-panel.ui-panel--nested::before { display: none; }
+.ui-panel--nested > .ui-panel__title { font-size: 1.05rem; }
 .ui-panel__title { margin: 0 0 var(--space-3); font-size: 1.15rem; }
 .ui-panel__title::after { content: ""; display: block; height: 1px; margin-top: var(--space-2); background: linear-gradient(90deg, var(--gold), transparent); }
 .ui-panel__body > :first-child { margin-top: 0; }
@@ -146,6 +151,8 @@
 :root[data-contrast="high"] .ui-badge { border: 2px solid var(--text); background: var(--surface); }
 :root[data-contrast="high"] .ui-field [aria-invalid="true"] { border-color: var(--text); border-style: dashed; }
 
+:root[data-contrast="high"] .ui-panel.ui-panel--nested { background: none; border: 0; border-top: 2px solid var(--text); }
+
 /* Forced colours: system colours only. */
 @media (forced-colors: active) {
   .ui-button, .ui-button--primary, .ui-button--secondary, .ui-button--danger, .ui-button--ghost { background: ButtonFace; background-image: none; color: ButtonText; border: 2px solid ButtonText; box-shadow: none; text-shadow: none; }
@@ -155,6 +162,7 @@
   .ui-button:disabled { color: GrayText; border-color: GrayText; opacity: 1; }
   .ui-panel { background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
   .ui-panel::before { display: none; }
+  .ui-panel.ui-panel--nested { background: none; border: 0; border-top: 1px solid CanvasText; }
   .ui-panel__title::after { background: CanvasText; }
   .ui-helptip__trigger, .ui-helptip__bubble { background: Canvas; color: CanvasText; border: 2px solid CanvasText; box-shadow: none; }
   .ui-badge { background: Canvas; color: CanvasText; border: 1px solid CanvasText; }
