@@ -37,9 +37,12 @@ files, 0 verified content packs. Re-run it before trusting any count here.
   `x86_64-pc-windows-msvc` tree and present on Linux only through tauri → muda/tao →
   gtk ([V0 handoff](docs/handoffs/2026-10-17-v0.md)). Remaining: the owner dismisses
   GHSA-wrw7-89jp-8q8g with that reasoning.
-- [ ] **V0.4 Signing** (Owner → Eng). Owner provisions cloud Authenticode signing
-  and the `NAVZEROTH_SIGN_COMMAND` secret. Eng runs a signed manual build and adds
-  `Get-AuthenticodeSignature` verification to the artifact verifier.
+- [ ] **V0.4 Signing** (Owner → Eng). SignPath Foundation, chosen by the owner. Eng
+  part done ([handoff](docs/handoffs/2026-10-17-v0.4.md)): tag signing in the package
+  workflow, a byte-level and Authenticode verifier, and the code signing policy.
+  Remaining: the owner applies and configures SignPath
+  ([setup](docs/compatibility/CODE_SIGNING.md#owner-setup-one-time)); then a
+  `test_signing` run, and SmartScreen on the first signed installer.
 - [ ] **V0.5 CI recheck** (Eng). The hosted "Native WebView2 smoke over CDP" result
   on a head at or after `81aef88`; owner confirms the nine required checks are the
   permanent set.
