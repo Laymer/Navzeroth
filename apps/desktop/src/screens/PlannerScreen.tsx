@@ -1,3 +1,5 @@
+import "./play.css";
+import { Button, Field, HelpTip } from "../ui";
 import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
@@ -125,22 +127,22 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     catch { if (ticket === generation.current) setCopyStatus("Clipboard unavailable; select the text and copy manually."); }
   }
   const nodeOptions = <><OffPageOptions selected={[origin,stop,...candidates.map(c=>c.node)]} visible={visibleCatalog?.nodes.map(n=>n.id)??[]}/><option value="">Choose a node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</>;
-  return <section aria-label="Planner">
+  return <section aria-label="Planner" className="play-screen">
     <h2>Single-character planner</h2>
     <p>Manual utility and time estimates. No inferred quest unlocks or transport links. Expected durations are uncertain.</p>
-    {visibleCatalog?.fixture && <p role="note">SYNTHETIC — engineering fixture, not live game advice.</p>}
+    {visibleCatalog?.fixture && <p role="note" className="play-note">SYNTHETIC — engineering fixture, not live game advice.</p>}
     {error && <p role="alert">{error}</p>}
-    <label>Planning profile <select value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
+    <Field label="Planning profile" help="The imported character whose saved snapshot supplies the planner inputs. Changing it discards the current estimate.">{(c) => <select {...c} value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     <p>Snapshot: {visibleCatalog?.snapshot_id ?? "none"}; revision: {visibleCatalog?.revision ?? "none — activate Content first"}</p>
     <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={visibleCatalog?.pages?.nodes} label="nodes" onPage={p=>{setCatalog(old=>old?{...old,nodes:p.records as NonNullable<typeof catalog>["nodes"],pages:{...old.pages,nodes:p}}:old);}}/>
 <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={visibleCatalog?.pages?.objectives} label="objectives" onPage={p=>{setCatalog(old=>old?{...old,objectives:p.records as NonNullable<typeof catalog>["objectives"],pages:{...old.pages,objectives:p}}:old);}}/>
-<label>Origin <select value={origin} onChange={(e) => { invalidate(); setOrigin(e.target.value); }}>{nodeOptions}</select></label>
-    <label>Stopping node <select value={stop} onChange={(e) => { invalidate(); setStop(e.target.value); }}>{nodeOptions}</select></label>
-    <label>Versioned goal identifier <input value={goal} onChange={(e) => { invalidate(); setGoal(e.target.value); }} /></label>
-    <button type="button" disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</button>
-    <label>Budget (ms) <input type="number" min="0" step="1" value={budget} onChange={(e) => { invalidate(); setBudget(e.target.valueAsNumber); }} /></label>
-    <label>Stopping service (ms) <input type="number" min="0" step="1" value={stoppingService} onChange={(e) => { invalidate(); setStoppingService(e.target.valueAsNumber); }} /></label>
-    <p>{candidates.length} selected objectives; {excluded.length} exclusions (maximum 128 each).</p><button type="button" onClick={()=>{invalidate();setCandidates([]);setExcluded([]);}}>Clear objective selections</button>
+<Field label="Origin" help="The declared node where the session starts. Nodes come from the active content; an unselected origin stays unknown and blocks planning.">{(c) => <select {...c} value={origin} onChange={(e) => { invalidate(); setOrigin(e.target.value); }}>{nodeOptions}</select>}</Field>
+    <Field label="Stopping node" help="The declared node where the session must end. Travel to it is included in the total.">{(c) => <select {...c} value={stop} onChange={(e) => { invalidate(); setStop(e.target.value); }}>{nodeOptions}</select>}</Field>
+    <Field label="Versioned goal identifier" help="Names the utility model your objective utilities follow, for example manual-utility-v1. It labels your own assumption and is not verified game advice.">{(c) => <input {...c} value={goal} onChange={(e) => { invalidate(); setGoal(e.target.value); }} />}</Field>
+    <Button disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</Button>
+    <Field label="Budget (ms)" help="Session time limit in milliseconds; 1000 ms is one second. A budget of 0 leaves no time for objectives.">{(c) => <input {...c} type="number" min="0" step="1" value={budget} onChange={(e) => { invalidate(); setBudget(e.target.valueAsNumber); }} />}</Field>
+    <Field label="Stopping service (ms)" help="Extra time in milliseconds you expect to spend after arriving at the stopping node. 0 means you declared none.">{(c) => <input {...c} type="number" min="0" step="1" value={stoppingService} onChange={(e) => { invalidate(); setStoppingService(e.target.valueAsNumber); }} />}</Field>
+    <p>{candidates.length} selected objectives; {excluded.length} exclusions (maximum 128 each).</p><Button variant="ghost" onClick={()=>{invalidate();setCandidates([]);setExcluded([]);}}>Clear objective selections</Button> <HelpTip>Planner estimates use only the objectives you tick. Unticked objectives add no assumed reward. At most 128 can be selected.</HelpTip>
     {visibleCatalog?.objectives.map((objective) => {
       const candidate = candidates.find((c) => c.objective === objective.id);
       const update = (key: "node" | "utility" | "completion_ms" | "service_ms", value: string | number) => { invalidate(); setCandidates((old) => old.map((c) => c.objective === objective.id ? { ...c, [key]: value } : c)); };
@@ -153,18 +155,18 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     })}
     {activeJob.current && busy && <div aria-label="Planning job progress">
       <p role="status">{progress?.ticket === generation.current ? `${progress.status.state}; ${progress.status.phase?.replaceAll("_", " ") ?? "awaiting worker"}; ${progress.status.work_units} work units checked` : "Registering planning job…"}</p>
-      <button type="button" onClick={cancelCalculation}>Cancel planning</button>
+      <Button variant="ghost" onClick={cancelCalculation}>Cancel planning</Button>
       {visibleReport && <p>Previous valid estimate remains visible while this calculation runs.</p>}
     </div>}
-    <button type="button" disabled={busy || !visibleCatalog?.snapshot_id || !visibleCatalog.revision || !origin || !stop} onClick={() => void calculate()}>Plan session</button>
+    <Button variant="primary" disabled={busy || !visibleCatalog?.snapshot_id || !visibleCatalog.revision || !origin || !stop} onClick={() => void calculate()}>Plan session</Button>
     {visibleReport && <section aria-label="Planning result">
       <ClusterSummary clustering={visibleReport.clustering} />
-      <button type="button" disabled={busy || visibleReport.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</button>
-      <button type="button" disabled={busy} onClick={() => void inspectRoute()}>Inspect route</button>
+      <Button disabled={busy || visibleReport.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</Button>
+      <Button disabled={busy} onClick={() => void inspectRoute()}>Inspect route</Button>
       {visibleRoute && <RouteInspection value={visibleRoute} />}
       {exported && <section aria-label="Plan export"><p>{exported.byte_count} bytes; {exported.plan_id}; expires at UTC epoch ms {exported.expires_at_utc_ms}.</p>
         <label>Plan export text <textarea readOnly value={exported.text} rows={8} onFocus={(e) => e.target.select()} /></label>
-        <button type="button" onClick={() => void copyExport()}>Copy plan</button><p role="status">{copyStatus}</p>
+        <Button onClick={() => void copyExport()}>Copy plan</Button><p role="status">{copyStatus}</p>
       </section>}
       <h3>Estimated plan</h3><p>Total {visibleReport.result.expected_total_ms} ms; final travel {visibleReport.result.stopping.total_ms} ms; stopping service {visibleReport.request.stopping_service_ms} ms.</p>
       <ol>{visibleReport.result.selected.map((step) => <li key={step.candidate}>{step.candidate}: utility {step.utility}; travel {step.travel.total_ms} ms; completion {step.completion_ms} ms; service {step.service_ms} ms</li>)}</ol>

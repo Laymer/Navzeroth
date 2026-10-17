@@ -1,3 +1,4 @@
+import { Button, Field, Panel } from "../ui";
 import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {PlanPinControl} from "./PlanPinControl";
 import { ClusterSummary } from "./ClusterSummary";
@@ -102,9 +103,8 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
   }
   function cancelCalculation() { current.current.edit += 1; abortJob(); setBusy(false); setError({ code: "OPERATION_CANCELED", message: "Planning request canceled locally; cancellation requested for its background job.", retryable: false }); }
 
-  const chooseNode = (label: string, value: string, change: (value: string) => void) => <label>{label} <select value={value} disabled={loading} onChange={(e) => edit(() => change(e.target.value))}><OffPageOptions selected={[value]} visible={visibleCatalog?.nodes.map(n=>n.id)??[]}/><option value="">Choose a declared node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</select></label>;
-  return <section aria-labelledby="joint-planning-title">
-    <h3 id="joint-planning-title">Manual joint session planning</h3>
+  const chooseNode = (label: string, value: string, change: (value: string) => void) => <Field label={label} help="A declared node from the active content. Leave it unselected if you do not know it; nothing is guessed.">{(c) => <select {...c} value={value} disabled={loading} onChange={(e) => edit(() => change(e.target.value))}><OffPageOptions selected={[value]} visible={visibleCatalog?.nodes.map(n=>n.id)??[]}/><option value="">Choose a declared node</option>{visibleCatalog?.nodes.map((n) => <option key={n.id} value={n.id}>{n.id}</option>)}</select>}</Field>;
+  return <Panel title="Manual joint session planning" level={3}>
     <p>Choose explicit shared travel assumptions and same-unit utility for each participant. Every selected objective must be ready and benefit every member. Review catch-up reasons above when progress differs; this planner does not predict unlocks or quest sharing.</p>
     {loading && <p role="status">Loading joint planning inputs…</p>}
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
@@ -113,14 +113,14 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
     {visibleCatalog && !fresh && <p>Joint planning requires a fresh trusted imported snapshot from every member. Missing, stale or uncertain age blocks calculation.</p>}
     {visibleCatalog && <fieldset disabled={loading}>
       <legend>Manual shared assumptions</legend>
-      <label>Goal profile / utility unit <input value={goal} onChange={(e) => edit(() => setGoal(e.target.value))} maxLength={128} /></label>
+      <Field label="Goal profile / utility unit" help="Names the unit your utility numbers use. It labels your assumption and is not verified game advice.">{(c) => <input {...c} value={goal} onChange={(e) => edit(() => setGoal(e.target.value))} maxLength={128} />}</Field>
       <CatalogPager disabled={busy} client={client} subject={{kind:"party",party_id:partyId}} page={visibleCatalog?.pages?.nodes} label="nodes" onPage={p=>{setCatalog(old=>old?{...old,nodes:p.records as NonNullable<typeof catalog>["nodes"],pages:{...old.pages,nodes:p}}:old);}}/>
 <CatalogPager disabled={busy} client={client} subject={{kind:"party",party_id:partyId}} page={visibleCatalog?.pages?.objectives} label="objectives" onPage={p=>{setDrafts(old=>({...Object.fromEntries((p.records as NonNullable<typeof catalog>["objectives"]).map(o=>[o.id,{node:"",minutes:"",service:"0",included:false,excluded:false,utilities:Object.fromEntries((visibleCatalog?.participants??[]).map(member=>[member.profile_id,""]))}])),...Object.fromEntries(Object.entries(old).filter(([id,d])=>d.included||d.excluded||p.records.some(r=>(r as {id:string}).id===id)))}));setCatalog(old=>old?{...old,objectives:p.records as NonNullable<typeof catalog>["objectives"],pages:{...old.pages,objectives:p}}:old);}}/>
 {chooseNode("Shared origin", origin, setOrigin)}{chooseNode("Shared stopping point", stop, setStop)}
-      <button type="button" disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</button>
-      <label>Session budget (minutes) <input type="number" min="0" value={budget} onChange={(e) => edit(() => setBudget(e.target.value))} /></label>
-      <label>Stopping service time (minutes) <input type="number" min="0" value={stopService} onChange={(e) => edit(() => setStopService(e.target.value))} /></label>
-      <p>{Object.values(drafts).filter(d=>d.included).length} selected objectives; {Object.values(drafts).filter(d=>d.excluded).length} exclusions (maximum 128 each).</p><button type="button" onClick={()=>edit(()=>setDrafts(old=>Object.fromEntries(Object.entries(old).filter(([id])=>visibleCatalog.objectives.some(o=>o.id===id)).map(([id,d])=>[id,{...d,included:false,excluded:false}]))))}>Clear objective selections</button>
+      <Button disabled={busy} onClick={()=>void applyDefaults()}>Apply local planning defaults</Button>
+      <Field label="Session budget (minutes)" help="Shared time limit for the whole group in minutes.">{(c) => <input {...c} type="number" min="0" value={budget} onChange={(e) => edit(() => setBudget(e.target.value))} />}</Field>
+      <Field label="Stopping service time (minutes)" help="Extra minutes you expect to spend after the group reaches the stopping point. 0 means none declared.">{(c) => <input {...c} type="number" min="0" value={stopService} onChange={(e) => edit(() => setStopService(e.target.value))} />}</Field>
+      <p>{Object.values(drafts).filter(d=>d.included).length} selected objectives; {Object.values(drafts).filter(d=>d.excluded).length} exclusions (maximum 128 each).</p><Button variant="ghost" onClick={()=>edit(()=>setDrafts(old=>Object.fromEntries(Object.entries(old).filter(([id])=>visibleCatalog.objectives.some(o=>o.id===id)).map(([id,d])=>[id,{...d,included:false,excluded:false}]))))}>Clear objective selections</Button>
       {visibleCatalog.objectives.length === 0 && <p>No authored objectives in this dataset.</p>}
       {visibleCatalog.objectives.map((objective) => {
         const draft = drafts[objective.id]; if (!draft) return null;
@@ -134,11 +134,11 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
           {visibleCatalog.participants.map((p) => <label key={p.profile_id}>Utility for {p.character} on {objective.id} <input type="number" min="0" step="1" value={draft.utilities[p.profile_id] ?? ""} onChange={(e) => candidate(objective.id, { utilities: { ...draft.utilities, [p.profile_id]: e.target.value } })} /></label>)}
         </fieldset>;
       })}
-      <button type="button" disabled={!valid || busy || loading} onClick={() => void calculate()}>Calculate joint estimate</button>
+      <Button disabled={!valid || busy || loading} onClick={() => void calculate()}>Calculate joint estimate</Button>
     </fieldset>}
     {activeJob.current && busy && <div aria-label="Joint planning job progress">
       <p role="status">{progress?.edit === current.current.edit ? `${progress.status.state}; ${progress.status.phase?.replaceAll("_", " ") ?? "awaiting worker"}; ${progress.status.work_units} work units checked` : "Registering joint planning job…"}</p>
-      <button type="button" onClick={cancelCalculation}>Cancel joint planning</button>
+      <Button variant="ghost" onClick={cancelCalculation}>Cancel joint planning</Button>
       {visibleReport && <p>Previous valid joint estimate remains visible while this calculation runs.</p>}
     </div>}
     {visibleReport && <div aria-label="Joint estimate">
@@ -153,5 +153,5 @@ export function PartyPlanning({ client, partyId, refreshKey }: { client: Command
       <ul>{visibleReport.result.unavailable_edges.map((edge) => <li key={`${edge.edge}:${edge.character}`}>Travel {edge.edge} unavailable for {edge.character}: {edge.truth}</li>)}</ul>
     </div>}
     <PartyAgreement client={client} partyId={partyId} refreshKey={refreshKey} planning={visibleReport} />
-  {visibleReport && pinJob && <PlanPinControl client={client} jobId={pinJob}/>}</section>;
+  {visibleReport && pinJob && <PlanPinControl client={client} jobId={pinJob}/>}</Panel>;
 }

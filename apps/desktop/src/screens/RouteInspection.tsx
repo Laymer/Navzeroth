@@ -1,3 +1,4 @@
+import { Button } from "../ui";
 import { useMemo, useRef, useState } from "react";
 import type { RouteInspection as Inspection } from "../commands/routes";
 import { MapView } from "../atlas/MapView";
@@ -30,23 +31,23 @@ function RouteView({ value }: { value: Inspection }) {
   return <section aria-label="Route inspection"><h3>Selected travel and final stopping route</h3>
     <p>Endpoint links are schematic connections. Road geometry is unavailable. Estimates include declared waits and service time.</p>
     <p>{value.context.build.edition}/{value.context.build.build}/{value.context.build.interface}, {value.context.namespace}. Snapshot {value.report.request.snapshot_id}; revision {value.report.request.revision}.</p>
-    {value.fixture && <p>SYNTHETIC — fixture route.</p>}
+    {value.fixture && <p className="play-note">SYNTHETIC — fixture route.</p>}
     <p>Planner termination: {value.report.result.termination}. Only returned hops are shown; missing or incomplete trace entries do not create connections.</p>
     {frame ? <figure><figcaption>{frame.id}: exact dataset projection; map {frame.map.map_id}, floor {frame.map.floor ?? "unrecorded"}, instance {frame.map.instance ?? "none"}; schematic links</figcaption>
       <p>Frame {frameIndex + 1} of {value.frames.length}. {segments.length} links displayed from this hop page; {fitted.count} same-frame links across all pages.</p>
-      <button type="button" disabled={frameIndex === 0} onClick={() => { setFrameIndex((n) => n - 1); setFit(null); }}>Previous route frame</button>
-      <button type="button" disabled={frameIndex + 1 >= value.frames.length} onClick={() => { setFrameIndex((n) => n + 1); setFit(null); }}>Next route frame</button>
-      <button type="button" disabled={fitted.bounds === null} onClick={() => { const bounds = fitted.bounds; if (bounds) setFit((old) => ({ bounds, nonce: (old?.nonce ?? 0) + 1 })); }}>Fit route endpoints in this frame</button>
-      <button type="button" disabled={selectedBounds === null} onClick={() => { if (selectedBounds) setFit((old) => ({ bounds: selectedBounds, nonce: (old?.nonce ?? 0) + 1 })); }}>Fit selected hop endpoints</button>
+      <Button variant="ghost" disabled={frameIndex === 0} onClick={() => { setFrameIndex((n) => n - 1); setFit(null); }}>Previous route frame</Button>
+      <Button variant="ghost" disabled={frameIndex + 1 >= value.frames.length} onClick={() => { setFrameIndex((n) => n + 1); setFit(null); }}>Next route frame</Button>
+      <Button disabled={fitted.bounds === null} onClick={() => { const bounds = fitted.bounds; if (bounds) setFit((old) => ({ bounds, nonce: (old?.nonce ?? 0) + 1 })); }}>Fit route endpoints in this frame</Button>
+      <Button disabled={selectedBounds === null} onClick={() => { if (selectedBounds) setFit((old) => ({ bounds: selectedBounds, nonce: (old?.nonce ?? 0) + 1 })); }}>Fit selected hop endpoints</Button>
       <MapView key={frameIndex} image={{ ...frame, pins: [] }} layer={null} onLayerError={() => {}} marker={null} markerStale={false} selectedPin={null} focus={null} segments={segments} fit={fit} mapLabel={`Schematic route frame ${frame.id}`} />
     </figure> : <p>No route image frames. Ordered hops and placement gaps remain available below.</p>}
     {value.hops.length > 0 && <><p role="status">Hops {start + 1}–{start + displayed.length} of {value.hops.length}. Selected hop {selected === null ? "none" : selected + 1}.</p>
       <p>On a hop button: Up/Down selects the previous/next hop; Home/End selects the first/last; Page Up/Down moves by {ROUTE_PAGE_SIZE} hops.</p>
-      <button type="button" disabled={page === 0} onClick={() => movePage(page - 1)}>Previous route hop page</button>
-      <button type="button" disabled={start + ROUTE_PAGE_SIZE >= value.hops.length} onClick={() => movePage(page + 1)}>Next route hop page</button>
+      <Button variant="ghost" disabled={page === 0} onClick={() => movePage(page - 1)}>Previous route hop page</Button>
+      <Button variant="ghost" disabled={start + ROUTE_PAGE_SIZE >= value.hops.length} onClick={() => movePage(page + 1)}>Next route hop page</Button>
     </>}
     <ol start={start + 1}>{displayed.map((h, offset) => { const index = start + offset; return <li key={index}>
-      <button type="button" ref={(el) => { if (el) buttons.current.set(index, el); else buttons.current.delete(index); }} aria-pressed={selected === index} onClick={() => choose(index, false)} onKeyDown={(event) => {
+      <button type="button" className="ui-button ui-button--secondary" ref={(el) => { if (el) buttons.current.set(index, el); else buttons.current.delete(index); }} aria-pressed={selected === index} onClick={() => choose(index, false)} onKeyDown={(event) => {
         if (event.ctrlKey || event.metaKey || event.altKey) return;
         const target = event.key === "ArrowUp" ? Math.max(0, index - 1) : event.key === "ArrowDown" ? Math.min(value.hops.length - 1, index + 1) : event.key === "Home" ? 0 : event.key === "End" ? value.hops.length - 1 : event.key === "PageUp" ? Math.max(0, index - ROUTE_PAGE_SIZE) : event.key === "PageDown" ? Math.min(value.hops.length - 1, index + ROUTE_PAGE_SIZE) : null;
         if (target !== null) { event.preventDefault(); choose(target, true); }

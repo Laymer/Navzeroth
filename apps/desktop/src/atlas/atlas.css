@@ -9,4 +9,4 @@
 .atlas .pin-pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .atlas .pin-pagination p { flex-basis: 100%; }
 .atlas .pin-pagination button { font: inherit; }
-.atlas button:focus-visible, .atlas input:focus-visible, .atlas select:focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
+.atlas button:focus-visible, .atlas input:focus-visible, .atlas select:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }

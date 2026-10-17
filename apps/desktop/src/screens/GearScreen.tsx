@@ -1,3 +1,5 @@
+import "./play.css";
+import { Button, Field, HelpTip, Panel } from "../ui";
 import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {AuthoredContentPicker} from "./AuthoredContentPicker";
 import type {AuthoredSelection} from "../commands/authoredContent";
@@ -8,16 +10,25 @@ import type { CommandClient } from "../commands";
 import type { ProfileSummary } from "../commands/contract";
 import type { GearCatalog, GearInput, GearObservation, GearReport, GearRequest, GearRanking } from "../commands/gear";
 
+const TIME_HELP: Record<string, string> = {
+  travel: "Extra travel time to reach the source, in milliseconds. Empty stays unknown and blocks a practical recommendation.",
+  formation: "Time to form the group, in milliseconds. Empty stays unknown.",
+  attempt: "Time for one attempt, in milliseconds. Empty stays unknown.",
+  stopping: "Time to get back to your stopping point, in milliseconds. Empty stays unknown.",
+  budget: "Your session time limit in milliseconds; 1000 ms is one second. A budget is required to compare.",
+  copper: "The most copper you declare you will spend. Empty stays unknown; 0 means you declared you will spend nothing.",
+  attempts: "How many trials you allow for each source, from 1 to 1024.",
+};
 const unknown = <T,>(): GearObservation<T> => ({ status: "unknown" });
 const known = <T,>(value: T): GearObservation<T> => ({ status: "known", value });
 const numberObservation = (value: string): GearObservation<number> => value.trim() === "" ? unknown() : known(Number(value));
 const itemId = (input: Pick<GearInput, "item">) => `${input.item.item_id} (${input.item.variant})`;
 function RankingView({ name, ranking }: { name: string; ranking: GearRanking }) {
-  return <section aria-label={name}><h3>{name}</h3><p>{ranking.label}. {ranking.scope_note}</p>
+  return <Panel title={name} level={3}><p>{ranking.label}. {ranking.scope_note}</p>
     <p>{ranking.top_is_definitive ? "Definitive ordering within the supplied model" : "Ordering is not definitive"}. {ranking.valid.length} legal, {ranking.uncertain.length} uncertain, {ranking.rejected.length} rejected configurations.</p>
     {ranking.valid.slice(0, 5).map((configuration) => <p key={configuration.rank}>#{configuration.rank}: {Object.entries(configuration.configuration.items).map(([slot, item]) => `${slot}: ${item.item.item_id} (${item.item.variant})`).join(", ")}; model score {formatMilli(configuration.score.total)}; {configuration.score.certainty}.</p>)}
     <details><summary>Configuration legality, exclusions and score breakdowns</summary><RankingDetails ranking={ranking} /></details>
-  </section>;
+  </Panel>;
 }
 export function GearScreen({ client, refreshKey }: { client: CommandClient; refreshKey: number }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
@@ -113,34 +124,34 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     } catch (failure) { if (ticket === generation.current) setError(failure instanceof Error ? failure.message : "Invalid manual inputs"); }
     finally { if (ticket === generation.current) setBusy(false); }
   }
-  return <section aria-label="Gear"><h2>Gear comparisons</h2>
+  return <section aria-label="Gear" className="play-screen"><h2>Gear comparisons</h2>
     <p>Model scores use your explicit assumptions. Select an installed authored model or supply a manual model. Class is an explicit assumption because imported snapshots do not contain class facts. Unknown acquisition or baseline inputs prevent a practical recommendation.</p>
-    {catalog?.fixture && <p role="note">SYNTHETIC — engineering fixture, not live game advice.</p>}
+    {catalog?.fixture && <p role="note" className="play-note">SYNTHETIC — engineering fixture, not live game advice.</p>}
     {error && <p role="alert">{error}</p>}
-    <label>Gear profile <select value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select></label>
+    <Field label="Gear profile" help="The imported character whose equipment snapshot is the baseline. Changing it discards the current comparison.">{(c) => <select {...c} value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     <p>Snapshot: {catalog?.snapshot_id ?? "none"}; revision: {catalog?.revision ?? "none — activate Content first"}</p>
     <AuthoredContentPicker client={client} kind="models" subject={{kind:"character",profile_id:profile}} refreshKey={refreshKey} value={authored} onChange={v=>{invalidate();setAuthored(v);}}/>
     {authored&&<p>Authored weights, proficiency, layout and item facts are resolved by the backend from this revision; unavailable applicability blocks comparison.</p>}
     <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({authored,weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
       gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
       onGearReport={routeReport} onBusyChange={setBusy} externalBusy={busy} opportunities={inputs.flatMap(input=>input.acquisition?[{source:input.acquisition.source,target:input.item,formation_ms:numberObservation(times.formation),attempt_ms:numberObservation(times.attempt),available_copper:times.copper.trim()?known(times.copper):unknown<string>(),max_attempts:Number(times.attempts),independent_player_attempts:independent,cost_per_attempt:perAttempt}]:[])} />
-    <button type="button" disabled={!catalog?.fixture} onClick={example}>Load labelled synthetic example</button>
+    <Button disabled={!catalog?.fixture} onClick={example}>Load labelled synthetic example</Button>
     {synthetic && <p>Engineering example: all readable attributes have equal weight 1; categories are explicitly assumed inapplicable, effort is fictional and sources remain unselected. Edit each assumption before use.</p>}
     <fieldset><legend>Manual model</legend>
-      <label>Role identifier <input value={role} onChange={(e) => { invalidate(); setRole(e.target.value); }} /></label>
-      <label>Attribute weights (JSON, integer thousandths) <textarea value={weights} onChange={(e) => { invalidate(); setWeights(e.target.value); }} rows={4} /></label>
-      <label>Assumed class identifier <input value={className} onChange={(e) => { invalidate(); setClassName(e.target.value); }} /></label>
-      <label>Class proficiency map (JSON allowed/disallowed categories) <textarea value={proficiency} onChange={(e) => { invalidate(); setProficiency(e.target.value); }} rows={3} /></label>
-      {(["Main-hand slot", "Off-hand slot"] as const).map((label, index) => <label key={label}>{label}<select value={index === 0 ? mainHand : offHand} onChange={(e) => { invalidate(); if (index === 0) setMainHand(e.target.value); else setOffHand(e.target.value); }}><OffPageOptions selected={[mainHand,offHand]} visible={slots}/><option value="">Relationship unknown / inapplicable</option>{slots.map((slot) => <option key={slot}>{slot}</option>)}</select></label>)}
+      <Field label="Role identifier" help="A name you choose for this weighting. It labels the model; it does not change any score.">{(c) => <input {...c} value={role} onChange={(e) => { invalidate(); setRole(e.target.value); }} />}</Field>
+      <Field label="Attribute weights (JSON, integer thousandths)" help="Maps attribute ids to weights in thousandths, so 1000 means a weight of 1. An empty map blocks a manual comparison.">{(c) => <textarea {...c} value={weights} onChange={(e) => { invalidate(); setWeights(e.target.value); }} rows={4} />}</Field>
+      <Field label="Assumed class identifier" help="Imported snapshots hold no class facts, so the class is your assumption. Leave it empty to keep the class unknown.">{(c) => <input {...c} value={className} onChange={(e) => { invalidate(); setClassName(e.target.value); }} />}</Field>
+      <Field label="Class proficiency map (JSON allowed/disallowed categories)" help="Used to judge equipment eligibility. Leave it as {} to supply no proficiency facts; eligibility then stays unconfirmed.">{(c) => <textarea {...c} value={proficiency} onChange={(e) => { invalidate(); setProficiency(e.target.value); }} rows={3} />}</Field>
+      {(["Main-hand slot", "Off-hand slot"] as const).map((label, index) => <Field key={label} label={label} help="The slot that holds this hand's weapon. Choose Relationship unknown / inapplicable when you do not know; nothing is inferred.">{(c) => <select {...c} value={index === 0 ? mainHand : offHand} onChange={(e) => { invalidate(); if (index === 0) setMainHand(e.target.value); else setOffHand(e.target.value); }}><OffPageOptions selected={[mainHand,offHand]} visible={slots}/><option value="">Relationship unknown / inapplicable</option>{slots.map((slot) => <option key={slot}>{slot}</option>)}</select>}</Field>)}
     </fieldset>
     <fieldset><legend>Acquisition assumptions for each selected source</legend><p>Empty effort fields remain unknown. Spending ceiling is your declared budget. Probabilities come from active content; player trial semantics require your explicit assertion.</p>
-      {(Object.keys(times) as (keyof typeof times)[]).map((key) => <label key={key}>{key === "copper" ? "Spending ceiling (copper)" : key === "attempts" ? "Maximum trials (1–1024)" : `${key} (ms)`}<input type="number" min="0" step="1" value={times[key]} onChange={(e) => { invalidate(); setTimes((old) => ({ ...old, [key]: e.target.value })); }} /></label>)}
-      <label><input type="checkbox" checked={independent} onChange={(e) => { invalidate(); setIndependent(e.target.checked); }} />Assume independent identical player acquisition trials</label>
-      <label><input type="checkbox" checked={perAttempt} onChange={(e) => { invalidate(); setPerAttempt(e.target.checked); }} />Pay source cost per attempt</label>
+      {(Object.keys(times) as (keyof typeof times)[]).map((key) => <Field key={key} label={key === "copper" ? "Spending ceiling (copper)" : key === "attempts" ? "Maximum trials (1–1024)" : `${key} (ms)`} help={TIME_HELP[key]}>{(c) => <input {...c} type="number" min="0" step="1" value={times[key]} onChange={(e) => { invalidate(); setTimes((old) => ({ ...old, [key]: e.target.value })); }} />}</Field>)}
+      <span className="play-inline"><label><input type="checkbox" checked={independent} onChange={(e) => { invalidate(); setIndependent(e.target.checked); }} />Assume independent identical player acquisition trials</label><HelpTip>Tick this only if every attempt is a fresh, identical chance. Unticked, repeated attempts are not combined into one probability.</HelpTip></span>
+      <span className="play-inline"><label><input type="checkbox" checked={perAttempt} onChange={(e) => { invalidate(); setPerAttempt(e.target.checked); }} />Pay source cost per attempt</label><HelpTip>Tick this if each attempt costs the source price again. Unticked, the price counts once.</HelpTip></span>
     </fieldset>
     <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={catalog?.pages?.items} label="items" onPage={p=>{setCatalog(old=>old?{...old,items:p.records as NonNullable<typeof catalog>["items"],pages:{...old.pages,items:p}}:old);}}/>
 <CatalogPager disabled={busy} client={client} subject={{kind:"character",profile_id:profile}} page={catalog?.pages?.acquisitions} label="acquisitions" onPage={p=>{setCatalog(old=>old?{...old,acquisitions:p.records as NonNullable<typeof catalog>["acquisitions"],pages:{...old.pages,acquisitions:p}}:old);}}/>
-<p>Selected candidates: {inputs.length} / 128</p>{inputs.filter(i=>!catalog?.items.some(item=>JSON.stringify(item.key)===JSON.stringify(i.item))).map(i=><p key={JSON.stringify(i.item)}>{i.item.item_id} (another page) <button type="button" onClick={()=>{invalidate();setInputs(old=>old.filter(v=>v!==i));}}>Remove {i.item.item_id}</button></p>)}
+<p>Selected candidates: {inputs.length} / 128</p>{inputs.filter(i=>!catalog?.items.some(item=>JSON.stringify(item.key)===JSON.stringify(i.item))).map(i=><p key={JSON.stringify(i.item)}>{i.item.item_id} (another page) <Button variant="ghost" onClick={()=>{invalidate();setInputs(old=>old.filter(v=>v!==i));}}>Remove {i.item.item_id}</Button></p>)}
     <h3>Active candidates ({catalog?.items.length ?? 0})</h3>
     {catalog?.items.length === 0 && <p>No items in active content. Real catalogs require explicit authoring.</p>}
     {catalog?.items.map((item) => {
@@ -154,7 +165,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
         </>}
       </fieldset>;
     })}
-    <button type="button" disabled={busy || !catalog?.snapshot_id || !catalog.revision} onClick={() => void calculate()}>Compare gear</button>
+    <Button variant="primary" disabled={busy || !catalog?.snapshot_id || !catalog.revision} onClick={() => void calculate()}>Compare gear</Button>
     <details><summary>Advanced captured-equipment data</summary><pre>{JSON.stringify(catalog?.equipment ?? {}, null, 2)}</pre></details>
     {report && <section aria-label="Gear result"><h3>Current baseline</h3><p>Model score {formatMilli(report.current_score.total)}; {report.current_score.certainty}.</p>
       <ul>{report.baseline_gaps.map((gap) => <li key={gap}>{gap}</li>)}</ul><BaselineSlots current={report.current} /><ScoreDetails score={report.current_score} />

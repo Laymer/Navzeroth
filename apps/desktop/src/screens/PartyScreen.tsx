@@ -1,3 +1,5 @@
+import "./play.css";
+import { Button, Field } from "../ui";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { AppError, ProfileSummary, StoredParty } from "../commands/contract";
@@ -74,26 +76,26 @@ export function PartyScreen({ client, refreshKey = 0 }: { client: CommandClient;
   const party = selected && detail.phase === "ready" && detail.party?.id === selected ? detail.party : null;
   const editable = mode === "stored" && !busy && !loading;
   const duplicateName = editor !== null && !editor.existing && ids.includes(editor.id.trim());
-  return <section className="party-screen" aria-labelledby="party-title">
+  return <section className="party-screen play-screen" aria-labelledby="party-title">
     <h2 id="party-title">Party</h2>
     <p>Choose separately imported characters for a local party. Each participant keeps their own progress and capture age.</p>
-    {mode === "demo" && <p className="demo-label">DEMO — local party changes require the desktop application.</p>}
+    {mode === "demo" && <p className="demo-label play-note">DEMO — local party changes require the desktop application.</p>}
     {loading && <p role="status">Loading parties…</p>}
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
     {message && <p role="status">{message}</p>}
-    <button type="button" disabled={busy} onClick={() => { setError(null); setRevision((old) => old + 1); }}>Refresh parties</button>
-    <button type="button" disabled={!editable} onClick={() => { setEditor({ id: "", members: [], existing: false }); setMessage(""); }}>New party</button>
+    <Button disabled={busy} onClick={() => { setError(null); setRevision((old) => old + 1); }}>Refresh parties</Button>
+    <Button disabled={!editable} onClick={() => { setEditor({ id: "", members: [], existing: false }); setMessage(""); }}>New party</Button>
     {!loading && ids.length === 0 && <p>No local parties yet.</p>}
-    {ids.length > 0 && <label>Selected party <select value={selected} disabled={busy || editor !== null} onChange={(event) => { setSelected(event.target.value); setDetail({ phase: "loading" }); setError(null); setMessage(""); }}>
+    {ids.length > 0 && <Field label="Selected party" help="Choose a local party to review or edit.">{(c) => <select {...c} value={selected} disabled={busy || editor !== null} onChange={(event) => { setSelected(event.target.value); setDetail({ phase: "loading" }); setError(null); setMessage(""); }}>
       {ids.map((id) => <option key={id} value={id}>{id}</option>)}
-    </select></label>}
+    </select>}</Field>}
     {selected && detail.phase === "loading" && <p role="status">Loading participant snapshots…</p>}
     {selected && detail.phase === "error" && <p role="alert">Error {detail.error.code}: {detail.error.message}</p>}
     {selected && detail.phase === "ready" && detail.party === null && <p>This party is no longer available. Refresh the party list.</p>}
     {party && <>
       <h3>{party.id}</h3>
-      <button type="button" disabled={!editable || editor !== null} onClick={() => setEditor({ id: party.id, members: party.participants.map((p) => p.profile_id), existing: true })}>Edit membership</button>
-      <button type="button" disabled={!editable || editor !== null} onClick={() => void remove()}>Remove local party</button>
+      <Button disabled={!editable || editor !== null} onClick={() => setEditor({ id: party.id, members: party.participants.map((p) => p.profile_id), existing: true })}>Edit membership</Button>
+      <Button variant="danger" disabled={!editable || editor !== null} onClick={() => void remove()}>Remove local party</Button>
       <ul className="party-participants">{party.participants.map((participant) => <li key={participant.profile_id}>
         <h4>{participant.character}</h4>
         {participant.snapshot === null ? <p>Missing imported snapshot. Import this character to restore their state.</p> : <Participant snapshot={participant.snapshot} />}
@@ -104,14 +106,14 @@ export function PartyScreen({ client, refreshKey = 0 }: { client: CommandClient;
     </>}
     {editor && <form onSubmit={(event) => { event.preventDefault(); void save(); }}>
       <fieldset disabled={busy}><legend>{editor.existing ? "Edit party membership" : "Create local party"}</legend>
-        <label>Party name <input value={editor.id} maxLength={256} readOnly={editor.existing} required onChange={(event) => setEditor({ ...editor, id: event.target.value })} /></label>
+        <Field label="Party name" help="Local name for the party. It cannot be changed after the party is created.">{(c) => <input {...c} value={editor.id} maxLength={256} readOnly={editor.existing} required onChange={(event) => setEditor({ ...editor, id: event.target.value })} />}</Field>
         {duplicateName && <p>A party with this name already exists. Select it to edit membership.</p>}
         <p>Select 1–40 different characters with the same edition, build, interface, namespace and synthetic status.</p>
         {profiles.length === 0 && <p>No stored profiles yet. Import characters first.</p>}
         {profiles.map((profile) => <label key={profile.id}><input type="checkbox" checked={editor.members.includes(profile.id)} disabled={!editor.members.includes(profile.id) && editor.members.length >= 40} onChange={(event) => setEditor({ ...editor, members: event.target.checked ? [...editor.members, profile.id] : editor.members.filter((id) => id !== profile.id) })} />{profileLabel(profile)}</label>)}
         {editor.members.filter((id) => !profiles.some((p) => p.id === id)).map((id) => <label key={id}><input type="checkbox" checked onChange={() => setEditor({ ...editor, members: editor.members.filter((member) => member !== id) })} />Missing profile: {party?.participants.find((p) => p.profile_id === id)?.character ?? id}</label>)}
-        <button type="submit" disabled={!editable || editor.members.length === 0 || !editor.id.trim() || duplicateName}>Save membership</button>
-        <button type="button" onClick={() => setEditor(null)}>Cancel editing</button>
+        <Button variant="primary" type="submit" disabled={!editable || editor.members.length === 0 || !editor.id.trim() || duplicateName}>Save membership</Button>
+        <Button variant="ghost" onClick={() => setEditor(null)}>Cancel editing</Button>
       </fieldset>
     </form>}
   </section>;
@@ -120,7 +122,7 @@ export function PartyScreen({ client, refreshKey = 0 }: { client: CommandClient;
 function Participant({ snapshot }: { snapshot: NonNullable<StoredParty["participants"][number]["snapshot"]> }) {
   const envelope = snapshot.envelope;
   return <>
-    {(envelope.fixture || envelope.namespace === "demo") && <p className="demo-label">SYNTHETIC — fixture or demo data, not from your game</p>}
+    {(envelope.fixture || envelope.namespace === "demo") && <p className="demo-label play-note">SYNTHETIC — fixture or demo data, not from your game</p>}
     <p>Last imported: {describeAge(snapshot.freshness)}</p>
     {snapshot.freshness.status === "uncertain" && <p>{describeUncertainty(snapshot.freshness.reason)}</p>}
     {snapshot.freshness.status !== "fresh" && <p className="stale-note">This participant’s progress may have changed since capture.</p>}
