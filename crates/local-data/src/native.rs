@@ -36,7 +36,7 @@ unsafe extern "C" {
         file: *mut *mut c_void,
         size: *mut u64,
     ) -> u32;
-    fn nav_casc_read(file: *mut c_void, buffer: *mut c_void, length: u32) -> u32;
+    fn nav_casc_read(file: *mut c_void, buffer: *mut c_void, length: u32, done: *mut u32) -> u32;
     fn nav_casc_name_open(
         storage: *mut c_void,
         name: *const std::ffi::c_char,
@@ -46,13 +46,35 @@ unsafe extern "C" {
     fn nav_casc_file_close(file: *mut c_void);
 }
 
+/// Why a strict logical read did not produce the whole file. Each variant is a
+/// distinct, reported cause; none implies another.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum ReadFailure {
     Missing,
+    /// The first BLTE frame needing decryption uses a key that is not available
+    /// and no earlier frame was produced.
     Encrypted,
+    /// Earlier frames were produced and verified, then a frame encrypted with an
+    /// unavailable key stopped the read. The logical file stays unavailable; the
+    /// verified prefix is neither retained nor zero-filled.
+    EncryptedFrames,
     Unsupported,
     Unavailable,
+    /// CascLib reported `ERROR_FILE_CORRUPT`: a frame checksum mismatch, a
+    /// malformed BLTE/encryption header or failed decompression.
     Invalid,
+    /// End-of-data or a missing file part reported while opening the file
+    /// (reading BLTE headers). Open stage only: local data streams zero-fill a
+    /// truncated span at read time, which then fails the strict frame MD5 and is
+    /// reported as `Invalid`. On Windows code 1006 is also the OS
+    /// `ERROR_FILE_INVALID`, so that OS error would land here too.
+    Truncated,
+    /// The read returned fewer bytes than declared with no recorded cause. Most
+    /// likely a raw data read failure after verified frames (for example an I/O or
+    /// sharing error while the game runs): CascLib's frame reader overwrites such
+    /// errors with success. Not encryption; mapped to the unavailable/encrypted
+    /// disposition only because there is no unknown disposition.
+    ShortRead,
     Capacity,
 }
 
@@ -164,10 +186,18 @@ impl Archive {
         bytes.resize(size, 0);
         // SAFETY: owned file and initialized allocation of exactly the requested
         // length. Native reads cannot exceed length; no encrypted zero-fill flag.
-        let error =
-            unsafe { nav_casc_read(file.0.as_ptr(), bytes.as_mut_ptr().cast(), size as u32) };
+        let mut done = 0;
+        let error = unsafe {
+            nav_casc_read(
+                file.0.as_ptr(),
+                bytes.as_mut_ptr().cast(),
+                size as u32,
+                &mut done,
+            )
+        };
         if error != 0 {
-            return Err(classify(error));
+            // The partial buffer is dropped here; only the cause is reported.
+            return Err(classify_read(error, done));
         }
         Ok(bytes)
     }
@@ -179,7 +209,17 @@ fn classify(error: u32) -> ReadFailure {
         3 => ReadFailure::Unsupported,
         4 => ReadFailure::Invalid,
         5 => ReadFailure::Capacity,
+        7 => ReadFailure::Truncated,
+        8 => ReadFailure::ShortRead,
         _ => ReadFailure::Unavailable,
+    }
+}
+/// Read-stage status: an encrypted frame reached after produced frames is a
+/// partially encrypted file, distinct from one encrypted from its first frame.
+fn classify_read(error: u32, done: u32) -> ReadFailure {
+    match classify(error) {
+        ReadFailure::Encrypted if done > 0 => ReadFailure::EncryptedFrames,
+        failure => failure,
     }
 }
 struct NativeFile(NonNull<c_void>);
@@ -197,5 +237,35 @@ impl Drop for Archive {
         unsafe {
             nav_casc_close(self.handle.as_ptr());
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn native_statuses_classify_distinctly() {
+        assert_eq!(classify(1), ReadFailure::Missing);
+        assert_eq!(classify(2), ReadFailure::Encrypted);
+        assert_eq!(classify(3), ReadFailure::Unsupported);
+        assert_eq!(classify(4), ReadFailure::Invalid);
+        assert_eq!(classify(5), ReadFailure::Capacity);
+        assert_eq!(classify(6), ReadFailure::Unavailable);
+        assert_eq!(classify(7), ReadFailure::Truncated);
+        assert_eq!(classify(8), ReadFailure::ShortRead);
+        assert_eq!(classify(99), ReadFailure::Unavailable);
+    }
+    #[test]
+    fn short_reads_keep_the_frame_cause() {
+        // An encrypted frame after verified frames (the 70450 Item/ItemSparse/Map
+        // case) is partial encryption, never corruption.
+        assert_eq!(classify_read(2, 302_156), ReadFailure::EncryptedFrames);
+        assert_eq!(classify_read(2, 0), ReadFailure::Encrypted);
+        // A checksum mismatch stays a verification failure at any offset.
+        assert_eq!(classify_read(4, 0), ReadFailure::Invalid);
+        assert_eq!(classify_read(4, 4096), ReadFailure::Invalid);
+        assert_eq!(classify_read(7, 4096), ReadFailure::Truncated);
+        assert_eq!(classify_read(8, 4096), ReadFailure::ShortRead);
+        assert_eq!(classify_read(6, 4096), ReadFailure::Unavailable);
     }
 }

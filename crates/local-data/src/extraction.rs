@@ -418,32 +418,7 @@ pub(crate) fn extract(
                 }
             }
             Err(error) => {
-                let (disposition, reason) = match error {
-                    ReadFailure::Missing => (
-                        InventoryDisposition::NotLocallyPresent,
-                        "not_locally_present",
-                    ),
-                    ReadFailure::Encrypted => (
-                        InventoryDisposition::UnavailableEncrypted,
-                        "unavailable_encrypted",
-                    ),
-                    ReadFailure::Unsupported => (
-                        InventoryDisposition::UnavailableEncrypted,
-                        "unsupported_archive_encoding_not_retained",
-                    ),
-                    ReadFailure::Unavailable => (
-                        InventoryDisposition::UnavailableEncrypted,
-                        "local_archive_read_unavailable",
-                    ),
-                    ReadFailure::Capacity => (
-                        InventoryDisposition::ExcludedByPolicy,
-                        "logical_file_or_allocation_exceeds_capacity_not_retained",
-                    ),
-                    ReadFailure::Invalid => (
-                        InventoryDisposition::InvalidCorrupt,
-                        "archive_verification_failed",
-                    ),
-                };
+                let (disposition, reason) = read_failure_disposition(error);
                 entry.disposition = disposition;
                 entry.reason = reason.into();
             }
@@ -545,9 +520,119 @@ pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalo
     Ok(manifest)
 }
 
+/// Catalog disposition and reason for a failed strict logical read. Causes stay
+/// distinct: encryption is never reported as corruption and an unexplained short
+/// read is never asserted to be corruption.
+fn read_failure_disposition(error: ReadFailure) -> (InventoryDisposition, &'static str) {
+    match error {
+        ReadFailure::Missing => (
+            InventoryDisposition::NotLocallyPresent,
+            "not_locally_present",
+        ),
+        ReadFailure::Encrypted => (
+            InventoryDisposition::UnavailableEncrypted,
+            "unavailable_encrypted",
+        ),
+        ReadFailure::EncryptedFrames => (
+            InventoryDisposition::UnavailableEncrypted,
+            "unavailable_encrypted_frames",
+        ),
+        ReadFailure::Unsupported => (
+            InventoryDisposition::UnavailableEncrypted,
+            "unsupported_archive_encoding_not_retained",
+        ),
+        ReadFailure::Unavailable => (
+            InventoryDisposition::UnavailableEncrypted,
+            "local_archive_read_unavailable",
+        ),
+        ReadFailure::ShortRead => (
+            InventoryDisposition::UnavailableEncrypted,
+            "archive_short_read_unexplained",
+        ),
+        ReadFailure::Truncated => (
+            InventoryDisposition::NotLocallyPresent,
+            "archive_span_incomplete",
+        ),
+        ReadFailure::Capacity => (
+            InventoryDisposition::ExcludedByPolicy,
+            "logical_file_or_allocation_exceeds_capacity_not_retained",
+        ),
+        ReadFailure::Invalid => (
+            InventoryDisposition::InvalidCorrupt,
+            "archive_verification_failed",
+        ),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn read_failures_keep_distinct_dispositions_and_reasons() {
+        use InventoryDisposition::*;
+        let cases = [
+            (
+                ReadFailure::Missing,
+                NotLocallyPresent,
+                "not_locally_present",
+            ),
+            (
+                ReadFailure::Encrypted,
+                UnavailableEncrypted,
+                "unavailable_encrypted",
+            ),
+            (
+                ReadFailure::EncryptedFrames,
+                UnavailableEncrypted,
+                "unavailable_encrypted_frames",
+            ),
+            (
+                ReadFailure::Unsupported,
+                UnavailableEncrypted,
+                "unsupported_archive_encoding_not_retained",
+            ),
+            (
+                ReadFailure::Unavailable,
+                UnavailableEncrypted,
+                "local_archive_read_unavailable",
+            ),
+            (
+                ReadFailure::ShortRead,
+                UnavailableEncrypted,
+                "archive_short_read_unexplained",
+            ),
+            (
+                ReadFailure::Truncated,
+                NotLocallyPresent,
+                "archive_span_incomplete",
+            ),
+            (
+                ReadFailure::Capacity,
+                ExcludedByPolicy,
+                "logical_file_or_allocation_exceeds_capacity_not_retained",
+            ),
+            (
+                ReadFailure::Invalid,
+                InvalidCorrupt,
+                "archive_verification_failed",
+            ),
+        ];
+        let mut reasons = std::collections::BTreeSet::new();
+        for (failure, disposition, reason) in cases {
+            assert_eq!(read_failure_disposition(failure), (disposition, reason));
+            assert!(reasons.insert(reason), "{reason} reused");
+        }
+        // Encryption, partial or whole, and incomplete or unexplained short reads
+        // are never reported as corruption.
+        for failure in [
+            ReadFailure::Encrypted,
+            ReadFailure::EncryptedFrames,
+            ReadFailure::Truncated,
+            ReadFailure::ShortRead,
+        ] {
+            assert_ne!(read_failure_disposition(failure).0, InvalidCorrupt);
+        }
+    }
     #[test]
     fn quota_refusal_and_duplicate_writes_preserve_sealed_objects() {
         let root =

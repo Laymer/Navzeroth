@@ -16,6 +16,9 @@ static uint32_t read_status(DWORD error) {
     if(error == ERROR_NOT_SUPPORTED || error == ERROR_BAD_FORMAT) return 3;
     if(error == ERROR_FILE_CORRUPT) return 4;
     if(error == ERROR_NOT_ENOUGH_MEMORY) return 5;
+    // Reached from the open stage (BLTE header reads); read-stage truncation is
+    // zero-filled by the local stream and fails the strict frame MD5 instead.
+    if(error == ERROR_HANDLE_EOF || error == ERROR_FILE_INCOMPLETE) return 7;
     return 6; // Inaccessible/unrecognized failure, not an assertion of corruption.
 }
 
@@ -63,10 +66,19 @@ uint32_t nav_casc_name_open(void * storage, const char * name, void ** result, u
     if(!CascGetFileSize64(*result, &length)) { DWORD error=GetCascError(); CascCloseFile(*result); *result=NULL; return read_status(error); }
     *size=length; return 0;
 }
-uint32_t nav_casc_read(void * file, void * buffer, uint32_t length) {
+// CascReadFile reports success with a short count when a later BLTE frame fails
+// (an encrypted frame with an unknown key, a frame checksum mismatch): the
+// frame's error is left in the last-error slot. Report that cause instead of a
+// generic corruption; a short count with no recorded error stays its own code (8).
+uint32_t nav_casc_read(void * file, void * buffer, uint32_t length, uint32_t * done) {
     DWORD read = 0;
+    *done = 0;
+    SetCascError(ERROR_SUCCESS);
     if(!CascReadFile(file, buffer, length, &read)) return read_status(GetCascError());
-    return read == length ? 0 : 4;
+    *done = read;
+    if(read == length) return 0;
+    DWORD error = GetCascError();
+    return error == ERROR_SUCCESS ? 8 : read_status(error);
 }
 void nav_casc_file_close(void * file) { CascCloseFile(file); }
 }
