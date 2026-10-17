@@ -25,8 +25,15 @@ jobs:
           package-manager-cache: false
       - name: Parser tests
         run: node --test scripts/build-watch/lib.test.mjs
+      - name: Read recorded titles once (a failed lookup stops the job)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh label create build-watch --color 5319e7 --description "WoW Forever build watch" --force >/dev/null
+          gh issue list --state all --label build-watch --limit 1000 --json title --jq '[.[].title]' > "$RUNNER_TEMP/existing.json"
       - name: Read the public version list
-        run: node scripts/build-watch/watch.mjs > "$RUNNER_TEMP/build-watch.json"
+        run: node scripts/build-watch/watch.mjs "$RUNNER_TEMP/existing.json" > "$RUNNER_TEMP/build-watch.json"
       - name: Summarize
         run: |
           node -e '
@@ -40,15 +47,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh label create build-watch --color 5319e7 --description "WoW Forever build watch" --force >/dev/null
-          node -e 'const r = require(process.argv[1]); for (const i of r.issues) console.log(JSON.stringify(i));' "$RUNNER_TEMP/build-watch.json" |
-          while IFS= read -r issue; do
-            title=$(jq -r .title <<<"$issue")
-            # Exact-title match over open and closed issues: a closed issue is an acknowledgement.
-            if gh issue list --state all --label build-watch --limit 500 --json title --jq '.[].title' | grep -Fxq -- "$title"; then
-              echo "already recorded: $title"
-            else
-              jq -r .body <<<"$issue" > "$RUNNER_TEMP/body.md"
-              gh issue create --title "$title" --label build-watch --body-file "$RUNNER_TEMP/body.md"
-            fi
+          set -euo pipefail
+          # watch.mjs already dropped recorded titles and capped the run (MAX_ISSUES_PER_RUN).
+          count=$(jq '.issues | length' "$RUNNER_TEMP/build-watch.json")
+          for i in $(seq 0 $((count - 1))); do
+            title=$(jq -r ".issues[$i].title" "$RUNNER_TEMP/build-watch.json")
+            jq -r ".issues[$i].body" "$RUNNER_TEMP/build-watch.json" > "$RUNNER_TEMP/body.md"
+            gh issue create --title "$title" --label build-watch --body-file "$RUNNER_TEMP/body.md"
           done
+          echo "opened $count issue(s)"

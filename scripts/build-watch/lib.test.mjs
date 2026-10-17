@@ -1,7 +1,7 @@
 // Offline tests for the build watch parser (synthetic tables in Blizzard's format).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { KNOWN_WOW_PRODUCTS, WATCHED, buildIssueTitle, newProducts, parseTable, productIssueTitle, summarizeVersions } from "./lib.mjs";
+import { KNOWN_WOW_PRODUCTS, MAX_ISSUES_PER_RUN, WATCHED, buildIssueTitle, capIssues, newProducts, parseTable, productIssueTitle, summarizeVersions } from "./lib.mjs";
 
 const HEADER = "Region!STRING:0|BuildConfig!HEX:16|CDNConfig!HEX:16|KeyRing!HEX:16|BuildId!DEC:4|VersionsName!String:0|ProductConfig!HEX:16";
 const row = (region, config, build, version) => `${region}|${config}|${"c".repeat(32)}||${build}|${version}|${"d".repeat(32)}`;
@@ -33,6 +33,28 @@ test("malformed tables and rows are refused instead of guessed", () => {
   assert.throws(() => parseTable("x".repeat(256 * 1024 + 1)), /too large/);
   assert.throws(() => summarizeVersions("p", [HEADER, row("us", A, "70450", "not-a-version")].join("\n")), /Unexpected version row/);
   assert.throws(() => summarizeVersions("p", [HEADER, row("us", "short", "70450", "1.60.1.70450")].join("\n")), /Unexpected version row/);
+  assert.throws(() => summarizeVersions("p", [HEADER, row("us", A, "70451", "1.60.1.70450")].join("\n")), /Unexpected version row/);
+});
+
+test("regions are validated before reaching an issue", () => {
+  for (const region of ["@Laymer [x](https://evil) $(id)", "", "US", "u"]) {
+    assert.throws(() => summarizeVersions("p", [HEADER, row(region, A, "70450", "1.60.1.70450")].join("\n")), /Unexpected version row/, region);
+  }
+  const noRegion = "BuildConfig!HEX:16|BuildId!DEC:4|VersionsName!String:0\n" + `${A}|70450|1.60.1.70450`;
+  assert.throws(() => summarizeVersions("p", noRegion), /Unexpected version row/);
+});
+
+test("an empty table for a watched product fails instead of reporting nothing", () => {
+  assert.throws(() => summarizeVersions("p", HEADER), /No version rows/);
+});
+
+test("recorded titles are dropped and a large batch becomes one aggregate issue", () => {
+  const issues = Array.from({ length: 8 }, (_, i) => ({ title: `t${i}`, body: "b" }));
+  assert.deepEqual(capIssues(issues.slice(0, 3), new Set(["t1"]), "2026-10-17").map((i) => i.title), ["t0", "t2"]);
+  const capped = capIssues(issues, new Set(), "2026-10-17");
+  assert.equal(capped.length, 1);
+  assert.match(capped[0].title, /8 changes on 2026-10-17 need manual review/);
+  assert.equal(capIssues(issues.slice(0, MAX_ISSUES_PER_RUN), new Set(), "d").length, MAX_ISSUES_PER_RUN);
 });
 
 test("only unknown wow product codes are reported as new", () => {

@@ -23,6 +23,8 @@ export const KNOWN_WOW_PRODUCTS = [
 ];
 
 export const MAX_RESPONSE_BYTES = 256 * 1024;
+/** More changes than this in one run become a single aggregate issue. */
+export const MAX_ISSUES_PER_RUN = 5;
 
 /**
  * Parses Blizzard's pipe-separated version tables: a `Name!TYPE:n|...` header,
@@ -51,11 +53,14 @@ export function parseTable(text) {
 /** Distinct (version, build, build config) per product, with the regions reporting each. */
 export function summarizeVersions(product, text) {
   const { seqn, rows } = parseTable(text);
+  // A watched product with no rows is a change worth failing on, not "nothing new".
+  if (rows.length === 0) throw new Error(`No version rows for ${product}`);
   const builds = new Map();
   for (const row of rows) {
     const build = row["BuildId"];
     const version = row["VersionsName"];
-    if (!/^\d{1,9}$/.test(build ?? "") || !/^\d+\.\d+\.\d+\.\d+$/.test(version ?? "") || !/^[0-9a-f]{32}$/.test(row["BuildConfig"] ?? "")) {
+    // Every value that reaches an issue is checked; nothing else is passed on.
+    if (!/^[a-z]{2,8}$/.test(row["Region"] ?? "") || !/^\d{1,9}$/.test(build ?? "") || !/^\d+\.\d+\.\d+\.\d+$/.test(version ?? "") || !version.endsWith(`.${build}`) || !/^[0-9a-f]{32}$/.test(row["BuildConfig"] ?? "")) {
       throw new Error(`Unexpected version row for ${product}`);
     }
     const key = `${version}|${row["BuildConfig"]}`;
@@ -81,4 +86,17 @@ export function buildIssueTitle(product, entry) {
 }
 export function productIssueTitle(code) {
   return `Build watch: new WoW product code ${code}`;
+}
+
+/**
+ * Bounds one run: more than MAX_ISSUES_PER_RUN changes (unseen titles) become one
+ * aggregate issue, so a malformed or hostile response can't open many issues.
+ */
+export function capIssues(issues, existingTitles, date) {
+  const fresh = issues.filter((issue) => !existingTitles.has(issue.title));
+  if (fresh.length <= MAX_ISSUES_PER_RUN) return fresh;
+  return [{
+    title: `Build watch: ${fresh.length} changes on ${date} need manual review`,
+    body: `The build watch saw ${fresh.length} builds or product codes it hadn't recorded, more than the per-run limit of ${MAX_ISSUES_PER_RUN}. No individual issues were opened. Check Blizzard's version list by hand (see docs/compatibility/BUILD_WATCH.md).`,
+  }];
 }

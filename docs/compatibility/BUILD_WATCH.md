@@ -25,6 +25,13 @@ runs daily at 06:23 UTC and on demand (Actions → Build watch → Run workflow)
 The first run opens one issue per current build (the baseline). Close them once
 read.
 
+Dedup key: the exact title plus the `build-watch` label. Don't edit those, or the
+next run opens the issue again. More than five changes in one run become a single
+aggregate issue instead of one each, and a failed issue lookup stops the run
+instead of risking duplicates. Every value placed in an issue is validated first
+(region codes, digits-only builds, `x.y.z.build` versions, hex build configs,
+`wow[a-z0-9_]*` product codes); anything else fails the run.
+
 It never admits a build, edits the repository or affects any release gate.
 
 ## When an issue opens
@@ -45,3 +52,7 @@ It never admits a build, edits the repository or affects any release gate.
 - Region `us` is the endpoint host; the rows cover every region the product lists
   (eu, kr, tw, us on 2026-10-17). Disagreeing regions are reported, not resolved.
 - `wowf` being the Forever live product is an inference from its 1.60.1 versions.
+- GitHub pauses scheduled workflows after 60 days without repository activity;
+  re-enable it under Actions if that happens.
+- An empty version table for a watched product fails the run (a retired product
+  should be noticed, not silently reported as unchanged).
