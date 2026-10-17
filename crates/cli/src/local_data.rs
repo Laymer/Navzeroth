@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -55,6 +55,8 @@ pub fn run(args: &[OsString]) -> ExitCode {
             "--tables",
         ],
         "verify" | "coverage" | "status" => &["--destination", "--catalog"],
+        "project" => &["--destination", "--catalog", "--locale"],
+        "projection-verify" => &["--destination", "--projection"],
         "receipt-public-key" => &["--secret-key"],
         "receipt-sign" => &["--payload", "--policy", "--key-id", "--secret-key"],
         "receipt-assemble" => &["--payload", "--operator", "--reviewer"],
@@ -83,6 +85,12 @@ pub fn run(args: &[OsString]) -> ExitCode {
             return usage();
         }
         return receipt(command, &options);
+    }
+    if matches!(command, "project" | "projection-verify") {
+        if options.len() != allowed.len() {
+            return usage();
+        }
+        return projection(command, &options);
     }
     if matches!(command, "verify" | "coverage" | "status") {
         let (Some(destination), Some(digest)) = (
@@ -167,6 +175,28 @@ pub fn run(args: &[OsString]) -> ExitCode {
             Err(error) => return emit::<()>(Err(error)),
         }
     }
+}
+
+/// Research-only projections (task V2.2). `project` seals a projection and exits
+/// 3 like extraction: the output is never verified for planning or activated.
+fn projection(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    use azeroth_local_data::projection;
+    let destination = Path::new(options["--destination"]);
+    let text = |key: &str| options[key].to_str().ok_or("Invalid option value");
+    if command == "project" {
+        let result =
+            (|| projection::project_catalog(destination, text("--catalog")?, text("--locale")?))();
+        return match result {
+            Ok(summary) => {
+                let _ = emit(Ok(summary));
+                ExitCode::from(3)
+            }
+            Err(error) => emit::<()>(Err(error)),
+        };
+    }
+    emit((|| {
+        projection::verify_projection(destination, text("--projection")?)
+    })())
 }
 
 /// Bounded regular-file read for explicitly named receipt inputs.

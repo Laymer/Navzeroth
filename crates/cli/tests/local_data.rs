@@ -166,3 +166,79 @@ fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
     assert_eq!(fs::read_dir(&source).unwrap().count(), 0);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn projection_commands_require_explicit_options_and_refuse_unknown_catalogs() {
+    for args in [
+        vec!["local-data", "project", "--destination", "private-input"],
+        vec![
+            "local-data",
+            "project",
+            "--destination",
+            "private-input",
+            "--catalog",
+            "x",
+        ],
+        vec!["local-data", "projection-verify", "--projection", "x"],
+        vec![
+            "local-data",
+            "project",
+            "--destination",
+            "d",
+            "--catalog",
+            "x",
+            "--locale",
+            "enUS",
+            "--preset",
+            "max",
+        ],
+    ] {
+        let output = cli(&args);
+        assert_eq!(output.status.code(), Some(2));
+        let value: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(value["error"], "usage");
+    }
+    let root = std::env::temp_dir().join(format!(
+        "navzeroth-local-cli-projection-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&root).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    let dest = root.to_str().unwrap();
+    let digest = "0".repeat(64);
+    for args in [
+        vec![
+            "local-data",
+            "project",
+            "--destination",
+            dest,
+            "--catalog",
+            &digest,
+            "--locale",
+            "enUS",
+        ],
+        vec![
+            "local-data",
+            "projection-verify",
+            "--destination",
+            dest,
+            "--projection",
+            &digest,
+        ],
+    ] {
+        let output = cli(&args);
+        assert_eq!(output.status.code(), Some(1));
+        let text = String::from_utf8(output.stdout).unwrap();
+        assert!(!text.contains(dest));
+        let value: serde_json::Value = serde_json::from_str(&text).unwrap();
+        assert!(value["error"].is_string());
+    }
+    // A refused projection never initialises a store.
+    assert_eq!(fs::read_dir(&root).unwrap().count(), 0);
+    fs::remove_dir_all(root).unwrap();
+}
