@@ -3,7 +3,7 @@
   "target": "x86_64-pc-windows-msvc",
   "scope": "Resolved desktop normal/build dependencies, including build tools and workspace feature unification; not a runtime-only SBOM. npm production dependencies. Rust standard library notices. Separate Microsoft SDK terms.",
   "cargo_lock_sha256": "3b072f22754fdd54dc0c1916ca3a56c4e5b1725f265d2e6dadd20291a4370391",
-  "pnpm_lock_sha256": "a5c2a09fa35583fa91b1b49fa2da1acc32869c88d1174666582129dc161ac256",
+  "pnpm_lock_sha256": "202a95f7a78da9bd68fdd3c36a3507034277032ccbe2ff53d1aea7a9fb10e1a3",
   "overrides_sha256": "1413d36a7da8729e602d1b51744fcb356523a533ce2ceeb2d62ecb5352aff414",
   "packages": [
     {

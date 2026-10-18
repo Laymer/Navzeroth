@@ -18,6 +18,13 @@ export default defineConfig({
   },
   test: {
     include: ["src/**/*.test.{ts,tsx}"],
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}", "csp.ts", "vite.config.ts"],
+      exclude: ["src/**/*.test.{ts,tsx}", "src/test-setup.ts", "src/**/test-fixtures/**"],
+      reporter: ["text", "json", "json-summary", "lcovonly"],
+      thresholds: { perFile: true, lines: 90 },
+    },
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test-setup.ts"],

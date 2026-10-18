@@ -1,0 +1,134 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+function sourcePath(file,platform){
+ if(!file.startsWith('file:'))return file;
+ if(platform!=='win32')return fileURLToPath(file);
+ const url=new URL(file),pathname=decodeURIComponent(url.pathname);
+ return url.hostname&&url.hostname!=='localhost'?'//'+url.hostname+pathname:pathname.replace(/^\/([A-Za-z]:\/)/,'$1');
+}
+export function relativeSource(file,root,platform){
+ file=sourcePath(file,platform);
+ const clean=value=>value.replaceAll('\\','/').replace(/\/$/,'');
+ const source=clean(file),base=clean(root),prefix=base+'/';
+ if(!(platform==='win32'?source.toLowerCase().startsWith(prefix.toLowerCase()):source.startsWith(prefix)))throw new Error('Source lies outside recorded checkout');
+ const rel=source.slice(prefix.length);
+ if(rel.split('/').some(p=>!p||p==='.'||p==='..')||rel.includes(':'))throw new Error('Unsafe normalized source path');
+ return rel;
+}
+export function lcovLines(text){
+ const files=[];let file=null;
+ for(const line of text.split(/\r?\n/)){
+  if(line.startsWith('SF:')){if(file)throw new Error('Unclosed LCOV file');file={path:line.slice(3),lines:[]};}
+  else if(line.startsWith('DA:')){
+   if(!file)throw new Error('LCOV line without file');
+   const fields=line.slice(3).split(',');
+   if(!/^[1-9][0-9]*$/.test(fields[0])||!/^\d+$/.test(fields[1]??''))throw new Error('Invalid LCOV count');
+   const entry=fields.slice(0,2).map(Number);if(entry.some(n=>!Number.isSafeInteger(n)))throw new Error('LCOV integer overflow');file.lines.push(entry);
+  }else if(line==='end_of_record'){if(!file)throw new Error('LCOV terminal without file');files.push(file);file=null;}
+ }
+ if(file)throw new Error('Truncated LCOV report');return files;
+}
+export function istanbulLines(report){
+ return Object.values(report).map(file=>{
+  const lines=new Map();
+  for(const [id,statement] of Object.entries(file.statementMap)){
+   const line=statement.start.line,count=file.s[id];
+   if(!Number.isSafeInteger(line)||line<=0||!Number.isSafeInteger(count)||count<0)throw new Error('Invalid Istanbul statement');
+   lines.set(line,Math.max(lines.get(line)??0,count));
+  }
+  return {path:file.path,lines:[...lines].sort(([a],[b])=>a-b)};
+ });
+}
+export function verdict(inventory,receipts,inventorySha){
+ if(inventory.format_version!==1||!/^[a-f0-9]{40}$/.test(inventory.source_commit))throw new Error('Invalid source inventory');
+ const indexed=new Map();
+ for(const file of inventory.files){
+  if(indexed.has(file.path)||file.path.startsWith('/')||file.path.split('/').some(p=>p==='.'||p==='..'||!p))throw new Error('Duplicate/unsafe inventory path');
+  if(!['eligible','declaration_only','excluded'].includes(file.disposition)||!['rust','typescript'].includes(file.language)||!Number.isSafeInteger(file.line_count)||file.line_count<1||!Array.isArray(file.test_line_ranges)||!/^[a-f0-9]{64}$/.test(file.source_sha256))throw new Error('Invalid inventory entry');
+  indexed.set(file.path,file);
+ }
+ const lines=new Map(),seen=new Set(),platforms=new Set();
+ for(const receipt of receipts){
+  if(receipt.format_version!==1||receipt.source_commit!==inventory.source_commit||receipt.inventory_sha256!==inventorySha)throw new Error('Coverage commit/inventory mismatch');
+  if(receipt.clean_source!==true||receipt.incomplete_profiles?.length)throw new Error('Incomplete or dirty coverage run');
+  if(receipt.kind==='rust-llvm'){
+   if(receipt.tool_version!=='0.9.1'||receipt.rust_llvm_version!==receipt.llvm_tools_version||!receipt.rust_llvm_version)throw new Error('Unpinned or mismatched Rust coverage tools');
+   platforms.add(receipt.platform);
+  }else if(['typescript-v8','typescript-config-v8'].includes(receipt.kind)){
+   if(receipt.tool_version!=='5.0.3')throw new Error('Unpinned TypeScript coverage tools');
+  }else throw new Error('Unknown coverage collector');
+  for(const file of receipt.files){
+   const declared=indexed.get(file.path);
+   if(!declared||declared.disposition==='excluded'||file.source_sha256!==declared.source_sha256)throw new Error('Undeclared or altered coverage source');
+   if((receipt.kind==='rust-llvm')!==(declared.language==='rust'))throw new Error('Coverage language mismatch');
+   if(!Array.isArray(file.lines))throw new Error('Missing executable lines');
+   seen.add(file.path);const combined=lines.get(file.path)??new Map();
+   for(const [line,count] of file.lines){
+    if(!Number.isSafeInteger(line)||line<=0||!Number.isSafeInteger(count)||count<0||line>declared.line_count)throw new Error('Invalid coverage line/count');
+    if(declared.test_line_ranges.some(([start,end])=>line>=start&&line<=end))continue;
+    combined.set(line,(combined.get(line)??false)||count>0);
+   }
+   lines.set(file.path,combined);
+  }
+ }
+ const errors=[];
+ if(!platforms.has('linux')||!platforms.has('win32'))errors.push('Native Rust Linux and Windows reports are required');
+ const files=inventory.files.filter(f=>f.disposition!=='excluded').map(file=>{
+  const executable=lines.get(file.path)??new Map(),covered=[...executable.values()].filter(Boolean).length;
+  if(file.disposition==='declaration_only'){
+   if(executable.size)throw new Error('Declaration-only inventory contains executable lines');
+   return {path:file.path,disposition:'declaration_only',executable:0,covered:0,passes:true};
+  }
+  const present=seen.has(file.path)&&executable.size>0;
+  return {path:file.path,disposition:present?'measured':'missing',executable:executable.size,covered,passes:present&&covered*100>=executable.size*90};
+ });
+ return {format_version:1,source_commit:inventory.source_commit,threshold:{covered_numerator:90,executable_denominator:100,rounding:false},passes:errors.length===0&&files.every(f=>f.passes),errors,files};
+}
+export function normalizeRaw(records,receipt,inventory){
+ const known=new Map(inventory.files.map(file=>[receipt.platform==='win32'?file.path.toLowerCase():file.path,file]));
+ const prefix=receipt.source_root.replaceAll('\\','/').replace(/\/$/,'')+'/';
+ if(known.size!==inventory.files.length)throw new Error('Ambiguous Windows source case');
+ const result=[];
+ for(const record of records){
+  const raw=sourcePath(record.path,receipt.platform);
+  const normalized=raw.replaceAll('\\','/');
+  if(!(receipt.platform==='win32'?normalized.toLowerCase().startsWith(prefix.toLowerCase()):normalized.startsWith(prefix)))continue;
+  const rel=relativeSource(record.path,receipt.source_root,receipt.platform);
+  if(!/\.(rs|ts|tsx)$/.test(rel))continue;
+  const entry=known.get(receipt.platform==='win32'?rel.toLowerCase():rel);
+  if(!entry){if(rel.split('/').some(p=>['target','node_modules','vendor'].includes(p)))continue;throw new Error('Source missing from inventory');}
+  if(entry.disposition==='excluded')continue;
+  result.push({path:entry.path,source_sha256:entry.source_sha256,lines:record.lines});
+ }
+ return result;
+}
+function readJson(file,max=64*1024*1024){const stat=fs.lstatSync(file);if(!stat.isFile()||stat.isSymbolicLink()||stat.size>max)throw new Error('Coverage input is not a bounded regular file');return JSON.parse(fs.readFileSync(file,'utf8'));}
+export function runGate(inventoryFile,receiptFiles,output){
+ if(fs.existsSync(output))throw new Error('Coverage verdict output already exists');
+ const inventoryBytes=fs.readFileSync(inventoryFile),inventory=readJson(inventoryFile);
+ const receipts=receiptFiles.map(file=>{
+  const receipt=readJson(file);
+  const records=[];
+  if(!Array.isArray(receipt.raw_reports)||!receipt.raw_reports.length)throw new Error('Raw coverage reports are required');
+  for(const report of receipt.raw_reports){
+   if(typeof report.path!=='string'||!/^[A-Za-z0-9_@.+/-]+$/.test(report.path)||report.path.split(/[\\/]/).some(p=>!p||p==='.'||p==='..')||path.isAbsolute(report.path))throw new Error('Unsafe raw report path');
+   const full=path.join(path.dirname(file),report.path),stat=fs.lstatSync(full);
+   if(!stat.isFile()||stat.isSymbolicLink()||stat.size>256*1024*1024)throw new Error('Missing/altered raw coverage report');
+   const bytes=fs.readFileSync(full);
+   if(hash(bytes)!==report.sha256)throw new Error('Missing/altered raw coverage report');
+   if(report.format==='lcov' && receipt.kind==='rust-llvm')records.push(...lcovLines(bytes.toString()));
+   else if(report.format==='istanbul' && ['typescript-v8','typescript-config-v8'].includes(receipt.kind))records.push(...istanbulLines(JSON.parse(bytes)));
+   else throw new Error('Unexpected raw coverage format');
+  }
+  // Reconstruct counts from raw reports; never trust a claimed per-file summary.
+  return {...receipt,files:normalizeRaw(records,receipt,inventory)};
+ });
+ const result=verdict(inventory,receipts,hash(inventoryBytes));fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx'});return result;
+}
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
+ try{if(process.argv.length<5)throw new Error('Usage: gate.mjs <inventory.json> <new-verdict.json> <receipt.json>...');const result=runGate(process.argv[2],process.argv.slice(4),process.argv[3]);console.log(JSON.stringify({passes:result.passes,missing:result.files.filter(f=>f.disposition==='missing').length,below_threshold:result.files.filter(f=>!f.passes).length}));if(!result.passes)process.exitCode=1;}
+ catch(error){console.error(error.message);process.exitCode=1;}
+}
