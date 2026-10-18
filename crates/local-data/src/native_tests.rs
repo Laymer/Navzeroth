@@ -287,13 +287,28 @@ static SYNTHETIC: Calls = Calls {
 /// Test-only ABI provider for the real staging/checkpoint orchestration. No
 /// production caller can select it, and its bytes never establish availability.
 pub(crate) fn stage_with_bytes<T>(bytes: Vec<u8>, action: impl FnOnce() -> T) -> T {
-    RESPONSE.with(|s| {
-        *s.borrow_mut() = Response {
+    staging(
+        Response {
             size: bytes.len() as u64,
             data: bytes,
             ..Response::default()
-        }
-    });
+        },
+        action,
+    )
+}
+
+pub(crate) fn stage_with_failure<T>(error: u32, action: impl FnOnce() -> T) -> T {
+    staging(
+        Response {
+            by_id: error,
+            ..Response::default()
+        },
+        action,
+    )
+}
+
+fn staging<T>(response: Response, action: impl FnOnce() -> T) -> T {
+    RESPONSE.with(|s| *s.borrow_mut() = response);
     let result = action();
     RESPONSE.with(|s| {
         let state = s.borrow();

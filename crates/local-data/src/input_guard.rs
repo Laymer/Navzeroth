@@ -107,6 +107,16 @@ pub(super) fn same_file(left: &std::fs::File, right: &std::fs::File) -> Result<(
 
 #[cfg(test)]
 mod tests {
+    #[cfg(windows)]
+    #[test]
+    fn native_process_inventory_establishes_a_closed_or_running_game_precondition() {
+        // A real ToolHelp snapshot, executable names only. Running WoW must
+        // remain a refusal; this test never asks for per-process handles.
+        assert!(matches!(
+            super::require_closed(),
+            Ok(()) | Err("Mutable cache work waits until the game closes")
+        ));
+    }
     #[test]
     fn selected_handle_identity_rejects_a_different_same_size_file() {
         let root =

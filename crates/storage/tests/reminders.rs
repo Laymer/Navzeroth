@@ -8,6 +8,13 @@ fn preferences_roundtrip_and_exact_profile_isolation() {
     let mut store = SqliteStore::open_in_memory().unwrap();
     let a = common::Doc::base().character("first").decode();
     let b = common::Doc::base().character("second").decode();
+    let missing = ProfileKey::of(&a);
+    assert!(store.reminder_state(&missing).is_err());
+    assert!(
+        store
+            .save_reminder_state(&missing, &Default::default())
+            .is_err()
+    );
     for doc in [&a, &b] {
         store
             .import_character_snapshot(doc, ImportSource::Fixture, None)

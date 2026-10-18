@@ -175,6 +175,12 @@ fn fixture(
 
 #[test]
 fn retained_definitions_support_exact_large_builds_without_remapping() {
+    // Independent retained-source pin: this must change only with a reviewed
+    // definition update, never as a nearest-build fallback.
+    assert_eq!(
+        metadata::definition_hashes().get("Map").map(String::as_str),
+        Some("22a98d345a95cec8f05d392d9349d36a36056d2e5112ef8aeb2215c96dd1016f")
+    );
     // 70450 is admitted alongside 70374/70425 as development input only.
     assert_eq!(metadata::ADMITTED_BUILDS, [70374, 70425, 70450]);
     for (table, layout) in [("Map", 0xd43afac3)] {

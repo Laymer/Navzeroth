@@ -151,6 +151,15 @@ fn invented_game_facts_are_refused() {
     });
     let content = content_v2::decode(CATALOG).unwrap();
     assert!(validate_authored(&content, &SourceId::new("another-source").unwrap()).is_err());
+    let mut fixture = content.clone();
+    let mut reference = fixture.reference.into_inner();
+    reference.fixture = true;
+    reference.provenance.source = azeroth_core::observation::StateSource::SyntheticFixture;
+    fixture.reference = azeroth_core::error::Validated::try_new(reference).unwrap();
+    assert_eq!(
+        validate_authored(&fixture, &source()).unwrap_err(),
+        "Authored content is not a fixture"
+    );
 }
 
 #[test]

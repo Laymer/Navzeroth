@@ -17,14 +17,15 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
 `test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. Latest clean-source UI run at `9b28435`: 512 tests pass, 95.73% overall lines;
-raw reconstruction confirms all 66 executable TS/TSX files meet 90%, with 22
-explicit declaration-only files. This is only the TypeScript portion. Native Linux/Windows
-coverage remains unfinished. The corrected Linux native collector completed;
-Windows passed workspace tests but refused its platform-specific environment
-quoting. Explicit POSIX output is implemented for the next run. Additional archive
-ABI, serializer, media and receipt tests are passing locally. PR #201 and #202
-are integrated; the combined gate has not passed.
+are in progress. TypeScript passes its per-file gate. At `d4707db`, existing CI,
+source parity and Windows packaging passed, and both native collectors completed.
+The combined gate refused Windows module aliases and missing desktop entrypoint
+counters. Path normalization and native return/flush repairs are pushed; fresh
+Windows collection is pending. Reconstruction of the retained reports now emits
+a full failing verdict: zero missing files, 37 Rust files below threshold, with
+missing native-entrypoint evidence explicit. Additional extraction/checkpoint,
+media/ABI, schema and bounded metadata tests pass locally. The 90% per-file
+requirement remains unchanged; this draft cannot merge yet.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)

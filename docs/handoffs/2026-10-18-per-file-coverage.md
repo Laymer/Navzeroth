@@ -306,3 +306,17 @@ instead of throwing before artifact creation. All 34 coverage/native-helper test
 pass. Reconstructing retained d4707db reports produces zero missing files, 37 Rust
 files below threshold and the explicit missing-entrypoint error. This remains a
 failing historical measurement; none of the thresholds or executable files changed.
+
+Additional archive-boundary expansion (same sole writer, media extension of the
+private opener seam): production media extraction always uses linked Archive::open.
+Test-only orchestration exercises supported BLP decoding and all eight native read
+refusals, selection/fingerprint refusal and preservation of an earlier media
+revision. All 25 local-data unit tests pass; local-data/app all-target Clippy passes.
+Oversized serialized reference metadata test passes. Three reminder tests pass
+including absent-profile read/write refusal; three authored-content tests pass
+including synthetic-provenance refusal. The retained Map definition source hash
+is independently pinned and its focused test passes. Core/storage/app/local-data
+all-target Clippy passed before the media extension; local-data/app were rerun
+after it. The Windows process-name-only precondition test awaits native execution.
+No game files are selected by these tests, and synthetic media is deleted with
+the owned test store; it establishes no real-client or gameplay acceptance.

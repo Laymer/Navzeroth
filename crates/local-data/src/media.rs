@@ -249,6 +249,13 @@ pub struct Request {
     pub preset: PerformancePreset,
 }
 fn extract(request: &Request) -> Result<String> {
+    extract_using(request, crate::native::Archive::open)
+}
+
+fn extract_using(
+    request: &Request,
+    open: impl FnOnce(&Path, &str, u32, u32) -> Result<crate::native::Archive>,
+) -> Result<String> {
     if request.format_version != 1 {
         return Err("Unsupported media request");
     }
@@ -270,7 +277,7 @@ fn extract(request: &Request) -> Result<String> {
         return Err("Media source fingerprint differs from catalog");
     }
     let locale_mask = crate::media::locale_mask(&request.locale)?;
-    let archive = crate::native::Archive::open(
+    let archive = open(
         &root,
         &catalog.installation.product,
         locale_mask,
@@ -325,6 +332,11 @@ fn extract(request: &Request) -> Result<String> {
         return Err("Media source changed during extraction");
     }
     seal(&mut store, discovery, assets, false)
+}
+
+#[cfg(test)]
+pub(crate) fn extract_synthetic(request: &Request) -> Result<String> {
+    extract_using(request, crate::native::boundary_tests::open_staging)
 }
 fn locale_mask(locale: &str) -> Result<u32> {
     Ok(match locale {

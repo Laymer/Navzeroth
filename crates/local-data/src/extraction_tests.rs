@@ -272,3 +272,117 @@ fn explicit_installed_locales_are_processed_separately_and_bad_selections_do_not
         assert!(!bad.request.destination.join("lifecycle.sqlite3").exists());
     }
 }
+
+fn media_catalog(f: &Fixture) -> String {
+    let summary = f.run(|_, _| Ok(())).unwrap();
+    let mut catalog = verify_catalog(&f.request.destination, &summary.catalog_sha256).unwrap();
+    let table = tables::DecodedTable {
+        format_version: 1,
+        header: tables::TableHeader {
+            format: "WDC5".into(),
+            records: 1,
+            fields: 1,
+            record_bytes: 4,
+            table_hash: 0,
+            layout_hash: 0x9a2a4834,
+            locale_mask: 2,
+            sections: 1,
+        },
+        rows: vec![tables::ResearchRow {
+            id: 1,
+            fields: BTreeMap::from([("IconFileDataID".into(), tables::Cell::Unsigned(900))]),
+            copied_from: None,
+        }],
+        gaps: vec![],
+    };
+    let mut store = Store::open(
+        &f.request.destination,
+        PerformancePreset::Small.limits().total_storage_bytes,
+    )
+    .unwrap();
+    let object = store
+        .put("objects", &serde_json::to_vec(&table).unwrap())
+        .unwrap();
+    let retained = store.put("objects", b"synthetic retained table").unwrap();
+    catalog.tables.insert(
+        0,
+        TableInventory {
+            table: "Item".into(),
+            locale: Some("enUS".into()),
+            file_data_id: Some(841626),
+            disposition: InventoryDisposition::Decoded,
+            reason: "research_decoded".into(),
+            retained_sha256: Some(retained),
+            decoded_sha256: Some(object),
+            encoded_bytes: None,
+            records: Some(1),
+            layout_hash: Some("9a2a4834".into()),
+        },
+    );
+    store
+        .put("catalogs", &serde_json::to_vec(&catalog).unwrap())
+        .unwrap()
+}
+
+#[test]
+fn bound_media_decodes_supported_bytes_and_keeps_every_native_refusal_explicit() {
+    use azeroth_core::local_data_media::{Disposition, ReadRefusal};
+    let f = Fixture::new();
+    let catalog = media_catalog(&f);
+    let mut request = crate::media::Request {
+        format_version: 1,
+        installation: f.request.installation.clone(),
+        destination: f.request.destination.clone(),
+        catalog,
+        locale: "enUS".into(),
+        ids: vec![900],
+        preset: PerformancePreset::Small,
+    };
+    let mut blp = vec![0; 152];
+    blp[..4].copy_from_slice(b"BLP2");
+    blp[4] = 1;
+    blp[8] = 3;
+    blp[9] = 8;
+    blp[12] = 1;
+    blp[16] = 1;
+    blp[20] = 148;
+    blp[84] = 4;
+    blp[148..].copy_from_slice(&[1, 2, 3, 0]);
+    let revision = stage_with_bytes(blp, || crate::media::extract_synthetic(&request)).unwrap();
+    let manifest = crate::media::verify(&request.destination, &revision).unwrap();
+    assert_eq!(manifest.assets[0].disposition, Disposition::Decoded);
+    assert_eq!(manifest.assets[0].width, Some(1));
+    assert_eq!(manifest.assets[0].height, Some(1));
+    assert!(manifest.local_only);
+    assert!(!manifest.calibrated);
+    assert!(!manifest.verified_for_gameplay);
+    for (code, refusal) in [
+        (1, ReadRefusal::Missing),
+        (2, ReadRefusal::Encrypted),
+        (3, ReadRefusal::Unsupported),
+        (4, ReadRefusal::Invalid),
+        (5, ReadRefusal::Capacity),
+        (6, ReadRefusal::Unavailable),
+        (7, ReadRefusal::Truncated),
+        (8, ReadRefusal::ShortRead),
+    ] {
+        let revision = crate::native::boundary_tests::stage_with_failure(code, || {
+            crate::media::extract_synthetic(&request)
+        })
+        .unwrap();
+        let manifest = crate::media::verify(&request.destination, &revision).unwrap();
+        assert_eq!(manifest.assets[0].read_refusal, Some(refusal));
+        assert!(manifest.assets[0].png_sha256.is_none());
+    }
+    request.ids = vec![901];
+    assert!(crate::media::extract_synthetic(&request).is_err());
+    request.ids = vec![900];
+    fs::write(
+        request.installation.join("Data/data/data.000"),
+        b"changed synthetic source",
+    )
+    .unwrap();
+    assert!(crate::media::extract_synthetic(&request).is_err());
+    // The earlier usable immutable media remains readable after every refusal.
+    assert!(crate::media::verify(&request.destination, &revision).is_ok());
+}
