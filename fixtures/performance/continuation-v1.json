@@ -1,0 +1,19 @@
+{
+  "format_version": 1,
+  "identity": "synthetic-continuation-workflow-v1",
+  "source_fixtures": ["fixtures/contracts/v1/character-snapshot.json", "fixtures/desktop/content/demo-revision.json", "fixtures/performance/search-v1.json"],
+  "storage": "new on-disk SQLite database under an owned temporary directory; never a personal store",
+  "warmup": 10,
+  "samples": 100,
+  "rss_every_samples": 10,
+  "workloads": [
+    "snapshot-import-fresh: monotonic producer/capture sequence, ID and capture UTC; retain 110 synthetic snapshots including warmup",
+    "snapshot-import-duplicate: repeat the final exact snapshot; history count must stay fixed",
+    "snapshot-current-lookup: retrieve the final imported snapshot with freshness context unavailable",
+    "active-content-lookup: retrieve an explicitly activated synthetic demo-r1 catalog",
+    "content-stage-repeat: stage the same original synthetic content without replacing activation",
+    "content-stage-refusal: malformed JSON must refuse and preserve the same activation"
+  ],
+  "planning": "run the existing four search-v1 optimized workloads and checkpoint cancellation, unchanged",
+  "limits": ["synthetic-only", "no verified gameplay tuple or availability", "not an ordinary Windows acceptance workload", "RSS is current Linux process memory if observable, otherwise null", "retained database growth is intentional; repeated-use RSS samples do not prove absence of long-term leaks"]
+}

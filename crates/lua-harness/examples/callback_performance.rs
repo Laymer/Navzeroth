@@ -53,6 +53,7 @@ fn main() {
         samples.push(start.elapsed().as_secs_f64() * 1000.0);
     }
     sandbox.lua().gc_collect().unwrap();
+    let raw_samples = samples.clone();
     samples.sort_by(f64::total_cmp);
     println!(
         "synthetic-hud-refresh-burst-v1 build=release warmup=10 samples=100 callbacks_per_sample=100 median_ms={:.6} p95_ms={:.6} max_ms={:.6} lua_retained_before_bytes={} lua_retained_after_bytes={} (after explicit GC; no native/client event claims)",
@@ -61,5 +62,9 @@ fn main() {
         samples[99],
         before,
         sandbox.lua().used_memory()
+    );
+    println!(
+        "{}",
+        serde_json::json!({"format_version":1,"fixture":"synthetic-hud-refresh-burst-v1","synthetic":true,"warmup":10,"samples":100,"callbacks_per_sample":100,"samples_ms":raw_samples,"min_ms":samples[0],"median_ms":(samples[49]+samples[50])/2.0,"p95_ms":samples[94],"max_ms":samples[99],"lua_retained_before_bytes":before,"lua_retained_after_bytes":sandbox.lua().used_memory(),"explicit_gc":true,"live_client_verified":false})
     );
 }

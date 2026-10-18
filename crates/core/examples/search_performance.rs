@@ -79,6 +79,7 @@ fn main() {
                 rss_samples.push(rss_kib());
             }
         }
+        let samples_ms = times.clone();
         times.sort_by(f64::total_cmp);
         let mut control = Counts {
             cancel_at: Some(1000),
@@ -89,7 +90,7 @@ fn main() {
         assert_eq!(canceled.code, ErrorCode::OperationCanceled);
         println!(
             "{}",
-            serde_json::json!({"workload":name,"nodes":n,"edges":e,"participants":members,"candidates":128,"selected":result.0,"candidates_evaluated":result.1,"median_ms":(times[49]+times[50])/2.0,"p95_ms":times[94],"max_ms":times[99],"checkpoints":checkpoints,"cancel_after_checkpoints":control.checkpoints,"cancel_ms":start.elapsed().as_secs_f64()*1000.0,"rss_samples_each_10_runs_kib":rss_samples,"rss_before_kib":before,"rss_after_kib":rss_kib()})
+            serde_json::json!({"workload":name,"nodes":n,"edges":e,"participants":members,"candidates":128,"selected":result.0,"candidates_evaluated":result.1,"samples_ms":samples_ms,"median_ms":(times[49]+times[50])/2.0,"p95_ms":times[94],"max_ms":times[99],"checkpoints":checkpoints,"cancel_after_checkpoints":control.checkpoints,"cancel_ms":start.elapsed().as_secs_f64()*1000.0,"rss_samples_each_10_runs_kib":rss_samples,"rss_before_kib":before,"rss_after_kib":rss_kib()})
         );
     }
 }

@@ -87,3 +87,15 @@ database checking-to-ready poll instead of mocking timers, preserves the same
 behavior assertion, and rejects the unguarded-navigation mutation. Typecheck,
 lint, all ten App tests and the full 411-test suite passed after correction.
 The exact new head must rerun every applicable hosted check; no failed head merges.
+
+
+## Integration receipt
+
+Merged PR #198 at `9d046b73b04bef548e2809533b5867f9e891620f`,
+2026-10-18T13:17:04Z, reviewed head
+`abc639560228d06081c8f1c3042680421a60c99d`. All nine applicable checks
+passed: CI 39129854804, Windows package 39129854787, source workflow
+39129854792 (both platforms and parity). Independent help correction PR #199
+was merged first and is present in this exact head. Full browser suite passed;
+ordinary Windows/operator acceptance and live checks remain separate/unverified.
+Next: continuation 9 performance/materials, then substantial per-file coverage.

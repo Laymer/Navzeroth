@@ -243,6 +243,10 @@ jobs:
             if ((Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $pair[0] -Algorithm SHA256).Hash) { throw "Bundled font notice differs from source: $($pair[1])" }
           }
 
+          # Verify every dependency notice/source after installing, including no extra files.
+          & node scripts/dependency-notices.mjs --installed (Join-Path $installDir 'local-data-notices')
+          if ($LASTEXITCODE -ne 0) { throw 'Installed dependency notices/source closure failed' }
+
           # Bound initialization separately from the minimum liveness observation.
           . ./scripts/windows/First-StartSmoke.ps1
           Invoke-FirstStartSmoke -Executable $exe -DataDirectory $data

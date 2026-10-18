@@ -26,3 +26,10 @@ live-game acceptance is inferred. Next: merge this independent fix after all che
 refresh continuation 8, and verify its formerly failing busy-help interaction.
 Performance/materials continues separately in continuation 9; coverage/publication
 and Pages remain subsequent work. No release was published.
+
+
+Integration: merged PR #199 at `506a9cb82d104fd4c2fef784d00099f57b596310`,
+2026-10-18T13:14:36Z, exact reviewed head
+`7dbfd4ddf2b3006bf6f186ed778d6250b1212603`. All nine checks passed
+(CI 39129628131, Windows package 39129628147), and source workflow 39129963578
+passed both platforms and parity. Continuation 8 subsequently integrated the fix.

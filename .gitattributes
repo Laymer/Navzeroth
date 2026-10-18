@@ -32,3 +32,8 @@ docs/sources/source-updates-v1.json text eol=lf
 # Bundled fonts and their OFL notices ship and are hashed byte for byte (apps/desktop/THIRD_PARTY.md).
 apps/desktop/src/theme/fonts/* -text
 apps/desktop/THIRD_PARTY.md text eol=lf
+
+# Retained upstream notice inputs are hashed before packaging; preserve original bytes.
+config/dependency-notices/** -text -whitespace
+config/dependency-notice-overrides.json text eol=lf
+pnpm-lock.yaml text eol=lf
