@@ -356,6 +356,33 @@ fn locale_mask(locale: &str) -> Result<u32> {
         _ => return Err("Unsupported media locale"),
     })
 }
+
+#[cfg(test)]
+mod locale_tests {
+    #[test]
+    fn installed_content_locale_masks_are_exact_and_unknown_locales_are_refused() {
+        for (locale, mask) in [
+            ("enUS", 2),
+            ("koKR", 4),
+            ("frFR", 16),
+            ("deDE", 32),
+            ("zhCN", 64),
+            ("esES", 128),
+            ("zhTW", 256),
+            ("enGB", 512),
+            ("esMX", 4096),
+            ("ruRU", 8192),
+            ("ptBR", 16384),
+            ("itIT", 32768),
+            ("ptPT", 65536),
+        ] {
+            assert_eq!(super::locale_mask(locale), Ok(mask));
+        }
+        for locale in ["", "enus", "enUS ", "xxXX"] {
+            assert_eq!(super::locale_mask(locale), Err("Unsupported media locale"));
+        }
+    }
+}
 pub fn verify(root: &Path, digest: &str) -> Result<MediaManifest> {
     if !is_sha256(digest) {
         return Err("Invalid media revision");

@@ -232,20 +232,35 @@ mod tests {
         .unwrap();
         let content = ActiveContentRevision::V1(Arc::new(revision));
         let store = SqliteStore::open_in_memory().unwrap();
-        for collection in [
-            Collection::Items,
-            Collection::Quests,
-            Collection::Acquisitions,
-            Collection::Nodes,
-            Collection::Edges,
-            Collection::Objectives,
-            Collection::Rules,
-            Collection::MapSpaces,
-            Collection::MapImages,
-            Collection::MapEmbeddings,
+        let fixture = serde_json::to_value(content.reference()).unwrap();
+        for (collection, field) in [
+            (Collection::Items, "items"),
+            (Collection::Quests, "quests"),
+            (Collection::Acquisitions, "acquisitions"),
+            (Collection::Nodes, "nodes"),
+            (Collection::Edges, "edges"),
+            (Collection::Objectives, "objectives"),
+            (Collection::Rules, "rules"),
+            (Collection::MapSpaces, "map_spaces"),
+            (Collection::MapImages, "map_images"),
+            (Collection::MapEmbeddings, "map_embeddings"),
         ] {
             let first = page(&store, &content, collection, None).unwrap();
             assert_eq!(first.page.collection, collection);
+            let expected = fixture[field].as_array().unwrap();
+            assert_eq!(first.page.total, expected.len());
+            let mut actual: Vec<String> = first
+                .records
+                .iter()
+                .map(|r| serde_json::to_string(r).unwrap())
+                .collect();
+            let mut expected: Vec<String> = expected
+                .iter()
+                .map(|r| serde_json::to_string(r).unwrap())
+                .collect();
+            actual.sort();
+            expected.sort();
+            assert_eq!(actual, expected);
             assert_eq!(first.records.len(), first.page.total);
             assert_eq!(first.page.next_offset, None);
             let mut request = PageRequest {

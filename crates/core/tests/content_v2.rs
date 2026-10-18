@@ -145,6 +145,28 @@ fn requires_documented_model_source_and_valid_reset() {
 }
 
 #[test]
+fn acquisition_origins_resolve_quest_vendor_and_dungeon_dependencies() {
+    let base = fixture();
+    let node = base["dungeons"][0]["entrance"]["value"].clone();
+    for origin in [
+        json!({"kind":"quest","quest":"demo-quest-1"}),
+        json!({"kind":"vendor","entity":"synthetic-vendor","location":node}),
+        json!({"kind":"drop","entity":"synthetic-drop","dungeon":"dungeon-1"}),
+        json!({"kind":"craft","recipe":"synthetic-recipe","profession":"synthetic-profession"}),
+    ] {
+        let mut v = base.clone();
+        v["reference"]["payload"]["acquisitions"][0]["kind"] =
+            match origin["kind"].as_str().unwrap() {
+                "craft" => json!("crafting"),
+                "drop" => json!("dungeon"),
+                value => json!(value),
+            };
+        v["acquisition_facts"][0]["origin"] = json!({"status":"known","value":origin});
+        parse(&v).unwrap();
+    }
+}
+
+#[test]
 fn exclusive_choices_require_explicit_trigger_and_conflicts_are_bidirectional() {
     let mut v = fixture();
     v["quest_facts"][0]["exclusive_groups"] =

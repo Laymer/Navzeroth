@@ -335,3 +335,24 @@ provenance, duplicate identities and unresolved evidence. Core content-v2 suite
 passes 11 tests with one explicit fixture regeneration ignored, including recursive
 quest/objective/map/equipment references and documented-model/guide bindings.
 Core/app/CLI all-target Clippy passes. These remain synthetic/domain checks.
+
+Fresh non-native Linux diagnostic at clean `ac76c10`: 1,362 tests pass, four
+explicit regeneration tests ignored, 181 suites; strict LLVM export succeeds.
+No native shell was included, so this is diagnostic evidence only. Raw profiles
+remain in target/coverage-local-expansion; report/log/gaps in /tmp/nav-local-expansion*.
+Twenty Linux files remain below 90%, including platform-specific files; fresh
+Windows union is required. The 37-file retained historical report is superseded
+for investigation only, not as accepted clean cross-platform evidence.
+
+Addressed independent review P3: legacy catalog-page expected records/counts now
+come independently from the fixture collection, preventing a wrong-collection
+implementation from passing with only a matching label. Both page tests pass.
+Media locale mask test and real CLI framed-worker refusal test pass. Acquisition
+origin checks now verify quest/vendor/drop/crafting kinds against their base
+acquisition identity; focused test passes. Core/app/CLI/local-data Clippy passes.
+
+Next subtask claim: `/root`, sole writer, baseline `ac76c10`: make the thin
+reference-window adapter generic over Tauri's Runtime and exercise dispatch through
+the official mock runtime. Production continues using Wry; these tests establish
+no ordinary-Windows focus/overlay/operator acceptance. Native hosted proof remains
+separate. No permissions or game integration will be added.
