@@ -9,7 +9,7 @@ export interface LocalDataPlan {
   required_storage_bytes:number|null;available_storage_bytes:number|null;extraction_ready:boolean;blockers:string[];
 }
 export interface LocalDataJob {
-  job_id:string;state:"running"|"complete"|"failed"|"cancelled"|"interrupted";completed:number;total:number;error:string|null;
+  job_id:string;state:"preparing"|"running"|"complete"|"failed"|"cancelled"|"interrupted";completed:number;total:number;error:string|null;
   summary:{catalog_sha256:string;build:number;tables_processed:number;tables_decoded:number;actual_workers:number;gameplay_projection_available:boolean;activated:boolean}|null;
 }
 export interface LocalDataInventoryPage {

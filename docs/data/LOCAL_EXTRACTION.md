@@ -65,6 +65,10 @@ cannot be combined with another installation/product. Explicit `--preset`
 overrides that run; saved selections are changed by `select` or desktop review.
 Resume uses the saved request; it cannot change product, tables or resource preset.
 
+A durable `preparing` job and cancel control exist before source hashing begins.
+Before its first binding, the checkpoint is explicitly unbound and has no reusable
+rows; after a preparation crash, resume must fingerprint the source from scratch.
+Cancellation is checked between source files, including post-extraction hashing.
 Each completed table checkpoints its inventory, retained/decoded object hashes and
 gaps. Resume compares the exact source, extractor/dependency profile, requested
 subset, locale/table sequence and preset; it verifies every reused object before
@@ -76,7 +80,7 @@ archive reads and can materially increase startup/resume time. It has not yet
 been measured on ordinary Windows. No source files are modified.
 
 Desktop cancellation persists the terminal state then kills its worker. CLI
-cancellation is cooperative at table boundaries; it cannot interrupt a native
+cancellation is cooperative at source-file and table boundaries; it cannot interrupt a native
 read in another process. A crash is classified as interrupted only after the
 private destination's writer lock proves that no worker can still commit.
 Checkpoint writes and completion refuse after cancellation. Extracted objects or
@@ -85,7 +89,7 @@ unchanged. Partial table results are never checkpointed.
 
 There are at most 16 saved selections, 8 retained jobs and 1,024 activations per
 build/locale scope. The index is capped at 64 MiB with 4 KiB pages, DELETE journal
-and FULL synchronization. Store quotas conservatively reserve another 128 MiB
+and FULL synchronization. Store quotas conservatively reserve another 130 MiB
 for the index and rollback journal, including existing file sizes. Capacity or
 SQLite failures preserve committed state. `forget` deletes terminal job records
 only; retained catalogs, projections and activation history are never removed.
@@ -375,7 +379,7 @@ containing it, so this is a one-way upgrade. Per-installation locks also
 serialize alternate destinations.
 Quota accounting includes existing objects/catalogs and staging. Free space is
 checked before writing; no quota is preallocated. Writes sync staging before
-atomic sealing, and extraction never changes active gameplay state. Cancellation
+atomic sealing, and extraction never changes active gameplay state. Desktop cancellation
 terminates the child, releases OS locks and leaves previous catalogs intact;
 unsealed staging may remain and currently needs manual review/cleanup. Checkpoint resumption is available as described above; automated cleanup remains
 unimplemented. Older binaries that do not recognize `lifecycle.sqlite3` refuse an

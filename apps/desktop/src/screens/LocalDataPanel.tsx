@@ -16,7 +16,7 @@ export function LocalDataPanel({client}:{client:CommandClient}) {
   const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");const serial=useRef(0);
   useEffect(()=>()=>{serial.current++;},[client]);
   useEffect(()=>{
-    if(job?.state!=="running")return;
+    if(job?.state!=="running"&&job?.state!=="preparing")return;
     let current=true;
     const timer=setTimeout(()=>{
       void client.getLocalDataJob(job.job_id).then(result=>{
@@ -76,7 +76,7 @@ export function LocalDataPanel({client}:{client:CommandClient}) {
     const result=await client.getLocalDataInventory(job.summary.catalog_sha256,offset);if(ticket!==serial.current)return;setBusy(false);
     if(result.ok)setPage(result.value);else setMessage(`Catalog verification unavailable: ${result.error.code}.`);
   }
-  const running=job?.state==="running";
+  const running=job?.state==="running"||job?.state==="preparing";
   return <Panel title="Local Data" level={3}>
     <p>Read installed client tables into private research storage. Client records do not prove playable availability. Research catalogs cannot generate routes or recommendations.</p>
     <Button disabled={busy||running} onClick={()=>void choose()}>Select game installation</Button>
@@ -92,7 +92,7 @@ export function LocalDataPanel({client}:{client:CommandClient}) {
       <p>Scope: reviewed table inventory and supported research decoding. Media and hotfix integration are pending; gameplay projection validation is separate.</p>
       <Button variant="primary" disabled={busy||running} onClick={()=>void start()}>Extract research tables</Button></div>}
     {job&&<div><p role="status">Extraction {job.state}: {job.completed} of {job.total||"unknown"} tables processed.</p>{running&&<Button onClick={()=>void cancel()}>Cancel extraction</Button>}
-      {job.state!=="running"&&job.state!=="complete"&&<Button disabled={busy} onClick={()=>void resume()}>Resume unchanged extraction</Button>}
+      {!running&&job.state!=="complete"&&<Button disabled={busy} onClick={()=>void resume()}>Resume unchanged extraction</Button>}
       {!running&&<Button disabled={busy} onClick={()=>void forget()}>Forget saved job</Button>}
       {job.error&&<p role="alert">Extraction failed: {job.error}</p>}
       {job.summary&&<><p>Build {job.summary.build}: {job.summary.tables_decoded} decoded of {job.summary.tables_processed} candidates. Research only; no gameplay catalog activated.</p><Button disabled={busy} onClick={()=>void inventory(0)}>Verify and inspect inventory</Button><Button disabled={busy} onClick={()=>void researchActivation(false)}>Review research activation</Button></>}

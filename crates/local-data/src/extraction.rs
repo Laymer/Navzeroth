@@ -20,7 +20,7 @@ use std::{
 };
 
 const MAX_TABLE_BYTES: usize = 64 * 1024 * 1024;
-const LIFECYCLE_RESERVE_BYTES: u64 = 128 * 1024 * 1024;
+const LIFECYCLE_RESERVE_BYTES: u64 = 130 * 1024 * 1024;
 pub const MAX_DECODED_BYTES: usize = 256 * 1024 * 1024;
 const MAX_MANIFEST_BYTES: usize = 16 * 1024 * 1024;
 /// A partially available file whose header, field, pallet, common or section
@@ -32,10 +32,19 @@ struct SourceState {
     hashes: BTreeMap<String, String>,
 }
 impl SourceState {
+    #[cfg(test)]
     fn capture(
         root: &Path,
         build: &azeroth_core::local_data::InstallationMetadata,
     ) -> Result<Self> {
+        Self::capture_checked(root, build, || Ok(()))
+    }
+    fn capture_checked(
+        root: &Path,
+        build: &azeroth_core::local_data::InstallationMetadata,
+        mut check: impl FnMut() -> Result<()>,
+    ) -> Result<Self> {
+        check()?;
         let mut names = vec![".build.info".to_owned()];
         for key in [&build.build_key, &build.cdn_key] {
             names.push(format!("Data/config/{}/{}/{key}", &key[..2], &key[2..4]));
@@ -66,6 +75,7 @@ impl SourceState {
         let mut stamps = BTreeMap::new();
         let mut hashes = BTreeMap::new();
         for name in names {
+            check()?;
             let path = checked_path(&root.join(&name))?;
             let meta = fs::metadata(&path).map_err(|_| "Source metadata unavailable")?;
             if !meta.is_file() {
@@ -183,7 +193,7 @@ impl Store {
             .map_err(|_| "Private writer lock unavailable")?;
         lock.try_lock()
             .map_err(|_| "Another extraction owns the destination")?;
-        // Reserve the bounded 64 MiB lifecycle database and a full rollback journal.
+        // Reserve the bounded 64 MiB lifecycle database and rollback-journal overhead.
         // Counting existing bytes as well is conservative and avoids quota races.
         let used = total_size(&root, 0, &mut 0)?
             .checked_add(LIFECYCLE_RESERVE_BYTES)
@@ -339,11 +349,34 @@ pub(crate) fn extract(
     if selected.is_empty() || selected.len() > 32_768 {
         return Err("Installed locales or table inventory unavailable or excessive");
     }
-    let source = SourceState::capture(&root, &inspection.metadata)?;
+    let mut store = Store::open(&destination, request.preset.limits().total_storage_bytes)?;
+    let mut db = crate::lifecycle::index(&destination)?;
+    let preparing = db
+        .prepare(
+            &request.request_id,
+            &serde_json::to_string(request).map_err(|_| "Cannot encode private request")?,
+            request.resume,
+        )
+        .map_err(|_| "Job exists or preparation/resume refused")?;
+    let _attempt = AttemptGuard {
+        root: destination.clone(),
+        id: request.request_id.clone(),
+    };
+    progress(preparing.completed, preparing.total)?;
+    let source = SourceState::capture_checked(&root, &inspection.metadata, || {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Preparing
+        {
+            return Err("Extraction cancelled during fingerprinting");
+        }
+        Ok(())
+    })?;
     if source.hashes.get(".build.info") != Some(&inspection.build_info_sha256) {
         return Err("Installation changed after inspection; candidate refused");
     }
-    let mut store = Store::open(&destination, request.preset.limits().total_storage_bytes)?;
     let source_sha256 = hash(&crate::bounded_json(
         &(&root, &source.stamps, &source.hashes),
         MAX_MANIFEST_BYTES,
@@ -367,7 +400,6 @@ pub(crate) fn extract(
         preset: request.preset,
         total: selected.len() as u32,
     };
-    let mut db = crate::lifecycle::index(&destination)?;
     let empty = Checkpoint {
         format_version: 1,
         binding,
@@ -382,10 +414,6 @@ pub(crate) fn extract(
             request.resume,
         )
         .map_err(|_| "Job exists, capacity reached or source/profile changed; resume refused")?;
-    let _attempt = AttemptGuard {
-        root: destination.clone(),
-        id: request.request_id.clone(),
-    };
     checkpoint.validate()?;
     for (index, row) in checkpoint.tables.iter().enumerate() {
         let (locale, _, candidate) = &selected[index];
@@ -395,17 +423,18 @@ pub(crate) fn extract(
         {
             return Err("Checkpoint does not match selected table order");
         }
-        for digest in [&row.retained_sha256, &row.decoded_sha256]
-            .into_iter()
-            .flatten()
-        {
-            let (_, actual) =
-                crate::hash_file(&destination.join("objects").join(digest), MAX_DECODED_BYTES)?;
-            if actual != *digest {
-                return Err("Checkpoint object hash mismatch");
-            }
-        }
     }
+    verify_checkpoint_objects(&destination, &checkpoint, || {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Running
+        {
+            return Err("Extraction cancelled while verifying checkpoint");
+        }
+        Ok(())
+    })?;
     let binding = checkpoint.binding.clone();
     let resumed = checkpoint.tables.len();
     let mut current_locale = selected[0].0.clone();
@@ -588,7 +617,17 @@ pub(crate) fn extract(
         progress(index as u32 + 1, total)?;
     }
     drop(archive);
-    let after = SourceState::capture(&root, &inspection.metadata)?;
+    let after = SourceState::capture_checked(&root, &inspection.metadata, || {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Running
+        {
+            return Err("Extraction cancelled during fingerprinting");
+        }
+        Ok(())
+    })?;
     if source.stamps != after.stamps || source.hashes != after.hashes {
         return Err("Source changed; candidate was not sealed");
     }
@@ -649,6 +688,28 @@ pub(crate) fn extract(
         return Err("Extraction cancelled before completion");
     }
     Ok(summary)
+}
+
+fn verify_checkpoint_objects(
+    destination: &Path,
+    checkpoint: &Checkpoint,
+    mut check: impl FnMut() -> Result<()>,
+) -> Result<()> {
+    for row in &checkpoint.tables {
+        check()?;
+        for digest in [&row.retained_sha256, &row.decoded_sha256]
+            .into_iter()
+            .flatten()
+        {
+            check()?;
+            let (_, actual) =
+                crate::hash_file(&destination.join("objects").join(digest), MAX_DECODED_BYTES)?;
+            if actual != *digest {
+                return Err("Checkpoint object hash mismatch");
+            }
+        }
+    }
+    Ok(())
 }
 
 pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalog> {
@@ -928,6 +989,51 @@ mod tests {
 #[cfg(test)]
 mod lifecycle_tests {
     use super::*;
+    #[test]
+    fn reused_objects_refuse_corruption_and_honor_cancellation_before_reading() {
+        let root =
+            std::env::temp_dir().join(format!("nav-checkpoint-object-{}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        fs::create_dir(root.join("objects")).unwrap();
+        let digest = hash(b"original");
+        let checkpoint = Checkpoint {
+            format_version: 1,
+            binding: CheckpointBinding {
+                format_version: 1,
+                source_sha256: "a".repeat(64),
+                extractor_sha256: "b".repeat(64),
+                selection_sha256: "c".repeat(64),
+                preset: azeroth_core::local_data::PerformancePreset::Small,
+                total: 1,
+            },
+            tables: vec![TableInventory {
+                table: "Map".into(),
+                locale: Some("enUS".into()),
+                file_data_id: Some(1),
+                disposition: InventoryDisposition::RetainedUnsupported,
+                reason: "synthetic".into(),
+                retained_sha256: Some(digest.clone()),
+                decoded_sha256: None,
+                encoded_bytes: Some(8),
+                records: None,
+                layout_hash: None,
+            }],
+            gaps: vec![],
+        };
+        fs::write(root.join("objects").join(&digest), b"tampered").unwrap();
+        assert_eq!(
+            verify_checkpoint_objects(&root, &checkpoint, || Ok(())),
+            Err("Checkpoint object hash mismatch")
+        );
+        fs::write(root.join("objects").join(&digest), b"original").unwrap();
+        verify_checkpoint_objects(&root, &checkpoint, || Ok(())).unwrap();
+        fs::remove_file(root.join("objects").join(&digest)).unwrap();
+        assert_eq!(
+            verify_checkpoint_objects(&root, &checkpoint, || Err("cancelled")),
+            Err("cancelled")
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
     #[test]
     fn segment_fingerprint_detects_same_length_bytes_with_restored_mtime() {
         let root =

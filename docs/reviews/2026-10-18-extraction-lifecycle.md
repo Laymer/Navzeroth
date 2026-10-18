@@ -27,3 +27,12 @@ Tests cover transactional failure, SQLite full, binding changes, same-ID race,
 corruption/rollback, recovery, saved presets and guarded UI operations.
 Ordinary Windows performance and interactive/live acceptance remain unverified.
 Exact-head hosted checks are a separate merge prerequisite.
+
+## Preparing-state follow-up
+
+The private run exposed that source hashing preceded durable job creation.
+Implementation now exposes a `preparing` job under the destination writer lock
+before fingerprinting. Unbound preparation carries no reusable rows. Cancellation
+cannot be overwritten by binding. Reviewer rechecked these transitions and version
+refusals, then requested cancellation checks during reused-object verification;
+those checks and corruption/cancellation regressions were added.

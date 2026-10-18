@@ -49,3 +49,10 @@ it("guards research activation with the displayed generation and clears a refuse
   expect(calls.find(c=>c.command==="activate_local_data")?.input).toEqual({revision:digest,expected:2,rollback:false});
   expect(screen.queryByRole("button",{name:"Activate research revision"})).not.toBeInTheDocument();expect(screen.queryByText(/private-path/)).not.toBeInTheDocument();
 });
+
+it("offers cancellation during fingerprint preparation and does not offer resume or forgetting",async()=>{
+ const job:LocalDataJob={job_id:"hashing",state:"preparing",completed:0,total:0,error:null,summary:null};
+ const adapter:CommandAdapter={invoke(command){return Promise.resolve((command==="list_local_installations"?[]:command==="list_local_data_jobs"?[job]:{...job,state:"cancelled"})as never);}};
+ render(<LocalDataPanel client={createClient(adapter)}/>);fireEvent.click(screen.getByRole("button",{name:"Review saved extraction state"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect saved job hashing"}));
+ expect(screen.getByText(/Extraction preparing: 0 of unknown/)).toBeInTheDocument();expect(screen.queryByRole("button",{name:"Resume unchanged extraction"})).not.toBeInTheDocument();expect(screen.queryByRole("button",{name:"Forget saved job"})).not.toBeInTheDocument();fireEvent.click(screen.getByRole("button",{name:"Cancel extraction"}));await screen.findByText(/Extraction cancelled/);
+});

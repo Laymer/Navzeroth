@@ -149,6 +149,7 @@ fn cancellation_checkpoint_and_terminal_states_are_transactional() {
             .state,
         JobState::Cancelled
     );
+    db.prepare("job", "request", true).unwrap();
     db.begin("job", "request", &checkpoint(), true).unwrap();
     assert!(
         db.finish("job", JobState::Complete, Some(summary()))
@@ -288,4 +289,39 @@ fn corrupt_checkpoint_versions_and_transaction_refusal_fail_closed() {
     cp.tables.push(row("Map"));
     assert!(db.checkpoint("job", &cp).is_err());
     assert_eq!(db.status("job").unwrap().completed, 0);
+}
+
+#[test]
+fn preparation_is_durable_cancellable_and_never_reuses_unbound_rows() {
+    let dir = Temp::new();
+    let mut db = dir.db();
+    let preparing = db.prepare("preparing", "request", false).unwrap();
+    assert_eq!(preparing.state, JobState::Preparing);
+    assert_eq!(preparing.total, 0);
+    assert!(db.forget("preparing").is_err());
+    drop(db);
+    let mut db = dir.db();
+    assert_eq!(db.status("preparing").unwrap().state, JobState::Preparing);
+    db.finish("preparing", JobState::Cancelled, None).unwrap();
+    assert!(
+        db.begin("preparing", "request", &checkpoint(), false)
+            .is_err()
+    );
+    db.prepare("preparing", "request", true).unwrap();
+    let bound = db
+        .begin("preparing", "request", &checkpoint(), true)
+        .unwrap();
+    assert!(bound.tables.is_empty());
+    assert_eq!(db.status("preparing").unwrap().state, JobState::Running);
+    let mut cp = checkpoint();
+    cp.tables.push(row("Map"));
+    db.checkpoint("preparing", &cp).unwrap();
+    db.finish("preparing", JobState::Interrupted, None).unwrap();
+    db.prepare("preparing", "request", true).unwrap();
+    db.finish("preparing", JobState::Cancelled, None).unwrap();
+    assert!(
+        db.begin("preparing", "request", &checkpoint(), true)
+            .is_err()
+    );
+    assert_eq!(db.status("preparing").unwrap().completed, 1);
 }

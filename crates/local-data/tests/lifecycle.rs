@@ -142,6 +142,7 @@ fn recovery_requires_writer_lock_and_cancelled_jobs_remain_resumable() {
         lifecycle::status(&store.0, "recover").unwrap().state,
         JobState::Interrupted
     );
+    db.prepare("recover", "ignored", true).unwrap();
     db.begin("recover", "ignored", &cp(), true).unwrap();
     assert_eq!(
         lifecycle::cancel(&store.0, "recover").unwrap().state,

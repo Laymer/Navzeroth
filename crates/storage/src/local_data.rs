@@ -33,6 +33,20 @@ fn decode<T: serde::de::DeserializeOwned>(text: &str) -> Result<T> {
         .map_err(|_| invalid("Invalid lifecycle record"))?;
     serde_json::from_value(value).map_err(|_| invalid("Unsupported lifecycle record"))
 }
+fn status_record(text: &str, id: &str) -> Result<JobStatus> {
+    let status: JobStatus = decode(text)?;
+    if status.format_version != VERSION
+        || status.job_id != id
+        || !valid_id(id)
+        || status.completed > status.total
+        || status.total > 32768
+        || status.error.as_ref().is_some_and(|s| s.len() > 512)
+        || (status.state == JobState::Complete) != status.summary.is_some()
+    {
+        return Err(invalid("Invalid or unsupported job status"));
+    }
+    Ok(status)
+}
 impl LocalDataIndex {
     pub fn open(path: &Path) -> Result<Self> {
         let conn = Connection::open(path).db()?;
@@ -121,6 +135,54 @@ impl LocalDataIndex {
             .find(|s| s.selection_id == id)
             .ok_or_else(|| invalid("Unknown installation selection"))
     }
+    /// Caller owns the destination writer lock. The checkpoint is unbound until
+    /// fingerprinting succeeds; cancellation is available throughout preparation.
+    pub fn prepare(&mut self, id: &str, request: &str, resume: bool) -> Result<JobStatus> {
+        if !valid_id(id) || request.len() > 65536 {
+            return Err(invalid("Invalid lifecycle job"));
+        }
+        let tx = self
+            .conn
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .db()?;
+        let old: Option<String> = tx
+            .query_row("SELECT status FROM jobs WHERE id=?1", [id], |r| r.get(0))
+            .optional()
+            .db()?;
+        let mut status = match (old, resume) {
+            (Some(text), true) => {
+                let status = status_record(&text, id)?;
+                if status.state == JobState::Complete {
+                    return Err(invalid("Completed extraction cannot resume"));
+                }
+                status
+            }
+            (None, false) => {
+                let count: i64 = tx
+                    .query_row("SELECT count(*) FROM jobs", [], |r| r.get(0))
+                    .db()?;
+                if count >= MAX_JOBS as i64 {
+                    return Err(invalid("Job capacity reached; forget a terminal job"));
+                }
+                JobStatus {
+                    format_version: VERSION,
+                    job_id: id.into(),
+                    state: JobState::Preparing,
+                    completed: 0,
+                    total: 0,
+                    summary: None,
+                    error: None,
+                }
+            }
+            _ => return Err(invalid("Job already exists or resume request is missing")),
+        };
+        status.state = JobState::Preparing;
+        status.summary = None;
+        status.error = None;
+        tx.execute("INSERT INTO jobs VALUES(?1,?2,'null',?3) ON CONFLICT(id) DO UPDATE SET status=excluded.status",params![id,request,encode(&status)?]).db()?;
+        tx.commit().db()?;
+        Ok(status)
+    }
     pub fn begin(
         &mut self,
         id: &str,
@@ -142,7 +204,24 @@ impl LocalDataIndex {
             })
             .optional()
             .db()?;
+        if existing.is_some() {
+            let text: String = tx
+                .query_row("SELECT status FROM jobs WHERE id=?1", [id], |r| r.get(0))
+                .db()?;
+            let status = status_record(&text, id)?;
+            if existing.as_deref() == Some("null")
+                && (status.state != JobState::Preparing
+                    || status.completed != 0
+                    || status.total != 0)
+            {
+                return Err(invalid("Invalid unbound preparation checkpoint"));
+            }
+            if !matches!(status.state, JobState::Preparing | JobState::Running) {
+                return Err(invalid("Job cancelled or not prepared for resume"));
+            }
+        }
         let checkpoint = match (existing, resume) {
+            (Some(text), _) if text == "null" => checkpoint.clone(),
             (Some(text), true) => {
                 let old: Checkpoint = decode(&text)?;
                 old.validate().map_err(invalid)?;
@@ -184,7 +263,7 @@ impl LocalDataIndex {
             summary: None,
             error: None,
         };
-        tx.execute("INSERT INTO jobs VALUES(?1,?2,?3,?4) ON CONFLICT(id) DO UPDATE SET status=excluded.status", params![id,request,encode(&checkpoint)?,encode(&status)?]).db()?;
+        tx.execute("INSERT INTO jobs VALUES(?1,?2,?3,?4) ON CONFLICT(id) DO UPDATE SET checkpoint=excluded.checkpoint,status=excluded.status", params![id,request,encode(&checkpoint)?,encode(&status)?]).db()?;
         tx.commit().db()?;
         Ok(checkpoint)
     }
@@ -194,7 +273,7 @@ impl LocalDataIndex {
             .query_row("SELECT status FROM jobs WHERE id=?1", [id], |r| r.get(0))
             .optional()
             .db()?;
-        let status: JobStatus = decode(&text.ok_or_else(|| invalid("Unknown local-data job"))?)?;
+        let status = status_record(&text.ok_or_else(|| invalid("Unknown local-data job"))?, id)?;
         if status.format_version != VERSION
             || status.job_id != id
             || status.completed > status.total
@@ -248,7 +327,7 @@ impl LocalDataIndex {
         let text: String = tx
             .query_row("SELECT status FROM jobs WHERE id=?1", [id], |r| r.get(0))
             .db()?;
-        let mut status: JobStatus = decode(&text)?;
+        let mut status = status_record(&text, id)?;
         if status.state != JobState::Running {
             return Err(invalid("Extraction cancelled or interrupted"));
         }
@@ -278,15 +357,16 @@ impl LocalDataIndex {
         let text: String = tx
             .query_row("SELECT status FROM jobs WHERE id=?1", [id], |r| r.get(0))
             .db()?;
-        let mut status: JobStatus = decode(&text)?;
-        if status.state != JobState::Running {
+        let mut status = status_record(&text, id)?;
+        if !matches!(status.state, JobState::Preparing | JobState::Running) {
             return Ok(status);
         }
-        if state == JobState::Running {
+        if matches!(state, JobState::Preparing | JobState::Running) {
             return Err(invalid("Expected terminal job state"));
         }
         if state == JobState::Complete
-            && (status.completed != status.total
+            && (status.state != JobState::Running
+                || status.completed != status.total
                 || summary.as_ref().is_none_or(|s| {
                     s.tables_processed != status.total
                         || !azeroth_core::local_data::is_sha256(&s.catalog_sha256)
@@ -310,7 +390,10 @@ impl LocalDataIndex {
         Ok(status)
     }
     pub fn forget(&mut self, id: &str) -> Result<()> {
-        if self.status(id)?.state == JobState::Running {
+        if matches!(
+            self.status(id)?.state,
+            JobState::Preparing | JobState::Running
+        ) {
             return Err(invalid("Cannot forget a running job"));
         }
         self.conn
@@ -323,6 +406,11 @@ impl LocalDataIndex {
             return Err(invalid("Invalid activation scope"));
         }
         let row: Option<(u32,String)> = self.conn.query_row("SELECT generation,catalog FROM activations WHERE scope=?1 ORDER BY generation DESC LIMIT 1", [scope], |r| Ok((r.get(0)?,r.get(1)?))).optional().db()?;
+        if row.as_ref().is_some_and(|(generation, digest)| {
+            *generation == 0 || *generation > 1024 || !azeroth_core::local_data::is_sha256(digest)
+        }) {
+            return Err(invalid("Invalid research activation history"));
+        }
         Ok(Activation {
             format_version: VERSION,
             scope: scope.into(),

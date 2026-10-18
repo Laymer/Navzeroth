@@ -28,8 +28,8 @@ Branch: `feat/continuation-extraction-lifecycle`; isolated worktree.
 Research activation selects a catalog only. Delivery bindings and validated partial
 projection consumers remain continuation 6. It never changes planning trust.
 Resume is table-granular; work in the currently interrupted table is discarded.
-CLI cancel cannot kill another process and takes effect at the next table boundary.
-SQLite index cap is 64 MiB; quotas reserve 128 MiB for index/journal in addition to
+CLI cancel cannot kill another process and takes effect at the next source-file or table boundary.
+SQLite index cap is 64 MiB; quotas reserve 130 MiB for index/journal in addition to
 existing sizes. Eight retained jobs, sixteen selections, 1,024 activation events
 per scope; terminal job forgetting preserves artifacts and history. Full archive
 hashing adds I/O; ordinary Windows workload performance is unverified.
@@ -39,8 +39,8 @@ hashing adds I/O; ordinary Windows workload performance is unverified.
 - `cargo fmt --all --check`: passed.
 - Workspace Clippy, all targets except desktop, `--locked`, `-D warnings`: passed.
 - `cargo test --locked --workspace --exclude azeroth-desktop`: 170 suites,
-  1,241 passed, zero failed, four ignored. Incremental and debug info disabled.
-- Desktop typecheck, lint, unit tests: passed, 388 tests across 45 files.
+  1,244 passed, zero failed, four ignored. Incremental and debug info disabled.
+- Desktop typecheck, lint, unit tests: passed, 389 tests across 45 files.
 - Initial quota regression test used an old eight-byte quota without the new
   lifecycle reservation; corrected its budget while retaining the same eight-byte
   object allowance. The initial SQLite-full fixture used an unsupported in-memory
@@ -50,6 +50,12 @@ hashing adds I/O; ordinary Windows workload performance is unverified.
   the same-ID worker regression passes. Full segment hashing and a restored-mtime
   mutation test close the source-binding gap. Two stale documentation paragraphs
   were corrected; no remaining actionable code findings were reported.
+- The initial unoptimized real-client attempt was stopped during its first full
+  archive fingerprint. It is not a successful extraction or a performance pass.
+  This exposed delayed cancellation before startup progress. Added a durable
+  `preparing` state before hashing, cancel checks between source files/reused
+  objects and regressions for cancellation winning checkpoint binding. Unbound
+  preparation has no reusable rows. Reviewer rechecked the state transitions.
 - The explicitly selected installation inspects as build 70450/enUS. A private
   real-client interruption/cancellation/resume-versus-fresh run is pending on
   frozen implementation. No live WoW acceptance is inferred.

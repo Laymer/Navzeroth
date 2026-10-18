@@ -38,7 +38,7 @@ pub fn index(root: &Path) -> Result<LocalDataIndex> {
                 || fs::metadata(&file)
                     .map_err(|_| "Lifecycle file unavailable")?
                     .len()
-                    > 64 * 1024 * 1024
+                    > (if name == "lifecycle.sqlite3" { 64 } else { 65 }) * 1024 * 1024
             {
                 return Err("Invalid or excessive lifecycle database file");
             }
@@ -63,7 +63,7 @@ pub fn jobs(root: &Path) -> Result<Vec<JobStatus>> {
     };
     if _store.is_some() {
         for job in db.jobs().map_err(|_| "Cannot read jobs")? {
-            if job.state == JobState::Running {
+            if matches!(job.state, JobState::Preparing | JobState::Running) {
                 db.finish(&job.job_id, JobState::Interrupted, None)
                     .map_err(|_| "Cannot recover interrupted job")?;
             }

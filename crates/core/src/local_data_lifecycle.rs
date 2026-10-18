@@ -84,6 +84,7 @@ impl Checkpoint {
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum JobState {
+    Preparing,
     Running,
     Cancelled,
     Interrupted,
