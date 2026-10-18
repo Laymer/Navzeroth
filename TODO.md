@@ -20,6 +20,15 @@ PR #188 (authored slice, including Windows path fixes), #189 (observed `wowf`
 70245, not admitted), and #190 (70450 addon development admission) are merged.
 V2.4 is implemented with explicit fact gaps; it is not accepted slice content.
 
+- [x] Selected real-cache development capture/pure-parser check after the operator
+  closed WoW: 70450/enUS XFTH v9, 48,301 envelope records; three WDB formats remain
+  explicitly unsupported. Private copies removed.
+  [Receipt](docs/handoffs/2026-10-18-cache-development-check.md).
+- [ ] Native Rust `cache-stage` end-to-end verification, including closed-game and
+  write-sharing refusal. Native capture plus Linux pure parsing does not establish
+  this path or live addon locale behavior. Wait for another closed-game opportunity
+  if needed; the operator can resume playing.
+
 The continuation order is: policy reconciliation; durable extraction lifecycle;
 cache/hotfix/observations; gameplay projections and guide facts; media/tooltips;
 versioned delivery and guarded consumers; guides and exact inventory; desktop and
@@ -27,9 +36,12 @@ installer; performance/materials; substantial review/test/CI; development versio
 and publication; Pages redesign. Each is a separate independently reviewed PR.
 See ADR 0006 §13 for the early development RC policy. None is a stable gate pass.
 
-Active: continuation 2, durable extraction lifecycle; Codex `/root`, baseline
-`167a454`, [claim](docs/claims/2026-10-18-extraction-lifecycle.md),
-[handoff](docs/handoffs/2026-10-18-extraction-lifecycle.md).
+Continuation 2 merged as PR #192 at `1cb6bb9`, with independent review, all nine
+exact-head checks, source workflow and a successful private real-client lifecycle
+comparison. [Handoff/receipt](docs/handoffs/2026-10-18-extraction-lifecycle.md).
+Active: continuation 3, selected cache/hotfix/observation inputs; Codex `/root`,
+[claim](docs/claims/2026-10-18-local-inputs.md),
+[handoff](docs/handoffs/2026-10-18-local-inputs.md).
 Later input adapters, expanded projections, media, guarded gameplay consumers,
 reviewed inventory, performance, coverage, publication and Pages remain pending.
 

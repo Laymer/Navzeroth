@@ -470,3 +470,7 @@ detection, receipt preparation and the completed private-inventory packaging/rea
 contracts. All nine complete slice inventories and actual candidate-bound
 live/interactive acceptance on the pending post-launch target remain missing.
 70425/70450 development extraction cannot substitute for those inputs or reviews.
+
+Selected cache/hotfix envelope and addon observation staging is documented in
+[LOCAL_INPUTS.md](LOCAL_INPUTS.md). Payload field overlays, media, expanded gameplay
+projections and guarded delivery remain separate work.

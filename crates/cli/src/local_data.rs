@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -45,6 +45,16 @@ pub fn run(args: &[OsString]) -> ExitCode {
         return usage();
     };
     let allowed: &[&str] = match command {
+        "cache-stage" | "cache-stage-fixture" | "observation-stage" => &[
+            "--destination",
+            "--catalog",
+            "--input",
+            "--kind",
+            "--locale",
+            "--preset",
+        ],
+        "input-verify" => &["--destination", "--input"],
+        "input-page" => &["--destination", "--input", "--offset", "--limit"],
         "inspect" => &["--installation", "--product"],
         "plan" | "select" => &["--installation", "--product", "--destination", "--preset"],
         "extract" => &[
@@ -86,6 +96,12 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if matches!(
+        command,
+        "cache-stage" | "cache-stage-fixture" | "observation-stage" | "input-verify" | "input-page"
+    ) {
+        return input_command(command, &options);
     }
     if matches!(
         command,
@@ -417,4 +433,78 @@ fn lifecycle_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCod
         )),
         _ => emit::<()>(Err("Expected activation generation is required")),
     }
+}
+
+fn input_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    use azeroth_core::local_data_inputs::InputKind;
+    use azeroth_local_data::inputs;
+    let result = (|| {
+        let value = |name| {
+            options
+                .get(name)
+                .and_then(|v| v.to_str())
+                .ok_or("Missing or invalid input option")
+        };
+        let destination = Path::new(
+            options
+                .get("--destination")
+                .ok_or("Missing private destination")?,
+        );
+        let input = options.get("--input").ok_or("Missing selected input")?;
+        if command == "input-verify" {
+            return serde_json::to_value(inputs::verify(destination, value("--input")?)?)
+                .map_err(|_| "Cannot encode input report");
+        }
+        if command == "input-page" {
+            let offset = value("--offset")?
+                .parse()
+                .map_err(|_| "Invalid input offset")?;
+            let limit = value("--limit")?
+                .parse()
+                .map_err(|_| "Invalid input limit")?;
+            return serde_json::to_value(inputs::cache_page(
+                destination,
+                value("--input")?,
+                offset,
+                limit,
+            )?)
+            .map_err(|_| "Cannot encode input page");
+        }
+        let kind = match value("--kind")? {
+            "hotfix" => InputKind::HotfixCache,
+            "quest" => InputKind::QuestCache,
+            "creature" => InputKind::CreatureCache,
+            "game-object" => InputKind::GameObjectCache,
+            "item" => InputKind::ItemCache,
+            "snapshot" => InputKind::CharacterSnapshot,
+            "session" => InputKind::SessionEvents,
+            _ => return Err("Unsupported selected input kind"),
+        };
+        let preset = preset(options.get("--preset")).ok_or("Invalid preset")?;
+        let catalog = value("--catalog")?;
+        let locale = value("--locale")?;
+        let staged = match command {
+            "cache-stage" => {
+                inputs::stage_cache(destination, catalog, Path::new(input), kind, locale, preset)
+            }
+            "cache-stage-fixture" => inputs::stage_cache_fixture(
+                destination,
+                catalog,
+                Path::new(input),
+                kind,
+                locale,
+                preset,
+            ),
+            _ => inputs::stage_observation(
+                destination,
+                catalog,
+                Path::new(input),
+                kind,
+                locale,
+                preset,
+            ),
+        }?;
+        serde_json::to_value(staged).map_err(|_| "Cannot encode input report")
+    })();
+    emit(result)
 }

@@ -417,3 +417,30 @@ fn malformed_callback_stops_without_reading_rewards_or_appending_partial_event()
         1
     );
 }
+#[test]
+fn explicit_locale_extension_roundtrips_without_changing_legacy_recorder() {
+    let sandbox = common::strict_core();
+    initialize(&sandbox);
+    let text:String=sandbox.run("locale",r#"local t=ns.recorder_test;local r=t.newRecorder();t.spec.locale='enUS';assert(r:start(t.spec));t.mono=1;assert(r:stop());return assert(r:export(t.db))"#).unwrap();
+    let d = azeroth_ingest::session::decode_text(&text).unwrap();
+    assert_eq!(d.version, 2);
+    assert_eq!(d.locale.as_ref().unwrap().as_str(), "enUS");
+    sandbox.run::<()>("bad-locale",r#"local t=ns.recorder_test;local r=t.newRecorder();t.spec.session='bad';t.spec.locale='unknown';assert(not r:start(t.spec));assert(r:status().phase=='idle')"#).unwrap();
+}
+#[test]
+fn manual_session_binding_records_observable_locale_and_falls_back_on_unavailable_api() {
+    for (body, expected) in [
+        ("return 'enUS'", Some("enUS")),
+        ("return 'unknown'", None),
+        ("error('restricted')", None),
+        ("return nil", None),
+    ] {
+        let sandbox = common::stub_client("1.60.1", "70450", 16001);
+        sandbox.run::<()>("locale-api",&format!("mono=0;localeReads=0;function GetTime() return mono end;function GetLocale() localeReads=localeReads+1;{body} end")).unwrap();
+        sandbox.load_toc_files().unwrap();
+        let text:String=sandbox.run("manual-locale",r#"local state=ns.Diagnostics.state;state.onEvent(nil,'ADDON_LOADED','AzerothNavigator');assert(localeReads==0);state.onSessionSlash('start profile');assert(localeReads==1);mono=1;state.onSessionSlash('stop');state.onSessionSlash('export');assert(localeReads==1);return assert(AzerothNavigatorDB.session_export)"#).unwrap();
+        let d = azeroth_ingest::session::decode_text(&text).unwrap();
+        assert_eq!(d.locale.as_ref().map(|v| v.as_str()), expected);
+        assert_eq!(d.version, if expected.is_some() { 2 } else { 1 });
+    }
+}

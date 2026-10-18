@@ -1,4 +1,5 @@
 //! Build only retained local sources. Never calls CMake, a shell or a downloader.
+mod build_support;
 use sha2::{Digest, Sha256};
 use std::{env, fs, path::PathBuf};
 
@@ -72,6 +73,23 @@ fn main() {
         "cargo:rustc-env=NAVZEROTH_PROJECTOR_PROFILE_SHA256={:x}",
         projector.finalize()
     );
+
+    let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let (profile, files) =
+        build_support::input_profile(&manifest).expect("Bounded input analyzer source closure");
+    for relative in files {
+        println!(
+            "cargo:rerun-if-changed={}",
+            manifest.join(relative).display()
+        );
+    }
+    for directory in ["src", "../core", "../ingest", "../storage"] {
+        println!(
+            "cargo:rerun-if-changed={}",
+            manifest.join(directory).display()
+        );
+    }
+    println!("cargo:rustc-env=NAVZEROTH_INPUT_PROFILE_SHA256={profile}");
     let metadata = PathBuf::from("vendor/wowdbdefs");
     println!("cargo:rerun-if-changed=vendor/wowdbdefs");
     let bytes = fs::read(metadata.join("UPSTREAM.json")).unwrap();

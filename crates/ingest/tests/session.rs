@@ -95,3 +95,28 @@ fn fixture_flag_cannot_disguise_observation_sources() {
     d.batch.events[0].kind=serde_json::from_value(serde_json::json!({"type":"level","level":{"status":"known","value":12,"source":"synthetic_fixture"}})).unwrap();
     assert!(encode_text(&d).is_err());
 }
+#[test]
+fn locale_extension_is_versioned_without_reinterpreting_historical_sessions() {
+    let legacy = document();
+    let mut localized = legacy.clone();
+    localized.version = 2;
+    localized.locale = Some(azeroth_core::types::Locale::new("enUS").unwrap());
+    let encoded = encode_text(&localized).unwrap();
+    assert_eq!(decode_text(&encoded).unwrap(), localized);
+    for version in [0, 1, 3] {
+        let mut d = localized.clone();
+        d.version = version;
+        assert!(encode_text(&d).is_err());
+    }
+    let mut missing = legacy.clone();
+    missing.version = 2;
+    assert!(encode_text(&missing).is_err());
+    localized.locale = Some(azeroth_core::types::Locale::new("unknown").unwrap());
+    assert!(encode_text(&localized).is_err());
+    assert!(
+        decode_text(&encode_text(&legacy).unwrap())
+            .unwrap()
+            .locale
+            .is_none()
+    );
+}

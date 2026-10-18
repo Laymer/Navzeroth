@@ -4,23 +4,32 @@ Updated: 2026-10-18.
 
 ## Current task
 
-**Continuation 2 — durable extraction lifecycle:** Codex `/root`, sole writer,
-baseline `167a4545edb0166da3ac81aaac51c002a9e1172a`, isolated branch
-`feat/continuation-extraction-lifecycle`;
-[claim](claims/2026-10-18-extraction-lifecycle.md),
-[handoff](handoffs/2026-10-18-extraction-lifecycle.md).
-The original checkout and `.claude/` are preserved. Continuation 1 merged as
-PR #191 at `167a454` after independent review and all nine exact-head checks;
-readiness on resulting main still reports 69 blockers, candidate/stable false,
-zero verified packs/evidence. [Inventory](releases/2026-10-18-blocker-inventory.md).
-The pending post-launch target supersedes the historical 70374 paragraphs below.
-No continuation release has been published; 0.9.2 remains latest.
+**Continuation 3 — selected caches and observation inputs:** Codex `/root`, sole
+writer, isolated branch `feat/continuation-local-inputs`; initial baseline
+`7f5587a`, resulting-main dependency `1cb6bb9`.
+[Claim](claims/2026-10-18-local-inputs.md),
+[handoff](handoffs/2026-10-18-local-inputs.md). Supported envelope formats,
+unsupported dispositions, private lineage, native closed-game boundary and
+compatible session locale extension are in [LOCAL_INPUTS](data/LOCAL_INPUTS.md).
+After initially deferring while playing, the owner closed WoW: native capture and
+pure parsing passed for the actual 70450 XFTH v9 envelope; three WDB layouts stayed
+unsupported. [Receipt](handoffs/2026-10-18-cache-development-check.md). Native Rust
+staging/refusal checks and live addon locale remain TODOs.
 
-The lifecycle change adds private durable selections/presets, bounded source- and
-extractor-bound table checkpoints, status/cancel/resume/recovery, and guarded
-research activation/rollback. Research activation never grants playable
-availability. Current checks, measured development runs and limitations are in
-the handoff; ordinary Windows/live acceptance remains separate.
+Continuation 1 merged as PR #191 at `167a454`. Continuation 2 merged as
+[PR #192](https://github.com/Laymer/Navzeroth/pull/192) at `1cb6bb9` after independent
+review, all nine exact-head checks and source workflow. Build 70450/enUS static
+archive interruption, cancellation, resume/fresh digest equality and failed
+replacement preservation passed in Linux/WSL; private stores were removed.
+[Lifecycle handoff](handoffs/2026-10-18-extraction-lifecycle.md) links the exact
+receipt. Research activation never grants playable availability. Ordinary Windows,
+interactive desktop and live acceptance remain separate and unverified.
+
+Original checkout and `.claude/` are preserved. Last measured readiness (PR #191)
+reports 69 blockers, candidate/stable false, zero verified packs/evidence.
+[Inventory](releases/2026-10-18-blocker-inventory.md). The pending post-launch target
+supersedes historical 70374 paragraphs below. No continuation release has been
+published; 0.9.2 remains latest.
 
 **1.0.0 program (ADR [0006](decisions/0006-v1-program.md), 2026-10-17).** The owner
 re-targeted 1.0.0 to the first stable live build after the 4 Nov 2026 launch and a

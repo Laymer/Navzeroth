@@ -155,6 +155,7 @@ impl Store {
                 "objects",
                 "catalogs",
                 "projections",
+                "inputs",
                 "lifecycle.sqlite3",
                 "lifecycle.sqlite3-journal",
             ]
@@ -201,7 +202,7 @@ impl Store {
         if used > quota {
             return Err("Existing private store exceeds configured quota");
         }
-        for name in ["objects", "catalogs", "projections"] {
+        for name in ["objects", "catalogs", "projections", "inputs"] {
             let path = root.join(name);
             if !path.exists() {
                 fs::create_dir(&path).map_err(|_| "Cannot create private store")?;

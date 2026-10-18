@@ -42,3 +42,5 @@ pub mod local_data_projection;
 pub mod local_data_release;
 pub mod source_pipeline;
 pub mod strict_json;
+
+pub mod local_data_inputs;

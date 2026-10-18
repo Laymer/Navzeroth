@@ -442,3 +442,7 @@ mod tests {
         fs::remove_dir_all(root).unwrap();
     }
 }
+
+#[allow(unsafe_code)]
+mod input_guard;
+pub mod inputs;

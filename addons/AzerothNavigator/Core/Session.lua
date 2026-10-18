@@ -93,6 +93,11 @@ function Session.new(monotonic, clock)
       check(spec.context.build.edition=='wow_forever' and type(spec.fixture)=='boolean')
       check(spec.context.namespace~='demo' or spec.fixture)
       check(not used[spec.session])
+      if spec.locale~=nil then
+        check(type(spec.locale)=='string' and
+          ({enUS=true,enGB=true,deDE=true,esES=true,esMX=true,frFR=true,
+          itIT=true,koKR=true,ptBR=true,ruRU=true,zhCN=true,zhTW=true})[spec.locale]==true)
+      end
       return assert(frozen(spec))
     end)
     if not valid then return nil,'session_invalid_identity' end
@@ -100,7 +105,8 @@ function Session.new(monotonic, clock)
     origin,previous,lastUtc=nil,nil,nil
     local value,code=reading();if not value then return nil,code end
     origin=value.mono
-    local candidate={format='anav-session-events',version=1,fixture=copy.fixture,
+    local candidate={format='anav-session-events',version=copy.locale and 2 or 1,
+      locale=copy.locale,fixture=copy.fixture,
       batch={character=copy.character,context=copy.context,events={{session=copy.session,sequence=1,
         elapsed_ms=0,utc=value.utc,clock_trust=value.clock_trust,kind={type='session_start'}}}}}
     local text,errorCode=Session.encode(candidate);if not text then return fail(errorCode) end
