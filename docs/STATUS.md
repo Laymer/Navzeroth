@@ -1,8 +1,21 @@
 # Project status
 
-Updated: 2026-10-17.
+Updated: 2026-10-18.
 
 ## Current task
+
+**Continuation reconciliation:** Codex `/root`, sole writer, baseline
+`7aecba8f170bd35fe2ece0dbce2c98a4337dfa4a`, isolated branch
+`docs/continuation-release-policy`; [claim](claims/2026-10-18-continuation-policy.md).
+The original checkout and `.claude/` are preserved. PRs #188 (authored slice),
+#189 (observed wowf 70245, not admitted) and #190 (70450 addon development
+admission) are merged. The tracker now separates the authorized early development
+`1.0.0-rc.1` from acceptance-candidate freeze (ADR 0006 §13). No release has
+been published by this continuation; 0.9.2 remains latest. The pending post-launch
+target supersedes the historical 70374 target paragraphs below.
+Clean-baseline readiness: 69 blockers, candidate/stable false, zero verified
+packs/evidence. [Exact inventory and clearing conditions](releases/2026-10-18-blocker-inventory.md).
+
 
 **1.0.0 program (ADR [0006](decisions/0006-v1-program.md), 2026-10-17).** The owner
 re-targeted 1.0.0 to the first stable live build after the 4 Nov 2026 launch and a

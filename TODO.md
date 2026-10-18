@@ -2,7 +2,7 @@
 
 Governing decision: [ADR 0006](docs/decisions/0006-v1-program.md) (2026-10-17).
 Target: the first stable live WoW Forever build after the 4 Nov 2026 launch
-(70374 is no longer the target; 70425 is development input only). Slice: Human,
+(70374 is no longer the target; 70425 and 70450 are development inputs only). Slice: Human,
 levels 1-20, Northshire/Elwynn/Westfall/Redridge, the Deadmines, every Human class,
 solo and duo, with all nine domains complete within it.
 
@@ -11,23 +11,27 @@ Owner types: **Owner** = the project owner or operator; **Eng** = repository wor
 nothing is verified unless it says so. The previous G8 inventory of what 1.0.0
 needed is in Git history (`TODO.md` at `3b19812`).
 
+## Continuation (2026-10-18)
+
+Owner and sole writer for reconciliation: Codex `/root`, baseline `7aecba8`;
+[claim](docs/claims/2026-10-18-continuation-policy.md).
+PR #188 (authored slice, including Windows path fixes), #189 (observed `wowf`
+70245, not admitted), and #190 (70450 addon development admission) are merged.
+V2.4 is implemented with explicit fact gaps; it is not accepted slice content.
+
+The continuation order is: policy reconciliation; durable extraction lifecycle;
+cache/hotfix/observations; gameplay projections and guide facts; media/tooltips;
+versioned delivery and guarded consumers; guides and exact inventory; desktop and
+installer; performance/materials; substantial review/test/CI; development version
+and publication; Pages redesign. Each is a separate independently reviewed PR.
+See ADR 0006 §13 for the early development RC policy. None is a stable gate pass.
+
 ## Gate snapshot
 
-`release-readiness --root . --version 0.9.2` after V1.4: 69 blockers (V1.1 left 68), `stable_ready: false`, `candidate_ready: false`, 0 verified evidence files,
-0 verified content packs. That's the 66 from `3b19812` plus two from V1.1: "Release
-target is pending" (cleared by V4.2) and "Release slice classes are unknown"
-(cleared after launch); V1.4 adds "Slice acceptance matrix cannot be checked until
-the slice classes are known". Re-run it before trusting any count here.
-
-| Category | Count | Cleared by |
-| --- | ---: | --- |
-| A, B Inventory incomplete / required records unknown (per domain) | 18 | V1.1, V2.5 |
-| C Required record inventory empty or excessive | 1 | V2.5 |
-| D Accepted source revisions missing | 1 | V2.5, V2.6 (local-only sources, ADR 0006 §11) |
-| E Tested source revision and production fingerprint pending | 1 | V5.1 |
-| F, G 15 `LIVE-*` and 10 `WIN-*` observations pending | 25 | V5.2 to V5.4 |
-| H, I Unit coverage missing / not passed | 10 | V2.5 |
-| J, K Validated packs missing / no pack record binding | 10 | V2.2 to V2.6 |
+Clean baseline `7aecba8`, 2026-10-18: 69 blockers, `stable_ready: false`,
+`candidate_ready: false`, zero verified evidence files and content packs.
+[Exact ordered blocker inventory, owners and clearing conditions](docs/releases/2026-10-18-blocker-inventory.md).
+Publication allowance for 0.9.2 is not readiness for a changed RC.
 
 ## Phase 0: housekeeping
 
@@ -90,8 +94,10 @@ the slice classes are known". Re-run it before trusting any count here.
   inert RXP importer, `verify2.py` replay checks with typed unknowns, `guide verify`.
   Remaining: a facts builder from the owner's addon observations plus V2.2 client
   projections, then per-class Human 1-20 routes with a Deadmines block (solo, duo).
-- [ ] **V2.4 Authored domains** (Eng). Deadmines preparation, Human class role
-  models (WoWSims-derived, assumptions documented), solo/duo scenarios, reminder rules.
+- [x] **V2.4 Authored domains** (Eng). PR #188 merged at `7aecba8`:
+  authored role heuristics (no WoWSims numbers), Deadmines preparation, solo/duo
+  scenarios and reminders. [Handoff](docs/handoffs/2026-10-17-v2.4.md).
+  Observable gameplay facts, activation and release admission remain pending.
 - [ ] **V2.5 Inventory and review** (Both). Replace each `<domain>-inventory-pending`
   with slice units and exact required IDs; independent enumeration review; owner
   confirms disagreements in client; passing coverage rows.
@@ -121,9 +127,10 @@ the slice classes are known". Re-run it before trusting any count here.
 
 ## Phase 5: candidate and acceptance
 
-- [ ] **V5.1 Freeze rc.1** (Eng). `1.0.0-rc.1` in the six declarations and eight
-  lock entries; `candidate-readiness` exits 0; `Build-Windows.ps1
-  -AcceptanceCandidate`; tag and publish the prerelease; verify the assets.
+- [ ] **V5.1 Acceptance-candidate freeze** (Eng). A later `1.0.0-rc.N`
+  after `candidate-readiness` exits 0; `Build-Windows.ps1 -AcceptanceCandidate`;
+  verify assets. The early development `1.0.0-rc.1` is a separate continuation
+  milestone (ADR 0006 §13), packaged without that switch; it cannot clear V5.1.
 - [ ] **V5.2 Live acceptance** (Owner). `LIVE-BUILD` first, then the other 14
   `LIVE-*` rows, the slice matrix rows and the `LIVE-GUI` addon checks
   ([runbook](docs/compatibility/V1_ACCEPTANCE_RUNBOOK.md),

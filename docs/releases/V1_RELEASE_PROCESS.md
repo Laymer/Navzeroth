@@ -119,10 +119,13 @@ prerequisite in addition to missing content rights and real acceptance. Current 
 
 ## Candidate, tag and publication
 
-1. Keep ordinary engineering previews labelled as such. Prepare `1.0.0-rc.N` only
-   when the mandatory inventory and acceptance rows permit entry to the release
-   candidate batch. Record failures and fix them in focused PRs. Prerelease handling
-   must not turn incomplete evidence into stable readiness.
+1. Label ordinary engineering previews as development prereleases. ADR 0006 §13
+   permits an early `1.0.0-rc.1` with ordinary packaging, without
+   `-AcceptanceCandidate`, after the continuation engineering, coverage and
+   version/notes PRs and exact-source checks. Its notes must list every missing
+   acceptance prerequisite and installer signing status. The RC name does not
+   establish candidate readiness. Acceptance-candidate packaging still requires
+   the full candidate gate; stable publication still requires the stable gate.
 2. Create the final version PR with matching versions in root `Cargo.toml`, root
    and desktop `package.json`, Tauri configuration, addon `Core/Version.lua` and
    addon TOC. Update internal Cargo.lock entries and affected generated fixtures
