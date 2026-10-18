@@ -52,7 +52,7 @@ pub const SOURCES: &[(&str, &str, &[&str])] = &[
 const STANDING_GAPS: &[&str] = &[
     "class_roles:role_models_not_projected",
     "equipment:slot_candidates_authored_not_rule_checked",
-    "equipment:stat_amounts_not_computed",
+    "equipment:actual_item_stat_amounts_unverified",
     "geography:coordinate_frame_interpretation_unverified",
     "hotfix_state_unknown",
     "playable_availability_unknown",
@@ -149,9 +149,16 @@ struct Context<'a, F> {
 impl<F: FnMut(&TableInventory) -> Result<DecodedTable>> Context<'_, F> {
     /// Returns the decoded rows, or records an explicit source gap.
     fn table(&mut self, domain: &str, table: &str) -> Result<Option<Vec<ResearchRow>>> {
-        let (_, _, layouts) = SOURCES
+        let layouts = SOURCES
             .iter()
             .find(|(d, t, _)| *d == domain && *t == table)
+            .map(|(_, _, layouts)| *layouts)
+            .or_else(|| {
+                azeroth_core::local_data_gameplay::TABLES
+                    .iter()
+                    .find(|s| s.domain == domain && s.table == table)
+                    .map(|s| s.layouts)
+            })
             .ok_or("Projection source is not registered")?;
         let entry = self
             .catalog
@@ -272,10 +279,19 @@ fn stat_allocations(row: &ResearchRow) -> Fact<Vec<StatAllocation>> {
 
 fn equipment<F: FnMut(&TableInventory) -> Result<DecodedTable>>(
     context: &mut Context<'_, F>,
-) -> Result<EquipmentProjection> {
+    quota: &mut crate::gameplay::Quota,
+) -> Result<(
+    EquipmentProjection,
+    azeroth_core::local_data_gameplay::MappedTable,
+)> {
     let mut items = BTreeMap::new();
     let sparse = context.table("equipment", "ItemSparse")?;
     let sparse_projected = sparse.is_some();
+    let stat_inputs = crate::gameplay::map_table(
+        &azeroth_core::local_data_gameplay::ITEM_STAT_INPUT,
+        sparse.as_deref(),
+        quota,
+    )?;
     for row in sparse.into_iter().flatten() {
         let mut item = missing_item(row.id);
         item.name = text(&row, "Display_lang");
@@ -344,10 +360,13 @@ fn equipment<F: FnMut(&TableInventory) -> Result<DecodedTable>>(
         "equipment:inventory_types_without_slot_mapping",
         unsupported_slots,
     );
-    Ok(EquipmentProjection {
-        sources_complete: context.complete("equipment"),
-        items: items.into_values().collect(),
-    })
+    Ok((
+        EquipmentProjection {
+            sources_complete: context.complete("equipment"),
+            items: items.into_values().collect(),
+        },
+        stat_inputs,
+    ))
 }
 
 fn geography<F: FnMut(&TableInventory) -> Result<DecodedTable>>(
@@ -565,6 +584,12 @@ pub fn project_within(
     max_records: usize,
     load: impl FnMut(&TableInventory) -> Result<DecodedTable>,
 ) -> Result<LocalProjection> {
+    if catalog.installation.product != "wow_classic_beta"
+        || !crate::metadata::ADMITTED_BUILDS.contains(&catalog.installation.build)
+        || catalog.installation.version != format!("1.60.1.{}", catalog.installation.build)
+    {
+        return Err("Unsupported projection development tuple");
+    }
     if !azeroth_core::local_data::is_sha256(catalog_sha256) {
         return Err("Invalid catalog identity");
     }
@@ -591,10 +616,48 @@ pub fn project_within(
     if catalog.gaps.iter().any(|g| g == "explicit_table_subset") {
         context.gaps.insert("explicit_table_subset".into());
     }
-    let equipment = equipment(&mut context)?;
-    let geography = geography(&mut context)?;
+    let mut quota = crate::gameplay::Quota::default();
+    let (mut equipment, stat_inputs) = equipment(&mut context, &mut quota)?;
+    let mut geography = geography(&mut context)?;
     let travel = travel(&mut context)?;
-    let class_roles = class_roles(&mut context)?;
+    let mut class_roles = class_roles(&mut context)?;
+    let mut expanded = azeroth_core::local_data_gameplay::ExpandedProjection {
+        format_version: 1,
+        references: vec![],
+        blocked_talent_ids: vec![],
+        tables: vec![stat_inputs],
+        item_stats: vec![],
+    };
+    for spec in azeroth_core::local_data_gameplay::TABLES {
+        let rows = context.table(spec.domain, spec.table)?;
+        expanded.tables.push(crate::gameplay::map_table(
+            spec,
+            rows.as_deref(),
+            &mut quota,
+        )?);
+    }
+    // Expanded sources participate in the same domain completeness contract.
+    equipment.sources_complete = context.complete("equipment");
+    geography.sources_complete = context.complete("geography");
+    class_roles.sources_complete = context.complete("class_roles");
+    expanded.item_stats = crate::gameplay::item_stats(&equipment, &expanded);
+    expanded.references = crate::gameplay::references(&expanded, &geography, &context.sources);
+    expanded.blocked_talent_ids = crate::gameplay::blocked_talents(&expanded);
+    if !expanded.blocked_talent_ids.is_empty() {
+        context
+            .gaps
+            .insert("class_roles:known_talent_cycle_or_dependency".into());
+    }
+    for gap in [
+        "equipment:budget_model_applicability_unverified",
+        "equipment:socket_cost_bonus_scaling_unverified",
+        "class_roles:learned_spells_and_talent_choices_unknown",
+        "geography:poi_coordinates_uncalibrated",
+        "quests:client_id_does_not_establish_server_availability",
+        "quests:line_order_is_not_a_prerequisite",
+    ] {
+        context.gaps.insert(gap.into());
+    }
     let projection = LocalProjection {
         format_version: PROJECTION_FORMAT_VERSION,
         profile: PROJECTION_PROFILE.into(),
@@ -617,6 +680,7 @@ pub fn project_within(
         travel,
         class_roles,
         gaps: context.gaps.into_iter().collect(),
+        expanded: Some(expanded),
     };
     projection.validate()?;
     Ok(projection)

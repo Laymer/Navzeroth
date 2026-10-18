@@ -44,3 +44,7 @@ pub mod source_pipeline;
 pub mod strict_json;
 
 pub mod local_data_inputs;
+
+pub mod local_data_gameplay;
+
+pub mod local_data_guide;

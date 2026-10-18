@@ -61,7 +61,12 @@ fn main() {
     // records (including the core record types, validation and slot mapping).
     let mut projector = Sha256::new();
     projector.update(b"NAVZEROTH-LOCAL-PROJECTOR-V1\0");
-    for source in ["src/projection.rs", "../core/src/local_data_projection.rs"] {
+    for source in [
+        "src/projection.rs",
+        "src/gameplay.rs",
+        "../core/src/local_data_projection.rs",
+        "../core/src/local_data_gameplay.rs",
+    ] {
         println!("cargo:rerun-if-changed={source}");
         let text = fs::read_to_string(source).unwrap().replace("\r\n", "\n");
         projector.update((source.len() as u64).to_le_bytes());

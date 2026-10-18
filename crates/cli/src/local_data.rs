@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -45,6 +45,8 @@ pub fn run(args: &[OsString]) -> ExitCode {
         return usage();
     };
     let allowed: &[&str] = match command {
+        "guide-facts-build" => &["--destination", "--projection", "--inputs", "--preset"],
+        "guide-facts-verify" => &["--destination", "--guide-facts"],
         "cache-stage" | "cache-stage-fixture" | "observation-stage" => &[
             "--destination",
             "--catalog",
@@ -96,6 +98,9 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if matches!(command, "guide-facts-build" | "guide-facts-verify") {
+        return guide_facts_command(command, &options);
     }
     if matches!(
         command,
@@ -507,4 +512,47 @@ fn input_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
         serde_json::to_value(staged).map_err(|_| "Cannot encode input report")
     })();
     emit(result)
+}
+
+fn guide_facts_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    emit((|| {
+        let destination = Path::new(
+            options
+                .get("--destination")
+                .ok_or("Missing private destination")?,
+        );
+        if command == "guide-facts-verify" {
+            let digest = options
+                .get("--guide-facts")
+                .and_then(|s| s.to_str())
+                .ok_or("Missing guide facts digest")?;
+            return serde_json::to_value(azeroth_local_data::guide_facts::verify(
+                destination,
+                digest,
+            )?)
+            .map_err(|_| "Cannot encode guide facts verification");
+        }
+        let projection = options
+            .get("--projection")
+            .and_then(|s| s.to_str())
+            .ok_or("Missing projection digest")?;
+        let mut inputs = match options.get("--inputs") {
+            Some(value) => value
+                .to_str()
+                .ok_or("Invalid observation input digests")?
+                .split(',')
+                .map(str::to_owned)
+                .collect::<Vec<_>>(),
+            None => vec![],
+        };
+        inputs.sort();
+        let preset = preset(options.get("--preset")).ok_or("Invalid preset")?;
+        serde_json::to_value(azeroth_local_data::guide_facts::build(
+            destination,
+            projection,
+            &inputs,
+            preset,
+        )?)
+        .map_err(|_| "Cannot encode guide facts report")
+    })())
 }

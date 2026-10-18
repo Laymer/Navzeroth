@@ -1291,3 +1291,30 @@ fn level_requires_and_completewith_tags_are_effective_or_unsupported() {
     );
     assert!(has(&quest, Check::StepTag, Status::Unsupported));
 }
+#[test]
+fn research_facts_are_versioned_and_never_turn_a_clean_replay_into_evidence() {
+    let text = facts_json("")
+        .replace("\"version\":1", "\"version\":2")
+        .replace("local_observation", "unverified_research");
+    let facts = JsonFacts::parse(text.as_bytes()).unwrap();
+    assert_eq!(facts.origin, FactOrigin::UnverifiedResearch);
+    let file = rxp::parse(guide("step\n    .zone Test Vale").as_bytes()).unwrap();
+    let report = rxp_verify::verify(
+        &file,
+        &world(),
+        HUMAN_WARRIOR,
+        Some(FactOrigin::UnverifiedResearch),
+    );
+    assert!(report.replay_clean);
+    assert!(!report.facts_are_evidence && !report.passes);
+    assert_eq!(report.version, 2);
+    for version in [1, 3] {
+        assert!(
+            JsonFacts::parse(
+                text.replace("\"version\":2", &format!("\"version\":{version}"))
+                    .as_bytes()
+            )
+            .is_err()
+        );
+    }
+}

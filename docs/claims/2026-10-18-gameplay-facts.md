@@ -23,4 +23,5 @@ source/layout/profile/tuple substitutions; old projection readers; bounded joins
 observed turn-in eligibility/prerequisite regression; deterministic artifacts and
 CLI verification; Rust workspace/affected desktop checks and independent review.
 Private guide designs remain local comparison inputs, never executed or admitted
-by ownership alone. Real-cache verification remains the operator-deferred TODO.
+by ownership alone. The later operator window completed native read-only capture and pure parsing;
+native Rust cache-stage end-to-end remains an explicit TODO.
