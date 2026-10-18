@@ -2,6 +2,12 @@
 
 Updated: 2026-10-18.
 
+Independent correction active: Codex `/root`, `fix/browser-demo-version`, baseline
+`9d046b7`: browser demo application status now uses package metadata instead of
+0.6.0. [Claim](claims/2026-10-18-browser-demo-version.md),
+[handoff](handoffs/2026-10-18-browser-demo-version.md). Review and exact-head
+checks precede integration; no release/acceptance state changes.
+
 Independent UI correction active: Codex `/root`, `fix/single-active-help`, baseline
 `8da8301`; [claim](claims/2026-10-18-single-active-help.md),
 [handoff](handoffs/2026-10-18-single-active-help.md). This fixes the competing
