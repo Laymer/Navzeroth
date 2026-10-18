@@ -50,13 +50,13 @@ It never admits a build, edits the repository or affects any release gate.
 
 Issue #183 (baseline run, 2026-10-17) reported `wowf` at 1.60.1.70245: build 70245,
 build config `e8c4ef4e67bd1d94d820254984258fa8`, regions eu, kr, tw, us. Recorded
-on 2026-10-18; the issue is closed as acknowledged.
+on 2026-10-18; closed by this record.
 
 - **Product identity unconfirmed.** That `wowf` is the Forever live product is
   inferred only from its 1.60.1 versions.
 - **Likely a pre-launch placeholder or staging build (inference).** 70245 is lower
-  than every build already used as development input (70374, the former target;
-  70425; 70450; [ADR 0006](../decisions/0006-v1-program.md)). No source we have
+  than 70374 (the former target) and the development inputs 70425 and 70450
+  ([ADR 0006](../decisions/0006-v1-program.md)). No source we have
   says what the build is.
 - **No local inspection.** No client running `wowf` was available, so `local-data
   inspect` was not run against it; the build is unverified.
