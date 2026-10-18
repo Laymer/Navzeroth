@@ -48,3 +48,17 @@ per-file ≥90% verdicts, baseline/final/raw artifacts and required Coverage gat
 without removing any of the nine existing checks. Independent product defects
 receive separate PRs (browser demo version correction: PR #201). Do not publish the
 RC before completing this stage, version/notes, fresh exact-main checks and stability.
+
+The current iteration passes 440 UI tests; its V8 line result is 89.02% overall
+with 12 files below 90%. Overall coverage does not satisfy the per-file gate.
+Six additional Rust boundary tests pass for strict JSON and synthetic partial
+research delivery, activation refusal, opaque guide selections and unavailable
+facts. Eleven coverage-tool tests pass, including independent source hashes,
+forged-summary/raw-report substitutions, missing native evidence and executable
+closure/async inventory classification.
+
+`node scripts/coverage/collect-typescript.mjs /tmp/new-ts-coverage-directory`
+requires clean committed source, pins both V8 packages, records before/after
+source hashes and actual test results, and collects real Vite configuration
+execution separately. Threshold failures remain nonzero and diagnostic receipts
+cannot establish final readiness. Native collectors and the CI gate are pending.

@@ -53,9 +53,16 @@ export function verdict(inventory,receipts,inventorySha){
  const lines=new Map(),seen=new Set(),platforms=new Set();
  for(const receipt of receipts){
   if(receipt.format_version!==1||receipt.source_commit!==inventory.source_commit||receipt.inventory_sha256!==inventorySha)throw new Error('Coverage commit/inventory mismatch');
-  if(receipt.clean_source!==true||receipt.incomplete_profiles?.length)throw new Error('Incomplete or dirty coverage run');
+  if(!['linux','win32'].includes(receipt.platform)||typeof receipt.source_root!=='string'||!(/^(?:[A-Za-z]:[\\/]|\/)/.test(receipt.source_root)))throw new Error('Invalid native coverage platform/root');
+  if(receipt.tests_passed!==true||receipt.clean_source!==true||!Array.isArray(receipt.incomplete_profiles)||receipt.incomplete_profiles.length)throw new Error('Incomplete or dirty coverage run');
   if(receipt.kind==='rust-llvm'){
    if(receipt.tool_version!=='0.9.1'||receipt.rust_llvm_version!==receipt.llvm_tools_version||!receipt.rust_llvm_version)throw new Error('Unpinned or mismatched Rust coverage tools');
+   if(!receipt.files.some(file=>file.lines?.some(([line,count])=>Number.isSafeInteger(line)&&Number.isSafeInteger(count)&&count>0)))throw new Error('Native report has no executable first-party evidence');
+   const entrypoints=receipt.platform==='win32'?['crates/cli/src/main.rs','apps/desktop/src-tauri/src/main.rs']:['crates/cli/src/main.rs'];
+   for(const required of entrypoints){
+    const declared=indexed.get(required);
+    if(declared?.disposition==='eligible'&&!receipt.files.some(file=>file.path===required&&file.lines?.some(([line,count])=>count>0&&!declared.test_line_ranges.some(([start,end])=>line>=start&&line<=end))))throw new Error('Native entrypoint has no execution evidence: '+required);
+   }
    platforms.add(receipt.platform);
   }else if(['typescript-v8','typescript-config-v8'].includes(receipt.kind)){
    if(receipt.tool_version!=='5.0.3')throw new Error('Unpinned TypeScript coverage tools');
@@ -101,7 +108,8 @@ export function normalizeRaw(records,receipt,inventory){
   const entry=known.get(receipt.platform==='win32'?rel.toLowerCase():rel);
   if(!entry){if(rel.split('/').some(p=>['target','node_modules','vendor'].includes(p)))continue;throw new Error('Source missing from inventory');}
   if(entry.disposition==='excluded')continue;
-  result.push({path:entry.path,source_sha256:entry.source_sha256,lines:record.lines});
+  if(!receipt.source_hashes || !Object.hasOwn(receipt.source_hashes,entry.path))throw new Error('Missing independent collector source hash');
+  result.push({path:entry.path,source_sha256:receipt.source_hashes[entry.path],lines:record.lines});
  }
  return result;
 }
@@ -121,6 +129,8 @@ export function runGate(inventoryFile,receiptFiles,output){
    if(hash(bytes)!==report.sha256)throw new Error('Missing/altered raw coverage report');
    if(report.format==='lcov' && receipt.kind==='rust-llvm')records.push(...lcovLines(bytes.toString()));
    else if(report.format==='istanbul' && ['typescript-v8','typescript-config-v8'].includes(receipt.kind))records.push(...istanbulLines(JSON.parse(bytes)));
+   else if(report.format==='v8'&&receipt.kind==='typescript-config-v8'){if(!Array.isArray(JSON.parse(bytes).result))throw new Error('Missing raw V8 scripts');}
+   else if(report.format==='test-results'&&receipt.kind==='typescript-v8'){const tests=JSON.parse(bytes);if(tests.numFailedTests!==0||tests.numFailedTestSuites!==0||!(tests.numTotalTests>0))throw new Error('TypeScript tests failed');}
    else throw new Error('Unexpected raw coverage format');
   }
   // Reconstruct counts from raw reports; never trust a claimed per-file summary.

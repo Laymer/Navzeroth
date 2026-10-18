@@ -14,6 +14,9 @@ test('only exact cfg(test) item ranges are excluded; production condition remain
  assert.deepEqual(rustTestRanges('fn production(){} #[cfg(test)] mod tests { fn test(){} }'),[]);
  assert.equal(declarationOnlyRust('declare_runtime!();'),false);
  assert.equal(declarationOnlyRust('pub const fn compute()->u32{1}'),false);
+ assert.equal(declarationOnlyRust('pub static VALUE: LazyLock<u32> = LazyLock::new(|| compute());'),false);
+ assert.equal(declarationOnlyRust('pub const VALUE: LazyLock<u32> = LazyLock::new(|x| x);'),false);
+ assert.equal(declarationOnlyRust('pub const FUTURE: _ = async { work(); };'),false);
 });
 test('TypeScript declarations are reported without executable lines, unloaded behavior stays eligible',()=>{
  assert.equal(declarationOnlyTs('import type {Thing} from "x"; export interface A {zero:0} export type B = false;'),true);

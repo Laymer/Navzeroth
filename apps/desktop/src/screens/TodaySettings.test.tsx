@@ -29,3 +29,23 @@ function importAdapter(saved:()=>unknown, calls:string[]):CommandAdapter {const 
 it("saved export choice is fetched explicitly and applies inputs without file side effects",async()=>{const calls:string[]=[];const client=createClient(importAdapter(()=>({revision:1,settings:{...defaultSettings(),selected_export:{path:"/explicit/local/export.lua",format:{kind:"saved_variables",global:"AzerothNavigatorDB",key:"snapshot_export"}}}}),calls));render(<ImportScreen client={client} onChanged={()=>{}}/>);await screen.findByText("No stored profiles yet.");expect(calls).not.toContain("get_app_settings");fireEvent.click(screen.getByRole("button",{name:"Use saved export-file choice"}));await screen.findByDisplayValue("/explicit/local/export.lua");expect(screen.getByLabelText("SavedVariables global")).toHaveValue("AzerothNavigatorDB");expect(screen.getByLabelText("Snapshot export key")).toHaveValue("snapshot_export");expect(calls.filter(c=>c==="get_app_settings")).toHaveLength(1);expect(calls).not.toContain("import_snapshot_file");expect(calls).not.toContain("start_snapshot_watch");expect(calls).not.toContain("set_reference_window");expect(screen.getByText("File watching is off.")).toBeVisible();});
 it("late saved-file response cannot overwrite a manually edited path",async()=>{const load=deferred<unknown>();const client=createClient(importAdapter(()=>load.promise,[]));render(<ImportScreen client={client} onChanged={()=>{}}/>);await screen.findByText("No stored profiles yet.");fireEvent.click(screen.getByRole("button",{name:"Use saved export-file choice"}));fireEvent.change(screen.getByLabelText("Export file path"),{target:{value:"/manual/new-choice"}});await act(async()=>load.resolve({revision:1,settings:{...defaultSettings(),selected_export:{path:"/old/private-path",format:{kind:"anav1_text"}}}}));expect(screen.getByLabelText("Export file path")).toHaveValue("/manual/new-choice");expect(screen.queryByDisplayValue("/old/private-path")).toBeNull();});
 it("late saved-file response cannot leak an old client's path",async()=>{const load=deferred<unknown>();const a=createClient(importAdapter(()=>load.promise,[]));const b=createClient(importAdapter(()=>({revision:0,settings:defaultSettings()}),[]));const ui=render(<ImportScreen client={a} onChanged={()=>{}}/>);await screen.findByText("No stored profiles yet.");fireEvent.click(screen.getByRole("button",{name:"Use saved export-file choice"}));ui.rerender(<ImportScreen client={b} onChanged={()=>{}}/>);await act(async()=>load.resolve({revision:1,settings:{...defaultSettings(),selected_export:{path:"/old/client-secret",format:{kind:"anav1_text"}}}}));expect(screen.getByLabelText("Export file path")).toHaveValue("");expect(screen.queryByDisplayValue("/old/client-secret")).toBeNull();});
+it('saved-plan lineage remains visible while historical advice exposes no next action',()=>{
+ render(<SavedPlanCard plan={{...empty,state:'historical',input_snapshots:[{profile_id:'profile-a',snapshot_id:'snapshot-before-update'}]}}/>);
+ fireEvent.click(screen.getByText('Imported inputs used'));
+ expect(screen.getByText('profile-a: snapshot snapshot-before-update.')).toBeVisible();
+ expect(screen.queryByText(/Next action:/)).toBeNull();
+});
+it('Today clears the exact saved revision then rereads the empty state',async()=>{
+ let reads=0;const clear=vi.fn(()=>2);
+ const client=createClient(adapter({get_today_view:()=>reads++===0?{...today(),current_plan:{...empty,state:'historical'}}:today(),clear_current_plan:clear}));
+ render(<TodayScreen client={client}/>);await screen.findByText(/Historical saved advice/);
+ fireEvent.click(screen.getByRole('button',{name:'Clear saved plan'}));
+ await screen.findByText(/No session plan selected/);expect(clear).toHaveBeenCalledWith({expected_revision:1});expect(reads).toBe(2);
+ expect(screen.getByRole('button',{name:'Clear saved plan'})).toBeDisabled();
+});
+it('Today refuses to keep an actionable view after a clear CAS error',async()=>{
+ const client=createClient(adapter({get_today_view:()=>({...today(),current_plan:{...empty,state:'historical'}}),clear_current_plan:()=>{throw {code:'INVALID_INPUT',message:'Saved plan changed',retryable:false};}}));
+ render(<TodayScreen client={client}/>);await screen.findByText(/Historical saved advice/);
+ fireEvent.click(screen.getByRole('button',{name:'Clear saved plan'}));await screen.findByRole('alert');
+ expect(screen.queryByText(/Historical saved advice/)).toBeNull();expect(screen.queryByText(/Next action:/)).toBeNull();
+});

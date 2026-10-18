@@ -53,7 +53,7 @@ export function declarationOnlyRust(text) {
  const tokens=rustTokens(stripped);
  // Conservative: function/implementation/macro bodies always require a report.
  // Constant/type/module/re-export declarations alone have no executable lines.
- return !tokens.some((t,i)=>t.value==='fn'||t.value==='impl'||t.value==='macro_rules'||(tokens[i+1]?.value==='!'&&/^[A-Za-z_]/.test(t.value)));
+ return !tokens.some((t,i)=>t.value==='fn'||t.value==='impl'||t.value==='async'||t.value==='|'||t.value==='macro_rules'||(tokens[i+1]?.value==='!'&&/^[A-Za-z_]/.test(t.value)));
 }
 export function declarationOnlyTs(text,file='file.ts') {
  const source=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true,file.endsWith('.tsx')?ts.ScriptKind.TSX:ts.ScriptKind.TS);

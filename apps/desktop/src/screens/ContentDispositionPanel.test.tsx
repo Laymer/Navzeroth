@@ -12,3 +12,18 @@ it("requires explicit confirmation and sends full CAS identity before restrictio
 it("revoked is terminal in UI and never activated by a release action",async()=>{const {client,change}=setup();client.getContentDispositions.mockResolvedValue({ok:true,value:{...initial,revisions:[{...first,state:"revoked"}]}});render(<ContentDispositionPanel client={client} profileId="one" refreshKey={0} disabled={false} onChanged={vi.fn()} onBusyChange={vi.fn()}/>);await screen.findByText(/Eligibility: revoked/);for(const name of ["Quarantine selected revision","Permanently revoke selected revision","Release quarantine without activating"]){expect(screen.getByRole("button",{name})).toBeDisabled();}expect(change).not.toHaveBeenCalled();});
 it("stale decision error invalidates actionable guard and shows no raw backend message",async()=>{const {client,change}=setup();change.mockResolvedValue({ok:false,error:{code:"INVALID_INPUT",message:"private-source-account",retryable:false}});render(<ContentDispositionPanel client={client} profileId="one" refreshKey={0} disabled={false} onChanged={vi.fn()} onBusyChange={vi.fn()}/>);await screen.findByLabelText("Stored revision");fireEvent.click(screen.getByRole("checkbox"));fireEvent.click(screen.getByRole("button",{name:"Permanently revoke selected revision"}));await screen.findByText(/Content decision unavailable: INVALID_INPUT/);expect(screen.queryByText(/private-source/)).toBeNull();expect(screen.queryByLabelText("Stored revision")).toBeNull();});
 it("late old profile list cannot supply decisions for new profile",async()=>{let finish:((r:Result<ContentGovernance>)=>void)|undefined;const {client}=setup();client.getContentDispositions.mockImplementationOnce(()=>new Promise(resolve=>finish=resolve));const props={client,refreshKey:0,disabled:false,onChanged:vi.fn(),onBusyChange:vi.fn()};const view=render(<ContentDispositionPanel {...props} profileId="old"/>);view.rerender(<ContentDispositionPanel {...props} profileId="new"/>);await screen.findByLabelText("Stored revision");await act(async()=>finish?.({ok:true,value:{...initial,revisions:[{...first,key:{scope,revision:"old-only"}}]}}));expect(screen.queryByRole("option",{name:/old-only/})).toBeNull();expect(client.getContentDispositions).toHaveBeenCalledWith("new");await waitFor(()=>expect(screen.getByRole("option",{name:/demo-r1/})).toBeInTheDocument());});
+it('releases only the confirmed quarantine identity and refreshes without activating content',async()=>{
+ const {client,change}=setup();let calls=0;
+ client.getContentDispositions.mockImplementation(async()=>({ok:true,value:{...initial,active:null,revisions:[{...first,state:calls++<2?'quarantined':'eligible'}]}}));
+ render(<ContentDispositionPanel client={client} profileId="one" refreshKey={0} disabled={false} onChanged={vi.fn()} onBusyChange={vi.fn()}/>);
+ await screen.findByText(/Eligibility: quarantined/);
+ fireEvent.click(screen.getByRole('button',{name:'Refresh eligibility'}));
+ await vi.waitFor(()=>expect(client.getContentDispositions).toHaveBeenCalledTimes(2));
+ fireEvent.click(await screen.findByRole('checkbox'));
+ fireEvent.click(screen.getByRole('button',{name:'Release quarantine without activating'}));
+ await vi.waitFor(()=>expect(change).toHaveBeenCalledOnce());
+ const request=JSON.parse(change.mock.calls[0]?.[0]??'null');
+ expect(request.mutation.state).toBe('eligible');expect(request.mutation.reason_code).toBe('operator_review');expect(request.mutation.guard.state).toBe('quarantined');
+ await screen.findByText(/Eligibility: eligible/);
+ expect(screen.getByRole('button',{name:'Release quarantine without activating'})).toBeDisabled();
+});
