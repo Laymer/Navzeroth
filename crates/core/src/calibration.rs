@@ -121,6 +121,7 @@ pub fn calibrate(
     let mut seen = std::collections::BTreeSet::new();
     for sample in samples {
         let document = crate::sessions::SessionDocument {
+            locale: None,
             format: "anav-session-events".into(),
             version: 1,
             fixture: sample.fixture,

@@ -20,6 +20,10 @@ PR #188 (authored slice, including Windows path fixes), #189 (observed `wowf`
 70245, not admitted), and #190 (70450 addon development admission) are merged.
 V2.4 is implemented with explicit fact gaps; it is not accepted slice content.
 
+- [ ] Operator-deferred real-cache verification: explicitly select cache files and
+  repeat exact-build/locale checks only after WoW closes. The owner chose synthetic
+  fixtures on 2026-10-18 so they can continue playing; do not read mutable caches.
+
 The continuation order is: policy reconciliation; durable extraction lifecycle;
 cache/hotfix/observations; gameplay projections and guide facts; media/tooltips;
 versioned delivery and guarded consumers; guides and exact inventory; desktop and
@@ -27,9 +31,12 @@ installer; performance/materials; substantial review/test/CI; development versio
 and publication; Pages redesign. Each is a separate independently reviewed PR.
 See ADR 0006 §13 for the early development RC policy. None is a stable gate pass.
 
-Active: continuation 2, durable extraction lifecycle; Codex `/root`, baseline
-`167a454`, [claim](docs/claims/2026-10-18-extraction-lifecycle.md),
-[handoff](docs/handoffs/2026-10-18-extraction-lifecycle.md).
+Continuation 2 merged as PR #192 at `1cb6bb9`, with independent review, all nine
+exact-head checks, source workflow and a successful private real-client lifecycle
+comparison. [Handoff/receipt](docs/handoffs/2026-10-18-extraction-lifecycle.md).
+Active: continuation 3, selected cache/hotfix/observation inputs; Codex `/root`,
+[claim](docs/claims/2026-10-18-local-inputs.md),
+[handoff](docs/handoffs/2026-10-18-local-inputs.md).
 Later input adapters, expanded projections, media, guarded gameplay consumers,
 reviewed inventory, performance, coverage, publication and Pages remain pending.
 

@@ -55,6 +55,40 @@ impl LocalDataService {
         }
         azeroth_local_data::checked_path(&self.root).map_err(error)
     }
+    /// Explicit file selection only. Cache reads always use the native closed-game
+    /// guard; synthetic cache staging is intentionally absent from desktop commands.
+    pub fn stage_input(
+        &self,
+        catalog: &str,
+        path: &Path,
+        kind: azeroth_core::local_data_inputs::InputKind,
+        locale: &str,
+        preset: PerformancePreset,
+    ) -> Result<azeroth_local_data::inputs::StagedInput> {
+        let root = self.store()?;
+        if kind.cache_filename().is_some() {
+            azeroth_local_data::inputs::stage_cache(&root, catalog, path, kind, locale, preset)
+        } else {
+            azeroth_local_data::inputs::stage_observation(
+                &root, catalog, path, kind, locale, preset,
+            )
+        }
+        .map_err(error)
+    }
+    pub fn verify_input(
+        &self,
+        digest: &str,
+    ) -> Result<azeroth_core::local_data_inputs::ResearchInput> {
+        azeroth_local_data::inputs::verify(&self.store()?, digest).map_err(error)
+    }
+    pub fn input_page(
+        &self,
+        digest: &str,
+        offset: u32,
+        limit: u32,
+    ) -> Result<azeroth_local_data::inputs::CachePage> {
+        azeroth_local_data::inputs::cache_page(&self.store()?, digest, offset, limit).map_err(error)
+    }
     pub fn select(&self, path: &Path) -> Result<SelectionView> {
         lifecycle::select(
             &self.store()?,

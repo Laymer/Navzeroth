@@ -862,8 +862,16 @@ function Diagnostics.attach(env)
           'session_sequence_invalid')
       end
       sequence = sequence + 1
+      local locale
+      local localeOk, localeValue=pcall(function()
+        if type(env.GetLocale)~='function' then return nil end
+        local value=env.GetLocale()
+        if type(value)=='string' and ({enUS=true,enGB=true,deDE=true,esES=true,esMX=true,frFR=true,
+          itIT=true,koKR=true,ptBR=true,ruRU=true,zhCN=true,zhTW=true})[value] then return value end
+      end)
+      if localeOk then locale=localeValue end
       result, code = recorder:start({session='recording-' .. profile .. '-' .. sequence,
-        character=profile, fixture=false, context={namespace='reference',
+        character=profile, fixture=false, locale=locale, context={namespace='reference',
           build={edition=Version.edition, build=build.version .. '.' .. build.build,
             interface=build.interface}}})
       if result then

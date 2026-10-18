@@ -151,6 +151,9 @@ pub struct SessionBatch {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SessionDocument {
+    /// Version 2 records the addon UI/content locale; version 1 remains readable.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub locale: Option<Locale>,
     pub format: String,
     pub version: u32,
     pub fixture: bool,
@@ -161,8 +164,30 @@ impl SessionDocument {
     /// Enforce the same distinction between captured and synthetic observations
     /// as exchange envelopes, without registering a new exchange kind.
     pub fn validate_identity(&self) -> Result<()> {
-        if self.format != "anav-session-events" || self.version != 1 {
+        if self.format != "anav-session-events" || !matches!(self.version, 1 | 2) {
             return Err(invalid("Unsupported session document format or version"));
+        }
+        if (self.version == 1 && self.locale.is_some())
+            || (self.version == 2
+                && !self.locale.as_ref().is_some_and(|v| {
+                    matches!(
+                        v.as_str(),
+                        "enUS"
+                            | "enGB"
+                            | "deDE"
+                            | "esES"
+                            | "esMX"
+                            | "frFR"
+                            | "itIT"
+                            | "koKR"
+                            | "ptBR"
+                            | "ruRU"
+                            | "zhCN"
+                            | "zhTW"
+                    )
+                }))
+        {
+            return Err(invalid("Session version and recorded locale disagree"));
         }
         if self.batch.context.namespace == DatasetNamespace::Demo && !self.fixture
             || self.batch.events.is_empty()
