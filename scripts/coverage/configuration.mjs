@@ -14,6 +14,20 @@ const ts=require('typescript');
 const coverageRequire=createRequire(require.resolve('@vitest/coverage-v8'));
 const {convert}=await import(pathToFileURL(coverageRequire.resolve('ast-v8-to-istanbul')).href);
 const {parseAstAsync}=await import(pathToFileURL(require.resolve('vite')).href);
+// The pinned converter visits statement/declaration initializers but omits an
+// ExportDefaultDeclaration whose declaration is an expression. Present that same
+// expression as a statement, retaining its original offsets and source map. Hits
+// still come exclusively from the actual V8 ranges, including zero-count ranges.
+export async function convertConfigurationScript(script,input){
+ const ast=await parseAstAsync(input.code);
+ for(let i=0;i<ast.body.length;i++){
+  const node=ast.body[i];
+  if(node.type==='ExportDefaultDeclaration' && !['FunctionDeclaration','ClassDeclaration'].includes(node.declaration.type)){
+   ast.body[i]={type:'ExpressionStatement',start:node.declaration.start,end:node.declaration.end,expression:node.declaration};
+  }
+ }
+ return convert({code:input.code,sourceMap:input.sourceMap,coverage:script,ast});
+}
 export async function collectConfiguration(destination){
  if(fs.existsSync(destination))throw new Error('Configuration coverage output already exists');
  const files=new Set(['vite.config.ts','csp.ts'].map(name=>pathToFileURL(path.join(desktop,name)).href));
@@ -39,7 +53,7 @@ export async function collectConfiguration(destination){
  const scripts=result.result.filter(script=>files.has(script.url));
  if(scripts.length!==files.size || compiled.size!==files.size)throw new Error('Missing configuration V8 entry');
  let istanbul={};
- for(const script of scripts){const input=compiled.get(script.url);Object.assign(istanbul,await convert({code:input.code,sourceMap:input.sourceMap,coverage:script,ast:parseAstAsync(input.code)}));}
+ for(const script of scripts){const input=compiled.get(script.url);Object.assign(istanbul,await convertConfigurationScript(script,input));}
  const receipt={format_version:1,source_commit:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),node:process.version,collector:'node:inspector precise V8 + pinned Vitest dependency ast-v8-to-istanbul',files:[...compiled].map(([url,input])=>({path:path.relative(root,fileURLToPath(url)).split(path.sep).join('/'),source_sha256:input.source_sha256}))};
  fs.mkdirSync(destination);
  for(const [name,data] of Object.entries({'configuration-v8.json':{result:scripts,compiled:Object.fromEntries(compiled)},'configuration-istanbul.json':istanbul,'configuration-receipt.json':receipt}))fs.writeFileSync(path.join(destination,name),JSON.stringify(data,null,2)+'\n',{flag:'wx'});

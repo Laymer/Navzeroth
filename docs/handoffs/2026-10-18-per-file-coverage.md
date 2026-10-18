@@ -23,7 +23,8 @@ Actual current checks:
   unavailable totals/completeness, activation refusal preservation, opaque guide
   selections and invalid material kinds. No client/private source was imported.
 - Configuration instrumentation was exercised separately; the combined clean-source
-  TypeScript collector awaits its first run after this commit.
+  TypeScript collector subsequently ran at `4435865`: 440 tests passed and
+  threshold failure was preserved with exit 1 and raw/hash-bound receipts.
 
 Independent interim reviews found and resolved source-hash/empty-native-receipt
 and closure-inventory defects. Final collector/CI/test-quality review is pending.
@@ -36,3 +37,13 @@ diagnose strict subprocess profiling, implement Linux/Windows collectors includi
 build scripts/examples and bounded Tauri execution, and add required Coverage gate
 while retaining all nine checks. At least 90% per eligible file is mandatory.
 Version/notes, stability, verified development RC and Pages follow afterward.
+
+Further verification: 58 focused gear/party UI tests pass, including uncertainty
+reason mappings, disjoint ranking outcomes, paging, captured empty/matched/gaps,
+unknown acquisition models and catalog failures. Typecheck/lint pass. Twelve
+coverage-tool tests pass. The clean-source collector exposed a converter omission:
+its pinned AST converter emits no statement for an export-default expression.
+The collector now presents that expression with unchanged offsets/source maps as
+an expression statement. A regression executes the actual configuration, requires
+nonempty measured statements, then verifies all-zero V8 counts remain zero. This
+adds executable accounting; it does not synthesize hits or exclude source.

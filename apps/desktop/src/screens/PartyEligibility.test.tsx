@@ -43,3 +43,15 @@ it("clears prior advice when the active revision changes and evaluation fails", 
 it("keeps alternative catch-up choices distinct from requirements that all apply", () => {
   expect(describeCatchUp({ kind: "one_of", alternatives: [{ kind: "single", requirement: { kind: "level", level: 23 } }, { kind: "single", requirement: { kind: "quest", quest: "q", state: "turned_in" } }] })).toBe("Choose an alternative: Reach level 23; Quest q: turned in");
 });
+
+it("reports failed catalog reads without evaluating or retaining advice", async () => {
+  const calls:string[]=[];
+  const adapter:CommandAdapter={invoke(command){calls.push(command);return Promise.reject({code:"STORAGE_ERROR",message:"Snapshot unavailable",retryable:true});}};
+  render(<PartyEligibility client={createClient(adapter)} partyId="duo" refreshKey={0}/>);
+  expect(await screen.findByRole("alert")).toHaveTextContent("Snapshot unavailable");
+  expect(calls).toEqual(["get_party_quests"]);
+  expect(screen.queryByText(/All participants meet/)).toBeNull();
+});
+it("explains conjunctions without collapsing the alternative branch or generic conditions", () => {
+  expect(describeCatchUp({kind:"all_of",items:[{kind:"single",requirement:{kind:"level",level:25}},{kind:"single",requirement:{kind:"other"}}]})).toBe("All required: Reach level 25; Satisfy another condition");
+});
