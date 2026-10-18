@@ -11,7 +11,10 @@ writer, isolated branch `feat/continuation-local-inputs`; initial baseline
 [handoff](handoffs/2026-10-18-local-inputs.md). Supported envelope formats,
 unsupported dispositions, private lineage, native closed-game boundary and
 compatible session locale extension are in [LOCAL_INPUTS](data/LOCAL_INPUTS.md).
-The owner deferred real-cache verification while playing; it remains a TODO.
+After initially deferring while playing, the owner closed WoW: native capture and
+pure parsing passed for the actual 70450 XFTH v9 envelope; three WDB layouts stayed
+unsupported. [Receipt](handoffs/2026-10-18-cache-development-check.md). Native Rust
+staging/refusal checks and live addon locale remain TODOs.
 
 Continuation 1 merged as PR #191 at `167a454`. Continuation 2 merged as
 [PR #192](https://github.com/Laymer/Navzeroth/pull/192) at `1cb6bb9` after independent

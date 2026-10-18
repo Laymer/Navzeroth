@@ -25,10 +25,13 @@ is directory evidence, never an embedded-header claim. Source edition/interface
 is retained in addon analysis; product-to-edition applicability stays unverified.
 A turn-in cannot establish universal prerequisites or eligibility.
 
-Operator chose synthetic fixtures while playing. Real selected-cache verification
-is a TODO in the root tracker; no installed mutable cache was read. Native Windows
-closed-game/write-sharing behavior and live addon locale behavior remain unverified
-until their specific checks complete. This is separate from hosted synthetic CI.
+The operator initially chose synthetic fixtures while playing, then closed WoW
+and authorized a bounded native capture. [Actual development receipt](2026-10-18-cache-development-check.md):
+70450/enUS XFTH v9 parsed with 48,301 envelope records; three WDB layouts explicitly
+unsupported; private copies removed. This tested native PowerShell capture plus
+Linux pure Rust parsing, not the native Rust staging path. Native Rust end-to-end,
+closed-game/write-sharing refusals and live addon locale remain unverified TODOs,
+separate from hosted synthetic CI.
 Desktop presentation follows in continuation 8; staged inputs cannot grant gameplay
 availability or alter an active catalog.
 
@@ -59,3 +62,6 @@ Hosted exact-head checks remain required before merge.
 Continuation 4: complete reviewed gameplay mappings and guide facts using verified
 projections and separate permitted observation evidence. Keep unknown applicability
 and unsupported payload semantics explicit. Media/tooltips follow it.
+
+Subsequent exact-head hosted results and merge receipt are recorded in
+[PR #193](https://github.com/Laymer/Navzeroth/pull/193); pending checks are not passes.

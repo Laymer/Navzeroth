@@ -25,3 +25,7 @@ observation adapter second; request read-only independent review before merge.
 Operator decision: use synthetic cache fixtures only for this continuation while
 playing. TODO: explicitly select real cache files and repeat verification after
 the operator closes the game. Do not read mutable caches during this session.
+
+The operator subsequently closed WoW and authorized a bounded native cache capture.
+The [development check](../handoffs/2026-10-18-cache-development-check.md) records
+actual results and cleanup, preserving native Rust staging/live acceptance TODOs.
