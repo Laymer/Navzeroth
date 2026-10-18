@@ -422,3 +422,26 @@ fn decoded_cell_capacity_is_exactly_four_million() {
         "decoded_cell_capacity"
     );
 }
+
+#[test]
+fn finite_float_cells_decode_but_nonfinite_payloads_are_refused() {
+    let definition = definition("float Value", "Value");
+    for value in [1.25f32, f32::INFINITY, f32::NEG_INFINITY, f32::NAN] {
+        let bytes = fixture(
+            &[field(32, 0)],
+            &value.to_le_bytes(),
+            1,
+            &[],
+            &[],
+            &[],
+            false,
+        );
+        let decoded = tables::decode(&bytes, &definition);
+        if value.is_finite() {
+            let table = decoded.unwrap();
+            assert_eq!(table.rows[0].fields["Value"], Cell::Float(1.25));
+        } else {
+            assert_eq!(decoded.unwrap_err(), "nonfinite_table_float");
+        }
+    }
+}

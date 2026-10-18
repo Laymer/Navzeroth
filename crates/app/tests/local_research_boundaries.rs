@@ -244,3 +244,62 @@ fn selected_guide_is_inert_bounded_and_cannot_establish_duo_eligibility() {
         .is_err()
     );
 }
+
+#[test]
+fn direct_research_services_keep_empty_catalog_and_bad_identity_boundaries() {
+    use azeroth_core::local_data_inputs::InputKind;
+    let f = Fixture::new();
+    let app = f.app();
+    let delivery = app.prepare_delivery(&f.catalog, "enUS").unwrap();
+    let manifest = app.delivery_manifest(&delivery).unwrap();
+    let facts = app
+        .build_guide_facts(&manifest.projection_sha256, &[], PerformancePreset::Small)
+        .unwrap();
+    let verified = app.verify_guide_facts(&facts.guide_facts_sha256).unwrap();
+    assert!(!verified.verified_for_planning);
+    let page = app.inventory(&f.catalog, 0, 200).unwrap();
+    assert_eq!(page.total, 0);
+    assert!(page.rows.is_empty());
+    assert!(app.inventory(&f.catalog, 1, 200).is_err());
+    assert!(app.inventory(&f.catalog, 0, 0).is_err());
+    assert!(app.media_page("invalid", 0, 200).is_err());
+    assert!(app.media_display_page("invalid", 0, 200).is_err());
+    assert!(app.verify_input("invalid").is_err());
+    assert!(app.input_page("invalid", 0, 200).is_err());
+    assert!(
+        app.stage_input(
+            &f.catalog,
+            &f.root.join("absent"),
+            InputKind::CharacterSnapshot,
+            "enUS",
+            PerformancePreset::Small
+        )
+        .is_err()
+    );
+    assert!(
+        app.stage_input(
+            &f.catalog,
+            &f.root.join("absent"),
+            InputKind::HotfixCache,
+            "enUS",
+            PerformancePreset::Small
+        )
+        .is_err()
+    );
+    assert!(app.jobs().unwrap().is_empty());
+    assert!(app.status("missing").is_err());
+    assert!(app.cancel("missing").is_err());
+    assert!(app.resume("missing").is_err());
+    assert!(app.forget("missing").is_err());
+    let initial = app.active(&f.catalog).unwrap();
+    assert_eq!(initial.generation, 0);
+    assert!(app.activate(&f.catalog, 1, false).is_err());
+    assert_eq!(app.active(&f.catalog).unwrap().generation, 0);
+    let path = format!("/research/{}/{}", "a".repeat(64), "b".repeat(64));
+    assert!(app.research_asset("GET", &path, false).is_none());
+    assert!(app.research_asset("GET", &path, true).is_none());
+    assert!(
+        app.research_asset("GET", &path.replace("/research/", "/foreignx/"), false)
+            .is_none()
+    );
+}

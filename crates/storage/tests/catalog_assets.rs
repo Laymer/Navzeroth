@@ -167,3 +167,35 @@ fn orphan_blob_refuses_recovery_and_staged_catalog_getter_preserves_v2() {
         .unwrap();
     assert!(azeroth_storage::recovery::validate(&store).is_err());
 }
+
+#[test]
+fn repeated_or_empty_supplied_assets_cannot_replace_usable_bundle() {
+    let mut store = SqliteStore::open_in_memory().unwrap();
+    let (revision, assets, request) = bundle();
+    store.stage_content_v2_bundle(&revision, &assets).unwrap();
+    store.activate_content_revision(&revision.key()).unwrap();
+    let duplicate = vec![
+        CatalogAsset {
+            file: assets[0].file.clone(),
+            bytes: assets[0].bytes.clone(),
+        },
+        CatalogAsset {
+            file: assets[0].file.clone(),
+            bytes: assets[0].bytes.clone(),
+        },
+    ];
+    let empty = vec![CatalogAsset {
+        file: assets[0].file.clone(),
+        bytes: vec![],
+    }];
+    for invalid in [duplicate, empty] {
+        assert!(store.stage_content_v2_bundle(&revision, &invalid).is_err());
+        assert_eq!(
+            store
+                .active_catalog_image(&revision.key().scope, &request)
+                .unwrap()
+                .unwrap(),
+            assets[0].bytes
+        );
+    }
+}

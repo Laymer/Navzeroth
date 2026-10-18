@@ -386,3 +386,134 @@ fn bound_media_decodes_supported_bytes_and_keeps_every_native_refusal_explicit()
     // The earlier usable immutable media remains readable after every refusal.
     assert!(crate::media::verify(&request.destination, &revision).is_ok());
 }
+
+#[test]
+fn encrypted_metadata_and_unsupported_plain_headers_keep_partial_lineage() {
+    for (header, disposition) in [
+        ([1, 2, 3, 4], InventoryDisposition::RetainedUnsupported),
+        (*b"WDC5", InventoryDisposition::UnavailableEncrypted),
+    ] {
+        let f = Fixture::new();
+        let result = crate::native::boundary_tests::stage_with_partial_header(header, || {
+            extract_using(&f.request, |_, _| Ok(()), open_staging)
+        })
+        .unwrap();
+        let catalog = verify_catalog(&f.request.destination, &result.catalog_sha256).unwrap();
+        let entry = &catalog.tables[0];
+        assert_eq!(entry.disposition, disposition);
+        assert_eq!(entry.encoded_bytes, Some(8));
+        assert!(entry.decoded_sha256.is_none());
+        let retained = fs::read(
+            f.request
+                .destination
+                .join("objects")
+                .join(entry.retained_sha256.as_ref().unwrap()),
+        )
+        .unwrap();
+        assert!(retained.ends_with(&header));
+        assert!(
+            catalog
+                .gaps
+                .iter()
+                .any(|gap| gap == "Map:unavailable_encrypted_frames:1-1:bytes:4+4")
+        );
+        if disposition == InventoryDisposition::UnavailableEncrypted {
+            assert_eq!(entry.reason, UNAVAILABLE_METADATA);
+        } else {
+            assert!(entry.reason.ends_with(PARTIAL_SUFFIX));
+        }
+        assert_eq!(result.tables_decoded, 0);
+        assert!(!result.activated);
+        assert!(!result.gameplay_projection_available);
+    }
+}
+
+#[test]
+fn changed_build_artifacts_preserve_staging_and_refuse_substitution() {
+    use crate::changes;
+    let f = Fixture::new();
+    let root = &f.request.destination;
+    let current = changes::read_build_identity(&f.request.installation).unwrap();
+    let previous = "0".repeat(64);
+    let selection = "1".repeat(64);
+    crate::lifecycle::index(root)
+        .unwrap()
+        .save_selection(&azeroth_storage::local_data::SavedSelection {
+            selection_id: selection.clone(),
+            installation: f.request.installation.clone(),
+            product: f.request.product.clone(),
+            preset: PerformancePreset::Small,
+        })
+        .unwrap();
+    assert!(
+        changes::stage(
+            root,
+            &f.request.installation,
+            &f.request.product,
+            &selection,
+            &current,
+            &current,
+            PerformancePreset::Small
+        )
+        .is_err()
+    );
+    assert!(
+        changes::stage(
+            root,
+            &f.request.installation,
+            &f.request.product,
+            &selection,
+            &previous,
+            &previous,
+            PerformancePreset::Small
+        )
+        .is_err()
+    );
+    let digest = changes::stage(
+        root,
+        &f.request.installation,
+        &f.request.product,
+        &selection,
+        &previous,
+        &current,
+        PerformancePreset::Small,
+    )
+    .unwrap();
+    let candidate = changes::verify(root, &digest).unwrap();
+    assert!(!candidate.activated);
+    let dir = root.join("changes");
+    fs::write(dir.join(".owned.staging"), b"incomplete").unwrap();
+    let page = changes::artifacts(root, "changes", 0, 1).unwrap();
+    assert_eq!(page.rows.as_slice(), std::slice::from_ref(&digest));
+    assert!(page.staging_present);
+    assert!(!page.integrity_checked);
+    assert!(changes::artifacts(root, "changes", 2, 1).is_err());
+    assert!(changes::artifacts(root, "../changes", 0, 1).is_err());
+    fs::write(dir.join("unexpected"), b"untrusted").unwrap();
+    assert!(changes::artifacts(root, "changes", 0, 1).is_err());
+    fs::remove_file(dir.join("unexpected")).unwrap();
+    fs::create_dir(dir.join("nested")).unwrap();
+    assert!(changes::artifacts(root, "changes", 0, 1).is_err());
+    fs::remove_dir(dir.join("nested")).unwrap();
+    for field in [
+        "format_version",
+        "local_only",
+        "activated",
+        "profile_sha256",
+    ] {
+        let mut altered = serde_json::to_value(&candidate).unwrap();
+        altered[field] = match field {
+            "format_version" => serde_json::json!(2),
+            "local_only" => serde_json::json!(false),
+            "activated" => serde_json::json!(true),
+            _ => serde_json::json!("2".repeat(64)),
+        };
+        let bytes = crate::bounded_json(&altered, 64 * 1024).unwrap();
+        let id = crate::hash(&bytes);
+        fs::write(dir.join(&id), bytes).unwrap();
+        assert!(changes::verify(root, &id).is_err(), "{field}");
+    }
+    fs::write(dir.join(&digest), b"altered").unwrap();
+    assert!(changes::verify(root, &digest).is_err());
+    assert!(changes::verify(root, "invalid").is_err());
+}

@@ -181,3 +181,65 @@ fn v2_restriction_falls_back_to_eligible_v1_and_invalid_stage_preserves_active()
         old.key()
     );
 }
+
+#[test]
+fn v2_conflict_closure_is_preserved_and_invalid_replacements_are_atomic() {
+    use azeroth_core::sources::{ConflictKind, RecordKey, SourceConflict};
+    let mut store = SqliteStore::open_in_memory().unwrap();
+    let mut revision = v2("conflict-closure", 1);
+    let data = &revision.content.reference.payload;
+    let conflict = SourceConflict {
+        key: RecordKey::Item(data.items[0].key.clone()),
+        kind: ConflictKind::CrossEditionRelabel,
+        preferred: data.evidence[0].id.clone(),
+        others: vec![],
+    };
+    revision.conflicts.push(conflict.clone());
+    store.stage_content_v2_revision(&revision).unwrap();
+    store.activate_content_revision(&revision.key()).unwrap();
+    assert_eq!(
+        store
+            .active_content_v2_revision(&revision.key().scope)
+            .unwrap()
+            .unwrap()
+            .conflicts
+            .as_slice(),
+        std::slice::from_ref(&conflict)
+    );
+    let mut variants = Vec::new();
+    let mut empty = conflict.clone();
+    empty.kind = ConflictKind::ValueDisagreement;
+    variants.push(vec![empty]);
+    let mut absent = conflict.clone();
+    absent.preferred = azeroth_core::types::EvidenceId::new("missing-evidence").unwrap();
+    variants.push(vec![absent]);
+    let mut self_reference = conflict.clone();
+    self_reference.others = vec![self_reference.preferred.clone()];
+    variants.push(vec![self_reference]);
+    let mut absent_item = conflict.clone();
+    let RecordKey::Item(ref mut item) = absent_item.key else {
+        unreachable!()
+    };
+    item.item_id = azeroth_core::types::ItemId::new("absent-item").unwrap();
+    variants.push(vec![absent_item]);
+    let mut absent_quest = conflict.clone();
+    absent_quest.key = RecordKey::Quest {
+        context: revision.content.reference.data_context(),
+        quest: azeroth_core::types::QuestId::new("absent-quest").unwrap(),
+    };
+    variants.push(vec![absent_quest]);
+    variants.push(vec![conflict.clone(), conflict]);
+    for conflicts in variants {
+        let mut invalid = revision.clone();
+        invalid.conflicts = conflicts;
+        assert!(store.stage_content_v2_revision(&invalid).is_err());
+        assert_eq!(
+            store
+                .active_content_v2_revision(&revision.key().scope)
+                .unwrap()
+                .unwrap()
+                .conflicts,
+            revision.conflicts
+        );
+    }
+}

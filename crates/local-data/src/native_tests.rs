@@ -297,6 +297,12 @@ pub(crate) fn stage_with_bytes<T>(bytes: Vec<u8>, action: impl FnOnce() -> T) ->
     )
 }
 
+pub(crate) fn stage_with_partial_header<T>(header: [u8; 4], action: impl FnOnce() -> T) -> T {
+    let mut response = partial_response();
+    response.data[..4].copy_from_slice(&header);
+    staging(response, action)
+}
+
 pub(crate) fn stage_with_failure<T>(error: u32, action: impl FnOnce() -> T) -> T {
     staging(
         Response {

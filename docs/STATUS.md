@@ -17,15 +17,14 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
 `test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. TypeScript passes its per-file gate. At `d4707db`, existing CI,
-source parity and Windows packaging passed, and both native collectors completed.
-The combined gate refused Windows module aliases and missing desktop entrypoint
-counters. Path normalization and native return/flush repairs are pushed; fresh
-Windows collection is pending. Reconstruction of the retained reports now emits
-a full failing verdict: zero missing files, 37 Rust files below threshold, with
-missing native-entrypoint evidence explicit. Additional extraction/checkpoint,
-media/ABI, schema and bounded metadata tests pass locally. The 90% per-file
-requirement remains unchanged; this draft cannot merge yet.
+are in progress. TypeScript passes its per-file gate. Both native collectors at
+`b2ff237` retained desktop entry counters, with no missing files or evidence errors;
+the combined gate still failed 34 Rust files below threshold. Subsequent targeted
+expansion is under verification. At `d611fc5`, Windows packaging/WebView2 smoke and
+Linux collection passed; Windows test loading failed. A test-only Common Controls
+manifest is prepared, but new mock IPC compilation first exposed omitted direct
+test dependencies; those are corrected. Fresh hosted execution remains required.
+The 90% per-file requirement remains unchanged; this draft cannot merge yet.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)

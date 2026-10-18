@@ -412,3 +412,23 @@ Clippy, Rust formatting and diff checks pass. New retrieval-publication, recipie
 quest-stage/quotas and authored-content unknown-cost/empty-catalog tests passed
 locally as recorded during development. No real network/game inputs are used.
 Next: hosted loader/IPC verification, then remaining strict per-file deficits.
+
+At 1e24cba, native coverage stopped at compilation: new IPC tests omitted direct
+serde/serde_json dev dependencies. Added the already locked dependencies; lockfile
+changes only desktop dependency edges. Local native check still stops at missing
+dbus development prerequisites, so no native execution is claimed.
+
+Additional focused tests actually passed: exact encrypted range lineage, staged
+change artifacts/hash/schema substitutions, source policy distinctions, closed
+fixture diagnostics, direct research services, finite/nonfinite float decode,
+conflict-closure refusals, repeated/empty asset atomicity, historical snapshot and
+guarded incomparable promotion, oversized/directory pending restore markers.
+The snapshot test initially attempted a provably older promotion and correctly
+failed; it now asserts that refusal and promotes a separate incomparable capture.
+Read-only review caught the vacuous encrypted gap assertion; exact range assertion
+replaced it and passed. Reviewer found no remaining findings in the batch reviewed.
+Affected app/storage/ingest/local-data all-target Clippy passes after removing two
+needless test clones. Native refusal Node tests, formatting/diff checks pass.
+Next: fresh hosted native loader/IPC checks and clean LLVM diagnostic to identify
+remaining deficits. Coverage gate is not passing; no merge/publication authorized
+by evidence yet.

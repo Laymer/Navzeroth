@@ -377,3 +377,44 @@ fn contract_check_applies_the_core_manifest_rules() {
         ]
     );
 }
+
+#[test]
+fn fixture_diagnostics_are_distinct_closed_descriptions() {
+    use std::collections::BTreeSet;
+    let problems = [
+        Problem::ManifestUnreadable,
+        Problem::ManifestInvalid,
+        Problem::TooManyEntries,
+        Problem::UnsafeFileName,
+        Problem::ListedTwice,
+        Problem::Unlisted,
+        Problem::Missing,
+        Problem::Unreadable,
+        Problem::UnknownExpectation,
+        Problem::MissingErrorCode,
+        Problem::AcceptedButDeclaredInvalid,
+        Problem::RejectedButDeclaredValid,
+        Problem::WrongErrorCode,
+        Problem::WrongKind,
+        Problem::Internal,
+    ];
+    let messages: BTreeSet<_> = problems.into_iter().map(Problem::message).collect();
+    assert_eq!(
+        messages.len(),
+        problems.len(),
+        "distinct failure classes need distinct diagnostics"
+    );
+    for message in messages {
+        assert!(!message.is_empty());
+        assert!(message.len() <= 80);
+        assert!(!message.contains(['\n', '\r', '\0']));
+    }
+    assert_eq!(
+        Problem::WrongErrorCode.message(),
+        "rejected with a different error code"
+    );
+    assert_eq!(
+        Problem::AcceptedButDeclaredInvalid.message(),
+        "accepted but declared invalid"
+    );
+}

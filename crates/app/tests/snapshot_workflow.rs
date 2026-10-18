@@ -387,3 +387,85 @@ fn watcher_imports_on_its_worker_and_preserves_a_different_selected_profile() {
     );
     std::fs::remove_file(path).unwrap();
 }
+
+#[test]
+fn historical_lookup_and_guarded_promotion_keep_current_until_explicit_success() {
+    use azeroth_core::types::{SnapshotId, UtcMillis};
+    let app = SnapshotApplication::in_memory().unwrap();
+    let first = app
+        .import_text(&text(&doc("history-first", 10)), None)
+        .unwrap();
+    app.import_text(&text(&doc("history-second", 11)), None)
+        .unwrap();
+    let old = SnapshotId::new("history-first").unwrap();
+    let current = SnapshotId::new("history-second").unwrap();
+    let historical = app
+        .historical(&first.profile_id, &old, None)
+        .unwrap()
+        .unwrap();
+    assert_eq!(historical.envelope.payload.id, old);
+    assert_eq!(historical.data_mode, DataMode::Stored);
+    assert!(
+        app.historical(
+            &first.profile_id,
+            &SnapshotId::new("missing").unwrap(),
+            None
+        )
+        .unwrap()
+        .is_none()
+    );
+    assert!(
+        app.promote(&first.profile_id, &old, &current, "operator-review", None)
+            .is_err()
+    );
+    let now = Some(UtcMillis::new(1791792000000).unwrap());
+    assert!(
+        app.promote(&first.profile_id, &old, &old, "operator-review", now)
+            .is_err()
+    );
+    assert_eq!(
+        app.current(&first.profile_id, None)
+            .unwrap()
+            .unwrap()
+            .envelope
+            .payload
+            .id,
+        current
+    );
+    assert!(
+        app.promote(&first.profile_id, &old, &current, "operator-review", now)
+            .is_err()
+    );
+    let mut incomparable = doc("history-incomparable", 1);
+    incomparable["producer"]["session_id"] = json!("different-session");
+    incomparable["payload"]["capture"]["session_id"] = json!("different-session");
+    incomparable["payload"]["capture"]["clock_trust"] = json!("uncertain");
+    app.import_text(&text(&incomparable), None).unwrap();
+    let selected = SnapshotId::new("history-incomparable").unwrap();
+    app.promote(
+        &first.profile_id,
+        &selected,
+        &current,
+        "operator-review",
+        now,
+    )
+    .unwrap();
+    assert_eq!(
+        app.current(&first.profile_id, None)
+            .unwrap()
+            .unwrap()
+            .envelope
+            .payload
+            .id,
+        selected
+    );
+    assert_eq!(
+        app.historical(&first.profile_id, &current, None)
+            .unwrap()
+            .unwrap()
+            .envelope
+            .payload
+            .id,
+        current
+    );
+}
