@@ -248,3 +248,23 @@ Hosted run 39138458699 at `d4707db`: TypeScript collection succeeded; both nativ
 collectors remain in progress at this checkpoint. No combined coverage result or
 release readiness is claimed. Next: inspect those native artifacts, expand the
 remaining Rust gaps and complete independent review before version/publication.
+
+PR #203 repair, owner `/root`, baseline `49eb29a`: hosted d4707db CI, source
+parity and Windows packaging passed. Both native collectors also succeeded, but
+the combined gate refused real Windows LCOV module paths containing internal
+`tests/../` aliases. Lexical normalization now precedes containment and exact
+inventory/hash validation. Compiler virtual `rustc/<40hex>/library/` paths are
+recognized only when absent from the inventory; owned files always win. Unknown
+source, escaping paths, ADS and missing/altered hashes remain refusals. Eight gate
+tests pass, including captured Windows forms. All 32 coverage/native-smoke helper
+tests pass. The original raw reports remain unchanged.
+
+Reconstruction then correctly refused missing desktop-entrypoint execution. The
+smoke ran successfully, but Tauri's `run` exits the process directly, preventing
+Windows native profile flushing. The shell now uses `build().run_return()` and
+returns its status through Rust's entrypoint, including both worker dispatches.
+A unit test covers success/refusal/out-of-range exit codes; native execution is
+awaiting hosted confirmation (local GTK/dbus prerequisites unavailable). Collector
+now executes both native worker EOF refusals as well as the graceful GUI smoke.
+No coverage threshold, source exclusion or acceptance requirement is relaxed.
+Next: validate corrected native flushing and finish actual per-file Rust gaps.

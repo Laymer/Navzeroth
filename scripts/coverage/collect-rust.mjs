@@ -65,6 +65,8 @@ export function collectRust(destination){
    if(binaries.length!==1)throw new Error('Missing unique native executable');
    const state=path.join(destination,'synthetic-desktop-state'),nativeEnv={...instrumented,APPDATA:path.join(state,'roaming'),LOCALAPPDATA:path.join(state,'local')};
    for(const dir of [nativeEnv.APPDATA,nativeEnv.LOCALAPPDATA])fs.mkdirSync(dir,{recursive:true});
+   run('native-extraction-worker-refusal',binaries[0],['--navzeroth-local-data-worker-v1'],{env:nativeEnv,expected:2});
+   run('native-media-worker-refusal',binaries[0],['--navzeroth-media-worker-v1'],{env:nativeEnv,expected:2});
    run('native-smoke',process.execPath,[path.join(root,'scripts/windows/Native-Smoke.mjs'),'--mode','smoke','--exe',binaries[0],'--shutdown','graceful','--port',String(19000+process.pid%10000),'--out',path.join(destination,'native-smoke.json')],{env:nativeEnv,timeout:300000});
   }
   report('debug');

@@ -12,7 +12,9 @@ function sourcePath(file,platform){
 export function relativeSource(file,root,platform){
  file=sourcePath(file,platform);
  const clean=value=>value.replaceAll('\\','/').replace(/\/$/,'');
- const source=clean(file),base=clean(root),prefix=base+'/';
+ // Rust #[path] modules retain internal ../ aliases in Windows LCOV. Resolve
+ // those lexically before checking containment; never resolve paths on this host.
+ const source=path.posix.normalize(clean(file)),base=path.posix.normalize(clean(root)),prefix=base+'/';
  if(!(platform==='win32'?source.toLowerCase().startsWith(prefix.toLowerCase()):source.startsWith(prefix)))throw new Error('Source lies outside recorded checkout');
  const rel=source.slice(prefix.length);
  if(rel.split('/').some(p=>!p||p==='.'||p==='..')||rel.includes(':'))throw new Error('Unsafe normalized source path');
@@ -101,12 +103,19 @@ export function normalizeRaw(records,receipt,inventory){
  const result=[];
  for(const record of records){
   const raw=sourcePath(record.path,receipt.platform);
-  const normalized=raw.replaceAll('\\','/');
+  const normalized=path.posix.normalize(raw.replaceAll('\\','/'));
   if(!(receipt.platform==='win32'?normalized.toLowerCase().startsWith(prefix.toLowerCase()):normalized.startsWith(prefix)))continue;
   const rel=relativeSource(record.path,receipt.source_root,receipt.platform);
   if(!/\.(rs|ts|tsx)$/.test(rel))continue;
   const entry=known.get(receipt.platform==='win32'?rel.toLowerCase():rel);
-  if(!entry){if(rel.split('/').some(p=>['target','node_modules','vendor'].includes(p)))continue;throw new Error('Source missing from inventory');}
+  if(!entry){
+   // LLVM on Windows anchors rustc's virtual /rustc/<commit>/library paths
+   // under the checkout drive. These are compiler standard-library sources,
+   // not repository sources. Known inventory files always take precedence.
+   if(/^rustc\/[a-f0-9]{40}\/library\//.test(rel)&&receipt.kind==='rust-llvm')continue;
+   if(rel.split('/').some(p=>['target','node_modules','vendor'].includes(p)))continue;
+   throw new Error('Source missing from inventory');
+  }
   if(entry.disposition==='excluded')continue;
   if(!receipt.source_hashes || !Object.hasOwn(receipt.source_hashes,entry.path))throw new Error('Missing independent collector source hash');
   result.push({path:entry.path,source_sha256:receipt.source_hashes[entry.path],lines:record.lines});

@@ -46,6 +46,19 @@ test('declaration-only reports cannot conceal newly executable code',()=>{
  const bad={...typescript,files:[{path:inventory.files[2].path,source_sha256:sha,lines:[[1,1]]}]};assert.throws(()=>verdict(inventory,[rust('linux'),rust('win32'),bad],sha));
 });
 
+test('real Windows Rust module aliases normalize before inventory and hash validation',()=>{
+ const receipt={...rust('win32'),source_hashes:{[inventory.files[0].path]:sha}};
+ const alias='C:\\repo\\crates\\core\\tests\\..\\src\\logic.rs';
+ assert.equal(relativeSource(alias,'C:/repo','win32'),inventory.files[0].path);
+ assert.equal(normalizeRaw([{path:alias,lines:[[1,1]]}],receipt,inventory)[0].path,inventory.files[0].path);
+ assert.throws(()=>normalizeRaw([{path:alias,lines:[[1,1]]}],{...receipt,source_hashes:{}},inventory),/collector source hash/);
+ for(const bad of ['C:/repo/../outside.rs','C:/repo/x/../../outside.rs','C:/repo/crates/core/src/logic.rs:stream'])assert.throws(()=>relativeSource(bad,'C:/repo','win32'));
+ assert.deepEqual(normalizeRaw([{path:'C:/repo/rustc/'+ 'b'.repeat(40)+'/library/std/src/sys/thread_local/native/mod.rs',lines:[[1,1]]}],receipt,inventory),[]);
+ for(const bad of ['C:/repo/rustc/not-a-commit/library/std.rs','C:/repo/rustc/'+ 'b'.repeat(40)+'/application.rs'])assert.throws(()=>normalizeRaw([{path:bad,lines:[[1,1]]}],receipt,inventory),/missing from inventory/);
+ const known='rustc/'+ 'b'.repeat(40)+'/library/owned.rs';
+ assert.throws(()=>normalizeRaw([{path:'C:/repo/'+known,lines:[[1,1]]}],receipt,{...inventory,files:[...inventory.files,{...inventory.files[0],path:known}]}),/collector source hash/);
+});
+
 test('end-to-end gate verifies independent collector hashes and derives verdict from raw counters',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'nav-gate-adversary-'));
  const digest=data=>crypto.createHash('sha256').update(data).digest('hex');

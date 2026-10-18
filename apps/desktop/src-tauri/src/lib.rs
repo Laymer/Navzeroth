@@ -1127,7 +1127,7 @@ async fn compare_gear(
 ) -> Result<azeroth_app::gear::GearReport, AppError> {
     blocking(state, move |app| app.compare_gear(&text, system_now())).await
 }
-pub fn run() {
+pub fn run() -> i32 {
     tauri::Builder::default()
         .setup(|app| {
             let directory = app.path().app_data_dir()?;
@@ -1296,8 +1296,11 @@ pub fn run() {
                 }
             }
         })
-        .run(tauri::generate_context!())
-        .expect("error while running the Azeroth Navigator shell");
+        .build(tauri::generate_context!())
+        .expect("error while building the Azeroth Navigator shell")
+        // Return through Rust's entrypoint so native process teardown (including
+        // instrumented profile flushing) runs after the event loop closes.
+        .run_return(|_, _| {})
 }
 
 async fn recovery_blocking<T: Send + 'static>(
