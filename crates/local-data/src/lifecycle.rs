@@ -7,6 +7,35 @@ use azeroth_core::{
 use azeroth_storage::local_data::LocalDataIndex;
 use std::{fs, path::Path};
 
+// SQLite may remove a journal/sidecar immediately after this no-follow observation.
+// Do not canonicalize/re-stat the volatile leaf: validate the observed metadata.
+// Root and all ancestor components are checked separately before entering here.
+fn validate_index_files(
+    root: &Path,
+    mut metadata: impl FnMut(&Path) -> std::io::Result<fs::Metadata>,
+) -> Result<()> {
+    for name in [
+        "lifecycle.sqlite3",
+        "lifecycle.sqlite3-journal",
+        "lifecycle.sqlite3-wal",
+        "lifecycle.sqlite3-shm",
+    ] {
+        let observed = match metadata(&root.join(name)) {
+            Ok(value) => value,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(_) => return Err("Lifecycle file unavailable"),
+        };
+        if crate::linked(&observed) {
+            return Err("Linked or reparse-point selections are unsupported");
+        }
+        let maximum = (if name == "lifecycle.sqlite3" { 64 } else { 65 }) * 1024 * 1024;
+        if !observed.is_file() || observed.len() > maximum {
+            return Err("Invalid or excessive lifecycle database file");
+        }
+    }
+    Ok(())
+}
+
 pub fn index(root: &Path) -> Result<LocalDataIndex> {
     let root = checked_path(root)?;
     if !root.is_dir() {
@@ -25,25 +54,7 @@ pub fn index(root: &Path) -> Result<LocalDataIndex> {
             return Err("Private destination must permit access only to its owner");
         }
     }
-    for name in [
-        "lifecycle.sqlite3",
-        "lifecycle.sqlite3-journal",
-        "lifecycle.sqlite3-wal",
-        "lifecycle.sqlite3-shm",
-    ] {
-        let file = root.join(name);
-        if file.symlink_metadata().is_ok() {
-            checked_path(&file)?;
-            if !file.is_file()
-                || fs::metadata(&file)
-                    .map_err(|_| "Lifecycle file unavailable")?
-                    .len()
-                    > (if name == "lifecycle.sqlite3" { 64 } else { 65 }) * 1024 * 1024
-            {
-                return Err("Invalid or excessive lifecycle database file");
-            }
-        }
-    }
+    validate_index_files(&root, |path| fs::symlink_metadata(path))?;
     LocalDataIndex::open(&root.join("lifecycle.sqlite3"))
         .map_err(|_| "Private lifecycle database unavailable or unsupported")
 }
@@ -182,4 +193,113 @@ pub fn new_job_id() -> Result<String> {
         .map_err(|_| "Job clock unavailable")?
         .as_nanos();
     Ok(format!("job-{}-{nanos}", std::process::id()))
+}
+
+#[cfg(test)]
+mod sidecar_tests {
+    use super::*;
+    struct Directory(std::path::PathBuf);
+    impl Directory {
+        fn new() -> Self {
+            let root = std::env::temp_dir().join(format!(
+                "nav-sidecar-{}-{}",
+                std::process::id(),
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap()
+                    .as_nanos()
+            ));
+            let mut builder = fs::DirBuilder::new();
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::DirBuilderExt;
+                builder.mode(0o700);
+            }
+            builder.create(&root).unwrap();
+            Self(root)
+        }
+    }
+    impl Drop for Directory {
+        fn drop(&mut self) {
+            fs::remove_dir_all(&self.0).unwrap();
+        }
+    }
+
+    #[test]
+    fn disappearing_journal_is_validated_once_without_reopening_the_leaf() {
+        let root = Directory::new();
+        let journal = root.0.join("lifecycle.sqlite3-journal");
+        fs::write(&journal, b"synthetic temporary journal").unwrap();
+        let mut observations = 0;
+        validate_index_files(&root.0, |path| {
+            observations += 1;
+            let metadata = fs::symlink_metadata(path);
+            if path == journal && metadata.is_ok() {
+                fs::remove_file(path).unwrap();
+            }
+            metadata
+        })
+        .unwrap();
+        assert_eq!(observations, 4);
+        assert!(!journal.exists());
+        let index = index(&root.0).unwrap();
+        assert!(index.jobs().unwrap().is_empty());
+    }
+    #[test]
+    fn only_missing_entries_are_optional_and_access_failures_remain_explicit() {
+        let root = Directory::new();
+        assert!(
+            validate_index_files(&root.0, |_| Err(std::io::ErrorKind::NotFound.into())).is_ok()
+        );
+        for kind in [
+            std::io::ErrorKind::PermissionDenied,
+            std::io::ErrorKind::Other,
+        ] {
+            assert_eq!(
+                validate_index_files(&root.0, |_| Err(kind.into())),
+                Err("Lifecycle file unavailable")
+            );
+        }
+    }
+    #[test]
+    fn wrong_types_and_size_ceilings_remain_refused_without_changing_files() {
+        let root = Directory::new();
+        let journal = root.0.join("lifecycle.sqlite3-journal");
+        fs::create_dir(&journal).unwrap();
+        assert_eq!(
+            validate_index_files(&root.0, |p| fs::symlink_metadata(p)),
+            Err("Invalid or excessive lifecycle database file")
+        );
+        fs::remove_dir(&journal).unwrap();
+        for (name, maximum) in [
+            ("lifecycle.sqlite3", 64_u64 * 1024 * 1024),
+            ("lifecycle.sqlite3-journal", 65_u64 * 1024 * 1024),
+        ] {
+            let path = root.0.join(name);
+            let file = fs::File::create(&path).unwrap();
+            file.set_len(maximum).unwrap();
+            assert!(validate_index_files(&root.0, |p| fs::symlink_metadata(p)).is_ok());
+            file.set_len(maximum + 1).unwrap();
+            drop(file);
+            assert_eq!(
+                validate_index_files(&root.0, |p| fs::symlink_metadata(p)),
+                Err("Invalid or excessive lifecycle database file")
+            );
+            assert_eq!(fs::metadata(&path).unwrap().len(), maximum + 1);
+            fs::remove_file(path).unwrap();
+        }
+    }
+    #[cfg(unix)]
+    #[test]
+    fn sidecar_links_are_refused_without_following_or_altering_the_target() {
+        let root = Directory::new();
+        let target = root.0.join("target");
+        fs::write(&target, b"preserve").unwrap();
+        std::os::unix::fs::symlink(&target, root.0.join("lifecycle.sqlite3-journal")).unwrap();
+        assert_eq!(
+            validate_index_files(&root.0, |p| fs::symlink_metadata(p)),
+            Err("Linked or reparse-point selections are unsupported")
+        );
+        assert_eq!(fs::read(target).unwrap(), b"preserve");
+    }
 }
