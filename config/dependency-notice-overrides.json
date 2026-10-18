@@ -1,0 +1,220 @@
+{
+  "format_version": 1,
+  "overrides": [
+    {
+      "file": "ALLOC-BSD.txt",
+      "source": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE",
+      "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
+      "packages": [
+        "alloc-stdlib@0.3.0"
+      ]
+    },
+    {
+      "file": "DEFMT-MIT.txt",
+      "source": "https://raw.githubusercontent.com/knurling-rs/defmt/4a8cdb44891ed57b8ff5a023b6bec7137c48708f/LICENSE-MIT",
+      "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50",
+      "packages": [
+        "defmt-parser@1.0.0"
+      ]
+    },
+    {
+      "file": "DEFMT-APACHE.txt",
+      "source": "https://raw.githubusercontent.com/knurling-rs/defmt/4a8cdb44891ed57b8ff5a023b6bec7137c48708f/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+      "packages": [
+        "defmt-parser@1.0.0"
+      ]
+    },
+    {
+      "file": "MPL-2.0.txt",
+      "source": "https://www.mozilla.org/media/MPL/2.0/index.txt",
+      "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+      "packages": [
+        "selectors@0.38.0"
+      ]
+    },
+    {
+      "file": "WEBVIEW2-MIT.txt",
+      "source": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE",
+      "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+      "packages": [
+        "webview2-com@0.39.1",
+        "webview2-com-sys@0.39.1"
+      ]
+    },
+    {
+      "file": "WEBVIEW2-MACROS-MIT.txt",
+      "source": "https://raw.githubusercontent.com/wravery/webview2-rs/dffa41a8a46d3f5565eefbff2de57d38d399f158/LICENSE",
+      "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+      "packages": [
+        "webview2-com-macros@0.8.1"
+      ]
+    }
+  ],
+  "source_archive_licenses": [
+    "MPL-2.0"
+  ],
+  "webview2_sdk": {
+    "version": "1.0.3800.47",
+    "source": "https://api.nuget.org/v3-flatcontainer/microsoft.web.webview2/1.0.3800.47/microsoft.web.webview2.1.0.3800.47.nupkg",
+    "sha256": "56c9f26bdd07916a2d1949fb58a5c7e434dfa1173577dca879206050c4e718db",
+    "bytes": 8973762,
+    "files": [
+      {
+        "file": "WEBVIEW2-SDK-LICENSE.txt",
+        "sha256": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55"
+      },
+      {
+        "file": "WEBVIEW2-SDK-NOTICE.txt",
+        "sha256": "106423785c5b7eba0a8e61d1837f2132e9c828e20ad530f565d981c1df60dd90"
+      }
+    ],
+    "loaders": [
+      {
+        "crate_path": "x64/WebView2Loader.dll",
+        "nuget_member": "build/native/x64/WebView2Loader.dll",
+        "sha256": "86545b66cdb0603bc26b626fb9ad610cb6e71f28d468f5ea66df23b03dda96d5",
+        "bytes": 160880
+      },
+      {
+        "crate_path": "x64/WebView2Loader.dll.lib",
+        "nuget_member": "build/native/x64/WebView2Loader.dll.lib",
+        "sha256": "bfc8ccaaa056be95243a5b66a827e5849d2bb39676fca4dcc2053796d8e15c6d",
+        "bytes": 2916
+      },
+      {
+        "crate_path": "x64/WebView2LoaderStatic.lib",
+        "nuget_member": "build/native/x64/WebView2LoaderStatic.lib",
+        "sha256": "89c6b872783b8f6c3cedbff618adb42082d455c615453ae10cfc753f1e8f25d8",
+        "bytes": 10500472
+      },
+      {
+        "crate_path": "x86/WebView2Loader.dll",
+        "nuget_member": "build/native/x86/WebView2Loader.dll",
+        "sha256": "161dc6673084a31f64670ace8e61cb0e1b55af815b6c7c8217a0cdd8503454e2",
+        "bytes": 121448
+      },
+      {
+        "crate_path": "x86/WebView2Loader.dll.lib",
+        "nuget_member": "build/native/x86/WebView2Loader.dll.lib",
+        "sha256": "a3ec0ee539d58fe72391f2e89cb814f96fab721c6d8d30953d152ea95dffad49",
+        "bytes": 2998
+      },
+      {
+        "crate_path": "x86/WebView2LoaderStatic.lib",
+        "nuget_member": "build/native/x86/WebView2LoaderStatic.lib",
+        "sha256": "0513f7e61304321f2d91e1851475be07e091042aa3640597e660608f72521e6c",
+        "bytes": 10465074
+      },
+      {
+        "crate_path": "arm64/WebView2Loader.dll",
+        "nuget_member": "build/native/arm64/WebView2Loader.dll",
+        "sha256": "a0de1844933a10c898f833771a85f0ab9a0e3c745d4715f63d2d9730f9416025",
+        "bytes": 146536
+      },
+      {
+        "crate_path": "arm64/WebView2Loader.dll.lib",
+        "nuget_member": "build/native/arm64/WebView2Loader.dll.lib",
+        "sha256": "d70271daa44507865ca0696cd1c1ede5e58e694eec74cb2d06e17dbbe205e9a2",
+        "bytes": 2916
+      },
+      {
+        "crate_path": "arm64/WebView2LoaderStatic.lib",
+        "nuget_member": "build/native/arm64/WebView2LoaderStatic.lib",
+        "sha256": "4a1ca4b518337c508aa0d778b220c6e59558fce21f4fd0d79a6ea944dd9d5208",
+        "bytes": 10505262
+      }
+    ]
+  },
+  "rust_stdlib": {
+    "release": "1.99.0",
+    "files": [
+      {
+        "file": "rust-stdlib/COPYRIGHT-library.html",
+        "sha256": "5647be074c8edf7339fd863055923a8fc80bc5610a8d4661ec3b767b9d392c27"
+      },
+      {
+        "file": "rust-stdlib/licenses/Apache-2.0.txt",
+        "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff"
+      },
+      {
+        "file": "rust-stdlib/licenses/BSD-2-Clause.txt",
+        "sha256": "f32fb3b417a194167cfad068223fc975ba96c5960513a10f66a3c28720aec1df"
+      },
+      {
+        "file": "rust-stdlib/licenses/CC-BY-SA-4.0.txt",
+        "sha256": "23ee78c8bae49cf08ea2f0c84945c66b987ebe4520881fb51b3dad4fb43d07c2"
+      },
+      {
+        "file": "rust-stdlib/licenses/GCC-exception-3.1.txt",
+        "sha256": "a3966c9410ef94a1efbfa9ec04e9c1994026a70623fbf0885ce36737bfba3b54"
+      },
+      {
+        "file": "rust-stdlib/licenses/GPL-2.0-only.txt",
+        "sha256": "54b212ba1f97f6948fa5486239ab505dd820b02e50cbfd296b4062c8609a70af"
+      },
+      {
+        "file": "rust-stdlib/licenses/GPL-3.0-or-later.txt",
+        "sha256": "05315fce6c35f79b8a35454828995fa26336f235895ac64557abc028f4ffcea2"
+      },
+      {
+        "file": "rust-stdlib/licenses/ISC.txt",
+        "sha256": "0ff61769b238634e042ab759dddfd104a8e69d091e3600ae3410e401a6164381"
+      },
+      {
+        "file": "rust-stdlib/licenses/LLVM-exception.txt",
+        "sha256": "e34c58338bd89d43e709e226610d8f32b3e3c47f4ad9a99a8dc1d4ac7842488e"
+      },
+      {
+        "file": "rust-stdlib/licenses/MIT.txt",
+        "sha256": "b85dcd3e453d05982552c52b5fc9e0bdd6d23c6f8e844b984a88af32570b0cc0"
+      },
+      {
+        "file": "rust-stdlib/licenses/NCSA.txt",
+        "sha256": "39cb0234065c92b9e6cee3830cbb52b1aa289aa8fe9ba2e66730fec5cf05c630"
+      },
+      {
+        "file": "rust-stdlib/licenses/OFL-1.1.txt",
+        "sha256": "8eea8287e5876b539670cadb82e99f9a7afddec6f6730811be1daf25d2e9bcfd"
+      },
+      {
+        "file": "rust-stdlib/licenses/Unicode-3.0.txt",
+        "sha256": "f5062c9a188d81dfe66b56db4182dcf9e4b17c0d9b0d311a8e20b3a1b075c443"
+      }
+    ]
+  },
+  "npm_archives": [
+    {
+      "name": "@tauri-apps/api",
+      "version": "2.12.3",
+      "file": "npm-sources/@tauri-apps_api-2.12.3.tgz",
+      "source": "https://registry.npmjs.org/@tauri-apps/api/-/api-2.12.3.tgz",
+      "sha256": "ccbd78474191de2beda977ca86cd763f0a9032c869734050f7a6eca1b5f72cc3",
+      "integrity": "sha512-9s0PKw0p4r3kFq92jhpivYSp+cSht15o0gXpZxuQd0+dV9KCexEVkNaLELVoLdJWyoH4KlfQo5h3W2LIM8siJg=="
+    },
+    {
+      "name": "react",
+      "version": "19.3.0",
+      "file": "npm-sources/react-19.3.0.tgz",
+      "source": "https://registry.npmjs.org/react/-/react-19.3.0.tgz",
+      "sha256": "5a4024110c49476e1538a70fd65b9e59d038fcc280b78eb933c24e10453afbf9",
+      "integrity": "sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog=="
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.0",
+      "file": "npm-sources/react-dom-19.3.0.tgz",
+      "source": "https://registry.npmjs.org/react-dom/-/react-dom-19.3.0.tgz",
+      "sha256": "dbeffb1e6cdbbbba07f799da4635333d0e20c210a32278dded85441ec4cb6a17",
+      "integrity": "sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q=="
+    },
+    {
+      "name": "scheduler",
+      "version": "0.28.0",
+      "file": "npm-sources/scheduler-0.28.0.tgz",
+      "source": "https://registry.npmjs.org/scheduler/-/scheduler-0.28.0.tgz",
+      "sha256": "302995d590e3c0a11eeb40d1d0f299c1df1800135d599d85cdd5faeb614f32d6",
+      "integrity": "sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw=="
+    }
+  ]
+}

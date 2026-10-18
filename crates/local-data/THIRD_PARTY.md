@@ -43,3 +43,32 @@ rfd0.17.2: PolyMeilex and contributors, MIT,
 https://github.com/PolyMeilex/rfd. Used for the explicit installation folder
 picker. Full notice: notices/RFD-LICENSE.txt. Full parser notices are also
 distributed with the application. See dependency source for transitive notices.
+
+## Complete desktop dependency notices
+
+`notices/DEPENDENCIES.json` records the resolved Windows desktop normal/build
+Rust dependency closure (including build tools and workspace feature unification,
+not a runtime-only SBOM), npm production dependencies and retained notice hashes.
+Full upstream texts are under `notices/rust/` and `notices/js/`; this includes the
+PNG/compression dependencies used by private media decoding. The five MPL-2.0
+packages have their exact, unmodified registry source archives under
+`notices/sources/`, checksum-bound to Cargo.lock, to provide their corresponding
+source with the distribution. They are not linked under the project's BSD terms.
+Rust standard-library attribution and license texts are under `notices/rust-stdlib/`.
+
+The WebView2 Rust wrappers' MIT terms do not cover Microsoft's loader binaries.
+`notices/webview2-sdk/` retains Microsoft's separate LICENSE and NOTICE from
+WebView2 SDK 1.0.3800.47. The manifest records the exact NuGet origin and SHA256,
+and byte-for-byte matching hashes for all nine retained loader variants in
+webview2-com-sys 0.39.1. The SDK binaries are not redistributed a second time as
+source. WebView2 Runtime/bootstrapper installation remains subject to Microsoft's
+separate terms. Installer signing and trust are independent of these notices.
+
+Regenerate only after reviewing locked dependency changes:
+`node scripts/dependency-notices.mjs --write`. Packaging runs `--check` after
+locked dependency acquisition and refuses changed/missing/extra notice files,
+altered registry notices or source archives, unknown dependency licenses and
+unreviewed SDK/compiler versions. The retained override input file records pinned
+upstream URLs and hashes for packages that omit root license files. Notice text
+is copied unchanged; no game data, private stores, exports, caches, generated media
+or signing keys are part of this dependency closure.

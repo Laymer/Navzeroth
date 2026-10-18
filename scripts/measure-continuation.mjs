@@ -2,7 +2,7 @@
 import {execFileSync} from "node:child_process";
 import {createHash} from "node:crypto";
 import {readFileSync,writeFileSync,existsSync} from "node:fs";
-import {cpus,platform,release,totalmem,arch} from "node:os";
+import {cpus,platform,release,totalmem,arch,homedir} from "node:os";
 import {resolve,dirname,join} from "node:path";
 import {fileURLToPath,pathToFileURL} from "node:url";
 const root=resolve(dirname(fileURLToPath(import.meta.url)),"..");
@@ -16,8 +16,15 @@ export function verifySeries(result,count=100){
  return result;
 }
 function command(program,args,options={}){return execFileSync(program,args,{cwd:root,encoding:"utf8",maxBuffer:16*1024*1024,...options});}
+export function verifyBuildConfiguration(env=process.env, directory=root, home=homedir()) {
+ if(Object.keys(env).some(key => env[key] && (/^(RUSTFLAGS|CARGO_ENCODED_RUSTFLAGS|RUSTC|RUSTC_WRAPPER|RUSTC_WORKSPACE_WRAPPER|RUSTC_BOOTSTRAP)$/.test(key) || /^CARGO_(PROFILE_|BUILD_|TARGET_.+_(RUSTFLAGS|LINKER|RUNNER)$)/.test(key)))) throw new Error("Measurements require source-default release flags without environment overrides");
+ const dirs=[];let current=resolve(directory);
+ while(true){dirs.push(join(current,'.cargo'));const parent=dirname(current);if(parent===current)break;current=parent;}
+ dirs.push(env.CARGO_HOME ? resolve(env.CARGO_HOME) : join(home,'.cargo'));
+ if(dirs.some(dir=>existsSync(join(dir,'config')) || existsSync(join(dir,'config.toml')))) throw new Error('Measurements refuse inherited Cargo configuration; use an environment without Cargo config overrides');
+}
 export function measure(output){
- if(process.env.RUSTFLAGS||process.env.CARGO_ENCODED_RUSTFLAGS||Object.keys(process.env).some(key=>key.startsWith("CARGO_PROFILE_RELEASE_")))throw new Error("Measurements require source-default release flags without environment overrides");
+ verifyBuildConfiguration();
  const destination=resolve(output);if(existsSync(destination))throw new Error("Measurement output already exists");
  const commit=command("git",["rev-parse","HEAD"]).trim();if(!/^[a-f0-9]{40}$/.test(commit)||command("git",["status","--porcelain","--untracked-files=normal"]).trim())throw new Error("Measurements require a clean committed source worktree");
  const metadata=JSON.parse(command("cargo",["metadata","--locked","--format-version","1","--no-deps"]));

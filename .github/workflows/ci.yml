@@ -129,6 +129,8 @@ jobs:
         run: pnpm contracts:check
       - name: Strict reference-content v2 schema checks
         run: node scripts/validate-content-v2-schema.mjs
+      - name: Dependency notice and performance guard tests (offline)
+        run: node --test scripts/dependency-notices.test.mjs scripts/measure-continuation.test.mjs
       - name: Build watch parser tests (offline, synthetic tables)
         run: node --test scripts/build-watch/lib.test.mjs
   desktop:

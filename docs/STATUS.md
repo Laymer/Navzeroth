@@ -4,6 +4,17 @@ Updated: 2026-10-18.
 
 ## Current task
 
+**Continuation 9 — performance and release materials:** Codex `/root`, sole writer,
+branch `feat/continuation-performance-materials`, baseline `d34b417` (continuation 8
+pending). [Claim](claims/2026-10-18-performance-materials.md),
+[handoff](handoffs/2026-10-18-performance-materials.md),
+[reproducible workloads and WSL measurements](data/PERFORMANCE_SLICES.md).
+Optimized synthetic measurements are recorded with raw samples and exact source;
+ordinary Windows performance remains unverified. Complete dependency notices,
+MPL source archives and SDK terms are retained and checked before packaging and
+after hosted installation. Review and exact-head checks precede integration.
+Coverage, stability, development RC publication and Pages remain separate stages.
+
 **Continuation 8 — desktop workflow and installer completion:** Codex `/root`,
 sole writer, branch `feat/continuation-desktop-completion`, baseline `896539e`.
 [Claim](claims/2026-10-18-desktop-completion.md),
