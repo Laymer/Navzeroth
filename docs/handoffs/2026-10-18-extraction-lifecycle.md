@@ -36,6 +36,9 @@ hashing adds I/O; ordinary Windows workload performance is unverified.
 
 ## Actual validation (Linux/WSL)
 
+Frozen final code: `9b0884edb7ae29457aa5f5eda99dd91ed7942f73`.
+PR: https://github.com/Laymer/Navzeroth/pull/192.
+
 - `cargo fmt --all --check`: passed.
 - Workspace Clippy, all targets except desktop, `--locked`, `-D warnings`: passed.
 - `cargo test --locked --workspace --exclude azeroth-desktop`: 170 suites,
@@ -56,9 +59,22 @@ hashing adds I/O; ordinary Windows workload performance is unverified.
   `preparing` state before hashing, cancel checks between source files/reused
   objects and regressions for cancellation winning checkpoint binding. Unbound
   preparation has no reusable rows. Reviewer rechecked the state transitions.
-- The explicitly selected installation inspects as build 70450/enUS. A private
-  real-client interruption/cancellation/resume-versus-fresh run is pending on
-  frozen implementation. No live WoW acceptance is inferred.
+- The explicitly selected installation inspects as build 70450/enUS. On code
+  `a3a9f39`, CLI cancellation during preparation persisted `cancelled` with zero
+  tables in 0.011 s (acknowledgement only, not worker-stop latency); the worker
+  then refused at its next source-file check.
+- The optimized final-code four-table interruption/cancellation/resume-versus-fresh
+  comparison runs in owner-only temporary stores, outside Git. Its subsequent
+  completion receipt, exact digests, timings, cleanup outcome and resulting-main
+  integration are recorded in [PR #192](https://github.com/Laymer/Navzeroth/pull/192).
+  Completion must not be inferred until that receipt is present. This link avoids
+  relabelling a running check as passed in a commit written before it finishes.
+- Final-code workspace checks still pass: 1,244 Rust tests, four ignored, and
+  Clippy; final desktop checks pass (389 tests, typecheck/lint/production build).
+- All nine hosted checks passed on `a3a9f39` (CI 39115819126, packaging
+  39115819144), and source workflow 39115819215 passed. The later final-head
+  activation hardening and these documentation updates require fresh hosted
+  checks before merge; exact outcomes are recorded in the linked PR receipt.
 
 Ordinary Windows performance, native interactive desktop behavior and live addon
 acceptance remain unverified. Hosted exact-head checks are required before merge.

@@ -36,3 +36,14 @@ before fingerprinting. Unbound preparation carries no reusable rows. Cancellatio
 cannot be overwritten by binding. Reviewer rechecked these transitions and version
 refusals, then requested cancellation checks during reused-object verification;
 those checks and corruption/cancellation regressions were added.
+
+The reviewer confirmed on exact code head
+`a3a9f39fc9d4d1eda8fde2ae80c4b1494786c01c` that the per-object cancellation finding
+is resolved and reported no remaining actionable findings. Final local checks:
+1,244 Rust tests, four ignored; Clippy/format; 389 desktop tests, typecheck, lint
+and production build. Real-client execution is recorded separately in the handoff.
+
+The reviewer separately reviewed final code `9b0884e`: activation now returns the
+exact committed generation/digest without a fallible post-commit read. No findings.
+The final handoff links subsequent long-running real-client and hosted-check
+receipts in PR #192; it does not prematurely claim their success.
