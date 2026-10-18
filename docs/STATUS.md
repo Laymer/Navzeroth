@@ -4,11 +4,14 @@ Updated: 2026-10-18.
 
 ## Current task
 
-**Continuation 6 — versioned delivery and guarded consumers:** Codex `/root`,
-sole writer, branch `feat/continuation-bound-delivery`; initial baseline `ea47b57`.
-[Claim](claims/2026-10-18-bound-delivery.md),
-[handoff](handoffs/2026-10-18-bound-delivery.md),
-[delivery contracts](data/LOCAL_DELIVERY.md).
+**Continuation 7 — guides, authored verification and exact inventory:** Codex
+`/root`, sole writer, branch `feat/continuation-guides-inventory`; initial baseline
+`d1af131`. [Claim](claims/2026-10-18-guides-inventory.md),
+[handoff](handoffs/2026-10-18-guides-inventory.md),
+[contracts and limitations](data/LOCAL_INVENTORY.md).
+Continuation 6 is [PR #196](https://github.com/Laymer/Navzeroth/pull/196),
+independently reviewed with local checks passing, pending exact-head hosted checks.
+[Delivery handoff](handoffs/2026-10-18-bound-delivery.md).
 Continuation 5 merged as [PR #195](https://github.com/Laymer/Navzeroth/pull/195)
 at `0151eb1` after independent review, all nine exact-head checks and source
 workflow. Media remains local-only, uncalibrated and research-only.
