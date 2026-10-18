@@ -40,6 +40,12 @@ try {
     Install-NativeSmokeSetup -SetupPath $fakeSetup -TimeoutSeconds 60
     Check 'installer success is accepted' $true
 
+    Refuses 'dialog cancellation refuses a different executable before looking for windows' 'does not match' {
+        & (Join-Path $PSScriptRoot 'Cancel-OwnedDialog.ps1') -TargetProcessId $PID -ExpectedExecutable (Join-Path $temp 'unrelated.exe') -TimeoutSeconds 1
+    }
+    Refuses 'dialog cancellation has a bounded missing-dialog refusal' 'No visible dialog owned' {
+        & (Join-Path $PSScriptRoot 'Cancel-OwnedDialog.ps1') -TargetProcessId $PID -ExpectedExecutable (Get-Process -Id $PID).Path -TimeoutSeconds 1
+    }
     Stop-NativeSmokeProcesses -TimeoutSeconds 5
     Check 'stopping with nothing running succeeds' $true
     Write-Host "$count native smoke helper checks passed (synthetic processes, not native acceptance)"

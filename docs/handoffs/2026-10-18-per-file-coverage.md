@@ -572,3 +572,23 @@ Hosted 70a6b60 planning test reached successful publication, then correctly
 refused its hardcoded stale pin revision. Fixture import/activation advances that
 revision. Test now reads current_plan.revision through get_today_view before
 explicit pin, asserting exact +1 pin and +2 clear changes. No production change.
+
+Exact e4b0d77/source890395e0: ordinary CI, source/parity, packaging and both native
+collectors pass. Strict gate still fails only lib.rs, 1160/1318, no evidence errors.
+Next claim: Codex /root, sole writer, baseline e4b0d77. Extend actual owned-process
+Windows smoke with both native dialog cancellations and registered atlas protocol
+refusals. Cancellation must verify the launched executable/PID and only close its
+visible dialog, with bounded waits; no desktop-wide input or game interaction.
+Keep real dialogs and generated macro spans eligible; no threshold/exclusion edits.
+
+
+New native smoke covers installation-folder, snapshot-file and authored-pack-folder
+picker cancellation with exact null results and unchanged workflow, installation
+and material inventories. Review caught that workflow alone cannot prove selection
+preservation; all three separate stores are now compared. Atlas requests use img
+loading under the existing CSP and require exact 404/no-store responses in all
+three namespaces. Helper tests cover executable mismatch and bounded absent-dialog
+refusal in existing PowerShell 5.1/7 jobs. Independent reviews otherwise found no
+findings. Local 15 Node tests, JavaScript syntax and diff checks pass; PowerShell,
+real dialogs and protocol response observation await hosted execution. No game,
+private inputs, production Rust or coverage policy changed.

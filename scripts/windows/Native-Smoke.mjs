@@ -339,6 +339,53 @@ async function smoke(page, response) {
     if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("Invalid requests changed the current imported reference");
     return { requests: COMMAND_BOUNDARIES.length, current_reference_unchanged: true };
   });
+  for (const [command, commandArgs] of [["select_local_installation", {}], ["select_local_material", {kind:"snapshot"}], ["select_local_material", {kind:"authored_pack"}]]) {
+    await rec.run(`native ${command} cancellation preserves selections`, async () => {
+      const selections = () => page.evaluate(async () => Promise.all(
+        ["get_local_workflow", "list_local_installations", "list_local_materials"].map(command => window.__TAURI_INTERNALS__.invoke(command)),
+      ));
+      const before = await selections();
+      await page.evaluate(({command,args}) => {
+        window.__navDialogOutcome = null;
+        window.__TAURI_INTERNALS__.invoke(command,args).then(
+          value => { window.__navDialogOutcome = {ok:true,value}; },
+          error => { window.__navDialogOutcome = {ok:false,error}; },
+        );
+      }, {command,args:commandArgs});
+      const cancelled = spawnSync("powershell.exe", ["-NoLogo", "-NoProfile", "-NonInteractive", "-File",
+        join(repoRoot,"scripts/windows/Cancel-OwnedDialog.ps1"), "-TargetProcessId", String(child.pid),
+        "-ExpectedExecutable", resolve(args.exe), "-TimeoutSeconds", "20"], {encoding:"utf8",timeout:30000});
+      if (cancelled.status !== 0) throw new Error(`Owned dialog cancellation failed: ${cancelled.stdout ?? ""}${cancelled.stderr ?? ""}`);
+      await page.waitForFunction(() => window.__navDialogOutcome !== null, undefined, {timeout:10000});
+      const outcome = await page.evaluate(() => {
+        const outcome = window.__navDialogOutcome;
+        delete window.__navDialogOutcome;
+        return outcome;
+      });
+      if (!outcome.ok || outcome.value !== null) throw new Error(`Dialog cancellation did not return null: ${JSON.stringify(outcome)}`);
+      const after = await selections();
+      if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("Cancelled picker changed persisted workflow choices or selections");
+      return {cancelled:true,workflow_and_selections_unchanged:true};
+    });
+  }
+  await rec.run("registered atlas protocol refuses unbound assets in all namespaces", async () => {
+    const observed=[];
+    for (const path of ["/research/missing-owned-fixture", "/stored/missing-owned-fixture", "/missing-owned-fixture"]) {
+      const url=`http://atlas.localhost${path}`;
+      const response = page.waitForResponse(reply => reply.url()===url, {timeout:15000});
+      const imageOutcome = page.evaluate(url => new Promise(resolve => {
+        const image=new Image();
+        const timer=setTimeout(() => { image.src=""; resolve("timeout"); },10000);
+        image.onload=() => {clearTimeout(timer); resolve("loaded");};
+        image.onerror=() => {clearTimeout(timer); resolve("refused");};
+        image.src=url;
+      }),url);
+      const [outcome,reply]=await Promise.all([imageOutcome,response]);
+      if (outcome!=="refused" || reply.status()!==404 || reply.headers()["cache-control"]!=="no-store") throw new Error(`Unbound native asset was not a noncacheable refusal: ${url} ${outcome} ${reply.status()}`);
+      observed.push({path,status:reply.status()});
+    }
+    return {observed};
+  });
   await rec.run("actual Tauri CSP header is present and has no data: or remote sources", async () => {
     const csp = cspFromHeaders(response ? response.headers() : {});
     const meta = await page.evaluate(() => document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.getAttribute("content") ?? null);

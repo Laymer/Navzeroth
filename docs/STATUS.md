@@ -17,11 +17,11 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
 `test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. At `2134418`, all ordinary CI, source Linux/Windows/parity and
+are in progress. At `e4b0d77`, all ordinary CI, source Linux/Windows/parity and
 Windows packaging checks pass. Both native collectors and TypeScript succeed;
-the combined coverage gate fails only desktop shell lib.rs (1126/1318), with no
-missing files or evidence errors. Every other eligible file clears 90%. A focused
-native planning/atlas/diagnostics test batch awaits hosted verification.
+the combined coverage gate fails only desktop shell lib.rs (1160/1318), with no
+missing files or evidence errors. Every other eligible file clears 90%. Actual native picker cancellation and registered atlas-protocol refusal tests
+now await hosted verification.
 The 90% per-file requirement remains unchanged; this draft cannot merge yet.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
