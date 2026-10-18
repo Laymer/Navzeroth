@@ -136,6 +136,7 @@ fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
     fs::write(destination.join("active-marker"), original).unwrap();
     let request = ExtractionRequest {
         protocol_version: 1,
+        resume: false,
         request_id: "worker-test".into(),
         installation: source.clone(),
         product: "wow_classic_beta".into(),
@@ -200,6 +201,7 @@ fn extraction_admits_70450_as_development_input_and_refuses_unknown_builds() {
         .unwrap();
         let request = ExtractionRequest {
             protocol_version: 1,
+            resume: false,
             request_id: format!("admission-{build}"),
             installation: source.clone(),
             product: "wow_classic_beta".into(),
@@ -416,4 +418,167 @@ fn project_and_projection_verify_succeed_on_a_synthetic_store() {
     assert_eq!(report["verified"], true);
     assert_eq!(report["reproduction"], "reproduced");
     fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn competing_worker_cannot_fail_an_existing_job_with_the_same_id() {
+    use azeroth_core::{
+        local_data::PerformancePreset,
+        local_data_lifecycle::{Checkpoint, CheckpointBinding, JobState},
+    };
+    use azeroth_local_data::worker::{ExtractionRequest, ExtractionWorker, WorkerEvent};
+    let root = std::env::temp_dir().join(format!(
+        "nav-competing-worker-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&root).unwrap();
+    let source = root.join("client");
+    let output = root.join("output");
+    fs::create_dir(&source).unwrap();
+    fs::create_dir(&output).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&output, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    let info = format!(
+        "Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.70450|{}|{}|enUS text\n",
+        "a".repeat(32),
+        "b".repeat(32)
+    );
+    fs::write(source.join(".build.info"), info).unwrap();
+    for key in ["a".repeat(32), "b".repeat(32)] {
+        let dir = source.join("Data/config").join(&key[..2]).join(&key[2..4]);
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join(key), b"synthetic-config").unwrap();
+    }
+    fs::create_dir_all(source.join("Data/data")).unwrap();
+    fs::write(source.join("Data/data/data.000"), b"synthetic-archive").unwrap();
+    let mut db = azeroth_local_data::lifecycle::index(&output).unwrap();
+    let cp = Checkpoint {
+        format_version: 1,
+        binding: CheckpointBinding {
+            format_version: 1,
+            source_sha256: "a".repeat(64),
+            extractor_sha256: "b".repeat(64),
+            selection_sha256: "c".repeat(64),
+            preset: PerformancePreset::Small,
+            total: 1,
+        },
+        tables: vec![],
+        gaps: vec![],
+    };
+    db.begin("same-job", "private-request", &cp, false).unwrap();
+    let lock = std::fs::File::create(output.join("writer.lock")).unwrap();
+    lock.lock().unwrap();
+    let request = ExtractionRequest {
+        protocol_version: 2,
+        resume: false,
+        request_id: "same-job".into(),
+        installation: source,
+        product: "wow_classic_beta".into(),
+        destination: output.clone(),
+        preset: PerformancePreset::Small,
+        tables: vec!["Map".into()],
+    };
+    let mut worker = ExtractionWorker::start_executable(
+        std::path::Path::new(env!("CARGO_BIN_EXE_azeroth-cli")),
+        &request,
+    )
+    .unwrap();
+    assert!(matches!(
+        worker.next_event().unwrap(),
+        WorkerEvent::Failed { .. }
+    ));
+    assert_eq!(db.status("same-job").unwrap().state, JobState::Running);
+    drop(worker);
+    drop(lock);
+    drop(db);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn durable_job_commands_recover_cancel_and_forget_without_exposing_requests() {
+    use azeroth_core::{
+        local_data::PerformancePreset,
+        local_data_lifecycle::{Checkpoint, CheckpointBinding},
+    };
+    let output = std::env::temp_dir().join(format!(
+        "nav-cli-lifecycle-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&output).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&output, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    let mut db = azeroth_local_data::lifecycle::index(&output).unwrap();
+    let cp = Checkpoint {
+        format_version: 1,
+        binding: CheckpointBinding {
+            format_version: 1,
+            source_sha256: "a".repeat(64),
+            extractor_sha256: "b".repeat(64),
+            selection_sha256: "c".repeat(64),
+            preset: PerformancePreset::Small,
+            total: 1,
+        },
+        tables: vec![],
+        gaps: vec![],
+    };
+    db.begin("interrupted", "private-path-never-returned", &cp, false)
+        .unwrap();
+    let destination = output.to_str().unwrap();
+    let result = cli(&[
+        "local-data",
+        "status",
+        "--destination",
+        destination,
+        "--job",
+        "interrupted",
+    ]);
+    assert_eq!(result.status.code(), Some(0));
+    let value: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(value["state"], "interrupted");
+    assert!(
+        !String::from_utf8(result.stdout)
+            .unwrap()
+            .contains("private-path")
+    );
+    let invalid = cli(&[
+        "local-data",
+        "resume",
+        "--destination",
+        destination,
+        "--job",
+        "interrupted",
+    ]);
+    assert_eq!(invalid.status.code(), Some(1));
+    db.begin("cancelled", "private", &cp, false).unwrap();
+    let cancelled = cli(&[
+        "local-data",
+        "cancel",
+        "--destination",
+        destination,
+        "--job",
+        "cancelled",
+    ]);
+    assert_eq!(cancelled.status.code(), Some(0));
+    let value: serde_json::Value = serde_json::from_slice(&cancelled.stdout).unwrap();
+    assert_eq!(value["state"], "cancelled");
+    let forgotten = cli(&[
+        "local-data",
+        "forget",
+        "--destination",
+        destination,
+        "--job",
+        "cancelled",
+    ]);
+    assert!(forgotten.status.success());
+    assert!(db.status("cancelled").is_err());
+    drop(db);
+    fs::remove_dir_all(output).unwrap();
 }

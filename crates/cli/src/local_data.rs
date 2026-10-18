@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data inspect --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -46,15 +46,22 @@ pub fn run(args: &[OsString]) -> ExitCode {
     };
     let allowed: &[&str] = match command {
         "inspect" => &["--installation", "--product"],
-        "plan" => &["--installation", "--product", "--destination", "--preset"],
+        "plan" | "select" => &["--installation", "--product", "--destination", "--preset"],
         "extract" => &[
             "--installation",
             "--product",
             "--destination",
             "--preset",
             "--tables",
+            "--job",
+            "--selection",
         ],
-        "verify" | "coverage" | "status" => &["--destination", "--catalog"],
+        "verify" | "coverage" => &["--destination", "--catalog"],
+        "status" => &["--destination", "--catalog", "--job"],
+        "jobs" | "selections" => &["--destination"],
+        "cancel" | "resume" | "forget" => &["--destination", "--job"],
+        "active" => &["--destination", "--catalog"],
+        "activate" | "rollback" => &["--destination", "--catalog", "--expected"],
         "project" => &["--destination", "--catalog", "--locale"],
         "projection-verify" => &["--destination", "--projection"],
         "receipt-public-key" => &["--secret-key"],
@@ -79,6 +86,13 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if matches!(
+        command,
+        "jobs" | "selections" | "cancel" | "resume" | "forget" | "active" | "activate" | "rollback"
+    ) || (command == "status" && options.contains_key("--job"))
+    {
+        return lifecycle_command(command, &options);
     }
     if command.starts_with("receipt-") {
         if options.len() != allowed.len() {
@@ -109,12 +123,43 @@ pub fn run(args: &[OsString]) -> ExitCode {
         }
         return emit(result);
     }
+    let saved = if command == "extract" {
+        match options.get("--selection") {
+            Some(id) => {
+                if options.contains_key("--installation") || options.contains_key("--product") {
+                    return usage();
+                }
+                let Some(destination) = options.get("--destination") else {
+                    return usage();
+                };
+                match azeroth_local_data::lifecycle::index(Path::new(destination)).and_then(|db| {
+                    db.selection(id.to_str().ok_or("Invalid selection")?)
+                        .map_err(|_| "Unknown selection")
+                }) {
+                    Ok(s) => Some(s),
+                    Err(e) => return emit::<()>(Err(e)),
+                }
+            }
+            None => None,
+        }
+    } else {
+        None
+    };
+    let installation_saved = saved.as_ref().map(|s| s.installation.as_os_str());
+    let product_saved = saved.as_ref().map(|s| s.product.as_str());
     let (Some(installation), Some(product)) = (
-        options.get("--installation"),
-        options.get("--product").and_then(|s| s.to_str()),
+        options
+            .get("--installation")
+            .copied()
+            .or(installation_saved),
+        options
+            .get("--product")
+            .and_then(|s| s.to_str())
+            .or(product_saved),
     ) else {
         return usage();
     };
+
     if command == "inspect" {
         return emit(azeroth_local_data::inspect(
             Path::new(installation),
@@ -123,10 +168,24 @@ pub fn run(args: &[OsString]) -> ExitCode {
     }
     let (Some(destination), Some(preset)) = (
         options.get("--destination"),
-        preset(options.get("--preset")),
+        preset(options.get("--preset")).map(|p| {
+            if options.contains_key("--preset") {
+                p
+            } else {
+                saved.as_ref().map_or(p, |s| s.preset)
+            }
+        }),
     ) else {
         return usage();
     };
+    if command == "select" {
+        return emit(azeroth_local_data::lifecycle::select(
+            Path::new(destination),
+            Path::new(installation),
+            product,
+            preset,
+        ));
+    }
     if command == "plan" {
         return match azeroth_local_data::plan(
             Path::new(installation),
@@ -148,16 +207,30 @@ pub fn run(args: &[OsString]) -> ExitCode {
             None => return usage(),
         },
     };
+    let request_id = match options.get("--job") {
+        Some(id) => match id.to_str() {
+            Some(id) => id.into(),
+            None => return usage(),
+        },
+        None => match azeroth_local_data::lifecycle::new_job_id() {
+            Ok(id) => id,
+            Err(e) => return emit::<()>(Err(e)),
+        },
+    };
     let request = ExtractionRequest {
         protocol_version: 1,
-        request_id: "cli-extract".into(),
+        resume: false,
+        request_id,
         installation: Path::new(installation).to_path_buf(),
         product: product.into(),
         destination: Path::new(destination).to_path_buf(),
         preset,
         tables,
     };
-    let mut worker = match ExtractionWorker::start(&request) {
+    run_worker(&request)
+}
+fn run_worker(request: &ExtractionRequest) -> ExitCode {
+    let mut worker = match ExtractionWorker::start(request) {
         Ok(worker) => worker,
         Err(error) => return emit::<()>(Err(error)),
     };
@@ -165,7 +238,12 @@ pub fn run(args: &[OsString]) -> ExitCode {
         match worker.next_event() {
             Ok(WorkerEvent::Progress { .. }) => {}
             Ok(WorkerEvent::Complete { summary, .. }) => {
-                let _ = emit(Ok(summary));
+                let mut value = serde_json::to_value(summary).expect("extraction summary");
+                value
+                    .as_object_mut()
+                    .expect("summary object")
+                    .insert("job_id".into(), request.request_id.clone().into());
+                let _ = emit(Ok(value));
                 return ExitCode::from(3);
             }
             Ok(WorkerEvent::Failed { code, .. }) => {
@@ -286,5 +364,57 @@ fn receipt(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
             receipts::verify_hybrid(&bytes, &policy, candidate, production)
                 .map(|r| serde_json::json!({"format_version":1,"verified":true,"private_catalog_sha256":r.payload.private_catalog_sha256}))
         })()),
+    }
+}
+
+fn lifecycle_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    use azeroth_local_data::lifecycle;
+    let Some(destination) = options.get("--destination") else {
+        return emit::<()>(Err("Destination is required"));
+    };
+    let root = Path::new(destination);
+    if command == "jobs" && options.len() == 1 {
+        return emit(lifecycle::jobs(root));
+    }
+    if command == "selections" && options.len() == 1 {
+        return emit(lifecycle::selections(root));
+    }
+    if let Some(id) = options.get("--job").and_then(|s| s.to_str()) {
+        if options.len() != 2 {
+            return emit::<()>(Err("Expected destination and job only"));
+        }
+        return match command {
+            "status" => emit(lifecycle::status(root, id)),
+            "cancel" => emit(lifecycle::cancel(root, id)),
+            "forget" => emit(lifecycle::index(root).and_then(|mut db| {
+                db.forget(id)
+                    .map_err(|_| "Cannot forget active or unknown job")
+            })),
+            "resume" => match lifecycle::resume_request(root, id) {
+                Ok(request) => run_worker(&request),
+                Err(e) => emit::<()>(Err(e)),
+            },
+            _ => emit::<()>(Err("Unsupported lifecycle command")),
+        };
+    }
+    let Some(digest) = options.get("--catalog").and_then(|s| s.to_str()) else {
+        return emit::<()>(Err("Catalog identity is required"));
+    };
+    if command == "active" && options.len() == 2 {
+        return emit(lifecycle::active(root, digest));
+    }
+    let expected = options
+        .get("--expected")
+        .and_then(|s| s.to_str())
+        .filter(|s| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit()))
+        .and_then(|s| s.parse::<u64>().ok());
+    match expected {
+        Some(expected) if options.len() == 3 => emit(lifecycle::activate(
+            root,
+            digest,
+            expected,
+            command == "rollback",
+        )),
+        _ => emit::<()>(Err("Expected activation generation is required")),
     }
 }

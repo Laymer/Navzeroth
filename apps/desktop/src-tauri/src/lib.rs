@@ -79,6 +79,61 @@ async fn cancel_local_data_job(
 ) -> Result<azeroth_app::local_data::JobView, AppError> {
     local_data_blocking(state, move |service| service.cancel(&job_id)).await
 }
+#[tauri::command]
+async fn list_local_installations(
+    state: State<'_, LocalData>,
+) -> Result<Vec<azeroth_app::local_data::SavedSelectionView>, AppError> {
+    local_data_blocking(state, |service| service.selections()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn restore_local_installation(
+    state: State<'_, LocalData>,
+    selection_id: String,
+) -> Result<azeroth_app::local_data::SelectionView, AppError> {
+    local_data_blocking(state, move |service| {
+        service.restore_selection(&selection_id)
+    })
+    .await
+}
+#[tauri::command]
+async fn list_local_data_jobs(
+    state: State<'_, LocalData>,
+) -> Result<Vec<azeroth_app::local_data::JobView>, AppError> {
+    local_data_blocking(state, |service| service.jobs()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn resume_local_data(
+    state: State<'_, LocalData>,
+    job_id: String,
+) -> Result<azeroth_app::local_data::JobView, AppError> {
+    local_data_blocking(state, move |service| service.resume(&job_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn forget_local_data_job(
+    state: State<'_, LocalData>,
+    job_id: String,
+) -> Result<(), AppError> {
+    local_data_blocking(state, move |service| service.forget(&job_id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_data_activation(
+    state: State<'_, LocalData>,
+    revision: String,
+) -> Result<azeroth_core::local_data_lifecycle::Activation, AppError> {
+    local_data_blocking(state, move |service| service.active(&revision)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn activate_local_data(
+    state: State<'_, LocalData>,
+    revision: String,
+    expected: u64,
+    rollback: bool,
+) -> Result<azeroth_core::local_data_lifecycle::Activation, AppError> {
+    local_data_blocking(state, move |service| {
+        service.activate(&revision, expected, rollback)
+    })
+    .await
+}
 #[tauri::command(rename_all = "snake_case")]
 async fn get_local_data_inventory(
     state: State<'_, LocalData>,
@@ -807,6 +862,13 @@ pub fn run() {
                 get_local_data_job,
                 cancel_local_data_job,
                 get_local_data_inventory,
+                list_local_installations,
+                restore_local_installation,
+                list_local_data_jobs,
+                resume_local_data,
+                forget_local_data_job,
+                get_local_data_activation,
+                activate_local_data,
                 list_local_submissions,
                 submit_local_observation,
                 change_local_submission,

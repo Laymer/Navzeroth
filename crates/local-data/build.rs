@@ -34,6 +34,10 @@ fn main() {
         PathBuf::from("native/offline.cpp"),
         PathBuf::from("Cargo.toml"),
         PathBuf::from("../../Cargo.lock"),
+        PathBuf::from("../core/src/local_data.rs"),
+        PathBuf::from("../core/src/local_data_catalog.rs"),
+        PathBuf::from("../core/src/local_data_lifecycle.rs"),
+        PathBuf::from("../storage/src/local_data.rs"),
     ]);
     sources.sort();
     let mut source_hash = Sha256::new();

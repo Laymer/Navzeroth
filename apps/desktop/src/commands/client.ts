@@ -48,6 +48,13 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    listLocalInstallations:()=>run(()=>adapter.invoke("list_local_installations",undefined)),
+    restoreLocalInstallation:(selectionId:string)=>run(()=>adapter.invoke("restore_local_installation",{selection_id:selectionId})),
+    listLocalDataJobs:()=>run(()=>adapter.invoke("list_local_data_jobs",undefined)),
+    forgetLocalDataJob:(jobId:string)=>run(()=>adapter.invoke("forget_local_data_job",{job_id:jobId})),
+    resumeLocalData:(jobId:string)=>run(()=>adapter.invoke("resume_local_data",{job_id:jobId})),
+    getLocalDataActivation:(revision:string)=>run(()=>adapter.invoke("get_local_data_activation",{revision})),
+    activateLocalData:(revision:string,expected:number,rollback=false)=>run(()=>adapter.invoke("activate_local_data",{revision,expected,rollback})),
     selectLocalInstallation:()=>run(()=>adapter.invoke("select_local_installation",undefined)),
     previewLocalData:(selectionId:string,preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("preview_local_data",{selection_id:selectionId,preset})),
     startLocalData:(selectionId:string,preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("start_local_data",{selection_id:selectionId,preset})),

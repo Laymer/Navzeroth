@@ -13,6 +13,7 @@ needed is in Git history (`TODO.md` at `3b19812`).
 
 ## Continuation (2026-10-18)
 
+Reconciliation merged as PR #191 at `167a454`, independently reviewed with all nine required checks.
 Owner and sole writer for reconciliation: Codex `/root`, baseline `7aecba8`;
 [claim](docs/claims/2026-10-18-continuation-policy.md).
 PR #188 (authored slice, including Windows path fixes), #189 (observed `wowf`
@@ -25,6 +26,12 @@ versioned delivery and guarded consumers; guides and exact inventory; desktop an
 installer; performance/materials; substantial review/test/CI; development version
 and publication; Pages redesign. Each is a separate independently reviewed PR.
 See ADR 0006 §13 for the early development RC policy. None is a stable gate pass.
+
+Active: continuation 2, durable extraction lifecycle; Codex `/root`, baseline
+`167a454`, [claim](docs/claims/2026-10-18-extraction-lifecycle.md),
+[handoff](docs/handoffs/2026-10-18-extraction-lifecycle.md).
+Later input adapters, expanded projections, media, guarded gameplay consumers,
+reviewed inventory, performance, coverage, publication and Pages remain pending.
 
 ## Gate snapshot
 

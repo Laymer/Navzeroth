@@ -9,6 +9,7 @@ authors.workspace = true
 publish.workspace = true
 
 [dependencies]
+azeroth-storage = { path = "../storage" }
 azeroth-core = { path = "../core" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

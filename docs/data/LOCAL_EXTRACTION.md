@@ -32,8 +32,79 @@ a preliminary plan or completed research-only extraction. An extracted research
 catalog never becomes gameplay-ready or active simply because decoding succeeds.
 `status` takes the same destination/catalog options as `verify`. `coverage`
 reports dispositions and unknown target completeness, not an imported-count
-completeness percentage. Durable CLI job control/resume/diff/activation and
-receipt *preparation* are not implemented; those commands fail closed.
+completeness percentage. Durable job control and research activation are described below. Gameplay diff,
+projection/media delivery binding and receipt *preparation* remain separate work;
+research activation never enables planning.
+
+## Durable jobs, saved selections and research activation
+
+The private store now includes `lifecycle.sqlite3`, a separate version-1 SQLite
+index with transactional checkpoints and activation history. Existing catalogs
+and projections keep their original formats and bytes. Unknown database, worker
+and checkpoint versions refuse. No character database is migrated or shared.
+
+```sh
+cargo run --locked -p azeroth-cli -- local-data select --installation <selected-directory> --product wow_classic_beta --destination <private-directory> --preset small
+cargo run --locked -p azeroth-cli -- local-data selections --destination <private-directory>
+cargo run --locked -p azeroth-cli -- local-data extract --destination <private-directory> --selection <opaque-selection-id> --job <chosen-job-id>
+cargo run --locked -p azeroth-cli -- local-data jobs --destination <private-directory>
+cargo run --locked -p azeroth-cli -- local-data status --destination <private-directory> --job <job-id>
+cargo run --locked -p azeroth-cli -- local-data cancel --destination <private-directory> --job <job-id>
+cargo run --locked -p azeroth-cli -- local-data resume --destination <private-directory> --job <job-id>
+cargo run --locked -p azeroth-cli -- local-data forget --destination <private-directory> --job <terminal-job-id>
+cargo run --locked -p azeroth-cli -- local-data active --destination <private-directory> --catalog <catalog-sha256>
+cargo run --locked -p azeroth-cli -- local-data activate --destination <private-directory> --catalog <catalog-sha256> --expected <generation>
+cargo run --locked -p azeroth-cli -- local-data rollback --destination <private-directory> --catalog <previously-active-catalog-sha256> --expected <generation>
+```
+
+Direct `extract --installation … --product …` remains supported. `--job` is
+optional for new extraction; otherwise the CLI generates and reports its ID.
+`status --catalog …` retains its historical catalog-verification behavior.
+`--selection` uses only a previously explicitly saved path/product/preset and
+cannot be combined with another installation/product. Explicit `--preset`
+overrides that run; saved selections are changed by `select` or desktop review.
+Resume uses the saved request; it cannot change product, tables or resource preset.
+
+Each completed table checkpoints its inventory, retained/decoded object hashes and
+gaps. Resume compares the exact source, extractor/dependency profile, requested
+subset, locale/table sequence and preset; it verifies every reused object before
+opening the archive. Changed inputs, corrupt objects or unknown versions refuse
+without reinterpreting the checkpoint. Source checks now stream SHA-256 over all
+selected archive segments before and after extraction (4 GiB per-segment bound),
+in addition to metadata/config/index hashes and file stamps. This performs full
+archive reads and can materially increase startup/resume time. It has not yet
+been measured on ordinary Windows. No source files are modified.
+
+Desktop cancellation persists the terminal state then kills its worker. CLI
+cancellation is cooperative at table boundaries; it cannot interrupt a native
+read in another process. A crash is classified as interrupted only after the
+private destination's writer lock proves that no worker can still commit.
+Checkpoint writes and completion refuse after cancellation. Extracted objects or
+an unactivated sealed catalog may remain after a failure; previous activation is
+unchanged. Partial table results are never checkpointed.
+
+There are at most 16 saved selections, 8 retained jobs and 1,024 activations per
+build/locale scope. The index is capped at 64 MiB with 4 KiB pages, DELETE journal
+and FULL synchronization. Store quotas conservatively reserve another 128 MiB
+for the index and rollback journal, including existing file sizes. Capacity or
+SQLite failures preserve committed state. `forget` deletes terminal job records
+only; retained catalogs, projections and activation history are never removed.
+
+Activation first verifies the full immutable catalog closure under the store
+writer lock. The immediate SQLite transaction compares the displayed generation
+and appends the new research selection atomically. Rollback requires an actually
+previously active digest in the same exact product/version/build/locale scope.
+Stale generations, missing/corrupt objects and cross-scope rollback refuse. No
+activation changes characters, plans, playable content, release readiness or
+`verified_for_planning` (which remains false). Projection/media binding and
+validated gameplay consumer activation are continuation 6, not this selection.
+
+In the desktop Local Data panel, use **Review saved extraction state** to restore
+an installation and its preset or inspect a saved job. Interrupted, failed and
+cancelled jobs offer exact-source resume. Terminal history can be forgotten
+without deleting artifacts. A complete job offers research activation review;
+choose an earlier complete job to select a rollback target. All operations use
+typed native commands and opaque IDs; no arbitrary paths are sent to browser UI.
 
 Explicit receipt steps (task V1.2) take named files only; nothing is generated,
 searched for, activated or printed from a key:
@@ -298,7 +369,7 @@ OS sandbox against hostile concurrent directory replacement; native read-only
 restrictions and post-read consistency checks are additional layers.
 
 Private storage contains content-addressed `objects/`, immutable `catalogs/`,
-sealed research `projections/` and an OS writer lock. Opening a store (extract
+sealed research `projections/`, the private lifecycle index and an OS writer lock. Opening a store (extract
 or project) now creates `projections/`; binaries before task V2.2 refuse a store
 containing it, so this is a one-way upgrade. Per-installation locks also
 serialize alternate destinations.
@@ -306,8 +377,9 @@ Quota accounting includes existing objects/catalogs and staging. Free space is
 checked before writing; no quota is preallocated. Writes sync staging before
 atomic sealing, and extraction never changes active gameplay state. Cancellation
 terminates the child, releases OS locks and leaves previous catalogs intact;
-unsealed staging may remain and currently needs manual review/cleanup. There is
-no checkpoint resumption or automated cleanup yet.
+unsealed staging may remain and currently needs manual review/cleanup. Checkpoint resumption is available as described above; automated cleanup remains
+unimplemented. Older binaries that do not recognize `lifecycle.sqlite3` refuse an
+upgraded store rather than silently discarding its lifecycle state.
 
 Supported research readers cover WDC3/4/5 headers, bounded sections, inline/
 non-inline IDs (including valid zero IDs), integer/sign/bit storage, common and
@@ -388,9 +460,9 @@ fingerprint, with its private catalog among the declared digests. The committed
 policy is still `bundled_content`; switching it is a later, reviewed change.
 
 Remaining engineering: cache/hotfix import, full media and tooltip evaluation,
-projection activation/rollback and consumers, row search and indexes, durable jobs/
-checkpoints, persistent presets/selection and installer choices, opt-in update
+projection/media-bound gameplay activation and consumers, row search and indexes,
+installer choices, opt-in update
 detection, receipt preparation and the completed private-inventory packaging/readiness
-contracts. All nine complete target inventories and actual candidate-bound
-70374 live/interactive acceptance remain missing.70425 development extraction
-cannot substitute for those inputs or reviews.
+contracts. All nine complete slice inventories and actual candidate-bound
+live/interactive acceptance on the pending post-launch target remain missing.
+70425/70450 development extraction cannot substitute for those inputs or reviews.

@@ -23,3 +23,29 @@ it("reports safe errors without exposing paths and never starts from an unselect
   await waitFor(()=>expect(screen.getByRole("alert")).toHaveTextContent("PROVIDER_UNAVAILABLE"));expect(screen.queryByText(/private-account-path/)).not.toBeInTheDocument();
   expect(screen.getByRole("button",{name:"Review extraction limits"})).toBeDisabled();
 });
+
+it("restores saved presets and resumes interrupted work through opaque identities",async()=>{
+  const calls:{command:string;input:unknown}[]=[];
+  const job:LocalDataJob={job_id:"saved-job",state:"interrupted",completed:1,total:2,error:"Worker interrupted; checkpoint retained",summary:null};
+  const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==="list_local_installations"?[{selection_id:"opaque-saved",product:"wow_classic_beta",preset:"small"}]:command==="list_local_data_jobs"?[job]:command==="restore_local_installation"?{selection_id:"opaque-saved",preset:"small",inspection:{metadata:{product:"wow_classic_beta",version:"1.60.1.70450",build:70450,declared_locales:["enUS"]}}}:command==="resume_local_data"?{...job,state:"cancelled",error:null}:null)as never);}};
+  render(<LocalDataPanel client={createClient(adapter)}/>);
+  fireEvent.click(screen.getByRole("button",{name:"Review saved extraction state"}));
+  fireEvent.click(await screen.findByRole("button",{name:/Restore installation/}));await screen.findByText(/Selected product wow_classic_beta/);
+  expect(screen.getByRole("combobox",{name:"Extraction resources"})).toHaveValue("small");
+  fireEvent.click(screen.getByRole("button",{name:"Inspect saved job saved-job"}));
+  expect(screen.getByText(/Extraction interrupted: 1 of 2/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button",{name:"Resume unchanged extraction"}));await screen.findByText(/Extraction cancelled/);
+  expect(calls.find(c=>c.command==="restore_local_installation")?.input).toEqual({selection_id:"opaque-saved"});
+  expect(calls.find(c=>c.command==="resume_local_data")?.input).toEqual({job_id:"saved-job"});
+});
+it("guards research activation with the displayed generation and clears a refused guard",async()=>{
+  const calls:{command:string;input:unknown}[]=[];const digest="b".repeat(64);
+  const job:LocalDataJob={job_id:"staged",state:"complete",completed:1,total:1,error:null,summary:{catalog_sha256:digest,build:70450,tables_processed:1,tables_decoded:0,actual_workers:1,gameplay_projection_available:false,activated:false}};
+  const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});if(command==="activate_local_data")return Promise.reject({code:"INVALID_INPUT",message:"private-path",retryable:false});return Promise.resolve((command==="list_local_installations"?[]:command==="list_local_data_jobs"?[job]:{format_version:1,scope:"c".repeat(64),generation:2,catalog_sha256:"a".repeat(64),verified_for_planning:false})as never);}};
+  render(<LocalDataPanel client={createClient(adapter)}/>);fireEvent.click(screen.getByRole("button",{name:"Review saved extraction state"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect saved job staged"}));
+  expect(screen.queryByRole("button",{name:"Activate research revision"})).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button",{name:"Review research activation"}));await screen.findByText(/generation 2/);fireEvent.click(screen.getByRole("button",{name:"Activate research revision"}));
+  await screen.findByText(/Research activation refused: INVALID_INPUT/);
+  expect(calls.find(c=>c.command==="activate_local_data")?.input).toEqual({revision:digest,expected:2,rollback:false});
+  expect(screen.queryByRole("button",{name:"Activate research revision"})).not.toBeInTheDocument();expect(screen.queryByText(/private-path/)).not.toBeInTheDocument();
+});

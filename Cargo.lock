@@ -149,6 +149,7 @@ name = "azeroth-local-data"
 version = "0.9.2"
 dependencies = [
  "azeroth-core",
+ "azeroth-storage",
  "cc",
  "ed25519-dalek",
  "libc",

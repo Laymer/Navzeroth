@@ -15,6 +15,9 @@ use std::{
 
 pub const WORKER_ARGUMENT: &str = "--navzeroth-local-data-worker-v1";
 const MAX_FRAME: usize = 64 * 1024;
+fn is_false(value: &bool) -> bool {
+    !*value
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -27,10 +30,14 @@ pub struct ExtractionRequest {
     pub preset: PerformancePreset,
     /// Empty means every reviewed table candidate, not every game asset.
     pub tables: Vec<String>,
+    /// Protocol 2 enables exact-source checkpoint resume; v1 remains readable.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub resume: bool,
 }
 impl ExtractionRequest {
     pub fn validate(&self) -> Result<()> {
-        if self.protocol_version != 1
+        if !matches!(self.protocol_version, 1 | 2)
+            || (self.resume && self.protocol_version != 2)
             || self.request_id.is_empty()
             || self.request_id.len() > 64
             || !self
