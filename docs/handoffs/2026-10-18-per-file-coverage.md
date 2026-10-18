@@ -432,3 +432,23 @@ needless test clones. Native refusal Node tests, formatting/diff checks pass.
 Next: fresh hosted native loader/IPC checks and clean LLVM diagnostic to identify
 remaining deficits. Coverage gate is not passing; no merge/publication authorized
 by evidence yet.
+
+Read-only policy review found start_snapshot_watch was incorrectly classified as
+an immediate refusal: missing selected files start a watcher and asynchronously
+report Missing. Removed it from the shared refusal fixture; official mock IPC now
+asserts owned missing-path startup, Missing/no import, explicit stop and unchanged
+reference state. Added nine typed refusals and explicit read-only/absent-party
+success responses. The shared matrix now has 90 cases. Independent review found
+no remaining argument/semantics findings; native hosted execution remains required.
+
+CLI synthetic empty-catalog round trip passed: coverage/verify/status, projection,
+guide facts, tooltip, delivery build/read/explicit activation/rollback/diff, inventory
+and all nine domain pages preserve unknown completeness and research status. CLI
+all-target Clippy passes. Coverage/native Node helper tests: 22 passed.
+
+Clean non-native Linux run at 25549a5 passed 1,380 tests, four explicit regenerators
+ignored, 182 suites. LLVM export failed on a corrupt profile: the manual diagnostic
+used LLVM_PROFILE_FILE instead of cargo-llvm-cov's LLVM_PROFILE_FILE_NAME and hence
+did not select continuous profiles. No counts from that failed export are accepted;
+raw logs/profiles retained. Next diagnostic uses the collector's actual environment
+contract and clears its owned prior coverage artifacts before starting.

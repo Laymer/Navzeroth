@@ -162,3 +162,124 @@ fn selected_cache_stage_verify_and_pages_share_the_bounded_research_contract() {
     assert_eq!(code, 2);
     fs::remove_dir_all(source).unwrap();
 }
+
+#[test]
+fn research_cli_round_trip_preserves_explicit_activation_and_unknown_completeness() {
+    let s = Store::new();
+    let catalog = s.catalog(70450, "synthetic_empty_catalog");
+    let dest = s.0.to_str().unwrap();
+    let run = |command: &str, options: &[&str], expected: i32| {
+        let mut args = vec!["local-data", command, "--destination", dest];
+        args.extend_from_slice(options);
+        let (code, value) = call(&args);
+        assert_eq!(code, expected, "{command}: {value}");
+        value
+    };
+    let coverage = run("coverage", &["--catalog", &catalog], 0);
+    assert!(coverage["complete_target_inventory"].is_null());
+    assert_eq!(coverage["gameplay_projection_available"], false);
+    for command in ["verify", "status"] {
+        run(command, &["--catalog", &catalog], 0);
+    }
+    let projection = run("project", &["--catalog", &catalog, "--locale", "enUS"], 3);
+    let projection = projection["projection_sha256"].as_str().unwrap();
+    let verified = run("projection-verify", &["--projection", projection], 0);
+    assert_eq!(verified["verified"], true);
+    let facts = run("guide-facts-build", &["--projection", projection], 0);
+    let facts = facts["guide_facts_sha256"].as_str().unwrap();
+    let facts_report = run("guide-facts-verify", &["--guide-facts", facts], 0);
+    assert_eq!(facts_report["verified_for_planning"], false);
+    let discovery = run(
+        "media-discover",
+        &["--catalog", &catalog, "--locale", "enUS"],
+        0,
+    );
+    assert!(discovery["candidates"].as_array().unwrap().is_empty());
+    let tooltip = run("tooltip", &["--projection", projection, "--spell", "1"], 0);
+    assert_eq!(tooltip["verified_for_gameplay"], false);
+    let delivery = run(
+        "delivery-build",
+        &["--projection", projection, "--guide-facts", facts],
+        0,
+    );
+    let delivery = delivery["delivery_sha256"].as_str().unwrap();
+    assert_eq!(
+        run("delivery-verify", &["--delivery", delivery], 0)["fixture"],
+        true
+    );
+    assert_eq!(
+        run("delivery-active", &["--delivery", delivery], 0)["generation"],
+        0
+    );
+    let page = run(
+        "delivery-page",
+        &[
+            "--delivery",
+            delivery,
+            "--domain",
+            "equipment",
+            "--offset",
+            "0",
+            "--limit",
+            "200",
+        ],
+        0,
+    );
+    assert!(page["rows"].as_array().unwrap().is_empty());
+    assert!(page["total"].is_null());
+    assert_eq!(
+        run(
+            "delivery-activate",
+            &["--delivery", delivery, "--expected", "0"],
+            0
+        )["generation"],
+        1
+    );
+    assert_eq!(
+        run(
+            "delivery-rollback",
+            &["--delivery", delivery, "--expected", "1"],
+            0
+        )["generation"],
+        2
+    );
+    assert!(
+        run(
+            "delivery-diff",
+            &["--before", delivery, "--after", delivery],
+            0
+        )["changed"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    let inventory = run("inventory-build", &["--delivery", delivery], 0);
+    let inventory = inventory["inventory_sha256"].as_str().unwrap();
+    let summary = run("inventory-verify", &["--inventory", inventory], 0);
+    assert_eq!(summary["acceptance_ready"], false);
+    for domain in summary["domains"].as_array().unwrap() {
+        assert_eq!(domain["independently_complete"], false);
+        let page = run(
+            "inventory-page",
+            &[
+                "--inventory",
+                inventory,
+                "--domain",
+                domain["domain"].as_str().unwrap(),
+                "--offset",
+                "0",
+                "--limit",
+                "200",
+            ],
+            0,
+        );
+        assert_eq!(page["total"], domain["imported_count"]);
+        assert_eq!(page["independently_complete"], false);
+    }
+    let designs = run("route-designs", &["--inventory", inventory], 0);
+    assert!(!serde_json::to_string(&designs).unwrap().contains(dest));
+    assert_eq!(
+        run("delivery-active", &["--delivery", delivery], 0)["generation"],
+        2
+    );
+}

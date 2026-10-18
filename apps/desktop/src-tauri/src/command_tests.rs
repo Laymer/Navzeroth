@@ -33,6 +33,30 @@ fn invalid_native_ipc_preserves_current_reference_and_structured_errors() {
             root.join("private"),
         )))
         .invoke_handler(tauri::generate_handler![
+            forget_local_data_job,
+            forget_local_material,
+            get_calibration,
+            get_joint_planning_catalog,
+            project_positions,
+            reminder_view,
+            review_selected_local_guide,
+            set_session_calibration,
+            get_app_status,
+            list_profiles,
+            list_parties,
+            get_app_settings,
+            get_today_view,
+            get_local_workflow,
+            list_local_materials,
+            get_local_change_detectors,
+            list_local_installations,
+            list_local_data_jobs,
+            get_database_status,
+            check_database,
+            get_reference_view,
+            get_party_plan_proposal,
+            get_party,
+            delete_party,
             get_planning_job,
             cancel_planning_job,
             take_planning_job_result,
@@ -56,6 +80,8 @@ fn invalid_native_ipc_preserves_current_reference_and_structured_errors() {
             import_snapshot_text,
             import_snapshot_file,
             start_snapshot_watch,
+            get_snapshot_watch,
+            stop_snapshot_watch,
             import_session_text,
             import_session_file,
             get_session_detail,
@@ -169,6 +195,105 @@ fn invalid_native_ipc_preserves_current_reference_and_structured_errors() {
             error
         );
     }
+    // A selected missing file is an accepted watcher startup, not a refusal.
+    // Exercise its asynchronous status and explicit stop through real handlers.
+    let invoke = |command: &str, args: Value| -> Value {
+        tauri::test::get_ipc_response(
+            &view,
+            tauri::webview::InvokeRequest {
+                cmd: command.into(),
+                callback: tauri::ipc::CallbackFn(0),
+                error: tauri::ipc::CallbackFn(1),
+                url: if cfg!(any(windows, target_os = "android")) {
+                    "http://tauri.localhost"
+                } else {
+                    "tauri://localhost"
+                }
+                .parse()
+                .unwrap(),
+                body: tauri::ipc::InvokeBody::Json(args),
+                headers: Default::default(),
+                invoke_key: tauri::test::INVOKE_KEY.into(),
+            },
+        )
+        .unwrap()
+        .deserialize()
+        .unwrap()
+    };
+    for command in [
+        "list_profiles",
+        "list_parties",
+        "list_local_materials",
+        "get_local_change_detectors",
+        "list_local_installations",
+        "list_local_data_jobs",
+    ] {
+        assert_eq!(
+            invoke(command, serde_json::json!({})),
+            serde_json::json!([]),
+            "{command}"
+        );
+    }
+    for command in [
+        "get_app_status",
+        "get_app_settings",
+        "get_today_view",
+        "get_local_workflow",
+        "get_reference_view",
+    ] {
+        assert!(
+            invoke(command, serde_json::json!({})).is_object(),
+            "{command}"
+        );
+    }
+    assert_eq!(
+        invoke("get_database_status", serde_json::json!({}))["state"],
+        "ready"
+    );
+    assert!(invoke("check_database", serde_json::json!({})).is_null());
+    assert!(
+        invoke(
+            "get_party_plan_proposal",
+            serde_json::json!({"party_id":"missing-synthetic-party"})
+        )
+        .is_null()
+    );
+    assert!(
+        invoke(
+            "get_party",
+            serde_json::json!({"party_id":"missing-synthetic-party"})
+        )
+        .is_null()
+    );
+    assert_eq!(
+        invoke(
+            "delete_party",
+            serde_json::json!({"party_id":"missing-synthetic-party"})
+        ),
+        false
+    );
+    let started = invoke(
+        "start_snapshot_watch",
+        serde_json::json!({"path":root.join("owned-missing.txt"),"format":{"kind":"anav1_text"}}),
+    );
+    assert_eq!(started["active"], true);
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    loop {
+        let status = invoke("get_snapshot_watch", serde_json::json!({}));
+        assert!(status["last_import"].is_null());
+        if status["status"] == "missing" {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "missing selected file status timed out: {status}"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert_eq!(
+        invoke("stop_snapshot_watch", serde_json::json!({}))["active"],
+        false
+    );
     let after = serde_json::to_value(
         host.with_application(|app| app.reference_view(None))
             .unwrap(),

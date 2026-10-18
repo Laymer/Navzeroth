@@ -146,15 +146,6 @@
     }
   },
   {
-    "command": "start_snapshot_watch",
-    "args": {
-      "path": "",
-      "format": {
-        "kind": "anav1_text"
-      }
-    }
-  },
-  {
     "command": "import_session_text",
     "args": {
       "profile_id": "invalid",
@@ -628,6 +619,104 @@
     "args": {
       "before": "invalid",
       "after": "invalid"
+    }
+  },
+  {
+    "command": "forget_local_material",
+    "args": {
+      "id": "invalid"
+    }
+  },
+  {
+    "command": "forget_local_data_job",
+    "args": {
+      "job_id": "missing-synthetic-job"
+    }
+  },
+  {
+    "command": "reminder_view",
+    "args": {
+      "profile_id": "missing-synthetic-profile"
+    }
+  },
+  {
+    "command": "get_joint_planning_catalog",
+    "args": {
+      "party_id": "missing-synthetic-party"
+    }
+  },
+  {
+    "command": "review_selected_local_guide",
+    "args": {
+      "request": {
+        "format_version": 2,
+        "delivery": "invalid",
+        "id": "missing",
+        "class_name": "Warrior",
+        "mode": "solo",
+        "expected": null,
+        "offset": 0,
+        "limit": 200
+      }
+    }
+  },
+  {
+    "command": "review_selected_local_guide",
+    "args": {
+      "request": {
+        "format_version": 1,
+        "delivery": "invalid",
+        "id": "missing",
+        "class_name": "Warrior",
+        "mode": "solo",
+        "expected": null,
+        "offset": 0,
+        "limit": 200
+      }
+    }
+  },
+  {
+    "command": "set_session_calibration",
+    "args": {
+      "profile_id": "missing-synthetic-profile",
+      "session_id": "synthetic-session",
+      "annotation": {
+        "conditions": {
+          "route_stage": "synthetic",
+          "level": 1,
+          "role": "solo",
+          "party_size": 1
+        },
+        "complete": false,
+        "completion_quest": "synthetic-quest"
+      }
+    }
+  },
+  {
+    "command": "get_calibration",
+    "args": {
+      "profile_id": "missing-synthetic-profile",
+      "request": {
+        "conditions": {
+          "route_stage": "synthetic",
+          "level": 1,
+          "role": "solo",
+          "party_size": 1
+        },
+        "baseline_ms": 1,
+        "baseline_source": "synthetic"
+      }
+    }
+  },
+  {
+    "command": "project_positions",
+    "args": {
+      "positions": [],
+      "page": {
+        "profile_id": "missing-synthetic-profile",
+        "revision": "synthetic",
+        "catalog_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
     }
   }
 ]
