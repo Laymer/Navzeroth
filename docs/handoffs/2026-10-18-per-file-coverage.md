@@ -542,3 +542,7 @@ tests, 22 coverage/native helper tests, formatting and diff checks pass. Native
 Tauri and Windows-only compilation/execution remain unverified until hosted checks.
 Next: push this batch, collect exact-head native reports and fix any remaining
 failures before final review. No threshold, exclusions or acceptance claims change.
+
+Hosted bbebea2 Linux compilation caught a test-only private-field access on
+AppError.message. Corrected to assert the serialized consumer error message; the
+production type and privacy remain unchanged. Native checks must run again.

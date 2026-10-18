@@ -490,7 +490,8 @@ fn invalid_native_ipc_preserves_current_reference_and_structured_errors() {
         let error = result.unwrap_err();
         assert_eq!(error.code, ErrorCode::ProviderUnavailable);
         assert!(!error.retryable);
-        assert!(!error.message.contains("SENTINEL"));
+        let serialized = serde_json::to_value(error).unwrap();
+        assert!(!serialized["message"].as_str().unwrap().contains("SENTINEL"));
     }
     assert_eq!(host.status().unwrap().state, "ready");
     let controller = app.state::<reference_window::Controller>();
