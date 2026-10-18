@@ -10,6 +10,7 @@ use crate::{
 use azeroth_core::{
     local_data::{CASCLIB_REVISION, InventoryDisposition},
     local_data_catalog::{DistributionClass, ExtractionSummary, ResearchCatalog, TableInventory},
+    local_data_lifecycle::{Checkpoint, CheckpointBinding, JobState},
 };
 use std::{
     collections::BTreeMap,
@@ -19,6 +20,7 @@ use std::{
 };
 
 const MAX_TABLE_BYTES: usize = 64 * 1024 * 1024;
+const LIFECYCLE_RESERVE_BYTES: u64 = 130 * 1024 * 1024;
 pub const MAX_DECODED_BYTES: usize = 256 * 1024 * 1024;
 const MAX_MANIFEST_BYTES: usize = 16 * 1024 * 1024;
 /// A partially available file whose header, field, pallet, common or section
@@ -30,10 +32,19 @@ struct SourceState {
     hashes: BTreeMap<String, String>,
 }
 impl SourceState {
+    #[cfg(test)]
     fn capture(
         root: &Path,
         build: &azeroth_core::local_data::InstallationMetadata,
     ) -> Result<Self> {
+        Self::capture_checked(root, build, || Ok(()))
+    }
+    fn capture_checked(
+        root: &Path,
+        build: &azeroth_core::local_data::InstallationMetadata,
+        mut check: impl FnMut() -> Result<()>,
+    ) -> Result<Self> {
+        check()?;
         let mut names = vec![".build.info".to_owned()];
         for key in [&build.build_key, &build.cdn_key] {
             names.push(format!("Data/config/{}/{}/{key}", &key[..2], &key[2..4]));
@@ -64,18 +75,37 @@ impl SourceState {
         let mut stamps = BTreeMap::new();
         let mut hashes = BTreeMap::new();
         for name in names {
+            check()?;
             let path = checked_path(&root.join(&name))?;
             let meta = fs::metadata(&path).map_err(|_| "Source metadata unavailable")?;
             if !meta.is_file() {
                 return Err("Source input is not a regular file");
             }
             stamps.insert(name.clone(), stamp(&meta)?);
-            if !name.to_ascii_lowercase().starts_with("data/data/data.") {
-                let (bytes, _) = read_file(&path, 64 * 1024 * 1024)?;
-                hashes.insert(name, hash(&bytes));
-            }
+            let digest = if name.to_ascii_lowercase().starts_with("data/data/data.") {
+                // Streaming content identity prevents same-size/mtime rewrites from
+                // reusing a checkpoint, including on Windows. No segment buffering.
+                crate::hash_file(&path, 4usize * 1024 * 1024 * 1024)?.1
+            } else {
+                hash(&read_file(&path, 64 * 1024 * 1024)?.0)
+            };
+            hashes.insert(name, digest);
         }
         Ok(Self { stamps, hashes })
+    }
+}
+
+struct AttemptGuard {
+    root: PathBuf,
+    id: String,
+}
+impl Drop for AttemptGuard {
+    fn drop(&mut self) {
+        // Created only AFTER this worker owns the destination and began a job.
+        // A competing/refused worker must never terminalize another attempt.
+        if let Ok(mut db) = crate::lifecycle::index(&self.root) {
+            let _ = db.finish(&self.id, JobState::Failed, None);
+        }
     }
 }
 
@@ -120,9 +150,16 @@ impl Store {
             let name = entry
                 .map_err(|_| "Private destination inaccessible")?
                 .file_name();
-            if !["writer.lock", "objects", "catalogs", "projections"]
-                .iter()
-                .any(|allowed| name == *allowed)
+            if ![
+                "writer.lock",
+                "objects",
+                "catalogs",
+                "projections",
+                "lifecycle.sqlite3",
+                "lifecycle.sqlite3-journal",
+            ]
+            .iter()
+            .any(|allowed| name == *allowed)
             {
                 return Err("Destination must be empty or an existing local-data store");
             }
@@ -141,7 +178,7 @@ impl Store {
             }
         }
         let lock_path = root.join("writer.lock");
-        if lock_path.exists() {
+        if lock_path.symlink_metadata().is_ok() {
             checked_path(&lock_path)?;
             if !lock_path.is_file() {
                 return Err("Writer lock must be a regular file");
@@ -156,7 +193,11 @@ impl Store {
             .map_err(|_| "Private writer lock unavailable")?;
         lock.try_lock()
             .map_err(|_| "Another extraction owns the destination")?;
-        let used = total_size(&root, 0, &mut 0)?;
+        // Reserve the bounded 64 MiB lifecycle database and rollback-journal overhead.
+        // Counting existing bytes as well is conservative and avoids quota races.
+        let used = total_size(&root, 0, &mut 0)?
+            .checked_add(LIFECYCLE_RESERVE_BYTES)
+            .ok_or("Storage quota overflow")?;
         if used > quota {
             return Err("Existing private store exceeds configured quota");
         }
@@ -237,7 +278,7 @@ fn installation_lock(root: &Path, destination: &Path) -> Result<File> {
         return Err("Unsafe installation lock location");
     }
     let path = directory.join(name);
-    if path.exists() {
+    if path.symlink_metadata().is_ok() {
         checked_path(&path)?;
         if !path.is_file() {
             return Err("Installation lock must be a regular file");
@@ -308,11 +349,94 @@ pub(crate) fn extract(
     if selected.is_empty() || selected.len() > 32_768 {
         return Err("Installed locales or table inventory unavailable or excessive");
     }
-    let source = SourceState::capture(&root, &inspection.metadata)?;
+    let mut store = Store::open(&destination, request.preset.limits().total_storage_bytes)?;
+    let mut db = crate::lifecycle::index(&destination)?;
+    let preparing = db
+        .prepare(
+            &request.request_id,
+            &serde_json::to_string(request).map_err(|_| "Cannot encode private request")?,
+            request.resume,
+        )
+        .map_err(|_| "Job exists or preparation/resume refused")?;
+    let _attempt = AttemptGuard {
+        root: destination.clone(),
+        id: request.request_id.clone(),
+    };
+    progress(preparing.completed, preparing.total)?;
+    let source = SourceState::capture_checked(&root, &inspection.metadata, || {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Preparing
+        {
+            return Err("Extraction cancelled during fingerprinting");
+        }
+        Ok(())
+    })?;
     if source.hashes.get(".build.info") != Some(&inspection.build_info_sha256) {
         return Err("Installation changed after inspection; candidate refused");
     }
-    let mut store = Store::open(&destination, request.preset.limits().total_storage_bytes)?;
+    let source_sha256 = hash(&crate::bounded_json(
+        &(&root, &source.stamps, &source.hashes),
+        MAX_MANIFEST_BYTES,
+    )?);
+    let selection_sha256 = hash(&crate::bounded_json(
+        &(
+            &request.product,
+            &request.tables,
+            selected
+                .iter()
+                .map(|(locale, _, table)| (locale, &table.name, table.file_data_id))
+                .collect::<Vec<_>>(),
+        ),
+        MAX_MANIFEST_BYTES,
+    )?);
+    let binding = CheckpointBinding {
+        format_version: 1,
+        source_sha256,
+        extractor_sha256: env!("NAVZEROTH_LOCAL_DATA_PROFILE_SHA256").into(),
+        selection_sha256,
+        preset: request.preset,
+        total: selected.len() as u32,
+    };
+    let empty = Checkpoint {
+        format_version: 1,
+        binding,
+        tables: Vec::new(),
+        gaps: Vec::new(),
+    };
+    let checkpoint = db
+        .begin(
+            &request.request_id,
+            &serde_json::to_string(request).map_err(|_| "Cannot encode private request")?,
+            &empty,
+            request.resume,
+        )
+        .map_err(|_| "Job exists, capacity reached or source/profile changed; resume refused")?;
+    checkpoint.validate()?;
+    for (index, row) in checkpoint.tables.iter().enumerate() {
+        let (locale, _, candidate) = &selected[index];
+        if row.table != candidate.name
+            || row.locale.as_ref() != Some(locale)
+            || row.file_data_id != candidate.file_data_id
+        {
+            return Err("Checkpoint does not match selected table order");
+        }
+    }
+    verify_checkpoint_objects(&destination, &checkpoint, || {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Running
+        {
+            return Err("Extraction cancelled while verifying checkpoint");
+        }
+        Ok(())
+    })?;
+    let binding = checkpoint.binding.clone();
+    let resumed = checkpoint.tables.len();
     let mut current_locale = selected[0].0.clone();
     let mut archive = Some(Archive::open(
         &root,
@@ -321,9 +445,9 @@ pub(crate) fn extract(
         inspection.metadata.build,
     )?);
     let archive_statistics = Some(archive.as_ref().unwrap().statistics()?);
-    let mut inventory = Vec::new();
+    let mut inventory = checkpoint.tables;
     let total = selected.len() as u32;
-    progress(0, total)?;
+    progress(resumed as u32, total)?;
     let mut gaps = vec![
         "research_only_no_playable_availability_evidence".into(),
         "hotfix_state_unknown".into(),
@@ -333,7 +457,16 @@ pub(crate) fn extract(
     if !request.tables.is_empty() {
         gaps.push("explicit_table_subset".into());
     }
-    for (index, (locale, mask, candidate)) in selected.into_iter().enumerate() {
+    gaps.extend(checkpoint.gaps);
+    for (index, (locale, mask, candidate)) in selected.into_iter().enumerate().skip(resumed) {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Running
+        {
+            return Err("Extraction cancelled");
+        }
         if locale != current_locale {
             drop(archive.take());
             archive = Some(Archive::open(
@@ -469,10 +602,32 @@ pub(crate) fn extract(
             }
         }
         inventory.push(entry);
+        gaps.sort();
+        gaps.dedup();
+        db.checkpoint(
+            &request.request_id,
+            &Checkpoint {
+                format_version: 1,
+                binding: binding.clone(),
+                tables: inventory.clone(),
+                gaps: gaps.clone(),
+            },
+        )
+        .map_err(|_| "Checkpoint write refused or extraction cancelled")?;
         progress(index as u32 + 1, total)?;
     }
     drop(archive);
-    let after = SourceState::capture(&root, &inspection.metadata)?;
+    let after = SourceState::capture_checked(&root, &inspection.metadata, || {
+        if db
+            .status(&request.request_id)
+            .map_err(|_| "Cannot read job state")?
+            .state
+            != JobState::Running
+        {
+            return Err("Extraction cancelled during fingerprinting");
+        }
+        Ok(())
+    })?;
     if source.stamps != after.stamps || source.hashes != after.hashes {
         return Err("Source changed; candidate was not sealed");
     }
@@ -502,8 +657,16 @@ pub(crate) fn extract(
     if bytes.len() > MAX_MANIFEST_BYTES {
         return Err("Catalog manifest exceeds capacity");
     }
+    if db
+        .status(&request.request_id)
+        .map_err(|_| "Cannot read job state")?
+        .state
+        != JobState::Running
+    {
+        return Err("Extraction cancelled");
+    }
     let digest = store.put("catalogs", &bytes)?;
-    Ok(ExtractionSummary {
+    let summary = ExtractionSummary {
         format_version: 1,
         catalog_sha256: digest,
         build: manifest.installation.build,
@@ -513,7 +676,40 @@ pub(crate) fn extract(
         actual_workers: 1,
         gameplay_projection_available: false,
         activated: false,
-    })
+    };
+    let status = db
+        .finish(
+            &request.request_id,
+            JobState::Complete,
+            Some(summary.clone()),
+        )
+        .map_err(|_| "Cannot complete extraction job")?;
+    if status.state != JobState::Complete {
+        return Err("Extraction cancelled before completion");
+    }
+    Ok(summary)
+}
+
+fn verify_checkpoint_objects(
+    destination: &Path,
+    checkpoint: &Checkpoint,
+    mut check: impl FnMut() -> Result<()>,
+) -> Result<()> {
+    for row in &checkpoint.tables {
+        check()?;
+        for digest in [&row.retained_sha256, &row.decoded_sha256]
+            .into_iter()
+            .flatten()
+        {
+            check()?;
+            let (_, actual) =
+                crate::hash_file(&destination.join("objects").join(digest), MAX_DECODED_BYTES)?;
+            if actual != *digest {
+                return Err("Checkpoint object hash mismatch");
+            }
+        }
+    }
+    Ok(())
 }
 
 pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalog> {
@@ -776,7 +972,7 @@ mod tests {
             builder.mode(0o700);
         }
         builder.create(&root).unwrap();
-        let mut store = Store::open(&root, 8).unwrap();
+        let mut store = Store::open(&root, LIFECYCLE_RESERVE_BYTES + 8).unwrap();
         let object = store.put("objects", b"retained").unwrap();
         assert_eq!(store.put("objects", b"retained").unwrap(), object);
         assert!(store.put("objects", b"extra").is_err());
@@ -786,6 +982,91 @@ mod tests {
         );
         assert_eq!(fs::read_dir(root.join("catalogs")).unwrap().count(), 0);
         drop(store);
+        fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod lifecycle_tests {
+    use super::*;
+    #[test]
+    fn reused_objects_refuse_corruption_and_honor_cancellation_before_reading() {
+        let root =
+            std::env::temp_dir().join(format!("nav-checkpoint-object-{}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        fs::create_dir(root.join("objects")).unwrap();
+        let digest = hash(b"original");
+        let checkpoint = Checkpoint {
+            format_version: 1,
+            binding: CheckpointBinding {
+                format_version: 1,
+                source_sha256: "a".repeat(64),
+                extractor_sha256: "b".repeat(64),
+                selection_sha256: "c".repeat(64),
+                preset: azeroth_core::local_data::PerformancePreset::Small,
+                total: 1,
+            },
+            tables: vec![TableInventory {
+                table: "Map".into(),
+                locale: Some("enUS".into()),
+                file_data_id: Some(1),
+                disposition: InventoryDisposition::RetainedUnsupported,
+                reason: "synthetic".into(),
+                retained_sha256: Some(digest.clone()),
+                decoded_sha256: None,
+                encoded_bytes: Some(8),
+                records: None,
+                layout_hash: None,
+            }],
+            gaps: vec![],
+        };
+        fs::write(root.join("objects").join(&digest), b"tampered").unwrap();
+        assert_eq!(
+            verify_checkpoint_objects(&root, &checkpoint, || Ok(())),
+            Err("Checkpoint object hash mismatch")
+        );
+        fs::write(root.join("objects").join(&digest), b"original").unwrap();
+        verify_checkpoint_objects(&root, &checkpoint, || Ok(())).unwrap();
+        fs::remove_file(root.join("objects").join(&digest)).unwrap();
+        assert_eq!(
+            verify_checkpoint_objects(&root, &checkpoint, || Err("cancelled")),
+            Err("cancelled")
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn segment_fingerprint_detects_same_length_bytes_with_restored_mtime() {
+        let root =
+            std::env::temp_dir().join(format!("nav-source-fingerprint-{}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        fs::create_dir_all(root.join("Data/data")).unwrap();
+        let metadata = azeroth_core::local_data::InstallationMetadata {
+            product: "wow_classic_beta".into(),
+            version: "1.60.1.70450".into(),
+            build: 70450,
+            build_key: "a".repeat(32),
+            cdn_key: "b".repeat(32),
+            declared_locales: vec!["enUS".into()],
+        };
+        fs::write(root.join(".build.info"), b"synthetic").unwrap();
+        for key in [&metadata.build_key, &metadata.cdn_key] {
+            let dir = root.join("Data/config").join(&key[..2]).join(&key[2..4]);
+            fs::create_dir_all(&dir).unwrap();
+            fs::write(dir.join(key), b"synthetic").unwrap();
+        }
+        let segment = root.join("Data/data/data.000");
+        fs::write(&segment, b"first").unwrap();
+        let modified = fs::metadata(&segment).unwrap().modified().unwrap();
+        let before = SourceState::capture(&root, &metadata).unwrap();
+        fs::write(&segment, b"other").unwrap();
+        File::options()
+            .write(true)
+            .open(&segment)
+            .unwrap()
+            .set_modified(modified)
+            .unwrap();
+        let after = SourceState::capture(&root, &metadata).unwrap();
+        assert_ne!(before.hashes, after.hashes);
         fs::remove_dir_all(root).unwrap();
     }
 }

@@ -273,6 +273,13 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  list_local_installations:{input:undefined;output:import("./localData").SavedLocalInstallation[]};
+  restore_local_installation:{input:{selection_id:string};output:import("./localData").LocalInstallation};
+  list_local_data_jobs:{input:undefined;output:import("./localData").LocalDataJob[]};
+  forget_local_data_job:{input:{job_id:string};output:null};
+  resume_local_data:{input:{job_id:string};output:import("./localData").LocalDataJob};
+  get_local_data_activation:{input:{revision:string};output:import("./localData").LocalDataActivation};
+  activate_local_data:{input:{revision:string;expected:number;rollback:boolean};output:import("./localData").LocalDataActivation};
   select_local_installation:{input:undefined;output:import("./localData").LocalInstallation|null};
   preview_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataPlan};
   start_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataJob};

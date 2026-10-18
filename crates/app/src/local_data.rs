@@ -1,42 +1,26 @@
-//! Application orchestration for private research catalogs. Native decoding stays
-//! in a self-worker. Frontends receive opaque selections and bounded inventory pages.
+//! Durable private extraction orchestration. UI receives opaque identities only.
 use azeroth_core::{
     error::{AppError, ErrorCode},
     local_data::PerformancePreset,
-    local_data_catalog::{ExtractionSummary, TableInventory},
+    local_data_catalog::TableInventory,
+    local_data_lifecycle::{Activation, JobState},
 };
 use azeroth_local_data::{
-    Inspection,
+    lifecycle,
     worker::{ExtractionRequest, ExtractionWorker, WorkerControl, WorkerEvent},
 };
 use serde::Serialize;
 use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
-    sync::{
-        Arc, Mutex,
-        atomic::{AtomicU64, Ordering},
-    },
+    sync::{Arc, Mutex},
 };
 type Result<T> = std::result::Result<T, AppError>;
 fn error(message: &'static str) -> AppError {
     AppError::new(ErrorCode::InvalidInput, message, false)
 }
-
-#[derive(Clone, Serialize)]
-pub struct SelectionView {
-    pub selection_id: String,
-    pub inspection: Inspection,
-}
-#[derive(Clone, Serialize)]
-pub struct JobView {
-    pub job_id: String,
-    pub state: String,
-    pub completed: u32,
-    pub total: u32,
-    pub summary: Option<ExtractionSummary>,
-    pub error: Option<String>,
-}
+pub use azeroth_local_data::lifecycle::{SavedSelectionView, SelectionView};
+pub type JobView = azeroth_core::local_data_lifecycle::JobStatus;
 #[derive(Serialize)]
 pub struct InventoryPage {
     pub revision: String,
@@ -45,27 +29,15 @@ pub struct InventoryPage {
     pub rows: Vec<TableInventory>,
     pub next_offset: Option<u32>,
 }
-struct Selection {
-    path: PathBuf,
-    inspection: Inspection,
-}
-struct Job {
-    view: JobView,
-    control: WorkerControl,
-}
 pub struct LocalDataService {
     root: PathBuf,
-    selections: Mutex<BTreeMap<String, Selection>>,
-    jobs: Arc<Mutex<BTreeMap<String, Job>>>,
-    serial: AtomicU64,
+    jobs: Arc<Mutex<BTreeMap<String, WorkerControl>>>,
 }
 impl LocalDataService {
     pub fn new(root: PathBuf) -> Self {
         Self {
             root,
-            selections: Mutex::default(),
             jobs: Arc::default(),
-            serial: AtomicU64::new(1),
         }
     }
     fn store(&self) -> Result<PathBuf> {
@@ -84,166 +56,126 @@ impl LocalDataService {
         azeroth_local_data::checked_path(&self.root).map_err(error)
     }
     pub fn select(&self, path: &Path) -> Result<SelectionView> {
-        let path = azeroth_local_data::checked_path(path).map_err(error)?;
-        let inspection = azeroth_local_data::inspect(&path, "wow_classic_beta").map_err(error)?;
-        let mut selections = self
-            .selections
-            .lock()
-            .map_err(|_| error("Selection registry unavailable"))?;
-        if selections.len() >= 16 {
-            return Err(error(
-                "Selection capacity reached; restart to clear unused selections",
-            ));
-        }
-        let id = format!(
-            "installation-{}",
-            self.serial.fetch_add(1, Ordering::Relaxed)
-        );
-        selections.insert(
-            id.clone(),
-            Selection {
-                path,
-                inspection: inspection.clone(),
-            },
-        );
-        Ok(SelectionView {
-            selection_id: id,
-            inspection,
-        })
+        lifecycle::select(
+            &self.store()?,
+            path,
+            "wow_classic_beta",
+            PerformancePreset::Max,
+        )
+        .map_err(error)
+    }
+    pub fn selections(&self) -> Result<Vec<SavedSelectionView>> {
+        lifecycle::selections(&self.store()?).map_err(error)
+    }
+    pub fn restore_selection(&self, id: &str) -> Result<SelectionView> {
+        let root = self.store()?;
+        let saved = lifecycle::index(&root).map_err(error)?.selection(id)?;
+        lifecycle::select(&root, &saved.installation, &saved.product, saved.preset).map_err(error)
+    }
+    fn selection(
+        &self,
+        id: &str,
+        preset: PerformancePreset,
+    ) -> Result<azeroth_storage::local_data::SavedSelection> {
+        let mut db = lifecycle::index(&self.store()?).map_err(error)?;
+        let mut selection = db.selection(id)?;
+        selection.preset = preset;
+        db.save_selection(&selection)?;
+        Ok(selection)
     }
     pub fn preview(
         &self,
         id: &str,
         preset: PerformancePreset,
     ) -> Result<azeroth_local_data::ExtractionPlan> {
-        let selections = self
-            .selections
-            .lock()
-            .map_err(|_| error("Selection registry unavailable"))?;
-        let selection = selections
-            .get(id)
-            .ok_or_else(|| error("Unknown installation selection"))?;
+        let selected = self.selection(id, preset)?;
         azeroth_local_data::plan(
-            &selection.path,
-            &selection.inspection.metadata.product,
+            &selected.installation,
+            &selected.product,
             &self.store()?,
             preset,
         )
         .map_err(error)
     }
     pub fn start(&self, id: &str, preset: PerformancePreset) -> Result<JobView> {
-        let path = {
-            let selections = self
-                .selections
-                .lock()
-                .map_err(|_| error("Selection registry unavailable"))?;
-            selections
-                .get(id)
-                .ok_or_else(|| error("Unknown installation selection"))?
-                .path
-                .clone()
-        };
+        let selected = self.selection(id, preset)?;
+        self.launch(ExtractionRequest {
+            protocol_version: 2,
+            resume: false,
+            request_id: lifecycle::new_job_id().map_err(error)?,
+            installation: selected.installation,
+            product: selected.product,
+            destination: self.store()?,
+            preset,
+            tables: Vec::new(),
+        })
+    }
+    pub fn resume(&self, id: &str) -> Result<JobView> {
+        self.launch(lifecycle::resume_request(&self.store()?, id).map_err(error)?)
+    }
+    fn launch(&self, request: ExtractionRequest) -> Result<JobView> {
         let mut jobs = self
             .jobs
             .lock()
             .map_err(|_| error("Job registry unavailable"))?;
-        if jobs.len() >= 8 || jobs.values().any(|j| j.view.state == "running") {
-            return Err(error(
-                "A local-data job is running or job capacity was reached",
-            ));
+        if !jobs.is_empty() {
+            return Err(error("A local-data worker is already running"));
         }
-        let job_id = format!("local-data-{}", self.serial.fetch_add(1, Ordering::Relaxed));
-        let request = ExtractionRequest {
-            protocol_version: 1,
-            request_id: job_id.clone(),
-            installation: path,
-            product: "wow_classic_beta".into(),
-            destination: self.store()?,
-            preset,
-            tables: Vec::new(),
-        };
         let mut worker = ExtractionWorker::start(&request).map_err(error)?;
-        let view = JobView {
-            job_id: job_id.clone(),
-            state: "running".into(),
-            completed: 0,
-            total: 0,
-            summary: None,
-            error: None,
-        };
-        jobs.insert(
-            job_id.clone(),
-            Job {
-                view: view.clone(),
-                control: worker.control(),
-            },
-        );
+        // Wait on the blocking command thread until durable checkpoint creation.
+        // A caller never receives a job ID that status cannot resolve.
+        match worker.next_event() {
+            Ok(WorkerEvent::Progress { .. }) => {}
+            _ => {
+                return Err(error(
+                    "Extraction could not initialize; inspect job status for retained checkpoints",
+                ));
+            }
+        }
+        let id = request.request_id;
+        let view = lifecycle::index(&self.store()?)
+            .map_err(error)?
+            .status(&id)?;
+        jobs.insert(id.clone(), worker.control());
         drop(jobs);
         let jobs = self.jobs.clone();
         std::thread::spawn(move || {
-            loop {
-                let event = worker.next_event();
-                let Ok(mut jobs) = jobs.lock() else {
-                    break;
-                };
-                let Some(job) = jobs.get_mut(&job_id) else {
-                    break;
-                };
-                if job.view.state == "cancelled" {
-                    break;
-                }
-                match event {
-                    Ok(WorkerEvent::Progress {
-                        completed, total, ..
-                    }) => {
-                        job.view.completed = completed;
-                        job.view.total = total;
-                    }
-                    Ok(WorkerEvent::Complete { summary, .. }) => {
-                        job.view.state = "complete".into();
-                        job.view.summary = Some(summary);
-                        break;
-                    }
-                    Ok(WorkerEvent::Failed { code, .. }) => {
-                        job.view.state = "failed".into();
-                        job.view.error = Some(code);
-                        break;
-                    }
-                    Err(code) => {
-                        job.view.state = "failed".into();
-                        job.view.error = Some(code.into());
-                        break;
-                    }
-                }
+            while let Ok(WorkerEvent::Progress { .. }) = worker.next_event() {}
+            // A crash releases writer locks before recovery can classify status.
+            drop(worker);
+            if let Ok(mut jobs) = jobs.lock() {
+                jobs.remove(&id);
             }
         });
         Ok(view)
     }
+    pub fn jobs(&self) -> Result<Vec<JobView>> {
+        lifecycle::jobs(&self.store()?).map_err(error)
+    }
     pub fn status(&self, id: &str) -> Result<JobView> {
-        self.jobs
-            .lock()
-            .map_err(|_| error("Job registry unavailable"))?
-            .get(id)
-            .map(|j| j.view.clone())
-            .ok_or_else(|| error("Unknown local-data job"))
+        lifecycle::status(&self.store()?, id).map_err(error)
     }
     pub fn cancel(&self, id: &str) -> Result<JobView> {
-        let control = {
-            let mut jobs = self
+        let status = lifecycle::cancel(&self.store()?, id).map_err(error)?;
+        if status.state == JobState::Cancelled
+            && let Some(control) = self
                 .jobs
                 .lock()
-                .map_err(|_| error("Job registry unavailable"))?;
-            let job = jobs
-                .get_mut(id)
-                .ok_or_else(|| error("Unknown local-data job"))?;
-            if job.view.state != "running" {
-                return Ok(job.view.clone());
-            }
-            job.view.state = "cancelled".into();
-            job.control.clone()
-        };
-        control.cancel().map_err(error)?;
-        self.status(id)
+                .map_err(|_| error("Job registry unavailable"))?
+                .get(id)
+        {
+            control.cancel().map_err(error)?;
+        }
+        Ok(status)
+    }
+    pub fn forget(&self, id: &str) -> Result<()> {
+        lifecycle::index(&self.store()?).map_err(error)?.forget(id)
+    }
+    pub fn active(&self, revision: &str) -> Result<Activation> {
+        lifecycle::active(&self.store()?, revision).map_err(error)
+    }
+    pub fn activate(&self, revision: &str, expected: u64, rollback: bool) -> Result<Activation> {
+        lifecycle::activate(&self.store()?, revision, expected, rollback).map_err(error)
     }
     pub fn inventory(&self, revision: &str, offset: u32, limit: u32) -> Result<InventoryPage> {
         if limit == 0 || limit > 200 {
@@ -268,10 +200,9 @@ impl LocalDataService {
 impl Drop for LocalDataService {
     fn drop(&mut self) {
         if let Ok(jobs) = self.jobs.lock() {
-            for job in jobs.values() {
-                if job.view.state == "running" {
-                    let _ = job.control.cancel();
-                }
+            for (id, control) in jobs.iter() {
+                let _ = lifecycle::cancel(&self.root, id);
+                let _ = control.cancel();
             }
         }
     }

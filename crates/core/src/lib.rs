@@ -37,6 +37,7 @@ pub mod source_admission;
 
 pub mod local_data;
 pub mod local_data_catalog;
+pub mod local_data_lifecycle;
 pub mod local_data_projection;
 pub mod local_data_release;
 pub mod source_pipeline;

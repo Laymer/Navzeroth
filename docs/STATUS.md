@@ -4,18 +4,23 @@ Updated: 2026-10-18.
 
 ## Current task
 
-**Continuation reconciliation:** Codex `/root`, sole writer, baseline
-`7aecba8f170bd35fe2ece0dbce2c98a4337dfa4a`, isolated branch
-`docs/continuation-release-policy`; [claim](claims/2026-10-18-continuation-policy.md).
-The original checkout and `.claude/` are preserved. PRs #188 (authored slice),
-#189 (observed wowf 70245, not admitted) and #190 (70450 addon development
-admission) are merged. The tracker now separates the authorized early development
-`1.0.0-rc.1` from acceptance-candidate freeze (ADR 0006 §13). No release has
-been published by this continuation; 0.9.2 remains latest. The pending post-launch
-target supersedes the historical 70374 target paragraphs below.
-Clean-baseline readiness: 69 blockers, candidate/stable false, zero verified
-packs/evidence. [Exact inventory and clearing conditions](releases/2026-10-18-blocker-inventory.md).
+**Continuation 2 — durable extraction lifecycle:** Codex `/root`, sole writer,
+baseline `167a4545edb0166da3ac81aaac51c002a9e1172a`, isolated branch
+`feat/continuation-extraction-lifecycle`;
+[claim](claims/2026-10-18-extraction-lifecycle.md),
+[handoff](handoffs/2026-10-18-extraction-lifecycle.md).
+The original checkout and `.claude/` are preserved. Continuation 1 merged as
+PR #191 at `167a454` after independent review and all nine exact-head checks;
+readiness on resulting main still reports 69 blockers, candidate/stable false,
+zero verified packs/evidence. [Inventory](releases/2026-10-18-blocker-inventory.md).
+The pending post-launch target supersedes the historical 70374 paragraphs below.
+No continuation release has been published; 0.9.2 remains latest.
 
+The lifecycle change adds private durable selections/presets, bounded source- and
+extractor-bound table checkpoints, status/cancel/resume/recovery, and guarded
+research activation/rollback. Research activation never grants playable
+availability. Current checks, measured development runs and limitations are in
+the handoff; ordinary Windows/live acceptance remains separate.
 
 **1.0.0 program (ADR [0006](decisions/0006-v1-program.md), 2026-10-17).** The owner
 re-targeted 1.0.0 to the first stable live build after the 4 Nov 2026 launch and a

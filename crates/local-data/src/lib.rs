@@ -8,6 +8,7 @@
 mod extraction;
 #[allow(unsafe_code)]
 mod isolation;
+pub mod lifecycle;
 pub mod metadata;
 #[allow(unsafe_code)]
 mod native;
@@ -150,7 +151,7 @@ pub fn checked_path(path: &Path) -> Result<PathBuf> {
     fs::canonicalize(absolute).map_err(|_| "Cannot resolve selection")
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, serde::Serialize)]
 struct Stamp {
     bytes: u64,
     modified: SystemTime,
