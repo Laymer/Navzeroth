@@ -76,3 +76,37 @@ pub fn exchange_schema_text() -> String {
     text.push('\n');
     text
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn numeric_format_cleanup_preserves_constraints_data_and_unknown_string_formats() {
+        for format in [
+            "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "uint",
+            "int", "float", "double",
+        ] {
+            let mut schema = json!({
+                "$defs":{"Zero":{"type":"integer","format":format,"minimum":0,"maximum":0}},
+                "anyOf":[{"type":"string","format":"email"},{"type":"string","format":"future-format"}],
+                "enum":["int32",0,false,null], "default":false,
+            });
+            strip_numeric_formats(&mut schema);
+            assert_eq!(
+                schema["$defs"]["Zero"],
+                json!({"type":"integer","minimum":0,"maximum":0})
+            );
+            assert_eq!(
+                schema["anyOf"],
+                json!([{"type":"string","format":"email"},{"type":"string","format":"future-format"}])
+            );
+            assert_eq!(schema["enum"], json!(["int32", 0, false, null]));
+            assert_eq!(schema["default"], false);
+        }
+        let mut non_string = json!({"format":["int32"],"nested":{"format":null}});
+        let original = non_string.clone();
+        strip_numeric_formats(&mut non_string);
+        assert_eq!(non_string, original);
+    }
+}
