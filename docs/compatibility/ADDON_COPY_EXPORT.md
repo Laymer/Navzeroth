@@ -16,7 +16,7 @@ checked as `anav-session-events` version 1 before it is shown). It never creates
 capture: the existing `/anavdiag snapshot <anonymous-profile-id>` command and its
 recorded-build gate still govern capture. After integration of the separate
 70374 adapter, exact `1.60.1.70338` and `1.60.1.70374` tuples with interface
-`16001` are enabled experimentally (and, UNVERIFIED and for development only, `70425`). Copying diagnostics never changes that gate
+`16001` are enabled experimentally (and, UNVERIFIED and for development only, `70425` and `70450`). Copying diagnostics never changes that gate
 or establishes readable gameplay fields. Published 0.8.1 lacks the copy commands.
 
 Open the window out of combat, choose **Select text**, and press **Ctrl+C** yourself.

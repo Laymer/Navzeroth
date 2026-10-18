@@ -50,13 +50,13 @@ The Overview shows the build and what it means:
 | Label | Build | Meaning |
 | --- | --- | --- |
 | `release_target` | 1.60.1.70374 / 16001 | The 1.0 release target. Capture features are enabled; every live check is still UNVERIFIED. |
-| `development_unverified` | 1.60.1.70425 / 16001 | Admitted for development capture only. UNVERIFIED: installation metadata, no addon-run evidence. Not the 1.0 release target. |
+| `development_unverified` | 1.60.1.70425 / 16001, 1.60.1.70450 / 16001 | Admitted for development capture only. UNVERIFIED: installation metadata, no addon-run evidence. Not the 1.0 release target. |
 | `previous_recorded` | 1.60.1.70338 / 16001 | A previously recorded build. Capture is enabled. |
 | not admitted | anything else | Probe, status and copy work; capture, plan, clock and session actions refuse. |
 
 `Capabilities.admission(build)` returns these labels; `isCaptureTarget` is true exactly
-when a label exists. Every export records the exact build, so 70425 data is never mistaken
-for 70374 data. See [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md).
+when a label exists. Every export records the exact build, so 70425 or 70450 data is never
+mistaken for 70374 data. See [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md).
 
 ## Tabs
 

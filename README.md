@@ -50,6 +50,7 @@ require complete licensed content and static validation; see the
 | Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
 | Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; source-identified development capture/turn-in checks, with full acceptance still unverified |
 | Forever 1.60.1.70425 / interface 16001 | Development capture only, UNVERIFIED: installation metadata, no addon-run evidence; never the 1.0 target |
+| Forever 1.60.1.70450 / interface 16001 | Current source only (after 0.9.2): development capture, UNVERIFIED; installation metadata and owner-reported interface, no addon-run evidence; never the 1.0 target |
 
 Current source includes a bounded QuestieDB raw-table staging adapter and
 [versioned release checks](release/v1/README.md). Staging preserves partial facts

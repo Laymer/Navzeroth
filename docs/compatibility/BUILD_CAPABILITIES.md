@@ -100,3 +100,15 @@ only**, labelled `development_unverified` in the addon and its window.
   `azeroth-cli capture` keeps reporting `target_tuple_matches=false` for 70425, which is
   correct. The guided acceptance kit still requires 70374.
 - Neighbouring builds (70424, 70426) are rejected; only exact tuples are admitted.
+
+## Client 1.60.1.70450 development admission
+
+On 2026-10-17 the owner's installation `.build.info` and Blizzard's public version list
+(`wow_classic_beta`, build config `84bea4233331e390fda8724c6f91ffa5`, issue #182; see
+[BUILD_WATCH.md](BUILD_WATCH.md#acknowledged-builds)) reported `1.60.1.70450`. The owner
+reported its interface number as `16001`. No `GetBuildInfo` result, probe export,
+capture or live check on 70450 has been recorded, so the addon admits the exact tuple
+`1.60.1` / `70450` / `16001` exactly like 70425: **development capture only**, labelled
+`development_unverified`. Every rule of the 70425 section applies: no capability is
+promoted, exports keep the exact build, it is never the 1.0.0 target (ADR 0006), and
+neighbouring builds (70449, 70451) stay unadmitted.

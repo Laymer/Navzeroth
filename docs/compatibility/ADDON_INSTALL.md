@@ -8,11 +8,12 @@ experimental client bindings. It runs inside the permitted addon environment;
 desktop exchange uses explicit files or pasted text.
 
 Current source enables the exact experimental tuples `1.60.1.70338`,
-`1.60.1.70374` and `1.60.1.70425`, each with interface `16001`. The first two were
-enabled in 0.9.1; **70425 is admitted for development capture only and is UNVERIFIED**:
-the owner's installation metadata reports it (see
-[BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md#client-160170425-development-admission)),
-and no addon run on it is recorded. The 1.0 release target and every LIVE acceptance
+`1.60.1.70374`, `1.60.1.70425` and `1.60.1.70450`, each with interface `16001`. The
+first two were enabled in 0.9.1; **70425 and 70450 are admitted for development capture
+only and are UNVERIFIED**: the owner's installation metadata reports them (see
+[BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md#client-160170425-development-admission)
+and [the 70450 section](BUILD_CAPABILITIES.md#client-160170450-development-admission)),
+and no addon run on either is recorded. The 1.0 release target and every LIVE acceptance
 row stay bound to 70374. Limited user-reported
 diagnostic retrieval, level capture and clock-age results are recorded in
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,

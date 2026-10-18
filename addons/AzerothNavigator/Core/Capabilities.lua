@@ -188,11 +188,15 @@ end
 -- Keep previously supported 70338 distinct, and never admit an unknown build.
 -- 70425 is admitted for development capture only: the owner's installation metadata
 -- reports it, but no addon run on that build is recorded (UNVERIFIED). The 1.0
--- release target stays 70374. ASCII classes keep the checks locale independent.
+-- release target stays 70374. 70450 is admitted the same way: the owner's
+-- installation and Blizzard's version list report it, and the owner reported its
+-- interface as 16001; no addon run on it is recorded (UNVERIFIED). Neither is the
+-- 1.0.0 target (ADR 0006). ASCII classes keep the checks locale independent.
 local ADMISSION = {
   ['70338'] = 'previous_recorded',
   ['70374'] = 'release_target',
   ['70425'] = 'development_unverified',
+  ['70450'] = 'development_unverified',
 }
 
 -- Returns release_target, development_unverified, previous_recorded or nil.

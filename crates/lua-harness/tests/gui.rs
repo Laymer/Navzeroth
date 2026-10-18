@@ -513,6 +513,11 @@ fn build_70425_is_development_unverified_and_the_other_builds_are_labelled() {
             "development_unverified",
             "Development build, UNVERIFIED",
         ),
+        (
+            "70450",
+            "development_unverified",
+            "Development build, UNVERIFIED",
+        ),
         ("70374", "release_target", "Release target build"),
         ("70338", "previous_recorded", "Previously recorded build"),
     ] {
