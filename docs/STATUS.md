@@ -2,6 +2,12 @@
 
 Updated: 2026-10-18.
 
+Independent correction active: Codex `/root`, `fix/browser-demo-version`, baseline
+`9d046b7`: browser demo application status now uses package metadata instead of
+0.6.0. [Claim](claims/2026-10-18-browser-demo-version.md),
+[handoff](handoffs/2026-10-18-browser-demo-version.md). Review and exact-head
+checks precede integration; no release/acceptance state changes.
+
 Independent UI correction [PR #199](https://github.com/Laymer/Navzeroth/pull/199)
 merged at `506a9cb` after independent review, all nine exact-head checks and source
 parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
@@ -12,13 +18,15 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 `ac114c8`, branch `fix/lifecycle-sidecar-race`. Windows CI exposed a disappearing
 SQLite journal between redundant metadata checks. Single-observation validation
 preserves link, type and quota refusals. Four deterministic boundary tests and
-two affected application workflow tests pass locally; exact-head Windows checks
-remain pending. [Handoff](handoffs/2026-10-18-lifecycle-sidecar-race.md).
+two affected application workflow tests pass locally. PR #202 merged at
+`3288fa0` after both independent reviews, all nine exact-head checks, Windows
+packaging and both source platforms/parity. [Handoff](handoffs/2026-10-18-lifecycle-sidecar-race.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
 and source parity. Coverage expansion is in progress; its per-file gate is not yet
-satisfied. Browser demo version correction PR #201 awaits this independent fix.
+satisfied. Browser demo version correction PR #201 is refreshed onto this fix;
+its exact-head checks must pass again.
 
 **Continuation 9 — performance and release materials:** Codex `/root`, sole writer,
 branch `feat/continuation-performance-materials`, baseline `d34b417` (continuation 8
