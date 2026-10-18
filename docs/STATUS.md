@@ -11,8 +11,10 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
 `test/continuation-coverage`, refreshed to main `ac114c8`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. Latest full UI run: 487 tests pass, 90.93% overall line coverage,
-ten files below 90%; this does not satisfy the per-file gate. Native Linux/Windows
+are in progress. Latest full UI run: 512 tests pass, 95.73% overall line coverage; Vitest
+passes every per-file threshold. The strict inventory found one pure re-export
+barrel with no executable statements; reviewed declaration-only classification
+is corrected and awaits clean-source recollection. Native Linux/Windows
 coverage and strict worker-profile completion remain unfinished. Independent
 product corrections #201 and #202 must merge before final branch refresh.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).

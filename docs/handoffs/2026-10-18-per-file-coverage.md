@@ -97,3 +97,15 @@ exact cfg(test) ranges. This is not a combined Linux/Windows verdict. The larges
 remaining gaps include native archive handling, extraction and app orchestration;
 examples need real instrumented execution and native shell/build scripts need
 platform collectors. Do not infer readiness from aggregate totals.
+
+Fifth clean-source UI run at `97c173d`: all 512 tests pass; Vitest per-file
+thresholds pass, overall 95.73% lines. Strict raw reconstruction still failed one
+eligible entry: ui/index.ts consists solely of named/type re-exports and has no
+executable initializer or statement counters. The TypeScript AST classifier now
+reports pure ExportDeclaration bindings as declaration-only, retaining default
+expressions, variables, functions and class bodies as eligible. Regression tests
+cover those distinctions. Independent read-only review confirmed this classification
+and found no actionable issues. Original frozen baseline inventory is unchanged;
+this is explicit no-executable-line accounting, not a source exclusion. All twelve
+infrastructure tests pass. Recollect clean-source coverage after this commit before
+claiming the TypeScript inventory passes; native Rust remains incomplete.

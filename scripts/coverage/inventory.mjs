@@ -62,7 +62,9 @@ export function declarationOnlyTs(text,file='file.ts') {
   if(ts.isInterfaceDeclaration(node)||ts.isTypeAliasDeclaration(node)||ts.isEmptyStatement(node))return true;
   if(ts.canHaveModifiers(node)&&ts.getModifiers(node)?.some(m=>m.kind===ts.SyntaxKind.DeclareKeyword))return true;
   if(ts.isImportDeclaration(node))return node.importClause?.isTypeOnly===true || (node.importClause&&!node.importClause.name&&node.importClause.namedBindings&&ts.isNamedImports(node.importClause.namedBindings)&&node.importClause.namedBindings.elements.every(e=>e.isTypeOnly));
-  if(ts.isExportDeclaration(node))return node.isTypeOnly || (node.exportClause&&ts.isNamedExports(node.exportClause)&&node.exportClause.elements.every(e=>e.isTypeOnly));
+  // Named/star re-exports bind names; they contain no executable initializer.
+  // Export assignments/default expressions are different AST nodes and remain eligible.
+  if(ts.isExportDeclaration(node))return true;
   return false;
  });
 }

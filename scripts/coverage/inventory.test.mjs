@@ -22,6 +22,10 @@ test('TypeScript declarations are reported without executable lines, unloaded be
  assert.equal(declarationOnlyTs('import type {Thing} from "x"; export interface A {zero:0} export type B = false;'),true);
  assert.equal(declarationOnlyTs('declare global {interface Window {x:string}} export {};','env.d.ts'),true);
  for(const source of ['import "side-effect";','export const zero=0;','export function unused(){return false;}','enum A {Zero}'])assert.equal(declarationOnlyTs(source),false);
+ assert.equal(declarationOnlyTs('export { Button } from "./Button"; export * from "./Panel";'),true);
+ assert.equal(declarationOnlyTs('export default loadConfiguration();'),false);
+ assert.equal(declarationOnlyTs('export const value = loadConfiguration();'),false);
+ assert.equal(declarationOnlyTs('export default class View { run(){ render(); } }'),false);
  assert.throws(()=>declarationOnlyTs('export const = ;'));
 });
 test('build scripts, native entrypoints and examples remain eligible; test/vendor/generated exclusions are explicit',()=>{
