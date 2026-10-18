@@ -45,6 +45,15 @@ It never admits a build, edits the repository or affects any release gate.
 4. A new product code may be the live Forever product: confirm, then add it to
    `KNOWN_WOW_PRODUCTS`, and to `WATCHED` if it should be tracked.
 
+## Acknowledged builds
+
+Builds whose issue was read and followed up. Acknowledging a build records it; it
+never makes it the 1.0.0 target (ADR 0006 §1).
+
+| Product | Version | Build config | Regions | Seen | Issue | Disposition |
+| --- | --- | --- | --- | --- | --- | --- |
+| `wow_classic_beta` | 1.60.1.70450 | `84bea4233331e390fda8724c6f91ffa5` | eu, kr, tw, us | 2026-10-17 | #182 | Development input only, not the target. Matches the owner's installation build key. Admitted for local data in [V2.2b](../handoffs/2026-10-17-v2.2b.md) (extraction in [V2.2c](../handoffs/2026-10-17-v2.2c.md), [V2.2d](../handoffs/2026-10-17-v2.2d.md), [re-extraction](../handoffs/2026-10-17-70450-extraction.md)); admitted in the addon as `development_unverified` with owner-reported interface 16001 ([handoff](../handoffs/2026-10-18-issue-182.md)). Live addon behaviour on 70450 is UNVERIFIED. |
+
 ## Limits
 
 - The list says what Blizzard's patch service serves, not what the servers accept
