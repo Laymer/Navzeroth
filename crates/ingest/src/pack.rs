@@ -1,5 +1,6 @@
 //! Deterministic local reference packs. Files are bounded data, never executable inputs.
 pub mod v2;
+use azeroth_core::selection_path::{PrefixRefusal, check_prefix};
 use azeroth_core::{
     contract::{Envelope, MAX_DATASET_BYTES, ReferenceDataset, decode_envelope},
     coverage::content_report,
@@ -197,12 +198,22 @@ fn path_checked(path: &Path, directory: bool) -> Res<()> {
             .map_err(|_| "Current directory unavailable")?
             .join(path)
     };
+    check_prefix(&absolute).map_err(|refusal| match refusal {
+        PrefixRefusal::DeviceNamespace => "Device namespace paths are unsupported",
+        PrefixRefusal::DriveRelative => "Drive-relative paths are unsupported",
+    })?;
     let mut prefix = PathBuf::new();
     for part in absolute.components() {
         if matches!(part, Component::ParentDir) {
             return Err("Parent traversal is unsupported");
         }
         prefix.push(part.as_os_str());
+        // A bare Windows prefix (`C:`, `\\?\C:`, `\\server\share`) names a drive
+        // or volume, not a directory entry; a verbatim one cannot be inspected at
+        // all. Its root is inspected at the next component, so skip only the prefix.
+        if matches!(part, Component::Prefix(_)) {
+            continue;
+        }
         let meta =
             fs::symlink_metadata(&prefix).map_err(|_| "Selected pack path cannot be inspected")?;
         #[cfg(windows)]
@@ -931,6 +942,87 @@ mod publication_tests {
             b"preserved"
         );
         fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod path_tests {
+    use super::*;
+    fn temporary(name: &str) -> PathBuf {
+        let root =
+            std::env::temp_dir().join(format!("anav-pack-path-{}-{name}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(root.join("pack")).unwrap();
+        fs::write(root.join("pack/a.json"), b"{}").unwrap();
+        root
+    }
+    #[test]
+    fn absolute_paths_pass_and_parent_traversal_is_refused() {
+        let root = temporary("absolute");
+        path_checked(&root.join("pack"), true).unwrap();
+        path_checked(&root.join("pack/a.json"), false).unwrap();
+        assert_eq!(
+            path_checked(&root.join("pack/a.json"), true),
+            Err("Pack path has the wrong file kind")
+        );
+        assert_eq!(
+            path_checked(&root.join("pack/../pack"), true),
+            Err("Parent traversal is unsupported")
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(unix)]
+    #[test]
+    fn symlinked_ancestors_stay_refused() {
+        // The temp directory itself may sit under a symlink (macOS `/var`).
+        let root = fs::canonicalize(temporary("symlink")).unwrap();
+        std::os::unix::fs::symlink(root.join("pack"), root.join("link")).unwrap();
+        assert_eq!(
+            path_checked(&root.join("link/a.json"), false),
+            Err("Symlink paths are unsupported")
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(windows)]
+    #[test]
+    fn verbatim_prefixed_paths_are_inspected_from_their_root() {
+        let root = temporary("verbatim");
+        // `canonicalize` returns a `\\?\C:\...` verbatim path on Windows.
+        let verbatim = fs::canonicalize(root.join("pack")).unwrap();
+        assert!(matches!(
+            verbatim.components().next(),
+            Some(Component::Prefix(p)) if p.kind().is_verbatim()
+        ));
+        path_checked(&verbatim, true).unwrap();
+        path_checked(&verbatim.join("a.json"), false).unwrap();
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(windows)]
+    #[test]
+    fn device_namespace_and_drive_relative_paths_are_refused() {
+        for device in [r"\\.\pipe\x", r"\\.\C:\Windows", r"\\?\GLOBALROOT\Device\x"] {
+            assert_eq!(
+                path_checked(Path::new(device), true),
+                Err("Device namespace paths are unsupported"),
+                "{device}"
+            );
+        }
+        let drive = std::env::current_dir().unwrap();
+        // Drive-relative forms exist only for a drive-letter working directory.
+        let Some(Component::Prefix(prefix)) = drive.components().next() else {
+            panic!("current directory has no prefix");
+        };
+        if !matches!(prefix.kind(), std::path::Prefix::Disk(_)) {
+            return;
+        }
+        let letter = prefix.as_os_str().to_str().unwrap().to_owned();
+        for relative in [format!("{letter}Windows"), letter] {
+            assert_eq!(
+                path_checked(Path::new(&relative), true),
+                Err("Drive-relative paths are unsupported"),
+                "{relative}"
+            );
+        }
     }
 }
 

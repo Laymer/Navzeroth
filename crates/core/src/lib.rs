@@ -16,6 +16,7 @@ pub mod planner;
 pub mod predicate;
 pub mod release;
 pub mod reminders;
+pub mod selection_path;
 pub mod sessions;
 pub mod sources;
 pub mod travel;

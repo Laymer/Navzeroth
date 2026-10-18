@@ -28,6 +28,7 @@ use azeroth_core::local_data::{
     FORMAT_VERSION, InstallationMetadata, MAX_BUILD_INFO_BYTES, MAX_METADATA_BYTES, MetadataBundle,
     PerformancePreset, ResourceLimits, decode_metadata, inspect_build_info,
 };
+use azeroth_core::selection_path::{PrefixRefusal, check_prefix};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::{
@@ -125,12 +126,19 @@ pub fn checked_path(path: &Path) -> Result<PathBuf> {
             .map_err(|_| "Cannot resolve selection")?
             .join(path)
     };
+    // Only drive letters and network shares, plain or verbatim, are file-system
+    // selections; not `\\.\pipe\x`, `\\?\GLOBALROOT\...` or drive-relative `C:foo`.
+    check_prefix(&absolute).map_err(|refusal| match refusal {
+        PrefixRefusal::DeviceNamespace => "Device namespace selections are unsupported",
+        PrefixRefusal::DriveRelative => "Drive-relative selections are unsupported",
+    })?;
     let mut cursor = PathBuf::new();
     for part in absolute.components() {
         if part == Component::CurDir {
             continue;
         }
         cursor.push(part.as_os_str());
+        // The bare prefix names a volume; its root is inspected at the next component.
         if matches!(part, Component::Prefix(_)) {
             continue;
         }
@@ -377,6 +385,36 @@ pub fn verify_metadata(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(windows)]
+    #[test]
+    fn selections_accept_verbatim_disks_and_refuse_devices_and_drive_relative_paths() {
+        let current = std::env::current_dir().unwrap();
+        let verbatim = fs::canonicalize(&current).unwrap();
+        assert_eq!(checked_path(&verbatim).unwrap(), verbatim);
+        for device in [r"\\.\pipe\x", r"\\.\C:\Windows", r"\\?\GLOBALROOT\Device\x"] {
+            assert_eq!(
+                checked_path(Path::new(device)),
+                Err("Device namespace selections are unsupported"),
+                "{device}"
+            );
+        }
+        // Drive-relative forms exist only for a drive-letter working directory.
+        let Some(Component::Prefix(prefix)) = current.components().next() else {
+            panic!("current directory has no prefix");
+        };
+        if !matches!(prefix.kind(), std::path::Prefix::Disk(_)) {
+            return;
+        }
+        let letter = prefix.as_os_str().to_str().unwrap().to_owned();
+        for relative in [format!("{letter}Windows"), letter] {
+            assert_eq!(
+                checked_path(Path::new(&relative)),
+                Err("Drive-relative selections are unsupported"),
+                "{relative}"
+            );
+        }
+    }
 
     #[test]
     fn changing_source_is_refused_even_with_same_file_length() {

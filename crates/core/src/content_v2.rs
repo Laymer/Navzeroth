@@ -1,5 +1,6 @@
 //! Additive v2 content contract. Never an alternate snapshot/plan decoder.
 //! Context, revision and fixture identity come exclusively from `reference`.
+pub mod authored;
 mod json;
 pub mod records;
 pub mod schema;

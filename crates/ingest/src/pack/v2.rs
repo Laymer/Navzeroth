@@ -1,8 +1,9 @@
 //! One immutable logical v2 catalog and its exact bounded material closure.
 use super::*;
 use azeroth_core::{
-    content_v2::{self, ReferenceContent},
+    content_v2::{self, ReferenceContent, authored::validate_authored},
     release_party::SupportMatrix,
+    sources::AccessMethod,
 };
 pub const MAX_CATALOG_BYTES: usize = 256 * 1024 * 1024;
 pub const MAX_CLOSURE_BYTES: usize = 1024 * 1024 * 1024;
@@ -44,6 +45,26 @@ fn distribution(content: &ReferenceContent, registry: &SourceRegistry) -> Res<bo
                 .is_some_and(|e| e.contains(&content.reference.game.edition));
     }
     Ok(permitted)
+}
+/// A pack that registers an authored source carries original writing only: it
+/// must register exactly that one source, and the authored-content rules run on
+/// top of the graph validation. A mixed registry would let game facts cite the
+/// authored source unchecked, so it is refused. A fixture catalog is synthetic
+/// engineering data, flagged as a fixture (which the release gate refuses), and
+/// is not authored content.
+fn authored(content: &ReferenceContent, registry: &SourceRegistry) -> Res<()> {
+    if content.reference.fixture
+        || !registry
+            .iter()
+            .any(|s| s.access.value() == Some(&AccessMethod::Authored))
+    {
+        return Ok(());
+    }
+    let mut sources = registry.iter();
+    match (sources.next(), sources.next()) {
+        (Some(source), None) => validate_authored(content, &source.id),
+        _ => Err("Authored pack must declare exactly one source"),
+    }
 }
 fn gaps(content: &ReferenceContent) -> Res<u64> {
     let base = content_report(&content.reference);
@@ -167,6 +188,7 @@ fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBun
     if canonical(&content)? != catalog_bytes {
         return Err("V2 catalog is not canonical");
     }
+    authored(&content, &registry)?;
     let layers = layers_data(&content.reference.payload)?;
     if layers.keys().collect::<BTreeSet<_>>() != manifest.assets.iter().map(|f| &f.path).collect() {
         return Err("V2 imagery closure differs");
@@ -190,10 +212,13 @@ fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBun
             &mut budget,
         )?;
         let matrix = SupportMatrix::decode(&bytes).map_err(|_| "Invalid party support matrix")?;
-        if content.reference.game.edition.as_str() != matrix.target.edition
-            || content.reference.game.build.as_str()
-                != format!("{}.{}", matrix.target.version, matrix.target.build)
-            || content.reference.game.interface.as_str() != matrix.target.interface.to_string()
+        // A pending (schema 2, `null`) target binds no build here; the release
+        // gate refuses it until the target is frozen and then requires equality.
+        if let Some(target) = &matrix.target
+            && (content.reference.game.edition.as_str() != target.edition
+                || content.reference.game.build.as_str()
+                    != format!("{}.{}", target.version, target.build)
+                || content.reference.game.interface.as_str() != target.interface.to_string())
         {
             return Err("Party support target differs from content catalog");
         }
@@ -246,13 +271,15 @@ pub fn build(input: &Path, output: &Path) -> Res<Report> {
     };
     let content = content_v2::decode(&budget.read(&input.join("catalog.json"), MAX_CATALOG_BYTES)?)
         .map_err(|_| "Invalid authored v2 content")?;
+    // Refuse invented game facts before staging any catalog bytes.
+    let registry = read_sources(&budget.read(&input.join("sources.json"), MAX_SOURCES_BYTES)?)?;
+    authored(&content, &registry)?;
     let bytes = canonical(&content)?;
     if bytes.len() > MAX_CATALOG_BYTES {
         return Err("Canonical catalog exceeds limit");
     }
     let catalog = record("catalog.json", &bytes)?;
     stage.write(&stage.root.join("catalog.json"), &bytes)?;
-    let registry = read_sources(&budget.read(&input.join("sources.json"), MAX_SOURCES_BYTES)?)?;
     let bytes = source_bytes(&registry)?;
     if bytes.len() > MAX_SOURCES_BYTES {
         return Err("Canonical source registry exceeds limit");

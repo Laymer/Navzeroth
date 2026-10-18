@@ -1,11 +1,17 @@
 //! Party support is a workflow/evidence matrix, not a gameplay catalog.
 //! Callers must supply identities from a verified, non-fixture content closure
 //! and verify every returned evidence file before accepting this declaration.
+//!
+//! Schema 1 is the historical 70374 matrix for groups of 2 to 40. Schema 2 (task
+//! V2.4) follows the 1.0.0 slice: its target is the code-side frozen target of
+//! release schema 2 (`null` while that is pending), and it admits a party of one.
+//! Which workflows exist for a size is fixed in code ([`applies`]), never chosen
+//! by the JSON, so an omitted row cannot make a required workflow optional.
 use crate::{
-    release::{FileRef, MAX_RELEASE_BYTES, Target},
+    release::{self, FileRef, MAX_RELEASE_BYTES, Target},
     types::Sha256Hex,
 };
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -31,11 +37,38 @@ pub const WORKFLOWS: [Workflow; 8] = [
     Workflow::Review,
 ];
 
+/// Whether a workflow exists for a party of `size`. A party of one has no other
+/// member to share with, catch up with, balance against or agree with, so those
+/// four workflows are not applicable (a distinct state from unsupported). Its
+/// planning workflow is the single-character planner; stale-capture blocking,
+/// advancement and review apply unchanged. Every size of two or more has all eight.
+pub fn applies(size: u8, workflow: Workflow) -> bool {
+    size >= 2
+        || !matches!(
+            workflow,
+            Workflow::UnequalProgress
+                | Workflow::Sharing
+                | Workflow::Fairness
+                | Workflow::Agreement
+        )
+}
+/// The workflows required for `size`, in [`WORKFLOWS`] order.
+pub fn workflows_for(size: u8) -> impl Iterator<Item = Workflow> {
+    WORKFLOWS.into_iter().filter(move |w| applies(size, *w))
+}
+fn present<'de, D: Deserializer<'de>>(d: D) -> Result<Option<Target>, D::Error> {
+    // Required member: `null` means pending, an absent member is refused.
+    Option::<Target>::deserialize(d)
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SupportMatrix {
     pub schema_version: u32,
-    pub target: Target,
+    /// Schema 1: always the historical 70374 target. Schema 2: the frozen release
+    /// target, or `null` while it is pending (ADR 0006 §1).
+    #[serde(deserialize_with = "present")]
+    pub target: Option<Target>,
     pub catalog_sha256: Sha256Hex,
     pub supported_sizes: Vec<u8>,
     pub rows: Vec<SupportRow>,
@@ -84,10 +117,12 @@ impl SupportMatrix {
         Ok(value)
     }
     pub fn validate(&self) -> Result<(), &'static str> {
-        if self.schema_version != 1 {
-            return Err("Unsupported party support version");
-        }
-        if self.target != Target::forever_70374() {
+        let (expected, smallest) = match self.schema_version {
+            1 => (Some(Target::forever_70374()), 2),
+            2 => (release::expected_target(2), 1),
+            _ => return Err("Unsupported party support version"),
+        };
+        if self.target != expected {
             return Err("Party support target differs");
         }
         // The implemented local party boundary is at most 40 participants.
@@ -95,8 +130,12 @@ impl SupportMatrix {
         let sizes: BTreeSet<_> = self.supported_sizes.iter().copied().collect();
         if sizes.is_empty()
             || sizes.len() != self.supported_sizes.len()
-            || sizes.iter().any(|s| !(2..=40).contains(s))
-            || self.rows.len() != sizes.len() * WORKFLOWS.len()
+            || sizes.iter().any(|s| !(smallest..=40).contains(s))
+            || self.rows.len()
+                != sizes
+                    .iter()
+                    .map(|s| workflows_for(*s).count())
+                    .sum::<usize>()
         {
             return Err("Missing or invalid party sizes/workflow rows");
         }
@@ -106,6 +145,7 @@ impl SupportMatrix {
             if !text(&row.id)
                 || !ids.insert(&row.id)
                 || !sizes.contains(&row.size)
+                || !applies(row.size, row.workflow)
                 || !pairs.insert((row.size, row.workflow))
             {
                 return Err("Duplicate or invalid party support row");

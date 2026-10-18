@@ -7,6 +7,8 @@ fixtures/** text eol=lf
 # Content records are hashed byte for byte; keep LF on every platform.
 content/**/*.json text eol=lf
 content/**/NOTICE text eol=lf
+# Authored procedures and evidence are pinned by SHA-256 in party-support.json.
+content/authored/**/*.md text eol=lf
 *.png binary
 content/forever/**/*.png filter=lfs diff=lfs merge=lfs -text
 
