@@ -1,0 +1,49 @@
+name: Coverage
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: coverage-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  typescript:
+    name: TypeScript coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: pnpm install --frozen-lockfile
+      - name: Collect pinned V8 tests and real configuration execution
+        run: node scripts/coverage/collect-typescript.mjs "${{ runner.temp }}/coverage-typescript"
+      - name: Retain raw reports, source inventory and collector receipts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-typescript-${{ github.sha }}
+          path: ${{ runner.temp }}/coverage-typescript
+          if-no-files-found: error
+          retention-days: 14
+      - name: Retain pre-expansion source inventory
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-baseline-${{ github.sha }}
+          path: docs/coverage/2026-10-18-initial-inventory.json
+          if-no-files-found: error
+          retention-days: 14
+# Native Linux/Windows collection and the required combined Coverage gate are
+# deliberately pending in this draft PR. This job alone cannot establish readiness.

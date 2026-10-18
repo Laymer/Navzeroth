@@ -11,10 +11,9 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
 `test/continuation-coverage`, refreshed to main `ac114c8`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. Latest full UI run: 512 tests pass, 95.73% overall line coverage; Vitest
-passes every per-file threshold. The strict inventory found one pure re-export
-barrel with no executable statements; reviewed declaration-only classification
-is corrected and awaits clean-source recollection. Native Linux/Windows
+are in progress. Latest clean-source UI run at `9b28435`: 512 tests pass, 95.73% overall lines;
+raw reconstruction confirms all 66 executable TS/TSX files meet 90%, with 22
+explicit declaration-only files. This is only the TypeScript portion. Native Linux/Windows
 coverage and strict worker-profile completion remain unfinished. Independent
 product corrections #201 and #202 must merge before final branch refresh.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).

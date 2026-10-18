@@ -109,3 +109,12 @@ and found no actionable issues. Original frozen baseline inventory is unchanged;
 this is explicit no-executable-line accounting, not a source exclusion. All twelve
 infrastructure tests pass. Recollect clean-source coverage after this commit before
 claiming the TypeScript inventory passes; native Rust remains incomplete.
+
+Sixth clean-source run at `9b28435`: 512 tests pass, command exit 0, all Vitest
+per-file thresholds pass. Strict raw reconstruction confirms 66 measured TS/TSX
+files pass and 22 declaration-only entries have zero executable lines. There are
+no missing or failing TypeScript rows. Combined gate still fails 185 missing Rust
+entries when given only the two TypeScript receipts; no combined readiness claim.
+Draft Coverage workflow now collects/upload the current inventory, baseline,
+raw V8/Istanbul/test results and hash/source receipts. Hosted result is pending;
+native collectors and the required combined Coverage gate remain outstanding.

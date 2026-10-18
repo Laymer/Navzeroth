@@ -62,3 +62,14 @@ requires clean committed source, pins both V8 packages, records before/after
 source hashes and actual test results, and collects real Vite configuration
 execution separately. Threshold failures remain nonzero and diagnostic receipts
 cannot establish final readiness. Native collectors and the CI gate are pending.
+
+The sixth clean-source run at `9b28435` passes all 512 UI tests and V8 per-file
+thresholds (95.73% overall lines). Strict raw reconstruction confirms 66 executable
+TS/TSX files pass and 22 declaration-only files have no executable lines. Pure
+named/star re-export bindings have no authored initializer; independent review
+confirmed their declaration-only classification. The frozen original inventory
+remains unchanged. This completes the current TypeScript portion only. The
+combined gate still fails 185 missing Rust entries when supplied only TS receipts.
+The draft Coverage workflow collects/upload TS raw reports, receipts, current and
+baseline inventories. Native collectors and required combined Coverage gate remain
+pending, preserving the existing nine checks.
