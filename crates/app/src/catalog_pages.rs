@@ -247,7 +247,12 @@ mod tests {
         ] {
             let first = page(&store, &content, collection, None).unwrap();
             assert_eq!(first.page.collection, collection);
-            let expected = fixture[field].as_array().unwrap();
+            // Historical documents omit optional empty imagery collections.
+            let expected = match fixture.get(field) {
+                Some(Value::Array(rows)) => rows.clone(),
+                None => vec![],
+                _ => panic!("Fixture collection must be an array"),
+            };
             assert_eq!(first.page.total, expected.len());
             let mut actual: Vec<String> = first
                 .records

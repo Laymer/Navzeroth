@@ -356,3 +356,20 @@ reference-window adapter generic over Tauri's Runtime and exercise dispatch thro
 the official mock runtime. Production continues using Wry; these tests establish
 no ordinary-Windows focus/overlay/operator acceptance. Native hosted proof remains
 separate. No permissions or game integration will be added.
+
+Correction to the preceding page-test checkpoint: the first fixture-derived
+comparison failed because optional empty imagery collections are omitted by
+legacy serialization. Expected missing optional collections now mean the historical
+empty default; present non-array values fail. The actual corrected result follows.
+
+Corrected fixture-derived catalog tests now both pass. Reference-window Runtime
+generic refactor and official mock-runtime dispatch test are prepared; formatting
+and locked metadata resolution pass. Native compilation/execution is pending
+because this local Linux environment lacks its GTK/dbus development prerequisites.
+No permission/capability changes or new packages are introduced (Tauri's empty
+`test` feature is enabled only as a dev dependency). Production remains Wry.
+
+Next thin-adapter subtask, same owner and baseline `c411bd6`: consolidate identical
+HTTP no-store/nosniff response construction in atlas_protocol and test its transport
+headers/body/refusals. Asset authorization and integrity remain in application
+services; synthetic response bytes cannot establish gameplay availability.
