@@ -320,3 +320,18 @@ all-target Clippy passed before the media extension; local-data/app were rerun
 after it. The Windows process-name-only precondition test awaits native execution.
 No game files are selected by these tests, and synthetic media is deleted with
 the owned test store; it establishes no real-client or gameplay acceptance.
+
+Further actual checks: five CLI argument tests and five content-validation tests
+pass, including human doctor output preserving unverified native/live status,
+schema output refusal preserving an existing file, malformed directory shapes,
+129-file quota, inert malformed JSON diagnostics and semantic-error human output.
+Repeated evidence pins deduplicate, while conflicting hashes refuse (focused unit
+test passes). Two catalog-page tests pass across legacy collection bindings and
+all v2 unresolved-index refusals. Three planning-job tests pass for poisoned
+registry/outcome/pin locks, no partial success publication, real elapsed-budget
+refusal without sleeping, cancellation distinction and all progress phases.
+Imagery inventory provenance test passes for embeddings/pins and absent node
+provenance, duplicate identities and unresolved evidence. Core content-v2 suite
+passes 11 tests with one explicit fixture regeneration ignored, including recursive
+quest/objective/map/equipment references and documented-model/guide bindings.
+Core/app/CLI all-target Clippy passes. These remain synthetic/domain checks.

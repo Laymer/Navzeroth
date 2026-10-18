@@ -510,3 +510,95 @@ fn phase_name(phase: u8) -> Option<&'static str> {
         _ => None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn poison<T>(mutex: &Mutex<T>) {
+        assert!(
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                let _held = mutex.lock().unwrap();
+                panic!("synthetic worker panic while owning state");
+            }))
+            .is_err()
+        );
+        assert!(mutex.is_poisoned());
+    }
+    #[test]
+    fn poisoned_registry_and_outcome_refuse_control_and_publication() {
+        let jobs = PlanningJobs::default();
+        let ticket = jobs.register(PlanningKind::Solo).unwrap();
+        poison(&ticket.entry.outcome);
+        ticket.entry.state.store(FAILED, Ordering::Release);
+        for result in [
+            jobs.status(ticket.id()).map(|_| ()),
+            jobs.cancel(ticket.id()),
+            jobs.take_result(ticket.id()).map(|_| ()),
+            ticket.completion_result(),
+            jobs.complete_with_pin(&ticket, Ok("{}".into()), None),
+        ] {
+            assert_eq!(result.unwrap_err().code, ErrorCode::ProviderUnavailable);
+        }
+        assert!(jobs.register(PlanningKind::Joint).is_ok());
+        poison(&jobs.entries);
+        assert_eq!(
+            jobs.register(PlanningKind::Solo).err().unwrap().code,
+            ErrorCode::ProviderUnavailable
+        );
+        assert_eq!(
+            jobs.status(ticket.id()).unwrap_err().code,
+            ErrorCode::ProviderUnavailable
+        );
+        assert_eq!(
+            jobs.complete_with_pin(&ticket, Ok("{}".into()), None)
+                .unwrap_err()
+                .code,
+            ErrorCode::ProviderUnavailable
+        );
+    }
+    #[test]
+    fn poisoned_pin_never_publishes_a_success_or_a_result() {
+        let jobs = PlanningJobs::default();
+        let ticket = jobs.register(PlanningKind::Solo).unwrap();
+        poison(&ticket.entry.pin);
+        assert_eq!(
+            jobs.complete_with_pin(&ticket, Ok("{}".into()), None)
+                .unwrap_err()
+                .code,
+            ErrorCode::ProviderUnavailable
+        );
+        let status = jobs.status(ticket.id()).unwrap();
+        assert_eq!(status.state, "queued");
+        assert!(!status.result_available);
+    }
+    #[test]
+    fn job_deadline_cancellation_and_observed_phases_remain_distinct() {
+        let jobs = PlanningJobs::default();
+        let ticket = jobs.register(PlanningKind::Solo).unwrap();
+        let mut control = JobControl {
+            entry: ticket.entry.clone(),
+            started: Instant::now(),
+        };
+        for (phase, label) in [
+            (SearchPhase::ValidateInputs, "validate_inputs"),
+            (SearchPhase::ParticipantReadiness, "participant_readiness"),
+            (SearchPhase::EdgeAssessment, "edge_assessment"),
+            (SearchPhase::RouteExpansion, "route_expansion"),
+            (SearchPhase::CandidateAssessment, "candidate_assessment"),
+            (SearchPhase::Selection, "selection"),
+        ] {
+            control.checkpoint(phase).unwrap();
+            assert_eq!(jobs.status(ticket.id()).unwrap().phase, Some(label));
+        }
+        control.started = Instant::now().checked_sub(MAX_JOB_DURATION).unwrap();
+        assert_eq!(
+            control.check_time().unwrap_err().to_string(),
+            "Planning job exceeded its ten second computation budget"
+        );
+        jobs.cancel(ticket.id()).unwrap();
+        assert_eq!(
+            control.check_time().unwrap_err().to_string(),
+            "Planning job canceled"
+        );
+    }
+}

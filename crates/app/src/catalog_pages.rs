@@ -219,3 +219,90 @@ impl SnapshotApplication {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Arc;
+    #[test]
+    fn legacy_pages_bind_every_collection_and_refuse_stale_or_out_of_range_requests() {
+        let revision: azeroth_storage::content::ContentRevision = serde_json::from_str(
+            include_str!("../../../fixtures/desktop/content/demo-revision.json"),
+        )
+        .unwrap();
+        let content = ActiveContentRevision::V1(Arc::new(revision));
+        let store = SqliteStore::open_in_memory().unwrap();
+        for collection in [
+            Collection::Items,
+            Collection::Quests,
+            Collection::Acquisitions,
+            Collection::Nodes,
+            Collection::Edges,
+            Collection::Objectives,
+            Collection::Rules,
+            Collection::MapSpaces,
+            Collection::MapImages,
+            Collection::MapEmbeddings,
+        ] {
+            let first = page(&store, &content, collection, None).unwrap();
+            assert_eq!(first.page.collection, collection);
+            assert_eq!(first.records.len(), first.page.total);
+            assert_eq!(first.page.next_offset, None);
+            let mut request = PageRequest {
+                revision: first.page.revision.clone(),
+                catalog_sha256: first.page.catalog_sha256.clone(),
+                collection,
+                offset: 0,
+                limit: MAX_PAGE_ROWS,
+            };
+            assert_eq!(
+                page(&store, &content, collection, Some(&request))
+                    .unwrap()
+                    .records,
+                first.records
+            );
+            request.offset = first.page.total + 1;
+            assert!(page(&store, &content, collection, Some(&request)).is_err());
+            request.offset = 0;
+            request.catalog_sha256 = Sha256Hex::new("f".repeat(64)).unwrap();
+            assert!(page(&store, &content, collection, Some(&request)).is_err());
+            assert!(record(&content, collection, usize::MAX).is_err());
+        }
+    }
+    #[test]
+    fn every_v2_record_collection_refuses_an_unresolved_index() {
+        let content =
+            ActiveContentRevision::V2(Arc::new(azeroth_storage::content::ContentRevisionV2 {
+                content: azeroth_core::content_v2::decode(include_bytes!(
+                    "../../../fixtures/contracts/v2/reference-content.json"
+                ))
+                .unwrap(),
+                sources: vec![],
+                conflicts: vec![],
+            }));
+        for collection in [
+            Collection::Items,
+            Collection::Quests,
+            Collection::Acquisitions,
+            Collection::Nodes,
+            Collection::Edges,
+            Collection::Objectives,
+            Collection::Rules,
+            Collection::MapSpaces,
+            Collection::MapImages,
+            Collection::MapEmbeddings,
+            Collection::Models,
+            Collection::Dungeons,
+            Collection::EquipmentFacts,
+            Collection::QuestFacts,
+            Collection::AcquisitionFacts,
+        ] {
+            assert_eq!(
+                record(&content, collection, usize::MAX)
+                    .unwrap_err()
+                    .to_string(),
+                "Catalog row does not resolve"
+            );
+        }
+    }
+}

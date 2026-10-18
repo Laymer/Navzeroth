@@ -40,6 +40,56 @@ fn bad_input_and_options_are_rejected() {
         .unwrap();
     assert_eq!(output.status.code(), Some(2));
 }
+
+#[test]
+fn selected_directory_shape_capacity_and_decode_failures_are_explicit() {
+    let dir = std::env::temp_dir().join(format!(
+        "nav-content-directory-boundary-{}",
+        std::process::id()
+    ));
+    std::fs::create_dir(&dir).unwrap();
+    assert_eq!(
+        azeroth_cli::content::reports(&dir).unwrap_err(),
+        "No content datasets found"
+    );
+    std::fs::write(dir.join("datasets"), b"preserve").unwrap();
+    assert_eq!(
+        azeroth_cli::content::reports(&dir).unwrap_err(),
+        "Content directory must be a regular directory"
+    );
+    std::fs::remove_file(dir.join("datasets")).unwrap();
+    std::fs::create_dir(dir.join("directory.json")).unwrap();
+    assert_eq!(
+        azeroth_cli::content::reports(&dir).unwrap_err(),
+        "Content file must be a regular file"
+    );
+    std::fs::remove_dir(dir.join("directory.json")).unwrap();
+    std::fs::write(dir.join("broken.json"), b"private-sentinel invalid JSON").unwrap();
+    let reports = azeroth_cli::content::reports(&dir).unwrap();
+    assert!(!reports[0].passes);
+    let human = azeroth_cli::content::human(&reports);
+    assert!(human.contains("decode failed"));
+    assert!(!human.contains("private-sentinel"));
+    for i in 0..128 {
+        std::fs::write(dir.join(format!("{i}.json")), b"{}").unwrap();
+    }
+    assert_eq!(
+        azeroth_cli::content::reports(&dir).unwrap_err(),
+        "Too many content files"
+    );
+    assert_eq!(
+        std::fs::read(dir.join("broken.json")).unwrap(),
+        b"private-sentinel invalid JSON"
+    );
+    std::fs::remove_dir_all(dir).unwrap();
+    let invalid = run("fixtures/coverage/v1/predicate-dangling-quest.json", false);
+    assert_eq!(invalid.status.code(), Some(1));
+    assert!(
+        String::from_utf8(invalid.stdout)
+            .unwrap()
+            .contains("  error:")
+    );
+}
 #[cfg(unix)]
 #[test]
 fn symlinks_and_oversized_files_are_rejected() {
