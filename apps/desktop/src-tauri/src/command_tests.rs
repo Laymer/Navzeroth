@@ -658,13 +658,16 @@ fn native_planning_jobs_publish_then_pin_only_the_verified_synthetic_result() {
     let status = wait(&job["job_id"]);
     assert_eq!(status["state"], "succeeded", "{status}");
     assert_eq!(status["result_available"], true);
+    let current = invoke("get_today_view", serde_json::json!({})).unwrap();
+    let revision = current["current_plan"]["revision"].as_i64().unwrap();
+    assert_eq!(current["current_plan"]["state"], "empty");
     assert_eq!(
         invoke(
             "pin_current_plan",
-            serde_json::json!({"job_id":job["job_id"],"expected_revision":0})
+            serde_json::json!({"job_id":job["job_id"],"expected_revision":revision})
         )
         .unwrap(),
-        1
+        revision + 1
     );
     let result = invoke(
         "take_planning_job_result",
@@ -677,9 +680,9 @@ fn native_planning_jobs_publish_then_pin_only_the_verified_synthetic_result() {
     assert_eq!(
         invoke(
             "clear_current_plan",
-            serde_json::json!({"expected_revision":1})
+            serde_json::json!({"expected_revision":revision + 1})
         )
         .unwrap(),
-        2
+        revision + 2
     );
 }

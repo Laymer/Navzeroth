@@ -567,3 +567,8 @@ Pure fixture freshness and expected planning output passed an isolated applicati
 probe (temporary test removed afterward); helper tests, formatting/diff pass.
 Independent lifecycle review found no actionable findings. No production edits or
 coverage policy changes. Hosted compilation/execution and full union remain next.
+
+Hosted 70a6b60 planning test reached successful publication, then correctly
+refused its hardcoded stale pin revision. Fixture import/activation advances that
+revision. Test now reads current_plan.revision through get_today_view before
+explicit pin, asserting exact +1 pin and +2 clear changes. No production change.
