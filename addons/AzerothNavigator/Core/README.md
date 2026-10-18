@@ -217,7 +217,7 @@ which builds nothing until it is first opened and calls only the `actions` table
 `Diagnostics.lua` exposes. These modules take `env` as an argument and never touch the
 global table. `Clock.status()` is a pure read of the pending probe and trust.
 `Capabilities.admission(build)` labels an admitted build `release_target`,
-`development_unverified` (70425), `previous_recorded` or nil. Settings gained
+`development_unverified` (70425, 70450), `previous_recorded` or nil. Settings gained
 `minimap_button`, `minimap_angle` (finite, 0 to 360) and `gui_last_tab` (a tab id) with
 validators; `db_version` stays 1 and a 0.9.1 addon drops those keys on its next merge.
 Live behavior of every template, tooltip, minimap and options call is UNVERIFIED.
