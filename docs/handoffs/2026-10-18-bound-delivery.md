@@ -1,8 +1,8 @@
 # Continuation 6 — bound delivery and guarded consumers
 
 Owner/sole writer: Codex `/root`; 2026-10-18. Initial baseline `ea47b57`,
-media PR #195. Claim: [bound delivery](../claims/2026-10-18-bound-delivery.md).
-Integrate resulting main before final PR review/merge.
+media PR #195; resulting main `0151eb1` integrated before review. Claim: [bound delivery](../claims/2026-10-18-bound-delivery.md).
+Exact-head hosted checks and PR #196 receipt remain pending.
 
 Implemented immutable version-1 research delivery binding catalog/tuple,
 projection/projector, media, selected observations, optional guide facts and

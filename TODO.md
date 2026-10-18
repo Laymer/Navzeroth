@@ -45,8 +45,9 @@ recorded separately from unverified native Rust cache-stage end-to-end behavior.
 Continuation 4 merged as PR #194 at `b590eae` after independent review, all nine
 exact-head checks and source workflow. Research mappings/facts do not grant
 availability or acceptance.
-Continuation 5 is PR #195, independently reviewed with local checks passing;
-remaining exact-head Windows checks and merge are pending.
+Continuation 5 merged as PR #195 at `0151eb1` after independent review, all nine
+exact-head checks and source workflow. No calibrated media or gameplay evidence
+was claimed.
 Active: continuation 6, bound research deliveries and guarded desktop consumers;
 [claim](docs/claims/2026-10-18-bound-delivery.md),
 [handoff](docs/handoffs/2026-10-18-bound-delivery.md).

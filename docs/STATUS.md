@@ -9,8 +9,9 @@ sole writer, branch `feat/continuation-bound-delivery`; initial baseline `ea47b5
 [Claim](claims/2026-10-18-bound-delivery.md),
 [handoff](handoffs/2026-10-18-bound-delivery.md),
 [delivery contracts](data/LOCAL_DELIVERY.md).
-Continuation 5 is [PR #195](https://github.com/Laymer/Navzeroth/pull/195), reviewed
-with local checks passing, pending remaining exact-head Windows checks/merge.
+Continuation 5 merged as [PR #195](https://github.com/Laymer/Navzeroth/pull/195)
+at `0151eb1` after independent review, all nine exact-head checks and source
+workflow. Media remains local-only, uncalibrated and research-only.
 [Media handoff](handoffs/2026-10-18-media-tooltips.md).
 Continuation 4 merged as [PR #194](https://github.com/Laymer/Navzeroth/pull/194)
 at `b590eae` after independent review, all nine exact-head checks and source
