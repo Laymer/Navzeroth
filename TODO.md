@@ -39,9 +39,12 @@ See ADR 0006 §13 for the early development RC policy. None is a stable gate pas
 Continuation 2 merged as PR #192 at `1cb6bb9`, with independent review, all nine
 exact-head checks, source workflow and a successful private real-client lifecycle
 comparison. [Handoff/receipt](docs/handoffs/2026-10-18-extraction-lifecycle.md).
-Active: continuation 3, selected cache/hotfix/observation inputs; Codex `/root`,
-[claim](docs/claims/2026-10-18-local-inputs.md),
-[handoff](docs/handoffs/2026-10-18-local-inputs.md).
+Continuation 3 merged as PR #193 at `b74549f` after independent review, all nine
+exact-head checks and source workflow. Native capture and pure parser results are
+recorded separately from unverified native Rust cache-stage end-to-end behavior.
+Active: continuation 4, gameplay projections and bound research guide facts;
+[claim](docs/claims/2026-10-18-gameplay-facts.md),
+[handoff](docs/handoffs/2026-10-18-gameplay-facts.md).
 Later input adapters, expanded projections, media, guarded gameplay consumers,
 reviewed inventory, performance, coverage, publication and Pages remain pending.
 

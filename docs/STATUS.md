@@ -4,17 +4,17 @@ Updated: 2026-10-18.
 
 ## Current task
 
-**Continuation 3 — selected caches and observation inputs:** Codex `/root`, sole
-writer, isolated branch `feat/continuation-local-inputs`; initial baseline
-`7f5587a`, resulting-main dependency `1cb6bb9`.
-[Claim](claims/2026-10-18-local-inputs.md),
-[handoff](handoffs/2026-10-18-local-inputs.md). Supported envelope formats,
-unsupported dispositions, private lineage, native closed-game boundary and
-compatible session locale extension are in [LOCAL_INPUTS](data/LOCAL_INPUTS.md).
-After initially deferring while playing, the owner closed WoW: native capture and
-pure parsing passed for the actual 70450 XFTH v9 envelope; three WDB layouts stayed
-unsupported. [Receipt](handoffs/2026-10-18-cache-development-check.md). Native Rust
-staging/refusal checks and live addon locale remain TODOs.
+**Continuation 4 — gameplay projections and guide facts:** Codex `/root`, sole
+writer, isolated branch `feat/continuation-gameplay-facts`; initial baseline
+`3f90417`, resulting-main dependency `b74549f`.
+[Claim](claims/2026-10-18-gameplay-facts.md),
+[handoff](handoffs/2026-10-18-gameplay-facts.md),
+[supported research scope](data/GAMEPLAY_PROJECTIONS.md).
+Continuation 3 merged as [PR #193](https://github.com/Laymer/Navzeroth/pull/193)
+at `b74549f` after independent review, all nine exact-head checks, both source
+platforms and parity. [Cache development receipt](handoffs/2026-10-18-cache-development-check.md)
+records native read-only capture and pure parsing; native Rust cache-stage
+end-to-end and live locale remain unverified. Private copies were removed.
 
 Continuation 1 merged as PR #191 at `167a454`. Continuation 2 merged as
 [PR #192](https://github.com/Laymer/Navzeroth/pull/192) at `1cb6bb9` after independent

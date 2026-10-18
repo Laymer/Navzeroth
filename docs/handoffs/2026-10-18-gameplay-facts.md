@@ -1,7 +1,7 @@
 # Continuation 4 — gameplay projections and guide facts
 
 Owner/sole writer: Codex `/root`; 2026-10-18. Initial baseline `3f90417`,
-continuation-3 branch; incorporate resulting main before PR. Claim:
+continuation-3 branch; resulting main `b74549f` integrated before PR. Claim:
 [gameplay facts](../claims/2026-10-18-gameplay-facts.md).
 
 Implemented versioned expanded research projections, exact retained field/layout
