@@ -114,3 +114,29 @@ it("discards deferred route projections across same-profile content refresh and 
   await act(async()=>{finish?.({...syntheticRoute(1),report:result(required(request))} as never);});
   expect(screen.getByRole("region",{name:"Route inspection"})).toBeInTheDocument();expect(screen.getByText(/Snapshot new-snapshot; revision r/)).toBeInTheDocument();
 });
+it("exports only the calculated request and reports clipboard failure without changing export text",async()=>{
+ let request:PlanningRequest|undefined;const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});
+  if(command==="list_profiles")return Promise.resolve([{id:"p",display_name:"Synthetic",fixture:true}]as never);
+  if(command==="get_planning_catalog")return Promise.resolve(catalog as never);
+  if(command==="start_planning_job"){request=JSON.parse((input as {text:string}).text);return Promise.resolve({job_schema_version:1,job_id:"job-a"}as never);}
+  if(command==="get_planning_job")return Promise.resolve(status as never);
+  if(command==="take_planning_job_result"&&request){const report=result(request);report.result.selected=[{candidate:"synthetic-service",utility:0,incremental_ms:0,completion_ms:0,service_ms:0,travel:{total_ms:0},expected_session_ms:0}];return Promise.resolve({job_schema_version:1,job_id:"job-a",kind:"solo",report_json:JSON.stringify(report)}as never);}
+  if(command==="export_plan")return Promise.resolve({text:"ANAV1:synthetic-plan",byte_count:20,plan_id:"synthetic-plan",expires_at_utc_ms:0}as never);
+  return Promise.reject(new Error("Unexpected command"));
+ }};
+ const writeText=vi.fn().mockRejectedValueOnce(new Error("Unavailable clipboard")).mockResolvedValueOnce(undefined);
+ const clipboard=Object.getOwnPropertyDescriptor(navigator,"clipboard");Object.defineProperty(navigator,"clipboard",{configurable:true,value:{writeText}});
+ try{
+  render(<PlannerScreen client={createClient(adapter)} refreshKey={0}/>);
+  await screen.findByText(/Snapshot: s; revision: r/);fields();
+  fireEvent.click(screen.getByRole("button",{name:"Plan session"}));
+  fireEvent.click(await screen.findByRole("button",{name:"Export plan"}));
+  const text=await screen.findByRole("textbox",{name:"Plan export text"});expect(text).toHaveValue("ANAV1:synthetic-plan");
+  expect(calls).toContainEqual({command:"export_plan",input:{text:JSON.stringify(request)}});
+  fireEvent.focus(text);fireEvent.click(screen.getByRole("button",{name:"Copy plan"}));
+  await screen.findByText("Clipboard unavailable; select the text and copy manually.");expect(text).toHaveValue("ANAV1:synthetic-plan");
+  fireEvent.click(screen.getByRole("button",{name:"Copy plan"}));await screen.findByText("Copied plan export.");
+  expect(writeText).toHaveBeenNthCalledWith(1,"ANAV1:synthetic-plan");expect(writeText).toHaveBeenCalledTimes(2);
+ }finally{if(clipboard)Object.defineProperty(navigator,"clipboard",clipboard);else Reflect.deleteProperty(navigator,"clipboard");}
+});

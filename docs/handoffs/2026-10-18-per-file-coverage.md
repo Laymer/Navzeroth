@@ -82,3 +82,18 @@ production entrypoints must also execute and produce actual coverage. No baselin
 profile was removed. Official LLVM documentation describes continuous recording
 and runtime counter relocation, with Windows support needing verification:
 https://clang.llvm.org/docs/SourceBasedCodeCoverage.html
+
+Fourth clean-source UI run at `1809f10`: all 498 tests pass; only MapView,
+demoAdapter and PlannerScreen remain below 90%. New focused checks now pass:
+twelve demo boundary cases (native workflows refuse; one synthetic profile;
+unknown identities and commands), map navigation/resize cleanup, and planner
+export/clipboard failure and retry (eleven combined map/planner tests).
+Typecheck/lint pass. Next clean-source full run follows commit. Independent review
+confirmed the required-raw-evidence P2 resolved with no remaining delta findings.
+
+The Linux diagnostic normalized production report has 185 eligible Rust files,
+five missing and 46 measured files below 90%; inline test bodies are excluded by
+exact cfg(test) ranges. This is not a combined Linux/Windows verdict. The largest
+remaining gaps include native archive handling, extraction and app orchestration;
+examples need real instrumented execution and native shell/build scripts need
+platform collectors. Do not infer readiness from aggregate totals.
