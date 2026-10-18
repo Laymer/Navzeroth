@@ -2,7 +2,7 @@
 export function coverageEnvironment(text){
  const result={};
  for(const line of text.trim().split(/\r?\n/)){
-  const match=/^([A-Z_][A-Z_0-9]*)=(.*)$/.exec(line);if(!match)throw new Error('Unexpected coverage environment assignment');
+  const match=/^(?:export )?([A-Z_][A-Z_0-9]*)=(.*)$/.exec(line);if(!match)throw new Error('Unexpected coverage environment assignment');
   const [,key,encoded]=match;if(Object.hasOwn(result,key))throw new Error('Duplicate coverage environment key');
   let value='',quoted=false;
   for(let i=0;i<encoded.length;i++){

@@ -48,7 +48,7 @@ export function collectRust(destination){
   requireMatchingLlvm(toolsVersion,llvmVersion);
   // No --no-clean here: collection starts from a new build/profile directory.
   run('workspace-tests','cargo',['llvm-cov','test','--locked','--workspace','--all-targets','--no-report']);
-  instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env'],{stdoutOnly:true}))};
+  instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env','--sh'],{stdoutOnly:true}))};
   if(path.resolve(instrumented.CARGO_LLVM_COV_TARGET_DIR)!==target||path.resolve(instrumented.CARGO_LLVM_COV_BUILD_DIR)!==target)throw new Error('Instrumentation escaped its owned build directory');
   cargoExample('schema-export','azeroth-core','export_content_schema');
   cargoExample('workflow-verification','azeroth-app','workflow_performance',['--verify']);

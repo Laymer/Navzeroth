@@ -210,3 +210,27 @@ rejecting 23.1.10 when 23.1.1 is required and refusing inherited LLVM_COV/
 LLVM_PROFDATA overrides. Thirty-three tooling/helper/build-guard tests pass.
 Current hosted collectors remain at `3bc9d18` while these changes are kept local;
 finish inspecting that run before pushing the next head.
+
+Second hosted Coverage run 39137046033, head `3bc9d18`, tested merge source
+`8954b62`: TypeScript and Linux native collectors succeeded. Linux collected all
+workspace tests, build scripts, schema export, debug refusals/verifications and
+all three release examples, then strictly merged/exported debug/release profiles.
+Windows workspace tests succeeded but its default environment output left native
+backslashes/control separators unquoted; the POSIX-only decoder refused that
+output. Windows collection and the combined gate correctly failed. Raw artifacts
+for both platforms and TS remain retained under that exact source SHA.
+
+Collector now requests cargo-llvm-cov show-env --sh explicitly on both platforms;
+the inert parser accepts the export prefix and preserves native Windows paths,
+spaces and encoded flags inside POSIX literals. Regression covers those values,
+and actual pinned --sh output parsed with an owned target locally. Thirty-four
+infrastructure/helper/build-guard tests pass. Native Windows confirmation awaits
+the next hosted run; no shell environment output is executed.
+
+Additional core checks: all 21 core unit tests pass, including new generic serde
+owned-string/nonfinite/byte-value behavior and numeric-schema-format cleanup that
+preserves zero bounds, false defaults, literal data and unknown string formats.
+Three media manifest tests pass, exercising all read-refusal kinds, decoded pixel
+limits, absent/altered lineage, calibration/gameplay promotion refusal, exact asset
+count boundaries and duplicate/out-of-order IDs. Core all-target Clippy passes.
+These are contract/boundary checks; no real image or gameplay evidence is implied.

@@ -20,9 +20,11 @@ have merged. Inventory, hash-bound raw-report validation and targeted expansion
 are in progress. Latest clean-source UI run at `9b28435`: 512 tests pass, 95.73% overall lines;
 raw reconstruction confirms all 66 executable TS/TSX files meet 90%, with 22
 explicit declaration-only files. This is only the TypeScript portion. Native Linux/Windows
-coverage and strict worker-profile completion remain unfinished. First native
-collector runs passed workspace tests, then failed on stderr/stdout mixing; the
-collector is corrected for a fresh run. PR #201 and #202 are integrated.
+coverage remains unfinished. The corrected Linux native collector completed;
+Windows passed workspace tests but refused its platform-specific environment
+quoting. Explicit POSIX output is implemented for the next run. Additional archive
+ABI, serializer, media and receipt tests are passing locally. PR #201 and #202
+are integrated; the combined gate has not passed.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)

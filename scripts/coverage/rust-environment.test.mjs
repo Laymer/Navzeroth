@@ -20,3 +20,11 @@ test('compiler and LLVM identities match exact versions rather than a shared str
  assert.throws(()=>compilerIdentity('host: x86_64-unknown-linux-gnu\nLLVM version: 23.1.1',undefined));
  for(const actual of ['23.1.10','23.1.0','22.1.1'])assert.throws(()=>requireMatchingLlvm('LLVM version '+actual,'23.1.1'));
 });
+
+test('explicit POSIX output preserves native Windows paths and encoded flags as data',()=>{
+ const result=coverageEnvironment("export LLVM_PROFILE_FILE='D:\\a\\temp folder\\nav-%p-%m.profraw'\nexport RUSTC_WRAPPER='C:\\Users\\runner admin\\cargo-llvm-cov.exe'\nexport CARGO_LLVM_COV_TARGET_DIR='D:\\a\\temp folder\\build'\nexport __CARGO_LLVM_COV_RUSTC_WRAPPER_RUSTFLAGS='-C\x1finstrument-coverage\x1f--cfg=coverage'");
+ assert.equal(result.CARGO_LLVM_COV_TARGET_DIR,'D:\\a\\temp folder\\build');
+ assert.equal(result.RUSTC_WRAPPER,'C:\\Users\\runner admin\\cargo-llvm-cov.exe');
+ assert.equal(result.__CARGO_LLVM_COV_RUSTC_WRAPPER_RUSTFLAGS,'-C\x1finstrument-coverage\x1f--cfg=coverage');
+ assert.throws(()=>coverageEnvironment('export export '+base),/Unexpected coverage/);
+});
