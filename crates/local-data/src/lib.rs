@@ -456,3 +456,7 @@ pub mod media;
 pub mod delivery;
 
 pub mod delivery_receipts;
+
+pub mod inventory;
+
+pub mod guide_review;

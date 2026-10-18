@@ -224,3 +224,11 @@ eligibility, rewards and XP remain unknown. False observations do not prove
 universal absence. Client zone/flight labels remain an incomplete vocabulary;
 client quest IDs and line order establish neither server availability nor quest
 prerequisites. Synthetic inputs remain explicitly marked in manifest gaps.
+
+## Delivery-bound review and exact inventory (continuation 7)
+
+The local-data `bound-guide-review` command now consumes a delivery's reproduced
+research facts directly and binds its report to the selected guide hash. It retains
+findings and cannot pass evidence/acceptance; duo verification stays explicitly
+unverified. [LOCAL_INVENTORY](LOCAL_INVENTORY.md) documents exact IDs across all nine
+domains and the separately unverified [Human designs](HUMAN_ROUTE_DRAFTS.md).

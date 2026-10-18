@@ -137,6 +137,8 @@ pub struct VerifiedAsset {
 pub struct VerifiedBundle {
     pub content: ReferenceContent,
     pub catalog_sha256: Sha256Hex,
+    pub manifest_sha256: Sha256Hex,
+    pub party_support: Option<SupportMatrix>,
     pub sources: Vec<SourceRecord>,
     pub assets: Vec<VerifiedAsset>,
 }
@@ -204,6 +206,7 @@ fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBun
             });
         }
     }
+    let mut verified_party_support = None;
     if let Some(support) = &manifest.party_support {
         let bytes = check_record(
             root,
@@ -237,6 +240,7 @@ fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBun
         for file in &manifest.supporting_files {
             check_record(root, file, MAX_CATALOG_BYTES, &mut budget)?;
         }
+        verified_party_support = Some(matrix);
     } else if !manifest.supporting_files.is_empty() {
         return Err("Unowned supporting evidence");
     }
@@ -257,6 +261,8 @@ fn inspect(root: &Path, collect_assets: bool) -> Res<(Report, Option<VerifiedBun
     let bundle = collect_assets.then_some(VerifiedBundle {
         content,
         catalog_sha256: manifest.catalog.sha256,
+        manifest_sha256: hash(&manifest_bytes),
+        party_support: verified_party_support,
         sources: registry.into(),
         assets: verified_assets,
     });

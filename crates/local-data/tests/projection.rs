@@ -1589,3 +1589,218 @@ fn delivery_lookup_preserves_missing_unsupported_and_justified_empty_sources() {
         fs::remove_dir_all(root).unwrap();
     }
 }
+#[test]
+fn exact_inventory_lists_nine_domains_and_keeps_completeness_separate() {
+    use azeroth_core::local_data::PerformancePreset;
+    use azeroth_local_data::{delivery, inventory};
+    let (root, catalog, _) = seeded_store("inventory");
+    let projected = projection::project_catalog(&root, &catalog, "enUS").unwrap();
+    let delivered = delivery::build(
+        &root,
+        &projected.projection_sha256,
+        &[],
+        &[],
+        None,
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let digest = inventory::build(&root, &delivered, None, PerformancePreset::Max).unwrap();
+    let report = inventory::verify(&root, &digest, None).unwrap();
+    assert_eq!(report.domains.len(), 9);
+    assert!(!report.acceptance_ready);
+    let acquisition = report
+        .domains
+        .iter()
+        .find(|d| d.domain == "acquisition")
+        .unwrap();
+    assert_eq!(acquisition.imported_count, 0);
+    assert!(!acquisition.source_available);
+    assert_eq!(acquisition.independently_required_count, None);
+    for domain in &report.domains {
+        assert!(!domain.independently_complete);
+        assert_eq!(domain.imported_count as usize, domain.records.len());
+    }
+    let page = inventory::page(&root, &digest, "equipment", 0, 2, None).unwrap();
+    assert_eq!(page.records.len(), 2);
+    assert_eq!(page.next_offset, Some(2));
+    let next = inventory::page(&root, &digest, "equipment", 2, 200, None).unwrap();
+    assert!(
+        page.records
+            .iter()
+            .all(|a| next.records.iter().all(|b| a.id != b.id))
+    );
+    assert!(inventory::page(&root, &digest, "equipment", 0, 201, None).is_err());
+    let designs = inventory::designs(&root, &digest, None).unwrap();
+    assert_eq!(designs.designs.len(), 12);
+    assert!(
+        designs
+            .designs
+            .iter()
+            .all(|d| !d.authored_models_present && !d.eligible_quest_sequence_verified)
+    );
+    let mut altered = report;
+    altered.domains[0].independently_complete = true;
+    let bytes = serde_json::to_vec(&altered).unwrap();
+    let forged = hash(&bytes);
+    fs::write(root.join("inventories").join(&forged), bytes).unwrap();
+    assert!(inventory::verify(&root, &forged, None).is_err());
+    fs::remove_dir_all(root).unwrap();
+}
+#[test]
+fn authored_inventory_binds_full_pack_and_refuses_mixed_builds() {
+    use azeroth_core::{local_data::PerformancePreset, local_data_inventory::RecordKind};
+    use azeroth_local_data::{delivery, inventory};
+    let (root, _, mut catalog) = seeded_store("authored-inventory");
+    catalog.installation.build = 70450;
+    catalog.installation.version = "1.60.1.70450".into();
+    let bytes = serde_json::to_vec(&catalog).unwrap();
+    let catalog = hash(&bytes);
+    fs::write(root.join("catalogs").join(&catalog), bytes).unwrap();
+    let projected = projection::project_catalog(&root, &catalog, "enUS").unwrap();
+    let delivered = delivery::build(
+        &root,
+        &projected.projection_sha256,
+        &[],
+        &[],
+        None,
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let pack = root.with_extension("authored-pack");
+    let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../content/authored/slice-v1")
+        .canonicalize()
+        .unwrap();
+    azeroth_ingest::pack::v2::build(&source, &pack).unwrap();
+    let digest = inventory::build(&root, &delivered, Some(&pack), PerformancePreset::Max).unwrap();
+    let report = inventory::verify(&root, &digest, Some(&pack)).unwrap();
+    assert!(report.authored_manifest_sha256.is_some());
+    let party = report.domains.iter().find(|d| d.domain == "party").unwrap();
+    assert_eq!(party.imported_count, 12);
+    assert!(
+        party
+            .records
+            .iter()
+            .all(|r| r.kind == RecordKind::AuthoredDesign)
+    );
+    assert!(!party.independently_complete);
+    let designs = inventory::designs(&root, &digest, Some(&pack)).unwrap();
+    assert!(
+        designs
+            .designs
+            .iter()
+            .all(|d| d.authored_models_present && !d.eligible_quest_sequence_verified)
+    );
+    assert!(inventory::verify(&root, &digest, None).is_err());
+    let (foreign_root, foreign_catalog, _) = seeded_store("authored-mixed");
+    let projected = projection::project_catalog(&foreign_root, &foreign_catalog, "enUS").unwrap();
+    let foreign_delivery = delivery::build(
+        &foreign_root,
+        &projected.projection_sha256,
+        &[],
+        &[],
+        None,
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    assert!(
+        inventory::build(
+            &foreign_root,
+            &foreign_delivery,
+            Some(&pack),
+            PerformancePreset::Max
+        )
+        .is_err()
+    );
+    let bytes = fs::read(foreign_root.join("catalogs").join(&foreign_catalog)).unwrap();
+    let mut foreign_metadata: ResearchCatalog = serde_json::from_slice(&bytes).unwrap();
+    foreign_metadata.installation.build = 70450;
+    foreign_metadata.installation.version = "1.60.1.70450".into();
+    foreign_metadata
+        .installation
+        .declared_locales
+        .push("deDE".into());
+    foreign_metadata.installation.declared_locales.sort();
+    let bytes = serde_json::to_vec(&foreign_metadata).unwrap();
+    let locale_catalog = hash(&bytes);
+    fs::write(foreign_root.join("catalogs").join(&locale_catalog), bytes).unwrap();
+    let projected = projection::project_catalog(&foreign_root, &locale_catalog, "deDE").unwrap();
+    let different_locale = delivery::build(
+        &foreign_root,
+        &projected.projection_sha256,
+        &[],
+        &[],
+        None,
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    assert!(
+        inventory::build(
+            &foreign_root,
+            &different_locale,
+            Some(&pack),
+            PerformancePreset::Max
+        )
+        .is_err()
+    );
+    fs::remove_dir_all(foreign_root).unwrap();
+    let procedure = pack.join("procedures/solo-review.md");
+    fs::write(procedure, "altered").unwrap();
+    assert!(inventory::verify(&root, &digest, Some(&pack)).is_err());
+    fs::remove_dir_all(pack).unwrap();
+    fs::remove_dir_all(root).unwrap();
+}
+#[test]
+fn bound_guide_replay_cannot_upgrade_observed_turn_ins_or_verify_duo() {
+    use azeroth_core::{local_data::PerformancePreset, local_data_inventory::Mode};
+    use azeroth_ingest::rxp::{Character, Class, Race};
+    let (root, catalog, _) = seeded_store("bound-guide");
+    let projected = projection::project_catalog(&root, &catalog, "enUS").unwrap();
+    let (input, input_file) = stage_milestone(&root, &catalog, "1");
+    let facts = azeroth_local_data::guide_facts::build(
+        &root,
+        &projected.projection_sha256,
+        std::slice::from_ref(&input),
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let delivery = azeroth_local_data::delivery::build(
+        &root,
+        &projected.projection_sha256,
+        &[],
+        &[input],
+        Some(&facts.guide_facts_sha256),
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let guide = root.with_extension("guide.lua");
+    fs::write(&guide,"RXPGuides.RegisterGuide([[\n#name Synthetic\n#forever\n#defaultfor Human Warrior\nstep\n.accept 1\n.turnin 1\n]])").unwrap();
+    let review = azeroth_local_data::guide_review::verify(
+        &root,
+        &delivery,
+        &guide,
+        Character {
+            race: Race::Human,
+            class: Class::Warrior,
+        },
+        Mode::Duo,
+    )
+    .unwrap();
+    assert!(
+        !review.acceptance_ready
+            && !review.duo_eligibility_verified
+            && !review.report.facts_are_evidence
+            && !review.report.passes
+    );
+    assert!(review.report.totals.unverified > 0);
+    assert_eq!(review.guide_sha256, hash(&fs::read(&guide).unwrap()));
+    assert!(
+        review
+            .limitations
+            .iter()
+            .any(|v| v.contains("single_character"))
+    );
+    fs::remove_file(input_file).unwrap();
+    fs::remove_file(guide).unwrap();
+    fs::remove_dir_all(root).unwrap();
+}

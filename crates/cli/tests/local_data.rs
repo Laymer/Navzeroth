@@ -499,6 +499,82 @@ fn project_and_projection_verify_succeed_on_a_synthetic_store() {
     let active: serde_json::Value = serde_json::from_slice(&active.stdout).unwrap();
     assert_eq!(active["generation"], 1);
     assert_eq!(active["delivery_sha256"], delivery);
+    let bound = cli(&[
+        "local-data",
+        "delivery-build",
+        "--destination",
+        dest,
+        "--projection",
+        projection,
+        "--guide-facts",
+        facts,
+    ]);
+    assert_eq!(bound.status.code(), Some(0));
+    let bound: serde_json::Value = serde_json::from_slice(&bound.stdout).unwrap();
+    let bound_delivery = bound["delivery_sha256"].as_str().unwrap();
+    let inventory = cli(&[
+        "local-data",
+        "inventory-build",
+        "--destination",
+        dest,
+        "--delivery",
+        bound_delivery,
+    ]);
+    assert_eq!(inventory.status.code(), Some(0));
+    let inventory: serde_json::Value = serde_json::from_slice(&inventory.stdout).unwrap();
+    let inventory = inventory["inventory_sha256"].as_str().unwrap();
+    let summary = cli(&[
+        "local-data",
+        "inventory-verify",
+        "--destination",
+        dest,
+        "--inventory",
+        inventory,
+    ]);
+    assert_eq!(summary.status.code(), Some(0));
+    let summary: serde_json::Value = serde_json::from_slice(&summary.stdout).unwrap();
+    assert_eq!(summary["domains"].as_array().unwrap().len(), 9);
+    assert_eq!(summary["acceptance_ready"], false);
+    let designs = cli(&[
+        "local-data",
+        "route-designs",
+        "--destination",
+        dest,
+        "--inventory",
+        inventory,
+    ]);
+    assert_eq!(designs.status.code(), Some(0));
+    let designs: serde_json::Value = serde_json::from_slice(&designs.stdout).unwrap();
+    assert_eq!(designs["designs"].as_array().unwrap().len(), 12);
+    let guide = root.with_extension("bound-guide.lua");
+    fs::write(&guide,"RXPGuides.RegisterGuide([[\n#name Synthetic Bound\n#version 1\n#group Synthetic\n#subgroup Bound\n#forever\n#defaultfor Human Warrior\nstep\n>> Review pending facts.\n]])").unwrap();
+    let reviewed = cli(&[
+        "local-data",
+        "bound-guide-review",
+        "--destination",
+        dest,
+        "--delivery",
+        bound_delivery,
+        "--guide",
+        guide.to_str().unwrap(),
+        "--race",
+        "Human",
+        "--class",
+        "Warrior",
+        "--mode",
+        "duo",
+    ]);
+    assert_eq!(
+        reviewed.status.code(),
+        Some(3),
+        "{}",
+        String::from_utf8_lossy(&reviewed.stdout)
+    );
+    let reviewed: serde_json::Value = serde_json::from_slice(&reviewed.stdout).unwrap();
+    assert_eq!(reviewed["acceptance_ready"], false);
+    assert_eq!(reviewed["duo_eligibility_verified"], false);
+    assert_eq!(reviewed["report"]["passes"], false);
+    fs::remove_file(guide).unwrap();
     let tooltip = cli(&[
         "local-data",
         "tooltip",

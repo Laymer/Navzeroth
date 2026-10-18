@@ -34,6 +34,43 @@ pub struct LocalDataService {
     jobs: Arc<Mutex<BTreeMap<String, WorkerControl>>>,
 }
 impl LocalDataService {
+    pub fn build_research_inventory(
+        &self,
+        delivery: &str,
+        authored_pack: Option<&Path>,
+        preset: PerformancePreset,
+    ) -> Result<String> {
+        azeroth_local_data::inventory::build(&self.store()?, delivery, authored_pack, preset)
+            .map_err(error)
+    }
+    pub fn research_inventory_page(
+        &self,
+        revision: &str,
+        domain: &str,
+        offset: u32,
+        limit: u32,
+        authored_pack: Option<&Path>,
+    ) -> Result<azeroth_local_data::inventory::Page> {
+        azeroth_local_data::inventory::page(
+            &self.store()?,
+            revision,
+            domain,
+            offset,
+            limit,
+            authored_pack,
+        )
+        .map_err(error)
+    }
+    pub fn review_bound_guide(
+        &self,
+        delivery: &str,
+        guide: &Path,
+        character: azeroth_ingest::rxp::Character,
+        mode: azeroth_core::local_data_inventory::Mode,
+    ) -> Result<azeroth_local_data::guide_review::Review> {
+        azeroth_local_data::guide_review::verify(&self.store()?, delivery, guide, character, mode)
+            .map_err(error)
+    }
     pub fn prepare_delivery(&self, catalog: &str, locale: &str) -> Result<String> {
         let root = self.store()?;
         let projection = azeroth_local_data::projection::project_catalog(&root, catalog, locale)

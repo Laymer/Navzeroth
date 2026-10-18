@@ -48,10 +48,12 @@ availability or acceptance.
 Continuation 5 merged as PR #195 at `0151eb1` after independent review, all nine
 exact-head checks and source workflow. No calibrated media or gameplay evidence
 was claimed.
-Active: continuation 6, bound research deliveries and guarded desktop consumers;
-[claim](docs/claims/2026-10-18-bound-delivery.md),
-[handoff](docs/handoffs/2026-10-18-bound-delivery.md).
-Reviewed inventory, complete desktop workflow, performance, coverage, publication
+Continuation 6 is PR #196, independently reviewed with local checks passing;
+exact-head hosted checks and merge are pending.
+Active: continuation 7, guide review and exact imported inventory;
+[claim](docs/claims/2026-10-18-guides-inventory.md),
+[handoff](docs/handoffs/2026-10-18-guides-inventory.md).
+Independent completeness, complete desktop workflow, performance, coverage, publication
 and Pages remain pending; research matches do not clear acceptance blockers.
 
 ## Gate snapshot
