@@ -30,14 +30,25 @@ pub struct ExtractionRequest {
     pub preset: PerformancePreset,
     /// Empty means every reviewed table candidate, not every game asset.
     pub tables: Vec<String>,
+    /// Protocol 3 explicitly selects installed content locales; historical requests omit it.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locales: Vec<String>,
     /// Protocol 2 enables exact-source checkpoint resume; v1 remains readable.
     #[serde(default, skip_serializing_if = "is_false")]
     pub resume: bool,
 }
 impl ExtractionRequest {
     pub fn validate(&self) -> Result<()> {
-        if !matches!(self.protocol_version, 1 | 2)
-            || (self.resume && self.protocol_version != 2)
+        if !matches!(self.protocol_version, 1..=3)
+            || (self.resume && !matches!(self.protocol_version, 2 | 3))
+            || (self.protocol_version < 3 && !self.locales.is_empty())
+            || (self.protocol_version == 3 && self.locales.is_empty())
+            || self.locales.len() > azeroth_core::local_data_workflow::CONTENT_LOCALES.len()
+            || self
+                .locales
+                .iter()
+                .any(|l| !azeroth_core::local_data_workflow::CONTENT_LOCALES.contains(&l.as_str()))
+            || self.locales.windows(2).any(|w| w[0] >= w[1])
             || self.request_id.is_empty()
             || self.request_id.len() > 64
             || !self

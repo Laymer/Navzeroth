@@ -1,0 +1,11 @@
+import {useEffect,useRef,useState} from "react";
+import type {CommandClient} from "../commands";
+import type {LocalArtifactPage} from "../commands/localData";
+import {Button} from "../ui";
+export function ResearchReferenceHistory({client,catalog,disabled,onReference}:{client:CommandClient;catalog:string;disabled:boolean;onReference:(revision:string)=>void}) {
+ const [page,setPage]=useState<LocalArtifactPage|null>(null);const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");const serial=useRef(0);
+ useEffect(()=>{serial.current++;setPage(null);setBusy(false);return()=>{serial.current++;};},[client,catalog]);
+ async function list(offset:number){const ticket=++serial.current;setBusy(true);const result=await client.getLocalArtifactPage("deliveries",offset);if(ticket!==serial.current)return;setBusy(false);if(result.ok&&result.value.namespace==="deliveries"&&result.value.offset===offset&&(offset===0||result.value.revision===page?.revision))setPage(result.value);else {setPage(null);setMessage("Stored references changed or are unavailable; review the first page again.");}}
+ async function inspect(revision:string){const ticket=++serial.current;setBusy(true);const result=await client.getResearchDeliveryManifest(revision);if(ticket!==serial.current)return;setBusy(false);if(result.ok&&result.value.format_version===1&&result.value.catalog_sha256===catalog){setMessage("");onReference(revision);}else setMessage("Stored reference is invalid or belongs to another catalog. Restore its saved extraction first.");}
+ return <section aria-label="Retained research references"><Button disabled={disabled||busy} onClick={()=>void list(0)}>Review retained research references</Button>{page&&<><p>{page.total} retained references. Each selection is reproduced before inspection; this count does not establish completeness.</p>{page.rows.map(revision=><p key={revision}>{revision}<Button disabled={disabled||busy} onClick={()=>void inspect(revision)}>Inspect reference {revision.slice(0,8)}</Button></p>)}{page.next_offset!==null&&<Button disabled={disabled||busy} onClick={()=>{if(page.next_offset!==null)void list(page.next_offset);}}>Next retained reference page</Button>}</>}{message&&<p role="status">{message}</p>}</section>;
+}

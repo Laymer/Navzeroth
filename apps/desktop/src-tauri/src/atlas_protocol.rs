@@ -57,3 +57,35 @@ pub fn respond_stored(
     }
     response
 }
+
+pub fn respond_research(
+    request: &Request<Vec<u8>>,
+    service: &azeroth_app::local_data::LocalDataService,
+) -> Response<Vec<u8>> {
+    let body = service.research_asset(
+        request.method().as_str(),
+        request.uri().path(),
+        request.uri().query().is_some(),
+    );
+    let status = if request.method().as_str() != "GET" {
+        StatusCode::METHOD_NOT_ALLOWED
+    } else if body.is_some() {
+        StatusCode::OK
+    } else {
+        StatusCode::NOT_FOUND
+    };
+    let mut response = Response::new(body.unwrap_or_default());
+    *response.status_mut() = status;
+    response
+        .headers_mut()
+        .insert(CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    response
+        .headers_mut()
+        .insert(X_CONTENT_TYPE_OPTIONS, HeaderValue::from_static("nosniff"));
+    if status == StatusCode::OK {
+        response
+            .headers_mut()
+            .insert(CONTENT_TYPE, HeaderValue::from_static("image/png"));
+    }
+    response
+}

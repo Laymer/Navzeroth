@@ -11,3 +11,10 @@
 .research-delivery pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .research-delivery table { width: 100%; table-layout: fixed; }
 .research-delivery td { vertical-align: top; overflow-wrap: anywhere; }
+
+.local-research-pane { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.local-research-pane table { width: 100%; table-layout: fixed; }
+.local-research-pane td { vertical-align: top; overflow-wrap: anywhere; }
+.local-research-pane img { max-width: 100%; height: auto; }
+.local-research-pane > label, .research-delivery fieldset > label { display: block; margin-block: .5rem; }
+.local-research-pane input[type="checkbox"], .research-delivery input[type="checkbox"] { margin-inline-end: .5rem; }

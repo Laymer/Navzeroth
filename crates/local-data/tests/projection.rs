@@ -1800,6 +1800,25 @@ fn bound_guide_replay_cannot_upgrade_observed_turn_ins_or_verify_duo() {
             .iter()
             .any(|v| v.contains("single_character"))
     );
+    let first = azeroth_local_data::guide_review::page(review.clone(), None, 0, 1).unwrap();
+    assert!(azeroth_local_data::guide_review::page(review.clone(), None, 1, 200).is_err());
+    assert!(
+        azeroth_local_data::guide_review::page(review.clone(), Some("invalid"), 0, 200).is_err()
+    );
+    assert_eq!(first.findings.len(), 1);
+    assert!(!first.acceptance_ready && !first.duo_eligibility_verified);
+    assert!(azeroth_local_data::guide_review::page(review.clone(), None, 0, 201).is_err());
+    assert!(azeroth_local_data::guide_review::page(review.clone(), None, u32::MAX, 1).is_err());
+    let next =
+        azeroth_local_data::guide_review::page(review.clone(), Some(&first.revision), 1, 200)
+            .unwrap();
+    assert_eq!(next.revision, first.revision);
+    assert!(next.findings.len() <= 200);
+    let mut changed = review;
+    changed.guide_sha256 = "f".repeat(64);
+    assert!(
+        azeroth_local_data::guide_review::page(changed, Some(&first.revision), 1, 200).is_err()
+    );
     fs::remove_file(input_file).unwrap();
     fs::remove_file(guide).unwrap();
     fs::remove_dir_all(root).unwrap();

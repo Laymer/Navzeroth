@@ -6,12 +6,13 @@ const page={revision,domain:"equipment",offset:0,total:1,next_offset:null,rows:[
 it("requires a selected locale and explicit activation while matched research stays unavailable for advice",async()=>{
   const calls:{command:string;input:unknown}[]=[];
   const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==="prepare_research_delivery"?revision:command==="get_research_delivery_page"?page:command==="activate_research_delivery"?{format_version:1,scope:"s",generation:1,delivery_sha256:revision,verified_for_planning:false}:{format_version:1,scope:"s",generation:0,delivery_sha256:null,verified_for_planning:false}) as never);}};
-  render(<ResearchDeliveryPanel client={createClient(adapter)} catalog={"c".repeat(64)}/>);
+  render(<ResearchDeliveryPanel client={createClient(adapter)} catalog={"c".repeat(64)} preset="small"/>);
   expect(screen.getByRole("button",{name:"Prepare research reference"})).toBeDisabled();
   fireEvent.change(screen.getByLabelText("Installed content locale"),{target:{value:"enUS"}});
   fireEvent.click(screen.getByRole("button",{name:"Prepare research reference"}));await screen.findByText(/Development match: matched/);
   expect(screen.getByText(/Advice and acceptance readiness remain unavailable/)).toBeInTheDocument();
   expect(calls.some(c=>c.command==="activate_research_delivery")).toBe(false);
+  expect(calls.find(c=>c.command==="prepare_research_delivery")?.input).toEqual({catalog:"c".repeat(64),locale:"enUS",bindings:{format_version:1,inputs:[],media:[],guide_facts:false,preset:"small"}});
   expect(calls.find(c=>c.command==="get_research_delivery_page")?.input).toEqual({revision,domain:"equipment",offset:0,limit:200});
   fireEvent.click(screen.getByRole("button",{name:"Select this research reference"}));await screen.findByText(/Research reference selected/);
   expect(calls.find(c=>c.command==="activate_research_delivery")?.input).toEqual({revision,expected:0,rollback:false});

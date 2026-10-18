@@ -56,3 +56,5 @@ pub mod local_data_media;
 pub mod local_data_delivery;
 
 pub mod local_data_inventory;
+
+pub mod local_data_workflow;

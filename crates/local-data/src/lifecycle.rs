@@ -92,7 +92,9 @@ pub fn resume_request(root: &Path, id: &str) -> Result<crate::worker::Extraction
         return Err("Saved extraction destination or identity changed");
     }
     request.validate()?;
-    request.protocol_version = 2;
+    if request.protocol_version < 3 {
+        request.protocol_version = 2;
+    }
     request.resume = true;
     request.validate()?;
     Ok(request)

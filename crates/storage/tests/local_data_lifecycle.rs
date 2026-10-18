@@ -231,7 +231,7 @@ fn capacities_and_unknown_versions_refuse_without_erasing_records() {
     assert_eq!(db.jobs().unwrap().len(), MAX_JOBS);
     drop(db);
     let sql = rusqlite::Connection::open(dir.0.join("index.sqlite3")).unwrap();
-    sql.pragma_update(None, "user_version", 3).unwrap();
+    sql.pragma_update(None, "user_version", 4).unwrap();
     drop(sql);
     assert!(LocalDataIndex::open(&dir.0.join("index.sqlite3")).is_err());
     let sql = rusqlite::Connection::open(dir.0.join("index.sqlite3")).unwrap();
@@ -243,7 +243,7 @@ fn capacities_and_unknown_versions_refuse_without_erasing_records() {
     assert_eq!(
         sql.pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
             .unwrap(),
-        3
+        4
     );
 }
 #[test]
@@ -364,4 +364,70 @@ fn version_one_migration_preserves_catalog_activation_and_isolates_delivery_hist
         dir.db().delivery_active(&scope).unwrap().delivery_sha256,
         Some(first)
     );
+}
+#[test]
+fn workflow_choices_and_materials_are_durable_bounded_and_compare_and_swap() {
+    use azeroth_core::local_data_workflow::*;
+    use azeroth_storage::local_data::SelectedMaterial;
+    let dir = Temp::new();
+    let mut db = dir.db();
+    let id = "a".repeat(64);
+    db.save_selection(&SavedSelection {
+        selection_id: id.clone(),
+        installation: dir.0.join("selected-client"),
+        product: "wow_classic_beta".into(),
+        preset: PerformancePreset::Max,
+    })
+    .unwrap();
+    let record = db.workflow().unwrap();
+    assert_eq!(record.revision, 0);
+    assert!(!record.preferences.first_run_completed);
+    let mut prefs = record.preferences;
+    prefs.first_run_completed = true;
+    prefs.startup_mode = StartupMode::Snapshots;
+    prefs.selections.insert(
+        id.clone(),
+        SelectionChoices {
+            locales: vec!["enUS".into()],
+            preset: PerformancePreset::Small,
+            change_detection: false,
+            baseline_sha256: None,
+        },
+    );
+    assert_eq!(db.replace_workflow(0, &prefs).unwrap().revision, 1);
+    assert!(db.replace_workflow(0, &prefs).is_err());
+    assert_eq!(db.selection(&id).unwrap().preset, PerformancePreset::Small);
+    for n in 0..32 {
+        db.save_material(&SelectedMaterial {
+            id: format!("{n:064x}"),
+            kind: MaterialKind::Guide,
+            path: dir.0.join(format!("private-{n}.lua")),
+        })
+        .unwrap();
+    }
+    assert!(
+        db.save_material(&SelectedMaterial {
+            id: "f".repeat(64),
+            kind: MaterialKind::Guide,
+            path: dir.0.join("overflow.lua")
+        })
+        .is_err()
+    );
+    drop(db);
+    let db = dir.db();
+    assert_eq!(db.workflow().unwrap().preferences, prefs);
+    assert_eq!(db.materials().unwrap().len(), 32);
+    drop(db);
+    let mut db = dir.db();
+    assert!(db.forget_material("invalid").is_err());
+    db.forget_material(&format!("{:064x}", 0)).unwrap();
+    db.save_material(&SelectedMaterial {
+        id: "f".repeat(64),
+        kind: MaterialKind::Guide,
+        path: dir.0.join("replacement.lua"),
+    })
+    .unwrap();
+    assert_eq!(db.materials().unwrap().len(), 32);
+    assert!(db.material(&format!("{:064x}", 0)).is_err());
+    assert!(db.material(&"f".repeat(64)).is_ok());
 }

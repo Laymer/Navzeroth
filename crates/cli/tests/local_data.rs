@@ -16,6 +16,30 @@ fn unsupported_duplicate_and_missing_options_fail_as_json_without_echoing_inputs
     for args in [
         vec!["local-data"],
         vec!["local-data", "extract"],
+        vec![
+            "local-data",
+            "extract",
+            "--installation",
+            "private-input",
+            "--product",
+            "wow_classic_beta",
+            "--destination",
+            "private-input",
+            "--locales",
+            "enUS,enUS",
+        ],
+        vec![
+            "local-data",
+            "extract",
+            "--installation",
+            "private-input",
+            "--product",
+            "wow_classic_beta",
+            "--destination",
+            "private-input",
+            "--locales",
+            "unknown",
+        ],
         vec!["local-data", "inspect", "--installation", "private-input"],
         vec!["local-data", "inspect", "--product", "a", "--product", "b"],
         vec!["local-data", "inspect", "--installation", "--product"],
@@ -135,6 +159,7 @@ fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
     let original = b"previous active state, never extraction output";
     fs::write(destination.join("active-marker"), original).unwrap();
     let request = ExtractionRequest {
+        locales: Vec::new(),
         protocol_version: 1,
         resume: false,
         request_id: "worker-test".into(),
@@ -200,6 +225,7 @@ fn extraction_admits_70450_as_development_input_and_refuses_unknown_builds() {
         )
         .unwrap();
         let request = ExtractionRequest {
+            locales: Vec::new(),
             protocol_version: 1,
             resume: false,
             request_id: format!("admission-{build}"),
@@ -676,6 +702,7 @@ fn competing_worker_cannot_fail_an_existing_job_with_the_same_id() {
     let lock = std::fs::File::create(output.join("writer.lock")).unwrap();
     lock.lock().unwrap();
     let request = ExtractionRequest {
+        locales: Vec::new(),
         protocol_version: 2,
         resume: false,
         request_id: "same-job".into(),
@@ -806,6 +833,7 @@ fn preparing_progress_is_durable_and_cancellable_before_archive_fingerprinting()
     }
     fs::write(source.join(".build.info"),format!("Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.70450|{}|{}|enUS text\n","a".repeat(32),"b".repeat(32))).unwrap();
     let request = ExtractionRequest {
+        locales: Vec::new(),
         protocol_version: 2,
         resume: false,
         request_id: "preparing-job".into(),

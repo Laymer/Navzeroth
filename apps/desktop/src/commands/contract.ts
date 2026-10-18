@@ -273,7 +273,7 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
-  prepare_research_delivery:{input:{catalog:string;locale:string};output:string};
+  prepare_research_delivery:{input:{catalog:string;locale:string;bindings?:import("./localData").LocalDeliveryChoices};output:string};
   get_research_delivery_page:{input:{revision:string;domain:string;offset:number;limit:number};output:import("./localData").ResearchDeliveryPage};
   get_research_delivery_activation:{input:{revision:string};output:import("./localData").ResearchDeliveryActivation};
   activate_research_delivery:{input:{revision:string;expected:number;rollback:boolean};output:import("./localData").ResearchDeliveryActivation};
@@ -287,7 +287,28 @@ export interface CommandMap {
   activate_local_data:{input:{revision:string;expected:number;rollback:boolean};output:import("./localData").LocalDataActivation};
   select_local_installation:{input:undefined;output:import("./localData").LocalInstallation|null};
   preview_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataPlan};
-  start_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataJob};
+  get_research_delivery_manifest:{input:{revision:string};output:import("./localData").LocalDeliveryManifest};
+  build_local_inventory:{input:{delivery:string;authored:string|null;preset:import("./localData").LocalDataPreset};output:string};
+  get_local_inventory_summary:{input:{revision:string;authored:string|null};output:import("./localData").LocalInventorySummary};
+  get_local_inventory_page:{input:{revision:string;domain:string;offset:number;limit:number;authored:string|null};output:import("./localData").LocalInventoryPage};
+  review_selected_local_guide:{input:{request:import("./localData").LocalGuideRequest};output:import("./localData").LocalGuidePage};
+  get_local_tooltip:{input:{projection:string;spell:number};output:import("./localData").LocalTooltip};
+  get_local_artifact_page:{input:{namespace:string;offset:number;limit:number};output:import("./localData").LocalArtifactPage};
+  discover_local_media:{input:{catalog:string;locale:string;offset:number;limit:number};output:import("./localData").LocalMediaDiscovery};
+  extract_local_media:{input:{selection_id:string;catalog:string;locale:string;ids:number[];preset:import("./localData").LocalDataPreset};output:string};
+  get_local_media_page:{input:{revision:string;offset:number;limit:number};output:import("./localData").LocalMediaPage};
+  get_local_media_manifest:{input:{revision:string};output:import("./localData").LocalMediaManifest};
+  select_local_material:{input:{kind:import("./localData").LocalMaterialKind};output:import("./localData").LocalMaterial|null};
+  list_local_materials:{input:undefined;output:import("./localData").LocalMaterial[]};
+  forget_local_material:{input:{id:string};output:null};
+  stage_selected_local_input:{input:{catalog:string;id:string;locale:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalStagedInput};
+  get_local_input_page:{input:{revision:string;offset:number;limit:number};output:import("./localData").LocalInputPage};
+  get_local_workflow:{input:undefined;output:import("./localData").LocalWorkflowRecord};
+  finish_local_startup:{input:{expected:number;mode:import("./localData").LocalStartupMode;completed:boolean};output:import("./localData").LocalWorkflowRecord};
+  save_local_workflow_choices:{input:{selection_id:string;expected:number;locales:string[];preset:import("./localData").LocalDataPreset;detect:boolean};output:import("./localData").LocalWorkflowRecord};
+  get_local_change_detectors:{input:undefined;output:import("./localData").LocalChangeDetector[]};
+  acknowledge_local_build_change:{input:{selection_id:string;expected:number;candidate:string};output:import("./localData").LocalWorkflowRecord};
+  start_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset;locales?:string[]};output:import("./localData").LocalDataJob};
   get_local_data_job:{input:{job_id:string};output:import("./localData").LocalDataJob};
   cancel_local_data_job:{input:{job_id:string};output:import("./localData").LocalDataJob};
   get_local_data_inventory:{input:{revision:string;offset:number;limit:number};output:import("./localData").LocalDataInventoryPage};

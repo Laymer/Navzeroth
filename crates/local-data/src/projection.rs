@@ -715,6 +715,14 @@ pub fn project_catalog(
     catalog_sha256: &str,
     locale: &str,
 ) -> Result<ProjectionSummary> {
+    project_catalog_within(destination, catalog_sha256, locale, PerformancePreset::Max)
+}
+pub fn project_catalog_within(
+    destination: &Path,
+    catalog_sha256: &str,
+    locale: &str,
+    preset: PerformancePreset,
+) -> Result<ProjectionSummary> {
     if !azeroth_core::local_data::is_sha256(catalog_sha256) {
         return Err("Invalid catalog identity");
     }
@@ -723,10 +731,8 @@ pub fn project_catalog(
     if !existing.join("catalogs").join(catalog_sha256).is_file() {
         return Err("Catalog is not present in the private store");
     }
-    let mut store = crate::extraction::Store::open(
-        destination,
-        PerformancePreset::Max.limits().total_storage_bytes,
-    )?;
+    let mut store =
+        crate::extraction::Store::open(destination, preset.limits().total_storage_bytes)?;
     let catalog = verify_catalog(destination, catalog_sha256)?;
     let root = checked_path(destination)?;
     let projection = project(&catalog, catalog_sha256, locale, |entry| {

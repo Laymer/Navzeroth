@@ -1,3 +1,5 @@
+import type {LocalStartupMode} from "./commands/localData";
+import {LocalStartupChoices} from "./screens/LocalStartupChoices";
 import {TodayScreen} from "./screens/TodayScreen";
 import {SettingsScreen} from "./screens/SettingsScreen";
 import "./screens/settings.css";
@@ -64,6 +66,9 @@ export function App({ client }: { client: CommandClient }) {
   const [savedTopmost,setSavedTopmost]=useState(false);
   const watchedImport = useRef("");
   useEffect(()=>{let live=true;void client.getAppSettings().then(result=>{if(!live||!result.ok)return;setSavedTopmost(result.value.settings.reference_always_on_top);const a=result.value.settings.accessibility;document.documentElement.style.fontSize=`${a.text_scale_percent}%`;document.documentElement.dataset.contrast=a.contrast;document.documentElement.dataset.motion=a.motion;});return()=>{live=false;};},[client,revision]);
+  const startupRestored=useRef<CommandClient|null>(null);
+  const openLocalStartup=useCallback((mode:LocalStartupMode)=>{startupRestored.current=client;if(mode==="snapshots")setScreen("imports");if(mode==="local_research")setScreen("compatibility");},[client]);
+  const restoreLocalStartup=useCallback((mode:LocalStartupMode)=>{if(startupRestored.current!==client)openLocalStartup(mode);},[client,openLocalStartup]);
   const changed = useCallback(() => setRevision((value) => value + 1), []);
   const restored = useCallback(() => { setScreen("recovery"); changed(); }, [changed]);
   useEffect(() => {
@@ -155,6 +160,7 @@ export function App({ client }: { client: CommandClient }) {
       {load.phase === "error" && <Button variant="primary" onClick={changed}>Retry loading</Button>}
       {((load.phase === "error" && screen !== "diagnostics") || screen === "recovery") && <RecoveryPanel client={client} onRestored={restored} onChecked={changed} awaitingStartup={load.phase === "error" && load.error.code === "PROVIDER_UNAVAILABLE" && load.error.retryable} />}
       {(load.phase === "ready" || load.phase === "error") && screen === "diagnostics" && <DiagnosticsPanel client={client} refreshKey={revision} />}
+      {load.phase === "ready" && <LocalStartupChoices client={client} onNavigate={openLocalStartup} onRestore={restoreLocalStartup}/>}
       {load.phase === "ready" && screen === "compatibility" && <CompatibilityPanel client={client} profileId={load.status.active_profile} refreshKey={revision} />}
       {load.phase === "ready" && screen === "today" && <><TodayScreen client={client} refreshKey={revision}/><Today status={load.status} snapshot={load.snapshot} freshness={load.freshness}/></>}
       {load.phase === "ready" && screen === "atlas" && <AtlasScreen client={client} refreshKey={revision} />}

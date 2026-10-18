@@ -127,6 +127,28 @@ export const demoAdapter: CommandAdapter = {
           return [];
         case "get_active_content":
           return null;
+        case "get_local_workflow":
+          return {format_version:1,revision:0,preferences:{format_version:1,first_run_completed:true,startup_mode:"later",selections:{}}};
+        case "get_research_delivery_manifest":
+        case "build_local_inventory":
+        case "get_local_inventory_summary":
+        case "get_local_inventory_page":
+        case "review_selected_local_guide":
+        case "get_local_tooltip":
+        case "get_local_artifact_page":
+        case "discover_local_media":
+        case "extract_local_media":
+        case "get_local_media_page":
+        case "get_local_media_manifest":
+        case "select_local_material":
+        case "list_local_materials":
+        case "forget_local_material":
+        case "stage_selected_local_input":
+        case "get_local_input_page":
+        case "finish_local_startup":
+        case "save_local_workflow_choices":
+        case "get_local_change_detectors":
+        case "acknowledge_local_build_change":
         case "preview_diagnostics":
         case "list_local_installations":
         case "restore_local_installation":

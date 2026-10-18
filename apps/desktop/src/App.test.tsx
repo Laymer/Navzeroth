@@ -108,3 +108,24 @@ test("startup failure keeps explicit local diagnostics reachable without gamepla
   fireEvent.click(screen.getByRole("button",{name:"Preview diagnostic metadata"}));
   await screen.findByText("Recorded imports: 0.");
 });
+
+test("backend recovery does not reapply a saved or newly changed next-launch workflow",async()=>{
+ const {fireEvent,waitFor}=await import("@testing-library/react");
+ let statusCalls=0;let databaseCalls=0;let failing=false;let mode="snapshots";
+ const adapter:CommandAdapter={invoke(command){
+  if(command==="get_app_status") {statusCalls++;return failing?Promise.reject({code:"STORAGE_ERROR",message:"Synthetic recovery",retryable:false}):Promise.resolve({version:"synthetic",data_mode:"stored",active_profile:null,capabilities:{}}as never);}
+  if(command==="get_database_status")return Promise.resolve({state:databaseCalls++===0?"checking":"ready",error:null,schema_version:8,restore_limit_bytes:1024}as never);
+  if(command==="get_local_workflow")return Promise.resolve({format_version:1,revision:1,preferences:{format_version:1,first_run_completed:true,startup_mode:mode,selections:{}}}as never);
+  return Promise.reject({code:"INVALID_INPUT",message:"Not provided by synthetic fixture",retryable:false});
+ }};
+ render(<App client={createClient(adapter)}/>);
+ await waitFor(()=>expect(screen.getByRole("button",{name:"Imports"})).toHaveAttribute("aria-current","page"));
+ fireEvent.click(screen.getByRole("button",{name:"Backup and recovery"}));
+ await screen.findByText(/Checking database at startup/);
+ mode="local_research";failing=true;
+ const retry=await screen.findByRole("button",{name:"Retry loading"});
+ const before=statusCalls;failing=false;fireEvent.click(retry);
+ await waitFor(()=>expect(statusCalls).toBe(before+1));
+ await waitFor(()=>expect(screen.getByRole("button",{name:"Backup and recovery"})).toHaveAttribute("aria-current","page"));
+ expect(screen.getByRole("button",{name:"Compatibility and coverage"})).not.toHaveAttribute("aria-current","page");
+});
