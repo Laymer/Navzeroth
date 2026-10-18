@@ -1394,9 +1394,9 @@ async fn get_reference_view(
     blocking(state, |app| app.reference_view(system_now())).await
 }
 #[tauri::command]
-async fn get_reference_window_state(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn get_reference_window_state<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
 ) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
     reference_window::main_caller(window.label())?;
@@ -1410,9 +1410,9 @@ async fn get_reference_window_state(
     reference_window::state(&app)
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn toggle_reference_window(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn toggle_reference_window<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
     always_on_top: bool,
     interaction_mode: azeroth_app::reference_controls::InteractionMode,
@@ -1432,9 +1432,9 @@ async fn toggle_reference_window(
     ))
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn set_reference_interaction(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn set_reference_interaction<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
     interaction_mode: azeroth_app::reference_controls::InteractionMode,
 ) -> Result<azeroth_app::reference_controls::ControlReceipt, AppError> {
@@ -1452,9 +1452,9 @@ async fn set_reference_interaction(
     ))
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn set_reference_window(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn set_reference_window<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
     visible: bool,
     always_on_top: bool,

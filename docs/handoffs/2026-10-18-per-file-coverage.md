@@ -515,3 +515,30 @@ hash. Each asserts its specific error and preserves the prior immutable media
 revision. Focused test, local-data all-target Clippy, formatting/diff checks pass;
 independent policy review found no actionable findings. Final exact-head native
 collection and integer gate still required before accepting the coverage claim.
+
+Next native-command subtask claim: Codex /root, sole writer, baseline 0c8eb53.
+Make four reference-window IPC adapters generic over the existing Tauri Runtime
+boundary, retaining production Wry, to exercise main/read-only caller identity and
+poisoned controller refusals through official mock IPC. No permissions, commands,
+window policies or ordinary-Windows acceptance claims change. Runtime-generic
+reference_window operations already exist and are independently reviewed.
+
+
+Combined hosted evidence at 6e9affb/source 7d7bf940: both native collectors and
+TypeScript succeed; the strict gate fails nine Rust files without evidence errors
+or missing reports. CI and source Linux/Windows/parity pass. The final clean local
+0c8eb53 diagnostic passes 1,384 tests (four explicit regenerators ignored), exports
+successfully and clears all non-native Linux files except the two Windows-specific
+adapters. This does not replace the required same-commit native union.
+
+Native boundary expansion now covers 93 shared application refusals, absent managed
+services as distinct transport failures, sanitized blocking-worker panic errors,
+reference-window caller identity and poisoned controller refusals. Four window
+commands use the already-supported Runtime boundary, retaining Wry in production.
+A Windows-only owned junction test checks refusal of a reparse handle as selected
+file identity; paths enter PowerShell only through environment data. Independent
+read-only review found no actionable findings. Local checks: 29 local-data unit
+tests, 22 coverage/native helper tests, formatting and diff checks pass. Native
+Tauri and Windows-only compilation/execution remain unverified until hosted checks.
+Next: push this batch, collect exact-head native reports and fix any remaining
+failures before final review. No threshold, exclusions or acceptance claims change.

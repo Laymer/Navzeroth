@@ -132,4 +132,53 @@ mod tests {
         drop((a, again, b));
         std::fs::remove_dir_all(root).unwrap();
     }
+    #[cfg(windows)]
+    #[test]
+    fn opened_reparse_handle_cannot_establish_a_selected_file_identity() {
+        use std::os::windows::fs::OpenOptionsExt;
+        use windows_sys::Win32::Storage::FileSystem::{
+            FILE_FLAG_BACKUP_SEMANTICS, FILE_FLAG_OPEN_REPARSE_POINT,
+        };
+        let root = std::env::temp_dir().join(format!("nav-input-reparse-{}", std::process::id()));
+        std::fs::create_dir(&root).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir(self.0.join("junction"));
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(root.clone());
+        let target = root.join("target");
+        let junction = root.join("junction");
+        std::fs::create_dir(&target).unwrap();
+        // Paths enter PowerShell only as environment data, never shell text.
+        let made = std::process::Command::new("powershell.exe")
+            .args(["-NoLogo", "-NoProfile", "-NonInteractive", "-Command",
+                "$ErrorActionPreference='Stop'; New-Item -ItemType Junction -Path $env:NAV_TEST_JUNCTION -Target $env:NAV_TEST_TARGET | Out-Null"])
+            .env("NAV_TEST_JUNCTION", &junction)
+            .env("NAV_TEST_TARGET", &target)
+            .output().unwrap();
+        assert!(
+            made.status.success(),
+            "owned junction fixture creation failed"
+        );
+        let open = |path: &std::path::Path, flags| {
+            std::fs::OpenOptions::new()
+                .read(true)
+                .custom_flags(flags)
+                .open(path)
+                .unwrap()
+        };
+        let actual = open(&target, FILE_FLAG_BACKUP_SEMANTICS);
+        let reparse = open(
+            &junction,
+            FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
+        );
+        assert_eq!(
+            super::same_file(&reparse, &actual),
+            Err("Cannot establish selected file identity")
+        );
+        assert!(super::same_file(&actual, &actual).is_ok());
+    }
 }

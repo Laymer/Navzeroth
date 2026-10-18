@@ -718,5 +718,26 @@
         "catalog_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       }
     }
+  },
+  {
+    "command": "pin_current_plan",
+    "args": {
+      "job_id": "missing-synthetic-job",
+      "expected_revision": 0
+    }
+  },
+  {
+    "command": "clear_current_plan",
+    "args": {
+      "expected_revision": -1
+    }
+  },
+  {
+    "command": "finish_local_startup",
+    "args": {
+      "expected": 1,
+      "mode": "later",
+      "completed": true
+    }
   }
 ]

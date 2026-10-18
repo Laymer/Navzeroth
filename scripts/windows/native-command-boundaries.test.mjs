@@ -16,7 +16,7 @@ test('native boundary matrix is bounded and rejects transport errors and false s
 test('native refusal requests name real Rust handlers and their serialized argument keys',()=>{
  const source=fs.readFileSync(new URL('../../apps/desktop/src-tauri/src/lib.rs',import.meta.url),'utf8');
  const commands=new Map();
- for(const [,options,name,parameters]of source.matchAll(/#\[tauri::command([^\]]*)\]\s*async fn (\w+)\(([\s\S]*?)\)\s*->/g)){
+ for(const [,options,name,parameters]of source.matchAll(/#\[tauri::command([^\]]*)\]\s*async fn (\w+)(?:<[^>]+>)?\(([\s\S]*?)\)\s*->/g)){
   const names=[...parameters.matchAll(/(?:^|[,\n])\s*(\w+)\s*:/g)].map(match=>match[1]).filter(name=>!['state','app','window','controller'].includes(name));
   commands.set(name,names.map(name=>options.includes('snake_case')?name:name.replace(/_([a-z])/g,(_,letter)=>letter.toUpperCase())).sort());
  }
