@@ -152,3 +152,25 @@ fn invented_game_facts_are_refused() {
     let content = content_v2::decode(CATALOG).unwrap();
     assert!(validate_authored(&content, &SourceId::new("another-source").unwrap()).is_err());
 }
+
+#[test]
+fn game_fact_fields_stay_unknown_not_only_unclaimed() {
+    // `not_applicable`, `unsupported` or `restricted` also states something about
+    // the game (no access rule, no rewards, no layout), so authoring refuses them.
+    for status in ["not_applicable", "unsupported", "restricted"] {
+        let pending = || json!({"status": status});
+        for field in [
+            "rewards",
+            "access",
+            "preparation_quests",
+            "entrance",
+            "travel_edges",
+        ] {
+            refused(|v| v["dungeons"][0][field] = pending());
+        }
+        for field in ["proficiency", "layout"] {
+            refused(|v| v["models"][0][field] = pending());
+        }
+        refused(|v| v["reference"]["payload"]["map_spaces"][0]["transform"] = pending());
+    }
+}

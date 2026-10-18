@@ -15,7 +15,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File, OpenOptions},
     io::{Cursor, Read, Write},
-    path::{Component, Path, PathBuf},
+    path::{Component, Path, PathBuf, Prefix},
     sync::atomic::{AtomicU64, Ordering},
 };
 
@@ -189,6 +189,15 @@ fn typed<T: serde::de::DeserializeOwned + Serialize>(bytes: &[u8]) -> Res<T> {
     )?;
     Ok(parsed)
 }
+/// Drive letters and network shares, plain or verbatim. Device namespaces
+/// (`\\.\pipe\x`) and other verbatim prefixes (`\\?\GLOBALROOT\...`) are not
+/// file-system selections.
+fn disk_or_share(prefix: Prefix<'_>) -> bool {
+    matches!(
+        prefix,
+        Prefix::Disk(_) | Prefix::VerbatimDisk(_) | Prefix::UNC(..) | Prefix::VerbatimUNC(..)
+    )
+}
 fn path_checked(path: &Path, directory: bool) -> Res<()> {
     let absolute = if path.is_absolute() {
         path.to_owned()
@@ -198,15 +207,24 @@ fn path_checked(path: &Path, directory: bool) -> Res<()> {
             .join(path)
     };
     let mut prefix = PathBuf::new();
+    let mut after_prefix = false;
     for part in absolute.components() {
         if matches!(part, Component::ParentDir) {
             return Err("Parent traversal is unsupported");
+        }
+        // A drive-relative `C:foo` resolves against a per-drive current directory.
+        if std::mem::take(&mut after_prefix) && part != Component::RootDir {
+            return Err("Drive-relative paths are unsupported");
         }
         prefix.push(part.as_os_str());
         // A bare Windows prefix (`C:`, `\\?\C:`, `\\server\share`) names a drive
         // or volume, not a directory entry; a verbatim one cannot be inspected at
         // all. Its root is inspected at the next component, so skip only the prefix.
-        if matches!(part, Component::Prefix(_)) {
+        if let Component::Prefix(kind) = part {
+            if !disk_or_share(kind.kind()) {
+                return Err("Device namespace paths are unsupported");
+            }
+            after_prefix = true;
             continue;
         }
         let meta =
@@ -224,6 +242,9 @@ fn path_checked(path: &Path, directory: bool) -> Res<()> {
         if prefix != absolute && !meta.is_dir() {
             return Err("Pack path ancestor must be a directory");
         }
+    }
+    if after_prefix {
+        return Err("Drive-relative paths are unsupported");
     }
     let meta = fs::symlink_metadata(path).map_err(|_| "Selected pack path cannot be inspected")?;
     if (directory && !meta.is_dir()) || (!directory && !meta.is_file()) {
@@ -969,7 +990,8 @@ mod path_tests {
     #[cfg(unix)]
     #[test]
     fn symlinked_ancestors_stay_refused() {
-        let root = temporary("symlink");
+        // The temp directory itself may sit under a symlink (macOS `/var`).
+        let root = fs::canonicalize(temporary("symlink")).unwrap();
         std::os::unix::fs::symlink(root.join("pack"), root.join("link")).unwrap();
         assert_eq!(
             path_checked(&root.join("link/a.json"), false),
@@ -990,6 +1012,29 @@ mod path_tests {
         path_checked(&verbatim, true).unwrap();
         path_checked(&verbatim.join("a.json"), false).unwrap();
         fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(windows)]
+    #[test]
+    fn device_namespace_and_drive_relative_paths_are_refused() {
+        for device in [r"\\.\pipe\x", r"\\.\C:\Windows", r"\\?\GLOBALROOT\Device\x"] {
+            assert_eq!(
+                path_checked(Path::new(device), true),
+                Err("Device namespace paths are unsupported"),
+                "{device}"
+            );
+        }
+        let drive = std::env::current_dir().unwrap();
+        let Some(Component::Prefix(prefix)) = drive.components().next() else {
+            panic!("current directory has no prefix");
+        };
+        let letter = prefix.as_os_str().to_str().unwrap().to_owned();
+        for relative in [format!("{letter}Windows"), letter] {
+            assert_eq!(
+                path_checked(Path::new(&relative), true),
+                Err("Drive-relative paths are unsupported"),
+                "{relative}"
+            );
+        }
     }
 }
 

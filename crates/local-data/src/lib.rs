@@ -33,7 +33,7 @@ use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, Metadata},
     io::Read,
-    path::{Component, Path, PathBuf},
+    path::{Component, Path, PathBuf, Prefix},
     time::{Duration, SystemTime},
 };
 
@@ -126,18 +126,39 @@ pub fn checked_path(path: &Path) -> Result<PathBuf> {
             .join(path)
     };
     let mut cursor = PathBuf::new();
+    let mut after_prefix = false;
     for part in absolute.components() {
         if part == Component::CurDir {
             continue;
         }
+        // A drive-relative `C:foo` resolves against a per-drive current directory.
+        if std::mem::take(&mut after_prefix) && part != Component::RootDir {
+            return Err("Drive-relative selections are unsupported");
+        }
         cursor.push(part.as_os_str());
-        if matches!(part, Component::Prefix(_)) {
+        // Only drive letters and network shares, plain or verbatim, are file-system
+        // selections; not `\\.\pipe\x` or `\\?\GLOBALROOT\...`. The bare prefix
+        // names a volume, so its root is inspected at the next component.
+        if let Component::Prefix(prefix) = part {
+            if !matches!(
+                prefix.kind(),
+                Prefix::Disk(_)
+                    | Prefix::VerbatimDisk(_)
+                    | Prefix::UNC(..)
+                    | Prefix::VerbatimUNC(..)
+            ) {
+                return Err("Device namespace selections are unsupported");
+            }
+            after_prefix = true;
             continue;
         }
         let metadata = fs::symlink_metadata(&cursor).map_err(|_| "Selection is inaccessible")?;
         if linked(&metadata) {
             return Err("Linked or reparse-point selections are unsupported");
         }
+    }
+    if after_prefix {
+        return Err("Drive-relative selections are unsupported");
     }
     fs::canonicalize(absolute).map_err(|_| "Cannot resolve selection")
 }
@@ -377,6 +398,32 @@ pub fn verify_metadata(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(windows)]
+    #[test]
+    fn selections_accept_verbatim_disks_and_refuse_devices_and_drive_relative_paths() {
+        let current = std::env::current_dir().unwrap();
+        let verbatim = fs::canonicalize(&current).unwrap();
+        assert_eq!(checked_path(&verbatim).unwrap(), verbatim);
+        for device in [r"\\.\pipe\x", r"\\.\C:\Windows", r"\\?\GLOBALROOT\Device\x"] {
+            assert_eq!(
+                checked_path(Path::new(device)),
+                Err("Device namespace selections are unsupported"),
+                "{device}"
+            );
+        }
+        let Some(Component::Prefix(prefix)) = current.components().next() else {
+            panic!("current directory has no prefix");
+        };
+        let letter = prefix.as_os_str().to_str().unwrap().to_owned();
+        for relative in [format!("{letter}Windows"), letter] {
+            assert_eq!(
+                checked_path(Path::new(&relative)),
+                Err("Drive-relative selections are unsupported"),
+                "{relative}"
+            );
+        }
+    }
 
     #[test]
     fn changing_source_is_refused_even_with_same_file_length() {

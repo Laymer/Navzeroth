@@ -56,8 +56,11 @@ fn predicate(p: &Observation<Predicate>) -> Res {
         _ => Ok(()),
     }
 }
+/// A game-fact field stays `unknown`: `known` states the fact, and
+/// `not_applicable`, `unsupported` or `restricted` would also be a claim about
+/// the game that authoring cannot make.
 fn pending<T>(value: &Observation<T>) -> Res {
-    if value.status() == ObservationStatus::Known {
+    if value.status() != ObservationStatus::Unknown {
         return Err("Authored content cannot declare a game fact");
     }
     Ok(())

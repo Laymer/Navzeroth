@@ -162,6 +162,10 @@ impl SourceRegistry {
     pub fn len(&self) -> usize {
         self.sources.len()
     }
+    /// Registered records in source-ID order.
+    pub fn iter(&self) -> impl Iterator<Item = &SourceRecord> {
+        self.sources.values()
+    }
     pub fn is_empty(&self) -> bool {
         self.sources.is_empty()
     }

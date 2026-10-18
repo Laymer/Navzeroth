@@ -106,3 +106,72 @@ fn edited_procedures_or_catalog_refuse_to_build() {
     .unwrap();
     assert!(build(&revised, &t.0.join("out-2")).is_err());
 }
+
+/// The same catalog with an invented game fact: a known (empty) reward list.
+fn invented(catalog: &[u8]) -> Vec<u8> {
+    let mut value: serde_json::Value = serde_json::from_slice(catalog).unwrap();
+    value["dungeons"][0]["rewards"] = serde_json::json!({"status": "known", "value": []});
+    // Canonical pack bytes, as the builder writes them; the v2 graph still decodes.
+    let content = azeroth_core::content_v2::decode(&serde_json::to_vec(&value).unwrap()).unwrap();
+    let mut bytes = serde_json::to_vec_pretty(&serde_json::to_value(&content).unwrap()).unwrap();
+    bytes.push(b'\n');
+    bytes
+}
+
+#[test]
+fn authored_rules_refuse_invented_game_facts_in_build_and_verify() {
+    const REFUSAL: &str = "Authored content cannot declare a game fact";
+    let t = temp("invented");
+    let changed = t.0.join("input");
+    copy(&input(), &changed);
+    // Without the party matrix, so its catalog hash cannot be what refuses.
+    fs::remove_file(changed.join("party-support.json")).unwrap();
+    let clean = t.0.join("clean");
+    build(&changed, &clean).unwrap();
+    let catalog = changed.join("catalog.json");
+    fs::write(&catalog, invented(&fs::read(&catalog).unwrap())).unwrap();
+    assert_eq!(build(&changed, &t.0.join("refused")).err(), Some(REFUSAL));
+    assert!(!t.0.join("refused").exists());
+
+    // A pack whose manifest records the tampered catalog's true size and digest
+    // (and the one fewer coverage gap) is refused by verify-pack too.
+    let bytes = invented(&fs::read(clean.join("catalog.json")).unwrap());
+    let manifest_path = clean.join("manifest.json");
+    let mut manifest: serde_json::Value =
+        serde_json::from_slice(&fs::read(&manifest_path).unwrap()).unwrap();
+    manifest["catalog"]["bytes"] = bytes.len().into();
+    manifest["catalog"]["sha256"] = format!("{:x}", Sha256::digest(&bytes)).into();
+    let gaps = manifest["coverage_gaps"].as_u64().unwrap();
+    manifest["coverage_gaps"] = (gaps - 1).into();
+    let mut manifest_bytes = serde_json::to_vec_pretty(&manifest).unwrap();
+    manifest_bytes.push(b'\n');
+    fs::write(clean.join("catalog.json"), &bytes).unwrap();
+    fs::write(&manifest_path, manifest_bytes).unwrap();
+    assert_eq!(verify(&clean).err(), Some(REFUSAL));
+
+    // The CLI reports the same refusal for both commands.
+    let cli = |args: &[&std::ffi::OsStr]| {
+        std::process::Command::new(env!("CARGO_BIN_EXE_azeroth-cli"))
+            .args(args)
+            .output()
+            .unwrap()
+    };
+    let cli_out = t.0.join("cli-out");
+    for output in [
+        cli(&[
+            "build-content-v2".as_ref(),
+            "--input".as_ref(),
+            changed.as_os_str(),
+            "--output".as_ref(),
+            cli_out.as_os_str(),
+        ]),
+        cli(&[
+            "verify-pack".as_ref(),
+            "--input".as_ref(),
+            clean.as_os_str(),
+        ]),
+    ] {
+        assert!(!output.status.success());
+        assert!(String::from_utf8_lossy(&output.stderr).contains(REFUSAL));
+    }
+}

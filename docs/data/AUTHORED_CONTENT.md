@@ -36,18 +36,23 @@ Building or verifying the pack does not activate it for planning.
 ## Authored-content rules
 
 `azeroth_core::content_v2::authored::validate_authored` runs after the normal v2
-decode and refuses, on top of it:
+decode. `build-content-v2` and `verify-pack` (and every reader of a verified v2
+pack) apply it whenever every source in `sources.json` has access `authored` and
+the catalog is not a fixture; such a pack must declare exactly one source. It
+refuses, on top of the graph validation:
 
 - evidence from any source other than the declared authored source, or evidence
   marked `verified_on_build` or `cross_edition_unverified`;
 - any game-fact record: quests, objectives, items, acquisitions, travel nodes or
   edges, map imagery or embeddings, and equipment/quest/acquisition/node facts;
-- a known dungeon entrance, access rule, preparation quest list, travel edge list
-  or reward list (an empty known list is also a claim and is refused);
-- a known class proficiency table or slot layout in a role model;
+- a dungeon entrance, access rule, preparation quest list, travel edge list or
+  reward list, or a role model's class proficiency table or slot layout, whose
+  status is anything but `unknown`. A known value (even an empty list) states the
+  fact, and `not_applicable`, `unsupported` or `restricted` is also a claim about
+  the game;
 - a model weight source other than `documented_model` citing the authored source;
-- a map space or dungeon map that is not an `authored:` placeholder, or has a
-  known transform; a model class outside the `class:` vocabulary;
+- a map space or dungeon map that is not an `authored:` placeholder, or whose
+  transform is not `unknown`; a model class outside the `class:` vocabulary;
 - predicates that read quest, objective, equipment, location or participant facts.
   Authored predicates may read only declared state: level, role and preferences.
 
