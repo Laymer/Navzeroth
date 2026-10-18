@@ -390,3 +390,25 @@ assertions that panic if the provider is consulted. Both production adapters use
 the guard before their unchanged application integrity checks. Read-only reviewer
 confirmed resolution and no remaining findings. Native compilation/execution of
 new adapter tests remains pending hosted checks; no local native pass is claimed.
+
+Next native adapter claim: `/root`, sole writer, baseline `d611fc5`. Reuse the
+explicit invalid-request cases through the official Tauri mock IPC runtime as
+well as real WebView2 smoke, binding argument keys to actual handler signatures.
+Use only owned synthetic SQLite/local-data roots; no dialogs or user files. The
+mock run tests Rust argument decoding/dispatch/refusals, not ordinary Windows
+observations. Production registration and capabilities remain unchanged.
+
+Hosted d611fc5: Linux native coverage, TypeScript and Windows packaging/native
+WebView2 smoke passed. Windows shell unit execution failed before tests with
+STATUS_ENTRYPOINT_NOT_FOUND (0xc0000139). The newly retained dialog imports are
+consistent with a missing Common Controls v6 test-harness manifest; this diagnosis
+is not yet confirmed by fresh native execution. Test-only COFF dependency metadata
+now requests v6 in library/bin harnesses; production manifest is unchanged.
+Read-only policy review found no actionable findings; native proof remains pending.
+
+Shared synthetic refusal matrix expands to 82 requests and official mock IPC,
+with actual-handler argument-key checks (two Node tests pass). App/CLI all-target
+Clippy, Rust formatting and diff checks pass. New retrieval-publication, recipient
+quest-stage/quotas and authored-content unknown-cost/empty-catalog tests passed
+locally as recorded during development. No real network/game inputs are used.
+Next: hosted loader/IPC verification, then remaining strict per-file deficits.

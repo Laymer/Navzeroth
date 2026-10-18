@@ -503,6 +503,50 @@ mod tests {
         .unwrap()
     }
     #[test]
+    fn missing_item_facts_and_unobservable_costs_remain_unknown() {
+        let mut catalog = content();
+        let item = catalog.reference.payload.items[0].clone();
+        catalog.equipment.clear();
+        let (item, category) = item_facts(&item, &catalog).unwrap();
+        assert_eq!(item.requirements.status(), ObservationStatus::Unknown);
+        assert_eq!(category.status(), ObservationStatus::Unknown);
+        let source = catalog.reference.payload.acquisitions[0].clone();
+        let target = source.items[0].clone();
+        catalog.acquisition_facts[0].costs = Observation::known(
+            vec![Cost::Item {
+                item: target.clone(),
+                quantity: 1,
+            }],
+            ObservationMetadata::default(),
+        )
+        .unwrap();
+        catalog.acquisition_facts[0].entitlement =
+            Observation::known(LootEntitlement::SharedRoll, ObservationMetadata::default())
+                .unwrap();
+        let effective = acquisition_facts(&source, &target, &catalog).unwrap();
+        assert_eq!(effective.cost.status(), ObservationStatus::Unknown);
+        assert_eq!(effective.probability.status(), ObservationStatus::Unknown);
+        catalog.acquisition_facts[0].costs = Observation::known(
+            vec![
+                Cost::Copper {
+                    amount: Copper::new(u64::MAX),
+                },
+                Cost::Copper {
+                    amount: Copper::new(1),
+                },
+            ],
+            ObservationMetadata::default(),
+        )
+        .unwrap();
+        assert_eq!(
+            acquisition_facts(&source, &target, &catalog)
+                .unwrap()
+                .cost
+                .status(),
+            ObservationStatus::Unknown
+        );
+    }
+    #[test]
     fn missing_quest_restrictions_never_become_unrestricted() {
         let mut catalog = content();
         let quest = catalog.reference.payload.quests[0].clone();

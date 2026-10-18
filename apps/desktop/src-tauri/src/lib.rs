@@ -1,7 +1,12 @@
 //! Explicit command DTOs; snapshot normalization and SQLite execute on blocking
 //! workers. No live addon bridge or generic filesystem command is exposed.
 mod atlas_protocol;
+#[cfg(test)]
+mod command_tests;
+#[cfg(test)]
+mod manifest_tests;
 mod reference_window;
+
 use azeroth_app::AppStatus;
 use azeroth_app::atlas::{AtlasView, ProjectedPosition, SnapshotMarker};
 use azeroth_app::diagnostics::DiagnosticOperation;

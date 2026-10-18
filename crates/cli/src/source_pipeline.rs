@@ -313,6 +313,14 @@ pub fn sync(options: &Options) -> Result<SyncReport> {
     sync_registry(options, &registry, &raw)
 }
 fn sync_registry(options: &Options, registry: &Registry, raw: &[u8]) -> Result<SyncReport> {
+    sync_registry_using(options, registry, raw, fetch)
+}
+fn sync_registry_using(
+    options: &Options,
+    registry: &Registry,
+    raw: &[u8],
+    mut fetch: impl FnMut(&Material, &str, u64) -> Result<Vec<u8>>,
+) -> Result<SyncReport> {
     if options.updates_policy.is_some() && !options.fetch {
         return Err("Metadata requests require explicit network acquisition");
     }
@@ -807,6 +815,94 @@ fn updates(registry: &Registry, policy: &UpdatesPolicy) -> Vec<Update> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn admitted_retrieval_publishes_verified_blobs_and_never_overwrites_on_refusal() {
+        use serde_json::json;
+        let root = std::env::temp_dir().join(format!(
+            "nav-source-retrieval-boundary-{}",
+            std::process::id()
+        ));
+        fs::create_dir(&root).unwrap();
+        struct Cleanup(PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                fs::remove_dir_all(&self.0).unwrap();
+            }
+        }
+        let _cleanup = Cleanup(root.clone());
+        let data = b"synthetic data fixture";
+        let license = b"synthetic review evidence; no real rights grant";
+        let revision = "a".repeat(40);
+        let evidence = json!({"url":format!("https://raw.githubusercontent.com/synthetic/fixture/{revision}/LICENSE"),"revision":revision,"sha256":digest(license),"reviewed_scope":"synthetic fixture"});
+        let value = json!({"schema_version":1,"sources":[{"id":"synthetic","revision":revision,"publisher":"synthetic/fixture","origin":{"edition":"wow_forever","build":"1.60.1.70374"},"rights":{"status":"admitted","license":"permissive","license_identifier":"synthetic-test-only","reviewer":"fixture","attribution":"fixture","obligations":"fixture","evidence":[evidence.clone()]},"retrieval":{"method":"https_pinned","max_total_bytes":data.len()+license.len(),"minimum_interval_ms":1000,"max_requests":2,"access_evidence":evidence},"files":[{"path":"facts.json","url":format!("https://raw.githubusercontent.com/synthetic/fixture/{revision}/facts.json"),"sha256":digest(data),"bytes":data.len(),"fields":["quests.shareable"],"transformation":"knowledge_v1"}]}]});
+        let raw = serde_json::to_vec(&value).unwrap();
+        let mut registry = Registry::parse(&raw).unwrap();
+        let options = Options {
+            registry: root.join("unused.json"),
+            cache: root.join("cache"),
+            plan: None,
+            output: None,
+            fetch: true,
+            updates_policy: None,
+        };
+        let mut requests = 0;
+        sync_registry_using(&options, &registry, &raw, |material, pinned, bound| {
+            assert_eq!(pinned, revision);
+            requests += 1;
+            let bytes = if material.sha256 == digest(data) {
+                data.as_slice()
+            } else {
+                license.as_slice()
+            };
+            assert!(bytes.len() as u64 <= bound);
+            Ok(bytes.to_vec())
+        })
+        .unwrap();
+        assert_eq!(requests, 2);
+        assert_eq!(fs::read(options.cache.join(digest(data))).unwrap(), data);
+        assert_eq!(
+            fs::read(options.cache.join(digest(license))).unwrap(),
+            license
+        );
+        sync_registry_using(&options, &registry, &raw, |_, _, _| {
+            panic!("Verified cached bytes must not be retrieved again")
+        })
+        .unwrap();
+        let material = Material {
+            url: "unused".into(),
+            sha256: digest(data),
+            bytes: Some(data.len() as u64),
+        };
+        publish_blob(&options.cache, &material, data).unwrap();
+        fs::remove_file(options.cache.join(digest(data))).unwrap();
+        assert!(
+            sync_registry_using(&options, &registry, &raw, |_, _, _| Ok(
+                b"altered download".to_vec()
+            ))
+            .is_err()
+        );
+        assert!(!options.cache.join(digest(data)).exists());
+        assert_eq!(
+            fs::read(options.cache.join(digest(license))).unwrap(),
+            license
+        );
+        registry.sources[0].retrieval.method = Method::ManualLocal;
+        assert_eq!(
+            sync_registry_using(&options, &registry, &raw, |_, _, _| panic!(
+                "Manual-only source must never be fetched"
+            ))
+            .err(),
+            Some("Source allows manual local acquisition only")
+        );
+        registry.sources[0].retrieval.minimum_interval_ms = 60_001;
+        assert_eq!(
+            sync_registry_using(&options, &registry, &raw, |_, _, _| panic!(
+                "Unsupported interval must be refused before transport"
+            ))
+            .err(),
+            Some("Source request interval exceeds this adapter's supported bound")
+        );
+    }
     #[test]
     fn exhausted_or_smaller_transport_budget_is_refused_before_fetch() {
         let mut material = Material {

@@ -513,6 +513,44 @@ impl SnapshotApplication {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn export_readiness_and_lua_resource_limits_refuse_without_flattening_unknowns() {
+        for status in ["unknown", "unsupported", "restricted"] {
+            let observation: Observation<Predicate> =
+                serde_json::from_value(json!({"status":status})).unwrap();
+            let mut predicates = vec![];
+            assert_eq!(
+                declared(&observation, &mut predicates).unwrap_err().code,
+                ErrorCode::InvalidInput
+            );
+            assert!(predicates.is_empty());
+        }
+        let allowed: Observation<Predicate> =
+            serde_json::from_value(json!({"status":"not_applicable"})).unwrap();
+        assert!(declared(&allowed, &mut vec![]).is_ok());
+        let oversized_object =
+            Value::Object((0..1025).map(|n| (n.to_string(), Value::Null)).collect());
+        for value in [
+            json!("x".repeat(4097)),
+            json!(vec![false; 1025]),
+            oversized_object,
+            json!({"x".repeat(4097):false}),
+        ] {
+            assert_eq!(
+                lua_limits(&value, 0, &mut 0).unwrap_err().code,
+                ErrorCode::ImportTooLarge
+            );
+        }
+        assert_eq!(
+            lua_limits(&json!([0]), 33, &mut 0).unwrap_err().code,
+            ErrorCode::ImportTooLarge
+        );
+        assert_eq!(
+            lua_limits(&json!(false), 0, &mut 8192).unwrap_err().code,
+            ErrorCode::ImportTooLarge
+        );
+        assert!(lua_limits(&json!([false, 0, "inert Lua text"]), 0, &mut 0).is_ok());
+    }
     #[allow(dead_code)]
     mod support {
         use crate as azeroth_app;

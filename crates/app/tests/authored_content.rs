@@ -8,6 +8,43 @@ const NOW: i64 = 1791791990100;
 fn known(value: Value) -> Value {
     json!({"status":"known","value":value,"source":"synthetic_fixture","clock_trust":"trusted","observed_at_utc_ms":NOW-100})
 }
+#[test]
+fn no_active_authored_catalog_stays_unbound_for_character_and_party() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let mut profiles = Vec::new();
+    for name in ["first-unbound", "second-unbound"] {
+        let mut snapshot: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/contracts/v1/character-snapshot.json"
+        ))
+        .unwrap();
+        snapshot["payload"]["character"] = json!(name);
+        snapshot["payload"]["id"] = json!(name);
+        profiles.push(
+            app.import_text(
+                &format!("ANAV1:{snapshot}"),
+                Some(UtcMillis::new(NOW).unwrap()),
+            )
+            .unwrap()
+            .profile_id,
+        );
+    }
+    let party = azeroth_core::types::PartyId::new("unbound-party").unwrap();
+    app.save_party(&party, &profiles).unwrap();
+    for subject in [
+        json!({"kind":"character","profile_id":profiles[0]}),
+        json!({"kind":"party","party_id":party}),
+    ] {
+        let mut request = json!({"subject":subject,"kind":"models","revision":null,"catalog_sha256":null,"offset":0});
+        let empty = app.authored_catalog(&request.to_string()).unwrap();
+        assert!(empty.revision.is_none());
+        assert!(empty.catalog_sha256.is_none());
+        assert!(empty.records.is_empty());
+        assert_eq!(empty.total, 0);
+        request["revision"] = json!("stale-selection");
+        assert!(app.authored_catalog(&request.to_string()).is_err());
+    }
+    assert!(app.authored_catalog(&" ".repeat(4097)).is_err());
+}
 fn bundle() -> Value {
     let mut content: Value = serde_json::from_str(include_str!(
         "../../../fixtures/contracts/v2/reference-content.json"

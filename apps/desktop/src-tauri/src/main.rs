@@ -1,6 +1,9 @@
 // Prevents an extra console window on Windows release builds.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+#[cfg(test)]
+mod manifest_tests;
+
 fn main() -> std::process::ExitCode {
     if std::env::args_os().skip(1).collect::<Vec<_>>()
         == [std::ffi::OsString::from(
