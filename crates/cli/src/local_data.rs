@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data media-discover --destination <private-directory> --catalog <sha256> --locale <locale> [--offset <number> --limit <1-200>]; local-data media-extract --installation <directory> --destination <private-directory> --catalog <sha256> --locale <locale> --ids <sorted-comma-separated-IDs> [--preset small|balanced|large|max]; local-data media-verify --destination <private-directory> --media <sha256>; local-data media-page --destination <private-directory> --media <sha256> --offset <number> --limit <1-200>; local-data tooltip --destination <private-directory> --projection <sha256> --spell <id>; local-data delivery-build --destination <private-directory> --projection <sha256> [--media <sorted-digests>] [--inputs <sorted-digests>] [--guide-facts <sha256>]; local-data (delivery-verify|delivery-active) --destination <private-directory> --delivery <sha256>; local-data (delivery-activate|delivery-rollback) --destination <private-directory> --delivery <sha256> --expected <generation>; local-data delivery-diff --destination <private-directory> --before <sha256> --after <sha256>; local-data delivery-page --destination <private-directory> --delivery <sha256> --domain <domain-or-table> --offset <number> --limit <1-200>; local-data delivery-receipt-(sign|assemble|verify) <explicit receipt options, see LOCAL_DELIVERY.md>; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data media-discover --destination <private-directory> --catalog <sha256> --locale <locale> [--offset <number> --limit <1-200>]; local-data media-extract --installation <directory> --destination <private-directory> --catalog <sha256> --locale <locale> --ids <sorted-comma-separated-IDs> [--preset small|balanced|large|max]; local-data media-verify --destination <private-directory> --media <sha256>; local-data media-page --destination <private-directory> --media <sha256> --offset <number> --limit <1-200>; local-data tooltip --destination <private-directory> --projection <sha256> --spell <id>; local-data delivery-build --destination <private-directory> --projection <sha256> [--media <sorted-digests>] [--inputs <sorted-digests>] [--guide-facts <sha256>]; local-data (delivery-verify|delivery-active) --destination <private-directory> --delivery <sha256>; local-data (delivery-activate|delivery-rollback) --destination <private-directory> --delivery <sha256> --expected <generation>; local-data delivery-diff --destination <private-directory> --before <sha256> --after <sha256>; local-data delivery-page --destination <private-directory> --delivery <sha256> --domain <domain-or-table> --offset <number> --limit <1-200>; local-data delivery-receipt-(sign|assemble|verify) <explicit receipt options, see LOCAL_DELIVERY.md>; local-data inventory-build --destination <private-directory> --delivery <sha256> [--authored-pack <verified-directory>]; local-data (inventory-verify|route-designs) --destination <private-directory> --inventory <sha256> [--authored-pack <verified-directory>]; local-data inventory-page --destination <private-directory> --inventory <sha256> --domain <domain> --offset <number> --limit <1-200> [--authored-pack <verified-directory>]; local-data bound-guide-review --destination <private-directory> --delivery <sha256> --guide <file> --race <Race> --class <Class> --mode solo|duo; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -45,6 +45,26 @@ pub fn run(args: &[OsString]) -> ExitCode {
         return usage();
     };
     let allowed: &[&str] = match command {
+        "inventory-build" => &["--destination", "--delivery", "--authored-pack", "--preset"],
+        "inventory-verify" | "route-designs" => {
+            &["--destination", "--inventory", "--authored-pack"]
+        }
+        "inventory-page" => &[
+            "--destination",
+            "--inventory",
+            "--authored-pack",
+            "--domain",
+            "--offset",
+            "--limit",
+        ],
+        "bound-guide-review" => &[
+            "--destination",
+            "--delivery",
+            "--guide",
+            "--race",
+            "--class",
+            "--mode",
+        ],
         "delivery-receipt-sign" => &["--payload", "--policy", "--key-id", "--secret-key"],
         "delivery-receipt-assemble" => &["--payload", "--operator", "--reviewer"],
         "delivery-receipt-verify" => &[
@@ -143,6 +163,11 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if command.starts_with("inventory-")
+        || matches!(command, "route-designs" | "bound-guide-review")
+    {
+        return inventory_command(command, &options);
     }
     if command.starts_with("delivery-receipt-") {
         return delivery_receipt_command(command, &options);
@@ -849,4 +874,93 @@ fn delivery_receipt_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> 
         _ => Err("Unsupported format 3 receipt operation"),
     })();
     emit(result)
+}
+
+fn inventory_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    let result = (|| {
+        let text = |key: &str| {
+            options
+                .get(key)
+                .and_then(|v| v.to_str())
+                .ok_or("Missing research inventory option")
+        };
+        let root = Path::new(
+            options
+                .get("--destination")
+                .ok_or("Missing inventory destination")?,
+        );
+        let authored = options.get("--authored-pack").map(Path::new);
+        match command {
+            "inventory-build" => {
+                let digest = azeroth_local_data::inventory::build(
+                    root,
+                    text("--delivery")?,
+                    authored,
+                    preset(options.get("--preset")).ok_or("Invalid inventory preset")?,
+                )?;
+                Ok(
+                    serde_json::json!({"format_version":1,"inventory_sha256":digest,"acceptance_ready":false}),
+                )
+            }
+            "inventory-verify" => serde_json::to_value(azeroth_local_data::inventory::summary(
+                root,
+                text("--inventory")?,
+                authored,
+            )?)
+            .map_err(|_| "Inventory report encoding failed"),
+            "inventory-page" => serde_json::to_value(azeroth_local_data::inventory::page(
+                root,
+                text("--inventory")?,
+                text("--domain")?,
+                text("--offset")?
+                    .parse()
+                    .map_err(|_| "Invalid inventory offset")?,
+                text("--limit")?
+                    .parse()
+                    .map_err(|_| "Invalid inventory page limit")?,
+                authored,
+            )?)
+            .map_err(|_| "Inventory page encoding failed"),
+            "route-designs" => serde_json::to_value(azeroth_local_data::inventory::designs(
+                root,
+                text("--inventory")?,
+                authored,
+            )?)
+            .map_err(|_| "Route design encoding failed"),
+            "bound-guide-review" => {
+                use azeroth_ingest::rxp::{Character, Class, Race};
+                let character = Character {
+                    race: Race::from_token(text("--race")?).ok_or("Unsupported guide race")?,
+                    class: Class::from_token(text("--class")?).ok_or("Unsupported guide class")?,
+                };
+                let mode = match text("--mode")? {
+                    "solo" => azeroth_core::local_data_inventory::Mode::Solo,
+                    "duo" => azeroth_core::local_data_inventory::Mode::Duo,
+                    _ => return Err("Unsupported guide review mode"),
+                };
+                serde_json::to_value(azeroth_local_data::guide_review::verify(
+                    root,
+                    text("--delivery")?,
+                    Path::new(options.get("--guide").ok_or("Missing guide selection")?),
+                    character,
+                    mode,
+                )?)
+                .map_err(|_| "Bound guide report encoding failed")
+            }
+            _ => Err("Unsupported inventory operation"),
+        }
+    })();
+    let clean_review = result
+        .as_ref()
+        .ok()
+        .and_then(|value| value.get("report"))
+        .and_then(|report| report.get("replay_clean"))
+        .and_then(serde_json::Value::as_bool)
+        .unwrap_or(false);
+    let exit = emit(result);
+    if command == "bound-guide-review" && exit == ExitCode::SUCCESS {
+        ExitCode::from(if clean_review { 3 } else { 1 })
+    } else {
+        exit
+    }
 }
