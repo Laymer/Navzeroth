@@ -480,3 +480,25 @@ actionable findings. Production metadata transport still uses https_get; its new
 private callback only permits bounded synthetic transport testing.
 App/CLI/storage all-target Clippy, formatting and diff checks pass for that batch.
 Next: clean source diagnostic followed by native union and exact-head CI review.
+
+At 6e9affb, native Windows shell CI passes the corrected mock IPC lifecycle and
+90-refusal matrix. Source Linux/Windows/parity pass. Packaging failed before build
+because DEPENDENCIES.json still recorded the prior Cargo.lock hash. Regenerated
+with the canonical notices tool: only cargo_lock_sha256 changes; --check verifies
+all 506 files and four notice-helper tests pass. No packages/licenses changed.
+
+Clean local diagnostic c353525: 1,383 passed, four explicit regenerators ignored,
+182 suites; LLVM export succeeds. Four Linux-only files remain below threshold:
+CLI local_data 734/827, media 456/534, and the two platform-specific path/isolation
+files awaiting Windows union. Current-source inventory was used, including moved
+unit-test ranges; no rounding/exclusions were added. Reports/log/inventory/gaps in
+/tmp/nav-local-expansion-fourth* and /tmp/nav-local-fourth-gaps.json.
+
+Focused follow-up passes: media discovery and decode refusal test (signed IDs,
+zero/unknown/missing/unsupported/duplicates, exact gaps, unsupported/truncated/
+overpixel BLP, unsupported layouts/undecoded lineage, earlier immutable revision).
+The undecoded gap initially omitted its reason suffix; test now declares an exact
+synthetic reason and verifies the complete gap. CLI roundtrip now rejects selected
+inert snapshot/session text and invalid guide-fact input while retaining prior
+facts. Read-only review found no actionable findings. Local-data/CLI all-target
+Clippy and formatting/diff checks pass; rerun complete clean diagnostic next.

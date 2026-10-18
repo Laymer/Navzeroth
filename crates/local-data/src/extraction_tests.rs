@@ -517,3 +517,131 @@ fn changed_build_artifacts_preserve_staging_and_refuse_substitution() {
     assert!(changes::verify(root, &digest).is_err());
     assert!(changes::verify(root, "invalid").is_err());
 }
+
+#[test]
+fn media_discovery_preserves_unknown_zero_duplicates_and_decode_refusals() {
+    use crate::media;
+    use azeroth_core::local_data_media::Disposition;
+    let f = Fixture::new();
+    let original = media_catalog(&f);
+    let root = &f.request.destination;
+    let mut catalog = verify_catalog(root, &original).unwrap();
+    let mut table: tables::DecodedTable = serde_json::from_slice(
+        &fs::read(
+            root.join("objects")
+                .join(catalog.tables[0].decoded_sha256.as_ref().unwrap()),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    for (id, value) in [
+        (2, Some(tables::Cell::Signed(901))),
+        (3, Some(tables::Cell::Signed(902))),
+        (4, Some(tables::Cell::Unsigned(0))),
+        (5, Some(tables::Cell::Unknown)),
+        (6, None),
+        (7, Some(tables::Cell::Text("unsupported expression".into()))),
+        (8, Some(tables::Cell::Unsigned(u64::MAX))),
+        (1, Some(tables::Cell::Unsigned(900))),
+    ] {
+        table.rows.push(tables::ResearchRow {
+            id,
+            fields: value
+                .map(|v| BTreeMap::from([("IconFileDataID".into(), v)]))
+                .unwrap_or_default(),
+            copied_from: None,
+        });
+    }
+    table.header.records = table.rows.len() as u32;
+    table.gaps.push("synthetic_unavailable_range".into());
+    let mut store =
+        Store::open(root, PerformancePreset::Small.limits().total_storage_bytes).unwrap();
+    catalog.tables[0].decoded_sha256 = Some(
+        store
+            .put("objects", &serde_json::to_vec(&table).unwrap())
+            .unwrap(),
+    );
+    catalog.tables[0].records = Some(table.rows.len() as u32);
+    let revision = store
+        .put("catalogs", &serde_json::to_vec(&catalog).unwrap())
+        .unwrap();
+    drop(store);
+    let discovery = media::discover(root, &revision, "enUS").unwrap();
+    assert_eq!(
+        discovery
+            .candidates
+            .iter()
+            .map(|c| c.file_data_id)
+            .collect::<Vec<_>>(),
+        [900, 901, 902]
+    );
+    for gap in [
+        "Item:duplicate_record_identity",
+        "Item:IconFileDataID:zero_sentinel",
+        "Item:IconFileDataID:unknown",
+        "Item:IconFileDataID:missing",
+        "Item:IconFileDataID:unsupported",
+        "Item:synthetic_unavailable_range",
+    ] {
+        assert!(discovery.gaps.iter().any(|actual| actual == gap), "{gap}");
+    }
+    let mut capacity = vec![0; 148];
+    capacity[..4].copy_from_slice(b"BLP2");
+    capacity[4] = 1;
+    capacity[12..16].copy_from_slice(&4096u32.to_le_bytes());
+    capacity[16..20].copy_from_slice(&4096u32.to_le_bytes());
+    let files = BTreeMap::from([
+        (900, b"BLP1unsupported".to_vec()),
+        (901, b"BLP2".to_vec()),
+        (902, capacity),
+    ]);
+    let media_revision =
+        media::stage_fixture(root, &revision, "enUS", &files, PerformancePreset::Small).unwrap();
+    let manifest = media::verify(root, &media_revision).unwrap();
+    assert!(manifest.fixture && !manifest.verified_for_gameplay);
+    assert_eq!(
+        manifest
+            .assets
+            .iter()
+            .map(|a| a.disposition)
+            .collect::<Vec<_>>(),
+        [
+            Disposition::Unsupported,
+            Disposition::Invalid,
+            Disposition::Capacity
+        ]
+    );
+    assert!(manifest.assets.iter().all(|a| a.png_sha256.is_none()));
+    assert!(
+        media::page(root, &media_revision, 0, 200)
+            .unwrap()
+            .assets
+            .is_empty()
+    );
+    assert!(media::page(root, &media_revision, 1, 200).is_err());
+    for (layout, decoded, gap) in [
+        ("00000000", true, "Item:unsupported_layout"),
+        ("9a2a4834", false, "Item:undecoded:synthetic_undecoded"),
+    ] {
+        let mut changed = catalog.clone();
+        changed.tables[0].layout_hash = Some(layout.into());
+        if !decoded {
+            changed.tables[0].disposition = InventoryDisposition::RetainedUnsupported;
+            changed.tables[0].decoded_sha256 = None;
+            changed.tables[0].reason = "synthetic_undecoded".into();
+        }
+        let mut store =
+            Store::open(root, PerformancePreset::Small.limits().total_storage_bytes).unwrap();
+        let id = store
+            .put("catalogs", &serde_json::to_vec(&changed).unwrap())
+            .unwrap();
+        drop(store);
+        let unavailable = media::discover(root, &id, "enUS").unwrap();
+        assert!(unavailable.candidates.is_empty());
+        assert!(unavailable.gaps.iter().any(|value| value == gap), "{gap}");
+    }
+    assert!(
+        media::verify(root, &media_revision).is_ok(),
+        "new discoveries cannot alter an earlier immutable revision"
+    );
+}

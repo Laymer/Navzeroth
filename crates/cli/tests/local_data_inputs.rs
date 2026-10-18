@@ -389,6 +389,35 @@ fn research_cli_round_trip_preserves_explicit_activation_and_unknown_completenes
     );
     assert_eq!(review["acceptance_ready"], false);
     assert_eq!(review["report"]["replay_clean"], false);
+    let inert = synthetic_source.0.join("selected-inert-export.txt");
+    fs::write(&inert, "return os.execute('SENTINEL_PRIVATE_INERT')").unwrap();
+    for kind in ["snapshot", "session"] {
+        let refused = run(
+            "observation-stage",
+            &[
+                "--catalog",
+                &catalog,
+                "--input",
+                inert.to_str().unwrap(),
+                "--kind",
+                kind,
+                "--locale",
+                "enUS",
+            ],
+            1,
+        );
+        assert!(!refused.to_string().contains("SENTINEL_PRIVATE_INERT"));
+        assert!(!refused.to_string().contains(dest));
+    }
+    run(
+        "guide-facts-build",
+        &["--projection", projection, "--inputs", "invalid"],
+        1,
+    );
+    assert_eq!(
+        run("guide-facts-verify", &["--guide-facts", facts], 0)["verified_for_planning"],
+        false
+    );
     run("media-verify", &["--media", "invalid"], 1);
     run(
         "media-page",
