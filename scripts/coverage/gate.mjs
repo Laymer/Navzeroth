@@ -121,6 +121,8 @@ export function runGate(inventoryFile,receiptFiles,output){
   const receipt=readJson(file);
   const records=[];
   if(!Array.isArray(receipt.raw_reports)||!receipt.raw_reports.length)throw new Error('Raw coverage reports are required');
+  const required={ 'rust-llvm':['lcov'], 'typescript-v8':['istanbul','test-results'], 'typescript-config-v8':['istanbul','v8'] }[receipt.kind];
+  if(!required||receipt.raw_reports.length!==required.length||new Set(receipt.raw_reports.map(report=>report.path)).size!==required.length||required.some(format=>receipt.raw_reports.filter(report=>report.format===format).length!==1))throw new Error('Required raw coverage evidence is missing or duplicated');
   for(const report of receipt.raw_reports){
    if(typeof report.path!=='string'||!/^[A-Za-z0-9_@.+/-]+$/.test(report.path)||report.path.split(/[\\/]/).some(p=>!p||p==='.'||p==='..')||path.isAbsolute(report.path))throw new Error('Unsafe raw report path');
    const full=path.join(path.dirname(file),report.path),stat=fs.lstatSync(full);

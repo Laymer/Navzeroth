@@ -127,6 +127,8 @@ jobs:
         run: git diff --exit-code
       - name: Contract fixtures, JSON Schema and TypeScript checks
         run: pnpm contracts:check
+      - name: Coverage inventory and raw-evidence adversaries
+        run: node --test scripts/coverage/inventory.test.mjs scripts/coverage/gate.test.mjs scripts/coverage/configuration.test.mjs
       - name: Strict reference-content v2 schema checks
         run: node scripts/validate-content-v2-schema.mjs
       - name: Dependency notice and performance guard tests (offline)

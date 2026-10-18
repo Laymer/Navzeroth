@@ -47,3 +47,19 @@ it("requires an exact rollback comparison and refreshes after a generation refus
   expect(calls.find(c=>c.command==="activate_research_delivery")?.input).toEqual({revision:target,expected:3,rollback:true});
   expect(screen.queryByText(/private-path/)).not.toBeInTheDocument();expect(screen.queryByRole("button",{name:"Restore reviewed reference"})).not.toBeInTheDocument();
 });
+it("inspects retained references through their manifest and exact comparison before activation",async()=>{
+ const catalog="c".repeat(64),previous="b".repeat(64);const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((
+  command==="get_local_artifact_page"?{namespace:"deliveries",revision:"index",offset:0,total:1,next_offset:null,rows:[revision]}:
+  command==="get_research_delivery_manifest"?{format_version:1,catalog_sha256:catalog,tuple:{build:70450,locale:"enUS"},fixture:true}:
+  command==="get_research_delivery_page"?page:
+  command==="diff_research_delivery"?{before:previous,after:revision,changed:["projection"],same_scope:true,actionable_advice:false}:
+  {format_version:1,scope:"s",generation:4,delivery_sha256:previous,verified_for_planning:false})as never);}};
+ render(<ResearchDeliveryPanel client={createClient(adapter)} catalog={catalog}/>);
+ fireEvent.click(screen.getByRole("button",{name:"Review retained research references"}));
+ fireEvent.click(await screen.findByRole("button",{name:"Inspect reference aaaaaaaa"}));
+ await screen.findByText(/Changed bindings: projection/);
+ expect(screen.getByRole("button",{name:"Select this research reference"})).not.toBeDisabled();
+ expect(calls).toContainEqual({command:"diff_research_delivery",input:{before:previous,after:revision}});
+ expect(calls.some(call=>call.command==="prepare_research_delivery"||call.command==="activate_research_delivery")).toBe(false);
+});

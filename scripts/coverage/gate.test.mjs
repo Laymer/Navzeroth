@@ -61,11 +61,22 @@ test('end-to-end gate verifies independent collector hashes and derives verdict 
   }
   const raw={source:{path:'/repo/apps/desktop/src/main.tsx',statementMap:{0:{start:{line:1}}},s:{0:0}}};
   write('ui-raw.json',raw);
-  const ui={...typescript,inventory_sha256:invSha,source_hashes:{[inventory.files[1].path]:sha},raw_reports:[{path:'ui-raw.json',format:'istanbul',sha256:digest(fs.readFileSync(path.join(dir,'ui-raw.json')))}]};
+  write('tests.json',{numFailedTests:0,numFailedTestSuites:0,numTotalTests:1});
+  const ui={...typescript,inventory_sha256:invSha,source_hashes:{[inventory.files[1].path]:sha},raw_reports:[{path:'ui-raw.json',format:'istanbul',sha256:digest(fs.readFileSync(path.join(dir,'ui-raw.json')))},{path:'tests.json',format:'test-results',sha256:digest(fs.readFileSync(path.join(dir,'tests.json')))}]};
   // The claimed summary says covered, but the raw source statement was never run.
   write('ui.json',ui);receipts.push(path.join(dir,'ui.json'));
   const outcome=runGate(path.join(dir,'inventory.json'),receipts,path.join(dir,'verdict.json'));
   assert.equal(outcome.passes,false);assert.equal(outcome.files[1].covered,0);
+  for(const [index,patch] of [
+   {raw_reports:ui.raw_reports.slice(0,1)},
+   {raw_reports:[ui.raw_reports[0],ui.raw_reports[0]]},
+   {kind:'typescript-config-v8',raw_reports:ui.raw_reports.slice(0,1)},
+   {kind:'typescript-config-v8',raw_reports:ui.raw_reports},
+  ].entries()){
+   write('ui.json',{...ui,...patch});
+   assert.throws(()=>runGate(path.join(dir,'inventory.json'),receipts,path.join(dir,`missing-raw-${index}.json`)),/Required raw coverage evidence/);
+  }
+
   write('ui.json',{...ui,source_hashes:{[inventory.files[1].path]:'c'.repeat(64)}});
   assert.throws(()=>runGate(path.join(dir,'inventory.json'),receipts,path.join(dir,'bad-source.json')),/altered coverage source/);
   write('ui.json',ui);write('ui-raw.json',{...raw,extra:'altered'});

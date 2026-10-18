@@ -54,3 +54,31 @@ receipt now contains actual default-export statement coverage. Subsequent focuse
 media/input tests (seven) and facts-tool tests (four) pass, as do typecheck/lint:
 revision-bound pagination, unsafe image URL refusal, saved selection scope,
 forgetting selected paths and clearing derived views. Full rerun follows commit.
+
+Third clean-source TypeScript run at `41e73ac`: 491 tests pass; seven UI files
+remain below 90%. Raw-report gate now requires the complete evidence set for each
+collector kind (LCOV; Istanbul+test-results; or Istanbul+precise V8), rejects omitted
+or duplicate formats, and has omission regressions. This resolves the independent
+reviewer's P2; final confirmation remains pending. Twelve tool tests pass. Existing
+pnpm Linux/Windows checks now run those tool tests without replacing any check.
+
+Further focused tests pass: six imports (promotion reason/CAS refusal, watcher
+receipt dedup and timer cleanup), seven local-data panel tests (poll refusal and
+forget without activation), five delivery tests (retained-reference inspection and
+comparison), three transport tests (opaque handles/selected paths/false choices).
+Desktop typecheck/lint pass. Next full TypeScript run follows this commit.
+
+Linux continuous-profile investigation: a tiny instrumented process killed after
+its ready marker retained nonzero profile data in five trials. The ten CLI
+lifecycle tests then passed and strict profile merging succeeded. A subsequent
+non-native all-target workspace run passed 1,319 tests (four ignored, 180 suites)
+and strict LCOV export succeeded. This is diagnostic: source was not frozen for
+the whole run, native shell/Windows are absent, and four zero-test harnesses emit
+counter-bias runtime diagnostics and empty profiles. All 542 raw files are retained
+(538 nonempty, 182,075,416 bytes total); do not treat this as final accepted coverage
+or silently discard those four dispositions. The four harnesses are CLI main test
+harness, schema-export example, search example and Lua callback example; their
+production entrypoints must also execute and produce actual coverage. No baseline
+profile was removed. Official LLVM documentation describes continuous recording
+and runtime counter relocation, with Windows support needing verification:
+https://clang.llvm.org/docs/SourceBasedCodeCoverage.html

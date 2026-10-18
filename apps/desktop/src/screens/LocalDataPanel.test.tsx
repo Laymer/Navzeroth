@@ -71,3 +71,22 @@ it("restores the same installation twice without separating checked locales from
  }
  expect(calls.filter(call=>call.command==="get_local_workflow")).toHaveLength(2);
 });
+it("stops polling after status refusal and forgets the retained job without touching extraction state",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const job:LocalDataJob={job_id:"status-job",state:"preparing",completed:0,total:0,error:null,summary:null};
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});
+  if(command==="get_local_data_job")return Promise.reject({code:"STORAGE_ERROR",message:"private source path",retryable:false});
+  return Promise.resolve((command==="list_local_installations"?[]:command==="list_local_data_jobs"?[job]:null)as never);
+ }};
+ render(<LocalDataPanel client={createClient(adapter)}/>);
+ fireEvent.click(screen.getByRole("button",{name:"Review saved extraction state"}));
+ fireEvent.click(await screen.findByRole("button",{name:"Inspect saved job status-job"}));
+ expect(await screen.findByRole("alert",{}, {timeout:3000})).toHaveTextContent("Extraction status unavailable: STORAGE_ERROR.");
+ expect(screen.queryByText(/private source path/)).toBeNull();
+ expect(screen.getByText(/Extraction failed:/)).toBeVisible();
+ fireEvent.click(screen.getByRole("button",{name:"Forget saved job"}));
+ await waitFor(()=>expect(screen.queryByRole("button",{name:"Inspect saved job status-job"})).toBeNull());
+ expect(calls).toContainEqual({command:"forget_local_data_job",input:{job_id:"status-job"}});
+ expect(calls.filter(call=>call.command==="get_local_data_job")).toHaveLength(1);
+ expect(calls.some(call=>call.command==="start_local_data"||call.command==="activate_local_data")).toBe(false);
+});
