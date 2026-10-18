@@ -22,6 +22,14 @@ test('missing files/platforms, mismatched source/commit/tools and partial profil
  for(const patch of [{source_commit:'c'.repeat(40)},{inventory_sha256:'c'.repeat(64)},{tool_version:'0.9.2'},{llvm_tools_version:'22.0.0'},{incomplete_profiles:['truncated']},{clean_source:false},{incomplete_profiles:null},{incomplete_profiles:undefined}])assert.throws(()=>verdict(inventory,[{...rust('linux'),...patch},rust('win32'),typescript],sha));
  assert.throws(()=>verdict(inventory,[{...rust('linux'),files:[{...rust('linux').files[0],source_sha256:'c'.repeat(64)}]}],sha));
 });
+test('missing native entrypoint execution retains a failing full per-file verdict',()=>{
+ const entry={...inventory.files[0],path:'apps/desktop/src-tauri/src/main.rs'};
+ const report=verdict({...inventory,files:[...inventory.files,entry]},[rust('linux'),{...rust('win32'),files:[...rust('win32').files,{path:entry.path,source_sha256:sha,lines:[[1,0]]}]},typescript],sha);
+ assert.equal(report.passes,false);
+ assert.deepEqual(report.errors,['Native entrypoint has no execution evidence: '+entry.path]);
+ assert.equal(report.files.find(file=>file.path===entry.path).passes,false);
+ assert.equal(report.files.length,inventory.files.length+1);
+});
 test('LCOV truncation, overflow, negative/zero line numbers and unexpected ordering fail',()=>{
  assert.deepEqual(lcovLines('SF:/repo/x.rs\nDA:1,0\nDA:2,1\nend_of_record\n'),[{path:'/repo/x.rs',lines:[[1,0],[2,1]]}]);
  for(const text of ['DA:1,1','SF:x\nDA:0,1\nend_of_record','SF:x\nDA:1,-1\nend_of_record','SF:x\nDA:1,9007199254740993\nend_of_record','SF:x\nDA:1,1','SF:x\nSF:y','end_of_record'])assert.throws(()=>lcovLines(text));

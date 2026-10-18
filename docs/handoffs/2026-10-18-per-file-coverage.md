@@ -293,3 +293,16 @@ All raw diagnostic outputs remain local under /tmp/nav-extraction-boundary*.
 
 Coverage normalization additionally rejects lexical checkout escapes explicitly
 instead of treating them as external files; the eight gate tests pass.
+
+Native IPC expansion prepared: 47 deliberately invalid application requests are
+sent through real renderer-to-Rust dispatch, with structured AppError refusals and
+unchanged current-reference assertions. The matrix never opens selection dialogs
+or supplies private paths. Transport/unknown-command failures and unexpected
+success fail the harness. Its local validation regression passes; actual native
+execution remains pending hosted smoke. Existing package helper checks include it.
+
+Missing native entrypoint counters now produce a full failing per-file verdict
+instead of throwing before artifact creation. All 34 coverage/native-helper tests
+pass. Reconstructing retained d4707db reports produces zero missing files, 37 Rust
+files below threshold and the explicit missing-entrypoint error. This remains a
+failing historical measurement; none of the thresholds or executable files changed.

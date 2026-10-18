@@ -52,7 +52,7 @@ export function verdict(inventory,receipts,inventorySha){
   if(!['eligible','declaration_only','excluded'].includes(file.disposition)||!['rust','typescript'].includes(file.language)||!Number.isSafeInteger(file.line_count)||file.line_count<1||!Array.isArray(file.test_line_ranges)||!/^[a-f0-9]{64}$/.test(file.source_sha256))throw new Error('Invalid inventory entry');
   indexed.set(file.path,file);
  }
- const lines=new Map(),seen=new Set(),platforms=new Set();
+ const lines=new Map(),seen=new Set(),platforms=new Set(),errors=[];
  for(const receipt of receipts){
   if(receipt.format_version!==1||receipt.source_commit!==inventory.source_commit||receipt.inventory_sha256!==inventorySha)throw new Error('Coverage commit/inventory mismatch');
   if(!['linux','win32'].includes(receipt.platform)||typeof receipt.source_root!=='string'||!(/^(?:[A-Za-z]:[\\/]|\/)/.test(receipt.source_root)))throw new Error('Invalid native coverage platform/root');
@@ -63,7 +63,7 @@ export function verdict(inventory,receipts,inventorySha){
    const entrypoints=receipt.platform==='win32'?['crates/cli/src/main.rs','apps/desktop/src-tauri/src/main.rs']:['crates/cli/src/main.rs'];
    for(const required of entrypoints){
     const declared=indexed.get(required);
-    if(declared?.disposition==='eligible'&&!receipt.files.some(file=>file.path===required&&file.lines?.some(([line,count])=>count>0&&!declared.test_line_ranges.some(([start,end])=>line>=start&&line<=end))))throw new Error('Native entrypoint has no execution evidence: '+required);
+    if(declared?.disposition==='eligible'&&!receipt.files.some(file=>file.path===required&&file.lines?.some(([line,count])=>count>0&&!declared.test_line_ranges.some(([start,end])=>line>=start&&line<=end))))errors.push('Native entrypoint has no execution evidence: '+required);
    }
    platforms.add(receipt.platform);
   }else if(['typescript-v8','typescript-config-v8'].includes(receipt.kind)){
@@ -83,7 +83,6 @@ export function verdict(inventory,receipts,inventorySha){
    lines.set(file.path,combined);
   }
  }
- const errors=[];
  if(!platforms.has('linux')||!platforms.has('win32'))errors.push('Native Rust Linux and Windows reports are required');
  const files=inventory.files.filter(f=>f.disposition!=='excluded').map(file=>{
   const executable=lines.get(file.path)??new Map(),covered=[...executable.values()].filter(Boolean).length;

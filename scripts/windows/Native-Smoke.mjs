@@ -14,6 +14,7 @@ import { createRequire } from "node:module";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { COMMAND_BOUNDARIES, validateRefusal } from "./native-command-boundaries.mjs";
 import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
@@ -325,6 +326,19 @@ async function run() {
 }
 
 async function smoke(page, response) {
+  await rec.run("invalid native requests preserve structured refusals and current snapshot", async () => {
+    const before = await page.evaluate(() => window.__TAURI_INTERNALS__.invoke("get_reference_view"));
+    for (const test of COMMAND_BOUNDARIES) {
+      const outcome = await page.evaluate(async ({command,args}) => {
+        try { await window.__TAURI_INTERNALS__.invoke(command,args); return {ok:true}; }
+        catch(error) { return {ok:false,error}; }
+      },test);
+      validateRefusal(test,outcome);
+    }
+    const after = await page.evaluate(() => window.__TAURI_INTERNALS__.invoke("get_reference_view"));
+    if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("Invalid requests changed the current imported reference");
+    return { requests: COMMAND_BOUNDARIES.length, current_reference_unchanged: true };
+  });
   await rec.run("actual Tauri CSP header is present and has no data: or remote sources", async () => {
     const csp = cspFromHeaders(response ? response.headers() : {});
     const meta = await page.evaluate(() => document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.getAttribute("content") ?? null);
