@@ -373,3 +373,20 @@ Next thin-adapter subtask, same owner and baseline `c411bd6`: consolidate identi
 HTTP no-store/nosniff response construction in atlas_protocol and test its transport
 headers/body/refusals. Asset authorization and integrity remain in application
 services; synthetic response bytes cannot establish gameplay availability.
+
+Hosted `b2ff237`, run 39149391518 / merge source `4fd076dd`: both native
+collectors and TypeScript succeeded. Returning through Rust's native entrypoint
+retains desktop counters; the combined verdict has no evidence errors or missing
+files. It still correctly fails 34 Rust files below threshold, prior to the local
+expansion commits. CI39149391500, source39149391517 and packaging39149391530
+succeeded on that head. Original raw artifacts and full verdict remain retained;
+local verdict /tmp/nav-coverage-fourth/verdict/per-file-verdict.json.
+
+Thin atlas transport refactor preserves validated application providers, sharing
+method/query refusal and no-store/nosniff response construction. Independent review
+found a vacuous missing-asset query test; replaced its query claim with a positive
+exact opaque-path provider response followed by same-path query404 and POST405
+assertions that panic if the provider is consulted. Both production adapters use
+the guard before their unchanged application integrity checks. Read-only reviewer
+confirmed resolution and no remaining findings. Native compilation/execution of
+new adapter tests remains pending hosted checks; no local native pass is claimed.
