@@ -12,3 +12,10 @@ reference view and checks that demo/unverified capability labels are preserved.
 Independent read-only review and exact-head CI/source/packaging precede merge.
 Next: refresh the separate coverage branch after this fix reaches main.
 No release, live evidence or acceptance promotion was performed.
+
+First refreshed Windows CI exposed the independent lifecycle journal race; that
+failed head was not merged. Separate PR #202 now merged as `3288fa0` after full
+exact-head checks and review. This branch is refreshed onto it without changing
+the version correction. Rerun exact-head CI/source/package and final read-only
+review before merging. Prior 414-test local result is historical, not a claim
+about the new head's full suite.
