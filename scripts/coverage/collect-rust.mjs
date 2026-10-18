@@ -1,8 +1,9 @@
 // Native first-party instrumentation. Every process is repository-owned or a
 // declared synthetic workload; this collector never selects game/private inputs.
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
-import {spawnSync,execFileSync} from 'node:child_process';import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
 import {verifyBuildConfiguration} from '../measure-continuation.mjs';
+import {loggedProcess} from './process-output.mjs';
 import {inventory} from './inventory.mjs';import {coverageEnvironment} from './rust-environment.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -24,13 +25,13 @@ export function collectRust(destination){
   RUSTFLAGS:process.platform==='linux'?'-C llvm-args=-runtime-counter-relocation':'',LLVM_PROFILE_FILE_NAME:process.platform==='linux'?'nav-%p-%c.profraw':'nav-%p-%m.profraw'};
  for(const key of ['CARGO_ENCODED_RUSTFLAGS','RUSTC_WORKSPACE_WRAPPER','RUSTC_WRAPPER','LLVM_PROFILE_FILE','CARGO_BUILD_RUSTFLAGS'])delete environment[key];
  const commands=[];let instrumented=environment;
- function run(name,exe,args,{env=environment,cwd=root,expected=0,timeout=2400000}={}){
-  const fd=fs.openSync(path.join(logs,name+'.log'),'wx');let result;
-  try{result=spawnSync(exe,args,{cwd,env,stdio:['ignore',fd,fd],timeout,windowsHide:true});}finally{fs.closeSync(fd);}
+ function run(name,exe,args,{env=environment,cwd=root,expected=0,timeout=2400000,stdoutOnly=false}={}){
+  console.log(`Native coverage: ${name}`);
+  const {process:result,text}=loggedProcess(exe,args,{log:path.join(logs,name+'.log'),cwd,env,timeout,windowsHide:true,stdoutOnly});
   commands.push({name,executable:path.basename(exe),arguments:args,expected_exit_code:expected,exit_code:result.status,signal:result.signal,error:result.error?.code??null});
   fs.writeFileSync(path.join(destination,'commands.json'),JSON.stringify(commands,null,2)+'\n');
   if(result.error||result.status!==expected)throw new Error(`Native coverage command failed: ${name}`);
-  return fs.readFileSync(path.join(logs,name+'.log'),'utf8');
+  return text;
  }
  const common=['--include-build-script','--no-default-ignore-filename-regex','--ignore-filename-regex','(/vendor/|/tests/|/rustc/|/registry/|/target/)'];
  const reportFiles=[];let completedReceipt=null;
@@ -46,7 +47,7 @@ export function collectRust(destination){
   if(!toolsVersion.includes('LLVM version '+llvmVersion))throw new Error('LLVM tools must match rustc');
   // No --no-clean here: collection starts from a new build/profile directory.
   run('workspace-tests','cargo',['llvm-cov','test','--locked','--workspace','--all-targets','--no-report']);
-  instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env']))};
+  instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env'],{stdoutOnly:true}))};
   if(path.resolve(instrumented.CARGO_LLVM_COV_TARGET_DIR)!==target||path.resolve(instrumented.CARGO_LLVM_COV_BUILD_DIR)!==target)throw new Error('Instrumentation escaped its owned build directory');
   cargoExample('schema-export','azeroth-core','export_content_schema');
   cargoExample('workflow-verification','azeroth-app','workflow_performance',['--verify']);

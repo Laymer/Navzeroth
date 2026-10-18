@@ -145,3 +145,32 @@ inert shell-assignment parsing, unknown/duplicate/truncated expressions and PID
 bounds/normal-close construction. Three existing build-configuration guard tests
 also pass. Native smoke and collector end-to-end remain unverified locally (Linux
 lacks dbus development metadata; no native Windows Rust toolchain).
+
+First hosted Coverage run 39136215077 at head `8d94b35` / synthetic merge source
+`526c5d0`: TypeScript job passed. Linux all-target native workspace tests passed
+1,325 tests, four ignored, 182 suites. Collector then failed because combined
+stdout/stderr inserted cargo-llvm-cov's informational message into the inert
+assignment parser. Raw profiles/logs/manifest were retained in artifact
+`coverage-rust-Linux-526c5d05b2f60414cd1dd133455376e48aff0b64`; no Rust success
+receipt or accepted coverage result was produced. Windows collector is still
+running as this update is written. Separate required Windows Clippy failed on
+an unused mutable binding in the synthetic research test directory helper.
+
+Fixes: machine-readable environment output now uses a separate bounded stdout
+pipe while stderr stays in retained logs; two subprocess regressions cover stderr
+contamination and nonzero results. Actual pinned cargo-llvm-cov show-env now parses
+successfully with an owned target directory. Directory creation is cfg-specific,
+preserving Unix0700 without a Windows mutable binding. Three affected research
+boundary tests and app all-target Clippy pass locally. Thirty-two tooling/helper/
+build-guard tests pass; syntax, Rust formatting and whitespace checks pass.
+
+Additional actual Rust expansion: two party assessment tests pass for unavailable,
+restricted, unsupported, stale/uncertain reasons, phase order, blocked states and
+preserved catch-up alternatives. Three session workflow tests pass, including
+selected text/SavedVariables parity, zero duration, duplicate idempotence, invalid
+key/global/missing file/inert-code refusal and unchanged snapshot/history.
+Nineteen receipt tests pass, including four new format-three canonical roundtrip,
+wrong/revoked signer keys, signature/role/duplicate assembly, unknown version,
+altered independent production/source/delivery/frozen-target expectations and
+pending-target refusal. Local-data receipt Clippy and app all-target Clippy pass.
+These tests use synthetic fixtures/keys only and establish no operator acceptance.
