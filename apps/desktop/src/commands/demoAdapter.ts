@@ -80,7 +80,7 @@ export const demoAdapter: CommandAdapter = {
         case "clear_current_plan":throw {code:"PROVIDER_UNAVAILABLE",message:"Persisted local settings and saved plans require the native desktop.",retryable:false};
         case "get_app_status":
           return {
-            version: "0.6.0",
+            version: desktopPackage.version,
             data_mode: "demo",
             active_profile: DEMO_PROFILE_ID,
             capabilities: { addon_transport: "unverified", live_position: "unverified" },

@@ -174,3 +174,12 @@ wrong/revoked signer keys, signature/role/duplicate assembly, unknown version,
 altered independent production/source/delivery/frozen-target expectations and
 pending-target refusal. Local-data receipt Clippy and app all-target Clippy pass.
 These tests use synthetic fixtures/keys only and establish no operator acceptance.
+
+Windows native collector also stopped at the same environment-parser failure
+after its workspace-test command completed successfully (job 117701143049).
+No successful native coverage collection is claimed. Both original raw artifacts
+remain in run 39136215077. Refreshed this branch to main `02cbfd7`, preserving
+coverage status and merge receipts; PR #201's package-metadata version correction
+and regression are now included. Conflicts were limited to STATUS prose.
+Next: fresh complete collector runs, resolve actual per-file Rust gaps, final
+independent test-quality review, then the required gate rule/version/release work.

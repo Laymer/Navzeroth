@@ -34,3 +34,10 @@ Next: exact-head CI, native Windows packaging and both source platforms/parity;
 merge only after successful checks and final review. Refresh PR #201 and the
 coverage branch afterward. Coverage, development RC and Pages remain incomplete;
 no publication or acceptance claim is made.
+
+Merge receipt: PR #202 merged 2026-10-18T14:20:51Z as
+`3288fa096901e7d7dd3996ca8eb519048135353c`, reviewed head
+`26c1d1aa993bfdb2d182fd41d87e90676a652501`. Both read-only reviewers confirmed
+no remaining findings. CI 39134364783 passed all nine checks; native Windows
+packaging 39134364699 and source 39134364707 passed (both platforms/parity).
+No ordinary-Windows operator or live acceptance is inferred.

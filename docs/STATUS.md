@@ -2,6 +2,12 @@
 
 Updated: 2026-10-18.
 
+Independent browser-version correction [PR #201](https://github.com/Laymer/Navzeroth/pull/201)
+merged at `02cbfd7` after both read-only reviews, all nine exact-head checks,
+Windows packaging and both source platforms/parity. Status now uses package
+metadata; no capability/acceptance promotion.
+[Handoff](handoffs/2026-10-18-browser-demo-version.md).
+
 Independent UI correction [PR #199](https://github.com/Laymer/Navzeroth/pull/199)
 merged at `506a9cb` after independent review, all nine exact-head checks and source
 parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
@@ -9,13 +15,14 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 ## Current task
 
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
-`test/continuation-coverage`, refreshed to main `3288fa0`. Engineering stages 1–9
+`test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
 are in progress. Latest clean-source UI run at `9b28435`: 512 tests pass, 95.73% overall lines;
 raw reconstruction confirms all 66 executable TS/TSX files meet 90%, with 22
 explicit declaration-only files. This is only the TypeScript portion. Native Linux/Windows
-coverage and strict worker-profile completion remain unfinished. Independent
-product correction #201 still needs integration and final branch refresh.
+coverage and strict worker-profile completion remain unfinished. First native
+collector runs passed workspace tests, then failed on stderr/stdout mixing; the
+collector is corrected for a fresh run. PR #201 and #202 are integrated.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
