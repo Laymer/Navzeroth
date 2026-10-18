@@ -42,9 +42,12 @@ comparison. [Handoff/receipt](docs/handoffs/2026-10-18-extraction-lifecycle.md).
 Continuation 3 merged as PR #193 at `b74549f` after independent review, all nine
 exact-head checks and source workflow. Native capture and pure parser results are
 recorded separately from unverified native Rust cache-stage end-to-end behavior.
-Active: continuation 4, gameplay projections and bound research guide facts;
-[claim](docs/claims/2026-10-18-gameplay-facts.md),
-[handoff](docs/handoffs/2026-10-18-gameplay-facts.md).
+Continuation 4 merged as PR #194 at `b590eae` after independent review, all nine
+exact-head checks and source workflow. Research mappings/facts do not grant
+availability or acceptance.
+Active: continuation 5, private media and bounded research tooltips;
+[claim](docs/claims/2026-10-18-media-tooltips.md),
+[handoff](docs/handoffs/2026-10-18-media-tooltips.md).
 Later input adapters, expanded projections, media, guarded gameplay consumers,
 reviewed inventory, performance, coverage, publication and Pages remain pending.
 
