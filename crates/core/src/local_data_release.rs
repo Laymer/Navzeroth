@@ -248,18 +248,20 @@ pub fn validate_payload(payload: &ReceiptPayload) -> Result<(), &'static str> {
             return Err("Invalid receipt binding");
         }
     }
-    if payload
-        .domains
-        .keys()
-        .map(String::as_str)
-        .collect::<BTreeSet<_>>()
-        != DOMAINS.into_iter().collect()
+    validate_inventory_acceptance(&payload.domains, &payload.acceptance)
+}
+/// Shared evidence invariants; target/version/signature rules remain format-specific.
+pub(crate) fn validate_inventory_acceptance(
+    domains: &BTreeMap<String, InventoryProof>,
+    acceptance: &BTreeMap<String, AcceptanceProof>,
+) -> Result<(), &'static str> {
+    if domains.keys().map(String::as_str).collect::<BTreeSet<_>>() != DOMAINS.into_iter().collect()
     {
         return Err("All nine private inventory domains are required");
     }
     let mut records = 0u64;
     let mut units = 0u64;
-    for proof in payload.domains.values() {
+    for proof in domains.values() {
         records += u64::from(proof.records);
         units += u64::from(proof.units);
         if proof.records == 0 || proof.units == 0 || proof.units > 4096 {
@@ -280,7 +282,7 @@ pub fn validate_payload(payload: &ReceiptPayload) -> Result<(), &'static str> {
     if records > 250_000 || units > 4096 {
         return Err("Private gameplay inventory exceeds capacity");
     }
-    if payload.acceptance.len() != LIVE_CHECKS.len() + WINDOWS_CHECKS.len() {
+    if acceptance.len() != LIVE_CHECKS.len() + WINDOWS_CHECKS.len() {
         return Err("Mandatory acceptance incomplete");
     }
     for (id, method) in LIVE_CHECKS.iter().map(|id| (*id, Method::LiveGame)).chain(
@@ -288,10 +290,7 @@ pub fn validate_payload(payload: &ReceiptPayload) -> Result<(), &'static str> {
             .iter()
             .map(|id| (*id, Method::InteractiveWindows)),
     ) {
-        let proof = payload
-            .acceptance
-            .get(id)
-            .ok_or("Mandatory acceptance missing")?;
+        let proof = acceptance.get(id).ok_or("Mandatory acceptance missing")?;
         if proof.method != method
             || proof.status != Status::Pass
             || !is_sha256(&proof.evidence_sha256)

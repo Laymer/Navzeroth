@@ -231,7 +231,7 @@ fn capacities_and_unknown_versions_refuse_without_erasing_records() {
     assert_eq!(db.jobs().unwrap().len(), MAX_JOBS);
     drop(db);
     let sql = rusqlite::Connection::open(dir.0.join("index.sqlite3")).unwrap();
-    sql.pragma_update(None, "user_version", 2).unwrap();
+    sql.pragma_update(None, "user_version", 3).unwrap();
     drop(sql);
     assert!(LocalDataIndex::open(&dir.0.join("index.sqlite3")).is_err());
     let sql = rusqlite::Connection::open(dir.0.join("index.sqlite3")).unwrap();
@@ -243,7 +243,7 @@ fn capacities_and_unknown_versions_refuse_without_erasing_records() {
     assert_eq!(
         sql.pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
             .unwrap(),
-        2
+        3
     );
 }
 #[test]
@@ -324,4 +324,44 @@ fn preparation_is_durable_cancellable_and_never_reuses_unbound_rows() {
             .is_err()
     );
     assert_eq!(db.status("preparing").unwrap().completed, 1);
+}
+#[test]
+fn version_one_migration_preserves_catalog_activation_and_isolates_delivery_history() {
+    let dir = Temp::new();
+    let path = dir.0.join("index.sqlite3");
+    let conn = rusqlite::Connection::open(&path).unwrap();
+    conn.execute_batch("CREATE TABLE selections(id TEXT PRIMARY KEY, document TEXT NOT NULL); CREATE TABLE jobs(id TEXT PRIMARY KEY, request TEXT NOT NULL, checkpoint TEXT NOT NULL, status TEXT NOT NULL); CREATE TABLE activations(scope TEXT NOT NULL,generation INTEGER NOT NULL,catalog TEXT NOT NULL,PRIMARY KEY(scope,generation)); PRAGMA application_id=1313621041;PRAGMA user_version=1;").unwrap();
+    let scope = "a".repeat(64);
+    let first = "b".repeat(64);
+    let second = "c".repeat(64);
+    conn.execute(
+        "INSERT INTO activations VALUES(?1,1,?2)",
+        rusqlite::params![scope, first],
+    )
+    .unwrap();
+    drop(conn);
+    let mut db = LocalDataIndex::open(&path).unwrap();
+    assert_eq!(
+        db.active(&scope).unwrap().catalog_sha256,
+        Some(first.clone())
+    );
+    assert_eq!(db.delivery_active(&scope).unwrap().generation, 0);
+    assert!(db.activate_delivery(&scope, &first, 0, true).is_err());
+    let active = db.activate_delivery(&scope, &first, 0, false).unwrap();
+    assert_eq!(active.generation, 1);
+    assert!(!active.verified_for_planning);
+    assert!(db.activate_delivery(&scope, &second, 0, false).is_err());
+    assert_eq!(
+        db.delivery_active(&scope).unwrap().delivery_sha256,
+        Some(first.clone())
+    );
+    db.activate_delivery(&scope, &second, 1, false).unwrap();
+    db.activate_delivery(&scope, &first, 2, true).unwrap();
+    assert_eq!(db.delivery_active(&scope).unwrap().generation, 3);
+    assert_eq!(db.active(&scope).unwrap().generation, 1);
+    drop(db);
+    assert_eq!(
+        dir.db().delivery_active(&scope).unwrap().delivery_sha256,
+        Some(first)
+    );
 }

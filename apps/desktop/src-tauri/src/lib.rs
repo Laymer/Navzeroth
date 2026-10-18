@@ -146,6 +146,57 @@ async fn get_local_data_inventory(
     })
     .await
 }
+#[tauri::command(rename_all = "snake_case")]
+async fn prepare_research_delivery(
+    state: State<'_, LocalData>,
+    catalog: String,
+    locale: String,
+) -> Result<String, AppError> {
+    local_data_blocking(state, move |service| {
+        service.prepare_delivery(&catalog, &locale)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_research_delivery_page(
+    state: State<'_, LocalData>,
+    revision: String,
+    domain: String,
+    offset: u32,
+    limit: u32,
+) -> Result<azeroth_local_data::delivery::Page, AppError> {
+    local_data_blocking(state, move |service| {
+        service.delivery_page(&revision, &domain, offset, limit)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_research_delivery_activation(
+    state: State<'_, LocalData>,
+    revision: String,
+) -> Result<azeroth_core::local_data_delivery::Activation, AppError> {
+    local_data_blocking(state, move |service| service.delivery_active(&revision)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn activate_research_delivery(
+    state: State<'_, LocalData>,
+    revision: String,
+    expected: u64,
+    rollback: bool,
+) -> Result<azeroth_core::local_data_delivery::Activation, AppError> {
+    local_data_blocking(state, move |service| {
+        service.activate_delivery(&revision, expected, rollback)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn diff_research_delivery(
+    state: State<'_, LocalData>,
+    before: String,
+    after: String,
+) -> Result<azeroth_local_data::delivery::Diff, AppError> {
+    local_data_blocking(state, move |service| service.delivery_diff(&before, &after)).await
+}
 async fn blocking<T: Send + 'static>(
     state: State<'_, Application>,
     call: impl FnOnce(&SnapshotApplication) -> Result<T, AppError> + Send + 'static,
@@ -869,6 +920,11 @@ pub fn run() {
                 forget_local_data_job,
                 get_local_data_activation,
                 activate_local_data,
+                prepare_research_delivery,
+                get_research_delivery_page,
+                get_research_delivery_activation,
+                activate_research_delivery,
+                diff_research_delivery,
                 list_local_submissions,
                 submit_local_observation,
                 change_local_submission,

@@ -20,7 +20,9 @@ pub struct ExpectedBindings<'a> {
     pub metadata_sha256: &'a str,
 }
 
-fn canonical<T: serde::Serialize + serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T> {
+pub(crate) fn canonical<T: serde::Serialize + serde::de::DeserializeOwned>(
+    bytes: &[u8],
+) -> Result<T> {
     let value: T = serde_json::from_value(azeroth_core::strict_json::value(bytes, MAX_RECEIPT)?)
         .map_err(|_| "Invalid receipt or policy schema")?;
     if serde_json::to_vec(&value).map_err(|_| "Canonical encoding failed")? != bytes {
@@ -41,7 +43,7 @@ fn payload_bytes(payload: &ReceiptPayload) -> Result<Vec<u8>> {
     message.extend(bytes);
     Ok(message)
 }
-fn decode_hex<const N: usize>(text: &str) -> Result<[u8; N]> {
+pub(crate) fn decode_hex<const N: usize>(text: &str) -> Result<[u8; N]> {
     if text.len() != N * 2
         || !text
             .bytes()
@@ -56,7 +58,7 @@ fn decode_hex<const N: usize>(text: &str) -> Result<[u8; N]> {
     }
     Ok(bytes)
 }
-fn encode_hex(bytes: &[u8]) -> String {
+pub(crate) fn encode_hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
 }
 /// Delivery modes whose local content is attested by signed receipts.

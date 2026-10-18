@@ -437,6 +437,68 @@ fn project_and_projection_verify_succeed_on_a_synthetic_store() {
         facts,
     ]);
     assert_eq!(verified.status.code(), Some(0));
+    let delivered = cli(&[
+        "local-data",
+        "delivery-build",
+        "--destination",
+        dest,
+        "--projection",
+        projection,
+    ]);
+    assert_eq!(delivered.status.code(), Some(0));
+    let delivered: serde_json::Value = serde_json::from_slice(&delivered.stdout).unwrap();
+    let delivery = delivered["delivery_sha256"].as_str().unwrap();
+    let lookup = cli(&[
+        "local-data",
+        "delivery-page",
+        "--destination",
+        dest,
+        "--delivery",
+        delivery,
+        "--domain",
+        "SpellName",
+        "--offset",
+        "0",
+        "--limit",
+        "200",
+    ]);
+    assert_eq!(lookup.status.code(), Some(0));
+    let lookup: serde_json::Value = serde_json::from_slice(&lookup.stdout).unwrap();
+    assert!(lookup["total"].is_null());
+    assert_eq!(lookup["guard"]["actionable_advice"], false);
+    let selected = cli(&[
+        "local-data",
+        "delivery-activate",
+        "--destination",
+        dest,
+        "--delivery",
+        delivery,
+        "--expected",
+        "0",
+    ]);
+    assert_eq!(selected.status.code(), Some(0));
+    let stale = cli(&[
+        "local-data",
+        "delivery-activate",
+        "--destination",
+        dest,
+        "--delivery",
+        delivery,
+        "--expected",
+        "0",
+    ]);
+    assert_eq!(stale.status.code(), Some(1));
+    let active = cli(&[
+        "local-data",
+        "delivery-active",
+        "--destination",
+        dest,
+        "--delivery",
+        delivery,
+    ]);
+    let active: serde_json::Value = serde_json::from_slice(&active.stdout).unwrap();
+    assert_eq!(active["generation"], 1);
+    assert_eq!(active["delivery_sha256"], delivery);
     let tooltip = cli(&[
         "local-data",
         "tooltip",

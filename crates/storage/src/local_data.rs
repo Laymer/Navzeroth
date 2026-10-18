@@ -61,7 +61,7 @@ impl LocalDataIndex {
             .query_row("SELECT count(*) FROM sqlite_master", [], |r| r.get(0))
             .db()?;
         if !((application == 0 && version == 0 && tables == 0)
-            || (application == APPLICATION_ID && version == 1))
+            || (application == APPLICATION_ID && matches!(version, 1 | 2)))
         {
             return Err(invalid("Unsupported private lifecycle database"));
         }
@@ -83,6 +83,11 @@ impl LocalDataIndex {
                 CREATE TABLE jobs(id TEXT PRIMARY KEY, request TEXT NOT NULL, checkpoint TEXT NOT NULL, status TEXT NOT NULL);
                 CREATE TABLE activations(scope TEXT NOT NULL, generation INTEGER NOT NULL, catalog TEXT NOT NULL, PRIMARY KEY(scope,generation));
                 PRAGMA application_id=1313621041; PRAGMA user_version=1; COMMIT;").db()?;
+        }
+        if version < 2 {
+            conn.execute_batch("BEGIN IMMEDIATE;
+                CREATE TABLE delivery_activations(scope TEXT NOT NULL, generation INTEGER NOT NULL, delivery TEXT NOT NULL, PRIMARY KEY(scope,generation));
+                PRAGMA user_version=2; COMMIT;").db()?;
         }
         Ok(Self { conn })
     }
@@ -402,10 +407,31 @@ impl LocalDataIndex {
         Ok(())
     }
     pub fn active(&self, scope: &str) -> Result<Activation> {
+        self.active_in(scope, false)
+    }
+    pub fn delivery_active(
+        &self,
+        scope: &str,
+    ) -> Result<azeroth_core::local_data_delivery::Activation> {
+        let active = self.active_in(scope, true)?;
+        Ok(azeroth_core::local_data_delivery::Activation {
+            format_version: 1,
+            scope: active.scope,
+            generation: active.generation,
+            delivery_sha256: active.catalog_sha256,
+            verified_for_planning: false,
+        })
+    }
+    fn active_in(&self, scope: &str, delivery: bool) -> Result<Activation> {
+        let (table, column) = if delivery {
+            ("delivery_activations", "delivery")
+        } else {
+            ("activations", "catalog")
+        };
         if !azeroth_core::local_data::is_sha256(scope) {
             return Err(invalid("Invalid activation scope"));
         }
-        let row: Option<(u32,String)> = self.conn.query_row("SELECT generation,catalog FROM activations WHERE scope=?1 ORDER BY generation DESC LIMIT 1", [scope], |r| Ok((r.get(0)?,r.get(1)?))).optional().db()?;
+        let row: Option<(u32,String)> = self.conn.query_row(&format!("SELECT generation,{column} FROM {table} WHERE scope=?1 ORDER BY generation DESC LIMIT 1"), [scope], |r| Ok((r.get(0)?,r.get(1)?))).optional().db()?;
         if row.as_ref().is_some_and(|(generation, digest)| {
             *generation == 0 || *generation > 1024 || !azeroth_core::local_data::is_sha256(digest)
         }) {
@@ -427,6 +453,37 @@ impl LocalDataIndex {
         expected: u64,
         rollback: bool,
     ) -> Result<Activation> {
+        self.activate_in(scope, digest, expected, rollback, false)
+    }
+    pub fn activate_delivery(
+        &mut self,
+        scope: &str,
+        digest: &str,
+        expected: u64,
+        rollback: bool,
+    ) -> Result<azeroth_core::local_data_delivery::Activation> {
+        let active = self.activate_in(scope, digest, expected, rollback, true)?;
+        Ok(azeroth_core::local_data_delivery::Activation {
+            format_version: 1,
+            scope: active.scope,
+            generation: active.generation,
+            delivery_sha256: active.catalog_sha256,
+            verified_for_planning: false,
+        })
+    }
+    fn activate_in(
+        &mut self,
+        scope: &str,
+        digest: &str,
+        expected: u64,
+        rollback: bool,
+        delivery: bool,
+    ) -> Result<Activation> {
+        let (table, column) = if delivery {
+            ("delivery_activations", "delivery")
+        } else {
+            ("activations", "catalog")
+        };
         if !azeroth_core::local_data::is_sha256(scope)
             || !azeroth_core::local_data::is_sha256(digest)
         {
@@ -438,7 +495,7 @@ impl LocalDataIndex {
             .db()?;
         let current: u32 = tx
             .query_row(
-                "SELECT coalesce(max(generation),0) FROM activations WHERE scope=?1",
+                &format!("SELECT coalesce(max(generation),0) FROM {table} WHERE scope=?1"),
                 [scope],
                 |r| r.get(0),
             )
@@ -449,7 +506,7 @@ impl LocalDataIndex {
         if rollback {
             let exists: bool = tx
                 .query_row(
-                    "SELECT EXISTS(SELECT 1 FROM activations WHERE scope=?1 AND catalog=?2)",
+                    &format!("SELECT EXISTS(SELECT 1 FROM {table} WHERE scope=?1 AND {column}=?2)"),
                     params![scope, digest],
                     |r| r.get(0),
                 )
@@ -459,7 +516,7 @@ impl LocalDataIndex {
             }
         }
         tx.execute(
-            "INSERT INTO activations VALUES(?1,?2,?3)",
+            &format!("INSERT INTO {table} VALUES(?1,?2,?3)"),
             params![scope, current + 1, digest],
         )
         .db()?;

@@ -158,6 +158,7 @@ impl Store {
                 "inputs",
                 "guide-facts",
                 "media",
+                "deliveries",
                 "lifecycle.sqlite3",
                 "lifecycle.sqlite3-journal",
             ]
@@ -211,6 +212,7 @@ impl Store {
             "inputs",
             "guide-facts",
             "media",
+            "deliveries",
         ] {
             let path = root.join(name);
             if !path.exists() {

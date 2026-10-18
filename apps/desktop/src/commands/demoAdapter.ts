@@ -140,6 +140,11 @@ export const demoAdapter: CommandAdapter = {
         case "start_local_data":
         case "get_local_data_job":
         case "cancel_local_data_job":
+        case "prepare_research_delivery":
+        case "get_research_delivery_page":
+        case "get_research_delivery_activation":
+        case "activate_research_delivery":
+        case "diff_research_delivery":
         case "get_local_data_inventory":
         case "export_diagnostics":
         case "preview_acquisition_route":

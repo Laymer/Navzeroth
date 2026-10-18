@@ -6,3 +6,8 @@
 .ui-field > textarea { width: min(100%, 50rem); }
 .snapshot-import .ui-field label { margin: 0; }
 .snapshot-import .ui-panel .ui-panel { margin-inline: 0; }
+
+.research-delivery { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.research-delivery pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.research-delivery table { width: 100%; table-layout: fixed; }
+.research-delivery td { vertical-align: top; overflow-wrap: anywhere; }
