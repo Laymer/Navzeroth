@@ -20,8 +20,8 @@ packs/evidence. [Exact inventory and clearing conditions](releases/2026-10-18-bl
 **1.0.0 program (ADR [0006](decisions/0006-v1-program.md), 2026-10-17).** The owner
 re-targeted 1.0.0 to the first stable live build after the 4 Nov 2026 launch and a
 declared slice (Human, levels 1-20, Northshire/Elwynn/Westfall/Redridge, the
-Deadmines, every Human class, solo and duo), with hybrid delivery and owner-reported
-source grants. Tasks V0.1 to V6.2 are tracked in the root [TODO.md](../TODO.md).
+Deadmines, every Human class, solo and duo), with hybrid delivery and local-only sources (ADR 0006 §11; the earlier
+owner-reported grant path was withdrawn). Tasks V0.1 to V6.2 are tracked in the root [TODO.md](../TODO.md).
 V0 (owner and sole writer Claude Code, Opus 5.5; baseline `3b19812`; branch
 `docs/v1-program`; claim [2026-10-17-v0](claims/2026-10-17-v0.md)) published 0.9.2
 and recorded the ADR; see the [V0 handoff](handoffs/2026-10-17-v0.md). The 0.9.2
@@ -32,9 +32,9 @@ program (ADR [0005](decisions/0005-v092-program.md), G1 to G8) is complete.
 receipt: [0.9.2 publication record](handoffs/2026-10-17-v0.9.2-publication.md). The
 previous prerelease, 0.9.1 (2026-10-16, commit `92f3f51`), has its own
 [publication record](handoffs/2026-10-16-v0.9.1-publication.md). The interrupted 0.9.0
-publication was superseded by 0.9.1 and is not claimed. Release readiness reports
+publication was superseded by 0.9.1 and is not claimed. At 0.9.2 publication, readiness reported
 publication allowed, stable and candidate readiness false, 66 blockers (the same
-count at 0.9.1 and 0.9.2),
+count at 0.9.1 and 0.9.2; historical, now 69),
 zero verified evidence files and zero verified content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
 Private research catalogs remain outside public assets.
 

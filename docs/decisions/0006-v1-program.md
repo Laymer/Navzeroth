@@ -156,8 +156,10 @@ metadata read on 2026-10-17; Blizzard's public version list reports the same for
 extraction and projection on the same terms as 70425 (ADR 0005 §3): development
 input only, never a release target, never relabelled, `target_tuple_matches` false,
 no nearest-build fallback. The admitted local-data builds are listed once in
-`ADMITTED_BUILDS` (`crates/local-data/src/metadata.rs`). The in-game addon does not
-admit 70450 yet: its admission waits for the interface number read from the client.
+`ADMITTED_BUILDS` (`crates/local-data/src/metadata.rs`). At the time of this amendment the in-game addon did not admit 70450; its
+admission awaited the interface number read from the client. **Superseded by
+PR #190** (merged `2e85981`): the owner reported interface 16001, and the addon
+now admits 70450 as development-unverified. This supplies no live acceptance.
 
 ### 13. Amendment 2026-10-18: early development RC
 

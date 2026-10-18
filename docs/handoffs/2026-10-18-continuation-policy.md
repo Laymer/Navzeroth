@@ -41,3 +41,10 @@ review and current-head hosted checks are required before merge.
 Continuation 2: durable extraction lifecycle. Inspect existing worker/store and
 app orchestration, claim a new branch from reconciled main, implement versioned
 source-bound checkpoints and atomic activation/rollback with failure tests.
+
+## Independent review and PR
+
+Draft PR: https://github.com/Laymer/Navzeroth/pull/191.
+Read-only reviewer `/root/review_policy` found three documentation consistency
+issues; all were corrected and re-reviewed with no remaining actionable findings.
+See [review record](../reviews/2026-10-18-continuation-policy.md).
