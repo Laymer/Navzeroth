@@ -8,6 +8,19 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
+**Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
+`test/continuation-coverage`, refreshed to main `ac114c8`. Engineering stages 1–9
+have merged. Inventory, hash-bound raw-report validation and targeted expansion
+are in progress. Latest full UI run: 487 tests pass, 90.93% overall line coverage,
+ten files below 90%; this does not satisfy the per-file gate. Native Linux/Windows
+coverage and strict worker-profile completion remain unfinished. Independent
+product corrections #201 and #202 must merge before final branch refresh.
+[Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
+
+Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
+at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
+and both source platforms/parity. Historical continuation 9 details follow.
+
 **Continuation 9 — performance and release materials:** Codex `/root`, sole writer,
 branch `feat/continuation-performance-materials`, baseline `d34b417` (continuation 8
 pending). [Claim](claims/2026-10-18-performance-materials.md),

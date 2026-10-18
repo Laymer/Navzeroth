@@ -47,3 +47,10 @@ The collector now presents that expression with unchanged offsets/source maps as
 an expression statement. A regression executes the actual configuration, requires
 nonempty measured statements, then verifies all-zero V8 counts remain zero. This
 adds executable accounting; it does not synthesize hits or exclude source.
+
+Second clean-source collector run at `1f39b6e`: all 487 UI tests pass; V8 reports
+90.93% overall lines and ten source files below 90%, so exits 1. The configuration
+receipt now contains actual default-export statement coverage. Subsequent focused
+media/input tests (seven) and facts-tool tests (four) pass, as do typecheck/lint:
+revision-bound pagination, unsafe image URL refusal, saved selection scope,
+forgetting selected paths and clearing derived views. Full rerun follows commit.

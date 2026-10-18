@@ -30,3 +30,30 @@ it("binds subsequent guide findings to the replay digest and clears findings whe
  await vi.waitFor(()=>expect(screen.queryByRole("button",{name:"Next guide finding page"})).not.toBeInTheDocument());
  fireEvent.change(screen.getByRole("combobox",{name:"Human research guide class"}),{target:{value:"Mage"}});expect(screen.queryByText(/201 unverified/)).not.toBeInTheDocument();
 });
+it("restores scoped materials, pages exact IDs and clears imported views when the pack is forgotten",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});
+  const value=command==="get_research_delivery_manifest"?manifest:
+   command==="list_local_materials"?[{id:"pack-opaque",kind:"authored_pack"},{id:"guide-opaque",kind:"guide"},{id:"cache-opaque",kind:"hotfix_cache"}]:
+   command==="build_local_inventory"?inventory:
+   command==="get_local_inventory_summary"?{revision:inventory,acceptance_ready:false,domains:[{domain:"quests",imported_count:2,source_available:true,independently_required_count:null,independently_complete:false,gaps:[]}]}:
+   command==="get_local_inventory_page"?{revision:inventory,domain:"quests",offset:(input as {offset:number}).offset,total:2,next_offset:(input as {offset:number}).offset===0?1:null,source_available:true,independently_complete:false,records:[{id:(input as {offset:number}).offset===0?"synthetic-first":"synthetic-second",kind:"synthetic",source_sha256:catalog}]}:null;
+  return Promise.resolve(value as never);
+ }};
+ render(<ResearchFactsTools client={createClient(adapter)} revision={revision} catalog={catalog} preset="small"/>);
+ fireEvent.click(await screen.findByRole("button",{name:"Review saved guide and pack selections"}));
+ fireEvent.click(await screen.findByRole("button",{name:"Use material pack-opa"}));
+ expect(screen.queryByText(/cache-opaque/)).toBeNull();
+ fireEvent.click(screen.getByRole("button",{name:"Build exact nine-domain inventory"}));
+ fireEvent.click(await screen.findByRole("button",{name:"Inspect exact record IDs"}));
+ await screen.findByText("synthetic-first");fireEvent.click(screen.getByRole("button",{name:"Next exact ID page"}));
+ await screen.findByText("synthetic-second");expect(screen.queryByText("synthetic-first")).toBeNull();
+ expect(calls).toContainEqual({command:"get_local_inventory_page",input:{revision:inventory,domain:"quests",offset:1,limit:200,authored:"pack-opaque"}});
+ fireEvent.click(screen.getByRole("button",{name:"Forget selected authored pack"}));
+ await screen.findByText(/immutable imported revisions remain intact/);
+ expect(screen.queryByText("synthetic-second")).toBeNull();
+ fireEvent.click(screen.getByRole("button",{name:"Use material guide-op"}));
+ fireEvent.click(screen.getByRole("button",{name:"Forget selected guide"}));
+ await vi.waitFor(()=>expect(screen.queryByRole("button",{name:"Forget selected guide"})).toBeNull());
+ expect(calls.filter(call=>call.command==="forget_local_material").map(call=>call.input)).toEqual([{id:"pack-opaque"},{id:"guide-opaque"}]);
+});
