@@ -79,3 +79,11 @@ verified development RC and Pages in their separate PRs. No continuation release
 has been published. Ordinary Windows and live acceptance remain unverified; no
 further mutable cache read was performed in this task. This work does not clear
 content completeness, availability, signing, launch-target or stable-release gates.
+
+Hosted checks on `d34b417` caught TypeScript test-fixture errors before native
+compilation: unsupported Testing Library `exact` role options and a cross-runtime
+timer-mock return type. The recovery regression now drives the existing bounded
+database checking-to-ready poll instead of mocking timers, preserves the same
+behavior assertion, and rejects the unguarded-navigation mutation. Typecheck,
+lint, all ten App tests and the full 411-test suite passed after correction.
+The exact new head must rerun every applicable hosted check; no failed head merges.
