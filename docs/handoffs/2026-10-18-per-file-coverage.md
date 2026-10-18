@@ -124,3 +124,24 @@ conflict by preserving coverage progress and the independent race-fix receipt.
 PR #202's reviewed head `26c1d1a` passed CI 39134364783 (all nine), package
 39134364699 and source 39134364707. PR #201 is separately refreshed and requires
 fresh exact-head checks. The coverage branch must refresh again after it merges.
+
+Native collector/workflow implementation added (not yet executed end to end).
+Pinned native LLVM identity, clean-source receipts, debug/release LCOV union,
+all-target tests/build scripts/examples, isolated Windows synthetic app state and
+bounded graceful Tauri shutdown are wired into Linux/Windows jobs. Raw profiles,
+including empty/corrupt files on failure, logs and manifests are retained; build
+outputs and synthetic desktop databases are excluded from artifacts. The combined
+Coverage gate requires both collectors' success and reconstructs all normalized
+lines. Existing nine checks remain; branch required-check settings are unchanged
+until the new gate passes. Windows smoke requires an ephemeral hosted runner.
+
+Both read-only reviewers found the same failure-preservation P2: a success receipt
+could precede raw retention, and an always-running gate could ignore failed jobs.
+Fixed both: emit Rust success receipt only after retention/manifest succeeds, and
+require successful TypeScript/Rust collection jobs before accepting artifacts.
+Final confirmation and first hosted collector runs remain pending. Actual local
+checks: 14 coverage-tool tests plus 13 native-smoke helper tests pass, including
+inert shell-assignment parsing, unknown/duplicate/truncated expressions and PID
+bounds/normal-close construction. Three existing build-configuration guard tests
+also pass. Native smoke and collector end-to-end remain unverified locally (Linux
+lacks dbus development metadata; no native Windows Rust toolchain).

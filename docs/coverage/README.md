@@ -73,3 +73,19 @@ combined gate still fails 185 missing Rust entries when supplied only TS receipt
 The draft Coverage workflow collects/upload TS raw reports, receipts, current and
 baseline inventories. Native collectors and required combined Coverage gate remain
 pending, preserving the existing nine checks.
+
+Native collection is now implemented but awaits its first hosted verification.
+`collect-rust.mjs` refuses dirty source, inherited Cargo flag/config overrides and
+reused output directories; pins cargo-llvm-cov 0.9.1 and matching LLVM; executes
+all native workspace targets, build scripts, debug refusal/verification examples,
+release examples and a bounded Windows Tauri smoke. Windows smoke requires an
+ ephemeral hosted runner; it uses ordinary WM_CLOSE and confirms exit 0 before
+accepting profile flush. Default packaging smoke termination is unchanged.
+
+The Coverage workflow now defines Linux/Windows collection and `Coverage gate`.
+The gate requires both collector jobs to succeed, reconstructs the per-file union
+from exact source/hash-bound raw reports and preserves raw profiles/logs on failure.
+No success receipt is published before raw retention completes. The required-check
+branch rule will be changed only after the complete gate passes; all nine existing
+checks remain. Native collection, ≥90% combined Rust coverage and final review are
+still incomplete; a defined workflow is not successful evidence.

@@ -17,14 +17,15 @@ import { fileURLToPath } from "node:url";
 import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
-  IpcLog, freshenSnapshotText, migrationSummary,
+  IpcLog, freshenSnapshotText, migrationSummary, gracefulCloseArgs,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..");
-const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db"];
+const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db", "shutdown"];
 const args = parseArgs(process.argv.slice(2), OPTIONS);
 const mode = args.mode ?? "smoke";
+if (args.shutdown !== undefined && args.shutdown !== "graceful") throw new Error("Unknown shutdown mode");
 const label = args.label ?? mode;
 if (![...MODES, "check-download", "db-summary"].includes(mode)) throw new Error(`Unknown mode ${mode}`);
 
@@ -120,6 +121,17 @@ function killTree() {
   if (!child || childExit) return;
   if (process.platform === "win32") spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore" });
   else child.kill("SIGKILL");
+}
+
+async function gracefulShutdown() {
+  if (process.platform !== "win32" || !child || childExit) throw new Error("Instrumented shutdown requires the running owned Windows process");
+  const requestedPid = child.pid;
+  const outcome = spawnSync("powershell.exe", gracefulCloseArgs(requestedPid), { encoding: "utf8", timeout: 15000, windowsHide: true });
+  if (outcome.error || outcome.status !== 0) throw new Error(`Graceful application close failed (${outcome.status ?? "timeout"}); force cleanup is not coverage evidence`);
+  const deadline = Date.now() + 2000;
+  while (!childExit && Date.now() < deadline) await sleep(50);
+  if (!childExit || childExit.code !== 0 || childExit.signal !== null) throw new Error("Application did not confirm a successful normal exit");
+  return { pid: requestedPid, exit_code: childExit.code, normal_exit: true, force_termination: false };
 }
 
 async function waitForEndpoint(timeoutMs) {
@@ -474,6 +486,8 @@ try {
 } catch (error) {
   rec.add("native smoke run", "failed", { error: String(error?.stack ?? error) });
 } finally {
+  if (args.shutdown === "graceful") await rec.run("ordinary application close flushes instrumented profiles", gracefulShutdown);
+  // A failed graceful close remains a failed smoke result; kill only for cleanup.
   killTree();
   clearDebugPolicy();
   await sleep(1500);

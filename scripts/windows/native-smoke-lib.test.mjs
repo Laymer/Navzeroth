@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   SCREEN_LABELS, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, compareVersions, classifyUpgrade, cspFromHeaders, parseCsp, Recorder,
-  debugPolicyValue, IpcLog, freshenSnapshotText, migrationSummary, policyAddArgs, policyDeleteArgs, WEBVIEW2_POLICY_KEY,
+  gracefulCloseArgs, debugPolicyValue, IpcLog, freshenSnapshotText, migrationSummary, policyAddArgs, policyDeleteArgs, WEBVIEW2_POLICY_KEY,
 } from "./native-smoke-lib.mjs";
 
 const H = "a".repeat(64);
@@ -115,4 +115,15 @@ test("freshenSnapshotText re-times capture fields only and stays synthetic", () 
 test("migrationSummary reports an empty table as unknown, not zero", () => {
   assert.deepEqual(migrationSummary(0, null), { migrations: 0, max_migration_version: null });
   assert.deepEqual(migrationSummary(12, 12), { migrations: 12, max_migration_version: 12 });
+});
+
+test("instrumented shutdown accepts only a bounded owned PID and requests a normal window close", () => {
+  for (const pid of [0, -1, 1.5, Infinity, NaN, 0x100000000, "42; exit 0", null, undefined]) assert.throws(() => gracefulCloseArgs(pid));
+  const args = gracefulCloseArgs(1042);
+  assert.deepEqual(args.slice(0, 4), ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command"]);
+  assert.match(args[4], /GetProcessById\(1042\)/);
+  assert.match(args[4], /CloseMainWindow\(\)/);
+  assert.match(args[4], /WaitForExit\(10000\)/);
+  assert.match(args[4], /exit \$ownedProcess.ExitCode/);
+  assert.doesNotMatch(args[4], /Stop-Process|Kill\(|taskkill/);
 });

@@ -190,3 +190,11 @@ export function migrationSummary(count, maxVersion) {
   const n = Number(count);
   return { migrations: n, max_migration_version: n > 0 && maxVersion !== null && maxVersion !== undefined ? Number(maxVersion) : null };
 }
+
+/** Request ordinary WM_CLOSE for one owned process, then await its normal exit.
+ * No force-termination counts as a successful instrumented shutdown. */
+export function gracefulCloseArgs(pid) {
+  if (!Number.isSafeInteger(pid) || pid <= 0 || pid > 0xffffffff) throw new Error("Invalid owned process ID");
+  return ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command",
+    `$ErrorActionPreference='Stop'; $ownedProcess=[System.Diagnostics.Process]::GetProcessById(${pid}); if(-not $ownedProcess.CloseMainWindow()){exit 2}; if(-not $ownedProcess.WaitForExit(10000)){exit 3}; exit $ownedProcess.ExitCode`];
+}

@@ -45,5 +45,96 @@ jobs:
           path: docs/coverage/2026-10-18-initial-inventory.json
           if-no-files-found: error
           retention-days: 14
-# Native Linux/Windows collection and the required combined Coverage gate are
-# deliberately pending in this draft PR. This job alone cannot establish readiness.
+  rust:
+    name: Rust coverage ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: Linux
+            os: ubuntu-24.04
+          - platform: Windows
+            os: windows-2025
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install isolated Corepack
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: pnpm install --frozen-lockfile
+      - name: Native Linux build prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libxdo-dev libssl-dev librsvg2-dev libayatana-appindicator3-dev libdbus-1-dev
+      - run: rustup component add llvm-tools-preview
+      - name: Install pinned native coverage collector
+        run: cargo install cargo-llvm-cov --version 0.9.1 --locked
+      - name: Native tests, build scripts, examples and bounded Windows app smoke
+        run: node scripts/coverage/collect-rust.mjs "${{ runner.temp }}/coverage-rust"
+      - name: Retain native raw profiles, reports and exact source receipts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-rust-${{ matrix.platform }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/coverage-rust/logs
+            ${{ runner.temp }}/coverage-rust/*.json
+            ${{ runner.temp }}/coverage-rust/*.lcov
+            ${{ runner.temp }}/coverage-rust/raw-profiles
+            ${{ runner.temp }}/coverage-rust/*.png
+          if-no-files-found: error
+          retention-days: 14
+  gate:
+    name: Coverage gate
+    if: always()
+    needs: [typescript, rust]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-typescript-${{ github.sha }}
+          path: ${{ runner.temp }}/coverage/typescript
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-rust-Linux-${{ github.sha }}
+          path: ${{ runner.temp }}/coverage/linux
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-rust-Windows-${{ github.sha }}
+          path: ${{ runner.temp }}/coverage/windows
+      - name: Require successful collection jobs
+        env:
+          TYPESCRIPT_RESULT: ${{ needs.typescript.result }}
+          RUST_RESULT: ${{ needs.rust.result }}
+        run: node --input-type=module -e "for(const key of ['TYPESCRIPT_RESULT','RUST_RESULT'])if(process.env[key]!=='success')throw new Error('Coverage collection failed '+key)"
+      - name: Reconstruct normalized executable lines and enforce every file
+        run: >-
+          node scripts/coverage/gate.mjs
+          "${{ runner.temp }}/coverage/typescript/inventory.json"
+          "${{ runner.temp }}/coverage/per-file-verdict.json"
+          "${{ runner.temp }}/coverage/typescript/typescript-receipt.json"
+          "${{ runner.temp }}/coverage/typescript/configuration-receipt.json"
+          "${{ runner.temp }}/coverage/linux/rust-receipt.json"
+          "${{ runner.temp }}/coverage/windows/rust-receipt.json"
+      - name: Retain final per-file verdict
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-verdict-${{ github.sha }}
+          path: ${{ runner.temp }}/coverage/per-file-verdict.json
+          if-no-files-found: warn
+          retention-days: 14
