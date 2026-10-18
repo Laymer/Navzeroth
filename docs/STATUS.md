@@ -14,6 +14,18 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
+**Independent lifecycle race correction:** Codex `/root`, sole writer, baseline
+`ac114c8`, branch `fix/lifecycle-sidecar-race`. Windows CI exposed a disappearing
+SQLite journal between redundant metadata checks. Single-observation validation
+preserves link, type and quota refusals. Four deterministic boundary tests and
+two affected application workflow tests pass locally; exact-head Windows checks
+remain pending. [Handoff](handoffs/2026-10-18-lifecycle-sidecar-race.md).
+
+Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
+at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
+and source parity. Coverage expansion is in progress; its per-file gate is not yet
+satisfied. Browser demo version correction PR #201 awaits this independent fix.
+
 **Continuation 9 — performance and release materials:** Codex `/root`, sole writer,
 branch `feat/continuation-performance-materials`, baseline `d34b417` (continuation 8
 pending). [Claim](claims/2026-10-18-performance-materials.md),
