@@ -20,3 +20,7 @@ Lua and desktop checks. Missing real-cache/operator checks remain unverified.
 
 Next: implement pure contracts/parser first, native input boundary and inert
 observation adapter second; request read-only independent review before merge.
+
+Operator decision: use synthetic cache fixtures only for this continuation while
+playing. TODO: explicitly select real cache files and repeat verification after
+the operator closes the game. Do not read mutable caches during this session.
