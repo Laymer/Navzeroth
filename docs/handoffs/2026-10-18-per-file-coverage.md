@@ -118,3 +118,9 @@ entries when given only the two TypeScript receipts; no combined readiness claim
 Draft Coverage workflow now collects/upload the current inventory, baseline,
 raw V8/Istanbul/test results and hash/source receipts. Hosted result is pending;
 native collectors and the required combined Coverage gate remain outstanding.
+
+Refreshed onto PR #202/main `3288fa0`; resolved only the STATUS task-summary
+conflict by preserving coverage progress and the independent race-fix receipt.
+PR #202's reviewed head `26c1d1a` passed CI 39134364783 (all nine), package
+39134364699 and source 39134364707. PR #201 is separately refreshed and requires
+fresh exact-head checks. The coverage branch must refresh again after it merges.

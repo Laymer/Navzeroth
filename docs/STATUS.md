@@ -9,18 +9,24 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 ## Current task
 
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
-`test/continuation-coverage`, refreshed to main `ac114c8`. Engineering stages 1–9
+`test/continuation-coverage`, refreshed to main `3288fa0`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
 are in progress. Latest clean-source UI run at `9b28435`: 512 tests pass, 95.73% overall lines;
 raw reconstruction confirms all 66 executable TS/TSX files meet 90%, with 22
 explicit declaration-only files. This is only the TypeScript portion. Native Linux/Windows
 coverage and strict worker-profile completion remain unfinished. Independent
-product corrections #201 and #202 must merge before final branch refresh.
+product correction #201 still needs integration and final branch refresh.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
 and both source platforms/parity. Historical continuation 9 details follow.
+
+Independent lifecycle race correction [PR #202](https://github.com/Laymer/Navzeroth/pull/202)
+merged at `3288fa0` after both independent read-only reviews, all nine exact-head
+checks, native Windows packaging and both source platforms/parity. Single-observation
+validation preserves link/type/quota refusals when SQLite removes its journal.
+[Handoff](handoffs/2026-10-18-lifecycle-sidecar-race.md).
 
 **Continuation 9 — performance and release materials:** Codex `/root`, sole writer,
 branch `feat/continuation-performance-materials`, baseline `d34b417` (continuation 8
