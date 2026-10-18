@@ -183,3 +183,30 @@ coverage status and merge receipts; PR #201's package-metadata version correctio
 and regression are now included. Conflicts were limited to STATUS prose.
 Next: fresh complete collector runs, resolve actual per-file Rust gaps, final
 independent test-quality review, then the required gate rule/version/release work.
+
+Archive FFI coverage subtask claimed at `4e4bee1` (baseline `3bc9d18`). The
+private Calls table makes the Rust ABI/ownership boundary explicit. Production
+Archive::open always selects LINKED; only cfg(test) code supplies synthetic
+responses. Handles retain their matching table, serialization and thread affinity;
+C++ shim and supported formats are unchanged. Tests exercise whole/empty/fallback,
+null handles, quotas, encrypted gaps, malformed counts/layouts, read failures and
+RAII cleanup. Encrypted spans are never reread or retained, and plain bytes remain
+exact. A separate real linked-shim test rejects empty storage, leaves the source
+directory empty and confirms the decryption guard. Both independent read-only
+reviewers reported no actionable findings, with no evidence promotion or production
+exclusions. Synthetic ABI tests do not establish real-archive verification.
+
+Actual local checks: eight focused native tests; all twenty local-data unit tests
+plus the one linked decryption integration test; local-data all-target Clippy;
+formatting and whitespace checks pass. A new isolated instrumented diagnostic run
+(not clean committed evidence) reports native.rs 215/216 production lines covered
+(99.537%, no threshold rounding), excluding exact test-module ranges. Its lone
+uncovered line is the poisoned-mutex refusal; no real OOM is induced. Fresh full
+Linux/Windows source-bound reports still determine final coverage.
+
+Collector identity validation also now requires the repository's exact Rust
+release and exact numeric LLVM tool version (compiler-specific suffix allowed),
+rejecting 23.1.10 when 23.1.1 is required and refusing inherited LLVM_COV/
+LLVM_PROFDATA overrides. Thirty-three tooling/helper/build-guard tests pass.
+Current hosted collectors remain at `3bc9d18` while these changes are kept local;
+finish inspecting that run before pushing the next head.
