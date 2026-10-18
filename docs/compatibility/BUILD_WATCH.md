@@ -15,7 +15,8 @@ runs daily at 06:23 UTC and on demand (Actions → Build watch → Run workflow)
     On 2026-10-17 it reported 1.60.1.70450, matching the installation's own
     `.build.info` build key.
   - `wowf`: lists 1.60.1.x builds (1.60.1.70245 on 2026-10-17) and is the likely
-    Forever live product. **Unconfirmed.**
+    Forever live product. **Unconfirmed.** Its 1.60.1.70245 is observed, not
+    admitted; see [`wowf` 1.60.1.70245](#wowf-160170245-observed-not-admitted).
 - Opens one issue labelled `build-watch` per product build not seen before, and per
   new `wow*` product code (any code not in `KNOWN_WOW_PRODUCTS` in
   [`scripts/build-watch/lib.mjs`](../../scripts/build-watch/lib.mjs)). The title is
@@ -44,6 +45,30 @@ It never admits a build, edits the repository or affects any release gate.
    (V4.1) and freeze it in code and manifests (V4.2); never relabel earlier builds.
 4. A new product code may be the live Forever product: confirm, then add it to
    `KNOWN_WOW_PRODUCTS`, and to `WATCHED` if it should be tracked.
+
+## `wowf` 1.60.1.70245: observed, not admitted
+
+Issue #183 (baseline run, 2026-10-17) reported `wowf` at 1.60.1.70245: build 70245,
+build config `e8c4ef4e67bd1d94d820254984258fa8`, regions eu, kr, tw, us. Recorded
+on 2026-10-18; the issue is closed as acknowledged.
+
+- **Product identity unconfirmed.** That `wowf` is the Forever live product is
+  inferred only from its 1.60.1 versions.
+- **Likely a pre-launch placeholder or staging build (inference).** 70245 is lower
+  than every build already used as development input (70374, the former target;
+  70425; 70450; [ADR 0006](../decisions/0006-v1-program.md)). No source we have
+  says what the build is.
+- **No local inspection.** No client running `wowf` was available, so `local-data
+  inspect` was not run against it; the build is unverified.
+- **Nothing changes.** No admission, extraction, projection, code, manifest or
+  release-gate change follows. 70450 stays the development input; the 1.0.0 target
+  is still the first stable live build after the 4 Nov 2026 launch.
+
+What would change this: after launch, the owner's live client `.build.info` (or
+`local-data inspect --installation <folder> --product wowf`) showing product `wowf`
+confirms the identity. The first stable live build it serves then goes through V4.1
+(record) and V4.2 (freeze), as in [When an issue opens](#when-an-issue-opens). A new
+`wowf` build before launch opens its own issue and is assessed the same way.
 
 ## Limits
 
