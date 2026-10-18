@@ -464,7 +464,15 @@ impl LocalDataIndex {
         )
         .db()?;
         tx.commit().db()?;
-        self.active(scope)
+        // No fallible re-read after commit: an unrelated writer must not turn a
+        // successful durable activation into a reported failure.
+        Ok(Activation {
+            format_version: VERSION,
+            scope: scope.into(),
+            generation: u64::from(current) + 1,
+            catalog_sha256: Some(digest.into()),
+            verified_for_planning: false,
+        })
     }
 }
 
