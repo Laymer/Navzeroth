@@ -20,6 +20,9 @@ use std::{
 };
 
 const MAX_TABLE_BYTES: usize = 64 * 1024 * 1024;
+#[cfg(test)]
+#[path = "extraction_tests.rs"]
+mod orchestration_tests;
 const LIFECYCLE_RESERVE_BYTES: u64 = 130 * 1024 * 1024;
 pub const MAX_DECODED_BYTES: usize = 256 * 1024 * 1024;
 const MAX_MANIFEST_BYTES: usize = 16 * 1024 * 1024;
@@ -317,7 +320,15 @@ fn installation_lock(root: &Path, destination: &Path) -> Result<File> {
 
 pub(crate) fn extract(
     request: &ExtractionRequest,
+    progress: impl FnMut(u32, u32) -> Result<()>,
+) -> Result<ExtractionSummary> {
+    extract_using(request, progress, Archive::open)
+}
+
+fn extract_using(
+    request: &ExtractionRequest,
     mut progress: impl FnMut(u32, u32) -> Result<()>,
+    mut open: impl FnMut(&Path, &str, u32, u32) -> Result<Archive>,
 ) -> Result<ExtractionSummary> {
     request.validate()?;
     let root = checked_path(&request.installation)?;
@@ -458,7 +469,7 @@ pub(crate) fn extract(
     let binding = checkpoint.binding.clone();
     let resumed = checkpoint.tables.len();
     let mut current_locale = selected[0].0.clone();
-    let mut archive = Some(Archive::open(
+    let mut archive = Some(open(
         &root,
         &request.product,
         selected[0].1,
@@ -489,7 +500,7 @@ pub(crate) fn extract(
         }
         if locale != current_locale {
             drop(archive.take());
-            archive = Some(Archive::open(
+            archive = Some(open(
                 &root,
                 &request.product,
                 mask,

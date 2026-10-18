@@ -498,4 +498,4 @@ mod tests {
 
 #[cfg(test)]
 #[path = "native_tests.rs"]
-mod boundary_tests;
+pub(crate) mod boundary_tests;

@@ -283,6 +283,35 @@ static SYNTHETIC: Calls = Calls {
     frame,
     read_at,
 };
+
+/// Test-only ABI provider for the real staging/checkpoint orchestration. No
+/// production caller can select it, and its bytes never establish availability.
+pub(crate) fn stage_with_bytes<T>(bytes: Vec<u8>, action: impl FnOnce() -> T) -> T {
+    RESPONSE.with(|s| {
+        *s.borrow_mut() = Response {
+            size: bytes.len() as u64,
+            data: bytes,
+            ..Response::default()
+        }
+    });
+    let result = action();
+    RESPONSE.with(|s| {
+        let state = s.borrow();
+        assert!(!state.bad_handle);
+        assert_eq!(state.opens, state.closes);
+        assert_eq!(state.file_opens, state.file_closes);
+    });
+    result
+}
+
+pub(crate) fn open_staging(
+    root: &Path,
+    product: &str,
+    locale: u32,
+    build: u32,
+) -> crate::Result<Archive> {
+    Archive::open_using(root, product, locale, build, &SYNTHETIC)
+}
 fn run<T>(response: Response, operation: impl FnOnce(&Archive) -> T) -> (T, Response) {
     RESPONSE.with(|s| *s.borrow_mut() = response);
     let archive = Archive::open_using(

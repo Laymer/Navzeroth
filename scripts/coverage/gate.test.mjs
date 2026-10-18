@@ -53,6 +53,7 @@ test('real Windows Rust module aliases normalize before inventory and hash valid
  assert.equal(normalizeRaw([{path:alias,lines:[[1,1]]}],receipt,inventory)[0].path,inventory.files[0].path);
  assert.throws(()=>normalizeRaw([{path:alias,lines:[[1,1]]}],{...receipt,source_hashes:{}},inventory),/collector source hash/);
  for(const bad of ['C:/repo/../outside.rs','C:/repo/x/../../outside.rs','C:/repo/crates/core/src/logic.rs:stream'])assert.throws(()=>relativeSource(bad,'C:/repo','win32'));
+ assert.throws(()=>normalizeRaw([{path:'C:/repo/../outside.rs',lines:[[1,1]]}],receipt,inventory),/outside recorded checkout/);
  assert.deepEqual(normalizeRaw([{path:'C:/repo/rustc/'+ 'b'.repeat(40)+'/library/std/src/sys/thread_local/native/mod.rs',lines:[[1,1]]}],receipt,inventory),[]);
  for(const bad of ['C:/repo/rustc/not-a-commit/library/std.rs','C:/repo/rustc/'+ 'b'.repeat(40)+'/application.rs'])assert.throws(()=>normalizeRaw([{path:bad,lines:[[1,1]]}],receipt,inventory),/missing from inventory/);
  const known='rustc/'+ 'b'.repeat(40)+'/library/owned.rs';

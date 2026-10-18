@@ -1,0 +1,274 @@
+//! Real private lifecycle orchestration with synthetic ABI payloads only.
+use super::*;
+use crate::native::boundary_tests::{open_staging, stage_with_bytes};
+use azeroth_core::local_data::PerformancePreset;
+use std::sync::atomic::{AtomicU64, Ordering};
+static NEXT: AtomicU64 = AtomicU64::new(0);
+struct Fixture {
+    root: PathBuf,
+    request: ExtractionRequest,
+}
+impl Fixture {
+    fn new() -> Self {
+        let root = std::env::temp_dir().join(format!(
+            "nav-staging-abi-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir(&root).unwrap();
+        let source = root.join("source");
+        let destination = root.join("store");
+        fs::create_dir(&source).unwrap();
+        fs::create_dir(&destination).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&destination, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+        fs::write(source.join(".build.info"),format!("Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.70450|{}|{}|enUS text\n", "a".repeat(32), "b".repeat(32))).unwrap();
+        for key in ["a".repeat(32), "b".repeat(32)] {
+            let dir = source.join(format!("Data/config/{}/{}", &key[..2], &key[2..4]));
+            fs::create_dir_all(&dir).unwrap();
+            fs::write(dir.join(key), b"synthetic configuration").unwrap();
+        }
+        fs::create_dir_all(source.join("Data/data")).unwrap();
+        fs::write(source.join("Data/data/data.000"), b"synthetic segment").unwrap();
+        Self {
+            root,
+            request: ExtractionRequest {
+                protocol_version: 3,
+                request_id: "synthetic-job".into(),
+                installation: source,
+                product: "wow_classic_beta".into(),
+                destination,
+                preset: PerformancePreset::Small,
+                tables: vec!["Map".into()],
+                locales: vec!["enUS".into()],
+                resume: false,
+            },
+        }
+    }
+    fn run(&self, progress: impl FnMut(u32, u32) -> Result<()>) -> Result<ExtractionSummary> {
+        stage_with_bytes(b"unsupported synthetic table".to_vec(), || {
+            extract_using(&self.request, progress, open_staging)
+        })
+    }
+}
+impl Drop for Fixture {
+    fn drop(&mut self) {
+        fs::remove_dir_all(&self.root).unwrap();
+    }
+}
+
+fn empty_map(table_hash: u32, layout: u32, fields: usize) -> Vec<u8> {
+    let mut bytes = vec![0; 204 + fields * 28];
+    bytes[..4].copy_from_slice(b"WDC5");
+    for (at, value) in [
+        (4, 5),
+        (140, fields as u32),
+        (152, table_hash),
+        (156, layout),
+        (176, fields as u32),
+        (188, fields as u32 * 24),
+    ] {
+        bytes[at..at + 4].copy_from_slice(&value.to_le_bytes());
+    }
+    bytes
+}
+
+#[test]
+fn header_identity_layout_and_justified_empty_decode_have_distinct_dispositions() {
+    let candidate = metadata::candidates()
+        .into_iter()
+        .find(|c| c.name == "Map")
+        .unwrap();
+    let table_hash = u32::from_str_radix(&candidate.table_hash, 16).unwrap();
+    let layout = 0xd43afac3;
+    let definition = metadata::definition("Map", 70450, layout).unwrap();
+    let fields = definition
+        .layout
+        .entries
+        .iter()
+        .filter(|e| e.inline)
+        .count();
+    for (hash, layout, expected, decoded) in [
+        (
+            table_hash ^ 1,
+            layout,
+            InventoryDisposition::InvalidCorrupt,
+            0,
+        ),
+        (table_hash, 0, InventoryDisposition::LayoutMismatch, 0),
+        (table_hash, layout, InventoryDisposition::Decoded, 1),
+    ] {
+        let f = Fixture::new();
+        let summary = stage_with_bytes(empty_map(hash, layout, fields), || {
+            extract_using(&f.request, |_, _| Ok(()), open_staging)
+        })
+        .unwrap();
+        let catalog = verify_catalog(&f.request.destination, &summary.catalog_sha256).unwrap();
+        assert_eq!(catalog.tables[0].disposition, expected);
+        assert_eq!(summary.tables_decoded, decoded);
+        assert_eq!(catalog.tables[0].records, Some(0));
+        assert!(!summary.activated);
+        assert!(!summary.gameplay_projection_available);
+        if decoded == 1 {
+            let digest = catalog.tables[0].decoded_sha256.as_ref().unwrap();
+            let document: tables::DecodedTable = serde_json::from_slice(
+                &fs::read(f.request.destination.join("objects").join(digest)).unwrap(),
+            )
+            .unwrap();
+            assert!(document.rows.is_empty());
+            assert!(document.gaps.is_empty());
+        }
+    }
+}
+
+#[test]
+fn unsupported_payload_is_immutable_research_and_never_activates_implicitly() {
+    let f = Fixture::new();
+    let mut events = Vec::new();
+    let result = f
+        .run(|done, total| {
+            events.push((done, total));
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(result.tables_processed, 1);
+    assert_eq!(result.tables_decoded, 0);
+    assert!(!result.activated);
+    assert!(!result.gameplay_projection_available);
+    assert_eq!(events, vec![(0, 0), (0, 1), (1, 1)]);
+    let catalog = verify_catalog(&f.request.destination, &result.catalog_sha256).unwrap();
+    assert_eq!(catalog.tables.len(), 1);
+    assert_eq!(
+        catalog.tables[0].disposition,
+        InventoryDisposition::RetainedUnsupported
+    );
+    assert!(catalog.tables[0].decoded_sha256.is_none());
+    assert!(catalog.tables[0].retained_sha256.is_some());
+    assert_eq!(
+        crate::lifecycle::status(&f.request.destination, &f.request.request_id)
+            .unwrap()
+            .state,
+        JobState::Complete
+    );
+    let active = crate::lifecycle::active(&f.request.destination, &result.catalog_sha256).unwrap();
+    assert!(active.catalog_sha256.is_none());
+    assert!(f.run(|_, _| Ok(())).is_err());
+    assert_eq!(
+        verify_catalog(&f.request.destination, &result.catalog_sha256)
+            .unwrap()
+            .tables
+            .len(),
+        1
+    );
+}
+
+#[test]
+fn cancellation_and_source_changes_refuse_sealing_then_exact_source_can_resume() {
+    let mut f = Fixture::new();
+    assert_eq!(
+        f.run(|done, total| if total == 1 && done == 1 {
+            Err("synthetic interrupted progress")
+        } else {
+            Ok(())
+        })
+        .err(),
+        Some("synthetic interrupted progress")
+    );
+    assert_eq!(
+        crate::lifecycle::status(&f.request.destination, &f.request.request_id)
+            .unwrap()
+            .state,
+        JobState::Failed
+    );
+    f.request.resume = true;
+    let result = f.run(|_, _| Ok(())).unwrap();
+    assert_eq!(result.tables_processed, 1);
+    let mut changed = Fixture::new();
+    assert!(
+        changed
+            .run(|done, total| if total == 1 && done == 1 {
+                fs::write(
+                    changed.request.installation.join("Data/data/data.000"),
+                    b"changed segment",
+                )
+                .unwrap();
+                Ok(())
+            } else {
+                Ok(())
+            })
+            .is_err()
+    );
+    assert_eq!(
+        fs::read_dir(changed.request.destination.join("catalogs"))
+            .unwrap()
+            .count(),
+        0
+    );
+    changed.request.resume = true;
+    assert!(changed.run(|_, _| Ok(())).is_err());
+    let cancelled = Fixture::new();
+    assert!(
+        cancelled
+            .run(|_, total| {
+                if total == 1 {
+                    crate::lifecycle::cancel(
+                        &cancelled.request.destination,
+                        &cancelled.request.request_id,
+                    )?;
+                }
+                Ok(())
+            })
+            .is_err()
+    );
+    assert_eq!(
+        crate::lifecycle::status(
+            &cancelled.request.destination,
+            &cancelled.request.request_id
+        )
+        .unwrap()
+        .state,
+        JobState::Cancelled
+    );
+}
+
+#[test]
+fn explicit_installed_locales_are_processed_separately_and_bad_selections_do_not_start_jobs() {
+    let mut f = Fixture::new();
+    let mut locales: Vec<String> = azeroth_core::local_data_workflow::CONTENT_LOCALES
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    locales.sort();
+    let info = f.request.installation.join(".build.info");
+    let original = fs::read_to_string(&info).unwrap();
+    fs::write(
+        &info,
+        original.replace("enUS text", &format!("{} text", locales.join(" "))),
+    )
+    .unwrap();
+    f.request.locales = locales.clone();
+    let summary = f.run(|_, _| Ok(())).unwrap();
+    let catalog = verify_catalog(&f.request.destination, &summary.catalog_sha256).unwrap();
+    assert_eq!(summary.tables_processed, locales.len() as u32);
+    assert_eq!(
+        catalog
+            .tables
+            .iter()
+            .map(|t| t.locale.clone().unwrap())
+            .collect::<Vec<_>>(),
+        locales
+    );
+    for case in ["missing-table", "uninstalled-locale", "overlapping-store"] {
+        let mut bad = Fixture::new();
+        match case {
+            "missing-table" => bad.request.tables = vec!["DefinitelyAbsentSyntheticTable".into()],
+            "uninstalled-locale" => bad.request.locales = vec!["deDE".into()],
+            _ => bad.request.destination = bad.request.installation.clone(),
+        }
+        assert!(bad.run(|_, _| Ok(())).is_err());
+        assert!(!bad.request.destination.join("lifecycle.sqlite3").exists());
+    }
+}

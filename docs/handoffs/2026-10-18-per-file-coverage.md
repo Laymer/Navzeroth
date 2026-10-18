@@ -279,3 +279,17 @@ archive-opening boundary in extraction so synthetic ABI responses can exercise
 real staging/checkpoint/refusal code. Production always opens the linked archive;
 no runtime fixture selector or availability promotion is permitted. Tests remain
 synthetic lifecycle evidence, separate from real archive/client acceptance.
+
+Extraction seam implementation: production delegates only to linked Archive::open;
+only cfg(test) code supplies synthetic ABI responses. Four orchestration tests pass
+for immutable unsupported content/no implicit activation, interrupted checkpoint
+resume, changed-source refusal, cancellation, corrupt hash versus layout mismatch
+versus justified empty decoded tables, all 12 explicitly installed locales and
+invalid selections before job creation. All-target local-data Clippy passes.
+Independent read-only review found no actionable issues. A fresh isolated unit-only
+LLVM diagnostic reports extraction.rs 607/690 lines and native.rs 215/216; it is
+not clean-source/full-workspace evidence and cannot establish the final gate.
+All raw diagnostic outputs remain local under /tmp/nav-extraction-boundary*.
+
+Coverage normalization additionally rejects lexical checkout escapes explicitly
+instead of treating them as external files; the eight gate tests pass.

@@ -103,8 +103,12 @@ export function normalizeRaw(records,receipt,inventory){
  const result=[];
  for(const record of records){
   const raw=sourcePath(record.path,receipt.platform);
-  const normalized=path.posix.normalize(raw.replaceAll('\\','/'));
-  if(!(receipt.platform==='win32'?normalized.toLowerCase().startsWith(prefix.toLowerCase()):normalized.startsWith(prefix)))continue;
+  const lexical=raw.replaceAll('\\','/'),normalized=path.posix.normalize(lexical);
+  const underRoot=value=>receipt.platform==='win32'?value.toLowerCase().startsWith(prefix.toLowerCase()):value.startsWith(prefix);
+  if(!underRoot(normalized)){
+   if(underRoot(lexical))throw new Error('Source lies outside recorded checkout');
+   continue;
+  }
   const rel=relativeSource(record.path,receipt.source_root,receipt.platform);
   if(!/\.(rs|ts|tsx)$/.test(rel))continue;
   const entry=known.get(receipt.platform==='win32'?rel.toLowerCase():rel);
