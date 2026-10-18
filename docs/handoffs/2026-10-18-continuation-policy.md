@@ -48,3 +48,16 @@ Draft PR: https://github.com/Laymer/Navzeroth/pull/191.
 Read-only reviewer `/root/review_policy` found three documentation consistency
 issues; all were corrected and re-reviewed with no remaining actionable findings.
 See [review record](../reviews/2026-10-18-continuation-policy.md).
+
+## Selected guide input (later-stage preparation)
+
+The owner supplied an external local guide directory during this task. Read-only
+inspection found a Human Protection Warrior 1–60 generated guide and its Python
+generator; no input files were copied or executed. Its README describes QuestieDB
+and scraped overlays as historical generation dependencies. Those dependencies
+are not admitted by ADR 0006 §11. Only route design is available for the later
+facts stage; exact references still require permitted observations/projections.
+The external path is in the conversation, not in public repository records.
+
+Additional check: 85 relative file links in changed Markdown resolved before this
+appendix. No guides, database pickle, scraper or fetched data were executed.

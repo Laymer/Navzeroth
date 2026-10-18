@@ -94,5 +94,6 @@ desktop/installer completion and measured workloads/notices. The new per-file 90
 coverage gate, independent reviews, stability workflow and exact-main release
 checks are still required before development RC publication. SignPath setup and
 ordinary Windows/live observations remain operator work; unsigned development
-publication does not relax stable signing. Private guide inputs remain absent
-until explicitly supplied. No private input is committed here.
+publication does not relax stable signing. The owner has selected an external guide directory; its route designs still need
+provenance-separated verification before content admission. No private input is
+committed here.

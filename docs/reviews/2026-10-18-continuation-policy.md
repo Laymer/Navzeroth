@@ -19,3 +19,8 @@ Reviewer re-read the corrected diff and reported all three resolved, no remainin
 actionable findings. The ordered inventory contains all 69 gate messages with
 owners and clearing conditions. Hosted exact-head checks remain required before
 merge; review is not a substitute for them.
+
+The reviewer also inspected the final handoff/inventory amendment after the owner
+selected guide inputs during CI. No actionable findings: available route designs
+remain distinct from admitted content, verification stays required, and no private
+paths or source data are exposed.
