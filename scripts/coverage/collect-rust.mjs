@@ -4,7 +4,7 @@ import fs from 'node:fs';import path from 'node:path';import crypto from 'node:c
 import {execFileSync} from 'node:child_process';import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
 import {verifyBuildConfiguration} from '../measure-continuation.mjs';
 import {loggedProcess} from './process-output.mjs';
-import {inventory} from './inventory.mjs';import {coverageEnvironment} from './rust-environment.mjs';
+import {inventory} from './inventory.mjs';import {coverageEnvironment,compilerIdentity,requireMatchingLlvm} from './rust-environment.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const require=createRequire(path.join(root,'apps/desktop/package.json'));
@@ -15,7 +15,7 @@ function snapshot(){
 export function collectRust(destination){
  if(!['linux','win32'].includes(process.platform))throw new Error('Unsupported native platform');
  verifyBuildConfiguration(process.env,root);
- if(Object.keys(process.env).some(key=>process.env[key]&&/^(CARGO_LLVM_COV|LLVM_PROFILE)/.test(key)))throw new Error('Inherited coverage configuration is unsupported');
+ if(Object.keys(process.env).some(key=>process.env[key]&&/^(?:CARGO_LLVM_COV|LLVM_PROFILE)|^(?:LLVM_COV|LLVM_PROFDATA)$/.test(key)))throw new Error('Inherited coverage configuration is unsupported');
  if(process.platform==='win32'&&process.env.GITHUB_ACTIONS!=='true')throw new Error('Native Windows smoke requires an ephemeral hosted runner');
  if(fs.existsSync(destination)||path.resolve(destination).startsWith(root+path.sep))throw new Error('Use a new native coverage directory outside the checkout');
  const before=snapshot(),indexed=JSON.parse(before);fs.mkdirSync(destination,{recursive:true});
@@ -39,12 +39,13 @@ export function collectRust(destination){
  function cargoExample(name,pkg,example,args=[],release=false,expected=0){run(name,'cargo',['run','--locked',...(release?['--release']:[]),'-p',pkg,'--example',example,'--',...args],{env:instrumented,expected});}
  try{
   const version=run('cargo-llvm-cov-version','cargo',['llvm-cov','--version']);if(!/^cargo-llvm-cov 0\.9\.1(?:\s|$)/.test(version.trim()))throw new Error('cargo-llvm-cov must be 0.9.1');
-  const rust=run('rust-version','rustc',['-vV']),llvmVersion=/^LLVM version: (\S+)$/m.exec(rust)?.[1],host=/^host: (\S+)$/m.exec(rust)?.[1];
-  if(!llvmVersion||!host)throw new Error('Missing compiler LLVM identity');
+  const rust=run('rust-version','rustc',['-vV']);
+  const pinned=/^channel\s*=\s*"([^"]+)"$/m.exec(fs.readFileSync(path.join(root,'rust-toolchain.toml'),'utf8'))?.[1];
+  const {llvm:llvmVersion,host}=compilerIdentity(rust,pinned);
   const sysroot=run('rust-sysroot','rustc',['--print','sysroot']).trim();
   const llvmTools=path.join(sysroot,'lib','rustlib',host,'bin','llvm-profdata'+(process.platform==='win32'?'.exe':''));
   const toolsVersion=run('llvm-tools-version',llvmTools,['--version']);
-  if(!toolsVersion.includes('LLVM version '+llvmVersion))throw new Error('LLVM tools must match rustc');
+  requireMatchingLlvm(toolsVersion,llvmVersion);
   // No --no-clean here: collection starts from a new build/profile directory.
   run('workspace-tests','cargo',['llvm-cov','test','--locked','--workspace','--all-targets','--no-report']);
   instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env'],{stdoutOnly:true}))};
