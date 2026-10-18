@@ -30,6 +30,25 @@ export function HelpTip({ children, label }: HelpTipProps) {
   const root = useRef<HTMLSpanElement>(null);
   const bubble = useRef<HTMLSpanElement>(null);
   const open = pinned || (!dismissed && (hover || focus));
+  const close = useCallback(() => {
+    setPinned(false);
+    setHover(false);
+    setDismissed(true);
+  }, []);
+  function activate() {
+    document.dispatchEvent(new CustomEvent("navzeroth-help-activate", { detail: id }));
+    setDismissed(false);
+  }
+  // Hover and keyboard input share one active bubble within this document.
+  // Dismissing a competing bubble never changes its trigger's actual focus.
+  useEffect(() => {
+    const otherHelp = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail !== id) close();
+    };
+    document.addEventListener("navzeroth-help-activate", otherHelp);
+    return () => document.removeEventListener("navzeroth-help-activate", otherHelp);
+  }, [id, close]);
+
 
   useEffect(() => {
     if (!pinned) return;
@@ -51,7 +70,7 @@ export function HelpTip({ children, label }: HelpTipProps) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, close]);
 
   // Keep the bubble inside the viewport (320 px wide windows, 200 % text), and again after a resize.
   const shiftNow = useRef(0);
@@ -73,18 +92,12 @@ export function HelpTip({ children, label }: HelpTipProps) {
     return () => window.removeEventListener("resize", measure);
   }, [open, measure]);
 
-  function close() {
-    setPinned(false);
-    setHover(false);
-    setDismissed(true);
-  }
-
   return (
     <span
       className="ui-helptip"
       ref={root}
       onMouseEnter={() => {
-        setDismissed(false);
+        activate();
         setHover(true);
       }}
       onMouseLeave={() => setHover(false)}
@@ -99,16 +112,16 @@ export function HelpTip({ children, label }: HelpTipProps) {
         aria-controls={id}
         aria-describedby={id}
         onFocus={() => {
-          setDismissed(false);
+          activate();
           setFocus(true);
         }}
         onBlur={() => setFocus(false)}
-        onClick={() => (pinned ? close() : setPinned(true))}
+        onClick={() => { if (pinned) close(); else { activate(); setPinned(true); } }}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             if (pinned) close();
-            else setPinned(true);
+            else { activate(); setPinned(true); }
           }
         }}
       >

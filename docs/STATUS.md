@@ -2,6 +2,12 @@
 
 Updated: 2026-10-18.
 
+Independent UI correction active: Codex `/root`, `fix/single-active-help`, baseline
+`8da8301`; [claim](claims/2026-10-18-single-active-help.md),
+[handoff](handoffs/2026-10-18-single-active-help.md). This fixes the competing
+hover/keyboard help exposed by pending desktop continuation PR #198. Exact-head
+checks precede integration; no release or acceptance state is changed.
+
 ## Current task
 
 **Continuation 7 — guides, authored verification and exact inventory:** Codex
