@@ -20,9 +20,14 @@ PR #188 (authored slice, including Windows path fixes), #189 (observed `wowf`
 70245, not admitted), and #190 (70450 addon development admission) are merged.
 V2.4 is implemented with explicit fact gaps; it is not accepted slice content.
 
-- [ ] Operator-deferred real-cache verification: explicitly select cache files and
-  repeat exact-build/locale checks only after WoW closes. The owner chose synthetic
-  fixtures on 2026-10-18 so they can continue playing; do not read mutable caches.
+- [x] Selected real-cache development capture/pure-parser check after the operator
+  closed WoW: 70450/enUS XFTH v9, 48,301 envelope records; three WDB formats remain
+  explicitly unsupported. Private copies removed.
+  [Receipt](docs/handoffs/2026-10-18-cache-development-check.md).
+- [ ] Native Rust `cache-stage` end-to-end verification, including closed-game and
+  write-sharing refusal. Native capture plus Linux pure parsing does not establish
+  this path or live addon locale behavior. Wait for another closed-game opportunity
+  if needed; the operator can resume playing.
 
 The continuation order is: policy reconciliation; durable extraction lifecycle;
 cache/hotfix/observations; gameplay projections and guide facts; media/tooltips;

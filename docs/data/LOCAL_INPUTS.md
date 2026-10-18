@@ -56,9 +56,12 @@ named API/CLI operation and always marks its result `fixture: true`. Desktop
 application services expose only guarded production cache staging. Synthetic
 fixture staging never counts as real-cache acceptance.
 
-The owner deferred real-cache verification on 2026-10-18 to continue playing.
-**TODO:** select exact cache files and verify them only after WoW is closed.
-No installed mutable cache was read for this continuation.
+The owner initially deferred real-cache verification to continue playing, then
+closed WoW and authorized a bounded check. [Native capture and pure-parser
+receipt](../handoffs/2026-10-18-cache-development-check.md): actual 70450/enUS XFTH
+v9 envelope parsed; three WDB layouts remained unsupported; private copies removed.
+**TODO:** native Rust `cache-stage` end-to-end and refusal checks remain unverified.
+Further mutable reads require a fresh closed-game opportunity.
 
 ## Permitted addon observations
 
