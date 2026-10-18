@@ -26,6 +26,10 @@ Actual checks:
 - Two independent read-only reviewers reported no actionable findings; one also
   independently ran all four focused tests and diff whitespace verification.
 
+Initial Windows Clippy identified a Unix-only mutable test builder binding;
+use platform-specific creation without a Windows unused-mut warning. That run
+is not counted as passing; all exact-head checks must run again.
+
 Next: exact-head CI, native Windows packaging and both source platforms/parity;
 merge only after successful checks and final review. Refresh PR #201 and the
 coverage branch afterward. Coverage, development RC and Pages remain incomplete;

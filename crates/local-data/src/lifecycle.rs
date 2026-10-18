@@ -209,13 +209,13 @@ mod sidecar_tests {
                     .unwrap()
                     .as_nanos()
             ));
-            let mut builder = fs::DirBuilder::new();
             #[cfg(unix)]
             {
                 use std::os::unix::fs::DirBuilderExt;
-                builder.mode(0o700);
+                fs::DirBuilder::new().mode(0o700).create(&root).unwrap();
             }
-            builder.create(&root).unwrap();
+            #[cfg(not(unix))]
+            fs::create_dir(&root).unwrap();
             Self(root)
         }
     }
