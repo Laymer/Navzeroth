@@ -2,15 +2,16 @@
 
 > **Superseded in part by [ADR 0006](../decisions/0006-v1-program.md) (2026-10-17):**
 > target (first stable post-launch live build), scope (declared Human 1-20 slice),
-> sources (owner-reported written grants, the owner's guides), hybrid delivery with
+> sources (local-only under §11, including the owner's guides), hybrid delivery with
 > locally built content, the signer arrangement, `1.0.0-rc.N`-only prereleases,
-> signing, and authority (including stable publication once the gate passes). The
+> signing, and authority. The 2026-10-18 continuation (§13) authorizes an early
+> development rc.1 and excludes stable publication during this continuation. The
 > latest published version is 0.9.2. The task tracker is [TODO.md](../../TODO.md).
 
 This is the release contract for the authorized v1 program, starting from
 `bb3782cbac13b5fb3e6ca8196278ba7fcc427474`. The latest published product is the
-[0.9.1 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)
-(receipt: [0.9.1 publication record](../handoffs/2026-10-16-v0.9.1-publication.md)).
+[0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2)
+(receipt: [0.9.2 publication record](../handoffs/2026-10-17-v0.9.2-publication.md)).
 Determine the latest published tag with `gh release list` rather than trusting this
 sentence. Packaging of the 0.8.1 baseline and its acceptance limits are recorded in
 the [final preview audit](../handoffs/2026-10-14-final-program-audit.md).
@@ -51,7 +52,9 @@ or content unit from the inventory.
 
 ## Sources and distributable content
 
-Audit QuestieDB first and CMaNGOS Classic DB as a historical comparison. For every
+ADR 0006 §11 supersedes the historical provider audit path: use only selected
+client extraction, permitted observations, admitted retained licensed material and
+original authoring. No website retrieval or grant intake is in scope. For every
 accepted source, retain its immutable revision and retrieved-file hashes, source
 location, applicable license and notices, attribution, permitted transformations
 and distribution, exact edition/build, field mappings, correction coverage,
@@ -73,9 +76,10 @@ excluded from the published preview and is not an approved v1 content asset. See
 
 ## Review and acceptance
 
-Use three isolated implementation workers plus a coordinator, with one recorded
-owner and baseline per task, pushed coherent commits, one PR per task and independent
-review. Shared interfaces have one writer. After each batch, reconcile protected
+Use one implementation writer with a recorded owner and baseline per task,
+pushed coherent commits, one PR per task and independent read-only review.
+The continuation explicitly requests reviewer agents; additional implementation
+workers require explicit authorization. Shared interfaces have one writer. After each batch, reconcile protected
 main, re-audit every implementation-plan task and continue independent work while
 external checks remain unavailable.
 
@@ -117,12 +121,39 @@ supplies those records, and the CLI still blocks their absence (it never turns a
 absent contract into a pass). Supplying real, validated packs is an explicit
 prerequisite in addition to missing content rights and real acceptance. Current preview allowance is never a stable-readiness result.
 
-## Candidate, tag and publication
+## Early development RC publication (ADR 0006 §13)
 
-1. Keep ordinary engineering previews labelled as such. Prepare `1.0.0-rc.N` only
-   when the mandatory inventory and acceptance rows permit entry to the release
-   candidate batch. Record failures and fix them in focused PRs. Prerelease handling
-   must not turn incomplete evidence into stable readiness.
+This path is separate from the acceptance/stable sequence below:
+
+1. Complete the ordered continuation engineering and review/test/CI PRs. Merge
+   the separate version/notes PR declaring `1.0.0-rc.1` consistently. Notes list
+   actual supported tuples, capabilities, signing status and all remaining gates,
+   with installation, upgrade, removal, checksums and signing instructions.
+2. Require fresh CI, Coverage gate, source and ordinary Windows packaging on the
+   exact resulting main commit, plus the stability workflow. Run readiness with
+   the actual version and preserve the blocker inventory. Candidate/stable
+   readiness remains false until independently established.
+3. Tag that exact commit `v1.0.0-rc.1`. Use ordinary prerelease packaging without
+   `-AcceptanceCandidate`. Verify tag jobs and every draft asset against source,
+   hashes, notices and the exact asset manifest. Unsigned installers are permitted
+   only with explicit signing status.
+4. Publish as a GitHub prerelease; download the public assets again and verify
+   metadata, hashes, sizes and source. Record a publication receipt. This does
+   not authorize stable publication. The Pages PR follows verification, links
+   only to verified RC assets, and records deployed page/link checks.
+
+## Acceptance candidate, tag and stable publication
+
+The following sequence remains for the later acceptance/stable program. Stable
+publication is outside the current continuation's authorization.
+
+1. Label ordinary engineering previews as development prereleases. ADR 0006 §13
+   permits an early `1.0.0-rc.1` with ordinary packaging, without
+   `-AcceptanceCandidate`, after the continuation engineering, coverage and
+   version/notes PRs and exact-source checks. Its notes must list every missing
+   acceptance prerequisite and installer signing status. The RC name does not
+   establish candidate readiness. Acceptance-candidate packaging still requires
+   the full candidate gate; stable publication still requires the stable gate.
 2. Create the final version PR with matching versions in root `Cargo.toml`, root
    and desktop `package.json`, Tauri configuration, addon `Core/Version.lua` and
    addon TOC. Update internal Cargo.lock entries and affected generated fixtures

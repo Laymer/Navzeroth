@@ -156,8 +156,34 @@ metadata read on 2026-10-17; Blizzard's public version list reports the same for
 extraction and projection on the same terms as 70425 (ADR 0005 §3): development
 input only, never a release target, never relabelled, `target_tuple_matches` false,
 no nearest-build fallback. The admitted local-data builds are listed once in
-`ADMITTED_BUILDS` (`crates/local-data/src/metadata.rs`). The in-game addon does not
-admit 70450 yet: its admission waits for the interface number read from the client.
+`ADMITTED_BUILDS` (`crates/local-data/src/metadata.rs`). At the time of this amendment the in-game addon did not admit 70450; its
+admission awaited the interface number read from the client. **Superseded by
+PR #190** (merged `2e85981`): the owner reported interface 16001, and the addon
+now admits 70450 as development-unverified. This supplies no live acceptance.
+
+### 13. Amendment 2026-10-18: early development RC
+
+The continuation explicitly authorizes `1.0.0-rc.1` before launch as a
+**development prerelease**, packaged without `-AcceptanceCandidate`. The RC name
+alone establishes neither candidate nor stable readiness. This supersedes §9's
+implicit RC freeze ordering and V5.1's use of rc.1 for the first acceptance batch.
+Later acceptance candidates still require `candidate-readiness`, a frozen target,
+complete validated slice content and candidate-bound evidence under the existing
+rules. Stable 1.0.0 is not authorized during this continuation.
+
+Before this development publication, complete the ordered engineering PRs, the
+substantial review/test/CI PR with the per-file 90% Rust and TypeScript coverage
+gate, and a separate version/notes PR. Require independent review, successful
+exact-head checks, stability workflow, exact-main CI/coverage/source/packaging,
+and verification of draft and public assets. Notes must distinguish actual
+supported development tuples and synthetic checks from live/Windows acceptance,
+and list all remaining content, target, signing and acceptance blockers.
+Unsigned development installers are permitted with explicit signing status and
+verification instructions. Stable Authenticode requirements remain unchanged.
+
+The Pages redesign follows the verified prerelease in its own reviewed PR; its
+download links must resolve only to verified published assets. No missing private
+input or operator evidence may be inferred from development success.
 
 ## Consequences
 
