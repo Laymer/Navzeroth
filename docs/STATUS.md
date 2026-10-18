@@ -9,8 +9,10 @@ Updated: 2026-10-18.
 `d1af131`. [Claim](claims/2026-10-18-guides-inventory.md),
 [handoff](handoffs/2026-10-18-guides-inventory.md),
 [contracts and limitations](data/LOCAL_INVENTORY.md).
-Continuation 6 is [PR #196](https://github.com/Laymer/Navzeroth/pull/196),
-independently reviewed with local checks passing, pending exact-head hosted checks.
+Continuation 6 merged as [PR #196](https://github.com/Laymer/Navzeroth/pull/196)
+at `49472d0` after independent review, all nine exact-head checks and both
+source platforms with parity. Research delivery remains unavailable for advice
+and acceptance; the current launch target and trusted signers remain pending.
 [Delivery handoff](handoffs/2026-10-18-bound-delivery.md).
 Continuation 5 merged as [PR #195](https://github.com/Laymer/Navzeroth/pull/195)
 at `0151eb1` after independent review, all nine exact-head checks and source

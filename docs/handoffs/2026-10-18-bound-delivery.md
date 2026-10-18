@@ -49,3 +49,14 @@ Next: continuation 7 — connect bound research facts to authored verification,
 inspect the owner's private guide designs as inert source, design class-specific
 solo/duo routes only where facts permit, and enumerate exact available record IDs
 across all nine domains with independent completeness kept separate.
+
+## Integration receipt
+
+PR #196 merged at `49472d0588f08035928a0594a74878a55dcdbdd0`,
+2026-10-18T12:06:30Z, from reviewed head
+`4e2907b1b7750e7fcffb50f0f9710eda9d6685a8`. All nine required checks passed:
+[CI](https://github.com/Laymer/Navzeroth/actions/runs/39124598116),
+[Windows package](https://github.com/Laymer/Navzeroth/actions/runs/39124598149),
+and both [source platforms and parity](https://github.com/Laymer/Navzeroth/actions/runs/39124598089).
+Ordinary packaging used no acceptance-candidate flag and published no release.
+Next task: continuation 7 guides and inventory, then desktop completion.
