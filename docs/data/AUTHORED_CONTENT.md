@@ -72,7 +72,7 @@ mean the advice is correct.
 - Preference keys read by rules and checks: `plan.deadmines`,
   `remind.flight-points`, `party.duo`. Until a capture reports them they are
   unknown, and the reminder engine omits the rule.
-- Context: the catalog is labelled `wow_forever 1.60.1.70425 / 16001`
+- Context: the catalog is labelled `wow_forever 1.60.1.70450 / 16001`
   (development input) only because the format requires one. It is rebuilt for
   the frozen live target and never relabelled.
 

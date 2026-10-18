@@ -23,7 +23,7 @@ What the files do not contain, on purpose:
   client projection (task V2.2) or from the operator's own in-game observations
   through the addon, and are confirmed against the frozen release target.
 - A verified game build. The catalog is labelled with the development tuple
-  `wow_forever 1.60.1.70425 / 16001` because the format requires a context; the
+  `wow_forever 1.60.1.70450 / 16001` because the format requires a context; the
   content does not depend on it and is rebuilt for the first stable live build
   after launch. Nothing here is relabelled to that build.
 - Activation. Building or verifying this pack does not install it for planning.
