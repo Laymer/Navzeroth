@@ -249,6 +249,13 @@ pub struct Request {
     pub preset: PerformancePreset,
 }
 fn extract(request: &Request) -> Result<String> {
+    extract_using(request, crate::native::Archive::open)
+}
+
+fn extract_using(
+    request: &Request,
+    open: impl FnOnce(&Path, &str, u32, u32) -> Result<crate::native::Archive>,
+) -> Result<String> {
     if request.format_version != 1 {
         return Err("Unsupported media request");
     }
@@ -270,7 +277,7 @@ fn extract(request: &Request) -> Result<String> {
         return Err("Media source fingerprint differs from catalog");
     }
     let locale_mask = crate::media::locale_mask(&request.locale)?;
-    let archive = crate::native::Archive::open(
+    let archive = open(
         &root,
         &catalog.installation.product,
         locale_mask,
@@ -326,6 +333,11 @@ fn extract(request: &Request) -> Result<String> {
     }
     seal(&mut store, discovery, assets, false)
 }
+
+#[cfg(test)]
+pub(crate) fn extract_synthetic(request: &Request) -> Result<String> {
+    extract_using(request, crate::native::boundary_tests::open_staging)
+}
 fn locale_mask(locale: &str) -> Result<u32> {
     Ok(match locale {
         "enUS" => 2,
@@ -343,6 +355,33 @@ fn locale_mask(locale: &str) -> Result<u32> {
         "ptPT" => 65536,
         _ => return Err("Unsupported media locale"),
     })
+}
+
+#[cfg(test)]
+mod locale_tests {
+    #[test]
+    fn installed_content_locale_masks_are_exact_and_unknown_locales_are_refused() {
+        for (locale, mask) in [
+            ("enUS", 2),
+            ("koKR", 4),
+            ("frFR", 16),
+            ("deDE", 32),
+            ("zhCN", 64),
+            ("esES", 128),
+            ("zhTW", 256),
+            ("enGB", 512),
+            ("esMX", 4096),
+            ("ruRU", 8192),
+            ("ptBR", 16384),
+            ("itIT", 32768),
+            ("ptPT", 65536),
+        ] {
+            assert_eq!(super::locale_mask(locale), Ok(mask));
+        }
+        for locale in ["", "enus", "enUS ", "xxXX"] {
+            assert_eq!(super::locale_mask(locale), Err("Unsupported media locale"));
+        }
+    }
 }
 pub fn verify(root: &Path, digest: &str) -> Result<MediaManifest> {
     if !is_sha256(digest) {

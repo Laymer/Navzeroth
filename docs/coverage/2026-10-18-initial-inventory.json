@@ -1,0 +1,5145 @@
+{
+  "format_version": 1,
+  "source_commit": "d053de0046edfa78e05b17826e19e8d8c4f2db83",
+  "source_hash_normalization": "UTF-8, CRLF to LF only",
+  "files": [
+    {
+      "path": "apps/desktop/csp.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0a0bf0cd6fa1baac0ef83bf0a4907548f8e2bcf9920218d2a9b79c40d9e90810",
+      "test_line_ranges": [],
+      "line_count": 9
+    },
+    {
+      "path": "apps/desktop/e2e/a11y.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c9b058739c10c2a7875fd4415a20365cb83562a36cffb6b519773eee14b3e5dd",
+      "test_line_ranges": [],
+      "line_count": 69
+    },
+    {
+      "path": "apps/desktop/e2e/atlas-dense.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "44ba91584d0f2c264ff514a857ea62c4ec3e3bc3f512184421f5e5518d24dc91",
+      "test_line_ranges": [],
+      "line_count": 93
+    },
+    {
+      "path": "apps/desktop/e2e/busy-fieldset-help.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d8aa1ca20aeeaa79feea94ff051daad9024dcc94c2155cfd5493f7df70642572",
+      "test_line_ranges": [],
+      "line_count": 76
+    },
+    {
+      "path": "apps/desktop/e2e/calibration.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "af77dffeb4c3c2faf9e855c609ce38a4444fc43ae42911da81abafa0267cc057",
+      "test_line_ranges": [],
+      "line_count": 48
+    },
+    {
+      "path": "apps/desktop/e2e/compatibility.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "6ffee38b9d29887b704e1d53ba65065bbeda32e62403b5a3a55dbc7acc92d936",
+      "test_line_ranges": [],
+      "line_count": 27
+    },
+    {
+      "path": "apps/desktop/e2e/content-dispositions.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3d57ab342552e4885f4f345fe46bbcf8023fc63ae7291374cea2be480ca6d6f4",
+      "test_line_ranges": [],
+      "line_count": 36
+    },
+    {
+      "path": "apps/desktop/e2e/data-screens-reflow.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "bd8a6cfdfff570ee4c11517b104a8f616e8a4a4a9db1a2d996ad13de10f4a3de",
+      "test_line_ranges": [],
+      "line_count": 47
+    },
+    {
+      "path": "apps/desktop/e2e/diagnostics.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "27bd52c7df61b358d1fc802f05be94c184bc86d89ea976c460c799e901da8c4c",
+      "test_line_ranges": [],
+      "line_count": 37
+    },
+    {
+      "path": "apps/desktop/e2e/dungeons.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "02b199228e8b81d942a3009c152fbb6585dfee0c7d2ed7b72a073af3bde5307b",
+      "test_line_ranges": [],
+      "line_count": 43
+    },
+    {
+      "path": "apps/desktop/e2e/gear.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "90f13c1428d6a5aadbf37ed6a1599c9eab7ecb914fe612596236e86bffa37b02",
+      "test_line_ranges": [],
+      "line_count": 50
+    },
+    {
+      "path": "apps/desktop/e2e/heading-reflow.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d1548eed88662c5d506dfdc105cc94f7e25da3667cd20a6308cc9a282bb13268",
+      "test_line_ranges": [],
+      "line_count": 24
+    },
+    {
+      "path": "apps/desktop/e2e/joint.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5e99b034349929e63d148be30fa4e0bd1545cec9b12e609360892152d30f3ebd",
+      "test_line_ranges": [],
+      "line_count": 65
+    },
+    {
+      "path": "apps/desktop/e2e/local-research-workflow.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "073b40cb1c6dc9eacc3cef34f5f5edead4216094560326d5b8d295d14d9fa228",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "apps/desktop/e2e/local-submissions.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d8f2dfac678ade09b002eb343b53734d651d7aa910310bfc69cd9262dc85b263",
+      "test_line_ranges": [],
+      "line_count": 55
+    },
+    {
+      "path": "apps/desktop/e2e/navigation-reflow.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "42c3276aac5a707966748c2a8e271e1ddd9d8c6fe40336c90ec6d64b5fdd1f76",
+      "test_line_ranges": [],
+      "line_count": 101
+    },
+    {
+      "path": "apps/desktop/e2e/nested-panel-reflow.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3959ab08dffbc9ae4996481fa7114a5c1fb1e8eed46e04f658acd6776455bd3d",
+      "test_line_ranges": [],
+      "line_count": 121
+    },
+    {
+      "path": "apps/desktop/e2e/planning-jobs.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e9daf584d9471af768e2baaef57a72ba5781c12c2d5fba5f1e3402000acabed3",
+      "test_line_ranges": [],
+      "line_count": 38
+    },
+    {
+      "path": "apps/desktop/e2e/pressed-button.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c33038577dccc2897a6a07bbc85695e9cf34f606d26156062c8386726915390a",
+      "test_line_ranges": [],
+      "line_count": 84
+    },
+    {
+      "path": "apps/desktop/e2e/prod-csp.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7536f41e3153401c1de5e080bf681e86cefdb17727682b7be20760ce986d83a0",
+      "test_line_ranges": [],
+      "line_count": 92
+    },
+    {
+      "path": "apps/desktop/e2e/proposals.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "eadbe4935736a47005410597eb32f733d5602b165830acca948e85860fe01f6b",
+      "test_line_ranges": [],
+      "line_count": 58
+    },
+    {
+      "path": "apps/desktop/e2e/recovery.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "55259c3e6a36bf7dbd06385e04fc65f9aec595716dd3f0e7375b5467c26cfb3f",
+      "test_line_ranges": [],
+      "line_count": 34
+    },
+    {
+      "path": "apps/desktop/e2e/reference.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "dba7ecf390b910792c136ddf2d5015857fea50a90d28db96809f544ffed75411",
+      "test_line_ranges": [],
+      "line_count": 74
+    },
+    {
+      "path": "apps/desktop/e2e/refresh-tick.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d669af5aac39fed5f3551d6cca44fa474edbb9078fcc51eaba552292520b7409",
+      "test_line_ranges": [],
+      "line_count": 51
+    },
+    {
+      "path": "apps/desktop/e2e/reminders.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ebe723897d62e3b2859fac372e109bfe018a97200182f5a9c8b7d16d32f7d783",
+      "test_line_ranges": [],
+      "line_count": 28
+    },
+    {
+      "path": "apps/desktop/e2e/route-acquisition.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a01b1963228d2804cdf05ee1e46956da6cf110767bbb2ff5d804518ed8495b28",
+      "test_line_ranges": [],
+      "line_count": 52
+    },
+    {
+      "path": "apps/desktop/e2e/screenshots.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3ce7fa7b8c4bb7c07e19c87351d45b4eeff45e1d2b1adc9a8775e333330fefd2",
+      "test_line_ranges": [],
+      "line_count": 18
+    },
+    {
+      "path": "apps/desktop/e2e/sessions.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "82e31a62f23ee387475803e9911a6584e63fc475a57ccd3fc954e0ae6291af25",
+      "test_line_ranges": [],
+      "line_count": 41
+    },
+    {
+      "path": "apps/desktop/e2e/support/mockInvoke.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3d4a3d9fdb953e60a085fab2e521c9976aa00c2b258acfda044e5be45c811af6",
+      "test_line_ranges": [],
+      "line_count": 61
+    },
+    {
+      "path": "apps/desktop/e2e/support/screens.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "fabc2b933661381c0d86342dd879278662293dca7802ee34d9f8f4aaeb04c040",
+      "test_line_ranges": [],
+      "line_count": 18
+    },
+    {
+      "path": "apps/desktop/e2e/today-settings.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "cf4a177f09e49d1ebeb5e73b19aa2b56c34fb3c08a1ace8c9ae1a6636a94d9db",
+      "test_line_ranges": [],
+      "line_count": 54
+    },
+    {
+      "path": "apps/desktop/e2e/workflow.spec.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e451cfff4564dcfbd1868898a95862d4020cb98a337da8d27211ef6037597094",
+      "test_line_ranges": [],
+      "line_count": 274
+    },
+    {
+      "path": "apps/desktop/playwright.config.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3e785b98508e9f4886f7f9813f3efe3066c6744718762fcbfcbe24da154e1a55",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "apps/desktop/src-tauri/build.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "487059eaf8a947b80f20a9aacac038a5047b2ad69d2401b827376c67d6fe847f",
+      "test_line_ranges": [],
+      "line_count": 4
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/atlas_protocol.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fdc27548b311ca14b08bda8f7efb564d727c9a7e64e1b7fe004798285787d6d3",
+      "test_line_ranges": [],
+      "line_count": 92
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f1a955c09786ce0b6ea6cb595b682e73faa128cc3d81c8aa44afe8d1053c0f95",
+      "test_line_ranges": [],
+      "line_count": 1528
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/main.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0827c1ed9f8cad7d94f271a7d7ecacb7147b485bd976754aa3cf8d56355d0763",
+      "test_line_ranges": [],
+      "line_count": 21
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/reference_window.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "db405a9cee7ba46349eafb3a10f10e03521101bfb450acecd38fcc60166356a8",
+      "test_line_ranges": [
+        [
+          151,
+          181
+        ]
+      ],
+      "line_count": 182
+    },
+    {
+      "path": "apps/desktop/src/App.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "18b6bfe2730348fcf657acc1d735211e026baea0b411d45e9fee955b541880bd",
+      "test_line_ranges": [],
+      "line_count": 132
+    },
+    {
+      "path": "apps/desktop/src/App.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "93634c2ddc2cab3ae13d82792c1e25eeb0478ff254e8369631e532595c9126ac",
+      "test_line_ranges": [],
+      "line_count": 220
+    },
+    {
+      "path": "apps/desktop/src/AppShell.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "59c3e0cbb6ac24129712dd071799585e19dc68ff2253525205fce0efec25b478",
+      "test_line_ranges": [],
+      "line_count": 56
+    },
+    {
+      "path": "apps/desktop/src/atlas/MapView.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6d2c41e0e283586f99d4792dd7c30f0bb370b72949863613b5ef09f3c1734bbe",
+      "test_line_ranges": [],
+      "line_count": 254
+    },
+    {
+      "path": "apps/desktop/src/atlas/describe.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "26f405083867372040cb18b2aef6be96cf43a4406216d7bf3d7effded3ab18cc",
+      "test_line_ranges": [],
+      "line_count": 115
+    },
+    {
+      "path": "apps/desktop/src/atlas/golden.shapes.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ca45c166aeb868387c0f851a821d7ad1402a07c8f2217df47f31ab1159025a23",
+      "test_line_ranges": [],
+      "line_count": 202
+    },
+    {
+      "path": "apps/desktop/src/atlas/golden.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "67dae6762596ddad3a6a1a97787eaa9d977112e598b50c4b02c2cb6bc9e54fc1",
+      "test_line_ranges": [],
+      "line_count": 71
+    },
+    {
+      "path": "apps/desktop/src/atlas/layers.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "69addd1d5eef063c2f7fe9856f3f43660e8bb50c526deb692b161af236525b72",
+      "test_line_ranges": [],
+      "line_count": 35
+    },
+    {
+      "path": "apps/desktop/src/atlas/layers.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8c7eeae8632211b44005bd7466f2e4184b243f51f259498300bf5c10cc34eee1",
+      "test_line_ranges": [],
+      "line_count": 29
+    },
+    {
+      "path": "apps/desktop/src/atlas/markerState.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3f7af936a7a8b932aa4e1ffb03713c1759b6867c366be422455133bd6f8b5393",
+      "test_line_ranges": [],
+      "line_count": 83
+    },
+    {
+      "path": "apps/desktop/src/atlas/markerState.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "643541fc88d0a48991b8790fc755e8412115268d79742d8b80e548a04372718c",
+      "test_line_ranges": [],
+      "line_count": 75
+    },
+    {
+      "path": "apps/desktop/src/atlas/viewport.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "8ea8d9ac35cfadd0dac8b700c7b7c266c2cfaa58735e4b598875605e5d7794f0",
+      "test_line_ranges": [],
+      "line_count": 138
+    },
+    {
+      "path": "apps/desktop/src/atlas/viewport.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f44d8ca778728eda985a4a1a366af869bcda05a17ea7bab554af623881dcd83c",
+      "test_line_ranges": [],
+      "line_count": 156
+    },
+    {
+      "path": "apps/desktop/src/commands/atlasClient.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3358681da46a900e0ee0e7ff161b159c01f1dc3d9e6905e47e9944c2d7a96e49",
+      "test_line_ranges": [],
+      "line_count": 46
+    },
+    {
+      "path": "apps/desktop/src/commands/authoredContent.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "908e3d471e36b46c0802ae15c60f7f87201702f999a36b3b19d0f011f743eccc",
+      "test_line_ranges": [],
+      "line_count": 9
+    },
+    {
+      "path": "apps/desktop/src/commands/calibration.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "39af32b3bb2e17d294fb5ca91ffc4e3253c40903a43201d7e3ca7592dd5ef452",
+      "test_line_ranges": [],
+      "line_count": 12
+    },
+    {
+      "path": "apps/desktop/src/commands/catalogPages.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "2da49282ce679f20529d9c045d6c5fd31464521b7913d718d800b5cb3031da91",
+      "test_line_ranges": [],
+      "line_count": 8
+    },
+    {
+      "path": "apps/desktop/src/commands/client.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "071fc70a7e8695b47b8a81955ae64bc3e6c4a6264d71bb306a17596bb00d1991",
+      "test_line_ranges": [],
+      "line_count": 192
+    },
+    {
+      "path": "apps/desktop/src/commands/clustering.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "6c4a4ad828c7d35c279eb52ae6c9060e101ba7898ae0b11cbcf1b70b10c2e4fe",
+      "test_line_ranges": [],
+      "line_count": 16
+    },
+    {
+      "path": "apps/desktop/src/commands/compatibility.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "8bae3b770420c8aa12078dca8ebb140c8548d279f94add00628b5a4381142373",
+      "test_line_ranges": [],
+      "line_count": 17
+    },
+    {
+      "path": "apps/desktop/src/commands/contentDispositions.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "372a4530078ab4216cc476609a7b53ef1dfdd9881a4dd109d943f167490cb5cf",
+      "test_line_ranges": [],
+      "line_count": 9
+    },
+    {
+      "path": "apps/desktop/src/commands/contract.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "eba6e927048cef7cb73723f8c426d67516d60203dcd890a68de6f290ce304836",
+      "test_line_ranges": [],
+      "line_count": 418
+    },
+    {
+      "path": "apps/desktop/src/commands/demoAdapter.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8c9afbcac5c85bb59d3d9afb7c3e851dc095d233c27fdedda153ab45c66aeb74",
+      "test_line_ranges": [],
+      "line_count": 227
+    },
+    {
+      "path": "apps/desktop/src/commands/diagnostics.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "e6dcddf84aeaeaf7565735145cba0b8358650a88854392eb908c8bb33ab4758d",
+      "test_line_ranges": [],
+      "line_count": 23
+    },
+    {
+      "path": "apps/desktop/src/commands/dungeonPreparation.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "952da6140a25300f78012b66d083ec0e998bccd23f08d2e1133fe2f124f163b3",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "apps/desktop/src/commands/gear.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "26d6fce874ab33da8b5397994aa4e9556366af6c0e2fc33c5f1dc1b490572acc",
+      "test_line_ranges": [],
+      "line_count": 109
+    },
+    {
+      "path": "apps/desktop/src/commands/index.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8d54f9835d82acce88e57ec7a58e98b8e6e76fc9231e630cc4a92642753d47a9",
+      "test_line_ranges": [],
+      "line_count": 20
+    },
+    {
+      "path": "apps/desktop/src/commands/localData.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "8b42b67e8e255f83d4f853daf20564c9ecd796cb6f0c5beaa7c76bd6445771b5",
+      "test_line_ranges": [],
+      "line_count": 52
+    },
+    {
+      "path": "apps/desktop/src/commands/localSubmissions.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "fa32f59bf0e0cf8e24a1f3f3b1929dea1e3d553f395978d9625aaafc10f2c1ea",
+      "test_line_ranges": [],
+      "line_count": 13
+    },
+    {
+      "path": "apps/desktop/src/commands/planningJobs.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "8988a21031363369c0cef54de76c2236eb1b597e2865c0f21aeb8d510e1c3883",
+      "test_line_ranges": [],
+      "line_count": 79
+    },
+    {
+      "path": "apps/desktop/src/commands/planningJobs.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e9d4b23a7e41c0c60102b65ec3512ec65b2d21841d172501b745c377eec0baf7",
+      "test_line_ranges": [],
+      "line_count": 76
+    },
+    {
+      "path": "apps/desktop/src/commands/recovery.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "f39a24dcb29d427a1660fe54dd09804f51f273b41339804c2a5a498edc61d7b8",
+      "test_line_ranges": [],
+      "line_count": 5
+    },
+    {
+      "path": "apps/desktop/src/commands/reference.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "880fc7d7accc9217b8968a740e7480bdf2a4b460e5ab1870f24a10fd3b0251cf",
+      "test_line_ranges": [],
+      "line_count": 21
+    },
+    {
+      "path": "apps/desktop/src/commands/reminders.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "27890103f0e50c116edee6b652584b5af7b69f292f2f15439184e2880b185bb3",
+      "test_line_ranges": [],
+      "line_count": 16
+    },
+    {
+      "path": "apps/desktop/src/commands/routeAcquisition.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "5a3b352969b4d3606efebc1fb5e13ea02b299c3ae4641c371bbea39c7a83c6ad",
+      "test_line_ranges": [],
+      "line_count": 38
+    },
+    {
+      "path": "apps/desktop/src/commands/routes.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "1fc4c7f6996b930904d523271fe9bf6c8e3b5f84525b76ff0389363a134a761d",
+      "test_line_ranges": [],
+      "line_count": 14
+    },
+    {
+      "path": "apps/desktop/src/commands/sessions.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "b5b1fee48083d6748ce7045c36f1f4ca5568be2b068054cebb7580cd71453907",
+      "test_line_ranges": [],
+      "line_count": 28
+    },
+    {
+      "path": "apps/desktop/src/commands/tauriAdapter.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "47ed45498511233973b03a6497ae16bd9e822e80f4a0371efe36d1881b5baed5",
+      "test_line_ranges": [],
+      "line_count": 12
+    },
+    {
+      "path": "apps/desktop/src/commands/today.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7c361f9555e2955b1089ff52e4726d63308aa2dcc548a44e4d33a167a4469769",
+      "test_line_ranges": [],
+      "line_count": 11
+    },
+    {
+      "path": "apps/desktop/src/csp.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "73c43c19cc62840204e31d8d45dfdb989af13b0843860289a102afa8c4ef267b",
+      "test_line_ranges": [],
+      "line_count": 40
+    },
+    {
+      "path": "apps/desktop/src/gear/golden.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "49587395d42c32e078346060b5d6081a0f07a45067bdf24fffda9a895b6d2766",
+      "test_line_ranges": [],
+      "line_count": 17
+    },
+    {
+      "path": "apps/desktop/src/main.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f07d47a6d96d50e61b0037bed78cf65eb24e70d1623a468067f5e72e59f39d0c",
+      "test_line_ranges": [],
+      "line_count": 25
+    },
+    {
+      "path": "apps/desktop/src/observation.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5c17b8fca23673a001deb6ba7df2bb5d7c3e675e2f00770d5e7c0e6818ff72aa",
+      "test_line_ranges": [],
+      "line_count": 20
+    },
+    {
+      "path": "apps/desktop/src/party/contract.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "63414228ec00a3adfd2961dea90dad17660c9d2bfdea65ebd11ff43552110fc8",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "apps/desktop/src/party/proposals.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "98d616f4b93dd723d93f429c4927631df0e0fb9993d330c419596cf655ed681d",
+      "test_line_ranges": [],
+      "line_count": 17
+    },
+    {
+      "path": "apps/desktop/src/screens/AtlasScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "28b24e7ada3ce725a32819c7fb8bd92ca6f7ee53c7d8da10624ed4c1baf5e014",
+      "test_line_ranges": [],
+      "line_count": 374
+    },
+    {
+      "path": "apps/desktop/src/screens/AtlasScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "03f2b185a174c0fc742109b4c9e6c85fbabf8b18278f2a1370ce72802a9ba01a",
+      "test_line_ranges": [],
+      "line_count": 294
+    },
+    {
+      "path": "apps/desktop/src/screens/AuthoredContentPicker.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0e404b11e406df6bb6635a3309867f60ad8eabb43669d676637804b6bde3b51b",
+      "test_line_ranges": [],
+      "line_count": 23
+    },
+    {
+      "path": "apps/desktop/src/screens/AuthoredContentPicker.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9d9ba282052f0263d564134c1384bb8e7fc7d7a2ef27df11dc36e316ef4a0b1f",
+      "test_line_ranges": [],
+      "line_count": 26
+    },
+    {
+      "path": "apps/desktop/src/screens/CalibrationPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "26df236aafdf1c69cdda361cd0e6bac566f875f05a38fa25f3c7decfde388317",
+      "test_line_ranges": [],
+      "line_count": 37
+    },
+    {
+      "path": "apps/desktop/src/screens/CalibrationPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5aba981967fa4aae81e3162c628b1065d28ac1e3fbb51ff915e9f5f69f70af7c",
+      "test_line_ranges": [],
+      "line_count": 51
+    },
+    {
+      "path": "apps/desktop/src/screens/CatalogPager.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d967b42d780a62327aac45800554cb2c1537c9c25a4b9cd630cd37173b3e3202",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "apps/desktop/src/screens/CatalogPager.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0fd6c136ec1ae9612aacd7b150f6ffd9d95d817a72b447765bb62828edf02865",
+      "test_line_ranges": [],
+      "line_count": 21
+    },
+    {
+      "path": "apps/desktop/src/screens/ClusterSummary.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c932e2dfb6fb70343bafb7006ab91b26df4bd8c123dd5e7359db4c6e07bbc851",
+      "test_line_ranges": [],
+      "line_count": 13
+    },
+    {
+      "path": "apps/desktop/src/screens/CompatibilityPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9456a0b0f3ba4c3eae567982307fc1959c07a71104c9be3a8df1e0c6dc1b38b4",
+      "test_line_ranges": [],
+      "line_count": 45
+    },
+    {
+      "path": "apps/desktop/src/screens/CompatibilityPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "72fa2387c1bace8131dd7edfac610a88484904c12674ab7aff093fa69287a0bc",
+      "test_line_ranges": [],
+      "line_count": 52
+    },
+    {
+      "path": "apps/desktop/src/screens/ContentDispositionPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4d3a0be92d3426a18da5a0bc8fd89084efbab7d0a04f968305fb350208f89380",
+      "test_line_ranges": [],
+      "line_count": 15
+    },
+    {
+      "path": "apps/desktop/src/screens/ContentDispositionPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b406f8ebbe025954cd3d75fa3d42db6722c83beba0f393f8a824109fc6458f88",
+      "test_line_ranges": [],
+      "line_count": 29
+    },
+    {
+      "path": "apps/desktop/src/screens/ContentScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "026147a88581ce3ce33c2395f5e32e6e879d42f488c11824aeee01b90a71c5c2",
+      "test_line_ranges": [],
+      "line_count": 79
+    },
+    {
+      "path": "apps/desktop/src/screens/ContentScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "be5315c7e42ad63e9011195fc6ed304c28059e9ad8f3bfb13b36eaa07f0b3875",
+      "test_line_ranges": [],
+      "line_count": 124
+    },
+    {
+      "path": "apps/desktop/src/screens/DiagnosticsPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b8b815de249651fd05ec700a4c4a8c825d070bcebdbb0746642c2f93792ccd69",
+      "test_line_ranges": [],
+      "line_count": 32
+    },
+    {
+      "path": "apps/desktop/src/screens/DiagnosticsPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5eb5677e1908e351d817b4ac64e5bb6513d67e7a8c19513c6248cbde4c831309",
+      "test_line_ranges": [],
+      "line_count": 41
+    },
+    {
+      "path": "apps/desktop/src/screens/DungeonsScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2f3c4647ed99e71eb8dd76d6e8d6d7258be65bf594b8ba71a2b9e5742375b4fd",
+      "test_line_ranges": [],
+      "line_count": 72
+    },
+    {
+      "path": "apps/desktop/src/screens/DungeonsScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "63ea580893365ebc8d17548aa161eb78854b0e59e13c571760a3056fcfbab4ab",
+      "test_line_ranges": [],
+      "line_count": 109
+    },
+    {
+      "path": "apps/desktop/src/screens/GearExplanations.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "92c1597c0aaa56f79804c0b7696f97f400cc304f663ba0f809c958eb442d1d7c",
+      "test_line_ranges": [],
+      "line_count": 75
+    },
+    {
+      "path": "apps/desktop/src/screens/GearExplanations.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0fcc830dcf2208ed9119934a738a6f65bebfde0dfe03e10bc392099276742600",
+      "test_line_ranges": [],
+      "line_count": 162
+    },
+    {
+      "path": "apps/desktop/src/screens/GearScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "cde1052c9a64894d94d7665400fdae164aea9c61dbdc3219c80220e09ee1b790",
+      "test_line_ranges": [],
+      "line_count": 120
+    },
+    {
+      "path": "apps/desktop/src/screens/GearScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4b2e43ff2d7aeb8cf6a648ec26dc05082eee9df5c92a5a524a5678ddc67aa4a5",
+      "test_line_ranges": [],
+      "line_count": 184
+    },
+    {
+      "path": "apps/desktop/src/screens/ImportScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "92c774d62a0e258652bbcff9774209008d5217395bb985b614af53dd0fabfaef",
+      "test_line_ranges": [],
+      "line_count": 108
+    },
+    {
+      "path": "apps/desktop/src/screens/ImportScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "455017db1364a3f9e343741436a813171aa0e64f2b8128877f050966be2c7c63",
+      "test_line_ranges": [],
+      "line_count": 197
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalDataPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a3640e4424e25e37517d44bfe8ef8d7534ccb3443f22db80bab53c030aa3b66b",
+      "test_line_ranges": [],
+      "line_count": 74
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalDataPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b509671a3cdfeb689ff118112bb8bce5476f517abc6bb9ea994ea310765f968f",
+      "test_line_ranges": [],
+      "line_count": 116
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalResearchInputs.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "75d3909cb21629ad9486c38866f76687725acf66f159cef0277102c0a8fa0c1f",
+      "test_line_ranges": [],
+      "line_count": 32
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalResearchInputs.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5140207ee135ca766bccf73613b7ead8939bc5d5638094d2c5087bd69e879967",
+      "test_line_ranges": [],
+      "line_count": 29
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalResearchMedia.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d77fe870302fad1745a7d9bcc10b532fa04f8049105ae2122386743614fba3a5",
+      "test_line_ranges": [],
+      "line_count": 22
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalResearchMedia.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7d18323819e4817aa364375f65925b023f11e29c88235c5c279cd7e1a90a4105",
+      "test_line_ranges": [],
+      "line_count": 37
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalStartupChoices.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0c2e7a99f26553206c9b032cf8655db0be9a3aeae278eab70e9605203ffd74bd",
+      "test_line_ranges": [],
+      "line_count": 35
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalStartupChoices.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f91953d4bb463a5d2f0736a0d8351638a82cf1e25e97fdbf3f4f4f0baab3f40b",
+      "test_line_ranges": [],
+      "line_count": 33
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalSubmissionsPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b70da2241d40044c57ceaadd7b97e42a9c4e2fa7fa6e08c749272e793750ad43",
+      "test_line_ranges": [],
+      "line_count": 61
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalSubmissionsPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "be3946fcad4e1f8fa1361d68a090319b3530eb83732ab973351bb9601f0526fa",
+      "test_line_ranges": [],
+      "line_count": 78
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalWorkflowChoices.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7bef400a847a3ff78805c256ab8e728651b8751849f92b47bb472cf45d747480",
+      "test_line_ranges": [],
+      "line_count": 37
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalWorkflowChoices.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9ee39ea34be93ce6a71dd6a3dcea2f95075455565ffc01c9acc7cf46492bd4a0",
+      "test_line_ranges": [],
+      "line_count": 62
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyAgreement.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "670f4df1f39ec86dec3e1631a52d2506748c867c3c0e1b68e8f2384c05fafff6",
+      "test_line_ranges": [],
+      "line_count": 144
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyAgreement.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8c3597b4932ffd364041f8a21b9b96f35381b503369124686a68a4c268e38bae",
+      "test_line_ranges": [],
+      "line_count": 96
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyEligibility.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3c12f9d9c9f6b1a8ec3d3a70a93549885f94a30a38e855e1c7283ca7ca75326d",
+      "test_line_ranges": [],
+      "line_count": 46
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyEligibility.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "cd618dd7cef37c003ea592a12394d31a90200f7e92fb054b269fe145356aebf7",
+      "test_line_ranges": [],
+      "line_count": 82
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyPlanning.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9ddb7f7246c6243d068b404fd0219cea3de15232d7087de1a58a02f5e25a93e2",
+      "test_line_ranges": [],
+      "line_count": 114
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyPlanning.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fbc57cde7b6b13b262ba2b775e8147aea6afd7d66f8589e7ed097170afa394ae",
+      "test_line_ranges": [],
+      "line_count": 158
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3e2b9acbfdba6d2fdc08e390e33cae3d68173887281ee91b8afa2e14daaebdfb",
+      "test_line_ranges": [],
+      "line_count": 150
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "1caa8d17905e89ca817188de0f9f959ebf7704d6e6fd9d4745a007c2f4337b99",
+      "test_line_ranges": [],
+      "line_count": 140
+    },
+    {
+      "path": "apps/desktop/src/screens/PlanPinControl.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5411d68ef581ba9c9e2bd80bc8268a7af0a494520201b99b8f7ba669c0e99257",
+      "test_line_ranges": [],
+      "line_count": 12
+    },
+    {
+      "path": "apps/desktop/src/screens/PlannerScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2f431fd8329a6a49ad813204656e1c90a0be660943383a91a0cc645560d404d6",
+      "test_line_ranges": [],
+      "line_count": 117
+    },
+    {
+      "path": "apps/desktop/src/screens/PlannerScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5e5093a3493e430eef8faf5bba56adca36547afff7e8fb59105fa25bf3e0a919",
+      "test_line_ranges": [],
+      "line_count": 181
+    },
+    {
+      "path": "apps/desktop/src/screens/RecoveryPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f9f3e60e8d2aee9dad729036b58b0072432b3110805fe6ca6a3e88d2803f21f5",
+      "test_line_ranges": [],
+      "line_count": 77
+    },
+    {
+      "path": "apps/desktop/src/screens/RecoveryPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e36edff0d9a0dd9f20e944972f01d497e3272b4a9f5509d73c79a606022d8bb0",
+      "test_line_ranges": [],
+      "line_count": 65
+    },
+    {
+      "path": "apps/desktop/src/screens/ReferenceControls.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d4765aa9f0d7a3279cc67fe0e63aefd929af4443904cae8dec25b7d209cd0090",
+      "test_line_ranges": [],
+      "line_count": 12
+    },
+    {
+      "path": "apps/desktop/src/screens/ReferenceView.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3bb3b28386ad890175cd581f302693872a3bee8abacfa6c93fd2f34835325758",
+      "test_line_ranges": [],
+      "line_count": 15
+    },
+    {
+      "path": "apps/desktop/src/screens/ReferenceView.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "60c914c03b374d4abe978f4d5371eb0adfa0ad610ef9d8a719e0450218c86288",
+      "test_line_ranges": [],
+      "line_count": 25
+    },
+    {
+      "path": "apps/desktop/src/screens/ReferenceWindowControls.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "333b9c860129a8c5db3e46fc8ee06a66a89939832d08c381ca528ea1c0c40908",
+      "test_line_ranges": [],
+      "line_count": 45
+    },
+    {
+      "path": "apps/desktop/src/screens/ReminderScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "8648dbbc85597ed3e80e1f0a4591bb0c0d550bf3c5c7ec46cfa73c4fc5a9ef5e",
+      "test_line_ranges": [],
+      "line_count": 57
+    },
+    {
+      "path": "apps/desktop/src/screens/ReminderScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d9362b3f7fe6756202b6cb88f2d545559fabfd74f9e8a8e3f637a059d64772a5",
+      "test_line_ranges": [],
+      "line_count": 54
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchBindings.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c8d8afd1dd6dec9c17e66188e70583fda72a69d3ddaf2f219a726862e30fee86",
+      "test_line_ranges": [],
+      "line_count": 17
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchBindings.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c51d0a273cc73ee15eec765790ae7d0becf8e70097a59e0352f20dc78ec12909",
+      "test_line_ranges": [],
+      "line_count": 21
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchDeliveryPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "872aecb3a34e8a15c3349f00dee2917d4ba02204457ef420edb6fffe67bf71c6",
+      "test_line_ranges": [],
+      "line_count": 50
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchDeliveryPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d19991425a0caf719a5e9dae805918d1896c41f20962ee4e026c7e55b9111240",
+      "test_line_ranges": [],
+      "line_count": 87
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchFactsTools.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e264511d152db99ec47621a7333843cbeb16244277a1f208565da5340daa9594",
+      "test_line_ranges": [],
+      "line_count": 33
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchFactsTools.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2085fd2b178ab6edd37d0e30f1602d7256f1e46f6d0c657f7d7c0bfcc4dcf035",
+      "test_line_ranges": [],
+      "line_count": 36
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchReferenceHistory.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d408247265408b8dd1bcff10b36ba347afcb0d5644cdc1bbe7a289ae7fd6c969",
+      "test_line_ranges": [],
+      "line_count": 12
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchReferenceHistory.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3681b572f204d0afe5e440e04064f885bea958acdae903078a0d394c2fc9f057",
+      "test_line_ranges": [],
+      "line_count": 12
+    },
+    {
+      "path": "apps/desktop/src/screens/RouteAcquisitionPanel.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f008ef665dbc1fe896ffb98522b9c62f594ab79b279c0ca800801984e6d74499",
+      "test_line_ranges": [],
+      "line_count": 26
+    },
+    {
+      "path": "apps/desktop/src/screens/RouteAcquisitionPanel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "cc42f059a84f5d5719ec2daac2db9c9fde69bbf3e66d509c266c341abf51bac3",
+      "test_line_ranges": [],
+      "line_count": 57
+    },
+    {
+      "path": "apps/desktop/src/screens/RouteInspection.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3f436e2b0f67d4aa2f6d0b0864e900d463c3a137ffc53fb220ade661bc91a680",
+      "test_line_ranges": [],
+      "line_count": 63
+    },
+    {
+      "path": "apps/desktop/src/screens/RouteInspection.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9eddc38bb6795e3020d223a79850f0cc77c0823c7df6485589be80766c115ed1",
+      "test_line_ranges": [],
+      "line_count": 63
+    },
+    {
+      "path": "apps/desktop/src/screens/SavedPlanCard.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f9049e786e09894a7078a6474ce0a04ac1426678338d63c8acc694cc16e9dbdb",
+      "test_line_ranges": [],
+      "line_count": 23
+    },
+    {
+      "path": "apps/desktop/src/screens/SessionsScreen.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "521f206b162f4fd905133acb0f3eb590ca2feab73d4721390e83c8a622553212",
+      "test_line_ranges": [],
+      "line_count": 135
+    },
+    {
+      "path": "apps/desktop/src/screens/SessionsScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ee51e687f9c4b35d8e1d5decd7f290d7337e7b2696d3819a552d1af878547e3f",
+      "test_line_ranges": [],
+      "line_count": 126
+    },
+    {
+      "path": "apps/desktop/src/screens/SettingsRefresh.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "151a0608c517680fcb681da4323d296b9a8acb2e8332362d6ca6bb6bcc7e8f61",
+      "test_line_ranges": [],
+      "line_count": 144
+    },
+    {
+      "path": "apps/desktop/src/screens/SettingsScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4a8d5ce9eab1a9f116eb9a6967a46086b39c15f6fa91d2af514f274b546d8028",
+      "test_line_ranges": [],
+      "line_count": 224
+    },
+    {
+      "path": "apps/desktop/src/screens/TodayScreen.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "989834c8bc70dfe52977db8534c0e8587cc3d1d639eeadcc88acb8b7fd137096",
+      "test_line_ranges": [],
+      "line_count": 24
+    },
+    {
+      "path": "apps/desktop/src/screens/TodaySettings.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "8500ee72869e8f4eff13dbbe9e29e4776e024e3cafe94796a81c8451e9121f10",
+      "test_line_ranges": [],
+      "line_count": 32
+    },
+    {
+      "path": "apps/desktop/src/screens/helpCopy.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9eb09967814d5507cf947a1e5ee4cabaccd4ada90b4a8e779e82daab8f690422",
+      "test_line_ranges": [],
+      "line_count": 67
+    },
+    {
+      "path": "apps/desktop/src/screens/playHelp.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7c29392eb938712d973adfd8e787047d0ca740a7b3f12b40ef534df171e9ddba",
+      "test_line_ranges": [],
+      "line_count": 6
+    },
+    {
+      "path": "apps/desktop/src/screens/referenceShortcut.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "56d24ffc915b6b53bf4efdc969d6b3f48dcf25fa215bae05d57180d059cd63ac",
+      "test_line_ranges": [],
+      "line_count": 5
+    },
+    {
+      "path": "apps/desktop/src/screens/referenceShortcut.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "a5c65e51ba31984187e8c9710240ab18895d60eaa0bce51d32c8d9c4d37b7156",
+      "test_line_ranges": [],
+      "line_count": 7
+    },
+    {
+      "path": "apps/desktop/src/screens/routeSegments.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "30e47acac7e942e8283c9d458d687c0a56b368dbdf7dc8ae94121342157a7f91",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "apps/desktop/src/screens/test-fixtures/route.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7ccced6a51734c1d4b1972377fa6cc534cd35fc750596821dd752c2256e00a53",
+      "test_line_ranges": [],
+      "line_count": 16
+    },
+    {
+      "path": "apps/desktop/src/test-setup.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9b328c4843431fa76d8de00008fc159e95f99a840211085ff3b8f25e53d14409",
+      "test_line_ranges": [],
+      "line_count": 2
+    },
+    {
+      "path": "apps/desktop/src/theme/Backdrop.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d20a71d2c00d8cfc6ccff39bde8b94312c4feb01bfcb22299f765d0a95427f91",
+      "test_line_ranges": [],
+      "line_count": 111
+    },
+    {
+      "path": "apps/desktop/src/theme/composite.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "6b0f4b967ca23fa422b3756dd0e569a0e26b8e939db0b1bb75b66db630f05a95",
+      "test_line_ranges": [],
+      "line_count": 156
+    },
+    {
+      "path": "apps/desktop/src/theme/contrast.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1e80af195dbf2403d9842918a650926cfb9b3e953f0baf5087c51ddd2dda6864",
+      "test_line_ranges": [],
+      "line_count": 80
+    },
+    {
+      "path": "apps/desktop/src/theme/contrastLib.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "85a44199ba14344d4119f06752b8f09433eec7be91ea0de2e02e9556e8fba52d",
+      "test_line_ranges": [],
+      "line_count": 75
+    },
+    {
+      "path": "apps/desktop/src/theme/fonts.test.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "25674a10a6dfa7b2181c16a689ae7d9e586fe8e3ac8dfde53410b18dae6a21c9",
+      "test_line_ranges": [],
+      "line_count": 41
+    },
+    {
+      "path": "apps/desktop/src/ui/Button.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "522359fc3c2fff250d6a27aed4bb2c3a9d7a7be58c9bd4c60a5b8f8a18bcd20f",
+      "test_line_ranges": [],
+      "line_count": 18
+    },
+    {
+      "path": "apps/desktop/src/ui/Field.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2d4441440e9034c0acbb151863d547c41e914609b028a550fd06b6947667608c",
+      "test_line_ranges": [],
+      "line_count": 47
+    },
+    {
+      "path": "apps/desktop/src/ui/HelpTip.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "639cc584f47d40c28dfe96a9aef9a74e3dc1342eb0531714db8a324f023b879d",
+      "test_line_ranges": [],
+      "line_count": 137
+    },
+    {
+      "path": "apps/desktop/src/ui/Panel.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "62544ac199f679f5d3da9f9394fe69e54dfc0f8c34b9ea8dd55a73f6f821a2b0",
+      "test_line_ranges": [],
+      "line_count": 42
+    },
+    {
+      "path": "apps/desktop/src/ui/StatusBadge.tsx",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ea66980bf79246897e22f79a6dbff4cb732c60ab9f8947389b45b9ee0428930b",
+      "test_line_ranges": [],
+      "line_count": 22
+    },
+    {
+      "path": "apps/desktop/src/ui/followups.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1b7c2d732f791da54af7d97391bb3f869ce94d909a8056e6f7b458217b10759a",
+      "test_line_ranges": [],
+      "line_count": 172
+    },
+    {
+      "path": "apps/desktop/src/ui/index.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "a5e13cc40858269f5faf7f468be7efd5fa0445cdc2231ba85f729162878fbd4b",
+      "test_line_ranges": [],
+      "line_count": 8
+    },
+    {
+      "path": "apps/desktop/src/ui/ui.test.tsx",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1088c22ea13116596bb059af115cc7071a7cb4273a9caf6282f2d8ba9654fa68",
+      "test_line_ranges": [],
+      "line_count": 174
+    },
+    {
+      "path": "apps/desktop/src/vite-env.d.ts",
+      "language": "typescript",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+      "test_line_ranges": [],
+      "line_count": 2
+    },
+    {
+      "path": "apps/desktop/vite.config.ts",
+      "language": "typescript",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "695f4b40d082f404e1be335d0da48a74791e775688fd1de61e467f57a02e0c7c",
+      "test_line_ranges": [],
+      "line_count": 28
+    },
+    {
+      "path": "crates/app/examples/workflow_performance.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f1e26d01eac87d69a52da0e62de9810a642ed5e9fc249aba37543ff70c43b207",
+      "test_line_ranges": [
+        [
+          210,
+          228
+        ]
+      ],
+      "line_count": 229
+    },
+    {
+      "path": "crates/app/src/atlas.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c8348742f4091993f0ce82acbe0ad35a0e95368d7986215cdf88963d9fcf6cc6",
+      "test_line_ranges": [],
+      "line_count": 697
+    },
+    {
+      "path": "crates/app/src/authored_content.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0735013b7f4bab1259335585e78a29f046ae4dd50aff84b81b5529015cd6dd38",
+      "test_line_ranges": [
+        [
+          495,
+          549
+        ]
+      ],
+      "line_count": 550
+    },
+    {
+      "path": "crates/app/src/calibration.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e373e1be9b87abe2ff7038038c392615b93281fa8d65b991e10d0dafb4205c66",
+      "test_line_ranges": [],
+      "line_count": 48
+    },
+    {
+      "path": "crates/app/src/catalog.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "44a2e8b5f81727211b0bb088a527ae4fad063ae06607f005f9abc23970e1809a",
+      "test_line_ranges": [],
+      "line_count": 101
+    },
+    {
+      "path": "crates/app/src/catalog_pages.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b7b6ae2636a42d36c0c0c9ca42772ffd73a9207586a685edd72f01da088b51d3",
+      "test_line_ranges": [],
+      "line_count": 222
+    },
+    {
+      "path": "crates/app/src/clustering.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "595d3e6db3c95e52c4a55038c2d143689f15d94c5ad89c66b0ad6bf8ff8c3ddd",
+      "test_line_ranges": [],
+      "line_count": 30
+    },
+    {
+      "path": "crates/app/src/compatibility.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "bb486e39c46c5108a9dcca0e671e62f9a6a5ef1b01c54ccbf10b63cd99a90cf8",
+      "test_line_ranges": [
+        [
+          340,
+          358
+        ]
+      ],
+      "line_count": 359
+    },
+    {
+      "path": "crates/app/src/content.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c156a9eb42d40000db6f4582ac95106f864d54fed725b925711d7b9eaec21db3",
+      "test_line_ranges": [],
+      "line_count": 177
+    },
+    {
+      "path": "crates/app/src/content_dispositions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5fc88f644abfa18244e4d7817e54562c2f74fc42a1908466c24241141b3be1ed",
+      "test_line_ranges": [],
+      "line_count": 88
+    },
+    {
+      "path": "crates/app/src/diagnostics.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "af8245c84e11baaac5d86e0bf4fe3d5f21ab747c05c858f7f936edae908c76a3",
+      "test_line_ranges": [
+        [
+          399,
+          426
+        ]
+      ],
+      "line_count": 427
+    },
+    {
+      "path": "crates/app/src/dungeon_preparation.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5cc6d982d107448bf0996cf80150d34cdfef080dfdb7cb61f15731157f8e6553",
+      "test_line_ranges": [
+        [
+          1005,
+          1205
+        ]
+      ],
+      "line_count": 1206
+    },
+    {
+      "path": "crates/app/src/dungeon_preparation/json.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c150912508b19f7bbeb9ec6d1b08e04087047eab2e4c25c5fa23cb6fa362c926",
+      "test_line_ranges": [],
+      "line_count": 104
+    },
+    {
+      "path": "crates/app/src/gear.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6d489ea60a7069644e9082dce07dd5bd705a68af8dfb0cefa5a628771d174218",
+      "test_line_ranges": [],
+      "line_count": 527
+    },
+    {
+      "path": "crates/app/src/joint_planning.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3feaefc9eb4bec0011f5b635d26a387a0d74b2debf0213126acc6fa24391866e",
+      "test_line_ranges": [],
+      "line_count": 502
+    },
+    {
+      "path": "crates/app/src/lib.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "095681f4a0899f586801c8b26167f80566c8cb9d3ce9dda73bb7ce1ff25997ab",
+      "test_line_ranges": [
+        [
+          103,
+          137
+        ]
+      ],
+      "line_count": 164
+    },
+    {
+      "path": "crates/app/src/local_changes.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9407d26cf3743015de81daf93fc9da974e378754ce0a4161970f597a78d7ef2b",
+      "test_line_ranges": [],
+      "line_count": 166
+    },
+    {
+      "path": "crates/app/src/local_data.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2300bad701e3c243b4e97516a03583496a7fb0f97b15730e274afd7a3a0f0f1d",
+      "test_line_ranges": [],
+      "line_count": 866
+    },
+    {
+      "path": "crates/app/src/local_submissions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "90247859c204164d9017ac55a139be28963fe576fbbd61488f7b7f36a6c58120",
+      "test_line_ranges": [
+        [
+          231,
+          473
+        ]
+      ],
+      "line_count": 474
+    },
+    {
+      "path": "crates/app/src/party.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "454f84c7cec3316fde63c56434cfd1875a7c39bec2fc7ab8c9a084254dafdcf9",
+      "test_line_ranges": [],
+      "line_count": 135
+    },
+    {
+      "path": "crates/app/src/party_proposals.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7de0c0af354eca57e82b6bb811f7d6f79499bdde2425278cdc45bcfdf43f6654",
+      "test_line_ranges": [],
+      "line_count": 435
+    },
+    {
+      "path": "crates/app/src/plan_export.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b5d042d0d707f648c73f3e1f111851fc2d24ba84c5bb366c0d055379e32c3eba",
+      "test_line_ranges": [
+        [
+          280,
+          297
+        ]
+      ],
+      "line_count": 298
+    },
+    {
+      "path": "crates/app/src/planning.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2f9727138b695e590c0d3610a76571d04d166256ff97937222df1ccb7e395c3a",
+      "test_line_ranges": [],
+      "line_count": 250
+    },
+    {
+      "path": "crates/app/src/planning_job_service.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "1b1e6f97f5aaa5f82538d3bc80445f28101556a16781af6115567b293c3bedb8",
+      "test_line_ranges": [
+        [
+          530,
+          713
+        ]
+      ],
+      "line_count": 714
+    },
+    {
+      "path": "crates/app/src/planning_jobs.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c265c626f32fb65a06c07dbcb1598736434e34f9f32b71beb64cac6d497f80b0",
+      "test_line_ranges": [],
+      "line_count": 513
+    },
+    {
+      "path": "crates/app/src/recipient_export.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e079355c3cc6178ceb8a6d2e81cd841e179fdf27437011113ba64c0cb5c8e9a9",
+      "test_line_ranges": [
+        [
+          513,
+          574
+        ]
+      ],
+      "line_count": 575
+    },
+    {
+      "path": "crates/app/src/recovery.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f93e329e4d163ea4ac26e46a126265c5f2088405599148c4ddb18c02ad23828b",
+      "test_line_ranges": [
+        [
+          519,
+          811
+        ]
+      ],
+      "line_count": 812
+    },
+    {
+      "path": "crates/app/src/reference.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "74b4699bf702d10bdd5aea3b91d1f23ebc2a0422b9d4ae3fe8011ce40b183be4",
+      "test_line_ranges": [],
+      "line_count": 100
+    },
+    {
+      "path": "crates/app/src/reference_controls.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "598cd4e88dff55cabb7e9efc9b0b6afe0e5dee2ebe79cabe7470ccd1aad6a174",
+      "test_line_ranges": [],
+      "line_count": 242
+    },
+    {
+      "path": "crates/app/src/reminders.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "74d6a3fe460ad1426b85b98508dba40960a9970315ab8abc76bb969f7a5ffa39",
+      "test_line_ranges": [
+        [
+          301,
+          368
+        ]
+      ],
+      "line_count": 369
+    },
+    {
+      "path": "crates/app/src/route_acquisition.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "bc30377596d1398b052eeeb98bb2ec0820f2b66d96fa0ca4e79e4625a26a3d81",
+      "test_line_ranges": [
+        [
+          556,
+          564
+        ]
+      ],
+      "line_count": 565
+    },
+    {
+      "path": "crates/app/src/routes.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "303bdd937c6420b63fac6ac8c143b88338ebc68c01bb7dc2a1c5230770c14a85",
+      "test_line_ranges": [],
+      "line_count": 77
+    },
+    {
+      "path": "crates/app/src/sessions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "dea55057991161f51bff4a17e575b2ac586fe5d225cc821784db3ca1380dc3e4",
+      "test_line_ranges": [],
+      "line_count": 102
+    },
+    {
+      "path": "crates/app/src/snapshots.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b045e625db4e8be61c989a90a8d7b85d21eb3d065a2134755fd9f97664278ebc",
+      "test_line_ranges": [],
+      "line_count": 1113
+    },
+    {
+      "path": "crates/app/src/stored_atlas.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "126c2860c2d36e73a58bce21da5618409d44005c02e00fcdc9afc407fb7fd0af",
+      "test_line_ranges": [
+        [
+          354,
+          455
+        ],
+        [
+          457,
+          539
+        ]
+      ],
+      "line_count": 540
+    },
+    {
+      "path": "crates/app/src/today.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7d8322c6f4e3ad4cc2932e9b9e2bea2c3193ac710288c485427b888d6a04b5ec",
+      "test_line_ranges": [],
+      "line_count": 291
+    },
+    {
+      "path": "crates/app/tests/atlas_commands.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0e09b9a4a4568a60a076b4b2899c5f9b01b2c715225df000b2be998e9d59d832",
+      "test_line_ranges": [],
+      "line_count": 439
+    },
+    {
+      "path": "crates/app/tests/authored_content.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "25cad09f30c5de6785dfbf6167f76982099b2f06e8bf4834eb2ff9755089028c",
+      "test_line_ranges": [],
+      "line_count": 248
+    },
+    {
+      "path": "crates/app/tests/calibration_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1206d86489aac6ef3b31d828724468cc883069b895e0dc1779eccad9556bbc88",
+      "test_line_ranges": [],
+      "line_count": 69
+    },
+    {
+      "path": "crates/app/tests/clustering_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9b79a3cb19c39741911fadeb3221b5e85ca4b0b7017417ba1ee5ef0423201569",
+      "test_line_ranges": [],
+      "line_count": 203
+    },
+    {
+      "path": "crates/app/tests/compatibility.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "38405c0a48f81a528157b8456b43b4ade3fbe3cdef5e73f79b731b43e6f67866",
+      "test_line_ranges": [],
+      "line_count": 205
+    },
+    {
+      "path": "crates/app/tests/content_dispositions.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5c8abe6e83cffb6a32e1d503a4789887a2130cf81b6483487de6aec6e31ab6c1",
+      "test_line_ranges": [],
+      "line_count": 97
+    },
+    {
+      "path": "crates/app/tests/content_inspection_pages.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0a12d9a5cae89054bb74f2ecc593683a58d68e98726a5d6eb142ea1eabe7e351",
+      "test_line_ranges": [],
+      "line_count": 111
+    },
+    {
+      "path": "crates/app/tests/content_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "695c8e7d988e64a65c0f2239f00422806a5ef259196a422b2c6e032baf69da70",
+      "test_line_ranges": [],
+      "line_count": 99
+    },
+    {
+      "path": "crates/app/tests/diagnostics.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b159edc65ec6a35d189baa5559318c18bcd69571de83ac78172bd7e1fcb50142",
+      "test_line_ranges": [],
+      "line_count": 246
+    },
+    {
+      "path": "crates/app/tests/diagnostics_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "43a113845be7ce600b379144132b9dbd2745797c2ac105dc8df8952994ed1b45",
+      "test_line_ranges": [],
+      "line_count": 207
+    },
+    {
+      "path": "crates/app/tests/dungeon_preparation.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "86113c0d6c6c478854c27593452020df50b663cf9ae1edcd0896ef1b439ab737",
+      "test_line_ranges": [],
+      "line_count": 328
+    },
+    {
+      "path": "crates/app/tests/gear_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c5ac7ff9376161afdd3100e74057fcfa0603d38cb620197817885110235b8619",
+      "test_line_ranges": [],
+      "line_count": 300
+    },
+    {
+      "path": "crates/app/tests/joint_planning.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0ccbe8e62a502d66627da6cfef4cbe1e0d4431ca5bcb7f874082accfd18a1f0d",
+      "test_line_ranges": [],
+      "line_count": 243
+    },
+    {
+      "path": "crates/app/tests/local_data_lifecycle.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c448d40a3e27ba188bd6bfc3323bd59e21958816090513dcfb0b8db31a0bb94f",
+      "test_line_ranges": [],
+      "line_count": 39
+    },
+    {
+      "path": "crates/app/tests/local_data_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "521005c7a921807b7d9b6be0faba07a03854c5a556ef670d366697716be28f5e",
+      "test_line_ranges": [],
+      "line_count": 140
+    },
+    {
+      "path": "crates/app/tests/local_state_recovery.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0b28690ddb3d9d4689ac3ee3d8b12d6b896dc46ae1ad1cf9b424f21bd3f2616f",
+      "test_line_ranges": [],
+      "line_count": 221
+    },
+    {
+      "path": "crates/app/tests/party_eligibility.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ddb24b714d4a8501369d31c4a47769f33bf949f5bf442f7f201c977f0a5dca85",
+      "test_line_ranges": [],
+      "line_count": 196
+    },
+    {
+      "path": "crates/app/tests/party_proposals.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "fa48ca932c450cf9e8b6d1922abd5e4a222c120fc9afee0d70d75d90d27f453c",
+      "test_line_ranges": [],
+      "line_count": 378
+    },
+    {
+      "path": "crates/app/tests/planning_field_freshness.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "37a6c2a4cd02c8bd50900ae438ec95c810e2176245ded0f3a91f72602004a88d",
+      "test_line_ranges": [],
+      "line_count": 301
+    },
+    {
+      "path": "crates/app/tests/planning_job_service.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "cbdda544098a5b2ea7e5c6cffa4a4e36abda68391dc30912e0f0502aa85e1c4d",
+      "test_line_ranges": [],
+      "line_count": 346
+    },
+    {
+      "path": "crates/app/tests/planning_jobs.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a9f653a78e7068a0daedb4d7abfb89c8493ed1dac899259de217e3ebe9ca6882",
+      "test_line_ranges": [],
+      "line_count": 224
+    },
+    {
+      "path": "crates/app/tests/planning_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d8c924969e53c9ba81155e6af6e1838fe708583d53e5762299d96b1b2a773cfa",
+      "test_line_ranges": [],
+      "line_count": 349
+    },
+    {
+      "path": "crates/app/tests/recipient_export.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "33a327673000de133563131addd682e4794a3d35d3a1c63069a4433a034733bd",
+      "test_line_ranges": [],
+      "line_count": 305
+    },
+    {
+      "path": "crates/app/tests/reference.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b9e8e61f91a9ebf95352fd3329b6bcbeb464d22b10ccf1cd64858cb941bed9cb",
+      "test_line_ranges": [],
+      "line_count": 112
+    },
+    {
+      "path": "crates/app/tests/reference_controls.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "bb98e2319fd683e2bf07cfaefa54d65fdcfea06789658e778a55a0ce1fa45558",
+      "test_line_ranges": [],
+      "line_count": 218
+    },
+    {
+      "path": "crates/app/tests/reminder_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b7e676e52eedc3258cf0ea765990362b62c3a268e6d0b7ef1b439be67b954ee4",
+      "test_line_ranges": [],
+      "line_count": 177
+    },
+    {
+      "path": "crates/app/tests/route_acquisition.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5ea4d4b3741bf1f3c3c0e41ffc73244ab08577f30136b6ee07b7262ffab49f53",
+      "test_line_ranges": [],
+      "line_count": 443
+    },
+    {
+      "path": "crates/app/tests/session_analytics_golden.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b145c7057c41b5ba9379285dc2bf95407dc6eedaa72d18cc63d75f5d8251b6e2",
+      "test_line_ranges": [],
+      "line_count": 65
+    },
+    {
+      "path": "crates/app/tests/session_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5ca5d5fc7739004d064510eccbb199acd94343faaadadbaf577e37c99b61c476",
+      "test_line_ranges": [],
+      "line_count": 40
+    },
+    {
+      "path": "crates/app/tests/snapshot_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5591afdbefef0175d628c7f8f9ae10d3de7ca64194fcaba8fa4e3f139cf3d926",
+      "test_line_ranges": [],
+      "line_count": 390
+    },
+    {
+      "path": "crates/app/tests/stored_atlas.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ced018fad938f71bdb7466e52e63ad2fbb7c07da438374fa3b83b964a0b82cc2",
+      "test_line_ranges": [],
+      "line_count": 115
+    },
+    {
+      "path": "crates/app/tests/support/recipient_export.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4115ac45a71759bddee66956cfa44a2fb8af52a4c20d095bb5516e5df8cebff2",
+      "test_line_ranges": [],
+      "line_count": 149
+    },
+    {
+      "path": "crates/app/tests/today.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f4dd52aa9cd61d6ef5ceb802c1737410662a501b1c9e13359f795853faa9abc3",
+      "test_line_ranges": [],
+      "line_count": 595
+    },
+    {
+      "path": "crates/cli/src/atlas.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "15d1f4c96223fe5b371f4938b91babe3a8d774bead7b63a4523ca7e8ee8d2827",
+      "test_line_ranges": [],
+      "line_count": 662
+    },
+    {
+      "path": "crates/cli/src/capture.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "cb6c108622e6f17bb1b5546641ac4cbc2c872455be73050b03eaa61faf392f37",
+      "test_line_ranges": [],
+      "line_count": 254
+    },
+    {
+      "path": "crates/cli/src/content.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "95707dce4eaec6e85cd3f69ab864666871a48ded694f41efe1ce266e933e4412",
+      "test_line_ranges": [],
+      "line_count": 116
+    },
+    {
+      "path": "crates/cli/src/doctor.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "768b7a6279af58aeb78281d7ef3e9b3f7b8f9b9f6638e61e2b7e0e8005959f12",
+      "test_line_ranges": [],
+      "line_count": 215
+    },
+    {
+      "path": "crates/cli/src/foreverdb.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9d4edf7a3ffe930ffefc3c6ae5dfc9c068872deeed107442f4d764b309400b86",
+      "test_line_ranges": [],
+      "line_count": 116
+    },
+    {
+      "path": "crates/cli/src/guide.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "14dacde94ad3b8590c57084dd620038eacd1ec3a30027be4f3be9832a66e0101",
+      "test_line_ranges": [],
+      "line_count": 101
+    },
+    {
+      "path": "crates/cli/src/lib.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "6f2cca98daf37d7a3512340bd34f9031848f02c435af7cbce619d7112457a9d4",
+      "test_line_ranges": [],
+      "line_count": 16
+    },
+    {
+      "path": "crates/cli/src/local_data.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "542ed6f6c34efe2c29745ff708d1eff39c2aba7e24a665ce22b12ae516352f8d",
+      "test_line_ranges": [],
+      "line_count": 986
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d078f31aee1b244e87122a103108740d7e00e408b735cccdccd30a10ec82b3f3",
+      "test_line_ranges": [],
+      "line_count": 557
+    },
+    {
+      "path": "crates/cli/src/pack.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "d196ee49a7c56bbd3686387de1c191bb0dfa5b67f360b1cad92e332b824334d6",
+      "test_line_ranges": [],
+      "line_count": 3
+    },
+    {
+      "path": "crates/cli/src/questiedb.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6d10bc9fe29a42d4856d1099c451a4e8b37a8655c829f62135f7ba231e9e9165",
+      "test_line_ranges": [],
+      "line_count": 228
+    },
+    {
+      "path": "crates/cli/src/release.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "00927d1d0da307065bb5daf251cc4bbdcd5a66dfeecec11f228f722317a554f7",
+      "test_line_ranges": [
+        [
+          1060,
+          1228
+        ]
+      ],
+      "line_count": 1229
+    },
+    {
+      "path": "crates/cli/src/release/admission.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fd4a094a9e3be8a367ed1dd4cda2713e986b16b5663bdca4dbf18874c6443ab4",
+      "test_line_ranges": [
+        [
+          135,
+          168
+        ]
+      ],
+      "line_count": 169
+    },
+    {
+      "path": "crates/cli/src/release/materials.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "90c75f804721a6744747cce090217d00c428a4b209927c9b70b68d5b872487d4",
+      "test_line_ranges": [],
+      "line_count": 459
+    },
+    {
+      "path": "crates/cli/src/release_inventory.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ee9d10d55516a4e835d6d1ef8e4c60fa6ff8b871a70b8afd488934d1bbb4889d",
+      "test_line_ranges": [
+        [
+          153,
+          244
+        ]
+      ],
+      "line_count": 245
+    },
+    {
+      "path": "crates/cli/src/replay.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "283429058b60ee87eb8aa041d84d6fa4cfc0fd8a268e99b9dcaee67dc669871a",
+      "test_line_ranges": [
+        [
+          457,
+          470
+        ]
+      ],
+      "line_count": 471
+    },
+    {
+      "path": "crates/cli/src/source_pipeline.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f7827ff53d34effe0fadae64f1a1e470d3e39c4ac00f3f23a091eeff95312a15",
+      "test_line_ranges": [
+        [
+          807,
+          830
+        ]
+      ],
+      "line_count": 831
+    },
+    {
+      "path": "crates/cli/tests/arguments.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1070b4f986693c83bf942e68dd6a1b56732b7aca9babcb7d3862655c36a3c6aa",
+      "test_line_ranges": [],
+      "line_count": 89
+    },
+    {
+      "path": "crates/cli/tests/authored_slice.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b4d3bc1abbfb5dee9e014b4850b0216089067baced628f9c536052458bf7d433",
+      "test_line_ranges": [],
+      "line_count": 195
+    },
+    {
+      "path": "crates/cli/tests/capture.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "eb96d68f4aade9f3c8ad46c390f53052e95c19feb3a7552ff5528e0a7f46b737",
+      "test_line_ranges": [],
+      "line_count": 220
+    },
+    {
+      "path": "crates/cli/tests/command_parity.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9f7c98842f04700d33923aa29c2efbdbf8d00be77946b53454d556667b343d1f",
+      "test_line_ranges": [],
+      "line_count": 157
+    },
+    {
+      "path": "crates/cli/tests/content_consistency.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9b4080a45375ff45e94bf85634cd683b127a0406901574a6d4b6dd2c7c4498c1",
+      "test_line_ranges": [],
+      "line_count": 151
+    },
+    {
+      "path": "crates/cli/tests/content_pack_v2.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "bf515b56e923a3da9f5f1fb17b693a148bdf17776713adda02acfd9f33801781",
+      "test_line_ranges": [],
+      "line_count": 399
+    },
+    {
+      "path": "crates/cli/tests/doctor.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7c00643dd091b8b0b9af6c699a1320ffc54ea1aafdaf60584140e365a849d57a",
+      "test_line_ranges": [],
+      "line_count": 165
+    },
+    {
+      "path": "crates/cli/tests/forever_atlas.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "27145476695fc7e2d21674c2ed71ea7f06338070e2ddbeeabe816219725bf7f4",
+      "test_line_ranges": [],
+      "line_count": 86
+    },
+    {
+      "path": "crates/cli/tests/forever_sources.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a32eff166b3b15374b2cb24cc4c9cc5c8dfacf2865eed381a5e1bd7d53dcccd6",
+      "test_line_ranges": [],
+      "line_count": 145
+    },
+    {
+      "path": "crates/cli/tests/foreverdb_staging.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "8f14d465266815ba105ee82d6be15e647435a78e323d043d73db2639df3dc01c",
+      "test_line_ranges": [],
+      "line_count": 174
+    },
+    {
+      "path": "crates/cli/tests/guide.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "64c4286d3298ce5519efd52983bf3b9e3102ac93d24593104ee819556112ff0d",
+      "test_line_ranges": [],
+      "line_count": 267
+    },
+    {
+      "path": "crates/cli/tests/local_data.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "fc727c2d03963986dc59929a4585542f2f07559dfaf9a5b47da3ddae8c1a8c1f",
+      "test_line_ranges": [],
+      "line_count": 875
+    },
+    {
+      "path": "crates/cli/tests/local_data_inputs.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "618838eb2dd5902144dfd1e5f64388c09049a01d4e41325c72b841180d1a0983",
+      "test_line_ranges": [],
+      "line_count": 165
+    },
+    {
+      "path": "crates/cli/tests/local_data_receipt.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "91146dd623b8905426ffe778ff04811c40ce1f907fd9f945296e2376f9052a48",
+      "test_line_ranges": [],
+      "line_count": 227
+    },
+    {
+      "path": "crates/cli/tests/pack.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b8e79d9e80ea9704217455965a1c6b6279ba01ed4a0f1a15c9171faddfb27250",
+      "test_line_ranges": [],
+      "line_count": 587
+    },
+    {
+      "path": "crates/cli/tests/prepare_atlas.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0ba6e3ca5c95575f98a8aae165a21ce229d9d58fbe55aa8f6887c6a3e4fabefe",
+      "test_line_ranges": [],
+      "line_count": 477
+    },
+    {
+      "path": "crates/cli/tests/questiedb.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1f3708773ae461ef2c7fd42f4e9a197dbe670182de88a3a842f2bb24412f195e",
+      "test_line_ranges": [],
+      "line_count": 425
+    },
+    {
+      "path": "crates/cli/tests/release_materials.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4972a01d5a7a78092340d1546d249e7d89cf2c22cf60f261f253f167d85ce004",
+      "test_line_ranges": [],
+      "line_count": 851
+    },
+    {
+      "path": "crates/cli/tests/release_readiness.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e65d18a9583f09af0b72f406b2fffb81aaee4c2b3e3cf95cfc087a31f7544f87",
+      "test_line_ranges": [],
+      "line_count": 666
+    },
+    {
+      "path": "crates/cli/tests/replay.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "02ec295bc6c497e9ab151b074883826105e303b903f0dd4ec2880f13d4935838",
+      "test_line_ranges": [],
+      "line_count": 311
+    },
+    {
+      "path": "crates/cli/tests/source_pipeline.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "57c4e9097fca8239a5c35318b04a4b607cc28c28040a34c319e491d724395120",
+      "test_line_ranges": [],
+      "line_count": 350
+    },
+    {
+      "path": "crates/cli/tests/validate_content.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d13bbd0fa4b0e87fae4aa8beee78da90cd703768a381bfc2b1adae1a07060b70",
+      "test_line_ranges": [],
+      "line_count": 61
+    },
+    {
+      "path": "crates/cli/tests/validate_fixtures.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a6d1e7048cc9e220bf6f6024b3ccdb6f3c8c86ea8756a1c354493e6cdbef7e12",
+      "test_line_ranges": [],
+      "line_count": 164
+    },
+    {
+      "path": "crates/core/examples/export_content_schema.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "af739ed7381dffd61fac847e326d39c224cf2b87c4eb04d8bd081e065ea443e1",
+      "test_line_ranges": [],
+      "line_count": 8
+    },
+    {
+      "path": "crates/core/examples/search_performance.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f32f33e85889eced1c0b0c900e7ce2422c7df03a02c3356dccef106faa197d4d",
+      "test_line_ranges": [],
+      "line_count": 97
+    },
+    {
+      "path": "crates/core/examples/support/mod.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "56bd02d66b643a06c7e83d9b9d137469d268565ad9fb2a56c3bfae8943afcc31",
+      "test_line_ranges": [],
+      "line_count": 126
+    },
+    {
+      "path": "crates/core/src/analytics.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "443225133f839610a57240b501f511eedaa1c51cfba064b00663f21aa4f2dfed",
+      "test_line_ranges": [],
+      "line_count": 147
+    },
+    {
+      "path": "crates/core/src/atlas.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "20ea4536a081930ae1800a00b0154ad0b16f4bb37a6603fdb039b7fe0c713740",
+      "test_line_ranges": [],
+      "line_count": 391
+    },
+    {
+      "path": "crates/core/src/calibration.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2b6d266f7bf0b4f1d2f96cc7378e12f425baacab2f07aee558ebac728e8cd98b",
+      "test_line_ranges": [],
+      "line_count": 215
+    },
+    {
+      "path": "crates/core/src/catalog.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f654620949f64a6ffb9febb3bd8dc51b842a74e6d2a4d3d1ef99c7ebeee563cb",
+      "test_line_ranges": [],
+      "line_count": 144
+    },
+    {
+      "path": "crates/core/src/content_v2.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6f13696195d093b53aa1e673b7b658eb8ca988dd0efd17edcfb8b0013d5ef10d",
+      "test_line_ranges": [],
+      "line_count": 526
+    },
+    {
+      "path": "crates/core/src/content_v2/authored.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7bb1758d45a208231984e26a9b828e5e79745d7e8109806d6fa9a9f184fcdcf3",
+      "test_line_ranges": [],
+      "line_count": 148
+    },
+    {
+      "path": "crates/core/src/content_v2/json.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4c29e2206390add43d50b36253dd87a02b3a0053496dbb4095926b521ab04cca",
+      "test_line_ranges": [],
+      "line_count": 51
+    },
+    {
+      "path": "crates/core/src/content_v2/records.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e5dd39a686d8c56d8650c139d9a3b495cf5ad036b9827962cb53099ad4e50dc3",
+      "test_line_ranges": [],
+      "line_count": 261
+    },
+    {
+      "path": "crates/core/src/content_v2/schema.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8dc58b20c2e75e04c438ba7a6ba3e6e9a2cfdc7aa7dad367b5967a83fd8931d3",
+      "test_line_ranges": [],
+      "line_count": 93
+    },
+    {
+      "path": "crates/core/src/contract/dataset.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "603562d25b5a2dc72a0935903ba7dabd7a30d5b40d8a33e71c417f346e353c2f",
+      "test_line_ranges": [],
+      "line_count": 350
+    },
+    {
+      "path": "crates/core/src/contract/evidence.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "a36df0bcd663120ed9bf0cd8e3e9e1dddbe30773cc70c9ecc81acd80909a81cb",
+      "test_line_ranges": [],
+      "line_count": 71
+    },
+    {
+      "path": "crates/core/src/contract/gear.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "a579bc9c64484b5387fc4164c46e428bd81cfcf28ff48ea725c9af6460a6034e",
+      "test_line_ranges": [],
+      "line_count": 55
+    },
+    {
+      "path": "crates/core/src/contract/mod.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8cc5ab6f08c7e48cbfd86c3503f45589201f789e589b9a987ed8986638f3adf9",
+      "test_line_ranges": [],
+      "line_count": 648
+    },
+    {
+      "path": "crates/core/src/contract/plan.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "62b3835fde14f485eab5f141fbb3db4eda47752182ee3cbfbff348ab52b41b95",
+      "test_line_ranges": [],
+      "line_count": 42
+    },
+    {
+      "path": "crates/core/src/contract/schema.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "62cffd4de43c2dbeddf22ddebefbb662b7c14c311946d39a18e93f4253f9e6ce",
+      "test_line_ranges": [],
+      "line_count": 79
+    },
+    {
+      "path": "crates/core/src/contract/snapshot.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "033c30f83b3f05d2f9e6df7036d7fa64bdc2185b292dafee6e848c78bf6f68c1",
+      "test_line_ranges": [],
+      "line_count": 39
+    },
+    {
+      "path": "crates/core/src/coverage.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "652fa13173b786d027dc77c05c9f3a68c5a3715d506ed385a071f66338ea07f6",
+      "test_line_ranges": [
+        [
+          994,
+          1010
+        ]
+      ],
+      "line_count": 1011
+    },
+    {
+      "path": "crates/core/src/eligibility.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f707f0c044780477d212be732b9200a12a8638950cef2bfa2cd478dbe6914090",
+      "test_line_ranges": [],
+      "line_count": 946
+    },
+    {
+      "path": "crates/core/src/entities/character.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "cd04be96e720ec758147a2375fc38cddf635ae714f1476c6c4cd2607ff4e4a87",
+      "test_line_ranges": [],
+      "line_count": 95
+    },
+    {
+      "path": "crates/core/src/entities/imagery.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5ddf4cfc4353a34701e1792936b734bddd41acf2a288ef9263a89cd6fc59b38d",
+      "test_line_ranges": [],
+      "line_count": 244
+    },
+    {
+      "path": "crates/core/src/entities/mod.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "65f85a8af344d5e1aa79b57ad0fcfdefbddbfbfa600f156d3dba74c86fb9b73a",
+      "test_line_ranges": [],
+      "line_count": 43
+    },
+    {
+      "path": "crates/core/src/entities/planning.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "44f00853dfbbec7c61be0b615121475247f55bf836efdfb71a1174961f71ae9d",
+      "test_line_ranges": [],
+      "line_count": 327
+    },
+    {
+      "path": "crates/core/src/entities/reference.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c952402ceec748ddc13718b10decee39172eb9f71097d2dcc4be88fa49454b98",
+      "test_line_ranges": [],
+      "line_count": 283
+    },
+    {
+      "path": "crates/core/src/entities/spatial.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "717ee4bc5c331786db61760a70bee90597b7bbf0ca70d02bc814b624bdc14330",
+      "test_line_ranges": [],
+      "line_count": 191
+    },
+    {
+      "path": "crates/core/src/error.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "76d704ab7a039b5509300da1c7f5bb357372dbc5ea5b775a5037b183a9775b07",
+      "test_line_ranges": [],
+      "line_count": 90
+    },
+    {
+      "path": "crates/core/src/evaluation.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "1c8bf172784f400f8ee2d4beb7f610dc88b87c69551e95f6a6bd1b16386d39db",
+      "test_line_ranges": [],
+      "line_count": 447
+    },
+    {
+      "path": "crates/core/src/gear/acquisition.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e14aa1d58895bd355f595672785057332c3b4cb0894b3dacc3cc3e48de7414b2",
+      "test_line_ranges": [],
+      "line_count": 362
+    },
+    {
+      "path": "crates/core/src/gear/configuration.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5f0596267d513346797bd6e0ca4264071bb2784b4c40642ee6a81f627d8595e6",
+      "test_line_ranges": [],
+      "line_count": 751
+    },
+    {
+      "path": "crates/core/src/gear/eligibility.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9b8c0095e96afb9dc7a1699787173cdfcc2cf4d6b379c8919d0d0296a8c5c296",
+      "test_line_ranges": [],
+      "line_count": 223
+    },
+    {
+      "path": "crates/core/src/gear/inputs.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ab4663db396ceac31acc2dfcbab47b9b6da46637c2584ab5dec96feb675c3c7e",
+      "test_line_ranges": [],
+      "line_count": 62
+    },
+    {
+      "path": "crates/core/src/gear/lua.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ed0738bff239447e3fbb7111ee0def4ff3413a00fe6e98be67a7170309920a2f",
+      "test_line_ranges": [],
+      "line_count": 148
+    },
+    {
+      "path": "crates/core/src/gear/mod.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "73b14f40bc065e6b14748862e4341c94623c16acbb5d1f84ed1ede0cd0167bb9",
+      "test_line_ranges": [],
+      "line_count": 40
+    },
+    {
+      "path": "crates/core/src/gear/profile.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fc1554734630124fb1ec9295811b390046b81a6598840e7ba59a42c99885844d",
+      "test_line_ranges": [],
+      "line_count": 50
+    },
+    {
+      "path": "crates/core/src/gear/score.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "cd71389885dd59d0ea0aa9320937ea0d2d7af67701ff3206155a268c50fc6dc9",
+      "test_line_ranges": [],
+      "line_count": 271
+    },
+    {
+      "path": "crates/core/src/joint_planner.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "1e92df21341e75a5c3ddcf75d5e6da8ac6d3591a6af2d216cd5287c72d4bfd4e",
+      "test_line_ranges": [],
+      "line_count": 277
+    },
+    {
+      "path": "crates/core/src/json.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "edbce9fb5d30ed1a8899cf82fea35d4abbb02df5f85d2537cd858232ee961d8c",
+      "test_line_ranges": [],
+      "line_count": 39
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "53227f52a4567906a0e330dc9acc4d1c42a227570bee6d46b5a5dbdec7a2fc6c",
+      "test_line_ranges": [],
+      "line_count": 61
+    },
+    {
+      "path": "crates/core/src/local_data.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6f8b749d5449e75ca883962edd05dc8688eec4664508ac8beabbdda3f7d65fea",
+      "test_line_ranges": [],
+      "line_count": 338
+    },
+    {
+      "path": "crates/core/src/local_data_catalog.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "09e64fdf36d0fed076184feecc2047eb73b56f368025a020a931eb2960438d61",
+      "test_line_ranges": [],
+      "line_count": 62
+    },
+    {
+      "path": "crates/core/src/local_data_delivery.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "a8a42939d7b216695d2997ff34cd5f773ab552e8d2d13629a9e7c7d218afc8f1",
+      "test_line_ranges": [],
+      "line_count": 241
+    },
+    {
+      "path": "crates/core/src/local_data_gameplay.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "564b21de5aad1b1afbc71c763614863320ebd6cf262cbaf64970560c1161ddf1",
+      "test_line_ranges": [],
+      "line_count": 382
+    },
+    {
+      "path": "crates/core/src/local_data_guide.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "78b3ed453335b1e99f8a8fce354d1e187fa33d97efbc20766bb858218ce7f873",
+      "test_line_ranges": [],
+      "line_count": 68
+    },
+    {
+      "path": "crates/core/src/local_data_inputs.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "973169c73d99f7a3bc28c3cfd9c87ab6ea6e07bacda7a24ee7e6e6b25c2a7cf9",
+      "test_line_ranges": [],
+      "line_count": 368
+    },
+    {
+      "path": "crates/core/src/local_data_inventory.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6ef5bb665ef417b2bd7c99ca734207ac05e93f4dbcc37373050f9c2a67976b6a",
+      "test_line_ranges": [],
+      "line_count": 201
+    },
+    {
+      "path": "crates/core/src/local_data_lifecycle.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "109764def0aa15000742cdc645342927cda673755f71fe927388534898e307e5",
+      "test_line_ranges": [],
+      "line_count": 115
+    },
+    {
+      "path": "crates/core/src/local_data_media.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4b30c3ac9d523e977f9f1ff62a4eef7533570bec417e8c5e50d9753972a71dc0",
+      "test_line_ranges": [],
+      "line_count": 136
+    },
+    {
+      "path": "crates/core/src/local_data_projection.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4165835b70adc1ea185e633f4be347aa6ca6566f45046b3ce1b01a815d3541fc",
+      "test_line_ranges": [
+        [
+          533,
+          554
+        ]
+      ],
+      "line_count": 555
+    },
+    {
+      "path": "crates/core/src/local_data_release.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f0f5551a42f1faba1079796f6af57ccf0236e2cf950b6b4ded1d5ece477373f8",
+      "test_line_ranges": [],
+      "line_count": 303
+    },
+    {
+      "path": "crates/core/src/local_data_workflow.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2ef6556f22ce345c15ec6e0fc50d30356ad92407b97ca8b14ce13242ee104522",
+      "test_line_ranges": [],
+      "line_count": 220
+    },
+    {
+      "path": "crates/core/src/objective_clustering.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "85fdbc4b38a8e0f2eda147a131112af0fa24d221478d4e2257182ddbfe0ae533",
+      "test_line_ranges": [],
+      "line_count": 497
+    },
+    {
+      "path": "crates/core/src/observation.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9ef525f3b869d8e8b6b94c164463d79bc9d4849fbb499ba70ed4f33361631feb",
+      "test_line_ranges": [],
+      "line_count": 275
+    },
+    {
+      "path": "crates/core/src/planner.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d9abab9602d4c805043d6b482d5ebc30dfc4b66e2065e525b53efb57fca3b826",
+      "test_line_ranges": [],
+      "line_count": 320
+    },
+    {
+      "path": "crates/core/src/predicate.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9f38609e7b9891b430ff82dfbe6b89d433e0daa5bab3f866a699835aa58fd132",
+      "test_line_ranges": [],
+      "line_count": 201
+    },
+    {
+      "path": "crates/core/src/release.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3be635cf900d65f249fb32e1bb22e367e2854de3eb329897f74702735976458d",
+      "test_line_ranges": [],
+      "line_count": 918
+    },
+    {
+      "path": "crates/core/src/release_inventory.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b9914e960ed00cc298c816e9b1c762bd8ba308dc004aa60e4f9ce4b4ae5961e2",
+      "test_line_ranges": [
+        [
+          497,
+          727
+        ]
+      ],
+      "line_count": 728
+    },
+    {
+      "path": "crates/core/src/release_party.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "a1f0847212c35152f474ccec52cf87eed2f038f0c38f59d1f840822b4bde0921",
+      "test_line_ranges": [],
+      "line_count": 214
+    },
+    {
+      "path": "crates/core/src/reminders.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "20fb082c553485567e2427950b182bce2ebb37552356e28139d26bdf0ae5eab1",
+      "test_line_ranges": [
+        [
+          790,
+          884
+        ]
+      ],
+      "line_count": 885
+    },
+    {
+      "path": "crates/core/src/search_control.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4bdd1774a584749890d07152ab50fff0ce1830a1cf1e29e374107b06661725d8",
+      "test_line_ranges": [],
+      "line_count": 27
+    },
+    {
+      "path": "crates/core/src/selection_path.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d0481cbfebeaa863192222423b1c9890912cb6a3b68c1552f2853f401bbad837",
+      "test_line_ranges": [
+        [
+          35,
+          75
+        ]
+      ],
+      "line_count": 76
+    },
+    {
+      "path": "crates/core/src/sessions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "45e04238522b3c88843e3df55775c194055670b4dc66371fd3e0f6d2032647a5",
+      "test_line_ranges": [],
+      "line_count": 678
+    },
+    {
+      "path": "crates/core/src/source_admission.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3d6d2c548ba8975d7528b08a60305de4f97487d029763c243f00cfbcbde217fc",
+      "test_line_ranges": [],
+      "line_count": 299
+    },
+    {
+      "path": "crates/core/src/source_pipeline.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e0def14debe78f8a821e87974fc34fd1bcda2e48213ace84eda664cf28e3766d",
+      "test_line_ranges": [],
+      "line_count": 324
+    },
+    {
+      "path": "crates/core/src/sources.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ddaeb8426f047966c8d9652b56b265c317f43f836dbe5a9800ec5cc7c3919bc0",
+      "test_line_ranges": [],
+      "line_count": 575
+    },
+    {
+      "path": "crates/core/src/strict_json.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "09820e8a8beb9ad3364170d88bd9dd53f00c85525048d528974550837a2dc8fd",
+      "test_line_ranges": [],
+      "line_count": 66
+    },
+    {
+      "path": "crates/core/src/submissions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0bfe80400a43b9e23be2b3b4bbf914af2a66b70d7259aeab45335158d0c47add",
+      "test_line_ranges": [],
+      "line_count": 146
+    },
+    {
+      "path": "crates/core/src/tooltip.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9b7576c9cf129691ce5084c01a8a1fa5e8dd42f3354ce716dab8a19e49d884c5",
+      "test_line_ranges": [],
+      "line_count": 202
+    },
+    {
+      "path": "crates/core/src/travel.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7bf9bf374c30f6b9c1a392cd4a2622ee8d24689477fe0d25d42fe92f9e3dbdb9",
+      "test_line_ranges": [],
+      "line_count": 485
+    },
+    {
+      "path": "crates/core/src/types.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3bbe85c5f502a66e8164a6779e8fce605b0a51df2b2a4b4eeeb569dfb1621ab5",
+      "test_line_ranges": [],
+      "line_count": 582
+    },
+    {
+      "path": "crates/core/tests/analytics.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ecd1bb701b8d91b225725d96800db7a5f2f074d591877de0671c60a08c000b79",
+      "test_line_ranges": [],
+      "line_count": 200
+    },
+    {
+      "path": "crates/core/tests/atlas_projection.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7fc9767a2c8a33af372af9213b4dffa891c17dea0d61cca1140069f55bed213e",
+      "test_line_ranges": [],
+      "line_count": 394
+    },
+    {
+      "path": "crates/core/tests/calibration.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "fba26babbdbf805ad9a3ffd8c68bad033c48755203aa3bb6a085f779a5fe2736",
+      "test_line_ranges": [],
+      "line_count": 262
+    },
+    {
+      "path": "crates/core/tests/catalog_capacity.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "85d1fcfdab9af6b5a3de283c08d80d585d2ca8e3b4df10322a8bcf81a893444e",
+      "test_line_ranges": [],
+      "line_count": 107
+    },
+    {
+      "path": "crates/core/tests/character_entities.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "08d204dfa09a15e3597a9d9b4eae8d3d9325b3768a5e90756e04aebc879988a3",
+      "test_line_ranges": [],
+      "line_count": 28
+    },
+    {
+      "path": "crates/core/tests/common/mod.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4fed8083e1b651203ea815e7278cd747d37f155c1a108fec71d0259f7f04816b",
+      "test_line_ranges": [],
+      "line_count": 11
+    },
+    {
+      "path": "crates/core/tests/content_v2.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "380eb335b2c05d708226d4f41f6647970967b5e66fc2aa5b5a92baa0e4dc69ad",
+      "test_line_ranges": [],
+      "line_count": 232
+    },
+    {
+      "path": "crates/core/tests/content_v2_authored.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "6c20c16a2d8c8784d220ccb9df1439369789db6928d0c4482c977cc4708a5dc0",
+      "test_line_ranges": [],
+      "line_count": 177
+    },
+    {
+      "path": "crates/core/tests/contract_schema.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c5b865724a92226aa3eed6d7bf470900e60f183bff0a8628f4069df367e57ef2",
+      "test_line_ranges": [],
+      "line_count": 87
+    },
+    {
+      "path": "crates/core/tests/contracts.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "cc1155f5cd0fd4b0683f0862732d58b1c81f97fc576e4481cec4fdb213c97b75",
+      "test_line_ranges": [],
+      "line_count": 281
+    },
+    {
+      "path": "crates/core/tests/coverage.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "db3a88c630c38b03f315c39dfa4cf67d144b9c93c89af41b224824df9a85107d",
+      "test_line_ranges": [],
+      "line_count": 565
+    },
+    {
+      "path": "crates/core/tests/eligibility.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "dee65fa157a24c46dfdd1e94468006105bd5462b98c2b3e6929b454ae7b92730",
+      "test_line_ranges": [],
+      "line_count": 1102
+    },
+    {
+      "path": "crates/core/tests/evaluation.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e4763ad75593f3304d9237985ea57126eb202b91c83e23f8fcbe63eed029f2a1",
+      "test_line_ranges": [],
+      "line_count": 316
+    },
+    {
+      "path": "crates/core/tests/gear_acquisition.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b7025a78e44cd507190ab2066ed0cf112bbc18c542dee31bf131bcfa6e772dd0",
+      "test_line_ranges": [],
+      "line_count": 204
+    },
+    {
+      "path": "crates/core/tests/gear_configuration.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3dd05695ab923f38e8f49e7c6e483b70776f8e1e281d13f9ca5a10c579729b4f",
+      "test_line_ranges": [],
+      "line_count": 1216
+    },
+    {
+      "path": "crates/core/tests/gear_eligibility.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e51133abdc48b5c08eef83d1be6b717494f26f708c8a7363080b568cb4407631",
+      "test_line_ranges": [],
+      "line_count": 511
+    },
+    {
+      "path": "crates/core/tests/gear_lua.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ef7f1330a5dc88495a7f898201623a366ba3a66b7e45590ef6cba23f56a654cc",
+      "test_line_ranges": [],
+      "line_count": 236
+    },
+    {
+      "path": "crates/core/tests/gear_score.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "91393470d60b8eeba29b2050a4ef85ec8ce2c26d077ae28b7d378aab30da8234",
+      "test_line_ranges": [],
+      "line_count": 301
+    },
+    {
+      "path": "crates/core/tests/imagery_entities.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d79798e8372415227d14597f392e910ef08a5a04c36f71ff03ad3d737d1495d2",
+      "test_line_ranges": [],
+      "line_count": 143
+    },
+    {
+      "path": "crates/core/tests/json_boundary.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2dad96ffc2b33623670c3610073b3f173734aaeae3ed4a20d4c3726a0580d5d9",
+      "test_line_ranges": [],
+      "line_count": 39
+    },
+    {
+      "path": "crates/core/tests/local_data.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c2ced9516bebb2ffe41592c9a0088f125ca359d9f7697410402f0a32b84e2e41",
+      "test_line_ranges": [],
+      "line_count": 191
+    },
+    {
+      "path": "crates/core/tests/local_data_gameplay.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5394784555f02a8b26453d737c68ddbafd29d72dd8229afb598719848973d3c2",
+      "test_line_ranges": [],
+      "line_count": 104
+    },
+    {
+      "path": "crates/core/tests/local_data_inputs.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "34ecdcb008ac2d47203d8e434e088acd3769530dc682fdafee509f08ebebf710",
+      "test_line_ranges": [],
+      "line_count": 131
+    },
+    {
+      "path": "crates/core/tests/local_data_inventory.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2f0806219627a1aed967d90131b506d92e661b8b855186dbfbd9002909c56389",
+      "test_line_ranges": [],
+      "line_count": 69
+    },
+    {
+      "path": "crates/core/tests/local_data_media.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "05ae1baa88e26c7581d61ac9d1bdb75d16f2f940a5e059fa1ae667ae4ce5fc54",
+      "test_line_ranges": [],
+      "line_count": 39
+    },
+    {
+      "path": "crates/core/tests/local_data_workflow.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0f426951f1499273194162278e2b5bfc76091debf60f8432aadbfc46cf5df06e",
+      "test_line_ranges": [],
+      "line_count": 70
+    },
+    {
+      "path": "crates/core/tests/local_submissions.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "515b0049c596817aea032edff3708ef9e4ead461c4a03290dd249ea0868c014c",
+      "test_line_ranges": [],
+      "line_count": 56
+    },
+    {
+      "path": "crates/core/tests/objective_clustering.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "94e8adbc57c8f91c83fbd073b91093f20354e9055482d1b253980792101e5804",
+      "test_line_ranges": [],
+      "line_count": 729
+    },
+    {
+      "path": "crates/core/tests/observations.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "bb0f7a436396f99df29ec403885e83f84a141333603b975505d26f9655599cce",
+      "test_line_ranges": [],
+      "line_count": 108
+    },
+    {
+      "path": "crates/core/tests/planner.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "bfa1c201625eed53af6b6a98ab73e8b3bd006592e7fed8094e097ec5bf3c2552",
+      "test_line_ranges": [],
+      "line_count": 326
+    },
+    {
+      "path": "crates/core/tests/planning_entities.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ae3e369c2b7885e7395a54b16f40c3d458e1001afc41cf724c9da6b1ec8778b8",
+      "test_line_ranges": [],
+      "line_count": 49
+    },
+    {
+      "path": "crates/core/tests/predicate_parity.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "16eac4145aafa142acdb7fac8acdcfc68510642938d42968af57b9ed38c098a8",
+      "test_line_ranges": [],
+      "line_count": 418
+    },
+    {
+      "path": "crates/core/tests/predicates.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "269f1817a544f6f108ba4de2f73e2ec0d34309a0cfcde60beabac953b2de033c",
+      "test_line_ranges": [],
+      "line_count": 53
+    },
+    {
+      "path": "crates/core/tests/primitives.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "865a3fd29cdd7febe58b0ea3fd75d8d335478b35bc48b8514bc5d2704705a720",
+      "test_line_ranges": [],
+      "line_count": 77
+    },
+    {
+      "path": "crates/core/tests/record_provenance.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "aa3e5603b5e1b72ff153d5632b9514b5c46435fc950f7ea17d3e4d8bf4867a8e",
+      "test_line_ranges": [],
+      "line_count": 124
+    },
+    {
+      "path": "crates/core/tests/reference_entities.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "95717768ac4206108432cd103ff0851c500d73868678faf5494ee2f03b425c8f",
+      "test_line_ranges": [],
+      "line_count": 59
+    },
+    {
+      "path": "crates/core/tests/release.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f0d9ab560005ae1cfa528b8d4dd76c8fff5f1861ebee6320cf0b5e2109134e27",
+      "test_line_ranges": [],
+      "line_count": 324
+    },
+    {
+      "path": "crates/core/tests/release_party.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "c0a2f83a6169239f782d09bfe64eb2e2a4373277d4ed5695185768fd603bae41",
+      "test_line_ranges": [],
+      "line_count": 139
+    },
+    {
+      "path": "crates/core/tests/release_v2.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "fa62ee1054d3261ed3fe1ae1c8e82766a58e1acf357c928eeded1314e4a87d0e",
+      "test_line_ranges": [],
+      "line_count": 451
+    },
+    {
+      "path": "crates/core/tests/reminders.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "051b6a0646beb6025f7334087c54dc016394139ceb23ed7e47ee4e52a3a2ccb7",
+      "test_line_ranges": [],
+      "line_count": 1095
+    },
+    {
+      "path": "crates/core/tests/search_control.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9302ba6a5f7ac2f0226b118e99953080217308a7db330b5553703569b12a6db5",
+      "test_line_ranges": [],
+      "line_count": 160
+    },
+    {
+      "path": "crates/core/tests/sessions.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "aff50ec338e288a915d2b99e9548a428e6c6e0db5aa0beffece8eacda2489716",
+      "test_line_ranges": [],
+      "line_count": 734
+    },
+    {
+      "path": "crates/core/tests/source_admission.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7c60a4fd8263e9081acca20cccdc6fc3d7a70109dd7465c58f432b54a6631629",
+      "test_line_ranges": [],
+      "line_count": 230
+    },
+    {
+      "path": "crates/core/tests/source_pipeline.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "6f422524ee0596d3ecff44acbd58a7da66320884ec8390bd35930eae929894aa",
+      "test_line_ranges": [],
+      "line_count": 234
+    },
+    {
+      "path": "crates/core/tests/sources.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3ea4b4feb58dab58cc78d44354e4cd50c526ebf147d18494457fb5a3e1e24330",
+      "test_line_ranges": [],
+      "line_count": 928
+    },
+    {
+      "path": "crates/core/tests/spatial_entities.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "76b7bb00e916d92ab0df9b989420c99167e6934c20f1912a2de537a858577aff",
+      "test_line_ranges": [],
+      "line_count": 31
+    },
+    {
+      "path": "crates/core/tests/tooltip.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "46fa313e084df96a1db3924470dbdb967a09a97470666c49c149cd015c559b17",
+      "test_line_ranges": [],
+      "line_count": 78
+    },
+    {
+      "path": "crates/core/tests/travel.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1679590471ac27a7076937dbc1ebfe85cb5ca93a6c32ecd2e58200d42a717472",
+      "test_line_ranges": [],
+      "line_count": 848
+    },
+    {
+      "path": "crates/ingest/src/anav1.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "2c68c3f3b2d87c7cb21e58a5bc91b9814baec4214629d3d0269f1f80aa396902",
+      "test_line_ranges": [],
+      "line_count": 118
+    },
+    {
+      "path": "crates/ingest/src/error.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8c30ed9eff02beaf9120589b58a6581b4b132d1bc283cb2ea27891ddf1229c13",
+      "test_line_ranges": [],
+      "line_count": 16
+    },
+    {
+      "path": "crates/ingest/src/fixtures.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b2cece2b4d16f91b8191122d34b81878730893bfc16f6649a67edf9e29ee5c1f",
+      "test_line_ranges": [],
+      "line_count": 322
+    },
+    {
+      "path": "crates/ingest/src/foreverdb.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3759bc1a9c8f16d7a9df84eb7448d22ff30408c197602b72d2a56017984afc04",
+      "test_line_ranges": [],
+      "line_count": 390
+    },
+    {
+      "path": "crates/ingest/src/import.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "63ba0c809f2fcb8c4c49252483e03499903eb9b409bab628a2fbde65a6a5bb1e",
+      "test_line_ranges": [],
+      "line_count": 255
+    },
+    {
+      "path": "crates/ingest/src/lib.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "f8269b3b7f1d99dedc2c375acce71d284b400748f97a639157a1c55d247f9116",
+      "test_line_ranges": [],
+      "line_count": 38
+    },
+    {
+      "path": "crates/ingest/src/pack.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b9d77d63a3339113d28cd847bcd54906a8ed5201c95bd8ce78915f5ffceb0a75",
+      "test_line_ranges": [
+        [
+          861,
+          946
+        ],
+        [
+          948,
+          1027
+        ],
+        [
+          1029,
+          1054
+        ]
+      ],
+      "line_count": 1055
+    },
+    {
+      "path": "crates/ingest/src/pack/v2.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "9ee048e6719fdc190fa0b060e742f1c1463c3a48730709ab545a581ae7d6f2bd",
+      "test_line_ranges": [],
+      "line_count": 358
+    },
+    {
+      "path": "crates/ingest/src/questiedb.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8c06db9f8d5562a38783b000c08ea919ca9114bdb4e8f8e1d10c60245513d706",
+      "test_line_ranges": [],
+      "line_count": 522
+    },
+    {
+      "path": "crates/ingest/src/rxp.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5d4162d547f44097b67c25b20bd9daaa016cd1b0d3034722036eb82fdf809a32",
+      "test_line_ranges": [],
+      "line_count": 979
+    },
+    {
+      "path": "crates/ingest/src/rxp_verify.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "395d2d108929405757b794322fdbe70071ed9d33ba0302847723c37434347a5b",
+      "test_line_ranges": [],
+      "line_count": 1420
+    },
+    {
+      "path": "crates/ingest/src/savedvars.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0e9279e50d56e457efbd064c63273d61e4892b74b9eabb6add177172f3a6a411",
+      "test_line_ranges": [
+        [
+          664,
+          701
+        ]
+      ],
+      "line_count": 702
+    },
+    {
+      "path": "crates/ingest/src/session.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "94973580668b52aedc3c78d7318976af0eb4d4b8e8f7f1984425e37374fdca5f",
+      "test_line_ranges": [],
+      "line_count": 83
+    },
+    {
+      "path": "crates/ingest/src/source_adapters.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "09d1718a89c2afc45a8f84808f3fc08182aae89a714f19e666f7ebb014ecf0bc",
+      "test_line_ranges": [
+        [
+          303,
+          356
+        ],
+        [
+          358,
+          371
+        ]
+      ],
+      "line_count": 372
+    },
+    {
+      "path": "crates/ingest/src/texture.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "aa5295df98e3d982710199c74ef17acc73f9ed8bdc595f1c3e6636b2468640ce",
+      "test_line_ranges": [],
+      "line_count": 251
+    },
+    {
+      "path": "crates/ingest/src/watcher.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d7a9995e2e10ba7cb3046d4a2a31181cd058fda7059af33f67956ef1efd6ad04",
+      "test_line_ranges": [],
+      "line_count": 204
+    },
+    {
+      "path": "crates/ingest/tests/anav1.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "376404d5965f3e741220bebd09915057cb8438d2347aac5ee8122f4cb3a73847",
+      "test_line_ranges": [],
+      "line_count": 191
+    },
+    {
+      "path": "crates/ingest/tests/common/mod.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "76a941315bc49228a9a0c91d2beece386b49af777d015b229c843ded01595092",
+      "test_line_ranges": [],
+      "line_count": 60
+    },
+    {
+      "path": "crates/ingest/tests/fixtures.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5087a95d11b59bc535017dae959ed3bfde05a2855e6069228103880186ab9293",
+      "test_line_ranges": [],
+      "line_count": 380
+    },
+    {
+      "path": "crates/ingest/tests/foreverdb.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f6df7824c10847a3f4fe9fe9ccc05ddc23452e1743a47d28d54f4a86a53bca6b",
+      "test_line_ranges": [],
+      "line_count": 181
+    },
+    {
+      "path": "crates/ingest/tests/import.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ad10a5cf12a5fabdca2f10bf6a64d724a75cf7c70295ee9525c5f9ac30a19342",
+      "test_line_ranges": [],
+      "line_count": 394
+    },
+    {
+      "path": "crates/ingest/tests/non_execution.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "af1b40505fa27c02077017c0466daaa7ed96a96a791b2695a612801792f0097d",
+      "test_line_ranges": [],
+      "line_count": 235
+    },
+    {
+      "path": "crates/ingest/tests/properties.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3062ae9ba2a6ea883f14efe25dbfb4423bda72d579d28ed60d0a0c94cfb5707c",
+      "test_line_ranges": [],
+      "line_count": 189
+    },
+    {
+      "path": "crates/ingest/tests/questiedb.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "51ef2fc0f573105d440355c6c94279c3e0f74063f8230d1f2d7f3abaca264273",
+      "test_line_ranges": [],
+      "line_count": 455
+    },
+    {
+      "path": "crates/ingest/tests/rxp.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "9e5aa4a62ea800982295370403f43f94ffd33ca36bc56baffb8301ec5951abef",
+      "test_line_ranges": [],
+      "line_count": 1321
+    },
+    {
+      "path": "crates/ingest/tests/savedvars.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "278152e78b77144ed843e1787e70881a26e6d2bcded36cbc989a052295fd0435",
+      "test_line_ranges": [],
+      "line_count": 364
+    },
+    {
+      "path": "crates/ingest/tests/session.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5436315f60d9884260f6e248f1e31c6214f93fe81768202755b448350522c722",
+      "test_line_ranges": [],
+      "line_count": 123
+    },
+    {
+      "path": "crates/ingest/tests/texture.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a94dac7933ca716fd13bf1ca9d1797e8b865beb481c6066582f4cc20e97e9c79",
+      "test_line_ranges": [],
+      "line_count": 140
+    },
+    {
+      "path": "crates/ingest/tests/watcher.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "67a09fbe45a78eccb58ed48f24fd45e9fa1cbcea9909acecd4129dc48b542727",
+      "test_line_ranges": [],
+      "line_count": 215
+    },
+    {
+      "path": "crates/local-data/build.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "dc80961e3b6467ea8635b3611d688b19c80f42d56d5d20973e0c8cb9b9b4e6d2",
+      "test_line_ranges": [],
+      "line_count": 267
+    },
+    {
+      "path": "crates/local-data/build_support.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e994aa664d18bf9bdb2aa22e93eca22a098ab9ee944b0e49ce275cb2cb14ed3c",
+      "test_line_ranges": [],
+      "line_count": 71
+    },
+    {
+      "path": "crates/local-data/src/changes.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4141a278c973d20dd1eaae7e654caea005245cb85edb65c4c917408c17e114a4",
+      "test_line_ranges": [],
+      "line_count": 195
+    },
+    {
+      "path": "crates/local-data/src/delivery.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "6c26853acf6e1550076945499f395b5509a1ecacf7bca32358bae70f5ced796e",
+      "test_line_ranges": [
+        [
+          357,
+          382
+        ]
+      ],
+      "line_count": 383
+    },
+    {
+      "path": "crates/local-data/src/delivery_receipts.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8735b584f40ec382aba28f29310bb147852e0b640e68349cc25c887181f515aa",
+      "test_line_ranges": [],
+      "line_count": 156
+    },
+    {
+      "path": "crates/local-data/src/extraction.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3f5bed0f9a44e63b6b8d00856d75614b82ddb0a31bec8a8b2b0cacb70ab20de3",
+      "test_line_ranges": [
+        [
+          35,
+          41
+        ],
+        [
+          849,
+          1007
+        ],
+        [
+          1009,
+          1092
+        ]
+      ],
+      "line_count": 1093
+    },
+    {
+      "path": "crates/local-data/src/gameplay.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ef0405eaa1dac67ab38ef3725aabebf66db3bcf64cef9dd9b7ddfab1f50bff3e",
+      "test_line_ranges": [],
+      "line_count": 351
+    },
+    {
+      "path": "crates/local-data/src/guide_facts.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f0a58bdb54f4c166c7f5409975a2c760e2796142710430e65eed07896314c98b",
+      "test_line_ranges": [],
+      "line_count": 370
+    },
+    {
+      "path": "crates/local-data/src/guide_review.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fe60904f097250bf1f5c13c1e6cfa495a5f1307e8c0513d197759e4598567b7d",
+      "test_line_ranges": [],
+      "line_count": 164
+    },
+    {
+      "path": "crates/local-data/src/input_guard.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ffb71686e7c3685869f587289156eaf4649714a16d755f9fd862c720b27bf0fa",
+      "test_line_ranges": [
+        [
+          108,
+          125
+        ]
+      ],
+      "line_count": 126
+    },
+    {
+      "path": "crates/local-data/src/inputs.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d4db53301506474238e499d25d6946bb8257e5a59d2fc0b9b4a4bb4d8cb5cde5",
+      "test_line_ranges": [],
+      "line_count": 454
+    },
+    {
+      "path": "crates/local-data/src/inventory.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "48a222e6a9dc69a3cfb732275e15ea40baf0b6b690d7d5a3531c7d1004f353b7",
+      "test_line_ranges": [],
+      "line_count": 399
+    },
+    {
+      "path": "crates/local-data/src/isolation.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3ad90ef2bee4ac95a18cabeb30ffcc305ae30227ca0b01dfe69b1cb764e19cae",
+      "test_line_ranges": [],
+      "line_count": 133
+    },
+    {
+      "path": "crates/local-data/src/lib.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "be908be0398017831a1261a239464d5b3a3b0e936c7a1f7775fb6497ce4da741",
+      "test_line_ranges": [
+        [
+          386,
+          444
+        ]
+      ],
+      "line_count": 465
+    },
+    {
+      "path": "crates/local-data/src/lifecycle.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "3bcbdd1c54e8ee05f9d2599d9a039560af9ba59505977d97ff1f011fbd46f262",
+      "test_line_ranges": [],
+      "line_count": 186
+    },
+    {
+      "path": "crates/local-data/src/media.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fa1f9661082bd7b452ca9cffa704e8dca7c501ed1a3f1af6ed619bb08e4a80a8",
+      "test_line_ranges": [],
+      "line_count": 658
+    },
+    {
+      "path": "crates/local-data/src/metadata.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "4797e95307ee3971cddd7493f75a489638b4531fe41a52ccca60e8983acfb4c7",
+      "test_line_ranges": [],
+      "line_count": 94
+    },
+    {
+      "path": "crates/local-data/src/native.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "26ed4d5746f30b341932be5fffb3313e2995a4a5f444ca43837578a2e1b8a412",
+      "test_line_ranges": [
+        [
+          383,
+          411
+        ]
+      ],
+      "line_count": 412
+    },
+    {
+      "path": "crates/local-data/src/partial.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "d9d79d9b964aabcfe379099edb26e5f43142dc3d0db74780957fddfbdfc0eaf5",
+      "test_line_ranges": [],
+      "line_count": 207
+    },
+    {
+      "path": "crates/local-data/src/projection.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e70d44631b76e9814b7746f70f258d0d0b14a2215dab3dbbf49acbd34f2ac374",
+      "test_line_ranges": [],
+      "line_count": 827
+    },
+    {
+      "path": "crates/local-data/src/receipts.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "367d3ddf5d795853dca90b24cb7ae862780869781c5105a71ae848890d1dd686",
+      "test_line_ranges": [],
+      "line_count": 276
+    },
+    {
+      "path": "crates/local-data/src/tables.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ec13e8b3dacdcb26c2bc8e6f3ebb35b57f61b0fe5327440741a7349911dc571a",
+      "test_line_ranges": [],
+      "line_count": 1002
+    },
+    {
+      "path": "crates/local-data/src/worker.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "1355ca0e34691c0a6ccb20ca1c53904a45da526abf94ed1219bda5dc42aa4bb0",
+      "test_line_ranges": [],
+      "line_count": 299
+    },
+    {
+      "path": "crates/local-data/tests/decryption.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4460a64b3197089b5afe4347cc463370c0c4cdacc7d065f5a0cf190cf72fa614",
+      "test_line_ranges": [],
+      "line_count": 8
+    },
+    {
+      "path": "crates/local-data/tests/input_profile.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f6d85ac4e35f2cd1f3dd2307e5fcb4ca93b4a7cc97010350323ead322815b03d",
+      "test_line_ranges": [],
+      "line_count": 94
+    },
+    {
+      "path": "crates/local-data/tests/inputs.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4d58d77d22db5a4098f38ec808386ad38d542e7924bd97b7e2b878113a91ee48",
+      "test_line_ranges": [],
+      "line_count": 405
+    },
+    {
+      "path": "crates/local-data/tests/inspection.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "73d0831091ac7480f3e24858b89b4ea6fc6365c417b828a00074616ee9e8e49d",
+      "test_line_ranges": [],
+      "line_count": 229
+    },
+    {
+      "path": "crates/local-data/tests/lifecycle.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "bef4bb3ed5285e21dc65a325685b0489dbfe628ec2be95a3748c72fed14ab8a2",
+      "test_line_ranges": [],
+      "line_count": 253
+    },
+    {
+      "path": "crates/local-data/tests/partial.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "af7221f1c4581bc75daa9db0375903d1a80f01be6219f7b5b91651c6758e42b6",
+      "test_line_ranges": [],
+      "line_count": 509
+    },
+    {
+      "path": "crates/local-data/tests/projection.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1d42e042cc2d7769360f7c9e696830e21275c1909ecf9a16a0a849ddc802a4e0",
+      "test_line_ranges": [],
+      "line_count": 1826
+    },
+    {
+      "path": "crates/local-data/tests/receipts.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "790977894f222b3c25842829b4a6e57b4ec1a109cc12723dc30319a0f3379d85",
+      "test_line_ranges": [],
+      "line_count": 696
+    },
+    {
+      "path": "crates/local-data/tests/tables.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7f942e879de0830577188b50cbc3da62e72675dacba8d560f182d807bd9880f3",
+      "test_line_ranges": [],
+      "line_count": 419
+    },
+    {
+      "path": "crates/lua-harness/examples/callback_performance.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "aa84d08567d0a2003ebf3b55b3625986d506a983795615e787d79a7cba505147",
+      "test_line_ranges": [],
+      "line_count": 71
+    },
+    {
+      "path": "crates/lua-harness/src/lib.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e1ba9d174eba059b14857087c5133768f92b0175411696a3dbb5ae67fd5e5cc3",
+      "test_line_ranges": [
+        [
+          490,
+          525
+        ]
+      ],
+      "line_count": 526
+    },
+    {
+      "path": "crates/lua-harness/tests/addon_load.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4cb47a2baaa99e35a3edd0f0a3ac9b1c9d195b34e8f29f0d9b6184fb387a78a4",
+      "test_line_ranges": [],
+      "line_count": 397
+    },
+    {
+      "path": "crates/lua-harness/tests/capture_target.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b2e984f328f2bd18055359f2e4544dd35f1fb79556fdf1b6845ae77f70e3d167",
+      "test_line_ranges": [],
+      "line_count": 259
+    },
+    {
+      "path": "crates/lua-harness/tests/clock.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5bad8843f54315fc1ea6079b604600e5b2448b35b64187c2c458c7ad6944c3ca",
+      "test_line_ranges": [],
+      "line_count": 236
+    },
+    {
+      "path": "crates/lua-harness/tests/common/mod.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a888002e1932bed5e6ce615395c378ca9b86dfa5125b491a75693d6b43224110",
+      "test_line_ranges": [],
+      "line_count": 140
+    },
+    {
+      "path": "crates/lua-harness/tests/common/ui.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "776b02e03bd025bb38b1d2c823dee11188c95e56ec24824e8efc7aaf0f220ff4",
+      "test_line_ranges": [],
+      "line_count": 318
+    },
+    {
+      "path": "crates/lua-harness/tests/copy_export.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "56e4399f9de94d1814bedd541a40f5100631600c71eafebacfd0b1a2775451c0",
+      "test_line_ranges": [],
+      "line_count": 271
+    },
+    {
+      "path": "crates/lua-harness/tests/e2e_round_trip.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0a60e5e51d5b2a74a629889d5365f48e41da36110648837114eca24dd44a307e",
+      "test_line_ranges": [],
+      "line_count": 690
+    },
+    {
+      "path": "crates/lua-harness/tests/equipment_capture.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "3effb16ddcc941ef81749efecad8c2259a47b5b2557cba5ebe24e6a0cf4ff267",
+      "test_line_ranges": [],
+      "line_count": 118
+    },
+    {
+      "path": "crates/lua-harness/tests/export_settings.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5716d242019a30e67da958f1a48a2a78b4fd39b8a2cac1d473798d0e036f5674",
+      "test_line_ranges": [],
+      "line_count": 356
+    },
+    {
+      "path": "crates/lua-harness/tests/gear_parity.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5be194af88e6e4a052c21430e71ac4ca581b422d1d968c745ed33a37d1748616",
+      "test_line_ranges": [],
+      "line_count": 246
+    },
+    {
+      "path": "crates/lua-harness/tests/gui.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "18bddec542719105fe924ac504aca769d779290f523106f178fa41dcbf802366",
+      "test_line_ranges": [],
+      "line_count": 1152
+    },
+    {
+      "path": "crates/lua-harness/tests/hud_appearance.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ef589a4edbc4810e50c0dc4da8a976bb1063ab160026415bdf6dadd7b217cefd",
+      "test_line_ranges": [],
+      "line_count": 393
+    },
+    {
+      "path": "crates/lua-harness/tests/json_decoder.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "1de2b4fd0269f40083e282760d5682f68bc401e0bace60df633e886efe4cb83e",
+      "test_line_ranges": [],
+      "line_count": 55
+    },
+    {
+      "path": "crates/lua-harness/tests/json_encoder.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7a243ba25fd52424f7ac267a0079b5de31506f22846aacc390a284d117fd5265",
+      "test_line_ranges": [],
+      "line_count": 352
+    },
+    {
+      "path": "crates/lua-harness/tests/json_properties.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "61f078da94a78da16c9dabe22cb71d700c7e550770722267a280af3297b43bdc",
+      "test_line_ranges": [],
+      "line_count": 132
+    },
+    {
+      "path": "crates/lua-harness/tests/plan_controls.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "20077fe8ad193f9bdf20891e3e852b3eb48bb725ce3d2d5ea24cc99141664246",
+      "test_line_ranges": [],
+      "line_count": 169
+    },
+    {
+      "path": "crates/lua-harness/tests/plan_export.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "404c032055548e92a82448d6bea25394971178a8c838a9d005bdbe155902dd2e",
+      "test_line_ranges": [],
+      "line_count": 215
+    },
+    {
+      "path": "crates/lua-harness/tests/plan_hud.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7ebe868da5721cd8cae9796ca31d628a59c47f702770e2bf7baaa3c66dac2a19",
+      "test_line_ranges": [],
+      "line_count": 446
+    },
+    {
+      "path": "crates/lua-harness/tests/predicate_parity.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "e3ea62fccf39182eea24fd93582da382db7879981cc7303ba3f45f599c703929",
+      "test_line_ranges": [],
+      "line_count": 135
+    },
+    {
+      "path": "crates/lua-harness/tests/probe.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2769999fcfba4a8c304213d670d102abfba60837c10d35ee347c50ff057a9cbf",
+      "test_line_ranges": [],
+      "line_count": 375
+    },
+    {
+      "path": "crates/lua-harness/tests/quest_capture.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f0088ad858d1bfb6f0da708a3d4f4f365e0115696ce76744acf1bd112bdd5c1f",
+      "test_line_ranges": [],
+      "line_count": 208
+    },
+    {
+      "path": "crates/lua-harness/tests/recipient_export.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "62d8871c9a57e4642d7c929032017a265e950e7dfac702c83a20655fe59abfcc",
+      "test_line_ranges": [],
+      "line_count": 143
+    },
+    {
+      "path": "crates/lua-harness/tests/session_recorder.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ad39028ae164cf7683d2e483cc6588c7cfc163c3476fe7111c941cc5f43e4c13",
+      "test_line_ranges": [],
+      "line_count": 447
+    },
+    {
+      "path": "crates/lua-harness/tests/snapshot_export.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "b32f7703abf04aead1ab07e31183b66b8c80eefa16b4742f5d28c54c11683e99",
+      "test_line_ranges": [],
+      "line_count": 325
+    },
+    {
+      "path": "crates/lua-harness/tests/static_scan.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "f48bbe63afd2dd8ee94e31dcf45d07c1cabc1b46033911d4ef273145d41adc5d",
+      "test_line_ranges": [],
+      "line_count": 156
+    },
+    {
+      "path": "crates/lua-harness/tests/template_and_fixtures.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "be1b3c88ac1fa074983c7874d06bfc76ce9cbaf824895a3012084003f4a6249e",
+      "test_line_ranges": [],
+      "line_count": 323
+    },
+    {
+      "path": "crates/storage/src/calibration.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "de228c218e70206a834745965f3015f809f0203275ab8cd600774a5d28c09fb7",
+      "test_line_ranges": [],
+      "line_count": 54
+    },
+    {
+      "path": "crates/storage/src/catalog_assets.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "433fde587feb8a97e842c73669ec9d3e5016d2c73da21670c9d68837f95fb77c",
+      "test_line_ranges": [
+        [
+          346,
+          355
+        ]
+      ],
+      "line_count": 356
+    },
+    {
+      "path": "crates/storage/src/consistent_read.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "17b4c70373af9437486f40f8c7cb8afd041d89432db3522656f57c9fc2178976",
+      "test_line_ranges": [],
+      "line_count": 29
+    },
+    {
+      "path": "crates/storage/src/content.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8168f583ef1cef66b47679d46bca94735e7b2aa995bc8ae568cfac3aa3a75cac",
+      "test_line_ranges": [],
+      "line_count": 533
+    },
+    {
+      "path": "crates/storage/src/content_catalog.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "53694995ab774829c35cb002000abc3cb95422f1a37a6c08659f25647e20f530",
+      "test_line_ranges": [],
+      "line_count": 411
+    },
+    {
+      "path": "crates/storage/src/content_dispositions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "fa90149f2ce00be5155cad1bcc5efe7a6cc443a2c9f6a20779391dd8290c5726",
+      "test_line_ranges": [
+        [
+          423,
+          461
+        ]
+      ],
+      "line_count": 462
+    },
+    {
+      "path": "crates/storage/src/error.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "8340a4c54ef852158be318fe87a8da32a1206a8e6bda6f8d23753b0d878a0ee6",
+      "test_line_ranges": [],
+      "line_count": 43
+    },
+    {
+      "path": "crates/storage/src/hash.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e4c1bf6c16e4b7fdb9812bd4213c64868358d8c92c333080ee051b14fa9f23b5",
+      "test_line_ranges": [],
+      "line_count": 83
+    },
+    {
+      "path": "crates/storage/src/lib.rs",
+      "language": "rust",
+      "disposition": "declaration_only",
+      "reason": "No executable first-party declarations; generated derive bodies are not authored code",
+      "source_sha256": "4bb610f0ee866705126bbfb31c5736a0a7c5f051bdc61ea24d00448d48639bfb",
+      "test_line_ranges": [],
+      "line_count": 57
+    },
+    {
+      "path": "crates/storage/src/local_data.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "f1730014a41139279c2acb792cce384d6ff5ccb759040ac0b7e670323cb0e524",
+      "test_line_ranges": [
+        [
+          719,
+          763
+        ]
+      ],
+      "line_count": 764
+    },
+    {
+      "path": "crates/storage/src/local_submissions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "7d56f76528752e749e4963e302df5da03c06bd5abd8bedf0ffc0a5ec6edc8360",
+      "test_line_ranges": [],
+      "line_count": 442
+    },
+    {
+      "path": "crates/storage/src/migrations.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "c6a254f88da6c6467b4cf449898720c6ee8118b9c2db100a3521fd9f2c04613d",
+      "test_line_ranges": [],
+      "line_count": 171
+    },
+    {
+      "path": "crates/storage/src/model.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "bbb57b03b84db227b633c9af3520fa1ce766ba21134ab508b3b6bbccf4878227",
+      "test_line_ranges": [],
+      "line_count": 148
+    },
+    {
+      "path": "crates/storage/src/ordering.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "5108b4c358cc6e8a9fff6b9affab381681fdcfa3d0a8a4a5b0eb626198d51fbe",
+      "test_line_ranges": [
+        [
+          74,
+          169
+        ]
+      ],
+      "line_count": 170
+    },
+    {
+      "path": "crates/storage/src/party.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "0444ffdaa0f429fb72125acf404936c2735c64b9b7d339e827a54092f8cbd277",
+      "test_line_ranges": [],
+      "line_count": 148
+    },
+    {
+      "path": "crates/storage/src/party_proposals.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "e3ea3ed551c0b9ddd5efedd88e9c4b6f99068443d8691ac8cde6bb9b69993014",
+      "test_line_ranges": [],
+      "line_count": 134
+    },
+    {
+      "path": "crates/storage/src/recovery.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "ee2d5f3cf4ebf1ab79a95e270b56011cfb0b530f804b0d7979ba6dbc881490a6",
+      "test_line_ranges": [
+        [
+          566,
+          580
+        ]
+      ],
+      "line_count": 581
+    },
+    {
+      "path": "crates/storage/src/reminders.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "be358ad2ddb597614058704a70d35d9fc629288634952c52540f92ba63f26d50",
+      "test_line_ranges": [],
+      "line_count": 96
+    },
+    {
+      "path": "crates/storage/src/sessions.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "b973f88780a423ee3fac4f25405b091b0ef40587340ae837ccf8107ee63b82bc",
+      "test_line_ranges": [],
+      "line_count": 212
+    },
+    {
+      "path": "crates/storage/src/sqlite.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "21b35bc516fe3a781aafb33347eebdf4df0ec60214d4ee87aeb50b7168922a39",
+      "test_line_ranges": [
+        [
+          900,
+          932
+        ]
+      ],
+      "line_count": 933
+    },
+    {
+      "path": "crates/storage/src/today.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "01d3920849f178c1f4b7e0708028ba579ac0538b9e7a218d56d7ab38f6fecbe1",
+      "test_line_ranges": [],
+      "line_count": 599
+    },
+    {
+      "path": "crates/storage/src/today_json.rs",
+      "language": "rust",
+      "disposition": "eligible",
+      "reason": null,
+      "source_sha256": "beec7463b76f652907d7adcfa9450365b3b9157e12c5101270998f6a92e1c9d3",
+      "test_line_ranges": [],
+      "line_count": 99
+    },
+    {
+      "path": "crates/storage/tests/catalog_assets.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "432016382ff32818b6be502c1de92d86e0adcd0f2e7ef935edf977b94fb7d01d",
+      "test_line_ranges": [],
+      "line_count": 170
+    },
+    {
+      "path": "crates/storage/tests/catalog_v2.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "a36056e5e72019ac681894cb801cf48d3f135cd8bc519f6c5a5dc72f75066423",
+      "test_line_ranges": [],
+      "line_count": 184
+    },
+    {
+      "path": "crates/storage/tests/common/mod.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "ae0d8e44c4de0a2ddc5fba07d57a4fa6bc40983da41da1b4355b95ff90bf1bf2",
+      "test_line_ranges": [],
+      "line_count": 183
+    },
+    {
+      "path": "crates/storage/tests/consistent_read.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "4845b9a2032747b5537cb6cede578302b37bccebff0a86c4ab27d264b6d4d34b",
+      "test_line_ranges": [],
+      "line_count": 70
+    },
+    {
+      "path": "crates/storage/tests/content.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "47838392345b5fc4345d0ddf295fef96c363b34adcfca9631c861cec95455316",
+      "test_line_ranges": [],
+      "line_count": 539
+    },
+    {
+      "path": "crates/storage/tests/content_dispositions.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2fdc4e8f344616d60283cf0b6984bf6ba21eb2dbea1b7a4b0d62cbc18ba76845",
+      "test_line_ranges": [],
+      "line_count": 426
+    },
+    {
+      "path": "crates/storage/tests/local_data_lifecycle.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "31fbb693203c70e75d5f13bf205f8f6c8bb6cea1f761dabe76a4bd46769b978c",
+      "test_line_ranges": [],
+      "line_count": 434
+    },
+    {
+      "path": "crates/storage/tests/local_state_foundation.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "7c1d322950aa161c6326bb9812c64e7552407013bd1f89600b5aa753118c0945",
+      "test_line_ranges": [],
+      "line_count": 276
+    },
+    {
+      "path": "crates/storage/tests/local_state_recovery.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "d94d99e3db10d83f0bcbe9817a56e820928e1aab5109c018bf5820863d36bf06",
+      "test_line_ranges": [],
+      "line_count": 120
+    },
+    {
+      "path": "crates/storage/tests/local_submissions.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "79665d3fc57a1728de589bcc5e5536e224723aee83d11c26e3aa51bd433b704e",
+      "test_line_ranges": [],
+      "line_count": 243
+    },
+    {
+      "path": "crates/storage/tests/migrations.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "674c4ee26eade278832608a2519901aaef188dc17b6e4a9c55b738d311e1ac1d",
+      "test_line_ranges": [],
+      "line_count": 362
+    },
+    {
+      "path": "crates/storage/tests/parties.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "5f8c4e9846e791359dba298c447a4dbcd4a926d5be177e36be703a2e266afdf5",
+      "test_line_ranges": [],
+      "line_count": 110
+    },
+    {
+      "path": "crates/storage/tests/party_proposals.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "34186923e99a07335af5472bad91e2e56c4462256ac594774dc09b9625df253f",
+      "test_line_ranges": [],
+      "line_count": 156
+    },
+    {
+      "path": "crates/storage/tests/preferences.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "df17a86de35b5d96c481a1716fc80d2c2dd1945ea5000156235c3e31f532e417",
+      "test_line_ranges": [],
+      "line_count": 120
+    },
+    {
+      "path": "crates/storage/tests/promotion.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "0ff03484e1ec84205e0148e7a4bec9b50df21041a250b59c9ac223ce390981f2",
+      "test_line_ranges": [],
+      "line_count": 170
+    },
+    {
+      "path": "crates/storage/tests/recovery.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "428e60ff0bcda1994df57524be70eeeeb6dc8b8722f1b59c6d099b2404190a7f",
+      "test_line_ranges": [],
+      "line_count": 324
+    },
+    {
+      "path": "crates/storage/tests/reminders.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "8d091d6186f4c5a04c48eb98ffd098bb2f9bb271635ced79169f94492c1bdb7e",
+      "test_line_ranges": [],
+      "line_count": 77
+    },
+    {
+      "path": "crates/storage/tests/sessions.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "44db6f1ace61c00c5a6b8e3e84c951e5528d12f5e996d9cb0e4c1ec4b00202d0",
+      "test_line_ranges": [],
+      "line_count": 199
+    },
+    {
+      "path": "crates/storage/tests/snapshots.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "43195b6274fa0d14b337b560af8915bb48df041e5ccf57a6e01a4948e32d3273",
+      "test_line_ranges": [],
+      "line_count": 586
+    },
+    {
+      "path": "crates/storage/tests/source_identity_migration.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "test source or test configuration/fixture",
+      "source_sha256": "2a0cac0935810d44787f38600a25b0dbcba3bb3f580a2b994fd8264095555996",
+      "test_line_ranges": [],
+      "line_count": 146
+    },
+    {
+      "path": "schemas/v1/exchange.ts",
+      "language": "typescript",
+      "disposition": "excluded",
+      "reason": "generated by scripts/generate-contract-types.mjs; validated separately",
+      "source_sha256": "8eb5fce929c9b13c84763d57324d4d33c7b20c047870541d4b92d6e46d750d38",
+      "test_line_ranges": [],
+      "line_count": 1705
+    },
+    {
+      "path": "vendor/wowdbdefs-rs/src/error.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "vendored dependency",
+      "source_sha256": "12014eec46f368d91071b9acc7f23d52ac3d02ddceb96e2e2f424aa1c0ffdb15",
+      "test_line_ranges": [],
+      "line_count": 171
+    },
+    {
+      "path": "vendor/wowdbdefs-rs/src/lib.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "vendored dependency",
+      "source_sha256": "d23b5dac422f05fd7566a1ba4cea4495fc1d63eb57683ecdd0c0e6ce57eb1c27",
+      "test_line_ranges": [],
+      "line_count": 222
+    },
+    {
+      "path": "vendor/wowdbdefs-rs/src/parser.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "vendored dependency",
+      "source_sha256": "a204444947eb44f5a8373222c8feb85ac75a41fcfe25b068ec8657b0ae0aec98",
+      "test_line_ranges": [],
+      "line_count": 454
+    },
+    {
+      "path": "vendor/wowdbdefs-rs/src/types.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "vendored dependency",
+      "source_sha256": "4402a099d066dfbbd479ca61adf06fa8596718e4518ee95f21354338813286d0",
+      "test_line_ranges": [],
+      "line_count": 579
+    },
+    {
+      "path": "vendor/wowdbdefs-rs/src/write_to_file.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "vendored dependency",
+      "source_sha256": "4feb82c808a36c2c43ceb1c59c0e48e426839354699ff3cd689b07b6633fe836",
+      "test_line_ranges": [],
+      "line_count": 112
+    },
+    {
+      "path": "vendor/wowdbdefs-rs/src/writer.rs",
+      "language": "rust",
+      "disposition": "excluded",
+      "reason": "vendored dependency",
+      "source_sha256": "22af9eb736a22687c3bbb125933e105a201d2641d99247e1c3b69ac119ade823",
+      "test_line_ranges": [],
+      "line_count": 27
+    }
+  ]
+}

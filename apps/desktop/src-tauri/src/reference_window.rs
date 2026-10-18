@@ -28,8 +28,8 @@ pub fn main_caller(caller: &str) -> Result<(), AppError> {
         ))
     }
 }
-pub fn state(
-    app: &tauri::AppHandle,
+pub fn state<R: tauri::Runtime>(
+    app: &tauri::AppHandle<R>,
 ) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
     match app.get_webview_window(LABEL) {
         Some(window) => Ok(azeroth_app::reference::ReferenceWindowState {
@@ -46,7 +46,9 @@ pub fn state(
         }),
     }
 }
-fn create_hidden(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, AppError> {
+fn create_hidden<R: tauri::Runtime>(
+    app: &tauri::AppHandle<R>,
+) -> Result<tauri::WebviewWindow<R>, AppError> {
     WebviewWindowBuilder::new(app, LABEL, WebviewUrl::App(PATH.into()))
         .title("Azeroth Navigator — imported reference")
         .inner_size(460.0, 620.0)
@@ -64,13 +66,13 @@ fn create_hidden(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, AppErro
         .build()
         .map_err(|_| unavailable())
 }
-pub struct Operations {
-    app: tauri::AppHandle,
-    main: tauri::WebviewWindow,
-    reference: Option<tauri::WebviewWindow>,
+pub struct Operations<R: tauri::Runtime> {
+    app: tauri::AppHandle<R>,
+    main: tauri::WebviewWindow<R>,
+    reference: Option<tauri::WebviewWindow<R>>,
 }
-impl Operations {
-    pub fn new(app: tauri::AppHandle, main: tauri::WebviewWindow) -> Self {
+impl<R: tauri::Runtime> Operations<R> {
+    pub fn new(app: tauri::AppHandle<R>, main: tauri::WebviewWindow<R>) -> Self {
         let reference = app.get_webview_window(LABEL);
         Self {
             app,
@@ -78,11 +80,11 @@ impl Operations {
             reference,
         }
     }
-    fn window(&self) -> Result<&tauri::WebviewWindow, AppError> {
+    fn window(&self) -> Result<&tauri::WebviewWindow<R>, AppError> {
         self.reference.as_ref().ok_or_else(unavailable)
     }
 }
-impl azeroth_app::reference_controls::WindowOperations for Operations {
+impl<R: tauri::Runtime> azeroth_app::reference_controls::WindowOperations for Operations<R> {
     fn main_focused(&mut self) -> Result<bool, AppError> {
         self.main.is_focused().map_err(|_| unavailable())
     }
@@ -120,8 +122,8 @@ impl azeroth_app::reference_controls::WindowOperations for Operations {
         .map_err(|_| unavailable())
     }
 }
-pub fn set(
-    app: &tauri::AppHandle,
+pub fn set<R: tauri::Runtime>(
+    app: &tauri::AppHandle<R>,
     visible: bool,
     always_on_top: bool,
 ) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
@@ -151,6 +153,38 @@ pub fn set(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use azeroth_app::reference_controls::WindowOperations;
+    #[test]
+    fn official_mock_runtime_exercises_dispatch_without_claiming_native_observations() {
+        let app = tauri::test::mock_app();
+        let handle = app.handle().clone();
+        let main = WebviewWindowBuilder::new(&app, "main", WebviewUrl::App("index.html".into()))
+            .build()
+            .unwrap();
+        assert!(!state(&handle).unwrap().exists);
+        assert!(!set(&handle, false, false).unwrap().exists);
+        let mut operations = Operations::new(handle.clone(), main);
+        assert_eq!(
+            operations.reference_focused().unwrap_err().code,
+            ErrorCode::ProviderUnavailable
+        );
+        operations.create_hidden().unwrap();
+        assert!(operations.state().unwrap().exists);
+        operations.main_focused().unwrap();
+        operations.reference_focused().unwrap();
+        operations.focusable(true).unwrap();
+        operations.ignore_pointer(false).unwrap();
+        operations.topmost(true).unwrap();
+        operations.visible(true).unwrap();
+        operations.visible(false).unwrap();
+        assert!(set(&handle, true, false).unwrap().exists);
+        assert!(set(&handle, false, false).unwrap().exists);
+        // MockRuntime returns canned observed visibility/topmost values. Setter
+        // success is dispatch evidence only; ordinary Windows behavior is separate.
+        assert!(!state(&handle).unwrap().always_on_top);
+        let second = tauri::test::mock_app();
+        assert!(set(second.handle(), true, false).unwrap().exists);
+    }
     #[test]
     fn actual_caller_policy_has_one_read_only_reference_command() {
         for command in [

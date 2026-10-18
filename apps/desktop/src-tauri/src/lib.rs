@@ -1,7 +1,12 @@
 //! Explicit command DTOs; snapshot normalization and SQLite execute on blocking
 //! workers. No live addon bridge or generic filesystem command is exposed.
 mod atlas_protocol;
+#[cfg(test)]
+mod command_tests;
+#[cfg(test)]
+mod manifest_tests;
 mod reference_window;
+
 use azeroth_app::AppStatus;
 use azeroth_app::atlas::{AtlasView, ProjectedPosition, SnapshotMarker};
 use azeroth_app::diagnostics::DiagnosticOperation;
@@ -1127,7 +1132,7 @@ async fn compare_gear(
 ) -> Result<azeroth_app::gear::GearReport, AppError> {
     blocking(state, move |app| app.compare_gear(&text, system_now())).await
 }
-pub fn run() {
+pub fn run() -> i32 {
     tauri::Builder::default()
         .setup(|app| {
             let directory = app.path().app_data_dir()?;
@@ -1296,8 +1301,11 @@ pub fn run() {
                 }
             }
         })
-        .run(tauri::generate_context!())
-        .expect("error while running the Azeroth Navigator shell");
+        .build(tauri::generate_context!())
+        .expect("error while building the Azeroth Navigator shell")
+        // Return through Rust's entrypoint so native process teardown (including
+        // instrumented profile flushing) runs after the event loop closes.
+        .run_return(|_, _| {})
 }
 
 async fn recovery_blocking<T: Send + 'static>(
@@ -1386,9 +1394,9 @@ async fn get_reference_view(
     blocking(state, |app| app.reference_view(system_now())).await
 }
 #[tauri::command]
-async fn get_reference_window_state(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn get_reference_window_state<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
 ) -> Result<azeroth_app::reference::ReferenceWindowState, AppError> {
     reference_window::main_caller(window.label())?;
@@ -1402,9 +1410,9 @@ async fn get_reference_window_state(
     reference_window::state(&app)
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn toggle_reference_window(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn toggle_reference_window<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
     always_on_top: bool,
     interaction_mode: azeroth_app::reference_controls::InteractionMode,
@@ -1424,9 +1432,9 @@ async fn toggle_reference_window(
     ))
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn set_reference_interaction(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn set_reference_interaction<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
     interaction_mode: azeroth_app::reference_controls::InteractionMode,
 ) -> Result<azeroth_app::reference_controls::ControlReceipt, AppError> {
@@ -1444,9 +1452,9 @@ async fn set_reference_interaction(
     ))
 }
 #[tauri::command(rename_all = "snake_case")]
-async fn set_reference_window(
-    app: tauri::AppHandle,
-    window: tauri::WebviewWindow,
+async fn set_reference_window<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::WebviewWindow<R>,
     controller: State<'_, reference_window::Controller>,
     visible: bool,
     always_on_top: bool,

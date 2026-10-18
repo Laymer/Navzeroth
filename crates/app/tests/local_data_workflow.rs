@@ -55,6 +55,19 @@ fn opt_in_stages_metadata_without_activation_and_opt_out_stops_detection() {
     let staged = azeroth_local_data::changes::verify(&private, &candidate).unwrap();
     assert_eq!(staged.metadata.build, 70450);
     assert!(!staged.activated && staged.local_only);
+    // Restart without acknowledging: reuse the bound immutable candidate.
+    drop(service);
+    let service = LocalDataService::new(private.clone());
+    let restart = Instant::now();
+    loop {
+        let detectors = service.change_detectors().unwrap();
+        if let Some(reused) = detectors.iter().find_map(|s| s.candidate_sha256.as_ref()) {
+            assert_eq!(reused, &candidate);
+            break;
+        }
+        assert!(restart.elapsed() < Duration::from_secs(8));
+        std::thread::sleep(Duration::from_millis(50));
+    }
     assert_eq!(service.artifact_page("catalogs", 0, 200).unwrap().total, 0);
     let prefs = service
         .save_workflow_choices(

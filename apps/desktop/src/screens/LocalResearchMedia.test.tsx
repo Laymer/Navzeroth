@@ -19,3 +19,28 @@ it("discards discoveries whose locale differs and does not enable extraction",as
  fireEvent.change(screen.getByRole("textbox",{name:"Media content locale"}),{target:{value:"enUS"}});fireEvent.click(screen.getByRole("button",{name:"Discover private media candidates"}));
  await screen.findByText(/Media discovery changed or is unavailable/);expect(screen.queryByRole("button",{name:"Extract selected private media"})).not.toBeInTheDocument();
 });
+it("binds decoded pagination to its revision and refuses unsafe preview references",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ let stale=false;
+ const adapter:CommandAdapter={invoke(command,input){
+  calls.push({command,input});
+  if(command==="discover_local_media")return Promise.resolve({revision:"discovery",catalog_sha256:catalog,locale:"enUS",total:1,offset:0,next_offset:null,gaps:[],candidates:[{table:"Item",row:1,field:"IconFileDataID",file_data_id:7}]}as never);
+  if(command==="extract_local_media")return Promise.resolve(revision as never);
+  if(command==="get_local_media_manifest")return Promise.resolve({format_version:1,catalog_sha256:catalog,locale:"enUS",fixture:true,local_only:true,calibrated:false,verified_for_gameplay:false,assets:[]}as never);
+  const offset=(input as {offset:number}).offset;
+  return Promise.resolve({revision:stale?"d".repeat(64):revision,offset,total:3,next_offset:offset===0?1:2,assets:[{id,width:640,height:320,url:offset===0?`atlas://localhost/research/${revision}/${id}`:"https://remote.invalid/private.png"}]}as never);
+ }};
+ render(<LocalResearchMedia client={createClient(adapter)} catalog={catalog} selectionId="selected" preset="small"/>);
+ fireEvent.change(screen.getByRole("textbox",{name:"Media content locale"}),{target:{value:"enUS"}});
+ fireEvent.click(screen.getByRole("button",{name:"Discover private media candidates"}));
+ fireEvent.click(await screen.findByRole("checkbox"));
+ fireEvent.click(screen.getByRole("button",{name:"Extract selected private media"}));
+ const image=await screen.findByRole("img");expect(image).toHaveAttribute("width","320");
+ fireEvent.error(image);await screen.findByText(/Private image unavailable/);
+ fireEvent.click(screen.getByRole("button",{name:"Next decoded media page"}));
+ await screen.findByText("Invalid private asset reference.");expect(screen.queryByRole("img")).toBeNull();
+ expect(calls).toContainEqual({command:"get_local_media_page",input:{revision,offset:1,limit:200}});
+ stale=true;fireEvent.click(screen.getByRole("button",{name:"Next decoded media page"}));
+ await screen.findByText("Media page is stale or unavailable.");
+ expect(screen.queryByRole("img")).toBeNull();
+});

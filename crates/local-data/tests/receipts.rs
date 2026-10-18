@@ -693,3 +693,131 @@ fn pending_targets_duplicate_signers_fixtures_and_unknown_v3_versions_refuse() {
     policy.format_version = 4;
     assert!(policy.validate().is_err());
 }
+
+#[test]
+fn format_three_policy_payload_and_assembly_roundtrip_without_promoting_pending_target() {
+    use azeroth_local_data::delivery_receipts as v3;
+    let (policy, receipt) = future_fixture();
+    let decoded = v3::policy(&serde_json::to_vec(&policy).unwrap()).unwrap();
+    assert_eq!(
+        v3::policy_hash(&decoded).unwrap(),
+        receipt.payload.release_policy_sha256
+    );
+    let payload = v3::read_payload(&serde_json::to_vec(&receipt.payload).unwrap()).unwrap();
+    let assembled = v3::assemble(
+        payload,
+        receipt.signatures[0].clone(),
+        receipt.signatures[1].clone(),
+    )
+    .unwrap();
+    assert_eq!(assembled, serde_json::to_vec(&receipt).unwrap());
+    assert!(v3::policy(&serde_json::to_vec_pretty(&policy).unwrap()).is_err());
+    let duplicate = format!(
+        "{{\"format_version\":3,{}",
+        std::str::from_utf8(&serde_json::to_vec(&receipt.payload).unwrap())
+            .unwrap()
+            .trim_start_matches('{')
+    );
+    assert!(v3::read_payload(duplicate.as_bytes()).is_err());
+    assert!(v3::read_payload(&vec![b' '; 256 * 1024 + 1]).is_err());
+    assert!(v3::read_payload(b"{\"format_version\":4}").is_err());
+    assert!(
+        v3::verify_current_release(
+            &assembled,
+            &policy,
+            &receipt.payload.candidate_source_commit,
+            &receipt.payload.production_sha256,
+            &receipt.payload.delivery_sha256
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn format_three_signing_refuses_unknown_revoked_and_mismatched_synthetic_keys() {
+    use azeroth_local_data::delivery_receipts as v3;
+    let (policy, receipt) = future_fixture();
+    assert!(v3::sign(&receipt.payload, &policy, "absent", &[1; 32]).is_err());
+    assert!(v3::sign(&receipt.payload, &policy, "operator", &[9; 32]).is_err());
+    let mut revoked = policy;
+    revoked.trusted_signers.get_mut("operator").unwrap().revoked = true;
+    let mut payload = receipt.payload;
+    payload.release_policy_sha256 = v3::policy_hash(&revoked).unwrap();
+    assert!(v3::sign(&payload, &revoked, "operator", &[1; 32]).is_err());
+}
+
+#[test]
+fn format_three_rejects_signature_substitution_and_nonindependent_assembly() {
+    use azeroth_local_data::delivery_receipts as v3;
+    let (policy, receipt) = future_fixture();
+    let p = &receipt.payload;
+    let expected = v3::Expected {
+        candidate_source_commit: &p.candidate_source_commit,
+        production_sha256: &p.production_sha256,
+        delivery_sha256: &p.delivery_sha256,
+        frozen_target: &p.target,
+    };
+    for signature in ["0".repeat(128), "not-hex".into(), "f".repeat(126)] {
+        let mut altered = receipt.clone();
+        altered.signatures[1].signature_hex = signature;
+        assert!(v3::verify(&serde_json::to_vec(&altered).unwrap(), &policy, &expected).is_err());
+    }
+    let mut unknown = receipt.clone();
+    unknown.signatures[1].key_id = "absent".into();
+    assert!(v3::verify(&serde_json::to_vec(&unknown).unwrap(), &policy, &expected).is_err());
+    let mut future = receipt.clone();
+    future.format_version = 4;
+    assert!(v3::verify(&serde_json::to_vec(&future).unwrap(), &policy, &expected).is_err());
+    future = receipt.clone();
+    future.signatures.pop();
+    assert!(v3::verify(&serde_json::to_vec(&future).unwrap(), &policy, &expected).is_err());
+    let operator = receipt.signatures[0].clone();
+    let reviewer = receipt.signatures[1].clone();
+    assert!(v3::assemble(p.clone(), reviewer.clone(), operator.clone()).is_err());
+    let mut duplicate = reviewer.clone();
+    duplicate.key_id = operator.key_id.clone();
+    assert!(v3::assemble(p.clone(), operator.clone(), duplicate).is_err());
+    let mut malformed = reviewer;
+    malformed.signature_hex = "not-hex".into();
+    assert!(v3::assemble(p.clone(), operator, malformed).is_err());
+}
+
+#[test]
+fn format_three_never_uses_receipt_selected_source_production_or_frozen_target() {
+    use azeroth_local_data::delivery_receipts as v3;
+    let (policy, receipt) = future_fixture();
+    let p = &receipt.payload;
+    let bytes = serde_json::to_vec(&receipt).unwrap();
+    let wrong = "f".repeat(64);
+    let wrong_commit = "f".repeat(40);
+    let mut target = p.target.clone();
+    target.build = "99998".into();
+    for expected in [
+        v3::Expected {
+            candidate_source_commit: &wrong_commit,
+            production_sha256: &p.production_sha256,
+            delivery_sha256: &p.delivery_sha256,
+            frozen_target: &p.target,
+        },
+        v3::Expected {
+            candidate_source_commit: &p.candidate_source_commit,
+            production_sha256: &wrong,
+            delivery_sha256: &p.delivery_sha256,
+            frozen_target: &p.target,
+        },
+        v3::Expected {
+            candidate_source_commit: &p.candidate_source_commit,
+            production_sha256: &p.production_sha256,
+            delivery_sha256: &wrong,
+            frozen_target: &p.target,
+        },
+        v3::Expected {
+            candidate_source_commit: &p.candidate_source_commit,
+            production_sha256: &p.production_sha256,
+            delivery_sha256: &p.delivery_sha256,
+            frozen_target: &target,
+        },
+    ] {
+        assert!(v3::verify(&bytes, &policy, &expected).is_err());
+    }
+}

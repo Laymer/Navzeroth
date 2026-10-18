@@ -9,6 +9,49 @@ use azeroth_storage::{SqliteStore, content::ContentRevision};
 use serde_json::{Value, json};
 use support::*;
 #[test]
+fn quest_stage_export_preserves_each_recipient_readiness_predicate() {
+    let db = setup(|value| {
+        value["payload"]["objectives"][0]["targets"] =
+            json!([{"kind":"quest_stage","quest":"demo-quest-1","stage":"demo-objective-1"}]);
+        value["payload"]["quests"][0]["eligibility"] =
+            json!({"status":"known","value":{"op":"level_at_least","level":1}});
+        value["payload"]["quests"][0]["prerequisites"] =
+            json!({"status":"known","value":{"op":"level_at_least","level":1}});
+    });
+    let mut profiles = Vec::new();
+    for (who, level) in [("one", 22), ("two", 23)] {
+        profiles.push(import_edit(&db.app,who,level,NOW,|payload| {
+            payload["objectives"]["demo-objective-1"]=json!({"status":"known","value":false,"clock_trust":"trusted","observed_at_utc_ms":NOW});
+        }));
+    }
+    db.app.save_party(&id(), &profiles).unwrap();
+    let agreed = agree(&db);
+    for recipient in [0, 1] {
+        let exported = export(&db, &agreed, recipient).unwrap();
+        let document: Value = serde_json::from_str(&exported.text[6..]).unwrap();
+        let step = &document["payload"]["steps"][0];
+        let predicates = step["prerequisite"]["value"]["predicates"]
+            .as_array()
+            .unwrap();
+        for (state, value) in [
+            ("accepted", true),
+            ("completed", false),
+            ("turned_in", false),
+        ] {
+            assert!(predicates.contains(
+                &json!({"op":"quest_state","quest":"demo-quest-1","state":state,"value":value})
+            ));
+        }
+        assert!(predicates.contains(
+            &json!({"op":"objective_state","objective":"demo-objective-1","completed":false})
+        ));
+        assert_eq!(
+            step["invalidation"]["value"],
+            json!({"op":"not","predicate":step["prerequisite"]["value"]})
+        );
+    }
+}
+#[test]
 fn exact_recipients_share_joint_choices_but_have_distinct_stable_identities() {
     let db = setup(|_| {});
     members(&db, 23, NOW);

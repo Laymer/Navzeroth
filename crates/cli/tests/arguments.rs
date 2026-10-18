@@ -14,6 +14,36 @@ fn no_arguments_reports_current_capabilities() {
 }
 
 #[test]
+fn human_doctor_keeps_native_and_live_checks_unverified() {
+    let output = cli().arg("doctor").output().unwrap();
+    assert!(output.status.success());
+    let text = String::from_utf8(output.stdout).unwrap();
+    assert!(text.contains("No selected file contents read"));
+    assert!(text.contains("Native prerequisites and live client unverified"));
+}
+
+#[test]
+fn schema_write_failure_and_bad_inventory_arguments_have_distinct_exit_codes() {
+    let file = std::env::temp_dir().join(format!("nav-schema-refusal-{}", std::process::id()));
+    std::fs::write(&file, b"preserve existing file").unwrap();
+    let output = cli()
+        .args(["export-schemas", "--output"])
+        .arg(&file)
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    assert!(
+        String::from_utf8(output.stderr)
+            .unwrap()
+            .contains("Could not write the schema file")
+    );
+    assert_eq!(std::fs::read(&file).unwrap(), b"preserve existing file");
+    std::fs::remove_file(file).unwrap();
+    let output = cli().arg("inventory-report").output().unwrap();
+    assert_eq!(output.status.code(), Some(2));
+}
+
+#[test]
 fn unsupported_commands_and_options_fail_without_echoing_input() {
     for args in [
         &["validate-fixtures", "extra-sentinel"][..],

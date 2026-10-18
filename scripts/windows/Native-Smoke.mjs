@@ -14,17 +14,19 @@ import { createRequire } from "node:module";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { COMMAND_BOUNDARIES, validateRefusal } from "./native-command-boundaries.mjs";
 import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
-  IpcLog, freshenSnapshotText, migrationSummary,
+  IpcLog, freshenSnapshotText, migrationSummary, gracefulCloseArgs,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..");
-const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db"];
+const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db", "shutdown"];
 const args = parseArgs(process.argv.slice(2), OPTIONS);
 const mode = args.mode ?? "smoke";
+if (args.shutdown !== undefined && args.shutdown !== "graceful") throw new Error("Unknown shutdown mode");
 const label = args.label ?? mode;
 if (![...MODES, "check-download", "db-summary"].includes(mode)) throw new Error(`Unknown mode ${mode}`);
 
@@ -120,6 +122,17 @@ function killTree() {
   if (!child || childExit) return;
   if (process.platform === "win32") spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore" });
   else child.kill("SIGKILL");
+}
+
+async function gracefulShutdown() {
+  if (process.platform !== "win32" || !child || childExit) throw new Error("Instrumented shutdown requires the running owned Windows process");
+  const requestedPid = child.pid;
+  const outcome = spawnSync("powershell.exe", gracefulCloseArgs(requestedPid), { encoding: "utf8", timeout: 15000, windowsHide: true });
+  if (outcome.error || outcome.status !== 0) throw new Error(`Graceful application close failed (${outcome.status ?? "timeout"}); force cleanup is not coverage evidence`);
+  const deadline = Date.now() + 2000;
+  while (!childExit && Date.now() < deadline) await sleep(50);
+  if (!childExit || childExit.code !== 0 || childExit.signal !== null) throw new Error("Application did not confirm a successful normal exit");
+  return { pid: requestedPid, exit_code: childExit.code, normal_exit: true, force_termination: false };
 }
 
 async function waitForEndpoint(timeoutMs) {
@@ -313,6 +326,66 @@ async function run() {
 }
 
 async function smoke(page, response) {
+  await rec.run("invalid native requests preserve structured refusals and current snapshot", async () => {
+    const before = await page.evaluate(() => window.__TAURI_INTERNALS__.invoke("get_reference_view"));
+    for (const test of COMMAND_BOUNDARIES) {
+      const outcome = await page.evaluate(async ({command,args}) => {
+        try { await window.__TAURI_INTERNALS__.invoke(command,args); return {ok:true}; }
+        catch(error) { return {ok:false,error}; }
+      },test);
+      validateRefusal(test,outcome);
+    }
+    const after = await page.evaluate(() => window.__TAURI_INTERNALS__.invoke("get_reference_view"));
+    if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("Invalid requests changed the current imported reference");
+    return { requests: COMMAND_BOUNDARIES.length, current_reference_unchanged: true };
+  });
+  for (const [command, commandArgs] of [["select_local_installation", {}], ["select_local_material", {kind:"snapshot"}], ["select_local_material", {kind:"authored_pack"}]]) {
+    await rec.run(`native ${command} cancellation preserves selections`, async () => {
+      const selections = () => page.evaluate(async () => Promise.all(
+        ["get_local_workflow", "list_local_installations", "list_local_materials"].map(command => window.__TAURI_INTERNALS__.invoke(command)),
+      ));
+      const before = await selections();
+      await page.evaluate(({command,args}) => {
+        window.__navDialogOutcome = null;
+        window.__TAURI_INTERNALS__.invoke(command,args).then(
+          value => { window.__navDialogOutcome = {ok:true,value}; },
+          error => { window.__navDialogOutcome = {ok:false,error}; },
+        );
+      }, {command,args:commandArgs});
+      const cancelled = spawnSync("powershell.exe", ["-NoLogo", "-NoProfile", "-NonInteractive", "-File",
+        join(repoRoot,"scripts/windows/Cancel-OwnedDialog.ps1"), "-TargetProcessId", String(child.pid),
+        "-ExpectedExecutable", resolve(args.exe), "-TimeoutSeconds", "20"], {encoding:"utf8",timeout:30000});
+      if (cancelled.status !== 0) throw new Error(`Owned dialog cancellation failed: ${cancelled.stdout ?? ""}${cancelled.stderr ?? ""}`);
+      await page.waitForFunction(() => window.__navDialogOutcome !== null, undefined, {timeout:10000});
+      const outcome = await page.evaluate(() => {
+        const outcome = window.__navDialogOutcome;
+        delete window.__navDialogOutcome;
+        return outcome;
+      });
+      if (!outcome.ok || outcome.value !== null) throw new Error(`Dialog cancellation did not return null: ${JSON.stringify(outcome)}`);
+      const after = await selections();
+      if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("Cancelled picker changed persisted workflow choices or selections");
+      return {cancelled:true,workflow_and_selections_unchanged:true};
+    });
+  }
+  await rec.run("registered atlas protocol refuses unbound assets in all namespaces", async () => {
+    const observed=[];
+    for (const path of ["/research/missing-owned-fixture", "/stored/missing-owned-fixture", "/missing-owned-fixture"]) {
+      const url=`http://atlas.localhost${path}`;
+      const response = page.waitForResponse(reply => reply.url()===url, {timeout:15000});
+      const imageOutcome = page.evaluate(url => new Promise(resolve => {
+        const image=new Image();
+        const timer=setTimeout(() => { image.src=""; resolve("timeout"); },10000);
+        image.onload=() => {clearTimeout(timer); resolve("loaded");};
+        image.onerror=() => {clearTimeout(timer); resolve("refused");};
+        image.src=url;
+      }),url);
+      const [outcome,reply]=await Promise.all([imageOutcome,response]);
+      if (outcome!=="refused" || reply.status()!==404 || reply.headers()["cache-control"]!=="no-store") throw new Error(`Unbound native asset was not a noncacheable refusal: ${url} ${outcome} ${reply.status()}`);
+      observed.push({path,status:reply.status()});
+    }
+    return {observed};
+  });
   await rec.run("actual Tauri CSP header is present and has no data: or remote sources", async () => {
     const csp = cspFromHeaders(response ? response.headers() : {});
     const meta = await page.evaluate(() => document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.getAttribute("content") ?? null);
@@ -474,6 +547,8 @@ try {
 } catch (error) {
   rec.add("native smoke run", "failed", { error: String(error?.stack ?? error) });
 } finally {
+  if (args.shutdown === "graceful") await rec.run("ordinary application close flushes instrumented profiles", gracefulShutdown);
+  // A failed graceful close remains a failed smoke result; kill only for cleanup.
   killTree();
   clearDebugPolicy();
   await sleep(1500);

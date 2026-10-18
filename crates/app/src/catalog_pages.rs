@@ -219,3 +219,110 @@ impl SnapshotApplication {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Arc;
+    #[test]
+    fn legacy_pages_bind_every_collection_and_refuse_stale_or_out_of_range_requests() {
+        let revision: azeroth_storage::content::ContentRevision = serde_json::from_str(
+            include_str!("../../../fixtures/desktop/content/demo-revision.json"),
+        )
+        .unwrap();
+        let content = ActiveContentRevision::V1(Arc::new(revision));
+        let store = SqliteStore::open_in_memory().unwrap();
+        let fixture = serde_json::to_value(content.reference()).unwrap();
+        for (collection, field) in [
+            (Collection::Items, "items"),
+            (Collection::Quests, "quests"),
+            (Collection::Acquisitions, "acquisitions"),
+            (Collection::Nodes, "nodes"),
+            (Collection::Edges, "edges"),
+            (Collection::Objectives, "objectives"),
+            (Collection::Rules, "rules"),
+            (Collection::MapSpaces, "map_spaces"),
+            (Collection::MapImages, "map_images"),
+            (Collection::MapEmbeddings, "map_embeddings"),
+        ] {
+            let first = page(&store, &content, collection, None).unwrap();
+            assert_eq!(first.page.collection, collection);
+            // Historical documents omit optional empty imagery collections.
+            let expected = match fixture.get(field) {
+                Some(Value::Array(rows)) => rows.clone(),
+                None => vec![],
+                _ => panic!("Fixture collection must be an array"),
+            };
+            assert_eq!(first.page.total, expected.len());
+            let mut actual: Vec<String> = first
+                .records
+                .iter()
+                .map(|r| serde_json::to_string(r).unwrap())
+                .collect();
+            let mut expected: Vec<String> = expected
+                .iter()
+                .map(|r| serde_json::to_string(r).unwrap())
+                .collect();
+            actual.sort();
+            expected.sort();
+            assert_eq!(actual, expected);
+            assert_eq!(first.records.len(), first.page.total);
+            assert_eq!(first.page.next_offset, None);
+            let mut request = PageRequest {
+                revision: first.page.revision.clone(),
+                catalog_sha256: first.page.catalog_sha256.clone(),
+                collection,
+                offset: 0,
+                limit: MAX_PAGE_ROWS,
+            };
+            assert_eq!(
+                page(&store, &content, collection, Some(&request))
+                    .unwrap()
+                    .records,
+                first.records
+            );
+            request.offset = first.page.total + 1;
+            assert!(page(&store, &content, collection, Some(&request)).is_err());
+            request.offset = 0;
+            request.catalog_sha256 = Sha256Hex::new("f".repeat(64)).unwrap();
+            assert!(page(&store, &content, collection, Some(&request)).is_err());
+            assert!(record(&content, collection, usize::MAX).is_err());
+        }
+    }
+    #[test]
+    fn every_v2_record_collection_refuses_an_unresolved_index() {
+        let content =
+            ActiveContentRevision::V2(Arc::new(azeroth_storage::content::ContentRevisionV2 {
+                content: azeroth_core::content_v2::decode(include_bytes!(
+                    "../../../fixtures/contracts/v2/reference-content.json"
+                ))
+                .unwrap(),
+                sources: vec![],
+                conflicts: vec![],
+            }));
+        for collection in [
+            Collection::Items,
+            Collection::Quests,
+            Collection::Acquisitions,
+            Collection::Nodes,
+            Collection::Edges,
+            Collection::Objectives,
+            Collection::Rules,
+            Collection::MapSpaces,
+            Collection::MapImages,
+            Collection::MapEmbeddings,
+            Collection::Models,
+            Collection::Dungeons,
+            Collection::EquipmentFacts,
+            Collection::QuestFacts,
+            Collection::AcquisitionFacts,
+        ] {
+            assert_eq!(
+                record(&content, collection, usize::MAX)
+                    .unwrap_err()
+                    .to_string(),
+                "Catalog row does not resolve"
+            );
+        }
+    }
+}

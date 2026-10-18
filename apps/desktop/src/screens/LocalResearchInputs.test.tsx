@@ -29,3 +29,25 @@ it("uses revision-bound pages and forgets only the selected path",async()=>{
  fireEvent.click(screen.getByRole("button",{name:"Forget selected input"}));await screen.findByText(/Retained input revisions remain intact/);
  expect(calls.find(call=>call.command==="forget_local_material")?.input).toEqual({id:"opaque"});
 });
+it("restores only input kinds and forgets the opaque selection without staging",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==="list_local_materials"?[{id:"input-opaque",kind:"snapshot"},{id:"guide-opaque",kind:"guide_source"}]:null)as never);}};
+ render(<LocalResearchInputs client={createClient(adapter)} catalog={catalog} preset="small"/>);
+ fireEvent.click(screen.getByRole("button",{name:"Review saved input selections"}));
+ fireEvent.click(await screen.findByRole("button",{name:"Use input input-op"}));
+ expect(screen.queryByText(/guide-opaque/)).toBeNull();
+ expect(screen.getByRole("button",{name:"Stage selected research input"})).toBeDisabled();
+ fireEvent.click(screen.getByRole("button",{name:"Forget input input-op"}));
+ await screen.findByText(/Retained input revisions remain intact/);
+ expect(screen.queryByRole("button",{name:"Forget selected input"})).toBeNull();
+ expect(calls).toEqual([{command:"list_local_materials",input:undefined},{command:"forget_local_material",input:{id:"input-opaque"}}]);
+});
+it("shows safe refusal codes for saved selections and selection failures",async()=>{
+ const adapter:CommandAdapter={invoke(){return Promise.reject({code:"STORAGE_ERROR",message:"private backend detail",retryable:true});}};
+ render(<LocalResearchInputs client={createClient(adapter)} catalog={catalog} preset="small"/>);
+ fireEvent.click(screen.getByRole("button",{name:"Review saved input selections"}));
+ await screen.findByText("Saved selections unavailable: STORAGE_ERROR.");
+ fireEvent.click(screen.getByRole("button",{name:"Select private input file"}));
+ await screen.findByText("Input selection unavailable: STORAGE_ERROR.");
+ expect(screen.queryByText(/private backend detail/)).toBeNull();
+});

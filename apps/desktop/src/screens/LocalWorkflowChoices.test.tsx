@@ -34,3 +34,23 @@ it("keeps explicit edits made while durable choices are still loading",async()=>
  await vi.waitFor(()=>expect(screen.getByRole("button",{name:"Save content choices"})).toBeEnabled());
  expect(screen.getByRole("checkbox",{name:"deDE"})).toBeChecked();expect(screen.getByRole("checkbox",{name:"enUS"})).not.toBeChecked();expect(changed).toHaveBeenLastCalledWith(["deDE"]);
 });
+it.each(['save','status','acknowledge'] as const)('keeps %s refusals explicit and never starts extraction or activation',async(failure)=>{
+ const calls:string[]=[];const candidate='b'.repeat(64);
+ const adapter:CommandAdapter={invoke(command){calls.push(command);
+  if((failure==='save'&&command==='save_local_workflow_choices')||(failure==='status'&&command==='get_local_change_detectors')||(failure==='acknowledge'&&command==='acknowledge_local_build_change'))throw {code:'INVALID_INPUT',message:'private backend detail',retryable:false};
+  return Promise.resolve((command==='get_local_change_detectors'?[{format_version:1,selection_id:'selected',status:'staged',candidate_sha256:candidate,auto_activation:false}]:record)as never);
+ }};
+ render(<LocalWorkflowChoices client={createClient(adapter)} selectionId="selected" locales={['enUS']} preset="small" onLocales={vi.fn()}/>);
+ await vi.waitFor(()=>expect(screen.getByRole('button',{name:'Save content choices'})).toBeEnabled());
+ fireEvent.click(screen.getByRole('checkbox',{name:'Watch selected build metadata while the app is open'}));
+ if(failure==='save'){
+  fireEvent.click(screen.getByRole('button',{name:'Save content choices'}));await screen.findByText(/Choices were not saved: INVALID_INPUT/);
+  expect(screen.getByRole('button',{name:'Save content choices'})).toBeDisabled();
+ }else{
+  fireEvent.click(screen.getByRole('button',{name:'Review detected build changes'}));
+  if(failure==='status')await screen.findByText(/Change status unavailable: INVALID_INPUT/);
+  else{fireEvent.click(await screen.findByRole('button',{name:'Acknowledge staged build metadata'}));await screen.findByText(/Build review refused: INVALID_INPUT/);}
+ }
+ expect(screen.queryByText(/private backend detail/)).toBeNull();
+ expect(calls.some(command=>['start_local_data','activate_local_data'].includes(command))).toBe(false);
+});

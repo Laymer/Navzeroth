@@ -96,3 +96,69 @@ pub(crate) fn decode<T: serde::de::DeserializeOwned + serde::Serialize>(
     }
     Ok(typed)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn local_state_preserves_values_and_rejects_noncanonical_or_ambiguous_data() {
+        let text = r#"{"values":[false,0,-1,1.25,null,"function() end"],"nested":{}}"#;
+        let decoded: Value = decode(text, text.len()).unwrap();
+        assert_eq!(decoded, serde_json::from_str::<Value>(text).unwrap());
+        assert_eq!(
+            decode::<Value>(text, text.len() - 1).unwrap_err().code,
+            ErrorCode::ImportTooLarge
+        );
+        for invalid in [
+            r#"{"a":{"x":0,"\u0078":1}}"#,
+            r#"[1,"#,
+            "true false",
+            "1e999",
+        ] {
+            assert_eq!(
+                decode::<Value>(invalid, 1024).unwrap_err().code,
+                ErrorCode::InvalidInput
+            );
+        }
+        #[derive(Deserialize, serde::Serialize, Debug)]
+        struct Document {
+            enabled: bool,
+        }
+        assert!(decode::<Document>(r#"{"enabled":false}"#, 1024).is_ok());
+        assert_eq!(
+            decode::<Document>(r#"{"enabled":false,"ignored":0}"#, 1024)
+                .unwrap_err()
+                .code,
+            ErrorCode::InvalidInput
+        );
+        assert_eq!(
+            decode::<Document>(r#"{"enabled":0}"#, 1024)
+                .unwrap_err()
+                .code,
+            ErrorCode::InvalidInput
+        );
+    }
+
+    #[test]
+    fn generic_deserialization_refuses_nonfinite_and_unsupported_values() {
+        use serde::de::value::{BytesDeserializer, Error, F64Deserializer, UnitDeserializer};
+        for value in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            assert!(Strict::deserialize(F64Deserializer::<Error>::new(value)).is_err());
+        }
+        assert_eq!(
+            Strict::deserialize(UnitDeserializer::<Error>::new())
+                .unwrap()
+                .0,
+            Value::Null
+        );
+        let error = Strict::deserialize(BytesDeserializer::<Error>::new(b"inert"));
+        assert!(
+            error
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("bounded JSON data")
+        );
+    }
+}

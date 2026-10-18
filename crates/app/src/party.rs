@@ -132,3 +132,204 @@ pub(crate) fn assessment(value: ParticipantEligibility) -> QuestAssessment {
         reasons,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use azeroth_core::{
+        eligibility::{AccessFact, DefinitionField, ObservedInput, QuestEligibilityReason},
+        evaluation::InputPath,
+        observation::ObservationStatus,
+        predicate::QuestState,
+        types::{Level, ObjectiveId},
+    };
+
+    fn report(codes: Vec<QuestEligibilityCode>) -> ParticipantEligibility {
+        let participant = CharacterId::new("synthetic-participant").unwrap();
+        let quest = QuestId::new("synthetic-quest").unwrap();
+        let phases = [
+            Phase::Acceptance,
+            Phase::Progress,
+            Phase::Completion,
+            Phase::TurnIn,
+        ];
+        ParticipantEligibility {
+            participant: participant.clone(),
+            quest: quest.clone(),
+            acceptance: AcceptanceOutcome::Unknown,
+            progress: ProgressOutcome::Unknown,
+            completion: CompletionOutcome::Unknown,
+            turn_in: TurnInOutcome::Unknown,
+            catch_up: None,
+            reasons: codes
+                .into_iter()
+                .enumerate()
+                .map(|(i, code)| QuestEligibilityReason {
+                    participant: participant.clone(),
+                    quest: quest.clone(),
+                    phase: phases[i % phases.len()],
+                    code,
+                })
+                .collect(),
+            blockers: vec![],
+            warnings: vec![],
+        }
+    }
+
+    #[test]
+    fn unavailable_and_stale_reasons_keep_phases_without_inventing_eligibility() {
+        use QuestEligibilityCode::*;
+        let other = QuestId::new("synthetic-other").unwrap();
+        let observed = ObservedInput::Access {
+            fact: AccessFact::Class,
+        };
+        let input = report(vec![
+            RequirementDataUnknown {
+                field: DefinitionField::Prerequisites,
+                status: ObservationStatus::Unsupported,
+            },
+            QuestHistoryUnknown {
+                history_quest: other.clone(),
+                state: QuestState::TurnedIn,
+                status: Some(ObservationStatus::Restricted),
+            },
+            LevelUnknown { status: None },
+            ConditionInputUnknown {
+                input: InputPath::Participant,
+                status: Some(ObservationStatus::Unknown),
+            },
+            StageUnknown {
+                objective: ObjectiveId::new("synthetic-stage").unwrap(),
+                status: None,
+            },
+            AccessFactUnknown {
+                fact: AccessFact::Faction,
+                status: Some(ObservationStatus::Unknown),
+            },
+            ExclusiveChoiceUnknown {
+                other_quest: other,
+                status: None,
+            },
+            ResetStateUnknown,
+            RepeatabilityUnknown {
+                status: ObservationStatus::Unsupported,
+            },
+            ObservationStale {
+                input: observed.clone(),
+            },
+            ClockUncertain {
+                input: observed.clone(),
+            },
+            RuleExpired { input: observed },
+        ]);
+        let expected_phases = input
+            .reasons
+            .iter()
+            .map(|reason| reason.phase)
+            .collect::<Vec<_>>();
+        let actual = assessment(input);
+        assert_eq!(actual.acceptance, AcceptanceOutcome::Unknown);
+        assert_eq!(actual.progress, ProgressOutcome::Unknown);
+        assert_eq!(actual.completion, CompletionOutcome::Unknown);
+        assert_eq!(actual.turn_in, TurnInOutcome::Unknown);
+        assert!(actual.catch_up.is_none());
+        assert_eq!(
+            actual
+                .reasons
+                .iter()
+                .map(|reason| reason.phase)
+                .collect::<Vec<_>>(),
+            expected_phases
+        );
+        let messages = actual
+            .reasons
+            .iter()
+            .map(|reason| reason.message.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(messages.len(), 12);
+        assert!(messages[0].contains("Unsupported"));
+        assert!(messages[1].contains("synthetic-other") && messages[1].contains("Restricted"));
+        assert!(messages[4].contains("synthetic-stage"));
+        assert!(messages[6].contains("choice history is unavailable"));
+        assert!(messages[9].contains("stale"));
+        assert!(messages[10].contains("uncertain capture age"));
+        assert!(messages[11].contains("expired"));
+        assert!(
+            messages
+                .iter()
+                .all(|message| !message.contains("is satisfied"))
+        );
+    }
+
+    #[test]
+    fn blocked_conditions_and_alternative_catch_up_are_not_relabelled_as_eligible() {
+        use QuestEligibilityCode::*;
+        let level = Level::new(25).unwrap();
+        let prerequisite = Requirement::Quest {
+            quest: QuestId::new("synthetic-prerequisite").unwrap(),
+            state: QuestState::Completed,
+        };
+        let catch_up = Unmet::OneOf {
+            alternatives: vec![
+                Unmet::Single {
+                    requirement: prerequisite.clone(),
+                },
+                Unmet::Single {
+                    requirement: Requirement::Level { level },
+                },
+            ],
+        };
+        let mut input = report(vec![
+            PrerequisiteUnmet {
+                requirement: prerequisite,
+            },
+            AlternativePrerequisiteUnmet {
+                requirement: Requirement::Level { level },
+            },
+            PrerequisiteUnmet {
+                requirement: Requirement::Other,
+            },
+            LevelBelowMinimum { level },
+            AccessClassMismatch,
+            AccessRaceMismatch,
+            AccessFactionMismatch,
+            ExclusiveChoiceTaken {
+                other_quest: QuestId::new("synthetic-exclusive").unwrap(),
+            },
+            AlreadyTurnedIn,
+        ]);
+        input.acceptance = AcceptanceOutcome::Blocked;
+        input.progress = ProgressOutcome::InProgress;
+        input.completion = CompletionOutcome::Incomplete;
+        input.turn_in = TurnInOutcome::NotReady;
+        // The adapter preserves the typed result; it does not recompute or flatten
+        // alternatives from human-readable reasons or an observed turn-in.
+        let actual = assessment(input);
+        assert_eq!(actual.acceptance, AcceptanceOutcome::Blocked);
+        assert_eq!(actual.progress, ProgressOutcome::InProgress);
+        assert_eq!(actual.completion, CompletionOutcome::Incomplete);
+        assert_eq!(actual.turn_in, TurnInOutcome::NotReady);
+        assert!(actual.catch_up.is_none());
+        assert_eq!(actual.reasons.len(), 9);
+        assert!(actual.reasons[0].message.contains("synthetic-prerequisite"));
+        assert!(actual.reasons[1].message.starts_with("Alternative:"));
+        assert!(actual.reasons[2].message.contains("Another condition"));
+        assert!(actual.reasons[3].message.contains("25"));
+        let access = actual.reasons[4..7]
+            .iter()
+            .map(|reason| &reason.message)
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(access.len(), 3);
+        assert!(actual.reasons[7].message.contains("synthetic-exclusive"));
+        assert!(actual.reasons[8].message.contains("Already turned in"));
+        let mut behind = report(vec![CatchUpRequired {
+            unmet: catch_up.clone(),
+        }]);
+        behind.acceptance = AcceptanceOutcome::Behind;
+        behind.catch_up = Some(catch_up.clone());
+        let actual = assessment(behind);
+        assert_eq!(actual.acceptance, AcceptanceOutcome::Behind);
+        assert_eq!(actual.catch_up, Some(catch_up));
+        assert!(actual.reasons[0].message.contains("before acceptance"));
+    }
+}

@@ -39,6 +39,50 @@ fn synthetic_graph_preserves_false_zero_unknown_restricted() {
     );
     assert_eq!(content.reference.payload.revision.as_str(), "demo-r1");
 }
+
+#[test]
+fn recursive_model_predicates_resolve_every_referenced_domain() {
+    let mut v = fixture();
+    let item = v["reference"]["payload"]["items"][0]["key"].clone();
+    let map = v["reference"]["payload"]["map_spaces"][0]["key"].clone();
+    let objective = v["reference"]["payload"]["objectives"][0]["id"].clone();
+    let predicates = vec![
+        json!({"op":"any","predicates":[{"op":"known","field":{"field":"quest","quest":"demo-quest-1","state":"accepted"}},{"op":"known","field":{"field":"objective","objective":objective}}]}),
+        json!({"op":"not","predicate":{"op":"equals","field":{"field":"level"},"value":{"type":"integer","value":1}}}),
+        json!({"op":"objective_state","objective":objective,"completed":false}),
+        json!({"op":"location_in_supported_area","area":{"map":map,"bounds":null}}),
+        json!({"op":"equipment_matches","slot":"head","item":item,"modifiers":{}}),
+    ];
+    v["models"][0]["applicability"] =
+        json!({"status":"known","value":{"op":"all","predicates":predicates}});
+    parse(&v).unwrap();
+    for path in [
+        "/models/0/applicability/value/predicates/0/predicates/0/field/quest",
+        "/models/0/applicability/value/predicates/0/predicates/1/field/objective",
+        "/models/0/applicability/value/predicates/2/objective",
+        "/models/0/applicability/value/predicates/3/area/map/map_id",
+    ] {
+        let mut missing = v.clone();
+        *missing.pointer_mut(path).unwrap() = json!("unresolved-synthetic-identity");
+        assert!(parse(&missing).is_err());
+    }
+    let mut missing_item = v.clone();
+    missing_item["models"][0]["applicability"]["value"]["predicates"][4]["item"]["item_id"] =
+        json!("unresolved-synthetic-item");
+    assert!(parse(&missing_item).is_err());
+    let mut missing_node = v.clone();
+    missing_node["dungeons"][0]["entrance"]["value"]["id"] = json!("unresolved-synthetic-node");
+    assert!(parse(&missing_node).is_err());
+    for kind in ["documented_model", "permitted_guide"] {
+        let mut documented = v.clone();
+        documented["models"][0]["profile"]["weight_source"] =
+            json!({"type":kind,"source":"demo-source-1"});
+        parse(&documented).unwrap();
+    }
+    v["models"][0]["minimum_level"] = json!(60);
+    v["models"][0]["maximum_level"] = json!(1);
+    assert!(parse(&v).is_err());
+}
 #[test]
 fn rejects_versions_unknown_extension_fields_and_byte_overflow() {
     let mut v = fixture();
@@ -98,6 +142,28 @@ fn requires_documented_model_source_and_valid_reset() {
     let mut v = fixture();
     v["quest_facts"][0]["reset"] = json!({"status":"known","value":{"kind":"timed","period_ms":0}});
     assert!(parse(&v).is_err());
+}
+
+#[test]
+fn acquisition_origins_resolve_quest_vendor_and_dungeon_dependencies() {
+    let base = fixture();
+    let node = base["dungeons"][0]["entrance"]["value"].clone();
+    for origin in [
+        json!({"kind":"quest","quest":"demo-quest-1"}),
+        json!({"kind":"vendor","entity":"synthetic-vendor","location":node}),
+        json!({"kind":"drop","entity":"synthetic-drop","dungeon":"dungeon-1"}),
+        json!({"kind":"craft","recipe":"synthetic-recipe","profession":"synthetic-profession"}),
+    ] {
+        let mut v = base.clone();
+        v["reference"]["payload"]["acquisitions"][0]["kind"] =
+            match origin["kind"].as_str().unwrap() {
+                "craft" => json!("crafting"),
+                "drop" => json!("dungeon"),
+                value => json!(value),
+            };
+        v["acquisition_facts"][0]["origin"] = json!({"status":"known","value":origin});
+        parse(&v).unwrap();
+    }
 }
 
 #[test]

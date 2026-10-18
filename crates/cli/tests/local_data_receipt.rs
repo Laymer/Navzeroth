@@ -223,4 +223,149 @@ fn owner_signs_assembles_and_verifies_a_hybrid_receipt_explicitly() {
         .unwrap();
     assert!(!output.status.success());
     assert!(!String::from_utf8_lossy(&output.stdout).contains("not-a-key"));
+    // Format 3 has distinct independent identities and future-target bindings.
+    // These synthetic signatures never satisfy the pending production target.
+    use azeroth_core::{
+        local_data_delivery::{Delivery, DeliveryPolicyV3, ReceiptPayloadV3},
+        local_data_inputs::InputTuple,
+    };
+    use azeroth_local_data::delivery_receipts as v3;
+    use sha2::{Digest, Sha256};
+    let target = Target {
+        edition: "wow_forever".into(),
+        version: "1.60.2".into(),
+        build: "99999".into(),
+        interface: 16002,
+    };
+    let mut signers = policy.trusted_signers.clone();
+    for (id, signer) in &mut signers {
+        signer.identity = format!("synthetic-{id}");
+    }
+    let future_policy = DeliveryPolicyV3 {
+        format_version: 3,
+        target: Some(target.clone()),
+        trusted_signers: signers,
+        development: vec![],
+    };
+    let hash = "a".repeat(64);
+    let binding = Delivery {
+        format_version: 1,
+        tuple: InputTuple {
+            product: "wow_classic_beta".into(),
+            version: "1.60.2.99999".into(),
+            build: 99999,
+            locale: "enUS".into(),
+        },
+        catalog_sha256: hash.clone(),
+        projection_sha256: hash.clone(),
+        projector_profile_sha256: hash.clone(),
+        media_sha256: vec![],
+        guide_facts_sha256: None,
+        input_sha256: vec![],
+        dependency_profile_sha256: hash.clone(),
+        dependencies_sha256: hash.clone(),
+        fixture: false,
+        local_only: true,
+        verified_for_planning: false,
+    };
+    let delivery_hash = format!(
+        "{:x}",
+        Sha256::digest(serde_json::to_vec(&binding).unwrap())
+    );
+    let old = payload(&policy_sha256);
+    let future_payload = ReceiptPayloadV3 {
+        format_version: 3,
+        candidate_source_commit: old.candidate_source_commit,
+        production_sha256: hash.clone(),
+        release_policy_sha256: v3::policy_hash(&future_policy).unwrap(),
+        target,
+        delivery_sha256: delivery_hash.clone(),
+        binding,
+        independent_review_sha256: hash.clone(),
+        validation_results_sha256: hash.clone(),
+        scenario_dependencies_sha256: hash.clone(),
+        performance_workload_sha256: hash.clone(),
+        performance_results_sha256: hash.clone(),
+        domains: old.domains,
+        acceptance: old.acceptance,
+    };
+    fs::write(
+        dir.join("future-policy.json"),
+        serde_json::to_vec(&future_policy).unwrap(),
+    )
+    .unwrap();
+    fs::write(
+        dir.join("future-payload.json"),
+        serde_json::to_vec(&future_payload).unwrap(),
+    )
+    .unwrap();
+    for id in ["operator", "reviewer"] {
+        let (ok, signature) = cli(&[
+            "delivery-receipt-sign",
+            "--payload",
+            &path(dir, "future-payload.json"),
+            "--policy",
+            &path(dir, "future-policy.json"),
+            "--key-id",
+            id,
+            "--secret-key",
+            &path(dir, &format!("{id}.key")),
+        ]);
+        assert!(ok, "{signature}");
+        fs::write(dir.join(format!("future-{id}.sig")), signature.to_string()).unwrap();
+    }
+    let assembled = Command::new(env!("CARGO_BIN_EXE_azeroth-cli"))
+        .args([
+            "local-data",
+            "delivery-receipt-assemble",
+            "--payload",
+            &path(dir, "future-payload.json"),
+            "--operator",
+            &path(dir, "future-operator.sig"),
+            "--reviewer",
+            &path(dir, "future-reviewer.sig"),
+        ])
+        .output()
+        .unwrap();
+    assert!(assembled.status.success());
+    assert!(assembled.stderr.is_empty());
+    assert!(!assembled.stdout.ends_with(b"\n"));
+    let canonical = assembled.stdout;
+    v3::verify(
+        &canonical,
+        &future_policy,
+        &v3::Expected {
+            candidate_source_commit: &future_payload.candidate_source_commit,
+            production_sha256: &hash,
+            delivery_sha256: &delivery_hash,
+            frozen_target: &future_payload.target,
+        },
+    )
+    .unwrap();
+    fs::write(dir.join("future-receipt.json"), canonical).unwrap();
+    let (ok, refusal) = cli(&[
+        "delivery-receipt-verify",
+        "--receipt",
+        &path(dir, "future-receipt.json"),
+        "--policy",
+        &path(dir, "future-policy.json"),
+        "--candidate",
+        &future_payload.candidate_source_commit,
+        "--production",
+        &hash,
+        "--delivery",
+        &delivery_hash,
+    ]);
+    assert!(!ok);
+    assert_eq!(refusal["error"], "Post-launch release target is not frozen");
+    let (ok, _) = cli(&[
+        "delivery-receipt-assemble",
+        "--payload",
+        &path(dir, "future-payload.json"),
+        "--operator",
+        &path(dir, "future-reviewer.sig"),
+        "--reviewer",
+        &path(dir, "future-operator.sig"),
+    ]);
+    assert!(!ok);
 }

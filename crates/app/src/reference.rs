@@ -97,3 +97,26 @@ pub fn permits_command(caller: &str, command: &str) -> bool {
 pub fn permits_management(caller: &str) -> bool {
     caller == "main"
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn serialized_reference_metadata_refuses_an_oversized_field() {
+        const TOO_LONG: &str = match std::str::from_utf8(&[b'v'; MAX_REFERENCE_BYTES]) {
+            Ok(value) => value,
+            Err(_) => panic!("ASCII test data"),
+        };
+        let view = ReferenceView {
+            schema_version: 1,
+            app_version: TOO_LONG,
+            snapshot: None,
+            current_plan: None,
+            accessibility: None,
+        };
+        let error = validate_bound(&view).unwrap_err();
+        assert_eq!(error.code, ErrorCode::ImportTooLarge);
+        assert!(!error.retryable);
+        assert!(view.snapshot.is_none());
+    }
+}

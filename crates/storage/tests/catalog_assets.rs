@@ -167,3 +167,59 @@ fn orphan_blob_refuses_recovery_and_staged_catalog_getter_preserves_v2() {
         .unwrap();
     assert!(azeroth_storage::recovery::validate(&store).is_err());
 }
+
+#[test]
+fn repeated_or_empty_supplied_assets_cannot_replace_usable_bundle() {
+    let mut store = SqliteStore::open_in_memory().unwrap();
+    let (revision, assets, request) = bundle();
+    store.stage_content_v2_bundle(&revision, &assets).unwrap();
+    store.activate_content_revision(&revision.key()).unwrap();
+    let duplicate = vec![
+        CatalogAsset {
+            file: assets[0].file.clone(),
+            bytes: assets[0].bytes.clone(),
+        },
+        CatalogAsset {
+            file: assets[0].file.clone(),
+            bytes: assets[0].bytes.clone(),
+        },
+    ];
+    let empty = vec![CatalogAsset {
+        file: assets[0].file.clone(),
+        bytes: vec![],
+    }];
+    for invalid in [duplicate, empty] {
+        assert!(store.stage_content_v2_bundle(&revision, &invalid).is_err());
+        assert_eq!(
+            store
+                .active_catalog_image(&revision.key().scope, &request)
+                .unwrap()
+                .unwrap(),
+            assets[0].bytes
+        );
+    }
+}
+
+#[test]
+fn idempotent_asset_install_checks_existing_bindings_and_blob_bytes() {
+    let db = TempDb::new("asset-existing");
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let (revision, assets, request) = bundle();
+    store.stage_content_v2_bundle(&revision, &assets).unwrap();
+    store.activate_content_revision(&revision.key()).unwrap();
+    store.stage_content_v2_bundle(&revision, &assets).unwrap();
+    assert_eq!(
+        store
+            .active_catalog_image(&revision.key().scope, &request)
+            .unwrap()
+            .unwrap(),
+        assets[0].bytes
+    );
+    raw(&db.path).execute_batch("DROP TRIGGER catalog_asset_blobs_no_update; UPDATE catalog_asset_blobs SET bytes=x'00'").unwrap();
+    assert!(store.stage_content_v2_bundle(&revision, &assets).is_err());
+    assert!(
+        store
+            .active_catalog_image(&revision.key().scope, &request)
+            .is_err()
+    );
+}

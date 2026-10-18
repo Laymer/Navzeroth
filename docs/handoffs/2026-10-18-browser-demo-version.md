@@ -19,3 +19,10 @@ exact-head checks and review. This branch is refreshed onto it without changing
 the version correction. Rerun exact-head CI/source/package and final read-only
 review before merging. Prior 414-test local result is historical, not a claim
 about the new head's full suite.
+
+Merge receipt: PR #201 merged 2026-10-18T14:36:24Z as
+`02cbfd76d2548193c112f519b4bf1bd05a747731`, reviewed head
+`bf9a3980d4c9d84f19505528f84948754409e2ff`. Both independent read-only reviewers
+confirmed the correction unchanged and no remaining findings. CI 39135618486
+passed all nine checks; Windows package 39135618327 and source 39135616059 passed,
+including both source platforms and parity. Coverage branch refreshed afterward.

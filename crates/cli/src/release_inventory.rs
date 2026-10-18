@@ -208,6 +208,25 @@ mod tests {
         assert!(report(&temp.options()).is_err());
     }
     #[test]
+    fn repeated_evidence_pins_are_deduplicated_but_conflicts_are_refused() {
+        let temp = Temp::new();
+        temp.write_input(true);
+        let path = temp.0.join("input.json");
+        let mut input: serde_json::Value =
+            serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+        input["inventory"]["domains"][1]["enumeration_evidence"] =
+            input["inventory"]["domains"][0]["enumeration_evidence"].clone();
+        fs::write(&path, serde_json::to_vec(&input).unwrap()).unwrap();
+        assert_eq!(report(&temp.options()).unwrap().evidence_files_verified, 1);
+        input["inventory"]["domains"][1]["enumeration_evidence"][0]["sha256"] =
+            serde_json::json!("f".repeat(64));
+        fs::write(&path, serde_json::to_vec(&input).unwrap()).unwrap();
+        assert_eq!(
+            report(&temp.options()).err(),
+            Some("conflicting evidence file pins")
+        );
+    }
+    #[test]
     fn inventory_report_rejects_traversal_and_oversized_input() {
         let temp = Temp::new();
         temp.write_input(false);

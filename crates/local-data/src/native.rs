@@ -63,10 +63,78 @@ unsafe extern "C" {
     ) -> u32;
 }
 
-fn decryption_disabled_locked() -> bool {
+// Private native ABI contract. Production construction always selects LINKED;
+// tests supply deterministic responses without a runtime backend selector.
+// A file carries the same calls as its owning storage.
+struct Calls {
+    open: unsafe extern "C" fn(
+        path: *const NativeChar,
+        product: *const NativeChar,
+        locale: u32,
+        expected_build: u32,
+        storage: *mut *mut c_void,
+    ) -> u32,
+    close: unsafe extern "C" fn(storage: *mut c_void),
+    decryption_disabled: unsafe extern "C" fn() -> u32,
+    stats: unsafe extern "C" fn(
+        storage: *mut c_void,
+        features: *mut u32,
+        local: *mut u32,
+        total: *mut u32,
+    ) -> u32,
+    file_open: unsafe extern "C" fn(
+        storage: *mut c_void,
+        id: u32,
+        file: *mut *mut c_void,
+        size: *mut u64,
+    ) -> u32,
+    read: unsafe extern "C" fn(
+        file: *mut c_void,
+        buffer: *mut c_void,
+        length: u32,
+        done: *mut u32,
+    ) -> u32,
+    name_open: unsafe extern "C" fn(
+        storage: *mut c_void,
+        name: *const std::ffi::c_char,
+        file: *mut *mut c_void,
+        size: *mut u64,
+    ) -> u32,
+    file_close: unsafe extern "C" fn(file: *mut c_void),
+    frame_count: unsafe extern "C" fn(file: *mut c_void, count: *mut u32) -> u32,
+    frame: unsafe extern "C" fn(
+        file: *mut c_void,
+        index: u32,
+        start: *mut u64,
+        length: *mut u32,
+        encrypted: *mut u32,
+    ) -> u32,
+    read_at: unsafe extern "C" fn(
+        file: *mut c_void,
+        offset: u64,
+        buffer: *mut c_void,
+        length: u32,
+        done: *mut u32,
+    ) -> u32,
+}
+static LINKED: Calls = Calls {
+    open: nav_casc_open,
+    close: nav_casc_close,
+    decryption_disabled: nav_casc_decryption_disabled,
+    stats: nav_casc_stats,
+    file_open: nav_casc_file_open,
+    read: nav_casc_read,
+    name_open: nav_casc_name_open,
+    file_close: nav_casc_file_close,
+    frame_count: nav_casc_frame_count,
+    frame: nav_casc_frame,
+    read_at: nav_casc_read_at,
+};
+
+fn decryption_disabled_locked(calls: &Calls) -> bool {
     // SAFETY: no arguments; the shim allocates and releases its own scratch
     // storage object and touches no shared state.
-    unsafe { nav_casc_decryption_disabled() == 0 }
+    unsafe { (calls.decryption_disabled)() == 0 }
 }
 
 /// Whether the linked CascLib build never decrypts: built-in keys are not
@@ -74,7 +142,7 @@ fn decryption_disabled_locked() -> bool {
 /// still reported as encrypted, not decrypted. Serialized with other native calls.
 pub(crate) fn decryption_disabled() -> bool {
     match NATIVE.lock() {
-        Ok(_serial) => decryption_disabled_locked(),
+        Ok(_serial) => decryption_disabled_locked(&LINKED),
         Err(_) => false,
     }
 }
@@ -121,6 +189,7 @@ pub(crate) enum ReadFailure {
 
 pub(crate) struct Archive {
     handle: NonNull<c_void>,
+    calls: &'static Calls,
     _serial: MutexGuard<'static, ()>,
     _thread: PhantomData<Rc<()>>,
 }
@@ -150,8 +219,9 @@ impl Archive {
     pub(crate) fn statistics(&self) -> Result<(u32, u32, u32), &'static str> {
         let (mut features, mut local, mut total) = (0, 0, 0);
         // SAFETY: live storage, properly aligned initialized scalar outputs.
-        if unsafe { nav_casc_stats(self.handle.as_ptr(), &mut features, &mut local, &mut total) }
-            != 0
+        if unsafe {
+            (self.calls.stats)(self.handle.as_ptr(), &mut features, &mut local, &mut total)
+        } != 0
         {
             return Err("Archive statistics unavailable");
         }
@@ -163,8 +233,17 @@ impl Archive {
         locale: u32,
         expected_build: u32,
     ) -> Result<Self, &'static str> {
+        Self::open_using(path, product, locale, expected_build, &LINKED)
+    }
+    fn open_using(
+        path: &Path,
+        product: &str,
+        locale: u32,
+        expected_build: u32,
+        calls: &'static Calls,
+    ) -> Result<Self, &'static str> {
         let serial = NATIVE.lock().map_err(|_| "Native reader unavailable")?;
-        if !decryption_disabled_locked() {
+        if !decryption_disabled_locked(calls) {
             return Err("Native reader can decrypt; refusing to open storage");
         }
         let path = native_text(path.as_os_str())?;
@@ -173,7 +252,7 @@ impl Archive {
         // SAFETY: both text buffers are NUL-terminated, live throughout the call;
         // shim initializes the output handle and copies selected strings internally.
         let error = unsafe {
-            nav_casc_open(
+            (calls.open)(
                 path.as_ptr(),
                 product.as_ptr(),
                 locale,
@@ -186,6 +265,7 @@ impl Archive {
         }
         Ok(Self {
             handle: NonNull::new(handle).ok_or("Native storage handle missing")?,
+            calls,
             _serial: serial,
             _thread: PhantomData,
         })
@@ -218,7 +298,7 @@ impl Archive {
         let (mut file, mut size) = (std::ptr::null_mut(), 0);
         // SAFETY: owned live storage; valid output pointers; shim closes on failure.
         let mut error = if let Some(id) = id {
-            unsafe { nav_casc_file_open(self.handle.as_ptr(), id, &mut file, &mut size) }
+            unsafe { (self.calls.file_open)(self.handle.as_ptr(), id, &mut file, &mut size) }
         } else {
             1
         };
@@ -228,13 +308,16 @@ impl Archive {
             let name = CString::new(name).map_err(|_| ReadFailure::Invalid)?;
             // SAFETY: static virtual prefix and reviewed table identifier, NUL-terminated.
             error = unsafe {
-                nav_casc_name_open(self.handle.as_ptr(), name.as_ptr(), &mut file, &mut size)
+                (self.calls.name_open)(self.handle.as_ptr(), name.as_ptr(), &mut file, &mut size)
             };
         }
         if error != 0 {
             return Err(classify(error));
         }
-        let file = NativeFile(NonNull::new(file).ok_or(ReadFailure::Invalid)?);
+        let file = NativeFile {
+            handle: NonNull::new(file).ok_or(ReadFailure::Invalid)?,
+            calls: self.calls,
+        };
         let size = usize::try_from(size).map_err(|_| ReadFailure::Capacity)?;
         if size > maximum || size > u32::MAX as usize {
             return Err(ReadFailure::Capacity);
@@ -248,8 +331,8 @@ impl Archive {
         // length. Native reads cannot exceed length; no encrypted zero-fill flag.
         let mut done = 0;
         let error = unsafe {
-            nav_casc_read(
-                file.0.as_ptr(),
+            (self.calls.read)(
+                file.handle.as_ptr(),
                 bytes.as_mut_ptr().cast(),
                 size as u32,
                 &mut done,
@@ -274,7 +357,7 @@ impl NativeFile {
     fn partial(&self, size: usize) -> Result<PartialFile, ReadFailure> {
         let mut count = 0;
         // SAFETY: owned live file handle and an initialized scalar output.
-        let error = unsafe { nav_casc_frame_count(self.0.as_ptr(), &mut count) };
+        let error = unsafe { (self.calls.frame_count)(self.handle.as_ptr(), &mut count) };
         if error != 0 {
             return Err(classify(error));
         }
@@ -291,8 +374,8 @@ impl NativeFile {
             // SAFETY: owned live file handle; initialized scalar outputs. The shim
             // bounds the index and frees the encoded frame copy before returning.
             let error = unsafe {
-                nav_casc_frame(
-                    self.0.as_ptr(),
+                (self.calls.frame)(
+                    self.handle.as_ptr(),
                     index,
                     &mut start,
                     &mut length,
@@ -318,8 +401,8 @@ impl NativeFile {
             // SAFETY: owned file and an initialized allocation of exactly `length`
             // bytes (assemble bounds it by the logical size, below u32::MAX).
             let error = unsafe {
-                nav_casc_read_at(
-                    self.0.as_ptr(),
+                (self.calls.read_at)(
+                    self.handle.as_ptr(),
                     offset as u64,
                     bytes.as_mut_ptr().cast(),
                     length as u32,
@@ -362,12 +445,15 @@ fn classify_read(error: u32, done: u32) -> ReadFailure {
         failure => failure,
     }
 }
-struct NativeFile(NonNull<c_void>);
+struct NativeFile {
+    handle: NonNull<c_void>,
+    calls: &'static Calls,
+}
 impl Drop for NativeFile {
     fn drop(&mut self) {
         // SAFETY: exactly one owner; the storage outlives this temporary file.
         unsafe {
-            nav_casc_file_close(self.0.as_ptr());
+            (self.calls.file_close)(self.handle.as_ptr());
         }
     }
 }
@@ -375,7 +461,7 @@ impl Drop for Archive {
     fn drop(&mut self) {
         // SAFETY: no files escape read(), unique live storage handle.
         unsafe {
-            nav_casc_close(self.handle.as_ptr());
+            (self.calls.close)(self.handle.as_ptr());
         }
     }
 }
@@ -409,3 +495,7 @@ mod tests {
         assert_eq!(classify_read(6, 4096), ReadFailure::Unavailable);
     }
 }
+
+#[cfg(test)]
+#[path = "native_tests.rs"]
+pub(crate) mod boundary_tests;

@@ -63,3 +63,34 @@ pub fn value(bytes: &[u8], maximum_bytes: usize) -> Result<Value, &'static str> 
         .map(|v| v.0)
         .map_err(|_| "Invalid or duplicate-key pack JSON")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde::de::value::{BytesDeserializer, Error, F64Deserializer, StringDeserializer};
+
+    #[test]
+    fn owned_strings_preserve_embedded_zero_and_inert_text() {
+        // Exercise Deserialize's owned-string path as well as the borrowed JSON
+        // path: owning a string must not interpret Lua-looking text or erase NUL.
+        let text = "literal\0os.execute('never run')".to_owned();
+        let decoded = Unique::deserialize(StringDeserializer::<Error>::new(text.clone())).unwrap();
+        assert_eq!(decoded.0, Value::String(text));
+    }
+
+    #[test]
+    fn generic_deserializer_rejects_nonfinite_numbers_and_unsupported_byte_values() {
+        for number in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            let error = match Unique::deserialize(F64Deserializer::<Error>::new(number)) {
+                Ok(_) => panic!("Nonfinite number became JSON"),
+                Err(error) => error,
+            };
+            assert_eq!(error.to_string(), "Invalid number");
+        }
+        let error = match Unique::deserialize(BytesDeserializer::<Error>::new(b"synthetic bytes")) {
+            Ok(_) => panic!("Byte array became JSON without declared encoding"),
+            Err(error) => error,
+        };
+        assert!(error.to_string().contains("unique-key JSON data"));
+    }
+}

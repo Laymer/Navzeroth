@@ -128,6 +128,8 @@ dependencies = [
  "azeroth-core",
  "azeroth-local-data",
  "rfd",
+ "serde",
+ "serde_json",
  "tauri",
  "tauri-build",
 ]

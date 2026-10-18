@@ -808,4 +808,19 @@ mod tests {
         assert!(host.restore(&preview.candidate_id).is_err());
         assert_eq!(host.status().unwrap().state, "ready");
     }
+    #[test]
+    fn pending_marker_directory_and_oversized_file_are_not_trusted_as_paths() {
+        let dir = Directory::new();
+        let live = dir.path("live.sqlite3");
+        let marker = pending_path(&live);
+        fs::create_dir(&marker).unwrap();
+        assert!(pending_directory(&live).is_none());
+        fs::remove_dir(&marker).unwrap();
+        fs::write(&marker, vec![b'x'; 4097]).unwrap();
+        assert!(pending_directory(&live).is_none());
+        // Even an unreadable marker preserves the interrupted-restore refusal.
+        let host = DatabaseHost::open(&live);
+        assert_eq!(host.status().unwrap().state, "recovery_required");
+        assert!(!live.exists());
+    }
 }

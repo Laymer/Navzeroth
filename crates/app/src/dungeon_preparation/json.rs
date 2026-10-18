@@ -101,3 +101,32 @@ pub(super) fn request(text: &str) -> Result<super::PreparationRequest> {
         )
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn preparation_json_preserves_values_and_refuses_unknown_schema_before_decoding() {
+        let value = strict_value(r#"[false,0,-1,1.25,null,"inert"]"#).unwrap();
+        assert_eq!(
+            value,
+            serde_json::json!([false, 0, -1, 1.25, null, "inert"])
+        );
+        for text in [
+            "{}",
+            r#"{"schema_version":0}"#,
+            r#"{"schema_version":2}"#,
+            r#"{"schema_version":false}"#,
+        ] {
+            assert_eq!(
+                request(text).unwrap_err().code,
+                ErrorCode::UnsupportedSchema
+            );
+        }
+        use serde::de::value::{BytesDeserializer, Error};
+        let error = Strict::deserialize(BytesDeserializer::<Error>::new(b"inert"))
+            .err()
+            .unwrap();
+        assert!(error.to_string().contains("bounded JSON data"));
+    }
+}

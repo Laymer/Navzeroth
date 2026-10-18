@@ -355,4 +355,49 @@ mod tests {
         assert_eq!(coverage.sources.evidence_references, 1);
         assert!(!coverage.gaps_by_code.is_empty());
     }
+    #[test]
+    fn policy_inventory_preserves_permission_false_revision_and_edition_distinctions() {
+        use serde_json::json;
+        let mut value: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/content/demo-revision.json"
+        ))
+        .unwrap();
+        // Obtain identities from the typed fixture, rather than assuming its JSON nesting.
+        let content: ContentRevision = serde_json::from_value(value.clone()).unwrap();
+        let selected = content.key().scope.context.build.edition;
+        let current = content.reference().revision.clone();
+        for (permission, offline, includes, same) in [
+            ("permitted", true, true, true),
+            ("not_permitted", false, false, false),
+            ("conditional", false, true, false),
+        ] {
+            let source = &mut value["sources"][0];
+            source["redistribution"] = json!({"status":"known","value":permission});
+            source["offline_usable"] = json!({"status":"known","value":offline});
+            source["editions"] = json!({"status":"known","value":if includes {json!([selected])} else {json!(["wow_classic_era"])}});
+            source["verified_revision"] = json!({"status":"known","value":if same {json!(current)} else {json!("different-revision")}});
+            let content: ContentRevision = serde_json::from_value(value.clone()).unwrap();
+            let report = active(&content).unwrap();
+            let sources = report.sources;
+            assert_eq!(
+                sources.redistribution_values.permitted,
+                usize::from(permission == "permitted")
+            );
+            assert_eq!(
+                sources.redistribution_values.not_permitted,
+                usize::from(permission == "not_permitted")
+            );
+            assert_eq!(
+                sources.redistribution_values.conditional,
+                usize::from(permission == "conditional")
+            );
+            assert_eq!(sources.offline_values.known_true, usize::from(offline));
+            assert_eq!(sources.offline_values.known_false, usize::from(!offline));
+            assert_eq!(sources.editions_include_selected, usize::from(includes));
+            assert_eq!(sources.editions_exclude_selected, usize::from(!includes));
+            assert_eq!(sources.verified_revision_matches, usize::from(same));
+            assert_eq!(sources.verified_revision_differs, usize::from(!same));
+            assert!(report.finite_scope.contains("do not establish"));
+        }
+    }
 }
