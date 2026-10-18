@@ -3,6 +3,47 @@ use azeroth_core::{
     local_data_projection::Fact,
 };
 #[test]
+fn equipment_inventory_types_keep_paired_slots_and_non_equipment_distinct() {
+    use azeroth_core::local_data_projection::{EquipmentSlot::*, inventory_type_slots};
+    let expected = [
+        vec![],
+        vec![Head],
+        vec![Neck],
+        vec![Shoulder],
+        vec![Shirt],
+        vec![Chest],
+        vec![Waist],
+        vec![Legs],
+        vec![Feet],
+        vec![Wrist],
+        vec![Hands],
+        vec![Finger1, Finger2],
+        vec![Trinket1, Trinket2],
+        vec![MainHand, OffHand],
+        vec![OffHand],
+        vec![Ranged],
+        vec![Back],
+        vec![MainHand],
+        vec![Bag],
+        vec![Tabard],
+        vec![Chest],
+        vec![MainHand],
+        vec![OffHand],
+        vec![OffHand],
+        vec![Ammo],
+        vec![Ranged],
+        vec![Ranged],
+        vec![Bag],
+        vec![Ranged],
+    ];
+    for (kind, slots) in expected.into_iter().enumerate() {
+        assert_eq!(inventory_type_slots(kind as i64), Some(slots));
+    }
+    for unsupported in [-1, 29, i64::MIN, i64::MAX] {
+        assert_eq!(inventory_type_slots(unsupported), None);
+    }
+}
+#[test]
 fn masks_preserve_zero_signed_bits_unknown_and_unsupported_boundaries() {
     assert_eq!(class_mask(&Fact::Known(0), 1, 16), Fact::Known(false));
     assert_eq!(class_mask(&Fact::Known(-1), 16, 16), Fact::Known(true));

@@ -268,3 +268,14 @@ awaiting hosted confirmation (local GTK/dbus prerequisites unavailable). Collect
 now executes both native worker EOF refusals as well as the graceful GUI smoke.
 No coverage threshold, source exclusion or acceptance requirement is relaxed.
 Next: validate corrected native flushing and finish actual per-file Rust gaps.
+
+Additional coverage tests: all four core gameplay tests pass, including exact
+inventory-type equipment mappings (paired slots, non-equipment zero and unsupported
+values). The preparation JSON boundary test passes for preserved false/zero/negative
+values, unknown schemas and generic unsupported-byte refusal.
+
+Next subtask claim: `/root`, sole writer, baseline `b2ff237`: expose a private
+archive-opening boundary in extraction so synthetic ABI responses can exercise
+real staging/checkpoint/refusal code. Production always opens the linked archive;
+no runtime fixture selector or availability promotion is permitted. Tests remain
+synthetic lifecycle evidence, separate from real archive/client acceptance.
