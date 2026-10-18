@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Backdrop } from "../theme/Backdrop";
 import { Button } from "./Button";
@@ -155,4 +155,19 @@ describe("Backdrop", () => {
     expect(container.querySelector("button, a, input, img, image, [tabindex]")).toBeNull();
     expect(container.querySelectorAll("circle.backdrop-ember").length).toBeGreaterThan(0);
   });
+});
+
+it("keyboard help dismisses a competing hover bubble without changing focus",()=>{
+ render(<><HelpTip label="Hovered">Hover explanation</HelpTip><HelpTip label="Keyboard">Keyboard explanation</HelpTip></>);
+ const first=screen.getByRole("button",{name:"Help: Hovered"});const second=screen.getByRole("button",{name:"Help: Keyboard"});
+ fireEvent.mouseEnter(first.parentElement as HTMLElement);expect(screen.getByText("Hover explanation")).toBeVisible();
+ act(()=>second.focus());expect(second).toHaveFocus();expect(first).toHaveAttribute("aria-expanded","false");expect(second).toHaveAttribute("aria-expanded","true");expect(screen.getAllByRole("tooltip")).toHaveLength(1);
+ fireEvent.keyDown(second,{key:"Enter"});expect(screen.getAllByRole("tooltip")).toHaveLength(1);
+ fireEvent.keyDown(second,{key:"Escape"});expect(screen.queryByRole("tooltip")).toBeNull();expect(second).toHaveFocus();expect(first).not.toHaveFocus();
+});
+it("opening another help dismisses a pinned bubble and cleans up unmounted listeners",()=>{
+ const view=render(<><HelpTip label="First">First explanation</HelpTip><HelpTip label="Second">Second explanation</HelpTip></>);
+ fireEvent.click(screen.getByRole("button",{name:"Help: First"}));fireEvent.click(screen.getByRole("button",{name:"Help: Second"}));
+ expect(screen.getByText("First explanation")).not.toBeVisible();expect(screen.getByText("Second explanation")).toBeVisible();
+ view.unmount();render(<HelpTip label="Fresh">Fresh explanation</HelpTip>);fireEvent.focus(screen.getByRole("button",{name:"Help: Fresh"}));expect(screen.getAllByRole("tooltip")).toHaveLength(1);
 });
