@@ -197,6 +197,21 @@ impl Archive {
         extension: &str,
         maximum: usize,
     ) -> Result<Logical, ReadFailure> {
+        self.read_selected(
+            id,
+            Some(format!("DBFilesClient\\{name}.{extension}")),
+            maximum,
+        )
+    }
+    pub(crate) fn read_file_id(&self, id: u32, maximum: usize) -> Result<Logical, ReadFailure> {
+        self.read_selected(Some(id), None, maximum)
+    }
+    fn read_selected(
+        &self,
+        id: Option<u32>,
+        name: Option<String>,
+        maximum: usize,
+    ) -> Result<Logical, ReadFailure> {
         if id == Some(0) {
             return Err(ReadFailure::Invalid);
         }
@@ -207,9 +222,10 @@ impl Archive {
         } else {
             1
         };
-        if error == 1 {
-            let name = CString::new(format!("DBFilesClient\\{name}.{extension}"))
-                .map_err(|_| ReadFailure::Invalid)?;
+        if error == 1
+            && let Some(name) = name
+        {
+            let name = CString::new(name).map_err(|_| ReadFailure::Invalid)?;
             // SAFETY: static virtual prefix and reviewed table identifier, NUL-terminated.
             error = unsafe {
                 nav_casc_name_open(self.handle.as_ptr(), name.as_ptr(), &mut file, &mut size)

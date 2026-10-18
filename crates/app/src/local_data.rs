@@ -34,6 +34,56 @@ pub struct LocalDataService {
     jobs: Arc<Mutex<BTreeMap<String, WorkerControl>>>,
 }
 impl LocalDataService {
+    pub fn media_discover(
+        &self,
+        catalog: &str,
+        locale: &str,
+        offset: u32,
+        limit: u32,
+    ) -> Result<azeroth_local_data::media::DiscoveryPage> {
+        azeroth_local_data::media::discovery_page(&self.store()?, catalog, locale, offset, limit)
+            .map_err(error)
+    }
+    pub fn media_extract(
+        &self,
+        selection: &str,
+        catalog: &str,
+        locale: &str,
+        ids: Vec<u32>,
+        preset: PerformancePreset,
+    ) -> Result<String> {
+        let selected = self.selection(selection, preset)?;
+        let request = azeroth_local_data::media::Request {
+            format_version: 1,
+            installation: selected.installation,
+            destination: self.store()?,
+            catalog: catalog.into(),
+            locale: locale.into(),
+            ids,
+            preset,
+        };
+        let executable =
+            std::env::current_exe().map_err(|_| error("Media executable unavailable"))?;
+        azeroth_local_data::media::extract_worker(&executable, &request).map_err(error)
+    }
+    pub fn media_page(
+        &self,
+        revision: &str,
+        offset: u32,
+        limit: u32,
+    ) -> Result<azeroth_local_data::media::Page> {
+        azeroth_local_data::media::page(&self.store()?, revision, offset, limit).map_err(error)
+    }
+    pub fn media_asset(&self, revision: &str, id: &str) -> Result<Vec<u8>> {
+        azeroth_local_data::media::asset(&self.store()?, revision, id).map_err(error)
+    }
+    pub fn tooltip(
+        &self,
+        projection: &str,
+        spell: u32,
+    ) -> Result<azeroth_core::tooltip::Evaluation> {
+        azeroth_local_data::media::tooltip(&self.store()?, projection, spell).map_err(error)
+    }
     pub fn new(root: PathBuf) -> Self {
         Self {
             root,

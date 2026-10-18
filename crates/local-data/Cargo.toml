@@ -16,6 +16,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "=0.10.9"
 libc = "0.2"
+png = "=0.17.16"
 wowdbdefs-rs = { version = "=0.1.0", path = "../../vendor/wowdbdefs-rs" }
 ed25519-dalek = "=2.2.0"
 

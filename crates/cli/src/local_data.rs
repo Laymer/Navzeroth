@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data media-discover --destination <private-directory> --catalog <sha256> --locale <locale> [--offset <number> --limit <1-200>]; local-data media-extract --installation <directory> --destination <private-directory> --catalog <sha256> --locale <locale> --ids <sorted-comma-separated-IDs> [--preset small|balanced|large|max]; local-data media-verify --destination <private-directory> --media <sha256>; local-data media-page --destination <private-directory> --media <sha256> --offset <number> --limit <1-200>; local-data tooltip --destination <private-directory> --projection <sha256> --spell <id>; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -45,6 +45,24 @@ pub fn run(args: &[OsString]) -> ExitCode {
         return usage();
     };
     let allowed: &[&str] = match command {
+        "media-discover" => &[
+            "--destination",
+            "--catalog",
+            "--locale",
+            "--offset",
+            "--limit",
+        ],
+        "media-extract" => &[
+            "--destination",
+            "--installation",
+            "--catalog",
+            "--locale",
+            "--ids",
+            "--preset",
+        ],
+        "media-verify" => &["--destination", "--media"],
+        "media-page" => &["--destination", "--media", "--offset", "--limit"],
+        "tooltip" => &["--destination", "--projection", "--spell"],
         "guide-facts-build" => &["--destination", "--projection", "--inputs", "--preset"],
         "guide-facts-verify" => &["--destination", "--guide-facts"],
         "cache-stage" | "cache-stage-fixture" | "observation-stage" => &[
@@ -98,6 +116,12 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if matches!(
+        command,
+        "media-discover" | "media-extract" | "media-verify" | "media-page" | "tooltip"
+    ) {
+        return media_command(command, &options);
     }
     if matches!(command, "guide-facts-build" | "guide-facts-verify") {
         return guide_facts_command(command, &options);
@@ -555,4 +579,88 @@ fn guide_facts_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitC
         )?)
         .map_err(|_| "Cannot encode guide facts report")
     })())
+}
+
+fn media_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    let result = (|| {
+        let value = |key: &str| {
+            options
+                .get(key)
+                .and_then(|v| v.to_str())
+                .ok_or("Missing media option")
+        };
+        let root = Path::new(
+            options
+                .get("--destination")
+                .ok_or("Missing media destination")?,
+        );
+        match command {
+            "media-discover" => serde_json::to_value(azeroth_local_data::media::discovery_page(
+                root,
+                value("--catalog")?,
+                value("--locale")?,
+                options.get("--offset").map_or(Ok(0), |v| {
+                    v.to_str()
+                        .ok_or("Invalid discovery offset")?
+                        .parse()
+                        .map_err(|_| "Invalid discovery offset")
+                })?,
+                options.get("--limit").map_or(Ok(200), |v| {
+                    v.to_str()
+                        .ok_or("Invalid discovery limit")?
+                        .parse()
+                        .map_err(|_| "Invalid discovery limit")
+                })?,
+            )?)
+            .map_err(|_| "Media JSON failed"),
+            "media-verify" => {
+                serde_json::to_value(azeroth_local_data::media::verify(root, value("--media")?)?)
+                    .map_err(|_| "Media JSON failed")
+            }
+            "media-page" => serde_json::to_value(azeroth_local_data::media::page(
+                root,
+                value("--media")?,
+                value("--offset")?
+                    .parse()
+                    .map_err(|_| "Invalid media offset")?,
+                value("--limit")?
+                    .parse()
+                    .map_err(|_| "Invalid media limit")?,
+            )?)
+            .map_err(|_| "Media JSON failed"),
+            "tooltip" => serde_json::to_value(azeroth_local_data::media::tooltip(
+                root,
+                value("--projection")?,
+                value("--spell")?.parse().map_err(|_| "Invalid spell ID")?,
+            )?)
+            .map_err(|_| "Tooltip JSON failed"),
+            "media-extract" => {
+                let ids = value("--ids")?
+                    .split(',')
+                    .map(|s| s.parse::<u32>().map_err(|_| "Invalid media IDs"))
+                    .collect::<Result<Vec<_>, _>>()?;
+                let request = azeroth_local_data::media::Request {
+                    format_version: 1,
+                    installation: Path::new(
+                        options
+                            .get("--installation")
+                            .ok_or("Missing media installation")?,
+                    )
+                    .into(),
+                    destination: root.into(),
+                    catalog: value("--catalog")?.into(),
+                    locale: value("--locale")?.into(),
+                    ids,
+                    preset: preset(options.get("--preset")).ok_or("Invalid media preset")?,
+                };
+                let exe = std::env::current_exe().map_err(|_| "Media executable unavailable")?;
+                let revision = azeroth_local_data::media::extract_worker(&exe, &request)?;
+                Ok(
+                    serde_json::json!({"format_version":1,"media_sha256":revision,"local_only":true,"verified_for_gameplay":false}),
+                )
+            }
+            _ => Err("Unsupported media operation"),
+        }
+    })();
+    emit(result)
 }

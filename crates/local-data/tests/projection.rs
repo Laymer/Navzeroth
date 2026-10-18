@@ -1290,3 +1290,171 @@ fn same_capture_disagreements_retain_both_observations_and_do_not_fill_eligibili
     }
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn private_media_is_deterministic_revision_bound_and_rejects_substitution() {
+    use azeroth_core::local_data::PerformancePreset;
+    use azeroth_local_data::media;
+    let root = private_store("media");
+    let mut source = tables();
+    source.get_mut("Item").unwrap().rows[0]
+        .fields
+        .insert("IconFileDataID".into(), u(900));
+    source.get_mut("Item").unwrap().header.layout_hash = 0x9a2a4834;
+    let (catalog, objects) = catalog(&source);
+    fs::create_dir(root.join("objects")).unwrap();
+    fs::create_dir(root.join("catalogs")).unwrap();
+    for (digest, bytes) in objects {
+        fs::write(root.join("objects").join(digest), bytes).unwrap();
+    }
+    let bytes = serde_json::to_vec(&catalog).unwrap();
+    let catalog_id = hash(&bytes);
+    fs::write(root.join("catalogs").join(&catalog_id), bytes).unwrap();
+    let discovery = media::discover(&root, &catalog_id, "enUS").unwrap();
+    assert!(discovery.candidates.iter().any(|c| c.file_data_id == 900));
+    assert!(media::discover(&root, &catalog_id, "frFR").is_err());
+    let mut blp = vec![0; 152];
+    blp[..4].copy_from_slice(b"BLP2");
+    blp[4] = 1;
+    blp[8] = 3;
+    blp[9] = 8;
+    blp[12] = 1;
+    blp[16] = 1;
+    blp[20] = 148;
+    blp[84] = 4;
+    blp[148..].copy_from_slice(&[1, 2, 3, 0]);
+    let files = BTreeMap::from([(900, blp)]);
+    let first =
+        media::stage_fixture(&root, &catalog_id, "enUS", &files, PerformancePreset::Max).unwrap();
+    assert_eq!(
+        media::stage_fixture(&root, &catalog_id, "enUS", &files, PerformancePreset::Max).unwrap(),
+        first
+    );
+    let manifest = media::verify(&root, &first).unwrap();
+    assert!(
+        manifest.fixture
+            && manifest.local_only
+            && !manifest.calibrated
+            && !manifest.verified_for_gameplay
+    );
+    let discovered_page = media::discovery_page(&root, &catalog_id, "enUS", 0, 1).unwrap();
+    assert_eq!(discovered_page.candidates.len(), 1);
+    assert!(media::discovery_page(&root, &catalog_id, "enUS", 0, 201).is_err());
+    let page = media::page(&root, &first, 0, 200).unwrap();
+    assert_eq!(page.assets.len(), 1);
+    assert_eq!(page.assets[0].width, 1);
+    assert!(media::asset(&root, &first, &"f".repeat(64)).is_err());
+    assert!(media::asset(&root, &first, "../objects").is_err());
+    let png = media::asset(&root, &first, &page.assets[0].id).unwrap();
+    assert_eq!(&png[..8], b"\x89PNG\r\n\x1a\n");
+    assert!(media::page(&root, &first, 0, 201).is_err());
+    let changed = media::stage_fixture(
+        &root,
+        &catalog_id,
+        "enUS",
+        &BTreeMap::from([(900, b"unsupported".to_vec())]),
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    assert!(media::asset(&root, &changed, &page.assets[0].id).is_err());
+    for reason in [
+        azeroth_core::local_data_media::ReadRefusal::Unsupported,
+        azeroth_core::local_data_media::ReadRefusal::Truncated,
+    ] {
+        let mut refused = manifest.clone();
+        refused.fixture = false;
+        let row = &mut refused.assets[0];
+        row.disposition = reason.disposition();
+        row.read_refusal = Some(reason);
+        row.source_sha256 = None;
+        row.png_sha256 = None;
+        row.width = None;
+        row.height = None;
+        let bytes = serde_json::to_vec(&refused).unwrap();
+        let digest = hash(&bytes);
+        fs::write(root.join("media").join(&digest), bytes).unwrap();
+        assert_eq!(
+            media::verify(&root, &digest).unwrap().assets[0].read_refusal,
+            Some(reason)
+        );
+    }
+    let source = manifest.assets[0].source_sha256.as_ref().unwrap();
+    fs::write(root.join("objects").join(source), b"tampered").unwrap();
+    assert!(media::verify(&root, &first).is_err());
+    fs::remove_dir_all(root).unwrap();
+}
+#[test]
+fn tooltip_loads_only_requested_dependency_closure_from_large_research_catalog() {
+    let root = private_store("tooltip-closure");
+    let mut decoded = tables();
+    decoded.insert(
+        "Spell",
+        table(
+            (1..=5000)
+                .map(|id| {
+                    row(
+                        id,
+                        &[(
+                            "Description_lang",
+                            t(if id == 1 {
+                                "See $@spelldesc2"
+                            } else if id == 2 {
+                                "Zero $s1"
+                            } else {
+                                "Unrelated"
+                            }),
+                        )],
+                    )
+                })
+                .collect(),
+            &[],
+        ),
+    );
+    let (catalog, objects) = with_expanded(&decoded);
+    fs::create_dir(root.join("objects")).unwrap();
+    fs::create_dir(root.join("catalogs")).unwrap();
+    for (digest, bytes) in objects {
+        fs::write(root.join("objects").join(digest), bytes).unwrap();
+    }
+    let bytes = serde_json::to_vec(&catalog).unwrap();
+    let digest = hash(&bytes);
+    fs::write(root.join("catalogs").join(&digest), bytes).unwrap();
+    let projection = projection::project_catalog(&root, &digest, "enUS").unwrap();
+    let result =
+        azeroth_local_data::media::tooltip(&root, &projection.projection_sha256, 1).unwrap();
+    assert_eq!(result.text, "See Zero [unknown]");
+    assert!(!result.verified_for_gameplay);
+    assert_eq!(result.gaps, [azeroth_core::tooltip::Gap::MissingScalar]);
+    fs::remove_dir_all(root).unwrap();
+}
+#[test]
+fn media_reference_fields_match_all_admitted_layouts() {
+    for (table, layout, fields) in [
+        ("Item", 0x9a2a4834, vec!["IconFileDataID"]),
+        (
+            "SpellMisc",
+            0x434b3607,
+            vec!["SpellIconFileDataID", "ActiveIconFileDataID"],
+        ),
+        ("UiMapArtTile", 0x2da5b77b, vec!["FileDataID"]),
+        ("UiMapArt", 0x3ae7d144, vec!["HighlightFileDataID"]),
+    ] {
+        for build in azeroth_local_data::metadata::ADMITTED_BUILDS {
+            let definition =
+                azeroth_local_data::metadata::definition(table, *build, layout).unwrap();
+            for field in &fields {
+                let entry = definition
+                    .layout
+                    .entries
+                    .iter()
+                    .find(|e| e.name == *field)
+                    .unwrap();
+                assert_eq!(entry.array_size, None);
+                assert!(matches!(
+                    definition.file.columns[*field].ty,
+                    wowdbdefs_rs::RawType::Int
+                ));
+            }
+        }
+    }
+}

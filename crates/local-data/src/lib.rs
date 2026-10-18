@@ -450,3 +450,5 @@ pub mod inputs;
 mod gameplay;
 
 pub mod guide_facts;
+
+pub mod media;
