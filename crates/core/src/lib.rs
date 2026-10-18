@@ -48,3 +48,7 @@ pub mod local_data_inputs;
 pub mod local_data_gameplay;
 
 pub mod local_data_guide;
+
+pub mod tooltip;
+
+pub mod local_data_media;

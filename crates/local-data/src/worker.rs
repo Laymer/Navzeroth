@@ -83,7 +83,7 @@ pub enum WorkerEvent {
     },
 }
 
-fn write_frame<T: Serialize>(writer: &mut impl Write, value: &T) -> Result<()> {
+pub(crate) fn write_frame<T: Serialize>(writer: &mut impl Write, value: &T) -> Result<()> {
     let bytes = serde_json::to_vec(value).map_err(|_| "Worker encoding failed")?;
     if bytes.len() > MAX_FRAME {
         return Err("Worker frame exceeds capacity");
@@ -94,7 +94,7 @@ fn write_frame<T: Serialize>(writer: &mut impl Write, value: &T) -> Result<()> {
         .and_then(|()| writer.flush())
         .map_err(|_| "Worker pipe unavailable")
 }
-fn read_frame<T: serde::de::DeserializeOwned>(reader: &mut impl Read) -> Result<T> {
+pub(crate) fn read_frame<T: serde::de::DeserializeOwned>(reader: &mut impl Read) -> Result<T> {
     let mut size = [0; 4];
     reader
         .read_exact(&mut size)

@@ -217,6 +217,13 @@ fn main() -> ExitCode {
     {
         return ExitCode::from(azeroth_local_data::worker::entry() as u8);
     }
+    if args.as_slice()
+        == [std::ffi::OsString::from(
+            azeroth_local_data::media::WORKER_ARGUMENT,
+        )]
+    {
+        return ExitCode::from(azeroth_local_data::media::worker_entry() as u8);
+    }
     match args.as_slice() {
         [command, rest @ ..] if command == "local-data" => azeroth_cli::local_data::run(rest),
         [command, flag, input] if command == "inspect-capture" && flag == "--input" => {

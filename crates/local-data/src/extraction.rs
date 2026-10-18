@@ -27,9 +27,9 @@ const MAX_MANIFEST_BYTES: usize = 16 * 1024 * 1024;
 /// directory bytes lie in an encrypted frame: no section can be located.
 const UNAVAILABLE_METADATA: &str = "unavailable_encrypted_frames_in_table_metadata";
 
-struct SourceState {
+pub(crate) struct SourceState {
     stamps: BTreeMap<String, Stamp>,
-    hashes: BTreeMap<String, String>,
+    pub(crate) hashes: BTreeMap<String, String>,
 }
 impl SourceState {
     #[cfg(test)]
@@ -39,7 +39,7 @@ impl SourceState {
     ) -> Result<Self> {
         Self::capture_checked(root, build, || Ok(()))
     }
-    fn capture_checked(
+    pub(crate) fn capture_checked(
         root: &Path,
         build: &azeroth_core::local_data::InstallationMetadata,
         mut check: impl FnMut() -> Result<()>,
@@ -157,6 +157,7 @@ impl Store {
                 "projections",
                 "inputs",
                 "guide-facts",
+                "media",
                 "lifecycle.sqlite3",
                 "lifecycle.sqlite3-journal",
             ]
@@ -209,6 +210,7 @@ impl Store {
             "projections",
             "inputs",
             "guide-facts",
+            "media",
         ] {
             let path = root.join(name);
             if !path.exists() {

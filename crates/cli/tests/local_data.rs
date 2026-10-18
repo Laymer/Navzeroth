@@ -417,6 +417,71 @@ fn project_and_projection_verify_succeed_on_a_synthetic_store() {
     let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
     assert_eq!(report["verified"], true);
     assert_eq!(report["reproduction"], "reproduced");
+    let built = cli(&[
+        "local-data",
+        "guide-facts-build",
+        "--destination",
+        dest,
+        "--projection",
+        projection,
+    ]);
+    assert_eq!(built.status.code(), Some(0));
+    let built: serde_json::Value = serde_json::from_slice(&built.stdout).unwrap();
+    let facts = built["guide_facts_sha256"].as_str().unwrap();
+    let verified = cli(&[
+        "local-data",
+        "guide-facts-verify",
+        "--destination",
+        dest,
+        "--guide-facts",
+        facts,
+    ]);
+    assert_eq!(verified.status.code(), Some(0));
+    let tooltip = cli(&[
+        "local-data",
+        "tooltip",
+        "--destination",
+        dest,
+        "--projection",
+        projection,
+        "--spell",
+        "1",
+    ]);
+    assert_eq!(tooltip.status.code(), Some(0));
+    let tooltip: serde_json::Value = serde_json::from_slice(&tooltip.stdout).unwrap();
+    assert_eq!(tooltip["gaps"], serde_json::json!(["missing_document"]));
+    assert_eq!(tooltip["verified_for_gameplay"], false);
+    let discovery = cli(&[
+        "local-data",
+        "media-discover",
+        "--destination",
+        dest,
+        "--catalog",
+        &digest,
+        "--locale",
+        "enUS",
+    ]);
+    assert_eq!(discovery.status.code(), Some(0));
+    let discovery: serde_json::Value = serde_json::from_slice(&discovery.stdout).unwrap();
+    assert_eq!(discovery["candidates"], serde_json::json!([]));
+    let refused = cli(&[
+        "local-data",
+        "media-extract",
+        "--destination",
+        dest,
+        "--installation",
+        dest,
+        "--catalog",
+        &digest,
+        "--locale",
+        "enUS",
+        "--ids",
+        "1",
+        "--preset",
+        "small",
+    ]);
+    assert_eq!(refused.status.code(), Some(1));
+    assert!(root.join("projections").join(projection).is_file());
     fs::remove_dir_all(root).unwrap();
 }
 
