@@ -66,7 +66,7 @@ PR: https://github.com/Laymer/Navzeroth/pull/192.
 - The optimized final-code four-table interruption/cancellation/resume-versus-fresh
   comparison runs in owner-only temporary stores, outside Git. Its subsequent
   completion receipt, exact digests, timings, cleanup outcome and resulting-main
-  integration are recorded in [PR #192](https://github.com/Laymer/Navzeroth/pull/192).
+  integration will be recorded in [PR #192](https://github.com/Laymer/Navzeroth/pull/192).
   Completion must not be inferred until that receipt is present. This link avoids
   relabelling a running check as passed in a commit written before it finishes.
 - Final-code workspace checks still pass: 1,244 Rust tests, four ignored, and
