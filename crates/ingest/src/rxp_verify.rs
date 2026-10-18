@@ -127,6 +127,8 @@ pub trait FactSource {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum FactOrigin {
+    /// Version-2 projected research: never an evidence claim or acceptance.
+    UnverifiedResearch,
     /// Hand-made test facts. Never evidence about the game.
     Synthetic,
     /// The user's own in-game observations through the permitted addon.
@@ -140,6 +142,7 @@ pub enum FactOrigin {
 
 pub const FACTS_FORMAT: &str = "navzeroth-guide-facts";
 pub const FACTS_VERSION: u32 = 1;
+pub const RESEARCH_FACTS_VERSION: u32 = 2;
 pub const MAX_FACTS_BYTES: usize = 8 * 1024 * 1024;
 pub const MAX_FACT_QUESTS: usize = 50_000;
 pub const MAX_FACT_NAMES: usize = 4096;
@@ -158,7 +161,7 @@ impl std::fmt::Display for FactsRejection {
         f.write_str(match self {
             Self::TooLarge => "Facts file exceeds the 8 MiB limit",
             Self::Json => "Facts file is not valid unique-key JSON of the facts schema",
-            Self::Format => "Facts file is not navzeroth-guide-facts version 1",
+            Self::Format => "Facts file has an unsupported navzeroth-guide-facts version or origin",
             Self::Capacity => "Facts file exceeds the quest, name or list bounds",
             Self::Value => "Facts file has an out-of-range or invalid value",
         })
@@ -305,12 +308,20 @@ impl JsonFacts {
         let value = azeroth_core::strict_json::value(bytes, MAX_FACTS_BYTES)
             .map_err(|_| FactsRejection::Json)?;
         if value.get("format").and_then(|v| v.as_str()) != Some(FACTS_FORMAT)
-            || value.get("version").and_then(|v| v.as_u64()) != Some(u64::from(FACTS_VERSION))
+            || !matches!(value.get("version").and_then(|v| v.as_u64()), Some(1 | 2))
+        {
+            return Err(FactsRejection::Format);
+        }
+        if (value.get("version").and_then(|v| v.as_u64()) == Some(2))
+            != (value.get("origin").and_then(|v| v.as_str()) == Some("unverified_research"))
         {
             return Err(FactsRejection::Format);
         }
         let raw: FactsJson = serde_json::from_value(value).map_err(|_| FactsRejection::Json)?;
-        debug_assert!(raw.format == FACTS_FORMAT && raw.version == FACTS_VERSION);
+        debug_assert!(raw.format == FACTS_FORMAT && matches!(raw.version, 1 | 2));
+        if (raw.version == 2) != (raw.origin == FactOrigin::UnverifiedResearch) {
+            return Err(FactsRejection::Format);
+        }
         if let Some(build) = &raw.client_build
             && (build.is_empty()
                 || build.len() > 64
@@ -1175,12 +1186,17 @@ pub fn verify(
 ) -> Report {
     let mut report = Report {
         format: REPORT_FORMAT,
-        version: REPORT_VERSION,
+        version: if origin == Some(FactOrigin::UnverifiedResearch) {
+            2
+        } else {
+            REPORT_VERSION
+        },
         character,
         facts_origin: origin,
         facts_edition: facts.edition().known().copied(),
         facts_build: facts.client_build().known().cloned(),
-        facts_are_evidence: origin.is_some_and(|o| o != FactOrigin::Synthetic),
+        facts_are_evidence: origin
+            .is_some_and(|o| !matches!(o, FactOrigin::Synthetic | FactOrigin::UnverifiedResearch)),
         replay_clean: false,
         passes: false,
         totals: Totals::default(),

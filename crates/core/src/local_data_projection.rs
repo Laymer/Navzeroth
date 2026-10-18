@@ -9,8 +9,8 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
-pub const PROJECTION_FORMAT_VERSION: u32 = 1;
-pub const PROJECTION_PROFILE: &str = "navzeroth-local-projection-v1";
+pub const PROJECTION_FORMAT_VERSION: u32 = 2;
+pub const PROJECTION_PROFILE: &str = "navzeroth-local-projection-v2";
 /// Total projected records across every domain, including taxi waypoints.
 pub const MAX_PROJECTED_RECORDS: usize = 1_000_000;
 pub const MAX_PROJECTION_GAPS: usize = 4096;
@@ -326,6 +326,8 @@ pub struct LocalProjection {
     pub travel: TravelProjection,
     pub class_roles: ClassRoleProjection,
     pub gaps: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub expanded: Option<crate::local_data_gameplay::ExpandedProjection>,
 }
 
 fn strictly_increasing<T>(records: &[T], id: impl Fn(&T) -> u32) -> bool {
@@ -334,7 +336,8 @@ fn strictly_increasing<T>(records: &[T], id: impl Fn(&T) -> u32) -> bool {
 
 impl LocalProjection {
     pub fn record_count(&self) -> usize {
-        self.equipment.items.len()
+        self.expanded.as_ref().map_or(0, |v| v.record_count())
+            + self.equipment.items.len()
             + self.geography.maps.len()
             + self.geography.ui_maps.len()
             + self.geography.ui_map_assignments.len()
@@ -353,8 +356,47 @@ impl LocalProjection {
     /// Structural invariants every sealed projection must satisfy. This does not
     /// verify the source catalog; callers bind and verify it separately.
     pub fn validate(&self) -> Result<(), &'static str> {
-        if self.format_version != PROJECTION_FORMAT_VERSION || self.profile != PROJECTION_PROFILE {
+        if !matches!(
+            (
+                self.format_version,
+                self.profile.as_str(),
+                self.expanded.is_some()
+            ),
+            (1, "navzeroth-local-projection-v1", false)
+                | (2, "navzeroth-local-projection-v2", true)
+        ) {
             return Err("Unsupported projection version");
+        }
+        if let Some(expanded) = &self.expanded {
+            expanded.validate()?;
+            if expanded.item_stats.iter().map(|r| r.item_id).ne(self
+                .equipment
+                .items
+                .iter()
+                .map(|r| r.item_id))
+            {
+                return Err("Item stat model is not bound to equipment identities");
+            }
+            for (table, spec) in expanded.tables.iter().zip(
+                std::iter::once(&crate::local_data_gameplay::ITEM_STAT_INPUT)
+                    .chain(crate::local_data_gameplay::TABLES),
+            ) {
+                let binding = self
+                    .sources
+                    .iter()
+                    .find(|s| s.domain == spec.domain && s.table == spec.table)
+                    .ok_or("Expanded source binding missing")?;
+                if binding.state != table.state
+                    || (table.state == SourceState::Projected
+                        && (binding.rows != table.records.as_ref().map(|r| r.len() as u32)
+                            || !binding
+                                .layout_hash
+                                .as_deref()
+                                .is_some_and(|h| spec.layouts.contains(&h))))
+                {
+                    return Err("Expanded records differ from source binding");
+                }
+            }
         }
         if self.activated || self.verified_for_planning {
             return Err("Projection claims activation or planning verification");
@@ -415,7 +457,7 @@ impl LocalProjection {
     }
 
     pub fn summary(&self, projection_sha256: &str) -> ProjectionSummary {
-        let counts = BTreeMap::from([
+        let mut counts = BTreeMap::from([
             ("equipment_items".to_owned(), self.equipment.items.len()),
             ("geography_maps".to_owned(), self.geography.maps.len()),
             ("geography_ui_maps".to_owned(), self.geography.ui_maps.len()),
@@ -435,8 +477,23 @@ impl LocalProjection {
             ),
             ("class_roles_races".to_owned(), self.class_roles.races.len()),
         ]);
+        if let Some(expanded) = &self.expanded {
+            counts.insert(
+                "expanded_client_records".into(),
+                expanded
+                    .tables
+                    .iter()
+                    .filter_map(|t| t.records.as_ref())
+                    .map(Vec::len)
+                    .sum(),
+            );
+            counts.insert(
+                "research_item_stat_models".into(),
+                expanded.item_stats.len(),
+            );
+        }
         ProjectionSummary {
-            format_version: PROJECTION_FORMAT_VERSION,
+            format_version: self.format_version,
             projection_sha256: projection_sha256.to_owned(),
             catalog_sha256: self.catalog_sha256.clone(),
             build: self.build,

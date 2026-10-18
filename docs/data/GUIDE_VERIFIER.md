@@ -191,7 +191,7 @@ The JSON report goes to stdout.
 Exit codes:
 
 - 0: `passes`.
-- 3: `replay_clean` against facts that don't claim evidence (synthetic).
+- 3: `replay_clean` against synthetic or unverified research facts.
 - 1: not clean, or an input was refused.
 - 2: usage error (input is never echoed).
 
@@ -203,3 +203,24 @@ facts first. The facts file should be built from the user's own observations
 through the permitted addon, plus local client data for zones, flight nodes and
 spells, and bound to those records. Then the routes can be verified to
 `passes: true`.
+
+## Bound research facts (continuation 4)
+
+Historical facts/report version 1 retains its original origin rules. Facts version
+2 accepts only `origin: "unverified_research"`; it produces report version 2 with
+`facts_are_evidence: false` and `passes: false`, including a clean replay. Unknown
+versions are refused. A research digest cannot establish release acceptance.
+
+`azeroth-cli local-data guide-facts-build --destination <private-store>
+--projection <digest> [--inputs <comma-separated-digests>]` builds deterministic
+private facts and observation objects. `guide-facts-verify` takes the destination
+and `--guide-facts <digest>` to reproduce the full binding. Inputs must belong to
+the exact projection catalog and tuple; cache payloads are not observations.
+The manifest binds projection, catalog, inputs, facts and observations by hash.
+
+True observed turn-ins/completions identify candidate quest records, preserving
+source metadata and conflicting observations. Required level, prerequisites,
+eligibility, rewards and XP remain unknown. False observations do not prove
+universal absence. Client zone/flight labels remain an incomplete vocabulary;
+client quest IDs and line order establish neither server availability nor quest
+prerequisites. Synthetic inputs remain explicitly marked in manifest gaps.

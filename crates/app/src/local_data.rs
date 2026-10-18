@@ -89,6 +89,23 @@ impl LocalDataService {
     ) -> Result<azeroth_local_data::inputs::CachePage> {
         azeroth_local_data::inputs::cache_page(&self.store()?, digest, offset, limit).map_err(error)
     }
+    pub fn build_guide_facts(
+        &self,
+        projection: &str,
+        inputs: &[String],
+        preset: PerformancePreset,
+    ) -> Result<azeroth_local_data::guide_facts::Summary> {
+        let mut inputs = inputs.to_vec();
+        inputs.sort();
+        azeroth_local_data::guide_facts::build(&self.store()?, projection, &inputs, preset)
+            .map_err(error)
+    }
+    pub fn verify_guide_facts(
+        &self,
+        digest: &str,
+    ) -> Result<azeroth_core::local_data_guide::GuideFactsManifest> {
+        azeroth_local_data::guide_facts::verify(&self.store()?, digest).map_err(error)
+    }
     pub fn select(&self, path: &Path) -> Result<SelectionView> {
         lifecycle::select(
             &self.store()?,

@@ -446,3 +446,7 @@ mod tests {
 #[allow(unsafe_code)]
 mod input_guard;
 pub mod inputs;
+
+mod gameplay;
+
+pub mod guide_facts;
