@@ -34,8 +34,8 @@ four ignored, 181 result suites before the final media adapter expansion. Latest
 workspace Clippy with warnings denied passed. Desktop unit suite passed 403 tests
 in 50 files; typecheck, lint and production build passed. Native Linux check was
 attempted but stopped in libdbus-sys because dbus-1 development metadata is missing;
-no native desktop success is claimed. Affected Rust lifecycle/storage/app checks
-are rerun after the final adapter changes; record final result before closing.
+no native desktop success is claimed. After the final adapters, all 19 affected Rust lifecycle/storage/app tests
+passed in four result suites.
 
 Two independent read-only reviewers found and confirmed fixes for delayed
 preferences overwriting edits, same-installation locale desynchronization,
