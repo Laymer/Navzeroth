@@ -234,3 +234,17 @@ Three media manifest tests pass, exercising all read-refusal kinds, decoded pixe
 limits, absent/altered lineage, calibration/gameplay promotion refusal, exact asset
 count boundaries and duplicate/out-of-order IDs. Core all-target Clippy passes.
 These are contract/boundary checks; no real image or gameplay evidence is implied.
+
+Additional storage boundary expansion at baseline `d4707db`: two local-state JSON
+tests preserve false, zero, negative/fractional numbers, null and inert Lua text;
+reject nested escaped duplicate keys, truncation, trailing input, overflow, exact
+byte-limit violations, ignored typed fields and wrong typed values. Generic serde
+inputs additionally refuse nonfinite numbers and unsupported byte values. Both
+tests pass with `cargo test -p azeroth-storage today::json::tests --lib`; storage
+all-target Clippy passes. An initial filter `today_json::tests` matched zero tests;
+the corrected module filter executed both tests. Formatting passes.
+
+Hosted run 39138458699 at `d4707db`: TypeScript collection succeeded; both native
+collectors remain in progress at this checkpoint. No combined coverage result or
+release readiness is claimed. Next: inspect those native artifacts, expand the
+remaining Rust gaps and complete independent review before version/publication.
