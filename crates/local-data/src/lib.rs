@@ -460,3 +460,5 @@ pub mod delivery_receipts;
 pub mod inventory;
 
 pub mod guide_review;
+
+pub mod changes;

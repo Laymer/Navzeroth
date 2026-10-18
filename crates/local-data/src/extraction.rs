@@ -160,6 +160,7 @@ impl Store {
                 "media",
                 "deliveries",
                 "inventories",
+                "changes",
                 "lifecycle.sqlite3",
                 "lifecycle.sqlite3-journal",
             ]
@@ -215,6 +216,7 @@ impl Store {
             "media",
             "deliveries",
             "inventories",
+            "changes",
         ] {
             let path = root.join(name);
             if !path.exists() {
@@ -341,7 +343,11 @@ pub(crate) fn extract(
         .filter(|t| request.tables.is_empty() || request.tables.contains(&t.name))
         .collect();
     let mut selected = Vec::new();
-    for locale in &inspection.metadata.declared_locales {
+    let selected_locales = azeroth_core::local_data_workflow::select_locales(
+        &inspection.metadata.declared_locales,
+        &request.locales,
+    )?;
+    for locale in &selected_locales {
         let mask = match locale.as_str() {
             "enUS" => 2,
             "koKR" => 4,

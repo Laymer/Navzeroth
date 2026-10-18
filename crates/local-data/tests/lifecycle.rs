@@ -114,6 +114,7 @@ fn recovery_requires_writer_lock_and_cancelled_jobs_remain_resumable() {
     let store = Store::new();
     let source = store.0.parent().unwrap().join("synthetic-selected-client");
     let request = ExtractionRequest {
+        locales: Vec::new(),
         protocol_version: 1,
         resume: false,
         request_id: "recover".into(),
@@ -184,6 +185,7 @@ fn lifecycle_database_and_catalog_paths_refuse_symlinks() {
 fn saved_unknown_worker_protocol_is_rejected_before_resume_conversion() {
     let store = Store::new();
     let request = ExtractionRequest {
+        locales: Vec::new(),
         protocol_version: 99,
         resume: false,
         request_id: "unknown".into(),
@@ -214,4 +216,37 @@ fn dangling_writer_lock_is_refused_without_creating_its_target() {
     symlink(&target, store.0.join("writer.lock")).unwrap();
     assert!(lifecycle::jobs(&store.0).is_err());
     assert!(!target.exists());
+}
+#[test]
+fn protocol_three_requires_explicit_locales_and_historical_encoding_omits_them() {
+    let store = Store::new();
+    let mut request = ExtractionRequest {
+        protocol_version: 3,
+        request_id: "locales".into(),
+        installation: store.0.join("client"),
+        product: "wow_classic_beta".into(),
+        destination: store.0.clone(),
+        preset: azeroth_core::local_data::PerformancePreset::Small,
+        tables: vec![],
+        locales: vec!["enUS".into()],
+        resume: false,
+    };
+    assert!(request.validate().is_ok());
+    request.resume = true;
+    assert!(request.validate().is_ok());
+    request.locales.clear();
+    assert!(request.validate().is_err());
+    request.protocol_version = 2;
+    assert!(request.validate().is_ok());
+    assert!(
+        serde_json::to_value(&request)
+            .unwrap()
+            .get("locales")
+            .is_none()
+    );
+    request.locales = vec!["enUS".into()];
+    assert!(request.validate().is_err());
+    request.protocol_version = 3;
+    request.locales = vec!["frFR".into(), "enUS".into()];
+    assert!(request.validate().is_err());
 }

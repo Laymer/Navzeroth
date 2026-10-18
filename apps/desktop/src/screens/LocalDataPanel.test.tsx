@@ -12,7 +12,10 @@ it("reviews explicit selection, extracts research only and requests bounded revi
   fireEvent.click(screen.getByRole("button",{name:"Select game installation"}));await screen.findByText(/Selected product wow_classic_beta/);
   expect(screen.queryByRole("button",{name:"Extract research tables"})).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button",{name:"Review extraction limits"}));await screen.findByText(/Required storage: unknown/);
+  expect(screen.getByRole("button",{name:"Extract research tables"})).toBeDisabled();
+  fireEvent.click(screen.getByRole("checkbox",{name:"enUS"}));
   fireEvent.click(screen.getByRole("button",{name:"Extract research tables"}));await screen.findByText(/493 decoded of 1270/);
+  expect(calls.find(c=>c.command==="start_local_data")?.input).toEqual({selection_id:"opaque-1",preset:"max",locales:["enUS"]});
   expect(screen.getByText(/no gameplay catalog activated/)).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button",{name:"Verify and inspect inventory"}));await screen.findByRole("row",{name:/Map enUS unavailable encrypted/});
   expect(calls.find(c=>c.command==="get_local_data_inventory")?.input).toEqual({revision:"a".repeat(64),offset:0,limit:200});
@@ -55,4 +58,16 @@ it("offers cancellation during fingerprint preparation and does not offer resume
  const adapter:CommandAdapter={invoke(command){return Promise.resolve((command==="list_local_installations"?[]:command==="list_local_data_jobs"?[job]:{...job,state:"cancelled"})as never);}};
  render(<LocalDataPanel client={createClient(adapter)}/>);fireEvent.click(screen.getByRole("button",{name:"Review saved extraction state"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect saved job hashing"}));
  expect(screen.getByText(/Extraction preparing: 0 of unknown/)).toBeInTheDocument();expect(screen.queryByRole("button",{name:"Resume unchanged extraction"})).not.toBeInTheDocument();expect(screen.queryByRole("button",{name:"Forget saved job"})).not.toBeInTheDocument();fireEvent.click(screen.getByRole("button",{name:"Cancel extraction"}));await screen.findByText(/Extraction cancelled/);
+});
+it("restores the same installation twice without separating checked locales from extraction",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==="select_local_installation"?{selection_id:"same",inspection:{metadata:{product:"wow_classic_beta",version:"1.60.1.70450",build:70450,declared_locales:["enUS"]}}}:command==="get_local_workflow"?{format_version:1,revision:1,preferences:{format_version:1,first_run_completed:true,startup_mode:"later",selections:{same:{locales:["enUS"],preset:"max",change_detection:false,baseline_sha256:null}}}}:command==="preview_local_data"?{preset:"max",limits:{},required_storage_bytes:null,available_storage_bytes:null,blockers:[]}:null)as never);}};
+ render(<LocalDataPanel client={createClient(adapter)}/>);
+ for(let attempt=0;attempt<2;attempt++){
+  fireEvent.click(screen.getByRole("button",{name:"Select game installation"}));
+  await waitFor(()=>expect(screen.getByRole("checkbox",{name:"enUS"})).toBeChecked());
+  fireEvent.click(screen.getByRole("button",{name:"Review extraction limits"}));
+  await waitFor(()=>expect(screen.getByRole("button",{name:"Extract research tables"})).toBeEnabled());
+ }
+ expect(calls.filter(call=>call.command==="get_local_workflow")).toHaveLength(2);
 });

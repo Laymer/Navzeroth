@@ -17,6 +17,13 @@ pub struct SavedSelection {
     pub product: String,
     pub preset: PerformancePreset,
 }
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct SelectedMaterial {
+    pub id: String,
+    pub kind: azeroth_core::local_data_workflow::MaterialKind,
+    pub path: PathBuf,
+}
 pub struct LocalDataIndex {
     conn: Connection,
 }
@@ -61,7 +68,7 @@ impl LocalDataIndex {
             .query_row("SELECT count(*) FROM sqlite_master", [], |r| r.get(0))
             .db()?;
         if !((application == 0 && version == 0 && tables == 0)
-            || (application == APPLICATION_ID && matches!(version, 1 | 2)))
+            || (application == APPLICATION_ID && matches!(version, 1..=3)))
         {
             return Err(invalid("Unsupported private lifecycle database"));
         }
@@ -89,7 +96,183 @@ impl LocalDataIndex {
                 CREATE TABLE delivery_activations(scope TEXT NOT NULL, generation INTEGER NOT NULL, delivery TEXT NOT NULL, PRIMARY KEY(scope,generation));
                 PRAGMA user_version=2; COMMIT;").db()?;
         }
+        if version < 3 {
+            conn.execute_batch("BEGIN IMMEDIATE;
+                CREATE TABLE workflow_preferences(id INTEGER PRIMARY KEY CHECK(id=1), revision INTEGER NOT NULL, document TEXT NOT NULL);
+                CREATE TABLE selected_materials(id TEXT PRIMARY KEY, document TEXT NOT NULL);
+                CREATE TABLE change_candidates(selection TEXT PRIMARY KEY, digest TEXT NOT NULL);
+                PRAGMA user_version=3; COMMIT;").db()?;
+        }
         Ok(Self { conn })
+    }
+    pub fn workflow(&self) -> Result<azeroth_core::local_data_workflow::PreferencesRecord> {
+        let row: Option<(u32, String)> = self
+            .conn
+            .query_row(
+                "SELECT revision,document FROM workflow_preferences WHERE id=1",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .optional()
+            .db()?;
+        let (revision, preferences) = if let Some((revision, text)) = row {
+            if revision == 0 || revision > 1_000_000 || text.len() > 64 * 1024 {
+                return Err(invalid("Invalid workflow preferences record"));
+            }
+            let value: azeroth_core::local_data_workflow::Preferences = decode(&text)?;
+            value.validate().map_err(invalid)?;
+            (revision, value)
+        } else {
+            (0, azeroth_core::local_data_workflow::Preferences::default())
+        };
+        Ok(azeroth_core::local_data_workflow::PreferencesRecord {
+            format_version: 1,
+            revision: u64::from(revision),
+            preferences,
+        })
+    }
+    pub fn replace_workflow(
+        &mut self,
+        expected: u64,
+        preferences: &azeroth_core::local_data_workflow::Preferences,
+    ) -> Result<azeroth_core::local_data_workflow::PreferencesRecord> {
+        preferences.validate().map_err(invalid)?;
+        let text = encode(preferences)?;
+        if text.len() > 64 * 1024 {
+            return Err(invalid("Workflow preferences capacity exceeded"));
+        }
+        let tx = self
+            .conn
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .db()?;
+        let current: u32 = tx
+            .query_row(
+                "SELECT coalesce((SELECT revision FROM workflow_preferences WHERE id=1),0)",
+                [],
+                |r| r.get(0),
+            )
+            .db()?;
+        if expected != u64::from(current) || current >= 1_000_000 {
+            return Err(invalid(
+                "Workflow choices changed or revision capacity reached",
+            ));
+        }
+        for (id, choices) in &preferences.selections {
+            let record: String = tx
+                .query_row("SELECT document FROM selections WHERE id=?1", [id], |r| {
+                    r.get(0)
+                })
+                .db()?;
+            let mut selected: SavedSelection = decode(&record)?;
+            selected.preset = choices.preset;
+            tx.execute(
+                "UPDATE selections SET document=?2 WHERE id=?1",
+                params![id, encode(&selected)?],
+            )
+            .db()?;
+        }
+        tx.execute("INSERT INTO workflow_preferences VALUES(1,?1,?2) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision,document=excluded.document",params![current+1,text]).db()?;
+        tx.commit().db()?;
+        Ok(azeroth_core::local_data_workflow::PreferencesRecord {
+            format_version: 1,
+            revision: u64::from(current) + 1,
+            preferences: preferences.clone(),
+        })
+    }
+    pub fn save_material(&mut self, selection: &SelectedMaterial) -> Result<()> {
+        if !azeroth_core::local_data::is_sha256(&selection.id) || !selection.path.is_absolute() {
+            return Err(invalid("Invalid selected material"));
+        }
+        let text = encode(selection)?;
+        if text.len() > 8192 {
+            return Err(invalid("Selected material path capacity exceeded"));
+        }
+        let tx = self
+            .conn
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .db()?;
+        let count: u32 = tx
+            .query_row(
+                "SELECT count(*) FROM selected_materials WHERE id<>?1",
+                [&selection.id],
+                |r| r.get(0),
+            )
+            .db()?;
+        if count >= 32 {
+            return Err(invalid("Selected material capacity reached"));
+        }
+        tx.execute("INSERT INTO selected_materials VALUES(?1,?2) ON CONFLICT(id) DO UPDATE SET document=excluded.document",params![selection.id,text]).db()?;
+        tx.commit().db()
+    }
+    /// Forget only the selected path; immutable imported artifacts are retained.
+    pub fn forget_material(&mut self, id: &str) -> Result<()> {
+        if !azeroth_core::local_data::is_sha256(id) {
+            return Err(invalid("Invalid material selection identity"));
+        }
+        self.conn
+            .execute("DELETE FROM selected_materials WHERE id=?1", [id])
+            .db()?;
+        Ok(())
+    }
+    pub fn material(&self, id: &str) -> Result<SelectedMaterial> {
+        if !azeroth_core::local_data::is_sha256(id) {
+            return Err(invalid("Invalid material selection identity"));
+        }
+        let text: String = self
+            .conn
+            .query_row(
+                "SELECT document FROM selected_materials WHERE id=?1",
+                [id],
+                |r| r.get(0),
+            )
+            .db()?;
+        let value: SelectedMaterial = decode(&text)?;
+        if value.id != id || !value.path.is_absolute() {
+            return Err(invalid("Invalid selected material record"));
+        }
+        Ok(value)
+    }
+    pub fn materials(&self) -> Result<Vec<SelectedMaterial>> {
+        let mut query = self
+            .conn
+            .prepare("SELECT id FROM selected_materials ORDER BY id LIMIT 33")
+            .db()?;
+        let ids = query
+            .query_map([], |r| r.get::<_, String>(0))
+            .db()?
+            .collect::<std::result::Result<Vec<_>, _>>()
+            .db()?;
+        if ids.len() > 32 {
+            return Err(invalid("Selected material capacity exceeded"));
+        }
+        ids.iter().map(|id| self.material(id)).collect()
+    }
+    pub fn set_change_candidate(&mut self, selection: &str, digest: &str) -> Result<()> {
+        if !azeroth_core::local_data::is_sha256(digest) {
+            return Err(invalid("Invalid change candidate identity"));
+        }
+        self.selection(selection)?;
+        self.conn.execute("INSERT INTO change_candidates VALUES(?1,?2) ON CONFLICT(selection) DO UPDATE SET digest=excluded.digest",params![selection,digest]).db()?;
+        Ok(())
+    }
+    pub fn change_candidate(&self, selection: &str) -> Result<Option<String>> {
+        self.selection(selection)?;
+        let digest: Option<String> = self
+            .conn
+            .query_row(
+                "SELECT digest FROM change_candidates WHERE selection=?1",
+                [selection],
+                |r| r.get(0),
+            )
+            .optional()
+            .db()?;
+        if digest
+            .as_ref()
+            .is_some_and(|d| !azeroth_core::local_data::is_sha256(d))
+        {
+            return Err(invalid("Invalid staged change record"));
+        }
+        Ok(digest)
     }
     pub fn save_selection(&mut self, selection: &SavedSelection) -> Result<()> {
         if !valid_id(&selection.selection_id)

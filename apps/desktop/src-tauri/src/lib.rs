@@ -62,8 +62,161 @@ async fn start_local_data(
     state: State<'_, LocalData>,
     selection_id: String,
     preset: azeroth_core::local_data::PerformancePreset,
+    locales: Option<Vec<String>>,
 ) -> Result<azeroth_app::local_data::JobView, AppError> {
-    local_data_blocking(state, move |service| service.start(&selection_id, preset)).await
+    local_data_blocking(state, move |service| match locales {
+        Some(locales) => service.start_selected(&selection_id, preset, locales),
+        None => service.start(&selection_id, preset),
+    })
+    .await
+}
+#[tauri::command]
+async fn get_local_workflow(
+    state: State<'_, LocalData>,
+) -> Result<azeroth_core::local_data_workflow::PreferencesRecord, AppError> {
+    local_data_blocking(state, |service| service.workflow_preferences()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn finish_local_startup(
+    state: State<'_, LocalData>,
+    expected: u64,
+    mode: azeroth_core::local_data_workflow::StartupMode,
+    completed: bool,
+) -> Result<azeroth_core::local_data_workflow::PreferencesRecord, AppError> {
+    local_data_blocking(state, move |service| {
+        service.finish_startup(expected, mode, completed)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn save_local_workflow_choices(
+    state: State<'_, LocalData>,
+    selection_id: String,
+    expected: u64,
+    locales: Vec<String>,
+    preset: azeroth_core::local_data::PerformancePreset,
+    detect: bool,
+) -> Result<azeroth_core::local_data_workflow::PreferencesRecord, AppError> {
+    local_data_blocking(state, move |service| {
+        service.save_workflow_choices(&selection_id, expected, locales, preset, detect)
+    })
+    .await
+}
+#[tauri::command]
+async fn get_local_change_detectors(
+    state: State<'_, LocalData>,
+) -> Result<Vec<azeroth_app::local_data::ChangeDetectorView>, AppError> {
+    local_data_blocking(state, |service| service.change_detectors()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn acknowledge_local_build_change(
+    state: State<'_, LocalData>,
+    selection_id: String,
+    expected: u64,
+    candidate: String,
+) -> Result<azeroth_core::local_data_workflow::PreferencesRecord, AppError> {
+    local_data_blocking(state, move |service| {
+        service.acknowledge_build_change(&selection_id, expected, &candidate)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn select_local_material(
+    state: State<'_, LocalData>,
+    kind: azeroth_core::local_data_workflow::MaterialKind,
+) -> Result<Option<azeroth_app::local_data::MaterialView>, AppError> {
+    local_data_blocking(state, move |service| {
+        let dialog = rfd::FileDialog::new().set_title("Select private local research input");
+        let path = if kind == azeroth_core::local_data_workflow::MaterialKind::AuthoredPack {
+            dialog.pick_folder()
+        } else {
+            dialog.pick_file()
+        };
+        path.map(|path| service.select_material(&path, kind))
+            .transpose()
+    })
+    .await
+}
+#[tauri::command]
+async fn list_local_materials(
+    state: State<'_, LocalData>,
+) -> Result<Vec<azeroth_app::local_data::MaterialView>, AppError> {
+    local_data_blocking(state, |service| service.material_selections()).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn forget_local_material(state: State<'_, LocalData>, id: String) -> Result<(), AppError> {
+    local_data_blocking(state, move |service| service.forget_material(&id)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn stage_selected_local_input(
+    state: State<'_, LocalData>,
+    catalog: String,
+    id: String,
+    locale: String,
+    preset: azeroth_core::local_data::PerformancePreset,
+) -> Result<azeroth_local_data::inputs::StagedInput, AppError> {
+    local_data_blocking(state, move |service| {
+        service.stage_selected_input(&catalog, &id, &locale, preset)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_input_page(
+    state: State<'_, LocalData>,
+    revision: String,
+    offset: u32,
+    limit: u32,
+) -> Result<azeroth_local_data::inputs::CachePage, AppError> {
+    local_data_blocking(state, move |service| {
+        service.input_page(&revision, offset, limit)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn discover_local_media(
+    state: State<'_, LocalData>,
+    catalog: String,
+    locale: String,
+    offset: u32,
+    limit: u32,
+) -> Result<azeroth_local_data::media::DiscoveryPage, AppError> {
+    local_data_blocking(state, move |service| {
+        service.media_discover(&catalog, &locale, offset, limit)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn extract_local_media(
+    state: State<'_, LocalData>,
+    selection_id: String,
+    catalog: String,
+    locale: String,
+    ids: Vec<u32>,
+    preset: azeroth_core::local_data::PerformancePreset,
+) -> Result<String, AppError> {
+    local_data_blocking(state, move |service| {
+        service.media_extract(&selection_id, &catalog, &locale, ids, preset)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_media_page(
+    state: State<'_, LocalData>,
+    revision: String,
+    offset: u32,
+    limit: u32,
+) -> Result<azeroth_app::local_data::MediaDisplayPage, AppError> {
+    local_data_blocking(state, move |service| {
+        service.media_display_page(&revision, offset, limit)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_media_manifest(
+    state: State<'_, LocalData>,
+    revision: String,
+) -> Result<azeroth_core::local_data_media::MediaManifest, AppError> {
+    local_data_blocking(state, move |service| service.media_manifest(&revision)).await
 }
 #[tauri::command(rename_all = "snake_case")]
 async fn get_local_data_job(
@@ -895,7 +1048,12 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol(atlas_protocol::SCHEME, |ctx, request| {
-            if request.uri().path().starts_with("/stored/") {
+            if request.uri().path().starts_with("/research/") {
+                atlas_protocol::respond_research(
+                    &request,
+                    ctx.app_handle().state::<LocalData>().inner(),
+                )
+            } else if request.uri().path().starts_with("/stored/") {
                 atlas_protocol::respond_stored(
                     &request,
                     ctx.app_handle().state::<Application>().inner(),
@@ -910,6 +1068,20 @@ pub fn run() {
                 select_local_installation,
                 preview_local_data,
                 start_local_data,
+                discover_local_media,
+                extract_local_media,
+                get_local_media_page,
+                get_local_media_manifest,
+                select_local_material,
+                list_local_materials,
+                forget_local_material,
+                stage_selected_local_input,
+                get_local_input_page,
+                get_local_workflow,
+                finish_local_startup,
+                save_local_workflow_choices,
+                get_local_change_detectors,
+                acknowledge_local_build_change,
                 get_local_data_job,
                 cancel_local_data_job,
                 get_local_data_inventory,

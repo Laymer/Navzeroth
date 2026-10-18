@@ -1,0 +1,31 @@
+import {fireEvent,render,screen} from "@testing-library/react";
+import {createClient,type CommandAdapter} from "../commands";
+import {LocalResearchInputs} from "./LocalResearchInputs";
+const catalog="a".repeat(64),revision="b".repeat(64);
+it("stages only an explicit opaque input and preserves unknown counts and unsupported disposition",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==="select_local_material"?{id:"opaque",kind:"quest_cache"}:{input_sha256:revision,manifest:{format_version:1,catalog_sha256:catalog,kind:"quest_cache",fixture:false,unsupported:"unsupported_cache_format",record_count:null,conflict_count:null,locale_evidence:"selected_directory",gaps:[]}})as never);}};
+ render(<LocalResearchInputs client={createClient(adapter)} catalog={catalog} preset="small"/>);
+ expect(screen.queryByRole("button",{name:"Stage selected research input"})).not.toBeInTheDocument();
+ fireEvent.change(screen.getByRole("combobox",{name:"Input kind"}),{target:{value:"quest_cache"}});
+ fireEvent.click(screen.getByRole("button",{name:"Select private input file"}));
+ expect(await screen.findByRole("button",{name:"Stage selected research input"})).toBeDisabled();
+ fireEvent.change(screen.getByRole("textbox",{name:"Exact input content locale"}),{target:{value:"enUS"}});
+ fireEvent.click(screen.getByRole("button",{name:"Stage selected research input"}));
+ await screen.findByText(/Records: unknown; conflicts: unknown/);
+ expect(screen.getByText(/Unsupported: unsupported cache format/)).toBeInTheDocument();
+ expect(screen.queryByRole("button",{name:"Inspect cache record metadata"})).not.toBeInTheDocument();
+ expect(calls.find(call=>call.command==="stage_selected_local_input")?.input).toEqual({catalog,id:"opaque",locale:"enUS",preset:"small"});
+});
+it("uses revision-bound pages and forgets only the selected path",async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==="select_local_material"?{id:"opaque",kind:"hotfix_cache"}:command==="stage_selected_local_input"?{input_sha256:revision,manifest:{format_version:1,catalog_sha256:catalog,kind:"hotfix_cache",fixture:false,unsupported:null,record_count:0,conflict_count:0,locale_evidence:"selected_directory",gaps:[]}}:command==="get_local_input_page"?{revision,offset:0,total:0,next_offset:null,rows:[]}:null)as never);}};
+ render(<LocalResearchInputs client={createClient(adapter)} catalog={catalog} preset="max"/>);
+ fireEvent.click(screen.getByRole("button",{name:"Select private input file"}));await screen.findByText(/Selected hotfix cache/);
+ fireEvent.change(screen.getByRole("textbox",{name:"Exact input content locale"}),{target:{value:"enUS"}});
+ fireEvent.click(screen.getByRole("button",{name:"Stage selected research input"}));fireEvent.click(await screen.findByRole("button",{name:"Inspect cache record metadata"}));
+ await screen.findByText(/0 record envelopes/);
+ expect(calls.find(call=>call.command==="get_local_input_page")?.input).toEqual({revision,offset:0,limit:200});
+ fireEvent.click(screen.getByRole("button",{name:"Forget selected input"}));await screen.findByText(/Retained input revisions remain intact/);
+ expect(calls.find(call=>call.command==="forget_local_material")?.input).toEqual({id:"opaque"});
+});

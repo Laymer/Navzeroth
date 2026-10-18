@@ -50,7 +50,8 @@ exact-head checks and source workflow. No calibrated media or gameplay evidence
 was claimed.
 Continuation 6 is PR #196, independently reviewed with local checks passing;
 exact-head hosted checks and merge are pending.
-Active: continuation 7, guide review and exact imported inventory;
+Active: continuation 8, desktop workflow and installer completion (partial);
+continuation 7 PR #197 awaits exact-head checks;
 [claim](docs/claims/2026-10-18-guides-inventory.md),
 [handoff](docs/handoffs/2026-10-18-guides-inventory.md).
 Independent completeness, complete desktop workflow, performance, coverage, publication
