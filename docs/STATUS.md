@@ -4,11 +4,14 @@ Updated: 2026-10-18.
 
 ## Current task
 
-**Continuation 5 — private media and bounded tooltips:** Codex `/root`, sole
-writer, branch `feat/continuation-media-tooltips`; initial baseline `8b4c249`,
-resulting-main dependency `b590eae`. [Claim](claims/2026-10-18-media-tooltips.md),
-[handoff](handoffs/2026-10-18-media-tooltips.md),
-[supported formats and limits](data/LOCAL_MEDIA.md).
+**Continuation 6 — versioned delivery and guarded consumers:** Codex `/root`,
+sole writer, branch `feat/continuation-bound-delivery`; initial baseline `ea47b57`.
+[Claim](claims/2026-10-18-bound-delivery.md),
+[handoff](handoffs/2026-10-18-bound-delivery.md),
+[delivery contracts](data/LOCAL_DELIVERY.md).
+Continuation 5 is [PR #195](https://github.com/Laymer/Navzeroth/pull/195), reviewed
+with local checks passing, pending remaining exact-head Windows checks/merge.
+[Media handoff](handoffs/2026-10-18-media-tooltips.md).
 Continuation 4 merged as [PR #194](https://github.com/Laymer/Navzeroth/pull/194)
 at `b590eae` after independent review, all nine exact-head checks and source
 workflow. Expanded gameplay mappings and bound guide facts remain research-only;

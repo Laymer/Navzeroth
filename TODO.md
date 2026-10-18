@@ -45,11 +45,13 @@ recorded separately from unverified native Rust cache-stage end-to-end behavior.
 Continuation 4 merged as PR #194 at `b590eae` after independent review, all nine
 exact-head checks and source workflow. Research mappings/facts do not grant
 availability or acceptance.
-Active: continuation 5, private media and bounded research tooltips;
-[claim](docs/claims/2026-10-18-media-tooltips.md),
-[handoff](docs/handoffs/2026-10-18-media-tooltips.md).
-Later input adapters, expanded projections, media, guarded gameplay consumers,
-reviewed inventory, performance, coverage, publication and Pages remain pending.
+Continuation 5 is PR #195, independently reviewed with local checks passing;
+remaining exact-head Windows checks and merge are pending.
+Active: continuation 6, bound research deliveries and guarded desktop consumers;
+[claim](docs/claims/2026-10-18-bound-delivery.md),
+[handoff](docs/handoffs/2026-10-18-bound-delivery.md).
+Reviewed inventory, complete desktop workflow, performance, coverage, publication
+and Pages remain pending; research matches do not clear acceptance blockers.
 
 ## Gate snapshot
 
