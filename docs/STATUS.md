@@ -2,11 +2,9 @@
 
 Updated: 2026-10-18.
 
-Independent UI correction active: Codex `/root`, `fix/single-active-help`, baseline
-`8da8301`; [claim](claims/2026-10-18-single-active-help.md),
-[handoff](handoffs/2026-10-18-single-active-help.md). This fixes the competing
-hover/keyboard help exposed by pending desktop continuation PR #198. Exact-head
-checks precede integration; no release or acceptance state is changed.
+Independent UI correction [PR #199](https://github.com/Laymer/Navzeroth/pull/199)
+merged at `506a9cb` after independent review, all nine exact-head checks and source
+parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
@@ -26,8 +24,10 @@ sole writer, branch `feat/continuation-desktop-completion`, baseline `896539e`.
 [Claim](claims/2026-10-18-desktop-completion.md),
 [handoff](handoffs/2026-10-18-desktop-completion.md),
 [workflow](data/LOCAL_DESKTOP_WORKFLOW.md), [PR #198](https://github.com/Laymer/Navzeroth/pull/198).
-Desktop engineering and focused local review/checks are complete; exact-head
-hosted/native checks remain pending. Continuation 7 merged as
+Continuation 8 merged as [PR #198](https://github.com/Laymer/Navzeroth/pull/198)
+at `9d046b7` after independent review, all nine exact-head checks, native Windows
+packaging and source parity. Research workflow remains unavailable for actionable
+advice; ordinary Windows/operator and live acceptance remain unverified. Continuation 7 merged as
 [PR #197](https://github.com/Laymer/Navzeroth/pull/197) at `8da8301` after
 independent review, all nine exact-head checks and source parity.
 Continuation 6 merged as [PR #196](https://github.com/Laymer/Navzeroth/pull/196)

@@ -4,7 +4,7 @@
   "scope": "Resolved desktop normal/build dependencies, including build tools and workspace feature unification; not a runtime-only SBOM. npm production dependencies. Rust standard library notices. Separate Microsoft SDK terms.",
   "cargo_lock_sha256": "3b072f22754fdd54dc0c1916ca3a56c4e5b1725f265d2e6dadd20291a4370391",
   "pnpm_lock_sha256": "a5c2a09fa35583fa91b1b49fa2da1acc32869c88d1174666582129dc161ac256",
-  "overrides_sha256": "cd84d3dc718710e0a2a528517e60287e511f5b649e12294eadf8bbab5c60b0c8",
+  "overrides_sha256": "1413d36a7da8729e602d1b51744fcb356523a533ce2ceeb2d62ecb5352aff414",
   "packages": [
     {
       "ecosystem": "cargo",
@@ -3576,7 +3576,11 @@
       }
     ]
   },
-  "rust_stdlib_release": "1.99.0",
+  "rust_stdlib": {
+    "release": "1.99.0",
+    "compiler_commit": "b940084d7eb6a299eb4bfeb8e34901bc051e7ac4",
+    "notice_source": "https://doc.rust-lang.org/1.99.0/COPYRIGHT-library.html"
+  },
   "files": [
     {
       "path": "ED25519-LICENSE.txt",

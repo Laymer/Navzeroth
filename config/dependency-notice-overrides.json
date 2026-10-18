@@ -181,7 +181,9 @@
         "file": "rust-stdlib/licenses/Unicode-3.0.txt",
         "sha256": "f5062c9a188d81dfe66b56db4182dcf9e4b17c0d9b0d311a8e20b3a1b075c443"
       }
-    ]
+    ],
+    "compiler_commit": "b940084d7eb6a299eb4bfeb8e34901bc051e7ac4",
+    "notice_source": "https://doc.rust-lang.org/1.99.0/COPYRIGHT-library.html"
   },
   "npm_archives": [
     {

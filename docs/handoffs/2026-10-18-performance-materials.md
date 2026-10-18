@@ -2,8 +2,7 @@
 
 Owner/sole writer Codex `/root`; baseline `d34b417`, branch
 `feat/continuation-performance-materials`. [Claim](../claims/2026-10-18-performance-materials.md).
-Continuation 8/PR #198 remains a pending dependency; integrate resulting main
-before final review/merge. Original checkout, `.claude/` and frozen extraction CLI
+Continuation 8/PR #198 merged at `9d046b7`; resulting main is integrated. Original checkout, `.claude/` and frozen extraction CLI
 are preserved. No personal files or client data were added.
 
 ## Measurements

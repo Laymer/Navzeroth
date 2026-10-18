@@ -182,10 +182,11 @@ function generate(repo) {
   }
   const compiler = execFileSync('rustc',['-vV'],{encoding:'utf8'});
   if (!compiler.includes('release: '+config.rust_stdlib.release+'\n')) throw new Error('Unreviewed Rust standard library version');
+  if (!compiler.includes('commit-hash: '+config.rust_stdlib.compiler_commit+'\n')) throw new Error('Unreviewed Rust compiler commit');
   for (const file of config.rust_stdlib.files) put('rust-stdlib/'+file.file.replace(/^rust-stdlib\//,''), retained(file));
   for (const file of ['ED25519-LICENSE.txt','RFD-LICENSE.txt']) put(file, read('crates/local-data/notices/'+file));
   if (output.size > 2048 || [...output.values()].reduce((sum,b) => sum+b.length,0) > 32*1024*1024) throw new Error('Notice closure exceeds quota');
-  const manifest = { format_version:1, target:'x86_64-pc-windows-msvc', scope:'Resolved desktop normal/build dependencies, including build tools and workspace feature unification; not a runtime-only SBOM. npm production dependencies. Rust standard library notices. Separate Microsoft SDK terms.', cargo_lock_sha256:digest(read('Cargo.lock')), pnpm_lock_sha256:digest(read('pnpm-lock.yaml')), overrides_sha256:digest(configBytes), packages, webview2_sdk:config.webview2_sdk, rust_stdlib_release:config.rust_stdlib.release, files:[...output.entries()].sort(([a],[b]) => a < b ? -1 : a > b ? 1 : 0).map(([name,bytes]) => ({path:name,bytes:bytes.length,sha256:digest(bytes)})) };
+  const manifest = { format_version:1, target:'x86_64-pc-windows-msvc', scope:'Resolved desktop normal/build dependencies, including build tools and workspace feature unification; not a runtime-only SBOM. npm production dependencies. Rust standard library notices. Separate Microsoft SDK terms.', cargo_lock_sha256:digest(read('Cargo.lock')), pnpm_lock_sha256:digest(read('pnpm-lock.yaml')), overrides_sha256:digest(configBytes), packages, webview2_sdk:config.webview2_sdk, rust_stdlib:{release:config.rust_stdlib.release,compiler_commit:config.rust_stdlib.compiler_commit,notice_source:config.rust_stdlib.notice_source}, files:[...output.entries()].sort(([a],[b]) => a < b ? -1 : a > b ? 1 : 0).map(([name,bytes]) => ({path:name,bytes:bytes.length,sha256:digest(bytes)})) };
   return { output, manifest:Buffer.from(JSON.stringify(manifest,null,2)+'\n') };
 }
 export function verifyInstalled(repo, dir) {
