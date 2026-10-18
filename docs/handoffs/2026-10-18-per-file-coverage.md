@@ -502,3 +502,16 @@ synthetic reason and verifies the complete gap. CLI roundtrip now rejects select
 inert snapshot/session text and invalid guide-fact input while retaining prior
 facts. Read-only review found no actionable findings. Local-data/CLI all-target
 Clippy and formatting/diff checks pass; rerun complete clean diagnostic next.
+
+Clean local diagnostic 1af198b: 1,384 passed, four explicit regenerators ignored,
+182 suites; strict export succeeds. CLI now clears 90%; media is 477/534, four
+covered lines short. Only selection_path and isolation additionally remain below
+threshold in Linux, pending Windows union. Matching report/inventory/log/gaps:
+/tmp/nav-local-expansion-fifth* and /tmp/nav-local-fifth-gaps.json.
+Added five meaningful media substitution refusals without production edits:
+hash-valid catalog/wrong decoded header, noncanonical manifest encoding, false
+discovery binding, false decode disposition and manifest stored under a wrong
+hash. Each asserts its specific error and preserves the prior immutable media
+revision. Focused test, local-data all-target Clippy, formatting/diff checks pass;
+independent policy review found no actionable findings. Final exact-head native
+collection and integer gate still required before accepting the coverage claim.

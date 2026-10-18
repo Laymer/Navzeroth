@@ -640,6 +640,60 @@ fn media_discovery_preserves_unknown_zero_duplicates_and_decode_refusals() {
         assert!(unavailable.candidates.is_empty());
         assert!(unavailable.gaps.iter().any(|value| value == gap), "{gap}");
     }
+    // A hash-valid catalog cannot substitute a decoded table's layout header.
+    let mut changed = catalog.clone();
+    table.header.layout_hash ^= 1;
+    let mut store =
+        Store::open(root, PerformancePreset::Small.limits().total_storage_bytes).unwrap();
+    changed.tables[0].decoded_sha256 = Some(
+        store
+            .put("objects", &serde_json::to_vec(&table).unwrap())
+            .unwrap(),
+    );
+    let altered = store
+        .put("catalogs", &serde_json::to_vec(&changed).unwrap())
+        .unwrap();
+    assert_eq!(
+        media::discover(root, &altered, "enUS").unwrap_err(),
+        "Media discovery table binding mismatch"
+    );
+    let noncanonical = store
+        .put("media", &serde_json::to_vec_pretty(&manifest).unwrap())
+        .unwrap();
+    let mut substituted = manifest.clone();
+    substituted.discovery_sha256 = "0".repeat(64);
+    let wrong_discovery = store
+        .put("media", &serde_json::to_vec(&substituted).unwrap())
+        .unwrap();
+    substituted = manifest.clone();
+    substituted.assets[0].disposition = Disposition::Capacity;
+    let wrong_disposition = store
+        .put("media", &serde_json::to_vec(&substituted).unwrap())
+        .unwrap();
+    drop(store);
+    assert_eq!(
+        media::verify(root, &wrong_discovery).unwrap_err(),
+        "Media discovery binding mismatch"
+    );
+    assert_eq!(
+        media::verify(root, &wrong_disposition).unwrap_err(),
+        "Media disposition mismatch"
+    );
+    assert_eq!(
+        media::verify(root, &noncanonical).unwrap_err(),
+        "Media profile or encoding mismatch"
+    );
+    let wrong = "e".repeat(64);
+    assert!(!root.join("media").join(&wrong).exists());
+    fs::write(
+        root.join("media").join(&wrong),
+        serde_json::to_vec(&manifest).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        media::verify(root, &wrong).unwrap_err(),
+        "Media revision hash mismatch"
+    );
     assert!(
         media::verify(root, &media_revision).is_ok(),
         "new discoveries cannot alter an earlier immutable revision"
