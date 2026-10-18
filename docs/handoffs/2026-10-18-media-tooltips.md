@@ -1,7 +1,7 @@
 # Continuation 5 — private media and bounded tooltips
 
 Owner/sole writer: Codex `/root`; 2026-10-18. Initial baseline `8b4c249`,
-continuation-4 PR #194; integrate resulting main before PR. Claim:
+continuation-4 PR #194; resulting main `b590eae` integrated before review. Claim:
 [media/tooltips](../claims/2026-10-18-media-tooltips.md).
 
 Implemented exact-layout map/icon candidate discovery, isolated file-ID-only

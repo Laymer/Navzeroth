@@ -4,12 +4,15 @@ Updated: 2026-10-18.
 
 ## Current task
 
-**Continuation 4 — gameplay projections and guide facts:** Codex `/root`, sole
-writer, isolated branch `feat/continuation-gameplay-facts`; initial baseline
-`3f90417`, resulting-main dependency `b74549f`.
-[Claim](claims/2026-10-18-gameplay-facts.md),
-[handoff](handoffs/2026-10-18-gameplay-facts.md),
-[supported research scope](data/GAMEPLAY_PROJECTIONS.md).
+**Continuation 5 — private media and bounded tooltips:** Codex `/root`, sole
+writer, branch `feat/continuation-media-tooltips`; initial baseline `8b4c249`,
+resulting-main dependency `b590eae`. [Claim](claims/2026-10-18-media-tooltips.md),
+[handoff](handoffs/2026-10-18-media-tooltips.md),
+[supported formats and limits](data/LOCAL_MEDIA.md).
+Continuation 4 merged as [PR #194](https://github.com/Laymer/Navzeroth/pull/194)
+at `b590eae` after independent review, all nine exact-head checks and source
+workflow. Expanded gameplay mappings and bound guide facts remain research-only;
+observed turn-ins cannot establish universal prerequisites or eligibility.
 Continuation 3 merged as [PR #193](https://github.com/Laymer/Navzeroth/pull/193)
 at `b74549f` after independent review, all nine exact-head checks, both source
 platforms and parity. [Cache development receipt](handoffs/2026-10-18-cache-development-check.md)
