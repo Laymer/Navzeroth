@@ -10,7 +10,8 @@ desktop exchange uses explicit files or pasted text.
 Current source enables the exact experimental tuples `1.60.1.70338`,
 `1.60.1.70374`, `1.60.1.70425` and `1.60.1.70450`, each with interface `16001`. The
 first two were enabled in 0.9.1; **70425 and 70450 are admitted for development capture
-only and are UNVERIFIED**: the owner's installation metadata reports them (see
+only and are UNVERIFIED**: the owner's installation metadata reports them (70450's interface 16001 is
+owner-reported; see
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md#client-160170425-development-admission)
 and [the 70450 section](BUILD_CAPABILITIES.md#client-160170450-development-admission)),
 and no addon run on either is recorded. The 1.0 release target and every LIVE acceptance
