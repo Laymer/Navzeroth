@@ -13,7 +13,8 @@ old requests retain their canonical encoding/readers. CLI accepts sorted unique
 `--locales`; desktop requires an explicit selection before new extraction.
 
 Opt-in detection reads only selected `.build.info`, polling every 500 ms with
-750 ms stable byte/size/mtime/file identity and three staging attempts. Cancellation
+750 ms stable bytes/size/mtime and three staging attempts. Unix also binds
+file identity; Windows file-ID replacement detection remains unverified. Cancellation
 wakes the worker. Immutable private candidates preserve source/profile lineage;
 acknowledgment changes the detection baseline, never extracts or activates.
 Reconciliation reads current preferences under its registry lock, preventing
@@ -47,7 +48,7 @@ Actual checks on the implemented source:
 
 - Full Rust workspace excluding native desktop: 1,311 passed, four ignored,
   181 result suites. Workspace Clippy with warnings denied passed.
-- Desktop: 410 unit tests in 53 files, typecheck, lint and production build passed.
+- Desktop: 411 unit tests in 53 files, typecheck, lint and production build passed.
 - Six focused Chromium checks passed: populated synthetic choices at 320/1100 px,
   200% text, keyboard focus and axe; four production CSP/font/navigation checks.
 - Native Windows PowerShell 5.1 addon-installer harness passed all 30 synthetic
@@ -61,7 +62,12 @@ overwriting edits, same-installation locale desynchronization, legacy-preset
 watcher restarts, stale opt-out reconciliation, material capacity recovery,
 projection-only resource-preset bypass and missing continuation replay tokens.
 Both reviewed media/binding/inventory/guide boundaries without remaining actionable
-findings. A real browser test exposed an incorrect first-run destination (Content
+findings. Final review also fixed startup remounts reapplying next-launch navigation:
+restoration is now consumed once per App/client, with an error/recovery regression.
+That regression was mutation-checked by temporarily restoring unguarded navigation;
+it failed as expected, and all 411 tests passed after restoring the fix. Windows
+file-ID replacement detection was explicitly narrowed to unverified; no guarantee
+beyond stable bytes/size/mtime is claimed there. A real browser test exposed an incorrect first-run destination (Content
 instead of Compatibility and coverage); corrected and the final six tests passed.
 The native desktop exact-head hosted checks remain authoritative for its adapter.
 

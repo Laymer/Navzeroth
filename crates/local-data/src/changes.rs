@@ -17,7 +17,8 @@ pub struct Candidate {
     pub local_only: bool,
     pub activated: bool,
 }
-/// Byte identity plus opaque size/time/file identity for cross-poll stability.
+/// Byte identity plus opaque size/time identity for cross-poll stability.
+/// Unix additionally binds file identity; Windows file-ID detection is unverified.
 /// The latter is transient and never enters persisted candidates or UI responses.
 pub fn read_build_observation(installation: &Path) -> Result<(String, String)> {
     let (bytes, stamp) = read_file(&installation.join(".build.info"), MAX_BUILD_INFO_BYTES)?;

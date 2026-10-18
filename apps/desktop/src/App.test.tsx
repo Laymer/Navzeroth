@@ -108,3 +108,27 @@ test("startup failure keeps explicit local diagnostics reachable without gamepla
   fireEvent.click(screen.getByRole("button",{name:"Preview diagnostic metadata"}));
   await screen.findByText("Recorded imports: 0.");
 });
+
+test("backend recovery does not reapply a saved or newly changed next-launch workflow",async()=>{
+ const {fireEvent,waitFor,act}=await import("@testing-library/react");
+ let refresh:(()=>void)|null=null;
+ const interval=vi.spyOn(window,"setInterval").mockImplementation((callback,delay)=>{if(refresh===null&&delay===60_000&&typeof callback==="function")refresh=()=>callback();return 1;});
+ try {
+  let statusCalls=0;let failing=false;let mode="snapshots";
+  const adapter:CommandAdapter={invoke(command){
+   if(command==="get_app_status") {statusCalls++;return failing?Promise.reject({code:"STORAGE_ERROR",message:"Synthetic recovery",retryable:false}):Promise.resolve({version:"synthetic",data_mode:"stored",active_profile:null,capabilities:{}}as never);}
+   if(command==="get_local_workflow")return Promise.resolve({format_version:1,revision:1,preferences:{format_version:1,first_run_completed:true,startup_mode:mode,selections:{}}}as never);
+   return Promise.reject({code:"INVALID_INPUT",message:"Not provided by synthetic fixture",retryable:false});
+  }};
+  render(<App client={createClient(adapter)}/>);
+  await waitFor(()=>expect(screen.getByRole("button",{name:"Imports",exact:true})).toHaveAttribute("aria-current","page"));
+  fireEvent.click(screen.getByRole("button",{name:"Backup and recovery",exact:true}));
+  mode="local_research";failing=true;
+  await act(async()=>{if(!refresh)throw new Error("Refresh timer was not installed");refresh();});
+  const retry=await screen.findByRole("button",{name:"Retry loading"});
+  const before=statusCalls;failing=false;fireEvent.click(retry);
+  await waitFor(()=>expect(statusCalls).toBe(before+1));
+  await waitFor(()=>expect(screen.getByRole("button",{name:"Backup and recovery",exact:true})).toHaveAttribute("aria-current","page"));
+  expect(screen.getByRole("button",{name:"Compatibility and coverage",exact:true})).not.toHaveAttribute("aria-current","page");
+ } finally {interval.mockRestore();}
+});

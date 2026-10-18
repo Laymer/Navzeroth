@@ -2,10 +2,10 @@ import {useEffect,useRef,useState} from "react";
 import type {CommandClient} from "../commands";
 import type {LocalStartupMode,LocalWorkflowRecord} from "../commands/localData";
 import {Button,Field,Panel} from "../ui";
-export function LocalStartupChoices({client,onNavigate}:{client:CommandClient;onNavigate:(mode:LocalStartupMode)=>void}) {
+export function LocalStartupChoices({client,onNavigate,onRestore=onNavigate}:{client:CommandClient;onNavigate:(mode:LocalStartupMode)=>void;onRestore?:(mode:LocalStartupMode)=>void}) {
  const [record,setRecord]=useState<LocalWorkflowRecord|null>(null);
  const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");const serial=useRef(0);
- useEffect(()=>{let current=true;void client.getLocalWorkflow().then(result=>{if(current&&result.ok&&result.value?.format_version===1){setRecord(result.value);if(result.value.preferences.first_run_completed)onNavigate(result.value.preferences.startup_mode);}});return()=>{current=false;serial.current++;};},[client,onNavigate]);
+ useEffect(()=>{let current=true;void client.getLocalWorkflow().then(result=>{if(current&&result.ok&&result.value?.format_version===1){setRecord(result.value);if(result.value.preferences.first_run_completed)onRestore(result.value.preferences.startup_mode);}});return()=>{current=false;serial.current++;};},[client,onRestore]);
  async function choose(mode:LocalStartupMode){
   if(!record)return;const ticket=++serial.current;setBusy(true);
   const result=await client.finishLocalStartup(record.revision,mode);

@@ -23,7 +23,8 @@ retain their historical encoding/readers; unknown request versions refuse.
 
 Build detection is optional and initially off. While the application is open it
 polls only the selected `.build.info` every 500 ms and requires 750 ms stable
-bytes, size, modification time and file identity. It retries failed staging at
+bytes, size and modification time. Unix also binds file identity; Windows
+file-ID replacement detection remains unverified. It retries failed staging at
 most three times for one stable identity. A changed source produces an immutable
 private metadata candidate, with no archive/cache scan, extraction or activation.
 Review detected changes; acknowledge the staged candidate to advance the baseline.
