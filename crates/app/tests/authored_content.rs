@@ -282,3 +282,22 @@ fn authored_travel_preserves_unavailable_states_and_resolves_known_directed_edge
         assert!(report.route.is_none());
     }
 }
+
+#[test]
+fn authored_dungeon_catalog_uses_exact_declared_identity_title_and_evidence() {
+    let data = bundle();
+    let (app, profile, _) = setup(&data);
+    let request = json!({"subject":{"kind":"character","profile_id":profile},"kind":"dungeons","revision":null,"catalog_sha256":null,"offset":0});
+    let page = app.authored_catalog(&request.to_string()).unwrap();
+    let declared = &data["content"]["dungeons"][0];
+    assert_eq!(page.records.len(), 1);
+    assert_eq!(
+        page.records[0].id.as_str(),
+        declared["id"].as_str().unwrap()
+    );
+    assert_eq!(page.records[0].label, declared["title"].as_str().unwrap());
+    assert_eq!(
+        serde_json::to_value(&page.records[0].evidence).unwrap(),
+        declared["evidence"]
+    );
+}

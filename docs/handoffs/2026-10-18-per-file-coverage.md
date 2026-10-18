@@ -452,3 +452,31 @@ used LLVM_PROFILE_FILE instead of cargo-llvm-cov's LLVM_PROFILE_FILE_NAME and he
 did not select continuous profiles. No counts from that failed export are accepted;
 raw logs/profiles retained. Next diagnostic uses the collector's actual environment
 contract and clears its owned prior coverage artifacts before starting.
+
+Hosted 25549a5 Windows shell job117752054067 confirms the loader repair: seven
+Rust unit tests executed, six passed and the IPC test failed specifically on the
+already-reviewed accepted watcher startup. The same assertion failed on Linux.
+Correction is pushed at 6e9affb; fresh checks are running. No loader failure remains
+in that observed execution.
+
+Clean non-native Linux diagnostic at 6e9affb exported successfully using the
+continuous-profile environment (1,381 tests passed, four explicit regenerators
+ignored). Current-source inventory filtering leaves ten below-threshold files;
+this excludes native Tauri and needs Windows union, so it is not the final gate.
+Artifacts: /tmp/nav-local-expansion-third.{log,lcov}, matching inventory/gaps in
+/tmp/nav-local-expansion-third-inventory.json and /tmp/nav-local-third-gaps.json.
+
+Next focused batch passed locally: eight authored-content tests (exact dungeon
+choice fields); service recreation and worker-entry refusal (one); watcher workflow
+including immutable-candidate reuse after restart (two); idempotent asset install
+and subsequent tamper refusal (one); source retrieval plus upstream metadata states
+(one); two selected-input/CLI round-trip tests; historical and format3 synthetic
+receipt CLI signing/assembly/crypto check with exact production-target refusal
+(one). The real CLI extraction subprocess reaches a durable failure, then explicit
+resume/cancel/forget, and keeps research activation separate. A separate real
+media subprocess refuses an undiscovered ID. Guide replay remains unverified and
+non-clean over the empty synthetic catalog. Read-only lifecycle review found no
+actionable findings. Production metadata transport still uses https_get; its new
+private callback only permits bounded synthetic transport testing.
+App/CLI/storage all-target Clippy, formatting and diff checks pass for that batch.
+Next: clean source diagnostic followed by native union and exact-head CI review.

@@ -189,6 +189,98 @@ fn research_cli_round_trip_preserves_explicit_activation_and_unknown_completenes
     let facts = facts["guide_facts_sha256"].as_str().unwrap();
     let facts_report = run("guide-facts-verify", &["--guide-facts", facts], 0);
     assert_eq!(facts_report["verified_for_planning"], false);
+    // A real isolated media worker receives a valid bounded request but refuses
+    // a file ID absent from this empty catalog; nothing is implicitly discovered.
+    let synthetic_source = Store::new();
+    fs::write(synthetic_source.0.join(".build.info"), format!("Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.70450|{}|{}|enUS text\n", "a".repeat(32), "b".repeat(32))).unwrap();
+    for key in ["a".repeat(32), "b".repeat(32)] {
+        let dir = synthetic_source
+            .0
+            .join(format!("Data/config/{}/{}", &key[..2], &key[2..4]));
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join(key), b"synthetic config").unwrap();
+    }
+    fs::create_dir_all(synthetic_source.0.join("Data/data")).unwrap();
+    fs::write(
+        synthetic_source.0.join("Data/data/data.000"),
+        b"synthetic segment; no archive",
+    )
+    .unwrap();
+    let mut selection = String::new();
+    for preset in ["small", "balanced", "large", "max"] {
+        let value = run(
+            "select",
+            &[
+                "--installation",
+                synthetic_source.0.to_str().unwrap(),
+                "--product",
+                "wow_classic_beta",
+                "--preset",
+                preset,
+            ],
+            0,
+        );
+        selection = value["selection_id"].as_str().unwrap().into();
+        assert_eq!(value["preset"], preset);
+    }
+    assert_eq!(run("selections", &[], 0).as_array().unwrap().len(), 1);
+    assert!(run("jobs", &[], 0).as_array().unwrap().is_empty());
+    let failed = run(
+        "extract",
+        &[
+            "--selection",
+            &selection,
+            "--tables",
+            "Map",
+            "--locales",
+            "enUS",
+            "--job",
+            "synthetic-cli-job",
+        ],
+        1,
+    );
+    assert!(failed["error"].is_string());
+    assert!(
+        !failed
+            .to_string()
+            .contains(synthetic_source.0.to_str().unwrap())
+    );
+    assert_eq!(
+        run("status", &["--job", "synthetic-cli-job"], 0)["state"],
+        "failed"
+    );
+    run("resume", &["--job", "synthetic-cli-job"], 1);
+    assert_eq!(
+        run("cancel", &["--job", "synthetic-cli-job"], 0)["state"],
+        "failed"
+    );
+    run("forget", &["--job", "synthetic-cli-job"], 0);
+    assert!(run("jobs", &[], 0).as_array().unwrap().is_empty());
+    assert_eq!(run("active", &["--catalog", &catalog], 0)["generation"], 0);
+    assert_eq!(
+        run("activate", &["--catalog", &catalog, "--expected", "0"], 0)["generation"],
+        1
+    );
+    assert_eq!(
+        run("rollback", &["--catalog", &catalog, "--expected", "1"], 0)["generation"],
+        2
+    );
+    let refused = run(
+        "media-extract",
+        &[
+            "--installation",
+            synthetic_source.0.to_str().unwrap(),
+            "--catalog",
+            &catalog,
+            "--locale",
+            "enUS",
+            "--ids",
+            "1",
+        ],
+        1,
+    );
+    assert!(refused["error"].is_string());
+    assert!(!refused.to_string().contains(dest));
     let discovery = run(
         "media-discover",
         &["--catalog", &catalog, "--locale", "enUS"],
@@ -277,6 +369,32 @@ fn research_cli_round_trip_preserves_explicit_activation_and_unknown_completenes
         assert_eq!(page["independently_complete"], false);
     }
     let designs = run("route-designs", &["--inventory", inventory], 0);
+    let guide = s.0.join("synthetic-guide.lua");
+    fs::write(&guide, "RXPGuides.RegisterGuide([[\n#name Synthetic\n#forever\n#defaultfor Human Warrior\nstep\n.accept 1\n.turnin 1\n]])").unwrap();
+    let review = run(
+        "bound-guide-review",
+        &[
+            "--delivery",
+            delivery,
+            "--guide",
+            guide.to_str().unwrap(),
+            "--race",
+            "Human",
+            "--class",
+            "Warrior",
+            "--mode",
+            "duo",
+        ],
+        1,
+    );
+    assert_eq!(review["acceptance_ready"], false);
+    assert_eq!(review["report"]["replay_clean"], false);
+    run("media-verify", &["--media", "invalid"], 1);
+    run(
+        "media-page",
+        &["--media", "invalid", "--offset", "0", "--limit", "200"],
+        1,
+    );
     assert!(!serde_json::to_string(&designs).unwrap().contains(dest));
     assert_eq!(
         run("delivery-active", &["--delivery", delivery], 0)["generation"],

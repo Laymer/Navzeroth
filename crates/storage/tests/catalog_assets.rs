@@ -199,3 +199,27 @@ fn repeated_or_empty_supplied_assets_cannot_replace_usable_bundle() {
         );
     }
 }
+
+#[test]
+fn idempotent_asset_install_checks_existing_bindings_and_blob_bytes() {
+    let db = TempDb::new("asset-existing");
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let (revision, assets, request) = bundle();
+    store.stage_content_v2_bundle(&revision, &assets).unwrap();
+    store.activate_content_revision(&revision.key()).unwrap();
+    store.stage_content_v2_bundle(&revision, &assets).unwrap();
+    assert_eq!(
+        store
+            .active_catalog_image(&revision.key().scope, &request)
+            .unwrap()
+            .unwrap(),
+        assets[0].bytes
+    );
+    raw(&db.path).execute_batch("DROP TRIGGER catalog_asset_blobs_no_update; UPDATE catalog_asset_blobs SET bytes=x'00'").unwrap();
+    assert!(store.stage_content_v2_bundle(&revision, &assets).is_err());
+    assert!(
+        store
+            .active_catalog_image(&revision.key().scope, &request)
+            .is_err()
+    );
+}

@@ -761,6 +761,13 @@ fn load_updates_policy(
     Ok((policy, digest(&bytes)))
 }
 fn updates(registry: &Registry, policy: &UpdatesPolicy) -> Vec<Update> {
+    updates_using(registry, policy, https_get)
+}
+fn updates_using(
+    registry: &Registry,
+    policy: &UpdatesPolicy,
+    mut retrieve: impl FnMut(&str, u64) -> Result<Vec<u8>>,
+) -> Vec<Update> {
     let mut rows = Vec::new();
     let mut last_request: Option<Instant> = None;
     for permission in &policy.repositories {
@@ -782,7 +789,7 @@ fn updates(registry: &Registry, policy: &UpdatesPolicy) -> Vec<Update> {
             "https://api.github.com/repos/{}/commits?per_page=1",
             permission.repository
         );
-        let revision = https_get(&url, policy.max_response_bytes)
+        let revision = retrieve(&url, policy.max_response_bytes)
             .ok()
             .and_then(|bytes| {
                 azeroth_core::strict_json::value(&bytes, policy.max_response_bytes as usize).ok()
@@ -837,6 +844,56 @@ mod tests {
         let value = json!({"schema_version":1,"sources":[{"id":"synthetic","revision":revision,"publisher":"synthetic/fixture","origin":{"edition":"wow_forever","build":"1.60.1.70374"},"rights":{"status":"admitted","license":"permissive","license_identifier":"synthetic-test-only","reviewer":"fixture","attribution":"fixture","obligations":"fixture","evidence":[evidence.clone()]},"retrieval":{"method":"https_pinned","max_total_bytes":data.len()+license.len(),"minimum_interval_ms":1000,"max_requests":2,"access_evidence":evidence},"files":[{"path":"facts.json","url":format!("https://raw.githubusercontent.com/synthetic/fixture/{revision}/facts.json"),"sha256":digest(data),"bytes":data.len(),"fields":["quests.shareable"],"transformation":"knowledge_v1"}]}]});
         let raw = serde_json::to_vec(&value).unwrap();
         let mut registry = Registry::parse(&raw).unwrap();
+        let policy: UpdatesPolicy = serde_json::from_value(json!({
+            "schema_version":1,"registry_sha256":digest(&raw),"method":"github_commit_metadata",
+            "reviewer":"synthetic","reviewed_on":"synthetic","access_evidence_url":"https://docs.github.com/en/rest/commits/commits#list-commits",
+            "scope":"metadata only","max_requests":1,"max_response_bytes":1024,"max_total_bytes":1024,"minimum_interval_ms":1000,
+            "repositories":[{"source_id":"synthetic","repository":"synthetic/fixture"}]
+        })).unwrap();
+        for (response, expected, observed) in [
+            (
+                Ok(json!([{"sha":revision}]).to_string().into_bytes()),
+                "retained_revision_is_current",
+                Some(revision.clone()),
+            ),
+            (
+                Ok(json!([{"sha":"b".repeat(40)}]).to_string().into_bytes()),
+                "new_upstream_revision_requires_validation",
+                Some("b".repeat(40)),
+            ),
+            (
+                Ok(json!([{"sha":"A".repeat(40)}]).to_string().into_bytes()),
+                "upstream_freshness_unknown",
+                None,
+            ),
+            (
+                Ok(b"truncated{".to_vec()),
+                "upstream_freshness_unknown",
+                None,
+            ),
+            (
+                Err("synthetic unavailable transport"),
+                "upstream_freshness_unknown",
+                None,
+            ),
+        ] {
+            let mut calls = 0;
+            let rows = updates_using(&registry, &policy, |url, bound| {
+                calls += 1;
+                assert_eq!(
+                    url,
+                    "https://api.github.com/repos/synthetic/fixture/commits?per_page=1"
+                );
+                assert_eq!(bound, 1024);
+                response.clone()
+            });
+            assert_eq!(calls, 1);
+            assert_eq!(rows.len(), 1);
+            assert_eq!(rows[0].status, expected);
+            assert_eq!(rows[0].retained_revision, revision);
+            assert_eq!(rows[0].upstream_revision, observed);
+            assert_eq!(registry.sources[0].revision, revision);
+        }
         let options = Options {
             registry: root.join("unused.json"),
             cache: root.join("cache"),

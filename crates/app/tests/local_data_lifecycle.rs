@@ -33,6 +33,38 @@ fn selected_installation_and_preset_survive_service_recreation() {
             .contains(source.to_str().unwrap())
     );
     assert!(service.restore_selection("missing").is_err());
+    // Unit-test executables deliberately have no worker entrypoint. Real process
+    // startup must fail conservatively without publishing a usable job/revision.
+    assert!(
+        service
+            .start(&view.selection_id, PerformancePreset::Small)
+            .is_err()
+    );
+    assert!(
+        service
+            .start_selected(
+                &view.selection_id,
+                PerformancePreset::Small,
+                vec!["enUS".into()]
+            )
+            .is_err()
+    );
+    assert!(
+        service
+            .media_extract(
+                &view.selection_id,
+                &"0".repeat(64),
+                "enUS",
+                vec![1],
+                PerformancePreset::Small
+            )
+            .is_err()
+    );
+    assert!(service.jobs().unwrap().is_empty());
+    assert_eq!(
+        service.selections().unwrap()[0].selection_id,
+        view.selection_id
+    );
     drop(service);
     fs::remove_dir_all(root).unwrap();
 }
