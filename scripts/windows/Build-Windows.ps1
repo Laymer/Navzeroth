@@ -344,6 +344,8 @@ function Build-Installer([string] $Version) {
     try {
         Invoke-Native 'pnpm' @('install', '--frozen-lockfile')
         Invoke-Native 'cargo' @('fetch', '--locked')
+        Write-Step 'Verify exact dependency notices and retained source closure'
+        Invoke-Native 'node' @('scripts/dependency-notices.mjs', '--check')
         if (-not $SkipTests) {
             Write-Step 'Tests'
             Invoke-Native 'cargo' @('test', '--locked', '--workspace')

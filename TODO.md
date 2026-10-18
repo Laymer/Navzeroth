@@ -50,7 +50,7 @@ exact-head checks and source workflow. No calibrated media or gameplay evidence
 was claimed.
 Continuation 6 merged as PR #196 at `49472d0`; continuation 7 merged as PR #197
 at `8da8301`, each after independent review, all nine exact-head checks and source
-parity. Active: continuation 8, desktop workflow and installer completion, PR #198;
+parity. Active: continuation 9, performance/materials; continuation 8 desktop PR #198 merged at `9d046b7` after all checks;
 [claim](docs/claims/2026-10-18-desktop-completion.md),
 [handoff](docs/handoffs/2026-10-18-desktop-completion.md).
 Independent completeness, performance, substantial coverage expansion, publication
