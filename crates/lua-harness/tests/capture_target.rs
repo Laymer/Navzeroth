@@ -9,11 +9,11 @@ fn only_reported_exact_tuples_admit_experimental_capture() {
             "target-allowlist",
             r#"
       local check=ns.Capabilities.isCaptureTarget
-      for _, build in ipairs({'70338','70374','70425'}) do
+      for _, build in ipairs({'70338','70374','70425','70450'}) do
         assert(check({version='1.60.1',build=build,interface='16001'}))
       end
-      for _, build in ipairs({'70205','70339','70375','70424','70426','unknown','70374 ',
-          '','7042','704250'}) do
+      for _, build in ipairs({'70205','70339','70375','70424','70426','70449','70451',
+          'unknown','70374 ','','7042','704250','7045','704500'}) do
         assert(not check({version='1.60.1',build=build,interface='16001'}))
       end
       assert(not check({version='1.60.2',build='70374',interface='16001'}))
@@ -131,17 +131,22 @@ fn admission_labels_each_build_and_keeps_70425_unverified_and_distinct() {
       local function tuple(build) return {version='1.60.1',build=build,interface='16001'} end
       assert(admission(tuple('70374'))=='release_target')
       assert(admission(tuple('70425'))=='development_unverified')
+      assert(admission(tuple('70450'))=='development_unverified')
       assert(admission(tuple('70338'))=='previous_recorded')
-      for _, build in ipairs({'70424','70426','70205','unknown',''}) do
+      for _, build in ipairs({'70424','70426','70449','70451','70205','unknown',''}) do
         assert(admission(tuple(build))==nil, build)
       end
       assert(admission({version='1.60.2',build='70425',interface='16001'})==nil)
       assert(admission({version='1.60.1',build='70425',interface='16002'})==nil)
       assert(admission({version='1.60.1',build=70425,interface='16001'})==nil)
+      assert(admission({version='1.60.2',build='70450',interface='16001'})==nil)
+      assert(admission({version='1.60.1',build='70450',interface='16002'})==nil)
+      assert(admission({version='1.60.1',build='70450',interface=16001})==nil)
+      assert(admission({version='1.60.1',build=70450,interface='16001'})==nil)
       assert(admission(nil)==nil and admission(false)==nil and admission({})==nil)
       assert(admission(setmetatable({}, {__index=function() error('unreadable') end}))==nil)
       -- isCaptureTarget is exactly "has an admission label"
-      for _, build in ipairs({'70338','70374','70425','70426'}) do
+      for _, build in ipairs({'70338','70374','70425','70426','70450','70451'}) do
         assert(ns.Capabilities.isCaptureTarget(tuple(build))==(admission(tuple(build))~=nil))
       end
     "#,
@@ -184,4 +189,70 @@ fn build_70425_runs_the_guarded_commands_and_stays_labelled_as_its_own_build() {
     assert_eq!(value["game"]["build"], "1.60.1.70425");
     let app = azeroth_app::snapshots::SnapshotApplication::in_memory().unwrap();
     app.import_text(&text, None).unwrap();
+}
+
+#[test]
+fn build_70450_runs_the_guarded_commands_and_stays_labelled_as_its_own_build() {
+    let sandbox = common::stub_client("1.60.1", "70450", 16001);
+    sandbox
+        .run::<()>(
+            "readers",
+            r#"
+      mono=100; wall=1791792000
+      function UnitLevel() return 12 end
+      function GetTime() return mono end
+      function GetServerTime() return wall end
+    "#,
+        )
+        .unwrap();
+    sandbox.load_toc_files().unwrap();
+    let text: String = sandbox
+        .run(
+            "dev-capture-70450",
+            r#"
+      local state=ns.Diagnostics.state
+      state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+      assert(ns.Capabilities.admission({version='1.60.1',build='70450',interface='16001'})
+        =='development_unverified')
+      state.onSlash('snapshot dev-profile')
+      assert(AzerothNavigatorDB.snapshot_sequence==1)
+      state.onSessionSlash('start dev-profile')
+      assert(state.session_recorder:status().phase=='recording')
+      return AzerothNavigatorDB.snapshot_export
+    "#,
+        )
+        .unwrap();
+    // The export records the exact build, so 70450 data is never mistaken for 70425 or 70374.
+    let value: serde_json::Value = serde_json::from_str(&text[6..]).unwrap();
+    assert_eq!(value["game"]["build"], "1.60.1.70450");
+    let app = azeroth_app::snapshots::SnapshotApplication::in_memory().unwrap();
+    app.import_text(&text, None).unwrap();
+}
+
+#[test]
+fn unknown_build_70451_stays_unadmitted_and_refuses_capture() {
+    let sandbox = common::stub_client("1.60.1", "70451", 16001);
+    sandbox
+        .run::<()>(
+            "readers",
+            "reads=0; function UnitLevel() reads=reads+1; return 12 end",
+        )
+        .unwrap();
+    sandbox.load_toc_files().unwrap();
+    sandbox
+        .run::<()>(
+            "unknown-70451",
+            r#"
+      local state=ns.Diagnostics.state
+      state.onEvent(nil,'ADDON_LOADED','AzerothNavigator')
+      local build={version='1.60.1',build='70451',interface='16001'}
+      assert(ns.Capabilities.admission(build)==nil)
+      assert(not ns.Capabilities.isCaptureTarget(build))
+      state.onSlash('snapshot dev-profile')
+      assert(reads==0 and AzerothNavigatorDB.snapshot_export==nil)
+      state.onSessionSlash('start dev-profile')
+      assert(state.session_recorder==nil or state.session_recorder:status().phase=='idle')
+    "#,
+        )
+        .unwrap();
 }
