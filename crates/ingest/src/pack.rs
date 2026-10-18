@@ -203,6 +203,12 @@ fn path_checked(path: &Path, directory: bool) -> Res<()> {
             return Err("Parent traversal is unsupported");
         }
         prefix.push(part.as_os_str());
+        // A bare Windows prefix (`C:`, `\\?\C:`, `\\server\share`) names a drive
+        // or volume, not a directory entry; a verbatim one cannot be inspected at
+        // all. Its root is inspected at the next component, so skip only the prefix.
+        if matches!(part, Component::Prefix(_)) {
+            continue;
+        }
         let meta =
             fs::symlink_metadata(&prefix).map_err(|_| "Selected pack path cannot be inspected")?;
         #[cfg(windows)]
@@ -930,6 +936,59 @@ mod publication_tests {
             fs::read(path.join("entries/unrelated-sentinel")).unwrap(),
             b"preserved"
         );
+        fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod path_tests {
+    use super::*;
+    fn temporary(name: &str) -> PathBuf {
+        let root =
+            std::env::temp_dir().join(format!("anav-pack-path-{}-{name}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(root.join("pack")).unwrap();
+        fs::write(root.join("pack/a.json"), b"{}").unwrap();
+        root
+    }
+    #[test]
+    fn absolute_paths_pass_and_parent_traversal_is_refused() {
+        let root = temporary("absolute");
+        path_checked(&root.join("pack"), true).unwrap();
+        path_checked(&root.join("pack/a.json"), false).unwrap();
+        assert_eq!(
+            path_checked(&root.join("pack/a.json"), true),
+            Err("Pack path has the wrong file kind")
+        );
+        assert_eq!(
+            path_checked(&root.join("pack/../pack"), true),
+            Err("Parent traversal is unsupported")
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(unix)]
+    #[test]
+    fn symlinked_ancestors_stay_refused() {
+        let root = temporary("symlink");
+        std::os::unix::fs::symlink(root.join("pack"), root.join("link")).unwrap();
+        assert_eq!(
+            path_checked(&root.join("link/a.json"), false),
+            Err("Symlink paths are unsupported")
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[cfg(windows)]
+    #[test]
+    fn verbatim_prefixed_paths_are_inspected_from_their_root() {
+        let root = temporary("verbatim");
+        // `canonicalize` returns a `\\?\C:\...` verbatim path on Windows.
+        let verbatim = fs::canonicalize(root.join("pack")).unwrap();
+        assert!(matches!(
+            verbatim.components().next(),
+            Some(Component::Prefix(p)) if p.kind().is_verbatim()
+        ));
+        path_checked(&verbatim, true).unwrap();
+        path_checked(&verbatim.join("a.json"), false).unwrap();
         fs::remove_dir_all(root).unwrap();
     }
 }

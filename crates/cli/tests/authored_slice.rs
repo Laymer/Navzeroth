@@ -11,6 +11,8 @@ use std::{
 
 fn input() -> PathBuf {
     // The pack builder refuses parent traversal, so resolve the repository path.
+    // On Windows this yields a verbatim `\\?\C:\...` path, which the builder must
+    // accept: a user can select one too.
     fs::canonicalize(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../content/authored/slice-v1"))
         .unwrap()
 }
