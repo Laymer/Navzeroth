@@ -1,5 +1,6 @@
 //! Deterministic local reference packs. Files are bounded data, never executable inputs.
 pub mod v2;
+use azeroth_core::selection_path::{PrefixRefusal, check_prefix};
 use azeroth_core::{
     contract::{Envelope, MAX_DATASET_BYTES, ReferenceDataset, decode_envelope},
     coverage::content_report,
@@ -15,7 +16,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File, OpenOptions},
     io::{Cursor, Read, Write},
-    path::{Component, Path, PathBuf, Prefix},
+    path::{Component, Path, PathBuf},
     sync::atomic::{AtomicU64, Ordering},
 };
 
@@ -189,15 +190,6 @@ fn typed<T: serde::de::DeserializeOwned + Serialize>(bytes: &[u8]) -> Res<T> {
     )?;
     Ok(parsed)
 }
-/// Drive letters and network shares, plain or verbatim. Device namespaces
-/// (`\\.\pipe\x`) and other verbatim prefixes (`\\?\GLOBALROOT\...`) are not
-/// file-system selections.
-fn disk_or_share(prefix: Prefix<'_>) -> bool {
-    matches!(
-        prefix,
-        Prefix::Disk(_) | Prefix::VerbatimDisk(_) | Prefix::UNC(..) | Prefix::VerbatimUNC(..)
-    )
-}
 fn path_checked(path: &Path, directory: bool) -> Res<()> {
     let absolute = if path.is_absolute() {
         path.to_owned()
@@ -206,25 +198,20 @@ fn path_checked(path: &Path, directory: bool) -> Res<()> {
             .map_err(|_| "Current directory unavailable")?
             .join(path)
     };
+    check_prefix(&absolute).map_err(|refusal| match refusal {
+        PrefixRefusal::DeviceNamespace => "Device namespace paths are unsupported",
+        PrefixRefusal::DriveRelative => "Drive-relative paths are unsupported",
+    })?;
     let mut prefix = PathBuf::new();
-    let mut after_prefix = false;
     for part in absolute.components() {
         if matches!(part, Component::ParentDir) {
             return Err("Parent traversal is unsupported");
-        }
-        // A drive-relative `C:foo` resolves against a per-drive current directory.
-        if std::mem::take(&mut after_prefix) && part != Component::RootDir {
-            return Err("Drive-relative paths are unsupported");
         }
         prefix.push(part.as_os_str());
         // A bare Windows prefix (`C:`, `\\?\C:`, `\\server\share`) names a drive
         // or volume, not a directory entry; a verbatim one cannot be inspected at
         // all. Its root is inspected at the next component, so skip only the prefix.
-        if let Component::Prefix(kind) = part {
-            if !disk_or_share(kind.kind()) {
-                return Err("Device namespace paths are unsupported");
-            }
-            after_prefix = true;
+        if matches!(part, Component::Prefix(_)) {
             continue;
         }
         let meta =
@@ -242,9 +229,6 @@ fn path_checked(path: &Path, directory: bool) -> Res<()> {
         if prefix != absolute && !meta.is_dir() {
             return Err("Pack path ancestor must be a directory");
         }
-    }
-    if after_prefix {
-        return Err("Drive-relative paths are unsupported");
     }
     let meta = fs::symlink_metadata(path).map_err(|_| "Selected pack path cannot be inspected")?;
     if (directory && !meta.is_dir()) || (!directory && !meta.is_file()) {
@@ -1024,9 +1008,13 @@ mod path_tests {
             );
         }
         let drive = std::env::current_dir().unwrap();
+        // Drive-relative forms exist only for a drive-letter working directory.
         let Some(Component::Prefix(prefix)) = drive.components().next() else {
             panic!("current directory has no prefix");
         };
+        if !matches!(prefix.kind(), std::path::Prefix::Disk(_)) {
+            return;
+        }
         let letter = prefix.as_os_str().to_str().unwrap().to_owned();
         for relative in [format!("{letter}Windows"), letter] {
             assert_eq!(

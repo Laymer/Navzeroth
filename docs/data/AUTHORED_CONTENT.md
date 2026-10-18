@@ -37,9 +37,9 @@ Building or verifying the pack does not activate it for planning.
 
 `azeroth_core::content_v2::authored::validate_authored` runs after the normal v2
 decode. `build-content-v2` and `verify-pack` (and every reader of a verified v2
-pack) apply it whenever every source in `sources.json` has access `authored` and
-the catalog is not a fixture; such a pack must declare exactly one source. It
-refuses, on top of the graph validation:
+pack) apply it whenever any source in `sources.json` has access `authored` and
+the catalog is not a fixture; such a pack must declare exactly that one source.
+It refuses, on top of the graph validation:
 
 - evidence from any source other than the declared authored source, or evidence
   marked `verified_on_build` or `cross_edition_unverified`;

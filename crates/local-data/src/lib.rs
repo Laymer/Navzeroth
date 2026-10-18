@@ -28,12 +28,13 @@ use azeroth_core::local_data::{
     FORMAT_VERSION, InstallationMetadata, MAX_BUILD_INFO_BYTES, MAX_METADATA_BYTES, MetadataBundle,
     PerformancePreset, ResourceLimits, decode_metadata, inspect_build_info,
 };
+use azeroth_core::selection_path::{PrefixRefusal, check_prefix};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, Metadata},
     io::Read,
-    path::{Component, Path, PathBuf, Prefix},
+    path::{Component, Path, PathBuf},
     time::{Duration, SystemTime},
 };
 
@@ -125,40 +126,26 @@ pub fn checked_path(path: &Path) -> Result<PathBuf> {
             .map_err(|_| "Cannot resolve selection")?
             .join(path)
     };
+    // Only drive letters and network shares, plain or verbatim, are file-system
+    // selections; not `\\.\pipe\x`, `\\?\GLOBALROOT\...` or drive-relative `C:foo`.
+    check_prefix(&absolute).map_err(|refusal| match refusal {
+        PrefixRefusal::DeviceNamespace => "Device namespace selections are unsupported",
+        PrefixRefusal::DriveRelative => "Drive-relative selections are unsupported",
+    })?;
     let mut cursor = PathBuf::new();
-    let mut after_prefix = false;
     for part in absolute.components() {
         if part == Component::CurDir {
             continue;
         }
-        // A drive-relative `C:foo` resolves against a per-drive current directory.
-        if std::mem::take(&mut after_prefix) && part != Component::RootDir {
-            return Err("Drive-relative selections are unsupported");
-        }
         cursor.push(part.as_os_str());
-        // Only drive letters and network shares, plain or verbatim, are file-system
-        // selections; not `\\.\pipe\x` or `\\?\GLOBALROOT\...`. The bare prefix
-        // names a volume, so its root is inspected at the next component.
-        if let Component::Prefix(prefix) = part {
-            if !matches!(
-                prefix.kind(),
-                Prefix::Disk(_)
-                    | Prefix::VerbatimDisk(_)
-                    | Prefix::UNC(..)
-                    | Prefix::VerbatimUNC(..)
-            ) {
-                return Err("Device namespace selections are unsupported");
-            }
-            after_prefix = true;
+        // The bare prefix names a volume; its root is inspected at the next component.
+        if matches!(part, Component::Prefix(_)) {
             continue;
         }
         let metadata = fs::symlink_metadata(&cursor).map_err(|_| "Selection is inaccessible")?;
         if linked(&metadata) {
             return Err("Linked or reparse-point selections are unsupported");
         }
-    }
-    if after_prefix {
-        return Err("Drive-relative selections are unsupported");
     }
     fs::canonicalize(absolute).map_err(|_| "Cannot resolve selection")
 }
@@ -412,9 +399,13 @@ mod tests {
                 "{device}"
             );
         }
+        // Drive-relative forms exist only for a drive-letter working directory.
         let Some(Component::Prefix(prefix)) = current.components().next() else {
             panic!("current directory has no prefix");
         };
+        if !matches!(prefix.kind(), std::path::Prefix::Disk(_)) {
+            return;
+        }
         let letter = prefix.as_os_str().to_str().unwrap().to_owned();
         for relative in [format!("{letter}Windows"), letter] {
             assert_eq!(

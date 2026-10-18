@@ -174,4 +174,21 @@ fn authored_rules_refuse_invented_game_facts_in_build_and_verify() {
         assert!(!output.status.success());
         assert!(String::from_utf8_lossy(&output.stderr).contains(REFUSAL));
     }
+    assert!(!cli_out.exists());
+
+    // A second, non-authored source cannot switch the authored rules off.
+    let mixed = t.0.join("mixed");
+    copy(&changed, &mixed);
+    let sources_path = mixed.join("sources.json");
+    let mut sources: serde_json::Value =
+        serde_json::from_slice(&fs::read(&sources_path).unwrap()).unwrap();
+    let mut other = sources["sources"][0].clone();
+    other["id"] = "another-source".into();
+    other["access"]["value"] = "manual_entry".into();
+    sources["sources"].as_array_mut().unwrap().push(other);
+    fs::write(&sources_path, serde_json::to_vec(&sources).unwrap()).unwrap();
+    assert_eq!(
+        build(&mixed, &t.0.join("mixed-out")).err(),
+        Some("Authored pack must declare exactly one source")
+    );
 }

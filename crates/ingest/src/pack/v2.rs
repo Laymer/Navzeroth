@@ -46,23 +46,24 @@ fn distribution(content: &ReferenceContent, registry: &SourceRegistry) -> Res<bo
     }
     Ok(permitted)
 }
-/// An authored pack (every registered source has access `authored`) carries
-/// original writing only: run the authored-content rules on top of the graph
-/// validation. A fixture catalog is synthetic engineering data, already flagged
-/// as a fixture, and is not authored content.
+/// A pack that registers an authored source carries original writing only: it
+/// must register exactly that one source, and the authored-content rules run on
+/// top of the graph validation. A mixed registry would let game facts cite the
+/// authored source unchecked, so it is refused. A fixture catalog is synthetic
+/// engineering data, flagged as a fixture (which the release gate refuses), and
+/// is not authored content.
 fn authored(content: &ReferenceContent, registry: &SourceRegistry) -> Res<()> {
     if content.reference.fixture
-        || registry.is_empty()
         || !registry
             .iter()
-            .all(|s| s.access.value() == Some(&AccessMethod::Authored))
+            .any(|s| s.access.value() == Some(&AccessMethod::Authored))
     {
         return Ok(());
     }
     let mut sources = registry.iter();
     match (sources.next(), sources.next()) {
         (Some(source), None) => validate_authored(content, &source.id),
-        _ => Err("Authored pack must declare exactly one authored source"),
+        _ => Err("Authored pack must declare exactly one source"),
     }
 }
 fn gaps(content: &ReferenceContent) -> Res<u64> {
@@ -270,14 +271,15 @@ pub fn build(input: &Path, output: &Path) -> Res<Report> {
     };
     let content = content_v2::decode(&budget.read(&input.join("catalog.json"), MAX_CATALOG_BYTES)?)
         .map_err(|_| "Invalid authored v2 content")?;
+    // Refuse invented game facts before staging any catalog bytes.
+    let registry = read_sources(&budget.read(&input.join("sources.json"), MAX_SOURCES_BYTES)?)?;
+    authored(&content, &registry)?;
     let bytes = canonical(&content)?;
     if bytes.len() > MAX_CATALOG_BYTES {
         return Err("Canonical catalog exceeds limit");
     }
     let catalog = record("catalog.json", &bytes)?;
     stage.write(&stage.root.join("catalog.json"), &bytes)?;
-    let registry = read_sources(&budget.read(&input.join("sources.json"), MAX_SOURCES_BYTES)?)?;
-    authored(&content, &registry)?;
     let bytes = source_bytes(&registry)?;
     if bytes.len() > MAX_SOURCES_BYTES {
         return Err("Canonical source registry exceeds limit");
