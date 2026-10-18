@@ -273,6 +273,11 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  prepare_research_delivery:{input:{catalog:string;locale:string};output:string};
+  get_research_delivery_page:{input:{revision:string;domain:string;offset:number;limit:number};output:import("./localData").ResearchDeliveryPage};
+  get_research_delivery_activation:{input:{revision:string};output:import("./localData").ResearchDeliveryActivation};
+  activate_research_delivery:{input:{revision:string;expected:number;rollback:boolean};output:import("./localData").ResearchDeliveryActivation};
+  diff_research_delivery:{input:{before:string;after:string};output:import("./localData").ResearchDeliveryDiff};
   list_local_installations:{input:undefined;output:import("./localData").SavedLocalInstallation[]};
   restore_local_installation:{input:{selection_id:string};output:import("./localData").LocalInstallation};
   list_local_data_jobs:{input:undefined;output:import("./localData").LocalDataJob[]};

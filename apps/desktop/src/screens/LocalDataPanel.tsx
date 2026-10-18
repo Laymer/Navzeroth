@@ -1,4 +1,5 @@
 import "./dataScreens.css";
+import {ResearchDeliveryPanel} from "./ResearchDeliveryPanel";
 import {useEffect,useRef,useState} from "react";
 import type {CommandClient} from "../commands";
 import type {LocalDataInventoryPage,LocalDataJob,LocalDataPlan,LocalDataPreset,LocalInstallation,LocalDataActivation,SavedLocalInstallation} from "../commands/localData";
@@ -99,6 +100,7 @@ export function LocalDataPanel({client}:{client:CommandClient}) {
       {activation&&<div><p>Research revision: {activation.catalog_sha256??"none"}; generation {activation.generation}. No gameplay availability is established.</p><Button disabled={busy||running} onClick={()=>void researchActivation(true)}>Activate research revision</Button><Button disabled={busy||running||activation.generation===0} onClick={()=>void researchActivation(true,true)}>Restore previously active research revision</Button></div>}
     </div>}
     {page&&<><p>Catalog {page.revision}; {page.total} table and locale candidates.</p><table><thead><tr><th>Table</th><th>Locale</th><th>Disposition</th><th>Details</th></tr></thead><tbody>{page.rows.map(row=><tr key={`${row.table}:${row.locale}`}><td>{row.table}</td><td>{row.locale??"unknown"}</td><td>{row.disposition.replaceAll("_"," ")}</td><td>{row.reason.replaceAll("_"," ")}</td></tr>)}</tbody></table>{page.next_offset!==null&&<Button disabled={busy} onClick={()=>{if(page.next_offset!==null)void inventory(page.next_offset);}}>Next inventory page</Button>}</>}
+    {job?.summary&&<ResearchDeliveryPanel client={client} catalog={job.summary.catalog_sha256}/>}
     {busy&&<p role="status">Reading local data…</p>}{message&&<p role="alert">{message}</p>}
   </Panel>;
 }

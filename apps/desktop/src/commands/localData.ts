@@ -19,3 +19,7 @@ export interface LocalDataInventoryPage {
 
 export interface SavedLocalInstallation {selection_id:string;product:string;preset:LocalDataPreset}
 export interface LocalDataActivation {format_version:1;scope:string;generation:number;catalog_sha256:string|null;verified_for_planning:false}
+
+export interface ResearchDeliveryActivation {format_version:1;scope:string;generation:number;delivery_sha256:string|null;verified_for_planning:false}
+export interface ResearchDeliveryDiff {before:string;after:string;changed:string[];same_scope:boolean;actionable_advice:false}
+export interface ResearchDeliveryPage {revision:string;domain:string;offset:number;total:number|null;sources:{table:string;state:"projected"|"gap";reason:string}[];gaps:string[];next_offset:number|null;rows:{domain:string;id:number;facts:unknown}[];guard:{development_match:"unconfigured"|"matched"|"different";actionable_advice:false;acceptance_ready:false;limitations:string[]}}

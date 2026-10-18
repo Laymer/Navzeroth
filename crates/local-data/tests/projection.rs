@@ -1458,3 +1458,134 @@ fn media_reference_fields_match_all_admitted_layouts() {
         }
     }
 }
+#[test]
+fn delivery_closure_match_is_research_only_and_failed_activation_preserves_previous() {
+    use azeroth_core::{
+        local_data::PerformancePreset,
+        local_data_delivery::{DeliveryPolicyV3, DevelopmentMatch, ExpectedDevelopment},
+    };
+    use azeroth_local_data::delivery;
+    let (root, catalog, _) = seeded_store("delivery");
+    let projected = projection::project_catalog(&root, &catalog, "enUS").unwrap();
+    let first = delivery::build(
+        &root,
+        &projected.projection_sha256,
+        &[],
+        &[],
+        None,
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let binding = delivery::verify(&root, &first).unwrap();
+    assert!(binding.fixture);
+    assert!(!binding.verified_for_planning);
+    let policy = DeliveryPolicyV3 {
+        format_version: 3,
+        target: None,
+        trusted_signers: BTreeMap::new(),
+        development: vec![ExpectedDevelopment {
+            tuple: binding.tuple.clone(),
+            delivery_sha256: first.clone(),
+        }],
+    };
+    let page = delivery::page(&root, &first, "equipment", 0, 200, Some(&policy)).unwrap();
+    assert_eq!(page.guard.development_match, DevelopmentMatch::Matched);
+    assert!(!page.guard.actionable_advice && !page.guard.acceptance_ready);
+    assert!(!page.rows.is_empty());
+    assert!(delivery::page(&root, &first, "equipment", 0, 201, None).is_err());
+    let active = delivery::activate(&root, &first, 0, false).unwrap();
+    assert_eq!(active.generation, 1);
+    assert!(!active.verified_for_planning);
+    assert!(delivery::activate(&root, &"f".repeat(64), 1, false).is_err());
+    assert_eq!(
+        delivery::active(&root, &first).unwrap().delivery_sha256,
+        Some(first.clone())
+    );
+    let guide = azeroth_local_data::guide_facts::build(
+        &root,
+        &projected.projection_sha256,
+        &[],
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let second = delivery::build(
+        &root,
+        &projected.projection_sha256,
+        &[],
+        &[],
+        Some(&guide.guide_facts_sha256),
+        PerformancePreset::Max,
+    )
+    .unwrap();
+    let diff = delivery::diff(&root, &first, &second).unwrap();
+    assert!(diff.same_scope && diff.changed.iter().any(|v| v == "guide_facts"));
+    assert!(!diff.actionable_advice);
+    assert!(delivery::activate(&root, &second, 1, true).is_err());
+    delivery::activate(&root, &second, 1, false).unwrap();
+    delivery::activate(&root, &first, 2, true).unwrap();
+    assert_eq!(delivery::active(&root, &first).unwrap().generation, 3);
+    let bytes = fs::read(root.join("deliveries").join(&first)).unwrap();
+    let mut substituted: azeroth_core::local_data_delivery::Delivery =
+        serde_json::from_slice(&bytes).unwrap();
+    substituted.dependencies_sha256 = "f".repeat(64);
+    let bytes = serde_json::to_vec(&substituted).unwrap();
+    let digest = hash(&bytes);
+    fs::write(root.join("deliveries").join(&digest), bytes).unwrap();
+    assert!(delivery::verify(&root, &digest).is_err());
+    assert_eq!(delivery::active(&root, &first).unwrap().generation, 3);
+    fs::remove_dir_all(root).unwrap();
+}
+#[test]
+fn delivery_lookup_preserves_missing_unsupported_and_justified_empty_sources() {
+    use azeroth_core::local_data::PerformancePreset;
+    use azeroth_local_data::delivery;
+    for mode in ["missing", "unsupported", "empty"] {
+        let root = private_store(&format!("delivery-state-{mode}"));
+        let mut source = tables();
+        if mode != "missing" {
+            source.insert("SpellName", table(vec![], &[]));
+        }
+        let (mut catalog, objects) = with_expanded(&source);
+        if mode == "unsupported" {
+            catalog
+                .tables
+                .iter_mut()
+                .find(|t| t.table == "SpellName")
+                .unwrap()
+                .layout_hash = Some("deadbeef".into());
+        }
+        fs::create_dir(root.join("objects")).unwrap();
+        fs::create_dir(root.join("catalogs")).unwrap();
+        for (digest, bytes) in objects {
+            fs::write(root.join("objects").join(digest), bytes).unwrap();
+        }
+        let bytes = serde_json::to_vec(&catalog).unwrap();
+        let digest = hash(&bytes);
+        fs::write(root.join("catalogs").join(&digest), bytes).unwrap();
+        let projected = projection::project_catalog(&root, &digest, "enUS").unwrap();
+        let revision = delivery::build(
+            &root,
+            &projected.projection_sha256,
+            &[],
+            &[],
+            None,
+            PerformancePreset::Max,
+        )
+        .unwrap();
+        let page = delivery::page(&root, &revision, "SpellName", 0, 200, None).unwrap();
+        assert!(page.rows.is_empty());
+        if mode == "empty" {
+            assert_eq!(page.total, Some(0));
+            assert_eq!(page.sources[0].state, SourceState::Projected);
+        } else {
+            assert_eq!(page.total, None);
+            assert_eq!(page.sources[0].state, SourceState::Gap);
+            assert!(page.sources[0].reason.contains(if mode == "missing" {
+                "not_in_catalog"
+            } else {
+                "unsupported"
+            }));
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
+}

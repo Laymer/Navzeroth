@@ -34,6 +34,63 @@ pub struct LocalDataService {
     jobs: Arc<Mutex<BTreeMap<String, WorkerControl>>>,
 }
 impl LocalDataService {
+    pub fn prepare_delivery(&self, catalog: &str, locale: &str) -> Result<String> {
+        let root = self.store()?;
+        let projection = azeroth_local_data::projection::project_catalog(&root, catalog, locale)
+            .map_err(error)?;
+        azeroth_local_data::delivery::build(
+            &root,
+            &projection.projection_sha256,
+            &[],
+            &[],
+            None,
+            PerformancePreset::Max,
+        )
+        .map_err(error)
+    }
+    pub fn delivery_page(
+        &self,
+        revision: &str,
+        domain: &str,
+        offset: u32,
+        limit: u32,
+    ) -> Result<azeroth_local_data::delivery::Page> {
+        let policy = azeroth_local_data::delivery_receipts::policy(include_bytes!(
+            "../../../config/release-delivery-v3.pending.json"
+        ))
+        .map_err(error)?;
+        azeroth_local_data::delivery::page(
+            &self.store()?,
+            revision,
+            domain,
+            offset,
+            limit,
+            Some(&policy),
+        )
+        .map_err(error)
+    }
+    pub fn delivery_active(
+        &self,
+        revision: &str,
+    ) -> Result<azeroth_core::local_data_delivery::Activation> {
+        azeroth_local_data::delivery::active(&self.store()?, revision).map_err(error)
+    }
+    pub fn activate_delivery(
+        &self,
+        revision: &str,
+        expected: u64,
+        rollback: bool,
+    ) -> Result<azeroth_core::local_data_delivery::Activation> {
+        azeroth_local_data::delivery::activate(&self.store()?, revision, expected, rollback)
+            .map_err(error)
+    }
+    pub fn delivery_diff(
+        &self,
+        before: &str,
+        after: &str,
+    ) -> Result<azeroth_local_data::delivery::Diff> {
+        azeroth_local_data::delivery::diff(&self.store()?, before, after).map_err(error)
+    }
     pub fn media_discover(
         &self,
         catalog: &str,

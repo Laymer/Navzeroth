@@ -37,7 +37,7 @@ pub fn run(args: &[OsString]) -> ExitCode {
     let usage = || {
         println!(
             "{}",
-            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data media-discover --destination <private-directory> --catalog <sha256> --locale <locale> [--offset <number> --limit <1-200>]; local-data media-extract --installation <directory> --destination <private-directory> --catalog <sha256> --locale <locale> --ids <sorted-comma-separated-IDs> [--preset small|balanced|large|max]; local-data media-verify --destination <private-directory> --media <sha256>; local-data media-page --destination <private-directory> --media <sha256> --offset <number> --limit <1-200>; local-data tooltip --destination <private-directory> --projection <sha256> --spell <id>; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
+            serde_json::json!({"format_version":1,"error":"usage","usage":"local-data (select|inspect) --installation <directory> --product <product>; local-data (plan|extract) --installation <directory> --product <product> --destination <private-directory> [--preset small|balanced|large|max] [extract: --tables <comma-separated-names>]; local-data (verify|coverage|status) --destination <private-directory> --catalog <sha256>; local-data (cache-stage|cache-stage-fixture|observation-stage) --destination <private-directory> --catalog <sha256> --input <selected-file> --kind <hotfix|quest|creature|game-object|item|snapshot|session> --locale <locale> [--preset small|balanced|large|max]; local-data guide-facts-build --destination <private-directory> --projection <sha256> [--inputs <comma-separated-input-digests>] [--preset small|balanced|large|max]; local-data guide-facts-verify --destination <private-directory> --guide-facts <sha256>; local-data media-discover --destination <private-directory> --catalog <sha256> --locale <locale> [--offset <number> --limit <1-200>]; local-data media-extract --installation <directory> --destination <private-directory> --catalog <sha256> --locale <locale> --ids <sorted-comma-separated-IDs> [--preset small|balanced|large|max]; local-data media-verify --destination <private-directory> --media <sha256>; local-data media-page --destination <private-directory> --media <sha256> --offset <number> --limit <1-200>; local-data tooltip --destination <private-directory> --projection <sha256> --spell <id>; local-data delivery-build --destination <private-directory> --projection <sha256> [--media <sorted-digests>] [--inputs <sorted-digests>] [--guide-facts <sha256>]; local-data (delivery-verify|delivery-active) --destination <private-directory> --delivery <sha256>; local-data (delivery-activate|delivery-rollback) --destination <private-directory> --delivery <sha256> --expected <generation>; local-data delivery-diff --destination <private-directory> --before <sha256> --after <sha256>; local-data delivery-page --destination <private-directory> --delivery <sha256> --domain <domain-or-table> --offset <number> --limit <1-200>; local-data delivery-receipt-(sign|assemble|verify) <explicit receipt options, see LOCAL_DELIVERY.md>; local-data input-verify --destination <private-directory> --input <sha256>; local-data input-page --destination <private-directory> --input <sha256> --offset <number> --limit <1-200>; local-data project --destination <private-directory> --catalog <sha256> --locale <locale>; local-data projection-verify --destination <private-directory> --projection <sha256>; local-data (jobs|selections) --destination <private-directory>; local-data (status|cancel|resume|forget) --destination <private-directory> --job <id>; local-data active --destination <private-directory> --catalog <sha256>; local-data (activate|rollback) --destination <private-directory> --catalog <sha256> --expected <generation>; local-data receipt-public-key --secret-key <file>; local-data receipt-sign --payload <file> --policy <file> --key-id <id> --secret-key <file>; local-data receipt-assemble --payload <file> --operator <file> --reviewer <file>; local-data receipt-verify --receipt <file> --policy <file> --candidate <commit> --production <sha256>"})
         );
         ExitCode::from(2)
     };
@@ -45,6 +45,33 @@ pub fn run(args: &[OsString]) -> ExitCode {
         return usage();
     };
     let allowed: &[&str] = match command {
+        "delivery-receipt-sign" => &["--payload", "--policy", "--key-id", "--secret-key"],
+        "delivery-receipt-assemble" => &["--payload", "--operator", "--reviewer"],
+        "delivery-receipt-verify" => &[
+            "--receipt",
+            "--policy",
+            "--candidate",
+            "--production",
+            "--delivery",
+        ],
+        "delivery-build" => &[
+            "--destination",
+            "--projection",
+            "--media",
+            "--inputs",
+            "--guide-facts",
+            "--preset",
+        ],
+        "delivery-verify" | "delivery-active" => &["--destination", "--delivery"],
+        "delivery-activate" | "delivery-rollback" => &["--destination", "--delivery", "--expected"],
+        "delivery-diff" => &["--destination", "--before", "--after"],
+        "delivery-page" => &[
+            "--destination",
+            "--delivery",
+            "--domain",
+            "--offset",
+            "--limit",
+        ],
         "media-discover" => &[
             "--destination",
             "--catalog",
@@ -116,6 +143,12 @@ pub fn run(args: &[OsString]) -> ExitCode {
         {
             return usage();
         }
+    }
+    if command.starts_with("delivery-receipt-") {
+        return delivery_receipt_command(command, &options);
+    }
+    if command.starts_with("delivery-") {
+        return delivery_command(command, &options);
     }
     if matches!(
         command,
@@ -661,6 +694,159 @@ fn media_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
             }
             _ => Err("Unsupported media operation"),
         }
+    })();
+    emit(result)
+}
+
+fn delivery_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    let result = (|| {
+        let value = |key: &str| {
+            options
+                .get(key)
+                .and_then(|s| s.to_str())
+                .ok_or("Missing delivery option")
+        };
+        let root = Path::new(
+            options
+                .get("--destination")
+                .ok_or("Missing delivery destination")?,
+        );
+        let json = |v| Ok(v);
+        match command {
+            "delivery-build" => {
+                let list = |key: &str| -> Result<Vec<String>, &'static str> {
+                    options.get(key).map_or(Ok(vec![]), |v| {
+                        Ok(v.to_str()
+                            .ok_or("Invalid delivery digests")?
+                            .split(',')
+                            .map(str::to_owned)
+                            .collect())
+                    })
+                };
+                let media = list("--media")?;
+                let inputs = list("--inputs")?;
+                let guide = options
+                    .get("--guide-facts")
+                    .map(|s| s.to_str().ok_or("Invalid guide facts identity"))
+                    .transpose()?;
+                let digest = azeroth_local_data::delivery::build(
+                    root,
+                    value("--projection")?,
+                    &media,
+                    &inputs,
+                    guide,
+                    preset(options.get("--preset")).ok_or("Invalid delivery preset")?,
+                )?;
+                json(
+                    serde_json::json!({"format_version":1,"delivery_sha256":digest,"verified_for_planning":false}),
+                )
+            }
+            "delivery-verify" => json(
+                serde_json::to_value(azeroth_local_data::delivery::verify(
+                    root,
+                    value("--delivery")?,
+                )?)
+                .map_err(|_| "Delivery JSON failed")?,
+            ),
+            "delivery-active" => json(
+                serde_json::to_value(azeroth_local_data::delivery::active(
+                    root,
+                    value("--delivery")?,
+                )?)
+                .map_err(|_| "Delivery JSON failed")?,
+            ),
+            "delivery-activate" | "delivery-rollback" => json(
+                serde_json::to_value(azeroth_local_data::delivery::activate(
+                    root,
+                    value("--delivery")?,
+                    value("--expected")?
+                        .parse()
+                        .map_err(|_| "Invalid delivery generation")?,
+                    command == "delivery-rollback",
+                )?)
+                .map_err(|_| "Delivery JSON failed")?,
+            ),
+            "delivery-diff" => json(
+                serde_json::to_value(azeroth_local_data::delivery::diff(
+                    root,
+                    value("--before")?,
+                    value("--after")?,
+                )?)
+                .map_err(|_| "Delivery JSON failed")?,
+            ),
+            "delivery-page" => json(
+                serde_json::to_value(azeroth_local_data::delivery::page(
+                    root,
+                    value("--delivery")?,
+                    value("--domain")?,
+                    value("--offset")?
+                        .parse()
+                        .map_err(|_| "Invalid delivery offset")?,
+                    value("--limit")?
+                        .parse()
+                        .map_err(|_| "Invalid delivery limit")?,
+                    None,
+                )?)
+                .map_err(|_| "Delivery JSON failed")?,
+            ),
+            _ => Err("Unsupported delivery command"),
+        }
+    })();
+    emit(result)
+}
+
+fn delivery_receipt_command(command: &str, options: &BTreeMap<&str, &OsStr>) -> ExitCode {
+    use azeroth_local_data::{delivery_receipts as v3, receipts};
+    let text = |key: &str| {
+        options
+            .get(key)
+            .and_then(|s| s.to_str())
+            .ok_or("Missing format 3 receipt option")
+    };
+    let file = |key: &str| -> Result<Vec<u8>, &'static str> {
+        let path = options.get(key).ok_or("Missing receipt input")?;
+        azeroth_local_data::checked_path(Path::new(path))?;
+        read_small(path, 128 * 1024)
+    };
+    if command == "delivery-receipt-assemble" {
+        let result = (|| {
+            v3::assemble(
+                v3::read_payload(&file("--payload")?)?,
+                receipts::read_signature(&file("--operator")?)?,
+                receipts::read_signature(&file("--reviewer")?)?,
+            )
+        })();
+        return match result {
+            Ok(bytes) => {
+                use std::io::Write;
+                match std::io::stdout().lock().write_all(&bytes) {
+                    Ok(()) => ExitCode::SUCCESS,
+                    Err(_) => ExitCode::from(1),
+                }
+            }
+            Err(e) => emit::<()>(Err(e)),
+        };
+    }
+    let result = (|| match command {
+        "delivery-receipt-sign" => {
+            let payload = v3::read_payload(&file("--payload")?)?;
+            let policy = v3::policy(&file("--policy")?)?;
+            let secret = receipts::read_secret_key(&file("--secret-key")?)?;
+            serde_json::to_value(v3::sign(&payload, &policy, text("--key-id")?, &secret)?)
+                .map_err(|_| "Receipt JSON failed")
+        }
+        "delivery-receipt-verify" => {
+            let policy = v3::policy(&file("--policy")?)?;
+            serde_json::to_value(v3::verify_current_release(
+                &file("--receipt")?,
+                &policy,
+                text("--candidate")?,
+                text("--production")?,
+                text("--delivery")?,
+            )?)
+            .map_err(|_| "Receipt JSON failed")
+        }
+        _ => Err("Unsupported format 3 receipt operation"),
     })();
     emit(result)
 }

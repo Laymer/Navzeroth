@@ -561,3 +561,135 @@ fn hybrid_policies_are_strict() {
     ];
     assert!(validate_policy(&locales).is_ok());
 }
+
+fn future_fixture() -> (
+    azeroth_core::local_data_delivery::DeliveryPolicyV3,
+    azeroth_core::local_data_delivery::SignedReceiptV3,
+) {
+    use azeroth_core::{local_data_delivery::*, local_data_inputs::InputTuple};
+    use azeroth_local_data::delivery_receipts as v3;
+    use sha2::{Digest, Sha256};
+    let (old, receipt) = fixture();
+    let target = Target {
+        edition: "wow_forever".into(),
+        version: "1.60.2".into(),
+        build: "99999".into(),
+        interface: 16002,
+    };
+    let policy = DeliveryPolicyV3 {
+        format_version: 3,
+        target: Some(target.clone()),
+        trusted_signers: old.trusted_signers,
+        development: vec![],
+    };
+    let digest = "a".repeat(64);
+    let binding = Delivery {
+        format_version: 1,
+        tuple: InputTuple {
+            product: "wow_classic_beta".into(),
+            version: "1.60.2.99999".into(),
+            build: 99999,
+            locale: "enUS".into(),
+        },
+        catalog_sha256: digest.clone(),
+        projection_sha256: digest.clone(),
+        projector_profile_sha256: digest.clone(),
+        media_sha256: vec![digest.clone()],
+        guide_facts_sha256: None,
+        input_sha256: vec![],
+        dependency_profile_sha256: digest.clone(),
+        dependencies_sha256: digest.clone(),
+        fixture: false,
+        local_only: true,
+        verified_for_planning: false,
+    };
+    let delivery_sha256 = format!(
+        "{:x}",
+        Sha256::digest(serde_json::to_vec(&binding).unwrap())
+    );
+    let payload = ReceiptPayloadV3 {
+        format_version: 3,
+        candidate_source_commit: receipt.payload.candidate_source_commit,
+        production_sha256: digest.clone(),
+        release_policy_sha256: v3::policy_hash(&policy).unwrap(),
+        target,
+        delivery_sha256,
+        binding,
+        independent_review_sha256: digest.clone(),
+        validation_results_sha256: digest.clone(),
+        scenario_dependencies_sha256: digest.clone(),
+        performance_workload_sha256: digest.clone(),
+        performance_results_sha256: digest,
+        domains: receipt.payload.domains,
+        acceptance: receipt.payload.acceptance,
+    };
+    let signatures = vec![
+        v3::sign(&payload, &policy, "operator", &[1; 32]).unwrap(),
+        v3::sign(&payload, &policy, "reviewer", &[2; 32]).unwrap(),
+    ];
+    (
+        policy,
+        SignedReceiptV3 {
+            format_version: 3,
+            payload,
+            signatures,
+        },
+    )
+}
+#[test]
+fn future_receipts_bind_all_components_but_current_pending_release_still_refuses() {
+    use azeroth_local_data::delivery_receipts as v3;
+    let (policy, receipt) = future_fixture();
+    let p = &receipt.payload;
+    let expected = v3::Expected {
+        candidate_source_commit: &p.candidate_source_commit,
+        production_sha256: &p.production_sha256,
+        delivery_sha256: &p.delivery_sha256,
+        frozen_target: &p.target,
+    };
+    let bytes = serde_json::to_vec(&receipt).unwrap();
+    assert!(v3::verify(&bytes, &policy, &expected).is_ok());
+    assert!(
+        v3::verify_current_release(
+            &bytes,
+            &policy,
+            &p.candidate_source_commit,
+            &p.production_sha256,
+            &p.delivery_sha256
+        )
+        .is_err()
+    );
+    let mut changed = receipt.clone();
+    changed.payload.binding.media_sha256 = vec!["f".repeat(64)];
+    assert!(v3::verify(&serde_json::to_vec(&changed).unwrap(), &policy, &expected).is_err());
+    changed = receipt.clone();
+    changed.payload.binding.projector_profile_sha256 = "e".repeat(64);
+    assert!(v3::verify(&serde_json::to_vec(&changed).unwrap(), &policy, &expected).is_err());
+    changed = receipt.clone();
+    changed.payload.domains.remove("quests");
+    assert!(v3::verify(&serde_json::to_vec(&changed).unwrap(), &policy, &expected).is_err());
+    changed = receipt.clone();
+    changed.signatures.swap(0, 1);
+    assert!(v3::verify(&serde_json::to_vec(&changed).unwrap(), &policy, &expected).is_err());
+    let mut revoked = policy.clone();
+    revoked.trusted_signers.get_mut("reviewer").unwrap().revoked = true;
+    assert!(v3::verify(&bytes, &revoked, &expected).is_err());
+}
+#[test]
+fn pending_targets_duplicate_signers_fixtures_and_unknown_v3_versions_refuse() {
+    use azeroth_local_data::delivery_receipts as v3;
+    let (mut policy, mut receipt) = future_fixture();
+    policy.target = None;
+    assert!(policy.validate().is_ok());
+    assert!(v3::sign(&receipt.payload, &policy, "operator", &[1; 32]).is_err());
+    policy.target = Some(receipt.payload.target.clone());
+    let identity = policy.trusted_signers["operator"].identity.clone();
+    policy.trusted_signers.get_mut("reviewer").unwrap().identity = identity;
+    assert!(policy.validate().is_err());
+    let (policy, _) = future_fixture();
+    receipt.payload.binding.fixture = true;
+    assert!(v3::sign(&receipt.payload, &policy, "operator", &[1; 32]).is_err());
+    let mut policy = policy;
+    policy.format_version = 4;
+    assert!(policy.validate().is_err());
+}

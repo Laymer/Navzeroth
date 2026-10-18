@@ -48,6 +48,11 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    prepareResearchDelivery:(catalog:string,locale:string)=>run(()=>adapter.invoke("prepare_research_delivery",{catalog,locale})),
+    getResearchDeliveryPage:(revision:string,domain:string,offset:number)=>run(()=>adapter.invoke("get_research_delivery_page",{revision,domain,offset,limit:200})),
+    getResearchDeliveryActivation:(revision:string)=>run(()=>adapter.invoke("get_research_delivery_activation",{revision})),
+    activateResearchDelivery:(revision:string,expected:number,rollback:boolean)=>run(()=>adapter.invoke("activate_research_delivery",{revision,expected,rollback})),
+    diffResearchDelivery:(before:string,after:string)=>run(()=>adapter.invoke("diff_research_delivery",{before,after})),
     listLocalInstallations:()=>run(()=>adapter.invoke("list_local_installations",undefined)),
     restoreLocalInstallation:(selectionId:string)=>run(()=>adapter.invoke("restore_local_installation",{selection_id:selectionId})),
     listLocalDataJobs:()=>run(()=>adapter.invoke("list_local_data_jobs",undefined)),
