@@ -1,3 +1,4 @@
+import {LocalStartupSettings} from "./LocalStartupChoices";
 import "./dataScreens.css";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
@@ -213,6 +214,7 @@ export function SettingsScreen({ client, refreshKey = 0, onChanged }: { client: 
             <p>Planning defaults are manual assumptions, separate from imported preferences. Apply them explicitly in the planner.</p>
           </fieldset>
         )}
+        <LocalStartupSettings client={client}/>
         <h3>Optional integrations</h3>
         <p>Official game API: unverified and unavailable. Hosted sharing and telemetry upload: disabled; no account or credential is configured here.</p>
       </Panel>

@@ -48,13 +48,12 @@ availability or acceptance.
 Continuation 5 merged as PR #195 at `0151eb1` after independent review, all nine
 exact-head checks and source workflow. No calibrated media or gameplay evidence
 was claimed.
-Continuation 6 is PR #196, independently reviewed with local checks passing;
-exact-head hosted checks and merge are pending.
-Active: continuation 8, desktop workflow and installer completion (partial);
-continuation 7 PR #197 awaits exact-head checks;
-[claim](docs/claims/2026-10-18-guides-inventory.md),
-[handoff](docs/handoffs/2026-10-18-guides-inventory.md).
-Independent completeness, complete desktop workflow, performance, coverage, publication
+Continuation 6 merged as PR #196 at `49472d0`; continuation 7 merged as PR #197
+at `8da8301`, each after independent review, all nine exact-head checks and source
+parity. Active: continuation 8, desktop workflow and installer completion, PR #198;
+[claim](docs/claims/2026-10-18-desktop-completion.md),
+[handoff](docs/handoffs/2026-10-18-desktop-completion.md).
+Independent completeness, performance, substantial coverage expansion, publication
 and Pages remain pending; research matches do not clear acceptance blockers.
 
 ## Gate snapshot

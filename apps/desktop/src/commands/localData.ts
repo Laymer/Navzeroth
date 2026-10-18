@@ -39,3 +39,13 @@ export interface LocalInputPage {revision:string;offset:number;total:number;next
 export interface LocalMediaDiscovery {revision:string;catalog_sha256:string;locale:string;total:number;offset:number;next_offset:number|null;gaps:string[];candidates:{table:string;row:number;field:string;file_data_id:number}[]}
 export interface LocalMediaPage {revision:string;offset:number;total:number;next_offset:number|null;assets:{id:string;width:number;height:number;url:string}[]}
 export interface LocalMediaManifest {format_version:1;catalog_sha256:string;locale:string;fixture:boolean;local_only:true;calibrated:false;verified_for_gameplay:false;assets:{file_data_id:number;disposition:string;read_refusal:string|null;width:number|null;height:number|null}[]}
+
+export interface LocalDeliveryChoices {format_version:1;media:string[];inputs:string[];guide_facts:boolean;preset:LocalDataPreset}
+export interface LocalArtifactPage {format_version:1;revision:string;namespace:string;total:number;offset:number;rows:string[];next_offset:number|null;integrity_checked:false;staging_present:boolean}
+
+export interface LocalDeliveryManifest {format_version:1;catalog_sha256:string;projection_sha256:string;guide_facts_sha256:string|null;media_sha256:string[];input_sha256:string[];tuple:{edition:string;build:number;locale:string};fixture:boolean;local_only:true;verified_for_planning:false}
+export interface LocalInventorySummary {revision:string;acceptance_ready:false;domains:{domain:string;imported_count:number;source_available:boolean;independently_required_count:number|null;independently_complete:false;gaps:string[]}[]}
+export interface LocalInventoryPage {revision:string;domain:string;offset:number;total:number;next_offset:number|null;source_available:boolean;independently_complete:false;records:{id:string;source_sha256:string;kind:string}[]}
+export interface LocalGuideRequest {format_version:1;delivery:string;id:string;class_name:string;mode:"solo"|"duo";expected:string|null;offset:number;limit:number}
+export interface LocalGuidePage {format_version:1;revision:string;delivery_sha256:string;guide_sha256:string;facts_manifest_sha256:string;offset:number;total:number;next_offset:number|null;totals:{guides:number;steps:number;errors:number;warnings:number;unverified:number;unsupported:number;asserted:number};findings:{check:unknown;status:string;line:number;quest?:number}[];acceptance_ready:false;duo_eligibility_verified:false;limitations:string[]}
+export interface LocalTooltip {text:string;gaps:string[];verified_for_gameplay:false}

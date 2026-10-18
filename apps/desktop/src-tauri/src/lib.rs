@@ -219,6 +219,97 @@ async fn get_local_media_manifest(
     local_data_blocking(state, move |service| service.media_manifest(&revision)).await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn get_local_artifact_page(
+    state: State<'_, LocalData>,
+    namespace: String,
+    offset: u32,
+    limit: u32,
+) -> Result<azeroth_local_data::changes::ArtifactPage, AppError> {
+    local_data_blocking(state, move |service| {
+        service.artifact_page(&namespace, offset, limit)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_research_delivery_manifest(
+    state: State<'_, LocalData>,
+    revision: String,
+) -> Result<azeroth_core::local_data_delivery::Delivery, AppError> {
+    local_data_blocking(state, move |service| service.delivery_manifest(&revision)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn build_local_inventory(
+    state: State<'_, LocalData>,
+    delivery: String,
+    authored: Option<String>,
+    preset: azeroth_core::local_data::PerformancePreset,
+) -> Result<String, AppError> {
+    local_data_blocking(state, move |service| {
+        service.inventory_selected(&delivery, authored.as_deref(), preset)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_inventory_summary(
+    state: State<'_, LocalData>,
+    revision: String,
+    authored: Option<String>,
+) -> Result<azeroth_local_data::inventory::Summary, AppError> {
+    local_data_blocking(state, move |service| {
+        service.inventory_summary_selected(&revision, authored.as_deref())
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_inventory_page(
+    state: State<'_, LocalData>,
+    revision: String,
+    domain: String,
+    offset: u32,
+    limit: u32,
+    authored: Option<String>,
+) -> Result<azeroth_local_data::inventory::Page, AppError> {
+    local_data_blocking(state, move |service| {
+        service.inventory_page_selected(&revision, &domain, offset, limit, authored.as_deref())
+    })
+    .await
+}
+#[tauri::command]
+async fn review_selected_local_guide(
+    state: State<'_, LocalData>,
+    request: azeroth_app::local_data::SelectedGuideReviewRequest,
+) -> Result<azeroth_local_data::guide_review::Page, AppError> {
+    local_data_blocking(state, move |service| {
+        if request.format_version != 1 {
+            return Err(AppError::new(
+                ErrorCode::InvalidInput,
+                "Unsupported guide review request",
+                false,
+            ));
+        }
+        service.review_selected_human_guide_page(
+            &request.delivery,
+            &request.id,
+            &request.class_name,
+            request.mode,
+            azeroth_local_data::guide_review::PageRequest {
+                expected: request.expected.as_deref(),
+                offset: request.offset,
+                limit: request.limit,
+            },
+        )
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_local_tooltip(
+    state: State<'_, LocalData>,
+    projection: String,
+    spell: u32,
+) -> Result<azeroth_core::tooltip::Evaluation, AppError> {
+    local_data_blocking(state, move |service| service.tooltip(&projection, spell)).await
+}
+#[tauri::command(rename_all = "snake_case")]
 async fn get_local_data_job(
     state: State<'_, LocalData>,
     job_id: String,
@@ -304,9 +395,11 @@ async fn prepare_research_delivery(
     state: State<'_, LocalData>,
     catalog: String,
     locale: String,
+    bindings: Option<azeroth_core::local_data_workflow::DeliveryChoices>,
 ) -> Result<String, AppError> {
-    local_data_blocking(state, move |service| {
-        service.prepare_delivery(&catalog, &locale)
+    local_data_blocking(state, move |service| match bindings {
+        Some(choices) => service.prepare_delivery_bound(&catalog, &locale, choices),
+        None => service.prepare_delivery(&catalog, &locale),
     })
     .await
 }
@@ -1068,6 +1161,13 @@ pub fn run() {
                 select_local_installation,
                 preview_local_data,
                 start_local_data,
+                get_research_delivery_manifest,
+                build_local_inventory,
+                get_local_inventory_summary,
+                get_local_inventory_page,
+                review_selected_local_guide,
+                get_local_tooltip,
+                get_local_artifact_page,
                 discover_local_media,
                 extract_local_media,
                 get_local_media_page,

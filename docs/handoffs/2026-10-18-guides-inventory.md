@@ -54,3 +54,14 @@ Next: continuation 8 — desktop selection/progress/conflict/inventory workflows
 durable choices and installer/first-run flow; opt-in polling/debounce stages
 changes without automatically activating them, explicit installed content locales
 and English desktop UI.
+
+## Integration receipt
+
+PR #197 merged at `8da8301801acc2d1d4bf33d662063765fa2acf8e`,
+2026-10-18T12:22:37Z, from reviewed exact head
+`1e98a72ae12c9265c68a7492943932568cc94537`. All nine required checks passed:
+[CI](https://github.com/Laymer/Navzeroth/actions/runs/39125952932),
+[Windows packaging](https://github.com/Laymer/Navzeroth/actions/runs/39125952934),
+and both [source platforms and parity](https://github.com/Laymer/Navzeroth/actions/runs/39125952920).
+No release was published and no acceptance evidence promoted. Next: continuation 8
+in draft PR #198, followed by performance/materials and the substantial coverage PR.

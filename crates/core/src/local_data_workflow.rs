@@ -192,3 +192,28 @@ impl MaterialKind {
         })
     }
 }
+
+/// Explicit dependencies for one local research delivery, never activation intent.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct DeliveryChoices {
+    pub format_version: u32,
+    pub media: Vec<String>,
+    pub inputs: Vec<String>,
+    pub guide_facts: bool,
+    pub preset: PerformancePreset,
+}
+impl DeliveryChoices {
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if self.format_version != 1
+            || [&self.media, &self.inputs].into_iter().any(|ids| {
+                ids.len() > 16
+                    || ids.iter().any(|id| !is_sha256(id))
+                    || ids.windows(2).any(|pair| pair[0] >= pair[1])
+            })
+        {
+            return Err("Invalid selected delivery dependencies");
+        }
+        Ok(())
+    }
+}

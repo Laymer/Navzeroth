@@ -48,3 +48,22 @@ fn change_detection_debounces_deduplicates_and_bounds_retries() {
         PollStatus::Idle
     );
 }
+#[test]
+fn explicit_delivery_choices_reject_unknown_versions_duplicates_and_unbounded_inputs() {
+    use azeroth_core::local_data::PerformancePreset;
+    let mut choices = DeliveryChoices {
+        format_version: 1,
+        media: vec![],
+        inputs: vec!["a".repeat(64)],
+        guide_facts: true,
+        preset: PerformancePreset::Small,
+    };
+    assert!(choices.validate().is_ok());
+    choices.inputs.push("a".repeat(64));
+    assert!(choices.validate().is_err());
+    choices.inputs = (0..17).map(|n| format!("{n:064x}")).collect();
+    assert!(choices.validate().is_err());
+    choices.inputs.clear();
+    choices.format_version = 2;
+    assert!(choices.validate().is_err());
+}

@@ -48,7 +48,7 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
-    prepareResearchDelivery:(catalog:string,locale:string)=>run(()=>adapter.invoke("prepare_research_delivery",{catalog,locale})),
+    prepareResearchDelivery:(catalog:string,locale:string,bindings?:import("./localData").LocalDeliveryChoices)=>run(()=>adapter.invoke("prepare_research_delivery",{catalog,locale,...(bindings===undefined?{}:{bindings})})),
     getResearchDeliveryPage:(revision:string,domain:string,offset:number)=>run(()=>adapter.invoke("get_research_delivery_page",{revision,domain,offset,limit:200})),
     getResearchDeliveryActivation:(revision:string)=>run(()=>adapter.invoke("get_research_delivery_activation",{revision})),
     activateResearchDelivery:(revision:string,expected:number,rollback:boolean)=>run(()=>adapter.invoke("activate_research_delivery",{revision,expected,rollback})),
@@ -62,6 +62,13 @@ export function createClient(adapter: CommandAdapter) {
     activateLocalData:(revision:string,expected:number,rollback=false)=>run(()=>adapter.invoke("activate_local_data",{revision,expected,rollback})),
     selectLocalInstallation:()=>run(()=>adapter.invoke("select_local_installation",undefined)),
     previewLocalData:(selectionId:string,preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("preview_local_data",{selection_id:selectionId,preset})),
+    getResearchDeliveryManifest:(revision:string)=>run(()=>adapter.invoke("get_research_delivery_manifest",{revision})),
+    buildLocalInventory:(delivery:string,authored:string|null,preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("build_local_inventory",{delivery,authored,preset})),
+    getLocalInventorySummary:(revision:string,authored:string|null)=>run(()=>adapter.invoke("get_local_inventory_summary",{revision,authored})),
+    getLocalInventoryPage:(revision:string,domain:string,offset:number,authored:string|null)=>run(()=>adapter.invoke("get_local_inventory_page",{revision,domain,offset,limit:200,authored})),
+    reviewSelectedLocalGuide:(request:import("./localData").LocalGuideRequest)=>run(()=>adapter.invoke("review_selected_local_guide",{request})),
+    getLocalTooltip:(projection:string,spell:number)=>run(()=>adapter.invoke("get_local_tooltip",{projection,spell})),
+    getLocalArtifactPage:(namespace:string,offset:number)=>run(()=>adapter.invoke("get_local_artifact_page",{namespace,offset,limit:200})),
     discoverLocalMedia:(catalog:string,locale:string,offset:number)=>run(()=>adapter.invoke("discover_local_media",{catalog,locale,offset,limit:200})),
     extractLocalMedia:(selectionId:string,catalog:string,locale:string,ids:number[],preset:import("./localData").LocalDataPreset)=>run(()=>adapter.invoke("extract_local_media",{selection_id:selectionId,catalog,locale,ids,preset})),
     getLocalMediaPage:(revision:string,offset:number)=>run(()=>adapter.invoke("get_local_media_page",{revision,offset,limit:200})),

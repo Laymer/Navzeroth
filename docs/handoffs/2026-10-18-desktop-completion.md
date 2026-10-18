@@ -1,9 +1,9 @@
-# Continuation 8 — desktop workflow checkpoint
+# Continuation 8 — desktop workflow and installer completion
 
 Owner/sole writer Codex `/root`; baseline `896539e`, branch
 `feat/continuation-desktop-completion`. Claim:
 [desktop completion](../claims/2026-10-18-desktop-completion.md).
-This is a partial implementation checkpoint; task 8 remains active.
+Engineering is implemented in PR #198; exact-head hosted checks and merge remain pending.
 
 Implemented additive private index schema 3, versioned CAS workflow preferences,
 first-run choices, selected locale/resource persistence and opaque selected input
@@ -29,25 +29,47 @@ Verified PNG previews use `/research/<revision>/<opaque-id>` under the existing
 atlas scheme/CSP, with GET-only, no queries, no-store and nosniff. All dispositions,
 read refusals, fixture labels and uncalibrated status remain visible.
 
-Actual checks: full Rust workspace excluding native desktop passed 1,309 tests,
-four ignored, 181 result suites before the final media adapter expansion. Latest
-workspace Clippy with warnings denied passed. Desktop unit suite passed 403 tests
-in 50 files; typecheck, lint and production build passed. Native Linux check was
-attempted but stopped in libdbus-sys because dbus-1 development metadata is missing;
-no native desktop success is claimed. After the final adapters, all 19 affected Rust lifecycle/storage/app tests
-passed in four result suites.
+Explicit delivery preparation now binds selected media/input revisions and optional
+research guide facts with version-1 choices. Even empty dependency lists use the
+selected resource ceiling; the old API remains for historical callers. Artifact
+history pages list candidates separately from integrity, and retained reference
+selection verifies the current catalog before inspection/diff/activation. Exact
+nine-domain inventory supports selected original authored packs and keeps required
+counts unknown independently of imports. Selected private guide replay is inert,
+with at most 200 findings per replay-hash-bound page; continuation requires a valid
+matching digest and refuses changed guides/facts. Tooltip rendering exposes gaps
+and does not execute markup. First-run saved workflows reopen on subsequent
+launches; Settings can change the next-launch choice without performing data work.
+The installer explicitly stays English; its existing addon prompts default to No.
+[User workflow/contracts](../data/LOCAL_DESKTOP_WORKFLOW.md).
 
-Two independent read-only reviewers found and confirmed fixes for delayed
-preferences overwriting edits, same-installation locale desynchronization,
-legacy-preset watcher restarts, stale opt-out reconciliation and material capacity
-recovery. Both reviewed media boundaries without further actionable findings.
-Runtime/browser/native hosted checks remain pending for this task.
+Actual checks on the implemented source:
 
-Next: integrate resulting main after PR #197; finish explicit delivery input/media/
-guide-facts bindings, persisted revision history selection, nine-domain inventory,
-selected authored packs/guide replay and tooltip presentation. Verify existing
-installer opt-in choices and harnesses. Then final review and all applicable
-exact-head checks. Performance/materials, substantial per-file coverage expansion,
-version/notes/verified development RC and Pages remain subsequent separate PRs.
-No continuation release has been published. Ordinary Windows and live acceptance
-remain unverified; no further mutable cache read was performed in this task.
+- Full Rust workspace excluding native desktop: 1,311 passed, four ignored,
+  181 result suites. Workspace Clippy with warnings denied passed.
+- Desktop: 410 unit tests in 53 files, typecheck, lint and production build passed.
+- Six focused Chromium checks passed: populated synthetic choices at 320/1100 px,
+  200% text, keyboard focus and axe; four production CSP/font/navigation checks.
+- Native Windows PowerShell 5.1 addon-installer harness passed all 30 synthetic
+  install/update/removal/WhatIf/refusal checks, including running-game protection.
+- Native Linux desktop check was attempted but stopped in libdbus-sys because
+  dbus-1 development metadata is missing. Native desktop/ordinary-Windows
+  installation and live-client acceptance are not claimed.
+
+Two independent read-only reviewers confirmed fixes for delayed preferences
+overwriting edits, same-installation locale desynchronization, legacy-preset
+watcher restarts, stale opt-out reconciliation, material capacity recovery,
+projection-only resource-preset bypass and missing continuation replay tokens.
+Both reviewed media/binding/inventory/guide boundaries without remaining actionable
+findings. A real browser test exposed an incorrect first-run destination (Content
+instead of Compatibility and coverage); corrected and the final six tests passed.
+The native desktop exact-head hosted checks remain authoritative for its adapter.
+
+Continuation 7 merged at `8da8301`; its source/packaging/check receipts are in its
+handoff. Integrate resulting main before final task-8 review/merge. Next independent
+task: reproducible performance slices, notices/retained-source closure and release
+materials (continuation 9), then the substantial per-file coverage PR, version/notes,
+verified development RC and Pages in their separate PRs. No continuation release
+has been published. Ordinary Windows and live acceptance remain unverified; no
+further mutable cache read was performed in this task. This work does not clear
+content completeness, availability, signing, launch-target or stable-release gates.

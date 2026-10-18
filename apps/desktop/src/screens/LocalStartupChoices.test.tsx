@@ -19,3 +19,16 @@ it("retains startup choices after a refused save and does not navigate",async()=
  fireEvent.click(await screen.findByRole("button",{name:"Choose later"}));
  expect(await screen.findByRole("alert")).toHaveTextContent("INVALID_INPUT");expect(navigate).not.toHaveBeenCalled();expect(screen.queryByText(/private-path/)).not.toBeInTheDocument();
 });
+it("restores the saved starting workflow without importing or activating anything",async()=>{
+ const navigate=vi.fn();const calls:string[]=[];
+ const adapter:CommandAdapter={invoke(command){calls.push(command);return Promise.resolve({format_version:1,revision:2,preferences:{...preferences,first_run_completed:true,startup_mode:"local_research"}}as never);}};
+ render(<LocalStartupChoices client={createClient(adapter)} onNavigate={navigate}/>);
+ await vi.waitFor(()=>expect(navigate).toHaveBeenCalledWith("local_research"));expect(calls).toEqual(["get_local_workflow"]);expect(screen.queryByRole("button",{name:"Choose later"})).not.toBeInTheDocument();
+});
+it("changes the next-launch workflow with CAS without navigating or invoking data operations",async()=>{
+ const {LocalStartupSettings}=await import("./LocalStartupChoices");const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve({format_version:1,revision:2,preferences:{...preferences,first_run_completed:true}}as never);}};
+ render(<LocalStartupSettings client={createClient(adapter)}/>);fireEvent.click(screen.getByRole("button",{name:"Review starting workflow"}));
+ fireEvent.change(await screen.findByRole("combobox",{name:"Starting workflow selection"}),{target:{value:"snapshots"}});fireEvent.click(screen.getByRole("button",{name:"Save starting workflow"}));
+ await screen.findByText(/saved for the next launch/);expect(calls.map(call=>call.command)).toEqual(["get_local_workflow","finish_local_startup"]);expect(calls[1]?.input).toEqual({expected:2,mode:"snapshots",completed:true});
+});

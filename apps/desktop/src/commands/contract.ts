@@ -273,7 +273,7 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
-  prepare_research_delivery:{input:{catalog:string;locale:string};output:string};
+  prepare_research_delivery:{input:{catalog:string;locale:string;bindings?:import("./localData").LocalDeliveryChoices};output:string};
   get_research_delivery_page:{input:{revision:string;domain:string;offset:number;limit:number};output:import("./localData").ResearchDeliveryPage};
   get_research_delivery_activation:{input:{revision:string};output:import("./localData").ResearchDeliveryActivation};
   activate_research_delivery:{input:{revision:string;expected:number;rollback:boolean};output:import("./localData").ResearchDeliveryActivation};
@@ -287,6 +287,13 @@ export interface CommandMap {
   activate_local_data:{input:{revision:string;expected:number;rollback:boolean};output:import("./localData").LocalDataActivation};
   select_local_installation:{input:undefined;output:import("./localData").LocalInstallation|null};
   preview_local_data:{input:{selection_id:string;preset:import("./localData").LocalDataPreset};output:import("./localData").LocalDataPlan};
+  get_research_delivery_manifest:{input:{revision:string};output:import("./localData").LocalDeliveryManifest};
+  build_local_inventory:{input:{delivery:string;authored:string|null;preset:import("./localData").LocalDataPreset};output:string};
+  get_local_inventory_summary:{input:{revision:string;authored:string|null};output:import("./localData").LocalInventorySummary};
+  get_local_inventory_page:{input:{revision:string;domain:string;offset:number;limit:number;authored:string|null};output:import("./localData").LocalInventoryPage};
+  review_selected_local_guide:{input:{request:import("./localData").LocalGuideRequest};output:import("./localData").LocalGuidePage};
+  get_local_tooltip:{input:{projection:string;spell:number};output:import("./localData").LocalTooltip};
+  get_local_artifact_page:{input:{namespace:string;offset:number;limit:number};output:import("./localData").LocalArtifactPage};
   discover_local_media:{input:{catalog:string;locale:string;offset:number;limit:number};output:import("./localData").LocalMediaDiscovery};
   extract_local_media:{input:{selection_id:string;catalog:string;locale:string;ids:number[];preset:import("./localData").LocalDataPreset};output:string};
   get_local_media_page:{input:{revision:string;offset:number;limit:number};output:import("./localData").LocalMediaPage};

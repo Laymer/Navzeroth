@@ -45,7 +45,7 @@ export function LocalWorkflowChoices({client,selectionId,locales,preset,onLocale
     if(result.ok){setRecord(result.value);setViews([]);setMessage("Reviewed build is the new detection baseline. No extraction or activation was performed.");}
     else setMessage(`Build review refused: ${result.error.code}. Refresh change status before retrying.`);
   }
-  return <fieldset><legend>Installed content choices</legend>
+  return <fieldset className="local-research-pane"><legend>Installed content choices</legend>
     <p>Select content locales explicitly. The desktop interface remains English.</p>
     {locales.map(locale=><label key={locale}><input type="checkbox" checked={selected.includes(locale)} disabled={busy} onChange={event=>{
       dirty.current=true;const next=(event.target.checked?[...selected,locale]:selected.filter(value=>value!==locale)).sort();setSelected(next);onLocales(next);

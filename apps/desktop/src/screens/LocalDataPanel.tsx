@@ -109,7 +109,7 @@ export function LocalDataPanel({client}:{client:CommandClient}) {
     {page&&<><p>Catalog {page.revision}; {page.total} table and locale candidates.</p><table><thead><tr><th>Table</th><th>Locale</th><th>Disposition</th><th>Details</th></tr></thead><tbody>{page.rows.map(row=><tr key={`${row.table}:${row.locale}`}><td>{row.table}</td><td>{row.locale??"unknown"}</td><td>{row.disposition.replaceAll("_"," ")}</td><td>{row.reason.replaceAll("_"," ")}</td></tr>)}</tbody></table>{page.next_offset!==null&&<Button disabled={busy} onClick={()=>{if(page.next_offset!==null)void inventory(page.next_offset);}}>Next inventory page</Button>}</>}
     {job?.summary&&selection&&<LocalResearchMedia client={client} catalog={job.summary.catalog_sha256} selectionId={selection.selection_id} preset={preset}/>}
     {job?.summary&&<LocalResearchInputs client={client} catalog={job.summary.catalog_sha256} preset={preset}/>}
-    {job?.summary&&<ResearchDeliveryPanel client={client} catalog={job.summary.catalog_sha256}/>}
+    {job?.summary&&<ResearchDeliveryPanel client={client} catalog={job.summary.catalog_sha256} preset={preset}/>}
     {busy&&<p role="status">Reading local data…</p>}{message&&<p role="alert">{message}</p>}
   </Panel>;
 }

@@ -129,6 +129,13 @@ export const demoAdapter: CommandAdapter = {
           return null;
         case "get_local_workflow":
           return {format_version:1,revision:0,preferences:{format_version:1,first_run_completed:true,startup_mode:"later",selections:{}}};
+        case "get_research_delivery_manifest":
+        case "build_local_inventory":
+        case "get_local_inventory_summary":
+        case "get_local_inventory_page":
+        case "review_selected_local_guide":
+        case "get_local_tooltip":
+        case "get_local_artifact_page":
         case "discover_local_media":
         case "extract_local_media":
         case "get_local_media_page":

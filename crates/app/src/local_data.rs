@@ -50,6 +50,18 @@ pub struct MediaDisplayPage {
     pub assets: Vec<MediaDisplayAsset>,
     pub next_offset: Option<u32>,
 }
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SelectedGuideReviewRequest {
+    pub format_version: u32,
+    pub delivery: String,
+    pub id: String,
+    pub class_name: String,
+    pub mode: azeroth_core::local_data_inventory::Mode,
+    pub expected: Option<String>,
+    pub offset: u32,
+    pub limit: u32,
+}
 pub struct LocalDataService {
     root: PathBuf,
     jobs: Arc<Mutex<BTreeMap<String, WorkerControl>>>,
@@ -311,6 +323,62 @@ impl LocalDataService {
         )?;
         self.review_bound_guide(delivery, &path, character, mode)
     }
+    pub fn review_selected_human_guide_page(
+        &self,
+        delivery: &str,
+        id: &str,
+        class_name: &str,
+        mode: azeroth_core::local_data_inventory::Mode,
+        page: azeroth_local_data::guide_review::PageRequest<'_>,
+    ) -> Result<azeroth_local_data::guide_review::Page> {
+        let class = azeroth_ingest::rxp::Class::from_token(class_name)
+            .ok_or_else(|| error("Unsupported guide review class"))?;
+        self.review_selected_guide_page(
+            delivery,
+            id,
+            azeroth_ingest::rxp::Character {
+                race: azeroth_ingest::rxp::Race::Human,
+                class,
+            },
+            mode,
+            page,
+        )
+    }
+    pub fn review_selected_guide_page(
+        &self,
+        delivery: &str,
+        id: &str,
+        character: azeroth_ingest::rxp::Character,
+        mode: azeroth_core::local_data_inventory::Mode,
+        page: azeroth_local_data::guide_review::PageRequest<'_>,
+    ) -> Result<azeroth_local_data::guide_review::Page> {
+        page.validate().map_err(error)?;
+        let review = self.review_selected_guide(delivery, id, character, mode)?;
+        azeroth_local_data::guide_review::page(review, page.expected, page.offset, page.limit)
+            .map_err(error)
+    }
+    pub fn inventory_summary_selected(
+        &self,
+        revision: &str,
+        authored: Option<&str>,
+    ) -> Result<azeroth_local_data::inventory::Summary> {
+        let path = authored
+            .map(|id| {
+                self.material_path(
+                    id,
+                    azeroth_core::local_data_workflow::MaterialKind::AuthoredPack,
+                )
+            })
+            .transpose()?;
+        azeroth_local_data::inventory::summary(&self.store()?, revision, path.as_deref())
+            .map_err(error)
+    }
+    pub fn delivery_manifest(
+        &self,
+        revision: &str,
+    ) -> Result<azeroth_core::local_data_delivery::Delivery> {
+        azeroth_local_data::delivery::verify(&self.store()?, revision).map_err(error)
+    }
     pub fn artifact_page(
         &self,
         namespace: &str,
@@ -387,6 +455,43 @@ impl LocalDataService {
             &[],
             None,
             PerformancePreset::Max,
+        )
+        .map_err(error)
+    }
+    pub fn prepare_delivery_bound(
+        &self,
+        catalog: &str,
+        locale: &str,
+        choices: azeroth_core::local_data_workflow::DeliveryChoices,
+    ) -> Result<String> {
+        choices.validate().map_err(error)?;
+        let root = self.store()?;
+        let projection = azeroth_local_data::projection::project_catalog_within(
+            &root,
+            catalog,
+            locale,
+            choices.preset,
+        )
+        .map_err(error)?;
+        let facts = if choices.guide_facts {
+            Some(
+                self.build_guide_facts(
+                    &projection.projection_sha256,
+                    &choices.inputs,
+                    choices.preset,
+                )?
+                .guide_facts_sha256,
+            )
+        } else {
+            None
+        };
+        azeroth_local_data::delivery::build(
+            &root,
+            &projection.projection_sha256,
+            &choices.media,
+            &choices.inputs,
+            facts.as_deref(),
+            choices.preset,
         )
         .map_err(error)
     }

@@ -7,11 +7,12 @@ Updated: 2026-10-18.
 **Continuation 8 — desktop workflow and installer completion:** Codex `/root`,
 sole writer, branch `feat/continuation-desktop-completion`, baseline `896539e`.
 [Claim](claims/2026-10-18-desktop-completion.md),
-[partial handoff](handoffs/2026-10-18-desktop-completion.md). Workflow persistence,
-explicit locales, metadata-only opt-in detection and selected input/media UI are
-implemented locally; remaining bindings/inventory/guide/installer work is active.
-Continuation 7 is [PR #197](https://github.com/Laymer/Navzeroth/pull/197),
-independently reviewed, pending exact-head hosted checks on main.
+[handoff](handoffs/2026-10-18-desktop-completion.md),
+[workflow](data/LOCAL_DESKTOP_WORKFLOW.md), [PR #198](https://github.com/Laymer/Navzeroth/pull/198).
+Desktop engineering and focused local review/checks are complete; exact-head
+hosted/native checks remain pending. Continuation 7 merged as
+[PR #197](https://github.com/Laymer/Navzeroth/pull/197) at `8da8301` after
+independent review, all nine exact-head checks and source parity.
 Continuation 6 merged as [PR #196](https://github.com/Laymer/Navzeroth/pull/196)
 at `49472d0` after independent review, all nine exact-head checks and source parity.
 [Delivery handoff](handoffs/2026-10-18-bound-delivery.md).
