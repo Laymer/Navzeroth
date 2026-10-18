@@ -546,3 +546,24 @@ failures before final review. No threshold, exclusions or acceptance claims chan
 Hosted bbebea2 Linux compilation caught a test-only private-field access on
 AppError.message. Corrected to assert the serialized consumer error message; the
 production type and privacy remain unchanged. Native checks must run again.
+
+Next native planning boundary claim: Codex /root, sole writer, baseline 2134418.
+Linux native collection passes; its report still leaves the shell below threshold.
+Exercise real asynchronous planning publication, failed jobs, explicit pin/clear
+and read-only atlas/diagnostics commands using labelled synthetic fixtures.
+
+
+Exact 2134418/source718eb64a result: all nine ordinary CI/package checks and source
+Linux/Windows/parity pass. Both native collectors and TypeScript succeed. Combined
+gate has no errors/missing entries and only one below-threshold file: native
+lib.rs, 1126/1318. All other eligible Rust/TypeScript files pass, including Windows
+input guard and desktop main. Artifacts /tmp/nav-coverage-tenth-{linux,verdict}.
+
+Follow-up native test covers asynchronous solo/joint malformed-job completion,
+oversize refusal, empty markers/no-profile atlas refusal, diagnostics preview and
+owned new-file export, missing verified bundle, then synthetic successful planning
+publication and explicit pin/take/clear with exact revision/result assertions.
+Pure fixture freshness and expected planning output passed an isolated application
+probe (temporary test removed afterward); helper tests, formatting/diff pass.
+Independent lifecycle review found no actionable findings. No production edits or
+coverage policy changes. Hosted compilation/execution and full union remain next.

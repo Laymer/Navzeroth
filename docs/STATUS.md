@@ -17,12 +17,11 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 **Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
 `test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
 have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. TypeScript passes its per-file gate. At `6e9affb`, CI and source
-Linux/Windows/parity pass, and both native coverage collectors succeed. The combined
-coverage gate still fails nine Rust files, with no missing files or evidence errors.
-A clean subsequent non-native Linux diagnostic clears all files except two Windows
-adapters; further native boundary tests await hosted verification. The packaging
-failure was a stale Cargo.lock notice hash, now regenerated and checked locally.
+are in progress. At `2134418`, all ordinary CI, source Linux/Windows/parity and
+Windows packaging checks pass. Both native collectors and TypeScript succeed;
+the combined coverage gate fails only desktop shell lib.rs (1126/1318), with no
+missing files or evidence errors. Every other eligible file clears 90%. A focused
+native planning/atlas/diagnostics test batch awaits hosted verification.
 The 90% per-file requirement remains unchanged; this draft cannot merge yet.
 [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 

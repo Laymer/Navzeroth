@@ -10,6 +10,11 @@ struct Case {
 }
 fn command_handler() -> fn(tauri::ipc::Invoke<tauri::test::MockRuntime>) -> bool {
     tauri::generate_handler![
+        start_planning_job,
+        query_atlas,
+        get_snapshot_markers,
+        preview_diagnostics,
+        stage_verified_content_bundle,
         pin_current_plan,
         clear_current_plan,
         finish_local_startup,
@@ -514,4 +519,167 @@ fn invalid_native_ipc_preserves_current_reference_and_structured_errors() {
     )
     .unwrap();
     assert_eq!(before, after);
+}
+
+#[test]
+fn native_planning_jobs_publish_then_pin_only_the_verified_synthetic_result() {
+    let root = std::env::temp_dir().join(format!("nav-native-planning-{}", std::process::id()));
+    std::fs::create_dir(&root).unwrap();
+    struct Cleanup(std::path::PathBuf);
+    impl Drop for Cleanup {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+    let _cleanup = Cleanup(root.clone());
+    let host = Arc::new(azeroth_app::recovery::DatabaseHost::open(
+        &root.join("state.sqlite3"),
+    ));
+    let app = tauri::test::mock_builder()
+        .manage(host.clone())
+        .invoke_handler(command_handler())
+        .build(tauri::test::mock_context(tauri::test::noop_assets()))
+        .unwrap();
+    let view =
+        tauri::WebviewWindowBuilder::new(&app, "main", tauri::WebviewUrl::App("index.html".into()))
+            .build()
+            .unwrap();
+    let invoke = |command: &str, args: Value| -> Result<Value, Value> {
+        tauri::test::get_ipc_response(&view, request(command, args))
+            .map(|body| body.deserialize().unwrap())
+    };
+    let wait = |id: &Value| -> Value {
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+        loop {
+            let status = invoke("get_planning_job", serde_json::json!({"job_id":id})).unwrap();
+            if status["state"] != "queued" && status["state"] != "running" {
+                return status;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "planning job timed out: {status}"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+    };
+    for kind in ["solo", "joint"] {
+        let job = invoke(
+            "start_planning_job",
+            serde_json::json!({"kind":kind,"text":"{}"}),
+        )
+        .unwrap();
+        let status = wait(&job["job_id"]);
+        assert_eq!(status["state"], "failed");
+        assert_eq!(status["kind"], kind);
+        assert_eq!(status["error"]["code"], "INVALID_INPUT");
+        assert_eq!(status["result_available"], false);
+        let error = invoke(
+            "take_planning_job_result",
+            serde_json::json!({"job_id":job["job_id"]}),
+        )
+        .unwrap_err();
+        assert_eq!(error["code"], "INVALID_INPUT");
+    }
+    let oversized = " ".repeat(azeroth_app::planning::MAX_REQUEST_BYTES + 1);
+    assert_eq!(
+        invoke(
+            "start_planning_job",
+            serde_json::json!({"kind":"solo","text":oversized})
+        )
+        .unwrap_err()["code"],
+        "IMPORT_TOO_LARGE"
+    );
+    assert_eq!(
+        invoke("get_snapshot_markers", serde_json::json!({})).unwrap(),
+        serde_json::json!([])
+    );
+    let atlas = invoke("query_atlas", serde_json::json!({})).unwrap_err();
+    assert_eq!(atlas["code"], "INVALID_INPUT");
+    assert!(
+        invoke("preview_diagnostics", serde_json::json!({}))
+            .unwrap()
+            .is_object()
+    );
+    let diagnostic_path = root.join("diagnostic.json");
+    assert!(
+        invoke(
+            "export_diagnostics",
+            serde_json::json!({"path":diagnostic_path})
+        )
+        .unwrap()
+        .is_object()
+    );
+    assert!(diagnostic_path.is_file());
+    assert_eq!(
+        invoke(
+            "stage_verified_content_bundle",
+            serde_json::json!({"path":root.join("missing-bundle")})
+        )
+        .unwrap_err()["code"],
+        "INVALID_INPUT"
+    );
+    let now = system_now().unwrap();
+    let mut snapshot: Value = serde_json::from_str(include_str!(
+        "../../../../fixtures/contracts/v1/character-snapshot.json"
+    ))
+    .unwrap();
+    fn freshen(value: &mut Value, timestamp: i64) {
+        match value {
+            Value::Object(fields) => {
+                for (key, value) in fields {
+                    if key.ends_with("_utc_ms") && value.is_number() {
+                        *value = serde_json::json!(timestamp);
+                    } else {
+                        freshen(value, timestamp);
+                    }
+                }
+            }
+            Value::Array(values) => {
+                for value in values {
+                    freshen(value, timestamp);
+                }
+            }
+            _ => {}
+        }
+    }
+    freshen(&mut snapshot, now.get() - 100);
+    let plan = host.with_application(|application| {
+        let profile = application.import_text(&format!("ANAV1:{snapshot}"), Some(now))?.profile_id;
+        application.stage_content(include_str!("../../../../fixtures/desktop/planning/synthetic-revision.json"))?;
+        application.activate_content(&profile, &DatasetRevision::new("synthetic-planning-v1")?)?;
+        let catalog = application.planning_catalog(&profile)?;
+        Ok(serde_json::json!({"profile_id":profile,"snapshot_id":catalog.snapshot_id,"revision":catalog.revision,"goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1","budget_ms":100000,"stopping_service_ms":0,"candidates":[{"objective":"synthetic-service","node":"demo-node-2","utility":10,"completion_ms":1000,"service_ms":0}],"excluded":[]}))
+    }).unwrap();
+    let job = invoke(
+        "start_planning_job",
+        serde_json::json!({"kind":"solo","text":plan.to_string()}),
+    )
+    .unwrap();
+    let status = wait(&job["job_id"]);
+    assert_eq!(status["state"], "succeeded", "{status}");
+    assert_eq!(status["result_available"], true);
+    assert_eq!(
+        invoke(
+            "pin_current_plan",
+            serde_json::json!({"job_id":job["job_id"],"expected_revision":0})
+        )
+        .unwrap(),
+        1
+    );
+    let result = invoke(
+        "take_planning_job_result",
+        serde_json::json!({"job_id":job["job_id"]}),
+    )
+    .unwrap();
+    let report: Value = serde_json::from_str(result["report_json"].as_str().unwrap()).unwrap();
+    assert_eq!(report["result"]["selected"].as_array().unwrap().len(), 1);
+    assert_eq!(report["result"]["expected_total_ms"], 61000);
+    assert_eq!(
+        invoke(
+            "clear_current_plan",
+            serde_json::json!({"expected_revision":1})
+        )
+        .unwrap(),
+        2
+    );
 }
