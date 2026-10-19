@@ -10,8 +10,8 @@ the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 installer pages, a non-runner Windows machine and the addon on a live Forever
 client are not fully verified. The current download is the published
 [0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2).
-It does not contain a verified playable-content catalog. Full-content v1.0.0 targets
-Forever 1.60.1.70374 and remains subject to the
+It does not contain a verified playable-content catalog. Under [ADR 0006](../decisions/0006-v1-program.md), full-content v1.0.0 targets
+the first verified stable live build after launch and remains subject to the
 [v1 release gates](../releases/V1_RELEASE_PROCESS.md).
 
 Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Windows.ps1)):
@@ -27,8 +27,9 @@ Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Window
 The 0.9.2 release has all five files. Its checksum manifest covers the
 four payload files, not itself. A local `-AddonOnly` build omits the installer;
 an untagged version without notes also omits `CANDIDATE_NOTES.md`. Neither is the
-complete Windows release asset set. The current packager does not include a
-production content pack or corresponding third-party source archives.
+complete Windows release asset set. The current development selection includes no production content pack or content
+source archive. The application does bundle dependency notices and retained
+dependency sources; these are verified against the committed source.
 
 ## For users
 

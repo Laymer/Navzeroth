@@ -22,3 +22,12 @@ Next: independent review and exact-head checks; separately repair atomic Windows
 fixture directories, bounded startup/structured IPC diagnostics, then SemVer upgrade
 checks. RC publication, stability and Pages remain unfinished. 0.9.2 stays published;
 no candidate or stable readiness is claimed.
+
+## Integration receipt — 2026-10-19
+
+PR #204 merged as `ac6037a44fb41a24dba7728a54cbf603eb364b87` after independent read-only approval of
+final head `bbdd5e4bb499c84f7329884c14f54e16ac7dd254` and all ten required checks passing.
+Successful runs: CI 39228695506, Coverage 39228695446, package 39228695449 and source/parity 39228695445.
+Earlier failures/cancellations remain distinct from these passes.
+Next: [development RC verification and preparation](2026-10-19-rc-release.md).
+This repair does not establish stable/candidate readiness or release publication.
