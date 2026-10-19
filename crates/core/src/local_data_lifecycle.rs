@@ -46,7 +46,7 @@ pub struct Checkpoint {
 impl Checkpoint {
     pub fn validate(&self) -> Result<(), &'static str> {
         self.binding.validate()?;
-        if self.format_version != VERSION
+        if !matches!(self.format_version, 1 | 2)
             || self.tables.len() > self.binding.total as usize
             || self.gaps.len() > 131072
             || self.gaps.iter().any(|s| s.len() > 512)
@@ -55,7 +55,8 @@ impl Checkpoint {
         }
         let mut keys = BTreeSet::new();
         for row in &self.tables {
-            if row.table.is_empty()
+            if !row.disposition.supported_in(self.format_version)
+                || row.table.is_empty()
                 || row.table.len() > 80
                 || !row
                     .table
@@ -111,4 +112,61 @@ pub struct Activation {
     pub catalog_sha256: Option<String>,
     /// Research selection only. Consumers must independently validate availability.
     pub verified_for_planning: bool,
+}
+
+#[cfg(test)]
+mod archive_version_tests {
+    use super::*;
+    use crate::local_data::InventoryDisposition;
+
+    #[test]
+    fn checkpoint_failure_dispositions_require_their_versioned_envelope() {
+        for disposition in [
+            InventoryDisposition::UnavailableUnknown,
+            InventoryDisposition::UnavailableUnsupported,
+            InventoryDisposition::UnavailableEncrypted,
+            InventoryDisposition::RetainedUnsupported,
+        ] {
+            let row = TableInventory {
+                table: "Map".into(),
+                locale: Some("enUS".into()),
+                file_data_id: Some(1),
+                disposition,
+                reason: "synthetic_failure".into(),
+                retained_sha256: None,
+                decoded_sha256: None,
+                encoded_bytes: None,
+                records: None,
+                layout_hash: None,
+            };
+            let mut checkpoint = Checkpoint {
+                format_version: 2,
+                binding: CheckpointBinding {
+                    format_version: 1,
+                    source_sha256: "a".repeat(64),
+                    extractor_sha256: "b".repeat(64),
+                    selection_sha256: "c".repeat(64),
+                    preset: PerformancePreset::Small,
+                    total: 1,
+                },
+                tables: vec![row],
+                gaps: vec![],
+            };
+            assert!(checkpoint.validate().is_ok());
+            let text = serde_json::to_string(&checkpoint).unwrap();
+            let restored: Checkpoint = serde_json::from_str(&text).unwrap();
+            assert_eq!(restored.tables[0].disposition, disposition);
+            checkpoint.format_version = 1;
+            assert_eq!(
+                checkpoint.validate().is_ok(),
+                !matches!(
+                    disposition,
+                    InventoryDisposition::UnavailableUnknown
+                        | InventoryDisposition::UnavailableUnsupported
+                )
+            );
+            checkpoint.format_version = 3;
+            assert!(checkpoint.validate().is_err());
+        }
+    }
 }

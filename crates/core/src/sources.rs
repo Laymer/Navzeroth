@@ -215,7 +215,7 @@ pub const fn precedence_rank(confidence: Confidence) -> u8 {
     }
 }
 
-/// Key of a normalized record. Both variants carry the full `DataContext`, so
+/// Key of a normalized record. Every variant carries the full `DataContext`, so
 /// equal IDs in different editions, builds or namespaces never share a key.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -225,12 +225,18 @@ pub enum RecordKey {
         context: DataContext,
         quest: QuestId,
     },
+    /// Internal content-v2 enrichment conflict; never an addon exchange key.
+    Dungeon {
+        context: DataContext,
+        dungeon: SourceId,
+        field: crate::dungeon_composition::DungeonField,
+    },
 }
 impl RecordKey {
     pub fn context(&self) -> &DataContext {
         match self {
             Self::Item(key) => &key.context,
-            Self::Quest { context, .. } => context,
+            Self::Quest { context, .. } | Self::Dungeon { context, .. } => context,
         }
     }
 }

@@ -35,8 +35,8 @@ fn invalid(message: &'static str) -> AppError {
     AppError::new(ErrorCode::InvalidInput, message, false)
 }
 
-/// Where a fact came from, when that is not the Forever client (ADR 0007 §3).
-/// No mark at all means Forever-origin, non-inferred or unattributed evidence.
+/// Accepted historical origins and inference markers. No marker establishes
+/// live verification or compatibility, including when origin metadata is absent.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub enum OriginMark {
     #[serde(rename = "vanilla_1_12")]
@@ -45,15 +45,19 @@ pub enum OriginMark {
     ClassicEra,
     #[serde(rename = "inferred")]
     Inferred,
+    #[serde(rename = "wow_forever_70245")]
+    HistoricalForever70245,
 }
 const VANILLA: u8 = 1;
 const CLASSIC: u8 = 2;
 const INFERRED: u8 = 4;
+const HISTORICAL_70245: u8 = 8;
 fn marks(bits: u8) -> Vec<OriginMark> {
     [
         (VANILLA, OriginMark::Vanilla112),
         (CLASSIC, OriginMark::ClassicEra),
         (INFERRED, OriginMark::Inferred),
+        (HISTORICAL_70245, OriginMark::HistoricalForever70245),
     ]
     .into_iter()
     .filter(|(bit, _)| bits & bit != 0)
@@ -151,6 +155,16 @@ impl WorldIndex {
                 let mut bits = sources.get(e.source.as_str()).copied().unwrap_or(0);
                 if e.confidence == Confidence::Inferred {
                     bits |= INFERRED;
+                }
+                if e.origin.as_ref().is_some_and(|origin| {
+                    origin.edition.as_str() == "wow_forever"
+                        && origin
+                            .build
+                            .value()
+                            .is_some_and(|build| build.as_str() == "1.60.1.70245")
+                        && e.context.build.build.as_str() != "1.60.1.70245"
+                }) {
+                    bits |= HISTORICAL_70245;
                 }
                 (e.id.as_str().to_owned(), bits)
             })

@@ -1,7 +1,7 @@
 {
   "format": "navzeroth-accepted-origins",
-  "schema_version": 1,
-  "decision": "ADR 0007 §3",
+  "schema_version": 2,
+  "decision": "ADR 0007 §3; owner decision 2026-10-19: historical Forever 1.60.1.70245",
   "target_edition": "wow_forever",
   "domains": {
     "quests": ["vanilla_1_12", "wow_classic_era"],
@@ -14,6 +14,7 @@
     "party": ["vanilla_1_12", "wow_classic_era"],
     "reminders": ["vanilla_1_12", "wow_classic_era"]
   },
+  "historical_builds": {"wow_forever": ["1.60.1.70245"]},
   "accept_inferred": true,
   "accept_unknowns": true,
   "precedence": ["owner_observation", "wow_forever", "authored", "vanilla_1_12", "wow_classic_era"]

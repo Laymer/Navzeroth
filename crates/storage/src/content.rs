@@ -172,6 +172,7 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
             RecordKey::Quest { quest, .. } => {
                 envelope.payload.quests.iter().any(|q| &q.id == quest)
             }
+            RecordKey::Dungeon { .. } => false, // v1 has no dungeon records.
         };
         if !found
             || !evidence_ids.contains(&conflict.preferred)

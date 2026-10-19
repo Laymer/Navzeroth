@@ -585,3 +585,54 @@ fn whole_world_pages_are_fast() {
         );
     }
 }
+
+#[test]
+fn exact_historical_forever_origin_is_exposed_without_relabelling_other_builds() {
+    for (origin, historical) in [
+        (
+            json!({"edition":"wow_forever","build":{"status":"known","value":"1.60.1.70245"}}),
+            true,
+        ),
+        (
+            json!({"edition":"wow_forever","build":{"status":"known","value":"1.60.1.70246"}}),
+            false,
+        ),
+        (
+            json!({"edition":"vanilla_1_12","build":{"status":"known","value":"1.60.1.70245"}}),
+            false,
+        ),
+        (
+            json!({"edition":"wow_forever","build":{"status":"unknown"}}),
+            false,
+        ),
+    ] {
+        let mut bundle = bundle();
+        let item = bundle["content"]["reference"]["payload"]["items"][0].clone();
+        let evidence_id = item["evidence"][0].clone();
+        let evidence = bundle["content"]["reference"]["payload"]["evidence"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|e| e["id"] == evidence_id)
+            .unwrap();
+        evidence["origin"] = origin;
+        let content = revision(&bundle);
+        let records: Vec<OriginRef> = serde_json::from_value(json!([{
+            "collection":"items", "id":item["key"]["item_id"], "variant":item["key"]["variant"]
+        }]))
+        .unwrap();
+        let result = world::record_origins(
+            &content,
+            &DatasetRevision::new("demo-r1").unwrap(),
+            &records,
+        )
+        .unwrap();
+        assert_eq!(
+            result.origins[0]
+                .as_ref()
+                .unwrap()
+                .contains(&world::OriginMark::HistoricalForever70245),
+            historical
+        );
+    }
+}

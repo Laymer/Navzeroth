@@ -2,8 +2,8 @@ import type { CommandClient } from "./client";
 // World browser and origin markers (ADR 0007 §3 and §9). Rust searches and pages;
 // the UI only renders one bounded page at a time.
 export type Observed<T> = { status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable"; value?: never };
-/** A fact's non-Forever origin. No mark means Forever-origin, non-inferred or unattributed. */
-export type OriginMark = "vanilla_1_12" | "wow_classic_era" | "inferred";
+/** Accepted historical origins and inference. No mark establishes live verification. */
+export type OriginMark = "vanilla_1_12" | "wow_classic_era" | "inferred" | "wow_forever_70245";
 export type WorldView = "entities" | "vendors" | "trainers" | "quests" | "loot";
 export type ServiceKind = "junction" | "vendor" | "repair" | "trainer" | "flight" | "transport" | "dungeon" | "other";
 export interface ItemRef { item_id: string; variant: string; /** Display name from the item table, when the pack records one. */ name?: string }
