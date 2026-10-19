@@ -78,3 +78,9 @@ passed; synthetic atlas preparation exited 0. Dependency notices regenerated and
 verified 506 retained notice/source files. New installed-tree mutation test and
 synthetic 542-resource mapping check passed; PowerShell 5.1 parser check passed.
 Locked pnpm dependencies installed. Hosted final-head checks remain pending.
+
+Readiness/material selection on committed `b020b45d2b57a1cba2f12f6e364a1a58c3cec77e`
+both exited 0: publication allowed for this development version, candidate/stable
+false, 69 exact blockers, zero verified evidence/packs and empty material selection.
+[Version-specific inventory](../releases/1.0.0-rc.1-readiness.md) records every
+blocker, owner and clearing condition alongside raw committed-tree outputs.

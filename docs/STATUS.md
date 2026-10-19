@@ -29,7 +29,7 @@ Coverage39164373980 and package39164374023 failed. Those failures are retained,
 not counted as passes. The repair PRs provide new evidence; exact resulting-release
 commit and tag validation still precede publication.
 
-Canonical versions are being prepared as **1.0.0-rc.1**, explicitly an unsigned
+Canonical versions are prepared as **1.0.0-rc.1**, explicitly an unsigned
 development prerelease. Candidate and stable readiness remain false. Published
 version and download links remain **0.9.2** until public RC verification. No
 acceptance-candidate promotion or stable 1.0.0 publication is included.
@@ -38,6 +38,8 @@ native aggregation and all ten required checks remain in force. Ordinary Windows
 performance, live acceptance, content permissions and launch-target evidence
 remain gaps. Private extraction/cache receipts are retained without reopening
 game files. Separate Pages delivery follows public RC verification.
+Committed-tree readiness at `b020b45` reports publication allowed, candidate/stable
+false, 69 blockers and empty material selection. [Exact inventory](releases/1.0.0-rc.1-readiness.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
