@@ -80,3 +80,42 @@ class InputBudget:
         self.records += count
         if self.records > MAX_INPUT_RECORDS:
             raise ValueError("input record count exceeds limit")
+
+
+def json_document(raw, max_depth=64):
+    """Parse bounded inert JSON; refuse duplicate members and excessive nesting."""
+    import json
+    depth = 0
+    quoted = False
+    escaped = False
+    for byte in raw:
+        if quoted:
+            if escaped:
+                escaped = False
+            elif byte == 92:
+                escaped = True
+            elif byte == 34:
+                quoted = False
+        elif byte == 34:
+            quoted = True
+        elif byte in (91, 123):
+            depth += 1
+            if depth > max_depth:
+                raise ValueError("JSON nesting exceeds limit")
+        elif byte in (93, 125):
+            depth -= 1
+    def number(value):
+        import math
+        result = float(value)
+        if not math.isfinite(result):
+            raise ValueError("non-finite JSON number")
+        return result
+    def members(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("duplicate JSON member")
+            result[key] = value
+        return result
+    return json.loads(raw, object_pairs_hook=members, parse_float=number,
+                      parse_constant=lambda value: (_ for _ in ()).throw(ValueError("non-finite JSON number")))
