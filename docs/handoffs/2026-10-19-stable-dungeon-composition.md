@@ -71,6 +71,8 @@ The strict v2 decoder still holds the strict JSON Value, a cloned Value used for
 typed decoding, the typed model and a canonical comparison Value. It remains a
 major full-data allocation source. Redesign must preserve duplicate-key, unknown
 field, canonical-field and resource bounds; no checks were weakened here.
+Portable workspace tests: 1,479 passed, zero failed, seven ignored (the actual
+full-catalog test was dispatched separately and passed as recorded above).
 Portable workspace/all-target Clippy, Rust format and whitespace checks passed.
 The initial Clippy run identified a test-module placement issue; the module was
 moved to the end before the final passing check.
