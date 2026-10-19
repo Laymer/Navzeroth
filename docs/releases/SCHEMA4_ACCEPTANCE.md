@@ -63,3 +63,34 @@ Those workflow adapters remain unimplemented by this contract change. Current
 stable packaging still uses full readiness, so draft preparation stays blocked
 until that explicitly reviewed adaptation. Hosted evidence producers and actual
 results, manifest migration and exact-draft owner smoke remain outstanding.
+
+## Reviewed corresponding-source materials
+
+Schema4 evidence may declare `corresponding_source_files`, a nonempty reviewed
+collection of exact FileRefs (at most4096, unique safe paths, positive bytes).
+Populate it from the admitted retainer's `corresponding_source.files`, including
+mixed-generator source such as permitted SQL originals. This is a source-material
+identity, not a claim that original bytes are BSD-licensed or an attribution notice.
+Schemas1/2/3 refuse this field even when null or empty. Omission preserves existing
+schema4 manifests; it does not assert that any unlisted corresponding source exists.
+The release preparer must enumerate the actual reviewed retained-source closure.
+
+All references participate in release evidence byte verification. Export requires
+tracked production files outside docs/release, exact hashes and sizes, the tested
+Git production fingerprint, and existing permission/admission checks. Missing,
+altered, duplicate, unlisted or private-proof-only paths refuse selection.
+
+Schema4 exports RELEASE_MATERIALS.json schema2 with the sorted
+`corresponding_source_files` collection and `corresponding_source` file category.
+A file already exported as a notice/source material stays one archive entry;
+`additional_kinds:["corresponding_source"]` retains the additional purpose.
+Its original source license and attribution declarations remain unchanged.
+Older release-material manifests retain schema1 and their prior serialized shape.
+
+Only schema4 may use a576MiB catalog allowance matching the v2 pack contract,
+and only for an exact verified pack catalog FileRef. Material manifest schema2
+exposes these exact pins in `catalog_files` for the Windows archive verifier. The aggregate checked-input
+budget is2GiB. Original/corresponding source and other evidence files retain the
+256MiB bound. Schemas1/2/3 retain256MiB per file and1GiB aggregate. Cached reads
+cannot turn a catalog allowance into permission for oversized source resources.
+Release JSON remains bounded to16MiB pending actual inventory measurements.

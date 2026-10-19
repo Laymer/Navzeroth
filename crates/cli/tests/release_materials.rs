@@ -1137,3 +1137,132 @@ fn unaccepted_or_mismatched_origins_and_unbound_policies_block() {
     assert!(has(&report, "World-data target file is missing"));
     assert!(materials::plan(&temp.options()).is_err());
 }
+
+fn corresponding_source_fixture() -> Temp {
+    let temp = Temp::new(true);
+    world_v3(&temp, "vanilla_1_12", "vanilla_1_12", &repository_policy());
+    let mut inventory = temp.read(INVENTORY);
+    inventory["schema_version"] = json!(4);
+    temp.json(INVENTORY, &inventory);
+    temp.write(
+        "vendor/mixed-generator-source.sql",
+        b"-- synthetic permitted mixed source\nSELECT 1;\n",
+    );
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["schema_version"] = json!(4);
+    evidence["corresponding_source_files"] =
+        json!([temp.reference("vendor/mixed-generator-source.sql")]);
+    temp.json(EVIDENCE, &evidence);
+    temp.bind_inventory();
+    temp.commit();
+    temp
+}
+
+#[test]
+fn schema4_corresponding_sources_export_exact_bytes_as_their_real_category() {
+    let temp = corresponding_source_fixture();
+    let plan = materials::plan(&temp.options()).unwrap();
+    assert_eq!(plan.schema_version, 2);
+    assert_eq!(plan.corresponding_source_files.len(), 1);
+    assert_eq!(plan.catalog_files.len(), 1);
+    assert!(
+        plan.catalog_files[0]
+            .path
+            .as_str()
+            .ends_with("catalog.json")
+    );
+    let file = plan
+        .files
+        .iter()
+        .find(|f| f.kind == materials::Kind::CorrespondingSource)
+        .unwrap();
+    assert_eq!(
+        file.input.path.as_str(),
+        "vendor/mixed-generator-source.sql"
+    );
+    assert!(
+        plan.sources
+            .iter()
+            .all(|s| !s.license_files.contains(&file.input)
+                && !s.attribution_files.contains(&file.input))
+    );
+    let staged = temp.0.join("dist/corresponding");
+    fs::create_dir_all(staged.parent().unwrap()).unwrap();
+    materials::stage(&temp.options(), &staged).unwrap();
+    assert_eq!(
+        fs::read(staged.join(file.archive_path.as_str())).unwrap(),
+        fs::read(temp.0.join(file.input.path.as_str())).unwrap()
+    );
+}
+
+#[test]
+fn corresponding_sources_deduplicate_archive_bytes_while_retaining_both_roles() {
+    let temp = corresponding_source_fixture();
+    let mut evidence = temp.read(EVIDENCE);
+    let notice = evidence["sources"][0]["license_files"][0].clone();
+    evidence["corresponding_source_files"] = json!([notice.clone()]);
+    temp.json(EVIDENCE, &evidence);
+    let plan = materials::plan(&temp.options()).unwrap();
+    let files: Vec<_> = plan
+        .files
+        .iter()
+        .filter(|f| f.input.path.as_str() == notice["path"].as_str().unwrap())
+        .collect();
+    assert_eq!(files.len(), 1);
+    assert_eq!(files[0].kind, materials::Kind::SourceMaterial);
+    assert_eq!(
+        files[0].additional_kinds,
+        [materials::Kind::CorrespondingSource]
+    );
+}
+
+#[test]
+fn corresponding_sources_refuse_bad_hash_missing_duplicate_and_unlisted_resources() {
+    for mutation in ["hash", "missing", "duplicate", "unlisted", "empty", "zero"] {
+        let temp = corresponding_source_fixture();
+        let mut evidence = temp.read(EVIDENCE);
+        match mutation {
+            "hash" => evidence["corresponding_source_files"][0]["sha256"] = json!("0".repeat(64)),
+            "missing" => {
+                evidence["corresponding_source_files"][0]["path"] = json!("vendor/absent.sql")
+            }
+            "duplicate" => {
+                let f = evidence["corresponding_source_files"][0].clone();
+                evidence["corresponding_source_files"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(f);
+            }
+            "empty" => evidence["corresponding_source_files"] = json!([]),
+            "zero" => evidence["corresponding_source_files"][0]["bytes"] = json!(0),
+            "unlisted" => {
+                temp.write("release/unlisted.sql", b"unlisted");
+                evidence["corresponding_source_files"] =
+                    json!([temp.reference("release/unlisted.sql")]);
+            }
+            _ => unreachable!(),
+        }
+        temp.json(EVIDENCE, &evidence);
+        assert!(materials::plan(&temp.options()).is_err(), "{mutation}");
+    }
+}
+
+#[test]
+fn historical_evidence_refuses_corresponding_source_field_even_null_or_empty() {
+    let temp = corresponding_source_fixture();
+    for version in [1, 2, 3] {
+        for field in [
+            json!(null),
+            json!([]),
+            temp.read(EVIDENCE)["corresponding_source_files"].clone(),
+        ] {
+            let mut evidence = temp.read(EVIDENCE);
+            evidence["schema_version"] = json!(version);
+            evidence["corresponding_source_files"] = field;
+            assert!(
+                azeroth_core::release::decode_evidence(&serde_json::to_vec(&evidence).unwrap())
+                    .is_err()
+            );
+        }
+    }
+}

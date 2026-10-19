@@ -94,3 +94,62 @@ pub fn verify(path: &Path, expected_bytes: u64, expected_sha256: &str) -> Result
         Ok(())
     })
 }
+
+/// Stream an exact resource to a new staging file. An error removes only the file
+/// created by this call; existing destinations are never overwritten.
+pub fn copy(
+    path: &Path,
+    destination: &Path,
+    expected_bytes: u64,
+    expected_sha256: &str,
+) -> Result<()> {
+    use std::io::Write;
+    if expected_bytes == 0 || expected_bytes > MAX_RESOURCE_BYTES {
+        return Err("Bundled copy exceeds resource bound");
+    }
+    let parent = destination
+        .parent()
+        .ok_or("Bundle destination has no parent")?;
+    let parent = crate::checked_path(parent)?;
+    if !parent.is_dir() {
+        return Err("Bundle destination parent is not a directory");
+    }
+    let mut created = false;
+    let result = checked(path, expected_bytes, |input| {
+        let mut output = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(destination)
+            .map_err(|_| "Cannot create bundle resource")?;
+        created = true;
+        let mut bytes = [0; 65536];
+        let mut total = 0u64;
+        let mut hash = Sha256::new();
+        loop {
+            let n = input
+                .read(&mut bytes)
+                .map_err(|_| "Cannot read bundled copy input")?;
+            if n == 0 {
+                break;
+            }
+            total += n as u64;
+            if total > expected_bytes {
+                return Err("Bundled copy input grew");
+            }
+            hash.update(&bytes[..n]);
+            output
+                .write_all(&bytes[..n])
+                .map_err(|_| "Cannot write bundle resource")?;
+        }
+        if total != expected_bytes || format!("{:x}", hash.finalize()) != expected_sha256 {
+            return Err("Bundled copy input differs");
+        }
+        output
+            .sync_all()
+            .map_err(|_| "Cannot flush bundle resource")
+    });
+    if result.is_err() && created {
+        let _ = fs::remove_file(destination);
+    }
+    result
+}

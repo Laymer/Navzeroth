@@ -406,6 +406,12 @@ fn stable_values() -> (Value, Value) {
     let mut evidence = evidence_value();
     inventory["schema_version"] = json!(SCHEMA_STABLE);
     evidence["schema_version"] = json!(SCHEMA_STABLE);
+    let bundle_file = |path: &str| {
+        let mut value = file();
+        value["path"] = json!(path);
+        value
+    };
+    evidence["bundled_content"] = json!({"manifest":bundle_file("release/bundle-manifest.json"),"receipt":bundle_file("release/bundle-receipt.json"),"review":bundle_file("docs/review.json")});
     evidence["candidate_installer_sha256"] = json!(HASH);
     evidence["checks"] =
         json!(required_checks(SCHEMA_STABLE).into_iter().map(|(id, method)| {
@@ -569,4 +575,48 @@ fn preparation_never_admits_failed_partial_stale_or_content_blockers() {
     e.production_sha256 = Some(Sha256Hex::new(POLICY_HASH).unwrap());
     let stale = check(&i, &e);
     assert!(!BuildPhase::Prebuild.ready(&stale) && !BuildPhase::Draft.ready(&stale));
+}
+
+#[test]
+fn signed_bundle_binding_is_required_and_new_fields_never_promote_historical_evidence() {
+    let (inventory, mut evidence) = stable_values();
+    evidence.as_object_mut().unwrap().remove("bundled_content");
+    let (i, e) = decode(&inventory, &evidence);
+    let report = check(&i, &e);
+    assert!(!report.candidate_ready);
+    assert!(report.blockers.iter().any(|b| b.contains("signed bundle")));
+    for version in [1, 2, 3] {
+        let mut old = evidence_value();
+        old["schema_version"] = json!(version);
+        old["bundled_content"] = Value::Null;
+        assert!(decode_evidence(&serde_json::to_vec(&old).unwrap()).is_err());
+    }
+    for change in [
+        "duplicate",
+        "manifest-size",
+        "receipt-size",
+        "review-size",
+        "production-metadata",
+    ] {
+        let (_, mut value) = stable_values();
+        match change {
+            "duplicate" => {
+                value["bundled_content"]["receipt"] = value["bundled_content"]["manifest"].clone()
+            }
+            "manifest-size" => {
+                value["bundled_content"]["manifest"]["bytes"] = json!(4 * 1024 * 1024 + 1)
+            }
+            "receipt-size" => value["bundled_content"]["receipt"]["bytes"] = json!(64 * 1024 + 1),
+            "review-size" => {
+                value["bundled_content"]["review"]["bytes"] = json!(MAX_RELEASE_BYTES + 1)
+            }
+            _ => {
+                value["bundled_content"]["receipt"]["path"] = json!("content/circular-receipt.json")
+            }
+        }
+        assert!(
+            decode_evidence(&serde_json::to_vec(&value).unwrap()).is_err(),
+            "{change}"
+        );
+    }
 }

@@ -57,8 +57,9 @@ pub struct Fixture {
 impl Fixture {
     pub fn new() -> Self {
         let root = std::env::temp_dir().join(format!(
-            "nav-bundled-resources-{}-{}",
+            "nav-bundled-resources-{}-{}-{}",
             std::process::id(),
+            &hash(module_path!().as_bytes()).as_str()[..12],
             NEXT.fetch_add(1, Ordering::Relaxed)
         ));
         fs::create_dir(&root).unwrap();
