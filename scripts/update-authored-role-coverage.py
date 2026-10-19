@@ -98,6 +98,7 @@ def main():
     reminder_evidence["id"]="ev-authored-reminders-r4"
     reminder_evidence["notes"]="Original project-authored heuristic reminder statements, separately attributed from dungeon/map declarations. Publisher documentation records authorship only, not verified game mechanics, prerequisites or availability."
     reminder_evidence["conflicts"]=[]
+    reminder_evidence["observed_at_utc_ms"]={"status":"unknown","source":"unrecorded","clock_trust":"uncertain"}
     payload["evidence"] = sorted([original_evidence,evidence,reminder_evidence],key=lambda e:e["id"])
 
     rules = [r for r in payload["rules"] if not r["id"].startswith("reminder:role-")]

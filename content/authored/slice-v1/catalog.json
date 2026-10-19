@@ -3125,8 +3125,7 @@
           "observed_at_utc_ms": {
             "clock_trust": "uncertain",
             "source": "unrecorded",
-            "status": "known",
-            "value": 1792281600000
+            "status": "unknown"
           },
           "source": "navzeroth-authored-v1"
         },

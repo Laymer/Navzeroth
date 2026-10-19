@@ -53,3 +53,8 @@ checks and actual combined reminder delivery remain unverified here.
 Next: independent world review, normal integration into combined regeneration,
 new immutable source/pack pins and an actual combined reminder scenario. No push,
 keys, signing, publication or target-client acceptance occurred.
+
+Independent review clarified that the new reminder-only declaration has no
+recorded exact observation time. Its timestamp is now explicitly unknown; the
+old original declaration timestamp remains historical and unchanged. Focused app
+integration was rerun after this metadata correction.

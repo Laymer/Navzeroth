@@ -523,6 +523,15 @@ mod tests {
     #[test]
     fn original_reminder_provenance_is_separate_from_dungeon_evidence() {
         let v = authored();
+        assert_eq!(
+            v["content"]["reference"]["payload"]["evidence"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e["id"] == "ev-authored-reminders-r4")
+                .unwrap()["observed_at_utc_ms"]["status"],
+            "unknown"
+        );
         let rules = v["content"]["reference"]["payload"]["rules"]
             .as_array()
             .unwrap();
