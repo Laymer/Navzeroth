@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "transformation": "world_to_content_v3",
-  "review": "Reviewed dungeon v3 transformation scope: existing admitted full DB/CSV and exact historical origins/field lists unchanged. Exterior ghost-entry planar coordinates carry derivation/uncertainty and unknown elevation/access; unique root-area matching only; explicit raw map169 test exclusion. No added grants, builds or observed game facts. Independent integration review required.",
+  "review": "Reviewed dungeon v3 transformation scope: existing admitted full DB/CSV and exact historical origins/field lists unchanged. Exterior ghost-entry planar coordinates carry derivation/uncertainty and unknown elevation/access; unique root-area matching only; explicit raw map169 test exclusion. No added grants, builds or observed game facts. Independent integration review required. Explicit project-derived fields added: dungeon.planar-entrance (admitted source XY, derivation/uncertainty, elevation/access unknown) and dungeon.preparation-heuristics (original prose, unknown readiness conditions). All upstream admitted fields remain unchanged.",
   "sources": [
     {
       "id": "cmangos-classic-db",
@@ -33,6 +33,8 @@
     {
       "id": "navzeroth-world-content",
       "allowed_fields": [
+        "dungeon.planar-entrance",
+        "dungeon.preparation-heuristics",
         "loot.reference-expansion",
         "travel.flight-time",
         "travel.walk"
