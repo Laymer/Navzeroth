@@ -278,3 +278,44 @@ fn source_bound_assembly_uses_exact_trusted_materials_and_preserves_existing_out
     );
     fs::remove_file(identity).unwrap();
 }
+
+#[test]
+fn approved_normalization_report_must_match_its_assigned_pack_and_policy() {
+    for change in [
+        "none",
+        "wrong-revision",
+        "wrong-precedence",
+        "wrong-format",
+        "not-array",
+    ] {
+        let mut f = Fixture::new();
+        let policy = azeroth_core::origin_policy::OriginPolicy::decode(
+            &fs::read(
+                f.bundle
+                    .root
+                    .join(f.bundle.manifest.accepted_origins.path.as_str()),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let mut report = json!({"format":"navzeroth-world-content-conflicts","schema_version":1,"revision":f.bundle.manifest.packs[0].key.revision,"precedence":policy.precedence,"conflicts":[]});
+        match change {
+            "wrong-revision" => report["revision"] = json!("another-accepted-pack"),
+            "wrong-precedence" => report["precedence"] = json!([]),
+            "wrong-format" => report["schema_version"] = json!(2),
+            "not-array" => report["conflicts"] = json!({}),
+            _ => {}
+        }
+        fs::write(
+            f.bundle.root.join("normalization.json"),
+            serde_json::to_vec(&report).unwrap(),
+        )
+        .unwrap();
+        let pin = shared::reference(&f.bundle.root, "normalization.json");
+        f.bundle.manifest.files.push(pin.clone());
+        f.bundle.manifest.packs[0].normalization_conflicts = Some(pin.clone());
+        f.evidence.normalization_conflict_files = Some(vec![pin]);
+        f.bind();
+        assert_eq!(f.verify(), change == "none", "{change}");
+    }
+}

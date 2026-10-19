@@ -262,6 +262,27 @@ fn verify_with_policy(
         {
             return Err("Bundle normalization conflicts are not admitted release material");
         }
+        if let Some(reference) = &pack.normalization_conflicts {
+            let raw = checked_bytes(root, reference, MAX_MANIFEST_BYTES, budget)?;
+            let report = azeroth_core::strict_json::value(&raw, MAX_MANIFEST_BYTES)
+                .map_err(|_| "Invalid bundle normalization report")?;
+            let origins = OriginPolicy::decode(&checked_bytes(
+                root,
+                &manifest.accepted_origins,
+                64 * 1024,
+                budget,
+            )?)?;
+            if report["format"] != "navzeroth-world-content-conflicts"
+                || report["schema_version"] != 1
+                || report["revision"].as_str() != Some(pack.key.revision.as_str())
+                || !report["conflicts"].is_array()
+                || report["precedence"]
+                    != serde_json::to_value(&origins.precedence)
+                        .map_err(|_| "Invalid normalization precedence")?
+            {
+                return Err("Bundle normalization report differs from its pack/policy");
+            }
+        }
         for reference in pack.conflicts.iter().chain(&pack.normalization_conflicts) {
             if files.get(reference.path.as_str()).copied() != Some(reference) {
                 return Err("Bundle omits declared conflict material");
