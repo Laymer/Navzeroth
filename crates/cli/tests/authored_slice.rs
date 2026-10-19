@@ -1,5 +1,5 @@
 //! V2.4: the committed authored slice input builds into a v2 pack that verifies,
-//! with a schema 2 party matrix for solo and duo bound to the authored records.
+//! with a schema 3 party matrix for solo and duo bound to the authored records.
 //! Building a pack never activates it for planning.
 use azeroth_cli::pack::{v2::build, verify};
 use azeroth_core::release_party::{SupportMatrix, workflows_for};

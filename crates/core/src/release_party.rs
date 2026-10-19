@@ -5,6 +5,9 @@
 //! Schema 1 is the historical 70374 matrix for groups of 2 to 40. Schema 2 (task
 //! V2.4) follows the 1.0.0 slice: its target is the code-side frozen target of
 //! release schema 2 (`null` while that is pending), and it admits a party of one.
+//! Schema 3 carries an explicit well-formed target; pack and release consumers
+//! must bind it to the actual selected catalog and release target. Historical
+//! schema 1 and 2 target semantics remain unchanged.
 //! Which workflows exist for a size is fixed in code ([`applies`]), never chosen
 //! by the JSON, so an omitted row cannot make a required workflow optional.
 use crate::{
@@ -66,7 +69,8 @@ fn present<'de, D: Deserializer<'de>>(d: D) -> Result<Option<Target>, D::Error> 
 pub struct SupportMatrix {
     pub schema_version: u32,
     /// Schema 1: always the historical 70374 target. Schema 2: the frozen release
-    /// target, or `null` while it is pending (ADR 0006 §1).
+    /// target, or `null` while it is pending (ADR 0006 §1). Schema 3: an explicit
+    /// target that consumers must compare with the actual catalog/release target.
     #[serde(deserialize_with = "present")]
     pub target: Option<Target>,
     pub catalog_sha256: Sha256Hex,

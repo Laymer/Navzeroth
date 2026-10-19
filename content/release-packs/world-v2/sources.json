@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "access": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "file_download"
+      },
+      "allowed_fields": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "dungeons.dungeons",
+          "items.items",
+          "loot.creature",
+          "loot.disenchant",
+          "loot.fishing",
+          "loot.game_object",
+          "loot.item",
+          "loot.pickpocketing",
+          "loot.reference",
+          "loot.skinning",
+          "quests.quests",
+          "vendors.items",
+          "world.game_objects",
+          "world.graveyards",
+          "world.npcs",
+          "world.spawns"
+        ]
+      },
+      "attribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "CMaNGOS Classic-DB contributors; https://github.com/cmangos/classic-db"
+      },
+      "authentication": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "none"
+      },
+      "conditional_requests": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "editions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "vanilla_1_12",
+          "wow_forever"
+        ]
+      },
+      "failure_behavior": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "id": "cmangos-classic-db",
+      "last_retrieval_utc_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "license": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "GPL-3.0-only"
+      },
+      "location": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "https://github.com/cmangos/classic-db"
+      },
+      "offline_usable": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": true
+      },
+      "provider": null,
+      "publisher": "cmangos/classic-db",
+      "record_class": "secondary_inference",
+      "redistribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "permitted"
+      },
+      "retention": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Retained in the repository under data-generators/output (Git LFS)"
+      },
+      "transformations": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "world_to_content_v2"
+        ]
+      },
+      "update_schedule": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Weekly generator run (ADR 0007 §1)"
+      },
+      "verified_revision": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "0f157a99aacb704c38488054c47fdc470d2ed1b7"
+      }
+    },
+    {
+      "access": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "allowed_fields": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "loot.reference-expansion",
+          "travel.flight-time",
+          "travel.walk"
+        ]
+      },
+      "attribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Navzeroth world content mapping (inferred travel times and loot expansion)"
+      },
+      "authentication": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "conditional_requests": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "editions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "failure_behavior": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "id": "navzeroth-world-content",
+      "last_retrieval_utc_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "license": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "BSD-3-Clause"
+      },
+      "location": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "data-generators/world_to_content.py"
+      },
+      "offline_usable": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": true
+      },
+      "provider": null,
+      "publisher": "Navzeroth project (repository owner)",
+      "record_class": "secondary_inference",
+      "redistribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "permitted"
+      },
+      "retention": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Regenerated from the retained world data by data-generators/world_to_content.py"
+      },
+      "transformations": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "world_to_content_v2"
+        ]
+      },
+      "update_schedule": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "With every world content build"
+      },
+      "verified_revision": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "b09816a9ebe3b19d2ba9c22dde8d4f71ac919469"
+      }
+    },
+    {
+      "access": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "file_download"
+      },
+      "allowed_fields": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "items.items",
+          "travel.taxi_nodes",
+          "travel.taxi_paths",
+          "world.ui_map_assignments",
+          "world.ui_maps"
+        ]
+      },
+      "attribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "World of Warcraft Forever 1.60.1 client data (Blizzard Entertainment) via wago.tools DB2 exports; https://wago.tools"
+      },
+      "authentication": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "none"
+      },
+      "conditional_requests": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "editions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "failure_behavior": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "id": "wago-tools-wowf",
+      "last_retrieval_utc_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "license": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "LicenseRef-Blizzard-client-data-via-wago-tools"
+      },
+      "location": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "https://wago.tools/db2?product=wowf"
+      },
+      "offline_usable": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": true
+      },
+      "provider": null,
+      "publisher": "wago.tools",
+      "record_class": "publisher_documentation",
+      "redistribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "permitted"
+      },
+      "retention": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Retained in the repository under data-generators/output (Git LFS)"
+      },
+      "transformations": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "world_to_content_v2"
+        ]
+      },
+      "update_schedule": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Weekly generator run (ADR 0007 §1)"
+      },
+      "verified_revision": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "c4d220c355fce03ef5fa47bb132715c8fd788074"
+      }
+    }
+  ]
+}

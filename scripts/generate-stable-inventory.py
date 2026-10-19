@@ -28,7 +28,7 @@ def read(path, maximum=8*1024*1024):
 
 def reference(root, relative):
     path=pathlib.PurePosixPath(relative)
-    if path.is_absolute() or '..' in path.parts or '.' in path.parts:
+    if relative != relative.lower() or path.is_absolute() or '..' in path.parts or '.' in path.parts:
         raise ValueError('invalid release reference')
     raw=bounded.read_file(root/relative,64*1024*1024)
     if not raw: raise ValueError('empty release reference')
@@ -58,10 +58,26 @@ def derive(root, enumeration, canonical_sha):
             if sid in pack_sources and source!=pack_sources[sid]: raise ValueError('inconsistent source metadata')
             if sid not in admitted or source['verified_revision'].get('value')!=admitted[sid]['revision']:
                 raise ValueError('pack source revision lacks exact reviewed admission')
+            policy=admitted[sid]
+            if (any(source[field].get('status')!='known' for field in ('license','attribution','verified_revision','allowed_fields','transformations','redistribution','offline_usable'))
+                    or source['redistribution'].get('value')!='permitted' or source['offline_usable'].get('value') is not True
+                    or not source['allowed_fields'].get('value') or not source['transformations'].get('value')
+                    or source['publisher']!=policy['publisher'] or source['license'].get('value')!=policy['rights']['license_identifier']
+                    or source['attribution'].get('value')!=policy['rights']['attribution']
+                    or not set(source['allowed_fields'].get('value',[])).issubset({field for f in policy['files'] for field in f['fields']})
+                    or not set(source['transformations'].get('value',[])).issubset({f['transformation'] for f in policy['files']})):
+                raise ValueError('pack source scope differs from exact reviewed admission')
             pack_sources[sid]=source
     closure=read(root/'content/world/1.60.1.70450/source-closure.json')
     conflicts=read(root/'content/world/1.60.1.70450/conflicts.json')
-    summary=dict(schema_version=1,validation='verified v2 pack tree, canonical content, target, provenance and accepted-origin/unknown classification; no environment or functional acceptance claim',target=enumeration['target'],canonical_enumeration_sha256=canonical_sha,record_counts={d:len(records.get(d,{})) for d in DOMAINS},absent_record_domains=enumeration['absent_record_domains'],accepted_unknown_fields=sum(p['accepted_unknown_fields'] for p in enumeration['packs']),remaining_gaps=0,missing_record_provenance=0,packs=[{k:v for k,v in p.items() if k!='sources'} for p in enumeration['packs']],normalization_conflict_records=len(conflicts['conflicts']),unknown_fields_are_not_absent_records=True)
+    origins=read(root/'release/v1/accepted-origins.json')
+    if (conflicts['format']!='navzeroth-world-content-conflicts' or conflicts['schema_version']!=1
+            or conflicts['revision'] not in {p['dataset_revision'] for p in enumeration['packs']}
+            or conflicts['precedence']!=origins['precedence']
+            or any(r.get('kind') not in ('value_disagreement','missing_in_higher_precedence')
+                   or 'chosen' not in r or not r.get('rule') for r in conflicts['conflicts'])):
+        raise ValueError('normalization decisions are not exactly policy bound')
+    summary=dict(schema_version=1,validation='verified v2 pack tree, canonical content, target, provenance and accepted-origin/unknown classification; no environment or functional acceptance claim',target=enumeration['target'],canonical_enumeration_sha256=canonical_sha,record_counts={d:len(records.get(d,{})) for d in DOMAINS},absent_record_domains=enumeration['absent_record_domains'],accepted_unknown_fields=sum(p['accepted_unknown_fields'] for p in enumeration['packs']),remaining_gaps=0,missing_record_provenance=0,packs=[{k:v for k,v in p.items() if k!='sources'} for p in enumeration['packs']],normalization_conflict_records=len(conflicts['conflicts']),unknown_fields_are_not_absent_records=True,unresolved_normalization_decisions=0,normalization_semantics='Explicit chosen/rule decisions under exact applied precedence; raw normalization reports are separate from typed SourceConflict records')
     summary['declared_exclusions']=read(root/'release/v1/deferred-features.json')
     artifact_path='release/v1/shipped-content-validation.json'
     artifact=encoded(summary)
@@ -87,7 +103,8 @@ def derive(root, enumeration, canonical_sha):
     inventory=dict(schema_version=4,inventory_id='forever-1.0.0-admitted-world-records-v1',target=enumeration['target'],slice=None,domains=domains,sources=[dict(id=sid,revision=admitted[sid]['revision']) for sid in sorted(pack_sources)])
     inventory_raw=encoded(inventory)
     sources=[]
-    notice=reference(root,'data-generators/NOTICE.md')
+    notice_raw=bounded.read_file(root/'data-generators/NOTICE.md',8*1024*1024)
+    notice=object_ref(root,hashlib.sha256(notice_raw).hexdigest())
     for sid in sorted(pack_sources):
         src=admitted[sid]
         if src['rights']['status']!='admitted': raise ValueError('source rights not admitted')
@@ -118,18 +135,28 @@ def derive(root, enumeration, canonical_sha):
 def generate(root,cli):
     # The canonical map is always regenerated through the verified Rust boundary;
     # caller-provided JSON cannot invent record identities or a passing check.
-    with tempfile.TemporaryDirectory(prefix='.inventory-enumeration-',dir=root/'release/v1') as tmp:
+    with tempfile.TemporaryDirectory(prefix='inventory-enumeration-',dir=root/'release/v1') as tmp:
         out=pathlib.Path(tmp)/'records.json'
         relative=out.relative_to(root).as_posix()
         command=[str(cli),'enumerate-release-packs','--root',str(root)]
         for pack in PACKS: command+=['--pack',pack]
         command+=['--output',relative]
         with open(pathlib.Path(tmp)/'stdout','wb') as stdout,open(pathlib.Path(tmp)/'stderr','wb') as stderr:
-            subprocess.run(command,stdout=stdout,stderr=stderr,check=True)
+            result=subprocess.run(command,stdout=stdout,stderr=stderr)
+        if result.returncode:
+            diagnostic=bounded.read_file(pathlib.Path(tmp)/'stderr',64*1024).decode('utf-8','replace')[:1000]
+            raise ValueError('verified enumeration refused: '+diagnostic.strip())
         raw=bounded.read_file(out,MAX_ENUMERATION)
         enumeration=bounded.json_document(raw)
         outputs,summary=derive(root,enumeration,hashlib.sha256(raw).hexdigest())
-        for path,data in outputs.items(): (root/path).write_bytes(data)
+        staged=[]
+        for path,data in outputs.items():
+            destination=root/path
+            if destination.is_symlink(): raise ValueError('linked release output refused')
+            temporary=pathlib.Path(tmp)/('output-'+destination.name)
+            temporary.write_bytes(data)
+            staged.append((temporary,destination))
+        for temporary,destination in staged: temporary.replace(destination)
         return dict(output_bytes={path:len(raw) for path,raw in outputs.items()},records=summary['record_counts'],accepted_unknown_fields=summary['accepted_unknown_fields'])
 
 

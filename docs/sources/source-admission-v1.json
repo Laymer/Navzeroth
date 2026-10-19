@@ -2642,8 +2642,255 @@
       ]
     },
     {
+      "id": "navzeroth-authored-v1",
+      "revision": "ca2b89dcf27956810d7a74628cd00997d2703186",
+      "publisher": "Navzeroth project (repository owner)",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "permissive",
+        "license_identifier": "BSD-3-Clause (repository LICENSE)",
+        "reviewer": "Codex /root authorized original project writing admission; independent exact-scope review required",
+        "attribution": "Original Navzeroth authoring, (c) 2026 Igor K",
+        "obligations": "Retain repository BSD-3-Clause LICENSE and original author attribution; show heuristic assumptions and unresolved game facts.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/LICENSE",
+            "revision": "b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0",
+            "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+            "reviewed_scope": "Existing project BSD license for exact original authored catalog, preparation/reminder/model prose and party procedures only. No game facts or third-party ownership grant; authored-only validator remains mandatory."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 63843,
+        "minimum_interval_ms": 1000,
+        "max_requests": 17,
+        "access_evidence": {
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/LICENSE",
+          "revision": "b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0",
+          "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+          "reviewed_scope": "Existing project BSD license for exact original authored catalog, preparation/reminder/model prose and party procedures only. No game facts or third-party ownership grant; authored-only validator remains mandatory."
+        }
+      },
+      "files": [
+        {
+          "path": "content/source-materials/objects/2ac5023798b292d651630281323c138b36c236031e636d07ef986d51678b6e62",
+          "bytes": 27546,
+          "sha256": "2ac5023798b292d651630281323c138b36c236031e636d07ef986d51678b6e62",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/catalog.json",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4",
+          "bytes": 2246,
+          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/evidence/authoring-statement.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e",
+          "bytes": 3717,
+          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/evidence/role-model-assumptions.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/90a4beed3e7b5748e3981ef456efd40737a8bc59a57661533c8bc6b21672b563",
+          "bytes": 17201,
+          "sha256": "90a4beed3e7b5748e3981ef456efd40737a8bc59a57661533c8bc6b21672b563",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/party-support.json",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/f226cce23ae014f96d74273b628c1e370caa08fafeb52045104f12aaa5ee72d2",
+          "bytes": 992,
+          "sha256": "f226cce23ae014f96d74273b628c1e370caa08fafeb52045104f12aaa5ee72d2",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-advancement.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/346c0798c7e37600340bfa7720b0f09fe41d37b3eb84090259239ab866e0f284",
+          "bytes": 952,
+          "sha256": "346c0798c7e37600340bfa7720b0f09fe41d37b3eb84090259239ab866e0f284",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-agreement.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/08fe6ecab8861a12c85a8337cda2fdfe7a145eaecf78461a4e9ab65d7fc1c5b9",
+          "bytes": 866,
+          "sha256": "08fe6ecab8861a12c85a8337cda2fdfe7a145eaecf78461a4e9ab65d7fc1c5b9",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-fairness.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/cb28bf5c33ec6099c31270bd3f3f048995ff567599eedc38ebb970dc7c0b682c",
+          "bytes": 1075,
+          "sha256": "cb28bf5c33ec6099c31270bd3f3f048995ff567599eedc38ebb970dc7c0b682c",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-joint-planning.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/781ca47fbaefd814e888fad4bb96605986a20db97b52985e30f0035d0cd3452e",
+          "bytes": 741,
+          "sha256": "781ca47fbaefd814e888fad4bb96605986a20db97b52985e30f0035d0cd3452e",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-review.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/e11a6e01c7d749e91b1de48ba9d6cb10ba0a328acd1c96a4baa3e6b796409ecc",
+          "bytes": 892,
+          "sha256": "e11a6e01c7d749e91b1de48ba9d6cb10ba0a328acd1c96a4baa3e6b796409ecc",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-sharing.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/6238ab2ed2a0f0e23de6f12e54f9717428ea3e61c75c1665f2a6c6f3c1721e2e",
+          "bytes": 882,
+          "sha256": "6238ab2ed2a0f0e23de6f12e54f9717428ea3e61c75c1665f2a6c6f3c1721e2e",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-stale-members.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/8c18cf5a1fa40da2cc3a88227d7ca12e6a30a6556ee58c17d3c3348c9164efb3",
+          "bytes": 1034,
+          "sha256": "8c18cf5a1fa40da2cc3a88227d7ca12e6a30a6556ee58c17d3c3348c9164efb3",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/duo-unequal-progress.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/210fcf88c00e1af5191fbe886e035bb934f92b3dde63d52b56a2babc00c92b3e",
+          "bytes": 1004,
+          "sha256": "210fcf88c00e1af5191fbe886e035bb934f92b3dde63d52b56a2babc00c92b3e",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/solo-advancement.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/002b87781a737e35ffec2dd1583c51aa570d6e58ece11ffca1547ea382567518",
+          "bytes": 1356,
+          "sha256": "002b87781a737e35ffec2dd1583c51aa570d6e58ece11ffca1547ea382567518",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/solo-joint-planning.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/430a72e0cff724eacb5bae30472dc90ea840ff0d89e97de3a1540a6429bb4c3c",
+          "bytes": 835,
+          "sha256": "430a72e0cff724eacb5bae30472dc90ea840ff0d89e97de3a1540a6429bb4c3c",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/solo-review.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        },
+        {
+          "path": "content/source-materials/objects/c3e71ca4b4cb914964780ba078af4bc3bc78a312f70f51b9100bf763adc6fac0",
+          "bytes": 1011,
+          "sha256": "c3e71ca4b4cb914964780ba078af4bc3bc78a312f70f51b9100bf763adc6fac0",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/b76f7c127ddbd4a238a1368644a16c8a9a4f3ef0/content/authored/slice-v1/procedures/solo-stale-members.md",
+          "fields": [
+            "class_roles.models",
+            "dungeons.preparation_checklist",
+            "party.procedures",
+            "reminders.rules"
+          ],
+          "transformation": "canonical_typed_serialization"
+        }
+      ]
+    },
+    {
       "id": "navzeroth-world-content",
-      "revision": "2e46b4fb3b18f9919ece1c67613143afef8661e8",
+      "revision": "b09816a9ebe3b19d2ba9c22dde8d4f71ac919469",
       "publisher": "Navzeroth project (repository owner)",
       "origin": {
         "edition": "wow_forever",
@@ -2658,8 +2905,8 @@
         "obligations": "Retain copyright, BSD license and corresponding generator source; upstream data rights remain separate.",
         "evidence": [
           {
-            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/899a206c547650cac0ef2bc3a982c0eccc2c7a8f/LICENSE",
-            "revision": "899a206c547650cac0ef2bc3a982c0eccc2c7a8f",
+            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/LICENSE",
+            "revision": "2ec43093add568ab85d4aaa1dd3c5dfacfb0877e",
             "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
             "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
           }
@@ -2667,12 +2914,12 @@
       },
       "retrieval": {
         "method": "manual_local",
-        "max_total_bytes": 93418,
+        "max_total_bytes": 93379,
         "minimum_interval_ms": 1000,
         "max_requests": 3,
         "access_evidence": {
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/899a206c547650cac0ef2bc3a982c0eccc2c7a8f/LICENSE",
-          "revision": "899a206c547650cac0ef2bc3a982c0eccc2c7a8f",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/LICENSE",
+          "revision": "2ec43093add568ab85d4aaa1dd3c5dfacfb0877e",
           "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
           "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
         }
@@ -2682,7 +2929,7 @@
           "path": "content/source-materials/objects/3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
           "bytes": 4266,
           "sha256": "3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/899a206c547650cac0ef2bc3a982c0eccc2c7a8f/data-generators/navzeroth_datagen/bounded.py",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/data-generators/navzeroth_datagen/bounded.py",
           "fields": [
             "loot.reference-expansion",
             "travel.flight-time",
@@ -2691,10 +2938,10 @@
           "transformation": "world_to_content_v2"
         },
         {
-          "path": "content/source-materials/objects/03e645a3b28fb5aae53fe1692492004540d172014c13d2ce17aadaaa283da746",
-          "bytes": 87659,
-          "sha256": "03e645a3b28fb5aae53fe1692492004540d172014c13d2ce17aadaaa283da746",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/899a206c547650cac0ef2bc3a982c0eccc2c7a8f/data-generators/world_to_content.py",
+          "path": "content/source-materials/objects/6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
+          "bytes": 87620,
+          "sha256": "6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/data-generators/world_to_content.py",
           "fields": [
             "loot.reference-expansion",
             "travel.flight-time",

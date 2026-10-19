@@ -186,7 +186,8 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
             "wago-tools-wowf",
             "wowhead-classic",
             "wowhead-forever",
-            "navzeroth-world-content"
+            "navzeroth-world-content",
+            "navzeroth-authored-v1"
         ]
     );
     for source in &hand {

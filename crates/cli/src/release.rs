@@ -1432,8 +1432,13 @@ mod tests {
         let mut catalog = Catalog::default();
         catalog_dataset(&mut catalog, &dataset).unwrap();
         let records = &catalog.records["quests"];
-        let mut inventory =
-            release::decode_inventory(&fs::read(root.join(INVENTORY_PATH)).unwrap()).unwrap();
+        let mut inventory = release::decode_inventory(
+            &fs::read(
+                root.join("release/history/2026-10-19-pre-stable-v3/coverage-inventory.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
         inventory.domains = vec![DomainInventory {
             domain: "quests".into(),
             completeness: Completeness::Complete,
@@ -1445,8 +1450,13 @@ mod tests {
             }],
             out_of_scope: vec![],
         }];
-        let mut evidence =
-            release::decode_evidence(&fs::read(root.join(EVIDENCE_PATH)).unwrap()).unwrap();
+        let mut evidence = release::decode_evidence(
+            &fs::read(
+                root.join("release/history/2026-10-19-pre-stable-v3/acceptance-evidence.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
         evidence.coverage = vec![UnitCoverage {
             unit_id: "synthetic-only".into(),
             status: Status::Pass,

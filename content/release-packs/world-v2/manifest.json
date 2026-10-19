@@ -1,0 +1,20 @@
+{
+  "assets": [],
+  "catalog": {
+    "bytes": 367721900,
+    "path": "catalog.json",
+    "sha256": "96259e9deb4374bcdf0a7264921d7e4a2c7e2038cf534c6cbe23f7bd7c9a2e29"
+  },
+  "coverage_gaps": 393597,
+  "distribution_eligible": true,
+  "generator_version": "1.0.0-rc.1",
+  "party_support": null,
+  "purpose": "local_reference",
+  "schema_version": 2,
+  "sources": {
+    "bytes": 9406,
+    "path": "sources.json",
+    "sha256": "b3e2c2b94da0d338dc26c3e785189c8e20f84aa1ec0fd2a1bd94a64d04b70e9d"
+  },
+  "supporting_files": []
+}

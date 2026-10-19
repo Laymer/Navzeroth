@@ -9,7 +9,7 @@ use serde_json::{Value, json};
 use std::collections::BTreeSet;
 
 const CATALOG: &[u8] = include_bytes!("../../../content/authored/slice-v1/catalog.json");
-const REV: &str = "navzeroth-authored-slice-r1";
+const REV: &str = "navzeroth-authored-slice-r1-release-contract-v2";
 
 fn source() -> SourceId {
     SourceId::new("navzeroth-authored-v1").unwrap()

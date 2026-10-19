@@ -56,8 +56,8 @@ def register(root, source_commit=None):
     existing[SID] = admitted
     registry['sources'] = [s for s in registry['sources'] if s['id'] != SID] + [admitted]
     source['verified_revision'] = {'status': 'known', 'value': revision, 'clock_trust': 'uncertain', 'source': 'unrecorded'}
-    registry_path.write_text(json.dumps(registry, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
-    sources_path.write_text(json.dumps(records, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
+    registry_path.write_bytes((json.dumps(registry, indent=2, ensure_ascii=False)+'\n').encode('utf-8'))
+    sources_path.write_bytes((json.dumps(records, indent=2, ensure_ascii=False, sort_keys=True)+'\n').encode('utf-8'))
     return dict(source_id=SID, revision=revision, source_commit=commit, original_files=len(files), original_bytes=sum(f['bytes'] for f in files), target_validation='unverified')
 
 

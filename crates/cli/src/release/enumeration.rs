@@ -321,6 +321,57 @@ mod tests {
         fs::remove_file(root.join("out.json")).unwrap();
         run(&options).unwrap();
         assert_eq!(fs::read(root.join("out.json")).unwrap(), first);
+        let target_file = root.join(WORLD_DATA_TARGET_PATH);
+        let target_bytes = fs::read(&target_file).unwrap();
+        let mut target: Value = serde_json::from_slice(&target_bytes).unwrap();
+        target["build"] = serde_json::json!("1.60.1.99999");
+        fs::write(&target_file, serde_json::to_vec(&target).unwrap()).unwrap();
+        assert!(
+            run(&Arguments {
+                root: root.clone(),
+                packs: options.packs.clone(),
+                output: AssetPath::new("wrong-target.json").unwrap()
+            })
+            .is_err()
+        );
+        fs::write(&target_file, target_bytes).unwrap();
+        crate::pack::v2::build(
+            &repo.join("content/authored/slice-v1"),
+            &root.join("duplicate-pack"),
+        )
+        .unwrap();
+        assert!(
+            run(&Arguments {
+                root: root.clone(),
+                packs: vec![
+                    AssetPath::new("pack").unwrap(),
+                    AssetPath::new("duplicate-pack").unwrap()
+                ],
+                output: AssetPath::new("duplicate.json").unwrap()
+            })
+            .is_err()
+        );
+        let fixture_input = root.join("fixture-input");
+        fs::create_dir(&fixture_input).unwrap();
+        fs::copy(
+            repo.join("fixtures/contracts/v2/reference-content.json"),
+            fixture_input.join("catalog.json"),
+        )
+        .unwrap();
+        fs::copy(
+            repo.join("fixtures/content-pack/sources.json"),
+            fixture_input.join("sources.json"),
+        )
+        .unwrap();
+        crate::pack::v2::build(&fixture_input, &root.join("fixture-pack")).unwrap();
+        assert!(
+            run(&Arguments {
+                root: root.clone(),
+                packs: vec![AssetPath::new("fixture-pack").unwrap()],
+                output: AssetPath::new("fixture.json").unwrap()
+            })
+            .is_err()
+        );
         fs::write(root.join("pack/undeclared.json"), b"{}").unwrap();
         assert!(
             run(&Arguments {
