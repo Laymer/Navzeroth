@@ -44,7 +44,9 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-2025]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    # The whole-world catalog (V2.8c: 2.86 million facts, 3.4 GB) takes minutes
+    # per debug build and about 4 GB of memory.
+    timeout-minutes: 60
     steps:
       - name: Preserve committed source bytes
         shell: bash
@@ -52,6 +54,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           lfs: false
+      # Generated fact objects are Git LFS objects (ADR 0007 §7). Hydrate exactly
+      # those; owner imagery and world-data shards stay pointers.
+      - name: Check out retained source objects from Git LFS
+        shell: bash
+        run: |
+          git lfs install --local
+          git lfs pull --include="content/source-materials/objects/*"
       - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: |
@@ -110,7 +119,7 @@ jobs:
     name: Source catalog platform parity
     needs: build
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
