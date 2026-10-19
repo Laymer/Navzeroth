@@ -25,6 +25,9 @@ crates/local-data/notices/** -text -whitespace
 *.rs text eol=lf
 Cargo.lock text eol=lf
 **/Cargo.toml text eol=lf
+# Release inventory, evidence and policy files are hashed by byte; a Windows CRLF checkout
+# would change their SHA-256 and break the bound-policy checks.
+release/v1/*.json text eol=lf
 docs/sources/source-admission-v1.json text eol=lf
 docs/sources/source-updates-v1.json text eol=lf
 

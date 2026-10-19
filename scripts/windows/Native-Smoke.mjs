@@ -430,10 +430,10 @@ async function smoke(page, response) {
     return { tauri_invoke: internals };
   });
 
-  await rec.run("exactly 14 primary navigation buttons, and no profiles yet on an empty database", async () => {
+  await rec.run("exactly 15 primary navigation buttons, and no profiles yet on an empty database", async () => {
     const nav = page.getByRole("navigation", { name: "Primary" }).getByRole("button");
     await nav.nth(SCREEN_LABELS.length - 1).waitFor({ timeout: 20000 }).catch(async () => {
-      throw new Error(`Navigation did not reach 14 buttons; alerts=${JSON.stringify(await alertTexts(page))}`);
+      throw new Error(`Navigation did not reach 15 buttons; alerts=${JSON.stringify(await alertTexts(page))}`);
     });
     const names = (await nav.allInnerTexts()).map((t) => t.trim());
     if (JSON.stringify(names.slice().sort()) !== JSON.stringify(SCREEN_LABELS.slice().sort())) throw new Error(`Navigation buttons: ${JSON.stringify(names)}`);

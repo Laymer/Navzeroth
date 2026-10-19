@@ -4,7 +4,7 @@
 export const SCREEN_LABELS = [
   "Today", "Settings", "Compatibility and coverage", "Local diagnostics",
   "Backup and recovery", "Atlas", "Imports", "Party", "Dungeons", "Content",
-  "Planner", "Gear", "Sessions", "Reminders",
+  "Planner", "Gear", "Sessions", "Reminders", "World",
 ];
 
 export const MODES = ["smoke", "populate", "verify", "capture"];
