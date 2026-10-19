@@ -173,8 +173,15 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
     Ok(materials.into_values().collect())
 }
 fn verify(bytes: &[u8], material: &Material) -> Result<()> {
+    // Only declared originals may use schema2's larger retained-file bound.
+    // Grant/access proofs have no declared size and retain the historical cap.
+    let maximum = if material.bytes.is_some() {
+        source_admission::MAX_RETAINED_FILE_BYTES
+    } else {
+        source_admission::MAX_FILE_BYTES
+    };
     if bytes.is_empty()
-        || bytes.len() as u64 > source_admission::MAX_RETAINED_FILE_BYTES
+        || bytes.len() as u64 > maximum
         || material.bytes.is_some_and(|n| n != bytes.len() as u64)
         || digest(bytes) != material.sha256
     {
@@ -887,6 +894,21 @@ fn updates_using(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn larger_declared_originals_do_not_expand_legacy_proof_limits() {
+        let bytes = vec![b'x'; source_admission::MAX_FILE_BYTES as usize + 1];
+        let mut material = Material {
+            url: "https://example.invalid/source".into(),
+            sha256: digest(&bytes),
+            bytes: None,
+        };
+        assert!(verify(&bytes, &material).is_err());
+        material.bytes = Some(bytes.len() as u64);
+        assert!(verify(&bytes, &material).is_ok());
+        material.bytes = Some(bytes.len() as u64 - 1);
+        assert!(verify(&bytes, &material).is_err());
+    }
+
     #[test]
     fn admitted_retrieval_publishes_verified_blobs_and_never_overwrites_on_refusal() {
         use serde_json::json;

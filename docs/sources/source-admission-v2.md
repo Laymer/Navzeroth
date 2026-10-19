@@ -20,3 +20,9 @@ immutable GitHub raw paths; Wago originals must already be retained and verified
 The cache verifier admits the larger maximum only after the source registry has
 validated declared file sizes; historical schema1 cannot declare a larger file.
 Unsigned installers do not waive content signatures or material/source closure.
+
+Independent review caught an initial cache-verifier regression: size-undeclared
+rights/access proofs could inherit the larger maximum. The corrected verifier
+keeps those proofs at8MiB. Only size-declared originals can use the larger ceiling,
+following schema-specific registry validation. A boundary regression exercises
+an8MiB+1 original versus the same bytes as an undeclared proof.
