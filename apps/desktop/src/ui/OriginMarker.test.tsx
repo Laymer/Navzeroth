@@ -19,3 +19,9 @@ describe("OriginMarker", () => {
     expect(ORIGIN_LABEL.wow_classic_era).toBe("From Classic Era data");
   });
 });
+
+it("names the exact historical Forever build without claiming target verification", () => {
+  render(<OriginMarker marks={["wow_forever_70245", "inferred"]} />);
+  expect(screen.getByText("From Forever 1.60.1.70245 (historical, unverified)")).toHaveClass("ui-badge--warn");
+  expect(screen.getByText("Inferred")).toBeInTheDocument();
+});

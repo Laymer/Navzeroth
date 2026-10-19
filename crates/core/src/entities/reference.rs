@@ -58,12 +58,23 @@ pub enum Confidence {
     Inferred,
     DisputedOrStale,
 }
+/// Source origin is independent of the dataset in which evidence is consumed.
+/// Historical catalogs may omit this; absence supplies no new origin assertion.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct EvidenceOrigin {
+    pub edition: EditionId,
+    pub build: Observation<BuildId>,
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "EvidenceRecord")]
 pub struct EvidenceRecordData {
     pub id: EvidenceId,
     pub context: DataContext,
     pub source: SourceId,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin: Option<EvidenceOrigin>,
     pub license: Observation<Text>,
     pub observed_at_utc_ms: Observation<UtcMillis>,
     pub confidence: Confidence,

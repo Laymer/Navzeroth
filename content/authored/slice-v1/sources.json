@@ -104,7 +104,8 @@
       "verified_revision": {
         "clock_trust": "uncertain",
         "source": "unrecorded",
-        "status": "unknown"
+        "status": "known",
+        "value": "ca2b89dcf27956810d7a74628cd00997d2703186"
       }
     }
   ]

@@ -96,7 +96,7 @@ impl From<questiedb::Rejection> for Error {
     }
 }
 
-fn regular(meta: &Metadata) -> Result<(), Error> {
+fn regular(meta: &Metadata, maximum: u64) -> Result<(), Error> {
     #[cfg(windows)]
     {
         use std::os::windows::fs::MetadataExt;
@@ -111,7 +111,7 @@ fn regular(meta: &Metadata) -> Result<(), Error> {
     if !meta.is_file() {
         return Err(Error::FileKind);
     }
-    if meta.len() > MAX_FILE_BYTES as u64 {
+    if meta.len() > maximum {
         return Err(Error::TooLarge);
     }
     Ok(())
@@ -120,6 +120,10 @@ fn regular(meta: &Metadata) -> Result<(), Error> {
 /// Inspect every path component rather than following a selected link.
 /// This follows the existing local pack/replay path policy.
 fn checked_path(path: &Path) -> Result<(PathBuf, Metadata), Error> {
+    checked_path_limit(path, MAX_FILE_BYTES as u64)
+}
+
+fn checked_path_limit(path: &Path, maximum: u64) -> Result<(PathBuf, Metadata), Error> {
     let absolute = if path.is_absolute() {
         path.to_owned()
     } else {
@@ -149,7 +153,7 @@ fn checked_path(path: &Path) -> Result<(PathBuf, Metadata), Error> {
         }
     }
     let meta = fs::symlink_metadata(&absolute).map_err(|_| Error::Inspect)?;
-    regular(&meta)?;
+    regular(&meta, maximum)?;
     Ok((absolute, meta))
 }
 
@@ -165,27 +169,31 @@ fn unchanged(before: &Metadata, after: &Metadata) -> bool {
 }
 
 fn read(path: &Path, selected: &Metadata) -> Result<Vec<u8>, Error> {
+    read_limit(path, selected, MAX_FILE_BYTES as u64)
+}
+
+fn read_limit(path: &Path, selected: &Metadata, maximum: u64) -> Result<Vec<u8>, Error> {
     // Check the selection again before open, then inspect the opened handle.
-    let (_, before) = checked_path(path)?;
+    let (_, before) = checked_path_limit(path, maximum)?;
     if !unchanged(selected, &before) {
         return Err(Error::Changed);
     }
     let mut file = File::open(path).map_err(|_| Error::Read)?;
     let opened = file.metadata().map_err(|_| Error::Inspect)?;
-    regular(&opened)?;
+    regular(&opened, maximum)?;
     if !unchanged(&before, &opened) {
         return Err(Error::Changed);
     }
     let mut bytes = Vec::new();
     (&mut file)
-        .take(MAX_FILE_BYTES as u64 + 1)
+        .take(maximum + 1)
         .read_to_end(&mut bytes)
         .map_err(|_| Error::Read)?;
-    if bytes.len() > MAX_FILE_BYTES {
+    if bytes.len() as u64 > maximum {
         return Err(Error::TooLarge);
     }
     let after = file.metadata().map_err(|_| Error::Inspect)?;
-    let (_, selected_after) = checked_path(path)?;
+    let (_, selected_after) = checked_path_limit(path, maximum)?;
     if bytes.len() as u64 != opened.len()
         || !unchanged(&opened, &after)
         || !unchanged(&opened, &selected_after)
@@ -199,6 +207,16 @@ fn read(path: &Path, selected: &Metadata) -> Result<Vec<u8>, Error> {
 pub(crate) fn read_local_source(path: &Path) -> Result<Vec<u8>, Error> {
     let (absolute, selected) = checked_path(path)?;
     read(&absolute, &selected)
+}
+
+/// Same component/identity checks, with a caller-selected finite source bound.
+/// Only validated schema2 original-file declarations may request the larger cap.
+pub(crate) fn read_local_source_limit(path: &Path, maximum: u64) -> Result<Vec<u8>, Error> {
+    if maximum > azeroth_core::source_admission::MAX_RETAINED_FILE_BYTES {
+        return Err(Error::TooLarge);
+    }
+    let (absolute, selected) = checked_path_limit(path, maximum)?;
+    read_limit(&absolute, &selected, maximum)
 }
 
 /// Stage only the selected raw files. No discovery, network, correction

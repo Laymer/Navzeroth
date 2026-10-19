@@ -8,6 +8,7 @@ mod bundle_test_fixture;
 
 mod bundled;
 mod bundled_stage;
+pub mod enumeration;
 pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -143,6 +144,7 @@ impl WorldInputs {
             target: self.target.as_ref(),
             origins: self.origins.as_ref(),
             origin_policy_sha256: self.origin_sha256.as_deref(),
+            verified_non_observational_sources: None,
         }
     }
 }
@@ -591,6 +593,16 @@ struct Catalog {
     files: BTreeMap<String, FileRef>,
     /// Release source id to its evidenced origin edition.
     origins: BTreeMap<String, String>,
+    non_observational: BTreeSet<String>,
+    observational: BTreeSet<String>,
+}
+impl Catalog {
+    fn verified_non_observational(&self) -> BTreeSet<String> {
+        self.non_observational
+            .difference(&self.observational)
+            .cloned()
+            .collect()
+    }
 }
 fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
     if !catalog
@@ -713,6 +725,43 @@ fn classify_v2(
     }
     Ok(())
 }
+fn non_observational_source(
+    content: &azeroth_core::content_v2::ReferenceContent,
+    all_sources: &[SourceRecord],
+    source: &SourceRecord,
+    policy: &ReleasePolicy<'_>,
+) -> Result<bool> {
+    use azeroth_core::{entities::Confidence, sources::AccessMethod};
+    if source.access.value() == Some(&AccessMethod::Authored) {
+        if all_sources.len() != 1 {
+            return Ok(false);
+        }
+        return Ok(
+            azeroth_core::content_v2::authored::validate_authored(content, &source.id).is_ok(),
+        );
+    }
+    if !policy.origins.is_some_and(|p| p.accept_inferred) {
+        return Ok(false);
+    }
+    let evidence: Vec<_> = content
+        .reference
+        .payload
+        .evidence
+        .iter()
+        .filter(|e| e.source == source.id)
+        .collect();
+    Ok(!evidence.is_empty()
+        && evidence
+            .iter()
+            .all(|e| e.confidence == Confidence::Inferred)
+        && !content
+            .reference
+            .payload
+            .map_images
+            .iter()
+            .any(|image| image.source == source.id))
+}
+
 #[allow(clippy::too_many_arguments)]
 fn bind_v2_pack(
     root: &Path,
@@ -811,6 +860,16 @@ fn bind_v2_pack(
         )?;
     }
     let mut records = v2_catalog_records(&content)?;
+    if inventory.schema_version == release::SCHEMA_STABLE {
+        for source in &sources.sources {
+            let id = source.id.as_str().to_owned();
+            if non_observational_source(&content, &sources.sources, source, policy)? {
+                catalog.non_observational.insert(id);
+            } else {
+                catalog.observational.insert(id);
+            }
+        }
+    }
     if let Some(support) = &manifest.party_support {
         let matrix = azeroth_core::release_party::SupportMatrix::decode(&checked_ref_bytes(
             budget,
@@ -1086,7 +1145,10 @@ fn inputs(options: &Options) -> Result<Inputs> {
     let root = root_path(&options.root)?;
     let mut budget = Budget::default();
     versions(&root, &options.version, &mut budget)?;
-    let inventory_bytes = budget.read(&root.join(INVENTORY_PATH), release::MAX_RELEASE_BYTES)?;
+    let inventory_bytes = budget.read(
+        &root.join(INVENTORY_PATH),
+        release::MAX_STABLE_RELEASE_BYTES,
+    )?;
     let inventory = release::decode_inventory(&inventory_bytes)?;
     budget.stable = inventory.schema_version == release::SCHEMA_STABLE;
     let world = world_inputs(&root, &inventory, &mut budget)?;
@@ -1098,7 +1160,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
     let evidence_path = root.join(selected.as_str());
     let evidence = match fs::symlink_metadata(&evidence_path) {
         Ok(_) => Some(release::decode_evidence(
-            &budget.read(&evidence_path, release::MAX_RELEASE_BYTES)?,
+            &budget.read(&evidence_path, release::MAX_STABLE_RELEASE_BYTES)?,
         )?),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
         Err(_) => return Err("Acceptance evidence cannot be inspected"),
@@ -1183,6 +1245,51 @@ pub fn report(options: &Options) -> Result<Report> {
         .as_ref()
         .and_then(|e| e.tested_source_commit.as_deref())
         .unwrap_or("");
+    release::assess_with(
+        &options.version,
+        &inventory,
+        evidence.as_ref(),
+        &Bindings {
+            inventory_sha256: &hash(&inventory_bytes),
+            production_sha256: &candidate.fingerprint,
+            tested_source_commit: tested,
+        },
+        &policy,
+    )?;
+    let (mut verified_packs, mut classifications, mut verification_errors) = (0, vec![], vec![]);
+    let mut verified_catalog = None;
+    if let Some(evidence) = &evidence {
+        for reference in release::evidence_files(&inventory, evidence) {
+            if let Err(message) = budget.verify(&root, reference) {
+                verification_errors.push(message);
+                break;
+            }
+        }
+        match packs(
+            &root,
+            &inventory,
+            evidence,
+            &policy,
+            &candidate,
+            &mut budget,
+            &mut classifications,
+        ) {
+            Ok((count, catalog)) => {
+                verified_packs = count;
+                verified_catalog = Some(catalog);
+            }
+            Err(message) => verification_errors.push(message),
+        }
+    }
+    let non_observational = verified_catalog
+        .as_ref()
+        .filter(|_| verification_errors.is_empty())
+        .map(Catalog::verified_non_observational)
+        .unwrap_or_default();
+    let policy = ReleasePolicy {
+        verified_non_observational_sources: Some(&non_observational),
+        ..policy
+    };
     let mut readiness = release::assess_with(
         &options.version,
         &inventory,
@@ -1194,6 +1301,9 @@ pub fn report(options: &Options) -> Result<Report> {
         },
         &policy,
     )?;
+    for message in verification_errors {
+        readiness.block(message);
+    }
     let status = production_status(&root)?;
     // Historical repositories without a delivery policy retain their original
     // bundled rules. An explicit policy is strict and production-fingerprinted.
@@ -1231,53 +1341,33 @@ pub fn report(options: &Options) -> Result<Report> {
     {
         readiness.block("Tested source commit is missing or invalid");
     }
-    let mut verified_packs = 0;
-    let mut classifications = vec![];
-    if let Some(evidence) = &evidence {
-        for reference in release::evidence_files(&inventory, evidence) {
-            if let Err(message) = budget.verify(&root, reference) {
-                readiness.block(message);
-                break;
-            }
-        }
-        match packs(
+    if let Some(evidence) = &evidence
+        && let Some(catalog) = &verified_catalog
+    {
+        bind_records(&mut readiness, &inventory, evidence, catalog);
+        match materials::selected_files(
             &root,
             &inventory,
             evidence,
             &policy,
             &candidate,
+            catalog,
             &mut budget,
-            &mut classifications,
         ) {
-            Ok((count, catalog)) => {
-                verified_packs = count;
-                bind_records(&mut readiness, &inventory, evidence, &catalog);
-                match materials::selected_files(
+            Ok((materials, _)) if inventory.schema_version == release::SCHEMA_STABLE => {
+                if let Err(message) = bundled::verify(
                     &root,
+                    &options.version,
                     &inventory,
                     evidence,
-                    &policy,
                     &candidate,
-                    &catalog,
                     &mut budget,
+                    &materials,
                 ) {
-                    Ok((materials, _)) if inventory.schema_version == release::SCHEMA_STABLE => {
-                        if let Err(message) = bundled::verify(
-                            &root,
-                            &options.version,
-                            &inventory,
-                            evidence,
-                            &candidate,
-                            &mut budget,
-                            &materials,
-                        ) {
-                            readiness.block(message);
-                        }
-                    }
-                    Ok(_) => {}
-                    Err(message) => readiness.block(message),
+                    readiness.block(message);
                 }
             }
+            Ok(_) => {}
             Err(message) => readiness.block(message),
         }
     }
@@ -1396,8 +1486,13 @@ mod tests {
         let mut catalog = Catalog::default();
         catalog_dataset(&mut catalog, &dataset).unwrap();
         let records = &catalog.records["quests"];
-        let mut inventory =
-            release::decode_inventory(&fs::read(root.join(INVENTORY_PATH)).unwrap()).unwrap();
+        let mut inventory = release::decode_inventory(
+            &fs::read(
+                root.join("release/history/2026-10-19-pre-stable-v3/coverage-inventory.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
         inventory.domains = vec![DomainInventory {
             domain: "quests".into(),
             completeness: Completeness::Complete,
@@ -1409,8 +1504,13 @@ mod tests {
             }],
             out_of_scope: vec![],
         }];
-        let mut evidence =
-            release::decode_evidence(&fs::read(root.join(EVIDENCE_PATH)).unwrap()).unwrap();
+        let mut evidence = release::decode_evidence(
+            &fs::read(
+                root.join("release/history/2026-10-19-pre-stable-v3/acceptance-evidence.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
         evidence.coverage = vec![UnitCoverage {
             unit_id: "synthetic-only".into(),
             status: Status::Pass,
@@ -1617,5 +1717,91 @@ mod tests {
             assert!(result.blockers[0].contains("No validated pack record binding"));
             assert!(!result.publication_allowed);
         }
+    }
+    #[test]
+    fn non_observational_materials_require_authored_only_or_wholly_inferred_evidence() {
+        use azeroth_core::content_v2;
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let original: Value = serde_json::from_slice(
+            &fs::read(root.join("content/authored/slice-v1/catalog.json")).unwrap(),
+        )
+        .unwrap();
+        let mut source_value: Value = serde_json::from_slice(
+            &fs::read(root.join("content/authored/slice-v1/sources.json")).unwrap(),
+        )
+        .unwrap();
+        let mut origins =
+            OriginPolicy::decode(&fs::read(root.join(ORIGIN_POLICY_PATH)).unwrap()).unwrap();
+        let content = content_v2::decode(&serde_json::to_vec(&original).unwrap()).unwrap();
+        let sources: PackSources = serde_json::from_value(source_value.clone()).unwrap();
+        let policy = ReleasePolicy {
+            origins: Some(&origins),
+            ..Default::default()
+        };
+        assert!(
+            non_observational_source(&content, &sources.sources, &sources.sources[0], &policy)
+                .unwrap()
+        );
+        let duplicate = vec![sources.sources[0].clone(), sources.sources[0].clone()];
+        assert!(
+            !non_observational_source(&content, &duplicate, &sources.sources[0], &policy).unwrap()
+        );
+        let mut stronger = original.clone();
+        stronger["reference"]["payload"]["evidence"][0]["confidence"] = json!("verified_on_build");
+        let mixed = content_v2::decode(&serde_json::to_vec(&stronger).unwrap()).unwrap();
+        assert!(
+            !non_observational_source(&mixed, &sources.sources, &sources.sources[0], &policy)
+                .unwrap()
+        );
+        source_value["sources"][0]["access"]["value"] = json!("file_download");
+        let sources: PackSources = serde_json::from_value(source_value).unwrap();
+        let mut inferred = original.clone();
+        for row in inferred["reference"]["payload"]["evidence"]
+            .as_array_mut()
+            .unwrap()
+        {
+            row["confidence"] = json!("inferred");
+        }
+        let inferred_content = content_v2::decode(&serde_json::to_vec(&inferred).unwrap()).unwrap();
+        assert!(
+            non_observational_source(
+                &inferred_content,
+                &sources.sources,
+                &sources.sources[0],
+                &policy
+            )
+            .unwrap()
+        );
+        assert!(
+            !non_observational_source(&mixed, &sources.sources, &sources.sources[0], &policy)
+                .unwrap()
+        );
+        origins.accept_inferred = false;
+        let policy = ReleasePolicy {
+            origins: Some(&origins),
+            ..Default::default()
+        };
+        assert!(
+            !non_observational_source(
+                &inferred_content,
+                &sources.sources,
+                &sources.sources[0],
+                &policy
+            )
+            .unwrap()
+        );
+        assert!(
+            !non_observational_source(
+                &inferred_content,
+                &sources.sources,
+                &sources.sources[0],
+                &ReleasePolicy::default()
+            )
+            .unwrap()
+        );
+        let mut catalog = Catalog::default();
+        catalog.non_observational.insert("same-source".into());
+        catalog.observational.insert("same-source".into());
+        assert!(catalog.verified_non_observational().is_empty());
     }
 }

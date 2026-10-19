@@ -1,4 +1,5 @@
 import json
+import hashlib
 import os
 import pathlib
 import sys
@@ -61,7 +62,7 @@ class HttpTest(unittest.TestCase):
             body, meta = http._paths("https://example.org/a", None)
             body.parent.mkdir(parents=True, exist_ok=True)
             body.write_bytes(b"ok")
-            meta.write_text(json.dumps({"url": "https://example.org/a", "status": 200, "sha256": "x"}))
+            meta.write_text(json.dumps({"url": "https://example.org/a", "status": 200, "sha256": hashlib.sha256(b"ok").hexdigest(), "bytes": 2}))
             self.assertEqual(http.fetch_text("https://example.org/a"), "ok")
             _, meta404 = http._paths("https://example.org/b", "b")
             meta404.write_text(json.dumps({"url": "https://example.org/b", "status": 403}))

@@ -5,6 +5,9 @@
 //! Schema 1 is the historical 70374 matrix for groups of 2 to 40. Schema 2 (task
 //! V2.4) follows the 1.0.0 slice: its target is the code-side frozen target of
 //! release schema 2 (`null` while that is pending), and it admits a party of one.
+//! Schema 3 carries an explicit well-formed target; pack and release consumers
+//! must bind it to the actual selected catalog and release target. Historical
+//! schema 1 and 2 target semantics remain unchanged.
 //! Which workflows exist for a size is fixed in code ([`applies`]), never chosen
 //! by the JSON, so an omitted row cannot make a required workflow optional.
 use crate::{
@@ -66,7 +69,8 @@ fn present<'de, D: Deserializer<'de>>(d: D) -> Result<Option<Target>, D::Error> 
 pub struct SupportMatrix {
     pub schema_version: u32,
     /// Schema 1: always the historical 70374 target. Schema 2: the frozen release
-    /// target, or `null` while it is pending (ADR 0006 §1).
+    /// target, or `null` while it is pending (ADR 0006 §1). Schema 3: an explicit
+    /// target that consumers must compare with the actual catalog/release target.
     #[serde(deserialize_with = "present")]
     pub target: Option<Target>,
     pub catalog_sha256: Sha256Hex,
@@ -120,6 +124,25 @@ impl SupportMatrix {
         let (expected, smallest) = match self.schema_version {
             1 => (Some(Target::forever_70374()), 2),
             2 => (release::expected_target(2), 1),
+            // Explicit world-data target, bound by the pack/release consumer.
+            3 => {
+                let target = self
+                    .target
+                    .as_ref()
+                    .ok_or("Party support target is missing")?;
+                let digits = |s: &str| {
+                    !s.is_empty() && s.len() <= 9 && s.bytes().all(|c| c.is_ascii_digit())
+                };
+                if crate::types::EditionId::new(target.edition.clone()).is_err()
+                    || target.version.split('.').count() != 3
+                    || !target.version.split('.').all(digits)
+                    || !digits(&target.build)
+                    || target.interface == 0
+                {
+                    return Err("Invalid explicit party support target");
+                }
+                (self.target.clone(), 1)
+            }
             _ => return Err("Unsupported party support version"),
         };
         if self.target != expected {

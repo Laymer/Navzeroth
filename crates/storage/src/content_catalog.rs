@@ -179,6 +179,16 @@ pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> 
         let found = match &conflict.key {
             RecordKey::Item(key) => items.contains(key),
             RecordKey::Quest { quest, .. } => quests.contains(quest),
+            RecordKey::Dungeon { dungeon, field, .. } => content.dungeons.iter().any(|d| {
+                &d.id == dungeon
+                    && match field {
+                        azeroth_core::dungeon_composition::DungeonField::Checklist { check } => d
+                            .checklist
+                            .value()
+                            .is_some_and(|checks| checks.iter().any(|c| &c.id == check)),
+                        _ => true,
+                    }
+            }),
         };
         if !found {
             return Err(invalid("Catalog conflict identity is absent"));

@@ -79,6 +79,7 @@ fn check(i: &Inventory, e: &Evidence) -> Readiness {
             target: Some(&target),
             origins: Some(&origins),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     )
 }
@@ -165,6 +166,7 @@ fn the_target_must_equal_the_world_data_target_file() {
             target: None,
             origins: Some(&origins),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&missing, "World-data target file is missing"));
@@ -191,6 +193,7 @@ fn evidence_must_bind_the_applied_policy() {
             target: Some(&target),
             origins: None,
             origin_policy_sha256: None,
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&none, "Accepted-origin policy is missing"));
@@ -210,6 +213,7 @@ fn evidence_must_bind_the_applied_policy() {
             target: Some(&target),
             origins: Some(&origins),
             origin_policy_sha256: Some(HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(
@@ -219,6 +223,7 @@ fn evidence_must_bind_the_applied_policy() {
     let mut other: Value =
         serde_json::from_slice(&repository("release/v1/accepted-origins.json")).unwrap();
     other["target_edition"] = json!("wow_classic_tbc");
+    other.as_object_mut().unwrap().remove("historical_builds");
     let other = OriginPolicy::decode(&serde_json::to_vec(&other).unwrap()).unwrap();
     let report = check_with(
         &i,
@@ -227,6 +232,7 @@ fn evidence_must_bind_the_applied_policy() {
             target: Some(&target),
             origins: Some(&other),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&report, "different target edition"));
@@ -247,6 +253,7 @@ fn an_accepted_origin_satisfies_target_validation_and_others_do_not() {
         target: Some(&target),
         origins: Some(&origins),
         origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: None,
     };
     assert_eq!(
         origin_accepted_sources(&i, &e, &policy)
@@ -275,6 +282,7 @@ fn an_accepted_origin_satisfies_target_validation_and_others_do_not() {
             target: Some(&target),
             origins: Some(&narrow),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&report, "target validation is incomplete"));
@@ -399,6 +407,35 @@ fn record_limit_admits_a_whole_world_inventory_and_refuses_one_more() {
         )
         .is_err()
     );
+}
+
+#[test]
+fn exact_historical_forever_build_can_satisfy_source_target_validation() {
+    for (build, accepted) in [
+        (Some("1.60.1.70245"), true),
+        (Some("1.60.1.70246"), false),
+        (None, false),
+    ] {
+        let mut evidence = evidence_value();
+        evidence["sources"][0]["origin_edition"] = json!("wow_forever");
+        evidence["sources"][0]["origin_build"] = json!(build);
+        let (i, e) = decode(&inventory_value(), &evidence);
+        let (target, origins) = (target(), origins());
+        let policy = ReleasePolicy {
+            target: Some(&target),
+            origins: Some(&origins),
+            origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
+        };
+        assert_eq!(
+            origin_accepted_sources(&i, &e, &policy).contains("synthetic"),
+            accepted
+        );
+        assert_eq!(
+            has(&check(&i, &e), "target validation is incomplete"),
+            !accepted
+        );
+    }
 }
 
 fn stable_values() -> (Value, Value) {
@@ -619,4 +656,73 @@ fn signed_bundle_binding_is_required_and_new_fields_never_promote_historical_evi
             "{change}"
         );
     }
+}
+
+#[test]
+fn only_schema4_accepts_checked_non_observational_source_contracts_without_promoting_observations()
+{
+    let (mut i, mut e) = stable_values();
+    e["sources"][0]["origin_edition"] = json!("wow_forever");
+    e["sources"][0]["origin_build"] = Value::Null;
+    e["sources"][0]["target_validation"] = json!("unverified");
+    e["sources"][0]["target_evidence"] = json!([]);
+    let (target, origins) = (target(), origins());
+    let ids = std::collections::BTreeSet::from(["synthetic".to_owned()]);
+    let policy = ReleasePolicy {
+        target: Some(&target),
+        origins: Some(&origins),
+        origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: Some(&ids),
+    };
+    let (inventory, evidence) = decode(&i, &e);
+    assert!(!has(
+        &check_with(&inventory, &evidence, &policy),
+        "target validation is incomplete"
+    ));
+    assert_eq!(evidence.sources[0].target_validation, Status::Unverified);
+    for schema in [3, 4] {
+        i["schema_version"] = json!(schema);
+        e["schema_version"] = json!(schema);
+        if schema == 3 {
+            e.as_object_mut()
+                .unwrap()
+                .remove("candidate_installer_sha256");
+            e["checks"] = evidence_value()["checks"].clone();
+        }
+        let (inventory, evidence) = decode(&i, &e);
+        if schema == 3 {
+            assert!(has(
+                &check_with(&inventory, &evidence, &policy),
+                "target validation is incomplete"
+            ));
+        }
+        let empty = ReleasePolicy {
+            verified_non_observational_sources: None,
+            ..policy
+        };
+        assert!(has(
+            &check_with(&inventory, &evidence, &empty),
+            "target validation is incomplete"
+        ));
+    }
+}
+
+#[test]
+fn schema4_manifest_ceiling_and_world_scope_do_not_expand_historical_contracts() {
+    let mut inventory = inventory_value();
+    inventory["schema_version"] = json!(4);
+    inventory["slice"] = Value::Null;
+    let mut raw = serde_json::to_vec(&inventory).unwrap();
+    raw.resize(MAX_RELEASE_BYTES + 1, b' ');
+    assert!(decode_inventory(&raw).is_ok());
+    inventory["schema_version"] = json!(3);
+    let mut historical = serde_json::to_vec(&inventory).unwrap();
+    historical.resize(MAX_RELEASE_BYTES + 1, b' ');
+    assert_eq!(
+        decode_inventory(&historical).unwrap_err(),
+        "Release manifest exceeds historical size limit"
+    );
+    assert!(decode_inventory(&serde_json::to_vec(&inventory).unwrap()).is_err());
+    let raw = vec![b' '; MAX_STABLE_RELEASE_BYTES + 1];
+    assert!(decode_inventory(&raw).is_err());
 }

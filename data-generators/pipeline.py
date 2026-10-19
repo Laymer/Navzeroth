@@ -14,7 +14,8 @@ Stages, in order (each one's outputs are the next one's inputs):
             content/source-materials/objects (LFS), the admission registry and
             content/source-build-v1.json; then source-sync and source-build
   content   world_to_content.py -> content/world/<build>/ (catalog.json, sources.json,
-            conflicts.json), then build-content-v2 and verify-pack
+            conflicts.json), retain exact admitted originals/corresponding source,
+            rebind source metadata, then build-content-v2 and verify-pack
   gate      release readiness with release/v1/accepted-origins.json
   publish   branch data/world-<build>-<date>, commit (LFS), push, draft PR
 
@@ -377,12 +378,26 @@ def stage_content(ctx):
     script = require(ctx, "data-generators/world_to_content.py", "V2.8d (W3)")
     build = read_target(ctx)["build"]
     out = f"content/world/{build}"
-    ctx.run([sys.executable, "-I", script,
-             "--input", "data-generators/output",
-             "--target", "release/v1/world-data-target.json",
-             "--policy", "release/v1/accepted-origins.json",
-             "--authored", "content/authored/slice-v1",
-             "--out", out])
+    retain = require(ctx, "data-generators/retain_world_sources.py", "STABLE-SOURCE-CLOSURE")
+    mapping = [sys.executable, "-I", script,
+               "--input", "data-generators/output",
+               "--target", "release/v1/world-data-target.json",
+               "--policy", "release/v1/accepted-origins.json",
+               "--authored", "content/authored/slice-v1",
+               "--out", out]
+    # The first pass enumerates actual mapped fields. It is never packed/published
+    # unless exact retained originals and admission bind the second pass.
+    ctx.run(mapping)
+    closure = f"{out}/source-closure.json"
+    cache = os.environ.get("NAVZEROTH_DATAGEN_CACHE") or str(ctx.root / "data-generators/.cache")
+    ctx.run([sys.executable, "-I", retain, "--root", ".",
+             "--world", "data-generators/output", "--cache", cache,
+             "--pack-sources", f"{out}/sources.json",
+             "--registry", "docs/sources/source-admission-v1.json", "--output", closure,
+             "--normalization-policy", "release/v1/source-normalization-policy.json"])
+    ctx.run([*mapping, "--admission", "docs/sources/source-admission-v1.json",
+             "--source-closure", closure,
+             "--normalization-policy", "release/v1/source-normalization-policy.json"])
     cli = ensure_cli(ctx)
     pack = fresh(ctx.root / "dist" / "world-pack" / build).relative_to(ctx.root).as_posix()
     ctx.run([cli, "build-content-v2", "--input", out, "--output", pack])

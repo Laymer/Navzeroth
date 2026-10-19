@@ -94,3 +94,34 @@ budget is2GiB. Original/corresponding source and other evidence files retain the
 256MiB bound. Schemas1/2/3 retain256MiB per file and1GiB aggregate. Cached reads
 cannot turn a catalog allowance into permission for oversized source resources.
 Release JSON remains bounded to16MiB pending actual inventory measurements.
+
+Schema4 whole-world inventories may declare `slice:null`: their scope is the exact
+admitted corpus, not a claim of complete Forever races, eligibility or game data.
+All nine domain/source inventories, genuine boundaries and functional validation
+still apply. Schemas2/3 retain their historical slice requirement. Measured compact
+real inventory/evidence are about28MiB each; schema4 permits64MiB, while historical
+schemas remain16MiB before typed decoding. Other manifest bounds stay unchanged.
+
+Only schema4 may accept exact admitted non-observational sources for materials
+without a target-validation pass. The I/O boundary must verify every occurrence:
+an authored source must satisfy authored-only rules in a single-source pack, or
+all evidence citing an inferred source must be Inferred under the applied inferred
+policy, with no directly attributed map-image assets. Mixed observational evidence
+or a stronger occurrence in another pack revokes this eligibility. Every existing
+file, field, transform, source, rights and pack-classification requirement remains.
+The checked source set is supplied to the pure schema4 assessment; it never changes
+`target_validation:unverified`. Historical contracts do not accept that set.
+
+Schema4 `normalization_conflict_files` pins versioned raw world-normalization
+reports. Material schema2 exports category `normalization_conflicts` with matching
+pins. Format, version, selected catalog revision and precedence must match the
+actual applied policy; the records are not coerced into typed SourceConflict rows.
+Historical evidence rejects this field, including null. It is separate from the
+mixed-term corresponding generator source and notices.
+
+Party support schema3 binds an explicit well-formed target to its exact catalog;
+pack/release consumers independently compare the actual target. Schemas1/2 retain
+their original historical/frozen-target meanings. The authored catalog revision
+`navzeroth-authored-slice-r1-release-contract-v2` changes release metadata and pins,
+not the authored gameplay heuristics; later role-coverage work must regenerate its
+catalog/source/party pins rather than silently reusing this revision.

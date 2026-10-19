@@ -135,3 +135,28 @@ content/source-materials/objects/fa21794fa52a1175f8e65de6ff9c977fad25bd438915974
 content/source-materials/objects/feaf0ebdf1df4c2e4cae6d9ebee640265ec7089b8116dfebef8510d1653db119 filter=lfs diff=lfs merge=lfs -text
 content/source-materials/objects/ffe6e23ba8b4335e614120e378d8324192fe7d3a48393f9b5e3d6d42d144f12b filter=lfs diff=lfs merge=lfs -text
 # END generated fact objects
+
+# BEGIN retained world original objects
+content/source-materials/objects/07222b184a692c0b275ad713bbb30e1a88e8da14e3f2e26d9afb6d6b59e41404 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/1f4aac70eaac015b1d2d0ea0faf6e3d7fb2cf7afdf45e5bb6772d9b80a72346b filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/27674c6456677b71cdfd50e4193e0db9feea2beb69c15cd5f48906c9ec092d17 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/42a865db73a34b45f75b13cf0d01e6b699f3ea7f72cd63826c8124e587b1859c filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/4f92b73343c9828fdb3d315f5732e6de8d41af6b8e2fc24263fef73cd46681a1 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/4f92db520868ab4e566726f68b5b2e380ae781209beaf22237b4f7f04600d0c0 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/5f2ba338646a454d2420a14cf56da693803267f734893e2b3f5e71250eaa56bf filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/623d79e218e2a9b0c365a1e47066abda26bfd019d2e0023e72c422be0f5eeb50 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/665307a5ff3625380f37c9d42753002d630b414d142e8c61780ff7e8849a6d9a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/79267e8be8034e47daab14350411b3acc0b1f64e86efc9d821a217497254ca0a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/802f4e863a28ff48d63e7e27c5cfb3b2396584aaed56870da90de6a823691aae filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/9539a388c0e697381f7574247488da528f2647099db4c39096bdb2a8695139b9 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/b96a5ef667a17b0a9b551e2d75552d3872a1d0e147fd817d251e1fab415dc81c filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/c8ccd626eed82a6d6bd048222176847c915dcf9e14c02230ae27025c62005be1 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/da19f8391c5c6f72fe858d4e35e91ba82d335a53c06530cad6477d28a81cb721 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/e3d4833dcb395214c0366d241fdaa4b7d7e2330133bb6db03ed5bfd01f974bea filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/e4a41af2ea8dc344c0c1ce36b26cba741b7f393cb74197e52d9893e6cb223db5 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/e79bc66c053da9499dad75ddc543656d988ede83e9e84cc1e18624f421e9a0e1 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/ef5518c5a3aaa7458e074a7e41e87837f8a1c74da00938244019e2e8c0428b4a filter=lfs diff=lfs merge=lfs -text
+# END retained world original objects
+
+# Exact stable shipped catalogs; small manifests/notices remain ordinary blobs.
+content/release-packs/**/catalog.json filter=lfs diff=lfs merge=lfs -text
