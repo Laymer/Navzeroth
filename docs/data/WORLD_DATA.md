@@ -147,3 +147,8 @@ tooltip requests than that. The cap binds the source pipeline's own fetching,
 which never runs for these sources (`source-sync` refuses them), so the generators'
 cache and per-host limits are the effective bound. Run them opt-in, and prefer
 `--offline` once the cache is warm.
+
+## Content limits
+
+The whole-world content v2 pack built from these shards, and the content-v2 limits
+raised for it (ADR 0007 §7), are recorded in [WORLD_CONTENT.md](WORLD_CONTENT.md).
