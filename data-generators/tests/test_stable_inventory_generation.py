@@ -48,8 +48,8 @@ class StableInventoryGeneration(unittest.TestCase):
             self.assertTrue(all(c['status']=='unverified' for c in evidence['coverage'] if 'functional' in c['unit_id']))
             self.assertEqual(evidence['inventory_sha256'],hashlib.sha256(first['release/v1/coverage-inventory.json']).hexdigest())
             self.assertEqual(summary['accepted_unknown_fields'],1)
-            index=json.loads(first['release/v1/corresponding-source-index.json']);self.assertEqual(index['files'][0]['source_path'],'code.py');self.assertNotIn('permission_path',index)
-            self.assertIn('release/v1/corresponding-source-index.json',[f['path'] for f in evidence['corresponding_source_files']])
+            index=json.loads(first['content/source-materials/corresponding-source-index.json']);self.assertEqual(index['files'][0]['source_path'],'code.py');self.assertNotIn('permission_path',index)
+            self.assertIn('content/source-materials/corresponding-source-index.json',[f['path'] for f in evidence['corresponding_source_files']])
 
     def test_missing_provenance_or_unadmitted_scope_cannot_become_a_pass(self):
         for kind in ('provenance','gap','revision','fields','normalization','mapping'):

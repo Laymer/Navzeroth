@@ -57,8 +57,37 @@ At clean1473018 actual `release-materials --version1.0.0-rc.1` passed:
 104.76s/5652548KiB Linux peak child RSS. This was preview material selection,
 not stable readiness; all environment and functional gates remain unverified.
 Root review then required a public reconstruction index: the schema4 corresponding
-source selection now includes `release/v1/corresponding-source-index.json`, with
+source selection now includes `content/source-materials/corresponding-source-index.json`, with
 immutable source commit, transform, normalization-policy digest, and22 exact
 content-addressed objects mapped to original paths/URLs. Private permission and
 admission fields are omitted. Regression tests reject unpinned URLs and verify
 public mapping/ref inclusion. All161 Python tests pass after this correction.
+
+Final public-index generations matched all four output hashes (64.85s/61.54s,
+5366076/5366884KiB peak Linux child RSS). Inventory27,927,287 bytes; evidence
+27,939,734 bytes; validation2382 bytes; public index9050 bytes.
+
+| Artifact | SHA256 |
+| --- | --- |
+| inventory | bfaab7db3c37ec9abf8bc404fe9a06926618de5f9c89ec30d60b5876d51cee33 |
+| evidence | 1a7c9d68f83f2d466eb75e0ef56b27e5fa2de1465e6eedb47b6d360eb03d62b3 |
+| private validation | 9883e9b1c7c0e368b682f18512a7b1a1b76d30acd1129f3f18b55d9a3e445683 |
+| public corresponding index | 6de3d8c84462ed1bab9a3fa95e640b5442944bc583faf7ff0782037a86c1b1cc |
+
+All259918 shipped records: quests14529, equipment48718, acquisition125620,
+geography21131, travel49865, dungeons28, class_roles9, party12, reminders6.
+Accepted unknown fields273963, missing provenance0, remaining classification gaps0.
+The7933 raw normalization decisions are separately pinned; they are not converted
+into SourceConflict observations. The4 functional units,4 source target-validation
+observations and9 hosted/manual checks remain unverified.
+
+Parent will keep this feature as a separate reviewed PR after initial212; root/world
+will regenerate original-authored-r1 world closure separately and rehearse actual
+material selection against that exact pack. This feature branch does not silently
+replace the original212 world revision. Source parity helper independently compared
+all four actual mapper outputs twice against1473018 and passed (reviewer report).
+
+Material staging correctly rejected the initial index path under private release/
+metadata. Moved the identical public bytes into tracked production
+content/source-materials/corresponding-source-index.json; no material boundary
+was relaxed. Final evidence hash below supersedes the earlier index-path hash.

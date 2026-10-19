@@ -143,7 +143,7 @@ def derive(root, enumeration, canonical_sha):
     if len({f['source_path'] for f in mapped})!=len(mapped):
         raise ValueError('duplicate corresponding source path')
     index=encoded(dict(schema_version=1,source_commit=commit,transformation=closure['transformation'],normalization_policy_sha256=closure['normalization_policy_sha256'],files=sorted(mapped,key=lambda f:f['source_path'])))
-    index_path='release/v1/corresponding-source-index.json'
+    index_path='content/source-materials/corresponding-source-index.json'
     evidence['corresponding_source_files'].append(dict(path=index_path,bytes=len(index),sha256=hashlib.sha256(index).hexdigest()))
     evidence_raw=encoded(evidence)
     if max(len(inventory_raw),len(evidence_raw))>MAX_MANIFEST: raise ValueError('schema4 output exceeds measured finite bound')
