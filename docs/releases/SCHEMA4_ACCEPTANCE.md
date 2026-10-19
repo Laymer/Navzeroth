@@ -41,9 +41,25 @@ A pristine unverified row retains unverified status. Existing source/hash/file a
 independent-review boundaries remain unchanged. Relevant production changes revoke
 the existing source/fingerprint binding and require new installer observations.
 
-Outstanding integration: separate build/artifact readiness from final publication
-so a pristine pending owner smoke can permit draft preparation while never permitting
-publication. Current stable artifact packaging invokes full readiness, so it remains
-blocked until that explicit two-phase adapter is implemented. This document does
-not authorize bypassing that gate. Hosted harness producers and actual results,
-manifest migration and exact-draft owner smoke remain outstanding.
+Artifact preparation is explicit and never authorizes publication:
+
+- `release-build-readiness`: schema4 prebuild permits pristine pending hosted and
+  owner rows. Source / production identity must already be bound. Initial missing
+  installer identity is permitted only while no passed observation requires it.
+- `release-draft-readiness`: all hosted rows must pass against one candidate
+  installer; only pristine pending OWNER-INSTALLER-SMOKE may remain.
+- `release-readiness`: unchanged final publication gate, including owner smoke.
+
+Both preparation commands perform the same full source/content/file/receipt I/O
+verification as release-readiness, then expose `phase`, `build_ready`, and
+`publication_allowed:false`, retaining the detailed report with its own publication
+flag forced false. Failure, partial unverified claims, wrong methods, stale source
+or installer hashes, initial unbound source identity and other content blockers
+cannot pass preparation. Historical schemas cannot use these preparation adapters.
+
+Outstanding integration: packaging must use prebuild, draft verification must use
+draft readiness and public verification/publication must retain full readiness.
+Those workflow adapters remain unimplemented by this contract change. Current
+stable packaging still uses full readiness, so draft preparation stays blocked
+until that explicitly reviewed adaptation. Hosted evidence producers and actual
+results, manifest migration and exact-draft owner smoke remain outstanding.

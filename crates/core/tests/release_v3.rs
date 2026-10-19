@@ -530,3 +530,72 @@ fn schema4_pending_smoke_is_unverified_and_historical_rows_are_not_promoted() {
         assert!(decode_evidence(&serde_json::to_vec(&old).unwrap()).is_err());
     }
 }
+
+#[test]
+fn preparation_phases_allow_only_their_pristine_pending_observations() {
+    let (inventory, evidence) = stable_values();
+    let (i, mut e) = decode(&inventory, &evidence);
+    let passed = check(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&passed) && BuildPhase::Draft.ready(&passed));
+    let owner = e.checks.last_mut().unwrap();
+    owner.status = Status::Unverified;
+    owner.operator = None;
+    owner.recorded_at = None;
+    owner.environment = None;
+    owner.artifacts.clear();
+    owner.installer_sha256 = None;
+    let draft = check(&i, &e);
+    assert!(BuildPhase::Draft.ready(&draft));
+    assert!(!draft.publication_allowed);
+    // All observations may be pending only before creating the installer.
+    for row in &mut e.checks {
+        row.status = Status::Unverified;
+        row.operator = None;
+        row.recorded_at = None;
+        row.environment = None;
+        row.artifacts.clear();
+        row.installer_sha256 = None;
+    }
+    e.candidate_installer_sha256 = None;
+    let prebuild = check(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&prebuild));
+    assert!(!BuildPhase::Draft.ready(&prebuild));
+    assert!(!prebuild.publication_allowed);
+    e.tested_source_commit = None;
+    e.production_sha256 = None;
+    let unbound = check(&i, &e);
+    assert!(!BuildPhase::Prebuild.ready(&unbound));
+    assert!(!BuildPhase::Draft.ready(&unbound));
+    // No historical contract is admitted by either adapter.
+    let (old_i, old_e) = decode(&inventory_value(), &evidence_value());
+    let old = check(&old_i, &old_e);
+    assert!(!BuildPhase::Prebuild.ready(&old) && !BuildPhase::Draft.ready(&old));
+}
+
+#[test]
+fn preparation_never_admits_failed_partial_stale_or_content_blockers() {
+    let (inventory, evidence) = stable_values();
+    let cases = [
+        ("status", json!("fail")),
+        ("method", json!("automated")),
+        ("installer_sha256", json!(POLICY_HASH)),
+        ("status", json!("unverified")), // retains partial observation metadata
+    ];
+    for (field, value) in cases {
+        let mut changed = evidence.clone();
+        changed["checks"][8][field] = value;
+        let (i, e) = decode(&inventory, &changed);
+        let report = check(&i, &e);
+        assert!(!BuildPhase::Prebuild.ready(&report) && !BuildPhase::Draft.ready(&report));
+    }
+    let (i, mut e) = decode(&inventory, &evidence);
+    e.coverage[0].unresolved_conflicts = 1;
+    let content_failure = check(&i, &e);
+    assert!(
+        !BuildPhase::Prebuild.ready(&content_failure) && !BuildPhase::Draft.ready(&content_failure)
+    );
+    e.coverage[0].unresolved_conflicts = 0;
+    e.production_sha256 = Some(Sha256Hex::new(POLICY_HASH).unwrap());
+    let stale = check(&i, &e);
+    assert!(!BuildPhase::Prebuild.ready(&stale) && !BuildPhase::Draft.ready(&stale));
+}
