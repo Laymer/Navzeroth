@@ -548,3 +548,40 @@ fn without_active_content_the_world_is_empty_not_an_error() {
         .is_err()
     );
 }
+
+/// Measurement over the real whole-world pack; needs the Git LFS catalog.
+/// `NAVZEROTH_WORLD_CATALOG=content/world/1.60.1.70450/catalog.json cargo test --release
+/// -p azeroth-app --test world_browser -- --ignored --nocapture`
+#[test]
+#[ignore = "needs the Git LFS whole-world catalog"]
+fn whole_world_pages_are_fast() {
+    let Ok(path) = std::env::var("NAVZEROTH_WORLD_CATALOG") else {
+        return;
+    };
+    let started = std::time::Instant::now();
+    let content = azeroth_core::content_v2::decode(&std::fs::read(path).unwrap()).unwrap();
+    eprintln!("decode {:?}", started.elapsed());
+    let content = ActiveContentRevision::V2(Arc::new(ContentRevisionV2 {
+        content,
+        sources: vec![],
+        conflicts: vec![],
+    }));
+    for (view, query) in [
+        (WorldView::Loot, ""),
+        (WorldView::Loot, "hogger"),
+        (WorldView::Quests, "wolf"),
+        (WorldView::Entities, "deadmines"),
+        (WorldView::Vendors, ""),
+    ] {
+        let started = std::time::Instant::now();
+        let page = world::world_page(&content, view, query, 0, None).unwrap();
+        let bytes = serde_json::to_vec(&page).unwrap().len();
+        eprintln!(
+            "{view:?} {query:?}: total {} rows {} json {} KiB in {:?}",
+            page.total,
+            page.rows.len(),
+            bytes / 1024,
+            started.elapsed()
+        );
+    }
+}
