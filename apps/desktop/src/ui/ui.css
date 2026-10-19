@@ -137,6 +137,8 @@
 .ui-badge--danger { color: var(--tone-danger); }
 .ui-badge--info { color: var(--tone-info); }
 .ui-badge--neutral { color: var(--text-muted); }
+/* Origin markers sit beside a record title and wrap with it on narrow windows. */
+.ui-origin { display: inline-flex; flex-wrap: wrap; gap: var(--space-1); margin-inline: var(--space-2) 0; vertical-align: middle; }
 
 /* High contrast: flat, outlined, no bevel or gradient. */
 :root[data-contrast="high"] .ui-button { background: var(--surface); background-image: none; color: var(--text); border: 2px solid var(--text); box-shadow: none; text-shadow: none; }

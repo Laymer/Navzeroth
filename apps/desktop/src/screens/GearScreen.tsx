@@ -1,5 +1,7 @@
 import "./play.css";
-import { Button, Field, HelpTip, Panel } from "../ui";
+import { Button, Field, HelpTip, OriginMarker, Panel } from "../ui";
+import { useRecordOrigins } from "./useRecordOrigins";
+import { originKey } from "../commands/world";
 import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {AuthoredContentPicker} from "./AuthoredContentPicker";
 import type {AuthoredSelection} from "../commands/authoredContent";
@@ -90,6 +92,8 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     return () => { live = false; generation.current++; };
   }, [client, profile, refreshKey]);
   const slots = [...new Set([...(catalog?.items.flatMap((i) => i.slots) ?? []), ...Object.keys(catalog?.equipment ?? {})])].sort();
+  const itemRef = (key: GearCatalog["items"][number]["key"]) => ({ collection: "items" as const, id: key.item_id, variant: key.variant });
+  const itemOrigins = useRecordOrigins(client, profile ? { kind: "character", profile_id: profile } : null, catalog?.revision, catalog?.items.map((item) => itemRef(item.key)) ?? []);
   function example() {
     if (!catalog?.fixture) return;
     invalidate(); setSynthetic(true); setRole("synthetic-equal-weights");
@@ -159,7 +163,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     {catalog?.items.map((item) => {
       const index = inputs.findIndex((i) => JSON.stringify(i.item) === JSON.stringify(item.key)); const selected = inputs[index];
       const update = (patch: Partial<GearInput>) => { invalidate(); setInputs((old) => old.map((input,i) => i === index ? { ...input, ...patch } : input)); };
-      return <fieldset key={JSON.stringify(item.key)}><legend>{item.key.item_id} ({item.key.variant})</legend>
+      return <fieldset key={JSON.stringify(item.key)}><legend>{item.key.item_id} ({item.key.variant})</legend><OriginMarker marks={itemOrigins.get(originKey(itemRef(item.key)))} />
         <label><input type="checkbox" checked={!!selected} disabled={!selected&&inputs.length>=128} onChange={(e) => { invalidate(); setInputs((old) => e.target.checked ? [...old, { item: item.key, category: unknown(), acquisition: null }] : old.filter((_,i) => i !== index)); }} />Compare {item.key.item_id}</label>
         {selected && <><span className="play-inline"><label>Category status for {item.key.item_id}<select value={selected.category.status} onChange={(e) => update({ category: e.target.value === "known" ? known("") : { status: e.target.value as "unknown" | "unsupported" | "restricted" | "not_applicable" } })}>{["unknown","unsupported","restricted","not_applicable","known"].map((status) => <option key={status}>{status}</option>)}</select></label><HelpTip label={`Category status for ${item.key.item_id}`}>{CATEGORY_HELP}</HelpTip></span>
           {selected.category.status === "known" && <label>Category identifier for {item.key.item_id}<input value={selected.category.value} onChange={(e) => update({ category: known(e.target.value) })} /></label>}

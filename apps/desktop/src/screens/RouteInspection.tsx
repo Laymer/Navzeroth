@@ -1,16 +1,18 @@
-import { Button } from "../ui";
+import { Button, OriginMarker } from "../ui";
+import { originKey } from "../commands/world";
+import type { Origins } from "./useRecordOrigins";
 import { useMemo, useRef, useState } from "react";
 import type { RouteInspection as Inspection } from "../commands/routes";
 import { MapView } from "../atlas/MapView";
 import type { Bounds } from "../atlas/viewport";
 import { endpoints, routeBounds, ROUTE_PAGE_SIZE } from "./routeSegments";
 /** A newly guarded response owns its own selection and projection state. */
-export function RouteInspection({ value }: { value: Inspection }) {
+export function RouteInspection({ value, origins }: { value: Inspection; origins?: Origins }) {
   const owner = useRef(value); const epoch = useRef(0);
   if (owner.current !== value) { owner.current = value; epoch.current++; }
-  return <RouteView key={epoch.current} value={value} />;
+  return <RouteView key={epoch.current} value={value} origins={origins} />;
 }
-function RouteView({ value }: { value: Inspection }) {
+function RouteView({ value, origins }: { value: Inspection; origins?: Origins | undefined }) {
   const [selected, setSelected] = useState<number | null>(value.hops.length ? 0 : null);
   const [page, setPage] = useState(0); const [frameIndex, setFrameIndex] = useState(() => Math.max(0, value.frames.findIndex((f) => value.hops[0] && endpoints(value, f, value.hops[0]) !== null)));
   const [fit, setFit] = useState<{ bounds: Bounds; nonce: number } | null>(null);
@@ -52,7 +54,7 @@ function RouteView({ value }: { value: Inspection }) {
         const target = event.key === "ArrowUp" ? Math.max(0, index - 1) : event.key === "ArrowDown" ? Math.min(value.hops.length - 1, index + 1) : event.key === "Home" ? 0 : event.key === "End" ? value.hops.length - 1 : event.key === "PageUp" ? Math.max(0, index - ROUTE_PAGE_SIZE) : event.key === "PageDown" ? Math.min(value.hops.length - 1, index + ROUTE_PAGE_SIZE) : null;
         if (target !== null) { event.preventDefault(); choose(target, true); }
       }}>Select hop {index + 1}: {h.hop.from.id} → {h.hop.to.id}</Button>
-      <p>{h.stopping ? "Final stopping route" : `Selected leg ${h.leg + 1}`}: {h.hop.from.id} → {h.hop.to.id}; {h.hop.mode}; {h.hop.cost_ms} ms; {h.hop.status}.</p>
+      <p>{h.stopping ? "Final stopping route" : `Selected leg ${h.leg + 1}`}: {h.hop.from.id} → {h.hop.to.id}; {h.hop.mode}; {h.hop.cost_ms} ms; {h.hop.status}.<OriginMarker marks={origins?.get(originKey({ collection: "edges", id: h.hop.edge }))} /></p>
       {h.geometry_gap && <p>{h.geometry_gap}</p>}
       {!h.geometry_gap && (!frame || endpoints(value, frame, h) === null) && <p>No schematic connection is displayed for this hop in the current frame.</p>}
       <details><summary>Endpoint placement, requirements and uncertainty</summary><pre>{JSON.stringify({ from: h.from, to: h.to, requirements: h.requirements, expected: h.hop.expected_ms, wait: h.hop.wait_ms, service: h.hop.service_ms, range: h.hop.range, stateful: h.hop.stateful, resource: h.hop.consumes_resource, cooldown: h.hop.cooldown_ms }, null, 2)}</pre></details>
