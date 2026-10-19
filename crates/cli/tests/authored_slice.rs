@@ -69,8 +69,20 @@ fn authored_slice_builds_and_verifies_with_solo_and_duo_support() {
         matrix.catalog_sha256.as_str(),
         format!("{:x}", Sha256::digest(&catalog))
     );
-    assert_eq!(matrix.schema_version, 2);
-    assert_eq!(matrix.target, None);
+    assert_eq!(matrix.schema_version, 3);
+    assert_eq!(
+        matrix.target,
+        Some(
+            azeroth_core::release::decode_world_data_target(
+                &fs::read(
+                    Path::new(env!("CARGO_MANIFEST_DIR"))
+                        .join("../../release/v1/world-data-target.json")
+                )
+                .unwrap()
+            )
+            .unwrap()
+        )
+    );
     assert_eq!(matrix.supported_sizes, [1, 2]);
     let mut expected: Vec<_> = [1u8, 2]
         .into_iter()

@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const MAX_RELEASE_BYTES: usize = 16 * 1024 * 1024;
+/// Measured whole-world canonical inventory/evidence is approximately28MiB each.
+/// Historical schemas retain16MiB; only explicit stable schema4 uses64MiB.
+pub const MAX_STABLE_RELEASE_BYTES: usize = 64 * 1024 * 1024;
 pub const MAX_UNITS: usize = 4096;
 /// Required and shipped record identities. ADR 0007 §7: a whole-world pack
 /// (expected at 350,000 to 800,000 identities) plus the authored pack fits
@@ -165,6 +168,10 @@ pub struct ReleasePolicy<'a> {
     pub origins: Option<&'a crate::origin_policy::OriginPolicy>,
     /// SHA-256 of the exact policy bytes, which evidence must bind.
     pub origin_policy_sha256: Option<&'a str>,
+    /// Schema4 only, supplied after I/O validates all pack/source occurrences,
+    /// exact admission and authored-only or wholly inferred content constraints.
+    /// This does not alter any source observation's target_validation status.
+    pub verified_non_observational_sources: Option<&'a BTreeSet<String>>,
 }
 /// The target a manifest must declare under the supplied release inputs.
 pub fn expected_target_with(schema_version: u32, policy: &ReleasePolicy<'_>) -> Option<Target> {
@@ -405,6 +412,9 @@ pub struct Deferral {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
+    /// Schema4 only: versioned raw normalization reports, never typed SourceConflict rows.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub normalization_conflict_files: Option<Vec<FileRef>>,
     /// Schema 4 only: reviewed public corresponding-source resources.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub corresponding_source_files: Option<Vec<FileRef>>,
@@ -583,7 +593,8 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
         1 => {
             inventory.slice.is_none() && inventory.domains.iter().all(|d| d.out_of_scope.is_empty())
         }
-        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE => inventory.slice.is_some(),
+        2 | SCHEMA_WORLD_DATA => inventory.slice.is_some(),
+        SCHEMA_STABLE => true,
         _ => false,
     };
     if !shape_matches {
@@ -596,8 +607,11 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     if evidence.schema_version != SCHEMA_STABLE
         && serde_json::from_slice::<serde_json::Value>(bytes)
             .map_err(|_| "Invalid release manifest")?
-            .get("corresponding_source_files")
-            .is_some()
+            .as_object()
+            .is_some_and(|v| {
+                v.contains_key("corresponding_source_files")
+                    || v.contains_key("normalization_conflict_files")
+            })
     {
         return Err("Corresponding-source fields require evidence schema 4");
     }
@@ -612,6 +626,7 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
         || world != evidence.origin_policy.is_some()
         || (evidence.schema_version != SCHEMA_STABLE
             && (evidence.corresponding_source_files.is_some()
+                || evidence.normalization_conflict_files.is_some()
                 || evidence.candidate_installer_sha256.is_some()
                 || evidence
                     .checks
@@ -625,6 +640,14 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
 }
 /// Explicit schema-4 collection; historical schemas cannot acquire this field.
 pub fn validate_corresponding_sources(evidence: &Evidence) -> Result<(), &'static str> {
+    if let Some(files) = &evidence.normalization_conflict_files
+        && (evidence.schema_version != SCHEMA_STABLE
+            || files.is_empty()
+            || files.len() > MAX_UNITS
+            || !files_present(files))
+    {
+        return Err("Invalid normalization-conflict file collection");
+    }
     if let Some(files) = &evidence.corresponding_source_files
         && (evidence.schema_version != SCHEMA_STABLE
             || files.is_empty()
@@ -636,8 +659,16 @@ pub fn validate_corresponding_sources(evidence: &Evidence) -> Result<(), &'stati
     Ok(())
 }
 fn decode<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, &'static str> {
-    if bytes.len() > MAX_RELEASE_BYTES {
+    if bytes.len() > MAX_STABLE_RELEASE_BYTES {
         return Err("Release manifest exceeds size limit");
+    }
+    #[derive(Deserialize)]
+    struct Version {
+        schema_version: u32,
+    }
+    let version: Version = serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")?;
+    if version.schema_version != SCHEMA_STABLE && bytes.len() > MAX_RELEASE_BYTES {
+        return Err("Release manifest exceeds historical size limit");
     }
     // Typed structs reject duplicate and unknown fields. Arrays are checked below.
     let value = serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")?;
@@ -860,6 +891,7 @@ pub fn assess_with(
             );
         }
         match &inventory.slice {
+            None if inventory.schema_version == SCHEMA_STABLE => {}
             Some(slice) if slice_valid(slice) => {
                 if slice.classes.is_none() {
                     report.block("Release slice classes are unknown");
@@ -1095,7 +1127,11 @@ pub fn assess_with(
         if sources_by_id.get(required.id.as_str()).is_none_or(|s| {
             let target_ok = (s.target_validation == Status::Pass
                 && files_present(&s.target_evidence))
-                || origin_accepted.contains(&s.id);
+                || origin_accepted.contains(&s.id)
+                || (inventory.schema_version == SCHEMA_STABLE
+                    && policy
+                        .verified_non_observational_sources
+                        .is_some_and(|ids| ids.contains(&s.id)));
             s.revision != required.revision
                 || s.redistribution != Permission::Permitted
                 || !bounded_text(&s.origin_edition)
@@ -1251,6 +1287,7 @@ pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> V
         .chain(evidence.admission_registry.iter())
         .chain(evidence.origin_policy.iter())
         .chain(evidence.corresponding_source_files.iter().flatten())
+        .chain(evidence.normalization_conflict_files.iter().flatten())
         .chain(evidence.packs.iter().map(|p| &p.manifest))
         .chain(evidence.matrix.iter().flat_map(|r| &r.artifacts))
         .collect()

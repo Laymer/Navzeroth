@@ -120,6 +120,25 @@ impl SupportMatrix {
         let (expected, smallest) = match self.schema_version {
             1 => (Some(Target::forever_70374()), 2),
             2 => (release::expected_target(2), 1),
+            // Explicit world-data target, bound by the pack/release consumer.
+            3 => {
+                let target = self
+                    .target
+                    .as_ref()
+                    .ok_or("Party support target is missing")?;
+                let digits = |s: &str| {
+                    !s.is_empty() && s.len() <= 9 && s.bytes().all(|c| c.is_ascii_digit())
+                };
+                if crate::types::EditionId::new(target.edition.clone()).is_err()
+                    || target.version.split('.').count() != 3
+                    || !target.version.split('.').all(digits)
+                    || !digits(&target.build)
+                    || target.interface == 0
+                {
+                    return Err("Invalid explicit party support target");
+                }
+                (self.target.clone(), 1)
+            }
             _ => return Err("Unsupported party support version"),
         };
         if self.target != expected {

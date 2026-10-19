@@ -381,6 +381,28 @@ fn main() -> ExitCode {
                 }
             }
         }
+        [command, rest @ ..] if command == "enumerate-release-packs" => {
+            use azeroth_cli::release::enumeration;
+            let Some(args) = enumeration::Arguments::parse(rest) else {
+                eprintln!(
+                    "enumerate-release-packs --root <dir> --pack <relative-dir> [--pack <relative-dir>] --output <new-relative-json>"
+                );
+                return ExitCode::from(2);
+            };
+            match enumeration::run(&args) {
+                Ok(summary) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&summary).expect("enumeration summary")
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("enumerate-release-packs: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
         [command, rest @ ..] if command == "release-materials" => {
             use azeroth_cli::release::materials;
             let Some(options) = materials::Arguments::parse(rest) else {

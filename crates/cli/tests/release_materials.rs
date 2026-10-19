@@ -44,7 +44,13 @@ impl Temp {
         ] {
             // Keep this synthetic preview independent of the release under test.
             // Stable-version policy is exercised by the readiness tests separately.
-            let source = fs::read_to_string(root.join(name)).unwrap();
+            let source_path = if name == INVENTORY || name == EVIDENCE {
+                root.join("release/history/2026-10-19-pre-stable-v3")
+                    .join(Path::new(name).file_name().unwrap())
+            } else {
+                root.join(name)
+            };
+            let source = fs::read_to_string(source_path).unwrap();
             let current = env!("CARGO_PKG_VERSION");
             let fixture = if name == "Cargo.lock" {
                 source
@@ -1263,6 +1269,59 @@ fn historical_evidence_refuses_corresponding_source_field_even_null_or_empty() {
                 azeroth_core::release::decode_evidence(&serde_json::to_vec(&evidence).unwrap())
                     .is_err()
             );
+        }
+    }
+}
+
+#[test]
+fn raw_normalization_conflicts_remain_versioned_policy_bound_materials() {
+    for mutation in [
+        "none",
+        "format",
+        "revision",
+        "precedence",
+        "tamper",
+        "historical",
+    ] {
+        let temp = corresponding_source_fixture();
+        let mut evidence = temp.read(EVIDENCE);
+        let revision = evidence["packs"][0]["dataset_revisions"][0].clone();
+        let mut report = json!({"format":"navzeroth-world-content-conflicts","schema_version":1,"revision":revision,"precedence":temp.read(POLICY)["precedence"],"conflicts":[{"kind":"synthetic normalization only","fact":"fixture","not_a_SourceConflict":true}]});
+        if mutation == "format" {
+            report["format"] = json!("typed-source-conflicts");
+        }
+        if mutation == "revision" {
+            report["revision"] = json!("wrong");
+        }
+        if mutation == "precedence" {
+            report["precedence"] = json!([]);
+        }
+        temp.json("content/raw-normalization.json", &report);
+        evidence["normalization_conflict_files"] =
+            json!([temp.reference("content/raw-normalization.json")]);
+        if mutation == "tamper" {
+            evidence["normalization_conflict_files"][0]["sha256"] = json!("0".repeat(64));
+        }
+        if mutation == "historical" {
+            evidence["schema_version"] = json!(3);
+            evidence
+                .as_object_mut()
+                .unwrap()
+                .remove("corresponding_source_files");
+        }
+        temp.json(EVIDENCE, &evidence);
+        temp.commit();
+        let result = materials::plan(&temp.options());
+        if mutation == "none" {
+            let plan = result.unwrap();
+            assert_eq!(plan.normalization_conflict_files.len(), 1);
+            assert!(
+                plan.files
+                    .iter()
+                    .any(|f| f.kind == materials::Kind::NormalizationConflicts)
+            );
+        } else {
+            assert!(result.is_err(), "{mutation}");
         }
     }
 }

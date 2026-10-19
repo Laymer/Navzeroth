@@ -17,6 +17,7 @@ pub enum Kind {
     ContentPack,
     SourceMaterial,
     CorrespondingSource,
+    NormalizationConflicts,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -57,6 +58,8 @@ pub struct Manifest {
     pub files: Vec<MaterialFile>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub corresponding_source_files: Vec<FileRef>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub normalization_conflict_files: Vec<FileRef>,
     /// Schema2 exact verified catalog pins eligible for the larger bound.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub catalog_files: Vec<FileRef>,
@@ -128,6 +131,16 @@ fn private_refs<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a
         )
         .collect()
 }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NormalizationConflicts {
+    format: String,
+    schema_version: u32,
+    revision: String,
+    precedence: Vec<String>,
+    conflicts: Vec<Value>,
+}
+
 fn source_valid(source: &SourceEvidence, origin_accepted: &BTreeSet<String>) -> bool {
     let text =
         |v: &str| !v.trim().is_empty() && v.len() <= 4096 && !v.chars().any(char::is_control);
@@ -170,7 +183,10 @@ pub(super) fn selected_files(
     catalog: &Catalog,
     budget: &mut Budget,
 ) -> Result<(Vec<MaterialFile>, Vec<SourceMaterial>)> {
-    let origin_accepted = release::origin_accepted_sources(inventory, evidence, policy);
+    let mut origin_accepted = release::origin_accepted_sources(inventory, evidence, policy);
+    if inventory.schema_version == release::SCHEMA_STABLE {
+        origin_accepted.extend(catalog.verified_non_observational());
+    }
     if evidence.sources.len() != inventory.sources.len()
         || inventory.sources.len() > release::MAX_UNITS
     {
@@ -302,6 +318,26 @@ pub(super) fn selected_files(
         }
     }
     release::validate_corresponding_sources(evidence)?;
+    let mut conflict_revisions = BTreeSet::new();
+    for reference in evidence.normalization_conflict_files.iter().flatten() {
+        let raw = checked_ref_bytes(budget, root, reference, MAX_FILE_BYTES as usize)?;
+        let value = azeroth_core::strict_json::value(&raw, MAX_FILE_BYTES as usize)
+            .map_err(|_| "Invalid normalization conflict JSON")?;
+        let report: NormalizationConflicts =
+            serde_json::from_value(value).map_err(|_| "Invalid normalization conflict report")?;
+        if report.format != "navzeroth-world-content-conflicts"
+            || report.schema_version != 1
+            || !catalog.revisions.contains(&report.revision)
+            || !conflict_revisions.insert(report.revision)
+            || report.conflicts.len() > release::MAX_RECORDS
+            || policy
+                .origins
+                .is_none_or(|policy| report.precedence != policy.precedence)
+        {
+            return Err("Normalization conflict report differs from selected pack or policy");
+        }
+        add(reference, Kind::NormalizationConflicts, budget)?;
+    }
     for reference in evidence.corresponding_source_files.iter().flatten() {
         add(reference, Kind::CorrespondingSource, budget)?;
     }
@@ -418,6 +454,12 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         vec![]
     };
     let manifest = Manifest {
+        normalization_conflict_files: sorted(
+            evidence
+                .normalization_conflict_files
+                .as_deref()
+                .unwrap_or_default(),
+        ),
         catalog_files,
         schema_version: if inventory.schema_version == release::SCHEMA_STABLE {
             2
