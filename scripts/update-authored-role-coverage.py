@@ -88,7 +88,7 @@ def main():
             models.append(model)
     catalog["models"] = sorted(models, key=lambda m:m["id"])
     payload = catalog["reference"]["payload"]
-    payload["revision"] = "navzeroth-authored-slice-r2"
+    payload["revision"] = "navzeroth-authored-slice-r3-stable-coverage"
     original_evidence = next(e for e in payload["evidence"] if e["id"] == "ev-authored-v1")
     evidence = copy.deepcopy(original_evidence)
     evidence["id"] = "ev-authored-roles-r2"

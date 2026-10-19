@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "transformation": "world_to_content_v2",
-  "review": "ADR 0006 section14 owner-admitted full DB/CSV, ADR0007 and stable contract historical70245; actual checked-in generated field enumeration. Independent review pending before integration.",
+  "transformation": "world_to_content_v3",
+  "review": "Reviewed dungeon v3 transformation scope: existing admitted full DB/CSV and exact historical origins/field lists unchanged. Exterior ghost-entry planar coordinates carry derivation/uncertainty and unknown elevation/access; unique root-area matching only; explicit raw map169 test exclusion. No added grants, builds or observed game facts. Independent integration review required.",
   "sources": [
     {
       "id": "cmangos-classic-db",

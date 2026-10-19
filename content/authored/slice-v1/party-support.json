@@ -1,47 +1,47 @@
 {
-  "catalog_sha256": "7336b1f92b49d886a596bb40e056f09dd5264651bc35532c2639dfd270bfe87b",
+  "catalog_sha256": "4ddd65a6b0ac043615a487064581b3dfabac12d47289d3d5b29f3a6cb016425f",
   "rows": [
     {
       "dependencies": [
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:mage-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:paladin-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:paladin-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:priest-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:priest-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:rogue-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warrior-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-tank-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warrior-tank-1-20\"]"
         },
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:solo-joint-planning",
@@ -69,11 +69,11 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:deadmines-repair-restock\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:deadmines-repair-restock\"]"
         }
       ],
       "id": "party:solo-stale-members",
@@ -101,15 +101,15 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:heuristic-level-boundary\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:heuristic-level-boundary\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:train-after-level-up\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:train-after-level-up\"]"
         }
       ],
       "id": "party:solo-advancement",
@@ -137,7 +137,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:solo-review",
@@ -165,43 +165,43 @@
       "dependencies": [
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:mage-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:paladin-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:paladin-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:priest-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:priest-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:rogue-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warrior-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-tank-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warrior-tank-1-20\"]"
         },
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-joint-planning",
@@ -229,11 +229,11 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:duo-compare-progress\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:duo-compare-progress\"]"
         }
       ],
       "id": "party:duo-unequal-progress",
@@ -261,7 +261,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-sharing",
@@ -289,11 +289,11 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:duo-compare-progress\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:duo-compare-progress\"]"
         }
       ],
       "id": "party:duo-stale-members",
@@ -321,43 +321,43 @@
       "dependencies": [
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:mage-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:paladin-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:paladin-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:priest-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:priest-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:rogue-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warrior-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-tank-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"models\",\"model:warrior-tank-1-20\"]"
         },
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-fairness",
@@ -385,7 +385,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-agreement",
@@ -413,15 +413,15 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:deadmines-hearthstone\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:deadmines-hearthstone\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:train-after-level-up\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"rules\",\"reminder:train-after-level-up\"]"
         }
       ],
       "id": "party:duo-advancement",
@@ -449,7 +449,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r3-stable-coverage\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-review",
@@ -480,9 +480,9 @@
     2
   ],
   "target": {
-    "edition": "wow_forever",
-    "version": "1.60.1",
     "build": "70450",
-    "interface": 16001
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
   }
 }
