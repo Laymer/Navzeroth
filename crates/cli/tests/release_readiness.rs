@@ -54,7 +54,12 @@ impl Temp {
         temp.write("Cargo.lock", &lock);
         temp.write("product.txt", "unchanged product\n");
         let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-        for file in [INVENTORY, EVIDENCE] {
+        for file in [
+            INVENTORY,
+            EVIDENCE,
+            "release/v1/accepted-origins.json",
+            "release/v1/world-data-target.json",
+        ] {
             temp.write(file, &fs::read_to_string(source.join(file)).unwrap());
         }
         temp.git(&["init", "-q"]);
@@ -334,16 +339,16 @@ fn future_unknown_duplicate_and_oversized_manifests_fail_even_for_preview() {
     let temp = Temp::new("0.8.1");
     let original = fs::read(temp.0.join(EVIDENCE)).unwrap();
     let mut value = temp.json(EVIDENCE);
-    value["schema_version"] = json!(3);
+    value["schema_version"] = json!(4);
     temp.json_write(EVIDENCE, &value);
     assert!(report(&temp.options("0.8.1")).is_err());
-    value["schema_version"] = json!(2);
+    value["schema_version"] = json!(3);
     value["unexpected"] = json!(true);
     temp.json_write(EVIDENCE, &value);
     assert!(report(&temp.options("0.8.1")).is_err());
     let duplicate = String::from_utf8(original).unwrap().replacen(
-        "\"schema_version\": 2",
-        "\"schema_version\": 2, \"schema_version\": 2",
+        "\"schema_version\": 3",
+        "\"schema_version\": 3, \"schema_version\": 3",
         1,
     );
     temp.write(EVIDENCE, &duplicate);
@@ -363,7 +368,8 @@ fn evidence_hashes_are_checked_without_running_or_echoing_contents() {
         json!([{"path":"docs/proof.txt","bytes":contents.len(),"sha256":digest(&contents)}]);
     temp.json_write(EVIDENCE, &value);
     let good = report(&temp.options("0.8.1")).unwrap();
-    assert_eq!(good.verified_evidence_files, 1);
+    // The proof and the bound accepted-origin policy (ADR 0007).
+    assert_eq!(good.verified_evidence_files, 2);
     temp.write(
         "docs/proof.txt",
         "different content with same file identity",
@@ -503,7 +509,8 @@ fn candidate_command_defers_initial_binding_without_waiving_content_or_integrity
     let value: Value = serde_json::from_slice(&result.stdout).unwrap();
     assert_eq!(value["publication_allowed"], false);
     assert_eq!(value["candidate_ready"], false); // no complete content
-    assert_eq!(value["pending"].as_array().unwrap().len(), 26);
+    // The 10 WIN-* observations and the initial binding (ADR 0007: no LIVE-* rows).
+    assert_eq!(value["pending"].as_array().unwrap().len(), 11);
     assert!(!value["blockers"].as_array().unwrap().iter().any(|v| {
         v.as_str()
             .unwrap()

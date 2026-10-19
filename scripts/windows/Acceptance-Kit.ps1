@@ -55,7 +55,7 @@ function Get-AcceptanceProcedures([string] $Root, [string] $ScenarioPath) {
     $manifest = (Read-BoundedReleaseText (Join-Path $Root 'release/v1/acceptance-evidence.json')) | ConvertFrom-Json
     $inventory = (Read-BoundedReleaseText (Join-Path $Root 'release/v1/coverage-inventory.json')) | ConvertFrom-Json
     $runbook = Read-BoundedReleaseText (Join-Path $Root 'docs/compatibility/V1_ACCEPTANCE_RUNBOOK.md')
-    if ($inventory.schema_version -notin 1, 2 -or $manifest.schema_version -ne $inventory.schema_version) { throw 'Unsupported acceptance or inventory schema.' }
+    if ($inventory.schema_version -notin 1, 2, 3 -or $manifest.schema_version -ne $inventory.schema_version) { throw 'Unsupported acceptance or inventory schema.' }
     $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
     $rows = @()
     foreach ($check in $manifest.checks) {
@@ -67,7 +67,9 @@ function Get-AcceptanceProcedures([string] $Root, [string] $ScenarioPath) {
         if (-not $match.Success) { throw "Missing procedure for $($check.id)." }
         $rows += [pscustomobject]@{id=$check.id; method=$method; procedure=$match.Value.Trim(); inventory_unit=$null}
     }
-    if (@($rows | Where-Object method -eq 'live_game').Count -ne 15 -or @($rows | Where-Object method -eq 'interactive_windows').Count -ne 10) { throw 'Expected 15 live and 10 Windows checks.' }
+    # Schema 3 (ADR 0007 section 5) has no LIVE-* rows; the 10 WIN-* rows are unchanged.
+    $expectedLive = if ($inventory.schema_version -eq 3) { 0 } else { 15 }
+    if (@($rows | Where-Object method -eq 'live_game').Count -ne $expectedLive -or @($rows | Where-Object method -eq 'interactive_windows').Count -ne 10) { throw "Expected $expectedLive live and 10 Windows checks." }
     $scenarios = (Read-BoundedReleaseText $ScenarioPath) | ConvertFrom-Json
     if ($scenarios.schema_version -ne 1 -or $scenarios.inventory_sha256 -cne (Get-AcceptanceHash (Join-Path $Root 'release/v1/coverage-inventory.json'))) { throw 'Scenario inventory binding mismatch.' }
     if (@($scenarios.scenarios).Count -gt 10000) { throw 'Too many acceptance scenarios.' }

@@ -1,4 +1,17 @@
-# Forever release requirements (manifest versions 1 and 2)
+# Forever release requirements (manifest versions 1, 2 and 3)
+
+> **Schema 3 is in effect ([ADR 0007](../../docs/decisions/0007-world-data-automation.md),
+> task V2.8e, 2026-10-19).** The committed manifests are schema 3. The target is not
+> frozen in code: it is read from `world-data-target.json` (currently
+> `wow_forever / 1.60.1 / 70450 / 16001`), and inventory and evidence must equal it.
+> The 15 `LIVE-*` rows and the live slice matrix are no longer required; the 10
+> `WIN-*` rows are unchanged. Evidence binds `accepted-origins.json` by FileRef hash;
+> the gate accepts evidence of the listed origins and reports accepted origins and
+> accepted unknowns instead of counting them as coverage gaps. Hashed evidence,
+> receipts and "unknown is never zero" stay mandatory. Details:
+> [WORLD_DATA.md, release gate](../../docs/data/WORLD_DATA.md#release-gate-adr-0007-task-v28e-2026-10-19).
+> `release::upgrade_inventory_v3` and `upgrade_evidence_v3` are the explicit v2 to v3
+> migration. The schema 2 text below (pending target, LIVE rows, matrix) is historical.
 
 > **Schema 2 is in effect ([ADR 0006](../../docs/decisions/0006-v1-program.md),
 > task V1.1, 2026-10-17).** The committed manifests declare the 1.0.0 slice and a
@@ -55,7 +68,7 @@ unit uses `[]`. Neither means unsupported, false, or silently omitted.
 
 The pure validator is `crates/core/src/release.rs`. Schema version 1 rejects
 unknown and duplicate object fields, unsupported enums and oversized documents
-(16 MiB), and bounds units (4096) and required records (250,000). Domain and
+(16 MiB), and bounds units (4096) and required records (2,000,000 since ADR 0007; 250,000 before). Domain and
 acceptance lists are fixed in code: removing a mandatory row from JSON does not
 make it optional. Any later format change requires an explicit version/migration.
 Existing exchange, source-registry and content-pack formats remain unchanged.

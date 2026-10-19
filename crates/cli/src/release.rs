@@ -5,7 +5,8 @@ pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
     local_data_release::{DeliveryMode, DeliveryPolicy},
-    release::{self, Bindings, Evidence, FileRef, Inventory, Readiness},
+    origin_policy::{GateClassification, OriginPolicy},
+    release::{self, Bindings, Evidence, FileRef, Inventory, Readiness, ReleasePolicy},
     sources::SourceRecord,
     types::{AssetPath, DatasetNamespace},
 };
@@ -29,6 +30,9 @@ const INVENTORY_PATH: &str = "release/v1/coverage-inventory.json";
 const EVIDENCE_PATH: &str = "release/v1/acceptance-evidence.json";
 /// Hybrid delivery evidence (ADR 0006 section 5); outside the production fingerprint.
 const RECEIPT_PATH: &str = "release/v1/local-catalog-receipt.json";
+/// ADR 0007 §6 and §3: schema 3 release inputs, bound by hash and equality.
+pub const WORLD_DATA_TARGET_PATH: &str = "release/v1/world-data-target.json";
+pub const ORIGIN_POLICY_PATH: &str = "release/v1/accepted-origins.json";
 
 #[derive(Debug)]
 pub struct Options {
@@ -72,6 +76,68 @@ pub struct Report {
     pub inventory_sha256: String,
     pub verified_evidence_files: usize,
     pub verified_content_packs: usize,
+    /// Schema 3 only: the applied world-data target and accepted-origin policy.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub world_data: Option<WorldDataReport>,
+}
+/// What the accepted-origin policy accepted (ADR 0007 §3 and §5). Accepted
+/// unknowns stay unknown; they are counted here, never written as zero.
+#[derive(Debug, Default, Serialize)]
+pub struct WorldDataReport {
+    pub target: Option<release::Target>,
+    pub origin_policy_sha256: Option<String>,
+    /// Accepted origin editions per domain, as applied.
+    pub accepted_origins_by_domain: BTreeMap<String, Vec<String>>,
+    pub accept_inferred: Option<bool>,
+    pub accept_unknowns: Option<bool>,
+    /// Release sources whose target validation the policy satisfies.
+    pub origin_accepted_sources: Vec<String>,
+    pub accepted_origins: u64,
+    pub accepted_unknowns: u64,
+    pub remaining_gaps: u64,
+    pub packs: Vec<PackClassification>,
+}
+#[derive(Debug, Serialize)]
+pub struct PackClassification {
+    pub manifest: String,
+    #[serde(flatten)]
+    pub classification: GateClassification,
+}
+/// Schema 3 release inputs read from the repository.
+#[derive(Default)]
+pub(crate) struct WorldInputs {
+    pub(crate) target: Option<release::Target>,
+    pub(crate) origins: Option<OriginPolicy>,
+    pub(crate) origin_sha256: Option<String>,
+}
+impl WorldInputs {
+    pub(crate) fn policy(&self) -> ReleasePolicy<'_> {
+        ReleasePolicy {
+            target: self.target.as_ref(),
+            origins: self.origins.as_ref(),
+            origin_policy_sha256: self.origin_sha256.as_deref(),
+        }
+    }
+}
+fn world_inputs(root: &Path, inventory: &Inventory, budget: &mut Budget) -> Result<WorldInputs> {
+    if inventory.schema_version != release::SCHEMA_WORLD_DATA {
+        return Ok(WorldInputs::default());
+    }
+    let mut read = |path: &str| -> Result<Option<Vec<u8>>> {
+        match fs::symlink_metadata(root.join(path)) {
+            Ok(_) => budget.read(&root.join(path), 64 * 1024).map(Some),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+            Err(_) => Err("Release policy input cannot be inspected"),
+        }
+    };
+    let target = read(WORLD_DATA_TARGET_PATH)?;
+    let origins = read(ORIGIN_POLICY_PATH)?;
+    // A missing or invalid input is left absent; the assessment blocks on it.
+    Ok(WorldInputs {
+        target: target.and_then(|b| release::decode_world_data_target(&b).ok()),
+        origin_sha256: origins.as_ref().map(|b| hash(b)),
+        origins: origins.and_then(|b| OriginPolicy::decode(&b).ok()),
+    })
 }
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
@@ -447,6 +513,8 @@ struct Catalog {
     revisions: BTreeSet<String>,
     sources: BTreeSet<String>,
     files: BTreeMap<String, FileRef>,
+    /// Release source id to its evidenced origin edition.
+    origins: BTreeMap<String, String>,
 }
 fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
     if !catalog
@@ -525,25 +593,61 @@ struct PackV2 {
     party_support: Option<FileRef>,
     supporting_files: Vec<FileRef>,
 }
-/// Content binds only to the code-side frozen target of the manifest's schema;
-/// a pending (null) or self-chosen target blocks it.
-fn release_target(inventory: &Inventory) -> Result<&release::Target> {
+/// Content binds only to the code-side frozen target of schema 1 and 2, or the
+/// world-data target file of schema 3; a pending (null) or self-chosen target
+/// blocks it.
+fn release_target<'a>(
+    inventory: &'a Inventory,
+    policy: &ReleasePolicy<'_>,
+) -> Result<&'a release::Target> {
     let target = inventory
         .target
         .as_ref()
         .ok_or("Release target is pending; content cannot be bound to it")?;
-    if Some(target) != release::expected_target(inventory.schema_version).as_ref() {
+    if Some(target) != release::expected_target_with(inventory.schema_version, policy).as_ref() {
         return Err("Release target differs from the frozen target");
     }
     Ok(target)
 }
+/// Schema 3 v2 packs: the strict coverage count is classified under the
+/// accepted-origin policy, and only findings it does not accept block.
+fn classify_v2(
+    pack: &release::PackRef,
+    content: &azeroth_core::content_v2::ReferenceContent,
+    sources: &[SourceRecord],
+    policy: &ReleasePolicy<'_>,
+    strict_gaps: u64,
+    classified: &mut Vec<PackClassification>,
+) -> Result<()> {
+    let classification = azeroth_core::origin_policy::classify(content, sources, policy.origins)?;
+    if classification.total() != strict_gaps {
+        return Err("Pack coverage classification differs from its verified gap count");
+    }
+    let remaining = classification.remaining_gaps;
+    let relabelled = classification.relabelled_evidence;
+    classified.push(PackClassification {
+        manifest: pack.manifest.path.as_str().to_owned(),
+        classification,
+    });
+    if relabelled != 0 {
+        return Err("Release pack evidence claims more than its source origin allows");
+    }
+    if remaining != 0 {
+        return Err("Release pack has coverage gaps the accepted-origin policy does not accept");
+    }
+    Ok(())
+}
+#[allow(clippy::too_many_arguments)]
 fn bind_v2_pack(
     root: &Path,
     pack: &release::PackRef,
     inventory: &Inventory,
+    policy: &ReleasePolicy<'_>,
+    strict_gaps: u64,
     tree: &Tree,
     budget: &mut Budget,
     catalog: &mut Catalog,
+    classified: &mut Vec<PackClassification>,
     bytes: &[u8],
 ) -> Result<()> {
     let manifest_path = root.join(pack.manifest.path.as_str());
@@ -564,8 +668,8 @@ fn bind_v2_pack(
         crate::pack::MAX_SOURCES_BYTES,
     )?)
     .map_err(|_| "Invalid v2 sources")?;
-    for source in sources.sources {
-        admission::pack_source(&source, &catalog.admitted)?;
+    for source in &sources.sources {
+        admission::pack_source(source, &catalog.admitted)?;
         let accepted = inventory
             .sources
             .iter()
@@ -575,6 +679,21 @@ fn bind_v2_pack(
             || source.offline_usable.value() != Some(&true)
         {
             return Err("V2 source revision or offline permission differs");
+        }
+        // Schema 3 accepts facts by the pack source's editions, so they must name
+        // the origin the release evidence records; neither can be relabelled alone.
+        if inventory.schema_version == release::SCHEMA_WORLD_DATA
+            && !catalog
+                .origins
+                .get(source.id.as_str())
+                .is_some_and(|origin| {
+                    source
+                        .editions
+                        .value()
+                        .is_some_and(|e| e.iter().any(|e| e.as_str() == origin))
+                })
+        {
+            return Err("V2 source editions differ from the release source origin");
         }
         catalog.sources.insert(source.id.as_str().to_owned());
     }
@@ -590,7 +709,7 @@ fn bind_v2_pack(
         return Err("V2 catalog target differs or contains fixtures");
     }
     // Bound after integrity and fixture refusals, so those still report first.
-    let target = release_target(inventory)?;
+    let target = release_target(inventory, policy)?;
     if data.game.edition.as_str() != target.edition
         || data.game.build.as_str() != format!("{}.{}", target.version, target.build)
         || data.game.interface.as_str() != target.interface.to_string()
@@ -605,6 +724,16 @@ fn bind_v2_pack(
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
     require_complete_v2_facts(&content)?;
+    if inventory.schema_version == release::SCHEMA_WORLD_DATA {
+        classify_v2(
+            pack,
+            &content,
+            &sources.sources,
+            policy,
+            strict_gaps,
+            classified,
+        )?;
+    }
     let mut records = v2_catalog_records(&content)?;
     if let Some(support) = &manifest.party_support {
         let matrix = azeroth_core::release_party::SupportMatrix::decode(&checked_ref_bytes(
@@ -641,12 +770,16 @@ fn bind_v2_pack(
     Ok(())
 }
 
+/// Verify and bind every release pack. Schema 3 pack classifications are
+/// appended to `classified` even when a later check refuses the pack.
 fn packs(
     root: &Path,
     inventory: &Inventory,
     evidence: &Evidence,
+    policy: &ReleasePolicy<'_>,
     tree: &Tree,
     budget: &mut Budget,
+    classified: &mut Vec<PackClassification>,
 ) -> Result<(usize, Catalog)> {
     let accepted: BTreeMap<_, _> = inventory
         .sources
@@ -655,6 +788,11 @@ fn packs(
         .collect();
     let mut catalog = Catalog {
         admitted: admission::load(root, inventory, evidence, budget)?,
+        origins: evidence
+            .sources
+            .iter()
+            .map(|s| (s.id.clone(), s.origin_edition.clone()))
+            .collect(),
         ..Catalog::default()
     };
     let mut count = 0;
@@ -708,25 +846,29 @@ fn packs(
         // Existing verifier is authoritative for strict fields, canonical bytes,
         // exact trees, distribution, coordinates/references and PNG verification.
         let report = crate::pack::verify(pack_root)?;
-
-        if report.fixtures != 0 || report.coverage_gaps != 0 || !report.distribution_eligible {
+        // Schema 3 classifies v2 gaps under the accepted-origin policy in
+        // bind_v2_pack; every other combination keeps the strict zero.
+        let policy_classified =
+            version == Some(2) && inventory.schema_version == release::SCHEMA_WORLD_DATA;
+        if report.fixtures != 0
+            || (!policy_classified && report.coverage_gaps != 0)
+            || !report.distribution_eligible
+        {
             return Err(
                 "Release pack has fixture content, coverage gaps or ineligible distribution",
             );
         }
-        if serde_json::from_slice::<Value>(&manifest_bytes)
-            .map_err(|_| "Invalid pack manifest")?
-            .get("schema_version")
-            .and_then(Value::as_u64)
-            == Some(2)
-        {
+        if version == Some(2) {
             bind_v2_pack(
                 root,
                 pack,
                 inventory,
+                policy,
+                report.coverage_gaps,
                 tree,
                 budget,
                 &mut catalog,
+                classified,
                 &manifest_bytes,
             )?;
             count += 1;
@@ -774,7 +916,7 @@ fn packs(
             if dataset.fixture || dataset.namespace != DatasetNamespace::Reference {
                 return Err("Release dataset differs from frozen target or contains fixtures");
             }
-            let target = release_target(inventory)?;
+            let target = release_target(inventory, policy)?;
             if dataset.game.edition.as_str() != target.edition
                 || dataset.game.build.as_str() != format!("{}.{}", target.version, target.build)
                 || dataset.game.interface.as_str() != target.interface.to_string()
@@ -861,6 +1003,7 @@ struct Inputs {
     evidence: Option<Evidence>,
     head: String,
     candidate: Tree,
+    world: WorldInputs,
 }
 fn inputs(options: &Options) -> Result<Inputs> {
     release::is_stable(&options.version)?;
@@ -869,6 +1012,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
     versions(&root, &options.version, &mut budget)?;
     let inventory_bytes = budget.read(&root.join(INVENTORY_PATH), release::MAX_RELEASE_BYTES)?;
     let inventory = release::decode_inventory(&inventory_bytes)?;
+    let world = world_inputs(&root, &inventory, &mut budget)?;
     let selected = options
         .evidence
         .as_deref()
@@ -897,6 +1041,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
         evidence,
         head,
         candidate,
+        world,
     })
 }
 /// The receipt attests the tested candidate, like the acceptance evidence, so a
@@ -954,12 +1099,14 @@ pub fn report(options: &Options) -> Result<Report> {
         evidence,
         head,
         candidate,
+        world,
     } = inputs(options)?;
+    let policy = world.policy();
     let tested = evidence
         .as_ref()
         .and_then(|e| e.tested_source_commit.as_deref())
         .unwrap_or("");
-    let mut readiness = release::assess(
+    let mut readiness = release::assess_with(
         &options.version,
         &inventory,
         evidence.as_ref(),
@@ -968,6 +1115,7 @@ pub fn report(options: &Options) -> Result<Report> {
             production_sha256: &candidate.fingerprint,
             tested_source_commit: tested,
         },
+        &policy,
     )?;
     let status = production_status(&root)?;
     // Historical repositories without a delivery policy retain their original
@@ -1007,6 +1155,7 @@ pub fn report(options: &Options) -> Result<Report> {
         readiness.block("Tested source commit is missing or invalid");
     }
     let mut verified_packs = 0;
+    let mut classifications = vec![];
     if let Some(evidence) = &evidence {
         for reference in release::evidence_files(&inventory, evidence) {
             if let Err(message) = budget.verify(&root, reference) {
@@ -1014,7 +1163,15 @@ pub fn report(options: &Options) -> Result<Report> {
                 break;
             }
         }
-        match packs(&root, &inventory, evidence, &candidate, &mut budget) {
+        match packs(
+            &root,
+            &inventory,
+            evidence,
+            &policy,
+            &candidate,
+            &mut budget,
+            &mut classifications,
+        ) {
             Ok((count, catalog)) => {
                 verified_packs = count;
                 bind_records(&mut readiness, &inventory, evidence, &catalog);
@@ -1022,6 +1179,7 @@ pub fn report(options: &Options) -> Result<Report> {
                     &root,
                     &inventory,
                     evidence,
+                    &policy,
                     &candidate,
                     &catalog,
                     &mut budget,
@@ -1032,6 +1190,8 @@ pub fn report(options: &Options) -> Result<Report> {
             Err(message) => readiness.block(message),
         }
     }
+    let world_data = (inventory.schema_version == release::SCHEMA_WORLD_DATA)
+        .then(|| world_report(&world, &inventory, evidence.as_ref(), classifications));
     Ok(Report {
         readiness,
         candidate_source_commit: head,
@@ -1039,7 +1199,47 @@ pub fn report(options: &Options) -> Result<Report> {
         inventory_sha256: hash(&inventory_bytes),
         verified_evidence_files: budget.verified.len(),
         verified_content_packs: verified_packs,
+        world_data,
     })
+}
+fn world_report(
+    world: &WorldInputs,
+    inventory: &Inventory,
+    evidence: Option<&Evidence>,
+    packs: Vec<PackClassification>,
+) -> WorldDataReport {
+    let origins = world.origins.as_ref();
+    WorldDataReport {
+        target: world.target.clone(),
+        origin_policy_sha256: world.origin_sha256.clone(),
+        accepted_origins_by_domain: origins
+            .map(|o| {
+                o.domains
+                    .iter()
+                    .map(|(d, e)| (d.clone(), e.iter().map(|e| e.as_str().to_owned()).collect()))
+                    .collect()
+            })
+            .unwrap_or_default(),
+        accept_inferred: origins.map(|o| o.accept_inferred),
+        accept_unknowns: origins.map(|o| o.accept_unknowns),
+        origin_accepted_sources: evidence
+            .map(|e| {
+                release::origin_accepted_sources(inventory, e, &world.policy())
+                    .into_iter()
+                    .collect()
+            })
+            .unwrap_or_default(),
+        accepted_origins: packs
+            .iter()
+            .map(|p| p.classification.accepted_origins)
+            .sum(),
+        accepted_unknowns: packs
+            .iter()
+            .map(|p| p.classification.accepted_unknowns)
+            .sum(),
+        remaining_gaps: packs.iter().map(|p| p.classification.remaining_gaps).sum(),
+        packs,
+    }
 }
 
 fn require_complete_v2_facts(
