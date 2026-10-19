@@ -1,4 +1,5 @@
 import "./dataScreens.css";
+import deferred from "../../../../release/v1/deferred-features.json";
 import { LocalSubmissionsPanel } from "./LocalSubmissionsPanel";
 import { useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
@@ -77,6 +78,10 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     <p>Stage a local data revision, inspect coverage and source policies, then activate it for a matching character context.</p>
     {!loading && !native && <p className="demo-label">DEMO — content changes require the desktop application.</p>}
     {loading && <p role="status">Loading content profiles…</p>}
+    <section aria-labelledby="deferred-gameplay"><h3 id="deferred-gameplay">Deferred gameplay in {deferred.version}</h3>
+      <ul>{deferred.features.map(feature => <li key={feature.id}><strong>{feature.label}:</strong> {feature.reason}</li>)}</ul>
+      <p>Reference records do not enable these recommendations. Missing supported records remain explicit coverage gaps.</p>
+    </section>
     {error && <p role="alert">Error {error.code}: {error.message}</p>}
     {message && <p role="status">{message}</p>}
     <Button disabled={busy} onClick={() => { setError(null); setRevision((n) => n + 1); }}>Refresh content</Button>
