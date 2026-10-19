@@ -65,6 +65,15 @@ FOREVER_PRODUCTS = ("wow_classic_beta", "wowf")
 INSTALL_NAMES = ("World of Warcraft",)
 
 
+def workspace_version():
+    """The workspace package version; release-readiness refuses any other version."""
+    try:
+        m = re.search(r'^version\s*=\s*"([^"]+)"', (ROOT / "Cargo.toml").read_text(encoding="utf-8"), re.M)
+    except OSError:
+        m = None
+    return m.group(1) if m else "1.0.0"
+
+
 def probe_roots():
     """Install folders probed after --client, in order (WSL mounts, then native Windows)."""
     roots = []
@@ -525,7 +534,8 @@ def parse_args(argv=None):
                    help="skip the Wowhead generators (the weekly CI run)")
     p.add_argument("--no-publish", action="store_true", help="stop before the branch and draft PR")
     p.add_argument("--cli", help="a built azeroth-cli to use (default: cargo build once)")
-    p.add_argument("--version", default="1.0.0", help="release version for the gate (default 1.0.0)")
+    p.add_argument("--version", default=workspace_version(),
+                   help="release version for the gate (default: the workspace version in Cargo.toml)")
     p.add_argument("--branch", help="publish branch (default data/world-<build>-<YYYYMMDD>)")
     p.add_argument("--base", default="main", help="pull request base branch (default main)")
     args = p.parse_args(argv)

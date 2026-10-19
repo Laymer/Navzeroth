@@ -313,7 +313,7 @@ class Stages(unittest.TestCase):
             self.assertIn("NOT ready; 2 blockers", note)
             saved = repo.root / "content" / "world" / "1.60.1.70450" / "release-readiness.json"
             self.assertEqual(json.loads(saved.read_text(encoding="utf-8")), report)
-            self.assertTrue(runner.ran("release-readiness", "--root", ".", "--version", "1.0.0"))
+            self.assertTrue(runner.ran("release-readiness", "--root", ".", "--version", pipeline.workspace_version()))
 
     def test_gate_without_report_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -439,3 +439,11 @@ class Driver(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WorkspaceVersionTest(unittest.TestCase):
+    def test_default_gate_version_follows_cargo_toml(self):
+        import re
+        want = re.search(r'^version\s*=\s*"([^"]+)"', (pipeline.ROOT / "Cargo.toml").read_text(), re.M).group(1)
+        self.assertEqual(pipeline.workspace_version(), want)
+        self.assertEqual(pipeline.parse_args([]).version, want)
