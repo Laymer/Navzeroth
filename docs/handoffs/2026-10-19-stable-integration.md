@@ -142,3 +142,53 @@ parity. Genuine inventory, immutable source closure regeneration and actual
 material-selection proof remain in progress. Native bundle/resource verification
 and hosted eight-case acceptance harness preparation do not establish installer
 acceptance. No actual content receipt, stable tag or stable release was issued.
+
+## Policy merge and original world candidate refresh
+
+ADR/documentation PR218 final75e1fc02 merged normally at
+6148ce4c623718cbcb26c5072dad7da654093add (2026-10-19T21:06:56Z), after
+independent final-head review and all ten protected checks. CI39320674744,
+Coverage39320674745, packaging39320674768 and explicit source39320676147 passed.
+No code-signing/content-receipt/manual acceptance pass was inferred from this.
+
+Original-scope world repair PR226 merged into PR212's feature branch at
+359fd4a3850679c65f16ac1ff9e74df1db4e5540 (21:02:34Z), not main. Final repairhead
+e09ae570 had actual Linux/Windows source parity39323726212; source/material
+closure and independent review are retained in stable-world-final-materials.
+The initial refreshed Rust/coverage tests failed an inherited hand-plan fixture
+that selected all non-generated admissions, including unrelated newly retained LFS
+originals. Exact-plan fixture repairad5abe4e retains real1685-row/PATH-empty and
+rights/tamper assertions; independent review plus9integration tests passed.
+PR227 normally merged that repair and main6148ce4 into the PR212 feature branch
+at3fc850c33dfd720b6cb54b4c19ea8082f474b932 (21:12:02Z). No production validator
+was relaxed. Three specialists reviewed this exact refresh; production trees
+remain identical to their independently reviewed world repair.
+
+Fresh source39325606623 passed actual Linux/Windows mapping and parity;
+packaging39325606421 passed. CI39325606458/Coverage39325606667 were still running
+when this record was written. Earlier failed359 runs remain failures. Ordinary
+PR stability is skipped, never counted as release stability.
+
+Full stable-content rehearsal subsequently exposed a pre-existing mapper defect:
+reward associations silently sliced to1024 in four dungeons, losing4011 links
+(underlying acquisition records are present): Stockade1541, SunkenTemple2559,
+ZulFarrak2147, Scholomance1860 full counts. No quest association exceeds91.
+PR212 merge is held despite its prior specialist clearance until an original-
+scope repair reports overflow Unsupported with explicit counts, never Known with
+truncated values. Separate future coverage work must preserve the complete lists
+under a versioned bounded contract. Existing desktop32-row preparation limits
+also block all26 generated packages and need their separate consumer repair.
+No functional coverage is passed while these defects remain.
+
+The completed feature branches were normally refreshed against3fc without history
+rewrites. Acceptance222 refresh7bada5d2 retained both append-conflict test suites;
+root15release tests and tooling refresh review passed. Defaults223 refresh140ecdff
+retained both bundled-default methods/tests and composition tests; root11content-
+set tests passed. Receipts225 refresh9c63e2b5 takes the current reviewed retainer
+rather than its older copy; root6receipt tests passed. Exclusions2206ece5866,
+objectives22175dc3f53 and roles2241b116fcf refreshed without conflicts. Transient
+GitHub LFS pre-receive checks rejected two simultaneous routine pushes; normal
+sequential retries succeeded without history changes or quota expansion.
+Verifier219 refreshf758d70d has all8ownedfiles identical to reviewede4ae08c;
+independent world delta review clear; root17policy+11synthetic-signing tests passed.
+These are prepared branches, not stable/main acceptance.
