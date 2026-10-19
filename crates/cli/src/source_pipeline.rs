@@ -84,6 +84,20 @@ fn read(path: &Path) -> Result<Vec<u8>> {
         |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
     )
 }
+fn read_material(path: &Path, material: &Material) -> Result<Vec<u8>> {
+    let maximum = material
+        .bytes
+        .unwrap_or(source_admission::MAX_FILE_BYTES)
+        .min(if material.bytes.is_some() {
+            source_admission::MAX_RETAINED_FILE_BYTES
+        } else {
+            source_admission::MAX_FILE_BYTES
+        });
+    crate::questiedb::read_local_source_limit(path, maximum).map_err(
+        |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
+    )
+}
+
 fn directory(path: &Path, create: bool) -> Result<PathBuf> {
     let path = if path.is_absolute() {
         path.to_owned()
@@ -271,7 +285,7 @@ fn publish_blob(cache: &Path, material: &Material, bytes: &[u8]) -> Result<()> {
     verify(bytes, material)?;
     let destination = cache_path(cache, &material.sha256);
     if destination.symlink_metadata().is_ok() {
-        return verify(&read(&destination)?, material);
+        return verify(&read_material(&destination, material)?, material);
     }
     let temporary = cache.join(format!(
         ".pending-{}-{}",
@@ -290,7 +304,7 @@ fn publish_blob(cache: &Path, material: &Material, bytes: &[u8]) -> Result<()> {
         drop(f);
         // hard_link publishes without overwriting an existing immutable object.
         if fs::hard_link(&temporary, &destination).is_err() {
-            verify(&read(&destination)?, material)?;
+            verify(&read_material(&destination, material)?, material)?;
         }
         Ok(())
     })();
@@ -366,7 +380,7 @@ fn sync_registry_using(
         for material in &materials {
             let path = cache_path(&cache, &material.sha256);
             let bytes = if path.symlink_metadata().is_ok() {
-                read(&path)?
+                read_material(&path, material)?
             } else {
                 if !options.fetch {
                     return Err(
@@ -609,7 +623,13 @@ pub fn build(options: &Options) -> Result<BuildReport> {
         if file.transformation != input.adapter.transform() {
             return Err("Build transformation differs from source admission");
         }
-        let bytes = read(&cache_path(&cache, &file.sha256))?;
+        let bytes = crate::questiedb::read_local_source_limit(
+            &cache_path(&cache, &file.sha256),
+            file.bytes,
+        )
+        .map_err(
+            |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
+        )?;
         verify(
             &bytes,
             &Material {
@@ -720,7 +740,7 @@ pub fn build(options: &Options) -> Result<BuildReport> {
             notices.push_str(&format!("\nSource: {}\nRevision: {}\nPublisher: {}\nLicence: {}\nAttribution: {}\nObligations: {}\n", source.id, source.revision, source.publisher, source.rights.license_identifier.as_deref().unwrap_or("unknown"), source.rights.attribution.as_deref().unwrap_or("unknown"), source.rights.obligations.as_deref().unwrap_or("unknown")));
             for material in closure(source)? {
                 if copied.insert(material.sha256.clone()) {
-                    let bytes = read(&cache_path(&cache, &material.sha256))?;
+                    let bytes = read_material(&cache_path(&cache, &material.sha256), &material)?;
                     verify(&bytes, &material)?;
                     output_file(
                         &staging,
@@ -903,7 +923,23 @@ mod tests {
             bytes: None,
         };
         assert!(verify(&bytes, &material).is_err());
+        let root =
+            std::env::temp_dir().join(format!("nav-source-read-bound-{}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        let path = root.join("original");
+        fs::write(&path, &bytes).unwrap();
+        assert!(read_material(&path, &material).is_err());
+        assert!(read(&path).is_err());
+        assert!(
+            crate::questiedb::read_local_source_limit(
+                &path,
+                source_admission::MAX_RETAINED_FILE_BYTES + 1
+            )
+            .is_err()
+        );
         material.bytes = Some(bytes.len() as u64);
+        assert_eq!(read_material(&path, &material).unwrap(), bytes);
+        fs::remove_dir_all(&root).unwrap();
         assert!(verify(&bytes, &material).is_ok());
         material.bytes = Some(bytes.len() as u64 - 1);
         assert!(verify(&bytes, &material).is_err());
