@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "releases": [
+    { "version": "1.0.0-rc.1", "prerelease": true, "signature": "unsigned" },
+    { "version": "1.0.0", "prerelease": false, "signature": "unsigned" }
+  ]
+}
