@@ -140,6 +140,8 @@ fn source_bundle_binds_review_materials_production_and_caller_trust() {
         "size",
         "shape",
         "untracked-resource",
+        "normalization-not-admitted",
+        "normalization-not-attached",
     ] {
         let mut f = Fixture::new();
         match change {
@@ -181,6 +183,15 @@ fn source_bundle_binds_review_materials_production_and_caller_trust() {
                     .manifest
                     .files
                     .retain(|r| r.path.as_str() != "conflicts.json");
+                f.bind();
+            }
+            "normalization-not-attached" => {
+                f.evidence.normalization_conflict_files =
+                    Some(vec![f.bundle.manifest.files[0].clone()]);
+            }
+            "normalization-not-admitted" => {
+                f.bundle.manifest.packs[0].normalization_conflicts =
+                    Some(f.bundle.manifest.files[0].clone());
                 f.bind();
             }
             "size" => {

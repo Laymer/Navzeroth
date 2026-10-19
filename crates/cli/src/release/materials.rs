@@ -46,6 +46,9 @@ pub struct SourceMaterial {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Manifest {
+    /// Schema2 only: keys derived from the validated catalog, never caller guesses.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bundled_packs: Vec<azeroth_app::bundled_content::Pack>,
     pub schema_version: u32,
     pub version: String,
     pub candidate_source_commit: String,
@@ -456,7 +459,34 @@ pub fn plan(options: &Options) -> Result<Manifest> {
     } else {
         vec![]
     };
+    let mut bundled_packs = if inventory.schema_version == release::SCHEMA_STABLE {
+        catalog.bundled_packs.clone()
+    } else {
+        vec![]
+    };
+    for reference in evidence.normalization_conflict_files.iter().flatten() {
+        let report: NormalizationConflicts = serde_json::from_slice(&checked_ref_bytes(
+            &mut budget,
+            &root,
+            reference,
+            MAX_FILE_BYTES as usize,
+        )?)
+        .map_err(|_| "Invalid normalization conflict report")?;
+        let pack = bundled_packs
+            .iter_mut()
+            .find(|pack| pack.key.revision.as_str() == report.revision)
+            .ok_or("Normalization conflict pack is missing")?;
+        if pack
+            .normalization_conflicts
+            .replace(reference.clone())
+            .is_some()
+        {
+            return Err("Duplicate normalization conflict pack");
+        }
+    }
+    bundled_packs.sort_by(|a, b| a.manifest.path.cmp(&b.manifest.path));
     let manifest = Manifest {
+        bundled_packs,
         normalization_conflict_files: sorted(
             evidence
                 .normalization_conflict_files

@@ -586,6 +586,7 @@ struct PackSources {
 }
 #[derive(Default)]
 struct Catalog {
+    bundled_packs: Vec<azeroth_app::bundled_content::Pack>,
     admitted: BTreeMap<String, azeroth_core::source_admission::Source>,
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
@@ -848,6 +849,21 @@ fn bind_v2_pack(
     {
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
+    catalog
+        .bundled_packs
+        .push(azeroth_app::bundled_content::Pack {
+            directory: relative(root, pack_root)?,
+            manifest: pack.manifest.clone(),
+            key: azeroth_storage::content::ContentRevisionKey {
+                scope: azeroth_storage::content::ContentScope {
+                    context: data.data_context(),
+                    fixture: data.fixture,
+                },
+                revision: data.payload.revision.clone(),
+            },
+            conflicts: None,
+            normalization_conflicts: None,
+        });
     require_complete_v2_facts(&content)?;
     if release::is_world_schema(inventory.schema_version) {
         classify_v2(

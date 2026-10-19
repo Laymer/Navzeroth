@@ -684,6 +684,7 @@ fn only_schema4_accepts_checked_non_observational_source_contracts_without_promo
         i["schema_version"] = json!(schema);
         e["schema_version"] = json!(schema);
         if schema == 3 {
+            e.as_object_mut().unwrap().remove("bundled_content");
             e.as_object_mut()
                 .unwrap()
                 .remove("candidate_installer_sha256");

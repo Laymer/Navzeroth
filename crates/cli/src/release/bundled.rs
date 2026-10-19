@@ -249,10 +249,34 @@ fn verify_with_policy(
         {
             return Err("Bundle pack identity differs from accepted release inventory");
         }
+        if pack
+            .normalization_conflicts
+            .as_ref()
+            .is_some_and(|reference| {
+                !evidence
+                    .normalization_conflict_files
+                    .as_deref()
+                    .unwrap_or_default()
+                    .contains(reference)
+            })
+        {
+            return Err("Bundle normalization conflicts are not admitted release material");
+        }
         for reference in pack.conflicts.iter().chain(&pack.normalization_conflicts) {
             if files.get(reference.path.as_str()).copied() != Some(reference) {
                 return Err("Bundle omits declared conflict material");
             }
+        }
+    }
+    for reference in evidence.normalization_conflict_files.iter().flatten() {
+        if manifest
+            .packs
+            .iter()
+            .filter(|pack| pack.normalization_conflicts.as_ref() == Some(reference))
+            .count()
+            != 1
+        {
+            return Err("Bundle normalization conflict is not attached to exactly one pack");
         }
     }
     // Every verified public material must actually ship in the installer bundle.
