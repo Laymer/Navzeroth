@@ -4,7 +4,9 @@ param(
     [Parameter(Mandatory)][string] $Directory,
     [Parameter(Mandatory)][string] $Version,
     [Parameter(Mandatory)][ValidatePattern('^[a-f0-9]{64}$')][string] $InstallerSha256,
-    [Parameter(Mandatory)][string] $Receipt
+    [Parameter(Mandatory)][string] $Receipt,
+    [ValidateSet('prepared','draft','public')][string] $Phase = 'public',
+    [string] $Evidence = ''
 )
 Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
@@ -17,7 +19,8 @@ $Directory = [IO.Path]::GetFullPath($Directory)
 $policy = Get-UnsignedReleasePolicy $root $Version
 if ($null -eq $policy) { throw 'No explicit unsigned release policy for this version.' }
 . (Join-Path $PSScriptRoot 'Native-Smoke-Helpers.ps1')
-Assert-ReleaseArtifacts $root $Version $Directory $false $false
+$readiness = switch ($Phase) { 'prepared' { 'prebuild' } 'draft' { 'draft' } 'public' { 'public' } }
+Assert-ReleaseArtifacts $root $Version $Directory $false $false $readiness $Evidence
 $setup = Get-NativeSmokeSetup -Directory $Directory
 $setupHash = (Get-FileHash -LiteralPath $setup.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($setupHash -cne $InstallerSha256) { throw 'Downloaded installer differs from the independently recorded packaging hash' }
@@ -66,7 +69,7 @@ try {
         [ordered]@{ name = $_.Name; bytes = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
     })
     $result = [ordered]@{
-        schema_version = 2; version = $Version; prerelease = $policy.prerelease; declared_signature = $policy.signature; source_commit = (Get-Content -Raw (Join-Path $Directory 'SOURCE_COMMIT.txt')).Trim()
+        schema_version = 3; phase = $Phase; version = $Version; prerelease = $policy.prerelease; declared_signature = $policy.signature; source_commit = (Get-Content -Raw (Join-Path $Directory 'SOURCE_COMMIT.txt')).Trim()
         checked_at = [DateTime]::UtcNow.ToString('o'); workflow_run_id = $env:GITHUB_RUN_ID; workflow_run_attempt = $env:GITHUB_RUN_ATTEMPT
         assets = $assets; installer_signature = $setupSignature.Status.ToString(); application_signature = $signature.Status.ToString()
         installed_display_version = Get-InstalledDisplayVersion; product_version = $metadata.ProductVersion; file_version = $metadata.FileVersion
