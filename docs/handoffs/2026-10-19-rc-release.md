@@ -1,9 +1,14 @@
-# Development RC preparation
+# Development RC publication and verification
 
 Owner/sole writer: Codex `/root`. Initial artifact-tooling baseline `c8577da`;
 branch `release/1.0.0-rc.1`, isolated worktree `/tmp/navzeroth-rc-release`.
 [Claim](../claims/2026-10-19-rc-release.md). All repair PRs are merged; final repair baseline
-`cb5d68b579934b324ac0e999384c64524ccbc260` is integrated cleanly. Latest public release remains 0.9.2. No tag or publication yet.
+`cb5d68b579934b324ac0e999384c64524ccbc260` was integrated cleanly.
+Current outcome: **1.0.0-rc.1 is published and publicly verified**, unsigned,
+from `fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`.
+[Durable publication receipt](../releases/1.0.0-rc.1-publication.json).
+The preparation entries below are historical; final publication details appear
+under “Public development prerelease”. Candidate/stable readiness remain false.
 
 ## Repair receipts
 
@@ -99,3 +104,69 @@ installation, ZIP/resource/source closure, signature and PE metadata checks befo
 tagging. Its receipt is labelled prepared-rc-verification, not draft/public
 download evidence. Draft/public workflows still verify independently downloaded
 bytes against the recorded tag-packaging hash. Hosted execution remains pending.
+
+## Release preparation integration
+
+PR #209 merged at 2026-10-19T10:43:41Z as
+`fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`. Both independent read-only
+reviewers approved final head `da390c44c865108f543723c0f7cda2a41ff85623`.
+All ten required checks passed: CI 39236035802, Coverage 39236035691,
+Windows package 39236035787; source/parity 39236035740 also passed.
+The combined coverage receipt evaluated PR merge tree
+`de82179d574e40b04d0020d7da3581dd39c0db90`, with no errors.
+Prepared Windows installation verified 544 installed files, matching addon ZIP
+and dependency closure; installer and application were NotSigned, with version
+strings 1.0.0-rc.1. Native smoke passed 31 checks, including all three picker
+cancellations and unchanged workflow selections. Upgrade population passed 5
+checks; verification passed 7; downgrade refusal exited 2 and retained the RC.
+These are prepared PR artifact checks, not public download verification.
+
+Readiness/material selection both exited 0 on the exact resulting commit above:
+[readiness](../releases/1.0.0-rc.1-release-commit-readiness.json),
+[materials](../releases/1.0.0-rc.1-release-commit-materials.json).
+Production fingerprint `721f07a667fc9aa3f1e99db8adf86bbd480f57526a8250a5fafc99150b580a21`;
+69 blockers, publication allowed, candidate/stable false, zero verified evidence
+and content packs, empty material selection. This supersedes the earlier
+preparation fingerprint for exact release-commit verification.
+
+Fresh resulting-commit checks are running: CI 39239511840, Coverage 39239511851,
+Windows package 39239511894, source/parity 39239511923, and dispatched CI with
+stability 39239530676. No tag or publication is inferred from pending runs.
+
+All fresh resulting-commit runs above completed successfully, including the
+dispatched stability job (both browser projects three times, full Rust suite
+twice, Lua harness three times). The combined coverage verdict binds
+`fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`, passes with no errors and retains
+the exact 90/100 unrounded per-file threshold. Windows native smoke passed
+31/31, upgrade population 5/5 and upgrade verification 7/7; downgrade refusal
+exited 2, did not time out and retained 1.0.0-rc.1.
+
+Annotated tag `v1.0.0-rc.1`, object
+`b55d72da23b2edab79971edd8d813ac68a4e0f46`, points to that exact commit.
+Ordinary tag packaging run 39242904060 is in progress; no acceptance-candidate
+flag or test-signing mode is used. Publication remains pending draft download
+verification and successful tag checks.
+
+## Public development prerelease
+
+Tag package 39242904060 passed: all five artifact hashes verified locally; native
+smoke 31/31, upgrade 7/7 and downgrade refusal exit 2 retaining RC. Initial draft
+verification 39245077836 failed before installation because its contents-read
+workflow token could not discover the draft. Independent review approved manual
+verifier permission correction `683c2ae` (PR #210), and draft run 39245500923
+passed against unchanged release source/bytes. Public run 39245910009 also passed
+after publication. Local public downloads match all five draft/tag artifacts,
+GitHub asset digests and addon source. Both hosted receipts verify all 544 installed
+files, dependency notice/source closure, SemVer metadata and NotSigned installer/app.
+
+[Publication receipt](../releases/1.0.0-rc.1-publication.json) retains commit, tag
+object, workflow IDs, every asset hash, signing status and scope. Raw receipts
+are in `docs/releases/1.0.0-rc.1-receipts/`. No stable/acceptance promotion occurred.
+
+External PR #208 merged after the immutable release source; it is not part of
+the RC. PR #210 was refreshed onto that main as `32f4828`; independent review
+confirmed unchanged three-file diff and approved it. All ten refreshed checks
+passed; PR #210 merged at 2026-10-19T12:32:12Z as
+`f20783f4ff93cb30aa15b5cd585e8571236b496e`. CI 39248994969, Coverage
+39248994715 and Windows package 39248994724 passed.
+Next delivery is Pages using actual verified release captures and RC-only downloads.

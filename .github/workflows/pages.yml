@@ -1,18 +1,52 @@
 name: Pages
 on:
+  pull_request:
+    branches: [main]
+    paths: ['site/**', 'scripts/site/**', '.github/workflows/pages.yml', 'pnpm-lock.yaml']
   push:
     branches: [main]
     paths:
       - "site/**"
       - ".github/workflows/pages.yml"
+      - "scripts/site/**"
+      - "pnpm-lock.yaml"
   workflow_dispatch:
+    inputs:
+      capture_release:
+        description: Capture the verified public RC in a disposable Windows runner (no deployment)
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
-  group: pages
+  group: pages-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 jobs:
+  validate:
+    if: github.event_name != 'workflow_dispatch' || !inputs.capture_release
+    name: Validate Pages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install locked test dependencies
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm install --frozen-lockfile
+          "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm --dir apps/desktop exec playwright install --with-deps chromium
+      - name: Check links, project paths, release identity and browser accessibility
+        run: node scripts/site/validate.mjs
   build:
+    needs: validate
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     name: Package site
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -38,3 +72,82 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+  capture:
+    name: Capture verified public release
+    if: github.event_name == 'workflow_dispatch' && inputs.capture_release
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - shell: bash
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+      - name: Read verified public release identity
+        id: release
+        shell: pwsh
+        run: |
+          $release = Get-Content -Raw site/release.json | ConvertFrom-Json
+          if ($release.tag -cne 'v1.0.0-rc.1' -or -not $release.public_verified -or $release.source_commit -cnotmatch '^[a-f0-9]{40}$') { throw 'Expected verified public RC metadata' }
+          "commit=$($release.source_commit)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ steps.release.outputs.commit }}
+          path: _release-source
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install locked capture dependencies
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+          "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm install --frozen-lockfile
+          "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm --dir _release-source install --frozen-lockfile
+          cargo fetch --locked --manifest-path _release-source/Cargo.toml
+      - name: Verify public bytes and capture the populated native application
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $release = Get-Content -Raw site/release.json | ConvertFrom-Json
+          $metadataJson = gh release view $release.tag --repo $env:GITHUB_REPOSITORY --json isDraft,isPrerelease,tagName
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot read public release' }
+          $metadata = $metadataJson | ConvertFrom-Json
+          if ($metadata.isDraft -or -not $metadata.isPrerelease -or $metadata.tagName -cne $release.tag) { throw 'Expected published development RC' }
+          $resolved = git -C _release-source rev-parse "$($release.tag)^{commit}"
+          if ($LASTEXITCODE -ne 0 -or $resolved -cne $release.source_commit) { throw 'Release tag source differs' }
+          $downloads = Join-Path $env:RUNNER_TEMP 'public-downloads'
+          $capture = Join-Path $env:RUNNER_TEMP 'release-capture'
+          New-Item -ItemType Directory -Path $downloads, $capture | Out-Null
+          gh release download $release.tag --repo $env:GITHUB_REPOSITORY --dir $downloads
+          if ($LASTEXITCODE -ne 0) { throw 'Public release download failed' }
+          foreach ($asset in $release.assets) {
+            if ((Get-FileHash -LiteralPath (Join-Path $downloads $asset.name) -Algorithm SHA256).Hash.ToLowerInvariant() -cne $asset.sha256) { throw 'Public asset differs from verified receipt' }
+          }
+          $installerHash = ($release.assets | Where-Object { $_.name.EndsWith('-setup.exe') }).sha256
+          ./_release-source/scripts/windows/Verify-DownloadedRelease.ps1 -Directory $downloads -Version '1.0.0-rc.1' -InstallerSha256 $installerHash -Receipt (Join-Path $capture 'download-verification.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Downloaded installation verification failed' }
+          $fixture = 'fixtures/transport/anav1-character-snapshot.txt'
+          if ((Get-FileHash $fixture).Hash -cne (Get-FileHash (Join-Path '_release-source' $fixture)).Hash) { throw 'Capture fixture differs from release source' }
+          . ./scripts/windows/Native-Smoke-Helpers.ps1
+          $install = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
+          $exe = Join-Path $install 'azeroth-desktop.exe'
+          try {
+            Install-NativeSmokeSetup -SetupPath (Get-NativeSmokeSetup -Directory $downloads).FullName
+            Invoke-NativeSmokeNode @('scripts/windows/Native-Smoke.mjs', '--mode', 'capture', '--label', 'public-release-capture', '--exe', $exe, '--port', '9225', '--out', (Join-Path $capture 'native-capture.json'), '--release-tag', $release.tag, '--release-commit', $release.source_commit, '--installer-sha256', $installerHash)
+            $proof = Get-Content -Raw (Join-Path $capture 'provenance.json') | ConvertFrom-Json
+            $verified = Get-Content -Raw (Join-Path $capture 'download-verification.json') | ConvertFrom-Json
+            if ($proof.application_sha256 -cne $verified.application_sha256) { throw 'Captured executable differs from verified executable' }
+          } finally {
+            Stop-NativeSmokeProcesses
+            Uninstall-NativeSmokeApp -InstallDirectory $install
+          }
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: public-release-capture-${{ github.run_id }}
+          path: ${{ runner.temp }}/release-capture
+          if-no-files-found: error

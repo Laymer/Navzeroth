@@ -3,13 +3,14 @@
 Task M9.4 (packaging automation) with the installation and removal instructions
 of M9.5. Status: IMPLEMENTED_UNVERIFIED. The hosted Windows runner builds the
 installer, installs it silently, starts the application and uninstalls it (see
-the [0.9.2 publication record](../handoffs/2026-10-17-v0.9.2-publication.md)
+the [RC publication receipt](../releases/1.0.0-rc.1-publication.json) and
+the earlier [0.9.2 publication record](../handoffs/2026-10-17-v0.9.2-publication.md)
 (earlier: [0.9.1](../handoffs/2026-10-16-v0.9.1-publication.md), [0.8.1 evidence](../handoffs/2026-10-14-final-program-audit.md)),
 the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 [PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
 client are not fully verified. The current download is the published
-[0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2).
+[1.0.0-rc.1 unsigned development prerelease](https://github.com/Laymer/Navzeroth/releases/tag/v1.0.0-rc.1).
 It does not contain a verified playable-content catalog. Under [ADR 0006](../decisions/0006-v1-program.md), full-content v1.0.0 targets
 the first verified stable live build after launch and remains subject to the
 [v1 release gates](../releases/V1_RELEASE_PROCESS.md).
@@ -24,7 +25,7 @@ Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Window
 | `SOURCE_COMMIT.txt` | Exact packaged source commit |
 | `CANDIDATE_NOTES.md` | Version-specific notes when present |
 
-The 0.9.2 release has all five files. Its checksum manifest covers the
+The 1.0.0-rc.1 release has all five files. Its checksum manifest covers the
 four payload files, not itself. A local `-AddonOnly` build omits the installer;
 an untagged version without notes also omits `CANDIDATE_NOTES.md`. Neither is the
 complete Windows release asset set. The current development selection includes no production content pack or content
@@ -37,7 +38,7 @@ dependency sources; these are verified against the committed source.
 
 1. Download the setup file, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes from the
    linked project's release page. Check the version and evidence limitations.
-2. Compare `Get-FileHash .\AzerothNavigator-0.9.2-x64-setup.exe -Algorithm SHA256`
+2. Compare `Get-FileHash .\AzerothNavigator-1.0.0-rc.1-x64-setup.exe -Algorithm SHA256`
    with its line in `SHA256SUMS.txt` (substitute the chosen version). A matching
    checksum shows the download is intact; it does
    not prove who published it (plan §8.7). Download only from the project's release page.
@@ -88,8 +89,10 @@ that `AddOns\AzerothNavigator\AzerothNavigator.toc` exists, as described in
 [ADDON_INSTALL.md](ADDON_INSTALL.md).
 
 Then start the game and enable *Azeroth Navigator Diagnostics* in the AddOns list.
-Record the actual client build before capture. The 0.9.2 adapters experimentally admit
-70338 and 70374 (and 70425 for development capture only, UNVERIFIED), each with interface 16001; full acceptance for the frozen v1 target is not enabled by this installer.
+Record the actual client build before capture. The 1.0.0-rc.1 adapters experimentally admit
+1.60.1 builds 70338, 70374, 70425 and 70450, each with interface 16001.
+70425 and 70450 remain development-only and UNVERIFIED; full acceptance for the
+pending post-launch v1 target is not enabled by this installer.
 
 ### Update
 
@@ -211,7 +214,7 @@ user/addon data and uploads the release files as a workflow artifact (kept 14 da
 
 Tag runs also require version-specific release notes and draft a release containing
 the five normal files. Versions beginning `0.` or containing `-` are marked
-prerelease. The tag-only **Draft GitHub release** job does not replace the nine
+prerelease. The tag-only **Draft GitHub release** job does not replace the ten
 required PR/main checks.
 
 For the authorized v1.0.0 program, follow the

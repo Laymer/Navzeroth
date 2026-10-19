@@ -7,7 +7,7 @@
 // (release/v1/README.md). It never touches the game, adds no socket bridge to the addon,
 // and drives only the application's own window through the browser debugging protocol.
 //
-// Modes: smoke | populate | verify | check-download | db-summary
+// Modes: smoke | populate | verify | capture | check-download | db-summary
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
@@ -24,13 +24,17 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..");
-const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db", "shutdown"];
+const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db", "shutdown", "release-commit", "release-tag", "installer-sha256"];
 const args = parseArgs(process.argv.slice(2), OPTIONS);
 const mode = args.mode ?? "smoke";
 if (args.shutdown !== undefined && args.shutdown !== "graceful") throw new Error("Unknown shutdown mode");
 const label = args.label ?? mode;
 if (![...MODES, "check-download", "db-summary"].includes(mode)) throw new Error(`Unknown mode ${mode}`);
 
+if (mode === "capture" && (process.env.GITHUB_ACTIONS !== "true" || process.env.RUNNER_ENVIRONMENT !== "github-hosted" ||
+    args["release-tag"] !== "v1.0.0-rc.1" || !/^[a-f0-9]{40}$/.test(args["release-commit"] ?? "") || !/^[a-f0-9]{64}$/.test(args["installer-sha256"] ?? ""))) {
+  throw new Error("Release capture requires a bound public RC on a disposable hosted runner");
+}
 const rec = new Recorder();
 const evidence = { label, mode, platform: process.platform, node: process.version, startedAt: new Date().toISOString() };
 
@@ -38,6 +42,9 @@ function finish() {
   evidence.finishedAt = new Date().toISOString();
   evidence.summary = rec.summary();
   evidence.steps = rec.steps;
+  if (mode === "capture" && evidence.summary.ok && evidence.capture) {
+    writeFileSync(join(dirname(resolve(args.out)), "provenance.json"), JSON.stringify(evidence.capture, null, 2) + "\n");
+  }
   const text = JSON.stringify(evidence, null, 2);
   if (args.out) { mkdirSync(dirname(resolve(args.out)), { recursive: true }); writeFileSync(args.out, `${text}\n`); }
   for (const s of rec.steps) console.log(`${s.status.toUpperCase().padEnd(7)} ${s.name}${s.error ? ` :: ${s.error}` : ""}${s.reason ? ` :: ${s.reason}` : ""}`);
@@ -91,7 +98,8 @@ const fixtureText = readFileSync(join(repoRoot, "fixtures", "transport", "anav1-
 // The committed fixture has fixed capture times, so the backend correctly calls it stale and refuses to
 // plan it. The driver re-times only the three capture-time fields to the runner's clock (still
 // fixture:true, still labelled synthetic) so planning, route inspection and export run natively.
-const snapshotText = freshenSnapshotText(fixtureText, Date.now());
+const snapshotRetimedAt = Date.now();
+const snapshotText = freshenSnapshotText(fixtureText, snapshotRetimedAt);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let child = null;
@@ -310,7 +318,12 @@ async function run() {
       waitForDatabaseReady(() => invokeNative(page, "get_database_status")));
     if (startup.status !== "passed") return;
 
-    if (mode === "smoke") await smoke(page, response);
+    if (mode === "capture") {
+      await smoke(page, response);
+      if (!rec.summary().ok) throw new Error("Native synthetic workflow failed before capture");
+      await captureRelease(page);
+    }
+    else if (mode === "smoke") await smoke(page, response);
     else if (mode === "populate") await populate(page);
     else await verify(page);
 
@@ -522,6 +535,43 @@ async function smoke(page, response) {
     const text = (await observed.innerText()).trim();
     if ((await page.getByText(/Reference window unavailable/).count()) !== 0) throw new Error("Reference window state query reported unavailable");
     return { observed: text };
+  });
+}
+
+async function captureRelease(page) {
+  await rec.run("capture populated release application with synthetic provenance", async () => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await go(page, "Today");
+    const later = page.getByRole("button", { name: "Choose later", exact: true });
+    if (await later.isVisible()) await later.click();
+    const reference = page.locator("details").filter({ has: page.locator("summary").filter({ hasText: /^Optional reference window$/ }) });
+    if (await reference.getAttribute("open") !== null) await reference.locator("summary").click();
+    const screenshots = [];
+    for (const name of ["Today", "Atlas", "Content"]) {
+      await go(page, name);
+      await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(() => scrollTo(0, 0));
+      if (name === "Today") await page.getByText(/SYNTHETIC — fixture/).first().waitFor({ timeout: 15000 });
+      const file = `capture-${name}.png`;
+      const bytes = await page.screenshot({ path: join(outDir, file) });
+      screenshots.push({ file, sha256: createHash("sha256").update(bytes).digest("hex"), width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20), captured_at: new Date().toISOString(), screen: name });
+    }
+    evidence.capture = {
+      schema_version: 1, synthetic: true, release_tag: args["release-tag"], source_commit: args["release-commit"],
+      installer_sha256: args["installer-sha256"], application_sha256: sha256(args.exe),
+      workflow_run_id: process.env.GITHUB_RUN_ID, workflow_run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+      capture_driver_commit: process.env.GITHUB_SHA,
+      fixture_path: "fixtures/transport/anav1-character-snapshot.txt",
+      fixture_sha256: sha256(join(repoRoot, "fixtures/transport/anav1-character-snapshot.txt")),
+      imported_snapshot_file: "imported-synthetic-snapshot.txt", retimed_at_utc_ms: snapshotRetimedAt,
+      imported_snapshot_sha256: createHash("sha256").update(snapshotText).digest("hex"),
+      retiming: "Only observed_at_utc_ms, received_at_utc_ms and created_at_utc_ms re-timed to capture-run clock; fixture remains true",
+      content: "Built-in Load synthetic planning example, validated and activated through real IPC",
+      presentation: "Chose later in onboarding, collapsed optional reference controls and scrolled each view to the top through ordinary UI actions; no content or styles replaced",
+      screenshots, cdp: evidence.cdp, evidence_scope: "Actual verified release app; synthetic fixtures; hosted regression, not live acceptance",
+    };
+    writeFileSync(join(outDir, "imported-synthetic-snapshot.txt"), snapshotText);
+    return { screenshots: screenshots.length };
   });
 }
 

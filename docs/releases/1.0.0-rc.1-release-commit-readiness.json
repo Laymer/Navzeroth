@@ -1,0 +1,189 @@
+{
+  "report_version": 2,
+  "version": "1.0.0-rc.1",
+  "stable": false,
+  "stable_ready": false,
+  "candidate_ready": false,
+  "pending": [
+    {
+      "kind": "initial_tested_binding"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-BUILD"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-CAPTURE"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-TRANSFER"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-RELOAD"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-RESTRICTIONS"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-HUD"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-PLAN"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-ADVANCE"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-DEVIATION"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-DUO"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-SESSION"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-NEXT-PLAN"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-REMINDERS"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-GEAR"
+    },
+    {
+      "kind": "observation",
+      "check_id": "LIVE-DUNGEON"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-INSTALL"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-UPGRADE"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-UNINSTALL"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-RECOVERY"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-OFFLINE"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-FOCUS"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-REFERENCE"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-DISPLAY"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-ACCESSIBILITY"
+    },
+    {
+      "kind": "observation",
+      "check_id": "WIN-PERFORMANCE"
+    }
+  ],
+  "publication_allowed": true,
+  "blockers": [
+    "Release target is pending the first stable live build after launch (ADR 0006)",
+    "Release slice classes are unknown",
+    "Content inventory is incomplete: quests",
+    "Required records are unknown: quests-inventory-pending",
+    "Content inventory is incomplete: equipment",
+    "Required records are unknown: equipment-inventory-pending",
+    "Content inventory is incomplete: acquisition",
+    "Required records are unknown: acquisition-inventory-pending",
+    "Content inventory is incomplete: geography",
+    "Required records are unknown: geography-inventory-pending",
+    "Content inventory is incomplete: travel",
+    "Required records are unknown: travel-inventory-pending",
+    "Content inventory is incomplete: dungeons",
+    "Required records are unknown: dungeons-inventory-pending",
+    "Content inventory is incomplete: class_roles",
+    "Required records are unknown: class_roles-inventory-pending",
+    "Content inventory is incomplete: party",
+    "Required records are unknown: party-inventory-pending",
+    "Content inventory is incomplete: reminders",
+    "Required records are unknown: reminders-inventory-pending",
+    "Required record inventory is empty or excessive",
+    "Accepted source revisions are missing or invalid",
+    "Initial tested source revision and production fingerprint are pending",
+    "Required acceptance observation is pending: LIVE-BUILD",
+    "Required acceptance observation is pending: LIVE-CAPTURE",
+    "Required acceptance observation is pending: LIVE-TRANSFER",
+    "Required acceptance observation is pending: LIVE-RELOAD",
+    "Required acceptance observation is pending: LIVE-RESTRICTIONS",
+    "Required acceptance observation is pending: LIVE-HUD",
+    "Required acceptance observation is pending: LIVE-PLAN",
+    "Required acceptance observation is pending: LIVE-ADVANCE",
+    "Required acceptance observation is pending: LIVE-DEVIATION",
+    "Required acceptance observation is pending: LIVE-DUO",
+    "Required acceptance observation is pending: LIVE-SESSION",
+    "Required acceptance observation is pending: LIVE-NEXT-PLAN",
+    "Required acceptance observation is pending: LIVE-REMINDERS",
+    "Required acceptance observation is pending: LIVE-GEAR",
+    "Required acceptance observation is pending: LIVE-DUNGEON",
+    "Required acceptance observation is pending: WIN-INSTALL",
+    "Required acceptance observation is pending: WIN-UPGRADE",
+    "Required acceptance observation is pending: WIN-UNINSTALL",
+    "Required acceptance observation is pending: WIN-RECOVERY",
+    "Required acceptance observation is pending: WIN-OFFLINE",
+    "Required acceptance observation is pending: WIN-FOCUS",
+    "Required acceptance observation is pending: WIN-REFERENCE",
+    "Required acceptance observation is pending: WIN-DISPLAY",
+    "Required acceptance observation is pending: WIN-ACCESSIBILITY",
+    "Required acceptance observation is pending: WIN-PERFORMANCE",
+    "Slice acceptance matrix cannot be checked until the slice classes are known",
+    "Unit coverage is missing, duplicated or excessive",
+    "Mandatory unit coverage has not passed: quests-inventory-pending",
+    "Mandatory unit coverage has not passed: equipment-inventory-pending",
+    "Mandatory unit coverage has not passed: acquisition-inventory-pending",
+    "Mandatory unit coverage has not passed: geography-inventory-pending",
+    "Mandatory unit coverage has not passed: travel-inventory-pending",
+    "Mandatory unit coverage has not passed: dungeons-inventory-pending",
+    "Mandatory unit coverage has not passed: class_roles-inventory-pending",
+    "Mandatory unit coverage has not passed: party-inventory-pending",
+    "Mandatory unit coverage has not passed: reminders-inventory-pending",
+    "Validated offline content packs are missing or invalid",
+    "No validated pack record binding for mandatory domain: quests",
+    "No validated pack record binding for mandatory domain: equipment",
+    "No validated pack record binding for mandatory domain: acquisition",
+    "No validated pack record binding for mandatory domain: geography",
+    "No validated pack record binding for mandatory domain: travel",
+    "No validated pack record binding for mandatory domain: dungeons",
+    "No validated pack record binding for mandatory domain: class_roles",
+    "No validated pack record binding for mandatory domain: party",
+    "No validated pack record binding for mandatory domain: reminders"
+  ],
+  "candidate_source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
+  "production_sha256": "721f07a667fc9aa3f1e99db8adf86bbd480f57526a8250a5fafc99150b580a21",
+  "inventory_sha256": "5ab72cef555964caa9c37d90016ce7761206c07e3a75eb1cb46447de71a7b7cc",
+  "verified_evidence_files": 0,
+  "verified_content_packs": 0
+}
