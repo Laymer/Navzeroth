@@ -19,9 +19,15 @@ preserved. User supplied full release plan is the controlling intent.
   Merged a79bb3433e03f18a10f72b0d4b45d19ff761f335 at2026-10-19T19:33:21Z.
 - #216 refreshed normally to0dd8fb50216d16b92c982608b0c3e9c1df80a68f against
   a79bb34. Root checked unchanged delta/patch-id442d2d6f from reviewed original.
-  Source39311989060 passed; CI39311989082/Coverage39311989140/package39311989100
-  still running, not passes. #217 original head independently reviewed; refresh
-  after216. #212 remains open.
+  All ten checks and Source39311989060 passed: CI39311989082,
+  Coverage39311989140, package39311989100. Merged1b0a830c010cce204a6d6d55055e4fa922de90d6
+  at2026-10-19T20:02:53Z.
+- #217 refreshed normally against1b0a830 toceb9ced2355a4a18aee7b3f91c6d7ad31d90e832.
+  Whole patch ID e0f50395175c211fb38c877f32d532344c600601 equals original688e716
+  patch versus826aa21; root review no new delta. CI39316038273, coverage39316037441,
+  packaging39316037847 and automatic source39316037451 running, not passes.
+  Attempted redundant dispatch with nonexistent sources.yml returned404; no result
+  claimed from it. Actual source run already started automatically. #212 remains open.
 - Policy documentation draft #218; unsigned verifier draft #219. Neither merged.
   #218 initial runs39307719660/39307719647/39307719711 were cancelled intentionally
   because the branch must refresh after the sequential batch; cancellations are
@@ -76,8 +82,7 @@ or commit private files or personal exports.
 
 ## Next actions
 
-Finish #216 checks and merge only on success, then refresh/review/check/merge
-#217 sequentially. Complete and independently review #212 integrated
+Finish #217 checks and merge only on success. Complete and independently review #212 integrated
 repairs, regenerate committed outputs, explicitly exercise material selection and
 record genuine remaining stable prerequisites before its refreshed checks/merge.
 Integrate separate reviewed content/default/acceptance/verifier/release PRs under
@@ -101,3 +106,17 @@ Historical build UI d2e4046 independently reviewed: backend historicaltest1 and
 OriginMarker5passed; root worldbrowser7pass/1ignore, typecheck/lint/fmt passed.
 Real combined dungeon composition initially passed but measured roughly7.5GiB
 WSL debug RSS; optimization and hosted Windows performance remain required.
+
+
+Latest source/world integration head531aa484 includes actual source generation,
+shared proof8MiB edge refusal and exact original64MiB reader repair. Root independent
+155Python,11coreadmission and7contentset tests passed. All51mappedoutput hashes
+reproduced in writer runs; original19raw inputsLFS closure and22correspondingplain
+code/terms checked. Actual367,731,829B pack builds/verifies distributioneligible;
+393,597strict gaps remain explicitlyclassified by acceptedpolicy. Fullsourceplatform
+parity/finalreview and realreleaseinventory/materialselection stillpending.
+Rolesdraft224 and contentreceiptdraft225 nowopen; no merge/productclaim. Receipt
+independent27targetedtests passed, sameoperatorcontrolexplicit. Native loaderWIP
+independent6bundle/CLI +13recoverytests passed, yet inheritedpackreader racehardening
+and90%coverage, actualnativeWindows assembly/evidence remainrequired. NoStabletag,
+installer/manualsmoke or publication has occurred.
