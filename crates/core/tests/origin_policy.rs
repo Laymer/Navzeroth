@@ -101,7 +101,7 @@ fn policy_decoding_is_strict() {
     value["format"] = json!("other");
     cases.push(value);
     let mut value = policy_value();
-    value["schema_version"] = json!(2);
+    value["schema_version"] = json!(3);
     cases.push(value);
     let mut value = policy_value();
     value["decision"] = json!(" ");
@@ -287,6 +287,7 @@ fn unknowns_are_accepted_only_by_policy_and_stay_distinct() {
     assert_eq!(none.accepted_origins + none.accepted_unknowns, 0);
     let mut other = policy_value();
     other["target_edition"] = json!("wow_classic_tbc");
+    other.as_object_mut().unwrap().remove("historical_builds");
     let other = OriginPolicy::decode(&serde_json::to_vec(&other).unwrap()).unwrap();
     assert_eq!(
         classify(&content, &vanilla(), Some(&other))
@@ -377,4 +378,115 @@ fn origin_only_sources_are_accepted_too_and_relabels_are_flagged() {
     let forever = sources(json!({"status":"known","value":["wow_forever"]}));
     let result = classify(&strong, &forever, Some(&policy())).unwrap();
     assert_eq!(result.relabelled_evidence, 0);
+}
+
+#[test]
+fn structured_origin_build_does_not_grant_historical_target_compatibility() {
+    for build in [
+        json!({"status":"known","value":"1.60.1.70246"}),
+        json!({"status":"unknown"}),
+    ] {
+        let mut value = content_value("publisher_documented");
+        value["reference"]["payload"]["evidence"][0]["origin"] =
+            json!({"edition":"wow_forever","build":build});
+        let data = decode(&value);
+        let target_sources = sources(json!({"status":"known","value":["wow_forever"]}));
+        let result = classify(&data, &target_sources, Some(&policy())).unwrap();
+        assert_eq!(result.relabelled_evidence, 1);
+        value["reference"]["payload"]["evidence"][0]["confidence"] =
+            json!("cross_edition_unverified");
+        let result = classify(&decode(&value), &target_sources, Some(&policy())).unwrap();
+        assert_eq!(result.relabelled_evidence, 0);
+        assert!(result.remaining_gaps > 0);
+    }
+}
+
+#[test]
+fn structured_origin_retains_accepted_cross_edition_and_exact_build_behavior() {
+    let mut value = content_value("cross_edition_unverified");
+    value["reference"]["payload"]["evidence"][0]["origin"] =
+        json!({"edition":"vanilla_1_12","build":{"status":"known","value":"1.12.1"}});
+    let data = decode(&value);
+    let result = classify(&data, &vanilla(), Some(&policy())).unwrap();
+    assert!(result.accepted_origins > 0);
+    assert_eq!(result.relabelled_evidence, 0);
+    value["reference"]["payload"]["evidence"][0]["origin"]["edition"] = json!("unaccepted");
+    assert!(
+        classify(&decode(&value), &vanilla(), Some(&policy()))
+            .unwrap()
+            .remaining_gaps
+            > 0
+    );
+    value["reference"]["payload"]["evidence"][0]["confidence"] = json!("publisher_documented");
+    value["reference"]["payload"]["evidence"][0]["origin"] = json!({"edition":"wow_forever","build":{"status":"known","value":value["reference"]["game"]["build"]}});
+    let result = classify(
+        &decode(&value),
+        &sources(json!({"status":"known","value":["wow_forever"]})),
+        Some(&policy()),
+    )
+    .unwrap();
+    assert_eq!(result.relabelled_evidence, 0);
+}
+
+#[test]
+fn absent_origin_metadata_preserves_historical_bytes() {
+    let value = content_value("publisher_documented");
+    let data = decode(&value);
+    assert!(data.reference.payload.evidence[0].origin.is_none());
+    let encoded = serde_json::to_value(&data).unwrap();
+    assert!(
+        encoded["reference"]["payload"]["evidence"][0]
+            .get("origin")
+            .is_none()
+    );
+}
+
+#[test]
+fn exact_historical_grant_is_versioned_and_never_a_target_confirmation() {
+    let policy = policy();
+    assert!(policy.accepts_historical_build("wow_forever", Some("1.60.1.70245")));
+    assert!(!policy.accepts_historical_build("wow_forever", None));
+    assert!(!policy.accepts_historical_build("wow_forever", Some("1.60.1.70246")));
+    let mut old = policy_value();
+    old["schema_version"] = json!(1);
+    assert!(refused(&old));
+    old.as_object_mut().unwrap().remove("historical_builds");
+    let old_policy = OriginPolicy::decode(&serde_json::to_vec(&old).unwrap()).unwrap();
+    assert!(!old_policy.accepts_historical_build("wow_forever", Some("1.60.1.70245")));
+    let mut value = content_value("cross_edition_unverified");
+    value["reference"]["payload"]["evidence"][0]["origin"] =
+        json!({"edition":"wow_forever","build":{"status":"known","value":"1.60.1.70245"}});
+    let target_sources = sources(json!({"status":"known","value":["wow_forever"]}));
+    let result = classify(&decode(&value), &target_sources, Some(&policy)).unwrap();
+    assert!(result.accepted_origins > 0);
+    assert_eq!(result.relabelled_evidence, 0);
+    assert!(
+        classify(&decode(&value), &target_sources, Some(&old_policy))
+            .unwrap()
+            .remaining_gaps
+            > 0
+    );
+    value["reference"]["payload"]["evidence"][0]["confidence"] = json!("publisher_documented");
+    assert_eq!(
+        classify(&decode(&value), &target_sources, Some(&policy))
+            .unwrap()
+            .relabelled_evidence,
+        1
+    );
+}
+
+#[test]
+fn historical_grants_refuse_foreign_empty_duplicate_and_malformed_build_lists() {
+    for historical in [
+        json!({"wow_classic_tbc":["1.60.1.70245"]}),
+        json!({"wow_forever":[]}),
+        json!({"wow_forever":["1.60.1.70245","1.60.1.70245"]}),
+        json!({"wow_forever":["1.60.1"]}),
+        json!({"wow_forever":["1.60..70245"]}),
+        json!({"wow_forever":["1.60.x.70245"]}),
+    ] {
+        let mut value = policy_value();
+        value["historical_builds"] = historical;
+        assert!(refused(&value));
+    }
 }

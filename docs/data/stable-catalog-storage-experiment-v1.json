@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "kind": "local_actual_catalog_storage_experiment",
+  "tested_code_commit": "9bb2096c113e88cd525653c31df41c47b202701b",
+  "baseline_code_commit": "531aa4848c03e3600b62484093c7a054216b6178",
+  "platform": "Linux shared development host; concurrent builds; no Windows or ordinary-PC claim",
+  "inputs": [
+    {
+      "path": "content/world/1.60.1.70450/catalog.json",
+      "bytes": 152853638,
+      "sha256": "89bbb0d4f2b82f24620e86e680477d64d99fd50a7d2a0bb6bfc109020f4f792e"
+    },
+    {
+      "path": "content/world/1.60.1.70450/sources.json",
+      "bytes": 4012,
+      "sha256": "30fb31a83a4213e7c359477dfcf82c7c6216d0f8728e0eef8aaeb5925c1eb5c7"
+    },
+    {
+      "path": "content/authored/slice-v1/catalog.json",
+      "bytes": 27526,
+      "sha256": "8bac8b20ee75bb1c6d73b1b6eb57285ef9101a22d360e5ae671d1a2511d48d86"
+    },
+    {
+      "path": "content/authored/slice-v1/sources.json",
+      "bytes": 2976,
+      "sha256": "59f7c7701ee628351e0ef48a81ea4545a17d03aac96bb5d891c31d484667fe79"
+    },
+    {
+      "path": "release/v1/accepted-origins.json",
+      "bytes": 904,
+      "sha256": "d58e2e456fc81b35b840ae846a794e1bf1b2ada46e0fff434ad9c063d5b73dd7"
+    }
+  ],
+  "scenario": "strict load/classify actual catalogs; stage both in SQLite; synthetic test-profile import; compose/activate; reopen persisted catalog",
+  "content_is_actual_admitted_public_data": true,
+  "composed_revision": "set-57916ee57afb91d6c8e4c6ba285dfe98",
+  "unique_dungeons": 27,
+  "quests": 4245,
+  "nodes": 8800,
+  "typed_conflicts": 1,
+  "coverage_errors": 0,
+  "v3_entrance_estimates_tested": false,
+  "baseline_debug": {
+    "world_stage_elapsed_seconds": 123.19901003,
+    "activation_elapsed_seconds": 507.223856992,
+    "reopen_elapsed_seconds": 582.233543904,
+    "maximum_child_rss_kib": 6699344
+  },
+  "optimized_debug": {
+    "world_stage_elapsed_seconds": 70.234013466,
+    "activation_elapsed_seconds": 364.872127891,
+    "reopen_elapsed_seconds": 421.949303381,
+    "maximum_child_rss_kib": 6067368
+  },
+  "optimized_release": {
+    "world_stage_elapsed_seconds": 24.353825199,
+    "activation_elapsed_seconds": 119.455208678,
+    "reopen_elapsed_seconds": 139.482803364,
+    "maximum_child_rss_kib": 6060940
+  },
+  "timing_excludes_compilation": true,
+  "rss_scope": "maximum child RSS of cargo harness invocation; not full-system memory",
+  "stored_documents_and_hashes_match_baseline": true,
+  "source_material_or_receipt_acceptance_claim": false,
+  "synthetic_profile_retargeted_to_catalog_scope": true
+}
