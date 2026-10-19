@@ -301,3 +301,28 @@ fn authored_dungeon_catalog_uses_exact_declared_identity_title_and_evidence() {
         declared["evidence"]
     );
 }
+
+#[test]
+fn dungeon_estimate_derivation_remains_visible_and_never_passes_readiness() {
+    let mut data = bundle();
+    let label = "Entrance estimate: CMaNGOS ghost-entry XY; portal, elevation and walkability unverified. Authored heuristic.";
+    data["content"]["dungeons"][0]["checklist"]["value"][0]["label"] = json!(label);
+    let (app, profile, _) = setup(&data);
+    let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},
+        "package":null,"origin":null,"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+    let report = app
+        .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+        .unwrap();
+    let package = report.package.unwrap();
+    assert_eq!(
+        package.checks.observation.value().unwrap()[0]
+            .label
+            .as_str(),
+        label
+    );
+    assert_eq!(
+        report.members[0].checks[0].condition.availability,
+        ObservationStatus::Unknown
+    );
+    assert!(report.members[0].checks[0].condition.evaluation.is_none());
+}
