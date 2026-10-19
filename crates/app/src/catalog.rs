@@ -252,7 +252,16 @@ mod tests {
                 view.route_options().inferred_edges.len(),
                 usize::from(accept)
             );
+            assert_eq!(view.route_options().accept_unknown_requirements, accept);
+            let inputs = travel_inputs(&view);
+            assert_eq!(inputs.withheld, usize::from(!accept));
+            assert_eq!(inputs.edges.len(), usize::from(accept));
+            assert!(inputs.assumption().is_some());
         }
+        // Without acceptance the generated edge is withheld and stated.
+        let strict = travel_inputs(&inner);
+        assert_eq!((strict.edges.len(), strict.withheld), (0, 1));
+        assert!(strict.assumption().unwrap().contains("not accept"));
         assert!(inner.route_options().inferred_edges.is_empty());
         let estimated = revision("limited_sample", "unverified");
         assert!(

@@ -216,3 +216,43 @@ fn inferred_travel_is_used_only_after_an_accepting_activation() {
     app.activate_content(&id, &set[0]).unwrap();
     assert_eq!(plan(&app), 0);
 }
+
+#[test]
+fn unknown_travel_requirements_are_assumed_only_under_the_accepting_activation() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let (id, _, now) = profile(&app);
+    let mut bundle: Value = serde_json::from_str(&inferred_planning()).unwrap();
+    for edge in bundle["envelope"]["payload"]["edges"].as_array_mut().unwrap() {
+        edge["requirements"] = json!({"status":"unknown"});
+    }
+    app.stage_content(&bundle.to_string()).unwrap();
+    let set = [revision("synthetic-planning-v1")];
+    let plan = |app: &SnapshotApplication| {
+        let catalog = app.planning_catalog(&id).unwrap();
+        let request = json!({"profile_id":id,"snapshot_id":catalog.snapshot_id,"revision":catalog.revision,
+            "goal_profile":"manual-v1","origin":"demo-node-1","stopping_node":"demo-node-1",
+            "budget_ms":100000,"stopping_service_ms":0,"candidates":[{"objective":"synthetic-service",
+            "node":"demo-node-2","utility":10,"completion_ms":1000,"service_ms":0}],"excluded":[]});
+        app.plan_session(&request.to_string(), Some(now)).unwrap()
+    };
+    app.activate_content(&id, &set[0]).unwrap();
+    let strict = plan(&app);
+    assert!(strict.result.selected.is_empty());
+    assert!(
+        strict
+            .assumptions
+            .iter()
+            .any(|a| a.contains("not accept inferred travel"))
+    );
+    app.activate_content_set(&id, &set, true).unwrap();
+    let accepted = plan(&app);
+    assert_eq!(accepted.result.selected.len(), 1);
+    assert!(accepted.result.selected[0].travel.assumes_requirements());
+    assert!(accepted.result.selected[0].travel.is_estimate());
+    assert!(
+        accepted
+            .assumptions
+            .iter()
+            .any(|a| a.contains("assumed, not checked"))
+    );
+}

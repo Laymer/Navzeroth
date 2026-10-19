@@ -379,6 +379,7 @@ export interface CommandMap {
   stage_content: { input: { text: string }; output: ContentInspection };
   get_active_content: { input: { profile_id: string }; output: ContentInspection | null };
   activate_content: { input: { profile_id: string; revision: string }; output: ContentInspection };
+  activate_content_set: { input: { profile_id: string; revisions: string[]; accept_inferred_travel: boolean }; output: ContentInspection };
   rollback_content: { input: { profile_id: string }; output: { changed: boolean; active: ContentInspection | null } };
   list_parties: { input: undefined; output: string[] };
   get_party_quests: { input: { party_id: string }; output: PartyQuestCatalog };

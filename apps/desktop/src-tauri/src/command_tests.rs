@@ -62,6 +62,7 @@ fn command_handler() -> fn(tauri::ipc::Invoke<tauri::test::MockRuntime>) -> bool
         get_historical_snapshot,
         promote_snapshot,
         activate_content,
+        activate_content_set,
         get_party_quests,
         get_party_eligibility,
         save_party,

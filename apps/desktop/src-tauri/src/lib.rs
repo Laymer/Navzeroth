@@ -885,6 +885,18 @@ async fn activate_content(
     .await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn activate_content_set(
+    state: State<'_, Application>,
+    profile_id: String,
+    revisions: Vec<DatasetRevision>,
+    accept_inferred_travel: bool,
+) -> Result<azeroth_app::content::ContentInspection, AppError> {
+    blocking(state, move |app| {
+        app.activate_content_set(&profile_id, &revisions, accept_inferred_travel)
+    })
+    .await
+}
+#[tauri::command(rename_all = "snake_case")]
 async fn rollback_content(
     state: State<'_, Application>,
     profile_id: String,
@@ -1281,6 +1293,7 @@ pub fn run() -> i32 {
                 get_content_inspection_page,
                 get_active_content,
                 activate_content,
+                activate_content_set,
                 rollback_content,
                 list_parties,
                 get_party_quests,

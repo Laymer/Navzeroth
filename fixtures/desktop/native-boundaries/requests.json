@@ -101,6 +101,14 @@
     }
   },
   {
+    "command": "activate_content_set",
+    "args": {
+      "profile_id": "invalid",
+      "revisions": ["synthetic-missing-revision"],
+      "accept_inferred_travel": true
+    }
+  },
+  {
     "command": "get_party_quests",
     "args": {
       "party_id": "missing-synthetic-party"

@@ -201,6 +201,7 @@ export const demoAdapter: CommandAdapter = {
         case "get_content_inspection_page":
         case "stage_content":
         case "activate_content":
+        case "activate_content_set":
         case "rollback_content":
           throw { code: "PROVIDER_UNAVAILABLE", message: "Content changes require the desktop application.", retryable: false } satisfies AppError;
         case "get_party":
