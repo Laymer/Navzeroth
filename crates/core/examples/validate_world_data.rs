@@ -3,6 +3,11 @@
 use std::path::{Path, PathBuf};
 
 fn collect(path: &Path, out: &mut Vec<PathBuf>) {
+    // Runner bookkeeping (.written/), fact documents and the run manifest are not shards.
+    let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+    if name.starts_with('.') || name == "facts" || name == "run-manifest.json" {
+        return;
+    }
     if path.is_dir() {
         let mut entries: Vec<_> = std::fs::read_dir(path)
             .into_iter()
