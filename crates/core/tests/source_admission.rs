@@ -185,10 +185,31 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
             "wago-tools-classic-era",
             "wago-tools-wowf",
             "wowhead-classic",
-            "wowhead-forever"
+            "wowhead-forever",
+            "navzeroth-world-content"
         ]
     );
-    assert!(hand.iter().all(|s| s.origin.build.is_none()));
+    for source in &hand {
+        let expected = match source.id.as_str() {
+            "cmangos-classic-db" => Some("1.12.1"),
+            "wago-tools-wowf" => Some("1.60.1.70245"),
+            _ => None,
+        };
+        assert_eq!(source.origin.build.as_deref(), expected, "{}", source.id);
+    }
+    let derived = hand
+        .iter()
+        .find(|s| s.id == "navzeroth-world-content")
+        .unwrap();
+    assert_eq!(derived.files.len(), 2);
+    assert_eq!(derived.retrieval.method, Method::ManualLocal);
+    assert_eq!(derived.rights.license, License::Permissive);
+    assert!(
+        derived
+            .files
+            .iter()
+            .all(|f| f.transformation == "world_to_content_v2")
+    );
     // ADR 0006 §14 sources: explicit owner acceptance (or GPL share-alike for
     // CMaNGOS), generator-only retrieval, generated files registered later.
     for s in hand.iter().filter(|s| s.files.is_empty()) {

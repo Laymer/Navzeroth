@@ -167,6 +167,12 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
         .chain(source.retrieval.access_evidence.iter())
     {
         if let Some(old) = materials.get(&proof.sha256) {
+            if old
+                .bytes
+                .is_some_and(|size| size > source_admission::MAX_FILE_BYTES)
+            {
+                return Err("Material also used as rights/access proof exceeds eight MiB");
+            }
             if old.url != proof.url {
                 return Err("Material hash has ambiguous origin URLs");
             }
@@ -967,6 +973,30 @@ mod tests {
         let value = json!({"schema_version":1,"sources":[{"id":"synthetic","revision":revision,"publisher":"synthetic/fixture","origin":{"edition":"wow_forever","build":"1.60.1.70374"},"rights":{"status":"admitted","license":"permissive","license_identifier":"synthetic-test-only","reviewer":"fixture","attribution":"fixture","obligations":"fixture","evidence":[evidence.clone()]},"retrieval":{"method":"https_pinned","max_total_bytes":data.len()+license.len(),"minimum_interval_ms":1000,"max_requests":2,"access_evidence":evidence},"files":[{"path":"facts.json","url":format!("https://raw.githubusercontent.com/synthetic/fixture/{revision}/facts.json"),"sha256":digest(data),"bytes":data.len(),"fields":["quests.shareable"],"transformation":"knowledge_v1"}]}]});
         let raw = serde_json::to_vec(&value).unwrap();
         let mut registry = Registry::parse(&raw).unwrap();
+        // A declared original may also be the exact rights/access proof. Its
+        // original length pin survives, but the shared role keeps the8MiB cap.
+        let mut shared = registry.sources[0].clone();
+        let mut proof = shared.rights.evidence[0].clone();
+        proof.url = shared.files[0].url.clone();
+        proof.sha256 = shared.files[0].sha256.clone();
+        shared.rights.evidence = vec![proof.clone()];
+        shared.retrieval.access_evidence = Some(proof);
+        shared.files[0].bytes = source_admission::MAX_FILE_BYTES + 1;
+        assert_eq!(
+            closure(&shared).err(),
+            Some("Material also used as rights/access proof exceeds eight MiB")
+        );
+        shared.files[0].bytes = source_admission::MAX_FILE_BYTES;
+        assert_eq!(
+            closure(&shared).unwrap()[0].bytes,
+            Some(source_admission::MAX_FILE_BYTES)
+        );
+        shared.files[0].bytes = data.len() as u64;
+        let mut shared_material = closure(&shared).unwrap().remove(0);
+        assert_eq!(shared_material.bytes, Some(data.len() as u64));
+        assert!(verify(data, &shared_material).is_ok());
+        shared_material.bytes = Some(data.len() as u64 + 1);
+        assert!(verify(data, &shared_material).is_err());
         let policy: UpdatesPolicy = serde_json::from_value(json!({
             "schema_version":1,"registry_sha256":digest(&raw),"method":"github_commit_metadata",
             "reviewer":"synthetic","reviewed_on":"synthetic","access_evidence_url":"https://docs.github.com/en/rest/commits/commits#list-commits",
