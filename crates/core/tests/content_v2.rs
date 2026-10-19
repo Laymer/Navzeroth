@@ -295,3 +295,35 @@ fn optional_node_facts_preserve_old_serialization_and_reject_invalid_provenance(
     bad["node_facts"][0]["unexpected"] = json!(true);
     assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
 }
+
+fn with_entity(entity: Value) -> Value {
+    let mut v = fixture();
+    v["entities"] = json!([entity]);
+    v
+}
+fn entity() -> Value {
+    json!({"id":"npc:448","evidence":["demo-evidence-1"],"kind":"npc","name":"Hogger",
+        "subname":{"status":"unknown"},"levels":{"status":"known","value":[11,11]},
+        "services":["vendor"],"reaction":{"status":"known","value":"hostile"},"nodes":["demo-node-1"]})
+}
+#[test]
+fn entities_resolve_nodes_and_evidence() {
+    let content = parse(&with_entity(entity())).unwrap();
+    assert_eq!(content.entities.len(), 1);
+    assert_eq!(content.entities[0].name.as_str(), "Hogger");
+    let mut bad = entity();
+    bad["nodes"] = json!(["missing-node"]);
+    assert!(parse(&with_entity(bad)).is_err());
+    let mut bad = entity();
+    bad["levels"] = json!({"status":"known","value":[12,11]});
+    assert!(parse(&with_entity(bad)).is_err());
+    let mut bad = entity();
+    bad["evidence"] = json!(["missing-evidence"]);
+    assert!(parse(&with_entity(bad)).is_err());
+    let mut twice = fixture();
+    twice["entities"] = json!([entity(), entity()]);
+    assert!(parse(&twice).is_err());
+    let mut empty = fixture();
+    empty["entities"] = json!([]);
+    assert!(parse(&empty).is_ok());
+}

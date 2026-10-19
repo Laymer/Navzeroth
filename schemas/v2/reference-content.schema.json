@@ -820,6 +820,70 @@
       "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
+    "EntityFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/SourceId",
+          "description": "Stable identity such as `npc:448`; referenced by acquisition origins."
+        },
+        "kind": {
+          "$ref": "#/$defs/EntityKind"
+        },
+        "levels": {
+          "$ref": "#/$defs/Observation_Array_size_2_of_Level",
+          "description": "Lowest and highest level."
+        },
+        "name": {
+          "$ref": "#/$defs/Text"
+        },
+        "nodes": {
+          "description": "Spawn nodes in the base graph; other spawns stay outside the travel graph.",
+          "items": {
+            "$ref": "#/$defs/NodeId"
+          },
+          "type": "array"
+        },
+        "reaction": {
+          "$ref": "#/$defs/Observation_SourceId",
+          "description": "`alliance`, `horde`, `both` or `hostile`."
+        },
+        "services": {
+          "items": {
+            "$ref": "#/$defs/ServiceKind"
+          },
+          "type": "array"
+        },
+        "subname": {
+          "$ref": "#/$defs/Observation_Text"
+        }
+      },
+      "required": [
+        "id",
+        "evidence",
+        "kind",
+        "name",
+        "subname",
+        "levels",
+        "services",
+        "reaction",
+        "nodes"
+      ],
+      "type": "object"
+    },
+    "EntityKind": {
+      "enum": [
+        "npc",
+        "game_object"
+      ],
+      "type": "string"
+    },
     "EquipmentFacts": {
       "additionalProperties": false,
       "properties": {
@@ -3561,6 +3625,165 @@
               "items": {
                 "$ref": "#/$defs/Text"
               },
+              "type": "array"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Array_size_2_of_Level": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "items": {
+                "$ref": "#/$defs/Level"
+              },
+              "maxItems": 2,
+              "minItems": 2,
               "type": "array"
             }
           },
@@ -7910,6 +8133,14 @@
     "dungeons": {
       "items": {
         "$ref": "#/$defs/Dungeon"
+      },
+      "maxItems": 250000,
+      "type": "array"
+    },
+    "entities": {
+      "description": "Named NPCs and game objects (ADR 0007): who stands at which nodes.",
+      "items": {
+        "$ref": "#/$defs/EntityFacts"
       },
       "maxItems": 250000,
       "type": "array"

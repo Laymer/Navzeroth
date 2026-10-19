@@ -96,7 +96,8 @@ pub fn validate_authored(content: &ReferenceContent, source: &SourceId) -> Res {
         && content.equipment.is_empty()
         && content.quest_facts.is_empty()
         && content.acquisition_facts.is_empty()
-        && content.node_facts.is_empty())
+        && content.node_facts.is_empty()
+        && content.entities.is_empty())
     {
         return Err("Authored content cannot contain game-fact records");
     }

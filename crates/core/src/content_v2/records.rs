@@ -211,6 +211,15 @@ pub fn content_records(
             &row_sources,
         )?;
     }
+    for row in &content.entities {
+        let row_sources = sources(&row.evidence)?;
+        add_record(
+            &mut catalog,
+            "geography",
+            json!([revision, "entities", row.id]),
+            &row_sources,
+        )?;
+    }
     for row in &content.models {
         add_record(
             &mut catalog,

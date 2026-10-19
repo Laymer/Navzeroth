@@ -24,6 +24,7 @@ pub fn reference_content_schema() -> Value {
         "acquisition_facts",
         "dungeons",
         "node_facts",
+        "entities",
     ] {
         value["properties"][collection]["maxItems"] =
             json!(crate::contract::MAX_CATALOG_IDENTITIES);

@@ -1,0 +1,20 @@
+{
+  "format": "navzeroth-accepted-origins",
+  "schema_version": 1,
+  "decision": "ADR 0007 §3",
+  "target_edition": "wow_forever",
+  "domains": {
+    "quests": ["vanilla_1_12", "wow_classic_era"],
+    "equipment": ["vanilla_1_12", "wow_classic_era"],
+    "acquisition": ["vanilla_1_12", "wow_classic_era"],
+    "geography": ["vanilla_1_12", "wow_classic_era"],
+    "travel": ["vanilla_1_12", "wow_classic_era"],
+    "dungeons": ["vanilla_1_12", "wow_classic_era"],
+    "class_roles": ["vanilla_1_12", "wow_classic_era"],
+    "party": ["vanilla_1_12", "wow_classic_era"],
+    "reminders": ["vanilla_1_12", "wow_classic_era"]
+  },
+  "accept_inferred": true,
+  "accept_unknowns": true,
+  "precedence": ["owner_observation", "wow_forever", "authored", "vanilla_1_12", "wow_classic_era"]
+}

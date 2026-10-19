@@ -8,7 +8,9 @@ use crate::{
     contract::{CatalogDataset, Envelope, MAX_CATALOG_IDENTITIES},
     coverage::content_report,
     eligibility::{AccessRequirements, ChoiceTaken},
-    entities::{AcquisitionKind, CompletionSemantics, Confidence, NodeRef, bounded, unique},
+    entities::{
+        AcquisitionKind, CompletionSemantics, Confidence, NodeRef, ServiceKind, bounded, unique,
+    },
     error::{Result, Validate, invalid},
     gear::{ProficiencyTable, RoleProfile, SlotLayout, WeightSource},
     observation::Observation,
@@ -34,6 +36,32 @@ pub struct ReferenceContent {
     pub dungeons: Vec<Dungeon>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub node_facts: Vec<NodeFacts>,
+    /// Named NPCs and game objects (ADR 0007): who stands at which nodes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub entities: Vec<EntityFacts>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum EntityKind {
+    Npc,
+    GameObject,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct EntityFacts {
+    /// Stable identity such as `npc:448`; referenced by acquisition origins.
+    pub id: SourceId,
+    pub evidence: Vec<EvidenceId>,
+    pub kind: EntityKind,
+    pub name: Text,
+    pub subname: Observation<Text>,
+    /// Lowest and highest level.
+    pub levels: Observation<[Level; 2]>,
+    pub services: Vec<ServiceKind>,
+    /// `alliance`, `horde`, `both` or `hostile`.
+    pub reaction: Observation<SourceId>,
+    /// Spawn nodes in the base graph; other spawns stay outside the travel graph.
+    pub nodes: Vec<NodeId>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -278,6 +306,7 @@ impl ReferenceContent {
             + self.acquisition_facts.len()
             + self.dungeons.len()
             + self.node_facts.len()
+            + self.entities.len()
     }
 }
 impl Validate for ReferenceContent {
@@ -303,6 +332,7 @@ impl Validate for ReferenceContent {
             self.acquisition_facts.len(),
             self.dungeons.len(),
             self.node_facts.len(),
+            self.entities.len(),
         ] {
             if n > MAX_CATALOG_IDENTITIES {
                 return Err(invalid("V2 catalog collection capacity exceeded"));
@@ -314,6 +344,7 @@ impl Validate for ReferenceContent {
         crate::contract::unique_catalog(self.acquisition_facts.iter().map(|r| &r.acquisition))?;
         crate::contract::unique_catalog(self.dungeons.iter().map(|r| &r.id))?;
         crate::contract::unique_catalog(self.node_facts.iter().map(|r| &r.node))?;
+        crate::contract::unique_catalog(self.entities.iter().map(|r| &r.id))?;
         let data = &self.reference.payload;
         let g = Graph {
             context: self.reference.data_context(),
@@ -351,6 +382,17 @@ impl Validate for ReferenceContent {
                 return Err(invalid("V2 node fact does not resolve"));
             }
             g.evidence(&facts.evidence)?;
+        }
+        for entity in &self.entities {
+            g.evidence(&entity.evidence)?;
+            bounded(entity.services.len())?;
+            bounded(entity.nodes.len())?;
+            if entity.nodes.iter().any(|n| !g.nodes.contains_key(n)) {
+                return Err(invalid("V2 entity node does not resolve"));
+            }
+            if entity.levels.value().is_some_and(|[lo, hi]| lo > hi) {
+                return Err(invalid("V2 entity level interval is inverted"));
+            }
         }
         for m in &self.models {
             g.evidence(&m.evidence)?;
