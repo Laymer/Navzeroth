@@ -8,7 +8,16 @@ export function prepareNativeBundle(root, destination, run) {
  const identity = path.join(root,'release/v1/bundled-content-build-identity.json');
  const metadata = fs.lstatSync(identity);
  if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.size < 1 || metadata.size > 65536) throw new Error('Invalid bounded native bundle identity');
- const raw = fs.readFileSync(identity,'utf8');
+ const descriptor=fs.openSync(identity,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0)|(fs.constants.O_NONBLOCK??0));
+ let raw;
+ try {
+  const opened=fs.fstatSync(descriptor);
+  if (!opened.isFile() || opened.dev!==metadata.dev || opened.ino!==metadata.ino || opened.size!==metadata.size) throw new Error('Bundle identity changed before read');
+  const buffer=Buffer.alloc(65537);let count=0,length;
+  while(count<buffer.length && (length=fs.readSync(descriptor,buffer,count,buffer.length-count,null))>0)count+=length;
+  if(count!==metadata.size)throw new Error('Bundle identity changed or exceeds bound');
+  raw=new TextDecoder('utf-8',{fatal:true}).decode(buffer.subarray(0,count));
+ } finally {fs.closeSync(descriptor);}
  if (Buffer.byteLength(raw)>65536 || /[\r\n\0]/.test(raw) || JSON.parse(raw).app_version !== version) throw new Error('Invalid native bundle identity JSON');
  const directory = path.join(destination,'bundled-content');
  run('coverage-bundle-assembly','cargo',['run','--locked','-p','azeroth-cli','--','assemble-bundled-content','--root',root,'--output',directory,'--identity',identity]);

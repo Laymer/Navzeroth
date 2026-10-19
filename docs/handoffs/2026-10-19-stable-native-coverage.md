@@ -16,7 +16,7 @@ RC behavior remains unchanged. Stable startup has20minute readiness and30minute
 process bounds; actual performance remains unmeasured here. Source fingerprint
 and clean-source collection checks and existing90% gates remain mandatory.
 
-Validation: new mockable adapter test passed (100% lines/branches/functions),
+Validation: new mockable adapter test passed (final100% lines/functions,86.21% branches),
 JavaScript syntax and git diff checks passed. Production CLI operations are mocked
 in this portable test; it proves invocation/placement/failures rather than actual
 cryptography. Actual Windows native coverage collection, final content assembly,
@@ -33,3 +33,9 @@ is explicitly documented, no adversarial no-clobber guarantee claimed.
 Next: independently review adapter and merge into final source, issue actual
 receipts only after final review, collect native Windows coverage with that exact
 verified content, run hosted8cases and exact draft owner smoke before publishing.
+
+Broader coverage script regression suite: initial16pass2could-not-load because
+new worktree lacked TypeScript dependencies. Reusing existing pinned dependencies
+through a temporary read-only-use symlink yielded21passed0failed; symlink removed.
+Identity capture additionally uses bounded no-follow/nonblocking descriptor reads,
+regular-file and descriptor/path identity matching, strict UTF8 decoding.
