@@ -54,3 +54,36 @@ it.each(['save','status','acknowledge'] as const)('keeps %s refusals explicit an
  expect(screen.queryByText(/private backend detail/)).toBeNull();
  expect(calls.some(command=>['start_local_data','activate_local_data'].includes(command))).toBe(false);
 });
+
+it.each([
+ {name:'a non-English locale',saved:['deDE'],installed:['deDE','enUS'],expected:['deDE'],warning:false},
+ {name:'an absent locale among installed choices',saved:['frFR','deDE'],installed:['deDE','enUS'],expected:['deDE'],warning:true},
+ {name:'only absent locales without falling back',saved:['frFR'],installed:['enUS'],expected:[],warning:true},
+ {name:'unknown installed locales',saved:['enUS'],installed:[],expected:[],warning:true},
+ {name:'different English locale identities',saved:['enGB'],installed:['enUS'],expected:[],warning:true},
+ {name:'duplicate and unsorted saved choices',saved:['enUS','deDE','deDE'],installed:['deDE','enUS'],expected:['deDE','enUS'],warning:false},
+])('reconciles $name before enabling extraction choices',async({saved,installed,expected,warning})=>{
+ const changed=vi.fn();const calls:{command:string;input:unknown}[]=[];
+ const savedRecord={...record,preferences:{...record.preferences,selections:{selected:{...record.preferences.selections.selected,locales:saved}}}};
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve(savedRecord as never);}};
+ render(<LocalWorkflowChoices client={createClient(adapter)} selectionId="selected" locales={installed} preset="small" onLocales={changed}/>);
+ await vi.waitFor(()=>expect(changed).toHaveBeenLastCalledWith(expected));
+ for(const locale of installed)expect(screen.getByRole('checkbox',{name:locale})).toHaveProperty('checked',expected.includes(locale));
+ expect(Boolean(screen.queryByText(/no longer declared/))).toBe(warning);
+ const save=screen.getByRole('button',{name:'Save content choices'});
+ if(expected.length){
+  expect(save).toBeEnabled();fireEvent.click(save);await screen.findByText(/Choices saved/);
+  expect(calls.find(call=>call.command==='save_local_workflow_choices')?.input).toEqual({selection_id:'selected',expected:3,locales:expected,preset:'small',detect:true});
+ }else expect(save).toBeDisabled();
+ expect(calls.some(call=>['start_local_data','activate_local_data'].includes(call.command))).toBe(false);
+});
+
+it('permits explicitly selecting an installed locale after every saved locale disappeared',async()=>{
+ const changed=vi.fn();
+ const adapter:CommandAdapter={invoke(){return Promise.resolve(record as never);}};
+ render(<LocalWorkflowChoices client={createClient(adapter)} selectionId="selected" locales={['koKR']} preset="small" onLocales={changed}/>);
+ await screen.findByText(/no replacement locale was selected/);
+ fireEvent.click(screen.getByRole('checkbox',{name:'koKR'}));
+ expect(changed).toHaveBeenLastCalledWith(['koKR']);
+ expect(screen.getByRole('button',{name:'Save content choices'})).toBeEnabled();
+});
