@@ -73,6 +73,12 @@ fn digest(path: &Path) -> Result<String> {
     }
     Ok(format!("{:x}", hash.finalize()))
 }
+/// Current-process explicit bundle startup timings. Never persisted or sent.
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+pub struct StartupMeasurements {
+    pub load_ms: u64,
+    pub activation_ms: u64,
+}
 #[derive(Clone, Debug, Serialize)]
 pub struct DatabaseStatus {
     pub preserved_recovery_directory: Option<String>,
@@ -80,6 +86,8 @@ pub struct DatabaseStatus {
     pub error: Option<AppError>,
     pub schema_version: u32,
     pub restore_limit_bytes: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub startup_measurements: Option<StartupMeasurements>,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct BackupPreview {
@@ -92,13 +100,15 @@ pub struct RestoreReceipt {
     pub original_files_retained: bool,
     pub recovery_directory: String,
 }
-type Initializer = Arc<dyn Fn(&SnapshotApplication) -> Result<()> + Send + Sync>;
+type Initializer =
+    Arc<dyn Fn(&SnapshotApplication) -> Result<Option<StartupMeasurements>> + Send + Sync>;
 struct Candidate {
     id: String,
     path: PathBuf,
     hash: String,
 }
 struct Hosted {
+    startup_measurements: Option<StartupMeasurements>,
     checking: bool,
     app: Option<SnapshotApplication>,
     error: Option<AppError>,
@@ -186,12 +196,23 @@ impl DatabaseHost {
         path: &Path,
         initialize: impl Fn(&SnapshotApplication) -> Result<()> + Send + Sync + 'static,
     ) -> Arc<Self> {
-        Self::start_with(path, Some(Arc::new(initialize)))
+        Self::start_with(
+            path,
+            Some(Arc::new(move |app| initialize(app).map(|()| None))),
+        )
+    }
+    /// Report only successful, explicitly measured bundle initialization.
+    pub fn start_initialized_measured(
+        path: &Path,
+        initialize: impl Fn(&SnapshotApplication) -> Result<StartupMeasurements> + Send + Sync + 'static,
+    ) -> Arc<Self> {
+        Self::start_with(path, Some(Arc::new(move |app| initialize(app).map(Some))))
     }
     fn start_with(path: &Path, initializer: Option<Initializer>) -> Arc<Self> {
         let host = Arc::new(Self {
             path: path.to_owned(),
             gate: RwLock::new(Hosted {
+                startup_measurements: None,
                 checking: true,
                 app: None,
                 error: None,
@@ -206,17 +227,25 @@ impl DatabaseHost {
             .name("database-startup-check".into())
             .spawn(move || {
                 let opened = Self::open(&worker.path);
-                if let (Ok(mut live), Ok(mut checked)) = (worker.gate.write(), opened.gate.write())
-                {
-                    if let (Some(app), Some(initialize)) = (&checked.app, &worker.initializer)
-                        && let Err(error) = initialize(app)
-                    {
-                        checked.app = None;
-                        checked.error = Some(error);
+                if let Ok(mut checked) = opened.gate.write() {
+                    let mut measurements = None;
+                    if let (Some(app), Some(initialize)) = (&checked.app, &worker.initializer) {
+                        match initialize(app) {
+                            Ok(value) => measurements = value,
+                            Err(error) => {
+                                checked.app = None;
+                                checked.error = Some(error);
+                            }
+                        }
                     }
-                    live.app = checked.app.take();
-                    live.error = checked.error.take();
-                    live.checking = false;
+                    // Keep the live host readable in checking state throughout
+                    // expensive private verification and staging. Publish once.
+                    if let Ok(mut live) = worker.gate.write() {
+                        live.startup_measurements = measurements;
+                        live.app = checked.app.take();
+                        live.error = checked.error.take();
+                        live.checking = false;
+                    }
                 }
             });
         if spawned.is_err()
@@ -255,11 +284,13 @@ impl DatabaseHost {
         })();
         let hosted = match opened {
             Ok(app) => Hosted {
+                startup_measurements: None,
                 checking: false,
                 app: Some(app),
                 error: None,
             },
             Err(error) => Hosted {
+                startup_measurements: None,
                 checking: false,
                 app: None,
                 error: Some(error),
@@ -304,6 +335,7 @@ impl DatabaseHost {
             .read()
             .map_err(|_| fail("Database status unavailable"))?;
         Ok(DatabaseStatus {
+            startup_measurements: state.startup_measurements.clone(),
             preserved_recovery_directory: pending_directory(&self.path),
             state: if state.checking {
                 "checking"

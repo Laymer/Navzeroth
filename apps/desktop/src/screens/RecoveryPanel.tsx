@@ -45,6 +45,7 @@ export function RecoveryPanel({ client, onRestored, onChecked, awaitingStartup =
   return <Panel title="Database backup and recovery">
     <p>Choose local SQLite files explicitly. Restore replaces all local profiles, content and feature history with the inspected backup. Original files are preserved; file watching stops. Close other application instances before restoring.</p>
     {status && <p>{status.state === "ready" ? "Database ready" : status.state === "checking" ? "Checking database at startup…" : "Database recovery required"}; supported schema {status.schema_version}; restore limit {status.restore_limit_bytes / (1024 * 1024)} MiB.</p>}
+    {status?.state === "checking" && <p>Verifying large bundled content may take several minutes. Keep the application open while checking completes.</p>}
     {status?.preserved_recovery_directory && <p>Interrupted restore retained files at {status.preserved_recovery_directory}. Inspect a compatible SQLite backup from that directory.</p>}
     {status?.error && <p role="alert">{status.error.message}</p>}
     {error && <p role="alert">{error}</p>}
