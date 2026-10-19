@@ -46,3 +46,6 @@ apps/desktop/screenshots/
 data-generators/.cache/
 data-generators/**/tools/cache/
 __pycache__/
+
+# Fact documents are derived from the shards in seconds (to_facts.py); not committed.
+data-generators/output/facts/

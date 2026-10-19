@@ -29,6 +29,7 @@ from navzeroth_datagen import envelope  # noqa: E402
 MAX_DOC_BYTES = 8 * 1024 * 1024 - 64 * 1024
 MAX_FACTS = 250_000
 MAX_VALUE_BYTES = 65536
+MAX_SAFE_INTEGER = 2**53 - 1  # the pipeline refuses larger JSON integers
 
 
 def _key(*parts):
@@ -51,7 +52,7 @@ MAPPING = {
     "ui_map_assignment": ("geography", lambda r: _key("ui_map_assignment", r["ui_map_id"], r["map_id"], r["order_index"]), None),
     "npc": ("geography", lambda r: _key("npc", r["id"]), None),
     "game_object": ("geography", lambda r: _key("game_object", r["id"]), None),
-    "spawn": ("geography", lambda r: _key("spawn", r["entity"], r["guid"]), None),
+    "spawn": ("geography", lambda r: _key("spawn", r["entity"], r["guid"], r["entity_id"]), None),
     "taxi_node": ("travel", lambda r: _key("taxi_node", r["id"]), None),
     "taxi_path": ("travel", lambda r: _key("taxi_path", r["id"]), None),
     "graveyard": ("travel", lambda r: _key("graveyard", r["id"]), None),
@@ -64,7 +65,21 @@ KEY_FIELDS = {"kind", "id"}
 OBSERVATIONS = {"position", "entrance", "cost", "build"}
 
 
+def safe(value):
+    """Integers beyond 2**53-1 (64-bit masks) become decimal strings, as Copper does."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int) and abs(value) > MAX_SAFE_INTEGER:
+        return str(value)
+    if isinstance(value, list):
+        return [safe(v) for v in value]
+    if isinstance(value, dict):
+        return {k: safe(v) for k, v in value.items()}
+    return value
+
+
 def datum(field, value):
+    value = safe(value)
     if field in OBSERVATIONS and isinstance(value, dict) and "status" in value:
         return {"status": "known", "value": value["value"]} if value["status"] == "known" else {"status": value["status"]}
     return {"status": "known", "value": value}
@@ -100,6 +115,7 @@ def shards(root):
 def convert(input_root, output_root):
     """Write fact documents; return {"documents": [...], "facts": n, "duplicates": n, "conflicts": [...]}."""
     groups = {}
+    summary_dups = []
     for path in shards(input_root):
         doc = json.loads(path.read_text(encoding="utf-8"))
         o = doc["origin"]
@@ -108,13 +124,21 @@ def convert(input_root, output_root):
         for record in doc["records"]:
             for f in facts_for(record, doc["confidence"]):
                 k = (f["domain"], f["record"], f["field"])
-                if k in facts:
-                    if facts[k] != f:
-                        facts[k]["conflict_with"] = True
-                    continue
-                facts[k] = f
+                n = 1
+                while k in facts:
+                    if facts[k] == f:
+                        break  # an exact repeat
+                    # Same key, different value (e.g. one item twice in a loot table):
+                    # keep both under an occurrence suffix instead of dropping one.
+                    n += 1
+                    k = (f["domain"], f"{f['record']}#{n}", f["field"])
+                else:
+                    if n > 1:
+                        f = dict(f, record=f"{f['record']}#{n}")
+                        summary_dups.append(_key(group[0], *k))
+                    facts[k] = f
     output_root = pathlib.Path(output_root)
-    summary = {"documents": [], "facts": 0, "conflicts": []}
+    summary = {"documents": [], "facts": 0, "conflicts": summary_dups}
     for (gen, edition, build), facts in sorted(groups.items()):
         folder = output_root / gen / edition / build
         folder.mkdir(parents=True, exist_ok=True)
@@ -122,10 +146,7 @@ def convert(input_root, output_root):
             old.unlink()
         lines = []
         for k in sorted(facts):
-            f = facts[k]
-            if f.pop("conflict_with", False):
-                summary["conflicts"].append(_key(gen, *k))
-            lines.append(envelope.dumps(f))
+            lines.append(envelope.dumps(facts[k]))
         docs, cur, size = [], [], 0
         for line in lines:
             n = len(line.encode()) + 2
@@ -152,9 +173,9 @@ def main(argv=None):
     args = p.parse_args(argv)
     summary = convert(args.input, args.output)
     print(f"{summary['facts']} facts in {len(summary['documents'])} documents, "
-          f"{len(summary['conflicts'])} conflicting duplicates (first value kept)")
-    for c in summary["conflicts"][:20]:
-        print("  conflict", c)
+          f"{len(summary['conflicts'])} repeated keys kept under #n suffixes")
+    for c in summary["conflicts"][:5]:
+        print("  repeated key", c)
     return 0
 
 

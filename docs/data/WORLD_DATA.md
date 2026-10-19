@@ -137,3 +137,13 @@ Regenerate it after a contract change with
 
 Rust validation stays authoritative: the schema cannot express the edition,
 confidence, record-kind and shard rules above.
+
+## Retrieval bounds
+
+The registry's `https_rate_limited` entries declare at least 1000 ms between
+requests, matching `HOST_LIMITS` in `data-generators/navzeroth_datagen/http.py`.
+The registry caps `max_requests` at 1024; a full professions run makes more
+tooltip requests than that. The cap binds the source pipeline's own fetching,
+which never runs for these sources (`source-sync` refuses them), so the generators'
+cache and per-host limits are the effective bound. Run them opt-in, and prefer
+`--offline` once the cache is warm.

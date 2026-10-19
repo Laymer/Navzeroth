@@ -31,9 +31,10 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 USER_AGENT = "Mozilla/5.0 (Navzeroth data generator; https://github.com/Laymer/Navzeroth)"
 # host -> (concurrent requests across all processes, minimum seconds between starts)
 HOST_LIMITS = {
-    "www.wowhead.com": (2, 0.25),
-    "nether.wowhead.com": (2, 0.25),
-    "wago.tools": (2, 0.5),
+    # Intervals match the source registry's minimum_interval_ms (1000) for these sources.
+    "www.wowhead.com": (2, 1.0),
+    "nether.wowhead.com": (2, 1.0),
+    "wago.tools": (2, 1.0),
     "api.github.com": (1, 1.0),
     "github.com": (1, 1.0),
     "raw.githubusercontent.com": (1, 1.0),

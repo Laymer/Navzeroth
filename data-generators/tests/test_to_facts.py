@@ -22,6 +22,12 @@ class ToFactsTest(unittest.TestCase):
         loot = {"kind": "loot", "table": "creature", "entry": 1, "reference": 5, "chance": 1.0}
         self.assertEqual(to_facts.facts_for(loot, "c")[0]["record"], "loot:creature:1:ref5:group:0")
 
+    def test_big_integers_become_strings(self):
+        item = {"kind": "item", "id": 1, "name": "N", "allowable_race": 9223372036854775807, "max_stack": 20}
+        got = {f["field"]: f["datum"]["value"] for f in to_facts.facts_for(item, "c")}
+        self.assertEqual(got["allowable_race"], "9223372036854775807")
+        self.assertEqual(got["max_stack"], 20)
+
     def test_convert_groups_by_generator_and_origin(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = pathlib.Path(tmp) / "out"
@@ -31,10 +37,11 @@ class ToFactsTest(unittest.TestCase):
             envelope.write("world.more_npcs", "npc", [{"id": 1, "name": "Other"}], **kw)
             summary = to_facts.convert(out, out / "facts")
             self.assertEqual(summary["documents"], ["gen_x/vanilla_1_12/1.12.1/part-0000.json"])
-            self.assertEqual(summary["conflicts"], ["gen_x:geography:npc:1:name"])
+            self.assertEqual(len(summary["conflicts"]), 1)
             doc = json.loads((out / "facts" / summary["documents"][0]).read_text())
             self.assertEqual(doc["schema_version"], 1)
-            self.assertEqual(len(doc["facts"]), 2)
+            self.assertEqual(len(doc["facts"]), 3)  # npc 1 twice (#2), npc 2
+            self.assertIn("npc:1#2", [f["record"] for f in doc["facts"]])
             self.assertIsNone(doc["facts"][0]["observed_at_utc_ms"])
 
 

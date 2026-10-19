@@ -50,7 +50,7 @@ SOURCES = {1: "crafted", 2: "drop", 3: "pvp", 4: "quest", 5: "vendor", 6: "train
 # Navzeroth: Wowhead's pages and its tooltip host, named as envelope sources.
 WOWHEAD = "https://www.wowhead.com/classic/"
 NETHER = "https://nether.wowhead.com/classic/tooltip/"
-WORKERS = 4                    # tooltip threads; http.py keeps each Wowhead host at 2 requests, 250 ms apart
+WORKERS = 4                    # tooltip threads; http.py keeps each Wowhead host to 1 request per second
 
 # Crafted items that are used on gear, by name.
 ITEM_PATTERNS = [
