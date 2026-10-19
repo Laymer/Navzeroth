@@ -2,7 +2,7 @@
   "schema_version": 1,
   "target": {
     "edition": "wow_forever",
-    "build": "1.60.1.70374"
+    "build": "1.60.1.70450"
   },
   "as_of_utc_ms": 1792022400000,
   "inputs": [
@@ -364,6 +364,46 @@
     {
       "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
       "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0067.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0068.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0069.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0070.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0071.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0072.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0073.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0074.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0075.json",
       "adapter": "knowledge_v1"
     },
     {
