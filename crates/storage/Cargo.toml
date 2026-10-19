@@ -11,7 +11,7 @@ publish.workspace = true
 [dependencies]
 azeroth-core = { path = "../core" }
 # Bundled SQLite keeps the library identical on Linux and Windows (plan section 8.2).
-rusqlite = { version = "=0.40.2", features = ["bundled", "backup"] }
+rusqlite = { version = "=0.40.2", features = ["bundled", "backup", "hooks"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["raw_value"] }
 sha2 = "=0.10.9"

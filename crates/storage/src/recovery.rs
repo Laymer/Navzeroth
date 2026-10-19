@@ -249,8 +249,10 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
         tx.commit().db()?;
         migrations::migrate(&mut output)?;
         output.pragma_update(None, "foreign_keys", true).db()?;
+        let catalog_generation = crate::catalog_generation::Generation::new(&output)?;
         let store = SqliteStore {
             conn: output,
+            catalog_generation,
             catalog_cache: Default::default(),
             catalog_index_cache: Default::default(),
         };
