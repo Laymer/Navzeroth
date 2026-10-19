@@ -34,3 +34,9 @@ is merged/registered on main. Exact steps, artifact/replay checks, token-suppres
 check dispatches and deferred-draft behavior are in WEEKLY_WORLD_PIPELINE.md. Failed
 or missing source/hosted checks hold completion. Full generic facts/catalog remain
 required; no large current facts or build stages were silently skipped.
+
+Independent review correction: weekly CLI initially accepted --skip for required
+stages, permitting a vacuous replay. It now requires all generate/verify/content/
+register/gate stages; only detect and publication are optional. Negative tests
+cover each required-stage skip, combined skip, subset-only and incompatible
+options. This correction does not make any actual network result verified.

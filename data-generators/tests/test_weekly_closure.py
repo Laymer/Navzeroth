@@ -50,6 +50,18 @@ class WeeklyClosure(unittest.TestCase):
         args=pipeline.parse_args(['--weekly-verified','--no-network-sources','--skip','detect'])
         self.assertLess(args.stages.index('content'),args.stages.index('register'))
 
+    def test_weekly_mode_refuses_required_stage_skips_and_subset_runs(self):
+        base=['--weekly-verified','--no-network-sources']
+        for skipped in ['generate','verify','content','register','gate','generate,verify,content,register,gate']:
+            with self.subTest(skipped=skipped),self.assertRaises(SystemExit),contextlib.redirect_stderr(io.StringIO()):
+                pipeline.parse_args(base+['--skip',skipped])
+        for options in [['--only','publish'],['--only','generate,verify,content,register,gate'],['--offline'],['--refresh'],['--pages-dir','synthetic']]:
+            with self.subTest(options=options),self.assertRaises(SystemExit),contextlib.redirect_stderr(io.StringIO()):
+                pipeline.parse_args(base+options)
+        for options in [['--skip','detect'],['--skip','publish'],['--no-publish'],['--skip','detect,publish']]:
+            args=pipeline.parse_args(base+options)
+            self.assertTrue({'generate','verify','content','register','gate'}.issubset(args.stages))
+
     def test_generation_overrides_inherited_build_with_exact_reviewed_policy(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=pathlib.Path(tmp)

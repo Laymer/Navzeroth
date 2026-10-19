@@ -581,6 +581,8 @@ def parse_args(argv=None):
     if args.weekly_verified:
         if not args.no_network_sources or args.only or args.pages_dir or args.refresh:
             p.error('weekly verification requires full no-Wowhead stages and default cache mode')
+        if not {'generate','verify','content','register','gate'}.issubset(args.stages):
+            p.error('weekly verification requires every generate/verify/content/register/gate stage')
         args.stages=[stage for stage in ['detect','generate','verify','content','register','gate','publish'] if stage in args.stages]
     if not args.stages:
         p.error("no stage left to run")
