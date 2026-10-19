@@ -22,6 +22,9 @@ independently reviewed and cherry-picked asf8e55848 before the successful run.
 No production byte validation was relaxed. Logs/tmp/navzeroth-normalization-
 {before,after,clippy,coverage}.log; raw/tmp/navzeroth-normalization.lcov.
 
-Independent review still required; no actual bundle/signature/installer/Windows
-or publication result is claimed. Integrate this repair with the deterministic
+Independent reviewer `/root/world_review` inspected exact476ec288 and ran
+release::bundled::tests independently:4passed, diffcheckpassed, no blocker.
+Checked report bytes, per-pack revision and precedence binding, and retained
+trust/material/staging checks. Log:/tmp/navzeroth-independent-normalization.log.
+No actual bundle/signature/installer/Windows or publication result is claimed. Integrate this repair with the deterministic
 preparation tool before final receipts and all protected source checks.
