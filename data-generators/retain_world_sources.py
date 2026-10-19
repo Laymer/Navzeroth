@@ -466,15 +466,15 @@ def prepare(root, world, cache, pack_sources, registry_path, output, commit=None
                     'permission_evidence': [license_ref]})
     registry['sources'] = [admitted[s['id']] for s in registry['sources'] if s['id'] != DERIVED] + [derived]
     registry['schema_version'] = 2
-    registry_path.write_text(json.dumps(registry, indent=2, ensure_ascii=False) + '\n')
-    output.write_text(json.dumps({'schema_version': 2, 'sources': closure, 'transformation': transformation,
+    registry_path.write_bytes((json.dumps(registry, indent=2, ensure_ascii=False) + '\n').encode('utf-8'))
+    output.write_bytes((json.dumps({'schema_version': 2, 'sources': closure, 'transformation': transformation,
                                   'normalization_policy_sha256': digest(bounded.read_file(policy_path, 8 * 1024 * 1024)),
                                   'source_commit': commit, 'corresponding_source': {
                                       'classification': CORRESPONDING_CLASS,
                                       'scope': CORRESPONDING_SCOPE,
                                       'files': corresponding,
                                       'permission_path': 'data-generators/TALOD-data-generators/PERMISSION.md',
-                                      'notice_path': 'data-generators/NOTICE.md'}}, indent=2) + '\n')
+                                      'notice_path': 'data-generators/NOTICE.md'}}, indent=2) + '\n').encode('utf-8'))
     return closure
 
 

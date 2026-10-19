@@ -1568,13 +1568,12 @@ def run(input_dir, target_file, policy_file, authored_dir, out_dir, admission=No
     out = pathlib.Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "catalog.json").write_bytes(catalog_bytes)
-    (out / "sources.json").write_text(dumps(sources), encoding="utf-8")
-    (out / "conflicts.json").write_text(dumps({"format": "navzeroth-world-content-conflicts", "schema_version": 1,
+    (out / "sources.json").write_bytes(dumps(sources).encode("utf-8"))
+    (out / "conflicts.json").write_bytes(dumps({"format": "navzeroth-world-content-conflicts", "schema_version": 1,
                                                 "revision": revision, "precedence": policy["precedence"],
-                                                "conflicts": conflicts}), encoding="utf-8")
+                                                "conflicts": conflicts}).encode("utf-8"))
     result = summary(catalog, sources, conflicts, builder, revision, catalog_bytes)
-    (out / "summary.json").write_text(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
-                                      encoding="utf-8")
+    (out / "summary.json").write_bytes((json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n").encode("utf-8"))
     return result
 
 

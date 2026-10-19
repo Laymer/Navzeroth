@@ -133,6 +133,21 @@ class RetainedSources(unittest.TestCase):
             f.run()
             self.assertEqual(original, (f.registry.read_bytes(), f.output.read_bytes()))
 
+    def test_windows_text_translation_preserves_registry_and_closure_exact_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Fixture(directory)
+            fixture.run()
+            expected = [fixture.registry.read_bytes(), fixture.output.read_bytes()]
+            original = pathlib.Path.write_text
+            def windows_text(path, value, **options):
+                options["newline"] = "\r\n"
+                return original(path, value, **options)
+            with mock.patch.object(pathlib.Path, "write_text", windows_text):
+                fixture.run()
+            for before, path in zip(expected, (fixture.registry, fixture.output)):
+                self.assertNotIn(b"\r\n", before)
+                self.assertEqual(before, path.read_bytes())
+
     def test_cache_tampering_missing_raw_and_aggregate_mismatch_fail_closed(self):
         for mutation in ('body', 'url', 'size', 'status', 'missing', 'aggregate'):
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
