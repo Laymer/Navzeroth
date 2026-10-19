@@ -31,14 +31,15 @@ impl Generation {
         // including a trigger's writes, invalidates. Schema changes are separate.
         // SqliteStore exclusively owns this hook; its connection is not public.
         conn.update_hook(Some(move |_, database: &str, table: &str, _| {
-            if database == "main"
-                && matches!(
-                    table,
-                    "dataset_revisions"
-                        | "dataset_manifests"
-                        | "source_records"
-                        | "source_conflicts"
-                )
+            if database.eq_ignore_ascii_case("main")
+                && [
+                    "dataset_revisions",
+                    "dataset_manifests",
+                    "source_records",
+                    "source_conflicts",
+                ]
+                .iter()
+                .any(|name| table.eq_ignore_ascii_case(name))
             {
                 // Terminal overflow disables caching permanently; never wrap.
                 let _ =
@@ -55,7 +56,7 @@ impl Generation {
         Ok(Stamp {
             // An unsupported temporary shadow may lack ROWID/update hooks.
             // Preserve full validation on every access instead of caching it.
-            temp_shadow: conn.query_row("SELECT EXISTS(SELECT 1 FROM temp.sqlite_schema WHERE name IN ('dataset_revisions','dataset_manifests','source_records','source_conflicts'))", [], |r| r.get(0)).db()?,
+            temp_shadow: conn.query_row("SELECT EXISTS(SELECT 1 FROM temp.sqlite_schema WHERE name COLLATE NOCASE IN ('dataset_revisions','dataset_manifests','source_records','source_conflicts'))", [], |r| r.get(0)).db()?,
             local: self.local.load(Ordering::Relaxed),
             external: conn
                 .pragma_query_value(Some("main"), "data_version", |r| r.get(0))
@@ -373,6 +374,46 @@ mod tests {
             .execute_batch("DROP TABLE temp.source_records; DETACH DATABASE other")
             .unwrap();
         assert_eq!(pair(&store, &input).0.key(), input.key());
+    }
+
+    #[test]
+    fn case_variant_main_names_never_hide_writes() {
+        let (store, input) = store();
+        // Renaming through a distinct name is accepted by SQLite. Its stored
+        // name becomes uppercase, while all fixed SQL still resolves to it.
+        store.conn.execute_batch("DROP TRIGGER dataset_manifests_no_update; ALTER TABLE dataset_manifests RENAME TO renamed_manifest; ALTER TABLE renamed_manifest RENAME TO DATASET_MANIFESTS").unwrap();
+        pair(&store, &input);
+        store
+            .conn
+            .execute("UPDATE DATASET_MANIFESTS SET coverage_document='{}'", [])
+            .unwrap();
+        assert!(
+            store.active_catalog_revision(&input.key().scope).is_err(),
+            "uppercase main mutation must invalidate"
+        );
+    }
+
+    #[test]
+    fn case_variant_temporary_shadows_never_hide_writes() {
+        let (store, input) = self::store();
+        store.conn.execute_batch("CREATE TEMP TABLE SOURCE_RECORDS(revision_id INTEGER, source_id TEXT, document TEXT, PRIMARY KEY(revision_id,source_id)) WITHOUT ROWID; INSERT INTO temp.SOURCE_RECORDS SELECT * FROM main.source_records").unwrap();
+        let first = store
+            .active_content_v2_revision(&input.key().scope)
+            .unwrap()
+            .unwrap();
+        let second = store
+            .active_content_v2_revision(&input.key().scope)
+            .unwrap()
+            .unwrap();
+        assert!(
+            !Arc::ptr_eq(&first, &second),
+            "uppercase temp shadow must bypass cache"
+        );
+        store
+            .conn
+            .execute("UPDATE temp.SOURCE_RECORDS SET document='{}'", [])
+            .unwrap();
+        assert!(store.active_catalog_revision(&input.key().scope).is_err());
     }
 
     #[test]
