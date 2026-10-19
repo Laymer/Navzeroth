@@ -26,6 +26,9 @@
 //!   unknown) become *accepted unknowns*. They are counted and listed; they are
 //!   never coerced to zero, false or empty, and `not_applicable` stays distinct.
 //!
+//! Policy schema 2 also admits explicitly named historical target-edition builds
+//! when evidence preserves their true structured origin and stays unverified.
+//! Schema 1 retains its original grants; unknown/unlisted builds stay gaps.
 //! Every other finding remains a gap. The module is pure: it performs no I/O.
 use crate::{
     content_v2::ReferenceContent,
@@ -33,14 +36,14 @@ use crate::{
     entities::{Confidence, EvidenceRecord},
     release::DOMAINS,
     sources::SourceRecord,
-    types::{EditionId, EvidenceId, SourceId},
+    types::{BuildId, EditionId, EvidenceId, SourceId},
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const FORMAT: &str = "navzeroth-accepted-origins";
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u32 = 2;
 pub const MAX_POLICY_BYTES: usize = 64 * 1024;
 /// Findings listed per category; counts are always complete.
 pub const MAX_LISTED: usize = 1000;
@@ -56,6 +59,10 @@ pub struct OriginPolicy {
     pub target_edition: EditionId,
     /// Release domain to accepted origin editions.
     pub domains: BTreeMap<String, Vec<EditionId>>,
+    /// Schema 2: explicit historical target-edition source builds. Unknown and
+    /// unlisted builds are never granted target compatibility.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub historical_builds: BTreeMap<EditionId, Vec<BuildId>>,
     pub accept_inferred: bool,
     pub accept_unknowns: bool,
     /// Conflict precedence (ADR 0007 §4), recorded for the conflict report.
@@ -79,8 +86,25 @@ impl OriginPolicy {
     }
 
     pub fn validate(&self) -> Result<(), &'static str> {
-        if self.format != FORMAT || self.schema_version != SCHEMA_VERSION {
+        if self.format != FORMAT || !matches!(self.schema_version, 1 | SCHEMA_VERSION) {
             return Err("Unsupported accepted-origin policy version");
+        }
+        if (self.schema_version == 1 && !self.historical_builds.is_empty())
+            || self.historical_builds.iter().any(|(edition, builds)| {
+                edition != &self.target_edition
+                    || builds.is_empty()
+                    || builds.len() > 1024
+                    || builds.iter().collect::<BTreeSet<_>>().len() != builds.len()
+                    || builds.iter().any(|build| {
+                        let parts: Vec<_> = build.as_str().split('.').collect();
+                        parts.len() != 4
+                            || parts.iter().any(|part| {
+                                part.is_empty() || !part.bytes().all(|b| b.is_ascii_digit())
+                            })
+                    })
+            })
+        {
+            return Err("Invalid historical-build grant");
         }
         if !text(&self.decision) {
             return Err("Accepted-origin policy must name its decision");
@@ -111,6 +135,14 @@ impl OriginPolicy {
         self.domains
             .get(domain)
             .is_some_and(|editions| editions.iter().any(|e| e.as_str() == edition))
+    }
+
+    /// An exact build grant is not evidence of target-build verification.
+    pub fn accepts_historical_build(&self, edition: &str, build: Option<&str>) -> bool {
+        self.historical_builds.iter().any(|(origin, builds)| {
+            origin.as_str() == edition
+                && build.is_some_and(|build| builds.iter().any(|b| b.as_str() == build))
+        })
     }
 
     /// Accepted origins named in at least one domain.
@@ -150,13 +182,35 @@ impl OriginPolicy {
             return false;
         };
         if !evidence.conflicts.is_empty()
+            // Cross-edition grants are not a grant for another build of the
+            // target edition. Inferred rules have no upstream build assertion.
+            || evidence.origin.as_ref().is_some_and(|origin| {
+                if origin.edition == self.target_edition {
+                    origin.build.value() != Some(&evidence.context.build.build)
+                        && !self.accepts_historical_build(origin.edition.as_str(), origin.build.value().map(BuildId::as_str))
+                } else {
+                    !self.accepts_origin(domain, origin.edition.as_str())
+                        || !source.editions.value().is_some_and(|editions| {
+                            editions.contains(&origin.edition)
+                        })
+                }
+            })
             || evidence.context.build.edition != self.target_edition
             || source.id != evidence.source
         {
             return false;
         }
         match evidence.confidence {
-            Confidence::CrossEditionUnverified => self.source_accepted(domain, source, true),
+            Confidence::CrossEditionUnverified => {
+                self.source_accepted(domain, source, true)
+                    || (self.source_accepted(domain, source, false)
+                        && evidence.origin.as_ref().is_some_and(|origin| {
+                            self.accepts_historical_build(
+                                origin.edition.as_str(),
+                                origin.build.value().map(BuildId::as_str),
+                            )
+                        }))
+            }
             Confidence::Inferred => {
                 self.accept_inferred && self.source_accepted(domain, source, false)
             }
@@ -337,7 +391,11 @@ pub fn classify(
             .get(&e.source)
             .and_then(|s| s.editions.value())
             .is_some_and(|editions| editions.iter().any(|edition| edition != target));
-        if foreign
+        let mismatched_origin = e.origin.as_ref().is_some_and(|origin| {
+            origin.edition != e.context.build.edition
+                || origin.build.value() != Some(&e.context.build.build)
+        });
+        if (foreign || mismatched_origin)
             && matches!(
                 e.confidence,
                 Confidence::VerifiedOnBuild | Confidence::PublisherDocumented

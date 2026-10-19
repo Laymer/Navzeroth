@@ -31,7 +31,7 @@ import re
 import sys
 
 NAME = "world_to_content"
-VERSION = "1"
+VERSION = "2"
 DERIVED_SOURCE = "navzeroth-world-content"
 
 # Inferred travel (ADR 0007 §8). Yards per second.
@@ -186,6 +186,10 @@ class Builder:
             raise InputError("target file is not navzeroth-world-data-target")
         if policy.get("format") != "navzeroth-accepted-origins":
             raise InputError("policy file is not navzeroth-accepted-origins")
+        if policy.get("schema_version") not in (1, 2):
+            raise InputError("unsupported accepted-origin policy version")
+        if policy["schema_version"] == 1 and policy.get("historical_builds"):
+            raise InputError("historical build grants require policy schema 2")
         self.target = target
         self.policy = policy
         self.authored = authored
@@ -274,6 +278,8 @@ class Builder:
                 if shard.rel not in ev["paths"]:
                     ev["paths"].append(shard.rel)
                     ev["builds"].add(shard.build or "unknown")
+                    if len(ev["builds"]) > 1:
+                        raise InputError(f"{eid}: multiple origin builds require separate evidence")
                     ev["refs"].append(ref)
                     ev["aux"].extend(a for a in aux if a not in ev["aux"])
                     if "retrieved_at_utc_ms" in ref:
@@ -1073,7 +1079,7 @@ class Builder:
                     "rule": "no item table defines the item; references are dropped from acquisitions and "
                             "quest rewards and kept as raw IDs in loot_tables"})
         evidence = [self.evidence_record(eid) for eid in sorted(self.evidence, key=natural)]
-        revision = f"navzeroth-world-{self.target['build']}-{self.input_digest[:12]}"
+        revision = ""  # Filled from the complete canonical mapping below, without circular hashing.
         payload = {
             "acquisitions": self.acquisitions, "edges": self.edges, "evidence": evidence,
             "items": [self.items[i] for i in sorted(self.items)],
@@ -1098,7 +1104,18 @@ class Builder:
             },
             "schema_version": 2,
         }
-        return catalog, self.source_registry(), revision
+        sources = self.source_registry()
+        # Shards alone do not identify a mapping: policy, authored facts, target
+        # context and conversion changes can all change its bytes. Hash canonical
+        # output with an empty revision together with every declared input.
+        identity = {"catalog": catalog, "sources": sources, "conflicts": self.conflicts,
+                    "input_sha256": self.input_digest, "target": self.target,
+                    "policy": self.policy, "authored": self.authored,
+                    "generator": {"name": NAME, "version": VERSION}}
+        digest = hashlib.sha256(dumps(identity).encode()).hexdigest()
+        revision = f"navzeroth-world-{self.target['build']}-{digest[:24]}"
+        payload["revision"] = revision
+        return catalog, sources, revision
 
     def evidence_record(self, eid):
         ev = self.evidence[eid]
@@ -1123,7 +1140,17 @@ class Builder:
         if len(notes.encode()) > 4096:
             notes = notes.encode()[:4090].decode(errors="ignore") + " ..."
         info = SOURCES.get(ev["source"], {})
-        return {"confidence": ev["confidence"], "conflicts": [], "context": self.context, "id": eid,
+        # A target-context envelope is not evidence that historical source bytes
+        # describe that build. Keep the actual origin structured; earlier same-
+        # edition builds remain unverified unless release policy accepts them.
+        origin_build = next(iter(ev["builds"])) if len(ev["builds"]) == 1 else None
+        origin_build = None if origin_build == "unknown" else origin_build
+        confidence = ev["confidence"]
+        if (ev["edition"] != self.target["edition"] or origin_build != self.target["build"]) \
+                and confidence in ("publisher_documented", "verified_on_build"):
+            confidence = "cross_edition_unverified"
+        return {"confidence": confidence, "conflicts": [], "context": self.context, "id": eid,
+                "origin": {"edition": ev["edition"], "build": known(origin_build) if origin_build else UNKNOWN},
                 "license": known(info["license"]) if info.get("license") else UNKNOWN, "notes": notes,
                 "observed_at_utc_ms": known(min(ev["retrieved"])) if ev["retrieved"] else UNKNOWN,
                 "source": ev["source"]}
