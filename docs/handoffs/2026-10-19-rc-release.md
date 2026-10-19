@@ -165,5 +165,8 @@ are in `docs/releases/1.0.0-rc.1-receipts/`. No stable/acceptance promotion occu
 
 External PR #208 merged after the immutable release source; it is not part of
 the RC. PR #210 was refreshed onto that main as `32f4828`; independent review
-confirmed unchanged three-file diff and approved it. Fresh checks remain pending.
+confirmed unchanged three-file diff and approved it. All ten refreshed checks
+passed; PR #210 merged at 2026-10-19T12:32:12Z as
+`f20783f4ff93cb30aa15b5cd585e8571236b496e`. CI 39248994969, Coverage
+39248994715 and Windows package 39248994724 passed.
 Next delivery is Pages using actual verified release captures and RC-only downloads.

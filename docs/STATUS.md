@@ -36,8 +36,8 @@ and release PR #209 merged after independent final-head review and all ten
 required checks. Fresh exact-release-commit CI, coverage, source parity, ordinary
 Windows package/upgrade/refusal and stability passed, followed by tag packaging
 39242904060 and downloaded draft/public verification. Manual verifier permission
-correction PR #210 is separately reviewed; refreshed checks are pending after
-#208 merged. The initial draft-token failure 39245077836 remains a failure.
+correction PR #210 merged as `f20783f` after independent review and all ten
+refreshed required checks. The initial draft-token failure 39245077836 remains a failure.
 PR #203's resulting-main failures remain historical failures, not passes.
 
 Candidate and stable readiness remain **false**: the exact release commit has
@@ -51,8 +51,11 @@ performance. No acceptance-candidate promotion or stable 1.0.0 publication occur
 Strict 90% executable-line coverage per Rust/TS/TSX file, missing-file detection,
 native aggregation and all ten required checks remain in force.
 
-Next: actual release-app synthetic captures, separate Pages final-head review and
-checks, gated deployment, public page/download validation and final handoff.
+Actual release-app synthetic captures and final local browser validation passed.
+Separate Pages [PR #211](https://github.com/Laymer/Navzeroth/pull/211) integrates
+`f20783f`; final-head review/checks and gated deployment remain pending.
+The PR description will retain the resulting deployment and public page/download
+verification receipt; no future deployment success is claimed by this commit.
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
