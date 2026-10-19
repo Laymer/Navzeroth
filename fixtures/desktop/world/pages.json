@@ -2,7 +2,7 @@
   "entities": {
     "counts": {
       "entities": 4,
-      "loot": 1,
+      "loot": 2,
       "quests": 1,
       "trainers": 1,
       "vendors": 1
@@ -15,6 +15,12 @@
     "revision": "demo-r1",
     "rows": [
       {
+        "boss_of": [
+          {
+            "id": "dungeon-1",
+            "title": "Synthetic dungeon"
+          }
+        ],
         "id": "npc:448",
         "kind": "npc",
         "levels": {
@@ -55,6 +61,7 @@
         }
       },
       {
+        "boss_of": [],
         "id": "object:1",
         "kind": "game_object",
         "levels": {
@@ -82,6 +89,7 @@
         }
       },
       {
+        "boss_of": [],
         "id": "npc:1198",
         "kind": "npc",
         "levels": {
@@ -120,6 +128,7 @@
         }
       },
       {
+        "boss_of": [],
         "id": "npc:5000",
         "kind": "npc",
         "levels": {
@@ -164,7 +173,7 @@
   "entities_hog": {
     "counts": {
       "entities": 4,
-      "loot": 1,
+      "loot": 2,
       "quests": 1,
       "trainers": 1,
       "vendors": 1
@@ -177,6 +186,12 @@
     "revision": "demo-r1",
     "rows": [
       {
+        "boss_of": [
+          {
+            "id": "dungeon-1",
+            "title": "Synthetic dungeon"
+          }
+        ],
         "id": "npc:448",
         "kind": "npc",
         "levels": {
@@ -224,7 +239,7 @@
   "loot": {
     "counts": {
       "entities": 4,
-      "loot": 1,
+      "loot": 2,
       "quests": 1,
       "trainers": 1,
       "vendors": 1
@@ -237,7 +252,46 @@
     "revision": "demo-r1",
     "rows": [
       {
+        "entity": null,
+        "id": "loot:reference:9",
+        "offers": [],
+        "offers_total": 0,
+        "row": "source",
+        "tables": [
+          {
+            "id": "loot:reference:9",
+            "kind": "reference",
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "rows": [
+              {
+                "conditional": false,
+                "group": null,
+                "item": {
+                  "item_id": "demo-item-1",
+                  "name": "Synthetic Sword"
+                },
+                "max_count": 1,
+                "min_count": 1,
+                "probability": null,
+                "quest_only": false,
+                "table": null
+              }
+            ],
+            "rows_total": 1
+          }
+        ],
+        "tables_total": 1
+      },
+      {
         "entity": {
+          "boss_of": [
+            {
+              "id": "dungeon-1",
+              "title": "Synthetic dungeon"
+            }
+          ],
           "id": "npc:448",
           "kind": "npc",
           "levels": {
@@ -285,6 +339,7 @@
               "source": "unrecorded",
               "status": "unknown"
             },
+            "cost_item_names": {},
             "costs": {
               "clock_trust": "uncertain",
               "source": "unrecorded",
@@ -294,6 +349,7 @@
             "items": [
               {
                 "item_id": "demo-item-1",
+                "name": "Synthetic Sword",
                 "variant": "base"
               }
             ],
@@ -315,11 +371,71 @@
           }
         ],
         "offers_total": 1,
-        "row": "source"
+        "row": "source",
+        "tables": [
+          {
+            "id": "loot:creature:448",
+            "kind": "creature",
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "rows": [
+              {
+                "conditional": false,
+                "group": null,
+                "item": {
+                  "item_id": "demo-item-1",
+                  "name": "Synthetic Sword"
+                },
+                "max_count": 1,
+                "min_count": 1,
+                "probability": 0.4,
+                "quest_only": false,
+                "table": null
+              },
+              {
+                "conditional": false,
+                "group": 1,
+                "item": {
+                  "item_id": "9001"
+                },
+                "max_count": 2,
+                "min_count": 1,
+                "probability": null,
+                "quest_only": true,
+                "table": null
+              },
+              {
+                "conditional": true,
+                "group": null,
+                "item": {
+                  "item_id": "9002"
+                },
+                "max_count": 1,
+                "min_count": 1,
+                "probability": 0.0,
+                "quest_only": false,
+                "table": null
+              },
+              {
+                "conditional": false,
+                "group": null,
+                "item": null,
+                "max_count": 3,
+                "min_count": 1,
+                "probability": 0.05,
+                "quest_only": false,
+                "table": "loot:reference:9"
+              }
+            ],
+            "rows_total": 4
+          }
+        ],
+        "tables_total": 1
       }
     ],
     "schema_version": 1,
-    "total": 1,
+    "total": 2,
     "view": "loot"
   },
   "origins": {
@@ -337,7 +453,7 @@
   "quests": {
     "counts": {
       "entities": 4,
-      "loot": 1,
+      "loot": 2,
       "quests": 1,
       "trainers": 1,
       "vendors": 1
@@ -356,6 +472,27 @@
           "status": "known",
           "value": "unrepeatable"
         },
+        "enders": [
+          {
+            "id": "npc:448",
+            "name": "Hogger"
+          }
+        ],
+        "enders_total": 1,
+        "givers": [
+          {
+            "id": "npc:1198",
+            "name": "Synthetic Quartermaster"
+          },
+          {
+            "id": "item:demo-item-1",
+            "name": "Synthetic Sword"
+          },
+          {
+            "id": "object:404"
+          }
+        ],
+        "givers_total": 3,
         "id": "demo-quest-1",
         "objectives": [
           {
@@ -386,6 +523,7 @@
               "source": "unrecorded",
               "status": "not_applicable"
             },
+            "cost_item_names": {},
             "costs": {
               "clock_trust": "uncertain",
               "source": "unrecorded",
@@ -395,6 +533,7 @@
             "items": [
               {
                 "item_id": "demo-item-1",
+                "name": "Synthetic Sword",
                 "variant": "base"
               }
             ],
@@ -426,6 +565,7 @@
           "value": [
             {
               "item_id": "demo-item-1",
+              "name": "Synthetic Sword",
               "variant": "base"
             }
           ]
@@ -433,7 +573,8 @@
         "row": "quest",
         "stages": [
           "demo-objective-1"
-        ]
+        ],
+        "title": "Synthetic Quest"
       }
     ],
     "schema_version": 1,
@@ -443,7 +584,7 @@
   "trainers": {
     "counts": {
       "entities": 4,
-      "loot": 1,
+      "loot": 2,
       "quests": 1,
       "trainers": 1,
       "vendors": 1
@@ -456,6 +597,7 @@
     "revision": "demo-r1",
     "rows": [
       {
+        "boss_of": [],
         "id": "npc:5000",
         "kind": "npc",
         "levels": {
@@ -500,7 +642,7 @@
   "vendors": {
     "counts": {
       "entities": 4,
-      "loot": 1,
+      "loot": 2,
       "quests": 1,
       "trainers": 1,
       "vendors": 1
@@ -514,6 +656,7 @@
     "rows": [
       {
         "entity": {
+          "boss_of": [],
           "id": "npc:1198",
           "kind": "npc",
           "levels": {
@@ -560,6 +703,7 @@
               "status": "known",
               "value": "250"
             },
+            "cost_item_names": {},
             "costs": {
               "clock_trust": "uncertain",
               "source": "unrecorded",
@@ -569,6 +713,7 @@
             "items": [
               {
                 "item_id": "demo-item-1",
+                "name": "Synthetic Sword",
                 "variant": "base"
               }
             ],
@@ -590,7 +735,9 @@
           }
         ],
         "offers_total": 1,
-        "row": "source"
+        "row": "source",
+        "tables": [],
+        "tables_total": 0
       }
     ],
     "schema_version": 1,

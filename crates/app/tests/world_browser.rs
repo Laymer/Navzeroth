@@ -169,6 +169,22 @@ pub fn bundle() -> Value {
             "world-evidence-inferred"
         ),
     ]);
+    // Names, quest titles, givers and enders, bosses and loot templates (V2.8g).
+    content["equipment"][0]["name"] = json!("Synthetic Sword");
+    content["quest_facts"][0]["title"] = json!("Synthetic Quest");
+    content["quest_facts"][0]["givers"] = json!(["npc:1198", "item:demo-item-1", "object:404"]);
+    content["quest_facts"][0]["enders"] = json!(["npc:448"]);
+    content["dungeons"][0]["bosses"] = json!(["npc:448"]);
+    content["loot_tables"] = json!([
+        {"id":"loot:creature:448","evidence":["world-evidence-112"],"table":"creature",
+         "source":known(json!("npc:448")),"rows":[
+            {"item":"demo-item-1","probability":0.4,"min_count":1,"max_count":1},
+            {"item":"9001","min_count":1,"max_count":2,"group":1,"quest_only":true},
+            {"item":"9002","probability":0,"min_count":1,"max_count":1,"conditional":true},
+            {"table":"loot:reference:9","probability":0.05,"min_count":1,"max_count":3}]},
+        {"id":"loot:reference:9","evidence":["world-evidence-112"],"table":"reference",
+         "source":{"status":"unknown"},"rows":[{"item":"demo-item-1","min_count":1,"max_count":1}]}
+    ]);
     json!({"content":content,"sources":sources,"conflicts":[]})
 }
 /// The expected pack shape: each source records only its true origin edition.
@@ -237,7 +253,7 @@ fn world_views_search_page_and_mark_origins() {
     let all = page(&content, WorldView::Entities, "");
     assert_eq!(
         all["counts"],
-        json!({"entities":4,"vendors":1,"trainers":1,"quests":1,"loot":1})
+        json!({"entities":4,"vendors":1,"trainers":1,"quests":1,"loot":2})
     );
     assert_eq!(
         names(&all),
@@ -275,6 +291,38 @@ fn world_views_search_page_and_mark_origins() {
     assert_eq!(loot["rows"][0]["offers"][0]["probability"]["value"], 0.25);
     assert_eq!(loot["rows"][0]["offers"][0]["dungeon"], Value::Null);
     assert_eq!(page(&content, WorldView::Loot, "nobody")["total"], 0);
+    // Loot templates: unknown probability stays absent, zero stays zero, a
+    // reference table is a row of its own, and a template without a stated
+    // source is its own source.
+    let table = &loot["rows"][0]["tables"][0];
+    assert_eq!(loot["rows"][0]["tables_total"], 1);
+    assert_eq!(
+        (table["id"].as_str(), table["kind"].as_str()),
+        (Some("loot:creature:448"), Some("creature"))
+    );
+    assert_eq!(table["rows_total"], 4);
+    assert_eq!(table["rows"][0]["item"]["name"], "Synthetic Sword");
+    assert_eq!(table["rows"][0]["probability"], 0.4);
+    assert_eq!(table["rows"][1]["probability"], Value::Null);
+    assert_eq!(table["rows"][1]["quest_only"], true);
+    assert_eq!(table["rows"][1]["group"], 1);
+    assert_eq!(table["rows"][1]["item"].get("name"), None);
+    assert_eq!(table["rows"][2]["probability"], 0.0);
+    assert_eq!(table["rows"][2]["conditional"], true);
+    assert_eq!(table["rows"][3]["table"], "loot:reference:9");
+    assert_eq!(table["origin"], json!(["vanilla_1_12"]));
+    let reference = page(&content, WorldView::Loot, "loot:reference:9");
+    assert_eq!(reference["rows"][0]["id"], "loot:reference:9");
+    assert_eq!(reference["rows"][0]["entity"], Value::Null);
+    assert_eq!(reference["rows"][0]["tables"][0]["kind"], "reference");
+    // Bosses of dungeons, and item names wherever items are listed.
+    let boss = page(&content, WorldView::Entities, "hogger");
+    assert_eq!(boss["rows"][0]["boss_of"][0]["id"], "dungeon-1");
+    assert!(boss["rows"][0]["boss_of"][0]["title"].is_string());
+    assert_eq!(
+        vendors["rows"][0]["offers"][0]["items"][0]["name"],
+        "Synthetic Sword"
+    );
     let trainers = page(&content, WorldView::Trainers, "");
     assert_eq!(names(&trainers), ["Synthetic Trainer"]);
     assert_eq!(trainers["rows"][0]["origin"], json!(["wow_classic_era"]));
@@ -282,6 +330,19 @@ fn world_views_search_page_and_mark_origins() {
     let quest = &quests["rows"][0];
     assert_eq!(quest["row"], "quest");
     assert_eq!(quest["origin"], json!(["vanilla_1_12"]));
+    assert_eq!(quest["title"], "Synthetic Quest");
+    assert_eq!(quest["stages"], json!(["demo-objective-1"]));
+    assert_eq!(
+        quest["givers"],
+        json!([{"id":"npc:1198","name":"Synthetic Quartermaster"},{"id":"item:demo-item-1","name":"Synthetic Sword"},{"id":"object:404"}])
+    );
+    assert_eq!(quest["givers_total"], 3);
+    assert_eq!(quest["enders"], json!([{"id":"npc:448","name":"Hogger"}]));
+    assert_eq!(quest["rewards"]["value"][0]["name"], "Synthetic Sword");
+    assert_eq!(
+        page(&content, WorldView::Quests, "synthetic quest")["total"],
+        1
+    );
     assert_eq!(quest["objectives"][0]["id"], "demo-objective-1");
     assert_eq!(
         quest["objectives"][0]["targets"],

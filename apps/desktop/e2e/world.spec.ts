@@ -33,7 +33,14 @@ test("the world browser finds Hogger and marks him as 1.12 data", async ({ page 
   await expect(page.getByText("map demo-map-1, floor 0, at 27, 87 (node world-node-hogger)")).toBeVisible();
   expect(requests.at(-1)).toMatchObject({ view: "entities", query: "Hogger", offset: 0 });
   await page.getByRole("button", { name: "Vendors (1)", exact: true }).click();
-  await expect(page.getByText(/item demo-item-1 \(base\); cost 250 copper/)).toContainText("From Classic Era data");
+  await expect(page.getByText(/Synthetic Sword \(item demo-item-1, base\); cost 250 copper/)).toContainText("From Classic Era data");
+  await page.getByRole("button", { name: "Quests (1)", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 3, name: /^Synthetic Quest/ })).toBeVisible();
+  await expect(page.getByText("Turned in to: Hogger (npc:448).")).toBeVisible();
+  await page.getByRole("button", { name: "Loot (2)", exact: true }).click();
+  await page.getByText(/creature loot loot:creature:448 \(4 rows\)/).click();
+  await expect(page.getByText("item 9001; count 1–2; chance unknown; group 1; only while a quest needs it")).toBeVisible();
+  await expect(page.getByText("table loot:reference:9; count 1–3; chance 5%")).toBeVisible();
   const scan = await new AxeBuilder({ page }).analyze();
   expect(scan.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
   await page.setViewportSize({ width: 320, height: 800 });

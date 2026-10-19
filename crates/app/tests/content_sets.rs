@@ -222,7 +222,10 @@ fn unknown_travel_requirements_are_assumed_only_under_the_accepting_activation()
     let app = SnapshotApplication::in_memory().unwrap();
     let (id, _, now) = profile(&app);
     let mut bundle: Value = serde_json::from_str(&inferred_planning()).unwrap();
-    for edge in bundle["envelope"]["payload"]["edges"].as_array_mut().unwrap() {
+    for edge in bundle["envelope"]["payload"]["edges"]
+        .as_array_mut()
+        .unwrap()
+    {
         edge["requirements"] = json!({"status":"unknown"});
     }
     app.stage_content(&bundle.to_string()).unwrap();

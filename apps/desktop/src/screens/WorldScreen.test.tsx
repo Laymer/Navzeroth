@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
-import { WorldScreen, describeLevels, describePlace } from "./WorldScreen";
-import type { EntityRow, Offer, QuestRow, SourceRow, WorldPage, WorldView } from "../commands/world";
+import { WorldScreen, describeItem, describeLevels, describePlace } from "./WorldScreen";
+import type { EntityRow, LootTableView, Offer, QuestRow, SourceRow, WorldPage, WorldView } from "../commands/world";
 import pages from "../../../../fixtures/desktop/world/pages.json";
 
 const golden = pages as unknown as Record<"entities" | "entities_hog" | "vendors" | "trainers" | "quests" | "loot", WorldPage>;
@@ -42,19 +42,24 @@ it("lists vendor items with cost, loot with chance and quests with objectives, e
   await heading("Hogger");
   fireEvent.click(screen.getByRole("button", { name: "Vendors (1)" }));
   const vendor = (await heading("Synthetic Quartermaster")).closest("li") as HTMLElement;
-  expect(within(vendor).getByText(/item demo-item-1 \(base\); cost 250 copper; at world-node-vendor/)).toHaveTextContent("From Classic Era data");
+  expect(within(vendor).getByText(/Synthetic Sword \(item demo-item-1, base\); cost 250 copper; at world-node-vendor/)).toHaveTextContent("From Classic Era data");
   expect(within(vendor).getByText("vendor, repair")).toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Loot (1)" }));
+  fireEvent.click(screen.getByRole("button", { name: "Loot (2)" }));
   const loot = (await heading("Hogger")).closest("li") as HTMLElement;
   expect(within(loot).getByText(/chance 25%/)).toHaveTextContent("From 1.12 data");
   fireEvent.click(screen.getByRole("button", { name: "Trainers (1)" }));
   expect((await heading("Synthetic Trainer"))).toHaveTextContent("From Classic Era data");
   fireEvent.click(screen.getByRole("button", { name: "Quests (1)" }));
-  const quest = (await heading("demo-quest-1")).closest("li") as HTMLElement;
+  const quest = (await heading("Synthetic Quest")).closest("li") as HTMLElement;
   expect(quest.querySelector("h3")).toHaveTextContent("From 1.12 data");
-  expect(within(quest).getByText(/Quest givers and enders are not recorded/)).toHaveTextContent("Completion: unrepeatable");
+  expect(quest.querySelector("h3")).toHaveTextContent(/^Synthetic Quest/);
+  expect(within(quest).getByText("Quest demo-quest-1.")).toBeInTheDocument();
+  expect(within(quest).getByText(/Given by: Synthetic Quartermaster \(npc:1198\); Synthetic Sword \(item:demo-item-1\); object:404 \(not described by this pack\)\./)).toBeInTheDocument();
+  expect(within(quest).getByText("Turned in to: Hogger (npc:448).")).toBeInTheDocument();
+  expect(within(quest).getByText("Completion: unrepeatable.")).toBeInTheDocument();
+  expect(within(quest).getByText("demo-objective-1.")).toBeInTheDocument();
   expect(within(quest).getByText(/demo-objective-1: quest stage demo-objective-1; obtain from demo-acq-1; visit demo-node-1/)).toBeInTheDocument();
-  expect(within(quest).getByText("item demo-item-1 (base)")).toBeInTheDocument();
+  expect(within(quest).getByText("Synthetic Sword (item demo-item-1, base)")).toBeInTheDocument();
   expect(within(quest).getByText(/cost Not applicable/)).toHaveTextContent("From 1.12 data");
   expect(screen.getByRole("button", { name: "Quests (1)" })).toHaveAttribute("aria-pressed", "true");
 });
@@ -83,10 +88,10 @@ it("pages by offset with the bound revision and keeps unknowns, partial lists an
 });
 
 it("describes unresolved sources, alternative costs and missing objective details", async () => {
-  const costs: Offer = { ...offer, items: [], cost: { status: "unknown" }, costs: { status: "known", value: [{ kind: "copper", amount: "5" }, { kind: "item", item: { item_id: "token", variant: "base" }, quantity: 2 }, { kind: "currency", currency: "honor", quantity: 3 }] } };
+  const costs: Offer = { ...offer, items: [], cost_item_names: { token: "Synthetic Token" }, cost: { status: "unknown" }, costs: { status: "known", value: [{ kind: "copper", amount: "5" }, { kind: "item", item: { item_id: "token", variant: "base" }, quantity: 2 }, { kind: "currency", currency: "honor", quantity: 3 }] } };
   const free: Offer = { ...offer, acquisition: "free", costs: { status: "known", value: [] }, cost: { status: "unknown" } };
   const unknown: Offer = { ...offer, acquisition: "unknown", cost: { status: "restricted" }, costs: { status: "unknown" }, dungeon: "deadmines", location: null };
-  const source: SourceRow = { row: "source", id: "npc:404", entity: null, offers: [costs, free, unknown], offers_total: 4 };
+  const source: SourceRow = { row: "source", id: "npc:404", entity: null, offers: [costs, free, unknown], offers_total: 4, tables: [], tables_total: 0 };
   const empty: SourceRow = { ...source, id: "npc:405", offers: [], offers_total: 0 };
   const quest: QuestRow = { ...(golden.quests.rows[0] as QuestRow), id: "bare-quest", objectives: [], stages: [], rewards: { status: "unknown" }, offers: [], origin: [] };
   const mock = client((r) => ({ ok: true, value: { ...base, view: r.view, rows: r.view === "quests" ? [quest] : r.view === "loot" ? [{ ...empty, id: "npc:406" }] : [source, empty] } }));
@@ -94,7 +99,7 @@ it("describes unresolved sources, alternative costs and missing objective detail
   await heading("Hogger").catch(() => undefined);
   fireEvent.click(await screen.findByRole("button", { name: /^Vendors/ }));
   expect(await screen.findByText("This pack names npc:404 but does not describe it.")).toBeInTheDocument();
-  expect(screen.getByText(/source world-acq-vendor \(items unresolved\); cost 5 copper, 2 × item token, 3 × honor/)).toBeInTheDocument();
+  expect(screen.getByText(/source world-acq-vendor \(items unresolved\); cost 5 copper, 2 × Synthetic Token \(item token\), 3 × honor/)).toBeInTheDocument();
   expect(screen.getByText(/cost free/)).toBeInTheDocument();
   expect(screen.getByText(/cost Restricted \(hidden by the game\); in deadmines/)).toBeInTheDocument();
   expect(screen.getByText("1 more entries are not listed here.")).toBeInTheDocument();
@@ -102,7 +107,8 @@ it("describes unresolved sources, alternative costs and missing objective detail
   fireEvent.click(screen.getByRole("button", { name: /^Loot/ }));
   expect(await screen.findByText("No rewards recorded.")).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: /^Quests/ }));
-  expect(await screen.findByText("Stages none; no objective details recorded.")).toBeInTheDocument();
+  expect(await screen.findByText("No objective details recorded.")).toBeInTheDocument();
+  expect(screen.getByText("none recorded.")).toBeInTheDocument();
   expect(screen.getByText("Unknown (not observed)")).toBeInTheDocument();
 });
 
@@ -147,4 +153,47 @@ it("formats levels and places for screen readers", () => {
   expect(describeLevels({ status: "known", value: [11, 11] })).toBe("11");
   expect(describeLevels({ status: "unsupported" })).toBe("Unsupported by this client");
   expect(describePlace({ map_id: "m", floor: "1", x: 0.123, y: 1 })).toBe("map m, floor 1, at 12.3, 100");
+});
+
+it("shows loot templates with unknown chances, groups, quest-only rows and reference tables", async () => {
+  render(<WorldScreen client={client() as never} refreshKey={0} />);
+  await heading("Hogger");
+  fireEvent.click(screen.getByRole("button", { name: "Loot (2)" }));
+  const hogger = (await heading("Hogger")).closest("li") as HTMLElement;
+  const summary = within(hogger).getByText(/creature loot loot:creature:448 \(4 rows\)/);
+  expect(summary).toHaveTextContent("From 1.12 data");
+  const rows = within(hogger).getAllByRole("listitem").map((li) => li.textContent);
+  expect(rows).toContain("Synthetic Sword (item demo-item-1); count 1; chance 40%");
+  expect(rows).toContain("item 9001; count 1–2; chance unknown; group 1; only while a quest needs it");
+  expect(rows).toContain("item 9002; count 1; chance 0%; has a condition this app cannot express");
+  expect(rows).toContain("table loot:reference:9; count 1–3; chance 5%");
+  const reference = (await heading("loot:reference:9")).closest("li") as HTMLElement;
+  expect(within(reference).getByText("This pack names loot:reference:9 but does not describe it.")).toBeInTheDocument();
+  expect(within(reference).getByText(/shared reference table loot:reference:9/)).toBeInTheDocument();
+});
+
+it("names bosses, caps loot tables and explains quest links the pack does not record", async () => {
+  const boss: EntityRow = { ...entity, boss_of: [{ id: "dungeon:the-deadmines", title: "The Deadmines" }] };
+  const table: LootTableView = { id: "loot:creature:1", kind: "creature", origin: [], rows_total: 45, rows: [{ item: null, table: "loot:reference:1", probability: null, min_count: 1, max_count: 1, group: null, quest_only: false, conditional: false }] };
+  const loot: SourceRow = { row: "source", id: "npc:1", entity: (() => { const rest: Partial<EntityRow> = { ...boss }; delete rest.row; return rest as Omit<EntityRow, "row">; })(), offers: [], offers_total: 0, tables: [table], tables_total: 8 };
+  const quest: QuestRow = { ...(golden.quests.rows[0] as QuestRow), givers: [], givers_total: 0, enders: [{ id: "npc:2" }], enders_total: 3 };
+  delete quest.title;
+  const mock = client((r) => ({ ok: true, value: { ...base, view: r.view, rows: r.view === "quests" ? [quest] : r.view === "loot" ? [loot] : [boss] } }));
+  render(<WorldScreen client={mock as never} refreshKey={0} />);
+  expect(await screen.findByText("The Deadmines")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /^Loot/ }));
+  expect(await screen.findByText("44 more rows are not listed here.")).toBeInTheDocument();
+  expect(screen.getByText("7 more loot tables are not listed here.")).toBeInTheDocument();
+  expect(screen.getByText(/table loot:reference:1; count 1; chance unknown/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /^Quests/ }));
+  expect(await screen.findByText("Given by: not recorded.")).toBeInTheDocument();
+  expect(screen.getByText("Turned in to: npc:2 (not described by this pack); 2 more not listed here.")).toBeInTheDocument();
+  expect(screen.getByRole("heading", { level: 3, name: /^demo-quest-1/ })).toBeInTheDocument();
+});
+
+it("describes items by name with the id and variant only when known", () => {
+  expect(describeItem({ item_id: "1", variant: "base", name: "Sword" })).toBe("Sword (item 1, base)");
+  expect(describeItem({ item_id: "1", name: "Sword" })).toBe("Sword (item 1)");
+  expect(describeItem({ item_id: "1", variant: "base" })).toBe("item 1 (base)");
+  expect(describeItem({ item_id: "1" })).toBe("item 1");
 });
