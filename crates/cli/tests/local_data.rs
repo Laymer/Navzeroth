@@ -176,6 +176,10 @@ fn isolated_worker_failure_and_cancellation_preserve_previous_active_state() {
     .unwrap();
     let event = worker.next_event().unwrap();
     assert!(matches!(event, WorkerEvent::Failed { .. }));
+    assert_eq!(
+        worker.next_event().unwrap_err(),
+        "Worker already terminated"
+    );
     let text = serde_json::to_string(&event).unwrap();
     assert!(!text.contains(&root.to_string_lossy().to_string()));
     let mut worker = ExtractionWorker::start_executable(
@@ -814,61 +818,80 @@ fn durable_job_commands_recover_cancel_and_forget_without_exposing_requests() {
 }
 
 #[test]
-fn preparing_progress_is_durable_and_cancellable_before_archive_fingerprinting() {
-    use azeroth_core::local_data::PerformancePreset;
-    use azeroth_local_data::worker::{ExtractionRequest, ExtractionWorker, WorkerEvent};
-    let root = std::env::temp_dir().join(format!(
-        "nav-prepare-worker-{}-{}",
-        std::process::id(),
-        NEXT.fetch_add(1, Ordering::Relaxed)
-    ));
-    let source = root.join("client");
-    let output = root.join("private");
-    fs::create_dir_all(&source).unwrap();
-    fs::create_dir(&output).unwrap();
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        fs::set_permissions(&output, fs::Permissions::from_mode(0o700)).unwrap();
-    }
-    fs::write(source.join(".build.info"),format!("Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.70450|{}|{}|enUS text\n","a".repeat(32),"b".repeat(32))).unwrap();
-    let request = ExtractionRequest {
-        locales: Vec::new(),
-        protocol_version: 2,
-        resume: false,
-        request_id: "preparing-job".into(),
-        installation: source,
-        product: "wow_classic_beta".into(),
-        destination: output.clone(),
-        preset: PerformancePreset::Small,
-        tables: vec!["Map".into()],
-    };
-    let mut worker = ExtractionWorker::start_executable(
-        std::path::Path::new(env!("CARGO_BIN_EXE_azeroth-cli")),
-        &request,
-    )
-    .unwrap();
-    assert!(matches!(
-        worker.next_event().unwrap(),
-        WorkerEvent::Progress {
-            completed: 0,
-            total: 0,
-            ..
+fn preparing_progress_is_durable_on_cancellation_and_graceful_failure() {
+    for cancel in [true, false] {
+        use azeroth_core::local_data::PerformancePreset;
+        use azeroth_local_data::worker::{ExtractionRequest, ExtractionWorker, WorkerEvent};
+        let root = std::env::temp_dir().join(format!(
+            "nav-prepare-worker-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let source = root.join("client");
+        let output = root.join("private");
+        fs::create_dir_all(&source).unwrap();
+        fs::create_dir(&output).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&output, fs::Permissions::from_mode(0o700)).unwrap();
         }
-    ));
-    // The ID exists before any required archive/config files are even present.
-    let status = azeroth_local_data::lifecycle::index(&output)
-        .unwrap()
-        .status("preparing-job")
+        fs::write(source.join(".build.info"),format!("Product!STRING:0|Active!DEC:1|Version!STRING:0|Build Key!HEX:16|CDN Key!HEX:16|Tags!STRING:0\nwow_classic_beta|1|1.60.1.70450|{}|{}|enUS text\n","a".repeat(32),"b".repeat(32))).unwrap();
+        let request = ExtractionRequest {
+            locales: Vec::new(),
+            protocol_version: 2,
+            resume: false,
+            request_id: "preparing-job".into(),
+            installation: source,
+            product: "wow_classic_beta".into(),
+            destination: output.clone(),
+            preset: PerformancePreset::Small,
+            tables: vec!["Map".into()],
+        };
+        let mut worker = ExtractionWorker::start_executable(
+            std::path::Path::new(env!("CARGO_BIN_EXE_azeroth-cli")),
+            &request,
+        )
         .unwrap();
-    assert_eq!(status.job_id, "preparing-job");
-    worker.cancel().unwrap();
-    drop(worker);
-    let status = azeroth_local_data::lifecycle::status(&output, "preparing-job").unwrap();
-    assert!(matches!(
-        status.state,
-        azeroth_core::local_data_lifecycle::JobState::Interrupted
-            | azeroth_core::local_data_lifecycle::JobState::Failed
-    ));
-    fs::remove_dir_all(root).unwrap();
+        assert!(matches!(
+            worker.next_event().unwrap(),
+            WorkerEvent::Progress {
+                completed: 0,
+                total: 0,
+                ..
+            }
+        ));
+        // The ID exists before any required archive/config files are even present.
+        let status = azeroth_local_data::lifecycle::index(&output)
+            .unwrap()
+            .status("preparing-job")
+            .unwrap();
+        assert_eq!(status.job_id, "preparing-job");
+        if cancel {
+            worker.cancel().unwrap();
+        } else {
+            assert!(matches!(
+                worker.next_event().unwrap(),
+                WorkerEvent::Failed { .. }
+            ));
+            assert_eq!(
+                worker.next_event().unwrap_err(),
+                "Worker already terminated"
+            );
+        }
+        drop(worker);
+        let status = azeroth_local_data::lifecycle::status(&output, "preparing-job").unwrap();
+        assert!(matches!(
+            status.state,
+            azeroth_core::local_data_lifecycle::JobState::Interrupted
+                | azeroth_core::local_data_lifecycle::JobState::Failed
+        ));
+        if !cancel {
+            assert_eq!(
+                status.state,
+                azeroth_core::local_data_lifecycle::JobState::Failed
+            );
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
 }

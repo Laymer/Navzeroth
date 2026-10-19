@@ -14,16 +14,18 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
-**Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
-`test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
-have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. At `e4b0d77`, all ordinary CI, source Linux/Windows/parity and
-Windows packaging checks pass. Both native collectors and TypeScript succeed;
-the combined coverage gate fails only desktop shell lib.rs (1160/1318), with no
-missing files or evidence errors. Every other eligible file clears 90%. Actual native picker cancellation and registered atlas-protocol refusal tests
-now await hosted verification.
-The 90% per-file requirement remains unchanged; this draft cannot merge yet.
-[Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
+**RC continuation:** Codex `/root`, sole writer, baseline `38bbe4a`, branch
+`fix/rc-lifecycle-transaction`. [Claim](claims/2026-10-19-rc-lifecycle.md).
+PR #203 merged as `38bbe4ab03ec48292b57cabfde15de940e99946c` after independent
+review and all ten required checks passed at its final head. Strict coverage
+passed for all 251 measured files, with 29 declaration-only entries.
+Resulting-main CI `39164374044`, Coverage `39164373980`, and Windows package
+`39164374023` failed; source/parity `39164374011` passed. These failures block RC
+preparation/publication. Repair lifecycle initialization, Windows fixture/startup
+verification and prerelease ordering before release preparation. Preserve all ten
+checks and 90% executable-line coverage per file, including native aggregation
+and missing-file detection. Published version remains 0.9.2; candidate/stable
+readiness remain false. [Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging

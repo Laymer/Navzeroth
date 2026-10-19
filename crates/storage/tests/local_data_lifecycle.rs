@@ -431,3 +431,93 @@ fn workflow_choices_and_materials_are_durable_bounded_and_compare_and_swap() {
     assert!(db.material(&format!("{:064x}", 0)).is_err());
     assert!(db.material(&"f".repeat(64)).is_ok());
 }
+
+#[test]
+fn simultaneous_openers_initialize_and_migrate_atomically() {
+    for version in 0..=3 {
+        let dir = Temp::new();
+        let path = dir.0.join("index.sqlite3");
+        if version != 0 {
+            let mut db = dir.db();
+            db.save_selection(&SavedSelection {
+                selection_id: "preserved".into(),
+                installation: dir.0.clone(),
+                product: "wow_classic_beta".into(),
+                preset: PerformancePreset::Small,
+            })
+            .unwrap();
+            drop(db);
+            let conn = rusqlite::Connection::open(&path).unwrap();
+            if version < 3 {
+                conn.execute_batch("DROP TABLE workflow_preferences; DROP TABLE selected_materials; DROP TABLE change_candidates;").unwrap();
+            }
+            if version < 2 {
+                conn.execute_batch("DROP TABLE delivery_activations;")
+                    .unwrap();
+            }
+            conn.pragma_update(None, "user_version", version).unwrap();
+        }
+        let barrier = std::sync::Barrier::new(12);
+        std::thread::scope(|scope| {
+            for _ in 0..12 {
+                scope.spawn(|| {
+                    barrier.wait();
+                    let db = LocalDataIndex::open(&path).unwrap();
+                    assert_eq!(db.workflow().unwrap().revision, 0);
+                    assert_eq!(db.delivery_active(&"a".repeat(64)).unwrap().generation, 0);
+                    if version != 0 {
+                        assert_eq!(db.selection("preserved").unwrap().installation, dir.0);
+                    }
+                });
+            }
+        });
+        let conn = rusqlite::Connection::open(&path).unwrap();
+        assert_eq!(
+            conn.pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+                .unwrap(),
+            3
+        );
+    }
+}
+
+#[test]
+fn late_migration_failure_rolls_back_earlier_steps_and_preserves_data() {
+    let dir = Temp::new();
+    let path = dir.0.join("index.sqlite3");
+    let conn = rusqlite::Connection::open(&path).unwrap();
+    conn.execute_batch(
+        "CREATE TABLE selections(id TEXT PRIMARY KEY, document TEXT NOT NULL);
+        INSERT INTO selections VALUES('retained','opaque original');
+        CREATE TABLE workflow_preferences(sentinel TEXT);
+        INSERT INTO workflow_preferences VALUES('unchanged');
+        PRAGMA application_id=1313621041; PRAGMA user_version=1;",
+    )
+    .unwrap();
+    assert!(LocalDataIndex::open(&path).is_err());
+    assert_eq!(
+        conn.pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        conn.query_row(
+            "SELECT count(*) FROM sqlite_master WHERE name='delivery_activations'",
+            [],
+            |r| r.get::<_, i64>(0)
+        )
+        .unwrap(),
+        0
+    );
+    assert_eq!(
+        conn.query_row("SELECT document FROM selections", [], |r| r
+            .get::<_, String>(0))
+            .unwrap(),
+        "opaque original"
+    );
+    assert_eq!(
+        conn.query_row("SELECT sentinel FROM workflow_preferences", [], |r| r
+            .get::<_, String>(0))
+            .unwrap(),
+        "unchanged"
+    );
+}
