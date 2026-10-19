@@ -40,3 +40,9 @@ stages, permitting a vacuous replay. It now requires all generate/verify/content
 register/gate stages; only detect and publication are optional. Negative tests
 cover each required-stage skip, combined skip, subset-only and incompatible
 options. This correction does not make any actual network result verified.
+
+Second independent scope correction: exact replay no longer reuses the historical
+publication suffix filter. It excludes only the current explicit target's world
+readiness report. Tests change same-named source-material and different-build
+world reports between passes; both now prevent publication. Historical generic
+publication helper semantics remain unchanged.

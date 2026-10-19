@@ -653,6 +653,10 @@ def published_digests(ctx, paths=None, maximum=4*1024**3):
     from navzeroth_datagen import bounded
     result={}
     total=0
+    build=read_target(ctx).get('build')
+    if not isinstance(build,str) or not re.fullmatch(r'[0-9]{1,9}(?:\.[0-9]{1,9}){3}',build):
+        raise StageError('replay requires an explicit canonical target build')
+    volatile_report=f'content/world/{build}/release-readiness.json'
     for relative in PUBLISHED if paths is None else paths:
         base=ctx.root/relative
         if base.is_symlink():raise StageError("linked published root refused")
@@ -660,7 +664,7 @@ def published_digests(ctx, paths=None, maximum=4*1024**3):
         paths=bounded.input_files(base,'*') if base.is_dir() else [base]
         for path in paths:
             name=path.relative_to(ctx.root).as_posix()
-            if not material([name]):continue
+            if name==volatile_report:continue
             info=path.lstat()
             if path.is_symlink() or not path.is_file():raise StageError('invalid published material file')
             total+=info.st_size
@@ -700,7 +704,7 @@ def verified_weekly(ctx):
         results.append(('reproducibility','failed',0.0,'exact material bytes differ: '+','.join(changed[:16])))
         return results
     receipt={'schema_version':1,'verified':True,'network_passes':1,'offline_passes':1,'files':first,'unpublished_build_products':products,
-             'excluded_nonmaterial':['content/world/**/release-readiness.json','pipeline/cache logs outside published paths']}
+             'excluded_nonmaterial':[f"content/world/{read_target(ctx)['build']}/release-readiness.json",'pipeline/cache logs outside published paths']}
     (first_logs/'weekly-reproducibility.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
     ctx.logs=first_logs
     if 'publish' in original_stages:

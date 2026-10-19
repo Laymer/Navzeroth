@@ -30,8 +30,8 @@ are compared, including metadata, notices, source closures, originals and facts.
 The full unpublished source-knowledge catalog and verified world pack also compare.
 Published closure is bounded4GiB/16384files, unpublished products10GiB (including
 the existing8GiB generic source catalog contract); finite scans and streaming hashes
-avoid loading these catalogs for comparison. Readiness reports and nonmaterial
-logs alone are excluded. No output normalization hides differences. Raw stage and
+avoid loading these catalogs for comparison. Only the current declared target’s `content/world/<build>/release-readiness.json`
+and nonmaterial logs are excluded; identically named files elsewhere still compare. No output normalization hides differences. Raw stage and
 separate offline logs retain actual timings. Only exact equality permits one draft
 publish attempt; readiness failures remain disclosed blockers, never publication.
 

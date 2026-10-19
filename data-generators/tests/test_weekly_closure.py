@@ -120,22 +120,27 @@ class WeeklyClosure(unittest.TestCase):
             with self.assertRaises(pipeline.StageError),contextlib.redirect_stdout(io.StringIO()):pipeline.hydrate_weekly_manifest(ctx)
 
     def test_exact_offline_replay_is_required_before_one_publication(self):
-        for alter in [False,True,"product"]:
+        for alter in [False,True,"product","outside-report","historical-report"]:
             with self.subTest(alter=alter),tempfile.TemporaryDirectory() as tmp:
                 root=pathlib.Path(tmp)
                 args=pipeline.parse_args(['--weekly-verified','--no-network-sources','--skip','detect'])
                 ctx=pipeline.Context(args,root=root,probes=[])
                 ctx.logs=root/'logs'
+                target=root/'release/v1/world-data-target.json';target.parent.mkdir(parents=True)
+                target.write_text(json.dumps({'build':'1.2.3.4'}))
                 calls=[]
                 def stage(name):
                     def execute(ctx):
                         calls.append((name,ctx.args.offline))
                         if name=='generate':
-                            file=root/'content/world/test/catalog.json';file.parent.mkdir(parents=True,exist_ok=True)
+                            file=root/'content/world/1.2.3.4/catalog.json';file.parent.mkdir(parents=True,exist_ok=True)
                             file.write_bytes(b'changed' if alter is True and ctx.args.offline else b'exact')
                             product=root/'dist/source-knowledge-world/catalog.json';product.parent.mkdir(parents=True,exist_ok=True)
                             product.write_bytes(b'changed' if alter=='product' and ctx.args.offline else b'exact catalog')
                             file.with_name('release-readiness.json').write_text(str(len(calls)))
+                            if alter in ('outside-report','historical-report'):
+                                other=root/('content/source-materials/release-readiness.json' if alter=='outside-report' else 'content/world/1.2.3.5/release-readiness.json')
+                                other.parent.mkdir(parents=True,exist_ok=True);other.write_text(str(len(calls)))
                         return 'ok','synthetic'
                     return execute
                 with mock.patch.dict(pipeline.STAGE_FUNCS,{name:stage(name) for name in pipeline.STAGES}),contextlib.redirect_stdout(io.StringIO()):
@@ -145,7 +150,8 @@ class WeeklyClosure(unittest.TestCase):
                 if not alter:
                     receipt=json.loads((root/'logs/weekly-reproducibility.json').read_text())
                     self.assertTrue(receipt['verified'])
-                    self.assertEqual(len(receipt['files']),1)
+                    self.assertEqual(len(receipt['files']),2)
+                    self.assertIn('content/world/1.2.3.4/release-readiness.json',receipt['excluded_nonmaterial'])
                     self.assertEqual(len(receipt['unpublished_build_products']),1)
                 self.assertEqual([name for name,offline in calls if not offline][:4],['generate','verify','content','register'])
 
