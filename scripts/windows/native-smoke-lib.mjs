@@ -198,3 +198,52 @@ export function gracefulCloseArgs(pid) {
   return ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command",
     `$ErrorActionPreference='Stop'; $ownedProcess=[System.Diagnostics.Process]::GetProcessById(${pid}); if(-not $ownedProcess.CloseMainWindow()){exit 2}; if(-not $ownedProcess.WaitForExit(10000)){exit 3}; exit $ownedProcess.ExitCode`];
 }
+
+/** Serialize only a bounded code, never backend paths, messages, stacks or arguments.
+ * Self-contained so Playwright can serialize this function into the app page. */
+export async function invokeInPage({ command, args }) {
+  try {
+    return { ok: true, value: await window.__TAURI_INTERNALS__.invoke(command, args) };
+  } catch (error) {
+    const code = typeof error?.code === "string" && /^[A-Z][A-Z0-9_]{0,63}$/.test(error.code)
+      ? error.code : "UNSTRUCTURED_IPC_ERROR";
+    return { ok: false, error: { code } };
+  }
+}
+
+export async function invokeNative(page, command, args) {
+  const result = await page.evaluate(invokeInPage, { command, args });
+  if (!result.ok) throw new Error(`Native IPC ${command}: ${JSON.stringify(result.error)}`);
+  return result.value;
+}
+
+/** One deadline also bounds a hung status request. No recovery paths enter receipts. */
+export async function waitForDatabaseReady(readStatus, timeoutMs = 30000, intervalMs = 100) {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || !Number.isFinite(intervalMs) || intervalMs <= 0) {
+    throw new Error("Invalid database readiness deadline");
+  }
+  let timer;
+  let expired = false;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      expired = true;
+      reject(new Error("Database readiness timed out"));
+    }, timeoutMs);
+  });
+  try {
+    const poll = async () => {
+      while (!expired) {
+        const status = await readStatus();
+        if (expired) return;
+        if (status?.state === "ready") return { state: "ready" };
+        if (status?.state === "recovery_required") throw new Error("Database recovery required");
+        if (status?.state !== "checking") throw new Error("Unknown database startup state");
+        await new Promise(resolve => setTimeout(resolve, intervalMs));
+      }
+    };
+    return await Promise.race([poll(), timeout]);
+  } finally {
+    expired = true;
+    clearTimeout(timer);
+  }
+}
