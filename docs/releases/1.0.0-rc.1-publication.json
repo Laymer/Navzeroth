@@ -1,0 +1,71 @@
+{
+  "tag": "v1.0.0-rc.1",
+  "public_verified": true,
+  "source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
+  "public_verification_run_id": "39245910009",
+  "application_sha256": "26012266d008136e2018b405388fd1ec3ae5edf1f0ae0bd2ac3c94182993e95c",
+  "assets": [
+    {
+      "name": "AzerothNavigator-1.0.0-rc.1-x64-setup.exe",
+      "bytes": 8382262,
+      "sha256": "0f87be628dbe7a979a4433cbc6c26faeb980b08e43307f2ef412141da0d7d3a0",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/AzerothNavigator-1.0.0-rc.1-x64-setup.exe"
+    },
+    {
+      "name": "AzerothNavigator-addon-1.0.0-rc.1.zip",
+      "bytes": 75452,
+      "sha256": "42f28af3ae6a485eb6405203326ab407a61aa65f648cc5614cb9e03e3baa866c",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/AzerothNavigator-addon-1.0.0-rc.1.zip"
+    },
+    {
+      "name": "CANDIDATE_NOTES.md",
+      "bytes": 6695,
+      "sha256": "de79c1cd0675a585eecbf82e41338b872f704f940e42d7ae4e8dba3abe584ce7",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/CANDIDATE_NOTES.md"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 381,
+      "sha256": "42f4a394176794f540ac52780f26270978f10d448ce5247542742daf2fc2a3a5",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE_COMMIT.txt",
+      "bytes": 41,
+      "sha256": "cdf6059ccc3dc399741d5c88a7ce102c9d32e7b7bd745c102d1cff662a38f783",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/SOURCE_COMMIT.txt"
+    }
+  ],
+  "release_id": 417211381,
+  "published_at": "2026-10-19T11:36:52Z",
+  "url": "https://github.com/Laymer/Navzeroth/releases/tag/v1.0.0-rc.1",
+  "tag_object": "b55d72da23b2edab79971edd8d813ac68a4e0f46",
+  "installer_signature": "NotSigned",
+  "application_signature": "NotSigned",
+  "numeric_pe_version": "1.0.0.0",
+  "string_version": "1.0.0-rc.1",
+  "production_sha256": "721f07a667fc9aa3f1e99db8adf86bbd480f57526a8250a5fafc99150b580a21",
+  "candidate_ready": false,
+  "stable_ready": false,
+  "readiness_blockers": 69,
+  "measured_coverage_files": 251,
+  "coverage_threshold_percent": 90,
+  "installed_file_count": 544,
+  "workflow_runs": {
+    "release_pr_ci": 39236035802,
+    "release_pr_coverage": 39236035691,
+    "release_pr_package": 39236035787,
+    "release_pr_source_parity": 39236035740,
+    "commit_ci": 39239511840,
+    "commit_coverage": 39239511851,
+    "commit_package": 39239511894,
+    "commit_source_parity": 39239511923,
+    "commit_stability_ci": 39239530676,
+    "tag_package": 39242904060,
+    "failed_draft_visibility": 39245077836,
+    "draft_verification": 39245500923,
+    "public_verification": 39245910009
+  },
+  "verification_driver_commit": "683c2aec08ab2cabd077eef097744205a7d73fee",
+  "scope": "Unsigned development prerelease; hosted synthetic verification, not live acceptance or ordinary-Windows performance. PR208 merged after release source and is not included."
+}
