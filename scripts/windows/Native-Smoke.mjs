@@ -19,6 +19,7 @@ import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
   IpcLog, freshenSnapshotText, migrationSummary, gracefulCloseArgs,
+  invokeNative, waitForDatabaseReady,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -305,6 +306,10 @@ async function run() {
     await settle(page);
     evidence.url = page.url();
 
+    const startup = await rec.run("native database becomes ready within deadline", () =>
+      waitForDatabaseReady(() => invokeNative(page, "get_database_status")));
+    if (startup.status !== "passed") return;
+
     if (mode === "smoke") await smoke(page, response);
     else if (mode === "populate") await populate(page);
     else await verify(page);
@@ -327,7 +332,7 @@ async function run() {
 
 async function smoke(page, response) {
   await rec.run("invalid native requests preserve structured refusals and current snapshot", async () => {
-    const before = await page.evaluate(() => window.__TAURI_INTERNALS__.invoke("get_reference_view"));
+    const before = await invokeNative(page, "get_reference_view");
     for (const test of COMMAND_BOUNDARIES) {
       const outcome = await page.evaluate(async ({command,args}) => {
         try { await window.__TAURI_INTERNALS__.invoke(command,args); return {ok:true}; }
@@ -335,21 +340,24 @@ async function smoke(page, response) {
       },test);
       validateRefusal(test,outcome);
     }
-    const after = await page.evaluate(() => window.__TAURI_INTERNALS__.invoke("get_reference_view"));
+    const after = await invokeNative(page, "get_reference_view");
     if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error("Invalid requests changed the current imported reference");
     return { requests: COMMAND_BOUNDARIES.length, current_reference_unchanged: true };
   });
   for (const [command, commandArgs] of [["select_local_installation", {}], ["select_local_material", {kind:"snapshot"}], ["select_local_material", {kind:"authored_pack"}]]) {
     await rec.run(`native ${command} cancellation preserves selections`, async () => {
-      const selections = () => page.evaluate(async () => Promise.all(
-        ["get_local_workflow", "list_local_installations", "list_local_materials"].map(command => window.__TAURI_INTERNALS__.invoke(command)),
-      ));
+      const selections = () => Promise.all(
+        ["get_local_workflow", "list_local_installations", "list_local_materials"].map(command => invokeNative(page, command)),
+      );
       const before = await selections();
       await page.evaluate(({command,args}) => {
         window.__navDialogOutcome = null;
         window.__TAURI_INTERNALS__.invoke(command,args).then(
           value => { window.__navDialogOutcome = {ok:true,value}; },
-          error => { window.__navDialogOutcome = {ok:false,error}; },
+          error => { window.__navDialogOutcome = {ok:false,error: {
+            code: typeof error?.code === "string" && /^[A-Z][A-Z0-9_]{0,63}$/.test(error.code)
+              ? error.code : "UNSTRUCTURED_IPC_ERROR",
+          }}; },
         );
       }, {command,args:commandArgs});
       const cancelled = spawnSync("powershell.exe", ["-NoLogo", "-NoProfile", "-NonInteractive", "-File",
