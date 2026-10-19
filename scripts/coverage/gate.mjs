@@ -128,7 +128,7 @@ export function normalizeRaw(records,receipt,inventory){
 function readBounded(file,max){
  const before=fs.lstatSync(file);
  if(!before.isFile()||before.isSymbolicLink()||before.size>max)throw new Error('Coverage input is not a bounded regular file');
- const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0));
+ const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0)|(fs.constants.O_NONBLOCK??0));
  try{
   const stat=fs.fstatSync(fd);
   if(!stat.isFile()||stat.dev!==before.dev||stat.ino!==before.ino||stat.size!==before.size)throw new Error('Coverage input changed during read');

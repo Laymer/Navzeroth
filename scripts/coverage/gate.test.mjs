@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 import {lcovLines,istanbulLines,relativeSource,normalizeRaw,verdict,runGate} from './gate.mjs';
 const commit='a'.repeat(40),sha='b'.repeat(64);
 const inventory={format_version:1,source_commit:commit,files:[{path:'crates/core/src/logic.rs',language:'rust',disposition:'eligible',source_sha256:sha,line_count:100,test_line_ranges:[[50,60]]},{path:'apps/desktop/src/main.tsx',language:'typescript',disposition:'eligible',source_sha256:sha,line_count:10,test_line_ranges:[]},{path:'apps/desktop/src/types.ts',language:'typescript',disposition:'declaration_only',source_sha256:sha,line_count:10,test_line_ranges:[]}]};
@@ -194,5 +195,27 @@ test('replacement between path inspection and open is refused',t=>{
   return original(target,...args);
  });
  assert.throws(fixture.run,/changed during read/);
+ assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
+});
+
+
+test('replacement with a FIFO is refused without blocking before descriptor inspection',{skip:process.platform==='win32'},t=>{
+ const fixture=evidenceFixture(t),fifo=path.join(fixture.dir,'fifo');
+ const create=spawnSync('mkfifo',[fifo],{encoding:'utf8'});
+ assert.equal(create.status,0,create.stderr);
+ const file=path.join(fixture.dir,'inventory.json');
+ const child=spawnSync(process.execPath,['--input-type=module','-e',`
+  import fs from 'node:fs';
+  import assert from 'node:assert/strict';
+  import {runGate} from ${JSON.stringify(new URL('./gate.mjs',import.meta.url).href)};
+  const file=${JSON.stringify(file)},original=fs.openSync;let replaced=false;
+  fs.openSync=(target,...args)=>{
+   if(target===file&&!replaced){replaced=true;fs.unlinkSync(file);fs.renameSync(${JSON.stringify(fifo)},file);}
+   return original(target,...args);
+  };
+  assert.throws(()=>runGate(file,[${JSON.stringify(path.join(fixture.dir,'receipt.json'))}],${JSON.stringify(path.join(fixture.dir,'verdict.json'))}),/changed during read/);
+ `],{encoding:'utf8',timeout:3000});
+ assert.equal(child.error,undefined,child.error?.message);
+ assert.equal(child.status,0,child.stderr);
  assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
 });
