@@ -483,12 +483,25 @@ impl SnapshotApplication {
             azeroth_core::catalog::Collection::Nodes,
             &mut pages,
         )?;
-        let objectives = crate::catalog_pages::first(
-            &state.store,
-            content.as_ref(),
-            azeroth_core::catalog::Collection::Objectives,
-            &mut pages,
-        )?;
+        let objectives =
+            if let (Some(content), Some(snapshot)) = (content.as_ref(), snapshot.as_ref()) {
+                let page = crate::planning_objectives::page(
+                    &state.store,
+                    content,
+                    &snapshot.payload.character,
+                    None,
+                )?;
+                pages.insert(azeroth_core::catalog::Collection::Objectives, page.page);
+                page.records
+                    .into_iter()
+                    .map(|v| {
+                        serde_json::from_value(v)
+                            .map_err(|_| invalid("Projected objective DTO does not match"))
+                    })
+                    .collect::<Result<Vec<_>>>()?
+            } else {
+                vec![]
+            };
         Ok(crate::planning::PlanningCatalog {
             pages,
 

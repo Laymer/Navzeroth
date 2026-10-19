@@ -140,3 +140,24 @@ it("exports only the calculated request and reports clipboard failure without ch
   expect(writeText).toHaveBeenNthCalledWith(1,"ANAV1:synthetic-plan");expect(writeText).toHaveBeenCalledTimes(2);
  }finally{if(clipboard)Object.defineProperty(navigator,"clipboard",clipboard);else Reflect.deleteProperty(navigator,"clipboard");}
 });
+
+it.each(["unknown", "restricted", "unsupported", "known"])("shows quest identity and %s requirements without claiming eligibility", async (status) => {
+  const base = fixture.envelope.payload.objectives[0];
+  const objective = { ...base, id: "quest-stage-source-backed", targets: [
+    { kind: "quest_stage", quest: "quest:33", stage: "quest:33:objective:1" },
+    { kind: "acquisition", source: "vendor:1" },
+    { kind: "service", node: { id: "demo-node-1" } },
+  ], requirements: status === "known" ? { status, value: { op: "all", predicates: [] } } : { status }, expected_ms: { status: "unknown" } };
+  const client = createClient({ invoke: vi.fn((command) => {
+    if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic", fixture: true }] as never);
+    if (command === "get_planning_catalog") return Promise.resolve({ ...catalog, objectives: [objective] } as never);
+    return Promise.resolve({ revision: "r", origins: [[]] } as never);
+  }) });
+  render(<PlannerScreen client={client} refreshKey={0} />);
+  expect(await screen.findByText(/Quest quest:33, stage quest:33:objective:1/)).toHaveTextContent("does not provide objective details or counts");
+  expect(screen.getByText("Acquisition source vendor:1.")).toBeInTheDocument();
+  expect(screen.getByText("Visit node demo-node-1.")).toBeInTheDocument();
+  expect(screen.getByText(/Requirements:/)).toHaveTextContent(status === "known" ? "recorded conditions; eligibility is checked when planning" : new RegExp(status, "i"));
+  expect(screen.getByText(/Requirements:/)).toHaveTextContent("Unavailable requirements do not establish eligibility");
+  expect(screen.getByText(/Source duration:/)).toHaveTextContent("Unknown (not observed). Planning uses the time you enter.");
+});
