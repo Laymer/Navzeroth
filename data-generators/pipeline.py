@@ -21,7 +21,7 @@ Stages, in order (each one's outputs are the next one's inputs):
 Interfaces between stages (owned by the V2.8 sub-tasks):
 
   register_facts.py --facts DIR --registry FILE --plan FILE --objects DIR
-                    --updates FILE --notice FILE
+                    --updates FILE --notice FILE --target FILE
   world_to_content.py --input DIR --target FILE --policy FILE --authored DIR --out DIR
 
 Each stage logs to data-generators/.cache/logs/pipeline-<stage>.log (the cache
@@ -352,7 +352,8 @@ def stage_register(ctx):
              "--plan", "content/source-build-v1.json",
              "--objects", "content/source-materials/objects",
              "--updates", "docs/sources/source-updates-v1.json",
-             "--notice", "content/source-materials/NOTICE.md"])
+             "--notice", "content/source-materials/NOTICE.md",
+             "--target", "release/v1/world-data-target.json"])
     cli = ensure_cli(ctx)
     ctx.run([cli, "source-sync", "--registry", "docs/sources/source-admission-v1.json",
              "--cache", "content/source-materials/objects"])

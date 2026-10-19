@@ -78,6 +78,9 @@ SLOTS = {
     18: ["bag"], 27: ["bag"], 19: ["tabard"], 24: ["ammo"],
 }
 TWO_HANDED = {17}
+# Item fields whose disagreement between origins is reported. Stats, prices and masks are
+# not: Forever stats are computed from budgets without armor or ratings and differ by design.
+ITEM_COMPARE = {"name", "quality", "class_id", "subclass_id", "inventory_type", "item_level", "required_level"}
 ENTITY_PREFIX = {"npc": "npc", "game_object": "object", "item": "item"}
 
 ROLE_SERVICE = {
@@ -88,9 +91,11 @@ SERVICE_ORDER = ["flight", "dungeon", "trainer", "vendor", "repair", "other"]
 # UiMap.Type ranks: zones first when locating a world point.
 TYPE_RANK = {3: 0, 4: 1, 5: 2, 6: 3, 2: 4, 1: 5, 0: 6}
 # Loot tables whose entry is, by the CMaNGOS classic-db convention, the creature
-# (LootId / PickpocketLootId / SkinningLootId = Entry) or the item it belongs to.
+# (LootId / PickpocketLootId / SkinningLootId = Entry) or the item it belongs to; the
+# generator keys game object loot by the chest or fishing hole whose data1 names it.
+# Disenchant loot is keyed by DisenchantID, which several items share: no entity.
 LOOT_SOURCE = {"creature": "npc", "pickpocketing": "npc", "skinning": "npc", "item": "item",
-               "fishing": "area"}
+               "fishing": "area", "game_object": "object"}
 
 
 class InputError(Exception):
@@ -216,9 +221,10 @@ class Builder:
 
     # ---- records with precedence
 
-    def records(self, dataset, key=None):
+    def records(self, dataset, key=None, compare=None):
         """[(record, edition)] for one dataset. With `key`, one record per key: the
-        highest-precedence origin wins and every differing field of a lower one is a conflict."""
+        highest-precedence origin wins and every differing field of a lower one is a conflict
+        (with `compare`, only differences in those fields are reported)."""
         out = []
         for edition in self.used.get(dataset, []):
             for shard in self.shards[dataset][edition]:
@@ -237,6 +243,8 @@ class Builder:
                 self.dropped[f"{dataset}: duplicate key within one origin"] += 1
                 continue
             for field in sorted(set(best) | set(record)):
+                if compare is not None and field not in compare:
+                    continue
                 if field != "kind" and best.get(field) != record.get(field):
                     self.conflict(f"{dataset}:{k}:{field}", best_edition, best.get(field),
                                   edition, record.get(field))
@@ -249,20 +257,25 @@ class Builder:
                                "rule": "precedence " + " > ".join(self.policy["precedence"])})
 
     def evidence_for(self, dataset, edition):
-        """Evidence IDs (one per upstream source) for records of one dataset and origin."""
+        """Evidence IDs for records of one dataset and origin: one per upstream source of the
+        record's origin edition (origin_sources). A shard's other sources (the Forever client
+        tables that place 1.12 spawns or name 1.12 areas) are named in the notes, never cited
+        as the source, so a source's editions always read [true origin, pack edition]."""
         ids = []
         for shard in self.shards[dataset][edition]:
-            for ref in shard.sources:
+            own, aux = origin_sources(shard.sources, edition)
+            for ref in own:
                 eid = f"ev:{ref['id']}:{edition}:{dataset}"
                 if eid not in self.evidence:
                     self.evidence[eid] = {"dataset": dataset, "edition": edition, "source": ref["id"],
                                           "confidence": shard.confidence, "builds": set(),
-                                          "paths": [], "refs": [], "retrieved": []}
+                                          "paths": [], "refs": [], "retrieved": [], "aux": []}
                 ev = self.evidence[eid]
                 if shard.rel not in ev["paths"]:
                     ev["paths"].append(shard.rel)
                     ev["builds"].add(shard.build or "unknown")
                     ev["refs"].append(ref)
+                    ev["aux"].extend(a for a in aux if a not in ev["aux"])
                     if "retrieved_at_utc_ms" in ref:
                         ev["retrieved"].append(ref["retrieved_at_utc_ms"])
                 self.evidence_sources[ref["id"]].add(dataset)
@@ -568,8 +581,9 @@ class Builder:
         self.items = {}
         self.prices = {}
         self.equipment = []
-        self.missing_items = collections.defaultdict(collections.Counter)
-        for record, edition in self.records("items.items", key=lambda r: r["id"]):
+        self.item_refs = collections.defaultdict(collections.Counter)
+        self.item_origin = {}
+        for record, edition in self.records("items.items", key=lambda r: r["id"], compare=ITEM_COMPARE):
             ev = self.evidence_for("items.items", edition)
             inv = record.get("inventory_type")
             if inv is None:
@@ -582,6 +596,7 @@ class Builder:
             two_handed = known(inv in TWO_HANDED) if slots else NOT_APPLICABLE
             stats = record.get("stats") or {}
             attributes = known({f"stat:{k}": v for k, v in sorted(stats.items())})
+            self.item_origin[record["id"]] = (edition, record.get("name"))
             self.items[record["id"]] = {
                 "attributes": attributes, "effects": UNKNOWN, "evidence": ev,
                 "key": self.item_key(record["id"]), "requirements": item_requirements(record),
@@ -602,11 +617,9 @@ class Builder:
                 self.prices[record["id"]] = record["buy_price"]
 
     def item(self, item_id, used_by):
-        """True when the item is defined; otherwise counts the dangling reference."""
-        if item_id in self.items:
-            return True
-        self.missing_items[item_id][used_by] += 1
-        return False
+        """Counts the reference; True when the item is defined."""
+        self.item_refs[item_id][used_by] += 1
+        return item_id in self.items
 
     # quests ------------------------------------------------------------------
 
@@ -1042,15 +1055,23 @@ class Builder:
         for node, services in self.node_services.items():
             pick = next((s for s in SERVICE_ORDER if s in services), None)
             self.nodes[node]["service"] = known(pick) if pick else NOT_APPLICABLE
-        for item_id, uses in sorted(self.missing_items.items()):
-            total = sum(uses.values())
-            if total:
+        top = self.policy.get("target_edition")
+        for item_id, (edition, name) in sorted(self.item_origin.items()):
+            if edition != top:
+                uses = self.item_refs.get(item_id, {})
                 self.conflicts.append({
                     "fact": f"item:{item_id}", "kind": "missing_in_higher_precedence",
-                    "chosen": {"origin": "wow_forever", "value": None},
+                    "chosen": {"origin": edition, "value": name}, "rejected": [{"origin": top, "value": None}],
+                    "references": dict(sorted(uses.items())),
+                    "rule": f"the {top} item table lacks the item; the {edition} item table defines it"})
+        for item_id, uses in sorted(self.item_refs.items()):
+            if item_id not in self.items and sum(uses.values()):
+                self.conflicts.append({
+                    "fact": f"item:{item_id}", "kind": "missing_item",
+                    "chosen": {"origin": None, "value": None},
                     "rejected": [{"origin": "vanilla_1_12", "value": dict(sorted(uses.items()))}],
-                    "rule": "items are defined only from items.items; references to absent items are dropped "
-                            "from acquisitions and quest rewards and kept as raw IDs in loot_tables"})
+                    "rule": "no item table defines the item; references are dropped from acquisitions and "
+                            "quest rewards and kept as raw IDs in loot_tables"})
         evidence = [self.evidence_record(eid) for eid in sorted(self.evidence, key=natural)]
         revision = f"navzeroth-world-{self.target['build']}-{self.input_digest[:12]}"
         payload = {
@@ -1089,8 +1110,15 @@ class Builder:
         refs = "; ".join(sorted({f"{r.get('url', '')} revision {r.get('revision', 'unknown')} snapshot "
                                  f"{r.get('snapshot_sha256', 'unknown')}" for r in ev["refs"]}))
         paths = ", ".join(ev["paths"])
+        aux = ""
+        if ev.get("aux"):
+            used = "; ".join(sorted({f"{a['id']} ({a.get('url', '')} revision {a.get('revision', 'unknown')} "
+                                     f"snapshot {a.get('snapshot_sha256', 'unknown')})" for a in ev["aux"]}))
+            aux = (f" The generator also read {used}, a {self.target['edition']} client source, for map "
+                   f"positions, zone areas, names of maps and areas or NPC reactions; the records stay "
+                   f"{ev['edition']} data.")
         notes = (f"Origin {ev['edition']} build {builds}; dataset {ev['dataset']}; shards {paths}; "
-                 f"source {refs}. Mapped by {NAME} v{VERSION} into the {self.target['edition']} "
+                 f"source {refs}.{aux} Mapped by {NAME} v{VERSION} into the {self.target['edition']} "
                  f"{self.target['build']} pack; the origin edition is kept, never relabelled (ADR 0007 §3).")
         if len(notes.encode()) > 4096:
             notes = notes.encode()[:4090].decode(errors="ignore") + " ..."
@@ -1186,6 +1214,15 @@ SOURCES = {
 
 # ------------------------------------------------------------------ pure helpers
 
+def origin_sources(refs, edition):
+    """(sources of the origin edition, other sources) of one shard. A known source belongs to
+    the origin when SOURCES lists that edition; an unlisted source is taken as the origin's.
+    A shard none of whose sources matches keeps all of them (nothing is left uncited)."""
+    own = [r for r in refs if edition in (SOURCES.get(r.get("id"), {}).get("editions") or [edition])]
+    if not own:
+        return list(refs), []
+    return own, [r for r in refs if r not in own]
+
 def transform_of(assignment):
     """CoordinateTransform from normalized uiMap x/y to world yards.
 
@@ -1271,6 +1308,8 @@ def loot_entity(table, entry, builder):
     kind = LOOT_SOURCE.get(table)
     if kind == "npc":
         return f"npc:{entry}" if entry in builder.npcs else None
+    if kind == "object":
+        return f"object:{entry}" if entry in builder.objects else None
     if kind == "item":
         return f"item:{entry}"
     if kind == "area":

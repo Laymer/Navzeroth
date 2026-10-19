@@ -239,6 +239,28 @@ class RegisterFactsTest(unittest.TestCase):
         self.assertEqual(rf.main(args), 0)
         self.assertEqual(len(self.ws.load(self.ws.registry)["sources"]), 5)
 
+    def test_plan_target_follows_the_world_data_target(self):
+        target = self.ws.root / "target.json"
+        target.write_text(json.dumps({"format": "navzeroth-world-data-target", "schema_version": 1,
+                                      "edition": "wow_forever", "build": "1.60.1.70450", "interface": "16001"}))
+        self.ws.run(world=False)
+        self.assertEqual(self.ws.load(self.ws.plan)["target"]["build"], "1.60.1.70374")  # no --target: kept
+        summary = rf.register(self.ws.facts, self.ws.registry, self.ws.plan, self.ws.objects, self.ws.updates,
+                              self.ws.notice, adr=self.ws.adr, attributes=self.ws.attributes, target=target)
+        plan = self.ws.load(self.ws.plan)
+        self.assertEqual(plan["target"], {"edition": "wow_forever", "build": "1.60.1.70450"})
+        self.assertEqual(summary["target"], plan["target"])
+        self.assertEqual(list(plan)[:2], ["schema_version", "target"])  # key order kept
+        target.write_text(json.dumps({"format": "other"}))
+        with self.assertRaises(rf.RegisterError):
+            rf.register(self.ws.facts, self.ws.registry, self.ws.plan, self.ws.objects, self.ws.updates,
+                        self.ws.notice, adr=self.ws.adr, attributes=self.ws.attributes, target=target)
+
+    def test_committed_plan_target_matches_the_world_data_target(self):
+        plan = json.loads((REPO / "content/source-build-v1.json").read_text(encoding="utf-8"))
+        target = json.loads((REPO / "release/v1/world-data-target.json").read_text(encoding="utf-8"))
+        self.assertEqual(plan["target"], {"edition": target["edition"], "build": target["build"]})
+
     def test_source_ids_are_sanitized(self):
         self.assertEqual(rf.source_id("gen_world_db2", "wow_classic_era", "unknown-build"),
                          "gen-world-db2-wow-classic-era-unknown-build")

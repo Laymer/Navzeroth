@@ -293,6 +293,7 @@ class Stages(unittest.TestCase):
             reg = runner.ran("--facts")[0]
             for flag in ("--registry", "--plan", "--objects", "--updates", "--notice"):
                 self.assertIn(flag, reg)
+            self.assertEqual(reg[reg.index("--target") + 1], "release/v1/world-data-target.json")
             self.assertTrue(runner.ran("cli", "source-sync"))
             self.assertTrue(runner.ran("cli", "source-build", "--output", "dist/source-knowledge-world"))
             content = runner.ran("--authored")[0]
