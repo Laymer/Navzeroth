@@ -132,10 +132,32 @@ def derive(root, enumeration, canonical_sha):
     if (conflicts['format']!='navzeroth-world-content-conflicts' or conflicts['schema_version']!=1
             or conflicts['revision'] not in {p['dataset_revision'] for p in enumeration['packs']}
             or conflicts['precedence']!=origins['precedence']
-            or any(r.get('kind') not in ('value_disagreement','missing_in_higher_precedence')
-                   or 'chosen' not in r or not r.get('rule') for r in conflicts['conflicts'])):
+):
         raise ValueError('normalization decisions are not exactly policy bound')
-    summary=dict(schema_version=1,validation='verified v2 pack tree, canonical content, target, provenance and accepted-origin/unknown classification; no environment or functional acceptance claim',target=enumeration['target'],canonical_enumeration_sha256=canonical_sha,record_counts={d:len(records.get(d,{})) for d in DOMAINS},absent_record_domains=enumeration['absent_record_domains'],accepted_unknown_fields=sum(p['accepted_unknown_fields'] for p in enumeration['packs']),remaining_gaps=0,missing_record_provenance=0,packs=[{k:v for k,v in p.items() if k!='sources'} for p in enumeration['packs']],normalization_conflict_records=len(conflicts['conflicts']),unknown_fields_are_not_absent_records=True,unresolved_normalization_decisions=0,normalization_semantics='Explicit chosen/rule decisions under exact applied precedence; raw normalization reports are separate from typed SourceConflict records')
+    bounded_associations=[]
+    seen=set()
+    dungeon_ids={tuple(json.loads(key)) for key in records.get('dungeons',{})}
+    for row in conflicts['conflicts']:
+        if row.get('kind') in ('value_disagreement','missing_in_higher_precedence'):
+            if 'chosen' not in row or not row.get('rule'):
+                raise ValueError('normalization decisions lack an explicit choice')
+            continue
+        fields={'fact','kind','dungeon','field','actual_count','contract_limit','exposed_count','unresolved_count','rule'}
+        key=(row.get('dungeon'),row.get('field'))
+        if (set(row)!=fields or row.get('kind')!='bounded_association_unsupported'
+                or row.get('field') not in ('rewards','preparation_quests')
+                or (conflicts['revision'],'dungeons',row.get('dungeon')) not in dungeon_ids
+                or row.get('fact')!=str(row.get('dungeon'))+':'+str(row.get('field'))
+                or key in seen or not row.get('rule')
+                or any(type(row.get(field)) is not int for field in ('actual_count','contract_limit','exposed_count','unresolved_count'))
+                or row['contract_limit']!=1024 or not 1024<row['actual_count']<=2_000_000
+                or row['exposed_count']!=0 or row['unresolved_count']!=row['actual_count']):
+            raise ValueError('unsupported bounded associations lack exact unresolved accounting')
+        seen.add(key)
+        bounded_associations.append({field:row[field] for field in ('dungeon','field','actual_count','contract_limit','exposed_count','unresolved_count')})
+    summary=dict(schema_version=1,validation='verified v2 pack tree, canonical content, target, provenance and accepted-origin/unknown classification; no environment or functional acceptance claim',target=enumeration['target'],canonical_enumeration_sha256=canonical_sha,record_counts={d:len(records.get(d,{})) for d in DOMAINS},absent_record_domains=enumeration['absent_record_domains'],accepted_unknown_fields=sum(p['accepted_unknown_fields'] for p in enumeration['packs']),remaining_gaps=0,missing_record_provenance=0,packs=[{k:v for k,v in p.items() if k!='sources'} for p in enumeration['packs']],normalization_conflict_records=len(conflicts['conflicts']),unknown_fields_are_not_absent_records=True,unresolved_normalization_decisions=0,normalization_semantics='Precedence decisions have explicit chosen/rule under exact applied precedence; bounded associations remain separately Unsupported with full unresolved counts. Raw reports are separate from typed SourceConflict records')
+    summary['bounded_associations']=bounded_associations
+    summary['unresolved_association_references']=sum(row['unresolved_count'] for row in bounded_associations)
     summary['declared_exclusions']=read(root/'release/v1/deferred-features.json')
     artifact_path='release/v1/shipped-content-validation.json'
     artifact=encoded(summary)

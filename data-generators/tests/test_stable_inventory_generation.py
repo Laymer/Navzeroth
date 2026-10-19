@@ -105,3 +105,26 @@ class StableInventoryGeneration(unittest.TestCase):
                 else:changed['game_observation']=True
                 (root/generator.FUNCTIONAL_PROOF).write_bytes(generator.encoded(changed))
                 with self.subTest(kind=kind),self.assertRaises(ValueError):generator.functional_proof(root,e,records)
+    def test_bounded_associations_remain_explicitly_unresolved_without_losing_records(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root,e=self.fixture(directory)
+            source=next(iter(e['records']['reminders'].values()))
+            e['records']['dungeons']={'["synthetic-r1","dungeons","dungeon:synthetic"]':source}
+            path=root/'content/world/1.60.1.70450/conflicts.json'
+            report=json.loads(path.read_bytes())
+            row=dict(kind='bounded_association_unsupported',fact='dungeon:synthetic:rewards',
+                     dungeon='dungeon:synthetic',field='rewards',actual_count=1025,
+                     contract_limit=1024,exposed_count=0,unresolved_count=1025,rule='Synthetic v2 bound, not game evidence')
+            report['conflicts']=[row];path.write_text(json.dumps(report))
+            outputs,summary=generator.derive(root,e,'a'*64)
+            self.assertEqual(summary['unresolved_association_references'],1025)
+            self.assertEqual(summary['bounded_associations'][0]['exposed_count'],0)
+            evidence=json.loads(outputs['release/v1/acceptance-evidence.json'])
+            self.assertTrue(all(r['status']=='unverified' for r in evidence['coverage'] if 'functional' in r['unit_id']))
+            for field,value in [('actual_count',1024),('actual_count',True),('exposed_count',1),
+                                ('unresolved_count',1),('contract_limit',4096),('field','title'),('dungeon','absent')]:
+                with self.subTest(field=field,value=value):
+                    bad=copy.deepcopy(row);bad[field]=value;report['conflicts']=[bad];path.write_text(json.dumps(report))
+                    with self.assertRaises(ValueError):generator.derive(root,e,'a'*64)
+            report['conflicts']=[row,row];path.write_text(json.dumps(report))
+            with self.assertRaises(ValueError):generator.derive(root,e,'a'*64)
