@@ -239,3 +239,44 @@ desktop) pay the same.
 
 `release::MAX_RECORDS` (250,000) is the release gate's and unchanged; the world
 pack's 186,665 records fit under it.
+
+## Application use (V2.8g)
+
+**Activation.** The Content screen keeps the packs staged in the session. Two or more
+staged packs of the selected context activate together (`activate_content_set`,
+for example the authored slice pack and the world pack) as one composed revision
+`set-<sha>`. A checkbox accepts inferred travel (ADR 0007 §5, §8): `activate_content_set`
+with `accept_inferred_travel`. The choice is held in memory for exactly the active
+revision (not persisted: the settings document is a versioned, validated schema that
+recovery also reads, so a field there needs its own migration task); a restart, a plain
+activation or a rollback returns to the strict default, and the user activates again.
+
+**Travel on the world pack.** `travel::MAX_TRAVEL_NODES` (32,768) and
+`MAX_TRAVEL_EDGES` (131,072) replace the old 1,024 bound (measured: 8,800 nodes and
+32,265 edges; no uiMap holds more than 395 nodes or 1,638 edges, and walking edges
+never leave their uiMap; 288 flight edges join them, so whole-graph search is cheap). `TravelGraph::prepare` validates
+and assesses the graph once; `route` runs Dijkstra and stops when the target settles.
+Measured on the real pack (release build, WSL2): load 1.4 s (JSON), prepare 52 ms,
+each query 0.5 to 30 ms (12 hops, 1.08 Ms: 13 ms; 27 hops: 30 ms) against 52 to
+106 ms for the one-shot `shortest_route`; peak RSS 2.1 GiB with the parsed catalog
+(`cargo test --release -p azeroth-core --test travel_world -- --ignored --nocapture`
+with `NAVZEROTH_WORLD_CATALOG`).
+
+**Unknown requirements.** Under the accepting activation an inferred edge whose
+requirement is unknown, unsupported or restricted (all 315 flight edges) is usable;
+its hop carries `requirement_assumed: true` and the route is an estimate. Authored,
+verified and estimated edges keep the strict rule. The planning report states the
+assumption. Joint planning, route acquisition and dungeon preparation use the same
+options as solo planning. Without the activation, generated inferred edges are left out
+of the search and the report says so.
+
+**Evidence.** A generated flight edge cites the documented taxi path and the inferred
+duration; `inferred_edges` accepts evidence of `inferred` plus `publisher_documented` or
+`verified_on_build`, never `cross_edition_unverified` or `limited_sample`.
+
+**World browser.** Quest titles, givers and enders (resolved to entity or item
+names), stages from the quest records, item names (`EquipmentFacts.name`), dungeon
+bosses on entities and loot templates per source (rows: item or reference table,
+chance (absent is unknown), counts, group, quest-only, conditional; at most 6 tables
+per source and 40 rows per table are listed, with totals). Real pack: first loot page
+109 ms (index build), later pages under 2 ms.
