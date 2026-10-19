@@ -1,5 +1,8 @@
 import "./play.css";
-import { Button, Field } from "../ui";
+import { Button, Field, OriginMarker } from "../ui";
+import { useRecordOrigins, type Origins } from "./useRecordOrigins";
+import { originKey, type OriginClient, type OriginRef } from "../commands/world";
+import type { CatalogSubject } from "../commands/catalogPages";
 import {AuthoredContentPicker} from "./AuthoredContentPicker";
 import type {AuthoredSelection} from "../commands/authoredContent";
 import { useEffect, useRef, useState } from "react";
@@ -64,7 +67,7 @@ setSelected(old=>options.includes(old)?old:options[0]??"");
     <Button variant="primary" disabled={!stored||pending} onClick={()=>void inspect()}>Inspect preparation gaps</Button>
     {pending&&<p role="status">Inspecting imported preparation inputs…</p>}
     {error&&<p role="alert">{error}</p>}
-    {visible&&<Preparation value={visible} key={report?.ticket}/>}
+    {visible&&<Preparation value={visible} key={report?.ticket} client={client} subject={kind==="party"?{kind,party_id:selected}:{kind,profile_id:selected}}/>}
   </section>;
 }
 function Condition({value}:{value:ConditionAssessment|null}) {
@@ -78,12 +81,20 @@ function List({title,section,checklist=false}:{title:string;section:Declared<str
   return <section><h4>{title}</h4>{section.observation.status==="known"?<ul>{section.observation.value.map((text,index)=><li key={index}>{checklist?<label><input type="checkbox"/>{text}</label>:text}</li>)}</ul>:<p>{describeObservation(section.observation)}</p>}
     {checklist&&<p>Manual local checklist; checking a box does not verify imported state.</p>}</section>;
 }
-function Preparation({value}:{value:PreparationReport}) {
+/** Records this report shows whose origin can be marked: the authored dungeon, quests, reward sources and travel edges. */
+function preparationRefs(value:PreparationReport):OriginRef[] {
+  return [...(value.authored?[{collection:"dungeons" as const,id:value.authored.id}]:[]),
+    ...value.members.flatMap(m=>[...m.quests.map(q=>({collection:"quests" as const,id:q.quest})),...m.rewards.map(r=>({collection:"acquisitions" as const,id:r.source}))]),
+    ...(value.authored_travel?.edges.map(e=>({collection:"edges" as const,id:e.id}))??[])];
+}
+const mark=(origins:Origins,ref:OriginRef)=><OriginMarker marks={origins.get(originKey(ref))}/>;
+function Preparation({value,client,subject}:{value:PreparationReport;client?:Partial<OriginClient>;subject?:CatalogSubject}) {
   const packageValue=value.package;
+  const origins=useRecordOrigins(client,subject??null,value.revision,preparationRefs(value));
   return <div>
     {value.fixture&&<p className="demo-label play-note">SYNTHETIC — engineering reference, not verified gameplay coverage</p>}
     <p>Context: {value.context.build.edition}/{value.context.build.build}/{value.context.build.interface}; {value.context.namespace}. Content: {value.revision??"unavailable"}.</p>
-    {packageValue&&<><h3>{packageValue.title}</h3><p>{value.authored?"Authored record resolved from the exact active revision; review cited evidence and missing sections.":"Explicit local declaration; cited evidence categories do not independently verify this package."}</p>
+    {packageValue&&<><h3>{packageValue.title}{value.authored&&mark(origins,{collection:"dungeons",id:value.authored.id})}</h3><p>{value.authored?"Authored record resolved from the exact active revision; review cited evidence and missing sections.":"Explicit local declaration; cited evidence categories do not independently verify this package."}</p>
       <p>Declared entrance: {packageValue.entrance.observation.status==="known"?packageValue.entrance.observation.value.id:packageValue.entrance.observation.status}.</p>
       <p>Declared group formation: {describeObservation(packageValue.formation_ms.observation,v=>`${v.min_ms} to ${v.max_ms} ms`)}. Declared run estimate: {describeObservation(packageValue.run_ms.observation,v=>`${v.min_ms} to ${v.max_ms} ms`)}. These are separate from measured personal history.</p>
       <List title="Before departure" section={packageValue.before_departure} checklist/><List title="Before entry" section={packageValue.before_entry} checklist/><List title="Reference encounter notes" section={packageValue.encounter_notes}/>
@@ -91,12 +102,12 @@ function Preparation({value}:{value:PreparationReport}) {
     <h3>Coverage and evidence gaps</h3><ul>{value.gaps.map((gap,index)=><li key={index}>{gap.section}: {gap.code.replaceAll("_"," ")}{gap.availability?` (${gap.availability})`:""}</li>)}</ul>
     <h3>Imported member assessments</h3>{value.members.map(member=><details key={member.profile_id}><summary>{member.character} — capture {member.freshness?.status??"missing"}</summary>
       <p>Snapshot: {member.snapshot_id??"missing"}. This is imported state.</p><p>Declared access: <Condition value={member.access}/></p>
-      <h4>Quest eligibility and prerequisites</h4><ul>{member.quests.map(q=><li key={q.quest}>{q.quest}: {q.assessment?<>acceptance {q.assessment.acceptance}; progress {q.assessment.progress}; turn-in {q.assessment.turn_in}<ul>{q.assessment.reasons.slice(0,8).map((r,i)=><li key={i}>{r.phase}: {r.message}</li>)}</ul>{q.assessment.catch_up&&<details><summary>Catch-up prerequisites</summary><pre>{JSON.stringify(q.assessment.catch_up,null,2)}</pre></details>}</>:"Unavailable: missing or nonfresh imported capture"}</li>)}</ul>
+      <h4>Quest eligibility and prerequisites</h4><ul>{member.quests.map(q=><li key={q.quest}>{q.quest}{mark(origins,{collection:"quests",id:q.quest})}: {q.assessment?<>acceptance {q.assessment.acceptance}; progress {q.assessment.progress}; turn-in {q.assessment.turn_in}<ul>{q.assessment.reasons.slice(0,8).map((r,i)=><li key={i}>{r.phase}: {r.message}</li>)}</ul>{q.assessment.catch_up&&<details><summary>Catch-up prerequisites</summary><pre>{JSON.stringify(q.assessment.catch_up,null,2)}</pre></details>}</>:"Unavailable: missing or nonfresh imported capture"}</li>)}</ul>
       <h4>Declared role, consumable and equipment conditions</h4><ul>{member.checks.map(check=><li key={check.check}>{packageValue?.checks.observation.status==="known"?packageValue.checks.observation.value.find(c=>c.id===check.check)?.label??check.check:check.check}: <Condition value={check.condition}/></li>)}</ul>
       <p>Consumable inventory is unavailable in current snapshots; possession is not inferred.</p>
-      <h4>Declared reward references</h4><ul>{member.rewards.map(reward=><li key={`${reward.source}-${reward.item.item_id}`}>{reward.item.item_id} via {reward.source}; declared role label <RewardRole packageValue={packageValue} reward={reward}/>; item requirements <Condition value={reward.item_requirement}/>; source requirements <Condition value={reward.acquisition_requirement}/>; source probability {describeObservation(reward.probability)}; cost {describeObservation(reward.cost)}. No drop guarantee or role benefit is inferred.</li>)}</ul>
+      <h4>Declared reward references</h4><ul>{member.rewards.map(reward=><li key={`${reward.source}-${reward.item.item_id}`}>{reward.item.item_id} via {reward.source}{mark(origins,{collection:"acquisitions",id:reward.source})}; declared role label <RewardRole packageValue={packageValue} reward={reward}/>; item requirements <Condition value={reward.item_requirement}/>; source requirements <Condition value={reward.acquisition_requirement}/>; source probability {describeObservation(reward.probability)}; cost {describeObservation(reward.cost)}. No drop guarantee or role benefit is inferred.</li>)}</ul>
     </details>)}
-    {value.authored_travel&&<section aria-label="Authored travel dependencies"><h3>Authored travel dependencies</h3><p>Availability: {value.authored_travel.declaration.observation.status}. These directed connections are reference facts, not an ordered route or proof of current member access.</p>{value.authored_travel.declaration.observation.status==="known"&&value.authored_travel.edges.length===0&&<p>The authored list is explicitly empty.</p>}<ul>{value.authored_travel.edges.map(edge=><li key={edge.id}>{edge.id}: {edge.from.id} → {edge.to.id} ({edge.mode})</li>)}</ul><details><summary>Travel facts and provenance</summary><pre>{JSON.stringify(value.authored_travel,null,2)}</pre></details></section>}
+    {value.authored_travel&&<section aria-label="Authored travel dependencies"><h3>Authored travel dependencies</h3><p>Availability: {value.authored_travel.declaration.observation.status}. These directed connections are reference facts, not an ordered route or proof of current member access.</p>{value.authored_travel.declaration.observation.status==="known"&&value.authored_travel.edges.length===0&&<p>The authored list is explicitly empty.</p>}<ul>{value.authored_travel.edges.map(edge=><li key={edge.id}>{edge.id}: {edge.from.id} → {edge.to.id} ({edge.mode}){mark(origins,{collection:"edges",id:edge.id})}</li>)}</ul><details><summary>Travel facts and provenance</summary><pre>{JSON.stringify(value.authored_travel,null,2)}</pre></details></section>}
     <h3>Declared entrance travel</h3>{value.route?.outcome.status==="complete"?<p>Estimated shared stateless route: {value.route.outcome.route?.total_ms} ms. Entrance association remains a local declaration.</p>:<p>No actionable supported route is available.</p>}
     <ul>{value.route_exclusions.map((e,index)=><li key={index}>{e.edge}: {e.character??"shared route"}; {e.reason.replaceAll("_"," ")} {e.condition&&<Condition value={e.condition}/>}</li>)}</ul>
     <h3>Referenced evidence and source policy</h3><ul>{value.evidence.map(e=><li key={e.id}>{e.id}: {e.confidence}; source {e.source}; license {describeObservation(e.license)}; redistribution {describeObservation(e.redistribution)}; offline use {describeObservation(e.offline_usable)}.</li>)}</ul>

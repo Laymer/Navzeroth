@@ -96,6 +96,8 @@ fn command_handler() -> fn(tauri::ipc::Invoke<tauri::test::MockRuntime>) -> bool
         get_content_inspection_page,
         stage_content,
         get_catalog_page,
+        get_world_page,
+        get_record_origins,
         get_authored_catalog,
         get_dungeon_preparation,
         compare_gear,

@@ -19,6 +19,7 @@ pub mod planning;
 pub mod routes;
 pub mod snapshots;
 pub mod stored_atlas;
+pub mod world;
 
 use azeroth_core::contract::decode_envelope;
 use azeroth_core::entities::CharacterSnapshot;

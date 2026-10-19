@@ -1,4 +1,4 @@
-/** The 14 primary screens, by their exact navigation label, in navigation order (plan 12.1). */
+/** The 15 primary screens, by their exact navigation label, in navigation order (plan 12.1). */
 export const SCREENS = [
   "Today",
   "Atlas",
@@ -6,6 +6,7 @@ export const SCREENS = [
   "Gear",
   "Party",
   "Dungeons",
+  "World",
   "Sessions",
   "Reminders",
   "Imports",

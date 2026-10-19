@@ -1,0 +1,600 @@
+{
+  "entities": {
+    "counts": {
+      "entities": 4,
+      "loot": 1,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "id": "npc:448",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": [
+            11,
+            11
+          ]
+        },
+        "name": "Hogger",
+        "origin": [
+          "vanilla_1_12"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "world-node-hogger",
+            "x": 0.27,
+            "y": 0.87
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "hostile"
+        },
+        "row": "entity",
+        "services": [],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      },
+      {
+        "id": "object:1",
+        "kind": "game_object",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Chest",
+        "origin": [
+          "inferred"
+        ],
+        "places": [],
+        "places_total": 0,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "row": "entity",
+        "services": [],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      },
+      {
+        "id": "npc:1198",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Quartermaster",
+        "origin": [],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "world-node-vendor",
+            "x": 0.42,
+            "y": 0.66
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "alliance"
+        },
+        "row": "entity",
+        "services": [
+          "vendor",
+          "repair"
+        ],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "Synthetic Goods"
+        }
+      },
+      {
+        "id": "npc:5000",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Trainer",
+        "origin": [
+          "wow_classic_era"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "demo-node-1",
+            "x": 0.1,
+            "y": 0.1
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "row": "entity",
+        "services": [
+          "trainer"
+        ],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ],
+    "schema_version": 1,
+    "total": 4,
+    "view": "entities"
+  },
+  "entities_hog": {
+    "counts": {
+      "entities": 4,
+      "loot": 1,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "  HOG ",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "id": "npc:448",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": [
+            11,
+            11
+          ]
+        },
+        "name": "Hogger",
+        "origin": [
+          "vanilla_1_12"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "world-node-hogger",
+            "x": 0.27,
+            "y": 0.87
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "hostile"
+        },
+        "row": "entity",
+        "services": [],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "entities"
+  },
+  "loot": {
+    "counts": {
+      "entities": 4,
+      "loot": 1,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "entity": {
+          "id": "npc:448",
+          "kind": "npc",
+          "levels": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": [
+              11,
+              11
+            ]
+          },
+          "name": "Hogger",
+          "origin": [
+            "vanilla_1_12"
+          ],
+          "places": [
+            {
+              "floor": "0",
+              "map_id": "demo-map-1",
+              "node": "world-node-hogger",
+              "x": 0.27,
+              "y": 0.87
+            }
+          ],
+          "places_total": 1,
+          "reaction": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "hostile"
+          },
+          "services": [],
+          "subname": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "unknown"
+          }
+        },
+        "id": "npc:448",
+        "offers": [
+          {
+            "acquisition": "world-acq-drop",
+            "cost": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "costs": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "dungeon": null,
+            "items": [
+              {
+                "item_id": "demo-item-1",
+                "variant": "base"
+              }
+            ],
+            "location": null,
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "probability": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": 0.25
+            },
+            "rewards": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            }
+          }
+        ],
+        "offers_total": 1,
+        "row": "source"
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "loot"
+  },
+  "origins": {
+    "origins": [
+      [],
+      [
+        "inferred"
+      ],
+      [
+        "vanilla_1_12"
+      ]
+    ],
+    "revision": "demo-r1"
+  },
+  "quests": {
+    "counts": {
+      "entities": 4,
+      "loot": 1,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "QUEST-1",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "completion": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "unrepeatable"
+        },
+        "id": "demo-quest-1",
+        "objectives": [
+          {
+            "id": "demo-objective-1",
+            "origin": [],
+            "targets": [
+              {
+                "kind": "quest_stage",
+                "stage": "demo-objective-1"
+              },
+              {
+                "kind": "acquisition",
+                "source": "demo-acq-1"
+              },
+              {
+                "kind": "service",
+                "node": "demo-node-1"
+              }
+            ]
+          }
+        ],
+        "objectives_total": 1,
+        "offers": [
+          {
+            "acquisition": "world-acq-quest",
+            "cost": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "not_applicable"
+            },
+            "costs": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "dungeon": null,
+            "items": [
+              {
+                "item_id": "demo-item-1",
+                "variant": "base"
+              }
+            ],
+            "location": null,
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "probability": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": 1.0
+            },
+            "rewards": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            }
+          }
+        ],
+        "offers_total": 1,
+        "origin": [
+          "vanilla_1_12"
+        ],
+        "rewards": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": [
+            {
+              "item_id": "demo-item-1",
+              "variant": "base"
+            }
+          ]
+        },
+        "row": "quest",
+        "stages": [
+          "demo-objective-1"
+        ]
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "quests"
+  },
+  "trainers": {
+    "counts": {
+      "entities": 4,
+      "loot": 1,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "id": "npc:5000",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Trainer",
+        "origin": [
+          "wow_classic_era"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "demo-node-1",
+            "x": 0.1,
+            "y": 0.1
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "row": "entity",
+        "services": [
+          "trainer"
+        ],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "trainers"
+  },
+  "vendors": {
+    "counts": {
+      "entities": 4,
+      "loot": 1,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "entity": {
+          "id": "npc:1198",
+          "kind": "npc",
+          "levels": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "unknown"
+          },
+          "name": "Synthetic Quartermaster",
+          "origin": [],
+          "places": [
+            {
+              "floor": "0",
+              "map_id": "demo-map-1",
+              "node": "world-node-vendor",
+              "x": 0.42,
+              "y": 0.66
+            }
+          ],
+          "places_total": 1,
+          "reaction": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "alliance"
+          },
+          "services": [
+            "vendor",
+            "repair"
+          ],
+          "subname": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "Synthetic Goods"
+          }
+        },
+        "id": "npc:1198",
+        "offers": [
+          {
+            "acquisition": "world-acq-vendor",
+            "cost": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": "250"
+            },
+            "costs": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "dungeon": null,
+            "items": [
+              {
+                "item_id": "demo-item-1",
+                "variant": "base"
+              }
+            ],
+            "location": "world-node-vendor",
+            "origin": [
+              "wow_classic_era"
+            ],
+            "probability": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": 1.0
+            },
+            "rewards": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            }
+          }
+        ],
+        "offers_total": 1,
+        "row": "source"
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "vendors"
+  }
+}

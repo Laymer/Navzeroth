@@ -7,7 +7,7 @@ for (const width of [320, 640]) {
       await page.addStyleTag({content:`:root { font-size: ${fontSize}px; }`});
       const nav=page.getByRole("navigation",{name:"Primary"});
       const buttons=nav.getByRole("button");
-      await expect(buttons).toHaveCount(14);
+      await expect(buttons).toHaveCount(15);
       const geometry=await nav.evaluate(el=>({width:el.clientWidth,scrollWidth:el.scrollWidth,overflow:getComputedStyle(el).overflowX,buttons:Array.from(el.querySelectorAll("button")).map(button=>{const r=button.getBoundingClientRect();return {text:button.textContent,left:r.left,right:r.right,width:r.width};})}));
       expect(geometry.overflow).toBe("visible");
       expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width);
@@ -30,7 +30,7 @@ for (const [fontSize, layout] of [[16, "rail"], [32, "bar"]] as const) {
     await page.goto("/");
     await page.evaluate((size) => { document.documentElement.style.fontSize = String(size) + "px"; }, fontSize);
     const nav = page.getByRole("navigation", { name: "Primary" });
-    await expect(nav.getByRole("button")).toHaveCount(14);
+    await expect(nav.getByRole("button")).toHaveCount(15);
     const boxes = await page.evaluate(() => {
       const n = document.querySelector(".app-nav")?.getBoundingClientRect();
       const c = document.querySelector(".app-content")?.getBoundingClientRect();
@@ -59,7 +59,7 @@ async function layoutAt(page: import("@playwright/test").Page, width: number): P
 
 test("the rail switches on at 58em of shell content width, not before", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("button")).toHaveCount(14);
+  await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("button")).toHaveCount(15);
   const probe = await layoutAt(page, 1100);
   const threshold = 58 * probe.em;
   // The viewport minus the shell's content width is fixed chrome (padding, scrollbar); aim either side of the threshold.
@@ -76,7 +76,7 @@ test("without container-query support the wrapping bar is used and stays usable"
   await page.setViewportSize({ width: 1100, height: 900 });
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  await expect(nav.getByRole("button")).toHaveCount(14);
+  await expect(nav.getByRole("button")).toHaveCount(15);
   expect((await layoutAt(page, 1100)).rail).toBe(true);
   // An engine without container queries drops the @container block; remove it the same way.
   const removed = await page.evaluate(() => {

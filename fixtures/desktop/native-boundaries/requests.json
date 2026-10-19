@@ -344,6 +344,24 @@
     ]
   },
   {
+    "command": "get_world_page",
+    "args": {
+      "text": "{\"truncated\":"
+    },
+    "codes": [
+      "INVALID_INPUT"
+    ]
+  },
+  {
+    "command": "get_record_origins",
+    "args": {
+      "text": "{\"truncated\":"
+    },
+    "codes": [
+      "INVALID_INPUT"
+    ]
+  },
+  {
     "command": "get_authored_catalog",
     "args": {
       "text": "{\"truncated\":"

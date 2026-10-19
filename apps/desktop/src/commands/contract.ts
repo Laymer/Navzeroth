@@ -326,6 +326,8 @@ export interface CommandMap {
   get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
   change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
   get_catalog_page: { input: { text: string }; output: import("./catalogPages").CatalogRecordPage };
+  get_world_page: { input: { text: string }; output: import("./world").WorldPage };
+  get_record_origins: { input: { text: string }; output: import("./world").RecordOrigins };
   get_authored_catalog: { input: { text: string }; output: import("./authoredContent").AuthoredCatalog };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
