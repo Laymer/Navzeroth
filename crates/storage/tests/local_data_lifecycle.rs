@@ -111,7 +111,7 @@ fn selections_and_checkpoints_survive_reopen_and_reject_changed_bindings() {
             2 => altered.binding.selection_sha256 = "f".repeat(64),
             3 => altered.binding.preset = PerformancePreset::Max,
             4 => altered.binding.total = 1,
-            _ => altered.format_version = 2,
+            _ => altered.format_version = 3,
         };
         assert!(db.begin("job-1", "other", &altered, true).is_err());
         assert_eq!(db.status("job-1").unwrap().completed, 1);
@@ -520,4 +520,29 @@ fn late_migration_failure_rolls_back_earlier_steps_and_preserves_data() {
             .unwrap(),
         "unchanged"
     );
+}
+
+#[test]
+fn v2_archive_failure_checkpoint_survives_reopen_without_reclassification() {
+    let dir = Temp::new();
+    let mut cp = checkpoint();
+    cp.format_version = 2;
+    let mut unknown = row("Map");
+    unknown.disposition = InventoryDisposition::UnavailableUnknown;
+    unknown.reason = "archive_short_read_unexplained".into();
+    cp.tables.push(unknown);
+    let mut db = dir.db();
+    db.begin("unknown-job", "request", &cp, false).unwrap();
+    drop(db);
+    let mut db = dir.db();
+    let restored = db.begin("unknown-job", "request", &cp, true).unwrap();
+    assert_eq!(restored.format_version, 2);
+    assert_eq!(
+        restored.tables[0].disposition,
+        InventoryDisposition::UnavailableUnknown
+    );
+    assert_eq!(restored.tables[0].reason, "archive_short_read_unexplained");
+    cp.format_version = 1;
+    assert!(db.checkpoint("unknown-job", &cp).is_err());
+    assert_eq!(db.status("unknown-job").unwrap().completed, 1);
 }

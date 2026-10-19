@@ -1823,3 +1823,34 @@ fn bound_guide_replay_cannot_upgrade_observed_turn_ins_or_verify_duo() {
     fs::remove_file(guide).unwrap();
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn unknown_and_unsupported_archives_stay_distinct_projected_gaps() {
+    for (disposition, reason, expected) in [
+        (
+            InventoryDisposition::UnavailableUnknown,
+            "archive_short_read_unexplained",
+            "equipment:Item:unavailable_unknown:archive_short_read_unexplained",
+        ),
+        (
+            InventoryDisposition::UnavailableUnsupported,
+            "unsupported_archive_encoding_not_retained",
+            "equipment:Item:unavailable_unsupported:unsupported_archive_encoding_not_retained",
+        ),
+    ] {
+        let (mut catalog, objects) = catalog(&tables());
+        catalog.format_version = 2;
+        let entry = catalog
+            .tables
+            .iter_mut()
+            .find(|entry| entry.table == "Item")
+            .unwrap();
+        entry.disposition = disposition;
+        entry.reason = reason.into();
+        entry.retained_sha256 = None;
+        entry.decoded_sha256 = None;
+        let p = run(&catalog, &objects);
+        assert!(p.gaps.iter().any(|gap| gap == expected));
+        assert!(!p.equipment.sources_complete);
+    }
+}
