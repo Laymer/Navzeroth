@@ -14,13 +14,14 @@ only and are UNVERIFIED**: the owner's installation metadata reports them (70450
 owner-reported; see
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md#client-160170425-development-admission)
 and [the 70450 section](BUILD_CAPABILITIES.md#client-160170450-development-admission)),
-and no addon run on either is recorded. The 1.0 release target and every LIVE acceptance
-row stay bound to 70374. Limited user-reported
+and no addon run on either is recorded. Under [ADR 0006](../decisions/0006-v1-program.md), the stable 1.0 target is the
+first verified stable live build after launch. Historical 70374 observations do
+not satisfy future candidate-bound LIVE acceptance. Limited user-reported
 diagnostic retrieval, level capture and clock-age results are recorded in
 [BUILD_CAPABILITIES.md](BUILD_CAPABILITIES.md). Full quest/equipment, restriction,
 HUD, plan, session and reload acceptance remains unverified.
 
-The frozen v1 target is **Forever 1.60.1.70374**. On 2026-10-14 the user reported
+The previous development target was **Forever 1.60.1.70374**. On 2026-10-14 the user reported
 `GetBuildInfo` version `1.60.1`, build `70374`, date `Oct 12 2026`, interface `16001`,
 on Windows 11 out of combat, with `/anavdiag` reporting addon `0.8.1` and probe/status
 showing no errors. The installed archive hash/source commit was not inspected;
