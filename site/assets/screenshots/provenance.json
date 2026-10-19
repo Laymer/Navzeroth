@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "release_tag": "v1.0.0-rc.1",
+  "source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
+  "installer_sha256": "0f87be628dbe7a979a4433cbc6c26faeb980b08e43307f2ef412141da0d7d3a0",
+  "application_sha256": "26012266d008136e2018b405388fd1ec3ae5edf1f0ae0bd2ac3c94182993e95c",
+  "workflow_run_id": "39249569950",
+  "workflow_run_attempt": "1",
+  "capture_driver_commit": "09be384d1bba2ebf950ffb7b0b304c69d0f0ef15",
+  "fixture_path": "fixtures/transport/anav1-character-snapshot.txt",
+  "fixture_sha256": "e5d7cdd70740a63892c6bb14e9a5c0cb5f3dd5b579008279356be333f732a55a",
+  "imported_snapshot_file": "imported-synthetic-snapshot.txt",
+  "retimed_at_utc_ms": 1792411744801,
+  "imported_snapshot_sha256": "006440072382293902576545ff57c59f8ff38e310347c5b6b3c4bf482bb5f31b",
+  "retiming": "Only observed_at_utc_ms, received_at_utc_ms and created_at_utc_ms re-timed to capture-run clock; fixture remains true",
+  "content": "Built-in Load synthetic planning example, validated and activated through real IPC",
+  "presentation": "Chose later in onboarding, collapsed optional reference controls and scrolled each view to the top through ordinary UI actions; no content or styles replaced",
+  "screenshots": [
+    {
+      "file": "capture-Today.png",
+      "sha256": "e76c915471cdf7f81c530bbaa5c033ece1691598d1dba64f8c9927a60d40c84f",
+      "width": 1280,
+      "height": 900,
+      "captured_at": "2026-10-19T12:09:34.867Z",
+      "screen": "Today"
+    },
+    {
+      "file": "capture-Atlas.png",
+      "sha256": "fb55d79e17eba444a5b6cacfe09c958a35a9e654a70184b36f53bd4b88429c72",
+      "width": 1280,
+      "height": 900,
+      "captured_at": "2026-10-19T12:09:35.695Z",
+      "screen": "Atlas"
+    },
+    {
+      "file": "capture-Content.png",
+      "sha256": "b6d4c1bce5bb2710fc1176ad46fa6fbe5bcb11fa9426ce4830f22359ca1c8fe3",
+      "width": 1280,
+      "height": 900,
+      "captured_at": "2026-10-19T12:09:36.586Z",
+      "screen": "Content"
+    }
+  ],
+  "cdp": {
+    "browser": "Edg/154.0.4258.62",
+    "protocol": "1.3",
+    "attach": "WebView2 AdditionalBrowserArguments machine policy (remote-debugging-port) + playwright connectOverCDP"
+  },
+  "evidence_scope": "Actual verified release app; synthetic fixtures; hosted regression, not live acceptance"
+}

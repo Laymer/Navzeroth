@@ -147,7 +147,8 @@ try {
       const reached = new Set();
       for (let index = 0; index < controls; index++) {
         await page.keyboard.press('Tab');
-        const focused = await page.locator(':focus').evaluate(n => ({ key:n.outerHTML, name:n.getAttribute('aria-label') || n.textContent.trim(), outline:getComputedStyle(n).outlineStyle }));
+        const focused = await page.locator(':focus').evaluate(n => ({ key:Array.from(document.querySelectorAll('a[href],button,summary,[tabindex="0"]')).indexOf(n), name:n.getAttribute('aria-label') || n.textContent.trim(), outline:getComputedStyle(n).outlineStyle }));
+        assert.ok(focused.key >= 0, 'Unexpected keyboard target');
         assert.ok(focused.name.length > 0, 'Unnamed keyboard control');
         assert.notEqual(focused.outline, 'none', 'Missing visible focus indication');
         reached.add(focused.key);

@@ -112,11 +112,11 @@ replacement preservation passed in Linux/WSL; private stores were removed.
 receipt. Research activation never grants playable availability. Ordinary Windows,
 interactive desktop and live acceptance remain separate and unverified.
 
-Original checkout and `.claude/` are preserved. Last measured readiness (PR #191)
-reports 69 blockers, candidate/stable false, zero verified packs/evidence.
+Original checkout and `.claude/` are preserved. Historical readiness (PR #191)
+reported 69 blockers, candidate/stable false, zero verified packs/evidence.
 [Inventory](releases/2026-10-18-blocker-inventory.md). The pending post-launch target
-supersedes historical 70374 paragraphs below. No continuation release has been
-published; 0.9.2 remains latest.
+supersedes historical 70374 paragraphs below. The verified continuation release
+is now 1.0.0-rc.1; see the current publication receipt above.
 
 **1.0.0 program (ADR [0006](decisions/0006-v1-program.md), 2026-10-17).** The owner
 re-targeted 1.0.0 to the first stable live build after the 4 Nov 2026 launch and a
@@ -135,7 +135,7 @@ integrator Claude Code, Sonnet/Opus 5.5; baseline `38bbe4a`; claim
 External datasets are admitted by owner acceptance (ADR 0006 §14); generated data
 is edition-tagged and not Forever-verified. Release gate counts are unchanged by it.
 
-**Latest published version: 0.9.2**, a developer prerelease published
+**Historical publication: 0.9.2**, a developer prerelease published
 2026-10-17T11:34:32Z from tag `v0.9.2` (tag object `fe63072`, commit `3b19812`);
 receipt: [0.9.2 publication record](handoffs/2026-10-17-v0.9.2-publication.md). The
 previous prerelease, 0.9.1 (2026-10-16, commit `92f3f51`), has its own

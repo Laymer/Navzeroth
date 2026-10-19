@@ -89,8 +89,10 @@ that `AddOns\AzerothNavigator\AzerothNavigator.toc` exists, as described in
 [ADDON_INSTALL.md](ADDON_INSTALL.md).
 
 Then start the game and enable *Azeroth Navigator Diagnostics* in the AddOns list.
-Record the actual client build before capture. The 0.9.2 adapters experimentally admit
-70338 and 70374 (and 70425 for development capture only, UNVERIFIED), each with interface 16001; full acceptance for the frozen v1 target is not enabled by this installer.
+Record the actual client build before capture. The 1.0.0-rc.1 adapters experimentally admit
+1.60.1 builds 70338, 70374, 70425 and 70450, each with interface 16001.
+70425 and 70450 remain development-only and UNVERIFIED; full acceptance for the
+pending post-launch v1 target is not enabled by this installer.
 
 ### Update
 
@@ -212,7 +214,7 @@ user/addon data and uploads the release files as a workflow artifact (kept 14 da
 
 Tag runs also require version-specific release notes and draft a release containing
 the five normal files. Versions beginning `0.` or containing `-` are marked
-prerelease. The tag-only **Draft GitHub release** job does not replace the nine
+prerelease. The tag-only **Draft GitHub release** job does not replace the ten
 required PR/main checks.
 
 For the authorized v1.0.0 program, follow the

@@ -1,9 +1,14 @@
-# Development RC preparation
+# Development RC publication and verification
 
 Owner/sole writer: Codex `/root`. Initial artifact-tooling baseline `c8577da`;
 branch `release/1.0.0-rc.1`, isolated worktree `/tmp/navzeroth-rc-release`.
 [Claim](../claims/2026-10-19-rc-release.md). All repair PRs are merged; final repair baseline
-`cb5d68b579934b324ac0e999384c64524ccbc260` is integrated cleanly. Latest public release remains 0.9.2. No tag or publication yet.
+`cb5d68b579934b324ac0e999384c64524ccbc260` was integrated cleanly.
+Current outcome: **1.0.0-rc.1 is published and publicly verified**, unsigned,
+from `fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`.
+[Durable publication receipt](../releases/1.0.0-rc.1-publication.json).
+The preparation entries below are historical; final publication details appear
+under “Public development prerelease”. Candidate/stable readiness remain false.
 
 ## Repair receipts
 
