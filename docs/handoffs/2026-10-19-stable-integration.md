@@ -14,10 +14,14 @@ preserved. User supplied full release plan is the controlling intent.
   39307501965 passed both platform reproducibility jobs and parity.
 - #215 refreshed by normal merge to `d59fdd5bcbdf81e0f4b671c9980625c521d0b965`
   against `cc30905`. Independent refreshed patch-id review equals original reviewed
-  patch; no new defect. CI39307902588/Coverage39307902741/package39307902589 still
-  running at last observation; not passes. Explicit source39309363224 passed.
-- #216/#217 original final heads independently reviewed, no blocker; remain open.
-  Refreshed candidates must pass before sequential merge. #212 remains open.
+  patch; no new defect. All ten checks passed: CI39307902588,
+  Coverage39307902741, package39307902589; explicit source39309363224 passed.
+  Merged a79bb3433e03f18a10f72b0d4b45d19ff761f335 at2026-10-19T19:33:21Z.
+- #216 refreshed normally to0dd8fb50216d16b92c982608b0c3e9c1df80a68f against
+  a79bb34. Root checked unchanged delta/patch-id442d2d6f from reviewed original.
+  Source39311989060 passed; CI39311989082/Coverage39311989140/package39311989100
+  still running, not passes. #217 original head independently reviewed; refresh
+  after216. #212 remains open.
 - Policy documentation draft #218; unsigned verifier draft #219. Neither merged.
   #218 initial runs39307719660/39307719647/39307719711 were cancelled intentionally
   because the branch must refresh after the sequential batch; cancellations are
@@ -46,8 +50,11 @@ Prepared independently reviewed followups: schema4 acceptance349c797+b39635b
 publication), source-backed solo objectives13b5d88 (258app tests/1existing ignored,
 540desktop tests, changed-file90% coverage), exclusions7601b57 (536independent
 desktop tests;16 inventory boundaries/digest verified). These are local preparation
-branches, not merged product. Roles/reminders and durable default activation are
-in progress in separate single-writer worktrees. Full real-pack source/admission,
+branches, not merged product. Separate drafts220exclusions/221objectives/
+222acceptance/223defaults remain open. Durable defaults24ccc4c independently
+reviewed with7content-set tests passing; native resource loader still absent.
+Roles67c06c1+3e427b3 now cover54authored heuristicmodels with explicit declared-role
+score-only opt-in and preserve imported unknowns; root independent review pending. Full real-pack source/admission,
 material/inventory/receipt closure, installer bundling and native startup loading
 remain required.
 
@@ -69,11 +76,28 @@ or commit private files or personal exports.
 
 ## Next actions
 
-Finish #215 checks and merge only on success, then refresh/review/check/merge
-#216 and #217 sequentially. Complete and independently review #212 integrated
+Finish #216 checks and merge only on success, then refresh/review/check/merge
+#217 sequentially. Complete and independently review #212 integrated
 repairs, regenerate committed outputs, explicitly exercise material selection and
 record genuine remaining stable prerequisites before its refreshed checks/merge.
 Integrate separate reviewed content/default/acceptance/verifier/release PRs under
 the supplied plan. Stable1.0.0 is not published. Exact-installer owner manual smoke
 remains required after verified draft assets; no extra publication approval once
 that passes and every applicable revised gate passes.
+
+
+## Latest source closure review
+
+Root source-closure branch added schema2 exact retained-original bounds/URLs,
+proof8MiB preservation, retainer and source normalization. All153Python tests
+passed after a synthetic fixture metadata failure was corrected. Independent
+review found blockers: retention must be constrained by an explicitly reviewed
+field/origin/snapshot policy, consuming shards must bind the retained snapshots,
+and corresponding-code inventory must be complete. Writer transferred to
+/root/desktop_review at4a950ff for those repairs. No pack/material/source permission
+promotion is claimed before this repair and actual final generation.
+
+Historical build UI d2e4046 independently reviewed: backend historicaltest1 and
+OriginMarker5passed; root worldbrowser7pass/1ignore, typecheck/lint/fmt passed.
+Real combined dungeon composition initially passed but measured roughly7.5GiB
+WSL debug RSS; optimization and hosted Windows performance remain required.
