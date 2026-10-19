@@ -4,7 +4,7 @@
 //! source → editions and evidence confidence. Pure reads; no imported code runs.
 use crate::{dungeon_preparation::PreparationSubject, snapshots::SnapshotApplication};
 use azeroth_core::{
-    content_v2::{AcquisitionFacts, AcquisitionOrigin, Cost, EntityKind, Reward},
+    content_v2::{AcquisitionFacts, AcquisitionOrigin, Cost, EntityKind, LootKind, Reward},
     entities::{CompletionSemantics, Confidence, ObjectiveTarget, ServiceKind},
     error::{AppError, ErrorCode, Result},
     observation::Observation,
@@ -22,6 +22,10 @@ use std::{
 pub const WORLD_PAGE_ROWS: usize = 50;
 /// Places, offers and objectives shown inside one row.
 pub const MAX_ROW_LINKS: usize = 50;
+/// Loot tables shown for one loot source (a creature has a few: loot,
+/// pickpocketing, skinning) and rows shown for one table.
+pub const MAX_SOURCE_TABLES: usize = 6;
+pub const MAX_TABLE_ROWS: usize = 40;
 pub const MAX_QUERY_CHARS: usize = 64;
 pub const MAX_ORIGIN_RECORDS: usize = 200;
 const MAX_REQUEST_BYTES: usize = 4096;
@@ -97,6 +101,8 @@ struct SourceGroup {
     id: SourceId,
     entity: Option<usize>,
     facts: Vec<usize>,
+    /// Indices into `loot_tables` (loot sources only).
+    tables: Vec<usize>,
     key: String,
 }
 /// Derived lookups for one immutable content revision.
@@ -112,6 +118,13 @@ struct WorldIndex {
     quests: Vec<usize>,
     quest_offers: HashMap<String, Vec<usize>>,
     quest_objectives: HashMap<String, Vec<usize>>,
+    /// Display names by item ID, from `EquipmentFacts.name`.
+    item_names: HashMap<String, Text>,
+    /// `QuestFacts` index and search key by quest ID.
+    quest_fact_by_id: HashMap<String, usize>,
+    quest_keys: HashMap<String, String>,
+    /// Dungeons (indices into `dungeons`) whose bosses include the entity.
+    boss_of: HashMap<String, Vec<usize>>,
     acquisition_by_id: HashMap<String, usize>,
     node_by_id: HashMap<String, usize>,
 }
@@ -154,6 +167,10 @@ impl WorldIndex {
             quests: vec![],
             quest_offers: HashMap::new(),
             quest_objectives: HashMap::new(),
+            item_names: HashMap::new(),
+            quest_fact_by_id: HashMap::new(),
+            quest_keys: HashMap::new(),
+            boss_of: HashMap::new(),
             acquisition_by_id: HashMap::new(),
             node_by_id: HashMap::new(),
         };
@@ -219,8 +236,15 @@ impl WorldIndex {
             for r in &v2.equipment {
                 let id = item_identity(r.item.item_id.as_str(), r.item.variant.as_str());
                 add(&index, OriginCollection::Items, id, &r.evidence);
+                if let Some(name) = &r.name {
+                    index
+                        .item_names
+                        .entry(r.item.item_id.as_str().into())
+                        .or_insert_with(|| name.clone());
+                }
             }
-            for r in &v2.quest_facts {
+            for (i, r) in v2.quest_facts.iter().enumerate() {
+                index.quest_fact_by_id.insert(r.quest.as_str().into(), i);
                 add(
                     &index,
                     OriginCollection::Quests,
@@ -244,14 +268,37 @@ impl WorldIndex {
                     &r.evidence,
                 );
             }
-            for r in &v2.dungeons {
+            for (i, r) in v2.dungeons.iter().enumerate() {
                 add(
                     &index,
                     OriginCollection::Dungeons,
                     r.id.as_str().into(),
                     &r.evidence,
                 );
+                for boss in &r.bosses {
+                    index
+                        .boss_of
+                        .entry(boss.as_str().into())
+                        .or_default()
+                        .push(i);
+                }
             }
+            let quest_keys: HashMap<String, String> = data
+                .quests
+                .iter()
+                .map(|q| {
+                    let title = index
+                        .quest_fact_by_id
+                        .get(q.id.as_str())
+                        .and_then(|i| v2.quest_facts[*i].title.as_ref())
+                        .map_or("", Text::as_str);
+                    (
+                        q.id.as_str().into(),
+                        format!("{} {}", title, q.id.as_str()).to_lowercase(),
+                    )
+                })
+                .collect();
+            index.quest_keys = quest_keys;
             for (i, r) in v2.entities.iter().enumerate() {
                 add(
                     &index,
@@ -278,14 +325,14 @@ impl WorldIndex {
                 .filter(|i| v2.entities[*i].services.contains(&ServiceKind::Trainer))
                 .collect();
             let mut vendors: BTreeMap<SourceId, Vec<usize>> = BTreeMap::new();
-            let mut loot: BTreeMap<SourceId, Vec<usize>> = BTreeMap::new();
+            let mut loot: BTreeMap<SourceId, (Vec<usize>, Vec<usize>)> = BTreeMap::new();
             for (i, f) in v2.acquisition_facts.iter().enumerate() {
                 match f.origin.value() {
                     Some(AcquisitionOrigin::Vendor { entity, .. }) => {
                         vendors.entry(entity.clone()).or_default().push(i)
                     }
                     Some(AcquisitionOrigin::Drop { entity, .. }) => {
-                        loot.entry(entity.clone()).or_default().push(i)
+                        loot.entry(entity.clone()).or_default().0.push(i)
                     }
                     Some(AcquisitionOrigin::Quest { quest }) => index
                         .quest_offers
@@ -301,7 +348,13 @@ impl WorldIndex {
                     vendors.entry(e.id.clone()).or_default();
                 }
             }
-            let group = |(id, facts): (SourceId, Vec<usize>)| {
+            // Loot templates group under the entity they belong to; a template
+            // whose source is not stated is its own source.
+            for (i, table) in v2.loot_tables.iter().enumerate() {
+                let owner = table.source.value().unwrap_or(&table.id);
+                loot.entry(owner.clone()).or_default().1.push(i);
+            }
+            let group = |(id, facts, tables): (SourceId, Vec<usize>, Vec<usize>)| {
                 let entity = index.entity_by_id.get(id.as_str()).copied();
                 let name = entity.map_or("", |i| v2.entities[i].name.as_str());
                 let key = entity.map_or_else(
@@ -312,14 +365,22 @@ impl WorldIndex {
                     id,
                     entity,
                     facts,
+                    tables,
                     key: format!("{}\u{0}{key}", name.to_lowercase()),
                 }
             };
-            let sorted = |groups: BTreeMap<SourceId, Vec<usize>>| {
-                let mut out: Vec<SourceGroup> = groups.into_iter().map(group).collect();
+            let sorted = |groups: BTreeMap<SourceId, (Vec<usize>, Vec<usize>)>| {
+                let mut out: Vec<SourceGroup> = groups
+                    .into_iter()
+                    .map(|(id, (facts, tables))| group((id, facts, tables)))
+                    .collect();
                 out.sort_by(|a, b| (&a.key, &a.id).cmp(&(&b.key, &b.id)));
                 out
             };
+            let vendors = vendors
+                .into_iter()
+                .map(|(id, facts)| (id, (facts, vec![])))
+                .collect();
             let (vendors, loot) = (sorted(vendors), sorted(loot));
             index.vendors = vendors;
             index.loot = loot;
@@ -369,6 +430,52 @@ fn index(content: &ActiveContentRevision) -> Arc<WorldIndex> {
 pub struct ItemRef {
     pub item_id: ItemId,
     pub variant: VariantId,
+    /// Display name from the item table, when the pack records one.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<Text>,
+}
+/// A quest giver or ender: the entity (or item) a pack names, with its name
+/// when the pack describes it.
+#[derive(Clone, Debug, Serialize)]
+pub struct EntityLink {
+    pub id: SourceId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<Text>,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct DungeonRef {
+    pub id: SourceId,
+    pub title: Text,
+}
+/// An item named by a loot row. The raw item ID may be absent from the item
+/// table, so the name is optional.
+#[derive(Clone, Debug, Serialize)]
+pub struct LootItem {
+    pub item_id: ItemId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<Text>,
+}
+/// One row of a loot template, as the source states it. An absent
+/// `probability` is unknown, never zero.
+#[derive(Clone, Debug, Serialize)]
+pub struct LootRowView {
+    pub item: Option<LootItem>,
+    /// A reference table of the catalog that is rolled `max_count` times.
+    pub table: Option<SourceId>,
+    pub probability: Option<Normalized>,
+    pub min_count: u32,
+    pub max_count: u32,
+    pub group: Option<u32>,
+    pub quest_only: bool,
+    pub conditional: bool,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct LootTableView {
+    pub id: SourceId,
+    pub kind: LootKind,
+    pub rows: Vec<LootRowView>,
+    pub rows_total: usize,
+    pub origin: Vec<OriginMark>,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct Place {
@@ -389,6 +496,8 @@ pub struct EntityRow {
     pub reaction: Observation<SourceId>,
     pub places: Vec<Place>,
     pub places_total: usize,
+    /// Dungeons this entity is a boss of.
+    pub boss_of: Vec<DungeonRef>,
     pub origin: Vec<OriginMark>,
 }
 /// One acquisition: a vendor offer, a drop or a quest reward.
@@ -398,6 +507,8 @@ pub struct Offer {
     pub items: Vec<ItemRef>,
     pub cost: Observation<Copper>,
     pub costs: Observation<Vec<Cost>>,
+    /// Names of the items a cost asks for, by item ID.
+    pub cost_item_names: BTreeMap<ItemId, Text>,
     pub probability: Observation<Normalized>,
     pub rewards: Observation<Vec<Reward>>,
     pub location: Option<NodeId>,
@@ -410,6 +521,9 @@ pub struct SourceRow {
     pub entity: Option<EntityRow>,
     pub offers: Vec<Offer>,
     pub offers_total: usize,
+    /// Loot templates of this source (loot view only).
+    pub tables: Vec<LootTableView>,
+    pub tables_total: usize,
 }
 #[derive(Clone, Debug, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -427,6 +541,13 @@ pub struct ObjectiveRow {
 #[derive(Clone, Debug, Serialize)]
 pub struct QuestRow {
     pub id: QuestId,
+    /// Display title, when the pack records one.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<Text>,
+    pub givers: Vec<EntityLink>,
+    pub givers_total: usize,
+    pub enders: Vec<EntityLink>,
+    pub enders_total: usize,
     pub stages: Vec<ObjectiveId>,
     pub objectives: Vec<ObjectiveRow>,
     pub objectives_total: usize,
@@ -509,18 +630,71 @@ fn map_obs<T, U: Serialize>(o: &Observation<T>, f: impl FnOnce(&T) -> U) -> Obse
     }
     .unwrap_or_else(|_| Observation::unknown())
 }
-fn item_ref(key: &ItemKey) -> ItemRef {
-    ItemRef {
-        item_id: key.item_id.clone(),
-        variant: key.variant.clone(),
-    }
-}
 
 struct Ctx<'a> {
     content: &'a ActiveContentRevision,
     index: &'a WorldIndex,
 }
 impl Ctx<'_> {
+    fn item_ref(&self, key: &ItemKey) -> ItemRef {
+        ItemRef {
+            item_id: key.item_id.clone(),
+            variant: key.variant.clone(),
+            name: self.index.item_names.get(key.item_id.as_str()).cloned(),
+        }
+    }
+    /// `npc:…` and `object:…` resolve to entities, `item:…` to item names.
+    fn link(&self, id: &SourceId) -> EntityLink {
+        let name = match id.as_str().strip_prefix("item:") {
+            Some(item) => self.index.item_names.get(item).cloned(),
+            None => self
+                .index
+                .entity_by_id
+                .get(id.as_str())
+                .and_then(|i| Some(self.content.content_v2()?.entities[*i].name.clone())),
+        };
+        EntityLink {
+            id: id.clone(),
+            name,
+        }
+    }
+    fn links(&self, ids: &[SourceId]) -> Vec<EntityLink> {
+        ids.iter()
+            .take(MAX_ROW_LINKS)
+            .map(|id| self.link(id))
+            .collect()
+    }
+    fn loot_table(&self, i: usize) -> LootTableView {
+        let table = &self
+            .content
+            .content_v2()
+            .expect("loot tables exist only in v2")
+            .loot_tables[i];
+        LootTableView {
+            id: table.id.clone(),
+            kind: table.table,
+            rows: table
+                .rows
+                .iter()
+                .take(MAX_TABLE_ROWS)
+                .map(|row| LootRowView {
+                    item: row.item.as_ref().map(|item| LootItem {
+                        item_id: item.clone(),
+                        name: self.index.item_names.get(item.as_str()).cloned(),
+                    }),
+                    table: row.table.clone(),
+                    probability: row.probability,
+                    min_count: row.min_count,
+                    max_count: row.max_count,
+                    group: row.group,
+                    quest_only: row.quest_only,
+                    conditional: row.conditional,
+                })
+                .collect(),
+            rows_total: table.rows.len(),
+            origin: marks(self.index.bits(&table.evidence)),
+        }
+    }
     fn entity(&self, i: usize) -> EntityRow {
         let v2 = self
             .content
@@ -551,6 +725,21 @@ impl Ctx<'_> {
             reaction: e.reaction.clone(),
             places,
             places_total: e.nodes.len(),
+            boss_of: self
+                .index
+                .boss_of
+                .get(e.id.as_str())
+                .into_iter()
+                .flatten()
+                .take(MAX_ROW_LINKS)
+                .map(|d| {
+                    let d = &v2.dungeons[*d];
+                    DungeonRef {
+                        id: d.id.clone(),
+                        title: d.title.clone(),
+                    }
+                })
+                .collect(),
             origin: marks(self.index.bits(&e.evidence)),
         }
     }
@@ -571,9 +760,25 @@ impl Ctx<'_> {
         };
         Offer {
             acquisition: fact.acquisition.clone(),
-            items: acquisition.map_or_else(Vec::new, |a| a.items.iter().map(item_ref).collect()),
+            items: acquisition.map_or_else(Vec::new, |a| {
+                a.items.iter().map(|i| self.item_ref(i)).collect()
+            }),
             cost: acquisition.map_or_else(Observation::unknown, |a| a.cost.clone()),
             costs: fact.costs.clone(),
+            cost_item_names: fact
+                .costs
+                .value()
+                .into_iter()
+                .flatten()
+                .filter_map(|c| match c {
+                    Cost::Item { item, .. } => self
+                        .index
+                        .item_names
+                        .get(item.item_id.as_str())
+                        .map(|n| (item.item_id.clone(), n.clone())),
+                    _ => None,
+                })
+                .collect(),
             probability: acquisition.map_or_else(Observation::unknown, |a| a.probability.clone()),
             rewards: fact.rewards.clone(),
             location,
@@ -599,6 +804,13 @@ impl Ctx<'_> {
             entity: group.entity.map(|i| self.entity(i)),
             offers: self.offers(&group.facts),
             offers_total: group.facts.len(),
+            tables: group
+                .tables
+                .iter()
+                .take(MAX_SOURCE_TABLES)
+                .map(|t| self.loot_table(*t))
+                .collect(),
+            tables_total: group.tables.len(),
         }
     }
     fn quest(&self, i: usize) -> QuestRow {
@@ -611,8 +823,18 @@ impl Ctx<'_> {
             .get(q.id.as_str())
             .unwrap_or(&none);
         let offers = self.index.quest_offers.get(q.id.as_str()).unwrap_or(&none);
+        let facts = self
+            .index
+            .quest_fact_by_id
+            .get(q.id.as_str())
+            .and_then(|i| Some(&self.content.content_v2()?.quest_facts[*i]));
         QuestRow {
             id: q.id.clone(),
+            title: facts.and_then(|f| f.title.clone()),
+            givers: facts.map_or_else(Vec::new, |f| self.links(&f.givers)),
+            givers_total: facts.map_or(0, |f| f.givers.len()),
+            enders: facts.map_or_else(Vec::new, |f| self.links(&f.enders)),
+            enders_total: facts.map_or(0, |f| f.enders.len()),
             stages: q.stages.clone(),
             objectives: objectives
                 .iter()
@@ -643,7 +865,9 @@ impl Ctx<'_> {
                 })
                 .collect(),
             objectives_total: objectives.len(),
-            rewards: map_obs(&q.rewards, |r| r.iter().map(item_ref).collect::<Vec<_>>()),
+            rewards: map_obs(&q.rewards, |r| {
+                r.iter().map(|i| self.item_ref(i)).collect::<Vec<_>>()
+            }),
             offers: self.offers(offers),
             offers_total: offers.len(),
             completion: q.completion.clone(),
@@ -717,7 +941,15 @@ pub fn world_page(
             .quests
             .iter()
             .copied()
-            .filter(|i| matches(&data.quests[*i].id.as_str().to_lowercase()))
+            .filter(|i| {
+                let id = data.quests[*i].id.as_str();
+                matches(
+                    index
+                        .quest_keys
+                        .get(id)
+                        .map_or(&id.to_lowercase(), |key| key),
+                )
+            })
             .collect(),
     };
     if offset > hits.len() {

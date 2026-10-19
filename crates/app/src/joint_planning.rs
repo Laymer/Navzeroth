@@ -266,7 +266,11 @@ impl SnapshotApplication {
             let guard=crate::planning_job_service::PublicationGuard::new(Some(request.party_id.clone()),&snapshots,&content,&context(now))?.bind_disposition(store.usable_catalog_revision(&content.key())?.ok_or_else(||invalid("Active content unavailable"))?.1.guard())?;
             Ok((catalog,snapshots,content,guard))
         }))?;
-        let result = calculate(request, catalog, snapshots, &content, control, &guard)?;
+        let view = crate::catalog::TravelPolicyView::new(
+            &content,
+            self.accepts_inferred_travel(&content.key())?,
+        );
+        let result = calculate(request, catalog, snapshots, &view, control, &guard)?;
         guard.publish(
             self,
             crate::planning_job_service::advanced_now(now, started.elapsed()),
@@ -468,6 +472,7 @@ pub(crate) fn calculate_controlled(
         })
         .collect::<Vec<_>>();
     filtered.sort_by(|a, b| a.objective.cmp(&b.objective));
+    let travel = crate::catalog::travel_inputs(content);
     let (result, clustered) = plan_joint_clustered_controlled(
         &JointInput {
             contexts: &contexts,
@@ -475,11 +480,12 @@ pub(crate) fn calculate_controlled(
             goal_profile: request.goal_profile.clone(),
             excluded: &request.excluded,
             nodes: &dataset.nodes,
-            edges: &dataset.edges,
+            edges: &travel.edges,
             origin: request.origin.clone(),
             stopping_node: request.stopping_node.clone(),
             budget_ms: request.budget_ms,
             stopping_service_ms: request.stopping_service_ms,
+            travel_options: &travel.options,
         },
         control,
     )?;
@@ -491,11 +497,14 @@ pub(crate) fn calculate_controlled(
         result,
         clustering: crate::clustering::ClusteringMetadata::from(clustered),
         filtered,
-        assumptions: vec![
+        assumptions: [
             "Utilities share an explicit goal profile; cluster utility is the minimum participant sum of original contributions and every member must benefit",
             "Origin, stopping point, utility and duration are manual assumptions, not observed positions or measured rewards",
             "Joint readiness and travel requirements are checked independently for every participant; blocked catch-up requires separate eligibility review",
             "Expected-time same-node clustered greedy estimate; no inferred shared-kill/service savings, speculative unlocks, quest sharing claim or live synchronization",
-        ],
+        ]
+        .into_iter()
+        .chain(travel.assumption())
+        .collect(),
     })
 }

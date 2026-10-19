@@ -448,6 +448,14 @@ impl SnapshotApplication {
         self.lock()?.inferred_travel = key;
         Ok(())
     }
+    /// True when planning on exactly this revision may use accepted inferred
+    /// travel (ADR 0007 §5 and §8).
+    pub(crate) fn accepts_inferred_travel(
+        &self,
+        key: &azeroth_storage::content::ContentRevisionKey,
+    ) -> Result<bool> {
+        Ok(self.lock()?.inferred_travel.as_ref() == Some(key))
+    }
     pub(crate) fn with_profile_store_mut<T>(
         &self,
         id: &str,

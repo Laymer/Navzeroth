@@ -80,8 +80,61 @@ impl CatalogView for TravelPolicyView<'_> {
             let data = self.inner.reference();
             options.inferred_edges =
                 azeroth_core::travel::inferred_edges(&data.edges, &data.evidence);
+            // ADR 0007 §5: unknown requirements of accepted inferred edges are
+            // accepted as estimates, never as satisfied.
+            options.accept_unknown_requirements = true;
         }
         options
+    }
+}
+/// Travel graph inputs under the content's travel policy.
+pub(crate) struct TravelInputs<'a> {
+    pub edges: std::borrow::Cow<'a, [azeroth_core::entities::TravelEdge]>,
+    pub options: azeroth_core::travel::RouteOptions,
+    /// Generated inferred edges left out because the policy does not accept
+    /// them. A search would exclude each one as `unverified`; leaving them
+    /// out keeps whole-world reports bounded, and this count states them.
+    pub withheld: usize,
+}
+impl TravelInputs<'_> {
+    /// Planning assumption stating the travel policy, if it matters.
+    pub fn assumption(&self) -> Option<&'static str> {
+        if self.withheld > 0 {
+            Some(
+                "Generated inferred travel edges are not used: the active content does not accept inferred travel",
+            )
+        } else if self.options.accept_unknown_requirements {
+            Some(
+                "Inferred travel accepted: generated walking and flight times are estimates, and unknown travel requirements (known flight points, faction) are assumed, not checked",
+            )
+        } else {
+            None
+        }
+    }
+}
+pub(crate) fn travel_inputs(content: &dyn CatalogView) -> TravelInputs<'_> {
+    let data = content.reference();
+    let options = content.route_options();
+    let withheld = if options.inferred_edges.is_empty() {
+        azeroth_core::travel::inferred_edges(&data.edges, &data.evidence)
+    } else {
+        Default::default()
+    };
+    let edges = if withheld.is_empty() {
+        std::borrow::Cow::Borrowed(data.edges.as_slice())
+    } else {
+        std::borrow::Cow::Owned(
+            data.edges
+                .iter()
+                .filter(|edge| !withheld.contains(&edge.id))
+                .cloned()
+                .collect(),
+        )
+    };
+    TravelInputs {
+        edges,
+        options,
+        withheld: withheld.len(),
     }
 }
 fn hash(value: &impl serde::Serialize) -> Result<String> {
@@ -199,7 +252,16 @@ mod tests {
                 view.route_options().inferred_edges.len(),
                 usize::from(accept)
             );
+            assert_eq!(view.route_options().accept_unknown_requirements, accept);
+            let inputs = travel_inputs(&view);
+            assert_eq!(inputs.withheld, usize::from(!accept));
+            assert_eq!(inputs.edges.len(), usize::from(accept));
+            assert!(inputs.assumption().is_some());
         }
+        // Without acceptance the generated edge is withheld and stated.
+        let strict = travel_inputs(&inner);
+        assert_eq!((strict.edges.len(), strict.withheld), (0, 1));
+        assert!(strict.assumption().unwrap().contains("not accept"));
         assert!(inner.route_options().inferred_edges.is_empty());
         let estimated = revision("limited_sample", "unverified");
         assert!(

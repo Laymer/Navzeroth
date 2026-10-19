@@ -5,7 +5,7 @@ import { createClient, type CommandAdapter } from "../commands";
 import type { ContentInspection } from "../commands/contract";
 const context = { namespace: "demo" as const, build: { edition: "wow_forever", build: "synthetic", interface: "synthetic" } };
 const inspection: ContentInspection = { key: { scope: { context, fixture: true }, revision: "r1" }, report: { passes: true, report_version: 1, errors: [], gaps: [{ code: "unverified_evidence" }], coverage: { collections: { quests: { total: 1, fields: {} } }, evidence_records: { by_confidence: { verified_on_build: 0, inferred: 1 } } } }, sources: [{ id: "source", publisher: "Synthetic author", license: { status: "unknown" }, redistribution: { status: "known", value: "not_permitted" }, attribution: { status: "unknown" }, offline_usable: { status: "known", value: false } }], conflicts: [] };
-function mock(content:ContentInspection=inspection) {
+function mock(content:ContentInspection=inspection,staging:ContentInspection[]=[]) {
   let active: ContentInspection | null = null;
   let fail = false;
   const calls: { command: string; input: unknown }[] = [];
@@ -18,9 +18,10 @@ function mock(content:ContentInspection=inspection) {
       case "get_content_dispositions": return Promise.resolve({schema_version:1,scope:inspection.key.scope,active:active?.key??null,revisions:[]} as never);
       case "get_active_content": return Promise.resolve(active as never);
       case "stage_verified_content_bundle":
-      case "stage_content": return fail ? Promise.reject({ code: "INVALID_INPUT", message: "Invalid content revision JSON", retryable: false }) : Promise.resolve(content as never);
+      case "stage_content": if (staging.length > 0 && !fail) return Promise.resolve(staging.shift() as never); return fail ? Promise.reject({ code: "INVALID_INPUT", message: "Invalid content revision JSON", retryable: false }) : Promise.resolve(content as never);
       case "get_content_inspection_page": {const request=JSON.parse((input as {text:string}).text) as {offset:number};return Promise.resolve({key:content.key,content_sha256:content.pages?.content_sha256,collection:"sources",offset:request.offset,total:201,next_offset:null,records:[{...inspection.sources[0],id:"last-source",publisher:"Last synthetic source"}]} as never);}
       case "activate_content": active = content; return Promise.resolve(content as never);
+      case "activate_content_set": { const set = { ...content, key: { ...content.key, revision: "set-abc" } }; active = set; return Promise.resolve(set as never); }
       case "rollback_content": return Promise.resolve({ changed: false, active } as never);
       default: return Promise.reject(new Error("Unexpected command"));
     }
@@ -75,4 +76,37 @@ it("requests bounded inspection pages using the staged revision hash",async()=>{
  fireEvent.click(screen.getByRole("button",{name:"Load synthetic example"}));fireEvent.click(screen.getByRole("button",{name:"Validate and stage content"}));await screen.findByText(/Validated and staged/);
  fireEvent.click(screen.getByText("Source policies (201)"));fireEvent.click(screen.getByRole("button",{name:"Next sources"}));await screen.findByText(/Last synthetic source/);
  const call=model.calls.find(c=>c.command==="get_content_inspection_page");expect(JSON.parse((call?.input as {text:string}).text)).toEqual({key:inspection.key,content_sha256:"a".repeat(64),collection:"sources",offset:200});
+});
+
+it("accepts inferred travel with a single activation through the content set command", async () => {
+  const { client, calls } = mock();
+  render(<ContentScreen client={client} onChanged={vi.fn()} refreshKey={0} />);
+  await screen.findByLabelText("Content profile");
+  fireEvent.click(screen.getByRole("button", { name: "Load synthetic example" }));
+  fireEvent.click(screen.getByRole("button", { name: "Validate and stage content" }));
+  await screen.findByText(/Validated and staged/);
+  fireEvent.click(screen.getByRole("checkbox", { name: /Accept inferred travel/ }));
+  fireEvent.click(screen.getByRole("button", { name: "Activate staged revision" }));
+  await screen.findByText(/inferred travel is accepted as estimates/);
+  expect(calls).toContainEqual({ command: "activate_content_set", input: { profile_id: "stored-one", revisions: ["r1"], accept_inferred_travel: true } });
+  expect(calls.some((c) => c.command === "activate_content")).toBe(false);
+});
+it("activates several staged packs of the selected context as one set", async () => {
+  const world: ContentInspection = { ...inspection, key: { ...inspection.key, revision: "world" } };
+  const other: ContentInspection = { ...inspection, key: { scope: { context: { ...context, build: { ...context.build, build: "other" } }, fixture: true }, revision: "elsewhere" } };
+  const { client, calls } = mock(inspection, [inspection, world, other]);
+  const changed = vi.fn();
+  render(<ContentScreen client={client} onChanged={changed} refreshKey={0} />);
+  await screen.findByLabelText("Content profile");
+  expect(screen.queryByRole("button", { name: "Activate all staged packs as one set" })).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Content revision JSON"), { target: { value: "a" } });
+  for (let n = 0; n < 3; n++) {
+    fireEvent.click(screen.getByRole("button", { name: "Validate and stage content" }));
+    await waitFor(() => expect(calls.filter((c) => c.command === "stage_content")).toHaveLength(n + 1));
+    await screen.findByText(/Validated and staged/);
+  }
+  fireEvent.click(await screen.findByRole("button", { name: "Activate all staged packs as one set" }));
+  await screen.findByText(/2 packs activated together as set-abc/);
+  expect(calls).toContainEqual({ command: "activate_content_set", input: { profile_id: "stored-one", revisions: ["r1", "world"], accept_inferred_travel: false } });
+  expect(changed).toHaveBeenCalledOnce();
 });

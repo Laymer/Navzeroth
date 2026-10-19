@@ -3,7 +3,7 @@ import "./world.css";
 import { useEffect, useRef, useState } from "react";
 import { Button, Field, OriginMarker } from "../ui";
 import type { ProfileSummary } from "../commands/contract";
-import type { EntityRow, Observed, Offer, QuestRow, SourceRow, TargetRow, WorldClient, WorldPage, WorldView } from "../commands/world";
+import type { EntityLink, EntityRow, LootRowView, LootTableView, Observed, Offer, QuestRow, SourceRow, TargetRow, WorldClient, WorldPage, WorldView } from "../commands/world";
 import { describeObservation } from "../observation";
 
 /** View tabs in display order; Trainers is hidden when the pack has no trainers. */
@@ -20,6 +20,30 @@ export const describeLevels = (levels: Observed<[number, number]>) => describeOb
 export function describePlace(place: { map_id: string; floor: string; x: number; y: number; node?: string }) {
   return `map ${place.map_id}, floor ${place.floor}, at ${percent(place.x)}, ${percent(place.y)}`;
 }
+/** An item by name when the pack records one, always with its id; `variant` only when known. */
+export function describeItem(item: { item_id: string; variant?: string; name?: string }) {
+  if (item.name) return `${item.name} (item ${item.item_id}${item.variant ? `, ${item.variant}` : ""})`;
+  return item.variant ? `item ${item.item_id} (${item.variant})` : `item ${item.item_id}`;
+}
+const describeLink = (link: EntityLink) => link.name ? `${link.name} (${link.id})` : `${link.id} (not described by this pack)`;
+function Links({ label, links, total }: { label: string; links: EntityLink[]; total: number }) {
+  if (total === 0) return <p>{label}: not recorded.</p>;
+  return <p>{label}: {links.map(describeLink).join("; ")}{total > links.length ? `; ${total - links.length} more not listed here` : ""}.</p>;
+}
+const LOOT_KIND: Record<string, string> = { creature: "creature loot", game_object: "object loot", item: "item contents", reference: "shared reference table", fishing: "fishing", pickpocketing: "pickpocketing", skinning: "skinning", disenchant: "disenchanting" };
+function describeLootRow(row: LootRowView) {
+  const what = row.item ? describeItem(row.item) : `table ${row.table ?? "unknown"}`;
+  const count = row.min_count === row.max_count ? `${row.min_count}` : `${row.min_count}–${row.max_count}`;
+  const chance = row.probability === null ? "chance unknown" : `chance ${percent(row.probability)}%`;
+  return [what, row.table && row.item ? `table ${row.table}` : "", `count ${count}`, chance, row.group === null ? "" : `group ${row.group}`, row.quest_only ? "only while a quest needs it" : "", row.conditional ? "has a condition this app cannot express" : ""].filter(Boolean).join("; ");
+}
+function LootTables({ tables, total }: { tables: LootTableView[]; total: number }) {
+  if (tables.length === 0) return null;
+  return <>{tables.map((table) => <details key={table.id}><summary>{LOOT_KIND[table.kind] ?? table.kind} {table.id} ({table.rows_total} rows)<OriginMarker marks={table.origin} /></summary>
+    <ul>{table.rows.map((row, n) => <li key={n}>{describeLootRow(row)}</li>)}</ul>
+    <More shown={table.rows.length} total={table.rows_total} noun="rows" /></details>)}
+    <More shown={tables.length} total={total} noun="loot tables" /></>;
+}
 function describeTarget(target: TargetRow) {
   if (target.kind === "quest_stage") return `quest stage ${target.stage}`;
   if (target.kind === "acquisition") return `obtain from ${target.source}`;
@@ -27,7 +51,7 @@ function describeTarget(target: TargetRow) {
 }
 function describeCost(offer: Offer) {
   if (offer.cost.status === "known") return `${offer.cost.value} copper`;
-  if (offer.costs.status === "known") return offer.costs.value.map((c) => c.kind === "copper" ? `${c.amount} copper` : c.kind === "item" ? `${c.quantity} × item ${c.item.item_id}` : `${c.quantity} × ${c.currency}`).join(", ") || "free";
+  if (offer.costs.status === "known") return offer.costs.value.map((c) => c.kind === "copper" ? `${c.amount} copper` : c.kind === "item" ? `${c.quantity} × ${offer.cost_item_names[c.item.item_id] ? `${offer.cost_item_names[c.item.item_id]} (item ${c.item.item_id})` : `item ${c.item.item_id}`}` : `${c.quantity} × ${c.currency}`).join(", ") || "free";
   return describeObservation(offer.cost);
 }
 function More({ shown, total, noun }: { shown: number; total: number; noun: string }) {
@@ -36,7 +60,7 @@ function More({ shown, total, noun }: { shown: number; total: number; noun: stri
 function OfferList({ offers, total, view }: { offers: Offer[]; total: number; view: WorldView }) {
   if (offers.length === 0) return <p>{view === "vendors" ? "No items recorded for this vendor." : "No rewards recorded."}</p>;
   return <><ul>{offers.map((offer) => <li key={offer.acquisition}>
-    {offer.items.length ? offer.items.map((i) => `item ${i.item_id} (${i.variant})`).join(", ") : `source ${offer.acquisition} (items unresolved)`}
+    {offer.items.length ? offer.items.map(describeItem).join(", ") : `source ${offer.acquisition} (items unresolved)`}
     {view === "loot" ? `; chance ${describeObservation(offer.probability, (p) => `${percent(p)}%`)}` : `; cost ${describeCost(offer)}`}
     {offer.dungeon && `; in ${offer.dungeon}`}{offer.location && `; at ${offer.location}`}
     <OriginMarker marks={offer.origin} />
@@ -49,6 +73,7 @@ function EntityDetails({ entity }: { entity: Omit<EntityRow, "row"> }) {
     <dt>Levels</dt><dd>{describeLevels(entity.levels)}</dd>
     <dt>Reaction</dt><dd>{describeObservation(entity.reaction)}</dd>
     <dt>Services</dt><dd>{entity.services.length ? entity.services.map((s) => SERVICE[s] ?? s).join(", ") : "None recorded"}</dd>
+    {entity.boss_of.length > 0 && <><dt>Boss of</dt><dd>{entity.boss_of.map((d) => d.title).join(", ")}</dd></>}
     <dt>Where</dt><dd>{entity.places.length === 0 ? "No mapped place in the travel graph" : <ul>{entity.places.map((p) => <li key={p.node}>{describePlace(p)} (node {p.node})</li>)}</ul>}
       <More shown={entity.places.length} total={entity.places_total} noun="places" /></dd>
   </dl>;
@@ -59,15 +84,20 @@ function EntityItem({ row }: { row: EntityRow }) {
 function SourceItem({ row, view }: { row: SourceRow; view: WorldView }) {
   return <li className="world-row"><h3>{row.entity?.name ?? row.id}<OriginMarker marks={row.entity?.origin} /></h3>
     {row.entity ? <details><summary>About {row.entity.name}</summary><EntityDetails entity={row.entity} /></details> : <p>This pack names {row.id} but does not describe it.</p>}
-    <h4>{view === "vendors" ? "Items for sale" : "Drops"}</h4><OfferList offers={row.offers} total={row.offers_total} view={view} />
+    <h4>{view === "vendors" ? "Items for sale" : "Drops"}</h4>
+    {(view !== "loot" || row.offers.length > 0 || row.tables.length === 0) && <OfferList offers={row.offers} total={row.offers_total} view={view} />}
+    {view === "loot" && <LootTables tables={row.tables} total={row.tables_total} />}
   </li>;
 }
 function QuestItem({ row }: { row: QuestRow }) {
-  return <li className="world-row"><h3>{row.id}<OriginMarker marks={row.origin} /></h3>
-    <p>Quest givers and enders are not recorded in this content pack. Completion: {describeObservation(row.completion)}.</p>
-    <h4>Objectives</h4>{row.objectives.length === 0 ? <p>Stages {row.stages.join(", ") || "none"}; no objective details recorded.</p>
+  return <li className="world-row"><h3>{row.title ?? row.id}<OriginMarker marks={row.origin} /></h3>
+    {row.title && <p>Quest {row.id}.</p>}
+    <Links label="Given by" links={row.givers} total={row.givers_total} /><Links label="Turned in to" links={row.enders} total={row.enders_total} />
+    <p>Completion: {describeObservation(row.completion)}.</p>
+    <h4>Stages</h4><p>{row.stages.length ? row.stages.join(", ") : "none recorded"}.</p>
+    <h4>Objectives</h4>{row.objectives.length === 0 ? <p>No objective details recorded.</p>
       : <><ul>{row.objectives.map((o) => <li key={o.id}>{o.id}: {o.targets.map(describeTarget).join("; ")}<OriginMarker marks={o.origin} /></li>)}</ul><More shown={row.objectives.length} total={row.objectives_total} noun="objectives" /></>}
-    <h4>Rewards</h4><p>{describeObservation(row.rewards, (items) => items.length ? items.map((i) => `item ${i.item_id} (${i.variant})`).join(", ") : "No item rewards")}</p>
+    <h4>Rewards</h4><p>{describeObservation(row.rewards, (items) => items.length ? items.map(describeItem).join(", ") : "No item rewards")}</p>
     {row.offers.length > 0 && <OfferList offers={row.offers} total={row.offers_total} view="quests" />}
   </li>;
 }

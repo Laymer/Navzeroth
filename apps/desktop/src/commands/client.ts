@@ -156,6 +156,7 @@ export function createClient(adapter: CommandAdapter) {
     stageContent: (text: string) => run(() => adapter.invoke("stage_content", { text })),
     getActiveContent: (profileId: string) => run(() => adapter.invoke("get_active_content", { profile_id: profileId })),
     activateContent: (profileId: string, revision: string) => run(() => adapter.invoke("activate_content", { profile_id: profileId, revision })),
+    activateContentSet: (profileId: string, revisions: string[], acceptInferredTravel: boolean) => run(() => adapter.invoke("activate_content_set", { profile_id: profileId, revisions, accept_inferred_travel: acceptInferredTravel })),
     rollbackContent: (profileId: string) => run(() => adapter.invoke("rollback_content", { profile_id: profileId })),
     listParties: (): Promise<Result<string[]>> => run(() => adapter.invoke("list_parties", undefined)),
     getPartyQuests: (partyId: string) => run(() => adapter.invoke("get_party_quests", { party_id: partyId })),

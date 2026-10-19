@@ -93,6 +93,18 @@ impl Fixture {
         count: usize,
         control: &mut dyn SearchControl,
     ) -> azeroth_core::error::Result<JointResult> {
+        self.joint_with(
+            count,
+            &azeroth_core::travel::RouteOptions::default(),
+            control,
+        )
+    }
+    pub fn joint_with(
+        &self,
+        count: usize,
+        travel_options: &azeroth_core::travel::RouteOptions,
+        control: &mut dyn SearchControl,
+    ) -> azeroth_core::error::Result<JointResult> {
         let contexts = self.contexts();
         let excluded = BTreeSet::new();
         let candidates = (0..count)
@@ -118,6 +130,7 @@ impl Fixture {
                 stopping_node: NodeId::new("n0000").unwrap(),
                 stopping_service_ms: ms(0),
                 budget_ms: ms(2500),
+                travel_options,
             },
             control,
         )
