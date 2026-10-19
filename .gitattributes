@@ -13,6 +13,9 @@ content/authored/**/*.md text eol=lf
 content/forever/**/*.png filter=lfs diff=lfs merge=lfs -text
 
 # Exact licensed source snapshots; never normalize their hashed bytes.
+# Licence and evidence objects stay plain blobs that LFS-less CI can read. The
+# generated fact objects (ADR 0007 §7) are listed one by one in the generated
+# block at the end of this file, which register_facts.py rewrites; they are LFS.
 content/source-materials/objects/* -text
 crates/local-data/vendor/** -text -whitespace
 vendor/** -text -whitespace
@@ -40,3 +43,82 @@ pnpm-lock.yaml text eol=lf
 # Generated world data (V2.7) is large; keep it in Git LFS with LF endings.
 data-generators/output/**/*.json filter=lfs diff=lfs merge=lfs -text
 data-generators/**/*.py text eol=lf
+
+# BEGIN generated fact objects (data-generators/register_facts.py): Git LFS
+content/source-materials/objects/077b0fa9217d106122a9a8a11cb091eef1b03242fe17251d8a1f1f3d02fd39ab filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/09d7bcfee9644c542efc78f62eab433834e2282ee2aa891240d179c5acd2bd04 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/0a9bf2d787fa177b88c01c58655c7ceb333cae5b0c693992972de9841ed72bd5 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/0d1d6a0eaf7a6a268f6f10a1a1661cee025fe34687d0477ace7ef5f289507140 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/0fb92540238fb244856ffa282fcc78138a9e10d26be7af5ae492803dfac5e2cc filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/10348ebe35bf7f389b1fb585bbf13536348d4d2bfd0daa6d54fcfb484d0cccb9 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/15d7ee53f819ebbae9e623c7cc32f2261b395eb541d99cd9372b21c699d28d26 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/17884a9b4b2601d0b314dfb398c37fdbb296f742827af9fd2d8e6ff2b21da8cc filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/184e2655dfeb3645b2e5d352ea58fb7477c370706465e1318c75bf86585a9b79 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/18f070637b606c45f0d486039c9fa40b5b83166097da2939f2da98cdb6f40566 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/19a58849164422184bbabf912006d0267573a1225562dc41a279f606d1e2c807 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/2130e7c91ccedbd35e0537ca4beacff8cc2d1306cf58f66c07eef38cecce36c2 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/264039698f7ba7207ef620ed8ff5c501247d007472d42f81a80532d83e00db05 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/27bb0cde777f41ce99e5587715e7ffde600d4211a8d4762577f0cee49d841a33 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/2aa27735f82e83a9a95e565855b2f60adbed28addc3bfc262c131ce1f598ab59 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/2fbaedada70ba187d6b5025d540ff66fb1c159ca9c2a5e914b56e6141ce8a329 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/392852fe549ac44f13cd28fcfd7649a6e3bc6473663e7823cc670c4834fc179a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/392b1bf2fc4e473770d96514551394d19f879e5533f6503d9ced6cbb99e8029a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/3f580b6d9176a6ed26b638619e2f2f3922d147d100a5acbe5bd0543088fa19d4 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/43458212221127b669cc7ba819f840a9c4b388fb760cd7298e7393f39dd3ce2b filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/44df0a88ddedf8845950a97f2220139d3ba37412a7b6a7b6b83bcbe732e26d30 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/46876f85646a1289f4625eb739be2d38ab7cac50fbac64a26c4ffed2281ee51e filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/475ce94c1d71858dc0f5b611de201d0e73a808880571e6907ec17363096b4668 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/47cec4fd5b3298a9c888a4b5a08927c1af3d3616f94b72a0822c268b5fdca20a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/4faab7638c61d6094bd400a2d5e8e2be8c7c88c3bfd731382a0bc2300c9a5f02 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/506b83564daa33cd77f603a7d42615b3cfe66ab9d89791b5465aa305f4a200aa filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/507cf721b794acf8c95ea3fb6802c3bcdb053dbfff9753bcd9b0deb45cb19783 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/56682802ab005961a67578833aef59d1e6ef999acb7692a095aa7785b0f576a9 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/5bee28869dac2fc85710c3e5772e9797f0ab8489119cd5b90a9a0907f61fbdc1 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/5f74cd5986522d32f2d9706673722b207a52ec33d4acdc8473343166062e4b1a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/60da3b6bebc51e7c38ce5cd3915d0aa449aff3fa303cb0a04c15ba7ff0a5b735 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/66751d372d94aa18ad8522db5aa361356261e375bee7b8313c49c6f408dcb45f filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/6812357ad4948fc5db05c054b4b9e42fc5dedb37df16280baba25031e3f9762a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/6b1671db6266202236a3447ef5842675daa5d40b127e766c638c3772fc8cc6f8 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/6d64f430492a64c5395ea7edf592f8619259a7d44f5870500feb324c7d1cda3e filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/6f619f60b9cd173f9e8ed03f363af6e7bc841337b3a76e26e702c5949f19e9e6 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/80382a8c48f0763e14aa3a76b48245cc28086902257427020eecefce2007afa7 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/81172c3abbb82993b1f809631dfabe933e666552dc79fcab30ae68f8df8c5885 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/824667140b5cd3d1c6ce4beb8392a9133af8d90baecb28bed2af4d1de4f4cf42 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/8a5f31b067bff5e3be243b5952f0813b13d2b34efeabff5780809306c3f0063e filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/8ddcc81f7078b7fa45f9251295b6a969ef85205258ab8c969b209a4113309ee6 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/9137d8a0d2e986225167215941f2d2ec3877ef99d259695eefb77d4914146587 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/928f41e73df98741c19ff737f5194e1a72b23f3eca563ffe0c307f50c02bcdff filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/92d059723e9ebaf290726f1b728dec46c79078aea310336caee80ce934ddc270 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/96ddb00dba968537403483603c0d6388f4fc8e28a49d3fd4fd228a5d7de24c4d filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/9a705ee41baca1e32718f01c3f31dd9e5a59326ba328224102f13a60ece73532 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/9c3a6ebe805f855002771d1ce66260f3ccecbedc2836c98415d3c3f290bc3dc9 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/a0035caf691caf3aae7a6d6c4bea90029faf6c2a0c25b5b49b4de23cf71564c5 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/a70119c087662e69c85249ac795d45c4b9314c2df2ee4cf0d23f9fd81b062bfb filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/a7698f1c3625ce8a983e523098ee86019855db1c218c67fac1b6da898f1cb30b filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/aa9525119efb42e33813abc2fe25b052ad37bba25d97b34b541ee56395d4b8a8 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/ac87f6660e9e0371a1ab0e8f2cff187ddca005b63ec237489ba94b709c10b263 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/b17c0134ae7b637ed2dffce6a1a6659eccb02fc0150b2c29e406bd0a72b19ff6 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/b2382c41ee37142f3932d0f8c8da9ba7c6e78a780f91a6a4b155db4b25907abb filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/b5ff13849118064b26b7f7df2276cb46134b1a31287705cd540a3792b4ec8206 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/bec81b5088526fb5928d8f4768fddee4c3b23050eb5d1fafb6705a86668bd30d filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/bf8e43c90a94b764557e4d2ba46f0949aa20442ea7714b72c40b92ec7903bbab filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/c8938880cb168966fc0b010abecac55357410ded3c307f7601ec5e5893dab20a filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/c9b62c5ffbc90be5979bba49c17778ffa29a9b3f51815b24ca16ac73bad49406 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/cc6718445dfa50666d4b2c615f759403b3fcdbf4f656329744fa6ce68e2f7bcb filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/cc8652b07e7bf2bea8a734e37e9d7c3b2dcf8cb0e62632d6ada1b72dd60eaafe filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/d26b4570258fd2242f5912e496f9ab56e70be65dc57b3d6b30f06643fc592f59 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/d37e6366fe569254ad040a68b08bac088a1c45aad7b29430b97226fea76ddac6 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/d5c00a02ea44873fe9a337f52513e1c812e4bc0366f53c824e98a51116d1cbe3 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/dbcc115e271c971246bc29d622c35ea291580667d458cc8d8cac16ff0bcc82cf filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/de1fa7c4a08ec5079ad08adfa5d90c5c5ce1336e3518167588aa1c311db68a48 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/e44aabbc92347e6d30da4c2714baf928c3fbf4eef44dada89e566042341c245b filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/e4b868b54d51b897f2548e8cdb424c6a600b654e1eefcef73efac2e89c9a01fe filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/e7f37af3b46a3c83804d2cd581877d076408932b178c79652f1576c694fe0f17 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/edcdd8a516bc216437862af965af26afa7292d4f290c256bc2260442c1db2cce filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/ef46ca900016e71e645a53abfe5f33584c3e1e6b0caca464d90382454a119621 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/f3d02788290396f4a12ce1090ab5986632388a3ec0bfd5b39df30ec135622fec filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/f5fdf2257e322730c9b1b4d83170dc270774206d8c3f9bab922a13f30b5e8eeb filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/f901cf2f2c2120f3266a6fd0db90922e93579d6a818dbe781c4fb3ba13475d65 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/feaf0ebdf1df4c2e4cae6d9ebee640265ec7089b8116dfebef8510d1653db119 filter=lfs diff=lfs merge=lfs -text
+content/source-materials/objects/ffe6e23ba8b4335e614120e378d8324192fe7d3a48393f9b5e3d6d42d144f12b filter=lfs diff=lfs merge=lfs -text
+# END generated fact objects

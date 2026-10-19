@@ -75,9 +75,27 @@ count as target-usable. Inference or cross-edition evidence is never promoted.
 Known false, zero and empty text remain values. Unknown, unsupported, restricted,
 stale and not-applicable remain distinct tags; known null is refused. Strict JSON
 rejects duplicate members, unsupported versions, future dates, unsafe numbers,
-excessive depth/size and identity collisions. Limits include 8 MiB per input,
-250,000 facts, 64 KiB per value, 256 MiB catalog encoding and 1 GiB retained
-material closure. Overflow fails; records are never truncated.
+excessive depth/size and identity collisions. Limits include 8 MiB and 250,000
+facts per input, 6,000,000 facts per build, 64 KiB per value, 8 GiB catalog
+encoding and 2 GiB retained material closure; the values and their measurement
+are in [WORLD_DATA.md](WORLD_DATA.md#source-pipeline-limits). Overflow fails;
+records are never truncated. The catalog is streamed to its output file, so a
+build does not hold a second encoded copy in memory.
+
+## Generated fact sources
+
+`data-generators/register_facts.py` (ADR 0007 §7) registers every fact document
+`to_facts.py` writes: one admitted `gen-<generator>-<edition>-<build>` source per
+generator and origin, `manual_local`, with each document's exact hash, size and
+`domain.field` list, rights copied from the upstream sources the generator used,
+and ADR 0007 as access evidence. It copies the documents to
+`content/source-materials/objects/<sha256>`, upserts the plan's `knowledge_v1`
+inputs, removes sources and objects for documents that no longer exist, updates
+`registry_sha256` in `source-updates-v1.json` and rewrites the generated sections
+of the [material notice](../../content/source-materials/NOTICE.md) and of
+`.gitattributes`. That block stores exactly the generated objects in Git LFS;
+licence and evidence objects stay plain blobs, so CI without LFS still builds
+every hand-admitted source.
 
 ## Retained scopes and current gaps
 
@@ -89,6 +107,10 @@ material closure. Overflow fails; records are never truncated.
 | AllTheThings Riverglades point declarations (MIT) | Forever, build unknown | 4 raw point/NPC/coordinate/access-symbol fields; no inferred flight edge |
 
 Total: 1,685 reference facts, including 258 unknown and 26 unsupported fields.
+The generated fact sources (below) add 2,862,735 facts: 2,566,760 from CMaNGOS
+(`vanilla_1_12` 1.12.1) and 295,975 from wago.tools `wowf` (`wow_forever`
+1.60.1.70245). None is target-usable for 70374: their origin differs from the
+target, and convergence never relabels it.
 There are **zero verified target-usable facts** for Forever build 70374. The
 catalog reports all nine domains with unknown independently required inventory
 counts. Quests, equipment, party and reminders have no admitted facts in
@@ -122,8 +144,10 @@ licence does not relicense third-party material.
 
 The `Independent source knowledge` workflow builds twice on Linux and Windows,
 compares outputs locally and across platforms, then retains complete artifacts.
-Source archives disable Git LFS smudge/process filters and verify exact pointer
-bytes before upload, preserving the committed source without downloading imagery.
+It pulls only `content/source-materials/objects/*` from Git LFS (the generated
+fact objects). Source archives disable Git LFS smudge/process filters and verify
+exact pointer bytes before upload, preserving the committed source without
+downloading imagery.
 It runs on relevant PRs/main pushes and can run manually or weekly. Only the
 scheduled/manual Linux job performs the separately permitted metadata check.
 Stable packaging still requires full release readiness. Real permitted addon

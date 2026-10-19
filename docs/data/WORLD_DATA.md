@@ -147,3 +147,39 @@ tooltip requests than that. The cap binds the source pipeline's own fetching,
 which never runs for these sources (`source-sync` refuses them), so the generators'
 cache and per-host limits are the effective bound. Run them opt-in, and prefer
 `--offline` once the cache is warm.
+
+## Source pipeline limits
+
+ADR 0007 §7 registers every generated fact in the research catalog
+(`data-generators/register_facts.py`, task V2.8c). Measured on 2026-10-19 from
+the committed shards (`to_facts.py`, then `register_facts.py`, `source-sync` and
+two `source-build` runs of the debug CLI on Linux):
+
+| Measure | Value |
+| --- | ---: |
+| Generated fact documents | 76 (68 CMaNGOS `vanilla_1_12` 1.12.1, 8 wago.tools `wow_forever` 1.60.1.70245) |
+| Generated facts | 2,862,735 (2,566,760 + 295,975); 2,864,420 with the hand-admitted adapters |
+| Fact document bytes | 620,893,524 (561,833,509 + 59,060,015); largest document 8,323,101 |
+| Largest per-source closure | 561,888,003 bytes, 72 objects (CMaNGOS) |
+| Retained objects folder | 621,228,274 bytes |
+| Pretty `catalog.json` | 3,355,337,694 bytes |
+| Build time and peak memory | 205 to 213 s and 3.97 GB per debug build |
+
+Limits, at about twice the measured size:
+
+| Limit | Before | Now | Where |
+| --- | ---: | ---: | --- |
+| Facts per build (`MAX_FACTS`) | 250,000 | 6,000,000 | `crates/core/src/source_pipeline.rs` |
+| Facts per document (`MAX_DOCUMENT_FACTS`) | 250,000 | 250,000 (unchanged; `to_facts.py` writes to it) | same |
+| Encoded catalog (`MAX_CATALOG_BYTES`), compact candidates and pretty catalog | 256 MiB | 8 GiB | same |
+| Retained closure and per-source bytes (`MAX_RETRIEVAL_BYTES`) | 1 GiB | 2 GiB | `crates/core/src/source_admission.rs` |
+
+Unchanged because the data fits: 8 MiB per file, 1,024 files and requests per
+source (largest: 72), 128 sources (19), 256 fields per file (largest: 36), 1 MiB
+registry (101 KB), 1,024 plan inputs (80).
+
+Memory: before V2.8c the build cloned every candidate for its identity check and
+encoded the catalog in memory, peaking at 14 GB. Convergence now sorts indices
+instead of cloning, and the catalog is streamed to its file while it is hashed and
+counted, so the peak is 3.97 GB, inside a 16 GB CI runner. The catalog hash is
+the same either way.

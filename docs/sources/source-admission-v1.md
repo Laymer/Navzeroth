@@ -39,7 +39,7 @@ The contract limits the JSON to 1 MiB, sources to 128, files per source to 1,024
 fields per file to 256, rights evidence entries to 64 and strings to 4,096 bytes.
 Each source snapshot declares a full 40-character Git SHA-1 or 64-character digest;
 files and evidence require lowercase SHA-256 pins. Files are at most 8 MiB and a
-retrieval closure at most 1 GiB. Access is serial, at least one second apart and
+retrieval closure at most 2 GiB (1 GiB before V2.8c registered the generated world). Access is serial, at least one second apart and
 at most 1,024 requests. Exact relative file paths and fields have no wildcards.
 This describes source staging limits, not the later full-catalog v2 limits.
 
@@ -132,9 +132,12 @@ automated extraction and redistribution). Credits are in
   GPL-2.0; the registry follows the published file).
 - Origin builds stay null in the registry; each shard's envelope carries the actual
   origin build (or unknown). Non-Forever origins stay `cross_edition_unverified`.
-- `files` lists are empty: the generated fact documents are registered later by the
-  integrator (task V2.7f). Until then `authorize` refuses every file of these sources.
-- Retrieval bounds are the contract maximums (1 GiB, 1,024 requests, one second).
+- `files` lists are empty: `authorize` refuses every file of these sources. The
+  generated fact documents are separate `gen-<generator>-<edition>-<build>` sources
+  that `data-generators/register_facts.py` writes with these rights (V2.8c,
+  ADR 0007 §7; [SOURCE_PIPELINE.md](../data/SOURCE_PIPELINE.md#generated-fact-sources)).
+- Retrieval bounds were the contract maximums when admitted (1 GiB, 1,024 requests,
+  one second).
   The generators' own per-host limits in `navzeroth_datagen/http.py` are the
   effective controls; aligning them with these declared bounds is an open item.
 
