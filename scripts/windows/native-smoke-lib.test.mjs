@@ -48,7 +48,7 @@ test("version comparison and upgrade classification", () => {
   assert.equal(compareVersions("0.9.1", "0.9.2"), -1);
   assert.equal(compareVersions("0.10.0", "0.9.9"), 1);
   assert.equal(compareVersions("1.0.0", "1.0.0"), 0);
-  assert.throws(() => compareVersions("1.0.0-rc1", "1.0.0"), /plain/);
+  assert.equal(compareVersions("1.0.0-rc1", "1.0.0"), -1);
   assert.deepEqual(classifyUpgrade("0.9.1", "0.9.2"), { kind: "upgrade", downgradeApplicable: true });
   assert.deepEqual(classifyUpgrade("0.9.1", "0.9.1"), { kind: "reinstall_same_version", downgradeApplicable: false });
   assert.equal(classifyUpgrade("0.9.2", "0.9.1").kind, "baseline_newer_than_candidate");
@@ -128,6 +128,26 @@ test("instrumented shutdown accepts only a bounded owned PID and requests a norm
   assert.doesNotMatch(args[4], /Stop-Process|Kill\(|taskkill/);
 });
 
+
+test("SemVer orders prereleases, ignores metadata and refuses malformed identifiers", () => {
+  const ordered = ["0.9.2", "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0"];
+  for (let i = 0; i < ordered.length; i += 1) {
+    for (let j = 0; j < ordered.length; j += 1) {
+      assert.equal(compareVersions(ordered[i], ordered[j]), Math.sign(i - j));
+    }
+  }
+  assert.equal(compareVersions("1.0.0-rc.1+abc", "1.0.0-rc.1+other.001"), 0);
+  assert.equal(compareVersions("1.0.0+001", "1.0.0"), 0);
+  assert.equal(compareVersions("1.0.0-9007199254740992", "1.0.0-9007199254740993"), -1);
+  assert.equal(compareVersions("9007199254740992.0.0", "9007199254740993.0.0"), -1);
+  assert.equal(compareVersions("1.0.0-0", "1.0.0-A"), -1);
+  assert.equal(compareVersions("1.0.0-Z", "1.0.0-a"), -1);
+  for (const bad of ["", "v1.0.0", "1.0", "01.0.0", "1.00.0", "1.0.00", "1.0.0-01", "1.0.0-rc.01", "1.0.0-", "1.0.0+", "1.0.0-a..b", "1.0.0+a..b", "1.0.0+a+b", "1.0.0_abc", "1.0.0\n", " 1.0.0", null, 100]) {
+    assert.throws(() => compareVersions(bad, "1.0.0"), /Malformed SemVer/);
+    assert.throws(() => compareVersions("1.0.0", bad), /Malformed SemVer/);
+  }
+  assert.deepEqual(classifyUpgrade("0.9.2", "1.0.0-rc.1"), {kind:"upgrade", downgradeApplicable:true});
+});
 
 test("readiness waits for delayed startup and rejects recovery, unknown, error and timeout", async () => {
   let calls = 0;
