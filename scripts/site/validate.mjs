@@ -5,6 +5,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { freshenSnapshotText } from '../windows/native-smoke-lib.mjs';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const root = path.join(repo, 'site');
 const pages = ['index.html', 'features.html', 'installation.html', 'readiness.html', 'code-signing.html'];
@@ -34,7 +35,13 @@ if (!draft) {
   assert.match(capture.workflow_run_id, /^\d+$/);
   assert.match(capture.application_sha256, /^[a-f0-9]{64}$/);
   assert.equal(capture.application_sha256, release.application_sha256);
+  assert.equal(capture.fixture_path, 'fixtures/transport/anav1-character-snapshot.txt');
   assert.equal(capture.fixture_sha256, hash(path.join(repo, 'fixtures/transport/anav1-character-snapshot.txt')));
+  assert.equal(capture.imported_snapshot_file, 'imported-synthetic-snapshot.txt');
+  assert.ok(Number.isSafeInteger(capture.retimed_at_utc_ms) && capture.retimed_at_utc_ms > 0);
+  const imported = path.join(root, 'assets/screenshots', capture.imported_snapshot_file);
+  assert.equal(hash(imported), capture.imported_snapshot_sha256);
+  assert.equal(fs.readFileSync(imported, 'utf8'), freshenSnapshotText(fs.readFileSync(path.join(repo, capture.fixture_path), 'utf8').trim(), capture.retimed_at_utc_ms));
   assert.ok(capture.screenshots.length >= 2);
   for (const screenshot of capture.screenshots) {
     assert.match(screenshot.file, /^[A-Za-z0-9-]+\.png$/);

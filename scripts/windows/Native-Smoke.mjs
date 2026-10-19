@@ -98,7 +98,8 @@ const fixtureText = readFileSync(join(repoRoot, "fixtures", "transport", "anav1-
 // The committed fixture has fixed capture times, so the backend correctly calls it stale and refuses to
 // plan it. The driver re-times only the three capture-time fields to the runner's clock (still
 // fixture:true, still labelled synthetic) so planning, route inspection and export run natively.
-const snapshotText = freshenSnapshotText(fixtureText, Date.now());
+const snapshotRetimedAt = Date.now();
+const snapshotText = freshenSnapshotText(fixtureText, snapshotRetimedAt);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let child = null;
@@ -556,12 +557,13 @@ async function captureRelease(page) {
       capture_driver_commit: process.env.GITHUB_SHA,
       fixture_path: "fixtures/transport/anav1-character-snapshot.txt",
       fixture_sha256: sha256(join(repoRoot, "fixtures/transport/anav1-character-snapshot.txt")),
+      imported_snapshot_file: "imported-synthetic-snapshot.txt", retimed_at_utc_ms: snapshotRetimedAt,
       imported_snapshot_sha256: createHash("sha256").update(snapshotText).digest("hex"),
       retiming: "Only observed_at_utc_ms, received_at_utc_ms and created_at_utc_ms re-timed to capture-run clock; fixture remains true",
       content: "Built-in Load synthetic planning example, validated and activated through real IPC",
       screenshots, cdp: evidence.cdp, evidence_scope: "Actual verified release app; synthetic fixtures; hosted regression, not live acceptance",
     };
-    writeFileSync(join(outDir, "imported-synthetic-snapshot.txt"), snapshotText + "\n");
+    writeFileSync(join(outDir, "imported-synthetic-snapshot.txt"), snapshotText);
     return { screenshots: screenshots.length };
   });
 }
