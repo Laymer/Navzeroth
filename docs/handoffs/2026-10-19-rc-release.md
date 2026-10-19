@@ -54,11 +54,12 @@ check passes. These are not installation evidence. Preliminary independent revie
 found no blockers and requested expanded PE metadata, now included. Final-head
 review and hosted execution are pending.
 
-Next: merge the reviewed repair PRs after passing checks, integrate resulting main,
-then synchronize versions, regenerate producer fixtures/notices, finalize notes,
-and measure readiness/material selection on the committed tree. Exact resulting
-release commit and tag checks, draft/public asset verification, publication and
-separate Pages delivery remain unfinished. Candidate/stable readiness remain false.
+Next: finish final-head checks and independent review for release PR #209,
+then require fresh exact-resulting-commit CI, Coverage, source/parity, ordinary
+Windows packaging/native upgrade/refusal and stability. Tag only that verified
+commit; verify draft downloads before publication and public downloads afterward.
+Separate Pages delivery follows public verification. Candidate/stable readiness
+remain false; stable publication and acceptance-candidate promotion are excluded.
 
 ## Version and evidence preparation
 
@@ -70,8 +71,9 @@ unsigned development prerelease; candidate/stable readiness remain false.
 Installation guides reconcile the pending post-launch target with ADR 0006 while
 keeping 0.9.2 download links. Private extraction/cache receipts are retained.
 
+Release PR [#209](https://github.com/Laymer/Navzeroth/pull/209) is open.
 Actual regeneration/check results and committed-tree readiness output follow.
-No release PR or publication is claimed by this preparation alone.
+No tag or publication has occurred.
 
 Actual local regeneration: addon fixture suite 7/7, reference 3/3 and Today 11/11
 passed; synthetic atlas preparation exited 0. Dependency notices regenerated and
@@ -84,3 +86,9 @@ both exited 0: publication allowed for this development version, candidate/stabl
 false, 69 exact blockers, zero verified evidence/packs and empty material selection.
 [Version-specific inventory](../releases/1.0.0-rc.1-readiness.md) records every
 blocker, owner and clearing condition alongside raw committed-tree outputs.
+
+Both independent read-only reviews approved preparation head `b8ee77d` without
+blocking findings. The version reviewer identified a stale next-task paragraph,
+corrected here. Final-head refresh review and hosted checks remain required.
+Readiness/material selection was also rerun successfully at `b8ee77d`: the same
+69 blockers, candidate/stable false, empty selection and production fingerprint.
