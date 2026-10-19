@@ -5,7 +5,7 @@ use azeroth_core::{
     release_party::SupportMatrix,
     sources::AccessMethod,
 };
-pub const MAX_CATALOG_BYTES: usize = 256 * 1024 * 1024;
+pub const MAX_CATALOG_BYTES: usize = 576 * 1024 * 1024;
 pub const MAX_CLOSURE_BYTES: usize = 1024 * 1024 * 1024;
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

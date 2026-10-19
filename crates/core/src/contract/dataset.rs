@@ -273,7 +273,7 @@ impl ReferenceDataset {
 }
 
 /// Separate v2 catalog payload. Ordinary v1 decoding retains its 1,024 bound.
-pub const MAX_CATALOG_IDENTITIES: usize = 250_000;
+pub const MAX_CATALOG_IDENTITIES: usize = 500_000;
 pub const MAX_CATALOG_EVIDENCE: usize = 250_000;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(transparent)]
