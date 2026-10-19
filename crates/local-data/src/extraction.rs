@@ -432,7 +432,7 @@ fn extract_using(
         total: selected.len() as u32,
     };
     let empty = Checkpoint {
-        format_version: 1,
+        format_version: 2,
         binding,
         tables: Vec::new(),
         gaps: Vec::new(),
@@ -638,7 +638,7 @@ fn extract_using(
         db.checkpoint(
             &request.request_id,
             &Checkpoint {
-                format_version: 1,
+                format_version: 2,
                 binding: binding.clone(),
                 tables: inventory.clone(),
                 gaps: gaps.clone(),
@@ -669,7 +669,7 @@ fn extract_using(
     gaps.sort();
     gaps.dedup();
     let manifest = ResearchCatalog {
-        format_version: 1,
+        format_version: 2,
         classification: DistributionClass::LocalOnly,
         installation: inspection.metadata,
         build_info_sha256: inspection.build_info_sha256,
@@ -757,7 +757,7 @@ pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalo
         MAX_MANIFEST_BYTES,
     )?)
     .map_err(|_| "Invalid catalog manifest")?;
-    if manifest.format_version != 1
+    if !matches!(manifest.format_version, 1 | 2)
         || manifest.tables.len() > 32768
         || manifest.native_revision != CASCLIB_REVISION
         || manifest.metadata_sha256 != metadata::METADATA_SHA256
@@ -767,6 +767,9 @@ pub fn verify_catalog(destination: &Path, digest: &str) -> Result<ResearchCatalo
     }
     let mut names = std::collections::BTreeSet::new();
     for entry in &manifest.tables {
+        if !entry.disposition.supported_in(manifest.format_version) {
+            return Err("Disposition requires catalog version 2");
+        }
         if !names.insert((&entry.table, &entry.locale)) {
             return Err("Duplicate table inventory");
         }
@@ -831,15 +834,15 @@ fn read_failure_disposition(error: ReadFailure) -> (InventoryDisposition, &'stat
             "unavailable_encrypted_frames",
         ),
         ReadFailure::Unsupported => (
-            InventoryDisposition::UnavailableEncrypted,
+            InventoryDisposition::UnavailableUnsupported,
             "unsupported_archive_encoding_not_retained",
         ),
         ReadFailure::Unavailable => (
-            InventoryDisposition::UnavailableEncrypted,
+            InventoryDisposition::UnavailableUnknown,
             "local_archive_read_unavailable",
         ),
         ReadFailure::ShortRead => (
-            InventoryDisposition::UnavailableEncrypted,
+            InventoryDisposition::UnavailableUnknown,
             "archive_short_read_unexplained",
         ),
         ReadFailure::Truncated => (
@@ -881,17 +884,17 @@ mod tests {
             ),
             (
                 ReadFailure::Unsupported,
-                UnavailableEncrypted,
+                UnavailableUnsupported,
                 "unsupported_archive_encoding_not_retained",
             ),
             (
                 ReadFailure::Unavailable,
-                UnavailableEncrypted,
+                UnavailableUnknown,
                 "local_archive_read_unavailable",
             ),
             (
                 ReadFailure::ShortRead,
-                UnavailableEncrypted,
+                UnavailableUnknown,
                 "archive_short_read_unexplained",
             ),
             (
