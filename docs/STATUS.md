@@ -99,6 +99,13 @@ V0 (owner and sole writer Claude Code, Opus 5.5; baseline `3b19812`; branch
 and recorded the ADR; see the [V0 handoff](handoffs/2026-10-17-v0.md). The 0.9.2
 program (ADR [0005](decisions/0005-v092-program.md), G1 to G8) is complete.
 
+**V2.7 (2026-10-19, owner request).** World-data generators and the
+`navzeroth-world-data` contract landed on `feat/V2.7-data-generators` (owner and
+integrator Claude Code, Sonnet/Opus 5.5; baseline `38bbe4a`; claim
+[2026-10-19-v2.7](claims/2026-10-19-v2.7.md); [handoff](handoffs/2026-10-19-v2.7.md)).
+External datasets are admitted by owner acceptance (ADR 0006 §14); generated data
+is edition-tagged and not Forever-verified. Release gate counts are unchanged by it.
+
 **Latest published version: 0.9.2**, a developer prerelease published
 2026-10-17T11:34:32Z from tag `v0.9.2` (tag object `fe63072`, commit `3b19812`);
 receipt: [0.9.2 publication record](handoffs/2026-10-17-v0.9.2-publication.md). The
