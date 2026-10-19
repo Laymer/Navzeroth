@@ -664,6 +664,34 @@ fn v2_catalog_materials_are_verified_delivered_and_do_not_waive_missing_domains(
 }
 
 #[test]
+fn owner_accepted_rights_select_materials_only_with_the_adr_citation() {
+    for cited in [true, false] {
+        let temp = Temp::new(true);
+        let mut evidence = temp.read(EVIDENCE);
+        let mut registry = temp.read("docs/admission-registry.json");
+        let rights = &mut registry["sources"][0]["rights"];
+        rights["license"] = json!("owner_accepted");
+        rights["evidence"][0]["url"] = json!(
+            "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md"
+        );
+        rights["evidence"][0]["reviewed_scope"] = json!(if cited {
+            "Owner accepts the synthetic terms; ADR 0006 §14"
+        } else {
+            "Owner accepts the synthetic terms"
+        });
+        temp.json("docs/admission-registry.json", &registry);
+        evidence["admission_registry"] = temp.reference("docs/admission-registry.json");
+        temp.json(EVIDENCE, &evidence);
+        temp.commit();
+        let plan = materials::plan(&temp.options());
+        assert_eq!(plan.is_ok(), cited);
+        if cited {
+            assert_eq!(plan.unwrap().sources.len(), 1);
+        }
+    }
+}
+
+#[test]
 fn offline_admission_blocks_unreviewed_noncommercial_mismatched_and_missing_claims() {
     for case in [
         "missing",

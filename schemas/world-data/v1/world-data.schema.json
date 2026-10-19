@@ -1,0 +1,2861 @@
+{
+  "$defs": {
+    "BuildId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "ClockTrust": {
+      "enum": [
+        "trusted",
+        "uncertain"
+      ],
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "verified_on_build",
+        "publisher_documented",
+        "limited_sample",
+        "cross_edition_unverified",
+        "inferred",
+        "disputed_or_stale"
+      ],
+      "type": "string"
+    },
+    "EditionId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "EnhancementType": {
+      "enum": [
+        "enchant",
+        "item"
+      ],
+      "type": "string"
+    },
+    "EntityKind": {
+      "enum": [
+        "npc",
+        "game_object",
+        "item"
+      ],
+      "type": "string"
+    },
+    "EntityRef": {
+      "additionalProperties": false,
+      "properties": {
+        "entity": {
+          "$ref": "#/$defs/EntityKind"
+        },
+        "id": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "entity",
+        "id"
+      ],
+      "type": "object"
+    },
+    "FishingQuest": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rewards": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "count"
+      ],
+      "type": "object"
+    },
+    "Generator": {
+      "additionalProperties": false,
+      "properties": {
+        "credit": {
+          "description": "Required attribution, e.g. the TALOD credit.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "credit"
+      ],
+      "type": "object"
+    },
+    "ItemQty": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "item": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "item",
+        "count"
+      ],
+      "type": "object"
+    },
+    "Locale": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "LootTable": {
+      "enum": [
+        "creature",
+        "game_object",
+        "item",
+        "reference",
+        "fishing",
+        "pickpocketing",
+        "skinning",
+        "disenchant"
+      ],
+      "type": "string"
+    },
+    "MapPosition": {
+      "additionalProperties": false,
+      "description": "A uiMap position, normalized 0..1 from the top-left like `types::Position`.",
+      "properties": {
+        "ui_map_id": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "x": {
+          "format": "double",
+          "type": "number"
+        },
+        "y": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "ui_map_id",
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "Millis": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "NpcRole": {
+      "enum": [
+        "quest_giver",
+        "vendor",
+        "repair",
+        "trainer",
+        "class_trainer",
+        "profession_trainer",
+        "innkeeper",
+        "flight_master",
+        "banker",
+        "auctioneer",
+        "spirit_healer",
+        "stable_master",
+        "battlemaster"
+      ],
+      "type": "string"
+    },
+    "ObjectiveKind": {
+      "enum": [
+        "kill",
+        "item",
+        "object",
+        "spell",
+        "explore",
+        "event"
+      ],
+      "type": "string"
+    },
+    "Observation_BuildId": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/BuildId"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_MapPosition": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/MapPosition"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_WorldPoint": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/WorldPoint"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_uint64": {
+      "oneOf": [
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Origin": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/Observation_BuildId"
+        },
+        "edition": {
+          "$ref": "#/$defs/EditionId",
+          "description": "`wow_forever`, `wow_classic_era` or `vanilla_1_12`; never relabelled."
+        },
+        "locale": {
+          "$ref": "#/$defs/Locale"
+        },
+        "product": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "edition",
+        "build",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "QuestObjective": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "objective": {
+          "$ref": "#/$defs/ObjectiveKind"
+        },
+        "target_id": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "objective",
+        "count"
+      ],
+      "type": "object"
+    },
+    "Record": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "allowable_class": {
+              "description": "Class and race bit masks; -1 means every class or race.",
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "allowable_race": {
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "auction_average": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "bonding": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "buy_price": {
+              "description": "Copper. `vendor_sold` says whether a vendor sells it; a price alone does not.",
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "class_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "icon": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "inventory_type": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "item_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "kind": {
+              "const": "item",
+              "type": "string"
+            },
+            "made_by": {
+              "description": "Recipe spells that create this item.",
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "max_stack": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "obtain_hint": {
+              "description": "How a raw material is obtained, in words (e.g. `Mining`, `Herbalism`).",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "quality": {
+              "format": "uint8",
+              "maximum": 255,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "sell_price": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "stats": {
+              "additionalProperties": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "description": "Stat name (source vocabulary, e.g. `stamina`, `armor`) to amount.",
+              "type": "object"
+            },
+            "subclass_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "vendor_sold": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "description": "Orange, yellow, green and grey thresholds; 0 means the colour is absent.",
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "cooldown": {
+              "default": false,
+              "type": "boolean"
+            },
+            "creates": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "kind": {
+              "const": "recipe",
+              "type": "string"
+            },
+            "makes": {
+              "description": "Average items made per craft (at least 1).",
+              "format": "double",
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "pattern_item": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "pattern_price": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "profession": {
+              "type": "string"
+            },
+            "reagents": {
+              "default": [],
+              "items": {
+                "$ref": "#/$defs/ItemQty"
+              },
+              "type": "array"
+            },
+            "required_skill": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "skill_line": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "skill_up": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "source_inferred": {
+              "default": false,
+              "description": "The learning source was inferred by a rule, not listed by the source.",
+              "type": "boolean"
+            },
+            "sources": {
+              "default": [],
+              "description": "`trainer`, `pattern`, `drop`, `quest`, `vendor`, `starter`, ...",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "specialization": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "spell_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tools": {
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "trainer_cost": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "spell_id",
+            "name",
+            "profession"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "character_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "cost": {
+              "$ref": "#/$defs/Observation_uint64"
+            },
+            "kind": {
+              "const": "profession_rank",
+              "type": "string"
+            },
+            "learn_at_skill": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "max_skill": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "profession": {
+              "type": "string"
+            },
+            "rank": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "profession",
+            "rank",
+            "max_skill",
+            "learn_at_skill",
+            "cost"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "profession_note",
+              "type": "string"
+            },
+            "profession": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "profession",
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "type": "string"
+            },
+            "enhancement_type": {
+              "$ref": "#/$defs/EnhancementType"
+            },
+            "item_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "kind": {
+              "const": "enhancement",
+              "type": "string"
+            },
+            "min_item_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "required_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "slots": {
+              "description": "Inventory slot IDs (1 head .. 19 tabard).",
+              "items": {
+                "format": "uint8",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "spell_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "temporary": {
+              "default": false,
+              "type": "boolean"
+            },
+            "weapon_kind": {
+              "description": "Narrows weapon slots: `shield`, `twohand`, `weapon`, `blunt`, `bladed`, `bowgun`.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "enhancement_type",
+            "spell_id",
+            "name",
+            "slots",
+            "effect"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "area_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "base_skill": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "kind": {
+              "const": "fishing_area",
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "area_id",
+            "name",
+            "base_skill"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "group": {
+              "description": "`pagle`, `stv` or `rare`.",
+              "type": "string"
+            },
+            "item_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "fishing_goal",
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "place_note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "places": {
+              "description": "Each place is `[area]` or `[area, zone]`.",
+              "items": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "quality": {
+              "format": "uint8",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "quests": {
+              "items": {
+                "$ref": "#/$defs/FishingQuest"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "kind",
+            "item_id",
+            "group",
+            "name",
+            "quality"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "best_hours": {
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "closed": {
+              "type": "string"
+            },
+            "hours": {
+              "description": "Server hours `[from, to)`, wrapping past midnight.",
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "item_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "timed_fish",
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "open": {
+              "type": "string"
+            },
+            "season": {
+              "description": "`[from, to]` as month * 100 + day, wrapping past New Year.",
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "source": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "item_id",
+            "label",
+            "open",
+            "closed",
+            "source"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "fishing_event",
+              "type": "string"
+            },
+            "length_minutes": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            },
+            "start_minute": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "weekday": {
+              "description": "1 = Sunday.",
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "name",
+            "weekday",
+            "start_minute",
+            "length_minutes",
+            "source"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "exploration_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "faction_group_mask": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "area",
+              "type": "string"
+            },
+            "level_range": {
+              "description": "Lowest and highest creature level found in the area by the generator.",
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "map_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "ui_map",
+              "type": "string"
+            },
+            "map_type": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent_ui_map_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "area_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "kind": {
+              "const": "ui_map_assignment",
+              "type": "string"
+            },
+            "map_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "order_index": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "region_max": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "region_min": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "ui_map_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "ui_max": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "ui_min": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "kind",
+            "ui_map_id",
+            "map_id",
+            "order_index",
+            "ui_min",
+            "ui_max",
+            "region_min",
+            "region_max"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "creature_type": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "faction_template": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "npc",
+              "type": "string"
+            },
+            "max_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "min_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "npc_flags": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "rank": {
+              "description": "0 normal, 1 elite, 2 rare elite, 3 boss, 4 rare.",
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "reaction": {
+              "description": "`alliance`, `horde`, `both` or `hostile`, from the faction template.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "roles": {
+              "items": {
+                "$ref": "#/$defs/NpcRole"
+              },
+              "type": "array"
+            },
+            "subname": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "trainer_class": {
+              "description": "Class trained, as a class ID, for class trainers.",
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "game_object",
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "object_type": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_skill": {
+              "description": "Lock or skill requirement for gathering nodes and chests, when known.",
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "area_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "entity": {
+              "$ref": "#/$defs/EntityKind"
+            },
+            "entity_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "guid": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "spawn",
+              "type": "string"
+            },
+            "position": {
+              "$ref": "#/$defs/Observation_MapPosition",
+              "description": "Unsupported when the map has no uiMap (instances without a region)."
+            },
+            "respawn_secs": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "world": {
+              "$ref": "#/$defs/WorldPoint"
+            }
+          },
+          "required": [
+            "kind",
+            "guid",
+            "entity",
+            "entity_id",
+            "world",
+            "position"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enders": {
+              "items": {
+                "$ref": "#/$defs/EntityRef"
+              },
+              "type": "array"
+            },
+            "exclusive_group": {
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "flags": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "givers": {
+              "items": {
+                "$ref": "#/$defs/EntityRef"
+              },
+              "type": "array"
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "quest",
+              "type": "string"
+            },
+            "level": {
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "min_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "next_in_chain": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "next_quest": {
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "objectives": {
+              "items": {
+                "$ref": "#/$defs/QuestObjective"
+              },
+              "type": "array"
+            },
+            "objectives_text": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "prev_quest": {
+              "description": "Positive: must be completed; negative: must be active.",
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_classes": {
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_races": {
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_skill": {
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "reward_choice_items": {
+              "items": {
+                "$ref": "#/$defs/ItemQty"
+              },
+              "type": "array"
+            },
+            "reward_items": {
+              "items": {
+                "$ref": "#/$defs/ItemQty"
+              },
+              "type": "array"
+            },
+            "reward_money": {
+              "description": "Copper; negative means the quest costs money.",
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "reward_spell": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "reward_xp": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "source_item": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "zone_or_sort": {
+              "description": "Positive: area ID; negative: quest sort (class, profession, holiday).",
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "title"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "item_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "vendor_item",
+              "type": "string"
+            },
+            "max_count": {
+              "description": "Limited stock; absent means unlimited.",
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "npc_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "restock_secs": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "npc_id",
+            "item_id"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "cost": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "kind": {
+              "const": "trainer_spell",
+              "type": "string"
+            },
+            "npc_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "required_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_skill": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "required_skill_line": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "spell_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "npc_id",
+            "spell_id"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "base_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "class_mask": {
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "spell",
+              "type": "string"
+            },
+            "max_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "race_mask": {
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "rank": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "skill_line": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "spell_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class_mask": {
+              "format": "int64",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "column": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "talent",
+              "type": "string"
+            },
+            "prerequisite": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "ranks": {
+              "description": "Spell ID per rank, in rank order.",
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "tab_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tab_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tier": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "tab_id",
+            "tier",
+            "column",
+            "ranks"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "faction": {
+              "description": "Faction usable by: `alliance`, `horde`, `both` or `unknown`.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "flight_master": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "taxi_node",
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "position": {
+              "$ref": "#/$defs/Observation_MapPosition"
+            },
+            "world": {
+              "$ref": "#/$defs/WorldPoint"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "name",
+            "world",
+            "position"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "cost": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "from_node": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "taxi_path",
+              "type": "string"
+            },
+            "points": {
+              "items": {
+                "$ref": "#/$defs/WorldPoint"
+              },
+              "type": "array"
+            },
+            "to_node": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "from_node",
+            "to_node"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "chance": {
+              "description": "Percent; negative marks a quest-only drop (CMaNGOS); 0 inside a group means\nan equal share of the group's remainder.",
+              "format": "double",
+              "type": "number"
+            },
+            "condition": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "entry": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "group": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "item": {
+              "description": "Exactly one of `item` or `reference` is set.",
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "kind": {
+              "const": "loot",
+              "type": "string"
+            },
+            "max_count": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_count": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "reference": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "table": {
+              "$ref": "#/$defs/LootTable"
+            }
+          },
+          "required": [
+            "kind",
+            "table",
+            "entry",
+            "chance",
+            "min_count",
+            "max_count"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "area_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "bosses": {
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "entrance": {
+              "$ref": "#/$defs/Observation_WorldPoint"
+            },
+            "kind": {
+              "const": "dungeon",
+              "type": "string"
+            },
+            "map_id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "max_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "min_level": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "map_id",
+            "name",
+            "entrance"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "faction": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "kind": {
+              "const": "graveyard",
+              "type": "string"
+            },
+            "position": {
+              "$ref": "#/$defs/Observation_MapPosition"
+            },
+            "world": {
+              "$ref": "#/$defs/WorldPoint"
+            },
+            "zones": {
+              "items": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "world",
+            "position"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "RecordKind": {
+      "enum": [
+        "item",
+        "recipe",
+        "profession_rank",
+        "profession_note",
+        "enhancement",
+        "fishing_area",
+        "fishing_goal",
+        "timed_fish",
+        "fishing_event",
+        "area",
+        "ui_map",
+        "ui_map_assignment",
+        "npc",
+        "game_object",
+        "spawn",
+        "quest",
+        "vendor_item",
+        "trainer_spell",
+        "spell",
+        "talent",
+        "taxi_node",
+        "taxi_path",
+        "loot",
+        "dungeon",
+        "graveyard"
+      ],
+      "type": "string"
+    },
+    "Sequence": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "SessionId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "Shard": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "index": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "index",
+        "count"
+      ],
+      "type": "object"
+    },
+    "SourceId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
+      "type": "string"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/SourceId"
+        },
+        "retrieved_at_utc_ms": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "revision": {
+          "description": "Upstream revision (commit, dump name or build); absent for live pages.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "snapshot_sha256": {
+          "description": "SHA-256 of the retained snapshot or of the cache manifest that lists them.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "url"
+      ],
+      "type": "object"
+    },
+    "StateSource": {
+      "enum": [
+        "unrecorded",
+        "addon_snapshot",
+        "manual_entry",
+        "official_api",
+        "reference_data",
+        "synthetic_fixture"
+      ],
+      "type": "string"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/Observation_BuildId",
+          "description": "Unknown until the 1.0.0 target build is frozen (ADR 0006 §1)."
+        },
+        "edition": {
+          "$ref": "#/$defs/EditionId"
+        }
+      },
+      "required": [
+        "edition",
+        "build"
+      ],
+      "type": "object"
+    },
+    "UtcMillis": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer"
+    },
+    "WorldPoint": {
+      "additionalProperties": false,
+      "description": "A point in a map's world coordinates (yards), as server data stores it.",
+      "properties": {
+        "map_id": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "x": {
+          "format": "double",
+          "type": "number"
+        },
+        "y": {
+          "format": "double",
+          "type": "number"
+        },
+        "z": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "map_id",
+        "x",
+        "y",
+        "z"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/Laymer/Navzeroth/schemas/world-data/v1/world-data.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "navzeroth-world-data v1 shard. Absent optional fields mean the source did not provide them (unknown), never zero. Structural validity is not a rights grant or a verified Forever fact.",
+  "properties": {
+    "confidence": {
+      "$ref": "#/$defs/Confidence"
+    },
+    "dataset": {
+      "description": "Dotted dataset name, for example `professions.recipes` or `world.spawns`.",
+      "type": "string"
+    },
+    "format": {
+      "const": "navzeroth-world-data"
+    },
+    "generator": {
+      "$ref": "#/$defs/Generator"
+    },
+    "origin": {
+      "$ref": "#/$defs/Origin"
+    },
+    "record_kind": {
+      "$ref": "#/$defs/RecordKind"
+    },
+    "records": {
+      "items": {
+        "$ref": "#/$defs/Record"
+      },
+      "maxItems": 250000,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "shard": {
+      "$ref": "#/$defs/Shard"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "type": "array"
+    },
+    "target": {
+      "$ref": "#/$defs/Target"
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "dataset",
+    "record_kind",
+    "origin",
+    "target",
+    "confidence",
+    "sources",
+    "generator",
+    "shard",
+    "records"
+  ],
+  "title": "WorldData",
+  "type": "object"
+}

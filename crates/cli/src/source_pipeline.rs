@@ -366,8 +366,18 @@ fn sync_registry_using(
                         "Offline source closure is incomplete; run explicit source-sync --fetch",
                     );
                 }
-                if source.retrieval.method != Method::HttpsPinned {
-                    return Err("Source allows manual local acquisition only");
+                match source.retrieval.method {
+                    Method::HttpsPinned => {}
+                    Method::ManualLocal => {
+                        return Err("Source allows manual local acquisition only");
+                    }
+                    // Only the opt-in generators under data-generators/ retrieve
+                    // these sources; their retained output is registered as files.
+                    Method::HttpsRateLimited => {
+                        return Err(
+                            "Generator-retrieved source material is retained from data-generators; source-sync never fetches it",
+                        );
+                    }
                 }
                 if let Some(last) = last_request {
                     let interval = Duration::from_millis(source.retrieval.minimum_interval_ms);
@@ -950,6 +960,16 @@ mod tests {
             ))
             .err(),
             Some("Source allows manual local acquisition only")
+        );
+        registry.sources[0].retrieval.method = Method::HttpsRateLimited;
+        assert_eq!(
+            sync_registry_using(&options, &registry, &raw, |_, _, _| panic!(
+                "Generator-retrieved source must never be fetched by source-sync"
+            ))
+            .err(),
+            Some(
+                "Generator-retrieved source material is retained from data-generators; source-sync never fetches it"
+            )
         );
         registry.sources[0].retrieval.minimum_interval_ms = 60_001;
         assert_eq!(

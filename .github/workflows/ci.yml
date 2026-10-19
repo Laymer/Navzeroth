@@ -74,6 +74,14 @@ jobs:
           done < <(git ls-files -z | git check-attr --stdin -z filter | awk 'BEGIN{RS="\0"; ORS="\0"} NR%3==1{p=$0} NR%3==0 && $0=="lfs"{print p}')
           exit $status
       - run: git diff --exit-code
+  python:
+    name: Python data generators
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # Offline unit tests only: generators never use the network in CI.
+      - run: NAVZEROTH_DATAGEN_OFFLINE=1 python3 -m unittest discover -s data-generators/tests -v
   lua:
     name: Lua static checks
     runs-on: ubuntu-24.04
