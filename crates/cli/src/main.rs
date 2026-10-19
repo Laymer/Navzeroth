@@ -15,7 +15,7 @@ use std::{
     process::ExitCode,
 };
 
-const USAGE: &str = "Unsupported command or options. Implemented: local-data (inspect|plan) <options, see docs/data/LOCAL_DATA.md>; inspect-capture --input <SavedVariables-file>; doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
+const USAGE: &str = "Unsupported command or options. Implemented: bundle-receipt-(sign|assemble|verify) <explicit files, see BUNDLED_CONTENT_RECEIPTS.md>; local-data (inspect|plan) <options, see docs/data/LOCAL_DATA.md>; inspect-capture --input <SavedVariables-file>; doctor [--json] [--saved-variables <file>] [--addons <dir>] [--content <dir>]; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; \
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
     inventory-report --root <repository> --input <relative-file>; \
@@ -226,6 +226,19 @@ fn main() -> ExitCode {
         return ExitCode::from(azeroth_local_data::media::worker_entry() as u8);
     }
     match args.as_slice() {
+        [command, rest @ ..] if command == "check-bundled-content" => {
+            azeroth_cli::bundled_content::run(rest)
+        }
+        [command, rest @ ..]
+            if command == "bundle-receipt-sign"
+                || command == "bundle-receipt-assemble"
+                || command == "bundle-receipt-verify" =>
+        {
+            azeroth_cli::bundled_receipts::run(
+                command.to_str().expect("ASCII receipt command"),
+                rest,
+            )
+        }
         [command, rest @ ..] if command == "local-data" => azeroth_cli::local_data::run(rest),
         [command, flag, input] if command == "inspect-capture" && flag == "--input" => {
             match azeroth_cli::capture::inspect_file(Path::new(input)) {

@@ -5,6 +5,8 @@
 #![deny(unsafe_code)]
 #![deny(unsafe_op_in_unsafe_fn)]
 
+pub mod bundled_receipts;
+pub mod bundled_resources;
 mod extraction;
 #[allow(unsafe_code)]
 mod isolation;
