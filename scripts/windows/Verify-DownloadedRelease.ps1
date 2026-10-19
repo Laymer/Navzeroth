@@ -11,10 +11,11 @@ $ErrorActionPreference = 'Stop'
 if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:OS -ne 'Windows_NT') {
     throw 'Download installation verification requires a disposable GitHub-hosted Windows runner'
 }
-if ($Version -ne '1.0.0-rc.1') { throw 'This verifier is scoped to the unsigned development RC' }
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $Directory = [IO.Path]::GetFullPath($Directory)
-. (Join-Path $PSScriptRoot 'Release-Materials.ps1')
+. (Join-Path $PSScriptRoot 'Release-Policy.ps1')
+$policy = Get-UnsignedReleasePolicy $root $Version
+if ($null -eq $policy) { throw 'No explicit unsigned release policy for this version.' }
 . (Join-Path $PSScriptRoot 'Native-Smoke-Helpers.ps1')
 Assert-ReleaseArtifacts $root $Version $Directory $false $false
 $setup = Get-NativeSmokeSetup -Directory $Directory
@@ -23,7 +24,7 @@ if ($setupHash -cne $InstallerSha256) { throw 'Downloaded installer differs from
 $setupMetadata = $setup.VersionInfo
 if ($setupMetadata.ProductVersion -cne $Version -or $setupMetadata.FileVersion -cne $Version) { throw 'Installer string version metadata differs from release' }
 $setupSignature = Get-AuthenticodeSignature -LiteralPath $setup.FullName
-if ($setupSignature.Status.ToString() -ne 'NotSigned') { throw 'Expected an explicitly unsigned development installer' }
+if ($setupSignature.Status.ToString() -ne 'NotSigned') { throw 'Expected an explicitly unsigned installer' }
 
 # Exact ZIP entries and bytes; no extraction of untrusted paths.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -65,7 +66,7 @@ try {
         [ordered]@{ name = $_.Name; bytes = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
     })
     $result = [ordered]@{
-        schema_version = 1; version = $Version; source_commit = (Get-Content -Raw (Join-Path $Directory 'SOURCE_COMMIT.txt')).Trim()
+        schema_version = 2; version = $Version; prerelease = $policy.prerelease; declared_signature = $policy.signature; source_commit = (Get-Content -Raw (Join-Path $Directory 'SOURCE_COMMIT.txt')).Trim()
         checked_at = [DateTime]::UtcNow.ToString('o'); workflow_run_id = $env:GITHUB_RUN_ID; workflow_run_attempt = $env:GITHUB_RUN_ATTEMPT
         assets = $assets; installer_signature = $setupSignature.Status.ToString(); application_signature = $signature.Status.ToString()
         installed_display_version = Get-InstalledDisplayVersion; product_version = $metadata.ProductVersion; file_version = $metadata.FileVersion
