@@ -7,6 +7,7 @@ folder are removed first. Records are plain dicts with a "kind" key; fields set
 to None are dropped (absent means unknown), while False, 0 and "" are kept.
 """
 import json
+import os
 import pathlib
 
 FORMAT = "navzeroth-world-data"
@@ -108,13 +109,19 @@ def write(dataset, record_kind, records, *, origin, sources, generator, confiden
     groups.append(current)
     folder = dataset_dir(dataset, origin, out)
     folder.mkdir(parents=True, exist_ok=True)
-    for old in folder.glob("part-*.json"):
-        old.unlink()
+    preserve_unlisted=os.environ.get('NAVZEROTH_DATAGEN_DECLARED_CLEAN')=='1'
+    if not preserve_unlisted:
+        for old in folder.glob("part-*.json"):
+            old.unlink()
     paths = []
     for i, group in enumerate(groups):
         head = dict(header, shard={"index": i, "count": len(groups)})
         text = dumps(head)[:-1] + ',"records":[\n' + ",\n".join(group) + "\n]}\n"
         path = folder / f"part-{i:04d}.json"
-        path.write_text(text, encoding="utf-8", newline="\n")
+        if preserve_unlisted:
+            with path.open('xb') as output:
+                output.write(text.encode('utf-8'))
+        else:
+            path.write_text(text, encoding="utf-8", newline="\n")
         paths.append(path)
     return paths
