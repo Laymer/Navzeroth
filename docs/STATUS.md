@@ -31,6 +31,20 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
+**STABLE-1.0.0 integration (2026-10-19):** owner/sole integration writer Codex
+`/root`, baseline `826aa21`, isolated branch `release/stable-1.0.0-integration`.
+[Claim](claims/2026-10-19-stable-integration.md),
+[ADR 0008](decisions/0008-unsigned-stable-release.md),
+[batch review](reviews/2026-10-19-stable-batch.md).
+The owner authorizes unsigned stable publication after revised gates and an
+exact-draft-installer manual Windows smoke. Policy authorization does not clear
+historical readiness blockers. #214–#217 final-head specialist reviews found no
+blockers; refreshed merge-candidate checks remain required. #212 has concrete
+cache integrity, bounded input and origin/build/material-closure findings under
+review and repair. Stable publication remains pending and no new tag exists.
+
+The following RC/Pages task narrative is retained as historical evidence.
+
 **Published development RC; Pages delivery:** Codex `/root`, sole writer, isolated
 branch `site/rc-field-manual`. [Pages claim](claims/2026-10-19-rc-pages.md),
 [Pages handoff](handoffs/2026-10-19-rc-pages.md),
