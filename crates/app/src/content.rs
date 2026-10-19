@@ -155,8 +155,23 @@ pub(crate) fn compose(
         for (key, value) in extra {
             match (target.get_mut(key), value) {
                 (Some(Value::Array(into)), Value::Array(values)) => {
+                    // Index hashes, not cloned records. Compare full values within
+                    // each bucket so collisions never discard distinct content.
+                    use std::hash::{DefaultHasher, Hash, Hasher};
+                    let fingerprint = |value: &Value| {
+                        let mut hasher = DefaultHasher::new();
+                        value.hash(&mut hasher);
+                        hasher.finish()
+                    };
+                    let mut positions: std::collections::HashMap<u64, Vec<usize>> =
+                        std::collections::HashMap::new();
+                    for (index, value) in into.iter().enumerate() {
+                        positions.entry(fingerprint(value)).or_default().push(index);
+                    }
                     for value in values {
-                        if !into.contains(value) {
+                        let bucket = positions.entry(fingerprint(value)).or_default();
+                        if !bucket.iter().any(|index| into[*index] == *value) {
+                            bucket.push(into.len());
                             into.push(value.clone());
                         }
                     }
