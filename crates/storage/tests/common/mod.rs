@@ -125,15 +125,21 @@ pub struct TempDb {
 }
 impl TempDb {
     pub fn new(name: &str) -> Self {
-        let nanos = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos();
-        let dir = std::env::temp_dir().join(format!(
-            "azeroth-storage-{name}-{}-{nanos}",
-            std::process::id()
-        ));
-        std::fs::create_dir_all(&dir).unwrap();
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+        let dir = (0..1024)
+            .find_map(|_| {
+                let dir = std::env::temp_dir().join(format!(
+                    "azeroth-storage-{name}-{}-{}",
+                    std::process::id(),
+                    NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+                ));
+                match std::fs::create_dir(&dir) {
+                    Ok(()) => Some(dir),
+                    Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => None,
+                    Err(error) => panic!("Cannot reserve storage fixture: {error}"),
+                }
+            })
+            .expect("Storage fixture reservation exhausted");
         let path = dir.join("store.sqlite3");
         Self { dir, path }
     }

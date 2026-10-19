@@ -22,3 +22,9 @@ picker checks require hosted execution; independent review remains pending.
 Next: final-head review/CI, integration after lifecycle repair, shared SemVer upgrade
 checks. No ordinary Windows/live acceptance or publication claim. Preserve ten
 required checks and strict coverage; no private game files accessed.
+
+Follow-up audit also replaces timestamp-only reusable storage and local-data
+sidecar fixture directories with bounded atomic reservation. All storage tests
+passed, as did four focused sidecar tests and all-target storage/local-data Clippy
+with warnings denied. The initial independent review found no actionable issues;
+this additional fixture-only delta requires a refreshed exact-head review/checks.
