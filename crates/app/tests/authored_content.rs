@@ -326,3 +326,111 @@ fn dungeon_estimate_derivation_remains_visible_and_never_passes_readiness() {
     );
     assert!(report.members[0].checks[0].condition.evaluation.is_none());
 }
+
+#[test]
+fn full_source_reward_reference_list_survives_preparation_and_keeps_unknown_requirements() {
+    let mut data = bundle();
+    let acquisition = data["content"]["reference"]["payload"]["acquisitions"][0].clone();
+    let mut facts = data["content"]["acquisition_facts"][0].clone();
+    facts["rewards"]["value"][0]["quantity"] = json!(1);
+    let ids: Vec<_> = (0..1024)
+        .map(|i| {
+            if i == 0 {
+                "demo-acq-1".to_owned()
+            } else {
+                format!("reward-source-{i}")
+            }
+        })
+        .collect();
+    data["content"]["reference"]["payload"]["acquisitions"] = json!(
+        ids.iter()
+            .map(|id| {
+                let mut row = acquisition.clone();
+                row["id"] = json!(id);
+                row
+            })
+            .collect::<Vec<_>>()
+    );
+    data["content"]["acquisition_facts"] = json!(
+        ids.iter()
+            .map(|id| {
+                let mut row = facts.clone();
+                row["acquisition"] = json!(id);
+                row
+            })
+            .collect::<Vec<_>>()
+    );
+    data["content"]["dungeons"][0]["rewards"] = known(json!(ids));
+    let (app, profile, _) = setup(&data);
+    let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+    let report = app
+        .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+        .unwrap();
+    assert_eq!(report.package.as_ref().unwrap().schema_version, 2);
+    assert_eq!(
+        report
+            .package
+            .as_ref()
+            .unwrap()
+            .rewards
+            .observation
+            .value()
+            .unwrap()
+            .len(),
+        1024
+    );
+    assert_eq!(report.members[0].rewards.len(), 1024);
+    assert_eq!(
+        report.members[0].rewards.last().unwrap().source.as_str(),
+        "reward-source-1023"
+    );
+    assert_eq!(
+        report.members[0].rewards[0]
+            .acquisition_requirement
+            .availability,
+        ObservationStatus::Unknown
+    );
+    assert!(
+        serde_json::to_vec(&report).unwrap().len()
+            < azeroth_app::dungeon_preparation::MAX_REPORT_BYTES
+    );
+    // A catalog source can name multiple items. Bound the expanded references,
+    // not just the number of acquisition IDs, before allocating an oversized list.
+    let item = data["content"]["reference"]["payload"]["items"][0].clone();
+    let items: Vec<_> = (0..5)
+        .map(|i| {
+            let mut item = item.clone();
+            if i > 0 {
+                item["key"]["item_id"] = json!(format!("additional-item-{i}"));
+            }
+            item
+        })
+        .collect();
+    let keys: Vec<_> = items.iter().map(|item| item["key"].clone()).collect();
+    data["content"]["reference"]["payload"]["items"] = json!(items);
+    for expanded in [4, 5] {
+        for source in data["content"]["reference"]["payload"]["acquisitions"]
+            .as_array_mut()
+            .unwrap()
+        {
+            source["items"] = json!(&keys[..expanded]);
+        }
+        let (app, profile, _) = setup(&data);
+        let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+        let result =
+            app.dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()));
+        if expanded == 4 {
+            let report = result.unwrap();
+            assert_eq!(report.members[0].rewards.len(), 4096);
+            let bytes = serde_json::to_vec(&report).unwrap().len();
+            assert!(bytes < azeroth_app::dungeon_preparation::MAX_REPORT_BYTES);
+            eprintln!("Synthetic 4096-reference single-member report: {bytes} bytes");
+        } else {
+            let error = result.unwrap_err();
+            assert_eq!(
+                serde_json::to_value(error).unwrap()["message"],
+                "Dungeon reward references exceed preparation bounds"
+            );
+        }
+    }
+}
