@@ -20,8 +20,13 @@ synthetic fixtures. Preserve capture source/fixture/executable/installer/image
 hashes, timing, dimensions and workflow provenance. Recreated screens and game
 art are not substitutes. No owner-supplied game imagery or personal exports ship.
 
-The previous dragon backdrop had unresolved provenance in its handoff and is no
-longer included. The local Inter font and app icon are retained from the repository.
+The owner explicitly requested restoration of `assets/dragon-citadel.jpg` on
+2026-10-19. It is the exact previously supplied decorative artwork, restored from
+commit `44df5b8`; it is not a game screenshot or release evidence. The earlier
+handoff records unresolved provenance; this request does not establish a new
+licence. Dark overlays preserve text readability. `assets/dragon.svg` is an
+original vector dragon favicon in the site’s gold/slate palette. The local Inter
+font and legacy app icon are retained from the repository.
 Public RC verification is recorded in `release.json` and the repository publication
 receipt. Actual release-app screenshots were captured by hosted run 39249569950
 from the verified public executable. Exact synthetic input and image provenance
