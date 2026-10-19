@@ -9,3 +9,8 @@ original/proof/code objects and committed mapping metadata needed for two-OS
 actual-corpus bound regeneration and byte/hash parity. No imagery or broad LFS
 fetch, purchases/quota expansion, hidden corpus skip, generator policy changes,
 or source normalization to manufacture a pass. Parent will dispatch reviewed CI.
+
+Root additionally authorized the necessary canonical-LF mapper/retainer repair.
+Desktop reviewer retains sole ownership of regenerated actual files in its
+inventory worktree; this branch supplies a small code/test commit for new pins.
+Old immutable source pins remain historical. No comparison-output normalization.
