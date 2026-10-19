@@ -1,5 +1,14 @@
 # Full-content v1.0.0 release process
 
+> **Superseded in part by [ADR 0007](../decisions/0007-world-data-automation.md)
+> (2026-10-19, task V2.8e):** 1.0.0 readiness no longer requires the 15 `LIVE-*`
+> checks, the live slice matrix or a post-launch frozen target. The target is the
+> owner's detected build in `release/v1/world-data-target.json`; 1.12 and Classic Era
+> data is accepted through `release/v1/accepted-origins.json`, and unknowns are
+> reported as accepted unknowns. The `WIN-*` checks, hashed evidence and receipts are
+> unchanged. Release notes must state that 1.0.0 ships without live-client evidence
+> and without a frozen launch build. See [release/v1/README.md](../../release/v1/README.md).
+
 > **Superseded in part by [ADR 0006](../decisions/0006-v1-program.md) (2026-10-17):**
 > target (first stable post-launch live build), scope (declared Human 1-20 slice),
 > sources (local-only under §11, including the owner's guides), hybrid delivery with

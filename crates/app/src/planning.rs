@@ -11,7 +11,6 @@ use azeroth_core::{
     observation::{FreshnessContext, ObservationStatus},
     planner::{EligibilityEvidence, PlannerResult},
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
-    travel::RouteOptions,
     types::*,
 };
 use serde::Serialize;
@@ -229,7 +228,7 @@ pub(crate) fn calculate_controlled(
             budget_ms: request.budget_ms,
             max_steps: 32,
             context: &context,
-            travel_options: &RouteOptions::default(),
+            travel_options: &content.route_options(),
         },
         control,
     )?;

@@ -129,6 +129,9 @@ struct State {
     watch: Option<RunningWatch>,
     watch_state: WatchState,
     watch_generation: u64,
+    /// The active revision whose planning may use accepted inferred travel
+    /// edges (ADR 0007 §8). In memory only: a restart restores the strict default.
+    inferred_travel: Option<azeroth_storage::content::ContentRevisionKey>,
 }
 /// Shared application service; SQLite access is serialized, and no filesystem
 /// path or profile key is accepted as an arbitrary database query.
@@ -255,6 +258,7 @@ impl SnapshotApplication {
                 watch: None,
                 watch_state: WatchState::default(),
                 watch_generation: 0,
+                inferred_travel: None,
             })),
         })
     }
@@ -437,6 +441,13 @@ impl SnapshotApplication {
         call(&mut self.lock()?.store)
     }
 
+    pub(crate) fn set_inferred_travel(
+        &self,
+        key: Option<azeroth_storage::content::ContentRevisionKey>,
+    ) -> Result<()> {
+        self.lock()?.inferred_travel = key;
+        Ok(())
+    }
     pub(crate) fn with_profile_store_mut<T>(
         &self,
         id: &str,
@@ -534,6 +545,7 @@ impl SnapshotApplication {
         let request: crate::planning::PlanningRequest =
             serde_json::from_str(text).map_err(|_| invalid("Invalid planning request"))?;
         let state = self.lock()?;
+        let inferred_travel = state.inferred_travel.clone();
         let (snapshot, content, guard) = state.store.with_immediate_read(|store| {
             let key = resolve(store, &request.profile_id)?;
             let snapshot = store
@@ -581,7 +593,9 @@ impl SnapshotApplication {
             Ok((snapshot, content, guard))
         })?;
         drop(state);
-        let result = calculate(request, &snapshot, &content, &context(now), &guard)?;
+        let accept_inferred = inferred_travel.as_ref() == Some(&content.key());
+        let view = crate::catalog::TravelPolicyView::new(&content, accept_inferred);
+        let result = calculate(request, &snapshot, &view, &context(now), &guard)?;
         guard.publish(
             self,
             crate::planning_job_service::advanced_now(now, started.elapsed()),
@@ -685,6 +699,7 @@ impl SnapshotApplication {
             revision: revision.clone(),
         };
         state.store.activate_content_revision(&key)?;
+        state.inferred_travel = None;
         let content = state
             .store
             .active_catalog_revision(&key.scope)?
@@ -703,6 +718,7 @@ impl SnapshotApplication {
             .store
             .rollback_content_revision(&scope)?
             .is_some_and(|result| result.changed);
+        state.inferred_travel = None;
         Ok(crate::content::ContentRollback {
             changed,
             active: state
