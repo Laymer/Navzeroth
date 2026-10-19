@@ -10,6 +10,55 @@ use azeroth_local_data::{guide_review::PageRequest, metadata::METADATA_SHA256};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
+static NEXT_DIRECTORY: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+fn reserve_fixture_directory() -> PathBuf {
+    for _ in 0..1024 {
+        let root = std::env::temp_dir().join(format!(
+            "nav-research-boundary-{}-{}",
+            std::process::id(),
+            NEXT_DIRECTORY.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        ));
+        #[allow(unused_mut)] // Unix permissions require a mutable builder.
+        let mut builder = fs::DirBuilder::new();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::DirBuilderExt;
+            builder.mode(0o700);
+        }
+        match builder.create(&root) {
+            Ok(()) => return root,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(error) => panic!("Cannot reserve fixture directory: {error}"),
+        }
+    }
+    panic!("Fixture directory reservation exhausted");
+}
+
+#[test]
+fn parallel_fixture_directories_are_unique_and_owned() {
+    let paths = std::thread::scope(|scope| {
+        let workers: Vec<_> = (0..32)
+            .map(|_| scope.spawn(reserve_fixture_directory))
+            .collect();
+        workers
+            .into_iter()
+            .map(|worker| worker.join().unwrap())
+            .collect::<Vec<_>>()
+    });
+    assert_eq!(
+        paths
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len(),
+        32
+    );
+    for path in paths {
+        assert!(path.is_dir());
+        fs::remove_dir(path).unwrap();
+    }
+}
+
 struct Fixture {
     root: PathBuf,
     service: Option<LocalDataService>,
@@ -17,21 +66,7 @@ struct Fixture {
 }
 impl Fixture {
     fn new() -> Self {
-        let root = std::env::temp_dir().join(format!(
-            "nav-research-boundary-{}-{}",
-            std::process::id(),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_nanos()
-        ));
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::DirBuilderExt;
-            fs::DirBuilder::new().mode(0o700).create(&root).unwrap();
-        }
-        #[cfg(not(unix))]
-        fs::create_dir(&root).unwrap();
+        let root = reserve_fixture_directory();
         for name in ["catalogs", "objects"] {
             fs::create_dir(root.join(name)).unwrap();
         }
