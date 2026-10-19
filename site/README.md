@@ -24,3 +24,7 @@ The previous dragon backdrop had unresolved provenance in its handoff and is no
 longer included. The local Inter font and app icon are retained from the repository.
 Public RC asset verification and real-app captures remain required before the
 separate Pages PR can be delivered.
+
+Inter OFL notice is retained byte for byte at `assets/fonts/OFL-Inter.txt`
+from `apps/desktop/src/theme/fonts/OFL-Inter.txt` (SHA-256
+`262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a`).
