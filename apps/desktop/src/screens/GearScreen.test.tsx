@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { vi } from "vitest";
 import { GearScreen } from "./GearScreen";
 import { createClient, type CommandAdapter } from "../commands";
-import type { GearCatalog, GearReport, GearRequest } from "../commands/gear";
+import type { AuthoredScores, GearCatalog, GearComparison, GearReport, GearRequest } from "../commands/gear";
 import dataset from "../../../../fixtures/contracts/v1/reference-dataset.json";
 const catalog: GearCatalog = { snapshot_id: "s", revision: "r", fixture: true, context: dataset.payload.items[0]?.key.context, equipment: {}, items: dataset.payload.items, acquisitions: dataset.payload.acquisitions } as GearCatalog;
 function mockReport(request: GearRequest): GearReport {
@@ -10,7 +10,7 @@ function mockReport(request: GearRequest): GearReport {
   const ranking = { ranking: "theoretical", label: "Best among verified candidates", scope_note: "Explicit manual fixture", model_version: "gear-model-v1", role: request.model.role, valid: [], uncertain: [], rejected: [], excluded: [], top_is_definitive: false } as const;
   return { request, fixture: true, context: catalog.context, current: { slots: {} }, current_score: score, baseline_gaps: ["Baseline slot missing"], theoretical: { ...ranking, valid: [], uncertain: [], rejected: [], excluded: [] }, equip_eligible: { ...ranking, valid: [], uncertain: [], rejected: [], excluded: [] }, obtainable: { ...ranking, ranking: "obtainable", valid: [], uncertain: [], rejected: [], excluded: [] }, candidates: [], practical: [], practical_model_version: "gear-practical-v1", assumptions: ["Explicit manual assumptions"] };
 }
-function adapter(compare: (request: GearRequest) => Promise<GearReport>, fixture = true): CommandAdapter {
+function adapter(compare: (request: GearRequest) => Promise<GearComparison>, fixture = true): CommandAdapter {
   return { invoke: vi.fn((command, input) => {
     if (command === "list_profiles") return Promise.resolve([{ id: "p", display_name: "Synthetic profile", fixture }] as never);
     if (command === "get_planning_catalog") return Promise.resolve({snapshot_id:"s",revision:"r",fixture,nodes:[],objectives:[]} as never);
@@ -116,4 +116,66 @@ it("retains bounded candidates when browsing and refreshing an immutable catalog
  await screen.findByLabelText(`Compare ${first.key.item_id}`);
  expect(screen.getByText('Selected candidates: 2 / 128')).toBeInTheDocument();
  expect(screen.getByRole('button',{name:'Remove page-two-item'})).toBeInTheDocument();
+});
+
+
+it("shows individual authored heuristic scores separately and clears them on edits", async () => {
+  const item = catalog.items[0];
+  if (!item) throw new Error("Missing synthetic item");
+  const compare = vi.fn((request: GearRequest): Promise<AuthoredScores> => Promise.resolve({
+    mode: "authored_score_only_v1", request, fixture: true, context: catalog.context,
+    imported_role:{status:"unknown"}, role_assumption:null,
+    source_layout: {status:"unknown"}, source_proficiency: {status:"restricted"},
+    equipment_eligibility: {status:"unknown"}, acquisition_availability: {status:"unknown"},
+    candidates: [{item:item.key,score:mockReport(request).current_score}], assumptions:["Synthetic heuristic weights only"],
+  }));
+  render(<GearScreen client={createClient(adapter(compare))} refreshKey={0} />);
+  await screen.findByText(/Snapshot: s; revision: r/);
+  fireEvent.click(screen.getByRole("button", {name:"Load labelled synthetic example"}));
+  fireEvent.click(screen.getByRole("button", {name:"Compare gear"}));
+  const result = await screen.findByRole("region", {name:"Individual heuristic scores"});
+  expect(result).toHaveTextContent("Source equipment layout: Unknown (not observed); source class proficiency: Restricted");
+  expect(result).toHaveTextContent("Equipment eligibility: not evaluated. Acquisition availability: not evaluated.");
+  expect(result).toHaveTextContent("Heuristic score 0; certainty low");
+  expect(screen.queryByRole("region",{name:"Gear result"})).not.toBeInTheDocument();
+  expect(screen.queryByText("Equipment eligibility",{exact:true})).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Assumed class identifier"),{target:{value:"class:mage"}});
+  expect(screen.queryByRole("region",{name:"Individual heuristic scores"})).not.toBeInTheDocument();
+});
+
+it("requires explicit role opt-in to score an unknown imported role and never shows practical rankings", async () => {
+  const item=catalog.items[0];if(!item)throw new Error("Missing fixture item");
+  const compare=vi.fn((request:GearRequest):Promise<AuthoredScores>=>request.score_role_assumption?Promise.resolve({
+    mode:"authored_score_only_v1",request,fixture:true,context:catalog.context,
+    imported_role:{status:"unknown"},role_assumption:request.score_role_assumption,
+    source_layout:{status:"unknown"},source_proficiency:{status:"unknown"},equipment_eligibility:{status:"unknown"},acquisition_availability:{status:"unknown"},
+    candidates:[{item:item.key,score:mockReport(request).current_score}],assumptions:["Explicit role assumption for scores only"],
+  }):Promise.reject({code:"INVALID_INPUT",message:"Authored model applicability is not established",retryable:false}));
+  const base=adapter(compare);
+  const client=createClient({invoke(command,input){
+    if(command==="get_authored_catalog")return Promise.resolve({revision:"r",records:[{id:"model-priest",label:"class:priest / healer / levels 1–20",evidence:[]}],total:1,next_offset:null} as never);
+    return base.invoke(command,input);
+  }});
+  render(<GearScreen client={client} refreshKey={0}/>);
+  await screen.findByRole("option",{name:"class:priest / healer / levels 1–20"});
+  fireEvent.change(screen.getByLabelText("Authored gear model selection"),{target:{value:"model-priest"}});
+  const optin=screen.getByLabelText("Use a declared role for individual heuristic scores");
+  expect(optin).not.toBeChecked();expect(screen.getByLabelText("Declared role for individual scores")).toBeDisabled();
+  fireEvent.change(screen.getByLabelText("Assumed class identifier"),{target:{value:"class:priest"}});
+  fireEvent.change(screen.getByLabelText("budget (ms)"),{target:{value:"1000"}});
+  fireEvent.click(screen.getByLabelText(`Compare ${item.key.item_id}`));
+  fireEvent.click(screen.getByRole("button",{name:"Compare gear"}));
+  expect(await screen.findByRole("alert")).toHaveTextContent("applicability is not established");
+  expect(compare.mock.calls[0]?.[0].score_role_assumption).toBeUndefined();
+  fireEvent.click(optin);fireEvent.click(screen.getByRole("button",{name:"Compare gear"}));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Choose a declared role");
+  expect(compare).toHaveBeenCalledTimes(1);
+  fireEvent.change(screen.getByLabelText("Declared role for individual scores"),{target:{value:"healer"}});
+  fireEvent.change(screen.getByLabelText("budget (ms)"),{target:{value:""}});
+  fireEvent.click(screen.getByRole("button",{name:"Compare gear"}));
+  const result=await screen.findByRole("region",{name:"Individual heuristic scores"});
+  expect(result).toHaveTextContent("Imported role: Unknown (not observed). Declared role assumption: healer (individual scores only).");
+  expect(compare.mock.calls[1]?.[0].score_role_assumption).toBe("healer");
+  expect(screen.queryByRole("region",{name:"Gear result"})).not.toBeInTheDocument();
+  fireEvent.click(optin);expect(screen.queryByRole("region",{name:"Individual heuristic scores"})).not.toBeInTheDocument();
 });

@@ -1,47 +1,47 @@
 {
-  "catalog_sha256": "2ac5023798b292d651630281323c138b36c236031e636d07ef986d51678b6e62",
+  "catalog_sha256": "7336b1f92b49d886a596bb40e056f09dd5264651bc35532c2639dfd270bfe87b",
   "rows": [
     {
       "dependencies": [
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:paladin-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:priest-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warrior-tank-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-tank-1-20\"]"
         },
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:solo-joint-planning",
@@ -53,14 +53,14 @@
       "size": 1,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "joint_planning"
@@ -69,11 +69,11 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:deadmines-repair-restock\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:deadmines-repair-restock\"]"
         }
       ],
       "id": "party:solo-stale-members",
@@ -85,14 +85,14 @@
       "size": 1,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "stale_members"
@@ -101,15 +101,15 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:slice-level-boundary\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:heuristic-level-boundary\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:train-after-level-up\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:train-after-level-up\"]"
         }
       ],
       "id": "party:solo-advancement",
@@ -121,14 +121,14 @@
       "size": 1,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "advancement"
@@ -137,7 +137,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:solo-review",
@@ -149,14 +149,14 @@
       "size": 1,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "review"
@@ -165,43 +165,43 @@
       "dependencies": [
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:paladin-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:priest-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warrior-tank-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-tank-1-20\"]"
         },
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-joint-planning",
@@ -213,14 +213,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "joint_planning"
@@ -229,11 +229,11 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:duo-compare-progress\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:duo-compare-progress\"]"
         }
       ],
       "id": "party:duo-unequal-progress",
@@ -245,14 +245,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "unequal_progress"
@@ -261,7 +261,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-sharing",
@@ -273,14 +273,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "sharing"
@@ -289,11 +289,11 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:duo-compare-progress\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:duo-compare-progress\"]"
         }
       ],
       "id": "party:duo-stale-members",
@@ -305,14 +305,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "stale_members"
@@ -321,43 +321,43 @@
       "dependencies": [
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:mage-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:paladin-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:paladin-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:priest-healer-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-healer-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:priest-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:rogue-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-melee-damage-1-20\"]"
         },
         {
           "domain": "class_roles",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"models\",\"model:warrior-tank-1-20\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"models\",\"model:warrior-tank-1-20\"]"
         },
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-fairness",
@@ -369,14 +369,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "fairness"
@@ -385,7 +385,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-agreement",
@@ -397,14 +397,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "agreement"
@@ -413,15 +413,15 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:deadmines-hearthstone\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:deadmines-hearthstone\"]"
         },
         {
           "domain": "reminders",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"rules\",\"reminder:train-after-level-up\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"rules\",\"reminder:train-after-level-up\"]"
         }
       ],
       "id": "party:duo-advancement",
@@ -433,14 +433,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "advancement"
@@ -449,7 +449,7 @@
       "dependencies": [
         {
           "domain": "dungeons",
-          "record_id": "[\"navzeroth-authored-slice-r1-release-contract-v2\",\"dungeons\",\"dungeon:the-deadmines\"]"
+          "record_id": "[\"navzeroth-authored-slice-r2\",\"dungeons\",\"dungeon:the-deadmines\"]"
         }
       ],
       "id": "party:duo-review",
@@ -461,14 +461,14 @@
       "size": 2,
       "supporting_evidence": [
         {
-          "bytes": 2246,
+          "bytes": 2476,
           "path": "evidence/authoring-statement.md",
-          "sha256": "97ddc5e40aa8a660557516867ba8f7aef573a171ea67ef6c4bdc9755f053bda4"
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
         },
         {
-          "bytes": 3717,
+          "bytes": 7276,
           "path": "evidence/role-model-assumptions.md",
-          "sha256": "84af6d428be4a0905a77bf17c67f67af3427beb8325ea711df461baad87a058e"
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
         }
       ],
       "workflow": "review"
@@ -480,9 +480,9 @@
     2
   ],
   "target": {
-    "build": "70450",
     "edition": "wow_forever",
-    "interface": 16001,
-    "version": "1.60.1"
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
   }
 }

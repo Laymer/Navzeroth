@@ -1,0 +1,171 @@
+{
+  "bands": [
+    [
+      1,
+      20
+    ],
+    [
+      21,
+      40
+    ],
+    [
+      41,
+      60
+    ]
+  ],
+  "classes": [
+    {
+      "id": "class:warrior",
+      "roles": [
+        "melee_damage",
+        "tank"
+      ],
+      "single_class_mask": 1,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 105
+    },
+    {
+      "id": "class:paladin",
+      "roles": [
+        "healer",
+        "melee_damage",
+        "tank"
+      ],
+      "single_class_mask": 2,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 87
+    },
+    {
+      "id": "class:hunter",
+      "roles": [
+        "ranged_damage"
+      ],
+      "single_class_mask": 4,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 77
+    },
+    {
+      "id": "class:rogue",
+      "roles": [
+        "melee_damage"
+      ],
+      "single_class_mask": 8,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 87
+    },
+    {
+      "id": "class:priest",
+      "roles": [
+        "healer",
+        "ranged_damage"
+      ],
+      "single_class_mask": 16,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 93
+    },
+    {
+      "id": "class:shaman",
+      "roles": [
+        "healer",
+        "melee_damage",
+        "ranged_damage"
+      ],
+      "single_class_mask": 64,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 71
+    },
+    {
+      "id": "class:mage",
+      "roles": [
+        "ranged_damage"
+      ],
+      "single_class_mask": 128,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 80
+    },
+    {
+      "id": "class:warlock",
+      "roles": [
+        "ranged_damage"
+      ],
+      "single_class_mask": 256,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 128
+    },
+    {
+      "id": "class:druid",
+      "roles": [
+        "healer",
+        "melee_damage",
+        "ranged_damage",
+        "tank"
+      ],
+      "single_class_mask": 1024,
+      "single_class_quest_min_level_range": [
+        1,
+        60
+      ],
+      "single_class_quest_records": 72
+    }
+  ],
+  "kind": "authored_heuristic_coverage",
+  "limitations": [
+    "Historical quest restrictions establish an input inventory, not a verified Forever class roster or level cap.",
+    "Source min_level zero stays recorded as zero; authored player-level models start at one.",
+    "Item requirement levels above 60 do not establish supported player-level coverage.",
+    "All weights are original authored heuristics; bands reuse ratios as explicit extrapolation.",
+    "Class proficiency, slot layouts, objective details and gameplay availability remain unresolved."
+  ],
+  "observed_quest_min_level_range": [
+    0,
+    60
+  ],
+  "schema_version": 1,
+  "source": {
+    "bytes": 2026036,
+    "confidence": "cross_edition_unverified",
+    "origin": {
+      "build": {
+        "status": "known",
+        "value": "1.12.1"
+      },
+      "edition": "vanilla_1_12",
+      "locale": "enUS",
+      "product": "cmangos-classic-db"
+    },
+    "path": "data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json",
+    "records": 4245,
+    "sha256": "f5a0f00625964c0a5c215b90c282473c9441d5f117e9538bdc7bdee0647031f5",
+    "source_ids": [
+      "cmangos-classic-db"
+    ]
+  },
+  "supported_heuristic_levels": [
+    1,
+    60
+  ]
+}

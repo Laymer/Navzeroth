@@ -187,14 +187,14 @@ pub(crate) fn quest_facts(
     })
 }
 
-pub(crate) fn apply_model(
-    request: &mut crate::gear::GearRequest,
+pub(crate) fn validate_model_identity_and_level(
+    class: &Observation<SourceId>,
     model: &ClassRoleModel,
     snapshot: &CharacterSnapshot,
     clock: &FreshnessContext,
 ) -> Result<()> {
     // Class is a declared assumption in the existing request, not a captured fact.
-    if request.class.value() != Some(&model.class) {
+    if class.value() != Some(&model.class) {
         return Err(invalid(
             "Authored model requires an explicit matching class assumption",
         ));
@@ -212,6 +212,16 @@ pub(crate) fn apply_model(
     if level < &model.minimum_level || level > &model.maximum_level {
         return Err(invalid("Authored model does not cover this level"));
     }
+    Ok(())
+}
+
+pub(crate) fn validate_model_selection(
+    class: &Observation<SourceId>,
+    model: &ClassRoleModel,
+    snapshot: &CharacterSnapshot,
+    clock: &FreshnessContext,
+) -> Result<()> {
+    validate_model_identity_and_level(class, model, snapshot, clock)?;
     let evaluation = EvaluationContext {
         snapshot,
         party: None,
@@ -235,6 +245,16 @@ pub(crate) fn apply_model(
             return Err(invalid("Authored model exclusion is true or unknown"));
         }
     }
+    Ok(())
+}
+
+pub(crate) fn apply_model(
+    request: &mut crate::gear::GearRequest,
+    model: &ClassRoleModel,
+    snapshot: &CharacterSnapshot,
+    clock: &FreshnessContext,
+) -> Result<()> {
+    validate_model_selection(&request.class, model, snapshot, clock)?;
     request.model = model.profile.clone().into_inner();
     request.layout = model
         .layout

@@ -204,3 +204,89 @@ fn authored_rules_refuse_invented_game_facts_in_build_and_verify() {
         Some("Authored pack must declare exactly one source")
     );
 }
+
+#[test]
+fn authored_role_inventory_is_bound_to_registered_historical_inputs() {
+    use serde_json::Value;
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let report: Value =
+        serde_json::from_slice(&fs::read(root.join("docs/data/role-coverage-v1.json")).unwrap())
+            .unwrap();
+    let bytes = fs::read(root.join(report["source"]["path"].as_str().unwrap())).unwrap();
+    assert_eq!(
+        report["source"]["sha256"],
+        format!("{:x}", Sha256::digest(&bytes))
+    );
+    let manifest: Value = serde_json::from_slice(
+        &fs::read(root.join("data-generators/output/run-manifest.json")).unwrap(),
+    )
+    .unwrap();
+    let registered = manifest["generators"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|g| g["files"].as_array().unwrap())
+        .find(|f| {
+            f["path"].as_str()
+                == Some(
+                    report["source"]["path"]
+                        .as_str()
+                        .unwrap()
+                        .trim_start_matches("data-generators/output/"),
+                )
+        })
+        .unwrap();
+    assert_eq!(registered["sha256"], report["source"]["sha256"]);
+    assert_eq!(registered["bytes"], report["source"]["bytes"]);
+    let shard: Value = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(shard["origin"], report["source"]["origin"]);
+    assert_eq!(shard["confidence"], report["source"]["confidence"]);
+    assert_eq!(shard["origin"]["edition"], "vanilla_1_12");
+    let records = shard["records"].as_array().unwrap();
+    assert_eq!(
+        records.len(),
+        report["source"]["records"].as_u64().unwrap() as usize
+    );
+    let catalog: Value =
+        serde_json::from_slice(&fs::read(input().join("catalog.json")).unwrap()).unwrap();
+    let models = catalog["models"].as_array().unwrap();
+    for class in report["classes"].as_array().unwrap() {
+        let count = records
+            .iter()
+            .filter(|r| r["required_classes"] == class["single_class_mask"])
+            .count();
+        assert!(count > 0);
+        assert_eq!(
+            count,
+            class["single_class_quest_records"].as_u64().unwrap() as usize
+        );
+        let levels: Vec<_> = records
+            .iter()
+            .filter(|r| r["required_classes"] == class["single_class_mask"])
+            .map(|r| r["min_level"].as_u64().unwrap())
+            .collect();
+        assert_eq!(
+            class["single_class_quest_min_level_range"],
+            serde_json::json!([levels.iter().min().unwrap(), levels.iter().max().unwrap()])
+        );
+        for role in class["roles"].as_array().unwrap() {
+            for band in report["bands"].as_array().unwrap() {
+                assert_eq!(
+                    models
+                        .iter()
+                        .filter(|m| m["class"] == class["id"]
+                            && m["profile"]["role"] == *role
+                            && m["minimum_level"] == band[0]
+                            && m["maximum_level"] == band[1])
+                        .count(),
+                    1
+                );
+            }
+        }
+    }
+    assert_eq!(report["classes"].as_array().unwrap().len(), 9);
+    assert_eq!(
+        report["supported_heuristic_levels"],
+        serde_json::json!([1, 60])
+    );
+}

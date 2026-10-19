@@ -219,12 +219,12 @@
         "status": "known",
         "value": {
           "op": "role_is",
-          "role": "melee_damage"
+          "role": "healer"
         }
       },
-      "class": "class:warrior",
+      "class": "class:druid",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -232,7 +232,7 @@
         "status": "known",
         "value": []
       },
-      "id": "model:warrior-melee-damage-1-20",
+      "id": "model:druid-healer-1-20",
       "layout": {
         "clock_trust": "uncertain",
         "source": "unrecorded",
@@ -247,21 +247,21 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Rage generation from weapon speed is not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
-        "role": "melee_damage",
+        "role": "healer",
         "version": "gear-model-v1",
         "weight_source": {
           "source": "navzeroth-authored-v1",
           "type": "documented_model"
         },
         "weights": {
-          "stat:agility": 600,
-          "stat:stamina": 400,
-          "stat:strength": 1000
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
         }
       }
     },
@@ -272,12 +272,12 @@
         "status": "known",
         "value": {
           "op": "role_is",
-          "role": "tank"
+          "role": "healer"
         }
       },
-      "class": "class:warrior",
+      "class": "class:druid",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -285,7 +285,113 @@
         "status": "known",
         "value": []
       },
-      "id": "model:warrior-tank-1-20",
+      "id": "model:druid-healer-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-healer-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-melee-damage-1-20",
       "layout": {
         "clock_trust": "uncertain",
         "source": "unrecorded",
@@ -300,21 +406,20 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Threat generation and shield block are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
-        "role": "tank",
+        "role": "melee_damage",
         "version": "gear-model-v1",
         "weight_source": {
           "source": "navzeroth-authored-v1",
           "type": "documented_model"
         },
         "weights": {
-          "stat:agility": 500,
-          "stat:armor": 20,
-          "stat:stamina": 1000,
+          "stat:agility": 1000,
+          "stat:stamina": 400,
           "stat:strength": 500
         }
       }
@@ -329,9 +434,9 @@
           "role": "melee_damage"
         }
       },
-      "class": "class:paladin",
+      "class": "class:druid",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -339,7 +444,113 @@
         "status": "known",
         "value": []
       },
-      "id": "model:paladin-melee-damage-1-20",
+      "id": "model:druid-melee-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:stamina": 400,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-melee-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:stamina": 400,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-ranged-damage-1-20",
       "layout": {
         "clock_trust": "uncertain",
         "source": "unrecorded",
@@ -354,22 +565,604 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Seal and judgement scaling are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
-        "role": "melee_damage",
+        "role": "ranged_damage",
         "version": "gear-model-v1",
         "weight_source": {
           "source": "navzeroth-authored-v1",
           "type": "documented_model"
         },
         "weights": {
-          "stat:agility": 300,
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-ranged-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-ranged-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-tank-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:armor": 20,
+          "stat:stamina": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-tank-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:armor": 20,
+          "stat:stamina": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:druid",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:druid-tank-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:armor": 20,
+          "stat:stamina": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:hunter",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:hunter-ranged-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
           "stat:intellect": 300,
-          "stat:stamina": 500,
-          "stat:strength": 1000
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:hunter",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:hunter-ranged-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:intellect": 300,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:hunter",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:hunter-ranged-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:intellect": 300,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:mage",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:mage-ranged-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 600,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:mage",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:mage-ranged-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 600,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:mage",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:mage-ranged-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 600,
+          "stat:stamina": 400
         }
       }
     },
@@ -385,7 +1178,7 @@
       },
       "class": "class:paladin",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -408,10 +1201,116 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Healing power and mana regeneration rules are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-healer-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-healer-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
         "role": "healer",
         "version": "gear-model-v1",
@@ -436,9 +1335,9 @@
           "role": "melee_damage"
         }
       },
-      "class": "class:rogue",
+      "class": "class:paladin",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -446,7 +1345,7 @@
         "status": "known",
         "value": []
       },
-      "id": "model:rogue-melee-damage-1-20",
+      "id": "model:paladin-melee-damage-1-20",
       "layout": {
         "clock_trust": "uncertain",
         "source": "unrecorded",
@@ -461,10 +1360,10 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Energy, combo points and off-hand weapon choice are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
         "role": "melee_damage",
         "version": "gear-model-v1",
@@ -473,8 +1372,279 @@
           "type": "documented_model"
         },
         "weights": {
-          "stat:agility": 1000,
-          "stat:stamina": 400,
+          "stat:agility": 300,
+          "stat:intellect": 300,
+          "stat:stamina": 500,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-melee-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 300,
+          "stat:intellect": 300,
+          "stat:stamina": 500,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-melee-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 300,
+          "stat:intellect": 300,
+          "stat:stamina": 500,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-tank-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:armor": 20,
+          "stat:intellect": 300,
+          "stat:stamina": 1000,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-tank-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:armor": 20,
+          "stat:intellect": 300,
+          "stat:stamina": 1000,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:paladin",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:paladin-tank-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:armor": 20,
+          "stat:intellect": 300,
+          "stat:stamina": 1000,
           "stat:strength": 500
         }
       }
@@ -491,7 +1661,7 @@
       },
       "class": "class:priest",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -514,10 +1684,116 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Healing power and mana regeneration rules are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 800,
+          "stat:stamina": 300
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:priest",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:priest-healer-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 800,
+          "stat:stamina": 300
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:priest",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:priest-healer-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
         "role": "healer",
         "version": "gear-model-v1",
@@ -544,7 +1820,7 @@
       },
       "class": "class:priest",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -567,10 +1843,10 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Wand damage is not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
         "role": "ranged_damage",
         "version": "gear-model-v1",
@@ -595,9 +1871,9 @@
           "role": "ranged_damage"
         }
       },
-      "class": "class:mage",
+      "class": "class:priest",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -605,7 +1881,113 @@
         "status": "known",
         "value": []
       },
-      "id": "model:mage-ranged-damage-1-20",
+      "id": "model:priest-ranged-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:priest",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:priest-ranged-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:rogue",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:rogue-melee-damage-1-20",
       "layout": {
         "clock_trust": "uncertain",
         "source": "unrecorded",
@@ -620,10 +2002,490 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Spell power and wand damage are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:stamina": 400,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:rogue",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:rogue-melee-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:stamina": 400,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:rogue",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:rogue-melee-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 1000,
+          "stat:stamina": 400,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-healer-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-healer-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "healer"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-healer-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "healer",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 700,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-melee-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:intellect": 300,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-melee-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:intellect": 300,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-melee-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:intellect": 300,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-ranged-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
         "role": "ranged_damage",
         "version": "gear-model-v1",
@@ -633,7 +2495,113 @@
         },
         "weights": {
           "stat:intellect": 1000,
-          "stat:spirit": 600,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-ranged-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 400
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:shaman",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:shaman-ranged-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
           "stat:stamina": 400
         }
       }
@@ -650,7 +2618,7 @@
       },
       "class": "class:warlock",
       "evidence": [
-        "ev-authored-v1"
+        "ev-authored-roles-r2"
       ],
       "exclusions": {
         "clock_trust": "uncertain",
@@ -673,10 +2641,10 @@
       },
       "profile": {
         "known_unmodeled": [
-          "Weights are authored leveling heuristics for levels 1-20, not measured or verified game mechanics.",
-          "Weapon damage, speed and procs are not modelled; compare weapons manually.",
-          "Item set bonuses, on-use and on-equip effects are not modelled.",
-          "Pet scaling, health-to-mana conversion and wand damage are not modelled."
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
         ],
         "role": "ranged_damage",
         "version": "gear-model-v1",
@@ -688,6 +2656,433 @@
           "stat:intellect": 1000,
           "stat:spirit": 500,
           "stat:stamina": 800
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:warlock",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warlock-ranged-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 800
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "ranged_damage"
+        }
+      },
+      "class": "class:warlock",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warlock-ranged-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "ranged_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:intellect": 1000,
+          "stat:spirit": 500,
+          "stat:stamina": 800
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-melee-damage-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-melee-damage-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "melee_damage"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-melee-damage-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "melee_damage",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 600,
+          "stat:stamina": 400,
+          "stat:strength": 1000
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-tank-1-20",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 20,
+      "minimum_level": 1,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 1-20; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:armor": 20,
+          "stat:stamina": 1000,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-tank-21-40",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 40,
+      "minimum_level": 21,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 21-40; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:armor": 20,
+          "stat:stamina": 1000,
+          "stat:strength": 500
+        }
+      }
+    },
+    {
+      "applicability": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "role_is",
+          "role": "tank"
+        }
+      },
+      "class": "class:warrior",
+      "evidence": [
+        "ev-authored-roles-r2"
+      ],
+      "exclusions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": []
+      },
+      "id": "model:warrior-tank-41-60",
+      "layout": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "maximum_level": 60,
+      "minimum_level": 41,
+      "proficiency": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "profile": {
+        "known_unmodeled": [
+          "Original authored heuristic for levels 41-60; not measured, simulated or verified game mechanics.",
+          "Ratios are reused across level bands as an explicit uncalibrated extrapolation.",
+          "Weapon damage, speed, procs, pet damage, class abilities, talents, forms, set bonuses and on-use/on-equip effects are not modelled.",
+          "Class proficiency and slot layout remain unknown; a model score does not establish equipment eligibility."
+        ],
+        "role": "tank",
+        "version": "gear-model-v1",
+        "weight_source": {
+          "source": "navzeroth-authored-v1",
+          "type": "documented_model"
+        },
+        "weights": {
+          "stat:agility": 500,
+          "stat:armor": 20,
+          "stat:stamina": 1000,
+          "stat:strength": 500
         }
       }
     }
@@ -708,6 +3103,32 @@
       "acquisitions": [],
       "edges": [],
       "evidence": [
+        {
+          "confidence": "publisher_documented",
+          "conflicts": [],
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "id": "ev-authored-roles-r2",
+          "license": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "BSD-3-Clause (repository LICENSE)"
+          },
+          "notes": "Original authored role/reminder coverage revision r2, 2026-10-19. Historical quest masks identify inventory only; coefficients and extrapolations are original heuristics, not verified game mechanics. See evidence/role-model-assumptions.md.",
+          "observed_at_utc_ms": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "unknown"
+          },
+          "source": "navzeroth-authored-v1"
+        },
         {
           "confidence": "publisher_documented",
           "conflicts": [],
@@ -765,7 +3186,7 @@
       "nodes": [],
       "objectives": [],
       "quests": [],
-      "revision": "navzeroth-authored-slice-r1-release-contract-v2",
+      "revision": "navzeroth-authored-slice-r2",
       "rules": [
         {
           "context": {
@@ -777,20 +3198,21 @@
             "namespace": "reference"
           },
           "cooldown_ms": 0,
-          "deduplication_key": "reminder:train-after-level-up",
-          "dismissal": "session",
+          "deduplication_key": "reminder:deadmines-hearthstone",
+          "dismissal": "until_ruleset_changes",
           "evidence": [
             "ev-authored-v1"
           ],
           "expires_at_utc_ms": null,
-          "id": "reminder:train-after-level-up",
+          "id": "reminder:deadmines-hearthstone",
           "predicate": {
-            "level": 2,
-            "op": "level_at_least"
+            "key": "plan.deadmines",
+            "op": "user_preference",
+            "value": true
           },
-          "priority": 20,
-          "result_template": "New level reached. Visit your class trainer before you move on and check what is offered at your level.",
-          "trigger": "level_changed"
+          "priority": 25,
+          "result_template": "Before the Deadmines: decide where you want to return afterwards and set your hearthstone there.",
+          "trigger": "preference_changed"
         },
         {
           "context": {
@@ -828,21 +3250,46 @@
             "namespace": "reference"
           },
           "cooldown_ms": 0,
-          "deduplication_key": "reminder:deadmines-hearthstone",
-          "dismissal": "until_ruleset_changes",
+          "deduplication_key": "reminder:duo-compare-progress",
+          "dismissal": "session",
           "evidence": [
             "ev-authored-v1"
           ],
           "expires_at_utc_ms": null,
-          "id": "reminder:deadmines-hearthstone",
+          "id": "reminder:duo-compare-progress",
           "predicate": {
-            "key": "plan.deadmines",
+            "key": "party.duo",
             "op": "user_preference",
             "value": true
           },
-          "priority": 25,
-          "result_template": "Before the Deadmines: decide where you want to return afterwards and set your hearthstone there.",
-          "trigger": "preference_changed"
+          "priority": 15,
+          "result_template": "Duo: import fresh captures for both characters and compare quest progress before you agree on the next step.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 0,
+          "deduplication_key": "reminder:heuristic-level-boundary",
+          "dismissal": "permanent",
+          "evidence": [
+            "ev-authored-v1"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:heuristic-level-boundary",
+          "predicate": {
+            "level": 61,
+            "op": "level_at_least"
+          },
+          "priority": 40,
+          "result_template": "Your level is outside the authored 1-60 heuristic range. This range is an advice boundary, not a verified game level cap.",
+          "trigger": "level_changed"
         },
         {
           "context": {
@@ -879,21 +3326,488 @@
             },
             "namespace": "reference"
           },
-          "cooldown_ms": 0,
-          "deduplication_key": "reminder:slice-level-boundary",
-          "dismissal": "permanent",
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-healer-1-20",
+          "dismissal": "session",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-roles-r2"
           ],
           "expires_at_utc_ms": null,
-          "id": "reminder:slice-level-boundary",
+          "id": "reminder:role-healer-1-20",
           "predicate": {
-            "level": 20,
-            "op": "level_at_least"
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "healer"
+              },
+              {
+                "level": 1,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 21,
+                  "op": "level_at_least"
+                }
+              }
+            ]
           },
-          "priority": 40,
-          "result_template": "Level 20 reached: the guided 1.0.0 range ends here. Models, checks and routes beyond level 20 are out of scope.",
-          "trigger": "level_changed"
+          "priority": 10,
+          "result_template": "Levels 1-20: Heuristic preparation: review your declared healing role, supplies and expected session duration with the group before departure.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-healer-21-40",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-healer-21-40",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "healer"
+              },
+              {
+                "level": 21,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 41,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 21-40: Heuristic preparation: review your declared healing role, supplies and expected session duration with the group before departure.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-healer-41-60",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-healer-41-60",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "healer"
+              },
+              {
+                "level": 41,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 61,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 41-60: Heuristic preparation: review your declared healing role, supplies and expected session duration with the group before departure.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-melee_damage-1-20",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-melee_damage-1-20",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "melee_damage"
+              },
+              {
+                "level": 1,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 21,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 1-20: Heuristic preparation: compare the attributes your selected model actually scores and inspect unmodelled weapon damage, speed and effects manually.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-melee_damage-21-40",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-melee_damage-21-40",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "melee_damage"
+              },
+              {
+                "level": 21,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 41,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 21-40: Heuristic preparation: compare the attributes your selected model actually scores and inspect unmodelled weapon damage, speed and effects manually.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-melee_damage-41-60",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-melee_damage-41-60",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "melee_damage"
+              },
+              {
+                "level": 41,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 61,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 41-60: Heuristic preparation: compare the attributes your selected model actually scores and inspect unmodelled weapon damage, speed and effects manually.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-ranged_damage-1-20",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-ranged_damage-1-20",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "ranged_damage"
+              },
+              {
+                "level": 1,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 21,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 1-20: Heuristic preparation: compare the attributes your selected model actually scores and review supplies, unmodelled effects and expected session duration.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-ranged_damage-21-40",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-ranged_damage-21-40",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "ranged_damage"
+              },
+              {
+                "level": 21,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 41,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 21-40: Heuristic preparation: compare the attributes your selected model actually scores and review supplies, unmodelled effects and expected session duration.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-ranged_damage-41-60",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-ranged_damage-41-60",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "ranged_damage"
+              },
+              {
+                "level": 41,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 61,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 41-60: Heuristic preparation: compare the attributes your selected model actually scores and review supplies, unmodelled effects and expected session duration.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-tank-1-20",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-tank-1-20",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "tank"
+              },
+              {
+                "level": 1,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 21,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 1-20: Heuristic preparation: agree who leads pulls, review unknown equipment eligibility, and discuss a fallback with your group before departure.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-tank-21-40",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-tank-21-40",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "tank"
+              },
+              {
+                "level": 21,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 41,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 21-40: Heuristic preparation: agree who leads pulls, review unknown equipment eligibility, and discuss a fallback with your group before departure.",
+          "trigger": "snapshot_changed"
+        },
+        {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "cooldown_ms": 600000,
+          "deduplication_key": "reminder:role-tank-41-60",
+          "dismissal": "session",
+          "evidence": [
+            "ev-authored-roles-r2"
+          ],
+          "expires_at_utc_ms": null,
+          "id": "reminder:role-tank-41-60",
+          "predicate": {
+            "op": "all",
+            "predicates": [
+              {
+                "op": "role_is",
+                "role": "tank"
+              },
+              {
+                "level": 41,
+                "op": "level_at_least"
+              },
+              {
+                "op": "not",
+                "predicate": {
+                  "level": 61,
+                  "op": "level_at_least"
+                }
+              }
+            ]
+          },
+          "priority": 10,
+          "result_template": "Levels 41-60: Heuristic preparation: agree who leads pulls, review unknown equipment eligibility, and discuss a fallback with your group before departure.",
+          "trigger": "snapshot_changed"
         },
         {
           "context": {
@@ -905,21 +3819,20 @@
             "namespace": "reference"
           },
           "cooldown_ms": 0,
-          "deduplication_key": "reminder:duo-compare-progress",
+          "deduplication_key": "reminder:train-after-level-up",
           "dismissal": "session",
           "evidence": [
             "ev-authored-v1"
           ],
           "expires_at_utc_ms": null,
-          "id": "reminder:duo-compare-progress",
+          "id": "reminder:train-after-level-up",
           "predicate": {
-            "key": "party.duo",
-            "op": "user_preference",
-            "value": true
+            "level": 2,
+            "op": "level_at_least"
           },
-          "priority": 15,
-          "result_template": "Duo: import fresh captures for both characters and compare quest progress before you agree on the next step.",
-          "trigger": "snapshot_changed"
+          "priority": 20,
+          "result_template": "New level reached. Visit your class trainer before you move on and check what is offered at your level.",
+          "trigger": "level_changed"
         }
       ]
     },
