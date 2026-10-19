@@ -48,3 +48,26 @@ path now matches the existing projection script convention.
 No network pipeline, whole-corpus regeneration, Windows check, coverage percentage,
 key operation, push, merge or release is claimed. Next: independent review and
 exact-head required CI; the integrator owns subsequent release work.
+
+## Independent review follow-up
+
+Root independently reran the initial 130 tests and requested elapsed response and
+aggregate scan bounds. HTTP body reads now use `HTTPResponse.read1`, checking a
+300-second elapsed deadline before/after each read; socket inactivity timeout is
+capped at five seconds. Deadline expiry is not retried. Other transient failures
+retain at most four attempts. This addresses continuous body trickles; it does
+not claim a hard end-to-end deadline over DNS, host-slot waiting or header parsing.
+The workflow's overall timeout remains necessary.
+
+Shared deterministic scans now cap entries (32,768), depth (16), matched files
+(4,096), aggregate consumed bytes (2 GiB), and records (6 million). The projection
+budget counts both original records and projected facts. Scan enumeration uses
+incremental scandir and refuses links; no concurrent ancestor race guarantee is
+added. Registration and citation reads use independent finite budgets. Existing
+corpus inspection found 119 world/fact shards and approximately 685 MB of facts,
+leaving substantial headroom. A deliberately huge corpus can still require large
+finite memory below these admission bounds; no ordinary-PC claim follows.
+
+Final follow-up validation: 132 offline tests passed, including synthetic clock /
+trickle-response, socket-timeout and scan/count/aggregate-budget refusals. No
+network requests were made. Isolated CLI help and diff checks still pass.

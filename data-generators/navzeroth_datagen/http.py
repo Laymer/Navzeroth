@@ -23,7 +23,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from .bounded import read_file, read_stream
+from .bounded import read_file
 
 try:
     import fcntl
@@ -46,6 +46,8 @@ DEFAULT_LIMIT = (1, 1.0)
 # Retained largest download is a 13 MiB SQL gzip; allow headroom, never unlimited.
 MAX_BODY_BYTES = 64 * 1024 * 1024
 MAX_META_BYTES = 64 * 1024
+MAX_RESPONSE_SECONDS = 300
+MAX_SOCKET_SECONDS = 5
 RETRY_STATUS = {429, 500, 502, 503, 504}
 # Answers that may be transient (rate limits, bot challenges): used for this run, never cached.
 NOT_CACHED = RETRY_STATUS | {202, 403}
@@ -171,6 +173,22 @@ class _SameHostRedirects(urllib.request.HTTPRedirectHandler):
 _opener = urllib.request.build_opener(_SameHostRedirects)
 
 
+def _response_bytes(response, deadline):
+    # HTTPResponse.read1 performs at most one underlying buffered read, allowing
+    # deadline checks even when the peer continuously trickles bytes.
+    data = bytearray()
+    while len(data) <= MAX_BODY_BYTES:
+        if time.monotonic() >= deadline:
+            raise FetchError(response.url, 0, "total response deadline exceeded")
+        chunk = response.read1(min(1024 * 1024, MAX_BODY_BYTES + 1 - len(data)))
+        if time.monotonic() >= deadline:
+            raise FetchError(response.url, 0, "total response deadline exceeded")
+        if not chunk:
+            return bytes(data)
+        data.extend(chunk)
+    raise ValueError("input exceeds byte limit")
+
+
 def _download(url, timeout):
     host = urllib.parse.urlsplit(url).hostname
     if urllib.parse.urlsplit(url).scheme != "https":
@@ -179,8 +197,9 @@ def _download(url, timeout):
     for attempt in range(4):
         try:
             with _host_slot(host):
-                with _opener.open(req, timeout=timeout) as r:
-                    return r.status, read_stream(r, MAX_BODY_BYTES)
+                deadline = time.monotonic() + MAX_RESPONSE_SECONDS
+                with _opener.open(req, timeout=min(timeout, MAX_SOCKET_SECONDS)) as r:
+                    return r.status, _response_bytes(r, deadline)
         except urllib.error.HTTPError as e:
             if e.code in RETRY_STATUS and attempt < 3:
                 time.sleep(2 ** attempt)

@@ -47,13 +47,13 @@ class IntegrityTest(unittest.TestCase):
         self.assertEqual(stream.tell(), 9)
         response = mock.MagicMock()
         response.status = 200
-        response.read.side_effect = io.BytesIO(b'x'*100).read
+        response.read1.side_effect = io.BytesIO(b'x'*100).read
         response.__enter__.return_value = response
         with mock.patch.object(http, 'MAX_BODY_BYTES', 8), mock.patch.object(http, '_host_slot'), \
                 mock.patch.object(http._opener, 'open', return_value=response):
             with self.assertRaises(ValueError):
                 http._download('https://example.org/a', 1)
-        self.assertEqual(response.read.call_args.args[0], 9)
+        self.assertEqual(response.read1.call_args.args[0], 9)
 
     def test_oversized_file_refused_before_open_and_links_refused(self):
         with tempfile.TemporaryDirectory() as root:
@@ -94,3 +94,38 @@ class IntegrityTest(unittest.TestCase):
             with mock.patch.object(bounded, 'MAX_SHARD_BYTES', 8):
                 with self.assertRaises(ValueError):
                     to_facts.convert(root, pathlib.Path(root)/'out')
+
+    def test_trickled_response_has_total_deadline_and_bounded_socket_timeout(self):
+        response = mock.MagicMock()
+        response.url = 'https://example.org/trickle'
+        response.read1.return_value = b'x'
+        with mock.patch.object(http.time, 'monotonic', side_effect=[0, 1, 2, 6]):
+            with self.assertRaisesRegex(http.FetchError, 'deadline'):
+                http._response_bytes(response, 5)
+        self.assertEqual(response.read1.call_count, 2)
+        response.__enter__.return_value = response
+        response.status = 200
+        response.read1.return_value = b''
+        with mock.patch.object(http, '_host_slot'), mock.patch.object(http._opener, 'open', return_value=response) as opened:
+            http._download(response.url, 300)
+        self.assertEqual(opened.call_args.kwargs['timeout'], http.MAX_SOCKET_SECONDS)
+
+    def test_directory_and_aggregate_budgets(self):
+        with tempfile.TemporaryDirectory() as root:
+            p = pathlib.Path(root)/'a.json'; p.write_bytes(b'1234')
+            (pathlib.Path(root)/'b.json').write_bytes(b'1234')
+            with mock.patch.object(bounded, 'MAX_INPUT_FILES', 1):
+                with self.assertRaisesRegex(ValueError, 'file count'):
+                    bounded.input_files(root, '*.json')
+            with mock.patch.object(bounded, 'MAX_INPUT_ENTRIES', 1):
+                with self.assertRaisesRegex(ValueError, 'directory scan'):
+                    bounded.input_files(root, '*.json')
+            with mock.patch.object(bounded, 'MAX_INPUT_BYTES', 7):
+                budget = bounded.InputBudget()
+                self.assertEqual(budget.read(p, 8), b'1234')
+                with self.assertRaises(ValueError):
+                    budget.read(p, 8)
+            with mock.patch.object(bounded, 'MAX_INPUT_RECORDS', 2):
+                budget = bounded.InputBudget(); budget.add_records(2)
+                with self.assertRaisesRegex(ValueError, 'record count'):
+                    budget.add_records(1)

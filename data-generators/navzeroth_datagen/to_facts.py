@@ -105,7 +105,7 @@ def facts_for(record, confidence):
 
 
 def shards(root):
-    for path in sorted(pathlib.Path(root).rglob("part-*.json")):
+    for path in bounded.input_files(root, "part-*.json"):
         rel = path.relative_to(root).parts
         if rel[0] in ("facts",) or any(p.startswith(".") for p in rel):
             continue
@@ -114,15 +114,19 @@ def shards(root):
 
 def convert(input_root, output_root):
     """Write fact documents; return {"documents": [...], "facts": n, "duplicates": n, "conflicts": [...]}."""
+    budget = bounded.InputBudget()
     groups = {}
     summary_dups = []
     for path in shards(input_root):
-        doc = json.loads(bounded.read_file(path, bounded.MAX_SHARD_BYTES))
+        doc = json.loads(budget.read(path, bounded.MAX_SHARD_BYTES))
+        budget.add_records(len(doc["records"]))
         o = doc["origin"]
         group = (doc["generator"]["name"], o["edition"], o["build"].get("value") or "unknown-build")
         facts = groups.setdefault(group, {})
         for record in doc["records"]:
-            for f in facts_for(record, doc["confidence"]):
+            projected = facts_for(record, doc["confidence"])
+            budget.add_records(len(projected))
+            for f in projected:
                 k = (f["domain"], f["record"], f["field"])
                 n = 1
                 while k in facts:
