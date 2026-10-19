@@ -23,7 +23,7 @@ class WorldAdmissionBinding(unittest.TestCase):
             fixture.registry.write_text(json.dumps(registry))
             fixture.run()
             with mock.patch.object(world, '__file__', str(fixture.root/'data-generators/world_to_content.py')), mock.patch.object(world, 'VERSION', '7'):
-                admitted = world.checked_admission(fixture.registry, fixture.output)
+                admitted = world.checked_admission(fixture.registry, fixture.output, fixture.world, fixture.policy)
                 self.assertEqual(set(admitted), {'cmangos-classic-db', 'wago-tools-wowf', world.DERIVED_SOURCE})
                 for sid, source in admitted.items():
                     builder = object.__new__(world.Builder)
@@ -41,7 +41,7 @@ class WorldAdmissionBinding(unittest.TestCase):
                 source = manifest['sources'][0]['files'][0]
                 (fixture.root/source['path']).write_bytes(b'changed')
                 with self.assertRaises(world.InputError):
-                    world.checked_admission(fixture.registry, fixture.output)
+                    world.checked_admission(fixture.registry, fixture.output, fixture.world, fixture.policy)
 
     def test_missing_wrong_duplicate_or_unreviewed_bindings_are_refused(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -56,7 +56,7 @@ class WorldAdmissionBinding(unittest.TestCase):
             registry = json.loads(fixture.registry.read_bytes())
             with mock.patch.object(world, '__file__', str(fixture.root/'data-generators/world_to_content.py')), mock.patch.object(world, 'VERSION', '7'):
                 with self.assertRaises(world.InputError):
-                    world.checked_admission(fixture.registry, None)
+                    world.checked_admission(fixture.registry, None, fixture.world, fixture.policy)
                 for kind in ('version', 'revision', 'origin', 'proof', 'files', 'path'):
                     changed = copy.deepcopy(original)
                     if kind == 'version': changed['transformation'] = 'world_to_content_v8'
@@ -67,9 +67,31 @@ class WorldAdmissionBinding(unittest.TestCase):
                     if kind == 'path': changed['corresponding_source']['files'][0]['path'] = '../escape'
                     fixture.output.write_text(json.dumps(changed))
                     with self.subTest(kind=kind), self.assertRaises(world.InputError):
-                        world.checked_admission(fixture.registry, fixture.output)
+                        world.checked_admission(fixture.registry, fixture.output, fixture.world, fixture.policy)
                 fixture.output.write_text(json.dumps(original))
                 registry['sources'].append(registry['sources'][0])
                 fixture.registry.write_text(json.dumps(registry))
                 with self.assertRaises(world.InputError):
-                    world.checked_admission(fixture.registry, fixture.output)
+                    world.checked_admission(fixture.registry, fixture.output, fixture.world, fixture.policy)
+
+    def test_exact_source_and_correspondence_closure_cannot_be_deleted_or_substituted(self):
+        for mutation in ('no-correspondence', 'wrong-commit', 'missing-terms', 'snapshot', 'no-snapshots', 'origin', 'unbound-grant', 'derived-license', 'derived-code', 'derived-obligations', 'terms-classification', 'policy'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                f = Fixture(directory); f.run()
+                closure = json.loads(f.output.read_bytes()); registry = json.loads(f.registry.read_bytes())
+                if mutation == 'no-correspondence': closure['corresponding_source']['files'] = []
+                elif mutation == 'wrong-commit': closure['source_commit'] = '0'*40
+                elif mutation == 'missing-terms': closure['corresponding_source']['files'] = [r for r in closure['corresponding_source']['files'] if r['source_path'] != 'data-generators/NOTICE.md']
+                elif mutation == 'snapshot': closure['sources'][0]['snapshots'][0]['snapshot_sha256'] = '0'*64
+                elif mutation == 'no-snapshots': closure['sources'][0]['snapshots'] = []
+                elif mutation == 'origin':
+                    shard = f.world/'db2/part-0000.json';doc=json.loads(shard.read_bytes());doc['sources'][0]['revision']='1.60.1.99999';shard.write_text(json.dumps(doc))
+                elif mutation == 'unbound-grant': registry['sources'][0]['rights']['license_identifier'] = 'Fabricated-permission'
+                elif mutation == 'derived-license': registry['sources'][-1]['rights']['evidence'][0]['sha256'] = '0'*64
+                elif mutation == 'derived-obligations': registry['sources'][-1]['rights']['obligations'] = ''
+                elif mutation == 'terms-classification': closure['corresponding_source']['classification'] = 'BSD-only'
+                elif mutation == 'derived-code': registry['sources'][-1]['files'][0]['url'] += '-wrong'
+                else: closure['normalization_policy_sha256'] = '0'*64
+                f.output.write_text(json.dumps(closure));f.registry.write_text(json.dumps(registry))
+                with mock.patch.object(world, '__file__', str(f.root/'data-generators/world_to_content.py')), mock.patch.object(world,'VERSION','7'):
+                    with self.assertRaises(world.InputError): world.checked_admission(f.registry, f.output, f.world, f.policy)

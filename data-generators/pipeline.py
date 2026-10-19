@@ -393,9 +393,11 @@ def stage_content(ctx):
     ctx.run([sys.executable, "-I", retain, "--root", ".",
              "--world", "data-generators/output", "--cache", cache,
              "--pack-sources", f"{out}/sources.json",
-             "--registry", "docs/sources/source-admission-v1.json", "--output", closure])
+             "--registry", "docs/sources/source-admission-v1.json", "--output", closure,
+             "--normalization-policy", "release/v1/source-normalization-policy.json"])
     ctx.run([*mapping, "--admission", "docs/sources/source-admission-v1.json",
-             "--source-closure", closure])
+             "--source-closure", closure,
+             "--normalization-policy", "release/v1/source-normalization-policy.json"])
     cli = ensure_cli(ctx)
     pack = fresh(ctx.root / "dist" / "world-pack" / build).relative_to(ctx.root).as_posix()
     ctx.run([cli, "build-content-v2", "--input", out, "--output", pack])
