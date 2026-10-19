@@ -13,28 +13,36 @@ const require = createRequire(path.join(repo, 'apps/desktop/package.json'));
 const { chromium } = require('@playwright/test');
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 let release;
+let capture;
+const displayedCaptures = new Set();
 if (!draft) {
   release = JSON.parse(fs.readFileSync(path.join(root, 'release.json')));
   assert.equal(release.tag, 'v1.0.0-rc.1');
   assert.equal(release.public_verified, true);
   assert.match(release.source_commit, /^[a-f0-9]{40}$/);
-  assert.equal(release.assets.length, 5);
+  assert.deepEqual(release.assets.map(a => a.name).sort(), ['AzerothNavigator-1.0.0-rc.1-x64-setup.exe', 'AzerothNavigator-addon-1.0.0-rc.1.zip', 'CANDIDATE_NOTES.md', 'SHA256SUMS.txt', 'SOURCE_COMMIT.txt'].sort());
+  assert.match(release.public_verification_run_id, /^\d+$/);
   for (const asset of release.assets) {
     assert.match(asset.sha256, /^[a-f0-9]{64}$/);
     assert.equal(asset.url, `https://github.com/Laymer/Navzeroth/releases/download/${release.tag}/${asset.name}`);
   }
-  const capture = JSON.parse(fs.readFileSync(path.join(root, 'assets/screenshots/provenance.json')));
+  capture = JSON.parse(fs.readFileSync(path.join(root, 'assets/screenshots/provenance.json')));
   assert.equal(capture.release_tag, release.tag);
   assert.equal(capture.source_commit, release.source_commit);
   assert.equal(capture.installer_sha256, release.assets.find(a => a.name.endsWith('-setup.exe')).sha256);
   assert.equal(capture.synthetic, true);
   assert.match(capture.workflow_run_id, /^\d+$/);
   assert.match(capture.application_sha256, /^[a-f0-9]{64}$/);
+  assert.equal(capture.application_sha256, release.application_sha256);
+  assert.equal(capture.fixture_sha256, hash(path.join(repo, 'fixtures/transport/anav1-character-snapshot.txt')));
   assert.ok(capture.screenshots.length >= 2);
   for (const screenshot of capture.screenshots) {
     assert.match(screenshot.file, /^[A-Za-z0-9-]+\.png$/);
     assert.equal(hash(path.join(root, 'assets/screenshots', screenshot.file)), screenshot.sha256);
     assert.ok(screenshot.width >= 640 && screenshot.height >= 480);
+    const bytes = fs.readFileSync(path.join(root, 'assets/screenshots', screenshot.file));
+    assert.equal(bytes.readUInt32BE(16), screenshot.width);
+    assert.equal(bytes.readUInt32BE(20), screenshot.height);
   }
 }
 const mime = { '.html':'text/html', '.css':'text/css', '.js':'text/javascript', '.json':'application/json', '.png':'image/png', '.woff2':'font/woff2' };
@@ -69,6 +77,31 @@ try {
       assert.equal(await page.locator('nav [aria-current="page"]').count(), 1);
       assert.equal(await page.locator('nav [aria-current="page"]').getAttribute('href'), file);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${file} overflows at ${width}`);
+      if (!draft) {
+        for (const figure of await page.locator('figure.screenshot').all()) {
+          const img = figure.locator('img');
+          const src = await img.getAttribute('src');
+          const proof = capture.screenshots.find(s => src === `assets/screenshots/${s.file}`);
+          assert.ok(proof, `Displayed capture lacks provenance: ${src}`);
+          assert.ok(await img.isVisible());
+          assert.match(await figure.locator('figcaption').innerText(), /synthetic/i);
+          assert.ok((await img.getAttribute('alt'))?.trim(), 'Screenshot needs a useful alternative');
+          displayedCaptures.add(proof.file);
+        }
+        for (const img of await page.locator('img[src*="screenshots/"]').all()) {
+          assert.equal(await img.locator('xpath=..').getAttribute('class'), 'screenshot', 'Capture must have its visible caption');
+        }
+      }
+      // Check the design's text tokens against the brightest backgrounds in its gradients.
+      const colors = await page.evaluate(() => {
+        const style = getComputedStyle(document.documentElement);
+        return ['--ink', '--muted', '--gold', '--bg', '--panel'].map(name => style.getPropertyValue(name).trim());
+      });
+      const luminance = hex => hex.replace('#', '').match(/../g).map(x => parseInt(x, 16) / 255).map(x => x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4).reduce((sum, x, i) => sum + x * [.2126, .7152, .0722][i], 0);
+      for (const text of colors.slice(0, 3)) for (const background of [...colors.slice(3), '#27323c', '#25313b']) {
+        const a = luminance(text), b = luminance(background);
+        assert.ok((Math.max(a,b) + .05) / (Math.min(a,b) + .05) >= 4.5, 'Text token contrast below 4.5:1');
+      }
       const ids = await page.locator('[id]').evaluateAll(nodes => nodes.map(n => n.id));
       assert.equal(new Set(ids).size, ids.length, 'Duplicate IDs');
       for (const img of await page.locator('img').all()) {
@@ -126,6 +159,7 @@ try {
   await page.getByRole('status').filter({ hasText:'Checksum command copied.' }).waitFor();
   assert.equal(await page.evaluate(() => navigator.clipboard.readText()), await page.locator('#checksum-command').textContent());
   assert.deepEqual(errors, []);
+  if (!draft) assert.ok(displayedCaptures.size >= 2, 'Display at least two provenance-bound synthetic release captures');
   // No script is required to read content or follow the primary navigation.
   const noJs = await browser.newContext({ javaScriptEnabled:false });
   const plain = await noJs.newPage();
