@@ -52,7 +52,7 @@ if (!draft) {
     assert.equal(bytes.readUInt32BE(20), screenshot.height);
   }
 }
-const mime = { '.html':'text/html', '.css':'text/css', '.js':'text/javascript', '.json':'application/json', '.png':'image/png', '.woff2':'font/woff2' };
+const mime = { '.html':'text/html', '.css':'text/css', '.js':'text/javascript', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.svg':'image/svg+xml', '.woff2':'font/woff2' };
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, 'http://localhost');
   if (!url.pathname.startsWith('/Navzeroth/')) { response.writeHead(404).end(); return; }

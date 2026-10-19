@@ -699,3 +699,70 @@ fn media_discovery_preserves_unknown_zero_duplicates_and_decode_refusals() {
         "new discoveries cannot alter an earlier immutable revision"
     );
 }
+
+#[test]
+fn archive_failures_roundtrip_without_inventing_encryption_or_retained_bytes() {
+    for (code, disposition, reason) in [
+        (
+            2,
+            InventoryDisposition::UnavailableEncrypted,
+            "unavailable_encrypted",
+        ),
+        (
+            3,
+            InventoryDisposition::UnavailableUnsupported,
+            "unsupported_archive_encoding_not_retained",
+        ),
+        (
+            6,
+            InventoryDisposition::UnavailableUnknown,
+            "local_archive_read_unavailable",
+        ),
+        (
+            8,
+            InventoryDisposition::UnavailableUnknown,
+            "archive_short_read_unexplained",
+        ),
+    ] {
+        let fixture = Fixture::new();
+        let summary = crate::native::boundary_tests::stage_with_failure(code, || {
+            extract_using(&fixture.request, |_, _| Ok(()), open_staging)
+        })
+        .unwrap();
+        let catalog =
+            verify_catalog(&fixture.request.destination, &summary.catalog_sha256).unwrap();
+        assert_eq!(catalog.format_version, 2);
+        let entry = &catalog.tables[0];
+        assert_eq!(entry.disposition, disposition);
+        assert_eq!(entry.reason, reason);
+        assert!(entry.retained_sha256.is_none());
+        assert!(entry.decoded_sha256.is_none());
+        assert!(!summary.gameplay_projection_available);
+        let mut old = catalog.clone();
+        old.format_version = 1;
+        let mut store = Store::open(
+            &fixture.request.destination,
+            PerformancePreset::Small.limits().total_storage_bytes,
+        )
+        .unwrap();
+        let digest = store
+            .put("catalogs", &serde_json::to_vec(&old).unwrap())
+            .unwrap();
+        drop(store);
+        assert_eq!(
+            verify_catalog(&fixture.request.destination, &digest).is_ok(),
+            code == 2
+        );
+        old.format_version = 3;
+        let mut store = Store::open(
+            &fixture.request.destination,
+            PerformancePreset::Small.limits().total_storage_bytes,
+        )
+        .unwrap();
+        let digest = store
+            .put("catalogs", &serde_json::to_vec(&old).unwrap())
+            .unwrap();
+        drop(store);
+        assert!(verify_catalog(&fixture.request.destination, &digest).is_err());
+    }
+}
