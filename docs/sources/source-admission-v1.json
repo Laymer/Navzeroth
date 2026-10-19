@@ -400,7 +400,7 @@
     },
     {
       "id": "cmangos-classic-db",
-      "revision": "0f157a99aacb704c38488054c47fdc470d2ed1b7",
+      "revision": "ec852d41ac871e3a0a3b7b7235fe35b4ae33db68",
       "publisher": "cmangos/classic-db",
       "origin": {
         "edition": "vanilla_1_12",
@@ -470,7 +470,7 @@
             "world.npcs",
             "world.spawns"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         }
       ]
     },
@@ -558,7 +558,7 @@
     },
     {
       "id": "wago-tools-wowf",
-      "revision": "c4d220c355fce03ef5fa47bb132715c8fd788074",
+      "revision": "e9579be8e43921d053f40b3fb98dd5f4bcaf79c7",
       "publisher": "wago.tools",
       "origin": {
         "edition": "wow_forever",
@@ -605,7 +605,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/b96a5ef667a17b0a9b551e2d75552d3872a1d0e147fd817d251e1fab415dc81c",
@@ -619,7 +619,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/665307a5ff3625380f37c9d42753002d630b414d142e8c61780ff7e8849a6d9a",
@@ -633,7 +633,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/42a865db73a34b45f75b13cf0d01e6b699f3ea7f72cd63826c8124e587b1859c",
@@ -647,7 +647,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/802f4e863a28ff48d63e7e27c5cfb3b2396584aaed56870da90de6a823691aae",
@@ -661,7 +661,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/5f2ba338646a454d2420a14cf56da693803267f734893e2b3f5e71250eaa56bf",
@@ -675,7 +675,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/e4a41af2ea8dc344c0c1ce36b26cba741b7f393cb74197e52d9893e6cb223db5",
@@ -689,7 +689,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/e79bc66c053da9499dad75ddc543656d988ede83e9e84cc1e18624f421e9a0e1",
@@ -703,7 +703,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/27674c6456677b71cdfd50e4193e0db9feea2beb69c15cd5f48906c9ec092d17",
@@ -717,7 +717,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/da19f8391c5c6f72fe858d4e35e91ba82d335a53c06530cad6477d28a81cb721",
@@ -731,7 +731,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/4f92b73343c9828fdb3d315f5732e6de8d41af6b8e2fc24263fef73cd46681a1",
@@ -745,7 +745,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/ef5518c5a3aaa7458e074a7e41e87837f8a1c74da00938244019e2e8c0428b4a",
@@ -759,7 +759,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/9539a388c0e697381f7574247488da528f2647099db4c39096bdb2a8695139b9",
@@ -773,7 +773,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/e3d4833dcb395214c0366d241fdaa4b7d7e2330133bb6db03ed5bfd01f974bea",
@@ -787,7 +787,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/07222b184a692c0b275ad713bbb30e1a88e8da14e3f2e26d9afb6d6b59e41404",
@@ -801,7 +801,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/c8ccd626eed82a6d6bd048222176847c915dcf9e14c02230ae27025c62005be1",
@@ -815,7 +815,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/1f4aac70eaac015b1d2d0ea0faf6e3d7fb2cf7afdf45e5bb6772d9b80a72346b",
@@ -829,7 +829,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
           "path": "content/source-materials/objects/79267e8be8034e47daab14350411b3acc0b1f64e86efc9d821a217497254ca0a",
@@ -843,7 +843,7 @@
             "world.ui_map_assignments",
             "world.ui_maps"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         }
       ]
     },
@@ -2643,7 +2643,7 @@
     },
     {
       "id": "navzeroth-world-content",
-      "revision": "f0d97682610c8acb91e8a6d722a4bdfcfdbfbdea",
+      "revision": "73891a7b792fa932d924971607e731af40daefba",
       "publisher": "Navzeroth project (repository owner)",
       "origin": {
         "edition": "wow_forever",
@@ -2658,8 +2658,8 @@
         "obligations": "Retain copyright, BSD license and corresponding generator source; upstream data rights remain separate.",
         "evidence": [
           {
-            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/LICENSE",
-            "revision": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2e89b1ff9761bbb3a320e20a68c350e71fc63608/LICENSE",
+            "revision": "2e89b1ff9761bbb3a320e20a68c350e71fc63608",
             "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
             "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
           }
@@ -2667,12 +2667,12 @@
       },
       "retrieval": {
         "method": "manual_local",
-        "max_total_bytes": 93379,
+        "max_total_bytes": 94366,
         "minimum_interval_ms": 1000,
         "max_requests": 3,
         "access_evidence": {
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/LICENSE",
-          "revision": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2e89b1ff9761bbb3a320e20a68c350e71fc63608/LICENSE",
+          "revision": "2e89b1ff9761bbb3a320e20a68c350e71fc63608",
           "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
           "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
         }
@@ -2682,25 +2682,25 @@
           "path": "content/source-materials/objects/3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
           "bytes": 4266,
           "sha256": "3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/data-generators/navzeroth_datagen/bounded.py",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2e89b1ff9761bbb3a320e20a68c350e71fc63608/data-generators/navzeroth_datagen/bounded.py",
           "fields": [
             "loot.reference-expansion",
             "travel.flight-time",
             "travel.walk"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         },
         {
-          "path": "content/source-materials/objects/6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
-          "bytes": 87620,
-          "sha256": "6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/data-generators/world_to_content.py",
+          "path": "content/source-materials/objects/61c9fb7676b91b2321bd37bd0d4e7ce3d3d28857d994078ad4824c6ea32c3a65",
+          "bytes": 88607,
+          "sha256": "61c9fb7676b91b2321bd37bd0d4e7ce3d3d28857d994078ad4824c6ea32c3a65",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2e89b1ff9761bbb3a320e20a68c350e71fc63608/data-generators/world_to_content.py",
           "fields": [
             "loot.reference-expansion",
             "travel.flight-time",
             "travel.walk"
           ],
-          "transformation": "world_to_content_v2"
+          "transformation": "world_to_content_v3"
         }
       ]
     },
