@@ -349,3 +349,36 @@ impl InventoryDisposition {
                 ))
     }
 }
+
+#[cfg(test)]
+mod inventory_disposition_versions {
+    use super::InventoryDisposition::*;
+
+    #[test]
+    fn every_legacy_disposition_remains_supported_without_reinterpretation() {
+        for disposition in [
+            Decoded,
+            RetainedUnsupported,
+            NotLocallyPresent,
+            UnavailableEncrypted,
+            DefinitionMissing,
+            LayoutMismatch,
+            InvalidCorrupt,
+            ExcludedByPolicy,
+        ] {
+            assert!(disposition.supported_in(1));
+            assert!(disposition.supported_in(2));
+            assert!(!disposition.supported_in(0));
+            assert!(!disposition.supported_in(3));
+            let encoded = serde_json::to_string(&disposition).unwrap();
+            let restored = serde_json::from_str(&encoded).unwrap();
+            assert_eq!(disposition, restored);
+        }
+        for disposition in [UnavailableUnknown, UnavailableUnsupported] {
+            assert!(!disposition.supported_in(1));
+            assert!(disposition.supported_in(2));
+            assert!(!disposition.supported_in(0));
+            assert!(!disposition.supported_in(3));
+        }
+    }
+}

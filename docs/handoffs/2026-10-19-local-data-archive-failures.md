@@ -1,6 +1,7 @@
 # Local archive failures preserve unknown and unsupported
 
 Owner and sole writer: Codex `/root/local_data_gaps`; baseline `826aa21`.
+Draft PR: https://github.com/Laymer/Navzeroth/pull/217.
 Branch `fix/local-data-archive-failures`; claim
 [archive failures](../claims/2026-10-19-local-data-archive-failures.md).
 
@@ -24,6 +25,8 @@ Actual checks (2026-10-19, Linux):
 - `git diff --check`: passed.
 - `cargo test --locked -p azeroth-local-data -p azeroth-core -p azeroth-storage`:
   passed; 692 tests, 0 failures, 1 existing ignored test.
+- `cargo test --locked -p azeroth-core --lib inventory_disposition_versions`: passed,
+  1 test covering every historical/new disposition and zero/future versions.
 - After adding the durable v2 checkpoint regression,
   `cargo test --locked -p azeroth-storage --test local_data_lifecycle`: passed,
   13 tests, 0 failures.
