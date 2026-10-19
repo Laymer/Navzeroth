@@ -150,8 +150,12 @@ impl Validate for ItemDefinitionData {
 
         unique(self.slots.iter())?;
         unique(self.evidence.iter())?;
-        if self.slots.is_empty() {
-            return Err(invalid("Item requires at least one slot"));
+        // An item without slots must say so: `two_handed` not_applicable marks it
+        // not equippable (consumables, quest items, reagents; task V2.8d).
+        if self.slots.is_empty() && self.two_handed.status() != ObservationStatus::NotApplicable {
+            return Err(invalid(
+                "Item requires a slot unless two_handed is not_applicable (not equippable)",
+            ));
         }
         if let Some(a) = self.attributes.value() {
             bounded(a.len())?;

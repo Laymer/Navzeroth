@@ -569,11 +569,11 @@ mod catalog_capacity_tests {
     fn catalog_rows_have_v2_capacity_without_loosening_snapshot_rows() {
         assert_eq!(
             super::row_limit("dataset_revisions"),
-            256 * 1024 * 1024 + 16 * 1024
+            576 * 1024 * 1024 + 16 * 1024
         );
         assert_eq!(
             super::row_limit("dataset_manifests"),
-            256 * 1024 * 1024 + 16 * 1024
+            576 * 1024 * 1024 + 16 * 1024
         );
         assert_eq!(super::row_limit("snapshots"), 32 * 1024 * 1024);
     }

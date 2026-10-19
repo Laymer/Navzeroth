@@ -131,6 +131,12 @@ fn invented_game_facts_are_refused() {
         v["dungeons"][0]["map"]["map_id"] = json!("36");
     });
     refused(|v| v["models"][0]["class"] = json!("1"));
+    // Loot tables are game facts even without any item record.
+    refused(|v| {
+        v["loot_tables"] = json!([{"id":"loot:creature:1","evidence":["ev-authored-v1"],
+            "table":"creature","source":{"status":"unknown"},
+            "rows":[{"item":"1","min_count":1,"max_count":1}]}])
+    });
     refused(|v| {
         v["models"][0]["layout"] = known(
             json!({"slots": ["main", "off"], "hands": {"main_hand": "main", "off_hand": "off"}}),

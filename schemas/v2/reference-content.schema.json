@@ -711,6 +711,13 @@
         "access": {
           "$ref": "#/$defs/Observation_Predicate"
         },
+        "bosses": {
+          "description": "Boss entities (`npc:…` identities of `entities`).",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          },
+          "type": "array"
+        },
         "checklist": {
           "$ref": "#/$defs/Observation_Array_of_DungeonCheck"
         },
@@ -901,6 +908,17 @@
         },
         "item": {
           "$ref": "#/$defs/ItemKey"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Text"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Display name from the item table, when recorded."
         }
       },
       "required": [
@@ -1344,6 +1362,123 @@
         "master_assigned"
       ],
       "type": "string"
+    },
+    "LootKind": {
+      "enum": [
+        "creature",
+        "game_object",
+        "item",
+        "reference",
+        "fishing",
+        "pickpocketing",
+        "skinning",
+        "disenchant"
+      ],
+      "type": "string"
+    },
+    "LootRow": {
+      "additionalProperties": false,
+      "properties": {
+        "conditional": {
+          "description": "The source attaches a condition this contract does not express.",
+          "type": "boolean"
+        },
+        "group": {
+          "description": "Rows of one group drop at most one item between them.",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "item": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ItemId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Client item ID. It may be absent from `items` when the item table of the\npack's edition lacks it; the row keeps the source's statement."
+        },
+        "max_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "min_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Normalized"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Chance per kill or roll. Absent means unknown (the source leaves it\nimplicit), never zero; a stated zero is `0`."
+        },
+        "quest_only": {
+          "description": "Drops only while a quest needs it.",
+          "type": "boolean"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A `reference` loot table of this catalog."
+        }
+      },
+      "required": [
+        "min_count",
+        "max_count"
+      ],
+      "type": "object"
+    },
+    "LootTable": {
+      "additionalProperties": false,
+      "description": "One loot template with every row the source gives. A row names either an\nitem or a `reference` table rolled `max_count` times; references are never\nexpanded, so the catalog stays linear in the source rows.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/SourceId",
+          "description": "Stable identity such as `loot:creature:448`."
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/LootRow"
+          },
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/Observation_SourceId",
+          "description": "What the template belongs to (`npc:448`, `item:…`, `area:…`), when known."
+        },
+        "table": {
+          "$ref": "#/$defs/LootKind"
+        }
+      },
+      "required": [
+        "id",
+        "evidence",
+        "table",
+        "source",
+        "rows"
+      ],
+      "type": "object"
     },
     "MapEmbedding": {
       "additionalProperties": false,
@@ -7356,6 +7491,13 @@
         "access_requirements": {
           "$ref": "#/$defs/Observation_AccessRequirementsData"
         },
+        "enders": {
+          "description": "Who or what accepts the turn-in (`npc:…` or `object:…`).",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          },
+          "type": "array"
+        },
         "evidence": {
           "items": {
             "$ref": "#/$defs/EvidenceId"
@@ -7364,6 +7506,13 @@
         },
         "exclusive_groups": {
           "$ref": "#/$defs/Observation_Array_of_ExclusiveBranch"
+        },
+        "givers": {
+          "description": "Who or what starts the quest (`npc:…`, `object:…` or `item:…`).",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          },
+          "type": "array"
         },
         "quest": {
           "$ref": "#/$defs/QuestId"
@@ -7376,6 +7525,17 @@
         },
         "sharing_conditions": {
           "$ref": "#/$defs/Observation_Predicate"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Text"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Display title, when recorded."
         }
       },
       "required": [
@@ -7411,70 +7571,70 @@
           "items": {
             "$ref": "#/$defs/AcquisitionSource"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "edges": {
           "items": {
             "$ref": "#/$defs/TravelEdge"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "evidence": {
           "items": {
             "$ref": "#/$defs/EvidenceRecord"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "items": {
           "items": {
             "$ref": "#/$defs/ItemDefinition"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "map_embeddings": {
           "items": {
             "$ref": "#/$defs/MapEmbedding"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "map_images": {
           "items": {
             "$ref": "#/$defs/MapImage"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "map_spaces": {
           "items": {
             "$ref": "#/$defs/MapSpace"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "nodes": {
           "items": {
             "$ref": "#/$defs/TravelNode"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "objectives": {
           "items": {
             "$ref": "#/$defs/Objective"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "quests": {
           "items": {
             "$ref": "#/$defs/QuestDefinition"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "revision": {
@@ -7484,7 +7644,7 @@
           "items": {
             "$ref": "#/$defs/ContextRule"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         }
       },
@@ -8127,14 +8287,14 @@
       "items": {
         "$ref": "#/$defs/AcquisitionFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "dungeons": {
       "items": {
         "$ref": "#/$defs/Dungeon"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "entities": {
@@ -8142,38 +8302,46 @@
       "items": {
         "$ref": "#/$defs/EntityFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "equipment": {
       "items": {
         "$ref": "#/$defs/EquipmentFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "format": {
       "const": "navzeroth-reference-content"
     },
+    "loot_tables": {
+      "description": "Loot templates as the source states them (ADR 0007, task V2.8d).",
+      "items": {
+        "$ref": "#/$defs/LootTable"
+      },
+      "maxItems": 500000,
+      "type": "array"
+    },
     "models": {
       "items": {
         "$ref": "#/$defs/ClassRoleModel"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "node_facts": {
       "items": {
         "$ref": "#/$defs/NodeFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "quest_facts": {
       "items": {
         "$ref": "#/$defs/QuestFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "reference": {

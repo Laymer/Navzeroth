@@ -233,3 +233,8 @@ unverified until a frozen target exists and that the acceptance gates are unchan
   selects non-stateful edges whose evidence is all conflict-free `inferred`).
   The desktop does so only for the revision activated with
   `accept_inferred_travel = true`; costs must still be known.
+
+## Content limits
+
+The whole-world content v2 pack built from these shards, and the content-v2 limits
+raised for it (ADR 0007 §7), are recorded in [WORLD_CONTENT.md](WORLD_CONTENT.md).

@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// V2 encoded catalog bound; ordinary v1 envelopes retain their smaller bound.
-pub const MAX_CONTENT_BYTES: usize = 256 * 1024 * 1024;
+pub const MAX_CONTENT_BYTES: usize = 576 * 1024 * 1024;
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceContent {
@@ -39,6 +39,66 @@ pub struct ReferenceContent {
     /// Named NPCs and game objects (ADR 0007): who stands at which nodes.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entities: Vec<EntityFacts>,
+    /// Loot templates as the source states them (ADR 0007, task V2.8d).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub loot_tables: Vec<LootTable>,
+}
+/// Most rows one loot table may hold; the largest generated table has 1,056.
+pub const MAX_LOOT_ROWS: usize = 4096;
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum LootKind {
+    Creature,
+    GameObject,
+    Item,
+    Reference,
+    Fishing,
+    Pickpocketing,
+    Skinning,
+    Disenchant,
+}
+/// One loot template with every row the source gives. A row names either an
+/// item or a `reference` table rolled `max_count` times; references are never
+/// expanded, so the catalog stays linear in the source rows.
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct LootTable {
+    /// Stable identity such as `loot:creature:448`.
+    pub id: SourceId,
+    pub evidence: Vec<EvidenceId>,
+    pub table: LootKind,
+    /// What the template belongs to (`npc:448`, `item:…`, `area:…`), when known.
+    pub source: Observation<SourceId>,
+    pub rows: Vec<LootRow>,
+}
+fn is_false(value: &bool) -> bool {
+    !value
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct LootRow {
+    /// Client item ID. It may be absent from `items` when the item table of the
+    /// pack's edition lacks it; the row keeps the source's statement.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub item: Option<ItemId>,
+    /// A `reference` loot table of this catalog.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub table: Option<SourceId>,
+    /// Chance per kill or roll. Absent means unknown (the source leaves it
+    /// implicit), never zero; a stated zero is `0`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub probability: Option<Normalized>,
+    pub min_count: u32,
+    pub max_count: u32,
+    /// Rows of one group drop at most one item between them.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub group: Option<u32>,
+    /// Drops only while a quest needs it.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub quest_only: bool,
+    /// The source attaches a condition this contract does not express.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub conditional: bool,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -90,6 +150,9 @@ pub struct EquipmentFacts {
     pub evidence: Vec<EvidenceId>,
     pub category: Observation<SourceId>,
     pub configuration: Observation<Predicate>,
+    /// Display name from the item table, when recorded.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<Text>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -102,6 +165,15 @@ pub struct QuestFacts {
     pub reset: Observation<ResetRule>,
     pub shareable: Observation<bool>,
     pub sharing_conditions: Observation<Predicate>,
+    /// Display title, when recorded.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub title: Option<Text>,
+    /// Who or what starts the quest (`npc:…`, `object:…` or `item:…`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub givers: Vec<SourceId>,
+    /// Who or what accepts the turn-in (`npc:…` or `object:…`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub enders: Vec<SourceId>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -184,6 +256,9 @@ pub struct Dungeon {
     pub travel_edges: Observation<Vec<EdgeId>>,
     pub rewards: Observation<Vec<AcquisitionId>>,
     pub checklist: Observation<Vec<DungeonCheck>>,
+    /// Boss entities (`npc:…` identities of `entities`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bosses: Vec<SourceId>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -307,6 +382,7 @@ impl ReferenceContent {
             + self.dungeons.len()
             + self.node_facts.len()
             + self.entities.len()
+            + self.loot_tables.len()
     }
 }
 impl Validate for ReferenceContent {
@@ -333,6 +409,7 @@ impl Validate for ReferenceContent {
             self.dungeons.len(),
             self.node_facts.len(),
             self.entities.len(),
+            self.loot_tables.len(),
         ] {
             if n > MAX_CATALOG_IDENTITIES {
                 return Err(invalid("V2 catalog collection capacity exceeded"));
@@ -345,6 +422,7 @@ impl Validate for ReferenceContent {
         crate::contract::unique_catalog(self.dungeons.iter().map(|r| &r.id))?;
         crate::contract::unique_catalog(self.node_facts.iter().map(|r| &r.node))?;
         crate::contract::unique_catalog(self.entities.iter().map(|r| &r.id))?;
+        crate::contract::unique_catalog(self.loot_tables.iter().map(|r| &r.id))?;
         let data = &self.reference.payload;
         let g = Graph {
             context: self.reference.data_context(),
@@ -394,6 +472,26 @@ impl Validate for ReferenceContent {
                 return Err(invalid("V2 entity level interval is inverted"));
             }
         }
+        let tables: BTreeMap<_, _> = self.loot_tables.iter().map(|t| (&t.id, t.table)).collect();
+        for table in &self.loot_tables {
+            g.evidence(&table.evidence)?;
+            if table.rows.is_empty() || table.rows.len() > MAX_LOOT_ROWS {
+                return Err(invalid("V2 loot table row count is outside 1..=4096"));
+            }
+            for row in &table.rows {
+                let target = match (&row.item, &row.table) {
+                    (Some(_), None) => true,
+                    (None, Some(id)) => tables.get(id) == Some(&LootKind::Reference),
+                    _ => false,
+                };
+                if !target || row.min_count > row.max_count {
+                    return Err(invalid(
+                        "V2 loot row needs one item or reference table and an ordered count",
+                    ));
+                }
+            }
+        }
+        let entities: BTreeSet<_> = self.entities.iter().map(|e| &e.id).collect();
         for m in &self.models {
             g.evidence(&m.evidence)?;
             m.profile.validate()?;
@@ -460,6 +558,10 @@ impl Validate for ReferenceContent {
             }
             g.predicate(&q.access)?;
             g.predicate(&q.sharing_conditions)?;
+            for ids in [&q.givers, &q.enders] {
+                bounded(ids.len())?;
+                unique(ids.iter())?;
+            }
             if let Some(access) = q.access_requirements.value() {
                 access.validate()?;
             }
@@ -553,6 +655,7 @@ impl Validate for ReferenceContent {
             if let Some(r) = d.rewards.value() {
                 refs(r, &acquisitions)?;
             }
+            refs(&d.bosses, &entities)?;
             if let Some(checks) = d.checklist.value() {
                 bounded(checks.len())?;
                 unique(checks.iter().map(|c| &c.id))?;

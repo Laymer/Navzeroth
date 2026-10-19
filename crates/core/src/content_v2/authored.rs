@@ -4,7 +4,7 @@
 //!
 //! An authored catalog cites only its declared authored source and carries no
 //! game-fact records: no quests, objectives, items, acquisitions, travel nodes or
-//! edges, imagery, or equipment/quest/acquisition/node facts. Fields of a dungeon
+//! edges, imagery, loot tables, or equipment/quest/acquisition/node facts. Fields of a dungeon
 //! or model that are game facts (entrance, access, preparation quests, travel,
 //! rewards, proficiency, slot layout) must stay unavailable. Predicates may only
 //! read declared state (level, role, preferences), never quest, objective,
@@ -97,7 +97,8 @@ pub fn validate_authored(content: &ReferenceContent, source: &SourceId) -> Res {
         && content.quest_facts.is_empty()
         && content.acquisition_facts.is_empty()
         && content.node_facts.is_empty()
-        && content.entities.is_empty())
+        && content.entities.is_empty()
+        && content.loot_tables.is_empty())
     {
         return Err("Authored content cannot contain game-fact records");
     }
