@@ -1348,8 +1348,7 @@
               "type": "integer"
             },
             "base_skill": {
-              "format": "uint32",
-              "minimum": 0,
+              "format": "int32",
               "type": "integer"
             },
             "kind": {

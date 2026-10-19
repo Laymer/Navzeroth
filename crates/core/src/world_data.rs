@@ -330,7 +330,7 @@ pub struct FishingArea {
     pub name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parent_name: Option<String>,
-    pub base_skill: u32,
+    pub base_skill: i32,
 }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]

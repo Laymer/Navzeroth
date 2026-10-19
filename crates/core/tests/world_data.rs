@@ -57,7 +57,7 @@ fn samples() -> Vec<(&'static str, Value)> {
         ),
         (
             "fishing_area",
-            json!({"area_id":12,"name":"Elwynn Forest","base_skill":0}),
+            json!({"area_id":12,"name":"Elwynn Forest","base_skill":-20}),
         ),
         (
             "fishing_goal",
