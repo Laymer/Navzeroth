@@ -1,4 +1,5 @@
 import "./play.css";
+import { describeObservation } from "../observation";
 import { Button, Field, HelpTip, OriginMarker, Panel } from "../ui";
 import { useRecordOrigins } from "./useRecordOrigins";
 import { originKey } from "../commands/world";
@@ -10,7 +11,7 @@ import { RouteAcquisitionPanel } from "./RouteAcquisitionPanel";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CommandClient } from "../commands";
 import type { ProfileSummary } from "../commands/contract";
-import type { GearCatalog, GearInput, GearObservation, GearReport, GearRequest, GearRanking } from "../commands/gear";
+import type { AuthoredScores, GearCatalog, GearInput, GearObservation, GearReport, GearRequest, GearRanking } from "../commands/gear";
 
 const TIME_HELP: Record<string, string> = {
   travel: "Extra travel time to reach the source, in milliseconds. Empty stays unknown and blocks a practical recommendation.",
@@ -53,12 +54,13 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   const [synthetic, setSynthetic] = useState(false);
   const [reportBasis, setReportBasis] = useState<"manual" | "route" | null>(null);
   const [report, setReport] = useState<GearReport | null>(null);
+  const [scores, setScores] = useState<AuthoredScores | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const generation = useRef(0);
   const scope = useRef<{ client: CommandClient; profile: string } | null>(null);
-  const routeReport = useCallback((value: GearReport | null) => { generation.current++; setReport(value); setReportBasis(value ? "route" : null); }, []);
-  const invalidate = useCallback(() => { generation.current++; setReport(null); setBusy(false); }, []);
+  const routeReport = useCallback((value: GearReport | null) => { generation.current++; setReport(value); setScores(null); setReportBasis(value ? "route" : null); }, []);
+  const invalidate = useCallback(() => { generation.current++; setReport(null); setScores(null); setBusy(false); }, []);
   useEffect(() => {
     let live = true;
     void client.listProfiles().then((result) => {
@@ -69,7 +71,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     return () => { live = false; };
   }, [client, refreshKey]);
   useEffect(() => {
-    let live = true; generation.current++; setReport(null); setBusy(false); setCatalog(null);
+    let live = true; generation.current++; setReport(null); setScores(null); setBusy(false); setCatalog(null);
     const changedScope = scope.current?.client !== client || scope.current?.profile !== profile;
     scope.current = { client, profile };
     if (changedScope) {
@@ -93,6 +95,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   }, [client, profile, refreshKey]);
   const slots = [...new Set([...(catalog?.items.flatMap((i) => i.slots) ?? []), ...Object.keys(catalog?.equipment ?? {})])].sort();
   const itemRef = (key: GearCatalog["items"][number]["key"]) => ({ collection: "items" as const, id: key.item_id, variant: key.variant });
+  const scoreOrigins = useRecordOrigins(client, profile ? { kind: "character", profile_id: profile } : null, scores?.request.revision, scores?.candidates.map(candidate => itemRef(candidate.item)) ?? []);
   const itemOrigins = useRecordOrigins(client, profile ? { kind: "character", profile_id: profile } : null, catalog?.revision, catalog?.items.map((item) => itemRef(item.key)) ?? []);
   function example() {
     if (!catalog?.fixture) return;
@@ -120,13 +123,13 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   }
   async function calculate() {
     if (!catalog?.snapshot_id || !catalog.revision) return;
-    const ticket = ++generation.current; setBusy(true); setReport(null); setError("");
+    const ticket = ++generation.current; setBusy(true); setReport(null); setScores(null); setError("");
     try {
       const request = gearRequest();
       if (inputs.length === 0 || times.budget.trim() === "" || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and explicitly supply weights and session budget.");
       const result = await client.compareGear(JSON.stringify(request));
       if (ticket !== generation.current) return;
-      if (!result.ok) setError(result.error.message); else { setReport(result.value); setReportBasis("manual"); }
+      if (!result.ok) setError(result.error.message); else if (result.value.mode === "authored_score_only_v1") { setScores(result.value); } else { setReport(result.value); setReportBasis("manual"); }
     } catch (failure) { if (ticket === generation.current) setError(failure instanceof Error ? failure.message : "Invalid manual inputs"); }
     finally { if (ticket === generation.current) setBusy(false); }
   }
@@ -137,7 +140,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     <Field label="Gear profile" help="The imported character whose equipment snapshot is the baseline. Changing it discards the current comparison.">{(c) => <select {...c} value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     <p>Snapshot: {catalog?.snapshot_id ?? "none"}; revision: {catalog?.revision ?? "none — activate Content first"}</p>
     <AuthoredContentPicker client={client} kind="models" subject={{kind:"character",profile_id:profile}} refreshKey={refreshKey} value={authored} onChange={v=>{invalidate();setAuthored(v);}}/>
-    {authored&&<p>Authored weights, proficiency, layout and item facts are resolved by the backend from this revision; unavailable applicability blocks comparison.</p>}
+    {authored&&<p>Authored weights are documented heuristics. A matching assumed class, fresh level and applicable role are required. When source layout or proficiency is unavailable, only individual scores are shown; equipment eligibility and acquisition remain unresolved.</p>}
     <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({authored,weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
       gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
       onGearReport={routeReport} onBusyChange={setBusy} externalBusy={busy} opportunities={inputs.flatMap(input=>input.acquisition?[{source:input.acquisition.source,target:input.item,formation_ms:numberObservation(times.formation),attempt_ms:numberObservation(times.attempt),available_copper:times.copper.trim()?known(times.copper):unknown<string>(),max_attempts:Number(times.attempts),independent_player_attempts:independent,cost_per_attempt:perAttempt}]:[])} />
@@ -173,6 +176,13 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     })}
     <Button variant="primary" disabled={busy || !catalog?.snapshot_id || !catalog.revision} onClick={() => void calculate()}>Compare gear</Button>
     <details><summary>Advanced captured-equipment data</summary><pre>{JSON.stringify(catalog?.equipment ?? {}, null, 2)}</pre></details>
+    {scores && <section aria-label="Individual heuristic scores"><h3>Individual heuristic scores</h3>
+      <p>These scores compare only the attributes in the authored model. They do not establish whether you can equip or obtain an item. Equipment configurations, baseline gains and practical recommendations are unavailable.</p>
+      <p>Source equipment layout: {describeObservation(scores.source_layout, () => "recorded")}; source class proficiency: {describeObservation(scores.source_proficiency, () => "recorded")}.</p>
+      <p>Equipment eligibility: not evaluated. Acquisition availability: not evaluated.</p>
+      {scores.candidates.map(candidate => <section key={JSON.stringify(candidate.item)} aria-label={`Heuristic score ${candidate.item.item_id}`}><h4>{candidate.item.item_id} ({candidate.item.variant})<OriginMarker marks={scoreOrigins.get(originKey(itemRef(candidate.item)))} /></h4><p>Heuristic score {formatMilli(candidate.score.total)}; certainty {candidate.score.certainty}.</p><ScoreDetails score={candidate.score} /></section>)}
+      <ul>{scores.assumptions.map(assumption => <li key={assumption}>{assumption}</li>)}</ul>
+    </section>}
     {report && <section aria-label="Gear result"><h3>Current baseline</h3><p>Model score {formatMilli(report.current_score.total)}; {report.current_score.certainty}.</p>
       <ul>{report.baseline_gaps.map((gap) => <li key={gap}>{gap}</li>)}</ul><BaselineSlots current={report.current} /><ScoreDetails score={report.current_score} />
       <p>{reportBasis === "route" ? "Gear comparison uses backend-calculated route effort and its remaining budget." : "Gear comparison uses your manual effort assumptions."}</p>

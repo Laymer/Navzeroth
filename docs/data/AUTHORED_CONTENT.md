@@ -6,14 +6,15 @@ directory: [`content/authored/slice-v1/`](../../content/authored/slice-v1/).
 Authored content is the project's own writing: role model assumptions, a dungeon
 preparation checklist, reminder rules, and party workflow procedures. It states no
 game facts. Fields that need one stay `unknown`, so they are counted as pack
-coverage gaps, until the local client projection (V2.2) or the operator's addon
-observations supply and confirm the value against the frozen release target.
+coverage gaps, until an admitted source or permitted observation supplies the value with its
+actual origin/build. ADRs 0007 and 0008 remove the live-client/build-freeze gate;
+unverified facts are never promoted.
 
 ## Files
 
 | File | Contents |
 | --- | --- |
-| `catalog.json` | v2 reference content, revision `navzeroth-authored-slice-r1`: 9 role models, the Deadmines dungeon record with a 12-item checklist, 6 reminder rules, one placeholder map space |
+| `catalog.json` | v2 reference content, revision `navzeroth-authored-slice-r2`: 54 role models, the Deadmines dungeon record with a 12-item checklist, 18 reminder rules, one placeholder map space |
 | `sources.json` | the one source `navzeroth-authored-v1` (original authoring, BSD-3-Clause, redistribution permitted) |
 | `party-support.json` | party support matrix schema 2: sizes 1 and 2, 12 rows |
 | `procedures/*.md` | one operator procedure per party row |
@@ -61,9 +62,10 @@ mean the advice is correct.
 
 ## Identities that wait for a join
 
-- Classes: `class:warrior`, `class:paladin`, `class:rogue`, `class:priest`,
-  `class:mage`, `class:warlock`. The launch class list is pending (ADR 0006 §2);
-  a Forever addition is one more `class:<name>` model.
+- Classes: `class:warrior`, `class:paladin`, `class:hunter`, `class:rogue`,
+  `class:priest`, `class:shaman`, `class:mage`, `class:warlock`, `class:druid`.
+  These nine identities come from admitted historical quest restriction masks;
+  they do not establish the current Forever roster. See [role coverage](role-coverage-v1.json).
 - Attributes: `stat:strength`, `stat:agility`, `stat:stamina`, `stat:intellect`,
   `stat:spirit`, `stat:armor`. They map to client item stat types once V2.2
   projects stat amounts.
@@ -73,8 +75,7 @@ mean the advice is correct.
   `remind.flight-points`, `party.duo`. Until a capture reports them they are
   unknown, and the reminder engine omits the rule.
 - Context: the catalog is labelled `wow_forever 1.60.1.70450 / 16001`
-  (development input) only because the format requires one. It is rebuilt for
-  the frozen live target and never relabelled.
+  (development input) only because the format requires one. It does not establish target verification; source origins are retained.
 
 ## Party support matrix schema 2
 
@@ -91,3 +92,29 @@ Schema 2 follows the slice:
   `unequal_progress`, `sharing`, `fairness` and `agreement` are not applicable to
   one person. Sizes of two or more have all eight. Rows must cover exactly the
   applicable pairs.
+
+
+## Stable role coverage and individual scores
+
+Revision r2 extends original authored heuristics across 18 class/role scenarios
+and three inclusive bands (1–20, 21–40, 41–60), with 12 role/level preparation
+reminders. The exact historical input inventory and its limitations are in
+[role-coverage-v1.json](role-coverage-v1.json); every weight and extrapolation is
+explained in the pack's role-model assumptions. No ability or gameplay coverage
+for trainer spells, talents, professions or enhancements is included.
+
+Regenerate the authored catalog and inventory with
+`python3 scripts/update-authored-role-coverage.py`, then run the build/verify
+commands above. The updater checks the exact source shard against its registered
+run manifest and refuses changed origin or class/level inventory. Regeneration
+reproduces the canonical catalog and party pins; it does not activate content.
+
+The direct desktop gear command can return `authored_score_only_v1` when an
+applicable model has unavailable layout/proficiency. This response contains only
+individual heuristic arithmetic, preserves each original unavailable status, and
+explicitly leaves equipment eligibility and acquisition unknown. It has no
+baseline, configuration rankings or practical recommendations. Manual equipment
+facts cannot fill these source gaps. The existing route/practical APIs stay strict.
+The UI separates individual scores from ordinary gear comparisons and shows score
+certainty and unmodelled effects. Both paths require matching explicit class,
+fresh level and satisfied role/applicability/exclusion predicates.
