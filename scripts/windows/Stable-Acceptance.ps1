@@ -56,6 +56,14 @@ function Workload([string] $Mode,[string] $AppVersion = $Version) {
     $report = Join-Path $reports ($Mode+'-'+[Guid]::NewGuid().ToString('N')+'.json')
     return Invoke-StableWorkload $Root $exe $manifest $AppVersion $Mode $state $report (Join-Path $reports ('backup-'+[Guid]::NewGuid().ToString('N')+'.sqlite3')) (Remaining 1200)
 }
+function Verify-OwnedResources {
+        Assert-VerifiedBundleInputs $Root $Version (Join-Path $install 'bundled-content') $BuildIdentity
+        $inventory = & node (Join-Path $PSScriptRoot 'verify-installed-tree.mjs') $Root $install
+        if ($LASTEXITCODE -ne 0) { throw 'Exact installed resource inventory differs from source.' }
+        & node (Join-Path $Root 'scripts/dependency-notices.mjs') --installed (Join-Path $install 'local-data-notices') | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'Installed dependency notices/source differ.' }
+        return @{installed_resources_verified=$true;source_notices_verified=$true;installed_files=@($inventory | ConvertFrom-Json)}
+}
 function Remove-OwnedInstallation {
     Stop-NativeSmokeProcesses
     $uninstaller = Join-Path $install 'uninstall.exe'
@@ -76,12 +84,7 @@ try {
         return @{install_ms=$script:installMs;installed_version=$Version}
     }
     Invoke-StableCase 'HOSTED-RESOURCES' $identity $OutputDirectory {
-        Assert-VerifiedBundleInputs $Root $Version (Join-Path $install 'bundled-content') $BuildIdentity
-        $inventory = & node (Join-Path $PSScriptRoot 'verify-installed-tree.mjs') $Root $install
-        if ($LASTEXITCODE -ne 0) { throw 'Exact installed resource inventory differs from source.' }
-        & node (Join-Path $Root 'scripts/dependency-notices.mjs') --installed (Join-Path $install 'local-data-notices') | Out-Null
-        if ($LASTEXITCODE -ne 0) { throw 'Installed dependency notices/source differ.' }
-        return @{installed_resources_verified=$true;source_notices_verified=$true;installed_files=@($inventory | ConvertFrom-Json)}
+        return Verify-OwnedResources
     }
     Invoke-StableCase 'HOSTED-FIRST-START' $identity $OutputDirectory {
         $script:fresh=Workload 'fresh'
@@ -111,8 +114,9 @@ try {
         try { $baseline=Workload 'baseline' '1.0.0-rc.1' } finally { $manifest=$previousManifest }
         Install-Owned $setup.FullName
         if ((Get-InstalledDisplayVersion) -cne $Version) { throw 'Candidate did not upgrade the RC installation.' }
+        $resources=Verify-OwnedResources
         $upgraded=Workload 'restart'
-        return @{baseline_version='1.0.0-rc.1';baseline_installer_sha256=$BaselineSha256;baseline=$baseline.raw;upgraded=$upgraded.raw}
+        return @{baseline_version='1.0.0-rc.1';baseline_installer_sha256=$BaselineSha256;baseline=$baseline.raw;upgraded=$upgraded.raw;installed_resources_verified=$resources.installed_resources_verified;source_notices_verified=$resources.source_notices_verified;installed_files=$resources.installed_files}
     }
     Invoke-StableCase 'HOSTED-DOWNGRADE-REFUSAL' $identity $OutputDirectory {
         $before=(Get-FileHash $exe -Algorithm SHA256).Hash

@@ -60,3 +60,14 @@ native coverage collector to the verified assembled bundle/identity (stable sour
 must not bypass missing-build-identity refusal). Then run fresh source checks,
 hosted full-pack cases, independently downloaded draft verification and owner
 smoke. Source/code changes invalidate an earlier installer smoke result.
+
+Independent review repair: after candidate upgrade from the retained RC installer,
+repeat the exact signed bundle, installed resource inventory and dependency notice
+verification used for fresh install. Upgrade details retain the verified flags and
+actual installed-file hashes. Actual hosted upgrade remains unverified.
+
+Repair validation: native PowerShell5.1 parser passed; 10 mocked hosted producer
+checks passed, git diff check passed. Initial parser used wrong WSL distro path;
+corrected path. First test invocation was blocked by local execution policy;
+process-local Bypass ran the existing authorized synthetic checks successfully.
+No actual installation or upgrade performed.
