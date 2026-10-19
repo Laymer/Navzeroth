@@ -14,32 +14,45 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
-**Development RC preparation:** Codex `/root`, sole writer, isolated branch
-`release/1.0.0-rc.1`, final repair baseline `cb5d68b`.
-[Claim](claims/2026-10-19-rc-release.md),
-[verification handoff](handoffs/2026-10-19-rc-release.md).
+**Published development RC; Pages delivery:** Codex `/root`, sole writer, isolated
+branch `site/rc-field-manual`. [Pages claim](claims/2026-10-19-rc-pages.md),
+[Pages handoff](handoffs/2026-10-19-rc-pages.md),
+[release handoff](handoffs/2026-10-19-rc-release.md).
+
+**[1.0.0-rc.1](https://github.com/Laymer/Navzeroth/releases/tag/v1.0.0-rc.1)**
+is published and publicly verified as an **unsigned development prerelease**.
+Exact source `fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`; annotated tag object
+`b55d72da23b2edab79971edd8d813ac68a4e0f46`.
+[Durable publication receipt](releases/1.0.0-rc.1-publication.json) records the five
+asset hashes, signing status and every release workflow ID; raw draft/public
+installation receipts are retained alongside it. Public verification run
+39245910009 confirms exact assets, 544 installed files, notices/source closure,
+addon source bytes and version/signature metadata. Later PR #208 is not included
+in the published RC. Current main and the immutable release are distinct.
+
 Repairs #205 (Windows verification), #207 (deterministic worker coverage),
-#204 (concurrent lifecycle initialization/migration) and #206 (shared SemVer
-upgrade classification) are merged after independent final-head read-only review
-and all ten required checks. Exact heads, resulting commits and workflow IDs are
-in the handoff. No schema versions or public application contracts changed.
+#204 (concurrent lifecycle initialization/migration) and #206 (shared SemVer)
+and release PR #209 merged after independent final-head review and all ten
+required checks. Fresh exact-release-commit CI, coverage, source parity, ordinary
+Windows package/upgrade/refusal and stability passed, followed by tag packaging
+39242904060 and downloaded draft/public verification. Manual verifier permission
+correction PR #210 is separately reviewed; refreshed checks are pending after
+#208 merged. The initial draft-token failure 39245077836 remains a failure.
+PR #203's resulting-main failures remain historical failures, not passes.
 
-PR #203's final-head checks passed, but its resulting-main CI39164374044,
-Coverage39164373980 and package39164374023 failed. Those failures are retained,
-not counted as passes. The repair PRs provide new evidence; exact resulting-release
-commit and tag validation still precede publication.
-
-Canonical versions are prepared as **1.0.0-rc.1**, explicitly an unsigned
-development prerelease. Candidate and stable readiness remain false. Published
-version and download links remain **0.9.2** until public RC verification. No
-acceptance-candidate promotion or stable 1.0.0 publication is included.
+Candidate and stable readiness remain **false**: the exact release commit has
+69 blockers and empty material selection. [Blocker owners and clearing conditions](releases/1.0.0-rc.1-readiness.md),
+[exact-commit readiness](releases/1.0.0-rc.1-release-commit-readiness.json).
+Ordinary Windows performance, live acceptance, content permissions and launch
+target evidence remain missing. Stable signing remains unconfigured and required
+for a stable release. Private extraction/cache receipts remain retained without
+reopening game files; WSL synthetic measurements do not establish ordinary-Windows
+performance. No acceptance-candidate promotion or stable 1.0.0 publication occurred.
 Strict 90% executable-line coverage per Rust/TS/TSX file, missing-file detection,
-native aggregation and all ten required checks remain in force. Ordinary Windows
-performance, live acceptance, content permissions and launch-target evidence
-remain gaps. Private extraction/cache receipts are retained without reopening
-game files. Separate Pages delivery follows public RC verification.
-Committed-tree readiness at `b020b45` reports publication allowed, candidate/stable
-false, 69 blockers and empty material selection. [Exact inventory](releases/1.0.0-rc.1-readiness.md).
+native aggregation and all ten required checks remain in force.
+
+Next: actual release-app synthetic captures, separate Pages final-head review and
+checks, gated deployment, public page/download validation and final handoff.
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging

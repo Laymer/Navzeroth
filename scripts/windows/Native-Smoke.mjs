@@ -541,10 +541,16 @@ async function smoke(page, response) {
 async function captureRelease(page) {
   await rec.run("capture populated release application with synthetic provenance", async () => {
     await page.setViewportSize({ width: 1280, height: 900 });
+    await go(page, "Today");
+    const later = page.getByRole("button", { name: "Choose later", exact: true });
+    if (await later.isVisible()) await later.click();
+    const reference = page.locator("details").filter({ has: page.locator("summary").filter({ hasText: /^Optional reference window$/ }) });
+    if (await reference.getAttribute("open") !== null) await reference.locator("summary").click();
     const screenshots = [];
     for (const name of ["Today", "Atlas", "Content"]) {
       await go(page, name);
       await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(() => scrollTo(0, 0));
       if (name === "Today") await page.getByText(/SYNTHETIC — fixture/).first().waitFor({ timeout: 15000 });
       const file = `capture-${name}.png`;
       const bytes = await page.screenshot({ path: join(outDir, file) });
@@ -561,6 +567,7 @@ async function captureRelease(page) {
       imported_snapshot_sha256: createHash("sha256").update(snapshotText).digest("hex"),
       retiming: "Only observed_at_utc_ms, received_at_utc_ms and created_at_utc_ms re-timed to capture-run clock; fixture remains true",
       content: "Built-in Load synthetic planning example, validated and activated through real IPC",
+      presentation: "Chose later in onboarding, collapsed optional reference controls and scrolled each view to the top through ordinary UI actions; no content or styles replaced",
       screenshots, cdp: evidence.cdp, evidence_scope: "Actual verified release app; synthetic fixtures; hosted regression, not live acceptance",
     };
     writeFileSync(join(outDir, "imported-synthetic-snapshot.txt"), snapshotText);

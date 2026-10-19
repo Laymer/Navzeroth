@@ -141,3 +141,24 @@ Annotated tag `v1.0.0-rc.1`, object
 Ordinary tag packaging run 39242904060 is in progress; no acceptance-candidate
 flag or test-signing mode is used. Publication remains pending draft download
 verification and successful tag checks.
+
+## Public development prerelease
+
+Tag package 39242904060 passed: all five artifact hashes verified locally; native
+smoke 31/31, upgrade 7/7 and downgrade refusal exit 2 retaining RC. Initial draft
+verification 39245077836 failed before installation because its contents-read
+workflow token could not discover the draft. Independent review approved manual
+verifier permission correction `683c2ae` (PR #210), and draft run 39245500923
+passed against unchanged release source/bytes. Public run 39245910009 also passed
+after publication. Local public downloads match all five draft/tag artifacts,
+GitHub asset digests and addon source. Both hosted receipts verify all 544 installed
+files, dependency notice/source closure, SemVer metadata and NotSigned installer/app.
+
+[Publication receipt](../releases/1.0.0-rc.1-publication.json) retains commit, tag
+object, workflow IDs, every asset hash, signing status and scope. Raw receipts
+are in `docs/releases/1.0.0-rc.1-receipts/`. No stable/acceptance promotion occurred.
+
+External PR #208 merged after the immutable release source; it is not part of
+the RC. PR #210 was refreshed onto that main as `32f4828`; independent review
+confirmed unchanged three-file diff and approved it. Fresh checks remain pending.
+Next delivery is Pages using actual verified release captures and RC-only downloads.
