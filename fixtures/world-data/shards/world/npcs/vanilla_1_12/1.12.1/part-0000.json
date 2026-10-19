@@ -1,0 +1,3 @@
+{"confidence":"cross_edition_unverified","dataset":"world.npcs","format":"navzeroth-world-data","generator":{"credit":"Data generators based on work by NotInTheBand (TALOD), used with permission.","name":"fixture","version":"1"},"origin":{"build":{"status":"known","value":"1.12.1"},"edition":"vanilla_1_12","locale":"enUS"},"record_kind":"npc","schema_version":1,"shard":{"count":1,"index":0},"sources":[{"id":"cmangos-classic-db","url":"https://github.com/cmangos/classic-db"}],"target":{"build":{"status":"unknown"},"edition":"wow_forever"},"records":[
+{"id":448,"kind":"npc","max_level":11,"min_level":11,"name":"Hogger"}
+]}

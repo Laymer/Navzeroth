@@ -62,6 +62,9 @@ preserved and each fact validated against the frozen target:
 - ~~Owner-reported written grants from ForeverDB, Questie/QuestieDB,
   foreverchanges.pro and Olympus News Network.~~ **Withdrawn 2026-10-17** (see
   §11): no third-party website data or grants are used.
+- Generated world data from the TALOD-derived and Navzeroth generators in
+  `data-generators/`: Wowhead Classic/Forever, CMaNGOS classic-db and wago.tools
+  DB2 exports (**added 2026-10-19**, §14).
 
 Retrieval from websites remains a separate, bounded, rate-limited, opt-in fetch step
 with retained snapshots and inert parsing. Builds and tests never use the network.
@@ -145,6 +148,7 @@ from data the project can gather itself:
   they count as content).
 
 No website retrieval, scraping or provider correspondence is part of the program.
+**Partly reversed by §14** (2026-10-19) for the generator sources named there.
 Task V0.6 (grant intake) and V2.1 (granted-source adapters) are dropped. §4 no
 longer applies; no grant evidence was admitted or stored.
 
@@ -184,6 +188,45 @@ verification instructions. Stable Authenticode requirements remain unchanged.
 The Pages redesign follows the verified prerelease in its own reviewed PR; its
 download links must resolve only to verified published assets. No missing private
 input or operator evidence may be inferred from development success.
+
+### 14. Amendment 2026-10-19: external datasets admitted
+
+The owner reverses §11's website-retrieval ban for exactly these sources, and only
+for the data the generators in `data-generators/` download:
+
+- Wowhead: `www.wowhead.com/classic`, `www.wowhead.com/forever` and the
+  `nether.wowhead.com` tooltip endpoints;
+- CMaNGOS `classic-db` (GitHub `cmangos/classic-db`): the `Full_DB` dump, under its
+  published GPL v3 `LICENSE.md` and the `COPYRIGHT.md` reservation of Blizzard
+  material;
+- wago.tools DB2 CSV exports for products `wowf` (WoW Forever 1.60.1) and
+  `wow_classic_era`: Blizzard client data republished by wago.tools.
+
+Terms:
+
+- Retrieval is opt-in, bounded and rate-limited, run only by the generators
+  (`https_rate_limited` in the admission registry). Builds, tests and `source-sync`
+  never use the network for these sources. Wowhead `/forever` list pages answer
+  HTTP 403 to scripts; that block is not bypassed.
+- Generated JSON is committed through Git LFS as `navzeroth-world-data` v1 shards
+  ([WORLD_DATA.md](../data/WORLD_DATA.md)). Every shard keeps its origin edition and
+  build; nothing is relabelled. Classic Era and 1.12 data stays
+  `cross_edition_unverified` until it is validated against the frozen Forever target
+  (§1). Forever-origin data is still validated against that target before it counts.
+- The TALOD generators are used under NotInTheBand's written permission of
+  18 Oct 2026 (`data-generators/TALOD-data-generators/PERMISSION.md`): credit the
+  author, Navzeroth only, non-commercial, no implied endorsement, revocable for
+  future use if its conditions are broken. The permission covers the scripts, not
+  the downloaded data.
+- Credits for every source are in `data-generators/NOTICE.md` and the README.
+- The owner has read the third-party terms, including the Wowhead/Fanbyte terms
+  that restrict automated extraction and redistribution, and explicitly accepts that
+  risk for this project. The admission gate records the acceptance as licence
+  `owner_accepted`, which admits a source only with a licence identifier, reviewer,
+  attribution, obligations and evidence citing this section.
+- Nothing else changes: the release `DOMAINS`, the mandatory acceptance gates, the
+  slice (§2), the evidence rules and the distinct unknown/unsupported/stale/false/zero
+  states stay as they are. Admission is not target validation.
 
 ## Consequences
 

@@ -37,3 +37,6 @@ apps/desktop/THIRD_PARTY.md text eol=lf
 config/dependency-notices/** -text -whitespace
 config/dependency-notice-overrides.json text eol=lf
 pnpm-lock.yaml text eol=lf
+# Generated world data (V2.7) is large; keep it in Git LFS with LF endings.
+data-generators/output/**/*.json filter=lfs diff=lfs merge=lfs -text
+data-generators/**/*.py text eol=lf

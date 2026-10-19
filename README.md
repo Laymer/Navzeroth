@@ -55,7 +55,8 @@ require complete licensed content and static validation; see the
 Current source includes a bounded QuestieDB raw-table staging adapter and
 [versioned release checks](release/v1/README.md). Staging preserves partial facts
 and reports unsupported corrections. The [pinned source audit](docs/sources/v1-public-source-audit.md)
-accepts neither QuestieDB nor historical CMaNGOS for shipped assets. Unknown
+accepts neither QuestieDB nor historical CMaNGOS for shipped assets (CMaNGOS
+classic-db is now admitted for the data generators, ADR 0006 §14). Unknown
 content inventory, source rights, real class/role models and live/Windows acceptance
 continue to block v1.0.0.
 
@@ -185,6 +186,16 @@ cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/forever/at
 
 This command deliberately fails on materialized images. To prepare owner-supplied
 imagery, omit `--check-pointer`. Do not commit personal exports or secrets.
+
+## Data credits
+
+Generated world data under `data-generators/` comes from Wowhead, CMaNGOS
+classic-db and wago.tools (Blizzard Entertainment client data), produced by data
+generators based on work by NotInTheBand (TALOD), used with permission. Credits,
+licences and terms are in [data-generators/NOTICE.md](data-generators/NOTICE.md);
+the admission decision is [ADR 0006 §14](docs/decisions/0006-v1-program.md) and the
+format is [WORLD_DATA.md](docs/data/WORLD_DATA.md). Navzeroth is not endorsed by
+TALOD, Wowhead, CMaNGOS, wago.tools or Blizzard Entertainment.
 
 ## CI and evidence
 

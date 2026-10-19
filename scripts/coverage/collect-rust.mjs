@@ -51,6 +51,10 @@ export function collectRust(destination){
   instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env','--sh'],{stdoutOnly:true}))};
   if(path.resolve(instrumented.CARGO_LLVM_COV_TARGET_DIR)!==target||path.resolve(instrumented.CARGO_LLVM_COV_BUILD_DIR)!==target)throw new Error('Instrumentation escaped its owned build directory');
   cargoExample('schema-export','azeroth-core','export_content_schema');
+  cargoExample('world-data-schema-export','azeroth-core','export_world_data_schema');
+  // One valid and one invalid input each, plus the bookkeeping the shard validator skips.
+  cargoExample('world-data-validation','azeroth-core','validate_world_data',['fixtures/world-data/shards','fixtures/world-data/shards/world/npcs/vanilla_1_12/1.12.1/part-0000.json'],false,1);
+  cargoExample('knowledge-validation','azeroth-core','validate_knowledge',['fixtures/world-data/facts'],false,1);
   cargoExample('workflow-verification','azeroth-app','workflow_performance',['--verify']);
   cargoExample('workflow-bad-option','azeroth-app','workflow_performance',['--unsupported'],false,2);
   cargoExample('workflow-debug-refusal','azeroth-app','workflow_performance',[],false,2);

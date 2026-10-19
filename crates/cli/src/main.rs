@@ -22,7 +22,8 @@ const USAGE: &str = "Unsupported command or options. Implemented: local-data (in
     (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]; \
     release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
     stage-questiedb <raw-file options>; stage-foreverdb --input <directory> --manifest <file>; \
-    guide verify --guide <file> --facts <file> [--race <Race>] [--class <Class>]. See README.md.";
+    guide verify --guide <file> --facts <file> [--race <Race>] [--class <Class>]; \
+    verify-world-data --input <dir> [--manifest <file>]. See README.md.";
 
 /// Fixture directories checked by `validate-fixtures`, relative to the repository root.
 /// This list is explicit on purpose: the command never globs `fixtures/**`.
@@ -252,7 +253,7 @@ fn main() -> ExitCode {
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
                  (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
                  release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
-                 stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md); stage-foreverdb --input <dir> --manifest <file> (see docs/data/FOREVERDB_STAGING.md); guide verify --guide <file> --facts <file> (see docs/data/GUIDE_VERIFIER.md). \
+                 stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md); stage-foreverdb --input <dir> --manifest <file> (see docs/data/FOREVERDB_STAGING.md); guide verify --guide <file> --facts <file> (see docs/data/GUIDE_VERIFIER.md); verify-world-data --input <dir> [--manifest <file>] (see docs/data/WORLD_DATA.md). \
                  Other commands are planned; see README.md and plan section 19.3."
             );
             ExitCode::SUCCESS
@@ -487,6 +488,31 @@ fn main() -> ExitCode {
                 }
                 Err(message) => {
                     eprintln!("guide verify: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [command, rest @ ..] if command == "verify-world-data" => {
+            use azeroth_cli::world_data;
+            let Some(options) = world_data::Options::parse(rest) else {
+                eprintln!("Unsupported options. {}", world_data::USAGE);
+                return ExitCode::from(2);
+            };
+            match world_data::verify(&options) {
+                Ok(report) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&report)
+                            .expect("world-data report serialization")
+                    );
+                    if report.passes {
+                        ExitCode::SUCCESS
+                    } else {
+                        ExitCode::FAILURE
+                    }
+                }
+                Err(message) => {
+                    eprintln!("verify-world-data: {message}");
                     ExitCode::FAILURE
                 }
             }
