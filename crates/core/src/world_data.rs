@@ -694,6 +694,16 @@ pub struct Loot {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub condition: Option<u32>,
 }
+/// A planar entrance estimate; elevation is intentionally absent.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct PlanarEntranceEstimate {
+    pub map_id: u32,
+    pub x: f64,
+    pub y: f64,
+    pub derivation: String,
+    pub uncertainty: String,
+}
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Dungeon {
@@ -704,6 +714,10 @@ pub struct Dungeon {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub max_level: Option<u32>,
     pub entrance: Observation<WorldPoint>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entrance_estimate: Option<PlanarEntranceEstimate>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub excluded_reason: Option<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bosses: Vec<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -865,7 +879,15 @@ impl Record {
             }
             Self::Dungeon(r) => {
                 name(&r.name)?;
-                r.entrance.value().map_or(Ok(()), point)
+                r.entrance.value().map_or(Ok(()), point)?;
+                if let Some(estimate) = &r.entrance_estimate {
+                    if ![estimate.x, estimate.y].iter().all(|v| v.is_finite()) {
+                        return Err(invalid("Planar entrance coordinates must be finite"));
+                    }
+                    name(&estimate.derivation)?;
+                    name(&estimate.uncertainty)?;
+                }
+                r.excluded_reason.as_deref().map_or(Ok(()), name)
             }
             Self::Graveyard(r) => located(&r.world, &r.position),
         }

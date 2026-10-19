@@ -239,3 +239,17 @@ unverified until a frozen target exists and that the acceptance gates are unchan
 
 The whole-world content v2 pack built from these shards, and the content-v2 limits
 raised for it (ADR 0007 §7), are recorded in [WORLD_CONTENT.md](WORLD_CONTENT.md).
+
+
+## Stable dungeon metadata extension
+
+World-data schema 1 adds optional dungeon `entrance_estimate` and
+`excluded_reason` fields. Existing shards remain readable and preserve their
+bytes when these fields are absent. `entrance_estimate` is a planar world
+coordinate (`map_id`, `x`, `y`) plus mandatory derivation and uncertainty text;
+there is deliberately no `z`. Coordinates must be finite. The CMaNGOS generator
+v2 retains ghost-entry XY as estimates, never claims they establish a live portal
+or entry access, and records map169's unused/test exclusion from zero source
+capacity/levels/ghost fields. Exact source portal points remain separate.
+See [world content](WORLD_CONTENT.md#stable-dungeon-expansion-converter-v3) for
+projection preference, preparation heuristics and the consumer path.

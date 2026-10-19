@@ -552,6 +552,35 @@ class RunTest(unittest.TestCase):
 
 
 class ProvenanceRevisionTests(unittest.TestCase):
+    def test_planar_dungeon_estimate_and_heuristic_are_consumed_not_hidden(self):
+        import copy
+        shards = copy.deepcopy(SHARDS)
+        dungeons = shards[("dungeons.dungeons", "vanilla_1_12")][2]
+        planar = world_of(0.25,0.75)
+        planar.pop("z")
+        planar.update(derivation="CMaNGOS instance_template map36 ghost entrance XY", uncertainty="Portal, access and elevation unverified")
+        dungeons[0]["entrance"] = {"status":"known", "value":{"map_id":36,"x":0,"y":0,"z":5}}
+        dungeons[0]["entrance_estimate"] = planar
+        dungeons.append({"kind":"dungeon","map_id":169,"name":"Emerald Dream","entrance":{"status":"unknown"},
+                         "excluded_reason":"Unused/test map169 with zero players and ghost fields"})
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Run(tmp, shards=shards)
+            dungeon = next(d for d in run.catalog["dungeons"] if d["id"] == "dungeon:the-deadmines")
+            self.assertEqual(dungeon["entrance"]["status"],"known")
+            self.assertTrue(dungeon["travel_edges"]["value"])
+            checks=dungeon["checklist"]["value"]
+            self.assertIn("ghost entrance XY",checks[0]["label"])
+            self.assertIn("unverified",checks[0]["label"])
+            self.assertTrue(all(c["condition"]["status"] == "unknown" for c in checks))
+            self.assertTrue(all(c["label"].startswith("Authored heuristic:") for c in checks[1:]))
+            self.assertEqual(dungeon["access"]["status"],"unknown")
+            self.assertFalse(any(d["id"] == "dungeon:emerald-dream" for d in run.catalog["dungeons"]))
+            self.assertEqual(run.summary["excluded_dungeons"][0]["map_id"],169)
+            ev={e["id"]:e for e in run.p["evidence"]}
+            self.assertTrue(any(ev[e]["confidence"] == "inferred" for e in checks[0]["evidence"]))
+            self.assertIn("quest:176",dungeon["preparation_quests"]["value"])
+
+
     def test_versioned_policy_compatibility(self):
         policy = json.loads(json.dumps(POLICY))
         policy["schema_version"] = 2

@@ -31,7 +31,7 @@ import re
 import sys
 
 NAME = "world_to_content"
-VERSION = "2"
+VERSION = "3"
 DERIVED_SOURCE = "navzeroth-world-content"
 
 # Inferred travel (ADR 0007 §8). Yards per second.
@@ -201,6 +201,7 @@ class Builder:
         self.dropped = collections.Counter()
         self.unmapped = collections.Counter()
         self.skipped_origins = []
+        self.excluded_dungeons = []
         self.evidence = {}  # id -> record
         self.evidence_sources = collections.defaultdict(set)  # source id -> datasets
         self.source_refs = {}  # source id -> first shard source ref
@@ -994,18 +995,42 @@ class Builder:
         authored = self.authored_dungeons().get(normal_title(record["name"]))
         return authored["title"] if authored else record["name"]
 
+    def included_dungeons(self):
+        for record, edition in self.records("dungeons.dungeons", key=lambda r: r["map_id"]):
+            if record.get("excluded_reason"):
+                exclusion = {"map_id": record["map_id"], "name": record["name"], "reason": record["excluded_reason"]}
+                if exclusion not in self.excluded_dungeons:
+                    self.excluded_dungeons.append(exclusion)
+                continue
+            yield record, edition
+
     def build_entrances(self):
         self.entrances = {}
-        for record, edition in self.records("dungeons.dungeons", key=lambda r: r["map_id"]):
-            if record["entrance"]["status"] != "known":
+        self.entrance_guidance = {}
+        self.entrance_evidence = {}
+        for record, edition in self.included_dungeons():
+            ev = self.evidence_for("dungeons.dungeons", edition)
+            w = record["entrance"].get("value") if record["entrance"]["status"] == "known" else None
+            located = self.locate(w["map_id"], w["x"], w["y"]) if w else None
+            if not located and record.get("entrance_estimate"):
+                # An exact server portal can be inside another instance (BWL).
+                # Preserve it in raw data; expose the outdoor ghost-entry estimate.
+                w = record["entrance_estimate"]
+                located = self.locate(w["map_id"], w["x"], w["y"])
+                inference = self.inferred("dungeon.planar-entrance", "Planar dungeon entrance estimate from "
+                    "CMaNGOS instance_template ghostEntranceMap/X/Y. No elevation is supplied or invented; "
+                    "ghost-entry locations do not verify portals, access, walkability or the target client build.")
+                ev = sorted(set(ev) | {inference})
+                self.entrance_guidance[record["map_id"]] = (f"Entrance estimate: {w['derivation']} "
+                    f"Uncertainty: {w['uncertainty']}")
+            if w is None:
                 continue
-            w = record["entrance"]["value"]
-            located = self.locate(w["map_id"], w["x"], w["y"])
+            self.entrance_evidence[record["map_id"]] = ev
             if not located:
                 self.dropped["dungeon entrance outside every uiMap"] += 1
                 continue
             node = f"node:dungeon-entrance:{record['map_id']}"
-            self.add_node(node, located[0], located[1], located[2], w, self.evidence_for("dungeons.dungeons", edition))
+            self.add_node(node, located[0], located[1], located[2], w, ev)
             self.node_services[node].add("dungeon")
             self.entrances[record["map_id"]] = node
 
@@ -1019,7 +1044,7 @@ class Builder:
         for qid, (quest, _) in sorted(self.quests.items()):
             if quest.get("zone_or_sort", 0) > 0:
                 zone_quests[quest["zone_or_sort"]].append(f"quest:{qid}")
-        for record, edition in self.records("dungeons.dungeons", key=lambda r: r["map_id"]):
+        for record, edition in self.included_dungeons():
             ev = self.evidence_for("dungeons.dungeons", edition)
             did = self.dungeon_id(record)
             mine = authored.get(normal_title(record["name"]))
@@ -1036,12 +1061,30 @@ class Builder:
                 entrance = mine["entrance"]
             bosses = [f"npc:{b}" for b in record.get("bosses", []) if f"npc:{b}" in self.entity_ids]
             area = record.get("area_id")
+            guidance_ev = self.inferred("dungeon.preparation-heuristics", "Authored generic preparation heuristic: "
+                "review group roles, repair/restock and check source-linked quests before entry. These are "
+                "manual reminders, not measured readiness, mandatory entry requirements or current inventory.")
+            checklist = []
+            if record["map_id"] in self.entrance_guidance:
+                checklist.append({"id": f"{did}:entrance-estimate", "condition": UNKNOWN,
+                    "evidence": self.entrance_evidence[record["map_id"]], "label": self.entrance_guidance[record["map_id"]]})
+            level = record.get("min_level")
+            level_note = (f" Source 1.12 recommended minimum level {level}; this is not an entry requirement." if level else "")
+            for suffix, label in [("roles", "Review the group's intended roles and source-linked preparation quests." + level_note),
+                                  ("supplies", "Check repairs, supplies and bag space manually; current inventory is unresolved.")]:
+                checklist.append({"id": f"{did}:heuristic:{suffix}", "condition": UNKNOWN,
+                                  "evidence": [guidance_ev], "label": "Authored heuristic: " + label})
+            ev = sorted(set(ev) | {guidance_ev})
+            if record["map_id"] in self.entrance_guidance:
+                ev = sorted(set(ev) | set(self.entrance_evidence[record["map_id"]]))
+            adjacent = [edge["id"] for edge in self.edges if entrance.get("status") == "known"
+                        and entrance["value"]["id"] in (edge["from"]["id"], edge["to"]["id"])]
             dungeon = {
-                "access": UNKNOWN, "checklist": UNKNOWN, "entrance": entrance,
+                "access": UNKNOWN, "checklist": known(checklist), "entrance": entrance,
                 "evidence": ev, "id": did, "map": self.map_key(map_id),
                 "preparation_quests": known(zone_quests.get(area, [])[:MAX_REFS]) if area else UNKNOWN,
                 "rewards": known(sorted(self.drops_by_entity.get(did, []), key=natural)[:MAX_REFS]),
-                "title": self.dungeon_title(record), "travel_edges": UNKNOWN}
+                "title": self.dungeon_title(record), "travel_edges": known(adjacent) if adjacent else UNKNOWN}
             if bosses:
                 dungeon["bosses"] = bosses
             self.dungeons.append(dungeon)
@@ -1405,6 +1448,7 @@ def summary(catalog, sources, conflicts, builder, revision, catalog_bytes):
         "dropped": dict(sorted(builder.dropped.items())),
         "not_mapped": dict(sorted(builder.unmapped.items())),
         "skipped_origins": builder.skipped_origins,
+        "excluded_dungeons": builder.excluded_dungeons,
         "parameters": {"run_speed_yards_per_s": RUN_SPEED, "flight_speed_yards_per_s": FLIGHT_SPEED,
                        "walk_neighbours": WALK_NEIGHBOURS, "walk_max_yards": WALK_MAX_YARDS,
                        "objective_spawn_cap": OBJECTIVE_SPAWN_CAP},
