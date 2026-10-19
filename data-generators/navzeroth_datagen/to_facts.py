@@ -24,7 +24,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from navzeroth_datagen import envelope  # noqa: E402
+from navzeroth_datagen import envelope, bounded  # noqa: E402
 
 MAX_DOC_BYTES = 8 * 1024 * 1024 - 64 * 1024
 MAX_FACTS = 250_000
@@ -117,7 +117,7 @@ def convert(input_root, output_root):
     groups = {}
     summary_dups = []
     for path in shards(input_root):
-        doc = json.loads(path.read_text(encoding="utf-8"))
+        doc = json.loads(bounded.read_file(path, bounded.MAX_SHARD_BYTES))
         o = doc["origin"]
         group = (doc["generator"]["name"], o["edition"], o["build"].get("value") or "unknown-build")
         facts = groups.setdefault(group, {})

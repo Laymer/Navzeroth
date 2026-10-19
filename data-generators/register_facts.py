@@ -40,6 +40,9 @@ import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from navzeroth_datagen.bounded import read_file, MAX_SHARD_BYTES  # noqa: E402
+
 ROOT = HERE.parent
 PREFIX = "gen-"
 TRANSFORMATION = "knowledge_v1"
@@ -136,7 +139,7 @@ def shard_citations(world):
         rel = path.relative_to(world).parts
         if rel[0] == "facts" or any(p.startswith(".") for p in rel):
             continue
-        doc = json.loads(path.read_text(encoding="utf-8"))
+        doc = json.loads(read_file(path, MAX_SHARD_BYTES))
         build = (doc["origin"].get("build") or {}).get("value") or UNKNOWN_BUILD
         key = (doc["generator"]["name"], doc["origin"]["edition"], build)
         ids = cited.setdefault(key, [])
@@ -163,7 +166,10 @@ def scan(facts_root):
             raise RegisterError(f"{rel.as_posix()}: registry paths are lowercase [a-z0-9._-] segments")
         if path.is_symlink():
             raise RegisterError(f"{rel.as_posix()}: symbolic links are refused")
-        data = path.read_bytes()
+        try:
+            data = read_file(path, MAX_FILE_BYTES)
+        except (ValueError, OSError) as error:
+            raise RegisterError(f"{rel.as_posix()}: {error}") from error
         if not data or len(data) > MAX_FILE_BYTES:
             raise RegisterError(f"{rel.as_posix()}: {len(data)} bytes is outside 1..{MAX_FILE_BYTES}")
         doc = json.loads(data)
