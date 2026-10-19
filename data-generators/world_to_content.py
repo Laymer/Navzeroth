@@ -30,6 +30,9 @@ import pathlib
 import re
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from navzeroth_datagen import bounded  # noqa: E402
+
 NAME = "world_to_content"
 VERSION = "2"
 DERIVED_SOURCE = "navzeroth-world-content"
@@ -149,20 +152,32 @@ def load_input(root):
         raise InputError(f"input is not a directory: {root}")
     shards = []
     digest = hashlib.sha256()
-    for path in sorted(root.rglob("*.json"), key=lambda p: p.relative_to(root).as_posix()):
+    budget = bounded.InputBudget()
+    try:
+        paths = bounded.input_files(root, "*.json")
+    except (OSError, ValueError) as error:
+        raise InputError(f"bounded input scan refused: {error}") from None
+    for path in sorted(paths, key=lambda p: p.relative_to(root).as_posix()):
         rel = path.relative_to(root).as_posix()
         parts = rel.split("/")
         if path.name == "run-manifest.json" or "facts" in parts[:-1] or any(p.startswith(".") for p in parts):
             continue
         if path.is_symlink():
             raise InputError(f"symbolic link in input: {rel}")
-        raw = path.read_bytes()
         try:
-            doc = json.loads(raw)
-        except ValueError as error:
+            raw = budget.read(path, bounded.MAX_SHARD_BYTES)
+            doc = bounded.json_document(raw)
+        except (OSError, ValueError) as error:
             raise InputError(f"{rel}: not JSON ({error}); is Git LFS checked out?") from None
         if not isinstance(doc, dict) or doc.get("format") != "navzeroth-world-data":
             continue
+        records = doc.get("records")
+        if not isinstance(records, list):
+            raise InputError(f"{rel}: records must be an array")
+        try:
+            budget.add_records(len(records))
+        except ValueError as error:
+            raise InputError(f"{rel}: {error}") from None
         digest.update(rel.encode() + b"\0" + hashlib.sha256(raw).hexdigest().encode() + b"\n")
         shards.append(Shard(path, rel, doc))
     grouped = collections.defaultdict(lambda: collections.defaultdict(list))
@@ -173,7 +188,7 @@ def load_input(root):
 
 def read_json(path, what):
     try:
-        return json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
+        return bounded.json_document(bounded.read_file(path, bounded.MAX_SHARD_BYTES))
     except (OSError, ValueError) as error:
         raise InputError(f"cannot read {what} {path}: {error}") from None
 
