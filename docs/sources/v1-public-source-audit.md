@@ -12,6 +12,14 @@ data redistribution grant or complete 70374 coverage. CMaNGOS is a historical
 comparison with separate copyright exclusions. Unknown target inventories remain
 release blockers, even if an adapter can decode every available source row.
 
+> **Note, 2026-10-19.** [ADR 0006 §14](../decisions/0006-v1-program.md) admits
+> CMaNGOS classic-db (`cmangos-classic-db`; its README and `LICENSE.md` are GPL v3,
+> with the `COPYRIGHT.md` reservation accepted by the owner) and Wowhead for the
+> opt-in generators in `data-generators/`. Their data stays `vanilla_1_12` /
+> Classic origin and `cross_edition_unverified` until validated against the frozen
+> Forever target. QuestieDB is unchanged. The audit text below is the 2026-10-14
+> record.
+
 The accompanying [source audit JSON](v1-source-audit.json) contains immutable
 identities, byte counts, SHA-256 values for fully retrieved files, Git blob IDs
 for the broader input inventory, field-index maps and mandatory coverage units.

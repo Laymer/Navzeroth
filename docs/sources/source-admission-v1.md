@@ -9,7 +9,10 @@ AtlasLootClassic original declarations (GPL2), Mapzeroth Retail EK node literals
 (MIT), a WoWSims paladin implementation pointer (MIT), and four raw ATT Forever
 Riverglades flight-point fields (MIT). Nine exact original
 and licence objects are retained for the [offline pipeline](../data/SOURCE_PIPELINE.md).
-Eight other candidate/exclusion entries remain unavailable to acquisition.
+Since 2026-10-19 it also admits **six generator sources** under
+[ADR 0006 §14](../decisions/0006-v1-program.md) (below); thirteen retained
+objects in all. Seven other candidate/exclusion entries remain unavailable to
+acquisition.
 The pure Rust `azeroth_core::source_admission` contract is a prerequisite
 for every acquisition adapter. The release gate now binds accepted sources to
 a pinned registry and local permission evidence (below). Audit-only Questie
@@ -44,6 +47,12 @@ Rights status is separate from source edition/build; absent origin remains null.
 Only reviewed permissive/share-alike grants with a license identifier, reviewer,
 attribution, obligations, scope-bearing immutable evidence and access-method
 evidence can be admitted. Noncommercial, unknown and rejected grants fail closed.
+A third licence, `owner_accepted`, records that the owner explicitly accepts a
+source's terms: it needs the same fields plus at least one evidence entry whose
+`reviewed_scope` cites `ADR 0006 §14` (`OWNER_ACCEPTANCE_CITATION`); it is never
+inferred. Admitted `owner_accepted` sources and sources retrieved by
+`https_rate_limited` may list no files yet; `authorize` refuses any file that is
+not listed, so nothing is usable until its generated files are registered.
 Rights evidence must cover the exact file/field/transform scope; reviewers must
 check that upstream can grant the rights and that attribution, share-alike,
 retention and redistribution obligations are compatible. A hash identifies bytes;
@@ -62,6 +71,8 @@ correction completeness, resolved conflicts or a complete target inventory.
 - Wowhead is research-only. [Fanbyte terms](https://corp.fanbyte.com/legal/terms)
   sections 4 and 8 restrict redistribution and automated extraction. No applicable
   grant is recorded. The page was read during this task; no source rows retrieved.
+  **Superseded 2026-10-19:** the owner admits Wowhead Classic/Forever for the
+  generators and accepts those terms explicitly (ADR 0006 §14, below).
 - RestedXP remains requirements-only under the selected policy. Its pinned
   [license](https://github.com/RestedXP/RXPGuides/blob/78e11d001e32b1432e29fc4bf8df61743a24ac68/LICENSE)
   is noncommercial. No route or guide content is admitted.
@@ -73,6 +84,8 @@ correction completeness, resolved conflicts or a complete target inventory.
   the [prior audit](v1-public-source-audit.md). Public repository availability,
   executable corrections and historical edition lineage are not permission or
   target validation. This task does not repeat or supersede that audit.
+  **2026-10-19:** CMaNGOS classic-db is admitted for the generators
+  (`cmangos-classic-db`, ADR 0006 §14); QuestieDB stays unaccepted.
 - Original permitted observations and explicitly licensed contributions require
   the same grant/attribution, exact scope and target validation records. None are
   fabricated here.
@@ -88,6 +101,42 @@ narrow ASCII HTTPS DNS-host subset on the default port: no user information,
 explicit ports, query/fragment, percent encoding or trailing DNS dot. Sources that
 need other access forms require a reviewed contract extension, not URL rewriting.
 
+
+## Generator sources (ADR 0006 §14, 2026-10-19)
+
+The owner admitted the data the generators in `data-generators/` download and
+explicitly accepted the third-party terms (Wowhead/Fanbyte terms restrict
+automated extraction and redistribution). Credits are in
+[data-generators/NOTICE.md](../../data-generators/NOTICE.md).
+
+| Registry id | Material | Licence | Origin edition | Retrieval |
+| --- | --- | --- | --- | --- |
+| `wowhead-classic` | www.wowhead.com/classic pages, nether.wowhead.com tooltips | `owner_accepted` | `wow_classic_era` | `https_rate_limited` |
+| `wowhead-forever` | www.wowhead.com/forever pages scripts may read (list pages answer 403; not bypassed), tooltips | `owner_accepted` | `wow_forever` | `https_rate_limited` |
+| `cmangos-classic-db` | cmangos/classic-db `Full_DB` dump (GPL v3 `LICENSE.md`, `COPYRIGHT.md` reservation) | `share_alike` GPL-3.0-only | `vanilla_1_12` | `https_rate_limited` |
+| `wago-tools-wowf` | wago.tools DB2 CSV, product `wowf` (Blizzard client data) | `owner_accepted` | `wow_forever` | `https_rate_limited` |
+| `wago-tools-classic-era` | wago.tools DB2 CSV, product `wow_classic_era` (Blizzard client data) | `owner_accepted` | `wow_classic_era` | `https_rate_limited` |
+| `talod-generators` | the three TALOD generator scripts, NotInTheBand's written permission | `owner_accepted` | none | `manual_local` |
+
+- `https_rate_limited` means opt-in, cached, rate-limited retrieval by the
+  generators only. `source-sync` never fetches these sources (it refuses with
+  "Generator-retrieved source material is retained from data-generators"), and
+  builds and tests never use the network. Their rights and decision documents are
+  retained under `content/source-materials/objects/` like every other licence object.
+- Wowhead and wago.tools have no immutable upstream revision. Their `revision`
+  pins the reviewed decision instead: the Git blob id of ADR 0006 at its §14
+  amendment. Each shard records retrieval time and snapshot hash per source
+  ([WORLD_DATA.md](../data/WORLD_DATA.md)). CMaNGOS keeps the audited commit
+  `ec4f596…`; TALOD pins the commit that added `PERMISSION.md`.
+- The CMaNGOS README and `LICENSE.md` are GPL **v3** (the owner's brief said
+  GPL-2.0; the registry follows the published file).
+- Origin builds stay null in the registry; each shard's envelope carries the actual
+  origin build (or unknown). Non-Forever origins stay `cross_edition_unverified`.
+- `files` lists are empty: the generated fact documents are registered later by the
+  integrator (task V2.7f). Until then `authorize` refuses every file of these sources.
+- Retrieval bounds are the contract maximums (1 GiB, 1,024 requests, one second).
+  The generators' own per-host limits in `navzeroth_datagen/http.py` are the
+  effective controls; aligning them with these declared bounds is an open item.
 
 ## Offline release binding
 

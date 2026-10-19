@@ -69,7 +69,12 @@ pub enum License {
     Noncommercial,
     Permissive,
     ShareAlike,
+    /// The owner explicitly accepts this source's terms (ADR 0006 §14). Never
+    /// implied: admission also needs evidence whose scope cites that amendment.
+    OwnerAccepted,
 }
+/// The ADR amendment an `owner_accepted` admission must cite in evidence scope.
+pub const OWNER_ACCEPTANCE_CITATION: &str = "ADR 0006 §14";
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
@@ -93,6 +98,9 @@ pub struct Retrieval {
 pub enum Method {
     ManualLocal,
     HttpsPinned,
+    /// Opt-in, bounded, rate-limited retrieval by `data-generators/`. Builds,
+    /// tests and `source-sync` never fetch it; generated material is retained.
+    HttpsRateLimited,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -206,14 +214,27 @@ impl Registry {
             {
                 return Err(Rejection::InvalidRegistry);
             }
+            // Owner acceptance is explicit: it must cite the ADR amendment.
+            // Owner-accepted and generator-retrieved sources register their
+            // generated files later, so an empty list is allowed for them;
+            // authorize() still refuses every file that is not listed.
+            let owner = r.license == License::OwnerAccepted;
+            let later = owner || s.retrieval.method == Method::HttpsRateLimited;
             if r.status == Status::Admitted
-                && (!matches!(r.license, License::Permissive | License::ShareAlike)
-                    || r.license_identifier.is_none()
+                && (!matches!(
+                    r.license,
+                    License::Permissive | License::ShareAlike | License::OwnerAccepted
+                ) || r.license_identifier.is_none()
                     || r.reviewer.is_none()
                     || r.attribution.is_none()
                     || r.obligations.is_none()
                     || r.evidence.is_empty()
-                    || s.files.is_empty())
+                    || (owner
+                        && !r
+                            .evidence
+                            .iter()
+                            .any(|e| e.reviewed_scope.contains(OWNER_ACCEPTANCE_CITATION)))
+                    || (!later && s.files.is_empty()))
             {
                 return Err(Rejection::RightsNotAdmitted);
             }
