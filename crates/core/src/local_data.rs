@@ -216,6 +216,8 @@ pub enum InventoryDisposition {
     RetainedUnsupported,
     NotLocallyPresent,
     UnavailableEncrypted,
+    UnavailableUnknown,
+    UnavailableUnsupported,
     DefinitionMissing,
     LayoutMismatch,
     InvalidCorrupt,
@@ -334,4 +336,16 @@ pub fn decode_metadata(bytes: &[u8], transforms: &[&str]) -> Result<MetadataBund
         serde_json::from_value(value).map_err(|_| "Invalid metadata schema")?;
     validate_metadata(&bundle, transforms)?;
     Ok(bundle)
+}
+
+impl InventoryDisposition {
+    /// New failure distinctions require the v2 catalog/checkpoint envelope.
+    pub fn supported_in(self, format_version: u32) -> bool {
+        matches!(format_version, 1 | 2)
+            && (format_version == 2
+                || !matches!(
+                    self,
+                    Self::UnavailableUnknown | Self::UnavailableUnsupported
+                ))
+    }
 }
