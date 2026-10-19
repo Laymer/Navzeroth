@@ -52,3 +52,13 @@ remain ordinary content-addressed bytes. Corresponding source contains22 files.
 
 
 Final LF-bound world pack build passed:114.13s/6696032KiB peak Linux child RSS.
+
+At clean1473018 actual `release-materials --version1.0.0-rc.1` passed:
+104.76s/5652548KiB Linux peak child RSS. This was preview material selection,
+not stable readiness; all environment and functional gates remain unverified.
+Root review then required a public reconstruction index: the schema4 corresponding
+source selection now includes `release/v1/corresponding-source-index.json`, with
+immutable source commit, transform, normalization-policy digest, and22 exact
+content-addressed objects mapped to original paths/URLs. Private permission and
+admission fields are omitted. Regression tests reject unpinned URLs and verify
+public mapping/ref inclusion. All161 Python tests pass after this correction.

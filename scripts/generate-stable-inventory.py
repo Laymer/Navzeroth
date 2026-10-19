@@ -127,9 +127,27 @@ def derive(root, enumeration, canonical_sha):
     checks=[dict(id=name,status='unverified',method='hosted_windows' if name!='OWNER-INSTALLER-SMOKE' else 'interactive_windows',operator=None,recorded_at=None,environment=None,artifacts=[]) for name in ('HOSTED-INSTALL','HOSTED-FIRST-START','HOSTED-UPGRADE-RC1','HOSTED-DOWNGRADE-REFUSAL','HOSTED-PERSISTENCE-RECOVERY','HOSTED-RESOURCES','HOSTED-OFFLINE','HOSTED-PERFORMANCE','OWNER-INSTALLER-SMOKE')]
     old=read(root/'release/history/2026-10-19-pre-stable-v3/acceptance-evidence.json')
     evidence=dict(schema_version=4,target=enumeration['target'],inventory_sha256=hashlib.sha256(inventory_raw).hexdigest(),admission_registry=reference(root,'docs/sources/source-admission-v1.json'),tested_source_commit=None,production_sha256=None,checks=checks,coverage=coverage,sources=sources,packs=[dict(manifest=p['manifest'],dataset_revisions=[p['dataset_revision']]) for p in enumeration['packs']],optional_deferrals=old['optional_deferrals'],matrix=[],origin_policy=enumeration['origin_policy'],corresponding_source_files=[{k:f[k] for k in ('path','bytes','sha256')} for f in closure['corresponding_source']['files']],normalization_conflict_files=[reference(root,'content/world/1.60.1.70450/conflicts.json')])
+    # Public reconstruction mapping excludes private admission/permission rows.
+    commit=closure['source_commit']
+    if len(commit)!=40 or any(c not in '0123456789abcdef' for c in commit):
+        raise ValueError('corresponding source commit must be immutable')
+    mapped=[]
+    for f in closure['corresponding_source']['files']:
+        ref=object_ref(root,f['sha256'])
+        if any(ref[k]!=f[k] for k in ('path','bytes','sha256')):
+            raise ValueError('corresponding source object differs from mapping')
+        source=pathlib.PurePosixPath(f['source_path'])
+        if source.is_absolute() or '..' in source.parts or str(source)!=f['source_path'] or not f['url'].endswith('/'+commit+'/'+f['source_path']):
+            raise ValueError('corresponding source mapping lacks exact immutable path')
+        mapped.append({k:f[k] for k in ('path','bytes','sha256','source_path','url')})
+    if len({f['source_path'] for f in mapped})!=len(mapped):
+        raise ValueError('duplicate corresponding source path')
+    index=encoded(dict(schema_version=1,source_commit=commit,transformation=closure['transformation'],normalization_policy_sha256=closure['normalization_policy_sha256'],files=sorted(mapped,key=lambda f:f['source_path'])))
+    index_path='release/v1/corresponding-source-index.json'
+    evidence['corresponding_source_files'].append(dict(path=index_path,bytes=len(index),sha256=hashlib.sha256(index).hexdigest()))
     evidence_raw=encoded(evidence)
     if max(len(inventory_raw),len(evidence_raw))>MAX_MANIFEST: raise ValueError('schema4 output exceeds measured finite bound')
-    return {artifact_path:artifact,'release/v1/coverage-inventory.json':inventory_raw,'release/v1/acceptance-evidence.json':evidence_raw},summary
+    return {index_path:index,artifact_path:artifact,'release/v1/coverage-inventory.json':inventory_raw,'release/v1/acceptance-evidence.json':evidence_raw},summary
 
 
 def generate(root,cli):
