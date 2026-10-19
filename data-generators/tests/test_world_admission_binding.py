@@ -16,6 +16,11 @@ class WorldAdmissionBinding(unittest.TestCase):
     def test_retained_closure_is_bound_before_metadata_becomes_usable(self):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Fixture(directory)
+            registry = json.loads(fixture.registry.read_bytes())
+            for source in registry["sources"]:
+                source["publisher"] = "Synthetic publisher"
+                source["rights"].update(license_identifier="LicenseRef-Synthetic-Test", attribution="Synthetic original author")
+            fixture.registry.write_text(json.dumps(registry))
             fixture.run()
             with mock.patch.object(world, '__file__', str(fixture.root/'data-generators/world_to_content.py')), mock.patch.object(world, 'VERSION', '7'):
                 admitted = world.checked_admission(fixture.registry, fixture.output)
@@ -41,6 +46,11 @@ class WorldAdmissionBinding(unittest.TestCase):
     def test_missing_wrong_duplicate_or_unreviewed_bindings_are_refused(self):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Fixture(directory)
+            registry = json.loads(fixture.registry.read_bytes())
+            for source in registry["sources"]:
+                source["publisher"] = "Synthetic publisher"
+                source["rights"].update(license_identifier="LicenseRef-Synthetic-Test", attribution="Synthetic original author")
+            fixture.registry.write_text(json.dumps(registry))
             fixture.run()
             original = json.loads(fixture.output.read_bytes())
             registry = json.loads(fixture.registry.read_bytes())
