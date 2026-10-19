@@ -50,15 +50,18 @@ fn the_crate_has_no_lua_engine_dependency() {
         .collect();
     // `proptest` is the pinned, test-only property-testing dev-dependency (G2);
     // Cargo.lock lists dev-dependencies alongside normal ones.
+    // libc/windows-sys supply file-open flags only; no dynamic loader or Lua API.
     assert_eq!(
         locked,
         [
             "azeroth-core",
             "image",
+            "libc",
             "proptest",
             "serde",
             "serde_json",
-            "sha2"
+            "sha2",
+            "windows-sys 0.61.2"
         ]
     );
     // No Lua engine is reachable from this crate, directly or transitively.
