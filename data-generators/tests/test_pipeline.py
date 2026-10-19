@@ -282,7 +282,7 @@ class Stages(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Repo(tmp)
             (repo.root / "data-generators").mkdir()
-            for name in ("register_facts.py", "world_to_content.py"):
+            for name in ("register_facts.py", "world_to_content.py", "retain_world_sources.py"):
                 (repo.root / "data-generators" / name).write_text("", encoding="utf-8")
             stale = repo.root / "dist" / "world-pack" / "1.60.1.70450"
             stale.mkdir(parents=True)
@@ -298,9 +298,30 @@ class Stages(unittest.TestCase):
             self.assertTrue(runner.ran("cli", "source-build", "--output", "dist/source-knowledge-world"))
             content = runner.ran("--authored")[0]
             self.assertEqual(content[content.index("--out") + 1], "content/world/1.60.1.70450")
+            bound = runner.ran("--source-closure")
+            self.assertEqual(len(bound), 1)
+            self.assertIn("--admission", bound[0])
+            retained = runner.ran("--pack-sources")
+            self.assertEqual(len(retained), 1)
+            commands = runner.commands()
+            self.assertLess(commands.index(retained[0]), commands.index(bound[0]))
+            self.assertLess(commands.index(bound[0]), commands.index(runner.ran("cli", "build-content-v2")[0]))
             self.assertTrue(runner.ran("cli", "build-content-v2", "--output", "dist/world-pack/1.60.1.70450"))
             self.assertTrue(runner.ran("cli", "verify-pack", "--input", "dist/world-pack/1.60.1.70450"))
             self.assertFalse(stale.exists())
+
+    def test_failed_retention_never_packs_unbound_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Repo(tmp)
+            (repo.root / "data-generators").mkdir()
+            for name in ("world_to_content.py", "retain_world_sources.py"):
+                (repo.root / "data-generators" / name).write_text("")
+            runner = FakeRunner([(has("--pack-sources"), (1, "refused"))])
+            ctx = context(repo.root, ["--cli", "cli"], runner)
+            with self.assertRaises(pipeline.StageError):
+                quiet(pipeline.stage_content, ctx)
+            self.assertFalse(runner.ran("--source-closure"))
+            self.assertFalse(runner.ran("cli", "build-content-v2"))
 
     def test_gate_not_ready_is_reported(self):
         with tempfile.TemporaryDirectory() as tmp:
