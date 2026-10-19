@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  SCREEN_LABELS, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
+  invokeInPage, invokeNative, waitForDatabaseReady, SCREEN_LABELS, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, compareVersions, classifyUpgrade, cspFromHeaders, parseCsp, Recorder,
   gracefulCloseArgs, debugPolicyValue, IpcLog, freshenSnapshotText, migrationSummary, policyAddArgs, policyDeleteArgs, WEBVIEW2_POLICY_KEY,
 } from "./native-smoke-lib.mjs";
@@ -126,4 +126,33 @@ test("instrumented shutdown accepts only a bounded owned PID and requests a norm
   assert.match(args[4], /WaitForExit\(10000\)/);
   assert.match(args[4], /exit \$ownedProcess.ExitCode/);
   assert.doesNotMatch(args[4], /Stop-Process|Kill\(|taskkill/);
+});
+
+
+test("readiness waits for delayed startup and rejects recovery, unknown, error and timeout", async () => {
+  let calls = 0;
+  assert.deepEqual(await waitForDatabaseReady(async () => ({state: ++calls < 3 ? "checking" : "ready"}), 1000, 1), {state:"ready"});
+  assert.equal(calls, 3);
+  await assert.rejects(waitForDatabaseReady(async () => ({state:"recovery_required", preserved_recovery_directory:"private"})), /recovery required/);
+  await assert.rejects(waitForDatabaseReady(async () => ({state:"unexpected"})), /Unknown/);
+  await assert.rejects(waitForDatabaseReady(async () => { throw new Error("IPC failed"); }), /IPC failed/);
+  await assert.rejects(waitForDatabaseReady(async () => ({state:"checking"}), 10, 1), /timed out/);
+  await assert.rejects(waitForDatabaseReady(() => new Promise(() => {}), 10, 1), /timed out/);
+  await assert.rejects(waitForDatabaseReady(async () => ({}), 0), /Invalid/);
+});
+
+test("native IPC errors preserve safe codes and omit private fields", async () => {
+  const previous = globalThis.window;
+  try {
+    globalThis.window = {__TAURI_INTERNALS__: {invoke: async () => { throw {code:"DATABASE_ERROR", message:"C:/private/export", stack:"secret", details:{private:true}}; }}};
+    assert.deepEqual(await invokeInPage({command:"get_reference_view"}), {ok:false,error:{code:"DATABASE_ERROR"}});
+    const page = {evaluate: (fn, args) => fn(args)};
+    await assert.rejects(invokeNative(page, "get_reference_view"), /^Error: Native IPC get_reference_view: \{"code":"DATABASE_ERROR"\}$/);
+    window.__TAURI_INTERNALS__.invoke = async () => { throw "private unstructured text"; };
+    assert.deepEqual(await invokeInPage({command:"test"}), {ok:false,error:{code:"UNSTRUCTURED_IPC_ERROR"}});
+    window.__TAURI_INTERNALS__.invoke = async () => false;
+    assert.equal(await invokeNative(page, "test"), false);
+  } finally {
+    globalThis.window = previous;
+  }
 });
