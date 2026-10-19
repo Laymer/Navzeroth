@@ -21,6 +21,7 @@ bytes, including LICENSE, NOTICE and TALOD permission; original rights evidence
 is preserved. All19raw originals have explicit LFS rules, matching staged Git
 pointer hashes/sizes and verified local media objects. All22corresponding source
 objects remain ordinary exact Git blobs. Existing generated world JSON uses LFS.
+Postcommit git lfs fsck --objects --pointers HEAD passed.
 
 Actual offline source-sync initially failed: generic Questie local reader kept an
 8MiB ceiling before schema2 verification. Repair231dca7 adds an explicitly bounded
@@ -43,7 +44,7 @@ format and diff checks passed. Realpack build AND verify passed:3files367,731,82
 bytes;393,597declared coverage gaps, distribution_eligible=true. This is a content
 format/material result, not release readiness or target-build verification.
 Measurements on shared Linux x86_64, debug Rust: bound mapping11.72–12.08s,
-peakRSS1,096,912KiB; retention2.69s (first run) and2.64s (rerun), peak131,200KiB; source-sync8.60s32,512KiB;
+peakRSS1,096,912KiB; retention2.69s (first run) and2.64s (rerun), peak131,464KiB; source-sync8.60s32,512KiB;
 pack build108.73s6,696,624KiB; verify49.84s5,362,928KiB. Python resource units are
 Linux KiB. Final sync/retention readings use exact-child wait4 to avoid inheriting
 prior shell-child compiler/hash resource counters. CPU/memory disclosure is in the evidence JSON; cgroup limit unavailable.

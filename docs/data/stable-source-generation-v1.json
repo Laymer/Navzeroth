@@ -6,6 +6,7 @@
     "core_source_admission_tests_passed": 11,
     "format": "passed",
     "generator_tests_passed": 155,
+    "git_lfs_fsck_objects_and_pointers": "passed at21504e8",
     "plain_corresponding_source_blobs": 22,
     "raw_lfs_pointers_and_local_objects": 19
   },
