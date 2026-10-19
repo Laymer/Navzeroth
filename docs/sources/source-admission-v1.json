@@ -54,32 +54,6 @@
       ]
     },
     {
-      "id": "cmangos-classic-candidate",
-      "revision": "ec4f596146be6467ea93c57397858e329e2db852",
-      "publisher": "cmangos/classic-db",
-      "origin": {
-        "edition": "wow_classic",
-        "build": null
-      },
-      "rights": {
-        "status": "unreviewed",
-        "license": "unknown",
-        "license_identifier": null,
-        "reviewer": null,
-        "attribution": null,
-        "obligations": null,
-        "evidence": []
-      },
-      "retrieval": {
-        "method": "manual_local",
-        "max_total_bytes": 8388608,
-        "minimum_interval_ms": 1000,
-        "max_requests": 1,
-        "access_evidence": null
-      },
-      "files": []
-    },
-    {
       "id": "forever-guidemate-candidate",
       "revision": "c9bb2efc3fca96dd8b476bb8e5363b366d9ea8f8",
       "publisher": "TylerAkins/forever-guide-mate",
@@ -423,6 +397,246 @@
           "transformation": "att_flight_point_v1"
         }
       ]
+    },
+    {
+      "id": "cmangos-classic-db",
+      "revision": "ec4f596146be6467ea93c57397858e329e2db852",
+      "publisher": "cmangos/classic-db",
+      "origin": {
+        "edition": "vanilla_1_12",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "share_alike",
+        "license_identifier": "GPL-3.0-only",
+        "reviewer": "Owner decision 2026-10-19 (ADR 0006 §14); recorded by Claude Code task V2.7e",
+        "attribution": "CMaNGOS Classic-DB contributors; https://github.com/cmangos/classic-db",
+        "obligations": "Retain LICENSE.md (GPL v3) and COPYRIGHT.md with redistributed derived data, mark modifications and provide the corresponding source including the generator transformation. COPYRIGHT.md reserves Blizzard material outside the GPL; the owner explicitly accepts that reservation's risk (ADR 0006 §14). Data stays vanilla_1_12 and cross_edition_unverified until validated against the frozen Forever target.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/cmangos/classic-db/ec4f596146be6467ea93c57397858e329e2db852/LICENSE.md",
+            "revision": "ec4f596146be6467ea93c57397858e329e2db852",
+            "sha256": "8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b",
+            "reviewed_scope": "GPL v3 text named by README.md as Classic-DB's licence; must accompany redistributed copies. ADR 0006 §14."
+          },
+          {
+            "url": "https://raw.githubusercontent.com/cmangos/classic-db/ec4f596146be6467ea93c57397858e329e2db852/COPYRIGHT.md",
+            "revision": "ec4f596146be6467ea93c57397858e329e2db852",
+            "sha256": "82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385",
+            "reviewed_scope": "Reserves World of Warcraft material to Blizzard outside the GPL (fair-use, non-commercial intent). Owner accepts the risk; ADR 0006 §14."
+          },
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+            "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+            "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+            "reviewed_scope": "Owner admits the Full_DB dump for the generators under GPL v3 with the COPYRIGHT.md reservation accepted; ADR 0006 §14. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_rate_limited",
+        "max_total_bytes": 67108864,
+        "minimum_interval_ms": 1000,
+        "max_requests": 8,
+        "access_evidence": {
+          "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+          "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+          "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+          "reviewed_scope": "Bounded generator retrieval of the Full_DB listing and dump through the GitHub API and raw files; ADR 0006 §14. Navzeroth generators under data-generators/ only (opt-in, cached, per-host rate limits, retained snapshots, inert parsing). Builds, tests and source-sync never fetch this source. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+        }
+      },
+      "files": []
+    },
+    {
+      "id": "talod-generators",
+      "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+      "publisher": "NotInTheBand/TALOD",
+      "origin": {
+        "edition": null,
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "owner_accepted",
+        "license_identifier": "LicenseRef-TALOD-written-permission-2026-10-18",
+        "reviewer": "Owner decision 2026-10-19 (ADR 0006 §14); recorded by Claude Code task V2.7e",
+        "attribution": "Data generators based on work by NotInTheBand (TALOD), used with permission.",
+        "obligations": "Keep the credit to NotInTheBand (TALOD). Navzeroth only; non-commercial (no sale or paywall of the generators or their output); never present them as official TALOD tools or imply endorsement. Covers tools/gen_enhancements.py, gen_professions.py and gen_fishing.py only, not the rest of TALOD or the data they download. As-is, no warranty; revocable for future use if the conditions are broken.",
+        "evidence": [
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/8d89fe3a3ac99a497d78acf3583ac098655c46a9/data-generators/TALOD-data-generators/PERMISSION.md",
+            "revision": "8d89fe3a3ac99a497d78acf3583ac098655c46a9",
+            "sha256": "08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3",
+            "reviewed_scope": "NotInTheBand's written permission of 18 Oct 2026 for the three TALOD generator scripts; recorded by ADR 0006 §14."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 1048576,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1,
+        "access_evidence": {
+          "url": "https://github.com/Laymer/Navzeroth/blob/8d89fe3a3ac99a497d78acf3583ac098655c46a9/data-generators/TALOD-data-generators/PERMISSION.md",
+          "revision": "8d89fe3a3ac99a497d78acf3583ac098655c46a9",
+          "sha256": "08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3",
+          "reviewed_scope": "The scripts were received from the author and are kept in the repository (manual local acquisition); ADR 0006 §14."
+        }
+      },
+      "files": []
+    },
+    {
+      "id": "wago-tools-classic-era",
+      "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+      "publisher": "wago.tools",
+      "origin": {
+        "edition": "wow_classic_era",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "owner_accepted",
+        "license_identifier": "LicenseRef-Blizzard-client-data-via-wago-tools",
+        "reviewer": "Owner decision 2026-10-19 (ADR 0006 §14); recorded by Claude Code task V2.7e",
+        "attribution": "World of Warcraft Classic Era client data (Blizzard Entertainment) via wago.tools DB2 exports; https://wago.tools",
+        "obligations": "Credit wago.tools and Blizzard Entertainment (World of Warcraft client data; World of Warcraft is a trademark of Blizzard Entertainment) in data-generators/NOTICE.md and with derived data. The owner explicitly accepts the wago.tools and Blizzard terms risk (ADR 0006 §14). Keep product, build and origin edition; never relabel. No endorsement implied.",
+        "evidence": [
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+            "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+            "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+            "reviewed_scope": "Owner accepts the wago.tools and Blizzard terms for bounded generator retrieval of DB2 CSV exports; ADR 0006 §14. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_rate_limited",
+        "max_total_bytes": 1073741824,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1024,
+        "access_evidence": {
+          "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+          "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+          "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+          "reviewed_scope": "Product wow_classic_era DB2 CSV exports (https://wago.tools/db2/<table>/csv); Owner accepts the wago.tools and Blizzard terms for bounded generator retrieval of DB2 CSV exports; ADR 0006 §14. Navzeroth generators under data-generators/ only (opt-in, cached, per-host rate limits, retained snapshots, inert parsing). Builds, tests and source-sync never fetch this source. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+        }
+      },
+      "files": []
+    },
+    {
+      "id": "wago-tools-wowf",
+      "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+      "publisher": "wago.tools",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "owner_accepted",
+        "license_identifier": "LicenseRef-Blizzard-client-data-via-wago-tools",
+        "reviewer": "Owner decision 2026-10-19 (ADR 0006 §14); recorded by Claude Code task V2.7e",
+        "attribution": "World of Warcraft Forever 1.60.1 client data (Blizzard Entertainment) via wago.tools DB2 exports; https://wago.tools",
+        "obligations": "Credit wago.tools and Blizzard Entertainment (World of Warcraft client data; World of Warcraft is a trademark of Blizzard Entertainment) in data-generators/NOTICE.md and with derived data. The owner explicitly accepts the wago.tools and Blizzard terms risk (ADR 0006 §14). Keep product, build and origin edition; never relabel. No endorsement implied.",
+        "evidence": [
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+            "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+            "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+            "reviewed_scope": "Owner accepts the wago.tools and Blizzard terms for bounded generator retrieval of DB2 CSV exports; ADR 0006 §14. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_rate_limited",
+        "max_total_bytes": 1073741824,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1024,
+        "access_evidence": {
+          "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+          "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+          "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+          "reviewed_scope": "Product wowf DB2 CSV exports (https://wago.tools/db2/<table>/csv); Owner accepts the wago.tools and Blizzard terms for bounded generator retrieval of DB2 CSV exports; ADR 0006 §14. Navzeroth generators under data-generators/ only (opt-in, cached, per-host rate limits, retained snapshots, inert parsing). Builds, tests and source-sync never fetch this source. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+        }
+      },
+      "files": []
+    },
+    {
+      "id": "wowhead-classic",
+      "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+      "publisher": "Wowhead (Fanbyte)",
+      "origin": {
+        "edition": "wow_classic_era",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "owner_accepted",
+        "license_identifier": "LicenseRef-Wowhead-terms-owner-accepted",
+        "reviewer": "Owner decision 2026-10-19 (ADR 0006 §14); recorded by Claude Code task V2.7e",
+        "attribution": "Wowhead Classic; https://www.wowhead.com/classic",
+        "obligations": "Credit Wowhead (https://www.wowhead.com) in data-generators/NOTICE.md and with derived data. Wowhead/Fanbyte terms restrict automated extraction and redistribution; the owner explicitly accepts that risk (ADR 0006 §14). Do not bypass access controls (the /forever list pages answer HTTP 403 to scripts and stay unfetched). Keep origin edition/build; never relabel. No endorsement implied.",
+        "evidence": [
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+            "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+            "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+            "reviewed_scope": "Owner accepts the Wowhead/Fanbyte terms for bounded generator retrieval of the named pages and nether.wowhead.com tooltips; ADR 0006 §14. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_rate_limited",
+        "max_total_bytes": 1073741824,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1024,
+        "access_evidence": {
+          "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+          "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+          "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+          "reviewed_scope": "www.wowhead.com/classic list pages and nether.wowhead.com/classic tooltips; Owner accepts the Wowhead/Fanbyte terms for bounded generator retrieval of the named pages and nether.wowhead.com tooltips; ADR 0006 §14. Navzeroth generators under data-generators/ only (opt-in, cached, per-host rate limits, retained snapshots, inert parsing). Builds, tests and source-sync never fetch this source. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+        }
+      },
+      "files": []
+    },
+    {
+      "id": "wowhead-forever",
+      "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+      "publisher": "Wowhead (Fanbyte)",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "owner_accepted",
+        "license_identifier": "LicenseRef-Wowhead-terms-owner-accepted",
+        "reviewer": "Owner decision 2026-10-19 (ADR 0006 §14); recorded by Claude Code task V2.7e",
+        "attribution": "Wowhead WoW Forever; https://www.wowhead.com/forever",
+        "obligations": "Credit Wowhead (https://www.wowhead.com) in data-generators/NOTICE.md and with derived data. Wowhead/Fanbyte terms restrict automated extraction and redistribution; the owner explicitly accepts that risk (ADR 0006 §14). Do not bypass access controls (the /forever list pages answer HTTP 403 to scripts and stay unfetched). Keep origin edition/build; never relabel. No endorsement implied.",
+        "evidence": [
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+            "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+            "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+            "reviewed_scope": "Owner accepts the Wowhead/Fanbyte terms for bounded generator retrieval of the named pages and nether.wowhead.com tooltips; ADR 0006 §14. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "https_rate_limited",
+        "max_total_bytes": 1073741824,
+        "minimum_interval_ms": 1000,
+        "max_requests": 1024,
+        "access_evidence": {
+          "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+          "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+          "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+          "reviewed_scope": "www.wowhead.com/forever pages that scripts may read and nether.wowhead.com tooltips; the 403 on /forever list pages is not bypassed; Owner accepts the Wowhead/Fanbyte terms for bounded generator retrieval of the named pages and nether.wowhead.com tooltips; ADR 0006 §14. Navzeroth generators under data-generators/ only (opt-in, cached, per-host rate limits, retained snapshots, inert parsing). Builds, tests and source-sync never fetch this source. Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
+        }
+      },
+      "files": []
     }
   ]
 }

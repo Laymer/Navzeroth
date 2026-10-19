@@ -150,10 +150,52 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
             "atlasloot-classic-areas",
             "mapzeroth-retail-ek",
             "wowsims-classic-paladin-model",
-            "allthethings-forever-riverglades"
+            "allthethings-forever-riverglades",
+            "cmangos-classic-db",
+            "talod-generators",
+            "wago-tools-classic-era",
+            "wago-tools-wowf",
+            "wowhead-classic",
+            "wowhead-forever"
         ]
     );
     assert!(r.sources.iter().all(|s| s.origin.build.is_none()));
+    // ADR 0006 §14 sources: explicit owner acceptance (or GPL share-alike for
+    // CMaNGOS), generator-only retrieval, generated files registered later.
+    for s in r.sources.iter().filter(|s| s.files.is_empty()) {
+        if s.rights.status != Status::Admitted {
+            continue;
+        }
+        assert!(
+            s.rights
+                .evidence
+                .iter()
+                .any(|e| e.reviewed_scope.contains(OWNER_ACCEPTANCE_CITATION)),
+            "{}",
+            s.id
+        );
+        let expected = if s.id == "talod-generators" {
+            Method::ManualLocal
+        } else {
+            Method::HttpsRateLimited
+        };
+        assert_eq!(s.retrieval.method, expected, "{}", s.id);
+        let license = if s.id == "cmangos-classic-db" {
+            License::ShareAlike
+        } else {
+            License::OwnerAccepted
+        };
+        assert_eq!(s.rights.license, license, "{}", s.id);
+    }
+    let talod = r
+        .sources
+        .iter()
+        .find(|s| s.id == "talod-generators")
+        .unwrap();
+    assert_eq!(
+        talod.rights.evidence[0].sha256,
+        "08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3"
+    );
     assert!(matches!(
         r.authorize(
             "questiedb-forever-candidate",
@@ -226,4 +268,122 @@ fn canonical_encoded_spaces_only_in_https_path_preserve_authority_guards() {
         r.sources[0].files[0].url = value.into();
         assert!(r.validate().is_err(), "{value}");
     }
+}
+
+fn owner_accepted() -> Registry {
+    let mut r = registry();
+    let s = &mut r.sources[0];
+    s.rights.license = License::OwnerAccepted;
+    s.rights.evidence[0].reviewed_scope =
+        "Owner accepts the publisher's terms for generator retrieval; ADR 0006 §14".into();
+    s.retrieval.method = Method::HttpsRateLimited;
+    r
+}
+#[test]
+fn owner_accepted_rights_require_every_field_and_the_adr_citation() {
+    let r = owner_accepted();
+    r.validate().unwrap();
+    r.authorize(
+        "synthetic",
+        "data/quests.lua",
+        &["id"],
+        Method::HttpsRateLimited,
+    )
+    .unwrap();
+    assert!(matches!(
+        r.authorize("synthetic", "data/quests.lua", &["id"], Method::HttpsPinned),
+        Err(Rejection::MethodNotPermitted)
+    ));
+    // Generated material is registered later: no files is admissible, yet nothing
+    // can be authorized from it.
+    let mut empty = owner_accepted();
+    empty.sources[0].files.clear();
+    empty.validate().unwrap();
+    assert!(matches!(
+        empty.authorize(
+            "synthetic",
+            "data/quests.lua",
+            &["id"],
+            Method::HttpsRateLimited
+        ),
+        Err(Rejection::FileNotPermitted)
+    ));
+    let missing: [fn(&mut Rights); 6] = [
+        |r| r.license_identifier = None,
+        |r| r.reviewer = None,
+        |r| r.attribution = None,
+        |r| r.obligations = None,
+        |r| r.evidence.clear(),
+        |r| r.evidence[0].reviewed_scope = "Owner accepts the publisher's terms".into(),
+    ];
+    for strip in missing {
+        let mut r = owner_accepted();
+        strip(&mut r.sources[0].rights);
+        assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
+    }
+    let mut r = owner_accepted();
+    r.sources[0].rights.license_identifier = Some("  ".into());
+    assert_eq!(r.validate(), Err(Rejection::InvalidRegistry));
+    let mut r = owner_accepted();
+    r.sources[0].retrieval.access_evidence = None;
+    assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
+    // The citation in a second evidence entry suffices.
+    let mut r = owner_accepted();
+    let mut extra = r.sources[0].rights.evidence[0].clone();
+    r.sources[0].rights.evidence[0].reviewed_scope = "Publisher terms page".into();
+    extra.reviewed_scope = "Recorded by ADR 0006 §14".into();
+    r.sources[0].rights.evidence.push(extra);
+    r.validate().unwrap();
+    // Unreviewed owner-accepted entries are inert, not errors.
+    let mut r = owner_accepted();
+    r.sources[0].rights.status = Status::Unreviewed;
+    r.sources[0].rights.evidence.clear();
+    r.validate().unwrap();
+    assert!(matches!(
+        r.authorize(
+            "synthetic",
+            "data/quests.lua",
+            &["id"],
+            Method::HttpsRateLimited
+        ),
+        Err(Rejection::RightsNotAdmitted)
+    ));
+}
+#[test]
+fn permissive_and_unknown_rights_keep_their_rules_beside_owner_acceptance() {
+    let mut r = registry();
+    r.sources[0].files.clear();
+    assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
+    for license in [License::Unknown, License::Noncommercial] {
+        let mut r = owner_accepted();
+        r.sources[0].rights.license = license;
+        assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
+    }
+    // A share-alike source retrieved by the generators registers files later.
+    let mut r = registry();
+    r.sources[0].retrieval.method = Method::HttpsRateLimited;
+    r.validate().unwrap();
+    r.sources[0].files.clear();
+    r.validate().unwrap();
+    r.sources[0].rights.reviewer = None;
+    assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
+    let bounds: [fn(&mut Retrieval); 4] = [
+        |t| t.minimum_interval_ms = 999,
+        |t| t.max_requests = 0,
+        |t| t.max_requests = 1025,
+        |t| t.max_total_bytes = MAX_RETRIEVAL_BYTES + 1,
+    ];
+    for bad in bounds {
+        let mut r = owner_accepted();
+        bad(&mut r.sources[0].retrieval);
+        assert_eq!(r.validate(), Err(Rejection::InvalidRegistry));
+    }
+    assert_eq!(
+        serde_json::to_value(License::OwnerAccepted).unwrap(),
+        "owner_accepted"
+    );
+    assert_eq!(
+        serde_json::to_value(Method::HttpsRateLimited).unwrap(),
+        "https_rate_limited"
+    );
 }
