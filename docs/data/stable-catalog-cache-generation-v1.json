@@ -1,0 +1,91 @@
+{
+  "baseline": "35c0dc0137d4a5f38efa996408894b92140431c7",
+  "checks": {
+    "baseline_public_api_regression": "unrelated settings write changes catalog Arc; expected assertion failure",
+    "clippy": "storage all-targets warnings denied passed",
+    "diff_check": "passed",
+    "format": "passed",
+    "new_cache_scenarios": 10,
+    "repaired_public_api_regression": "same catalog Arc reused; passed",
+    "storage_and_app_tests": {
+      "failed": 0,
+      "ignored": 3,
+      "log": "/tmp/navzeroth-cache-generation-coverage-continuous.log",
+      "passed": 432,
+      "profile_mode": "Linux continuous counter relocation"
+    }
+  },
+  "coverage_method": {
+    "corrupt_profiles_ignored": false,
+    "excluded_ranges": "repository rustTestRanges, exact inventory.mjs SHA256914d4dcc1ca86dee8468cb6ac2f84709c50352fc5925df468e3f78a4ee449661",
+    "lcov": "/tmp/navzeroth-cache-generation.lcov",
+    "raw_json": "/tmp/navzeroth-cache-generation.json"
+  },
+  "implementation": "ac57050df4581048208452dfe65b6626ffde7d47",
+  "limitations": [
+    "No actual full-pack timing or memory measurement for this change yet",
+    "No Windows or ordinary-PC performance claim",
+    "External commits still conservatively invalidate even if unrelated",
+    "Arbitrary write/savepoint transactions and temporary catalog shadows bypass caching",
+    "No public raw connection, hook-replacement or incremental BLOB writer; canonical watched main tables remain ROWID"
+  ],
+  "schema_version": 1,
+  "scope": "Immutable catalog/index cache correctness; no production content or database schema changes",
+  "source_coverage": {
+    "catalog_generation.rs": {
+      "count": 50,
+      "covered": 50,
+      "percent": 100,
+      "source_sha256": "2f971ddb0640cd634e35125af2055d9882daa306ff9f7ab7275eec56cf1d69c2",
+      "test_ranges": [
+        [
+          101,
+          565
+        ]
+      ]
+    },
+    "consistent_read.rs": {
+      "count": 16,
+      "covered": 16,
+      "percent": 100,
+      "source_sha256": "f0ab3c7725950177212ec703d464095397709a96101be4339faa5e39ae17cff9",
+      "test_ranges": []
+    },
+    "content_catalog.rs": {
+      "count": 358,
+      "covered": 339,
+      "percent": 94.6927374301676,
+      "source_sha256": "1550bd49f6b6ded7682d4e05719e9993eeab8087ea1778f03c19e9c66551c983",
+      "test_ranges": [
+        [
+          473,
+          500
+        ]
+      ]
+    },
+    "recovery.rs": {
+      "count": 449,
+      "covered": 418,
+      "percent": 93.0957683741648,
+      "source_sha256": "ac019fab138a6f9d602d0bf9ed90563157aa296f313c455ef44b8e32b1c7ea42",
+      "test_ranges": [
+        [
+          568,
+          582
+        ]
+      ]
+    },
+    "sqlite.rs": {
+      "count": 668,
+      "covered": 647,
+      "percent": 96.8562874251497,
+      "source_sha256": "f9e14fb3057c6299842b840da6ca06b26206b0fa405c606da00d44a9d4925d36",
+      "test_ranges": [
+        [
+          904,
+          936
+        ]
+      ]
+    }
+  }
+}
