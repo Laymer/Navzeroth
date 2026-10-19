@@ -127,3 +127,17 @@ preparation fingerprint for exact release-commit verification.
 Fresh resulting-commit checks are running: CI 39239511840, Coverage 39239511851,
 Windows package 39239511894, source/parity 39239511923, and dispatched CI with
 stability 39239530676. No tag or publication is inferred from pending runs.
+
+All fresh resulting-commit runs above completed successfully, including the
+dispatched stability job (both browser projects three times, full Rust suite
+twice, Lua harness three times). The combined coverage verdict binds
+`fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`, passes with no errors and retains
+the exact 90/100 unrounded per-file threshold. Windows native smoke passed
+31/31, upgrade population 5/5 and upgrade verification 7/7; downgrade refusal
+exited 2, did not time out and retained 1.0.0-rc.1.
+
+Annotated tag `v1.0.0-rc.1`, object
+`b55d72da23b2edab79971edd8d813ac68a4e0f46`, points to that exact commit.
+Ordinary tag packaging run 39242904060 is in progress; no acceptance-candidate
+flag or test-signing mode is used. Publication remains pending draft download
+verification and successful tag checks.
