@@ -52,9 +52,13 @@ class Fixture:
         proof = retain.retain(self.root, b'Synthetic pre-admitted proof; not a grant')
         sources = []
         for sid in sorted(retain.UPSTREAMS):
-            sources.append({'id': sid, 'revision': 'a'*40, 'rights': {'status': 'admitted', 'evidence': [proof]},
+            sources.append({'id': sid, 'revision': 'a'*40, 'publisher':'Synthetic publisher', 'rights': {'status': 'admitted', 'license_identifier':'LicenseRef-Synthetic-Test', 'attribution':'Synthetic original author', 'evidence': [proof]},
                 'retrieval': {'access_evidence': proof, 'max_total_bytes': 100000, 'max_requests': 128}, 'files': []})
         self.registry.write_text(json.dumps({'schema_version': 1, 'sources': sources}))
+        self.policy = self.root / 'policy.json'
+        rules = [dict(id=s['id'], admission_revision=s['revision'], grant_sha256=retain.grant_identity(s), origin={'edition':'wow_forever' if s['id']=='wago-tools-wowf' else 'vanilla_1_12','build':BUILD if s['id']=='wago-tools-wowf' else '1.12.1'},allowed_fields=['quests.title']) for s in sources]
+        rules.append(dict(id=retain.DERIVED,allowed_fields=['quests.title'],publisher='Synthetic publisher',attribution='Synthetic original author'))
+        self.policy.write_text(json.dumps(dict(schema_version=1,transformation='world_to_content_v7',sources=rules)))
         self.pack.write_text(json.dumps({'sources': [dict(id=sid, publisher='Synthetic publisher',
             allowed_fields={'status': 'known', 'value': ['quests.title']},
             attribution={'status': 'known', 'value': 'Synthetic original author'})
@@ -94,7 +98,7 @@ class Fixture:
             records=[{'id': 'synthetic'}], sources=sources, origin={'edition': edition, 'build': {'status': 'known', 'value': build}})))
 
     def run(self, commit=None):
-        return retain.prepare(self.root, self.world, self.cache, self.pack, self.registry, self.output, commit)
+        return retain.prepare(self.root, self.world, self.cache, self.pack, self.registry, self.output, commit, self.policy)
 
 
 class RetainedSources(unittest.TestCase):
@@ -128,6 +132,21 @@ class RetainedSources(unittest.TestCase):
             git(f.root, 'add', '.'); git(f.root, 'commit', '-qm', 'Synthetic generated outputs')
             f.run()
             self.assertEqual(original, (f.registry.read_bytes(), f.output.read_bytes()))
+
+    def test_windows_text_translation_preserves_registry_and_closure_exact_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Fixture(directory)
+            fixture.run()
+            expected = [fixture.registry.read_bytes(), fixture.output.read_bytes()]
+            original = pathlib.Path.write_text
+            def windows_text(path, value, **options):
+                options["newline"] = "\r\n"
+                return original(path, value, **options)
+            with mock.patch.object(pathlib.Path, "write_text", windows_text):
+                fixture.run()
+            for before, path in zip(expected, (fixture.registry, fixture.output)):
+                self.assertNotIn(b"\r\n", before)
+                self.assertEqual(before, path.read_bytes())
 
     def test_cache_tampering_missing_raw_and_aggregate_mismatch_fail_closed(self):
         for mutation in ('body', 'url', 'size', 'status', 'missing', 'aggregate'):
@@ -183,3 +202,33 @@ class RetainedSources(unittest.TestCase):
     def test_duplicate_sources_and_invalid_mapper_version_refuse(self):
         with self.assertRaises(ValueError): retain.sources_by_id([{'id':'x'}, {'id':'x'}])
         with self.assertRaises(ValueError): retain.transformation_version(b'VERSION = "unknown"')
+
+    def test_normalization_policy_and_budgets_cannot_be_promoted_by_pack(self):
+        for mutation in ('fields', 'grant', 'origin', 'revision', 'budget', 'policy-version'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                f = Fixture(directory)
+                registry = json.loads(f.registry.read_bytes())
+                if mutation == 'fields':
+                    pack = json.loads(f.pack.read_bytes())
+                    pack['sources'][0]['allowed_fields']['value'].append('unreviewed.field')
+                    f.pack.write_text(json.dumps(pack))
+                elif mutation == 'origin':
+                    policy = json.loads(f.policy.read_bytes())
+                    policy['sources'][0]['origin']['build'] = 'unreviewed'
+                    f.policy.write_text(json.dumps(policy))
+                elif mutation == 'policy-version':
+                    policy = json.loads(f.policy.read_bytes());policy['transformation'] = 'world_to_content_v8'
+                    f.policy.write_text(json.dumps(policy))
+                else:
+                    if mutation == 'grant': registry['sources'][0]['rights']['status'] = 'unreviewed'
+                    elif mutation == 'revision': registry['sources'][0]['revision'] = 'b'*40
+                    else:
+                        registry['sources'][0]['retrieval']['max_total_bytes'] = 1
+                        # Explicitly reviewed small budget is still a hard ceiling.
+                        policy = json.loads(f.policy.read_bytes())
+                        policy['sources'][0]['grant_sha256'] = retain.grant_identity(registry['sources'][0])
+                        f.policy.write_text(json.dumps(policy))
+                    f.registry.write_text(json.dumps(registry))
+                before = f.registry.read_bytes()
+                with self.assertRaises(ValueError): f.run()
+                self.assertEqual(f.registry.read_bytes(), before)

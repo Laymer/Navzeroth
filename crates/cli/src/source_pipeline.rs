@@ -84,6 +84,20 @@ fn read(path: &Path) -> Result<Vec<u8>> {
         |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
     )
 }
+fn read_material(path: &Path, material: &Material) -> Result<Vec<u8>> {
+    let maximum = material
+        .bytes
+        .unwrap_or(source_admission::MAX_FILE_BYTES)
+        .min(if material.bytes.is_some() {
+            source_admission::MAX_RETAINED_FILE_BYTES
+        } else {
+            source_admission::MAX_FILE_BYTES
+        });
+    crate::questiedb::read_local_source_limit(path, maximum).map_err(
+        |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
+    )
+}
+
 fn directory(path: &Path, create: bool) -> Result<PathBuf> {
     let path = if path.is_absolute() {
         path.to_owned()
@@ -153,6 +167,12 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
         .chain(source.retrieval.access_evidence.iter())
     {
         if let Some(old) = materials.get(&proof.sha256) {
+            if old
+                .bytes
+                .is_some_and(|size| size > source_admission::MAX_FILE_BYTES)
+            {
+                return Err("Material also used as rights/access proof exceeds eight MiB");
+            }
             if old.url != proof.url {
                 return Err("Material hash has ambiguous origin URLs");
             }
@@ -173,8 +193,15 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
     Ok(materials.into_values().collect())
 }
 fn verify(bytes: &[u8], material: &Material) -> Result<()> {
+    // Only declared originals may use schema2's larger retained-file bound.
+    // Grant/access proofs have no declared size and retain the historical cap.
+    let maximum = if material.bytes.is_some() {
+        source_admission::MAX_RETAINED_FILE_BYTES
+    } else {
+        source_admission::MAX_FILE_BYTES
+    };
     if bytes.is_empty()
-        || bytes.len() as u64 > source_admission::MAX_RETAINED_FILE_BYTES
+        || bytes.len() as u64 > maximum
         || material.bytes.is_some_and(|n| n != bytes.len() as u64)
         || digest(bytes) != material.sha256
     {
@@ -264,7 +291,7 @@ fn publish_blob(cache: &Path, material: &Material, bytes: &[u8]) -> Result<()> {
     verify(bytes, material)?;
     let destination = cache_path(cache, &material.sha256);
     if destination.symlink_metadata().is_ok() {
-        return verify(&read(&destination)?, material);
+        return verify(&read_material(&destination, material)?, material);
     }
     let temporary = cache.join(format!(
         ".pending-{}-{}",
@@ -283,7 +310,7 @@ fn publish_blob(cache: &Path, material: &Material, bytes: &[u8]) -> Result<()> {
         drop(f);
         // hard_link publishes without overwriting an existing immutable object.
         if fs::hard_link(&temporary, &destination).is_err() {
-            verify(&read(&destination)?, material)?;
+            verify(&read_material(&destination, material)?, material)?;
         }
         Ok(())
     })();
@@ -359,7 +386,7 @@ fn sync_registry_using(
         for material in &materials {
             let path = cache_path(&cache, &material.sha256);
             let bytes = if path.symlink_metadata().is_ok() {
-                read(&path)?
+                read_material(&path, material)?
             } else {
                 if !options.fetch {
                     return Err(
@@ -602,7 +629,13 @@ pub fn build(options: &Options) -> Result<BuildReport> {
         if file.transformation != input.adapter.transform() {
             return Err("Build transformation differs from source admission");
         }
-        let bytes = read(&cache_path(&cache, &file.sha256))?;
+        let bytes = crate::questiedb::read_local_source_limit(
+            &cache_path(&cache, &file.sha256),
+            file.bytes,
+        )
+        .map_err(
+            |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
+        )?;
         verify(
             &bytes,
             &Material {
@@ -713,7 +746,7 @@ pub fn build(options: &Options) -> Result<BuildReport> {
             notices.push_str(&format!("\nSource: {}\nRevision: {}\nPublisher: {}\nLicence: {}\nAttribution: {}\nObligations: {}\n", source.id, source.revision, source.publisher, source.rights.license_identifier.as_deref().unwrap_or("unknown"), source.rights.attribution.as_deref().unwrap_or("unknown"), source.rights.obligations.as_deref().unwrap_or("unknown")));
             for material in closure(source)? {
                 if copied.insert(material.sha256.clone()) {
-                    let bytes = read(&cache_path(&cache, &material.sha256))?;
+                    let bytes = read_material(&cache_path(&cache, &material.sha256), &material)?;
                     verify(&bytes, &material)?;
                     output_file(
                         &staging,
@@ -888,6 +921,37 @@ fn updates_using(
 mod tests {
     use super::*;
     #[test]
+    fn larger_declared_originals_do_not_expand_legacy_proof_limits() {
+        let bytes = vec![b'x'; source_admission::MAX_FILE_BYTES as usize + 1];
+        let mut material = Material {
+            url: "https://example.invalid/source".into(),
+            sha256: digest(&bytes),
+            bytes: None,
+        };
+        assert!(verify(&bytes, &material).is_err());
+        let root =
+            std::env::temp_dir().join(format!("nav-source-read-bound-{}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        let path = root.join("original");
+        fs::write(&path, &bytes).unwrap();
+        assert!(read_material(&path, &material).is_err());
+        assert!(read(&path).is_err());
+        assert!(
+            crate::questiedb::read_local_source_limit(
+                &path,
+                source_admission::MAX_RETAINED_FILE_BYTES + 1
+            )
+            .is_err()
+        );
+        material.bytes = Some(bytes.len() as u64);
+        assert_eq!(read_material(&path, &material).unwrap(), bytes);
+        fs::remove_dir_all(&root).unwrap();
+        assert!(verify(&bytes, &material).is_ok());
+        material.bytes = Some(bytes.len() as u64 - 1);
+        assert!(verify(&bytes, &material).is_err());
+    }
+
+    #[test]
     fn admitted_retrieval_publishes_verified_blobs_and_never_overwrites_on_refusal() {
         use serde_json::json;
         let root = std::env::temp_dir().join(format!(
@@ -909,6 +973,30 @@ mod tests {
         let value = json!({"schema_version":1,"sources":[{"id":"synthetic","revision":revision,"publisher":"synthetic/fixture","origin":{"edition":"wow_forever","build":"1.60.1.70374"},"rights":{"status":"admitted","license":"permissive","license_identifier":"synthetic-test-only","reviewer":"fixture","attribution":"fixture","obligations":"fixture","evidence":[evidence.clone()]},"retrieval":{"method":"https_pinned","max_total_bytes":data.len()+license.len(),"minimum_interval_ms":1000,"max_requests":2,"access_evidence":evidence},"files":[{"path":"facts.json","url":format!("https://raw.githubusercontent.com/synthetic/fixture/{revision}/facts.json"),"sha256":digest(data),"bytes":data.len(),"fields":["quests.shareable"],"transformation":"knowledge_v1"}]}]});
         let raw = serde_json::to_vec(&value).unwrap();
         let mut registry = Registry::parse(&raw).unwrap();
+        // A declared original may also be the exact rights/access proof. Its
+        // original length pin survives, but the shared role keeps the8MiB cap.
+        let mut shared = registry.sources[0].clone();
+        let mut proof = shared.rights.evidence[0].clone();
+        proof.url = shared.files[0].url.clone();
+        proof.sha256 = shared.files[0].sha256.clone();
+        shared.rights.evidence = vec![proof.clone()];
+        shared.retrieval.access_evidence = Some(proof);
+        shared.files[0].bytes = source_admission::MAX_FILE_BYTES + 1;
+        assert_eq!(
+            closure(&shared).err(),
+            Some("Material also used as rights/access proof exceeds eight MiB")
+        );
+        shared.files[0].bytes = source_admission::MAX_FILE_BYTES;
+        assert_eq!(
+            closure(&shared).unwrap()[0].bytes,
+            Some(source_admission::MAX_FILE_BYTES)
+        );
+        shared.files[0].bytes = data.len() as u64;
+        let mut shared_material = closure(&shared).unwrap().remove(0);
+        assert_eq!(shared_material.bytes, Some(data.len() as u64));
+        assert!(verify(data, &shared_material).is_ok());
+        shared_material.bytes = Some(data.len() as u64 + 1);
+        assert!(verify(data, &shared_material).is_err());
         let policy: UpdatesPolicy = serde_json::from_value(json!({
             "schema_version":1,"registry_sha256":digest(&raw),"method":"github_commit_metadata",
             "reviewer":"synthetic","reviewed_on":"synthetic","access_evidence_url":"https://docs.github.com/en/rest/commits/commits#list-commits",

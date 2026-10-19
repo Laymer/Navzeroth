@@ -41,3 +41,36 @@ source_commit, transformation identity and the separately classified correspondi
 source closure. Source admission remains schema2 and retains existing upstream
 rights evidence. Hashes establish byte identity; independent review, permission
 scope, signed content receipts and release-material validation remain separate.
+
+## Reviewed normalization contract1
+
+Both retention and the admitted mapping pass require
+`--normalization-policy release/v1/source-normalization-policy.json`. This is a
+separate reviewed artifact, never written from a pack by the retainer. It pins
+mapper v2, exact admitted upstream identities, original admission revisions,
+canonical SHA256 of publisher/rights/retrieval declarations, actual historical
+origins and the complete sorted generated field enumeration. The current list
+was enumerated from the checked-in world sources and requires independent review.
+Changing the mapper version, fields, origin or grant requires a reviewed policy
+change. A generated pack cannot confer additional field rights. Repeated runs
+accept the deterministic retained-file revision while keeping the same grant.
+The admission's request and byte limits are ceilings; retention refuses excess
+rather than expanding either limit. Permission proofs retain the8MiB bound.
+
+The mapping pass verifies the policy's exact bytes, corresponding source's full
+current pinned Git inventory (including the retainer, LICENSE, NOTICE and TALOD
+permission), the exact code/terms hashes and immutable URLs, and the mapper/helper
+license admission. Omitting an inventory member or substituting an unbound commit
+fails. Existing original bytes, sizes, permissions and normalized revisions are
+checked before any permission/revision is presented as usable. Every actual shard
+source snapshot and origin must match the retained closure; Wago aggregate inputs
+must reproduce its digest and CMaNGOS bytes its recorded Git blob. Extra or missing
+originals and changed shard references fail. This binds source declarations to
+retained bytes; source-platform regeneration/parity independently verifies the
+transformation of the shard records themselves. It does not replace that gate.
+
+The normal pipeline passes the policy to both commands. Run retention only after
+committing reviewed generator code: dirty code cannot be assigned an immutable
+source URL. After integrating mapper v3, explicitly review/update this policy's
+version and any changed fields before regenerating. Missing public source URLs,
+production receipts, Windows results or external review remain unverified.

@@ -1318,3 +1318,121 @@ fn research_facts_are_versioned_and_never_turn_a_clean_replay_into_evidence() {
         );
     }
 }
+
+#[test]
+fn objective_coverage_requires_each_declared_index() {
+    // Counts alone cannot establish coverage: extra invalid indexes may conceal
+    // a missing valid objective, and repeated indexes do not advance coverage.
+    for (count, marked, expected) in [
+        (2, vec![1, 3], Status::Warning),
+        (2, vec![2, 3], Status::Warning),
+        (2, vec![3, 4], Status::Warning),
+        (2, vec![1, 1], Status::Warning),
+        (2, vec![1, 2], Status::Ok),
+        (2, vec![2, 1, 2], Status::Ok),
+        (2, vec![1, 2, 3], Status::Ok),
+        (0, vec![], Status::Ok),
+        (0, vec![1], Status::Ok),
+        (255, (1..=254).chain([254]).collect(), Status::Warning),
+        (255, (1..=255).collect(), Status::Ok),
+    ] {
+        let mut facts = world();
+        facts.quests.get_mut(&1).unwrap().objectives = Fact::Known(count);
+        let completions = marked
+            .iter()
+            .map(|index| format!("step\n    .goto Test Vale,1,1\n    .complete 1,{index}\n"))
+            .collect::<String>();
+        let report = run(
+            &guide(&format!(
+                "step\n    .goto Test Vale,1,1\n    .accept 1\n{completions}    .turnin 1"
+            )),
+            &facts,
+        );
+        assert_eq!(
+            has(&report, Check::ObjectivesMarked, Status::Warning),
+            expected == Status::Warning,
+            "count={count}, marked={marked:?}"
+        );
+        assert!(!has(&report, Check::ObjectivesMarked, Status::Unverified));
+        let invalid = marked.iter().any(|index| *index > count);
+        assert_eq!(has(&report, Check::ObjectiveIndex, Status::Error), invalid);
+        assert!(
+            !report.passes,
+            "synthetic replay must not establish evidence"
+        );
+    }
+}
+
+#[test]
+fn unknown_objective_count_never_becomes_verified_from_marked_indexes() {
+    let mut facts = world();
+    facts.quests.get_mut(&1).unwrap().objectives = Fact::Unknown;
+    for completions in [
+        "",
+        "    .complete 1,1\n",
+        "    .complete 1,1\n    .complete 1,2\n",
+    ] {
+        let report = run(
+            &guide(&format!(
+                "step\n    .goto Test Vale,1,1\n    .accept 1\n{completions}    .turnin 1"
+            )),
+            &facts,
+        );
+        assert!(has(&report, Check::ObjectivesMarked, Status::Unverified));
+        assert!(!has(&report, Check::ObjectivesMarked, Status::Ok));
+        assert!(!report.replay_clean);
+    }
+}
+
+proptest::proptest! {
+    #[test]
+    fn objective_coverage_matches_exact_set_membership(
+        count in 0u8..=32,
+        indexes in proptest::collection::vec(1u8..=40, 0..80),
+    ) {
+        let mut facts = world();
+        facts.quests.get_mut(&1).unwrap().objectives = Fact::Known(count);
+        let completions = indexes.iter().map(|index| format!("step\n    .goto Test Vale,1,1\n    .complete 1,{index}\n"))
+            .collect::<String>();
+        let report = run(&guide(&format!(
+            "step\n    .goto Test Vale,1,1\n    .accept 1\n{completions}    .turnin 1"
+        )), &facts);
+        let missing = (1..=count).any(|index| !indexes.contains(&index));
+        proptest::prop_assert_eq!(has(&report, Check::ObjectivesMarked, Status::Warning), missing);
+        proptest::prop_assert_eq!(has(&report, Check::ObjectiveIndex, Status::Error),
+            indexes.iter().any(|index| *index > count));
+        proptest::prop_assert!(!has(&report, Check::ObjectivesMarked, Status::Unverified));
+        proptest::prop_assert!(!report.passes);
+    }
+}
+
+#[test]
+fn filtered_objective_marks_do_not_fill_missing_coverage() {
+    let mut facts = world();
+    facts.quests.get_mut(&1).unwrap().objectives = Fact::Known(2);
+    for qualifier in [" << Mage", " << Horde"] {
+        let report = run(
+            &guide(&format!(
+                "step\n    .goto Test Vale,1,1\n    .accept 1\n    .complete 1,1\n    .complete 1,2{qualifier}\n    .turnin 1"
+            )),
+            &facts,
+        );
+        assert!(has(&report, Check::ObjectivesMarked, Status::Warning));
+        assert!(!has(&report, Check::ObjectiveIndex, Status::Error));
+    }
+}
+
+#[test]
+fn abandon_discards_marks_before_reaccepting_a_quest() {
+    let mut facts = world();
+    facts.quests.get_mut(&1).unwrap().objectives = Fact::Known(2);
+    let report = run(
+        &guide(
+            "step\n    .goto Test Vale,1,1\n    .accept 1\n    .complete 1,1\n    .complete 1,2\n    .abandon 1\n    .accept 1\n    .turnin 1",
+        ),
+        &facts,
+    );
+    assert!(has(&report, Check::ObjectivesMarked, Status::Warning));
+    assert!(!has(&report, Check::DoubleAccept, Status::Error));
+    assert!(!has(&report, Check::ReAcceptDone, Status::Error));
+}
