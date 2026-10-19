@@ -174,7 +174,7 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
 }
 fn verify(bytes: &[u8], material: &Material) -> Result<()> {
     if bytes.is_empty()
-        || bytes.len() as u64 > source_admission::MAX_FILE_BYTES
+        || bytes.len() as u64 > source_admission::MAX_RETAINED_FILE_BYTES
         || material.bytes.is_some_and(|n| n != bytes.len() as u64)
         || digest(bytes) != material.sha256
     {
