@@ -82,7 +82,7 @@ or commit private files or personal exports.
 
 ## Next actions
 
-Finish #217 checks and merge only on success. Complete and independently review #212 integrated
+Completed #217 at e42c2b24905d755be43fae5275c24c659bd48d61 after all required checks. Complete and independently review #212 integrated
 repairs, regenerate committed outputs, explicitly exercise material selection and
 record genuine remaining stable prerequisites before its refreshed checks/merge.
 Integrate separate reviewed content/default/acceptance/verifier/release PRs under
@@ -110,7 +110,7 @@ WSL debug RSS; optimization and hosted Windows performance remain required.
 
 Latest source/world integration head531aa484 includes actual source generation,
 shared proof8MiB edge refusal and exact original64MiB reader repair. Root independent
-155Python,11coreadmission and7contentset tests passed. All51mappedoutput hashes
+155Python,11coreadmission and9contentset tests passed. All51mappedoutput hashes
 reproduced in writer runs; original19raw inputsLFS closure and22correspondingplain
 code/terms checked. Actual367,731,829B pack builds/verifies distributioneligible;
 393,597strict gaps remain explicitlyclassified by acceptedpolicy. Fullsourceplatform
@@ -120,3 +120,25 @@ independent27targetedtests passed, sameoperatorcontrolexplicit. Native loaderWIP
 independent6bundle/CLI +13recoverytests passed, yet inheritedpackreader racehardening
 and90%coverage, actualnativeWindows assembly/evidence remainrequired. NoStabletag,
 installer/manualsmoke or publication has occurred.
+
+
+## Sequential batch completed
+
+PR217 refreshed head ceb9ced2355a4a18aee7b3f91c6d7ad31d90e832 retained
+patch identity e0f50395175c211fb38c877f32d532344c600601. Independent final-delta
+review found no changes to the reviewed patch. All ten strict protected checks
+passed, including Coverage39316037441; CI39316038273, Windows package39316037847
+and both source platforms/parity39316037451 passed. Merged with an exact-head
+condition at e42c2b24905d755be43fae5275c24c659bd48d61,
+2026-10-19T20:32:17Z. Stability was skipped on this ordinary PR, not passed.
+This completes214/215/216/217 in the authorized order. PR212 remains open.
+
+User explicitly reaffirmed admission of Forever1.60.1.70245 with true historical,
+unverified attribution. No target70450 verification is inferred. Full-pack Linux
+storage optimization preserves all three original document bytes/hashes; release
+experiment139.48s and6060940KiB maximumRSS is not Windows acceptance. A Windows
+newline defect in mapper evidence outputs is under repair before genuine platform
+parity. Genuine inventory, immutable source closure regeneration and actual
+material-selection proof remain in progress. Native bundle/resource verification
+and hosted eight-case acceptance harness preparation do not establish installer
+acceptance. No actual content receipt, stable tag or stable release was issued.
