@@ -70,3 +70,8 @@ verified descriptor bytes. Evidence and static config JSON reads now use bounded
 same-descriptor capture too. The regression proves no unverified reopen occurs and
 undeclared resources still fail. Both Node tests pass after repair; Rust files
 and prior portable coverage are unchanged. Final independent rereview is required.
+
+Assembly preservation scope: preexisting destinations are refused and checked again
+before rename; this is not an adversarial atomic no-clobber guarantee against a
+concurrently created empty destination directory on Unix. Staging is intended for
+an explicitly selected new build-output path under the operator's owned directory.
