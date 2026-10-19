@@ -237,9 +237,9 @@ zero-filled. Catalog disposition and reason per cause:
 | Partial read: header, field, pallet, common or section-directory bytes in an encrypted frame | `unavailable_encrypted` | `unavailable_encrypted_frames_in_table_metadata` |
 | Partial read not decoded for another reason | that reason's disposition | `<reason>:partial_plain_frames` |
 | String pointer into an undecoded section / copy source possibly in an unavailable section | `unavailable_encrypted` | `string_in_unavailable_section` / `copy_source_in_unavailable_section` |
-| Unsupported BLTE/encryption encoding | `unavailable_encrypted` | `unsupported_archive_encoding_not_retained` |
-| Unrecognized native failure | `unavailable_encrypted` | `local_archive_read_unavailable` |
-| Short read with no recorded cause: most likely a raw data read failure after verified frames (for example an I/O or sharing error while the game runs), not encryption | `unavailable_encrypted` (used only because there is no unknown disposition) | `archive_short_read_unexplained` |
+| Unsupported BLTE/encryption encoding | `unavailable_unsupported` | `unsupported_archive_encoding_not_retained` |
+| Unrecognized native failure | `unavailable_unknown` | `local_archive_read_unavailable` |
+| Short read with no recorded cause: most likely a raw data read failure after verified frames (for example an I/O or sharing error while the game runs), not encryption | `unavailable_unknown` | `archive_short_read_unexplained` |
 | `ERROR_FILE_CORRUPT`: frame checksum mismatch, malformed BLTE/encryption header or failed decompression | `invalid_corrupt` | `archive_verification_failed` |
 | Logical size or allocation above the table limit | `excluded_by_policy` | `logical_file_or_allocation_exceeds_capacity_not_retained` |
 
@@ -474,3 +474,11 @@ live/interactive acceptance on the pending post-launch target remain missing.
 Selected cache/hotfix envelope and addon observation staging is documented in
 [LOCAL_INPUTS.md](LOCAL_INPUTS.md). Payload field overlays, media, expanded gameplay
 projections and guarded delivery remain separate work.
+
+Research catalogs and extraction checkpoint envelopes now write format version 2.
+Version 1 remains readable with its original dispositions; historical ambiguous
+`unavailable_encrypted` entries are not reinterpreted. Version 1 envelopes reject
+v2-only `unavailable_unknown` and `unavailable_unsupported` dispositions. Re-extract
+to obtain the corrected classification. Binding, decoded-table, metadata, summary
+and projection formats are unchanged. Neither unknown nor unsupported read failures
+retain partial bytes or establish playable availability.

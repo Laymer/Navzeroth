@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "algorithm": "Ed25519",
+  "status": "generated_public_identities_only_not_active_receipt_policy",
+  "control": "Both private keys are held by the local repository operator. Distinct keys do not establish independent control or independent review.",
+  "identities": [
+    { "id": "stable-1.0.0-operator", "purpose": "operator attestation", "public_key_hex": "3d407b80a7bd6275e69993c179bb08df6837037c94e1a8af57d284151b8007f4" },
+    { "id": "stable-1.0.0-review-evidence", "purpose": "bind independently recorded review evidence; not proof of reviewer identity", "public_key_hex": "26119b03b6b8cee1d1f348e06c8c4dd991a104afcec9740926a3e6dda65f5995" }
+  ]
+}

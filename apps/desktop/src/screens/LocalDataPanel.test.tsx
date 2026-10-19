@@ -90,3 +90,19 @@ it("stops polling after status refusal and forgets the retained job without touc
  expect(calls.filter(call=>call.command==="get_local_data_job")).toHaveLength(1);
  expect(calls.some(call=>call.command==="start_local_data"||call.command==="activate_local_data")).toBe(false);
 });
+
+it('blocks extraction for vanished saved locales and passes the explicitly selected non-English locale unchanged',async()=>{
+ const calls:{command:string;input:unknown}[]=[];
+ const adapter:CommandAdapter={invoke(command,input){calls.push({command,input});return Promise.resolve((command==='select_local_installation'?{selection_id:'changed-locales',inspection:{metadata:{product:'wow_classic_beta',version:'1.60.1.70450',build:70450,declared_locales:['deDE','enUS']}}}:command==='get_local_workflow'?{format_version:1,revision:1,preferences:{format_version:1,first_run_completed:true,startup_mode:'later',selections:{'changed-locales':{locales:['frFR'],preset:'max',change_detection:false,baseline_sha256:null}}}}:command==='preview_local_data'?{preset:'max',limits:{},required_storage_bytes:null,available_storage_bytes:null,blockers:[]}:null)as never);}};
+ render(<LocalDataPanel client={createClient(adapter)}/>);
+ fireEvent.click(screen.getByRole('button',{name:'Select game installation'}));
+ await screen.findByText(/no replacement locale was selected/);
+ fireEvent.click(screen.getByRole('button',{name:'Review extraction limits'}));
+ const extract=await screen.findByRole('button',{name:'Extract research tables'});
+ expect(extract).toBeDisabled();fireEvent.click(extract);
+ expect(calls.some(call=>call.command==='start_local_data')).toBe(false);
+ expect(screen.getByRole('checkbox',{name:'enUS'})).not.toBeChecked();
+ fireEvent.click(screen.getByRole('checkbox',{name:'deDE'}));
+ expect(extract).toBeEnabled();fireEvent.click(extract);
+ await waitFor(()=>expect(calls).toContainEqual({command:'start_local_data',input:{selection_id:'changed-locales',preset:'max',locales:['deDE']}}));
+});

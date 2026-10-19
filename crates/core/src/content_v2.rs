@@ -260,7 +260,7 @@ pub struct Dungeon {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bosses: Vec<SourceId>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct DungeonCheck {
     pub id: SourceId,

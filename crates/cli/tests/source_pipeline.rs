@@ -233,14 +233,24 @@ fn committed_licensed_materials_build_without_network_on_every_platform() {
         serde_json::from_slice(&fs::read(root.join("content/source-build-v1.json")).unwrap())
             .unwrap();
     let generated = |v: &Value, key: &str| v[key].as_str().unwrap().starts_with("gen-");
-    registry["sources"]
-        .as_array_mut()
-        .unwrap()
-        .retain(|s| !generated(s, "id"));
     plan["inputs"]
         .as_array_mut()
         .unwrap()
         .retain(|i| !generated(i, "source"));
+    // Newly admitted world originals are also non-gen sources, but this test's
+    // hand-written plan does not consume them. Their LFS closure is exercised
+    // separately by the actual-world platform jobs. Keep this fixture exactly
+    // the source closure of the real hand plan, rather than all registry rows.
+    let required: std::collections::BTreeSet<_> = plan["inputs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|input| input["source"].as_str().unwrap().to_owned())
+        .collect();
+    registry["sources"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|source| required.contains(source["id"].as_str().unwrap()));
     let registry_path = c.root.join("hand-registry.json");
     let plan_path = c.root.join("hand-plan.json");
     fs::write(&registry_path, serde_json::to_vec(&registry).unwrap()).unwrap();

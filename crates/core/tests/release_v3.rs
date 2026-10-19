@@ -219,6 +219,7 @@ fn evidence_must_bind_the_applied_policy() {
     let mut other: Value =
         serde_json::from_slice(&repository("release/v1/accepted-origins.json")).unwrap();
     other["target_edition"] = json!("wow_classic_tbc");
+    other.as_object_mut().unwrap().remove("historical_builds");
     let other = OriginPolicy::decode(&serde_json::to_vec(&other).unwrap()).unwrap();
     let report = check_with(
         &i,
@@ -569,4 +570,31 @@ fn preparation_never_admits_failed_partial_stale_or_content_blockers() {
     e.production_sha256 = Some(Sha256Hex::new(POLICY_HASH).unwrap());
     let stale = check(&i, &e);
     assert!(!BuildPhase::Prebuild.ready(&stale) && !BuildPhase::Draft.ready(&stale));
+}
+#[test]
+fn exact_historical_forever_build_can_satisfy_source_target_validation() {
+    for (build, accepted) in [
+        (Some("1.60.1.70245"), true),
+        (Some("1.60.1.70246"), false),
+        (None, false),
+    ] {
+        let mut evidence = evidence_value();
+        evidence["sources"][0]["origin_edition"] = json!("wow_forever");
+        evidence["sources"][0]["origin_build"] = json!(build);
+        let (i, e) = decode(&inventory_value(), &evidence);
+        let (target, origins) = (target(), origins());
+        let policy = ReleasePolicy {
+            target: Some(&target),
+            origins: Some(&origins),
+            origin_policy_sha256: Some(POLICY_HASH),
+        };
+        assert_eq!(
+            origin_accepted_sources(&i, &e, &policy).contains("synthetic"),
+            accepted
+        );
+        assert_eq!(
+            has(&check(&i, &e), "target validation is incomplete"),
+            !accepted
+        );
+    }
 }

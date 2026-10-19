@@ -8,6 +8,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import world_to_content as w  # noqa: E402
@@ -511,6 +512,21 @@ class RunTest(unittest.TestCase):
             for name in ("catalog.json", "sources.json", "conflicts.json", "summary.json"):
                 self.assertEqual((first.out / name).read_bytes(), (second.out / name).read_bytes(), name)
 
+    def test_windows_text_newline_translation_cannot_change_mapping_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first = Run(directory)
+            root = pathlib.Path(directory)
+            original = pathlib.Path.write_text
+            def windows_text(path, value, **options):
+                options["newline"] = "\r\n"
+                return original(path, value, **options)
+            with mock.patch.object(pathlib.Path, "write_text", windows_text):
+                w.run(root / "in", root / "target.json", root / "policy.json", root / "authored", root / "windows")
+            for name in ("catalog.json", "sources.json", "conflicts.json", "summary.json"):
+                expected = (first.out / name).read_bytes()
+                self.assertNotIn(b"\r\n", expected)
+                self.assertEqual(expected, (root / "windows" / name).read_bytes(), name)
+
     def test_policy_skips_unaccepted_origins(self):
         policy = json.loads(json.dumps(POLICY))
         policy["domains"]["equipment"] = ["vanilla_1_12"]
@@ -549,6 +565,84 @@ class RunTest(unittest.TestCase):
             self.assertIn('"revision"', printed.getvalue())
             d = {x["id"]: x for x in json.loads((root / "o" / "catalog.json").read_text())["dungeons"]}
             self.assertIn("dungeon:deadmines", d)  # without authored input the source title stands
+
+
+class ProvenanceRevisionTests(unittest.TestCase):
+    def test_versioned_policy_compatibility(self):
+        policy = json.loads(json.dumps(POLICY))
+        policy["schema_version"] = 2
+        policy["historical_builds"] = {"wow_forever": ["1.60.1.70245"]}
+        with tempfile.TemporaryDirectory() as tmp:
+            Run(tmp, policy=policy)
+        for version in (1, 3):
+            policy["schema_version"] = version
+            with tempfile.TemporaryDirectory() as tmp, self.assertRaises(w.InputError):
+                Run(tmp, policy=policy)
+
+    def test_revision_changes_for_policy_authored_target_and_conversion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            initial = Run(tmp)
+            baseline = initial.summary["revision"]
+            def run_again():
+                return w.run(root / "in", root / "target.json", root / "policy.json",
+                             root / "authored", root / "out")["revision"]
+            self.assertEqual(run_again(), baseline)
+            for filename, value in [
+                ("policy.json", dict(POLICY, accept_unknowns=False)),
+                ("target.json", dict(TARGET, locale="deDE")),
+                ("authored/catalog.json", {"dungeons": []}),
+            ]:
+                path = root / filename
+                previous = path.read_bytes()
+                path.write_text(json.dumps(value))
+                self.assertNotEqual(run_again(), baseline, filename)
+                path.write_bytes(previous)
+            old = w.RUN_SPEED
+            try:
+                w.RUN_SPEED = old + 1
+                self.assertNotEqual(run_again(), baseline)
+            finally:
+                w.RUN_SPEED = old
+            changed = json.loads(json.dumps(POLICY))
+            changed["domains"]["equipment"] = ["wow_classic_era"]
+            (root / "policy.json").write_text(json.dumps(changed))
+            self.assertNotEqual(run_again(), baseline)
+
+    def test_multiple_builds_cannot_collapse_into_one_evidence_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Run(tmp)
+            root = pathlib.Path(tmp)
+            path = next((root / "in/items/items/wow_forever").rglob("*.json"))
+            shard = json.loads(path.read_text())
+            shard["origin"]["build"] = w.known("1.60.1.70245")
+            path.with_name("part-0001.json").write_text(json.dumps(shard))
+            with self.assertRaisesRegex(w.InputError, "multiple origin builds"):
+                w.run(root / "in", root / "target.json", root / "policy.json", root / "authored", root / "out")
+
+    def test_true_origin_build_survives_target_mapping(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Run(tmp)
+            root = pathlib.Path(tmp)
+            path = next((root / "in/items/items/wow_forever").rglob("*.json"))
+            shard = json.loads(path.read_text())
+            shard["origin"]["build"] = w.known("1.60.1.70245")
+            path.write_text(json.dumps(shard))
+            w.run(root / "in", root / "target.json", root / "policy.json", root / "authored", root / "out")
+            catalog = json.loads((root / "out/catalog.json").read_text())
+            evidence = catalog["reference"]["payload"]["evidence"]
+            old = next(e for e in evidence if e["id"] == "ev:wago-tools-wowf:wow_forever:items.items")
+            self.assertEqual(old["origin"], {"edition":"wow_forever","build":w.known("1.60.1.70245")})
+            self.assertEqual(old["context"]["build"]["build"], TARGET["build"])
+            self.assertEqual(old["confidence"], "cross_edition_unverified")
+            vanilla = next(e for e in evidence if e["source"] == "cmangos-classic-db")
+            self.assertEqual(vanilla["origin"], {"edition":"vanilla_1_12","build":w.known("1.12.1")})
+            shard["origin"]["build"] = w.known(TARGET["build"])
+            path.write_text(json.dumps(shard))
+            w.run(root / "in", root / "target.json", root / "policy.json", root / "authored", root / "out")
+            evidence = json.loads((root / "out/catalog.json").read_text())["reference"]["payload"]["evidence"]
+            exact = next(e for e in evidence if e["id"] == old["id"])
+            self.assertEqual(exact["confidence"], "publisher_documented")
 
 
 if __name__ == "__main__":

@@ -237,9 +237,11 @@ pub fn origin_accepted_sources(
         .iter()
         .filter(|s| {
             citing.get(s.id.as_str()).is_some_and(|domains| {
-                domains
-                    .iter()
-                    .all(|d| origins.accepts_origin(d, &s.origin_edition))
+                domains.iter().all(|d| {
+                    origins.accepts_origin(d, &s.origin_edition)
+                        || origins
+                            .accepts_historical_build(&s.origin_edition, s.origin_build.as_deref())
+                })
             })
         })
         .map(|s| s.id.clone())

@@ -40,6 +40,9 @@ import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from navzeroth_datagen.bounded import read_file, MAX_SHARD_BYTES, input_files, InputBudget  # noqa: E402
+
 ROOT = HERE.parent
 PREFIX = "gen-"
 TRANSFORMATION = "knowledge_v1"
@@ -130,13 +133,14 @@ def upstreams_for(generator, edition):
 def shard_citations(world):
     """{(generator, edition, build folder): [registry-looking source ids in first-seen order]}."""
     cited = {}
+    budget = InputBudget()
     if world is None or not pathlib.Path(world).is_dir():
         return cited
-    for path in sorted(pathlib.Path(world).rglob("part-*.json")):
+    for path in input_files(world, "part-*.json"):
         rel = path.relative_to(world).parts
         if rel[0] == "facts" or any(p.startswith(".") for p in rel):
             continue
-        doc = json.loads(path.read_text(encoding="utf-8"))
+        doc = json.loads(budget.read(path, MAX_SHARD_BYTES))
         build = (doc["origin"].get("build") or {}).get("value") or UNKNOWN_BUILD
         key = (doc["generator"]["name"], doc["origin"]["edition"], build)
         ids = cited.setdefault(key, [])
@@ -152,7 +156,8 @@ def scan(facts_root):
     if not facts_root.is_dir():
         raise RegisterError(f"{facts_root}: facts folder not found")
     groups = {}
-    for path in sorted(facts_root.rglob("*.json")):
+    budget = InputBudget()
+    for path in input_files(facts_root, "*.json"):
         rel = path.relative_to(facts_root)
         parts = rel.parts
         if any(p.startswith(".") for p in parts):
@@ -163,12 +168,16 @@ def scan(facts_root):
             raise RegisterError(f"{rel.as_posix()}: registry paths are lowercase [a-z0-9._-] segments")
         if path.is_symlink():
             raise RegisterError(f"{rel.as_posix()}: symbolic links are refused")
-        data = path.read_bytes()
+        try:
+            data = budget.read(path, MAX_FILE_BYTES)
+        except (ValueError, OSError) as error:
+            raise RegisterError(f"{rel.as_posix()}: {error}") from error
         if not data or len(data) > MAX_FILE_BYTES:
             raise RegisterError(f"{rel.as_posix()}: {len(data)} bytes is outside 1..{MAX_FILE_BYTES}")
         doc = json.loads(data)
         if doc.get("schema_version") != 1 or not isinstance(doc.get("facts"), list) or not doc["facts"]:
             raise RegisterError(f"{rel.as_posix()}: not a non-empty knowledge_v1 document")
+        budget.add_records(len(doc["facts"]))
         fields = sorted({f"{f['domain']}.{f['field']}" for f in doc["facts"]})
         if len(fields) > MAX_FIELDS:
             raise RegisterError(f"{rel.as_posix()}: {len(fields)} fields exceed {MAX_FIELDS}")

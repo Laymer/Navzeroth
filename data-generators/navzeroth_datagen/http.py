@@ -23,6 +23,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from .bounded import read_file
+
 try:
     import fcntl
 except ImportError:  # Windows: limits hold per process only
@@ -41,6 +43,11 @@ HOST_LIMITS = {
     "raw.githubusercontent.com": (1, 1.0),
 }
 DEFAULT_LIMIT = (1, 1.0)
+# Retained largest download is a 13 MiB SQL gzip; allow headroom, never unlimited.
+MAX_BODY_BYTES = 64 * 1024 * 1024
+MAX_META_BYTES = 64 * 1024
+MAX_RESPONSE_SECONDS = 300
+MAX_SOCKET_SECONDS = 5
 RETRY_STATUS = {429, 500, 502, 503, 504}
 # Answers that may be transient (rate limits, bot challenges): used for this run, never cached.
 NOT_CACHED = RETRY_STATUS | {202, 403}
@@ -166,6 +173,22 @@ class _SameHostRedirects(urllib.request.HTTPRedirectHandler):
 _opener = urllib.request.build_opener(_SameHostRedirects)
 
 
+def _response_bytes(response, deadline):
+    # HTTPResponse.read1 performs at most one underlying buffered read, allowing
+    # deadline checks even when the peer continuously trickles bytes.
+    data = bytearray()
+    while len(data) <= MAX_BODY_BYTES:
+        if time.monotonic() >= deadline:
+            raise FetchError(response.url, 0, "total response deadline exceeded")
+        chunk = response.read1(min(1024 * 1024, MAX_BODY_BYTES + 1 - len(data)))
+        if time.monotonic() >= deadline:
+            raise FetchError(response.url, 0, "total response deadline exceeded")
+        if not chunk:
+            return bytes(data)
+        data.extend(chunk)
+    raise ValueError("input exceeds byte limit")
+
+
 def _download(url, timeout):
     host = urllib.parse.urlsplit(url).hostname
     if urllib.parse.urlsplit(url).scheme != "https":
@@ -174,8 +197,9 @@ def _download(url, timeout):
     for attempt in range(4):
         try:
             with _host_slot(host):
-                with _opener.open(req, timeout=timeout) as r:
-                    return r.status, r.read()
+                deadline = time.monotonic() + MAX_RESPONSE_SECONDS
+                with _opener.open(req, timeout=min(timeout, MAX_SOCKET_SECONDS)) as r:
+                    return r.status, _response_bytes(r, deadline)
         except urllib.error.HTTPError as e:
             if e.code in RETRY_STATUS and attempt < 3:
                 time.sleep(2 ** attempt)
@@ -197,7 +221,7 @@ def fetch(url, name=None, *, timeout=60):
     with local, _flock(meta_path.with_name(meta_path.name + ".lock")):
         meta = None
         if meta_path.exists() and not refresh():
-            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+            meta = json.loads(read_file(meta_path, MAX_META_BYTES))
         elif offline():
             raise FetchError(url, 0, "not cached (offline)")
         else:
@@ -208,11 +232,19 @@ def fetch(url, name=None, *, timeout=60):
                 meta.update(sha256=hashlib.sha256(data).hexdigest(), bytes=len(data))
             if status not in NOT_CACHED:  # a refresh that hits a 5xx keeps the good entry
                 meta_path.write_text(json.dumps(meta, sort_keys=True), encoding="utf-8")
+        if not isinstance(meta, dict) or meta.get("url") != url or type(meta.get("status")) is not int:
+            raise FetchError(url, 0, "invalid cache metadata")
+        if not (200 <= meta["status"] < 300) or meta["status"] == 202:
+            with _used_lock:
+                _used[url] = meta
+            raise FetchError(url, meta["status"])
+        data = read_file(body_path, MAX_BODY_BYTES)
+        if (type(meta.get("bytes")) is not int or meta["bytes"] != len(data)
+                or meta.get("sha256") != hashlib.sha256(data).hexdigest()):
+            raise FetchError(url, 0, "cache body integrity mismatch")
         with _used_lock:
             _used[url] = meta
-        if not (200 <= meta["status"] < 300) or meta["status"] == 202:
-            raise FetchError(url, meta["status"])
-        return body_path.read_bytes()
+        return data
 
 
 def fetch_text(url, name=None, *, timeout=60):
