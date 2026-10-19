@@ -8,6 +8,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import world_to_content as w  # noqa: E402
@@ -510,6 +511,21 @@ class RunTest(unittest.TestCase):
             first, second = Run(a), Run(b)
             for name in ("catalog.json", "sources.json", "conflicts.json", "summary.json"):
                 self.assertEqual((first.out / name).read_bytes(), (second.out / name).read_bytes(), name)
+
+    def test_windows_text_newline_translation_cannot_change_mapping_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first = Run(directory)
+            root = pathlib.Path(directory)
+            original = pathlib.Path.write_text
+            def windows_text(path, value, **options):
+                options["newline"] = "\r\n"
+                return original(path, value, **options)
+            with mock.patch.object(pathlib.Path, "write_text", windows_text):
+                w.run(root / "in", root / "target.json", root / "policy.json", root / "authored", root / "windows")
+            for name in ("catalog.json", "sources.json", "conflicts.json", "summary.json"):
+                expected = (first.out / name).read_bytes()
+                self.assertNotIn(b"\r\n", expected)
+                self.assertEqual(expected, (root / "windows" / name).read_bytes(), name)
 
     def test_policy_skips_unaccepted_origins(self):
         policy = json.loads(json.dumps(POLICY))
