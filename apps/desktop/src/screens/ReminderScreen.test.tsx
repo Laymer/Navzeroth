@@ -2,11 +2,11 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { expect, test } from "vitest";
 import { createClient } from "../commands";
 import type { CommandAdapter } from "../commands/contract";
-import type { ReminderView } from "../commands/reminders";
+import type { ReminderView, RuleDelivery } from "../commands/reminders";
 import { ReminderScreen } from "./ReminderScreen";
-function fixture() {
+function fixture(delivery:RuleDelivery="synthetic") {
  const calls: {command:string;args:unknown}[]=[];
- let view:ReminderView={profile_id:"one",snapshot_id:"snapshot",revision:"revision",fixture:true,enabled:true,bag_checklist_enabled:false,bag_checklist_checked:false,gaps:[],dismissed:[],rules:[{id:"r",text:"Synthetic advice",dismissal:"permanent",delivery:"synthetic"}],plan:{mode:"non_intrusive",queue:[{rule:"r",priority:1,dismissal:"permanent",kind:{kind:"advice",text:"Synthetic advice"},evidence:[]}],held:[],excluded:{}}};
+ let view:ReminderView={profile_id:"one",snapshot_id:"snapshot",revision:"revision",fixture:true,enabled:true,bag_checklist_enabled:false,bag_checklist_checked:false,gaps:[],dismissed:[],rules:[{id:"r",text:"Synthetic advice",dismissal:"permanent",delivery}],plan:{mode:"non_intrusive",queue:[{rule:"r",priority:1,dismissal:"permanent",kind:{kind:"advice",text:"Synthetic advice"},evidence:[]}],held:[],excluded:{}}};
  const adapter:CommandAdapter={invoke:async(command,args)=>{
   calls.push({command,args});let value:unknown;
   if(command==="list_profiles")value=[{id:"one",display_name:"One",data_mode:"stored",snapshot_count:1,fixture:true}];
@@ -53,4 +53,12 @@ test("manual bag checklist is opt-in and records only a declaration",async()=>{
  fireEvent.click(screen.getByLabelText("Add a bag-space checklist"));await screen.findByLabelText("I checked bag space manually");
  fireEvent.click(screen.getByLabelText("I checked bag space manually"));await waitFor(()=>expect(screen.getByLabelText("I checked bag space manually")).toBeChecked());
  expect(screen.getByText(/This checklist is your declaration/)).toBeVisible();
+});
+
+test("authored heuristic advice is labelled and stays separate from withheld evidence",async()=>{
+ const {client}=fixture("authored_heuristic");render(<ReminderScreen client={client} refreshKey={0}/>);
+ await screen.findByText("Synthetic advice");
+ expect(screen.getByText(/Authored heuristic reminders are original advice/)).toBeInTheDocument();
+ expect(screen.queryByText(/Advice withheld/)).not.toBeInTheDocument();
+ expect(screen.queryByText("Evidence-gated rules")).not.toBeInTheDocument();
 });

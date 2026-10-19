@@ -1,0 +1,145 @@
+{
+  "format": "azeroth-navigator",
+  "kind": "character_snapshot",
+  "schema_version": 1,
+  "fixture": false,
+  "producer": {
+    "component": "desktop",
+    "version": "1.0.0",
+    "session_id": "stable-engineering-session",
+    "sequence": 2
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "1.60.1.70450",
+    "interface": "16001",
+    "locale": "enUS"
+  },
+  "namespace": "reference",
+  "provenance": {
+    "source": "manual_entry",
+    "clock_trust": "trusted",
+    "created_at_utc_ms": 1000
+  },
+  "payload": {
+    "schema_version": 1,
+    "id": "stable-engineering-2",
+    "character": "synthetic-engineering-workload",
+    "context": {
+      "build": {
+        "edition": "wow_forever",
+        "build": "1.60.1.70450",
+        "interface": "16001"
+      },
+      "namespace": "reference"
+    },
+    "capture": {
+      "source": "manual_entry",
+      "clock_trust": "trusted",
+      "observed_at_utc_ms": 1000,
+      "session_id": "stable-engineering-session",
+      "sequence": 2
+    },
+    "source_revision": "manual-engineering-v1",
+    "level": {
+      "status": "known",
+      "value": 60,
+      "source": "manual_entry",
+      "clock_trust": "trusted",
+      "observed_at_utc_ms": 1000,
+      "session_id": "stable-engineering-session",
+      "sequence": 2
+    },
+    "role": {
+      "status": "unknown",
+      "source": "manual_entry"
+    },
+    "location": {
+      "status": "unknown",
+      "source": "manual_entry"
+    },
+    "preferences": {},
+    "equipment": {},
+    "quests": {
+      "prerequisite": {
+        "quest": "prerequisite",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70450",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "accepted": {
+          "status": "unknown",
+          "source": "manual_entry"
+        },
+        "completed": {
+          "status": "unknown",
+          "source": "manual_entry"
+        },
+        "turned_in": {
+          "status": "known",
+          "value": true,
+          "source": "manual_entry",
+          "clock_trust": "trusted",
+          "observed_at_utc_ms": 1000,
+          "session_id": "stable-engineering-session",
+          "sequence": 2
+        },
+        "objectives": {}
+      },
+      "quest-source": {
+        "quest": "quest-source",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "1.60.1.70450",
+            "interface": "16001"
+          },
+          "namespace": "reference"
+        },
+        "accepted": {
+          "status": "known",
+          "value": true,
+          "source": "manual_entry",
+          "clock_trust": "trusted",
+          "observed_at_utc_ms": 1000,
+          "session_id": "stable-engineering-session",
+          "sequence": 2
+        },
+        "completed": {
+          "status": "known",
+          "value": false,
+          "source": "manual_entry",
+          "clock_trust": "trusted",
+          "observed_at_utc_ms": 1000,
+          "session_id": "stable-engineering-session",
+          "sequence": 2
+        },
+        "turned_in": {
+          "status": "known",
+          "value": false,
+          "source": "manual_entry",
+          "clock_trust": "trusted",
+          "observed_at_utc_ms": 1000,
+          "session_id": "stable-engineering-session",
+          "sequence": 2
+        },
+        "objectives": {}
+      }
+    },
+    "objectives": {
+      "stage-source": {
+        "status": "known",
+        "value": false,
+        "source": "manual_entry",
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1000,
+        "session_id": "stable-engineering-session",
+        "sequence": 2
+      }
+    }
+  }
+}

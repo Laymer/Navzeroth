@@ -3114,6 +3114,33 @@
             },
             "namespace": "reference"
           },
+          "id": "ev-authored-reminders-r4",
+          "license": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "BSD-3-Clause (repository LICENSE)"
+          },
+          "notes": "Original project-authored heuristic reminder statements, separately attributed from dungeon/map declarations. Publisher documentation records authorship only, not verified game mechanics, prerequisites or availability.",
+          "observed_at_utc_ms": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": 1792281600000
+          },
+          "source": "navzeroth-authored-v1"
+        },
+        {
+          "confidence": "publisher_documented",
+          "conflicts": [],
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
           "id": "ev-authored-roles-r2",
           "license": {
             "clock_trust": "uncertain",
@@ -3186,7 +3213,7 @@
       "nodes": [],
       "objectives": [],
       "quests": [],
-      "revision": "navzeroth-authored-slice-r3-stable-coverage",
+      "revision": "navzeroth-authored-slice-r4-heuristic-reminders",
       "rules": [
         {
           "context": {
@@ -3201,7 +3228,7 @@
           "deduplication_key": "reminder:deadmines-hearthstone",
           "dismissal": "until_ruleset_changes",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-reminders-r4"
           ],
           "expires_at_utc_ms": null,
           "id": "reminder:deadmines-hearthstone",
@@ -3227,7 +3254,7 @@
           "deduplication_key": "reminder:deadmines-repair-restock",
           "dismissal": "until_ruleset_changes",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-reminders-r4"
           ],
           "expires_at_utc_ms": null,
           "id": "reminder:deadmines-repair-restock",
@@ -3253,7 +3280,7 @@
           "deduplication_key": "reminder:duo-compare-progress",
           "dismissal": "session",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-reminders-r4"
           ],
           "expires_at_utc_ms": null,
           "id": "reminder:duo-compare-progress",
@@ -3279,7 +3306,7 @@
           "deduplication_key": "reminder:heuristic-level-boundary",
           "dismissal": "permanent",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-reminders-r4"
           ],
           "expires_at_utc_ms": null,
           "id": "reminder:heuristic-level-boundary",
@@ -3304,7 +3331,7 @@
           "deduplication_key": "reminder:learn-flight-points",
           "dismissal": "session",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-reminders-r4"
           ],
           "expires_at_utc_ms": null,
           "id": "reminder:learn-flight-points",
@@ -3822,7 +3849,7 @@
           "deduplication_key": "reminder:train-after-level-up",
           "dismissal": "session",
           "evidence": [
-            "ev-authored-v1"
+            "ev-authored-reminders-r4"
           ],
           "expires_at_utc_ms": null,
           "id": "reminder:train-after-level-up",
