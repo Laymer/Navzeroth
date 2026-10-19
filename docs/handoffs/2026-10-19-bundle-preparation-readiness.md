@@ -29,7 +29,12 @@ CLI/release/materials467/491=95.11%. Final all-target Clippy and fmt passed.
 Logs:/tmp/navzeroth-preparation-{coverage-final,clippy-final,python-tests}.log;
 raw:/tmp/navzeroth-preparation.lcov. Zero-test examples emit LLVM counter-bias
 warnings; executable tests/report completed successfully. Independent rereview
-remains required.
+completed at exact490dcfc9 by `/root/tooling_review`: no blocker. Reviewer
+independently ran19core release tests,23material tests (2existingignored), and
+8Python tests, and reproduced rejection of deleted coverage with stale prior
+readiness or a freshly computed non-ready assessment. No source/signature or
+historical gate was relaxed. Logs:/tmp/navzeroth-preparation-repair-
+{core,material,python}-review.log.
 
 Initial expanded coverage caught three schema4 RC material fixtures that must stay
 inspectable; corrected the helper to return non-ready RC assessment rather than
