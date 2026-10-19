@@ -2,6 +2,23 @@
 
 Updated: 2026-10-19.
 
+Parallel continuation requested 2026-10-19: isolated writers are auditing desktop
+locale restoration, guide objective replay, archive failure dispositions and
+coverage evidence inputs from `826aa21`. Existing world-data PR #212 and the
+original checkout are preserved. Coverage-input changes and actual synthetic
+checks are recorded in the [handoff](handoffs/2026-10-19-coverage-inputs.md).
+Draft PRs: [#214](https://github.com/Laymer/Navzeroth/pull/214) locale
+reconciliation (521 desktop tests and per-file coverage pass),
+[#215](https://github.com/Laymer/Navzeroth/pull/215) bounded coverage inputs
+(28 tooling tests), [#216](https://github.com/Laymer/Navzeroth/pull/216) exact
+guide objectives (132 ingest tests; verifier line coverage 95.06%), and
+[#217](https://github.com/Laymer/Navzeroth/pull/217) distinct archive failures
+(692 core/local-data/storage tests plus final compatibility checks).
+See [review record](reviews/2026-10-19-parallel-continuation.md). Hosted checks
+were queued when recorded. No merge, release or acceptance promotion is part of
+this batch. Broader V3.2, complete content inventory, signing setup, native cache
+staging and post-launch target/candidate/operator evidence remain open.
+
 Independent browser-version correction [PR #201](https://github.com/Laymer/Navzeroth/pull/201)
 merged at `02cbfd7` after both read-only reviews, all nine exact-head checks,
 Windows packaging and both source platforms/parity. Status now uses package
@@ -13,6 +30,20 @@ merged at `506a9cb` after independent review, all nine exact-head checks and sou
 parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
+
+**STABLE-1.0.0 integration (2026-10-19):** owner/sole integration writer Codex
+`/root`, baseline `826aa21`, isolated branch `release/stable-1.0.0-integration`.
+[Claim](claims/2026-10-19-stable-integration.md),
+[ADR 0008](decisions/0008-unsigned-stable-release.md),
+[batch review](reviews/2026-10-19-stable-batch.md).
+The owner authorizes unsigned stable publication after revised gates and an
+exact-draft-installer manual Windows smoke. Policy authorization does not clear
+historical readiness blockers. #214–#217 final-head specialist reviews found no
+blockers; refreshed merge-candidate checks remain required. #212 has concrete
+cache integrity, bounded input and origin/build/material-closure findings under
+review and repair. Stable publication remains pending and no new tag exists.
+
+The following RC/Pages task narrative is retained as historical evidence.
 
 **Published development RC; Pages delivery:** Codex `/root`, sole writer, isolated
 branch `site/rc-field-manual`. [Pages claim](claims/2026-10-19-rc-pages.md),

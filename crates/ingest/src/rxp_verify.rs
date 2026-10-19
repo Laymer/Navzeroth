@@ -868,7 +868,9 @@ impl Replay<'_> {
         let marked = self.log.remove(&quest).unwrap_or_default();
         if !optional {
             let status = match facts.objectives {
-                Fact::Known(n) if marked.len() >= usize::from(n) => Status::Ok,
+                // Invalid indexes are reported independently and must not stand in
+                // for a missing declared objective. Zero objectives is complete.
+                Fact::Known(n) if (1..=n).all(|index| marked.contains(&index)) => Status::Ok,
                 Fact::Known(_) => Status::Warning,
                 Fact::Unknown => Status::Unverified,
             };

@@ -30,8 +30,11 @@ import pathlib
 import re
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from navzeroth_datagen import bounded  # noqa: E402
+
 NAME = "world_to_content"
-VERSION = "1"
+VERSION = "2"
 DERIVED_SOURCE = "navzeroth-world-content"
 
 # Inferred travel (ADR 0007 §8). Yards per second.
@@ -149,20 +152,32 @@ def load_input(root):
         raise InputError(f"input is not a directory: {root}")
     shards = []
     digest = hashlib.sha256()
-    for path in sorted(root.rglob("*.json"), key=lambda p: p.relative_to(root).as_posix()):
+    budget = bounded.InputBudget()
+    try:
+        paths = bounded.input_files(root, "*.json")
+    except (OSError, ValueError) as error:
+        raise InputError(f"bounded input scan refused: {error}") from None
+    for path in sorted(paths, key=lambda p: p.relative_to(root).as_posix()):
         rel = path.relative_to(root).as_posix()
         parts = rel.split("/")
         if path.name == "run-manifest.json" or "facts" in parts[:-1] or any(p.startswith(".") for p in parts):
             continue
         if path.is_symlink():
             raise InputError(f"symbolic link in input: {rel}")
-        raw = path.read_bytes()
         try:
-            doc = json.loads(raw)
-        except ValueError as error:
+            raw = budget.read(path, bounded.MAX_SHARD_BYTES)
+            doc = bounded.json_document(raw)
+        except (OSError, ValueError) as error:
             raise InputError(f"{rel}: not JSON ({error}); is Git LFS checked out?") from None
         if not isinstance(doc, dict) or doc.get("format") != "navzeroth-world-data":
             continue
+        records = doc.get("records")
+        if not isinstance(records, list):
+            raise InputError(f"{rel}: records must be an array")
+        try:
+            budget.add_records(len(records))
+        except ValueError as error:
+            raise InputError(f"{rel}: {error}") from None
         digest.update(rel.encode() + b"\0" + hashlib.sha256(raw).hexdigest().encode() + b"\n")
         shards.append(Shard(path, rel, doc))
     grouped = collections.defaultdict(lambda: collections.defaultdict(list))
@@ -173,7 +188,7 @@ def load_input(root):
 
 def read_json(path, what):
     try:
-        return json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
+        return bounded.json_document(bounded.read_file(path, bounded.MAX_SHARD_BYTES))
     except (OSError, ValueError) as error:
         raise InputError(f"cannot read {what} {path}: {error}") from None
 
@@ -181,11 +196,16 @@ def read_json(path, what):
 # ------------------------------------------------------------------ builder
 
 class Builder:
-    def __init__(self, shards, digest, target, policy, authored):
+    def __init__(self, shards, digest, target, policy, authored, admitted=None):
         if target.get("format") != "navzeroth-world-data-target":
             raise InputError("target file is not navzeroth-world-data-target")
         if policy.get("format") != "navzeroth-accepted-origins":
             raise InputError("policy file is not navzeroth-accepted-origins")
+        if policy.get("schema_version") not in (1, 2):
+            raise InputError("unsupported accepted-origin policy version")
+        if policy["schema_version"] == 1 and policy.get("historical_builds"):
+            raise InputError("historical build grants require policy schema 2")
+        self.admitted = admitted
         self.target = target
         self.policy = policy
         self.authored = authored
@@ -274,6 +294,8 @@ class Builder:
                 if shard.rel not in ev["paths"]:
                     ev["paths"].append(shard.rel)
                     ev["builds"].add(shard.build or "unknown")
+                    if len(ev["builds"]) > 1:
+                        raise InputError(f"{eid}: multiple origin builds require separate evidence")
                     ev["refs"].append(ref)
                     ev["aux"].extend(a for a in aux if a not in ev["aux"])
                     if "retrieved_at_utc_ms" in ref:
@@ -1073,7 +1095,7 @@ class Builder:
                     "rule": "no item table defines the item; references are dropped from acquisitions and "
                             "quest rewards and kept as raw IDs in loot_tables"})
         evidence = [self.evidence_record(eid) for eid in sorted(self.evidence, key=natural)]
-        revision = f"navzeroth-world-{self.target['build']}-{self.input_digest[:12]}"
+        revision = ""  # Filled from the complete canonical mapping below, without circular hashing.
         payload = {
             "acquisitions": self.acquisitions, "edges": self.edges, "evidence": evidence,
             "items": [self.items[i] for i in sorted(self.items)],
@@ -1098,13 +1120,24 @@ class Builder:
             },
             "schema_version": 2,
         }
-        return catalog, self.source_registry(), revision
+        sources = self.source_registry()
+        # Shards alone do not identify a mapping: policy, authored facts, target
+        # context and conversion changes can all change its bytes. Hash canonical
+        # output with an empty revision together with every declared input.
+        identity = {"catalog": catalog, "sources": sources, "conflicts": self.conflicts,
+                    "input_sha256": self.input_digest, "target": self.target,
+                    "policy": self.policy, "authored": self.authored,
+                    "generator": {"name": NAME, "version": VERSION}}
+        digest = hashlib.sha256(dumps(identity).encode()).hexdigest()
+        revision = f"navzeroth-world-{self.target['build']}-{digest[:24]}"
+        payload["revision"] = revision
+        return catalog, sources, revision
 
     def evidence_record(self, eid):
         ev = self.evidence[eid]
         if ev.get("inferred"):
             return {"confidence": "inferred", "conflicts": [], "context": self.context, "id": eid,
-                    "license": known(SOURCES[DERIVED_SOURCE]["license"]), "notes": ev["notes"],
+                    "license": known(self.source_info(DERIVED_SOURCE)["license"]), "notes": ev["notes"],
                     "observed_at_utc_ms": NOT_APPLICABLE, "source": DERIVED_SOURCE}
         builds = ", ".join(sorted(ev["builds"]))
         refs = "; ".join(sorted({f"{r.get('url', '')} revision {r.get('revision', 'unknown')} snapshot "
@@ -1122,16 +1155,44 @@ class Builder:
                  f"{self.target['build']} pack; the origin edition is kept, never relabelled (ADR 0007 §3).")
         if len(notes.encode()) > 4096:
             notes = notes.encode()[:4090].decode(errors="ignore") + " ..."
-        info = SOURCES.get(ev["source"], {})
-        return {"confidence": ev["confidence"], "conflicts": [], "context": self.context, "id": eid,
+        info = self.source_info(ev["source"])
+        # A target-context envelope is not evidence that historical source bytes
+        # describe that build. Keep the actual origin structured; earlier same-
+        # edition builds remain unverified unless release policy accepts them.
+        origin_build = next(iter(ev["builds"])) if len(ev["builds"]) == 1 else None
+        origin_build = None if origin_build == "unknown" else origin_build
+        confidence = ev["confidence"]
+        if (ev["edition"] != self.target["edition"] or origin_build != self.target["build"]) \
+                and confidence in ("publisher_documented", "verified_on_build"):
+            confidence = "cross_edition_unverified"
+        return {"confidence": confidence, "conflicts": [], "context": self.context, "id": eid,
+                "origin": {"edition": ev["edition"], "build": known(origin_build) if origin_build else UNKNOWN},
                 "license": known(info["license"]) if info.get("license") else UNKNOWN, "notes": notes,
                 "observed_at_utc_ms": known(min(ev["retrieved"])) if ev["retrieved"] else UNKNOWN,
                 "source": ev["source"]}
 
+    def source_info(self, sid):
+        info = dict(SOURCES.get(sid, {}))
+        if self.admitted is None:
+            return info
+        source = self.admitted.get(sid)
+        if not source or source["rights"]["status"] != "admitted" or not source["files"]:
+            raise InputError(f"source lacks retained admission: {sid}")
+        rights = source["rights"]
+        permitted = {field for file in source["files"] for field in file["fields"]}
+        if not set(self.evidence_sources[sid]).issubset(permitted):
+            raise InputError(f"mapped fields exceed retained admission: {sid}")
+        if any(file["transformation"] != f"{NAME}_v{VERSION}" for file in source["files"]):
+            raise InputError(f"source transformation is not admitted at mapper version: {sid}")
+        info.update(publisher=source["publisher"], license=rights["license_identifier"],
+                    attribution=rights["attribution"], verified_revision=source["revision"],
+                    redistribution="permitted")
+        return info
+
     def source_registry(self):
         out = []
         for sid in sorted(self.evidence_sources):
-            info = SOURCES.get(sid)
+            info = self.source_info(sid)
             ref = self.source_refs.get(sid, {})
             retrieved = [r for e in self.evidence.values() if e.get("source") == sid for r in e.get("retrieved", [])]
             fields = sorted(self.evidence_sources[sid])
@@ -1147,6 +1208,9 @@ class Builder:
                 "verified_revision": UNKNOWN,
             }
             if info:
+                if info.get("verified_revision"):
+                    rec["verified_revision"] = known(info["verified_revision"])
+                    rec["transformations"] = known([f"{NAME}_v{VERSION}"])
                 editions = sorted(set(info["editions"]) | {self.target["edition"]}) if info.get("editions") else None
                 rec.update({
                     "access": known(info["access"]) if info.get("access") else NOT_APPLICABLE,
@@ -1385,7 +1449,110 @@ def summary(catalog, sources, conflicts, builder, revision, catalog_bytes):
     }
 
 
-def run(input_dir, target_file, policy_file, authored_dir, out_dir):
+def checked_admission(admission, source_closure, input_dir=None, normalization_policy=None):
+    import subprocess
+    try:
+        return _checked_admission(admission, source_closure, input_dir, normalization_policy)
+    except (ValueError, OSError, KeyError, TypeError, subprocess.CalledProcessError) as error:
+        raise InputError(f"retained admission verification failed: {error}") from error
+
+
+def _checked_admission(admission, source_closure, input_dir, normalization_policy):
+    if not admission or not source_closure:
+        raise InputError("both admission and retained source closure are required")
+    root = pathlib.Path(__file__).resolve().parent.parent
+    import retain_world_sources as retained
+    if input_dir is None or normalization_policy is None:
+        raise InputError("mapped inputs and reviewed normalization policy are required")
+    registry = read_json(admission, "admission registry")
+    closure = read_json(source_closure, "retained source closure")
+    if registry.get("schema_version") != 2 or closure.get("schema_version") != 2:
+        raise InputError("retained world sources require schema2 registry and closure")
+    if closure.get("transformation") != f"{NAME}_v{VERSION}":
+        raise InputError("retained source closure uses a different mapper version")
+    policy = retained.normalization_policy(normalization_policy, f"{NAME}_v{VERSION}")
+    if closure.get('normalization_policy_sha256') != retained.digest(bounded.read_file(normalization_policy, 8 * 1024 * 1024)):
+        raise InputError('retained normalization policy differs')
+    pinned_code = retained.verify_corresponding(root, closure)
+    sources = {source["id"]: source for source in registry["sources"]}
+    selected = closure["sources"]
+    if len(sources) != len(registry["sources"]) or len({source["id"] for source in selected}) != len(selected):
+        raise InputError("duplicate retained source identity")
+    references = list(closure["corresponding_source"]["files"])
+    for source in selected:
+        admitted = sources.get(source["id"])
+        if not admitted or source["revision"] != admitted["revision"] or source["origin"] != admitted["origin"]:
+            raise InputError("retained source identity differs from admission")
+        triples = lambda files: {(f["path"], f["bytes"], f["sha256"]) for f in files}
+        if triples(source["files"]) != triples(admitted["files"]):
+            raise InputError("retained original source files differ from admission")
+        rule = policy[source['id']]
+        if source['id'] in retained.UPSTREAMS:
+            if (retained.grant_identity(admitted) != rule['grant_sha256']
+                    or admitted['origin'] != rule['origin']
+                    or admitted['revision'] != retained.normalized_revision(admitted['files'], admitted['origin'])):
+                raise InputError('retained admission differs from reviewed normalization policy')
+        elif (admitted['publisher'] != rule['publisher'] or admitted['rights']['attribution'] != rule['attribution']
+                or admitted['rights']['license_identifier'] != 'BSD-3-Clause'
+                or admitted['rights']['status'] != 'admitted' or admitted['rights']['license'] != 'permissive'):
+            raise InputError('derived permission metadata differs from reviewed policy')
+        if any(f['fields'] != rule['allowed_fields'] or f['transformation'] != closure['transformation'] for f in admitted['files']):
+            raise InputError('retained fields/transformation differ from reviewed policy')
+        source['_admitted_files'] = admitted['files']
+        references.extend(source["files"])
+        references.extend(source["permission_evidence"])
+        material_sizes = {f['sha256']: f['bytes'] for f in source['files'] + source['permission_evidence']}
+        if (len(material_sizes) > admitted['retrieval']['max_requests']
+                or sum(material_sizes.values()) > admitted['retrieval']['max_total_bytes']):
+            raise InputError('retained originals/proofs exceed admitted retrieval budget')
+        proof_hashes = {proof["sha256"] for proof in source["permission_evidence"]}
+        for proof in admitted["rights"]["evidence"] + [admitted["retrieval"]["access_evidence"]]:
+            if proof["sha256"] not in proof_hashes:
+                raise InputError("retained rights proof is missing")
+    derived = sources[retained.DERIVED]
+    code_files = derived['files']
+    expected_code = {f'https://raw.githubusercontent.com/Laymer/Navzeroth/{closure["source_commit"]}/{path}': retained.digest(pinned_code[path]) for path in retained.DERIVED_CODE}
+    if (len(code_files) != len(expected_code) or {f['url']: f['sha256'] for f in code_files} != expected_code
+            or derived['revision'] != hashlib.sha1(json.dumps(code_files, sort_keys=True, separators=(',', ':')).encode()).hexdigest()):
+        raise InputError('derived source differs from pinned mapper/helper')
+    license_hash = retained.digest(pinned_code['LICENSE'])
+    proofs = derived['rights']['evidence'] + [derived['retrieval']['access_evidence']]
+    if any(proof['sha256'] != license_hash or proof['revision'] != closure['source_commit'] or proof['url'] != f'https://raw.githubusercontent.com/Laymer/Navzeroth/{closure["source_commit"]}/LICENSE' for proof in proofs) or len(derived['rights']['evidence']) != 1:
+        raise InputError('derived license proof differs from pinned repository license')
+    proof_paths = {proof['path'] for source in selected for proof in source['permission_evidence']}
+    budget = bounded.InputBudget()
+    checked = {}
+    for reference in references:
+        path = reference["path"]
+        if not re.fullmatch(r"content/source-materials/objects/[a-f0-9]{64}", path):
+            raise InputError("retained source path is not content addressed")
+        pin = (reference["bytes"], reference["sha256"])
+        if path.rsplit("/", 1)[-1] != pin[1]:
+            raise InputError("retained source address differs from hash")
+        if path in checked:
+            if checked[path] != pin:
+                raise InputError("conflicting retained source pins")
+            continue
+        raw = budget.read(root / path, bounded.MAX_SHARD_BYTES if path in proof_paths else 64 * 1024 * 1024)
+        if len(raw) != pin[0] or hashlib.sha256(raw).hexdigest() != pin[1] or not raw:
+            raise InputError("retained source bytes differ from admission")
+        checked[path] = pin
+    expected_proof = {'url': f'https://raw.githubusercontent.com/Laymer/Navzeroth/{closure["source_commit"]}/LICENSE',
+                      'revision': closure['source_commit'], 'sha256': license_hash,
+                      'reviewed_scope': retained.DERIVED_PROOF_SCOPE}
+    expected_rights = {'status': 'admitted', 'license': 'permissive', 'license_identifier': 'BSD-3-Clause',
+                       'reviewer': retained.DERIVED_REVIEWER, 'attribution': policy[retained.DERIVED]['attribution'],
+                       'obligations': retained.DERIVED_OBLIGATIONS, 'evidence': [expected_proof]}
+    expected_retrieval = {'method': 'manual_local', 'max_total_bytes': sum(f['bytes'] for f in code_files) + len(pinned_code['LICENSE']),
+                          'minimum_interval_ms': 1000, 'max_requests': len(code_files) + 1, 'access_evidence': expected_proof}
+    if (derived['rights'] != expected_rights or derived['retrieval'] != expected_retrieval
+            or derived['origin'] != {'edition': 'wow_forever', 'build': None}):
+        raise InputError('derived rights/retrieval/origin differ from exact original-source admission')
+    retained.verify_snapshots(root, pathlib.Path(input_dir), closure)
+    return {source["id"]: sources[source["id"]] for source in selected}
+
+
+def run(input_dir, target_file, policy_file, authored_dir, out_dir, admission=None, source_closure=None, normalization_policy=None):
     shards, digest = load_input(pathlib.Path(input_dir))
     target = read_json(target_file, "target")
     policy = read_json(policy_file, "policy")
@@ -1393,20 +1560,20 @@ def run(input_dir, target_file, policy_file, authored_dir, out_dir):
     if authored_dir:
         path = pathlib.Path(authored_dir) / "catalog.json"
         authored = read_json(path, "authored catalog")
-    builder = Builder(shards, digest, target, policy, authored)
+    admitted = checked_admission(admission, source_closure, input_dir, normalization_policy) if admission or source_closure else None
+    builder = Builder(shards, digest, target, policy, authored, admitted)
     catalog, sources, revision = builder.build()
     conflicts = sorted(builder.conflicts, key=lambda c: (natural(c["fact"]), c["kind"], dumps(c)))
     catalog_bytes = dumps(catalog).encode()
     out = pathlib.Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "catalog.json").write_bytes(catalog_bytes)
-    (out / "sources.json").write_text(dumps(sources), encoding="utf-8")
-    (out / "conflicts.json").write_text(dumps({"format": "navzeroth-world-content-conflicts", "schema_version": 1,
+    (out / "sources.json").write_bytes(dumps(sources).encode("utf-8"))
+    (out / "conflicts.json").write_bytes(dumps({"format": "navzeroth-world-content-conflicts", "schema_version": 1,
                                                 "revision": revision, "precedence": policy["precedence"],
-                                                "conflicts": conflicts}), encoding="utf-8")
+                                                "conflicts": conflicts}).encode("utf-8"))
     result = summary(catalog, sources, conflicts, builder, revision, catalog_bytes)
-    (out / "summary.json").write_text(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
-                                      encoding="utf-8")
+    (out / "summary.json").write_bytes((json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n").encode("utf-8"))
     return result
 
 
@@ -1417,9 +1584,12 @@ def main(argv=None):
     p.add_argument("--policy", required=True, help="release/v1/accepted-origins.json")
     p.add_argument("--authored", help="authored slice directory (catalog.json)")
     p.add_argument("--out", required=True, help="output directory")
+    p.add_argument("--normalization-policy", help="reviewed source normalization policy")
+    p.add_argument("--admission", help="retained source admission registry")
+    p.add_argument("--source-closure", help="exact retained world-source closure")
     a = p.parse_args(argv)
     try:
-        result = run(a.input, a.target, a.policy, a.authored, a.out)
+        result = run(a.input, a.target, a.policy, a.authored, a.out, a.admission, a.source_closure, a.normalization_policy)
     except InputError as error:
         print(f"world_to_content: {error}", file=sys.stderr)
         return 1
