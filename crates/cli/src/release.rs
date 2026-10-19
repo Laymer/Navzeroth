@@ -80,6 +80,26 @@ pub struct Report {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub world_data: Option<WorldDataReport>,
 }
+/// A preparation verdict retains every checked I/O result but cannot publish.
+#[derive(Debug, Serialize)]
+pub struct BuildReport {
+    pub phase: release::BuildPhase,
+    pub build_ready: bool,
+    pub publication_allowed: bool,
+    pub report: Report,
+}
+impl BuildReport {
+    pub fn new(mut report: Report, phase: release::BuildPhase) -> Self {
+        let build_ready = phase.ready(&report.readiness);
+        report.readiness.publication_allowed = false;
+        Self {
+            phase,
+            build_ready,
+            publication_allowed: false,
+            report,
+        }
+    }
+}
 /// What the accepted-origin policy accepted (ADR 0007 §3 and §5). Accepted
 /// unknowns stay unknown; they are counted here, never written as zero.
 #[derive(Debug, Default, Serialize)]
@@ -1319,6 +1339,35 @@ mod tests {
             pending: vec![],
             publication_allowed: true,
             blockers: vec![],
+        }
+    }
+    #[test]
+    fn preparation_wrapper_preserves_source_evidence_but_cannot_publish() {
+        for phase in [release::BuildPhase::Prebuild, release::BuildPhase::Draft] {
+            let mut readiness = mapping_report();
+            readiness.report_version = 4;
+            let prepared = BuildReport::new(
+                Report {
+                    readiness,
+                    candidate_source_commit: "a".repeat(40),
+                    production_sha256: "b".repeat(64),
+                    inventory_sha256: "c".repeat(64),
+                    verified_evidence_files: 7,
+                    verified_content_packs: 2,
+                    world_data: None,
+                },
+                phase,
+            );
+            assert!(prepared.build_ready);
+            assert!(
+                !prepared.publication_allowed && !prepared.report.readiness.publication_allowed
+            );
+            let json = serde_json::to_value(prepared).unwrap();
+            assert_eq!(json["report"]["candidate_source_commit"], "a".repeat(40));
+            assert_eq!(json["report"]["verified_evidence_files"], 7);
+            assert_eq!(json["report"]["verified_content_packs"], 2);
+            assert_eq!(json["publication_allowed"], false);
+            assert_eq!(json["report"]["publication_allowed"], false);
         }
     }
     #[test]
