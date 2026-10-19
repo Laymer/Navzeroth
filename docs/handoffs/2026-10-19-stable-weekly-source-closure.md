@@ -46,3 +46,45 @@ publication suffix filter. It excludes only the current explicit target's world
 readiness report. Tests change same-named source-material and different-build
 world reports between passes; both now prevent publication. Historical generic
 publication helper semantics remain unchanged.
+
+## Actual original-authored #212 output rebinding
+
+Independent world/root review cleared immutable code
+`daad17bbb82e2da2c2b4b26b22ad083ba2425eda`; no later Python code edits.
+Generated outputs committed4242022a902fc901eed1de1ab5283c942793aaad.
+Original authored r1 SHA8bac8b20ee75bb1c6d73b1b6eb57285ef9101a22d360e5ae671d1a2511d48d86
+and both accepted-origin/normalization policies remain unchanged. Every non-derived
+admission source is identical; same19 upstream originals/22 corresponding files.
+Every retained corresponding file was independently compared to `git show daad:path`.
+New world revision navzeroth-world-1.60.1.70450-d390b8d8a9e842248d63c0f8.
+Historical867/2ec code objects and all old evidence remain intact.
+
+Actual offline unbound mapper9.76s, retainer2.83s, admitted mapper11.96s passed.
+Own exact-source CLI build passed; offline source-sync9.03s passed. Two bound mapper
+runs exactly matched committed424 outputs in25.08s:90selectedfiles253642477bytes,
+35rawshards/19originals. Catalog152853638bytes SHA48b13e5390c371763a5808d5c2fe38f878582cf0f3e38738a38a7f1359d8b47e.
+Git LFS object/pointer fsck passed. Actual cache-based restoration rehearsal replaced
+only own19original files with their exact committed canonical pointers, ran retainer
+against existing verified cache, and verified all restored bytes and registry/closure/
+attributes unchanged (2.83s). Original working bytes were retained for failure rollback.
+This was not a new network acquisition or generic fact regeneration.
+
+Actual debug CLI pack build103.22s/6696932KiB exact-child peak RSS and independent
+verify48.56s/5363204KiB passed:3files367731829bytes,393597declaredcoverage gaps,
+distribution_eligible=true. These are shared Linux debug measurements, not hosted
+Windows/installed application or ordinary-PC performance evidence.
+
+Current source-updates policy registry hash only was rebound atb11c239d; existing
+four-repository scope/grants/budgets/reviewer history unchanged. Normal merge937fb0c
+retains rootad5 fixture fix and its historical material reviews. Source-pipeline
+integration9tests and library4tests passed; source production behavior unchanged.
+An initial filtered --lib command ran only4tests; the separate integration target
+was then correctly run and9passed. No passing claim is made for unrun targets.
+
+New exact records: docs/data/stable-weekly-world-212-generation-v1.json and
+stable-weekly-world-212-parity-linux-v1.json. Public raw URLs for original daad
+history remain unverified until parent pushes that reachable history; hosted
+Windows parity and one real network weekly/draft run remain unverified. No signing,
+manual smoke or release-readiness claim. Parent must independently review new
+output bindings, run fresh protected source checks and register main workflow before
+one bounded network verification; generated update PR remains deferred.
