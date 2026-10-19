@@ -91,3 +91,37 @@ Material staging correctly rejected the initial index path under private release
 metadata. Moved the identical public bytes into tracked production
 content/source-materials/corresponding-source-index.json; no material boundary
 was relaxed. Final evidence hash below supersedes the earlier index-path hash.
+
+Actual prebuild refusal proof (`release-build-readiness --version1.0.0-rc.1`)
+returned exit1, build_ready=false, publication_allowed=false, candidate_ready=false
+with exact pending checks/binding/functional obligations. It was run before the
+public index path correction; its observation/pending evidence remains applicable,
+while final selected material validation is rerun after that correction.
+
+Regenerate with `python3 scripts/generate-stable-inventory.py --root . --cli
+target/debug/azeroth-cli`; the CLI must be freshly built from the reviewed tree.
+Actual pack catalogs remain LFS pointers in Git (world96259e9d..., authored2ac50237...).
+No data cache was mutated and no network/quota expansion was used.
+
+Production-path index regeneration passed69.31s/5366656KiB and exactly matched
+the committed final output bytes. Final evidence27,939,748 bytes SHA256
+7d3e6c5e13eb8db0791db36b3c7f7f6daf9775d2486a8450efd9575e5cbd4f72.
+Inventory, private validation and public-index hashes remain as listed above.
+The material guard was preserved, rather than allowing private release paths.
+
+Final clean-production fb85312 real material staging PASSED113.62s/5652836KiB
+Linux peak child RSS. `/tmp/navzeroth-inventory-selected-materials` contains82
+selected files394972187 bytes,4 source materials,23 corresponding-source refs
+(including the index mapping22 code/terms files), and1 raw normalization report.
+RELEASE_MATERIALS.json SHA256
+c249c851ff2bde0a73fefff3d3e3e2006d90b1ae28d6a3dcea9c875df9900b0b.
+A separate Python verifier streamed every staged file in1MiB chunks, checked exact
+length/hash, exact declared tree/no extras, all22 source object mappings and
+immutable URLs, and absence of private permission/admission index fields: PASS.
+No source observations, manual acceptance, Windows performance or publication
+readiness were inferred from this material-selection success.
+
+Next: independent review/integration as a separate feature PR, original212 exact
+world-only rehearsal, later objective/roles/dungeon feature regeneration, bundled
+receipt/manifest binding, hosted Windows checks and exact-installer owner smoke.
+No push was performed; LFS objects are local and fsck-valid, not claimed uploaded.
