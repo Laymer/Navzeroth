@@ -99,3 +99,31 @@ installation, ZIP/resource/source closure, signature and PE metadata checks befo
 tagging. Its receipt is labelled prepared-rc-verification, not draft/public
 download evidence. Draft/public workflows still verify independently downloaded
 bytes against the recorded tag-packaging hash. Hosted execution remains pending.
+
+## Release preparation integration
+
+PR #209 merged at 2026-10-19T10:43:41Z as
+`fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3`. Both independent read-only
+reviewers approved final head `da390c44c865108f543723c0f7cda2a41ff85623`.
+All ten required checks passed: CI 39236035802, Coverage 39236035691,
+Windows package 39236035787; source/parity 39236035740 also passed.
+The combined coverage receipt evaluated PR merge tree
+`de82179d574e40b04d0020d7da3581dd39c0db90`, with no errors.
+Prepared Windows installation verified 544 installed files, matching addon ZIP
+and dependency closure; installer and application were NotSigned, with version
+strings 1.0.0-rc.1. Native smoke passed 31 checks, including all three picker
+cancellations and unchanged workflow selections. Upgrade population passed 5
+checks; verification passed 7; downgrade refusal exited 2 and retained the RC.
+These are prepared PR artifact checks, not public download verification.
+
+Readiness/material selection both exited 0 on the exact resulting commit above:
+[readiness](../releases/1.0.0-rc.1-release-commit-readiness.json),
+[materials](../releases/1.0.0-rc.1-release-commit-materials.json).
+Production fingerprint `721f07a667fc9aa3f1e99db8adf86bbd480f57526a8250a5fafc99150b580a21`;
+69 blockers, publication allowed, candidate/stable false, zero verified evidence
+and content packs, empty material selection. This supersedes the earlier
+preparation fingerprint for exact release-commit verification.
+
+Fresh resulting-commit checks are running: CI 39239511840, Coverage 39239511851,
+Windows package 39239511894, source/parity 39239511923, and dispatched CI with
+stability 39239530676. No tag or publication is inferred from pending runs.

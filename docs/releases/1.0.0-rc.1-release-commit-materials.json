@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-rc.1",
+  "candidate_source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
+  "production_sha256": "721f07a667fc9aa3f1e99db8adf86bbd480f57526a8250a5fafc99150b580a21",
+  "inventory_sha256": "5ab72cef555964caa9c37d90016ce7761206c07e3a75eb1cb46447de71a7b7cc",
+  "target": null,
+  "packs": [],
+  "sources": [],
+  "files": []
+}
