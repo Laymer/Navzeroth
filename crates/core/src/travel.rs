@@ -17,6 +17,19 @@
 //! - Stateful actions (return or teleport modes, consumed resources, known
 //!   cooldowns) are never relaxed mid-route. At most one verified stateful
 //!   edge may close a route as its final hop.
+//! - `Unverified` edges are excluded unless the caller names them in
+//!   [`RouteOptions::inferred_edges`]: generated walk and flight edges whose
+//!   evidence is all `inferred` (ADR 0007 §8), accepted only when the content
+//!   policy accepts inferred values. Their cost still needs known
+//!   `expected_ms` and `wait_ms`, and a route using one is an estimate.
+//! - With [`RouteOptions::accept_unknown_requirements`] (ADR 0007 §5), an
+//!   accepted inferred edge whose requirement observation is unknown,
+//!   unsupported or restricted is usable as an estimate. The hop records
+//!   `requirement_assumed`; the requirement is never reported as satisfied.
+//!   Authored and verified edges keep the strict rule.
+//! - A graph holds at most [`MAX_TRAVEL_NODES`] nodes and [`MAX_TRAVEL_EDGES`]
+//!   edges. [`TravelGraph`] validates and assesses a graph once so that many
+//!   queries over one graph (the planner) do not repeat that work.
 //!
 //! The module is pure: it reads no clock, performs no I/O and uses only
 //! ordered collections, so equal inputs give an identical result regardless of
@@ -24,8 +37,8 @@
 use crate::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use crate::{
     entities::{
-        DurationRange, EdgeStatus, NodeRef, TravelEdge, TravelMode, TravelNode, TravelSegment,
-        unique,
+        Confidence, DurationRange, EdgeStatus, EvidenceRecord, NodeRef, TravelEdge, TravelMode,
+        TravelNode, TravelSegment,
     },
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationIssue, Truth, evaluate},
@@ -38,6 +51,13 @@ use std::{
     collections::{BTreeMap, BTreeSet, BinaryHeap},
 };
 
+/// Largest node count a route search accepts. The generated whole-world pack
+/// for 1.60.1.70450 has 8,800 nodes (ADR 0007 §2); about 3.7 times headroom.
+pub const MAX_TRAVEL_NODES: usize = 32_768;
+/// Largest edge count a route search accepts; the whole-world pack has 32,265
+/// edges (31,950 walking, 315 flight); about 4 times headroom.
+pub const MAX_TRAVEL_EDGES: usize = 131_072;
+
 /// Caller-supplied inputs that the contract has no field for.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct RouteOptions {
@@ -45,6 +65,54 @@ pub struct RouteOptions {
     /// boarding a boat. Edges without an entry add 0. Keys must name edges of
     /// the graph. Danger or preference penalties never belong here.
     pub service_ms: BTreeMap<EdgeId, Millis>,
+    /// `Unverified` edges the caller accepts because every piece of their
+    /// evidence is `inferred` and the active content policy accepts inferred
+    /// travel (ADR 0007 §8). Empty by default, so content without that policy
+    /// keeps excluding unverified edges. Keys must name edges of the graph;
+    /// see [`inferred_edges`].
+    pub inferred_edges: BTreeSet<EdgeId>,
+    /// Accept an edge of [`Self::inferred_edges`] whose requirement observation
+    /// is unknown, unsupported or restricted (ADR 0007 §5: unknowns are
+    /// accepted). Such a hop is an estimate with `requirement_assumed`; no
+    /// other edge is relaxed. False by default.
+    pub accept_unknown_requirements: bool,
+}
+
+/// Non-stateful `Unverified` edges whose evidence is non-empty, all present in
+/// `evidence` and free of conflicts, with at least one `inferred` record and
+/// every other record `publisher_documented` or `verified_on_build`: the
+/// inference is the only weakness (a generated flight cites the documented
+/// taxi path and the inferred duration). A caller adds these to
+/// [`RouteOptions::inferred_edges`] only under a policy that accepts inferred
+/// values; nothing here decides that.
+pub fn inferred_edges(edges: &[TravelEdge], evidence: &[EvidenceRecord]) -> BTreeSet<EdgeId> {
+    let evidence: BTreeMap<&EvidenceId, &EvidenceRecord> =
+        evidence.iter().map(|e| (&e.id, e)).collect();
+    edges
+        .iter()
+        .filter(|edge| {
+            edge.status == EdgeStatus::Unverified
+                && !is_stateful(edge)
+                && !edge.evidence.is_empty()
+                && edge.evidence.iter().all(|id| {
+                    evidence.get(id).is_some_and(|e| {
+                        e.conflicts.is_empty()
+                            && matches!(
+                                e.confidence,
+                                Confidence::Inferred
+                                    | Confidence::PublisherDocumented
+                                    | Confidence::VerifiedOnBuild
+                            )
+                    })
+                })
+                && edge.evidence.iter().any(|id| {
+                    evidence
+                        .get(id)
+                        .is_some_and(|e| e.confidence == Confidence::Inferred)
+                })
+        })
+        .map(|edge| edge.id.clone())
+        .collect()
 }
 
 /// Cost term that made an edge unusable.
@@ -113,6 +181,11 @@ pub struct RouteHop {
     pub stateful: bool,
     pub consumes_resource: Observation<bool>,
     pub cooldown_ms: Observation<Millis>,
+    /// True when the edge's requirement is unknown, unsupported or restricted
+    /// and the caller accepted it as an estimate
+    /// ([`RouteOptions::accept_unknown_requirements`]). Never "satisfied".
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub requirement_assumed: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -126,11 +199,16 @@ impl Route {
     pub fn end(&self) -> &NodeRef {
         self.hops.last().map_or(&self.start, |hop| &hop.to)
     }
-    /// True if any hop rests on an estimated edge.
+    /// True if any hop rests on an estimated edge or an accepted inferred
+    /// (`Unverified`) edge.
     pub fn is_estimate(&self) -> bool {
         self.hops
             .iter()
-            .any(|hop| hop.status == EdgeStatus::Estimated)
+            .any(|hop| matches!(hop.status, EdgeStatus::Estimated | EdgeStatus::Unverified))
+    }
+    /// True if any hop's requirement is unknown and only assumed.
+    pub fn assumes_requirements(&self) -> bool {
+        self.hops.iter().any(|hop| hop.requirement_assumed)
     }
     /// Contract segments for a `RoutePlan`. Each segment carries the edge's
     /// own travel duration and range (waits and service time are in
@@ -178,6 +256,7 @@ struct Prepared<'a> {
     cost: u64,
     service: Millis,
     stateful: bool,
+    assumed: bool,
 }
 
 type Label = (u64, usize, Vec<EdgeId>);
@@ -203,9 +282,13 @@ fn assess<'a>(
         EdgeStatus::TemporarilyUnavailable => {
             return Ok(Err(TravelExclusion::TemporarilyUnavailable));
         }
-        EdgeStatus::Unverified => return Ok(Err(TravelExclusion::Unverified)),
+        EdgeStatus::Unverified if !options.inferred_edges.contains(&edge.id) => {
+            return Ok(Err(TravelExclusion::Unverified));
+        }
+        EdgeStatus::Unverified => {}
         EdgeStatus::Verified | EdgeStatus::Estimated => {}
     }
+    let mut assumed = false;
     match (edge.requirements.value(), edge.requirements.status()) {
         (Some(predicate), _) => {
             let result = evaluate(predicate, context)?;
@@ -220,6 +303,13 @@ fn assess<'a>(
             }
         }
         (None, ObservationStatus::NotApplicable) => {}
+        // Reached only for accepted inferred edges: other unverified edges
+        // returned above, and verified or estimated ones keep the strict rule.
+        (None, _)
+            if options.accept_unknown_requirements && edge.status == EdgeStatus::Unverified =>
+        {
+            assumed = true;
+        }
         (None, status) => return Ok(Err(TravelExclusion::RequirementUnavailable { status })),
     }
     let Some(expected) = edge.expected_ms.value() else {
@@ -260,20 +350,23 @@ fn assess<'a>(
         cost,
         service,
         stateful,
+        assumed,
     }))
 }
 
 fn build_route(
     start: NodeRef,
     label: &Label,
-    prepared: &BTreeMap<&EdgeId, &Prepared<'_>>,
+    graph: &TravelGraph<'_>,
     control: &mut dyn SearchControl,
 ) -> Result<Route> {
     let mut hops = Vec::with_capacity(label.2.len());
     for id in &label.2 {
         control.checkpoint(SearchPhase::RouteExpansion)?;
-        let item = prepared
+        let item = graph
+            .by_edge
             .get(id)
+            .map(|index| &graph.usable[*index])
             .ok_or_else(|| invalid("Route references an unusable edge"))?;
         let edge = item.edge;
         hops.push(RouteHop {
@@ -290,6 +383,7 @@ fn build_route(
             stateful: item.stateful,
             consumes_resource: edge.consumes_resource.clone(),
             cooldown_ms: edge.cooldown_ms.clone(),
+            requirement_assumed: item.assumed,
         });
     }
     Ok(Route {
@@ -299,16 +393,269 @@ fn build_route(
     })
 }
 
+/// Unique identifiers within a travel-graph bound.
+fn unique_within<'a, T: Ord + 'a>(
+    values: impl IntoIterator<Item = &'a T>,
+    max: usize,
+) -> Result<()> {
+    let mut seen = BTreeSet::new();
+    for value in values {
+        if !seen.insert(value) {
+            return Err(invalid("Duplicate record identifier"));
+        }
+        if seen.len() > max {
+            return Err(invalid("Travel graph exceeds its node or edge bound"));
+        }
+    }
+    Ok(())
+}
+
+/// A travel graph validated and assessed once for one evaluation context and
+/// one set of options. Every query gives the same result as
+/// [`shortest_route_controlled`] over the same inputs.
+pub struct TravelGraph<'a> {
+    by_node: BTreeMap<&'a NodeId, &'a TravelNode>,
+    /// Usable edges sorted by id, stateful ones included.
+    usable: Vec<Prepared<'a>>,
+    by_edge: BTreeMap<&'a EdgeId, usize>,
+    /// Target-independent exclusions, sorted by edge id.
+    exclusions: Vec<ExcludedEdge>,
+    /// Non-stateful usable edges by start node, in edge-id order.
+    adjacency: BTreeMap<&'a NodeId, Vec<usize>>,
+}
+
+impl<'a> TravelGraph<'a> {
+    /// Validate and assess a graph. Errors as for [`shortest_route`], except
+    /// that each query checks its own endpoints.
+    pub fn prepare(
+        nodes: &'a [TravelNode],
+        edges: &'a [TravelEdge],
+        context: &EvaluationContext<'_>,
+        options: &RouteOptions,
+        control: &mut dyn SearchControl,
+    ) -> Result<Self> {
+        Self::prepare_with(nodes, edges, context, options, None, control)
+    }
+
+    fn prepare_with(
+        nodes: &'a [TravelNode],
+        edges: &'a [TravelEdge],
+        context: &EvaluationContext<'_>,
+        options: &RouteOptions,
+        endpoints: Option<(&NodeId, &NodeId)>,
+        control: &mut dyn SearchControl,
+    ) -> Result<Self> {
+        control.checkpoint(SearchPhase::ValidateInputs)?;
+        unique_within(nodes.iter().map(|node| &node.id), MAX_TRAVEL_NODES)?;
+        unique_within(edges.iter().map(|edge| &edge.id), MAX_TRAVEL_EDGES)?;
+        for node in nodes {
+            control.checkpoint(SearchPhase::ValidateInputs)?;
+            node.position
+                .map
+                .context
+                .ensure_compatible(&context.snapshot.context)?;
+        }
+        for edge in edges {
+            control.checkpoint(SearchPhase::ValidateInputs)?;
+            edge.context.ensure_compatible(&context.snapshot.context)?;
+        }
+        let by_node: BTreeMap<&NodeId, &TravelNode> = nodes.iter().map(|n| (&n.id, n)).collect();
+        let edge_ids: BTreeSet<&EdgeId> = edges.iter().map(|edge| &edge.id).collect();
+        let keys: [(Vec<&EdgeId>, &'static str); 2] = [
+            (
+                options.service_ms.keys().collect(),
+                "Service time names an unknown edge",
+            ),
+            (
+                options.inferred_edges.iter().collect(),
+                "Inferred edge option names an unknown edge",
+            ),
+        ];
+        for (keys, message) in keys {
+            if keys.len() > MAX_TRAVEL_EDGES {
+                return Err(invalid("Travel options exceed the edge bound"));
+            }
+            if keys.iter().any(|id| !edge_ids.contains(id)) {
+                return Err(invalid(message));
+            }
+        }
+        if let Some((origin, target)) = endpoints
+            && (!by_node.contains_key(origin) || !by_node.contains_key(target))
+        {
+            return Err(invalid("Route endpoint is not a node of the graph"));
+        }
+
+        let mut sorted: Vec<&TravelEdge> = edges.iter().collect();
+        sorted.sort_by(|a, b| a.id.cmp(&b.id));
+        let mut exclusions = Vec::new();
+        let mut usable = Vec::new();
+        for edge in sorted {
+            control.checkpoint(SearchPhase::EdgeAssessment)?;
+            let (Some(from), Some(to)) = (by_node.get(&edge.from.id), by_node.get(&edge.to.id))
+            else {
+                return Err(invalid("Travel edge references an unknown node"));
+            };
+            if edge.from.map != from.position.map || edge.to.map != to.position.map {
+                exclusions.push(ExcludedEdge {
+                    edge: edge.id.clone(),
+                    reason: TravelExclusion::MapMismatch,
+                });
+                continue;
+            }
+            match assess(edge, context, options)? {
+                Ok(prepared) => usable.push(prepared),
+                Err(reason) => exclusions.push(ExcludedEdge {
+                    edge: edge.id.clone(),
+                    reason,
+                }),
+            }
+        }
+        let by_edge = usable
+            .iter()
+            .enumerate()
+            .map(|(index, item)| (&item.edge.id, index))
+            .collect();
+        let mut adjacency: BTreeMap<&NodeId, Vec<usize>> = BTreeMap::new();
+        for (index, item) in usable.iter().enumerate() {
+            control.checkpoint(SearchPhase::EdgeAssessment)?;
+            if !item.stateful {
+                adjacency.entry(&item.edge.from.id).or_default().push(index);
+            }
+        }
+        Ok(Self {
+            by_node,
+            usable,
+            by_edge,
+            exclusions,
+            adjacency,
+        })
+    }
+
+    /// Cheapest route from `origin` to `target` over the prepared graph.
+    pub fn route(
+        &self,
+        origin: &NodeId,
+        target: &NodeId,
+        control: &mut dyn SearchControl,
+    ) -> Result<RouteSearch> {
+        let (Some(start_node), Some(_)) = (self.by_node.get(origin), self.by_node.get(target))
+        else {
+            return Err(invalid("Route endpoint is not a node of the graph"));
+        };
+        let start = NodeRef {
+            id: start_node.id.clone(),
+            map: start_node.position.map.clone(),
+        };
+        // A stateful edge may only close the route onto this target.
+        let mut exclusions = self.exclusions.clone();
+        let mut closing = Vec::new();
+        for item in self.usable.iter().filter(|item| item.stateful) {
+            control.checkpoint(SearchPhase::EdgeAssessment)?;
+            if item.edge.to.id == *target {
+                closing.push(item);
+            } else {
+                exclusions.push(ExcludedEdge {
+                    edge: item.edge.id.clone(),
+                    reason: TravelExclusion::StatefulNotFinalHop,
+                });
+            }
+        }
+        exclusions.sort_by(|a, b| a.edge.cmp(&b.edge));
+
+        // Dijkstra. The label (cost, hops, edge ids) is totally ordered and grows
+        // strictly along any extension, so settled labels are optimal even with
+        // zero-cost edges and cycles. The search stops once the target settles:
+        // every node settled later has a label at least the target's, so a
+        // stateful edge closing from it is strictly worse.
+        let mut best: BTreeMap<&NodeId, Label> = BTreeMap::new();
+        let mut settled: BTreeMap<&NodeId, Label> = BTreeMap::new();
+        let mut heap = BinaryHeap::new();
+        let origin: &NodeId = &start_node.id;
+        best.insert(origin, (0, 0, Vec::new()));
+        heap.push(Reverse((0u64, 0usize, Vec::<EdgeId>::new(), origin)));
+        while let Some(Reverse((cost, hops, path, node))) = heap.pop() {
+            control.checkpoint(SearchPhase::RouteExpansion)?;
+            if settled.contains_key(node) {
+                continue;
+            }
+            for index in self.adjacency.get(node).into_iter().flatten() {
+                control.checkpoint(SearchPhase::RouteExpansion)?;
+                let item = &self.usable[*index];
+                let next = &item.edge.to.id;
+                if settled.contains_key(next) {
+                    continue;
+                }
+                let mut next_path = Vec::with_capacity(path.len() + 1);
+                next_path.extend_from_slice(&path);
+                next_path.push(item.edge.id.clone());
+                let label = (add(cost, item.cost)?, hops + 1, next_path);
+                if best.get(next).is_none_or(|known| label < *known) {
+                    best.insert(next, label.clone());
+                    heap.push(Reverse((label.0, label.1, label.2, next)));
+                }
+            }
+            let done = node == target;
+            settled.insert(node, (cost, hops, path));
+            if done {
+                break;
+            }
+        }
+
+        // Candidates: the plain route and every verified stateful edge that closes
+        // a settled node onto the target. The same label order decides.
+        let mut chosen: Option<Label> = settled.get(target).cloned();
+        for item in closing {
+            control.checkpoint(SearchPhase::RouteExpansion)?;
+            let Some(base) = settled.get(&item.edge.from.id) else {
+                continue;
+            };
+            let mut path = base.2.clone();
+            path.push(item.edge.id.clone());
+            let label = (add(base.0, item.cost)?, base.1 + 1, path);
+            if chosen.as_ref().is_none_or(|known| label < *known) {
+                chosen = Some(label);
+            }
+        }
+
+        let outcome = match chosen {
+            Some(label) => RouteOutcome::Complete {
+                route: build_route(start, &label, self, control)?,
+            },
+            None => {
+                let mut frontier: Option<&Label> = None;
+                for label in settled.values() {
+                    control.checkpoint(SearchPhase::RouteExpansion)?;
+                    if frontier.is_none_or(|known| label.0 > known.0) {
+                        frontier = Some(label);
+                    }
+                }
+                let label = frontier.ok_or_else(|| invalid("Search did not settle the origin"))?;
+                RouteOutcome::Incomplete {
+                    target: target.clone(),
+                    reached: build_route(start, label, self, control)?,
+                    reachable: settled.keys().map(|id| (*id).clone()).collect(),
+                }
+            }
+        };
+        control.checkpoint(SearchPhase::RouteExpansion)?;
+        Ok(RouteSearch {
+            outcome,
+            exclusions,
+        })
+    }
+}
+
 /// Cheapest route from `origin` to `target`.
 ///
 /// Ties resolve by lowest total milliseconds, then fewer hops, then the
 /// lexicographically smallest sequence of edge ids. The caller supplies the
 /// snapshot, freshness and limits inside `context`; nothing reads a clock.
 ///
-/// Errors: `InvalidInput` for more than 1024 nodes or edges, duplicate ids,
-/// dangling node references, unknown origin, target or option keys and
-/// duration overflow; `BuildMismatch` if any node, edge or the snapshot lies
-/// in a different data context; evaluation errors propagate unchanged.
+/// Errors: `InvalidInput` for more than [`MAX_TRAVEL_NODES`] nodes or
+/// [`MAX_TRAVEL_EDGES`] edges, duplicate ids, dangling node references,
+/// unknown origin, target or option keys and duration overflow;
+/// `BuildMismatch` if any node, edge or the snapshot lies in a different data
+/// context; evaluation errors propagate unchanged.
 pub fn shortest_route(
     nodes: &[TravelNode],
     edges: &[TravelEdge],
@@ -338,147 +685,13 @@ pub fn shortest_route_controlled(
     options: &RouteOptions,
     control: &mut dyn SearchControl,
 ) -> Result<RouteSearch> {
-    control.checkpoint(SearchPhase::ValidateInputs)?;
-    unique(nodes.iter().map(|node| &node.id))?;
-    unique(edges.iter().map(|edge| &edge.id))?;
-    for node in nodes {
-        control.checkpoint(SearchPhase::ValidateInputs)?;
-        node.position
-            .map
-            .context
-            .ensure_compatible(&context.snapshot.context)?;
-    }
-    for edge in edges {
-        control.checkpoint(SearchPhase::ValidateInputs)?;
-        edge.context.ensure_compatible(&context.snapshot.context)?;
-    }
-    let by_node: BTreeMap<&NodeId, &TravelNode> = nodes.iter().map(|n| (&n.id, n)).collect();
-    crate::entities::bounded(options.service_ms.len())?;
-    let edge_ids: BTreeSet<&EdgeId> = edges.iter().map(|edge| &edge.id).collect();
-    if options.service_ms.keys().any(|id| !edge_ids.contains(id)) {
-        return Err(invalid("Service time names an unknown edge"));
-    }
-    let (Some(start_node), Some(_)) = (by_node.get(origin), by_node.get(target)) else {
-        return Err(invalid("Route endpoint is not a node of the graph"));
-    };
-    let start = NodeRef {
-        id: start_node.id.clone(),
-        map: start_node.position.map.clone(),
-    };
-
-    let mut sorted: Vec<&TravelEdge> = edges.iter().collect();
-    sorted.sort_by(|a, b| a.id.cmp(&b.id));
-
-    let mut exclusions = Vec::new();
-    let mut usable = Vec::new();
-    for edge in sorted {
-        control.checkpoint(SearchPhase::EdgeAssessment)?;
-        let (Some(from), Some(to)) = (by_node.get(&edge.from.id), by_node.get(&edge.to.id)) else {
-            return Err(invalid("Travel edge references an unknown node"));
-        };
-        if edge.from.map != from.position.map || edge.to.map != to.position.map {
-            exclusions.push(ExcludedEdge {
-                edge: edge.id.clone(),
-                reason: TravelExclusion::MapMismatch,
-            });
-            continue;
-        }
-        match assess(edge, context, options)? {
-            Ok(prepared) if prepared.stateful && edge.to.id != *target => {
-                exclusions.push(ExcludedEdge {
-                    edge: edge.id.clone(),
-                    reason: TravelExclusion::StatefulNotFinalHop,
-                });
-            }
-            Ok(prepared) => usable.push(prepared),
-            Err(reason) => exclusions.push(ExcludedEdge {
-                edge: edge.id.clone(),
-                reason,
-            }),
-        }
-    }
-    let prepared: BTreeMap<&EdgeId, &Prepared<'_>> =
-        usable.iter().map(|item| (&item.edge.id, item)).collect();
-    let mut adjacency: BTreeMap<&NodeId, Vec<&Prepared<'_>>> = BTreeMap::new();
-    for item in usable.iter().filter(|item| !item.stateful) {
-        control.checkpoint(SearchPhase::EdgeAssessment)?;
-        adjacency.entry(&item.edge.from.id).or_default().push(item);
-    }
-
-    // Dijkstra. The label (cost, hops, edge ids) is totally ordered and grows
-    // strictly along any extension, so settled labels are optimal even with
-    // zero-cost edges and cycles.
-    let mut best: BTreeMap<NodeId, Label> = BTreeMap::new();
-    let mut settled: BTreeMap<NodeId, Label> = BTreeMap::new();
-    let mut heap = BinaryHeap::new();
-    best.insert(origin.clone(), (0, 0, Vec::new()));
-    heap.push(Reverse((
-        0u64,
-        0usize,
-        Vec::<EdgeId>::new(),
-        origin.clone(),
-    )));
-    while let Some(Reverse((cost, hops, path, node))) = heap.pop() {
-        control.checkpoint(SearchPhase::RouteExpansion)?;
-        if settled.contains_key(&node) {
-            continue;
-        }
-        for item in adjacency.get(&node).into_iter().flatten() {
-            control.checkpoint(SearchPhase::RouteExpansion)?;
-            let next = &item.edge.to.id;
-            if settled.contains_key(next) {
-                continue;
-            }
-            let mut next_path = path.clone();
-            next_path.push(item.edge.id.clone());
-            let label = (add(cost, item.cost)?, hops + 1, next_path);
-            if best.get(next).is_none_or(|known| label < *known) {
-                best.insert(next.clone(), label.clone());
-                heap.push(Reverse((label.0, label.1, label.2, next.clone())));
-            }
-        }
-        settled.insert(node, (cost, hops, path));
-    }
-
-    // Candidates: the plain route and every verified stateful edge that closes
-    // a settled node onto the target. The same label order decides.
-    let mut chosen: Option<Label> = settled.get(target).cloned();
-    for item in usable.iter().filter(|item| item.stateful) {
-        control.checkpoint(SearchPhase::RouteExpansion)?;
-        let Some(base) = settled.get(&item.edge.from.id) else {
-            continue;
-        };
-        let mut path = base.2.clone();
-        path.push(item.edge.id.clone());
-        let label = (add(base.0, item.cost)?, base.1 + 1, path);
-        if chosen.as_ref().is_none_or(|known| label < *known) {
-            chosen = Some(label);
-        }
-    }
-
-    let outcome = match chosen {
-        Some(label) => RouteOutcome::Complete {
-            route: build_route(start, &label, &prepared, control)?,
-        },
-        None => {
-            let mut frontier: Option<&Label> = None;
-            for label in settled.values() {
-                control.checkpoint(SearchPhase::RouteExpansion)?;
-                if frontier.is_none_or(|known| label.0 > known.0) {
-                    frontier = Some(label);
-                }
-            }
-            let label = frontier.ok_or_else(|| invalid("Search did not settle the origin"))?;
-            RouteOutcome::Incomplete {
-                target: target.clone(),
-                reached: build_route(start, label, &prepared, control)?,
-                reachable: settled.keys().cloned().collect(),
-            }
-        }
-    };
-    control.checkpoint(SearchPhase::RouteExpansion)?;
-    Ok(RouteSearch {
-        outcome,
-        exclusions,
-    })
+    TravelGraph::prepare_with(
+        nodes,
+        edges,
+        context,
+        options,
+        Some((origin, target)),
+        control,
+    )?
+    .route(origin, target, control)
 }

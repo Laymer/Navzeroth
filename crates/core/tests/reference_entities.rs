@@ -28,7 +28,14 @@ fn reference_records_round_trip_and_reject_semantic_errors() {
     let item = json!({"key":key,"slots":["main_hand"],"two_handed":u,"unique_group":u,"attributes":u,"requirements":u,"effects":u,"evidence":[]});
     let mut bad = item.clone();
     bad["slots"] = json!([]);
-    check::<ItemDefinition>(item, bad);
+    check::<ItemDefinition>(item.clone(), bad);
+    // No slot is accepted only with an explicit not-equippable marker.
+    let mut goods = item;
+    goods["slots"] = json!([]);
+    goods["two_handed"] = json!({"status":"not_applicable"});
+    let mut bad = goods.clone();
+    bad["two_handed"] = json!({"status":"known","value":false});
+    check::<ItemDefinition>(goods, bad);
     let equipped = json!({"context":context,"item_id":"1","variant":u,"instance":u,"modifiers":u});
     let mut bad = equipped.clone();
     bad["variant"] = json!({"status":"unknown","value":"base"});

@@ -93,6 +93,9 @@ export const demoAdapter: CommandAdapter = {
         case "export_local_submission":
         case "get_authored_catalog":
           return { revision: null, records: [], total: 0, next_offset: null };
+        case "get_world_page":
+        case "get_record_origins":
+          throw { code: "PROVIDER_UNAVAILABLE", message: "The world browser needs active content in the native application.", retryable: false } satisfies AppError;
         case "get_catalog_page":
         case "get_dungeon_preparation":
           throw { code: "PROVIDER_UNAVAILABLE", message: "Preparation assessments require imported stored snapshots in the native application.", retryable: false } satisfies AppError;
@@ -198,6 +201,7 @@ export const demoAdapter: CommandAdapter = {
         case "get_content_inspection_page":
         case "stage_content":
         case "activate_content":
+        case "activate_content_set":
         case "rollback_content":
           throw { code: "PROVIDER_UNAVAILABLE", message: "Content changes require the desktop application.", retryable: false } satisfies AppError;
         case "get_party":

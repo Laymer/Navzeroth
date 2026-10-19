@@ -38,3 +38,12 @@ external blocker independently of successful synthetic contract tests.
 `node_facts` is an optional v2 collection of `{ "node": "node-id", "evidence": ["evidence-id"] }`. Empty collections are omitted during serialization so existing v2 drafts retain their canonical bytes; v1 remains unchanged. Each node ID must resolve once into the nested reference catalog. Evidence must be nonempty, unique, resolved, and neither conflicted nor disputed/stale. These records count toward the shared 250,000-identity limit.
 
 Only a node's own facts supply sources for its `[revision,"nodes",node]` release identity. The facts also have a `[revision,"node_facts",node]` identity in the travel domain. Nearby edges/maps and unrelated catalog records never lend a node their sources. No separate desktop list is needed for this provenance metadata. A draft may omit node facts, but full release binding requires a fact record for every node and rejects any claimed record with no source attribution, even when other records in its inventory unit have sources. This is a provenance contract, not new gameplay content or a rights grant.
+
+## World content additions (task V2.8d)
+
+Optional members, omitted when empty, so earlier catalogs keep their bytes:
+`loot_tables` (complete loot templates, references unexpanded, at most 4,096 rows
+each), `EquipmentFacts.name`, `QuestFacts.title`/`givers`/`enders`, and
+`Dungeon.bosses` (resolving to `entities`). An `ItemDefinition` may have no slot
+only when `two_handed` is `not_applicable` (not equippable). Authored packs refuse
+loot tables. Mapping and limits: [WORLD_CONTENT.md](WORLD_CONTENT.md).

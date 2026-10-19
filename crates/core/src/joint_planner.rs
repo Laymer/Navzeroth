@@ -3,7 +3,7 @@
 //! Group utility is the minimum contribution, so one member cannot dominate.
 use crate::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use crate::{
-    entities::{TravelEdge, TravelNode},
+    entities::{EdgeStatus, TravelEdge, TravelNode},
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationResult, Truth, evaluate},
     objective_clustering::{
@@ -42,6 +42,10 @@ pub struct JointInput<'a> {
     pub stopping_node: NodeId,
     pub budget_ms: Millis,
     pub stopping_service_ms: Millis,
+    /// Travel policy of the active content (accepted inferred edges and, with
+    /// `accept_unknown_requirements`, their unknown requirements). Default:
+    /// strict.
+    pub travel_options: &'a RouteOptions,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct MemberReadiness {
@@ -174,11 +178,18 @@ fn calculate_joint(
     for edge in input.edges {
         control.checkpoint(SearchPhase::EdgeAssessment)?;
         let mut ready = true;
+        let assumes_unknown = input.travel_options.accept_unknown_requirements
+            && edge.status == EdgeStatus::Unverified
+            && input.travel_options.inferred_edges.contains(&edge.id);
         for context in input.contexts {
             control.checkpoint(SearchPhase::ParticipantReadiness)?;
             let truth = match (edge.requirements.value(), edge.requirements.status()) {
                 (Some(predicate), _) => evaluate(predicate, context)?.truth,
                 (None, ObservationStatus::NotApplicable) => Truth::True,
+                // An accepted inferred edge's unknown requirement stays an
+                // assumption: the route search marks the hop, nothing here
+                // calls it satisfied.
+                _ if assumes_unknown => Truth::True,
                 _ => Truth::Unknown,
             };
             if truth != Truth::True {
@@ -236,7 +247,7 @@ fn calculate_joint(
                 stopping_service_ms: input.stopping_service_ms,
                 max_steps: 32,
                 context: first,
-                travel_options: &RouteOptions::default(),
+                travel_options: input.travel_options,
             },
             control,
         )?)
@@ -259,7 +270,7 @@ fn calculate_joint(
                 stopping_service_ms: input.stopping_service_ms,
                 max_steps: 32,
                 context: first,
-                travel_options: &RouteOptions::default(),
+                travel_options: input.travel_options,
             },
             control,
         )?

@@ -5,7 +5,9 @@ use std::collections::BTreeSet;
 
 pub const MAX_REGISTRY_BYTES: usize = 1_048_576;
 pub const MAX_FILE_BYTES: u64 = 8 * 1024 * 1024;
-pub const MAX_RETRIEVAL_BYTES: u64 = 1024 * 1024 * 1024;
+/// Schema2 retains bounded original compressed SQL (measured13MiB), not only shards.
+pub const MAX_RETAINED_FILE_BYTES: u64 = 64 * 1024 * 1024;
+pub const MAX_RETRIEVAL_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Rejection {
@@ -170,6 +172,36 @@ fn url(s: &str) -> bool {
                     .all(|c| c.is_ascii_alphanumeric() || c == b'-')
         })
 }
+fn file_url(s: &str, schema: u32) -> bool {
+    if url(s) {
+        return true;
+    }
+    if schema != 2 {
+        return false;
+    }
+    let Some((base, query)) = s.split_once('?') else {
+        return false;
+    };
+    let Some(table) = base
+        .strip_prefix("https://wago.tools/db2/")
+        .and_then(|path| path.strip_suffix("/csv"))
+    else {
+        return false;
+    };
+    let Some((product, build)) = query.split_once("&build=") else {
+        return false;
+    };
+    url(base)
+        && !table.is_empty()
+        && table
+            .bytes()
+            .all(|c| c.is_ascii_alphanumeric() || c == b'_')
+        && matches!(product, "product=wowf" | "product=wow_classic_era")
+        && build.split('.').count() == 4
+        && build.split('.').all(|part| {
+            !part.is_empty() && part.len() <= 9 && part.bytes().all(|c| c.is_ascii_digit())
+        })
+}
 fn path(s: &str) -> bool {
     crate::types::AssetPath::new(s.to_ascii_lowercase()).is_ok()
 }
@@ -187,7 +219,7 @@ impl Registry {
         Ok(registry)
     }
     pub fn validate(&self) -> Result<(), Rejection> {
-        if self.schema_version != 1 {
+        if !matches!(self.schema_version, 1 | 2) {
             return Err(Rejection::UnsupportedVersion);
         }
         if self.sources.len() > 128 {
@@ -258,10 +290,15 @@ impl Registry {
             for f in &s.files {
                 if !path(&f.path)
                     || !paths.insert(f.path.to_ascii_lowercase())
-                    || !url(&f.url)
+                    || !file_url(&f.url, self.schema_version)
                     || !hash(&f.sha256)
                     || f.bytes == 0
-                    || f.bytes > MAX_FILE_BYTES
+                    || f.bytes
+                        > if self.schema_version == 2 {
+                            MAX_RETAINED_FILE_BYTES
+                        } else {
+                            MAX_FILE_BYTES
+                        }
                     || !text(&f.transformation)
                 {
                     return Err(Rejection::InvalidRegistry);

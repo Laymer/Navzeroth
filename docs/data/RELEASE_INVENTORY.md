@@ -63,7 +63,7 @@ independence: the named reviewer must inspect the evidence and methodology.
 The CLI verifies every referenced evidence file's size/hash beneath the selected
 root, rejects symlink/reparse traversal and conflicting pins, and reads at most
 1 GiB of evidence with a 256 MiB per-file bound. Input JSON is at most 16 MiB,
-4,096 units/sources, 250,000 required IDs/imported records/scenarios, 250,000 scenario
+4,096 units/sources, 2,000,000 required IDs/imported records/scenarios (`release::MAX_RECORDS`, ADR 0007), 2,000,000 scenario
 dependencies, and 2,500,000 required-ID/source comparison pairs. Oversize inputs
 fail without truncation. These are investigation limits, not v2 catalog limits.
 No personal exports belong in committed evidence; review and sanitize first.

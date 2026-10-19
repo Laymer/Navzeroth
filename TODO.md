@@ -139,6 +139,17 @@ Publication allowance for 0.9.2 is not readiness for a changed RC.
   [Handoff](docs/handoffs/2026-10-19-v2.7.md). Open: professions/enhancements need
   the Wowhead list pages saved by the owner; generated facts are not registered
   as admitted source files and nothing is activated for planning.
+- [ ] **V2.8 World-data automation** (Eng, owner decisions 2026-10-19,
+  [ADR 0007](docs/decisions/0007-world-data-automation.md)). One pipeline
+  (`data-generators/pipeline.py`, plus a weekly workflow) from download to draft PR.
+  - [x] V2.8a W0: ADR 0007, `entities` content-v2 records, accepted-origin policy and
+    target files, pipeline skeleton.
+  - [ ] V2.8b W1: pipeline stages, client build detection, weekly workflow, publishing.
+  - [ ] V2.8c W2: register every fact (raised source-pipeline limits, LFS objects).
+  - [ ] V2.8d W3: world data to a whole-world content-v2 pack, precedence and conflicts.
+  - [ ] V2.8e W4: gate (accepted origins, accepted unknowns, no LIVE checks or freeze,
+    raised limits, multi-pack, inferred travel).
+  - [ ] V2.8f W5: desktop origin marker and world browser.
 - [ ] **V2.6 Release materials** (Eng). Notices, licences and corresponding source
   for every bundled source; no Blizzard art or client fonts; no private catalogs in
   public assets.

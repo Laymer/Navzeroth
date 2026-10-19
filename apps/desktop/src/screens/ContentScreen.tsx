@@ -14,6 +14,9 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
   const [profile, setProfile] = useState("");
   const [active, setActive] = useState<ContentInspection | null>(null);
   const [staged, setStaged] = useState<ContentInspection | null>(null);
+  // Packs staged in this session; several can be activated together as one set.
+  const [pool, setPool] = useState<ContentInspection[]>([]);
+  const [acceptTravel, setAcceptTravel] = useState(false);
   const [bundlePath,setBundlePath]=useState("");
   const [text, setText] = useState("");
   const [error, setError] = useState<AppError | null>(null);
@@ -44,16 +47,20 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     });
     return () => { current = false; };
   }, [client, profile, refreshKey, revision]);
-  async function mutate(action: "stage" | "bundle" | "activate" | "rollback") {
+  async function mutate(action: "stage" | "bundle" | "activate" | "activate-set" | "rollback") {
     if (lock.current) return;
     lock.current = true; setBusy(true); setError(null); setMessage("");
     if (action === "stage" || action === "bundle") {
       const result = action === "bundle" ? await client.stageVerifiedContentBundle(bundlePath) : await client.stageContent(text);
-      if (result.ok) { setStaged(result.value); setMessage("Validated and staged. Activation requires the matching profile context."); }
+      if (result.ok) { const value = result.value; setStaged(value); setPool((old) => [...old.filter((p) => p.key.revision !== value.key.revision), value]); setMessage("Validated and staged. Activation requires the matching profile context."); }
       else setError(result.error);
     } else if (action === "activate" && staged) {
-      const result = await client.activateContent(profile, staged.key.revision);
-      if (result.ok) { setActive(result.value); setMessage("Content activated. Dependent views will refresh."); onChanged(); }
+      const result = acceptTravel ? await client.activateContentSet(profile, [staged.key.revision], true) : await client.activateContent(profile, staged.key.revision);
+      if (result.ok) { setActive(result.value); setMessage(acceptTravel ? "Content activated; inferred travel is accepted as estimates for this session." : "Content activated. Dependent views will refresh."); onChanged(); }
+      else setError(result.error);
+    } else if (action === "activate-set") {
+      const result = await client.activateContentSet(profile, pooled.map((p) => p.key.revision), acceptTravel);
+      if (result.ok) { setActive(result.value); setMessage(`${pooled.length} packs activated together as ${result.value.key.revision}.${acceptTravel ? " Inferred travel is accepted as estimates for this session." : ""}`); onChanged(); }
       else setError(result.error);
     } else if (action === "rollback") {
       const result = await client.rollbackContent(profile);
@@ -63,6 +70,8 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     lock.current = false; setBusy(false);
   }
   const selected = profiles.find((p) => p.id === profile);
+  const matches = (value: ContentInspection) => selected?.fixture === value.key.scope.fixture && selected.context?.namespace === value.key.scope.context.namespace && selected.context.build.edition === value.key.scope.context.build.edition && selected.context.build.build === value.key.scope.context.build.build && selected.context.build.interface === value.key.scope.context.build.interface;
+  const pooled = pool.filter(matches);
   const compatible = staged !== null && selected?.fixture === staged.key.scope.fixture && selected.context?.namespace === staged.key.scope.context.namespace && selected.context.build.edition === staged.key.scope.context.build.edition && selected.context.build.build === staged.key.scope.context.build.build && selected.context.build.interface === staged.key.scope.context.build.interface;
   return <div className="snapshot-import"><Panel title="Content">
     <p>Stage a local data revision, inspect coverage and source policies, then activate it for a matching character context.</p>
@@ -88,6 +97,9 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     {staged && <><h3>Staged revision</h3><Inspection client={client} value={staged} />
       {!compatible && <p>This revision does not match the selected profile’s edition, build, interface, namespace and synthetic status.</p>}
       <Button disabled={!native || busy || !compatible} onClick={() => void mutate("activate")}>Activate staged revision</Button></>}
+    {pooled.length > 1 && <><h3>Content set</h3><p>Staged this session for the selected context: {pooled.map((p) => p.key.revision).join(", ")}. Activating them together composes one revision; each pack keeps its own evidence and nothing is relabelled.</p>
+      <Button disabled={!native || busy} onClick={() => void mutate("activate-set")}>Activate all staged packs as one set</Button></>}
+    {(staged !== null || pooled.length > 1) && <label><input type="checkbox" checked={acceptTravel} disabled={busy} onChange={(event) => setAcceptTravel(event.target.checked)} /> Accept inferred travel (estimates): generated walking and flight times are used, and unknown travel requirements are assumed, not checked. Applies until the content changes or the application restarts.</label>}
     <LocalSubmissionsPanel client={client} enabled={native} refreshKey={refreshKey + revision} />
   </Panel></div>;
 }

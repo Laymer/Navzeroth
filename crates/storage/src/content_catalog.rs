@@ -128,15 +128,52 @@ fn encode<T: Serialize>(value: &T) -> Result<String> {
         .map_err(|_| invalid("Catalog exceeds byte capacity or cannot serialize"))?;
     String::from_utf8(writer.0).map_err(|_| storage("Catalog serialization failed"))
 }
+/// Byte capacity is independent of object-key order. Count the same compact or
+/// pretty JSON (including its trailing newline) without allocating a full tree
+/// and byte buffer merely to discard their digest. Actual hash APIs stay below.
+fn check_capacity<T: Serialize>(value: &T, pretty: bool, maximum: usize) -> Result<()> {
+    struct Counter {
+        bytes: usize,
+        maximum: usize,
+    }
+    impl std::io::Write for Counter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            if bytes.len() > self.maximum.saturating_sub(self.bytes) {
+                return Err(std::io::Error::other("catalog exceeds byte capacity"));
+            }
+            self.bytes += bytes.len();
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut counter = Counter {
+        bytes: usize::from(pretty),
+        maximum,
+    };
+    if counter.bytes > maximum {
+        return Err(invalid("Catalog exceeds byte capacity or cannot serialize"));
+    }
+    let result = if pretty {
+        serde_json::to_writer_pretty(&mut counter, value)
+    } else {
+        serde_json::to_writer(&mut counter, value)
+    };
+    result.map_err(|_| invalid("Catalog exceeds byte capacity or cannot serialize"))
+}
+
 pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
     if input.sources.len() > 1024 || input.conflicts.len() > 250_000 {
         return Err(invalid("Catalog provenance capacity exceeded"));
     }
-    let encoded = encode(input)?;
-    drop(encoded);
+    check_capacity(input, false, MAX_CONTENT_BYTES)?;
     input.content.validate()?;
-    let content = content_v2::decode(encode(&input.content)?.as_bytes())?;
-    catalog_content_sha256(&content)?;
+    // Typed input cannot contain discarded wire fields. Validate all schema,
+    // domain, capacity and graph invariants above, then retain its exact typed
+    // states without serializing and reparsing the entire catalog.
+    let content = input.content.clone();
+    check_capacity(&content, true, MAX_CONTENT_BYTES)?;
     let registry = SourceRegistry::try_from(input.sources.clone())?;
     let data = &content.reference.payload;
     for evidence in &data.evidence {
@@ -179,6 +216,16 @@ pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> 
         let found = match &conflict.key {
             RecordKey::Item(key) => items.contains(key),
             RecordKey::Quest { quest, .. } => quests.contains(quest),
+            RecordKey::Dungeon { dungeon, field, .. } => content.dungeons.iter().any(|d| {
+                &d.id == dungeon
+                    && match field {
+                        azeroth_core::dungeon_composition::DungeonField::Checklist { check } => d
+                            .checklist
+                            .value()
+                            .is_some_and(|checks| checks.iter().any(|c| &c.id == check)),
+                        _ => true,
+                    }
+            }),
         };
         if !found {
             return Err(invalid("Catalog conflict identity is absent"));
@@ -203,8 +250,23 @@ pub(crate) fn load_checked(
     id: i64,
 ) -> std::result::Result<ContentRevisionV2, content::LoadFailure> {
     let (document, hash, coverage): (String,String,String) = conn.query_row("SELECT r.document,m.content_sha256,m.coverage_document FROM dataset_revisions r JOIN dataset_manifests m ON m.revision_id=r.id WHERE r.id=?1 AND r.content_version=2 AND length(CAST(r.document AS BLOB))<=?2 AND length(CAST(m.coverage_document AS BLOB))<=?2 AND m.manifest_version=1",params![id,MAX_CONTENT_BYTES as i64],|row| Ok((row.get(0)?,row.get(1)?,row.get(2)?))).map_err(content::load_sql_error)?;
-    let input: ContentRevisionV2 =
+    // Borrow the original content JSON: decoding a typed wrapper first would
+    // silently discard nested unknown fields before the strict content boundary.
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct StoredRevision<'a> {
+        #[serde(borrow)]
+        content: &'a serde_json::value::RawValue,
+        sources: Vec<SourceRecord>,
+        conflicts: Vec<SourceConflict>,
+    }
+    let stored: StoredRevision<'_> =
         serde_json::from_str(&document).map_err(|_| storage("Stored v2 catalog is invalid"))?;
+    let input = ContentRevisionV2 {
+        content: content_v2::decode(stored.content.get().as_bytes())?,
+        sources: stored.sources,
+        conflicts: stored.conflicts,
+    };
     let revision = canonical(&input)?;
     if content::hash(&revision)?.as_str() != hash
         || encode(&content_report(&revision.content.reference))? != coverage
@@ -407,4 +469,33 @@ pub(crate) fn stage_canonical(
     }
     conn.execute("INSERT INTO dataset_manifests(revision_id,manifest_version,content_sha256,coverage_document) VALUES(?1,1,?2,?3)",params![id,hash.as_str(),report]).db()?;
     Ok(StageOutcome::Inserted)
+}
+
+#[cfg(test)]
+mod capacity_checks {
+    use super::*;
+    #[test]
+    fn counting_matches_existing_compact_and_canonical_pretty_boundaries() {
+        #[derive(Serialize)]
+        struct Input {
+            z: Vec<String>,
+            a: bool,
+        }
+        let value = Input {
+            z: vec!["quoted\"\n\\é".into(), String::new()],
+            a: false,
+        };
+        for pretty in [false, true] {
+            let expected = if pretty {
+                // Existing canonical hash sorts object keys through Value.
+                let value = serde_json::to_value(&value).unwrap();
+                serde_json::to_vec_pretty(&value).unwrap().len() + 1
+            } else {
+                serde_json::to_vec(&value).unwrap().len()
+            };
+            assert!(check_capacity(&value, pretty, expected).is_ok());
+            assert!(check_capacity(&value, pretty, expected - 1).is_err());
+            assert!(check_capacity(&value, pretty, 0).is_err());
+        }
+    }
 }

@@ -326,6 +326,8 @@ export interface CommandMap {
   get_content_dispositions: { input: {profile_id:string}; output: import("./contentDispositions").ContentGovernance };
   change_content_disposition: { input: {text:string}; output: import("./contentDispositions").ContentDecision };
   get_catalog_page: { input: { text: string }; output: import("./catalogPages").CatalogRecordPage };
+  get_world_page: { input: { text: string }; output: import("./world").WorldPage };
+  get_record_origins: { input: { text: string }; output: import("./world").RecordOrigins };
   get_authored_catalog: { input: { text: string }; output: import("./authoredContent").AuthoredCatalog };
   get_dungeon_preparation: { input: { text: string }; output: import("./dungeonPreparation").PreparationReport };
   get_reference_view: {input:undefined;output:import("./reference").ReferenceViewData};
@@ -377,6 +379,7 @@ export interface CommandMap {
   stage_content: { input: { text: string }; output: ContentInspection };
   get_active_content: { input: { profile_id: string }; output: ContentInspection | null };
   activate_content: { input: { profile_id: string; revision: string }; output: ContentInspection };
+  activate_content_set: { input: { profile_id: string; revisions: string[]; accept_inferred_travel: boolean }; output: ContentInspection };
   rollback_content: { input: { profile_id: string }; output: { changed: boolean; active: ContentInspection | null } };
   list_parties: { input: undefined; output: string[] };
   get_party_quests: { input: { party_id: string }; output: PartyQuestCatalog };

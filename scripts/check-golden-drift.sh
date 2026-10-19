@@ -13,6 +13,7 @@ export UPDATE_ROUTE_ACQUISITION_GOLDENS=1
 export UPDATE_CONTENT_DISPOSITION_GOLDENS=1
 export NAVZEROTH_UPDATE_PREPARATION_FIXTURE=1
 export UPDATE_LUA_GEAR_FIXTURES=1
+export UPDATE_WORLD_BROWSER_FIXTURES=1
 
 before="$(git status --porcelain)"
 cargo test --locked -p azeroth-core -p azeroth-app

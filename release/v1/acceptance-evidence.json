@@ -1,145 +1,15 @@
 {
-  "schema_version": 2,
-  "target": null,
-  "inventory_sha256": "5ab72cef555964caa9c37d90016ce7761206c07e3a75eb1cb46447de71a7b7cc",
+  "schema_version": 3,
+  "target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
+  "inventory_sha256": "8e94085c2ec776da2494739b8b8a879eca7af227731b319438b23ea01219cbf1",
   "tested_source_commit": null,
   "production_sha256": null,
   "checks": [
-    {
-      "id": "LIVE-BUILD",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-CAPTURE",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-TRANSFER",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-RELOAD",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-RESTRICTIONS",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-HUD",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-PLAN",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-ADVANCE",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-DEVIATION",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-DUO",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-SESSION",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-NEXT-PLAN",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-REMINDERS",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-GEAR",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
-    {
-      "id": "LIVE-DUNGEON",
-      "status": "unverified",
-      "method": "live_game",
-      "operator": null,
-      "recorded_at": null,
-      "environment": null,
-      "artifacts": []
-    },
     {
       "id": "WIN-INSTALL",
       "status": "unverified",
@@ -251,5 +121,10 @@
       "feature": "hosted_distribution",
       "reason": "Local offline distribution is the required baseline; hosted delivery prerequisites are not verified."
     }
-  ]
+  ],
+  "origin_policy": {
+    "path": "release/v1/accepted-origins.json",
+    "bytes": 904,
+    "sha256": "d58e2e456fc81b35b840ae846a794e1bf1b2ada46e0fff434ad9c063d5b73dd7"
+  }
 }

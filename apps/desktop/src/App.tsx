@@ -22,9 +22,10 @@ import { SessionsScreen } from "./screens/SessionsScreen";
 import { ReminderScreen } from "./screens/ReminderScreen";
 import { ContentScreen } from "./screens/ContentScreen";
 import { DungeonsScreen } from "./screens/DungeonsScreen";
+import { WorldScreen } from "./screens/WorldScreen";
 import { Button } from "./ui";
 
-type Screen = "compatibility" | "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics" | "dungeons" | "settings";
+type Screen = "compatibility" | "today" | "atlas" | "imports" | "party" | "content" | "planner" | "gear" | "sessions" | "reminders" | "recovery" | "diagnostics" | "dungeons" | "world" | "settings";
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "atlas", label: "Atlas" },
@@ -32,6 +33,7 @@ const SCREENS: { id: Screen; label: string }[] = [
   { id: "gear", label: "Gear" },
   { id: "party", label: "Party" },
   { id: "dungeons", label: "Dungeons" },
+  { id: "world", label: "World" },
   { id: "sessions", label: "Sessions" },
   { id: "reminders", label: "Reminders" },
   { id: "imports", label: "Imports" },
@@ -41,9 +43,10 @@ const SCREENS: { id: Screen; label: string }[] = [
   { id: "diagnostics", label: "Local diagnostics" },
   { id: "recovery", label: "Backup and recovery" },
 ];
-// Two labelled groups, following plan section 12.1. Together they hold all 14 screens.
+// Two labelled groups, following plan section 12.1. Together they hold all 15 screens
+// (the World browser joined Play under ADR 0007 §9).
 const NAV_GROUPS: { title: string; ids: Screen[] }[] = [
-  { title: "Play", ids: ["today", "atlas", "planner", "gear", "party", "dungeons", "sessions", "reminders"] },
+  { title: "Play", ids: ["today", "atlas", "planner", "gear", "party", "dungeons", "world", "sessions", "reminders"] },
   { title: "Data & system", ids: ["imports", "content", "compatibility", "settings", "diagnostics", "recovery"] },
 ];
 
@@ -168,6 +171,7 @@ export function App({ client }: { client: CommandClient }) {
       {load.phase === "ready" && screen === "imports" && <ImportScreen client={client} onChanged={changed} />}
       {load.phase === "ready" && screen === "party" && <PartyScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "dungeons" && <DungeonsScreen client={client} refreshKey={revision} />}
+      {load.phase === "ready" && screen === "world" && <WorldScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "planner" && <PlannerScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "gear" && <GearScreen client={client} refreshKey={revision} />}
       {load.phase === "ready" && screen === "sessions" && <SessionsScreen client={client} refreshKey={revision} onChanged={changed} />}

@@ -243,7 +243,7 @@ fn future_schema_and_excessive_collections_fail_even_for_prereleases() {
         production_sha256: HASH,
         tested_source_commit: COMMIT,
     };
-    i.schema_version = 3;
+    i.schema_version = 4;
     assert!(assess("1.0.0-rc.1", &i, Some(&e), &bindings).is_err());
     i.schema_version = 1;
     let mut excessive = e.clone();

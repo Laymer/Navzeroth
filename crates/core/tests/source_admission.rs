@@ -95,7 +95,7 @@ fn all_unreviewed_and_excluded_rights_fail_closed() {
 #[test]
 fn strict_version_size_unknown_fields_and_duplicate_fields() {
     let mut r = registry();
-    r.schema_version = 2;
+    r.schema_version = 3;
     assert_eq!(r.validate(), Err(Rejection::UnsupportedVersion));
     assert!(matches!(
         Registry::parse(&vec![b' '; MAX_REGISTRY_BYTES + 1]),
@@ -138,8 +138,37 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
         "../../../docs/sources/source-admission-v1.json"
     ))
     .unwrap();
-    let accepted: Vec<_> = r
-        .sources
+    // Generated fact sources (V2.8c, register_facts.py) are checked below.
+    let (generated, hand): (Vec<_>, Vec<_>) =
+        r.sources.iter().partition(|s| s.id.starts_with("gen-"));
+    for s in &generated {
+        assert_eq!(s.rights.status, Status::Admitted, "{}", s.id);
+        assert_eq!(s.retrieval.method, Method::ManualLocal, "{}", s.id);
+        assert!(s.origin.edition.is_some(), "{}", s.id);
+        assert!(!s.files.is_empty(), "{}", s.id);
+        assert!(
+            s.rights
+                .evidence
+                .iter()
+                .any(|e| e.reviewed_scope.contains(OWNER_ACCEPTANCE_CITATION)),
+            "{}",
+            s.id
+        );
+        assert!(
+            s.retrieval.access_evidence.as_ref().is_some_and(|e| e
+                .url
+                .ends_with("docs/decisions/0007-world-data-automation.md")),
+            "{}",
+            s.id
+        );
+        for f in &s.files {
+            assert_eq!(f.transformation, "knowledge_v1");
+            let fields: Vec<_> = f.fields.iter().map(String::as_str).collect();
+            r.authorize(&s.id, &f.path, &fields, Method::ManualLocal)
+                .unwrap();
+        }
+    }
+    let accepted: Vec<_> = hand
         .iter()
         .filter(|s| s.rights.status == Status::Admitted)
         .map(|s| s.id.as_str())
@@ -156,13 +185,34 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
             "wago-tools-classic-era",
             "wago-tools-wowf",
             "wowhead-classic",
-            "wowhead-forever"
+            "wowhead-forever",
+            "navzeroth-world-content"
         ]
     );
-    assert!(r.sources.iter().all(|s| s.origin.build.is_none()));
+    for source in &hand {
+        let expected = match source.id.as_str() {
+            "cmangos-classic-db" => Some("1.12.1"),
+            "wago-tools-wowf" => Some("1.60.1.70245"),
+            _ => None,
+        };
+        assert_eq!(source.origin.build.as_deref(), expected, "{}", source.id);
+    }
+    let derived = hand
+        .iter()
+        .find(|s| s.id == "navzeroth-world-content")
+        .unwrap();
+    assert_eq!(derived.files.len(), 2);
+    assert_eq!(derived.retrieval.method, Method::ManualLocal);
+    assert_eq!(derived.rights.license, License::Permissive);
+    assert!(
+        derived
+            .files
+            .iter()
+            .all(|f| f.transformation == "world_to_content_v2")
+    );
     // ADR 0006 §14 sources: explicit owner acceptance (or GPL share-alike for
     // CMaNGOS), generator-only retrieval, generated files registered later.
-    for s in r.sources.iter().filter(|s| s.files.is_empty()) {
+    for s in hand.iter().filter(|s| s.files.is_empty()) {
         if s.rights.status != Status::Admitted {
             continue;
         }
@@ -384,6 +434,13 @@ fn permissive_and_unknown_rights_keep_their_rules_beside_owner_acceptance() {
         bad(&mut r.sources[0].retrieval);
         assert_eq!(r.validate(), Err(Rejection::InvalidRegistry));
     }
+    // V2.8c: the whole generated world (621 MB of fact documents) fits with
+    // about three times headroom; the exact limit itself is admitted.
+    assert_eq!(MAX_RETRIEVAL_BYTES, 2 * 1024 * 1024 * 1024);
+    let mut r = owner_accepted();
+    r.sources[0].retrieval.max_total_bytes = MAX_RETRIEVAL_BYTES;
+    r.sources[0].retrieval.max_requests = 1024;
+    r.validate().unwrap();
     assert_eq!(
         serde_json::to_value(License::OwnerAccepted).unwrap(),
         "owner_accepted"
@@ -392,4 +449,48 @@ fn permissive_and_unknown_rights_keep_their_rules_beside_owner_acceptance() {
         serde_json::to_value(Method::HttpsRateLimited).unwrap(),
         "https_rate_limited"
     );
+}
+
+#[test]
+fn schema_two_retains_compressed_originals_without_changing_legacy_limits() {
+    let mut r = registry();
+    r.sources[0].retrieval.max_total_bytes = MAX_RETAINED_FILE_BYTES;
+    r.sources[0].files[0].bytes = MAX_FILE_BYTES + 1;
+    assert!(r.validate().is_err());
+    r.schema_version = 2;
+    assert!(r.validate().is_ok());
+    r.sources[0].files[0].bytes = MAX_RETAINED_FILE_BYTES;
+    assert!(r.validate().is_ok());
+    r.sources[0].files[0].bytes += 1;
+    assert!(r.validate().is_err());
+}
+
+#[test]
+fn schema_two_records_only_exact_wago_product_build_queries() {
+    let mut r = registry();
+    let original = "https://wago.tools/db2/UiMap/csv?product=wowf&build=1.60.1.70245";
+    r.sources[0].files[0].url = original.into();
+    assert!(r.validate().is_err());
+    r.schema_version = 2;
+    assert!(r.validate().is_ok());
+    for good in [
+        original,
+        "https://wago.tools/db2/ItemSparse/csv?product=wow_classic_era&build=1.15.7.12345",
+    ] {
+        r.sources[0].files[0].url = good.into();
+        assert!(r.validate().is_ok());
+    }
+    for bad in [
+        "https://other.example/db2/UiMap/csv?product=wowf&build=1.60.1.70245",
+        "https://wago.tools/db2/../UiMap/csv?product=wowf&build=1.60.1.70245",
+        "https://wago.tools/db2//csv?product=wowf&build=1.60.1.70245",
+        "https://wago.tools/db2/UiMap/csv?build=1.60.1.70245",
+        "https://wago.tools/db2/UiMap/csv?product=wowf&build=latest",
+        "https://wago.tools/db2/UiMap/csv?product=wowf&build=1.60.1.70245&token=secret",
+        "https://wago.tools/db2/UiMap/csv?product=wowf&build=1.60.1.70245#fragment",
+        "https://wago.tools/db2/UiMap/csv?product=unknown&build=1.60.1.70245",
+    ] {
+        r.sources[0].files[0].url = bad.into();
+        assert!(r.validate().is_err(), "{bad}");
+    }
 }

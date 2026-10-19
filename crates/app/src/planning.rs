@@ -11,7 +11,6 @@ use azeroth_core::{
     observation::{FreshnessContext, ObservationStatus},
     planner::{EligibilityEvidence, PlannerResult},
     predicate::{Predicate, PredicateNode, QuestState, RuleLimits},
-    travel::RouteOptions,
     types::*,
 };
 use serde::Serialize;
@@ -215,6 +214,7 @@ pub(crate) fn calculate_controlled(
             })
         })
         .collect::<Result<Vec<_>>>()?;
+    let travel = crate::catalog::travel_inputs(content);
     let clustered = plan_clustered_controlled(
         &ClusterPlanningInput {
             goal_profile: request.goal_profile.clone(),
@@ -222,14 +222,14 @@ pub(crate) fn calculate_controlled(
             participant_count: 1,
             excluded: &request.excluded,
             nodes: &dataset.nodes,
-            edges: &dataset.edges,
+            edges: &travel.edges,
             origin: request.origin.clone(),
             stopping_node: request.stopping_node.clone(),
             stopping_service_ms: request.stopping_service_ms,
             budget_ms: request.budget_ms,
             max_steps: 32,
             context: &context,
-            travel_options: &RouteOptions::default(),
+            travel_options: &travel.options,
         },
         control,
     )?;
@@ -240,10 +240,13 @@ pub(crate) fn calculate_controlled(
         result: clustered.plan.clone(),
         clustering: crate::clustering::ClusteringMetadata::from(clustered),
         filtered,
-        assumptions: vec![
+        assumptions: [
             "Utilities, objective node associations and completion/service times are explicit manual inputs",
             "Expected-time greedy baseline with deterministic same-node clusters and singleton fallbacks; estimates are not guaranteed durations",
             "No speculative prerequisite unlocks or party fairness; declared quest predicates only; no shared-kill or service savings inferred",
-        ],
+        ]
+        .into_iter()
+        .chain(travel.assumption())
+        .collect(),
     })
 }

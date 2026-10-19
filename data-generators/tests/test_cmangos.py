@@ -158,6 +158,41 @@ class LootVendorTrainerTest(unittest.TestCase):
                                              "mincountOrRef": -7, "maxcount": 0, "condition_id": None})
         self.assertEqual((zero["reference"], zero["min_count"], zero["max_count"], zero["chance"]), (7, 1, 1, 0.0))
 
+    def test_game_object_loot_is_keyed_by_the_object(self):
+        templates = [{"entry": 2843, "type": 3, "data1": 2264}, {"entry": 2844, "type": 3, "data1": 2264},
+                     {"entry": 180582, "type": 25, "data1": 5000}, {"entry": 68, "type": 2, "data1": 2264},
+                     {"entry": 1731, "type": 3, "data1": 0}]
+        owners = gen.game_object_loot_owners(templates)
+        self.assertEqual(owners, {2264: [2843, 2844], 5000: [180582]})  # type 2 data1 is no loot ID
+        rows = [{"entry": 2264, "item": 872, "ChanceOrQuestChance": 5, "groupid": 0, "mincountOrRef": 1,
+                 "maxcount": 1, "condition_id": 0},
+                {"entry": 5000, "item": 6303, "ChanceOrQuestChance": 50, "groupid": 0, "mincountOrRef": 1,
+                 "maxcount": 1, "condition_id": 0},
+                {"entry": 9999, "item": 1, "ChanceOrQuestChance": 50, "groupid": 0, "mincountOrRef": 1,
+                 "maxcount": 1, "condition_id": 0}]
+        records, orphans = gen.game_object_loot(rows, owners, {2843, 2844})
+        self.assertEqual([(r["entry"], r["item"]) for r in records], [(2843, 872), (2844, 872)])
+        self.assertEqual(orphans, {5000, 9999})  # 180582 is not a known game object
+        self.assertTrue(all(r["table"] == "game_object" for r in records))
+
+    def test_item_record_from_item_template(self):
+        row = {"entry": 872, "name": "Rockslicer", "Quality": 2, "class": 2, "subclass": 1, "InventoryType": 17,
+               "ItemLevel": 21, "RequiredLevel": 16, "AllowableClass": -1, "AllowableRace": -1, "bonding": 1,
+               "stackable": 1, "BuyPrice": 10058, "SellPrice": 2011, "stat_type1": 4, "stat_value1": 7,
+               "stat_type2": 7, "stat_value2": 0, "stat_type3": 4, "stat_value3": 2, "stat_type4": 99,
+               "stat_value4": 1, "armor": 0, "fire_res": 5}
+        rec = envelope.clean(gen.item_record(row))
+        self.assertEqual(rec, {"id": 872, "name": "Rockslicer", "quality": 2, "class_id": 2, "subclass_id": 1,
+                               "inventory_type": 17, "item_level": 21, "required_level": 16,
+                               "allowable_class": -1, "allowable_race": -1, "bonding": 1, "max_stack": 1,
+                               "buy_price": 10058, "sell_price": 2011,
+                               "stats": {"fire_resistance": 5, "stat_99": 1, "strength": 9}})
+        self.assertEqual(gen.item_stats({"armor": 120}), {"armor": 120})
+        self.assertIsNone(gen.item_record({"entry": 1, "name": "  "}))
+        # Absent or negative unsigned columns stay absent; zero stays zero.
+        rec = envelope.clean(gen.item_record({"entry": 2, "name": "X", "Quality": 0, "stackable": -1}))
+        self.assertEqual(rec, {"id": 2, "name": "X", "quality": 0})
+
     def test_vendor_template_expansion(self):
         direct = [{"entry": 10, "item": 1, "maxcount": 0, "incrtime": 0},
                   {"entry": 10, "item": 2, "maxcount": 5, "incrtime": 3600}]

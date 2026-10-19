@@ -15,7 +15,7 @@ use azeroth_core::{
     evaluation::{EvaluationContext, EvaluationResult, StalePolicy, Truth, evaluate},
     observation::{Freshness, Observation, ObservationStatus, freshness},
     predicate::{Predicate, RuleLimits},
-    travel::{RouteOptions, RouteOutcome, RouteSearch, shortest_route},
+    travel::{RouteOutcome, RouteSearch, shortest_route},
     types::*,
 };
 use azeroth_storage::content::ActiveContentRevision;
@@ -340,6 +340,8 @@ struct Captured {
     content: Option<ActiveContentRevision>,
     disposition: Option<azeroth_storage::content_dispositions::DispositionGuard>,
     party: Option<PartyId>,
+    /// The activation accepts inferred travel for exactly this content.
+    accept_inferred: bool,
 }
 fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -> Result<Captured> {
     if keys.is_empty() || keys.len() > 40 {
@@ -380,6 +382,7 @@ fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -
         snapshots,
         content,
         party,
+        accept_inferred: false,
     })
 }
 fn snapshot_hash(snapshot: &Option<Envelope<CharacterSnapshot>>) -> Result<Option<Sha256Hex>> {
@@ -476,7 +479,7 @@ impl SnapshotApplication {
         let started = Instant::now();
         let mut request = json::request(text)?;
         let mut gaps = Vec::new();
-        let captured = match &request.subject {
+        let mut captured = match &request.subject {
             PreparationSubject::Character { profile_id } => {
                 self.with_profile_store_mut(profile_id, |store, key| {
                     store.with_immediate_read(|store| capture(store, vec![key.clone()], None))
@@ -491,6 +494,9 @@ impl SnapshotApplication {
                 })
             })?,
         };
+        if let Some(content) = &captured.content {
+            captured.accept_inferred = self.accepts_inferred_travel(&content.key())?;
+        }
         if let Some(selection) = &request.authored {
             if request.package.is_some() {
                 return Err(invalid(
@@ -929,16 +935,25 @@ fn evaluate_inputs(
                             limits: RuleLimits::default(),
                         })
                         .collect::<Vec<_>>();
+                    let view =
+                        crate::catalog::TravelPolicyView::new(content, captured.accept_inferred);
+                    let travel = crate::catalog::travel_inputs(&view);
                     let mut edges = Vec::new();
-                    for edge in &content.reference().edges {
+                    for edge in travel.edges.iter() {
                         let mut usable = true;
+                        // An accepted inferred edge's unknown requirement is
+                        // assumed (the hop says so), never called satisfied.
+                        let assumed = travel.options.accept_unknown_requirements
+                            && edge.requirements.value().is_none()
+                            && travel.options.inferred_edges.contains(&edge.id);
                         for context in &contexts {
                             let assessment = condition(&edge.requirements, Some(context))?;
                             let member_usable = assessment
                                 .evaluation
                                 .as_ref()
                                 .is_some_and(|r| r.truth == Truth::True)
-                                || assessment.availability == ObservationStatus::NotApplicable;
+                                || assessment.availability == ObservationStatus::NotApplicable
+                                || assumed;
                             usable &= member_usable;
                             if !member_usable {
                                 route_exclusions.push(PreparationEdgeExclusion {
@@ -967,13 +982,18 @@ fn evaluate_inputs(
                             edges.push(edge.clone());
                         }
                     }
+                    // Options may only name edges of the searched graph.
+                    let kept: BTreeSet<&azeroth_core::types::EdgeId> =
+                        edges.iter().map(|edge| &edge.id).collect();
+                    let mut options = travel.options.clone();
+                    options.inferred_edges.retain(|id| kept.contains(id));
                     let search = shortest_route(
                         &content.reference().nodes,
                         &edges,
                         origin,
                         &entrance.id,
                         &contexts[0],
-                        &RouteOptions::default(),
+                        &options,
                     )?;
                     if !matches!(search.outcome, RouteOutcome::Complete { .. }) {
                         gap(&mut gaps, GapCode::NoSupportedRoute, "route");
