@@ -120,7 +120,7 @@ impl WorldInputs {
     }
 }
 fn world_inputs(root: &Path, inventory: &Inventory, budget: &mut Budget) -> Result<WorldInputs> {
-    if inventory.schema_version != release::SCHEMA_WORLD_DATA {
+    if !release::is_world_schema(inventory.schema_version) {
         return Ok(WorldInputs::default());
     }
     let mut read = |path: &str| -> Result<Option<Vec<u8>>> {
@@ -682,7 +682,7 @@ fn bind_v2_pack(
         }
         // Schema 3 accepts facts by the pack source's editions, so they must name
         // the origin the release evidence records; neither can be relabelled alone.
-        if inventory.schema_version == release::SCHEMA_WORLD_DATA
+        if release::is_world_schema(inventory.schema_version)
             && !catalog
                 .origins
                 .get(source.id.as_str())
@@ -724,7 +724,7 @@ fn bind_v2_pack(
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
     require_complete_v2_facts(&content)?;
-    if inventory.schema_version == release::SCHEMA_WORLD_DATA {
+    if release::is_world_schema(inventory.schema_version) {
         classify_v2(
             pack,
             &content,
@@ -849,7 +849,7 @@ fn packs(
         // Schema 3 classifies v2 gaps under the accepted-origin policy in
         // bind_v2_pack; every other combination keeps the strict zero.
         let policy_classified =
-            version == Some(2) && inventory.schema_version == release::SCHEMA_WORLD_DATA;
+            version == Some(2) && release::is_world_schema(inventory.schema_version);
         if report.fixtures != 0
             || (!policy_classified && report.coverage_gaps != 0)
             || !report.distribution_eligible
@@ -1190,7 +1190,7 @@ pub fn report(options: &Options) -> Result<Report> {
             Err(message) => readiness.block(message),
         }
     }
-    let world_data = (inventory.schema_version == release::SCHEMA_WORLD_DATA)
+    let world_data = (release::is_world_schema(inventory.schema_version))
         .then(|| world_report(&world, &inventory, evidence.as_ref(), classifications));
     Ok(Report {
         readiness,

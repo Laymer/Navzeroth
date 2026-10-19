@@ -400,3 +400,104 @@ fn record_limit_admits_a_whole_world_inventory_and_refuses_one_more() {
         .is_err()
     );
 }
+
+fn stable_values() -> (Value, Value) {
+    let mut inventory = inventory_value();
+    let mut evidence = evidence_value();
+    inventory["schema_version"] = json!(SCHEMA_STABLE);
+    evidence["schema_version"] = json!(SCHEMA_STABLE);
+    evidence["candidate_installer_sha256"] = json!(HASH);
+    evidence["checks"] =
+        json!(required_checks(SCHEMA_STABLE).into_iter().map(|(id, method)| {
+        json!({"id":id,"method":method,"status":"pass","operator":"synthetic owner/runner",
+            "recorded_at":"2026-10-19T12:00:00Z","environment":"synthetic only",
+            "artifacts":[file()],"installer_sha256":HASH})
+    }).collect::<Vec<_>>());
+    (inventory, evidence)
+}
+
+#[test]
+fn schema4_requires_hosted_windows_and_separate_exact_installer_owner_smoke() {
+    let (inventory, evidence) = stable_values();
+    let (i, e) = decode(&inventory, &evidence);
+    let report = check(&i, &e);
+    assert!(report.stable_ready, "{:?}", report.blockers);
+    assert!(report.publication_allowed);
+    assert_eq!(report.report_version, 4);
+    assert_eq!(required_checks(4).len(), 9);
+    assert_eq!(
+        required_checks(4).last(),
+        Some(&(OWNER_INSTALLER_SMOKE, Method::InteractiveWindows))
+    );
+    assert!(
+        required_checks(4)[..8]
+            .iter()
+            .all(|(_, m)| *m == Method::HostedWindows)
+    );
+    assert!(is_world_schema(3) && is_world_schema(4));
+    assert!(!is_world_schema(2) && !is_world_schema(5));
+}
+
+#[test]
+fn schema4_missing_failed_wrong_method_and_mismatched_installer_hold_publication() {
+    let (inventory, evidence) = stable_values();
+    let mutations = [
+        ("status", json!("fail")),
+        ("method", json!("automated")),
+        ("installer_sha256", json!(POLICY_HASH)),
+        ("installer_sha256", Value::Null),
+    ];
+    for index in [0, 8] {
+        for (field, value) in &mutations {
+            let mut changed = evidence.clone();
+            changed["checks"][index][field] = value.clone();
+            let (i, e) = decode(&inventory, &changed);
+            let report = check(&i, &e);
+            assert!(
+                !report.stable_ready && !report.publication_allowed,
+                "{index} {field}"
+            );
+            assert!(has(&report, "Required acceptance has not passed"));
+        }
+    }
+    for field in [
+        "candidate_installer_sha256",
+        "tested_source_commit",
+        "production_sha256",
+    ] {
+        let mut changed = evidence.clone();
+        changed[field] = Value::Null;
+        let (i, e) = decode(&inventory, &changed);
+        assert!(!check(&i, &e).publication_allowed, "{field}");
+    }
+    let mut missing = evidence.clone();
+    missing["checks"].as_array_mut().unwrap().pop();
+    let (i, e) = decode(&inventory, &missing);
+    assert!(has(&check(&i, &e), "Mandatory acceptance rows"));
+}
+
+#[test]
+fn schema4_pending_smoke_is_unverified_and_historical_rows_are_not_promoted() {
+    let (inventory, mut evidence) = stable_values();
+    evidence["checks"][8] = json!({"id":OWNER_INSTALLER_SMOKE,"method":"interactive_windows",
+        "status":"unverified","operator":null,"recorded_at":null,"environment":null,"artifacts":[]});
+    let (i, e) = decode(&inventory, &evidence);
+    let report = check(&i, &e);
+    assert!(!report.publication_allowed);
+    assert!(
+        report
+            .blockers
+            .iter()
+            .any(|b| b.contains(OWNER_INSTALLER_SMOKE))
+    );
+    let historical = evidence_value();
+    evidence["checks"] = historical["checks"].clone();
+    let (i, e) = decode(&inventory, &evidence);
+    assert!(has(&check(&i, &e), "Mandatory acceptance rows"));
+    // The new method and installer bindings cannot silently enter old contracts.
+    for schema in [1, 2, 3] {
+        let (_, mut old) = stable_values();
+        old["schema_version"] = json!(schema);
+        assert!(decode_evidence(&serde_json::to_vec(&old).unwrap()).is_err());
+    }
+}

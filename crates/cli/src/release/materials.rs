@@ -325,7 +325,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
     {
         return Err("Release material target differs from frozen build");
     }
-    if inventory.schema_version == release::SCHEMA_WORLD_DATA
+    if release::is_world_schema(inventory.schema_version)
         && (policy.origins.is_none()
             || evidence.origin_policy.as_ref().map(|f| f.sha256.as_str())
                 != policy.origin_policy_sha256)
