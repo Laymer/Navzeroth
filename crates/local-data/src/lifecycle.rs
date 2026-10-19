@@ -201,21 +201,28 @@ mod sidecar_tests {
     struct Directory(std::path::PathBuf);
     impl Directory {
         fn new() -> Self {
-            let root = std::env::temp_dir().join(format!(
-                "nav-sidecar-{}-{}",
-                std::process::id(),
-                std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap()
-                    .as_nanos()
-            ));
-            #[cfg(unix)]
-            {
-                use std::os::unix::fs::DirBuilderExt;
-                fs::DirBuilder::new().mode(0o700).create(&root).unwrap();
-            }
-            #[cfg(not(unix))]
-            fs::create_dir(&root).unwrap();
+            static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+            let root = (0..1024)
+                .find_map(|_| {
+                    let root = std::env::temp_dir().join(format!(
+                        "nav-sidecar-{}-{}",
+                        std::process::id(),
+                        NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+                    ));
+                    #[allow(unused_mut)] // Unix permissions require a mutable builder.
+                    let mut builder = fs::DirBuilder::new();
+                    #[cfg(unix)]
+                    {
+                        use std::os::unix::fs::DirBuilderExt;
+                        builder.mode(0o700);
+                    }
+                    match builder.create(&root) {
+                        Ok(()) => Some(root),
+                        Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => None,
+                        Err(error) => panic!("Cannot reserve sidecar fixture: {error}"),
+                    }
+                })
+                .expect("Sidecar fixture reservation exhausted");
             Self(root)
         }
     }
