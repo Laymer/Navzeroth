@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 import {lcovLines,istanbulLines,relativeSource,normalizeRaw,verdict,runGate} from './gate.mjs';
 const commit='a'.repeat(40),sha='b'.repeat(64);
 const inventory={format_version:1,source_commit:commit,files:[{path:'crates/core/src/logic.rs',language:'rust',disposition:'eligible',source_sha256:sha,line_count:100,test_line_ranges:[[50,60]]},{path:'apps/desktop/src/main.tsx',language:'typescript',disposition:'eligible',source_sha256:sha,line_count:10,test_line_ranges:[]},{path:'apps/desktop/src/types.ts',language:'typescript',disposition:'declaration_only',source_sha256:sha,line_count:10,test_line_ranges:[]}]};
@@ -104,4 +105,117 @@ test('end-to-end gate verifies independent collector hashes and derives verdict 
   write('ui.json',ui);write('ui-raw.json',{...raw,extra:'altered'});
   assert.throws(()=>runGate(path.join(dir,'inventory.json'),receipts,path.join(dir,'bad-raw.json')),/altered raw/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+function evidenceFixture(t){
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'nav-gate-inputs-'));
+ t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
+ const write=(name,bytes)=>fs.writeFileSync(path.join(dir,name),bytes);
+ write('inventory.json',JSON.stringify(inventory));
+ const body='SF:/repo/crates/core/src/logic.rs\nDA:1,1\nend_of_record\n';
+ write('raw.lcov',body);
+ write('receipt.json',JSON.stringify({...rust('linux'),
+  inventory_sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(dir,'inventory.json'))).digest('hex'),
+  source_hashes:{[inventory.files[0].path]:sha},
+  raw_reports:[{path:'raw.lcov',format:'lcov',sha256:crypto.createHash('sha256').update(body).digest('hex')}],
+ }));
+ return {dir,write,run:()=>runGate(path.join(dir,'inventory.json'),[path.join(dir,'receipt.json')],path.join(dir,'verdict.json'))};
+}
+
+test('inventory size and regular-file bounds apply before reading any bytes',t=>{
+ const fixture=evidenceFixture(t),file=path.join(fixture.dir,'inventory.json');
+ fs.truncateSync(file,64*1024*1024+1);
+ const original=fs.readSync;let reads=0;
+ t.mock.method(fs,'readSync',(...args)=>{reads++;return original(...args);});
+ assert.throws(fixture.run,/bounded regular file/);
+ assert.equal(reads,0);assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
+});
+
+test('inventory and receipt symbolic links are refused even with matching bytes',t=>{
+ const fixture=evidenceFixture(t);
+ for(const name of ['inventory.json','receipt.json']){
+  const file=path.join(fixture.dir,name),saved=file+'.saved';
+  fs.renameSync(file,saved);fs.symlinkSync(saved,file);
+  assert.throws(fixture.run,/bounded regular file/);
+  fs.unlinkSync(file);fs.renameSync(saved,file);
+ }
+});
+
+test('raw report size, type and final symlink are checked before parsing',t=>{
+ const fixture=evidenceFixture(t),file=path.join(fixture.dir,'raw.lcov');
+ const body=fs.readFileSync(file);
+ fs.truncateSync(file,256*1024*1024+1);
+ assert.throws(fixture.run,/bounded regular file/);
+ fs.unlinkSync(file);fs.mkdirSync(file);
+ assert.throws(fixture.run,/bounded regular file/);
+ fs.rmdirSync(file);fixture.write('saved.lcov',body);
+ fs.symlinkSync(path.join(fixture.dir,'saved.lcov'),file);
+ assert.throws(fixture.run,/bounded regular file/);
+});
+
+test('nested raw reports work but linked parent directories cannot supply evidence',t=>{
+ const fixture=evidenceFixture(t),receiptFile=path.join(fixture.dir,'receipt.json');
+ const receipt=JSON.parse(fs.readFileSync(receiptFile));
+ fs.mkdirSync(path.join(fixture.dir,'reports'));
+ fs.renameSync(path.join(fixture.dir,'raw.lcov'),path.join(fixture.dir,'reports','raw.lcov'));
+ receipt.raw_reports[0].path='reports/raw.lcov';
+ fixture.write('receipt.json',JSON.stringify(receipt));
+ assert.equal(fixture.run().passes,false); // Missing Windows and UI, not a claimed pass.
+ fs.unlinkSync(path.join(fixture.dir,'verdict.json'));
+ fs.renameSync(path.join(fixture.dir,'reports'),path.join(fixture.dir,'external'));
+ fs.symlinkSync(path.join(fixture.dir,'external'),path.join(fixture.dir,'reports'),'junction');
+ assert.throws(fixture.run,/directory is linked/);
+ assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
+});
+
+for(const mutation of ['growth','truncation'])test(`bounded evidence read refuses concurrent ${mutation}`,t=>{
+ const fixture=evidenceFixture(t),original=fs.readSync;let mutated=false,total=0;
+ const file=path.join(fixture.dir,'inventory.json'),originalSize=fs.statSync(file).size;
+ t.mock.method(fs,'readSync',(fd,buffer,offset,length,position)=>{
+  if(!mutated){
+   mutated=true;
+   if(mutation==='growth')fs.appendFileSync(file,' '.repeat(4096));
+   else fs.truncateSync(file,1);
+  }
+  assert.ok(buffer.length<=originalSize+1);
+  const count=original(fd,buffer,offset,length,position);total+=count;return count;
+ });
+ assert.throws(fixture.run,/changed during read/);
+ assert.ok(total<=originalSize+1);
+ assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
+});
+
+test('replacement between path inspection and open is refused',t=>{
+ const fixture=evidenceFixture(t),file=path.join(fixture.dir,'inventory.json');
+ const original=fs.openSync;let replaced=false;
+ t.mock.method(fs,'openSync',(target,...args)=>{
+  if(target===file&&!replaced){
+   replaced=true;fs.renameSync(file,file+'.old');fs.copyFileSync(file+'.old',file);
+  }
+  return original(target,...args);
+ });
+ assert.throws(fixture.run,/changed during read/);
+ assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
+});
+
+
+test('replacement with a FIFO is refused without blocking before descriptor inspection',{skip:process.platform==='win32'},t=>{
+ const fixture=evidenceFixture(t),fifo=path.join(fixture.dir,'fifo');
+ const create=spawnSync('mkfifo',[fifo],{encoding:'utf8'});
+ assert.equal(create.status,0,create.stderr);
+ const file=path.join(fixture.dir,'inventory.json');
+ const child=spawnSync(process.execPath,['--input-type=module','-e',`
+  import fs from 'node:fs';
+  import assert from 'node:assert/strict';
+  import {runGate} from ${JSON.stringify(new URL('./gate.mjs',import.meta.url).href)};
+  const file=${JSON.stringify(file)},original=fs.openSync;let replaced=false;
+  fs.openSync=(target,...args)=>{
+   if(target===file&&!replaced){replaced=true;fs.unlinkSync(file);fs.renameSync(${JSON.stringify(fifo)},file);}
+   return original(target,...args);
+  };
+  assert.throws(()=>runGate(file,[${JSON.stringify(path.join(fixture.dir,'receipt.json'))}],${JSON.stringify(path.join(fixture.dir,'verdict.json'))}),/changed during read/);
+ `],{encoding:'utf8',timeout:3000});
+ assert.equal(child.error,undefined,child.error?.message);
+ assert.equal(child.status,0,child.stderr);
+ assert.equal(fs.existsSync(path.join(fixture.dir,'verdict.json')),false);
 });

@@ -2,6 +2,7 @@
 import contextlib
 import io
 import json
+import hashlib
 import os
 import pathlib
 import sys
@@ -51,7 +52,7 @@ def cache(url, name, body, status=200):
     body_path.parent.mkdir(parents=True, exist_ok=True)
     data = body.encode()
     body_path.write_bytes(data)
-    meta = {"url": url, "status": status, "bytes": len(data)}
+    meta = {"url": url, "status": status, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
     meta_path.write_text(json.dumps(meta), encoding="utf-8")
 
 

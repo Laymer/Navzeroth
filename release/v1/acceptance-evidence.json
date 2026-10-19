@@ -124,7 +124,7 @@
   ],
   "origin_policy": {
     "path": "release/v1/accepted-origins.json",
-    "bytes": 786,
-    "sha256": "23be4b9d42197f2a61ab8973e526ea258ace90bf520a84bbd0a0a3565310bb9a"
+    "bytes": 904,
+    "sha256": "d58e2e456fc81b35b840ae846a794e1bf1b2ada46e0fff434ad9c063d5b73dd7"
   }
 }

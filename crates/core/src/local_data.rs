@@ -216,6 +216,8 @@ pub enum InventoryDisposition {
     RetainedUnsupported,
     NotLocallyPresent,
     UnavailableEncrypted,
+    UnavailableUnknown,
+    UnavailableUnsupported,
     DefinitionMissing,
     LayoutMismatch,
     InvalidCorrupt,
@@ -334,4 +336,49 @@ pub fn decode_metadata(bytes: &[u8], transforms: &[&str]) -> Result<MetadataBund
         serde_json::from_value(value).map_err(|_| "Invalid metadata schema")?;
     validate_metadata(&bundle, transforms)?;
     Ok(bundle)
+}
+
+impl InventoryDisposition {
+    /// New failure distinctions require the v2 catalog/checkpoint envelope.
+    pub fn supported_in(self, format_version: u32) -> bool {
+        matches!(format_version, 1 | 2)
+            && (format_version == 2
+                || !matches!(
+                    self,
+                    Self::UnavailableUnknown | Self::UnavailableUnsupported
+                ))
+    }
+}
+
+#[cfg(test)]
+mod inventory_disposition_versions {
+    use super::InventoryDisposition::*;
+
+    #[test]
+    fn every_legacy_disposition_remains_supported_without_reinterpretation() {
+        for disposition in [
+            Decoded,
+            RetainedUnsupported,
+            NotLocallyPresent,
+            UnavailableEncrypted,
+            DefinitionMissing,
+            LayoutMismatch,
+            InvalidCorrupt,
+            ExcludedByPolicy,
+        ] {
+            assert!(disposition.supported_in(1));
+            assert!(disposition.supported_in(2));
+            assert!(!disposition.supported_in(0));
+            assert!(!disposition.supported_in(3));
+            let encoded = serde_json::to_string(&disposition).unwrap();
+            let restored = serde_json::from_str(&encoded).unwrap();
+            assert_eq!(disposition, restored);
+        }
+        for disposition in [UnavailableUnknown, UnavailableUnsupported] {
+            assert!(!disposition.supported_in(1));
+            assert!(disposition.supported_in(2));
+            assert!(!disposition.supported_in(0));
+            assert!(!disposition.supported_in(3));
+        }
+    }
 }

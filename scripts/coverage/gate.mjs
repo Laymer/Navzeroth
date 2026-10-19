@@ -125,10 +125,33 @@ export function normalizeRaw(records,receipt,inventory){
  }
  return result;
 }
-function readJson(file,max=64*1024*1024){const stat=fs.lstatSync(file);if(!stat.isFile()||stat.isSymbolicLink()||stat.size>max)throw new Error('Coverage input is not a bounded regular file');return JSON.parse(fs.readFileSync(file,'utf8'));}
+function readBounded(file,max){
+ const before=fs.lstatSync(file);
+ if(!before.isFile()||before.isSymbolicLink()||before.size>max)throw new Error('Coverage input is not a bounded regular file');
+ const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0)|(fs.constants.O_NONBLOCK??0));
+ try{
+  const stat=fs.fstatSync(fd);
+  if(!stat.isFile()||stat.dev!==before.dev||stat.ino!==before.ino||stat.size!==before.size)throw new Error('Coverage input changed during read');
+  // Read at most the checked size plus one byte, including if the file grows.
+  const bytes=Buffer.alloc(stat.size+1);let used=0,count;
+  while(used<bytes.length&&(count=fs.readSync(fd,bytes,used,bytes.length-used,null))>0)used+=count;
+  if(used!==stat.size)throw new Error('Coverage input changed during read');
+  return bytes.subarray(0,used);
+ }finally{fs.closeSync(fd);}
+}
+function readJson(file,max=64*1024*1024){return JSON.parse(readBounded(file,max).toString('utf8'));}
+function rawReportPath(receiptFile,relative){
+ const root=path.dirname(path.resolve(receiptFile));let current=root;
+ for(const component of ['',...relative.split('/').slice(0,-1)]){
+  current=path.join(current,component);
+  const stat=fs.lstatSync(current);
+  if(stat.isSymbolicLink()||!stat.isDirectory())throw new Error('Raw coverage report directory is linked or not a directory');
+ }
+ return path.join(root,relative);
+}
 export function runGate(inventoryFile,receiptFiles,output){
  if(fs.existsSync(output))throw new Error('Coverage verdict output already exists');
- const inventoryBytes=fs.readFileSync(inventoryFile),inventory=readJson(inventoryFile);
+ const inventoryBytes=readBounded(inventoryFile,64*1024*1024),inventory=JSON.parse(inventoryBytes.toString('utf8'));
  const receipts=receiptFiles.map(file=>{
   const receipt=readJson(file);
   const records=[];
@@ -137,9 +160,8 @@ export function runGate(inventoryFile,receiptFiles,output){
   if(!required||receipt.raw_reports.length!==required.length||new Set(receipt.raw_reports.map(report=>report.path)).size!==required.length||required.some(format=>receipt.raw_reports.filter(report=>report.format===format).length!==1))throw new Error('Required raw coverage evidence is missing or duplicated');
   for(const report of receipt.raw_reports){
    if(typeof report.path!=='string'||!/^[A-Za-z0-9_@.+/-]+$/.test(report.path)||report.path.split(/[\\/]/).some(p=>!p||p==='.'||p==='..')||path.isAbsolute(report.path))throw new Error('Unsafe raw report path');
-   const full=path.join(path.dirname(file),report.path),stat=fs.lstatSync(full);
-   if(!stat.isFile()||stat.isSymbolicLink()||stat.size>256*1024*1024)throw new Error('Missing/altered raw coverage report');
-   const bytes=fs.readFileSync(full);
+   const full=rawReportPath(file,report.path);
+   const bytes=readBounded(full,256*1024*1024);
    if(hash(bytes)!==report.sha256)throw new Error('Missing/altered raw coverage report');
    if(report.format==='lcov' && receipt.kind==='rust-llvm')records.push(...lcovLines(bytes.toString()));
    else if(report.format==='istanbul' && ['typescript-v8','typescript-config-v8'].includes(receipt.kind))records.push(...istanbulLines(JSON.parse(bytes)));

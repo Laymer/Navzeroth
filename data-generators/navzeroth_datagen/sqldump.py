@@ -9,6 +9,9 @@ the string "NULL" and to decode backslash escapes.
     for row in dump.rows("creature_template"): ...
 """
 import gzip
+import io
+
+from .bounded import read_stream
 import re
 
 from . import http
@@ -97,6 +100,15 @@ class Dump:
         return out
 
 
+# The retained SQL expands to 73,289,738 bytes; finite growth allowance.
+MAX_SQL_BYTES = 256 * 1024 * 1024
+
+
+def decompress_sql(raw):
+    with gzip.GzipFile(fileobj=io.BytesIO(raw)) as stream:
+        return read_stream(stream, MAX_SQL_BYTES).decode("utf-8", "strict")
+
+
 def load_classic_db():
     """(Dump, dump file name, source ref dict) for the newest CMaNGOS classic-db dump."""
     from . import envelope
@@ -104,7 +116,7 @@ def load_classic_db():
     entry = next(f for f in listing if f["name"].endswith(".sql.gz"))
     name, url = entry["name"], entry["download_url"]  # raw.githubusercontent.com, no cross-host redirect
     raw = http.fetch(url, name, timeout=300)
-    sql = gzip.decompress(raw).decode("utf-8", "replace")
+    sql = decompress_sql(raw)
     ref = envelope.source("cmangos-classic-db", CMANGOS_REPO, revision=f"{name} (git blob {entry['sha']})",
                           snapshot_sha256=http.used()[url]["sha256"])
     return Dump(sql), name, ref
