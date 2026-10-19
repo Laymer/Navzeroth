@@ -33,6 +33,49 @@ missing is `skipped`. Each generator also runs alone with `--refresh`, `--offlin
   and shards with sha256, bytes and records; the downloads used). Neither holds timestamps:
   an `--offline` re-run over the same cache writes the same bytes.
 
+## Pipeline
+
+`pipeline.py` (ADR 0007) runs everything from download to a draft pull request:
+
+    python3 data-generators/pipeline.py                         # every stage
+    python3 data-generators/pipeline.py --offline --no-publish  # from the cache, no branch or PR
+    python3 data-generators/pipeline.py --pages-dir ~/Downloads/wowhead
+    python3 data-generators/pipeline.py --only content,gate --no-publish
+
+| Stage | Does |
+|---|---|
+| `detect` | Reads the client's `.build.info` and writes `release/v1/world-data-target.json` (build, interface, locale). |
+| `generate` | `run_all.py` (`--offline`/`--refresh` passed on); with `--pages-dir`, `import_wowhead_pages.py` first; with `--no-network-sources`, only `gen_fishing`, `gen_world_cmangos`, `gen_world_db2`. |
+| `verify` | `azeroth-cli verify-world-data --input data-generators/output`. |
+| `register` | `to_facts.py`, `register_facts.py`, then `source-sync` and `source-build` (output `dist/source-knowledge-world`). |
+| `content` | `world_to_content.py` to `content/world/<build>/`, then `build-content-v2` and `verify-pack` (pack in `dist/world-pack/<build>`). |
+| `gate` | `release-readiness --root . --version 1.0.0`; the JSON report goes to `content/world/<build>/release-readiness.json`. Not ready is reported, not a failure. |
+| `publish` | Commits the generated paths to `data/world-<build>-<YYYYMMDD>` (`--branch` overrides), checks LFS pointers, pushes and opens or updates a draft PR. |
+
+- Client detection: `--client DIR`, else the usual WSL installs (`/mnt/c` and `/mnt/d`,
+  `Program Files (x86)`, `Program Files` or the drive root, `World of Warcraft`), else
+  `data-generators/local.json` holding `{"client": "<install folder>"}` (git-ignored).
+  A product subfolder such as `_classic_beta_` resolves to its parent. The active row
+  whose version starts with `1.60.` (products `wow_classic_beta`, `wowf`) wins; the
+  interface is major·10000 + minor·100 + patch (1.60.1 → 16001). With no client found,
+  the committed target stays unchanged.
+- The CLI is built once with `cargo build --locked -p azeroth-cli` (`--cli PATH` uses a
+  built one). `--only`/`--skip` select stages; the order is fixed. A failed stage stops
+  the run and the exit code is non-zero. Logs: `.cache/logs/pipeline-<stage>.log`.
+- Publishing commits through a private index, so your index and working tree are left
+  alone. It never pushes to `main` or force-pushes; on an existing data branch it adds a
+  merge commit (parents: branch tip, current HEAD). Nothing is published when the
+  generated paths equal HEAD (or the branch); a changed readiness report alone does not
+  count. LFS-tracked files must be staged as pointers (`git lfs install --local`).
+- `register` and `content` need `register_facts.py` (V2.8c) and `world_to_content.py`
+  (V2.8d); until those are merged the stage fails and names the missing script.
+
+The weekly workflow `.github/workflows/world-data.yml` runs
+`pipeline.py --no-network-sources --skip detect --branch data/world-weekly` (reusing the
+committed target) and opens or updates a draft PR only when the output changed. **The
+owner must enable "Allow GitHub Actions to create and approve pull requests"**
+(repository Settings > Actions > General > Workflow permissions), or the PR step fails.
+
 ## Editions
 
 Every shard names the edition and build its data comes from; nothing is relabelled as
