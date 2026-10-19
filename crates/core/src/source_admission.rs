@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 
 pub const MAX_REGISTRY_BYTES: usize = 1_048_576;
 pub const MAX_FILE_BYTES: u64 = 8 * 1024 * 1024;
-pub const MAX_RETRIEVAL_BYTES: u64 = 1024 * 1024 * 1024;
+pub const MAX_RETRIEVAL_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Rejection {
