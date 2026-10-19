@@ -107,7 +107,10 @@ fn sorted(files: &[FileRef]) -> Vec<FileRef> {
     result.sort_by(|a, b| a.path.cmp(&b.path));
     result
 }
-fn private_refs<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a FileRef> {
+pub(super) fn private_refs<'a>(
+    inventory: &'a Inventory,
+    evidence: &'a Evidence,
+) -> Vec<&'a FileRef> {
     inventory
         .domains
         .iter()

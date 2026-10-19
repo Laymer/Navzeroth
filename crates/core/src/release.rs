@@ -400,12 +400,22 @@ pub struct Deferral {
     pub feature: OptionalFeature,
     pub reason: String,
 }
+/// Schema4 public bundle receipts bind exact source resources to independent review.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BundledContentEvidence {
+    pub manifest: FileRef,
+    pub receipt: FileRef,
+    pub review: FileRef,
+}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
     /// Schema 4 only: reviewed public corresponding-source resources.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub corresponding_source_files: Option<Vec<FileRef>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bundled_content: Option<BundledContentEvidence>,
     /// Schema 4 only: independently verified draft installer identity.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub candidate_installer_sha256: Option<Sha256Hex>,
@@ -594,8 +604,10 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     if evidence.schema_version != SCHEMA_STABLE
         && serde_json::from_slice::<serde_json::Value>(bytes)
             .map_err(|_| "Invalid release manifest")?
-            .get("corresponding_source_files")
-            .is_some()
+            .as_object()
+            .is_some_and(|o| {
+                o.contains_key("corresponding_source_files") || o.contains_key("bundled_content")
+            })
     {
         return Err("Corresponding-source fields require evidence schema 4");
     }
@@ -619,6 +631,19 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
         return Err("Unsupported evidence version");
     }
     validate_corresponding_sources(&evidence)?;
+    if let Some(bundle) = &evidence.bundled_content {
+        let refs = [&bundle.manifest, &bundle.receipt, &bundle.review];
+        if evidence.schema_version != SCHEMA_STABLE
+            || !files_present(&refs.into_iter().cloned().collect::<Vec<_>>())
+            || !bundle.manifest.path.as_str().starts_with("release/")
+            || !bundle.receipt.path.as_str().starts_with("release/")
+            || bundle.manifest.bytes > 4 * 1024 * 1024
+            || bundle.receipt.bytes > 64 * 1024
+            || bundle.review.bytes > MAX_RELEASE_BYTES as u64
+        {
+            return Err("Invalid bundled-content evidence collection");
+        }
+    }
     Ok(evidence)
 }
 /// Explicit schema-4 collection; historical schemas cannot acquire this field.
@@ -955,6 +980,11 @@ pub fn assess_with(
         report.block("Acceptance evidence is missing");
         return Ok(report);
     };
+    if inventory.schema_version == SCHEMA_STABLE && evidence.bundled_content.is_none() {
+        report.block(
+            "Stable content requires a signed bundle manifest and independent review binding",
+        );
+    }
     if !inventory.sources.is_empty() && evidence.admission_registry.is_none() {
         report.block("Accepted sources require a pinned admission registry");
     }

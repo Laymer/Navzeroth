@@ -68,3 +68,42 @@ fn packaging_command_checks_explicit_build_identity_and_exact_signed_resources()
     fs::remove_file(identity).unwrap();
     fs::remove_file(policy).unwrap();
 }
+
+#[test]
+fn assembly_rejects_ambiguous_options_and_untrusted_source_without_creating_output() {
+    use azeroth_cli::bundled_content::execute_assembly;
+    let f = Fixture::new();
+    let identity = f.root.join("identity.json");
+    fs::write(&identity, receipts::encode(&f.payload).unwrap()).unwrap();
+    let output = f.root.join("assembled");
+    let args: Vec<OsString> = vec![
+        "--root".into(),
+        f.root.clone().into_os_string(),
+        "--output".into(),
+        output.clone().into_os_string(),
+        "--identity".into(),
+        identity.into_os_string(),
+    ];
+    assert!(
+        execute_assembly(&args).is_err(),
+        "synthetic source cannot use production trust"
+    );
+    assert!(!output.exists());
+    for bad in [
+        vec![],
+        vec!["--root", "."],
+        vec!["--root", ".", "--root", ".", "--identity", "."],
+        vec!["--unknown", ".", "--output", ".", "--identity", "."],
+    ] {
+        assert!(
+            execute_assembly(&bad.into_iter().map(OsString::from).collect::<Vec<_>>()).is_err()
+        );
+    }
+    let command = Command::new(env!("CARGO_BIN_EXE_azeroth-cli"))
+        .arg("assemble-bundled-content")
+        .args(&args)
+        .output()
+        .unwrap();
+    assert!(!command.status.success());
+    assert!(!output.exists());
+}
