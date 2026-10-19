@@ -25,14 +25,29 @@ Tests: `python3 -m unittest data-generators/tests/test_world_to_content.py`
 
 Every record carries the target context from `--target` (edition, build,
 interface; namespace `reference`, `fixture: false`). The revision is
-`navzeroth-world-<build>-<first 12 hex of the input digest>`; the digest covers
-every shard path and SHA-256, so new input gives a new revision. Collections are
+`navzeroth-world-<build>-<first 24 hex of the mapping digest>` in converter v2.
+The digest covers canonical output (with empty revision), source registry, conflicts,
+shard digest, complete target, policy, authored input and generator version. Changed
+mapping inputs and output cannot reuse an old revision. Collections are
 sorted (numbers inside IDs numerically), keys are sorted and no clock or host path
 is read: two runs on the same input give byte-identical files.
 
 The files under `content/world/` are stored through Git LFS (`.gitattributes`).
 
 ## Origins and evidence
+
+Converter v2 adds optional structured `EvidenceRecord.origin`: true edition and
+observed build, including explicit unknown. Historical catalogs without this
+additive metadata retain their previous serialization and decoding semantics;
+absence does not supply a newly observed origin. `context` stays the dataset
+context. Older or unknown builds of the target edition use
+`cross_edition_unverified`; documented source bytes do not establish target-build
+compatibility. The owner explicitly admitted historical Forever 1.60.1.70245 on 2026-10-19.
+Policy schema 2 names only that exact build in `historical_builds`; unknown, other
+and future builds receive no grant. Schema 1 remains readable without this grant.
+Historical acceptance is reported separately from target-build verification. Strong
+confidence with mismatching structured origin is a relabel finding. Multiple
+builds sharing one dataset/edition evidence identity are refused.
 
 The origin edition is never relabelled. One evidence record exists per
 (source, origin edition, dataset): `ev:<source>:<origin>:<dataset>`, for example
@@ -314,5 +329,6 @@ per source and 40 rows per table are listed, with totals). Real pack: first loot
   the world pack alone); the merge uses linear `contains` per element.
 - Quest `givers`/`enders` and `LootTable.source` are checked for uniqueness and shape
   but not resolved against entities.
-- Evidence for wago `wowf` shards (build 1.60.1.70245) is stamped with the target
-  build (1.60.1.70450) in its context; the shard build is only in the evidence notes.
+- Committed converter-v1 catalogs require integrated regeneration, source/material
+  closure and signed receipts before release. Their historical source build is
+  not target verification.
