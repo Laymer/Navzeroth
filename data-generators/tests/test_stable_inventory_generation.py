@@ -64,3 +64,44 @@ class StableInventoryGeneration(unittest.TestCase):
                 else:
                     p=root/'content/world/1.60.1.70450/conflicts.json';v=json.loads(p.read_bytes());v['precedence']=[];p.write_text(json.dumps(v))
                 with self.assertRaises(ValueError):generator.derive(root,e,'a'*64)
+
+    def proof_fixture(self,directory):
+        import subprocess
+        root,e=self.fixture(directory)
+        source=root/generator.FUNCTIONAL_SOURCE;source.parent.mkdir(parents=True);source.write_text('// Synthetic binding fixture only; no actual functional execution claim.\n')
+        subprocess.run(['git','-C',str(root),'add',generator.FUNCTIONAL_SOURCE],check=True,stdout=subprocess.DEVNULL)
+        subprocess.run(['git','-C',str(root),'commit','-qm','Synthetic proof source'],check=True,stdout=subprocess.DEVNULL)
+        commit=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD']).decode().strip()
+        def key(collection,*ids):return json.dumps(['synthetic-r1',collection,*ids],separators=(',',':'))
+        ids={
+            'quests':[key('quests','q1'),key('quests','q2'),key('quest_stages','q1','s1'),key('quest_stages','q2','s2')],
+            'class_roles':[key('models',str(i)) for i in range(54)],
+            'reminders':[key('rules',str(i)) for i in range(18)],
+            'dungeons':[key('dungeons',str(i)) for i in range(27)],
+            'equipment':[key('items','i',{'status':'known','value':'base'})]}
+        records={domain:{identity:['synthetic-source'] for identity in keys} for domain,keys in ids.items()}
+        inputs=[]
+        for name in ('data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json','docs/data/role-coverage-v1.json','data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json'):
+            path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('{"synthetic":true}')
+            inputs.append(generator.reference(root,name))
+        proof=dict(schema_version=1,kind='manual_engineering_full_pack_functional_scenarios',status='pass',game_observation=False,platform='synthetic fixture only',disclosure='Synthetic contract test, no actual passing application workflow claimed.',test_source=dict(path=generator.FUNCTIONAL_SOURCE,commit=commit,sha256=hashlib.sha256(source.read_bytes()).hexdigest()),packs=[p['manifest'] for p in e['packs']],source_inputs=inputs,additional_source_records=[dict(domain='equipment',id=ids['equipment'][0])],units=[dict(domain=domain,scenario=scenario,scope='Synthetic bounded binding fixture.',source_record_ids=sorted(ids[domain])) for domain,scenario in generator.FUNCTIONAL_SCENARIOS.items()],counts=dict(models=54,classes=9,score_boundary_cases=108,reminder_boundary_cases=24,dungeon_packages=26,raw_dungeons=27,excluded_test_maps=[169]))
+        (root/generator.FUNCTIONAL_PROOF).write_bytes(generator.encoded(proof))
+        return root,e,records,proof
+
+    def test_functional_proof_requires_exact_pack_committed_test_and_canonical_source_bindings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root,e,records,proof=self.proof_fixture(directory)
+            result=generator.functional_proof(root,e,records)
+            self.assertEqual(len(result['units']),4)
+            self.assertEqual(result['reference'],generator.reference(root,generator.FUNCTIONAL_PROOF))
+            for kind in ('pack','runtime_id','source','missing_unit','counts','input','game_observation'):
+                changed=copy.deepcopy(proof)
+                if kind=='pack':changed['packs'][0]['sha256']='0'*64
+                elif kind=='runtime_id':changed['units'][0]['source_record_ids'][0]='quest-stage-runtime-only'
+                elif kind=='source':changed['test_source']['sha256']='0'*64
+                elif kind=='missing_unit':changed['units'].pop()
+                elif kind=='counts':changed['counts']['classes']=10
+                elif kind=='input':changed['source_inputs'][0]['bytes']+=1
+                else:changed['game_observation']=True
+                (root/generator.FUNCTIONAL_PROOF).write_bytes(generator.encoded(changed))
+                with self.subTest(kind=kind),self.assertRaises(ValueError):generator.functional_proof(root,e,records)

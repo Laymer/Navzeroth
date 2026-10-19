@@ -41,6 +41,64 @@ def object_ref(root, sha):
     return ref
 
 
+FUNCTIONAL_PROOF='release/v1/functional-scenarios.json'
+FUNCTIONAL_SCENARIOS={'quests':'source_quest_projection_v1','class_roles':'authored_score_model_boundaries_v1','reminders':'authored_heuristic_reminder_boundaries_v1','dungeons':'supported_dungeon_guidance_v1'}
+FUNCTIONAL_SOURCE='crates/app/tests/stable_bundled_functional.rs'
+
+def functional_proof(root,enumeration,records):
+    path=root/FUNCTIONAL_PROOF
+    if not path.exists(): return None
+    proof=read(path,1024*1024)
+    if (proof['schema_version']!=1 or proof['kind']!='manual_engineering_full_pack_functional_scenarios'
+            or proof['status']!='pass' or proof['game_observation'] is not False
+            or not isinstance(proof['disclosure'],str) or not proof['disclosure'] or len(proof['disclosure'])>4096):
+        raise ValueError('functional proof does not preserve engineering-only scope')
+    pins=proof['packs'];expected=[p['manifest'] for p in enumeration['packs']]
+    if sorted(pins,key=lambda f:f['path'])!=sorted(expected,key=lambda f:f['path']):
+        raise ValueError('functional proof differs from exact selected packs')
+    source=proof['test_source'];commit=source['commit']
+    if source['path']!=FUNCTIONAL_SOURCE or len(commit)!=40 or any(c not in '0123456789abcdef' for c in commit):
+        raise ValueError('functional test source identity is not immutable')
+    raw=bounded.read_file(root/FUNCTIONAL_SOURCE,128*1024)
+    if hashlib.sha256(raw).hexdigest()!=source['sha256']:
+        raise ValueError('functional test implementation changed')
+    with tempfile.TemporaryFile() as pinned:
+        result=subprocess.run(['git','-C',str(root),'show',commit+':'+FUNCTIONAL_SOURCE],stdout=pinned,stderr=subprocess.DEVNULL)
+        pinned.seek(0);committed=pinned.read(128*1024+1)
+        if result.returncode or len(committed)>128*1024 or committed!=raw:
+            raise ValueError('functional test is not the exact committed implementation')
+    inputs=proof['source_inputs']
+    required={'data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json','docs/data/role-coverage-v1.json','data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json'}
+    if len(inputs)!=len(required) or {f['path'] for f in inputs}!=required:
+        raise ValueError('functional input proof is incomplete')
+    for ref in inputs:
+        if reference(root,ref['path'])!=ref: raise ValueError('functional source input changed')
+    units=proof['units'];by_domain={u['domain']:u for u in units}
+    if len(units)!=4 or set(by_domain)!=set(FUNCTIONAL_SCENARIOS):
+        raise ValueError('functional scenario inventory is incomplete or duplicate')
+    for domain,unit in by_domain.items():
+        ids=unit['source_record_ids']
+        if (unit['scenario']!=FUNCTIONAL_SCENARIOS[domain] or not isinstance(unit['scope'],str) or not unit['scope'] or len(unit['scope'])>4096
+                or not ids or len(ids)>2048 or ids!=sorted(set(ids))
+                or any(key not in records.get(domain,{}) for key in ids)):
+            raise ValueError('functional scenario invents records or scope')
+        keys=[json.loads(key) for key in ids]
+        permitted={'quests':{'quests','quest_stages'},'class_roles':{'models'},'reminders':{'rules'},'dungeons':{'dungeons'}}[domain]
+        if any(not isinstance(key,list) or len(key)<3 or key[1] not in permitted for key in keys):
+            raise ValueError('functional scenario contains runtime or wrong-domain identities')
+        if domain=='quests' and (sum(key[1]=='quests' for key in keys)!=2 or sum(key[1]=='quest_stages' for key in keys)!=2):
+            raise ValueError('functional quest scenario lacks source quests/stages')
+    additional=proof['additional_source_records']
+    if not additional or len(additional)>128 or any(f['id'] not in records.get(f['domain'],{}) for f in additional):
+        raise ValueError('functional extra source record is unresolved')
+    counts=proof['counts']
+    if counts!={'models':54,'classes':9,'score_boundary_cases':108,'reminder_boundary_cases':24,'dungeon_packages':26,'raw_dungeons':27,'excluded_test_maps':[169]}:
+        raise ValueError('functional supported scenario coverage changed; review required')
+    if len(by_domain['class_roles']['source_record_ids'])!=54 or len(by_domain['reminders']['source_record_ids'])!=18:
+        raise ValueError('functional model/rule coverage is incomplete')
+    return dict(reference=reference(root,FUNCTIONAL_PROOF),units=by_domain)
+
+
 def derive(root, enumeration, canonical_sha):
     records=enumeration['records']
     if set(records)-set(DOMAINS) or sum(map(len,records.values()))>2_000_000:
@@ -82,6 +140,7 @@ def derive(root, enumeration, canonical_sha):
     artifact_path='release/v1/shipped-content-validation.json'
     artifact=encoded(summary)
     artifact_ref=dict(path=artifact_path,bytes=len(artifact),sha256=hashlib.sha256(artifact).hexdigest())
+    proved=functional_proof(root,enumeration,records)
     domains=[];coverage=[]
     for domain in DOMAINS:
         rows=records.get(domain,{})
@@ -94,9 +153,12 @@ def derive(root, enumeration, canonical_sha):
             # Known concrete identities support future functional scenarios. A
             # genuinely absent record inventory remains None, never fabricated IDs.
             selected=ids if domain in ('class_roles','dungeons','reminders') else ids[:1]
-            functional=dict(id=domain+'-functional-coverage-pending-v1',scope='Required '+domain+' workflow/coverage proof remains unverified; shipped identity presence and accepted unknowns do not establish usable full-scope behavior.',required_record_ids=selected if selected else None)
+            scope='Required '+domain+' workflow/coverage proof remains unverified; shipped identity presence and accepted unknowns do not establish usable full-scope behavior.'
+            if proved:
+                selected=proved['units'][domain]['source_record_ids'];scope=proved['units'][domain]['scope']
+            functional=dict(id=domain+('-functional-scenarios-v1' if proved else '-functional-coverage-pending-v1'),scope=scope,required_record_ids=selected if selected else None)
             units.append(functional)
-            coverage.append(dict(unit_id=functional['id'],status='unverified',included_record_ids=selected,source_ids=sorted({sid for key in selected for sid in rows[key]}),unresolved_conflicts=0,unsupported_corrections=0,validation_evidence=[]))
+            coverage.append(dict(unit_id=functional['id'],status='pass' if proved else 'unverified',included_record_ids=selected,source_ids=sorted({sid for key in selected for sid in rows[key]}),unresolved_conflicts=0,unsupported_corrections=0,validation_evidence=[proved['reference']] if proved else []))
         boundaries=[dict(id=domain+'-outside-admitted-records',scope='Records absent from the admitted source corpus and later additions are not covered by this exact enumeration.',reason='Historical source corpus scope does not establish completeness or eligibility for the whole Forever game. Promised missing functionality remains unverified separately.')]
         boundaries.append(dict(id=domain+'-deferred-gameplay',scope='Trainer-spell gameplay, talents, professions and enhancements.',reason='Explicit stable1.0.0 exclusions; no planner, scoring or acquisition gameplay support is promised for these systems.'))
         domains.append(dict(domain=domain,completeness='complete' if ids else 'unknown',enumeration_evidence=[artifact_ref],units=units,out_of_scope=boundaries))
