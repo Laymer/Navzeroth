@@ -1,0 +1,108 @@
+{
+  "authored_scope": "original r1; baseline byte-identical",
+  "checks": {
+    "generator_tests_passed": 157,
+    "git_lfs_fsck": "passed",
+    "two_bound_mapper_runs": "exact committed bytes",
+    "upstream_admission_and_closure": "baseline identical"
+  },
+  "corresponding_code_commit": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+  "environment": {
+    "build": "debug",
+    "hosted_windows": false,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.42",
+    "shared_host": true
+  },
+  "limitations": [
+    "No hosted Windows/source-platform parity result yet",
+    "No stable readiness, installer/manual smoke or signed receipt claim",
+    "Shared Linux debug measurements do not establish ordinary-PC or installed application performance",
+    "393597 declared coverage gaps remain; distribution eligibility only evaluates admitted material/format"
+  ],
+  "measurements": {
+    "source-sync": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "source-sync",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--cache",
+        "content/source-materials/objects"
+      ],
+      "elapsed_seconds": 10.096781781998288,
+      "exit_code": 0,
+      "peak_rss_kib": 33024,
+      "resource_method": "os.wait4 exact child process",
+      "system_seconds": 0.075985,
+      "user_seconds": 10.014049
+    },
+    "world-pack-build": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "build-content-v2",
+        "--input",
+        "content/world/1.60.1.70450",
+        "--output",
+        "/tmp/navzeroth-212-world-pack"
+      ],
+      "elapsed_seconds": 115.35622865900223,
+      "exit_code": 0,
+      "peak_rss_kib": 6696800,
+      "resource_method": "os.wait4 exact child process",
+      "system_seconds": 3.73186,
+      "user_seconds": 111.427837
+    },
+    "world-pack-verify": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "verify-pack",
+        "--input",
+        "/tmp/navzeroth-212-world-pack"
+      ],
+      "elapsed_seconds": 52.71723614499933,
+      "exit_code": 0,
+      "peak_rss_kib": 5363156,
+      "resource_method": "os.wait4 exact child process",
+      "system_seconds": 1.419918,
+      "user_seconds": 51.289059
+    }
+  },
+  "pack": {
+    "build_report": {
+      "coverage_gaps": 393597,
+      "datasets": 1,
+      "distribution_eligible": true,
+      "files": 3,
+      "fixtures": 0,
+      "report_version": 2,
+      "total_bytes": 367731829
+    },
+    "files": {
+      "catalog.json": {
+        "bytes": 367721900,
+        "sha256": "d5e4839ff852e804b6c3469d07e6f449eb1e0ef0e46650877f4fb908450ecd08"
+      },
+      "manifest.json": {
+        "bytes": 523,
+        "sha256": "30d2adf9a554d43dc0438572843d4b683e28b284281cda863ab71a904bdcf36c"
+      },
+      "sources.json": {
+        "bytes": 9406,
+        "sha256": "8a9faf08284331cad1a36b546998a7ac724e2cd7d6dfd0e9ca4f08fa14b6cb26"
+      }
+    },
+    "path": "/tmp/navzeroth-212-world-pack",
+    "verification_report": {
+      "coverage_gaps": 393597,
+      "datasets": 1,
+      "distribution_eligible": true,
+      "files": 3,
+      "fixtures": 0,
+      "report_version": 2,
+      "total_bytes": 367731829
+    }
+  },
+  "schema_version": 1,
+  "source_commit": "c339e990dd901f8ef3a641989b1bb88223d468ac",
+  "world_revision": "navzeroth-world-1.60.1.70450-df08efbdf71b8a6cb3cebbf7"
+}

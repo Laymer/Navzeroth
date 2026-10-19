@@ -4,6 +4,7 @@ pub mod analytics;
 pub mod atlas;
 pub mod contract;
 pub mod coverage;
+pub mod dungeon_composition;
 pub mod eligibility;
 pub mod entities;
 pub mod error;

@@ -20,11 +20,15 @@ export function LocalWorkflowChoices({client,selectionId,locales,preset,onLocale
       if(result.ok&&result.value?.format_version===1){
         setRecord(result.value);
         const choices=result.value.preferences.selections[selectionId];
-        if(choices&&!dirty.current){setSelected(choices.locales);onLocales(choices.locales);setDetect(choices.change_detection);}
+        if(choices&&!dirty.current){
+          const installed=[...new Set(choices.locales.filter(locale=>locales.includes(locale)))].sort();
+          setSelected(installed);onLocales(installed);setDetect(choices.change_detection);
+          if(choices.locales.some(locale=>!locales.includes(locale)))setMessage("Some saved content locales are no longer declared by this installation. Review the available choices before extracting; no replacement locale was selected.");
+        }
       }else setMessage("Saved choices unavailable. Extraction still requires explicit locale selection.");
     });
     return()=>{current=false;serial.current++;};
-  },[client,selectionId,onLocales]);
+  },[client,selectionId,onLocales,locales]);
   async function save(){
     if(!record)return;const ticket=++serial.current;setBusy(true);
     const result=await client.saveLocalWorkflowChoices(selectionId,record.revision,selected,preset,detect);

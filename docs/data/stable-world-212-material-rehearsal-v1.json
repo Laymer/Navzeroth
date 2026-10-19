@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "reviewer": "Codex /root independent material rehearsal",
+  "repaired_world_commit": "ad0043433bfc09ab8692bb8f967dcde2bf273d9c",
+  "tooling_rehearsal_commit": "42e598fa71b4629b2c740619a466e9ca1b01e2f2",
+  "files": 82,
+  "bytes": 394972187,
+  "corresponding_mappings": 22,
+  "source_commit": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+  "exact_tree": true,
+  "all_file_hashes_and_lengths_verified": true,
+  "material_manifest_sha256": "c8ea43514fcdc7179fd44def9c0b32376f33b26bcd1631b0d472a10fadfbd530",
+  "world_catalog_sha256": "d5e4839ff852e804b6c3469d07e6f449eb1e0ef0e46650877f4fb908450ecd08",
+  "measurements": {
+    "exit_code": 0,
+    "elapsed_seconds": 107.07013390499924,
+    "maximum_child_rss_kib": 5653400,
+    "platform": "shared Linux development host; not Windows acceptance"
+  },
+  "limitations": [
+    "Future schema4 tooling and authored contract used only in isolated rehearsal; not merged with original212",
+    "Accepted unknown fields remain unknown; this proves material/source closure, not stable readiness",
+    "No Windows, installer, receipt, owner-smoke or publication result"
+  ]
+}

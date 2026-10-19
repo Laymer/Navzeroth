@@ -650,6 +650,41 @@ export type Observation_UtcMillis =
       status: "unknown" | "unsupported" | "restricted" | "not_applicable";
       value?: never;
     };
+export type Observation_BuildId =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: BuildId;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
 export type SourceId = string;
 export type Observation_RecordMap_CapabilityId_CapabilityCheck =
   | {
@@ -1336,7 +1371,16 @@ export interface EvidenceRecord {
   license: Observation_Text;
   notes: Text;
   observed_at_utc_ms: Observation_UtcMillis;
+  origin?: EvidenceOrigin | null;
   source: SourceId;
+}
+/**
+ * Source origin is independent of the dataset in which evidence is consumed.
+ * Historical catalogs may omit this; absence supplies no new origin assertion.
+ */
+export interface EvidenceOrigin {
+  build: Observation_BuildId;
+  edition: EditionId;
 }
 export interface GameBuild {
   capabilities: Observation_RecordMap_CapabilityId_CapabilityCheck;

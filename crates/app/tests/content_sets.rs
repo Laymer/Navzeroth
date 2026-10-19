@@ -58,6 +58,123 @@ fn revision(id: &str) -> DatasetRevision {
     DatasetRevision::new(id).unwrap()
 }
 
+fn overlapping_dungeons() -> (Value, Value) {
+    let mut low = world();
+    low["sources"][0]["editions"] =
+        json!({"status":"known","value":["vanilla_1_12","wow_forever"]});
+    low["content"]["reference"]["payload"]["evidence"][0]["confidence"] =
+        json!("cross_edition_unverified");
+    low["content"]["reference"]["payload"]["evidence"][0]["origin"] =
+        json!({"edition":"vanilla_1_12","build":{"status":"known","value":"1.12.1"}});
+    low["content"]["dungeons"][0]["id"] = json!("dungeon:the-deadmines");
+    low["content"]["dungeons"][0]["checklist"]["value"][0]["id"] = json!("estimated-entry");
+    low["content"]["dungeons"][0]["checklist"]["value"][0]["label"] =
+        json!("Entrance estimate: ghost-entry XY; portal, access and elevation unverified");
+    let mut high = authored();
+    high["sources"][0]["id"] = json!("authored-source");
+    high["sources"][0]["access"] = json!({"status":"known","value":"authored"});
+    high["content"]["reference"]["payload"]["evidence"][0]["source"] = json!("authored-source");
+    let mut map = low["content"]["reference"]["payload"]["map_spaces"][0].clone();
+    map["key"]["map_id"] = json!("authored:the-deadmines");
+    map["key"]["floor"] = json!("authored:pending");
+    map["evidence"] = json!(["authored-evidence-1"]);
+    high["content"]["reference"]["payload"]["map_spaces"] = json!([map]);
+    let mut dungeon = low["content"]["dungeons"][0].clone();
+    dungeon["title"] = json!("Authored dungeon title");
+    dungeon["map"] = high["content"]["reference"]["payload"]["map_spaces"][0]["key"].clone();
+    dungeon["evidence"] = json!(["authored-evidence-1"]);
+    for name in [
+        "entrance",
+        "access",
+        "preparation_quests",
+        "rewards",
+        "travel_edges",
+    ] {
+        dungeon[name] = json!({"status":"unknown"});
+    }
+    dungeon["checklist"]["value"][0]["id"] = json!("authored-check");
+    dungeon["checklist"]["value"][0]["label"] = json!("Authored readiness declaration");
+    dungeon["checklist"]["value"][0]["evidence"] = json!(["authored-evidence-1"]);
+    high["content"]["dungeons"] = json!([dungeon]);
+    (high, low)
+}
+
+#[test]
+fn dungeon_enrichment_activates_one_identity_with_visible_estimates_and_conflicts() {
+    let (high, low) = overlapping_dungeons();
+    let app = SnapshotApplication::in_memory().unwrap();
+    let (profile, _, now) = profile(&app);
+    app.stage_content(&high.to_string()).unwrap();
+    app.stage_content(&low.to_string()).unwrap();
+    let set = [revision("authored-r1"), revision("demo-r1")];
+    let active = app.activate_content_set(&profile, &set, true).unwrap();
+    assert!(active.conflicts.iter().any(|conflict| matches!(
+        conflict.key,
+        azeroth_core::sources::RecordKey::Dungeon {
+            field: azeroth_core::dungeon_composition::DungeonField::Map,
+            ..
+        }
+    )));
+    let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},
+        "package":null,"origin":null,"authored":{"revision":active.key.revision,"id":"dungeon:the-deadmines"}});
+    let report = app
+        .dungeon_preparation(&request.to_string(), Some(now))
+        .unwrap();
+    let package = report.package.unwrap();
+    assert_eq!(package.title.as_str(), "Authored dungeon title");
+    assert!(package.entrance.observation.value().is_some());
+    let checks = package.checks.observation.value().unwrap();
+    assert_eq!(checks.len(), 2);
+    assert!(
+        checks
+            .iter()
+            .any(|check| check.label.as_str().contains("elevation unverified"))
+    );
+    let reversed = [revision("demo-r1"), revision("authored-r1")];
+    assert_eq!(
+        app.activate_content_set(&profile, &reversed, true)
+            .unwrap()
+            .key,
+        active.key
+    );
+}
+
+#[test]
+fn direct_forever_and_ambiguous_authored_overlaps_refuse_without_changing_active_content() {
+    for both_authored in [false, true] {
+        let (high, mut low) = overlapping_dungeons();
+        if both_authored {
+            low["sources"][0]["access"] = json!({"status":"known","value":"authored"});
+        } else {
+            low["sources"][0]["editions"] = json!({"status":"known","value":["wow_forever"]});
+            low["content"]["reference"]["payload"]["evidence"][0]["confidence"] =
+                json!("publisher_documented");
+            low["content"]["reference"]["payload"]["evidence"][0]
+                .as_object_mut()
+                .unwrap()
+                .remove("origin");
+        }
+        let app = SnapshotApplication::in_memory().unwrap();
+        let (profile, _, _) = profile(&app);
+        app.stage_content(&high.to_string()).unwrap();
+        app.stage_content(&low.to_string()).unwrap();
+        app.activate_content(&profile, &revision("demo-r1"))
+            .unwrap();
+        assert!(
+            app.activate_content_set(
+                &profile,
+                &[revision("authored-r1"), revision("demo-r1")],
+                true
+            )
+            .is_err()
+        );
+        assert_eq!(
+            app.active_content(&profile).unwrap().unwrap().key.revision,
+            revision("demo-r1")
+        );
+    }
+}
+
 #[test]
 fn authored_and_world_revisions_activate_as_one_composed_revision() {
     let app = SnapshotApplication::in_memory().unwrap();
@@ -258,4 +375,62 @@ fn unknown_travel_requirements_are_assumed_only_under_the_accepting_activation()
             .iter()
             .any(|a| a.contains("assumed, not checked"))
     );
+}
+
+#[test]
+fn legacy_historical_origin_metadata_is_accepted_only_for_unambiguous_admitted_editions() {
+    for mixed_foreign in [false, true] {
+        let (high, mut low) = overlapping_dungeons();
+        low["content"]["reference"]["payload"]["evidence"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("origin");
+        if mixed_foreign {
+            low["sources"][0]["editions"] =
+                json!({"status":"known","value":["vanilla_1_12","wow_forever","wow_classic_tbc"]});
+        }
+        let app = SnapshotApplication::in_memory().unwrap();
+        let (profile, _, _) = profile(&app);
+        app.stage_content(&high.to_string()).unwrap();
+        app.stage_content(&low.to_string()).unwrap();
+        assert_eq!(
+            app.activate_content_set(
+                &profile,
+                &[revision("authored-r1"), revision("demo-r1")],
+                true
+            )
+            .is_ok(),
+            !mixed_foreign
+        );
+    }
+}
+
+#[test]
+fn immutable_set_identity_changes_with_content_even_if_external_labels_are_reused() {
+    let (high, low) = overlapping_dungeons();
+    let app = SnapshotApplication::in_memory().unwrap();
+    let (first_profile, _, _) = profile(&app);
+    app.stage_content(&high.to_string()).unwrap();
+    app.stage_content(&low.to_string()).unwrap();
+    let first = app
+        .activate_content_set(
+            &first_profile,
+            &[revision("authored-r1"), revision("demo-r1")],
+            false,
+        )
+        .unwrap();
+    let (mut changed, low) = overlapping_dungeons();
+    changed["content"]["dungeons"][0]["title"] = json!("Reviewed changed declaration");
+    let other = SnapshotApplication::in_memory().unwrap();
+    let (profile, _, _) = profile(&other);
+    other.stage_content(&changed.to_string()).unwrap();
+    other.stage_content(&low.to_string()).unwrap();
+    let second = other
+        .activate_content_set(
+            &profile,
+            &[revision("authored-r1"), revision("demo-r1")],
+            false,
+        )
+        .unwrap();
+    assert_ne!(first.key.revision, second.key.revision);
 }
