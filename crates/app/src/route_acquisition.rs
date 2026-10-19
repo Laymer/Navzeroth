@@ -16,7 +16,7 @@ use azeroth_core::{
     },
     observation::{FreshnessContext, Observation, ObservationMetadata, StateSource},
     predicate::RuleLimits,
-    travel::{Route, RouteOptions, RouteOutcome, RouteSearch, shortest_route},
+    travel::{Route, RouteOutcome, RouteSearch, shortest_route},
     types::*,
 };
 use serde::{Deserialize, Serialize};
@@ -241,14 +241,16 @@ fn detour(
             "Manual source node is absent from exact active content",
         ));
     }
-    let options = RouteOptions::default();
+    // The same travel policy as the planned route (ADR 0007 §5, §8).
+    let travel = crate::catalog::travel_inputs(content);
+    let options = &travel.options;
     let outbound = shortest_route(
         &data.nodes,
-        &data.edges,
+        &travel.edges,
         &leg.route.start.id,
         &node.id,
         context,
-        &options,
+        options,
     )?;
     let Some(a) = complete(&outbound) else {
         return Ok(DetourOutcome::Unknown {
@@ -259,11 +261,11 @@ fn detour(
     };
     let rejoin = shortest_route(
         &data.nodes,
-        &data.edges,
+        &travel.edges,
         &node.id,
         &leg.route.end().id,
         context,
-        &options,
+        options,
     )?;
     let Some(c) = complete(&rejoin) else {
         return Ok(DetourOutcome::Unknown {
