@@ -47,3 +47,29 @@ artifact preparation still invokes full readiness, so the draft-before-owner-smo
 cycle remains blocked until that separate adapter is implemented. No waiver is
 introduced. Native Windows, hosted coverage parity and real installation remain
 unverified. No push, release, key or network pipeline action.
+
+## Explicit preparation phases (follow-up)
+
+Implemented core BuildPhase::Prebuild / Draft and separate CLI commands
+release-build-readiness / release-draft-readiness. They run the same I/O verifier
+then wrap its report with build_ready and publication_allowed=false (also false
+inside the retained report). Only schema4 stable reports qualify. Prebuild accepts
+pristine pending required observations; draft accepts only pristine pending owner
+smoke. Initial source/fingerprint binding is never deferred by either phase.
+Existing nonpending blockers, failed/partial claims and mismatched/stale bindings
+remain failures. Full release-readiness behavior remains unchanged.
+
+The earlier outstanding two-phase note now applies only to packaging and workflow
+adapters, not the core/CLI contract. Root explicitly reserved those adapters to
+avoid concurrent changes with STABLE-VERIFIER. Draft download verification must
+choose draft readiness while public verification retains final readiness. No
+claim of a usable end-to-end release workflow follows from these commands alone.
+
+Actual follow-up checks: schema3/4 integration 14 passed; full core LLVM run 467
+passed, zero failed, two ignored; release.rs 827/842 lines = 98.2185% local Linux
+measurement. CLI filtered release-module tests: seven passed including wrapper
+serialization/source-evidence retention and both publication flags false.
+Formatting/diff checks passed. An initial CLI compile found the command arguments
+are OsString rather than String; explicit comparisons corrected the guard, and
+the final CLI test build passed. CLI/main cross-platform per-file coverage remains
+for required hosted CI; no gate settings or threshold were changed.

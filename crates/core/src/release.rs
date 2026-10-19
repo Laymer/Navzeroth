@@ -490,6 +490,29 @@ impl Readiness {
         self.publication_allowed = !self.stable;
     }
 }
+/// Artifact preparation phases never authorize publication. Schema 4 only.
+#[derive(Clone, Copy, Debug, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BuildPhase {
+    Prebuild,
+    Draft,
+}
+impl BuildPhase {
+    pub fn ready(self, report: &Readiness) -> bool {
+        report.report_version == SCHEMA_STABLE
+            && report.stable
+            && report.candidate_ready
+            && report.pending.iter().all(|requirement| match requirement {
+                PendingRequirement::InitialTestedBinding => false,
+                PendingRequirement::Observation { check_id } => match self {
+                    Self::Prebuild => required_checks(SCHEMA_STABLE)
+                        .iter()
+                        .any(|(id, _)| *id == check_id),
+                    Self::Draft => check_id == OWNER_INSTALLER_SMOKE,
+                },
+            })
+    }
+}
 pub struct Bindings<'a> {
     pub inventory_sha256: &'a str,
     pub production_sha256: &'a str,
