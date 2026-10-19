@@ -74,3 +74,15 @@ Retain exact MIT copyright/permission/warranty notices with original source and 
 - `LICENSE` → [`955281b9174e0f66b08c8e83d31e0f38b2fcaa247ca3af92d1723d81a13cddfb`](objects/955281b9174e0f66b08c8e83d31e0f38b2fcaa247ca3af92d1723d81a13cddfb); [immutable upstream](https://raw.githubusercontent.com/ATTWoWAddon/AllTheThings/bf97402174a017c1ffe2b710e0ba9ac9eb7c169b/LICENSE).
 
 Navzeroth explicitly maps four literal declaration fields on 2026-10-15; imported code is never executed. Raw symbols and unknown origin build are preserved. This is neither a directed travel edge nor calibrated geography or verified target content.
+
+## ADR 0006 §14 generator sources (added 2026-10-19)
+
+These objects are the reviewed rights and decision documents for the sources the
+generators in `data-generators/` retrieve (see `data-generators/NOTICE.md`). No
+generated world data is retained here; those shards are committed through Git LFS
+under `data-generators/output/` and registered separately.
+
+- cmangos-classic-db, origin cmangos/classic-db at `ec4f596146be6467ea93c57397858e329e2db852`, licence GPL-3.0-only:
+  `LICENSE.md` → [`8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b`](objects/8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b); `COPYRIGHT.md` → [`82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385`](objects/82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385) (reserves Blizzard material outside the GPL).
+- talod-generators: NotInTheBand's written permission, `data-generators/TALOD-data-generators/PERMISSION.md` → [`08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3`](objects/08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3).
+- wowhead-classic, wowhead-forever, wago-tools-wowf, wago-tools-classic-era and the CMaNGOS retrieval: the owner's acceptance, `docs/decisions/0006-v1-program.md` at §14 → [`6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea`](objects/6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea).

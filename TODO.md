@@ -131,6 +131,14 @@ Publication allowance for 0.9.2 is not readiness for a changed RC.
 - [ ] **V2.5 Inventory and review** (Both). Replace each `<domain>-inventory-pending`
   with slice units and exact required IDs; independent enumeration review; owner
   confirms disagreements in client; passing coverage rows.
+- [ ] **V2.7 Data generators and world data** (Eng, owner request 2026-10-19).
+  TALOD's generators (with the author's written permission) ported to emit
+  `navzeroth-world-data` v1, plus new whole-world generators for CMaNGOS server
+  data and the WoW Forever client tables (wago `wowf`), a parallel runner,
+  `verify-world-data`, the `owner_accepted` admission licence and ADR 0006 §14.
+  [Handoff](docs/handoffs/2026-10-19-v2.7.md). Open: professions/enhancements need
+  the Wowhead list pages saved by the owner; generated facts are not registered
+  as admitted source files and nothing is activated for planning.
 - [ ] **V2.6 Release materials** (Eng). Notices, licences and corresponding source
   for every bundled source; no Blizzard art or client fonts; no private catalogs in
   public assets.

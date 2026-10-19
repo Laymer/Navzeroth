@@ -37,6 +37,13 @@ says it scrapes Wowhead and Blizzard APIs; it is not a provenance-clean replacem
 for an unavailable Wowhead grant. Warcraft Wiki's copyright page returned403 during
 this research; no new wiki content was retrieved or admitted.
 
+> **Note, 2026-10-19.** The owner later admitted Wowhead Classic/Forever, CMaNGOS
+> classic-db and wago.tools DB2 exports for the opt-in, rate-limited generators in
+> `data-generators/`, accepting the third-party terms explicitly
+> ([ADR 0006 §14](../decisions/0006-v1-program.md)). Retrieval stays a separate
+> opt-in step; builds and tests still never query a website. The findings above are
+> the 2026-10-15 research record.
+
 ## Independent operating model
 
 Maintain Navzeroth's own versioned, documented catalog and an extensible set of
