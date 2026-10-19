@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "features": [
+    { "id": "trainer_spell_gameplay", "label": "Trainer-spell recommendations", "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred." },
+    { "id": "talents", "label": "Talent recommendations", "reason": "Talent allocation and build advice are deferred." },
+    { "id": "professions", "label": "Profession recommendations", "reason": "Profession progression, recipes and crafting plans are deferred." },
+    { "id": "enhancements", "label": "Enhancement recommendations", "reason": "Enchantments and other item enhancements are deferred." }
+  ]
+}
