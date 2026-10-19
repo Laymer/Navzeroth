@@ -98,3 +98,50 @@ unresolved or excluded. Score-only output does not fill those gaps.
 Next: independent review and integration after repaired #212, exact combined-head
 source/platform and Windows checks, then bundle/material/receipt and owner-smoke
 verification. Rebuild packs and inventory from final source; do not reuse r1 hashes.
+
+
+## Root review follow-up: unknown imported role
+
+Root correctly identified that initial score-only implementation still required a
+captured role that the current addon does not populate. Static inspection finds
+role in generic Core/Snapshot and Predicate machinery, but the actual Diagnostics
+capture provider supplies level/quests/equipment rather than a role declaration.
+The initial commit alone therefore did not establish usability from normal
+unknown-role imports.
+
+The follow-up adds optional `score_role_assumption` in the request, behind an
+unchecked checkbox and an independently selected role. Model selection never opts
+in. A separate predicate context replaces only RoleIs leaves with boolean literals;
+no snapshot is copied into a fabricated known role, persisted, or timestamped.
+Class matching and fresh observed level remain mandatory, as do applicability and
+exclusion checks. Other captured-role field tests are conservatively refused.
+
+The result preserves original `imported_role` and names `role_assumption` separately.
+Explicit declaration can enable hypothetical arithmetic while captured role stays
+unknown/restricted/unsupported/mismatched. Strict equipment/route/practical
+calculation explicitly rejects this flag. No acquisition inputs are supplied by
+the score-only UI option, so an omitted budget is not turned into an acquisition
+claim. The checkbox and declaration reset on profile/model changes.
+
+New regressions exercise all 54 models from unknown imported roles: no opt-in
+refuses, explicit declaration yields only arithmetic, and stored snapshot/role
+metadata remains identical. They also cover wrong declarations, unavailable class
+or level, out-of-band level, unresolved/true exclusions, nested predicate logic,
+conservative captured-role-check refusal and strict full-report rejection. A UI
+regression verifies explicit opt-in plus independent role choice, retained unknown
+imported role, lack of practical rankings and result invalidation.
+
+Follow-up verification: full app LLVM run 258 passed, 0 failed, 1 existing ignored;
+source lines authored_scores 167/173 (96.53%), authored_content 447/490 (91.22%),
+gear 404/442 (91.40%). Full desktop coverage: 66 files / 538 tests passed, per-file
+90% gate passed; GearScreen 111/121 (91.73%), total lines 95.99%. CLI authored
+pack/inventory suite: 4 passed. Rebuilt pack verifies with 18 files, 163,521 bytes,
+124 unresolved gaps and distribution_eligible=true. Typecheck/lint/build, app
+Clippy/fmt and diff checks passed; existing bundle-size warning remains. Native
+Windows status remains unverified as recorded above. The initial measurements
+remain actual initial-commit evidence.
+
+Intermediate follow-up fixtures exposed a borrowed JSON profile string, private
+error access, TypeScript exact-optional-property requirements and a synthetic
+proficiency table missing its selected class. Those fixtures/types were corrected;
+no production validity or freshness rule was relaxed.

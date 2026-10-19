@@ -118,3 +118,11 @@ facts cannot fill these source gaps. The existing route/practical APIs stay stri
 The UI separates individual scores from ordinary gear comparisons and shows score
 certainty and unmodelled effects. Both paths require matching explicit class,
 fresh level and satisfied role/applicability/exclusion predicates.
+
+
+A separate unchecked role-assumption option makes individual arithmetic usable
+when the addon has no captured role. The user must explicitly choose the role;
+model selection alone never supplies one. Captured role/status remains unchanged
+and visible alongside the declaration. Class and fresh level gates still apply.
+The option is rejected by strict equipment/route/practical calculations. See the
+[score-only context contract](AUTHORED_SCORE_ONLY_V1.md).

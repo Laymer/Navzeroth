@@ -187,7 +187,7 @@ pub(crate) fn quest_facts(
     })
 }
 
-pub(crate) fn validate_model_selection(
+pub(crate) fn validate_model_identity_and_level(
     class: &Observation<SourceId>,
     model: &ClassRoleModel,
     snapshot: &CharacterSnapshot,
@@ -212,6 +212,16 @@ pub(crate) fn validate_model_selection(
     if level < &model.minimum_level || level > &model.maximum_level {
         return Err(invalid("Authored model does not cover this level"));
     }
+    Ok(())
+}
+
+pub(crate) fn validate_model_selection(
+    class: &Observation<SourceId>,
+    model: &ClassRoleModel,
+    snapshot: &CharacterSnapshot,
+    clock: &FreshnessContext,
+) -> Result<()> {
+    validate_model_identity_and_level(class, model, snapshot, clock)?;
     let evaluation = EvaluationContext {
         snapshot,
         party: None,

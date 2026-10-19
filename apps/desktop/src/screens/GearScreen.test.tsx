@@ -124,6 +124,7 @@ it("shows individual authored heuristic scores separately and clears them on edi
   if (!item) throw new Error("Missing synthetic item");
   const compare = vi.fn((request: GearRequest): Promise<AuthoredScores> => Promise.resolve({
     mode: "authored_score_only_v1", request, fixture: true, context: catalog.context,
+    imported_role:{status:"unknown"}, role_assumption:null,
     source_layout: {status:"unknown"}, source_proficiency: {status:"restricted"},
     equipment_eligibility: {status:"unknown"}, acquisition_availability: {status:"unknown"},
     candidates: [{item:item.key,score:mockReport(request).current_score}], assumptions:["Synthetic heuristic weights only"],
@@ -140,4 +141,41 @@ it("shows individual authored heuristic scores separately and clears them on edi
   expect(screen.queryByText("Equipment eligibility",{exact:true})).not.toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Assumed class identifier"),{target:{value:"class:mage"}});
   expect(screen.queryByRole("region",{name:"Individual heuristic scores"})).not.toBeInTheDocument();
+});
+
+it("requires explicit role opt-in to score an unknown imported role and never shows practical rankings", async () => {
+  const item=catalog.items[0];if(!item)throw new Error("Missing fixture item");
+  const compare=vi.fn((request:GearRequest):Promise<AuthoredScores>=>request.score_role_assumption?Promise.resolve({
+    mode:"authored_score_only_v1",request,fixture:true,context:catalog.context,
+    imported_role:{status:"unknown"},role_assumption:request.score_role_assumption,
+    source_layout:{status:"unknown"},source_proficiency:{status:"unknown"},equipment_eligibility:{status:"unknown"},acquisition_availability:{status:"unknown"},
+    candidates:[{item:item.key,score:mockReport(request).current_score}],assumptions:["Explicit role assumption for scores only"],
+  }):Promise.reject({code:"INVALID_INPUT",message:"Authored model applicability is not established",retryable:false}));
+  const base=adapter(compare);
+  const client=createClient({invoke(command,input){
+    if(command==="get_authored_catalog")return Promise.resolve({revision:"r",records:[{id:"model-priest",label:"class:priest / healer / levels 1–20",evidence:[]}],total:1,next_offset:null} as never);
+    return base.invoke(command,input);
+  }});
+  render(<GearScreen client={client} refreshKey={0}/>);
+  await screen.findByRole("option",{name:"class:priest / healer / levels 1–20"});
+  fireEvent.change(screen.getByLabelText("Authored gear model selection"),{target:{value:"model-priest"}});
+  const optin=screen.getByLabelText("Use a declared role for individual heuristic scores");
+  expect(optin).not.toBeChecked();expect(screen.getByLabelText("Declared role for individual scores")).toBeDisabled();
+  fireEvent.change(screen.getByLabelText("Assumed class identifier"),{target:{value:"class:priest"}});
+  fireEvent.change(screen.getByLabelText("budget (ms)"),{target:{value:"1000"}});
+  fireEvent.click(screen.getByLabelText(`Compare ${item.key.item_id}`));
+  fireEvent.click(screen.getByRole("button",{name:"Compare gear"}));
+  expect(await screen.findByRole("alert")).toHaveTextContent("applicability is not established");
+  expect(compare.mock.calls[0]?.[0].score_role_assumption).toBeUndefined();
+  fireEvent.click(optin);fireEvent.click(screen.getByRole("button",{name:"Compare gear"}));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Choose a declared role");
+  expect(compare).toHaveBeenCalledTimes(1);
+  fireEvent.change(screen.getByLabelText("Declared role for individual scores"),{target:{value:"healer"}});
+  fireEvent.change(screen.getByLabelText("budget (ms)"),{target:{value:""}});
+  fireEvent.click(screen.getByRole("button",{name:"Compare gear"}));
+  const result=await screen.findByRole("region",{name:"Individual heuristic scores"});
+  expect(result).toHaveTextContent("Imported role: Unknown (not observed). Declared role assumption: healer (individual scores only).");
+  expect(compare.mock.calls[1]?.[0].score_role_assumption).toBe("healer");
+  expect(screen.queryByRole("region",{name:"Gear result"})).not.toBeInTheDocument();
+  fireEvent.click(optin);expect(screen.queryByRole("region",{name:"Individual heuristic scores"})).not.toBeInTheDocument();
 });

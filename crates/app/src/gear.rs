@@ -91,6 +91,9 @@ pub struct GearRequest {
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub authored_model: Option<SourceId>,
+    /// Explicit hypothetical role for individual arithmetic only; never capture state.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub score_role_assumption: Option<RoleId>,
     pub model: RoleProfileData,
     pub layout: SlotLayoutData,
     pub class: Observation<SourceId>,
@@ -236,6 +239,11 @@ pub fn calculate(
     content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<GearReport> {
+    if request.score_role_assumption.is_some() {
+        return Err(invalid(
+            "Declared-role assumptions apply only to individual heuristic scores, not equipment or practical comparisons",
+        ));
+    }
     if request.candidates.len() > MAX_CANDIDATES {
         return Err(invalid("Gear input exceeds 128 candidates"));
     }

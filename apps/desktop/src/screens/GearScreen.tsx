@@ -43,6 +43,8 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   const [authored,setAuthored]=useState<AuthoredSelection|null>(null);
   const [inputs, setInputs] = useState<GearInput[]>([]);
   const [role, setRole] = useState("manual-role");
+  const [assumeScoreRole, setAssumeScoreRole] = useState(false);
+  const [scoreRole, setScoreRole] = useState("");
   const [weights, setWeights] = useState("{}");
   const [className, setClassName] = useState("");
   const [proficiency, setProficiency] = useState("{}");
@@ -75,7 +77,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     const changedScope = scope.current?.client !== client || scope.current?.profile !== profile;
     scope.current = { client, profile };
     if (changedScope) {
-      setInputs([]); setAuthored(null); setSynthetic(false); setWeights("{}"); setRole("manual-role"); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
+      setInputs([]); setAuthored(null); setAssumeScoreRole(false); setScoreRole(""); setSynthetic(false); setWeights("{}"); setRole("manual-role"); setClassName(""); setProficiency("{}"); setMainHand(""); setOffHand("");
       setTimes({ travel: "", formation: "", attempt: "", stopping: "", budget: "", copper: "", attempts: "1" }); setIndependent(false); setPerAttempt(false);
     }
     if (profile) void client.getGearCatalog(profile).then((result) => {
@@ -109,13 +111,15 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
   function gearRequest(): GearRequest {
     if (!catalog?.snapshot_id || !catalog.revision) throw new Error("Import a capture and activate content first.");
     if(authored && authored.revision!==catalog.revision) throw new Error("Authored model revision changed; select it again.");
+    if (assumeScoreRole && !scoreRole) throw new Error("Choose a declared role for individual heuristic scores.");
     return {
+        ...(assumeScoreRole ? {score_role_assumption:scoreRole} : {}),
         authored_model: authored?.id??null,
         profile_id: profile, snapshot_id: catalog.snapshot_id, revision: catalog.revision,
         model: { role, version: "gear-model-v1", weight_source: { type: synthetic ? "synthetic_test" : "user_preference" }, weights: JSON.parse(weights) as Record<string, number>, known_unmodeled: [] },
         layout: { slots, hands: mainHand || offHand ? { main_hand: mainHand, off_hand: offHand } : null },
         class: className ? known(className) : unknown(), proficiency: { classes: JSON.parse(proficiency) as GearRequest["proficiency"]["classes"] },
-        candidates: inputs.map((input) => ({ ...input, acquisition: input.acquisition ? { source: input.acquisition.source, effort: {
+        candidates: inputs.map((input) => ({ ...input, acquisition: input.acquisition && !assumeScoreRole ? { source: input.acquisition.source, effort: {
           incremental_travel_ms: numberObservation(times.travel), formation_ms: numberObservation(times.formation), attempt_ms: numberObservation(times.attempt), stopping_ms: numberObservation(times.stopping),
           available_copper: times.copper.trim() ? known(times.copper) : unknown(), session_budget_ms: Number(times.budget), max_attempts: Number(times.attempts), independent_player_attempts: independent, cost_per_attempt: perAttempt,
         } } : null })),
@@ -126,7 +130,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     const ticket = ++generation.current; setBusy(true); setReport(null); setScores(null); setError("");
     try {
       const request = gearRequest();
-      if (inputs.length === 0 || times.budget.trim() === "" || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and explicitly supply weights and session budget.");
+      if (inputs.length === 0 || (times.budget.trim() === "" && !(authored && assumeScoreRole)) || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and explicitly supply weights and session budget.");
       const result = await client.compareGear(JSON.stringify(request));
       if (ticket !== generation.current) return;
       if (!result.ok) setError(result.error.message); else if (result.value.mode === "authored_score_only_v1") { setScores(result.value); } else { setReport(result.value); setReportBasis("manual"); }
@@ -139,10 +143,15 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     {error && <p role="alert">{error}</p>}
     <Field label="Gear profile" help="The imported character whose equipment snapshot is the baseline. Changing it discards the current comparison.">{(c) => <select {...c} value={profile} onChange={(e) => { invalidate(); setProfile(e.target.value); }}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     <p>Snapshot: {catalog?.snapshot_id ?? "none"}; revision: {catalog?.revision ?? "none — activate Content first"}</p>
-    <AuthoredContentPicker client={client} kind="models" subject={{kind:"character",profile_id:profile}} refreshKey={refreshKey} value={authored} onChange={v=>{invalidate();setAuthored(v);}}/>
+    <AuthoredContentPicker client={client} kind="models" subject={{kind:"character",profile_id:profile}} refreshKey={refreshKey} value={authored} onChange={v=>{invalidate();setAuthored(v);setAssumeScoreRole(false);setScoreRole("");}}/>
     {authored&&<p>Authored weights are documented heuristics. A matching assumed class, fresh level and applicable role are required. When source layout or proficiency is unavailable, only individual scores are shown; equipment eligibility and acquisition remain unresolved.</p>}
-    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({authored,weights,role,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
-      gearAssumptions={() => { const request=gearRequest(); if(!inputs.length || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
+    {authored && <fieldset><legend>Role assumption for individual scores</legend>
+      <label><input type="checkbox" checked={assumeScoreRole} onChange={event=>{invalidate();setAssumeScoreRole(event.target.checked);}}/>Use a declared role for individual heuristic scores</label>
+      <Field label="Declared role for individual scores" help="A separate hypothetical role for arithmetic only. It does not change the imported role or enable equipment or practical recommendations.">{c=><select {...c} disabled={!assumeScoreRole} value={scoreRole} onChange={event=>{invalidate();setScoreRole(event.target.value);}}><option value="">Choose a role explicitly</option><option value="melee_damage">Melee damage</option><option value="ranged_damage">Ranged damage</option><option value="healer">Healer</option><option value="tank">Tank</option></select>}</Field>
+      <p>Model selection alone never supplies a captured role. This assumption is used only for individual scores; imported observations remain unchanged. A matching assumed class and fresh level are still required.</p>
+    </fieldset>}
+    <RouteAcquisitionPanel client={client} profileId={profile} refreshKey={refreshKey} scopeKey={JSON.stringify({authored,weights,role,assumeScoreRole,scoreRole,synthetic,className,proficiency,mainHand,offHand,inputs,times,independent,perAttempt})}
+      gearAssumptions={() => { const request=gearRequest(); if(request.score_role_assumption) throw new Error("Declared-role assumptions apply only to individual heuristic scores. Turn it off for route or practical comparisons."); if(!inputs.length || (!authored && !Object.keys(request.model.weights).length)) throw new Error("Select candidates and supply explicit model weights first."); return request; }}
       onGearReport={routeReport} onBusyChange={setBusy} externalBusy={busy} opportunities={inputs.flatMap(input=>input.acquisition?[{source:input.acquisition.source,target:input.item,formation_ms:numberObservation(times.formation),attempt_ms:numberObservation(times.attempt),available_copper:times.copper.trim()?known(times.copper):unknown<string>(),max_attempts:Number(times.attempts),independent_player_attempts:independent,cost_per_attempt:perAttempt}]:[])} />
     <Button disabled={!catalog?.fixture} onClick={example}>Load labelled synthetic example</Button>
     {synthetic && <p>Engineering example: all readable attributes have equal weight 1; categories are explicitly assumed inapplicable, effort is fictional and sources remain unselected. Edit each assumption before use.</p>}
@@ -178,6 +187,7 @@ export function GearScreen({ client, refreshKey }: { client: CommandClient; refr
     <details><summary>Advanced captured-equipment data</summary><pre>{JSON.stringify(catalog?.equipment ?? {}, null, 2)}</pre></details>
     {scores && <section aria-label="Individual heuristic scores"><h3>Individual heuristic scores</h3>
       <p>These scores compare only the attributes in the authored model. They do not establish whether you can equip or obtain an item. Equipment configurations, baseline gains and practical recommendations are unavailable.</p>
+      <p>Imported role: {describeObservation(scores.imported_role)}. {scores.role_assumption ? `Declared role assumption: ${scores.role_assumption} (individual scores only).` : "No declared role assumption was used."}</p>
       <p>Source equipment layout: {describeObservation(scores.source_layout, () => "recorded")}; source class proficiency: {describeObservation(scores.source_proficiency, () => "recorded")}.</p>
       <p>Equipment eligibility: not evaluated. Acquisition availability: not evaluated.</p>
       {scores.candidates.map(candidate => <section key={JSON.stringify(candidate.item)} aria-label={`Heuristic score ${candidate.item.item_id}`}><h4>{candidate.item.item_id} ({candidate.item.variant})<OriginMarker marks={scoreOrigins.get(originKey(itemRef(candidate.item)))} /></h4><p>Heuristic score {formatMilli(candidate.score.total)}; certainty {candidate.score.certainty}.</p><ScoreDetails score={candidate.score} /></section>)}

@@ -234,3 +234,173 @@ fn score_only_preserves_unavailable_source_fields_and_incomplete_subtotals() {
         );
     }
 }
+
+#[test]
+fn explicit_declared_role_enables_only_individual_scores_without_changing_imported_role() {
+    for model in models() {
+        let (app, mut request) = setup(
+            &model,
+            known(model["minimum_level"].clone()),
+            json!({"status":"unknown"}),
+        );
+        let profile = request["profile_id"].as_str().unwrap().to_owned();
+        let before = serde_json::to_value(
+            &app.current(&profile, Some(UtcMillis::new(NOW).unwrap()))
+                .unwrap()
+                .unwrap()
+                .envelope
+                .payload
+                .role,
+        )
+        .unwrap();
+        assert!(
+            app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .is_err()
+        );
+        request["score_role_assumption"] = model["profile"]["role"].clone();
+        let GearComparison::ScoreOnly(result) = app
+            .compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+            .unwrap()
+        else {
+            panic!("declared role may produce only arithmetic")
+        };
+        assert_eq!(serde_json::to_value(&result.imported_role).unwrap(), before);
+        assert_eq!(
+            serde_json::to_value(&result.role_assumption).unwrap(),
+            model["profile"]["role"]
+        );
+        assert_eq!(
+            serde_json::to_value(
+                &app.current(&profile, Some(UtcMillis::new(NOW).unwrap()))
+                    .unwrap()
+                    .unwrap()
+                    .envelope
+                    .payload
+                    .role
+            )
+            .unwrap(),
+            before
+        );
+        assert!(
+            app.compare_gear(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .is_err()
+        );
+    }
+    let model = &models()[0];
+    for imported in [
+        json!({"status":"restricted"}),
+        json!({"status":"unsupported"}),
+        known(json!("different-imported-role")),
+    ] {
+        let imported_status = imported["status"].clone();
+        let (app, mut request) = setup(model, known(model["minimum_level"].clone()), imported);
+        assert!(
+            app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .is_err()
+        );
+        request["score_role_assumption"] = model["profile"]["role"].clone();
+        let result = serde_json::to_value(
+            app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(result["mode"], "authored_score_only_v1");
+        assert_eq!(result["imported_role"]["status"], imported_status);
+        assert!(result.get("practical").is_none());
+    }
+}
+
+#[test]
+fn declared_roles_do_not_override_class_level_exclusions_or_strict_equipment_paths() {
+    let model = &models()[0];
+    let positive = known(
+        json!({"op":"all","predicates":[{"op":"role_is","role":model["profile"]["role"]},{"op":"any","predicates":[{"op":"level_at_least","level":1}]},{"op":"not","predicate":{"op":"role_is","role":"different"}}]}),
+    );
+    for (field, value, passes) in [
+        ("applicability", positive, true),
+        (
+            "applicability",
+            known(json!({"op":"role_is","role":"different"})),
+            false,
+        ),
+        ("applicability", json!({"status":"unknown"}), false),
+        ("exclusions", json!({"status":"unknown"}), false),
+        (
+            "exclusions",
+            known(json!([{"op":"role_is","role":model["profile"]["role"]}])),
+            false,
+        ),
+        (
+            "exclusions",
+            known(json!([{"op":"role_is","role":"different"}])),
+            true,
+        ),
+        (
+            "applicability",
+            known(json!({"op":"known","field":{"field":"role"}})),
+            false,
+        ),
+    ] {
+        let (app, mut request) = setup_edit(
+            model,
+            known(model["minimum_level"].clone()),
+            json!({"status":"unknown"}),
+            |content| content["models"][0][field] = value,
+        );
+        request["score_role_assumption"] = model["profile"]["role"].clone();
+        assert_eq!(
+            app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .is_ok(),
+            passes,
+            "{field}"
+        );
+    }
+    let (app, mut request) = setup(
+        model,
+        known(model["minimum_level"].clone()),
+        json!({"status":"unknown"}),
+    );
+    request["score_role_assumption"] = json!("wrong-role");
+    assert!(
+        app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+            .is_err()
+    );
+    request["score_role_assumption"] = model["profile"]["role"].clone();
+    request["class"] = json!({"status":"unknown"});
+    assert!(
+        app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+            .is_err()
+    );
+    for level in [
+        json!({"status":"unknown"}),
+        json!({"status":"restricted"}),
+        known(json!(model["maximum_level"].as_u64().unwrap() + 1)),
+    ] {
+        let (app, mut request) = setup(model, level, json!({"status":"unknown"}));
+        request["score_role_assumption"] = model["profile"]["role"].clone();
+        assert!(
+            app.compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+                .is_err()
+        );
+    }
+    let (app, mut request) = setup_edit(
+        model,
+        known(model["minimum_level"].clone()),
+        json!({"status":"unknown"}),
+        |content| {
+            content["models"][0]["layout"] = known(json!({"slots":["main_hand"],"hands":null}));
+            content["models"][0]["proficiency"] = known(
+                json!({"classes":std::collections::BTreeMap::from([(model["class"].as_str().unwrap().to_owned(),json!({"allowed":[],"disallowed":[]}))])}),
+            );
+        },
+    );
+    request["score_role_assumption"] = model["profile"]["role"].clone();
+    let error = app
+        .compare_gear_or_score(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+        .unwrap_err();
+    assert!(
+        error
+            .to_string()
+            .contains("only to individual heuristic scores")
+    );
+}

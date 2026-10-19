@@ -30,6 +30,7 @@ export interface GearInput {
 export type WeightSource = { type: "user_preference" | "synthetic_test" } | { type: "documented_model" | "permitted_guide"; source: string };
 export interface GearRequest {
   authored_model?: string | null;
+  score_role_assumption?: string | null;
   profile_id: string;
   snapshot_id: string;
   revision: string;
@@ -114,6 +115,8 @@ export interface AuthoredScores {
   request: GearRequest;
   fixture: boolean;
   context: DataContext;
+  imported_role: GearObservation<string>;
+  role_assumption: string | null;
   source_layout: GearObservation<GearRequest["layout"]>;
   source_proficiency: GearObservation<GearRequest["proficiency"]>;
   equipment_eligibility: GearObservation<boolean>;

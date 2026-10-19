@@ -83,3 +83,19 @@ unknown/mismatched role and unresolved exclusions refuse selection. Reminder
 scenarios cover all 54 model/band combinations and omit unknown, restricted,
 unsupported and stale role observations. These are synthetic tests, not client
 acceptance or a claim that the advice is optimal.
+
+
+## Declared roles for hypothetical individual scores
+
+Current addon capture does not supply a role. The desktop may accept a separately
+opted-in role declaration for individual score arithmetic only. The checkbox is
+unchecked by default; choosing a model alone never supplies a role. The declaration
+must match the model role, class must still be explicitly assumed and matching,
+and level must be freshly observed within the model band.
+
+Only RoleIs leaves are evaluated against that explicit hypothetical declaration.
+Other applicability/exclusion checks remain active. Imported role observations,
+including unknown/restricted/unsupported or a different known role, remain unchanged
+and separately visible. No snapshot field is filled or clock-stamped. Strict
+configuration, equipment, route and practical advice rejects this declaration.
+These scores do not establish the character's actual role, abilities or eligibility.
