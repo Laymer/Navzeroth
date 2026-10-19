@@ -16,7 +16,9 @@ For each (generator, edition, build) folder this script
     evidence for local retention (`manual_local`, bounded to the exact closure);
   * upserts the matching `knowledge_v1` inputs of the source-build plan;
 
-then removes generated sources, plan inputs and objects that no longer exist, sets
+sets the plan's `target` to the edition and build of release/v1/world-data-target.json
+(--target, written by the pipeline's detect stage), so the research catalog is built for
+the same client build as the world pack; then removes generated sources, plan inputs and objects that no longer exist, sets
 `registry_sha256` in the source-updates policy to the new registry hash and rewrites
 the delimited generated sections of the material NOTICE and of .gitattributes (which
 stores exactly the generated fact objects in Git LFS; other objects stay plain).
@@ -27,7 +29,7 @@ style, json.dumps(indent=2, ensure_ascii=False) plus a newline.
     python3 data-generators/register_facts.py --facts data-generators/output/facts \\
         --registry docs/sources/source-admission-v1.json --plan content/source-build-v1.json \\
         --objects content/source-materials/objects --updates docs/sources/source-updates-v1.json \\
-        --notice content/source-materials/NOTICE.md
+        --notice content/source-materials/NOTICE.md --target release/v1/world-data-target.json
 """
 import argparse
 import hashlib
@@ -43,6 +45,7 @@ PREFIX = "gen-"
 TRANSFORMATION = "knowledge_v1"
 OBJECT_URL = "https://github.com/Laymer/Navzeroth/blob/main/content/source-materials/objects/{}"
 ADR = ROOT / "docs" / "decisions" / "0007-world-data-automation.md"
+TARGET = ROOT / "release" / "v1" / "world-data-target.json"
 ADR_URL = "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0007-world-data-automation.md"
 ADR_SCOPE = ("ADR 0007 §7: the research catalog registers every generated fact; the retained "
              "fact documents are Navzeroth generator output kept in Git LFS under "
@@ -327,9 +330,18 @@ def attributes_section(hashes):
     return "\n".join([ATTR_BEGIN] + [ATTR_LINE.format(h) for h in sorted(hashes)] + [ATTR_END]) + "\n"
 
 
+def plan_target(target_path):
+    """{edition, build} of a navzeroth-world-data-target file (the plan's `target`)."""
+    doc = load(target_path)
+    if doc.get("format") != "navzeroth-world-data-target" or not doc.get("edition") or not doc.get("build"):
+        raise RegisterError(f"{target_path}: not a navzeroth-world-data-target with an edition and build")
+    return {"edition": doc["edition"], "build": doc["build"]}
+
+
 def register(facts, registry_path, plan_path, objects, updates_path, notice_path, world=None, adr=ADR,
-             attributes=ROOT / ".gitattributes"):
-    """Register every fact document; return a summary dict."""
+             attributes=ROOT / ".gitattributes", target=None):
+    """Register every fact document; return a summary dict. With `target` (a
+    world-data-target file) the plan's target follows its edition and build."""
     objects = pathlib.Path(objects)
     objects.mkdir(parents=True, exist_ok=True)
     registry = load(registry_path)
@@ -363,6 +375,8 @@ def register(facts, registry_path, plan_path, objects, updates_path, notice_path
     inputs += sorted(({"source": s["id"], "file": f["path"], "adapter": TRANSFORMATION}
                       for s in generated for f in s["files"]), key=lambda i: (i["source"], i["file"]))
     plan["inputs"] = inputs
+    if target is not None:
+        plan["target"] = plan_target(target)
 
     updates["registry_sha256"] = sha256(registry_text.encode("utf-8"))
 
@@ -385,7 +399,7 @@ def register(facts, registry_path, plan_path, objects, updates_path, notice_path
     if attributes is not None:
         attr = pathlib.Path(attributes).read_text(encoding="utf-8")
         write_if_changed(attributes, replace_section(attr, ATTR_BEGIN, ATTR_END, attributes_section(lfs)))
-    return {"sources": ids, "documents": sum(len(s["files"]) for s in generated),
+    return {"sources": ids, "target": plan.get("target"), "documents": sum(len(s["files"]) for s in generated),
             "bytes": sum(f["bytes"] for s in generated for f in s["files"]),
             "removed_objects": sorted(stale), "registry_sha256": updates["registry_sha256"]}
 
@@ -401,12 +415,15 @@ def main(argv=None):
     p.add_argument("--world", default=str(HERE / "output"),
                    help="world-data shards, for the source ids they cite (default: data-generators/output)")
     p.add_argument("--adr", default=str(ADR), help="ADR 0007, the access evidence (default: docs/decisions/...)")
+    p.add_argument("--target", default=str(TARGET),
+                   help="world-data target whose edition and build the plan's target takes "
+                        "(default: release/v1/world-data-target.json)")
     p.add_argument("--attributes", default=str(ROOT / ".gitattributes"),
                    help="the .gitattributes whose generated block lists the LFS objects")
     args = p.parse_args(argv)
     try:
         summary = register(args.facts, args.registry, args.plan, args.objects, args.updates, args.notice,
-                           world=args.world, adr=args.adr, attributes=args.attributes)
+                           world=args.world, adr=args.adr, attributes=args.attributes, target=args.target)
     except (RegisterError, OSError, ValueError, KeyError) as e:
         print(f"register_facts: {e}", file=sys.stderr)
         return 1

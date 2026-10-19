@@ -84,7 +84,8 @@ SHARDS = {
          "reaction": "hostile"},
         {"kind": "npc", "id": 900, "name": "Quiet Guard"}]),
     ("world.game_objects", "vanilla_1_12"): (CMANGOS, "cross_edition_unverified", [
-        {"kind": "game_object", "id": 68, "name": "Wanted Board", "object_type": 2}]),
+        {"kind": "game_object", "id": 68, "name": "Wanted Board", "object_type": 2},
+        {"kind": "game_object", "id": 2843, "name": "Battered Chest", "object_type": 3}]),
     ("world.spawns", "vanilla_1_12"): (CMANGOS + WAGO, "cross_edition_unverified", [
         spawn(1, "npc", 448, 0.271, 0.868), spawn(2, "npc", 448, 0.2736, 0.9271),
         spawn(3, "npc", 448, 0.2502, 0.929), spawn(4, "npc", 448, 0.2600, 0.9000),
@@ -117,6 +118,11 @@ SHARDS = {
         item(5001, 99, "Odd thing")]),
     ("items.items", "wow_classic_era"): (WAGO_ERA, "cross_edition_unverified", [
         item(6085, 5, "Footman's Tunic", stats={"agility": 1, "stamina": 2})]),
+    # CMaNGOS item_template: the fallback for items the Forever table lacks (872).
+    ("items.items", "vanilla_1_12"): (CMANGOS, "cross_edition_unverified", [
+        item(872, 17, "Rockslicer", required_level=16, stats={"strength": 7}),
+        item(6085, 5, "Footman Tunic", stats={"agility": 1, "stamina": 2, "armor": 30}, buy_price=7),
+        item(6215, 17, "Balanced Fighting Stick", required_level=6)]),
     ("quests.quests", "vanilla_1_12"): (CMANGOS, "cross_edition_unverified", [
         {"kind": "quest", "id": 176, "title": "Wanted: Hogger", "level": 11, "min_level": 5, "flags": 8,
          "required_races": 77, "required_classes": 0, "zone_or_sort": 12, "reward_money": 0,
@@ -147,6 +153,10 @@ SHARDS = {
         loot("creature", 639, 10.0, item=6215, condition=3),
         loot("creature", 639, 20.0, reference=50, mx=2),
         loot("creature", 639, 10.0, reference=50, group=2)]),
+    ("loot.game_object", "vanilla_1_12"): (CMANGOS, "cross_edition_unverified", [
+        loot("game_object", 2843, 5.0, item=6085), loot("game_object", 2843, 50.0, item=2589)]),
+    ("loot.disenchant", "vanilla_1_12"): (CMANGOS, "cross_edition_unverified", [
+        loot("disenchant", 23, 100.0, item=2589)]),
     ("loot.reference", "vanilla_1_12"): (CMANGOS, "cross_edition_unverified", [
         loot("reference", 50, 0.0, item=6085, group=1),
         loot("reference", 50, 0.0, item=6215, group=1),
@@ -284,8 +294,8 @@ class MappingTest(unittest.TestCase):
         self.assertEqual(self.r.nodes["node:dungeon-entrance:36"]["service"], w.known("dungeon"))
         facts = {f["node"]: f["evidence"] for f in self.r.catalog["node_facts"]}
         self.assertEqual(set(facts), set(self.r.nodes))
-        self.assertEqual(facts["node:npc-spawn:5"], ["ev:cmangos-classic-db:vanilla_1_12:world.spawns",
-                                                     "ev:wago-tools-wowf:vanilla_1_12:world.spawns"])
+        # A 1.12 spawn cites only its CMaNGOS evidence; the Forever map layout is named in the notes.
+        self.assertEqual(facts["node:npc-spawn:5"], ["ev:cmangos-classic-db:vanilla_1_12:world.spawns"])
 
     def test_flight_and_walk_edges(self):
         flight = self.r.edges["edge:flight:6"]
@@ -326,6 +336,11 @@ class MappingTest(unittest.TestCase):
         self.assertEqual(tunic["requirements"], w.known(w.TRUE_PREDICATE))
         self.assertEqual(self.r.items["5000"]["requirements"], w.UNSUPPORTED)
         self.assertNotIn("5001", self.r.items)
+        rock = self.r.items["872"]  # absent from the Forever table: the 1.12 item fills the gap
+        self.assertEqual((rock["slots"], rock["two_handed"]), (["main_hand"], w.known(True)))
+        self.assertEqual(rock["attributes"], w.known({"stat:strength": 7}))
+        self.assertEqual(rock["evidence"], ["ev:cmangos-classic-db:vanilla_1_12:items.items"])
+        self.assertEqual(tunic["evidence"], ["ev:wago-tools-wowf:wow_forever:items.items"])  # Forever first
         eq = {e["item"]["item_id"]: e for e in self.r.catalog["equipment"]}
         self.assertEqual(eq["1931"]["category"], w.known("non_equippable"))
         self.assertEqual(eq["6085"]["category"], w.known("item_class:4:2"))
@@ -339,9 +354,18 @@ class MappingTest(unittest.TestCase):
         self.assertEqual(facts["area:12:name"]["chosen"]["value"], "Elwynn Forest")
         title = facts["dungeons.dungeons:36:name"]
         self.assertEqual((title["chosen"]["origin"], title["chosen"]["value"]), ("authored", "The Deadmines"))
-        self.assertEqual(facts["item:77777"]["kind"], "missing_in_higher_precedence")
+        self.assertEqual(facts["item:77777"]["kind"], "missing_item")
         self.assertEqual(facts["item:77777"]["rejected"][0]["value"], {"quest_reward": 1, "vendor": 1})
-        self.assertEqual(facts["item:872"]["rejected"][0]["value"], {"loot": 1})
+        filled = facts["item:872"]
+        self.assertEqual(filled["kind"], "missing_in_higher_precedence")
+        self.assertEqual(filled["chosen"], {"origin": "vanilla_1_12", "value": "Rockslicer"})
+        self.assertEqual(filled["rejected"], [{"origin": "wow_forever", "value": None}])
+        self.assertEqual(filled["references"], {"loot": 1})
+        # Overlapping items: only meaningful fields are compared (not stats or prices).
+        level = facts["items.items:6215:required_level"]
+        self.assertEqual((level["chosen"], level["rejected"]), ({"origin": "wow_forever", "value": 5},
+                                                                [{"origin": "vanilla_1_12", "value": 6}]))
+        self.assertFalse([f for f in facts if f.startswith("items.items:6085:") and not f.endswith(":name")])
         self.assertIn("prerequisite_cycle", {x["kind"] for x in self.r.conflicts})
 
     def test_quests(self):
@@ -410,6 +434,12 @@ class MappingTest(unittest.TestCase):
         self.assertIn({"item": "872", "max_count": 1, "min_count": 1, "probability": 0.02}, rows)
         self.assertEqual(self.r.loot["loot:creature:448"]["source"], w.known("npc:448"))
         self.assertEqual(self.r.loot["loot:reference:50"]["source"], w.UNKNOWN)
+        # Game object loot is keyed by the object; disenchant IDs name no single item.
+        self.assertEqual(self.r.loot["loot:game_object:2843"]["source"], w.known("object:2843"))
+        self.assertEqual(self.r.facts["drop:game_object:2843:6085"]["origin"],
+                         w.known({"dungeon": None, "entity": "object:2843", "kind": "drop"}))
+        self.assertEqual(self.r.loot["loot:disenchant:23"]["source"], w.UNKNOWN)
+        self.assertIn("drop:creature:448:872", self.r.acq)  # the 1.12 item makes the drop resolvable
         # Boss: one-level expansion, occurrences combined.
         boss = self.r.acq["drop:creature:639:ref:50:6085"]
         p1 = 1 - (1 - 0.2 * 0.5) ** 2
@@ -449,6 +479,18 @@ class MappingTest(unittest.TestCase):
         self.assertEqual(src["wago-tools-wowf"]["editions"], w.known(["wow_forever"]))
         self.assertNotIn("wago-tools-classic-era", src)  # no kept record cites the outranked origin
         self.assertEqual(src["navzeroth-world-content"]["editions"], w.NOT_APPLICABLE)
+        # Every evidence record cites a source of its own origin: [origin, pack edition].
+        for e in self.r.p["evidence"]:
+            if e["source"] == "navzeroth-world-content":
+                continue
+            origin = e["id"].split(":")[2]
+            self.assertEqual(src[e["source"]]["editions"], w.known(sorted({origin, "wow_forever"})), e["id"])
+        self.assertNotIn("ev:wago-tools-wowf:vanilla_1_12:world.spawns", ev)
+        spawns = ev["ev:cmangos-classic-db:vanilla_1_12:world.spawns"]["notes"]
+        self.assertIn("also read wago-tools-wowf (https://wago.tools/db2?product=wowf revision 1.60.1.70245", spawns)
+        self.assertEqual(src["wago-tools-wowf"]["allowed_fields"]["value"],
+                         sorted(["items.items", "travel.taxi_nodes", "travel.taxi_paths",
+                                 "world.ui_map_assignments", "world.ui_maps"]))
         self.assertEqual(src["navzeroth-world-content"]["redistribution"], w.known("permitted"))
         self.assertEqual(src["cmangos-classic-db"]["last_retrieval_utc_ms"], w.known(1700000000000))
 
@@ -456,7 +498,7 @@ class MappingTest(unittest.TestCase):
         s = self.r.summary
         self.assertEqual(s["not_mapped"], {"trainers.spells": 1})
         self.assertEqual(s["dropped"]["vendor row for an NPC outside world.npcs"], 1)
-        self.assertEqual(s["counts"]["entities"], 7)
+        self.assertEqual(s["counts"]["entities"], 8)
         self.assertEqual(s["parameters"]["run_speed_yards_per_s"], w.RUN_SPEED)
         self.assertEqual(s["catalog_bytes"], len((self.r.out / "catalog.json").read_bytes()))
 

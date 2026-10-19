@@ -36,13 +36,18 @@ The files under `content/world/` are stored through Git LFS (`.gitattributes`).
 
 The origin edition is never relabelled. One evidence record exists per
 (source, origin edition, dataset): `ev:<source>:<origin>:<dataset>`, for example
-`ev:cmangos-classic-db:vanilla_1_12:world.npcs`. Its confidence is the shard's
-(`cross_edition_unverified` for 1.12 data, `publisher_documented` for Forever client
-tables); its notes name the origin edition and build, the shard paths and the source
-revision and snapshot hash; `observed_at_utc_ms` is the earliest retrieval time the
-shards record, otherwise `unknown`. A shard with two sources (positions of 1.12
-spawns come from the Forever client's map layout) gives two evidence records, and
-records cite both.
+`ev:cmangos-classic-db:vanilla_1_12:world.npcs`. Its `source` is always a source of
+the record's true origin, so the source's `editions` read `[<origin>, <pack
+edition>]` (V2.8h). Its confidence is the shard's (`cross_edition_unverified` for
+1.12 data, `publisher_documented` for Forever client tables); its notes name the
+origin edition and build, the shard paths and the source revision and snapshot hash;
+`observed_at_utc_ms` is the earliest retrieval time the shards record, otherwise
+`unknown`. A 1.12 shard that also read Forever client tables (spawn positions from
+the client's map layout, map and area names, NPC reactions from `FactionTemplate`)
+cites only the CMaNGOS evidence; the wago.tools source, build and snapshot are named
+in that evidence's notes ("The generator also read wago-tools-wowf ..."), so an
+origin marker never shows Forever for 1.12 records. A source not listed in the
+mapping's source table is taken as the origin's own.
 
 Derived values cite `ev:navzeroth-world-content:inferred:<rule>` with confidence
 `inferred`: `travel.walk`, `travel.flight-time` and `loot.reference-expansion`.
@@ -62,13 +67,18 @@ a shard from another, unaccepted origin is skipped and listed under
 `skipped_origins`. When two inputs state the same record (same dataset and key), the
 origin earlier in `precedence` wins: owner observations, `wow_forever`, authored
 content, `vanilla_1_12`, `wow_classic_era`. Every field of the losing record that
-differs is a `value_disagreement` in `conflicts.json`, with both values and origins.
+differs is a `value_disagreement` in `conflicts.json`, with both values and origins;
+for items only `name`, `quality`, `class_id`, `subclass_id`, `inventory_type`,
+`item_level` and `required_level` are compared (Forever stats are computed from
+stat budgets without armor or ratings, so stats and prices differ by design).
 Other reports there:
 
-- `missing_in_higher_precedence`: an item referenced by 1.12 data (vendor, quest
-  reward, loot) that the Forever item table lacks, with the reference counts. Such
-  references are dropped from acquisitions and quest rewards (an `ItemKey` must
-  resolve) and kept as raw IDs in loot tables.
+- `missing_in_higher_precedence`: an item the Forever item table lacks that the
+  1.12 `item_template` defines; the 1.12 item is used (chosen origin
+  `vanilla_1_12`) and `references` counts its vendor, quest-reward and loot uses.
+- `missing_item`: an item referenced by 1.12 data that no item table defines, with
+  the reference counts. Such references are dropped from acquisitions and quest
+  rewards (an `ItemKey` must resolve) and kept as raw IDs in loot tables.
 - `prerequisite_cycle`: a quest prerequisite that closed a cycle and was dropped.
 - Authored content: the Deadmines title "The Deadmines" (authored) outranks
   "Deadmines" (1.12); area names from the Forever `AreaTable` outrank the 1.12
@@ -148,10 +158,17 @@ treatment of unverified inferred edges is the policy task's), `cooldown_ms` and
 
 ### Items
 
-Every Forever item (`item_id` = item ID, variant `base`). Equippable items get slots
+Every Forever item, then every 1.12 `item_template` item the Forever table lacks
+(`item_id` = item ID, variant `base`; the 1.12 items cite the CMaNGOS evidence).
+wago.tools serves one `wowf` build (1.60.1.70245) whose `ItemSparse` has 19,227
+named items; its `Item` table has 31,824 rows, but the 12,597 without an
+`ItemSparse` row carry no name, level or stats, and wago.tools lists no other
+`wowf` build (checked 2026-10-19).
+Equippable items get slots
 from `InventoryType` (the `inventory_type_slots` mapping), `two_handed` true for
-type 17, attributes `stat:<name>` from the generator's stats (armor and combat
-ratings are not in the client table), requirements `level_at_least` or
+type 17, attributes `stat:<name>` from the generator's stats (Forever: armor and
+combat ratings are not in the client table; 1.12: `stat_typeN` under the same
+names plus `armor` and `<school>_resistance`), requirements `level_at_least` or
 `unsupported` when the class or race mask restricts. Non-equippable items
 (type 0: quest items, reagents, consumables) are kept with **no slot and
 `two_handed: not_applicable`**: the core contract accepts an empty slot list only
@@ -175,8 +192,11 @@ with that explicit marker, so vendors, loot and quest rewards can reference them
   rows with a CMaNGOS condition are `unsupported`. Origin `drop {entity, dungeon}`
   where the entry names an entity (creature, pickpocketing and skinning entries are
   the creature entry by the classic-db convention; item containers `item:<id>`,
-  fishing `area:<id>`); game object and disenchant loot IDs are not entity IDs, so
-  their origin is `unknown`. Kind `dungeon` for bosses, otherwise `other`.
+  fishing `area:<id>`; game objects `object:<id>`: the generator writes
+  `gameobject_loot_template` once per chest or fishing hole whose `data1` names the
+  loot ID). Disenchant loot IDs (`item_template.DisenchantID`) are each shared by
+  several items (up to 877), so they name no single entity and the origin stays
+  `unknown`. Kind `dungeon` for bosses, otherwise `other`.
 - Boss reference loot `drop:creature:<boss>:ref:<table>:<item>` (depth 1):
   p = 1 - (1 - p_roll * p_item)^rolls, occurrences combined as 1 - prod(1 - p).
 
@@ -202,23 +222,24 @@ and checklist `unknown` (the authored pack keeps the checklist).
 `trainers.spells`, `spells.spells`, `talents.talents` (no content v2 type yet),
 `fishing.*` except fishing loot, taxi costs. `summary.json` lists them.
 
-## Measured world pack (1.60.1.70450, input revision `defb516b3468`)
+## Measured world pack (1.60.1.70450, V2.8h)
 
 | Collection | Count |
 | --- | --- |
-| items / equipment | 19,227 |
-| acquisitions / acquisition_facts | 27,278 |
+| items / equipment | 24,359 (19,227 Forever, 5,132 from 1.12 `item_template`) |
+| acquisitions / acquisition_facts | 58,712 |
 | quests / quest_facts / stages | 4,245 / 4,245 / 6,039 |
 | nodes / node_facts | 8,800 |
 | edges (32,265: 315 flight) | 32,265 |
 | entities | 21,043 |
-| loot_tables (rows) | 8,104 (229,646) |
-| map_spaces / dungeons / evidence | 87 / 27 / 27 |
+| loot_tables (rows) | 8,196 (240,722; every item row resolves to an item) |
+| map_spaces / dungeons / evidence | 87 / 27 / 24 |
 
-186,665 identities. `catalog.json` input 114,395,704 bytes; canonical pack catalog
-273,541,841 bytes. Conflicts: 4,768 items missing from the Forever table, 1 value
-disagreement. Coverage gaps (unknown and unsupported fields, unverified evidence):
-182,901.
+`catalog.json` input 152,853,500 bytes; canonical pack catalog about 367 MB
+(`verify-pack` total 367,728,145 bytes). Conflicts: 5,132 items the Forever table
+lacks (filled from 1.12), 2,801 value disagreements (mostly item class fields).
+Drop origins now resolved for 18,922 game object drops (665 loot tables);
+disenchant (37 tables) and reference tables stay `unknown`.
 
 On the development machine (WSL2, release build): generator 4.8 s, 0.87 GiB;
 `build-content-v2` 34 s, peak RSS 4.8 GiB; `verify-pack` 13 s, peak RSS 3.9 GiB.

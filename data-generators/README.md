@@ -11,7 +11,7 @@ data as `navzeroth-world-data` v1 JSON shards
 | `TALOD-data-generators/tools/gen_fishing.py` | `fishing.areas`, `fishing.goals` | CMaNGOS classic-db (`vanilla_1_12`, 1.12.1) and wago.tools AreaTable names |
 | | `fishing.timed`, `fishing.events` | TALOD's hand lists with cited wiki pages (`wow_classic_era`, build unknown) |
 | `Navzeroth-data-generators/gen_world_db2.py` | client DB2 tables (areas, uiMaps, ...) | wago.tools `wowf` (`wow_forever`, pinned build) |
-| `Navzeroth-data-generators/gen_world_cmangos.py` | NPCs, spawns, quests, loot, ... | CMaNGOS classic-db (`vanilla_1_12`) |
+| `Navzeroth-data-generators/gen_world_cmangos.py` | NPCs, spawns, quests, loot, items (`item_template`, the fallback for items the Forever table lacks), ... | CMaNGOS classic-db (`vanilla_1_12`) |
 
 ## Running
 
@@ -47,7 +47,7 @@ missing is `skipped`. Each generator also runs alone with `--refresh`, `--offlin
 | `detect` | Reads the client's `.build.info` and writes `release/v1/world-data-target.json` (build, interface, locale). |
 | `generate` | `run_all.py` (`--offline`/`--refresh` passed on); with `--pages-dir`, `import_wowhead_pages.py` first; with `--no-network-sources`, only `gen_fishing`, `gen_world_cmangos`, `gen_world_db2`. |
 | `verify` | `azeroth-cli verify-world-data --input data-generators/output`. |
-| `register` | `to_facts.py`, `register_facts.py`, then `source-sync` and `source-build` (output `dist/source-knowledge-world`). |
+| `register` | `to_facts.py`, `register_facts.py` (which also sets the target of `content/source-build-v1.json` to the edition and build of `release/v1/world-data-target.json`), then `source-sync` and `source-build` (output `dist/source-knowledge-world`). |
 | `content` | `world_to_content.py` to `content/world/<build>/`, then `build-content-v2` and `verify-pack` (pack in `dist/world-pack/<build>`). |
 | `gate` | `release-readiness --root . --version 1.0.0`; the JSON report goes to `content/world/<build>/release-readiness.json`. Not ready is reported, not a failure. |
 | `publish` | Commits the generated paths to `data/world-<build>-<YYYYMMDD>` (`--branch` overrides), checks LFS pointers, pushes and opens or updates a draft PR. |
