@@ -2,6 +2,14 @@
 
 Updated: 2026-10-19.
 
+Parallel continuation requested 2026-10-19: isolated writers are auditing desktop
+locale restoration, guide objective replay, archive failure dispositions and
+coverage evidence inputs from `826aa21`. Existing world-data PR #212 and the
+original checkout are preserved. Coverage-input changes and actual synthetic
+checks are recorded in the [handoff](handoffs/2026-10-19-coverage-inputs.md).
+Each task has its own draft PR; no merge, release or acceptance promotion is
+part of this batch.
+
 Independent browser-version correction [PR #201](https://github.com/Laymer/Navzeroth/pull/201)
 merged at `02cbfd7` after both read-only reviews, all nine exact-head checks,
 Windows packaging and both source platforms/parity. Status now uses package
