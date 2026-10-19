@@ -17,6 +17,11 @@
 //! - Stateful actions (return or teleport modes, consumed resources, known
 //!   cooldowns) are never relaxed mid-route. At most one verified stateful
 //!   edge may close a route as its final hop.
+//! - `Unverified` edges are excluded unless the caller names them in
+//!   [`RouteOptions::inferred_edges`]: generated walk and flight edges whose
+//!   evidence is all `inferred` (ADR 0007 §8), accepted only when the content
+//!   policy accepts inferred values. Their cost still needs known
+//!   `expected_ms` and `wait_ms`, and a route using one is an estimate.
 //!
 //! The module is pure: it reads no clock, performs no I/O and uses only
 //! ordered collections, so equal inputs give an identical result regardless of
@@ -24,8 +29,8 @@
 use crate::search_control::{NoopSearchControl, SearchControl, SearchPhase};
 use crate::{
     entities::{
-        DurationRange, EdgeStatus, NodeRef, TravelEdge, TravelMode, TravelNode, TravelSegment,
-        unique,
+        Confidence, DurationRange, EdgeStatus, EvidenceRecord, NodeRef, TravelEdge, TravelMode,
+        TravelNode, TravelSegment, unique,
     },
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationIssue, Truth, evaluate},
@@ -45,6 +50,35 @@ pub struct RouteOptions {
     /// boarding a boat. Edges without an entry add 0. Keys must name edges of
     /// the graph. Danger or preference penalties never belong here.
     pub service_ms: BTreeMap<EdgeId, Millis>,
+    /// `Unverified` edges the caller accepts because every piece of their
+    /// evidence is `inferred` and the active content policy accepts inferred
+    /// travel (ADR 0007 §8). Empty by default, so content without that policy
+    /// keeps excluding unverified edges. Keys must name edges of the graph;
+    /// see [`inferred_edges`].
+    pub inferred_edges: BTreeSet<EdgeId>,
+}
+
+/// Non-stateful `Unverified` edges whose evidence is non-empty, all present in
+/// `evidence`, free of conflicts and all `inferred`. A caller adds these to
+/// [`RouteOptions::inferred_edges`] only under a policy that accepts inferred
+/// values; nothing here decides that.
+pub fn inferred_edges(edges: &[TravelEdge], evidence: &[EvidenceRecord]) -> BTreeSet<EdgeId> {
+    let evidence: BTreeMap<&EvidenceId, &EvidenceRecord> =
+        evidence.iter().map(|e| (&e.id, e)).collect();
+    edges
+        .iter()
+        .filter(|edge| {
+            edge.status == EdgeStatus::Unverified
+                && !is_stateful(edge)
+                && !edge.evidence.is_empty()
+                && edge.evidence.iter().all(|id| {
+                    evidence.get(id).is_some_and(|e| {
+                        e.confidence == Confidence::Inferred && e.conflicts.is_empty()
+                    })
+                })
+        })
+        .map(|edge| edge.id.clone())
+        .collect()
 }
 
 /// Cost term that made an edge unusable.
@@ -126,11 +160,12 @@ impl Route {
     pub fn end(&self) -> &NodeRef {
         self.hops.last().map_or(&self.start, |hop| &hop.to)
     }
-    /// True if any hop rests on an estimated edge.
+    /// True if any hop rests on an estimated edge or an accepted inferred
+    /// (`Unverified`) edge.
     pub fn is_estimate(&self) -> bool {
         self.hops
             .iter()
-            .any(|hop| hop.status == EdgeStatus::Estimated)
+            .any(|hop| matches!(hop.status, EdgeStatus::Estimated | EdgeStatus::Unverified))
     }
     /// Contract segments for a `RoutePlan`. Each segment carries the edge's
     /// own travel duration and range (waits and service time are in
@@ -203,7 +238,10 @@ fn assess<'a>(
         EdgeStatus::TemporarilyUnavailable => {
             return Ok(Err(TravelExclusion::TemporarilyUnavailable));
         }
-        EdgeStatus::Unverified => return Ok(Err(TravelExclusion::Unverified)),
+        EdgeStatus::Unverified if !options.inferred_edges.contains(&edge.id) => {
+            return Ok(Err(TravelExclusion::Unverified));
+        }
+        EdgeStatus::Unverified => {}
         EdgeStatus::Verified | EdgeStatus::Estimated => {}
     }
     match (edge.requirements.value(), edge.requirements.status()) {
@@ -357,6 +395,14 @@ pub fn shortest_route_controlled(
     let edge_ids: BTreeSet<&EdgeId> = edges.iter().map(|edge| &edge.id).collect();
     if options.service_ms.keys().any(|id| !edge_ids.contains(id)) {
         return Err(invalid("Service time names an unknown edge"));
+    }
+    crate::entities::bounded(options.inferred_edges.len())?;
+    if options
+        .inferred_edges
+        .iter()
+        .any(|id| !edge_ids.contains(id))
+    {
+        return Err(invalid("Inferred edge option names an unknown edge"));
     }
     let (Some(start_node), Some(_)) = (by_node.get(origin), by_node.get(target)) else {
         return Err(invalid("Route endpoint is not a node of the graph"));
