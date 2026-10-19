@@ -19,3 +19,10 @@ class BoundedJson(unittest.TestCase):
 
     def test_brackets_in_escaped_strings_do_not_count(self):
         self.assertEqual(bounded.json_document(b'{"id":"[[[\\\"{{{"}', max_depth=1), {'id': '[[["{{{'})
+
+    def test_alternate_encodings_cannot_bypass_nesting(self):
+        import json
+        text = json.dumps({'x': '"', 'a': [[[1]]]})
+        for encoding in ('utf-8', 'utf-16', 'utf-32', 'utf-16-le', 'utf-16-be'):
+            with self.subTest(encoding=encoding), self.assertRaises(ValueError):
+                bounded.json_document(text.encode(encoding), max_depth=1)

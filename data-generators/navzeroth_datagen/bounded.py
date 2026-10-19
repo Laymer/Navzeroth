@@ -85,6 +85,7 @@ class InputBudget:
 def json_document(raw, max_depth=64):
     """Parse bounded inert JSON; refuse duplicate members and excessive nesting."""
     import json
+    text = raw.decode("utf-8", "strict")
     depth = 0
     quoted = False
     escaped = False
@@ -117,5 +118,5 @@ def json_document(raw, max_depth=64):
                 raise ValueError("duplicate JSON member")
             result[key] = value
         return result
-    return json.loads(raw, object_pairs_hook=members, parse_float=number,
+    return json.loads(text, object_pairs_hook=members, parse_float=number,
                       parse_constant=lambda value: (_ for _ in ()).throw(ValueError("non-finite JSON number")))
