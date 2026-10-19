@@ -102,3 +102,18 @@ class RunAllTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PartialRunTest(unittest.TestCase):
+    def test_used_dicts_count_and_only_keeps_other_entries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = pathlib.Path(tmp)
+            (out / ".written").mkdir()
+            meta = {"url": "https://wago.tools/db2/Map/csv", "status": 200, "sha256": "a" * 64, "bytes": 5}
+            (out / ".written" / "gen_a.json").write_text(json.dumps({"files": [], "used": {meta["url"]: meta}}))
+            previous = ({"gen_b": {"name": "gen_b", "status": "ok", "files": [{"path": "p"}]}},
+                        {"https://old.example/x": {"url": "https://old.example/x", "status": 200}})
+            m = run_all.build_manifest(out, {"gen_a": "ok", "gen_b": "skipped"}, ran={"gen_a"}, previous=previous)
+            self.assertEqual([s["url"] for s in m["sources"]], ["https://old.example/x", meta["url"]])
+            self.assertEqual(m["generators"][1]["files"], [{"path": "p"}])  # kept, not orphaned
+            self.assertEqual(m["generators"][1]["status"], "ok")

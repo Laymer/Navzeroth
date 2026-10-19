@@ -276,6 +276,8 @@ fn owner_accepted() -> Registry {
     s.rights.license = License::OwnerAccepted;
     s.rights.evidence[0].reviewed_scope =
         "Owner accepts the publisher's terms for generator retrieval; ADR 0006 §14".into();
+    s.rights.evidence[0].url =
+        "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md".into();
     s.retrieval.method = Method::HttpsRateLimited;
     r
 }
@@ -326,6 +328,10 @@ fn owner_accepted_rights_require_every_field_and_the_adr_citation() {
     assert_eq!(r.validate(), Err(Rejection::InvalidRegistry));
     let mut r = owner_accepted();
     r.sources[0].retrieval.access_evidence = None;
+    assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
+    // The citation must come with evidence that points at the ADR itself.
+    let mut r = owner_accepted();
+    r.sources[0].rights.evidence[0].url = "https://example.invalid/other-document".into();
     assert_eq!(r.validate(), Err(Rejection::RightsNotAdmitted));
     // The citation in a second evidence entry suffices.
     let mut r = owner_accepted();

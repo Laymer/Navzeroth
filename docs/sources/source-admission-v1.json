@@ -469,6 +469,12 @@
             "revision": "8d89fe3a3ac99a497d78acf3583ac098655c46a9",
             "sha256": "08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3",
             "reviewed_scope": "NotInTheBand's written permission of 18 Oct 2026 for the three TALOD generator scripts; recorded by ADR 0006 §14."
+          },
+          {
+            "url": "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md",
+            "revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+            "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea",
+            "reviewed_scope": "ADR 0006 §14 records the owner's acceptance of the TALOD permission conditions (credit, Navzeroth-only, non-commercial). Pinned bytes: ADR 0006 at its §14 amendment (revision is the Git blob id)."
           }
         ]
       },
@@ -476,7 +482,7 @@
         "method": "manual_local",
         "max_total_bytes": 1048576,
         "minimum_interval_ms": 1000,
-        "max_requests": 1,
+        "max_requests": 2,
         "access_evidence": {
           "url": "https://github.com/Laymer/Navzeroth/blob/8d89fe3a3ac99a497d78acf3583ac098655c46a9/data-generators/TALOD-data-generators/PERMISSION.md",
           "revision": "8d89fe3a3ac99a497d78acf3583ac098655c46a9",

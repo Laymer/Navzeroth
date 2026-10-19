@@ -75,6 +75,8 @@ pub enum License {
 }
 /// The ADR amendment an `owner_accepted` admission must cite in evidence scope.
 pub const OWNER_ACCEPTANCE_CITATION: &str = "ADR 0006 §14";
+/// The evidence that carries the citation must point at the ADR itself.
+pub const OWNER_ACCEPTANCE_DOCUMENT: &str = "docs/decisions/0006-v1-program.md";
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
@@ -230,10 +232,10 @@ impl Registry {
                     || r.obligations.is_none()
                     || r.evidence.is_empty()
                     || (owner
-                        && !r
-                            .evidence
-                            .iter()
-                            .any(|e| e.reviewed_scope.contains(OWNER_ACCEPTANCE_CITATION)))
+                        && !r.evidence.iter().any(|e| {
+                            e.reviewed_scope.contains(OWNER_ACCEPTANCE_CITATION)
+                                && e.url.contains(OWNER_ACCEPTANCE_DOCUMENT)
+                        }))
                     || (!later && s.files.is_empty()))
             {
                 return Err(Rejection::RightsNotAdmitted);

@@ -73,3 +73,22 @@ class HttpTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HardeningTest(unittest.TestCase):
+    def test_cache_names_are_sanitised(self):
+        body, meta = http._paths("https://example.org/x", "../../evil name.gz")
+        self.assertEqual(body.parent, http.cache_root() / "example.org")
+        self.assertEqual(body.name, "evil_name.gz")
+        body, _ = http._paths("https://example.org/x", "..")
+        self.assertEqual(len(body.name), 64)  # falls back to the URL hash
+
+    def test_transient_statuses_are_not_cached(self):
+        self.assertTrue({202, 403, 429, 503} <= http.NOT_CACHED)
+        self.assertNotIn(404, http.NOT_CACHED)
+        self.assertNotIn(400, http.NOT_CACHED)  # wago: table absent from this build
+
+    def test_insert_column_list_wins(self):
+        sql = ("CREATE TABLE `t` (\n  `a` int,\n  `b` int\n)\n"
+               "INSERT INTO `t` (`b`, `a`) VALUES (1,2);\nINSERT INTO `t` VALUES (3,4);\n")
+        self.assertEqual(sqldump.Dump(sql).rows("t"), [{"b": 1, "a": 2}, {"a": 3, "b": 4}])

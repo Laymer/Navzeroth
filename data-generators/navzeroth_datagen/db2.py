@@ -41,7 +41,7 @@ class Wago:
             self.table(table)
             return True
         except http.FetchError as e:
-            if e.status in (400, 403, 404):  # wago answers 400 for a table the build lacks
+            if e.status in (400, 404):  # wago answers 400 for a table the build lacks
                 return False
             raise
 

@@ -352,7 +352,7 @@ class Tables:
             try:
                 self._rows[table] = self.wago.table(table)
             except http.FetchError as e:
-                if e.status not in (400, 403, 404):  # wago answers 400 for a table the build lacks
+                if e.status not in (400, 404):  # wago answers 400 for a table the build lacks
                     raise
                 self._rows[table] = None
         return self._rows[table]

@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import threading
 import time
 import urllib.error
@@ -41,6 +42,8 @@ HOST_LIMITS = {
 }
 DEFAULT_LIMIT = (1, 1.0)
 RETRY_STATUS = {429, 500, 502, 503, 504}
+# Answers that may be transient (rate limits, bot challenges): used for this run, never cached.
+NOT_CACHED = RETRY_STATUS | {202, 403}
 
 
 class FetchError(Exception):
@@ -91,7 +94,8 @@ def snapshot_digest(prefix):
 
 def _paths(url, name):
     host = urllib.parse.urlsplit(url).hostname or "unknown"
-    key = name or hashlib.sha256(url.encode()).hexdigest()
+    key = re.sub(r"[^A-Za-z0-9._-]", "_", os.path.basename(name or "")) if name else ""
+    key = key.lstrip(".") or hashlib.sha256(url.encode()).hexdigest()
     base = cache_root() / host / key
     return base, base.with_name(base.name + ".meta.json")
 
@@ -153,7 +157,8 @@ def _host_slot(host):
 
 class _SameHostRedirects(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        if urllib.parse.urlsplit(newurl).hostname != urllib.parse.urlsplit(req.full_url).hostname:
+        new, old = urllib.parse.urlsplit(newurl), urllib.parse.urlsplit(req.full_url)
+        if new.hostname != old.hostname or new.scheme != "https":
             raise FetchError(req.full_url, code, f"redirect to another host refused: {newurl}")
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
@@ -198,13 +203,14 @@ def fetch(url, name=None, *, timeout=60):
         else:
             status, data = _download(url, timeout)
             meta = {"url": url, "status": status, "retrieved_at_utc_ms": int(time.time() * 1000)}
-            if data is not None and 200 <= status < 300:
+            if data is not None and 200 <= status < 300 and status != 202:
                 body_path.write_bytes(data)
                 meta.update(sha256=hashlib.sha256(data).hexdigest(), bytes=len(data))
-            meta_path.write_text(json.dumps(meta, sort_keys=True), encoding="utf-8")
+            if status not in NOT_CACHED:  # a refresh that hits a 5xx keeps the good entry
+                meta_path.write_text(json.dumps(meta, sort_keys=True), encoding="utf-8")
         with _used_lock:
             _used[url] = meta
-        if not (200 <= meta["status"] < 300):
+        if not (200 <= meta["status"] < 300) or meta["status"] == 202:
             raise FetchError(url, meta["status"])
         return body_path.read_bytes()
 

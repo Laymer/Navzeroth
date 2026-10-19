@@ -671,6 +671,9 @@ fn owner_accepted_rights_select_materials_only_with_the_adr_citation() {
         let mut registry = temp.read("docs/admission-registry.json");
         let rights = &mut registry["sources"][0]["rights"];
         rights["license"] = json!("owner_accepted");
+        rights["evidence"][0]["url"] = json!(
+            "https://github.com/Laymer/Navzeroth/blob/main/docs/decisions/0006-v1-program.md"
+        );
         rights["evidence"][0]["reviewed_scope"] = json!(if cited {
             "Owner accepts the synthetic terms; ADR 0006 §14"
         } else {

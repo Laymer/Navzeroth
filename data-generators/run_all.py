@@ -122,19 +122,37 @@ def source_entry(meta):
     return entry
 
 
-def build_manifest(out, statuses):
-    """statuses: {name: status}. Reads and then removes <out>/.written."""
+def load_previous(out):
+    """The manifest already in out (generators and sources), or None."""
+    path = pathlib.Path(out) / "run-manifest.json"
+    try:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        return {g["name"]: g for g in doc["generators"]}, {x["url"]: x for x in doc["sources"]}
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def build_manifest(out, statuses, ran=None, previous=None):
+    """statuses: {name: status}. Reads and then removes <out>/.written.
+    A partial run (ran = the generators started) keeps the entries and sources of the
+    others from the previous manifest, so --only never orphans their shards."""
     out = pathlib.Path(out)
     written_dir = out / ".written"
     scanned = None
-    generators, sources = [], {}
+    generators, sources = [], dict(previous[1]) if previous and ran is not None else {}
     for name in sorted(statuses):
         files = []
+        if ran is not None and name not in ran and previous and name in previous[0]:
+            generators.append(previous[0][name])
+            continue
         report = written_dir / f"{name}.json"
         if statuses[name] != "skipped" and report.exists():
             doc = json.loads(report.read_text(encoding="utf-8"))
             files = doc.get("files", [])
-            for meta in doc.get("sources", []):  # a failed run's downloads too (403s, refusals)
+            # A failed run's downloads too (403s, refusals). Generators report them either as a
+            # "sources" list or as "used", the {url: meta} dict of http.used().
+            metas = list(doc.get("sources", [])) + list((doc.get("used") or {}).values())
+            for meta in metas:
                 sources[meta["url"]] = source_entry(meta)
         elif statuses[name] == "ok":
             scanned = scanned if scanned is not None else shards_by_generator(out)
@@ -180,6 +198,7 @@ def main(argv=None):
     out.mkdir(parents=True, exist_ok=True)
     logs = http.cache_root() / "logs"
 
+    previous = load_previous(out)
     selected = [n for n in names if GENERATORS[n][0].exists()]
     # With --refresh each generator re-downloads what it reads, the shared inputs
     # included (http.py keeps no per-run memory of what was refreshed), so the
@@ -205,7 +224,7 @@ def main(argv=None):
         else:
             print("to_facts: skipped (navzeroth_datagen/to_facts.py not found)")
 
-    manifest = build_manifest(out, statuses)
+    manifest = build_manifest(out, statuses, ran=set(names), previous=previous)
     path = write_manifest(out, manifest)
     print(f"\n{'generator':<20} {'status':<8} {'seconds':>8} {'files':>6} {'records':>9}")
     for g in manifest["generators"]:

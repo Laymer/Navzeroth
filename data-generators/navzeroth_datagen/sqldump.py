@@ -74,8 +74,10 @@ class Dump:
         for m in re.finditer(r"CREATE TABLE `(\w+)` \((.*?)\n\)", sql, re.S):
             self._columns[m.group(1)] = re.findall(r"^\s*`(\w+)`", m.group(2), re.M)
         self._bodies = {}
-        for m in re.finditer(r"INSERT INTO `(\w+)` (?:\([^)]*\) )?VALUES (.*?);\n", sql, re.S):
-            self._bodies.setdefault(m.group(1), []).append(m.group(2))
+        for m in re.finditer(r"INSERT INTO `(\w+)` (?:\(([^)]*)\) )?VALUES (.*?);\n", sql, re.S):
+            # An explicit column list (subset or reordered insert) wins over CREATE TABLE order.
+            cols = re.findall(r"`(\w+)`", m.group(2)) if m.group(2) else None
+            self._bodies.setdefault(m.group(1), []).append((cols, m.group(3)))
 
     def tables(self):
         return sorted(self._columns)
@@ -89,8 +91,9 @@ class Dump:
         """Rows as dicts keyed by column name; an empty table gives []."""
         cols = self.columns(table)
         out = []
-        for body in self._bodies.get(table, ()):
-            out.extend(dict(zip(cols, r)) for r in parse_values(body))
+        for insert_cols, body in self._bodies.get(table, ()):
+            names = insert_cols or cols
+            out.extend(dict(zip(names, r)) for r in parse_values(body))
         return out
 
 
