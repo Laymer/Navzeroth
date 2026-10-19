@@ -88,13 +88,18 @@ def main():
             models.append(model)
     catalog["models"] = sorted(models, key=lambda m:m["id"])
     payload = catalog["reference"]["payload"]
-    payload["revision"] = "navzeroth-authored-slice-r3-stable-coverage"
+    payload["revision"] = "navzeroth-authored-slice-r4-heuristic-reminders"
     original_evidence = next(e for e in payload["evidence"] if e["id"] == "ev-authored-v1")
     evidence = copy.deepcopy(original_evidence)
     evidence["id"] = "ev-authored-roles-r2"
     evidence["notes"] = "Original authored role/reminder coverage revision r2, 2026-10-19. Historical quest masks identify inventory only; coefficients and extrapolations are original heuristics, not verified game mechanics. See evidence/role-model-assumptions.md."
     evidence["observed_at_utc_ms"] = {"clock_trust":"uncertain","source":"unrecorded","status":"unknown"}
-    payload["evidence"] = sorted([original_evidence,evidence],key=lambda e:e["id"])
+    reminder_evidence=copy.deepcopy(original_evidence)
+    reminder_evidence["id"]="ev-authored-reminders-r4"
+    reminder_evidence["notes"]="Original project-authored heuristic reminder statements, separately attributed from dungeon/map declarations. Publisher documentation records authorship only, not verified game mechanics, prerequisites or availability."
+    reminder_evidence["conflicts"]=[]
+    reminder_evidence["observed_at_utc_ms"]={"status":"unknown","source":"unrecorded","clock_trust":"uncertain"}
+    payload["evidence"] = sorted([original_evidence,evidence,reminder_evidence],key=lambda e:e["id"])
 
     rules = [r for r in payload["rules"] if not r["id"].startswith("reminder:role-")]
     for rule in rules:
@@ -103,6 +108,8 @@ def main():
             rule["evidence"] = ["ev-authored-roles-r2"]
             rule["predicate"] = {"op":"level_at_least","level":61}
             rule["result_template"] = "Your level is outside the authored 1-60 heuristic range. This range is an advice boundary, not a verified game level cap."
+    for rule in rules:
+        rule["evidence"]=["ev-authored-reminders-r4"]
     role_template = copy.deepcopy(next(r for r in rules if r["id"] == "reminder:train-after-level-up"))
     for role, text in sorted(ROLE_TEXT.items()):
         for lo, hi in BANDS:
