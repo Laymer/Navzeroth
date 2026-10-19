@@ -2,7 +2,9 @@
 
 Owner/sole writer world_review, isolated fix/stable-catalog-cache-generation.
 Baseline35c0dc0137d4a5f38efa996408894b92140431c7; claim517941f8;
-implementationac57050df4581048208452dfe65b6626ffde7d47.
+initial implementationac57050df4581048208452dfe65b6626ffde7d47.
+Current implementation85eb91126b7aa60e0648e53383650e40cb2463be includes
+the independent-review correction recorded below; the initial code is superseded.
 The active rehearsal worktree, its generated data and other worktrees are untouched.
 
 The parsed catalog and paging index previously keyed connection.total_changes().
@@ -75,3 +77,28 @@ actual full-pack installation/loading/browsing/planning/reminder persistence and
 resource measurements before any performance or release acceptance claim. Cold
 loads and content changes still require full validation; unrelated external commits
 and arbitrary write transactions remain conservative cache misses.
+
+
+## Independent-review correction: SQLite case-insensitive names
+
+Root identified an actual hole in the initial source-name comparisons. Renaming
+main dataset_manifests through an alternate name to DATASET_MANIFESTS before
+warming the cache allowed a same-connection update to evade the exact lowercase
+hook allowlist. An uppercase TEMP SOURCE_RECORDS WITHOUT ROWID shadow likewise
+evaded the binary name predicate. Two controlled regressions failed against the
+initial implementation; these are real failures, not passes.
+
+Follow-up85eb9112 uses eq_ignore_ascii_case for hook database/table names and
+COLLATE NOCASE for temporary schema names. This matches SQLite's ASCII identifier
+resolution without changing source/game identities. Both regressions now pass,
+alongside all ten earlier scenarios. No other production policy, schema, content,
+validation or transaction semantics changed.
+
+Fresh final Linux continuous-profile storage/app run:434passed,0failed,
+3existingignored. No profile corruption was ignored. Final executable-source LCOV:
+catalog_generation52/52(100%), consistent_read16/16(100%), content_catalog339/358
+(94.69%), sqlite647/668(96.86%), recovery418/449(93.10%). Final Clippy warnings-denied,
+format and diff checks passed. Evidence: /tmp/navzeroth-cache-generation-cases-before.log,
+cases-after.log, case-coverage.log, case.lcov and case.json. The machine record
+preserves the earlier measurement separately from the corrected current result.
+Root independent re-review and actual full-pack measurements remain required.
