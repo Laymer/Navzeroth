@@ -1,7 +1,7 @@
 # Addon: install, capture and remove
 
-The current release is the **0.9.2 developer preview**, with copyable exports and
-guarded 70374 support. Use its exact artifact/source identity when testing it. The AddOns entry is
+The current release is the **1.0.0-rc.1 development prerelease**, with copyable
+exports and the exact experimental guards listed below. Use its exact artifact/source identity when testing it. The AddOns entry is
 still named **Azeroth Navigator Diagnostics**, but the addon now includes manual
 snapshots, plan import and HUD controls, and manual session recording. These are
 experimental client bindings. It runs inside the permitted addon environment;
@@ -36,8 +36,8 @@ a 70338 export or edit a guard to claim 70374 evidence.
 ## Install
 
 1. Close the game client.
-2. Download `AzerothNavigator-addon-0.9.2.zip` and `SHA256SUMS.txt` from the
-   [0.9.2 release](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2). Verify
+2. Download `AzerothNavigator-addon-1.0.0-rc.1.zip` and `SHA256SUMS.txt` from the
+   [1.0.0-rc.1 release](https://github.com/Laymer/Navzeroth/releases/tag/v1.0.0-rc.1). Verify
    the ZIP's SHA-256. Extract its `AzerothNavigator` folder into the directory the
    client actually uses for addons, so that this file exists:
 

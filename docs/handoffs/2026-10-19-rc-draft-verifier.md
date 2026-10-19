@@ -17,3 +17,15 @@ are unchanged; this is verification orchestration, not a replacement release.
 
 Next: independent review, actual draft verification, all final-head PR checks,
 merge, then record successful draft/public receipts before Pages publication.
+
+## Integration receipt
+
+Independent read-only review approved final refreshed head
+`32f482850688180c28cde3125089f55296fa6315`. All ten required checks passed:
+CI 39248994969, Coverage 39248994715, Windows package 39248994724.
+PR #210 merged 2026-10-19T12:32:12Z as
+`f20783f4ff93cb30aa15b5cd585e8571236b496e`.
+The corrected verifier already passed draft 39245500923 and public 39245910009
+on reviewed driver `683c2ae`, checking unchanged release source `fcf48ea`.
+[Publication receipt](../releases/1.0.0-rc.1-publication.json) retains the exact
+asset and application identities; the initial failure remains recorded above.

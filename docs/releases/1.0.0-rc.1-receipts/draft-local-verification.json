@@ -1,0 +1,36 @@
+{
+  "source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
+  "tag": "v1.0.0-rc.1",
+  "draft": true,
+  "checksums_match": true,
+  "github_asset_digests_match": true,
+  "exact_asset_set": true,
+  "addon_matches_source": true,
+  "assets": [
+    {
+      "name": "AzerothNavigator-1.0.0-rc.1-x64-setup.exe",
+      "sha256": "0f87be628dbe7a979a4433cbc6c26faeb980b08e43307f2ef412141da0d7d3a0",
+      "bytes": 8382262
+    },
+    {
+      "name": "AzerothNavigator-addon-1.0.0-rc.1.zip",
+      "sha256": "42f28af3ae6a485eb6405203326ab407a61aa65f648cc5614cb9e03e3baa866c",
+      "bytes": 75452
+    },
+    {
+      "name": "CANDIDATE_NOTES.md",
+      "sha256": "de79c1cd0675a585eecbf82e41338b872f704f940e42d7ae4e8dba3abe584ce7",
+      "bytes": 6695
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "sha256": "42f4a394176794f540ac52780f26270978f10d448ce5247542742daf2fc2a3a5",
+      "bytes": 381
+    },
+    {
+      "name": "SOURCE_COMMIT.txt",
+      "sha256": "cdf6059ccc3dc399741d5c88a7ce102c9d32e7b7bd745c102d1cff662a38f783",
+      "bytes": 41
+    }
+  ]
+}
