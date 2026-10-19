@@ -14,23 +14,25 @@ function noLinkedComponents(file) {
     if (fs.lstatSync(current).isSymbolicLink()) throw new Error('Linked resource component refused');
   }
 }
-function hash(file) {
+function hash(file, maximum = MAX_FILE, capture = false) {
   noLinkedComponents(file);
   const before = fs.lstatSync(file, { bigint: true });
-  if (!before.isFile() || before.isSymbolicLink() || before.size > BigInt(MAX_FILE)) throw new Error('Invalid bounded source/resource file');
+  if (!before.isFile() || before.isSymbolicLink() || before.size > BigInt(maximum)) throw new Error('Invalid bounded source/resource file');
   const descriptor = fs.openSync(file, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW ?? 0) | (fs.constants.O_NONBLOCK ?? 0));
   try {
     if (identity(fs.fstatSync(descriptor, { bigint: true })) !== identity(before)) throw new Error('Resource changed before reading');
-    const digest = createHash('sha256'), buffer = Buffer.alloc(65536);
+    const digest = createHash('sha256'), buffer = Buffer.alloc(65536), chunks = [];
     let count = 0, length;
     while ((length = fs.readSync(descriptor, buffer, 0, buffer.length, null)) > 0) {
       count += length;
-      if (count > MAX_FILE) throw new Error('Resource exceeds bound');
+      if (count > maximum) throw new Error('Resource exceeds bound');
+      if (capture) chunks.push(Buffer.from(buffer.subarray(0, length)));
       digest.update(buffer.subarray(0, length));
     }
     if (BigInt(count) !== before.size || identity(fs.fstatSync(descriptor, { bigint: true })) !== identity(before)
       || identity(fs.lstatSync(file, { bigint: true })) !== identity(before)) throw new Error('Resource changed while reading');
-    return digest.digest('hex');
+    const sha256 = digest.digest('hex');
+    return capture ? { sha256, bytes: Buffer.concat(chunks) } : sha256;
   } finally { fs.closeSync(descriptor); }
 }
 function files(root, prefix = '', depth = 0, budget = { entries: 0 }) {
@@ -55,20 +57,20 @@ function installedBundle(repo, add) {
   const evidencePath = path.join(repo, 'release/v1/acceptance-evidence.json');
   if (!fs.existsSync(evidencePath)) return;
   noLinkedComponents(evidencePath);
-  if (fs.lstatSync(evidencePath).size > 64 * 1024 * 1024) throw new Error('Evidence exceeds bound');
-  const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  const evidence = JSON.parse(hash(evidencePath, 64 * 1024 * 1024, true).bytes.toString('utf8'));
   if (evidence.schema_version !== 4 || !evidence.bundled_content) return;
   const binding = evidence.bundled_content;
-  const source = ref => {
+  const source = (ref, maximum = MAX_FILE, capture = false) => {
     if (!ref || !/^[a-z0-9_./-]+$/.test(ref.path) || !/^[a-f0-9]{64}$/.test(ref.sha256)
-      || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0 || ref.bytes > MAX_FILE) throw new Error('Invalid bundle resource pin');
+      || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0 || ref.bytes > maximum) throw new Error('Invalid bundle resource pin');
     safe(ref.path);
     const file = path.join(repo, ref.path);
-    if (fs.lstatSync(file).size !== ref.bytes || hash(file) !== ref.sha256) throw new Error('Bundle source differs from release evidence');
-    return file;
+    const verified = hash(file, maximum, capture);
+    if (fs.lstatSync(file).size !== ref.bytes || (capture ? verified.sha256 : verified) !== ref.sha256) throw new Error('Bundle source differs from release evidence');
+    return capture ? verified.bytes : file;
   };
   if (binding.manifest.bytes > 4 * 1024 * 1024 || binding.receipt.bytes > 65536) throw new Error('Bundle document exceeds bound');
-  const manifest = JSON.parse(fs.readFileSync(source(binding.manifest), 'utf8'));
+  const manifest = JSON.parse(source(binding.manifest, 4 * 1024 * 1024, true).toString('utf8'));
   source(binding.receipt);
   const same = (a, b) => a && b && a.path === b.path && a.bytes === b.bytes && a.sha256 === b.sha256;
   if (manifest.format !== 'navzeroth-installed-content' || manifest.schema_version !== 1 || !Array.isArray(manifest.files)
@@ -88,7 +90,7 @@ export function verifyInstalledTree(repo, installed) {
   const configDir = path.join(repo, 'apps/desktop/src-tauri');
   noLinkedComponents(path.join(configDir, 'tauri.windows.conf.json'));
   noLinkedComponents(installed);
-  const resources = JSON.parse(fs.readFileSync(path.join(configDir, 'tauri.windows.conf.json'), 'utf8')).bundle.resources;
+  const resources = JSON.parse(hash(path.join(configDir, 'tauri.windows.conf.json'), 4 * 1024 * 1024, true).bytes.toString('utf8')).bundle.resources;
   const expected = new Map();
   const add = (relative, file) => {
     safe(relative);

@@ -61,3 +61,12 @@ raw LCOV /tmp/navzeroth-release-binding.lcov.
 Hosted harness integration additionally needs native coverage collector adaptation:
 coverage-built stable native application must receive the exact canonical build
 identity and verified staged bundle before startup, without a synthetic bypass.
+
+Independent tooling review of34d1b1a found a Node parsed-manifest reopen defect:
+pinned descriptor bytes were hashed, then the pathname was reopened for parsing.
+A controlled substituted-read regression demonstrated an undeclared installed
+file could then be accepted. Corrected by capturing and parsing the same bounded
+verified descriptor bytes. Evidence and static config JSON reads now use bounded
+same-descriptor capture too. The regression proves no unverified reopen occurs and
+undeclared resources still fail. Both Node tests pass after repair; Rust files
+and prior portable coverage are unchanged. Final independent rereview is required.

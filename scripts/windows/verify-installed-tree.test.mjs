@@ -65,6 +65,27 @@ test('schema4 installed bundles bind every resource to explicit source pins', ()
     write(installed, 'bundled-content/manifest.json', fs.readFileSync(path.join(repo, evidence.bundled_content.manifest.path)));
     write(installed, 'bundled-content/receipt.json', fs.readFileSync(path.join(repo, evidence.bundled_content.receipt.path)));
     assert.equal(verifyInstalledTree(repo, installed).filter(f => f.source_verified).length, 4);
+    // A second pathname read must never substitute unverified parsed manifest
+    // bytes after the descriptor's pinned digest has passed.
+    write(repo, 'content/undeclared.txt', 'not declared by pinned manifest');
+    write(installed, 'bundled-content/content/undeclared.txt', 'not declared by pinned manifest');
+    const substituted = structuredClone(manifest);
+    substituted.files.push(pin('content/undeclared.txt'));
+    const originalRead = fs.readFileSync;
+    let unverifiedReopens = 0;
+    fs.readFileSync = function(file, ...args) {
+      if (String(file) === path.join(repo, evidence.bundled_content.manifest.path)) {
+        unverifiedReopens++;
+        return JSON.stringify(substituted);
+      }
+      return originalRead.call(this, file, ...args);
+    };
+    try {
+      assert.throws(() => verifyInstalledTree(repo, installed), /inventory/);
+      assert.equal(unverifiedReopens, 0);
+    } finally { fs.readFileSync = originalRead; }
+    fs.rmSync(path.join(installed, 'bundled-content/content/undeclared.txt'));
+
     write(installed, 'bundled-content/content/raw-source.txt', 'altered');
     assert.throws(() => verifyInstalledTree(repo, installed), /differs/);
     write(installed, 'bundled-content/content/raw-source.txt', 'exact original source bytes');
