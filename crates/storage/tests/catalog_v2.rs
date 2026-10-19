@@ -243,3 +243,72 @@ fn v2_conflict_closure_is_preserved_and_invalid_replacements_are_atomic() {
         );
     }
 }
+
+#[test]
+fn dungeon_conflicts_validate_exact_v2_record_and_check_identities_and_refuse_v1() {
+    use azeroth_core::{
+        dungeon_composition::DungeonField,
+        sources::{ConflictKind, RecordKey, SourceConflict},
+        types::SourceId,
+    };
+    let mut value: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v2/reference-content.json"
+    ))
+    .unwrap();
+    let mut second = value["reference"]["payload"]["evidence"][0].clone();
+    second["id"] = json!("other-proof");
+    value["reference"]["payload"]["evidence"]
+        .as_array_mut()
+        .unwrap()
+        .push(second);
+    let content = decode(&serde_json::to_vec(&value).unwrap()).unwrap();
+    let old = v1();
+    for (id, field, valid) in [
+        ("dungeon-1", DungeonField::Map, true),
+        ("dungeon-1", DungeonField::ChecklistCollection, true),
+        (
+            "dungeon-1",
+            DungeonField::Checklist {
+                check: SourceId::new("check-1").unwrap(),
+            },
+            true,
+        ),
+        (
+            "dungeon-1",
+            DungeonField::Checklist {
+                check: SourceId::new("absent-check").unwrap(),
+            },
+            false,
+        ),
+        ("absent-dungeon", DungeonField::Map, false),
+    ] {
+        let conflict = SourceConflict {
+            key: RecordKey::Dungeon {
+                context: content.reference.data_context(),
+                dungeon: SourceId::new(id).unwrap(),
+                field,
+            },
+            kind: ConflictKind::ValueDisagreement,
+            preferred: content.reference.payload.evidence[0].id.clone(),
+            others: vec![content.reference.payload.evidence[1].id.clone()],
+        };
+        let input = ContentRevisionV2 {
+            content: content.clone(),
+            sources: old.sources.clone(),
+            conflicts: vec![conflict.clone()],
+        };
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        assert_eq!(store.stage_content_v2_revision(&input).is_ok(), valid);
+        let mut v1input = old.clone();
+        let mut envelope = serde_json::to_value(&v1input.envelope).unwrap();
+        envelope["payload"]["evidence"] = value["reference"]["payload"]["evidence"].clone();
+        v1input.envelope = azeroth_core::contract::decode_envelope(&envelope.to_string()).unwrap();
+        v1input.conflicts = vec![conflict];
+        assert!(
+            SqliteStore::open_in_memory()
+                .unwrap()
+                .stage_content_revision(&v1input)
+                .is_err()
+        );
+    }
+}
