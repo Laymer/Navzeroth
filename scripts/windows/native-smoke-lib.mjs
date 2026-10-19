@@ -60,16 +60,31 @@ export function verifyAgainstSums(sums, name, actualSha256) {
   return expected;
 }
 
-/** Numeric semver triple comparison; prerelease suffixes are rejected, not ignored. */
+/** Strict SemVer precedence. Decimal strings avoid rounding large numeric identifiers. */
 export function compareVersions(a, b) {
-  const parse = (v) => {
-    const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(v);
-    if (!m) throw new Error(`Not a plain MAJOR.MINOR.PATCH version: ${v}`);
-    return m.slice(1).map(Number);
+  const parse = (value) => {
+    const match = typeof value === "string" && /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/.exec(value);
+    if (!match || match[0] !== value) throw new Error("Malformed SemVer version");
+    const pre = match[4]?.split(".") ?? [];
+    if (pre.some(id => /^0[0-9]+$/.test(id))) throw new Error("Malformed SemVer numeric prerelease identifier");
+    return { core: match.slice(1, 4), pre };
   };
-  const [x, y] = [parse(a), parse(b)];
-  for (let i = 0; i < 3; i += 1) if (x[i] !== y[i]) return x[i] < y[i] ? -1 : 1;
-  return 0;
+  const decimal = (x, y) => x.length !== y.length ? (x.length < y.length ? -1 : 1) : x === y ? 0 : x < y ? -1 : 1;
+  const x = parse(a), y = parse(b);
+  for (let i = 0; i < 3; i += 1) {
+    const order = decimal(x.core[i], y.core[i]);
+    if (order) return order;
+  }
+  if (!x.pre.length || !y.pre.length) return x.pre.length === y.pre.length ? 0 : x.pre.length ? -1 : 1;
+  for (let i = 0; i < Math.min(x.pre.length, y.pre.length); i += 1) {
+    const left = x.pre[i], right = y.pre[i];
+    if (left === right) continue;
+    const ln = /^[0-9]+$/.test(left), rn = /^[0-9]+$/.test(right);
+    if (ln && rn) return decimal(left, right);
+    if (ln !== rn) return ln ? -1 : 1;
+    return left < right ? -1 : 1;
+  }
+  return x.pre.length === y.pre.length ? 0 : x.pre.length < y.pre.length ? -1 : 1;
 }
 
 /** Describe what an upgrade run actually exercises, so same-version runs are never called upgrades. */

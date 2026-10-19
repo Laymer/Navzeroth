@@ -144,11 +144,20 @@ pub fn entry() -> i32 {
                 )
             })
         });
-    let (event, exit) = match operation {
+    let (event, exit) = terminal_event(request.request_id, operation);
+    if write_frame(&mut std::io::stdout().lock(), &event).is_err() {
+        return 1;
+    }
+    exit
+}
+
+// One terminal encoding boundary for successful and failed extraction outcomes.
+fn terminal_event(request_id: String, operation: Result<ExtractionSummary>) -> (WorkerEvent, i32) {
+    match operation {
         Ok(summary) => (
             WorkerEvent::Complete {
                 protocol_version: 1,
-                request_id: request.request_id,
+                request_id,
                 summary,
             },
             0,
@@ -156,16 +165,12 @@ pub fn entry() -> i32 {
         Err(code) => (
             WorkerEvent::Failed {
                 protocol_version: 1,
-                request_id: request.request_id,
+                request_id,
                 code: code.into(),
             },
             1,
         ),
-    };
-    if write_frame(&mut std::io::stdout().lock(), &event).is_err() {
-        return 1;
     }
-    exit
 }
 
 pub struct ExtractionWorker {
@@ -294,5 +299,95 @@ impl ExtractionWorker {
 impl Drop for ExtractionWorker {
     fn drop(&mut self) {
         let _ = self.cancel();
+    }
+}
+
+#[cfg(test)]
+mod protocol_tests {
+    use super::*;
+
+    #[test]
+    fn terminal_frames_preserve_summary_and_failure_identity() {
+        let summary = ExtractionSummary {
+            format_version: 1,
+            catalog_sha256: "a".repeat(64),
+            build: 70450,
+            tables_processed: 2,
+            tables_decoded: 0,
+            preset: PerformancePreset::Small,
+            actual_workers: 1,
+            gameplay_projection_available: false,
+            activated: false,
+        };
+        let expected = serde_json::to_value(&summary).unwrap();
+        let (event, exit) = terminal_event("synthetic-job".into(), Ok(summary));
+        assert_eq!(exit, 0);
+        let mut bytes = Vec::new();
+        write_frame(&mut bytes, &event).unwrap();
+        let decoded: WorkerEvent = read_frame(&mut bytes.as_slice()).unwrap();
+        let value = serde_json::to_value(decoded).unwrap();
+        assert_eq!(value["event"], "complete");
+        assert_eq!(value["request_id"], "synthetic-job");
+        assert_eq!(value["protocol_version"], 1);
+        assert_eq!(value["summary"], expected);
+        let (event, exit) = terminal_event("failed-job".into(), Err("synthetic refusal"));
+        assert_eq!(exit, 1);
+        bytes.clear();
+        write_frame(&mut bytes, &event).unwrap();
+        let decoded: WorkerEvent = read_frame(&mut bytes.as_slice()).unwrap();
+        assert!(
+            matches!(decoded, WorkerEvent::Failed {protocol_version:1, request_id, code} if request_id == "failed-job" && code == "synthetic refusal")
+        );
+    }
+
+    #[test]
+    fn frames_refuse_oversize_truncation_invalid_data_and_broken_writers() {
+        let mut bytes = Vec::new();
+        assert_eq!(
+            write_frame(&mut bytes, &"x".repeat(MAX_FRAME)),
+            Err("Worker frame exceeds capacity")
+        );
+        assert!(bytes.is_empty());
+        assert_eq!(
+            read_frame::<WorkerEvent>(&mut [0u8; 3].as_slice()).unwrap_err(),
+            "Worker pipe closed"
+        );
+        assert_eq!(
+            read_frame::<WorkerEvent>(&mut (MAX_FRAME as u32 + 1).to_le_bytes().as_slice())
+                .unwrap_err(),
+            "Worker frame exceeds capacity"
+        );
+        assert_eq!(
+            read_frame::<WorkerEvent>(&mut [3u8, 0, 0, 0, b'{'].as_slice()).unwrap_err(),
+            "Truncated worker frame"
+        );
+        for text in [
+            "{",
+            "null",
+            r#"{"event":"failed","protocol_version":1,"request_id":"job","code":"refused","extra":true}"#,
+        ] {
+            let mut frame = (text.len() as u32).to_le_bytes().to_vec();
+            frame.extend_from_slice(text.as_bytes());
+            assert!(read_frame::<WorkerEvent>(&mut frame.as_slice()).is_err());
+        }
+        struct Broken(bool);
+        impl Write for Broken {
+            fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+                if self.0 {
+                    Ok(bytes.len())
+                } else {
+                    Err(std::io::ErrorKind::BrokenPipe.into())
+                }
+            }
+            fn flush(&mut self) -> std::io::Result<()> {
+                Err(std::io::ErrorKind::BrokenPipe.into())
+            }
+        }
+        for flush_only in [false, true] {
+            assert_eq!(
+                write_frame(&mut Broken(flush_only), &false),
+                Err("Worker pipe unavailable")
+            );
+        }
     }
 }

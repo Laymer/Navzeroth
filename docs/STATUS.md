@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-18.
+Updated: 2026-10-19.
 
 Independent browser-version correction [PR #201](https://github.com/Laymer/Navzeroth/pull/201)
 merged at `02cbfd7` after both read-only reviews, all nine exact-head checks,
@@ -14,16 +14,32 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Current task
 
-**Continuation review, tests and coverage:** Codex `/root`, sole writer, branch
-`test/continuation-coverage`, refreshed to main `02cbfd7`. Engineering stages 1–9
-have merged. Inventory, hash-bound raw-report validation and targeted expansion
-are in progress. At `e4b0d77`, all ordinary CI, source Linux/Windows/parity and
-Windows packaging checks pass. Both native collectors and TypeScript succeed;
-the combined coverage gate fails only desktop shell lib.rs (1160/1318), with no
-missing files or evidence errors. Every other eligible file clears 90%. Actual native picker cancellation and registered atlas-protocol refusal tests
-now await hosted verification.
-The 90% per-file requirement remains unchanged; this draft cannot merge yet.
-[Coverage handoff](handoffs/2026-10-18-per-file-coverage.md).
+**Development RC preparation:** Codex `/root`, sole writer, isolated branch
+`release/1.0.0-rc.1`, final repair baseline `cb5d68b`.
+[Claim](claims/2026-10-19-rc-release.md),
+[verification handoff](handoffs/2026-10-19-rc-release.md).
+Repairs #205 (Windows verification), #207 (deterministic worker coverage),
+#204 (concurrent lifecycle initialization/migration) and #206 (shared SemVer
+upgrade classification) are merged after independent final-head read-only review
+and all ten required checks. Exact heads, resulting commits and workflow IDs are
+in the handoff. No schema versions or public application contracts changed.
+
+PR #203's final-head checks passed, but its resulting-main CI39164374044,
+Coverage39164373980 and package39164374023 failed. Those failures are retained,
+not counted as passes. The repair PRs provide new evidence; exact resulting-release
+commit and tag validation still precede publication.
+
+Canonical versions are prepared as **1.0.0-rc.1**, explicitly an unsigned
+development prerelease. Candidate and stable readiness remain false. Published
+version and download links remain **0.9.2** until public RC verification. No
+acceptance-candidate promotion or stable 1.0.0 publication is included.
+Strict 90% executable-line coverage per Rust/TS/TSX file, missing-file detection,
+native aggregation and all ten required checks remain in force. Ordinary Windows
+performance, live acceptance, content permissions and launch-target evidence
+remain gaps. Private extraction/cache receipts are retained without reopening
+game files. Separate Pages delivery follows public RC verification.
+Committed-tree readiness at `b020b45` reports publication allowed, candidate/stable
+false, 69 blockers and empty material selection. [Exact inventory](releases/1.0.0-rc.1-readiness.md).
 
 Continuation 9 merged as [PR #200](https://github.com/Laymer/Navzeroth/pull/200)
 at `ac114c8` after independent review, all nine exact-head checks, Windows packaging
@@ -117,13 +133,13 @@ count at 0.9.1 and 0.9.2; historical, now 69),
 zero verified evidence files and zero verified content packs. Full 1.0.0 content and candidate-bound acceptance gates remain unmet.
 Private research catalogs remain outside public assets.
 
-GitHub branch protection on `main` (verified read-only with `gh api` on 2026-10-17)
-requires nine status checks with strict up-to-date branches: Rust format, Rust Linux,
+GitHub branch protection on `main` was verified read-only on 2026-10-19:
+**ten required checks** with strict up-to-date branches: Rust format, Rust Linux,
 Rust Windows, pnpm Linux, pnpm Windows, Lua static checks, Desktop shell Windows,
-Mocked desktop Chromium and Windows installer and addon package. The source knowledge
-workflow is not among them and passes by process convention only. Earlier records that
-say "only five checks" were written before the setting changed. Some earlier commits use the `release:`
-subject prefix, which predates the plan 21.4 task-ID convention.
+Mocked desktop Chromium, Windows installer and addon package, and Coverage gate.
+Source platform/parity verification remains an additional process requirement for
+applicable changes and the exact release commit. Historical nine-check receipts
+below describe their own earlier configuration.
 
 ## Preceding work
 
