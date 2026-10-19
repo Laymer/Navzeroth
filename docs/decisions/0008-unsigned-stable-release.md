@@ -21,7 +21,11 @@ Supersede ADR 0006's stable Authenticode requirement and ADR 0007's statement th
 Windows acceptance is unchanged. This does not waive content-receipt signatures.
 
 Adopt ADR 0007's accepted origins, accepted unknown fields, true origin/build
-retention, source precedence and marked inferred travel. No live-client evidence
+retention, source precedence and marked inferred travel. The owner additionally
+accepted Forever build `1.60.1.70245` as a historical, unverified input after the
+review exposed its restamping as `1.60.1.70450`. Admit that exact build explicitly
+in versioned policy, retain its true build and display a historical warning; no
+unknown or later build is admitted by this decision. No live-client evidence
 or launch-build freeze is required. Missing records differ from accepted unknown
 fields: an unknown field never satisfies an absent promised record. Historical
 unverified/failed observations retain their actual status.
