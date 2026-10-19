@@ -204,6 +204,19 @@ impl WorldIndex {
                 &r.evidence,
             );
         }
+        // Projected objectives retain their source quest's origin marks.
+        for quest in &data.quests {
+            if !quest.evidence.is_empty() {
+                for stage in &quest.stages {
+                    add(
+                        &index,
+                        OriginCollection::Objectives,
+                        crate::planning_objectives::stage_identity(&quest.id, stage),
+                        &quest.evidence,
+                    );
+                }
+            }
+        }
         for (i, r) in data.acquisitions.iter().enumerate() {
             add(
                 &index,
