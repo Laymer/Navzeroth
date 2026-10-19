@@ -4,7 +4,10 @@ use azeroth_app::{authored_scores::GearComparison, snapshots::SnapshotApplicatio
 use azeroth_core::types::UtcMillis;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeSet, path::PathBuf};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::PathBuf,
+};
 const NOW: i64 = 1100;
 fn known(value: Value) -> Value {
     json!({"status":"known","value":value,"clock_trust":"trusted","source":"manual_entry","observed_at_utc_ms":NOW-100})
@@ -53,6 +56,23 @@ fn import(app: &SnapshotApplication, value: &mut Value, sequence: u64) -> String
     .unwrap()
     .profile_id
 }
+fn engineering_profile(
+    app: &SnapshotApplication,
+    label: &str,
+    level: u64,
+    role: Value,
+    sequence: u64,
+) -> (String, Value) {
+    let mut snap = snapshot();
+    snap["payload"]["character"] = json!(label);
+    snap["producer"]["session_id"] = json!(format!("session-{label}"));
+    snap["payload"]["capture"]["session_id"] = json!(format!("session-{label}"));
+    snap["payload"]["level"] = known(json!(level));
+    snap["payload"]["role"] = role;
+    let profile = import(app, &mut snap, sequence);
+    (profile, snap["payload"]["id"].clone())
+}
+
 fn level_only(v: &Value) -> bool {
     match v["op"].as_str() {
         Some("level_at_least") => v["level"].as_u64().is_some_and(|n| n <= 60),
@@ -69,6 +89,39 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
     let app = SnapshotApplication::in_memory().unwrap();
     let mut snap = snapshot();
     let profile = import(&app, &mut snap, 100);
+    // Pre-import boundary profiles: request-only model changes should not repeatedly
+    // invalidate the immutable catalog through unrelated snapshot writes.
+    let mut level_profiles = BTreeMap::new();
+    let mut sequence = 200;
+    for level in [1, 20, 21, 40, 41, 60, 61] {
+        sequence += 1;
+        level_profiles.insert(
+            level,
+            engineering_profile(
+                &app,
+                &format!("engineering-level-{level}"),
+                level,
+                json!({"status":"unknown"}),
+                sequence,
+            ),
+        );
+    }
+    let mut reminder_profiles = BTreeMap::new();
+    for role in ["tank", "healer", "melee_damage", "ranged_damage"] {
+        for level in [1, 20, 21, 40, 41, 60] {
+            sequence += 1;
+            reminder_profiles.insert(
+                (role, level),
+                engineering_profile(
+                    &app,
+                    &format!("engineering-{role}-{level}"),
+                    level,
+                    known(json!(role)),
+                    sequence,
+                ),
+            );
+        }
+    }
     let mut revisions = Vec::new();
     for name in ["world-v2", "authored-v2"] {
         let inspection = app
@@ -111,7 +164,7 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
         let target = &value["targets"][0];
         let quest = target["quest"].as_str().unwrap();
         let stage = target["stage"].as_str().unwrap();
-        snap["payload"]["quests"][quest] = json!({"accepted":known(json!(true)),"completed":known(json!(false)),"turned_in":known(json!(false))});
+        snap["payload"]["quests"][quest] = json!({"quest":quest,"context":snap["payload"]["context"],"accepted":known(json!(true)),"completed":known(json!(false)),"turned_in":known(json!(false)),"objectives":{stage:known(json!(false))}});
         snap["payload"]["objectives"][stage] = known(json!(false));
     }
     assert_eq!(import(&app, &mut snap, 101), profile);
@@ -153,14 +206,12 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
         .expect("actual first gear page includes a source-backed positive stamina contribution")
         .key
         .clone();
-    let mut sequence = 102;
     let mut score_boundary_cases = 0;
     for model in models {
         for boundary in ["minimum_level", "maximum_level"] {
-            snap["payload"]["level"] = known(model[boundary].clone());
-            sequence += 1;
-            assert_eq!(import(&app, &mut snap, sequence), profile);
-            let mut score = json!({"profile_id":profile,"snapshot_id":snap["payload"]["id"],"revision":revision,"authored_model":model["id"],"model":model["profile"],"layout":{"slots":[],"hands":null},"class":known(model["class"].clone()),"proficiency":{"classes":{}},"candidates":[{"item":item,"category":{"status":"unknown"},"acquisition":null}]});
+            let (score_profile, score_snapshot) =
+                &level_profiles[&model[boundary].as_u64().unwrap()];
+            let mut score = json!({"profile_id":score_profile,"snapshot_id":score_snapshot,"revision":revision,"authored_model":model["id"],"model":model["profile"],"layout":{"slots":[],"hands":null},"class":known(model["class"].clone()),"proficiency":{"classes":{}},"candidates":[{"item":item,"category":{"status":"unknown"},"acquisition":null}]});
             assert!(
                 app.compare_gear_or_score(&score.to_string(), Some(UtcMillis::new(NOW).unwrap()))
                     .is_err()
@@ -190,22 +241,18 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
                 if outside == 0 {
                     continue;
                 }
-                snap["payload"]["level"] = known(json!(outside));
-                sequence += 1;
-                import(&app, &mut snap, sequence);
-                score["snapshot_id"] = snap["payload"]["id"].clone();
+                let (outside_profile, outside_snapshot) = &level_profiles[&outside];
+                let mut wrong_band = score.clone();
+                wrong_band["profile_id"] = json!(outside_profile);
+                wrong_band["snapshot_id"] = outside_snapshot.clone();
                 assert!(
                     app.compare_gear_or_score(
-                        &score.to_string(),
+                        &wrong_band.to_string(),
                         Some(UtcMillis::new(NOW).unwrap())
                     )
                     .is_err()
                 );
             }
-            snap["payload"]["level"] = known(model[boundary].clone());
-            sequence += 1;
-            import(&app, &mut snap, sequence);
-            score["snapshot_id"] = snap["payload"]["id"].clone();
             score["class"] = known(json!("class:other"));
             assert!(
                 app.compare_gear_or_score(&score.to_string(), Some(UtcMillis::new(NOW).unwrap()))
@@ -218,12 +265,9 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
     for role in ["tank", "healer", "melee_damage", "ranged_damage"] {
         for (lo, hi) in [(1, 20), (21, 40), (41, 60)] {
             for level in [lo, hi] {
-                snap["payload"]["level"] = known(json!(level));
-                snap["payload"]["role"] = known(json!(role));
-                sequence += 1;
-                import(&app, &mut snap, sequence);
+                let (reminder_profile, _) = &reminder_profiles[&(role, level)];
                 let view = app
-                    .reminder_view(&profile, Some(UtcMillis::new(NOW).unwrap()))
+                    .reminder_view(reminder_profile, Some(UtcMillis::new(NOW).unwrap()))
                     .unwrap();
                 let v = serde_json::to_value(&view).unwrap();
                 assert_eq!(v["rules"].as_array().unwrap().len(), 18);
@@ -255,12 +299,8 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
             }
         }
     }
-    snap["payload"]["role"] = json!({"status":"unknown"});
-    snap["payload"]["level"] = known(json!(61));
-    sequence += 1;
-    import(&app, &mut snap, sequence);
     let view = serde_json::to_value(
-        app.reminder_view(&profile, Some(UtcMillis::new(NOW).unwrap()))
+        app.reminder_view(&level_profiles[&61].0, Some(UtcMillis::new(NOW).unwrap()))
             .unwrap(),
     )
     .unwrap();
@@ -404,5 +444,38 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
     println!(
         "ACTUAL-BUNDLE-PROOF revision={revision:?} projected_source_quest={:?} unresolved={:?} models=54 classes=9 dungeon_packages=26; character facts are disclosed manual engineering inputs; time/node estimates manual; target-game correctness unverified",
         positive.id, unresolved.id
+    );
+}
+
+#[test]
+fn permitted_engineering_profiles_and_quest_updates_keep_exchange_guards() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let (unknown, _) = engineering_profile(
+        &app,
+        "engineering-boundary-unknown",
+        20,
+        json!({"status":"unknown"}),
+        500,
+    );
+    let (declared, _) = engineering_profile(
+        &app,
+        "engineering-boundary-declared",
+        21,
+        known(json!("tank")),
+        501,
+    );
+    assert_ne!(unknown, declared);
+    let mut value = snapshot();
+    let first = import(&app, &mut value, 502);
+    value["payload"]["quests"]["quest:1"] = json!({"quest":"quest:1","context":value["payload"]["context"],"accepted":known(json!(true)),"completed":known(json!(false)),"turned_in":known(json!(false)),"objectives":{"quest:1:complete":known(json!(false))}});
+    value["payload"]["objectives"]["quest:1:complete"] = known(json!(false));
+    assert_eq!(import(&app, &mut value, 503), first);
+    value["fixture"] = json!(true);
+    assert!(
+        app.import_text(
+            &format!("ANAV1:{value}"),
+            Some(UtcMillis::new(NOW).unwrap())
+        )
+        .is_err()
     );
 }
