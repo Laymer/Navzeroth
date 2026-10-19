@@ -88,3 +88,21 @@ Windows parity and one real network weekly/draft run remain unverified. No signi
 manual smoke or release-readiness claim. Parent must independently review new
 output bindings, run fresh protected source checks and register main workflow before
 one bounded network verification; generated update PR remains deferred.
+
+Parent independently reran exact offline mapper parity from62e4210: passed,
+/tmp/navzeroth-root-weekly-parity.{log,json}. Reviewed registry delta changes only
+derived code/revision bindings and truthful current-registry hash; originalr1,
+upstream grants/origins and both policy bytes unchanged. Normal mergeefd0cced
+incorporated reviewed212head3fc with documentation-only difference. Routine push
+uploaded5newLFSobjects155MB without quota expansion. Parent independently downloaded
+all22 immutable corresponding code/terms URLs and verified exact size/SHA256:
+1.74s, docs/data/stable-weekly-public-code-v1.json. This supersedes only the missing
+public-URL observation, not hosted mapping/network-pipeline/manual evidence.
+Draft PR228 retains review-before-merge.
+
+Subsequent full-pack functional rehearsal found original mapper reward truncation
+in4dungeons (4011links). PR212 and this dependent repair stay held until the
+separately reviewed original-scope Unsupported-overflow correction is incorporated
+and exact source bindings regenerated. The old offline byte-reproducibility checks
+remain historical passes but do not establish dungeon association completeness.
+The required bounded real network run still has not occurred.
