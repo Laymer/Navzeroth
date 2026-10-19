@@ -58,12 +58,7 @@ def retain(root, raw):
         if not stat.S_ISDIR(info.st_mode) or stat.S_ISLNK(info.st_mode):
             raise ValueError('linked retained-object directory refused')
     path = parent / digest(raw)
-    try:
-        with path.open('xb') as out:
-            out.write(raw)
-    except FileExistsError:
-        if bounded.read_file(path, MAX_RAW_BYTES) != raw:
-            raise ValueError('existing immutable retained object differs')
+    bounded.retain_object(path,raw,MAX_RAW_BYTES)
     return file_ref(root, path)
 
 
@@ -466,6 +461,21 @@ def prepare(root, world, cache, pack_sources, registry_path, output, commit=None
                     'permission_evidence': [license_ref]})
     registry['sources'] = [admitted[s['id']] for s in registry['sources'] if s['id'] != DERIVED] + [derived]
     registry['schema_version'] = 2
+    # Upstream originals are regenerated from acquired cache bytes; new identities
+    # must remain LFS objects rather than silently becoming large Git blobs.
+    attributes=root / '.gitattributes'
+    previous=bounded.read_file(attributes,8*1024*1024) if attributes.exists() else b''
+    lines={line.decode() for line in previous.splitlines()}
+    additions=[]
+    for source in closure:
+        if source['id'] in UPSTREAMS:
+            for reference in source['files']:
+                line=f"{reference['path']} filter=lfs diff=lfs merge=lfs -text"
+                if line not in lines:
+                    lines.add(line)
+                    additions.append(line)
+    if additions:
+        attributes.write_bytes(previous.rstrip(b'\n')+b'\n'+('\n'.join(sorted(additions))+'\n').encode())
     registry_path.write_bytes((json.dumps(registry, indent=2, ensure_ascii=False) + '\n').encode('utf-8'))
     output.write_bytes((json.dumps({'schema_version': 2, 'sources': closure, 'transformation': transformation,
                                   'normalization_policy_sha256': digest(bounded.read_file(policy_path, 8 * 1024 * 1024)),

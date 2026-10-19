@@ -9,6 +9,8 @@ passed on every request, so all tables of a run come from the same build.
     w.origin()                              # envelope origin {edition, build, product}
 """
 import csv
+import os
+import re
 import io
 
 from . import envelope, http
@@ -47,6 +49,11 @@ class Wago:
         if product not in EDITIONS:
             raise ValueError(f"unknown wago product {product}")
         self.product = product
+        if product == 'wowf' and os.environ.get('NAVZEROTH_DATAGEN_WAGO_WOWF_BUILD'):
+            pinned=os.environ['NAVZEROTH_DATAGEN_WAGO_WOWF_BUILD']
+            if not re.fullmatch(r'[0-9]{1,9}(?:\.[0-9]{1,9}){3}',pinned) or (build is not None and build != pinned):
+                raise ValueError('explicit Wago build differs from policy pin')
+            build=pinned
         if not build:  # {product: [{version, created_at, ...}, ...]}: newest by creation time
             builds = http.fetch_json(BUILDS, "builds.json")[product]
             build = max(builds, key=lambda b: b["created_at"])["version"]

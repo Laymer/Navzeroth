@@ -25,13 +25,14 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import subprocess
 import sys
 import time
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from navzeroth_datagen import db2, envelope, http, sqldump  # noqa: E402
+from navzeroth_datagen import bounded, db2, envelope, http, sqldump  # noqa: E402
 
 MANIFEST_FORMAT = "navzeroth-world-data-run"
 MANIFEST_VERSION = 1
@@ -126,7 +127,7 @@ def load_previous(out):
     """The manifest already in out (generators and sources), or None."""
     path = pathlib.Path(out) / "run-manifest.json"
     try:
-        doc = json.loads(path.read_text(encoding="utf-8"))
+        doc = json.loads(bounded.read_file(path,bounded.MAX_SHARD_BYTES))
         return {g["name"]: g for g in doc["generators"]}, {x["url"]: x for x in doc["sources"]}
     except (OSError, ValueError, KeyError, TypeError):
         return None
@@ -175,6 +176,45 @@ def write_manifest(out, manifest):
     return path
 
 
+def clean_declared(out, names, previous):
+    """Delete only declared selected-generator shards; preserve all other files."""
+    if previous is None:
+        raise ValueError('weekly cleanup requires verified prior run-manifest metadata')
+    owned=[]
+    for name, generator in previous[0].items():
+        if name not in names:
+            if generator.get('files'):
+                raise ValueError('weekly generator exclusion has existing shards: '+name)
+            print('weekly exclusion: '+name+' (no declared shards)')
+            continue
+        for reference in generator.get('files',[]):
+            relative=reference['path']
+            parts=relative.split('/')
+            if (len(parts)<4 or len(parts)>16 or any(not re.fullmatch(r'[a-z0-9_.-]+',part) or part in ('.','..') for part in parts)
+                    or not re.fullmatch(r'part-[0-9]{4}\.json',parts[-1]) or parts[0] in ('facts','.written')):
+                raise ValueError('unsafe prior declared shard')
+            path=out
+            for part in parts:
+                path=path/part
+                if path.is_symlink():raise ValueError('linked declared shard refused')
+            if path.exists():
+                if not path.is_file():raise ValueError('non-file declared shard refused')
+                size=reference.get('bytes')
+                sha=reference.get('sha256')
+                if type(size) is not int or not 0<size<=bounded.MAX_SHARD_BYTES or not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{64}',sha):
+                    raise ValueError('invalid prior declared shard pin')
+                raw=bounded.read_file(path,bounded.MAX_SHARD_BYTES)
+                pointer=f'version https://git-lfs.github.com/spec/v1\noid sha256:{sha}\nsize {size}\n'.encode()
+                if raw!=pointer and (len(raw)!=size or hashlib.sha256(raw).hexdigest()!=sha):
+                    raise ValueError('prior declared shard contains unrelated/changed bytes')
+            owned.append(path)
+    if len(owned)>bounded.MAX_INPUT_FILES or len(set(owned))!=len(owned):
+        raise ValueError('duplicate/excessive declared shard set')
+    for path in owned:
+        path.unlink(missing_ok=True)
+    print(f'weekly declared cleanup: {len(owned)} selected shards; unlisted files preserved')
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
     p.add_argument("--jobs", type=int, default=4, help="generators run at once (default 4)")
@@ -183,6 +223,7 @@ def main(argv=None):
     mode.add_argument("--refresh", action="store_true", help="ignore the cache and fetch everything again")
     mode.add_argument("--offline", action="store_true", help="use only cached downloads")
     p.add_argument("--out", default=str(envelope.OUTPUT), help="output root (default data-generators/output)")
+    p.add_argument("--clean-declared", action="store_true",help="weekly: remove only prior declared selected shards")
     p.add_argument("--facts", action="store_true", help="convert the output with to_facts.py afterwards")
     args = p.parse_args(argv)
 
@@ -196,9 +237,12 @@ def main(argv=None):
     http.configure(refresh_cache=args.refresh, offline_only=args.offline)
     out = pathlib.Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    logs = http.cache_root() / "logs"
+    logs = pathlib.Path(os.environ.get("NAVZEROTH_DATAGEN_LOGS",str(http.cache_root()/"logs")))
 
     previous = load_previous(out)
+    if args.clean_declared:
+        clean_declared(out,names,previous)
+        os.environ['NAVZEROTH_DATAGEN_DECLARED_CLEAN']='1'
     selected = [n for n in names if GENERATORS[n][0].exists()]
     # With --refresh each generator re-downloads what it reads, the shared inputs
     # included (http.py keeps no per-run memory of what was refreshed), so the

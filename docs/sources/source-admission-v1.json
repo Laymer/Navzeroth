@@ -2642,6 +2642,69 @@
       ]
     },
     {
+      "id": "navzeroth-world-content",
+      "revision": "f0d97682610c8acb91e8a6d722a4bdfcfdbfbdea",
+      "publisher": "Navzeroth project (repository owner)",
+      "origin": {
+        "edition": "wow_forever",
+        "build": null
+      },
+      "rights": {
+        "status": "admitted",
+        "license": "permissive",
+        "license_identifier": "BSD-3-Clause",
+        "reviewer": "Codex /root; original project-authored transformation, independent final review required",
+        "attribution": "Navzeroth world content mapping (inferred travel times and loot expansion)",
+        "obligations": "Retain copyright, BSD license and corresponding generator source; upstream data rights remain separate.",
+        "evidence": [
+          {
+            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/LICENSE",
+            "revision": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+            "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+            "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
+          }
+        ]
+      },
+      "retrieval": {
+        "method": "manual_local",
+        "max_total_bytes": 93379,
+        "minimum_interval_ms": 1000,
+        "max_requests": 3,
+        "access_evidence": {
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/LICENSE",
+          "revision": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+          "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+          "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
+        }
+      },
+      "files": [
+        {
+          "path": "content/source-materials/objects/3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
+          "bytes": 4266,
+          "sha256": "3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/data-generators/navzeroth_datagen/bounded.py",
+          "fields": [
+            "loot.reference-expansion",
+            "travel.flight-time",
+            "travel.walk"
+          ],
+          "transformation": "world_to_content_v2"
+        },
+        {
+          "path": "content/source-materials/objects/6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
+          "bytes": 87620,
+          "sha256": "6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/data-generators/world_to_content.py",
+          "fields": [
+            "loot.reference-expansion",
+            "travel.flight-time",
+            "travel.walk"
+          ],
+          "transformation": "world_to_content_v2"
+        }
+      ]
+    },
+    {
       "id": "navzeroth-authored-v1",
       "revision": "ca2b89dcf27956810d7a74628cd00997d2703186",
       "publisher": "Navzeroth project (repository owner)",
@@ -2885,69 +2948,6 @@
             "reminders.rules"
           ],
           "transformation": "canonical_typed_serialization"
-        }
-      ]
-    },
-    {
-      "id": "navzeroth-world-content",
-      "revision": "b09816a9ebe3b19d2ba9c22dde8d4f71ac919469",
-      "publisher": "Navzeroth project (repository owner)",
-      "origin": {
-        "edition": "wow_forever",
-        "build": null
-      },
-      "rights": {
-        "status": "admitted",
-        "license": "permissive",
-        "license_identifier": "BSD-3-Clause",
-        "reviewer": "Codex /root; original project-authored transformation, independent final review required",
-        "attribution": "Navzeroth world content mapping (inferred travel times and loot expansion)",
-        "obligations": "Retain copyright, BSD license and corresponding generator source; upstream data rights remain separate.",
-        "evidence": [
-          {
-            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/LICENSE",
-            "revision": "2ec43093add568ab85d4aaa1dd3c5dfacfb0877e",
-            "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
-            "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
-          }
-        ]
-      },
-      "retrieval": {
-        "method": "manual_local",
-        "max_total_bytes": 93379,
-        "minimum_interval_ms": 1000,
-        "max_requests": 3,
-        "access_evidence": {
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/LICENSE",
-          "revision": "2ec43093add568ab85d4aaa1dd3c5dfacfb0877e",
-          "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
-          "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
-        }
-      },
-      "files": [
-        {
-          "path": "content/source-materials/objects/3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
-          "bytes": 4266,
-          "sha256": "3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/data-generators/navzeroth_datagen/bounded.py",
-          "fields": [
-            "loot.reference-expansion",
-            "travel.flight-time",
-            "travel.walk"
-          ],
-          "transformation": "world_to_content_v2"
-        },
-        {
-          "path": "content/source-materials/objects/6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
-          "bytes": 87620,
-          "sha256": "6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/2ec43093add568ab85d4aaa1dd3c5dfacfb0877e/data-generators/world_to_content.py",
-          "fields": [
-            "loot.reference-expansion",
-            "travel.flight-time",
-            "travel.walk"
-          ],
-          "transformation": "world_to_content_v2"
         }
       ]
     }
