@@ -7,7 +7,7 @@ export const SCREEN_LABELS = [
   "Planner", "Gear", "Sessions", "Reminders",
 ];
 
-export const MODES = ["smoke", "populate", "verify"];
+export const MODES = ["smoke", "populate", "verify", "capture"];
 
 /** Parse `--name value` pairs. Unknown names and missing values are errors. */
 export function parseArgs(argv, allowed) {
