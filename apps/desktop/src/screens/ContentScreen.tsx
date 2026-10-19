@@ -43,7 +43,7 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
     if (!profile) return;
     void client.getActiveContent(profile).then((result) => {
       if (!current) return;
-      if (result.ok) setActive(result.value); else { setActive(null); setError(result.error); }
+      if (result.ok) { setActive(result.value); setAcceptTravel(result.value?.accepts_inferred_travel ?? false); } else { setActive(null); setError(result.error); }
     });
     return () => { current = false; };
   }, [client, profile, refreshKey, revision]);
@@ -99,7 +99,9 @@ export function ContentScreen({ client, onChanged, refreshKey }: { client: Comma
       <Button disabled={!native || busy || !compatible} onClick={() => void mutate("activate")}>Activate staged revision</Button></>}
     {pooled.length > 1 && <><h3>Content set</h3><p>Staged this session for the selected context: {pooled.map((p) => p.key.revision).join(", ")}. Activating them together composes one revision; each pack keeps its own evidence and nothing is relabelled.</p>
       <Button disabled={!native || busy} onClick={() => void mutate("activate-set")}>Activate all staged packs as one set</Button></>}
-    {(staged !== null || pooled.length > 1) && <label><input type="checkbox" checked={acceptTravel} disabled={busy} onChange={(event) => setAcceptTravel(event.target.checked)} /> Accept inferred travel (estimates): generated walking and flight times are used, and unknown travel requirements are assumed, not checked. Applies until the content changes or the application restarts.</label>}
+    {(staged !== null || pooled.length > 1) && <label><input type="checkbox" checked={acceptTravel} disabled={busy} onChange={(event) => setAcceptTravel(event.target.checked)} /> Accept inferred travel (estimates): generated walking and flight times are used, and unknown travel requirements are assumed, not checked. Saved for this revision across restarts. Bundled defaults are restored on each application-version change.</label>}
+    {active?.bundle_defaults && <p role="status">Bundled defaults applied for {active.bundle_defaults.app_version}{active.bundle_defaults.previous_app_version ? ` after ${active.bundle_defaults.previous_app_version}` : " on first setup"}. Content selection and marked travel estimates reset together. A previous revision remains available for rollback when one existed.</p>}
+    {active?.accepts_inferred_travel !== undefined && <p>Active revision travel estimates: {active.accepts_inferred_travel ? "accepted" : "disabled"}.</p>}
     <LocalSubmissionsPanel client={client} enabled={native} refreshKey={refreshKey + revision} />
   </Panel></div>;
 }

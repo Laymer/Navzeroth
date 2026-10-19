@@ -259,3 +259,102 @@ fn unknown_travel_requirements_are_assumed_only_under_the_accepting_activation()
             .any(|a| a.contains("assumed, not checked"))
     );
 }
+
+#[test]
+fn bundled_defaults_apply_before_profile_import_and_upgrade_without_repeating_within_version() {
+    let app = SnapshotApplication::in_memory().unwrap();
+    let first = app.stage_content(&world().to_string()).unwrap().key;
+    let second = app.stage_content(&authored().to_string()).unwrap().key;
+    let composed = app
+        .stage_content_set(&[first.clone(), second.clone()])
+        .unwrap();
+    assert!(app.stage_content_set(&[]).is_err());
+    assert!(app.configure_bundled_defaults("1.0.0", &[]).is_err());
+    assert!(
+        app.configure_bundled_defaults("1.0.0", &[first.clone(), second])
+            .is_err()
+    );
+    assert_eq!(
+        app.configure_bundled_defaults("1.0.0-rc.1", std::slice::from_ref(&composed))
+            .unwrap(),
+        [true]
+    );
+    let (id, _, _) = profile(&app);
+    let active = app.active_content(&id).unwrap().unwrap();
+    assert_eq!(active.key, composed);
+    assert_eq!(active.accepts_inferred_travel, Some(true));
+    assert_eq!(active.bundle_defaults.unwrap().app_version, "1.0.0-rc.1");
+    app.activate_content(&id, &first.revision).unwrap();
+    assert_eq!(
+        app.configure_bundled_defaults("1.0.0-rc.1", std::slice::from_ref(&composed))
+            .unwrap(),
+        [false]
+    );
+    assert_eq!(app.active_content(&id).unwrap().unwrap().key, first);
+    assert_eq!(
+        app.configure_bundled_defaults("1.0.0", std::slice::from_ref(&composed))
+            .unwrap(),
+        [true]
+    );
+    let active = app.active_content(&id).unwrap().unwrap();
+    assert_eq!(active.key, composed);
+    assert_eq!(
+        active
+            .bundle_defaults
+            .unwrap()
+            .previous_app_version
+            .as_deref(),
+        Some("1.0.0-rc.1")
+    );
+    assert_eq!(active.accepts_inferred_travel, Some(true));
+    app.rollback_content(&id).unwrap();
+    let rolled = app.active_content(&id).unwrap().unwrap();
+    assert_eq!(rolled.key, first);
+    assert_eq!(rolled.accepts_inferred_travel, Some(false));
+}
+
+#[test]
+fn inferred_choice_and_default_marker_survive_application_restart() {
+    let root = std::env::temp_dir().join(format!(
+        "anav-defaults-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir(&root).unwrap();
+    let path = root.join("app.sqlite");
+    let (id, key) = {
+        let app = SnapshotApplication::open(&path).unwrap();
+        let key = app.stage_content(&world().to_string()).unwrap().key;
+        app.configure_bundled_defaults("1.0.0", std::slice::from_ref(&key))
+            .unwrap();
+        let (id, _, _) = profile(&app);
+        (id, key)
+    };
+    {
+        let app = SnapshotApplication::open(&path).unwrap();
+        let active = app.active_content(&id).unwrap().unwrap();
+        assert_eq!(active.key, key);
+        assert_eq!(active.accepts_inferred_travel, Some(true));
+        app.activate_content_set(&id, std::slice::from_ref(&key.revision), false)
+            .unwrap();
+        assert_eq!(
+            app.configure_bundled_defaults("1.0.0", std::slice::from_ref(&key))
+                .unwrap(),
+            [false]
+        );
+    }
+    {
+        let app = SnapshotApplication::open(&path).unwrap();
+        assert_eq!(
+            app.active_content(&id)
+                .unwrap()
+                .unwrap()
+                .accepts_inferred_travel,
+            Some(false)
+        );
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
