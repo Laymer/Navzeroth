@@ -281,7 +281,8 @@ def stage_detect(ctx):
 
 
 def read_target(ctx):
-    return json.loads((ctx.root / "release" / "v1" / "world-data-target.json").read_text(encoding="utf-8"))
+    from navzeroth_datagen import bounded
+    return bounded.json_document(bounded.read_file(ctx.root / "release" / "v1" / "world-data-target.json", bounded.MAX_SHARD_BYTES))
 
 
 # --------------------------------------------------------------------------- generate / verify
