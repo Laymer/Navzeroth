@@ -56,15 +56,22 @@ fn status_record(text: &str, id: &str) -> Result<JobStatus> {
 }
 impl LocalDataIndex {
     pub fn open(path: &Path) -> Result<Self> {
-        let conn = Connection::open(path).db()?;
+        let mut conn = Connection::open(path).db()?;
         conn.busy_timeout(Duration::from_secs(5)).db()?;
-        let application: i64 = conn
+        conn.pragma_update(None, "foreign_keys", true).db()?;
+        conn.pragma_update(None, "synchronous", "FULL").db()?;
+        // Read identity only after locking: another opener may be initializing or
+        // migrating this file. Drop rolls back every additive step on refusal.
+        let tx = conn
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .db()?;
+        let application: i64 = tx
             .pragma_query_value(None, "application_id", |r| r.get(0))
             .db()?;
-        let version: i64 = conn
+        let version: i64 = tx
             .pragma_query_value(None, "user_version", |r| r.get(0))
             .db()?;
-        let tables: i64 = conn
+        let tables: i64 = tx
             .query_row("SELECT count(*) FROM sqlite_master", [], |r| r.get(0))
             .db()?;
         if !((application == 0 && version == 0 && tables == 0)
@@ -72,37 +79,36 @@ impl LocalDataIndex {
         {
             return Err(invalid("Unsupported private lifecycle database"));
         }
-        let page_size: i64 = conn
+        let page_size: i64 = tx
             .pragma_query_value(None, "page_size", |r| r.get(0))
             .db()?;
-        let journal: String = conn
+        let journal: String = tx
             .pragma_query_value(None, "journal_mode", |r| r.get(0))
             .db()?;
         if page_size != 4096 || journal != "delete" {
             return Err(invalid("Unsupported lifecycle page size or journal mode"));
         }
-        conn.pragma_update(None, "foreign_keys", true).db()?;
-        conn.pragma_update(None, "max_page_count", 16384).db()?;
-        conn.pragma_update(None, "synchronous", "FULL").db()?;
+        tx.pragma_update(None, "max_page_count", 16384).db()?;
         if version == 0 {
-            conn.execute_batch("BEGIN IMMEDIATE;
+            tx.execute_batch("
                 CREATE TABLE selections(id TEXT PRIMARY KEY, document TEXT NOT NULL);
                 CREATE TABLE jobs(id TEXT PRIMARY KEY, request TEXT NOT NULL, checkpoint TEXT NOT NULL, status TEXT NOT NULL);
                 CREATE TABLE activations(scope TEXT NOT NULL, generation INTEGER NOT NULL, catalog TEXT NOT NULL, PRIMARY KEY(scope,generation));
-                PRAGMA application_id=1313621041; PRAGMA user_version=1; COMMIT;").db()?;
+                PRAGMA application_id=1313621041; PRAGMA user_version=1;").db()?;
         }
         if version < 2 {
-            conn.execute_batch("BEGIN IMMEDIATE;
+            tx.execute_batch("
                 CREATE TABLE delivery_activations(scope TEXT NOT NULL, generation INTEGER NOT NULL, delivery TEXT NOT NULL, PRIMARY KEY(scope,generation));
-                PRAGMA user_version=2; COMMIT;").db()?;
+                PRAGMA user_version=2;").db()?;
         }
         if version < 3 {
-            conn.execute_batch("BEGIN IMMEDIATE;
+            tx.execute_batch("
                 CREATE TABLE workflow_preferences(id INTEGER PRIMARY KEY CHECK(id=1), revision INTEGER NOT NULL, document TEXT NOT NULL);
                 CREATE TABLE selected_materials(id TEXT PRIMARY KEY, document TEXT NOT NULL);
                 CREATE TABLE change_candidates(selection TEXT PRIMARY KEY, digest TEXT NOT NULL);
-                PRAGMA user_version=3; COMMIT;").db()?;
+                PRAGMA user_version=3;").db()?;
         }
+        tx.commit().db()?;
         Ok(Self { conn })
     }
     pub fn workflow(&self) -> Result<azeroth_core::local_data_workflow::PreferencesRecord> {
