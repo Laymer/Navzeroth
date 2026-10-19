@@ -92,3 +92,10 @@ blocking findings. The version reviewer identified a stale next-task paragraph,
 corrected here. Final-head refresh review and hosted checks remain required.
 Readiness/material selection was also rerun successfully at `b8ee77d`: the same
 69 blockers, candidate/stable false, empty selection and production fingerprint.
+
+Ordinary unsigned RC packaging now rehearses the complete verifier against the
+prepared asset set before its existing install/smoke/upgrade checks. This tests
+installation, ZIP/resource/source closure, signature and PE metadata checks before
+tagging. Its receipt is labelled prepared-rc-verification, not draft/public
+download evidence. Draft/public workflows still verify independently downloaded
+bytes against the recorded tag-packaging hash. Hosted execution remains pending.

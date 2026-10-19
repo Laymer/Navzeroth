@@ -194,6 +194,20 @@ jobs:
       - name: Test first-start observation harness
         shell: pwsh
         run: ./scripts/windows/Test-FirstStartSmoke.ps1
+      - name: Rehearse unsigned development RC artifact verification
+        if: steps.signing.outputs.mode == 'none'
+        shell: pwsh
+        run: |
+          $version = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          if ($version -eq '1.0.0-rc.1') {
+            $setup = @(Get-ChildItem dist/windows -Filter '*-x64-setup.exe' -File)
+            if ($setup.Count -ne 1) { throw 'Expected one RC installer' }
+            $hash = (Get-FileHash -LiteralPath $setup[0].FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            $evidence = Join-Path $env:RUNNER_TEMP 'native-smoke'
+            New-Item -ItemType Directory -Path $evidence -Force | Out-Null
+            ./scripts/windows/Verify-DownloadedRelease.ps1 -Directory dist/windows -Version $version -InstallerSha256 $hash -Receipt (Join-Path $evidence 'prepared-rc-verification.json')
+            if ($LASTEXITCODE -ne 0) { throw 'Prepared RC verification rehearsal failed' }
+          }
       - name: Silent install, first start and uninstall
         shell: pwsh
         run: |
