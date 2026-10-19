@@ -7,8 +7,17 @@ locale restoration, guide objective replay, archive failure dispositions and
 coverage evidence inputs from `826aa21`. Existing world-data PR #212 and the
 original checkout are preserved. Coverage-input changes and actual synthetic
 checks are recorded in the [handoff](handoffs/2026-10-19-coverage-inputs.md).
-Each task has its own draft PR; no merge, release or acceptance promotion is
-part of this batch.
+Draft PRs: [#214](https://github.com/Laymer/Navzeroth/pull/214) locale
+reconciliation (521 desktop tests and per-file coverage pass),
+[#215](https://github.com/Laymer/Navzeroth/pull/215) bounded coverage inputs
+(28 tooling tests), [#216](https://github.com/Laymer/Navzeroth/pull/216) exact
+guide objectives (132 ingest tests; verifier line coverage 95.06%), and
+[#217](https://github.com/Laymer/Navzeroth/pull/217) distinct archive failures
+(692 core/local-data/storage tests plus final compatibility checks).
+See [review record](reviews/2026-10-19-parallel-continuation.md). Hosted checks
+were queued when recorded. No merge, release or acceptance promotion is part of
+this batch. Broader V3.2, complete content inventory, signing setup, native cache
+staging and post-launch target/candidate/operator evidence remain open.
 
 Independent browser-version correction [PR #201](https://github.com/Laymer/Navzeroth/pull/201)
 merged at `02cbfd7` after both read-only reviews, all nine exact-head checks,
