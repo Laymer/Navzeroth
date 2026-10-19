@@ -16,5 +16,11 @@ Each script writes its output to the folder *above* `tools/` and caches download
     python tools/gen_enhancements.py --refresh
     python tools/gen_fishing.py
 
+**In Navzeroth** the scripts are adapted (changes marked `# Navzeroth:`): instead of the Lua
+files they write `navzeroth-world-data` v1 JSON (datasets `professions.*`, `enhancements.*`,
+`fishing.*`) to `data-generators/output/`, cache downloads in `data-generators/.cache/`, and
+are run together by `data-generators/run_all.py` (see `../README.md`). They also take
+`--offline` and `--out DIR`.
+
 The data these scripts download belongs to its sources (Wowhead, CMaNGOS, wago.tools) and is
 subject to their terms. The permission in PERMISSION.md covers the scripts only.

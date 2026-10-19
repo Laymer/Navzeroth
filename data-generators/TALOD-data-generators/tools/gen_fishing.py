@@ -30,24 +30,38 @@ fetches it again.
     python tools/gen_fishing.py --refresh  # ignore the cache
 
 See docs/DATA.md.
+
+Navzeroth: adapted with the author's permission (../PERMISSION.md). Instead of
+FishingData.lua it writes navzeroth-world-data v1 JSON:
+
+  - fishing.areas and fishing.goals, origin vanilla_1_12 build 1.12.1 (the skill
+    rule and the loot are CMaNGOS server data); area names come from the client
+    AreaTable of the wago.tools product --wago-product (default wowf, WoW
+    Forever; or wow_classic_era), pinned to one build (--wago-build, default the
+    newest), listed as a second source;
+  - fishing.timed and fishing.events, TALOD's hand lists, origin
+    wow_classic_era with an unknown build, source talod-hand-rules.
+
+TALOD's uiMapArea table is not written: gen_world_db2.py emits the client's
+UiMapAssignment rows, of which it was a subset. The dump is read with
+navzeroth_datagen.sqldump (TALOD's parser, improved), downloads go through
+navzeroth_datagen.http (shared cache in data-generators/.cache).
+
+    python3 tools/gen_fishing.py [--refresh | --offline] [--wago-product wowf] [--wago-build B] [--out DIR]
 """
+import argparse
 import collections
-import csv
-import datetime
-import gzip
-import io
 import json
 import pathlib
-import re
 import sys
-import urllib.request
 
-ADDON = pathlib.Path(__file__).resolve().parent.parent
-OUT = ADDON / "FishingData.lua"
-CACHE = ADDON / "tools" / "cache"
-CMANGOS_LIST = "https://api.github.com/repos/cmangos/classic-db/contents/Full_DB"
-CMANGOS_RAW = "https://github.com/cmangos/classic-db/raw/master/Full_DB/"
-WAGO = "https://wago.tools/db2/{}/csv?product=wow_classic_era"
+# Navzeroth: the shared library lives in data-generators/ (python3 -I does not add the script's folder).
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+from navzeroth_datagen import db2, envelope, http, sqldump  # noqa: E402
+
+# Navzeroth: the CMaNGOS dump and the wago.tools tables come from navzeroth_datagen
+# (sqldump.load_classic_db, db2.Wago), which replace TALOD's CMANGOS_* / WAGO URLs.
+CMANGOS_BUILD = "1.12.1"
 
 # Goal list: item ID -> group. Names, quests and rewards are read from the
 # database (a wrong ID stops the build). Groups: "pagle" = Nat Pagle's
@@ -103,213 +117,182 @@ TIMED = [
 EXTRAVAGANZA = {"weekday": 1, "start": 14 * 60, "length": 120,
                 "source": "https://warcraft.wiki.gg/wiki/Stranglethorn_Fishing_Extravaganza "
                           "(patch 1.7.0: Sundays 2:00 - 4:00 PM server time; 40 Speckled Tastyfish to Riggle Bassbait, Booty Bay)"}
+# Navzeroth: the hand lists' sources, as envelope sources (cited, not fetched).
+HAND_SOURCES = {
+    "fishing.timed": [("talod-hand-rules", "https://warcraft.wiki.gg/wiki/Raw_Nightfin_Snapper"),
+                      ("talod-hand-rules-blizzardwatch",
+                       "https://blizzardwatch.com/2019/10/02/make-gold-fishing-wow-classic/"),
+                      ("talod-hand-rules-winter-squid", "https://warcraft.wiki.gg/wiki/Winter_Squid"),
+                      ("talod-hand-rules-summer-bass", "https://warcraft.wiki.gg/wiki/Raw_Summer_Bass")],
+    "fishing.events": [("talod-hand-rules", WHERE_SOURCE)],
+}
+EVENT_NAME = "Stranglethorn Fishing Extravaganza"
 
 
-def fetch(url, name, refresh, binary=False):
-    path = CACHE / name
-    if path.exists() and not refresh:
-        return path.read_bytes() if binary else path.read_text(encoding="utf-8")
-    print("fetch", url)
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (TALOD data generator)"})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        data = r.read()
-    CACHE.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(data)
-    return data if binary else data.decode("utf-8")
-
-
-def parse_values(body):
-    """Rows of an INSERT ... VALUES body, as lists of strings."""
-    rows, i, n = [], 0, len(body)
-    while i < n:
-        if body[i] != "(":
-            i += 1
-            continue
-        row, cur, i = [], "", i + 1
-        while i < n:
-            c = body[i]
-            if c == "'":
-                i += 1
-                s = []
-                while body[i] != "'":
-                    if body[i] == "\\":
-                        i += 1
-                    s.append(body[i])
-                    i += 1
-                cur = "".join(s)
-            elif c == ",":
-                row.append(cur.strip())
-                cur = ""
-            elif c == ")":
-                row.append(cur.strip())
-                rows.append(row)
-                i += 1
-                break
-            else:
-                cur += c
-            i += 1
-    return rows
-
-
-def table(sql, name):
-    m = re.search(r"CREATE TABLE `%s` \((.*?)\n\)" % name, sql, re.S)
-    cols = re.findall(r"^\s*`(\w+)`", m.group(1), re.M)
-    out = []
-    for body in re.findall(r"INSERT INTO `%s` VALUES (.*?);\n" % name, sql, re.S):
-        out.extend(dict(zip(cols, r)) for r in parse_values(body))
-    return out
-
-
-def lua_str(s):
-    return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
-
-
-def lua(v):
-    if v is None:
-        return "nil"
-    if isinstance(v, bool):
-        return "true" if v else "false"
-    if isinstance(v, (int, float)):
-        return str(v)
-    if isinstance(v, str):
-        return lua_str(v)
-    if isinstance(v, list):
-        return "{ " + ", ".join(lua(x) for x in v) + " }"
-    if isinstance(v, dict):
-        parts = []
-        for k, x in v.items():
-            key = ("[%d]" % k) if isinstance(k, int) else (k if re.match(r"^[A-Za-z_]\w*$", k) else "[" + lua_str(k) + "]")
-            parts.append("%s = %s" % (key, lua(x)))
-        return "{ " + ", ".join(parts) + " }"
-    raise TypeError(v)
-
-
-def main():
-    refresh = "--refresh" in sys.argv
-    listing = json.loads(fetch(CMANGOS_LIST, "cmangos_full_db.json", refresh))
-    dump = next(f["name"] for f in listing if f["name"].endswith(".sql.gz"))
-    sql = gzip.decompress(fetch(CMANGOS_RAW + dump, dump, refresh, binary=True)).decode("utf-8", "replace")
-    areas = {int(r["ID"]): r for r in csv.DictReader(io.StringIO(fetch(WAGO.format("AreaTable"), "wago_era_AreaTable.csv", refresh)))}
-    assign = list(csv.DictReader(io.StringIO(fetch(WAGO.format("UiMapAssignment"), "wago_era_UiMapAssignment.csv", refresh))))
-
-    def area_name(a):
+def area_rows(base, areas):
+    """Navzeroth: zone fishing levels as FishingArea records. base: {area: skill}
+    from skill_fishing_base_level; areas: AreaTable rows by ID. An area the
+    client table does not name is skipped (and printed)."""
+    def name(a):
         r = areas.get(a)
         return r["AreaName_lang"] if r else None
 
-    def parent_name(a):
-        r = areas.get(a)
-        p = int(r["ParentAreaID"]) if r else 0
-        return area_name(p) if p else None
-
-    # Zone fishing levels.
-    base = {int(r["entry"]): int(r["skill"]) for r in table(sql, "skill_fishing_base_level")}
-    zone_rows = {}
+    out = []
     for a, skill in sorted(base.items()):
-        name = area_name(a)
-        if not name:
-            print("skip area", a, "(not in the Classic Era AreaTable)")
+        if not name(a):
+            print("skip area", a, "(not in the client AreaTable)")
             continue
-        zone_rows[a] = [name, parent_name(a), skill]
-    ui_maps = {}
-    for r in assign:
-        a, m = int(r["AreaID"]), int(r["UiMapID"])
-        if a and a in zone_rows and int(r["OrderIndex"]) == 0:
-            ui_maps[m] = a
+        parent = int(areas[a]["ParentAreaID"] or 0)
+        out.append({"area_id": a, "name": name(a), "parent_name": name(parent) if parent else None,
+                    "base_skill": skill})
+    return out
 
-    # Where each goal item is fished: walk the fishing loot (references included).
+
+def fished_where(dump):
+    """Where each item is fished: {item: {area}}, walking the fishing loot
+    (references included)."""
     refs = collections.defaultdict(list)
-    for r in table(sql, "reference_loot_template"):
-        refs[r["entry"]].append(r)
+    for r in dump.rows("reference_loot_template"):
+        refs[int(r["entry"])].append(r)
     where = collections.defaultdict(set)
 
     def walk(rows, a, depth=0):
         for r in rows:
             n = int(r["mincountOrRef"])
             if n < 0 and depth < 5:
-                walk(refs[str(-n)], a, depth + 1)
+                walk(refs[-n], a, depth + 1)
             elif n >= 0:
                 where[int(r["item"])].add(a)
     by_area = collections.defaultdict(list)
-    for r in table(sql, "fishing_loot_template"):
+    for r in dump.rows("fishing_loot_template"):
         by_area[int(r["entry"])].append(r)
     for a, rows in by_area.items():
         walk(rows, a)
+    return where
 
-    items = {int(r["entry"]): r for r in table(sql, "item_template")}
-    quests = table(sql, "quest_template")
+
+def goal_rows(dump, areas):
+    """Navzeroth: TALOD's goal list as FishingGoal records (where -> places,
+    whereNote -> place_note). Exits when a goal ID names another item."""
+    def area_name(a):
+        r = areas.get(a)
+        return r["AreaName_lang"] if r else None
+
+    def parent_name(a):
+        r = areas.get(a)
+        p = int(r["ParentAreaID"] or 0) if r else 0
+        return area_name(p) if p else None
+
+    where = fished_where(dump)
+    items = {int(r["entry"]): r for r in dump.rows("item_template")}
+    quests = dump.rows("quest_template")
     goals = []
     for item_id, group, expected in GOALS:
         it = items.get(item_id)
         if not it or it["name"] != expected:
             sys.exit("goal item %d is %r in the database, expected %r" % (item_id, it and it["name"], expected))
-        g = {"id": item_id, "group": group, "name": it["name"], "quality": int(it["Quality"])}
+        g = {"item_id": item_id, "group": group, "name": it["name"], "quality": int(it["Quality"])}
         places = []
         for a in sorted(where.get(item_id, ()), key=lambda a: (parent_name(a) or area_name(a) or "", area_name(a) or "")):
             if area_name(a):
                 places.append([area_name(a), parent_name(a)] if parent_name(a) else [area_name(a)])
         if places:
-            g["where"] = places
+            g["places"] = places
         if item_id in WHERE_NOTES:
-            g["whereNote"] = WHERE_NOTES[item_id]
+            g["place_note"] = WHERE_NOTES[item_id]
         qs = []
         for q in quests:
             for k in range(1, 5):
-                if int(q["ReqItemId%d" % k]) == item_id:
+                if int(q["ReqItemId%d" % k] or 0) == item_id:
                     rewards = [items[int(q[c])]["name"] for c in
                                ["RewChoiceItemId%d" % i for i in range(1, 7)] + ["RewItemId%d" % i for i in range(1, 5)]
-                               if int(q[c]) and int(q[c]) in items]
+                               if int(q.get(c) or 0) and int(q[c]) in items]
                     quest = {"id": int(q["entry"]), "title": q["Title"], "count": int(q["ReqItemCount%d" % k])}
                     if rewards:
                         quest["rewards"] = rewards
                     qs.append(quest)
         if qs:
-            g["quests"] = sorted(qs, key=lambda x: x["count"])
+            g["quests"] = sorted(qs, key=lambda x: (x["count"], x["id"]))
         goals.append(g)
-
     for t in TIMED:
         if t["id"] not in items:
             sys.exit("timed fish %d not in the database" % t["id"])
+    return goals
 
-    today = datetime.date.today().isoformat()
-    out = [
-        "-- Generated by tools/gen_fishing.py. Do not edit by hand: change the generator's",
-        "-- lists or re-run it (see docs/DATA.md).",
-        "-- Generated %s from:" % today,
-        "--   CMaNGOS Classic DB %s (https://github.com/cmangos/classic-db):" % dump,
-        "--     skill_fishing_base_level, fishing / reference loot, items, quests;",
-        "--   wago.tools Classic Era DB2 (https://wago.tools/db2/AreaTable, /UiMapAssignment).",
-        "-- Zone level rule (cmangos/mangos-classic GameObject.cpp): hooked when skill >= base",
-        "-- and a 1-100 roll <= skill - base + 5; no fish gets away from base + 95.",
-        "local ADDON_NAME, ns = ...",
-        "-- Other fishing modules may add their own tables to ns.FishingData: keep the table.",
-        "ns.FishingData = ns.FishingData or {}",
-        "local D = ns.FishingData",
-        "D.generated = %s" % lua(today),
-        "D.zoneSource = %s" % lua("CMaNGOS Classic DB " + dump + " (skill_fishing_base_level)"),
-        "-- [areaID] = { name, parent zone (nil for a zone), base skill }",
-        "D.areas = {",
-    ]
-    for a, row in sorted(zone_rows.items()):
-        out.append("    [%d] = %s," % (a, lua(row)))
-    out.append("}")
-    out.append("-- Classic UiMap ID -> areaID (outdoor zones and cities).")
-    out.append("D.uiMapArea = { " + ", ".join("[%d] = %d" % (m, a) for m, a in sorted(ui_maps.items())) + " }")
-    out.append("-- Goals: id, group (pagle / stv / rare), name, quality, where = { { area, zone } },")
-    out.append("-- whereNote, quests = { { id, title, count, rewards } }.")
-    out.append("D.goals = {")
-    for g in goals:
-        out.append("    " + lua(g) + ",")
-    out.append("}")
-    out.append("D.whereSource = %s" % lua(WHERE_SOURCE))
-    out.append("-- Server hours [from, to) / seasons [from, to] as month * 100 + day; sources inline.")
-    out.append("D.timed = {")
-    for t in TIMED:
-        out.append("    " + lua(t) + ",")
-    out.append("}")
-    out.append("D.extravaganza = " + lua(EXTRAVAGANZA))
-    OUT.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print("wrote", OUT, "-", len(zone_rows), "areas,", len(ui_maps), "UiMaps,", len(goals), "goals")
+
+def timed_rows():
+    """Navzeroth: TIMED as TimedFish records (best -> best_hours)."""
+    return [{"item_id": t["id"], "hours": t.get("hours"), "best_hours": t.get("best"), "season": t.get("season"),
+             "label": t["label"], "open": t["open"], "closed": t["closed"], "note": t.get("note"),
+             "source": t["source"]} for t in TIMED]
+
+
+def event_rows():
+    """Navzeroth: EXTRAVAGANZA as a FishingEvent record."""
+    e = EXTRAVAGANZA
+    return [{"name": EVENT_NAME, "weekday": e["weekday"], "start_minute": e["start"], "length_minutes": e["length"],
+             "source": e["source"]}]
+
+
+def record_written(out, generator, paths):
+    """Navzeroth: <out>/.written/<generator>.json lists the shards written and the
+    cache entries used, for run_all.py's run manifest."""
+    out = pathlib.Path(out).resolve()
+    folder = out / ".written"
+    folder.mkdir(parents=True, exist_ok=True)
+    doc = {"files": sorted(pathlib.Path(p).resolve().relative_to(out).as_posix() for p in paths),
+           "sources": [m for _, m in sorted(http.used().items())]}
+    (folder / f"{generator}.json").write_text(json.dumps(doc, sort_keys=True, indent=1) + "\n", encoding="utf-8")
+
+
+def build(out, product, build_id):
+    dump, dump_name, cmangos = sqldump.load_classic_db()
+    wago = db2.Wago(product, build_id)
+    areas = {int(r["ID"]): r for r in wago.table("AreaTable")}
+    base = {int(r["entry"]): int(r["skill"]) for r in dump.rows("skill_fishing_base_level")}
+    zone_rows = area_rows(base, areas)
+    goals = goal_rows(dump, areas)
+
+    gen = envelope.generator("gen_fishing")
+    server = dict(origin=envelope.origin(envelope.VANILLA, CMANGOS_BUILD), sources=[cmangos, wago.source()],
+                  generator=gen, out=out)
+    paths = envelope.write("fishing.areas", "fishing_area", zone_rows, **server)
+    paths += envelope.write("fishing.goals", "fishing_goal", goals, **server)
+    hand = envelope.origin(envelope.CLASSIC_ERA)
+    for dataset, kind, rows in (("fishing.timed", "timed_fish", timed_rows()),
+                                ("fishing.events", "fishing_event", event_rows())):
+        sources = [envelope.source(i, u) for i, u in HAND_SOURCES[dataset]]
+        paths += envelope.write(dataset, kind, rows, origin=hand, sources=sources, generator=gen, out=out)
+    print("wrote", out, "-", dump_name, len(zone_rows), "areas,", len(goals), "goals; wago", wago.product, wago.build)
+    return paths
+
+
+def main(argv=None):
+    """Navzeroth: exits non-zero when a download fails or the data does not match."""
+    p = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    p.add_argument("--refresh", action="store_true", help="ignore the cache and fetch everything again")
+    p.add_argument("--offline", action="store_true", help="use only cached downloads")
+    p.add_argument("--no-tooltips", action="store_true", help="accepted for a uniform command line; no effect")
+    p.add_argument("--out", default=str(envelope.OUTPUT), help="output root (default data-generators/output)")
+    p.add_argument("--wago-product", default="wowf", choices=sorted(db2.EDITIONS), help="client data for area names")
+    p.add_argument("--wago-build", help="wago.tools build (default: the product's newest)")
+    args = p.parse_args(argv)
+    if args.refresh and args.offline:
+        sys.exit("--refresh and --offline exclude each other")
+    if args.refresh:
+        http.configure(refresh_cache=True)
+    if args.offline:
+        http.configure(offline_only=True)
+    paths = []
+    try:
+        paths = build(args.out, args.wago_product, args.wago_build)
+    except (http.FetchError, KeyError, ValueError) as e:
+        print(f"gen_fishing failed: {e}", file=sys.stderr)
+        return 2
+    finally:  # the downloads are listed even when the run fails
+        record_written(args.out, "gen_fishing", paths)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

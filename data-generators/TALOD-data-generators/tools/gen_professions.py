@@ -21,19 +21,28 @@ plain re-run only fetches what is new; --refresh fetches everything again.
 
 Run it again whenever the data may have changed (new content patch, a
 reported wrong reagent or skill color). See docs/DATA.md.
+
+Navzeroth: adapted with the author's permission (../PERMISSION.md). Instead of
+ProfessionData.lua it writes navzeroth-world-data v1 JSON, the datasets
+professions.ranks, professions.notes (TALOD's gathering notes),
+professions.recipes and professions.items, with origin wow_classic_era and an
+unknown build. Downloads go through navzeroth_datagen.http (shared cache in
+data-generators/.cache); the tooltips use a small thread pool.
+
+    python3 tools/gen_professions.py [--refresh | --offline] [--no-tooltips] [--out DIR]
 """
 import json
 import pathlib
 import re
 import sys
-import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from gen_enhancements import (fetch, parse_page, lua, SOURCES, VENDOR_ITEMS, GATHER_PATTERNS,  # noqa: E402
-                              MAX_CLASSIC_SPELL, TOOLTIP)
+# Navzeroth: gen_enhancements also puts data-generators/ on sys.path for navzeroth_datagen.
+from gen_enhancements import (fetch, parse_page, SOURCES, VENDOR_ITEMS, GATHER_PATTERNS,  # noqa: E402
+                              MAX_CLASSIC_SPELL, TOOLTIP, cli, configure, in_parallel, item_record,
+                              recipe_record, record_written, wowhead_sources)
+from navzeroth_datagen import envelope, http  # noqa: E402
 
-ADDON = pathlib.Path(__file__).resolve().parent.parent
-OUT = ADDON / "ProfessionData.lua"
 BASE = "https://www.wowhead.com/classic/spells/"
 
 # Wowhead list path -> (the name the game's Skills tab uses, skill line ID).
@@ -98,11 +107,11 @@ def makes_of(creates):
         return 1
     return int(avg) if avg == int(avg) else round(avg, 1)
 
-def recipe_items(slug, refresh):
+def recipe_items(slug):
     """The profession's recipe items (Pattern: / Plans: / Formula: ...):
     { spell name: {item, src, price} }. The name after the prefix is the
     recipe's name; a vendor price means a vendor sells it."""
-    text = fetch(ITEMS_BASE + slug, f"recipeitems_{slug}.html", refresh)
+    text = fetch(ITEMS_BASE + slug, f"recipeitems_{slug}.html")
     m = re.search(r"var listviewitems = (\[.*?\]);\n", text, re.S)
     if not m:
         print(f"  no recipe item list for {slug}")
@@ -128,9 +137,9 @@ def recipe_items(slug, refresh):
     return out
 
 
-def spell_extra(spell_id, refresh):
+def spell_extra(spell_id):
     """Tools from the spell tooltip."""
-    data = json.loads(fetch(TOOLTIP.format(kind="spell", id=spell_id), f"spell_{spell_id}.json", refresh))
+    data = json.loads(fetch(TOOLTIP.format(kind="spell", id=spell_id), f"spell_{spell_id}.json"))
     tip = data.get("tooltip", "")
     tools = []
     tm = re.search(r"Tools:(.*?)(Reagents:|<div class=\"q\">|$)", tip, re.S)
@@ -139,12 +148,33 @@ def spell_extra(spell_id, refresh):
     return tools
 
 
-def main():
-    refresh = "--refresh" in sys.argv
-    tooltips = "--no-tooltips" not in sys.argv
+def rank_entry(prof, rank, at, cost):
+    """Navzeroth: TALOD's rank entry, built in one place; cost None = unknown."""
+    entry = {"rank": rank, "max": RANK_MAX[rank], "at": at, "cost": cost}
+    if prof not in SECONDARY:
+        entry["level"] = RANK_LEVEL[rank]
+    if (prof, rank) in RANK_NOTES:
+        entry["note"] = RANK_NOTES[(prof, rank)]
+    return entry
+
+
+def rank_record(prof, entry):
+    """Navzeroth: a TALOD rank entry as a world-data ProfessionRank record."""
+    cost = envelope.known(entry["cost"]) if entry.get("cost") is not None else envelope.unknown()
+    return {"profession": prof, "rank": entry["rank"], "max_skill": entry["max"], "learn_at_skill": entry["at"],
+            "cost": cost, "character_level": entry.get("level"), "note": entry.get("note")}
+
+
+def note_records():
+    """Navzeroth: TALOD's GATHERING notes as ProfessionNote records."""
+    return [{"profession": prof, "text": text} for prof, text in sorted(GATHERING.items())]
+
+
+def build(out, tooltips):
+    """Navzeroth: TALOD's main(), writing world-data shards; returns their paths."""
     recipes, items, creates, ranks = {}, {}, {}, {}
     for slug, (prof, skill_id) in PROFESSIONS.items():
-        spells, page_items, _ = parse_page(fetch(BASE + slug, f"page_{slug.split('/')[-1]}.html", refresh))
+        spells, page_items, _ = parse_page(fetch(BASE + slug, f"page_{slug.split('/')[-1]}.html"))
         items.update(page_items)
         n = 0
         for sp in spells:
@@ -153,13 +183,9 @@ def main():
                 continue
             if sp.get("rank") in RANK_MAX and sp.get("name") == prof:
                 rank = sp["rank"]
-                entry = {"rank": rank, "max": RANK_MAX[rank], "at": 1 if sp.get("learnedat") == 9999 else sp.get("learnedat"),
-                         "cost": sp.get("trainingcost") or 0}
-                if prof not in SECONDARY:
-                    entry["level"] = RANK_LEVEL[rank]
-                if (prof, rank) in RANK_NOTES:
-                    entry["note"] = RANK_NOTES[(prof, rank)]
-                ranks.setdefault(prof, {})[rank] = entry
+                # Navzeroth: a cost Wowhead does not list stays unknown (TALOD wrote 0).
+                ranks.setdefault(prof, {})[rank] = rank_entry(
+                    prof, rank, 1 if sp.get("learnedat") == 9999 else sp.get("learnedat"), sp.get("trainingcost"))
                 continue
             colors = sp.get("colors")
             if not colors or not (sp.get("reagents") or sp.get("creates")):
@@ -186,7 +212,7 @@ def main():
         # Taught by an item (pattern, plans, formula, ...) or, with no source
         # listed at all, by the trainer (Wowhead leaves e.g. Heavy Linen
         # Bandage's trainer out) or known from the start at skill 1.
-        taught = recipe_items(slug.split("/")[-1], refresh)
+        taught = recipe_items(slug.split("/")[-1])
         for sid, r in recipes.items():
             if r["prof"] != prof:
                 continue
@@ -203,12 +229,8 @@ def main():
         # Ranks Wowhead does not list: fill from the vanilla table.
         for rank in RANK_ORDER:
             if rank not in ranks.get(prof, {}):
-                entry = {"rank": rank, "max": RANK_MAX[rank], "at": {"Apprentice": 1, "Journeyman": 50, "Expert": 125, "Artisan": 200}[rank], "cost": None}
-                if prof not in SECONDARY:
-                    entry["level"] = RANK_LEVEL[rank]
-                if (prof, rank) in RANK_NOTES:
-                    entry["note"] = RANK_NOTES[(prof, rank)]
-                ranks.setdefault(prof, {})[rank] = entry
+                at = {"Apprentice": 1, "Journeyman": 50, "Expert": 125, "Artisan": 200}[rank]
+                ranks.setdefault(prof, {})[rank] = rank_entry(prof, rank, at, None)
         print(f"{prof}: {n} recipes")
 
     for r in recipes.values():
@@ -221,12 +243,10 @@ def main():
     if tooltips:
         todo = sorted(recipes)
         print(f"tooltips for {len(todo)} recipes (cached ones are instant)")
-        for i, sid in enumerate(todo):
-            tools = spell_extra(sid, refresh)
+        # Navzeroth: fetched on a thread pool; results come back in todo's order.
+        for sid, tools in zip(todo, in_parallel(spell_extra, todo)):
             if tools:
                 recipes[sid]["tools"] = tools
-            if (i + 1) % 100 == 0:
-                print(f"  {i + 1} / {len(todo)}")
 
     used = set()
     for r in recipes.values():
@@ -239,13 +259,15 @@ def main():
         it = items.get(iid, {})
         eq = it.get("jsonequip") or {}
         name = it.get("name_enus") or VENDOR_ITEMS.get(iid) or f"Item {iid}"
-        entry = {"name": name, "q": it.get("quality", 1)}
+        # Navzeroth: quality stays unknown when Wowhead gives none (TALOD assumed 1).
+        entry = {"name": name, "q": it.get("quality")}
         if it.get("icon"):
             entry["icon"] = it["icon"]
         # Wowhead's buyprice is the item's price field, not proof a vendor sells
         # it (herbs, leathers, raid materials have one): the hand list decides.
+        # Navzeroth: a missing price stays unknown (TALOD wrote 0).
         if iid in VENDOR_ITEMS:
-            entry["vendor"] = eq.get("buyprice") or 0
+            entry["vendor"] = eq.get("buyprice")
         if eq.get("avgbuyout"):
             entry["ah"] = eq["avgbuyout"]
         if eq.get("sellprice"):
@@ -259,29 +281,33 @@ def main():
                     break
         out_items[iid] = entry
 
-    stamp = time.strftime("%Y-%m-%d")
-    lines = [
-        "-- Generated by tools/gen_professions.py from Wowhead Classic. Do not edit by hand:",
-        "-- re-run the generator (see docs/DATA.md).",
-        f"-- Generated {stamp}: {len(recipes)} recipes, {len(out_items)} items.",
-        "local ADDON_NAME, ns = ...",
-        "ns.ProfessionData = {",
-        f"    generated = {lua(stamp)},",
-        "    source = \"https://www.wowhead.com/classic\",",
-        "    ranks = {",
-    ]
-    for prof, _ in PROFESSIONS.values():
-        lines.append(f"        [{json.dumps(prof)}] = {{ " + ", ".join(lua(ranks[prof][r]) for r in RANK_ORDER) + " },")
-    lines += ["    },", "    gathering = " + lua(GATHERING) + ",", "    recipes = {"]
-    for sid, r in sorted(recipes.items()):
-        lines.append(f"        [{sid}] = " + lua(r) + ",")
-    lines += ["    },", "    items = {"]
-    for iid, it in out_items.items():
-        lines.append(f"        [{iid}] = " + lua(it) + ",")
-    lines += ["    },", "}"]
-    OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"{OUT}: {len(recipes)} recipes, {len(out_items)} items")
+    # Navzeroth: world-data shards instead of ProfessionData.lua.
+    kw = dict(origin=envelope.origin(envelope.CLASSIC_ERA), sources=wowhead_sources(),
+              generator=envelope.generator("gen_professions"), out=out)
+    rank_records = [rank_record(prof, ranks[prof][r]) for prof, _ in PROFESSIONS.values() for r in RANK_ORDER]
+    paths = envelope.write("professions.ranks", "profession_rank", rank_records, **kw)
+    paths += envelope.write("professions.notes", "profession_note", note_records(), **kw)
+    paths += envelope.write("professions.recipes", "recipe",
+                            [recipe_record(sid, r) for sid, r in sorted(recipes.items())], **kw)
+    paths += envelope.write("professions.items", "item", [item_record(iid, it) for iid, it in out_items.items()], **kw)
+    print(f"{out}: {len(recipes)} recipes, {len(out_items)} items")
+    return paths
+
+
+def main(argv=None):
+    """Navzeroth: exits non-zero when a download is refused or a page cannot be read."""
+    args = cli(__doc__).parse_args(argv)
+    configure(args)
+    paths = []
+    try:
+        paths = build(args.out, not args.no_tooltips)
+    except (http.FetchError, ValueError) as e:
+        print(f"gen_professions failed: {e}", file=sys.stderr)
+        return 2
+    finally:  # the downloads are listed even when the run fails
+        record_written(args.out, "gen_professions", paths)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
