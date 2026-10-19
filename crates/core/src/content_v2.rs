@@ -246,6 +246,13 @@ pub enum LootEntitlement {
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Dungeon {
+    /// Missing preserves the historical 1024 bound; v2 allows 4096 quest/reward refs.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "present_reference_version"
+    )]
+    pub reference_contract_version: Option<u32>,
     pub id: SourceId,
     pub evidence: Vec<EvidenceId>,
     pub title: Text,
@@ -268,6 +275,20 @@ pub struct DungeonCheck {
     pub label: Text,
     pub condition: Observation<Predicate>,
 }
+fn present_reference_version<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Option<u32>, D::Error> {
+    u32::deserialize(deserializer).map(Some)
+}
+impl Dungeon {
+    pub fn reference_limit(&self) -> Result<usize> {
+        match self.reference_contract_version.unwrap_or(1) {
+            1 => Ok(1024),
+            2 => Ok(4096),
+            _ => Err(invalid("Unsupported dungeon reference contract version")),
+        }
+    }
+}
 pub fn decode(bytes: &[u8]) -> Result<ReferenceContent> {
     if bytes.len() > MAX_CONTENT_BYTES {
         return Err(invalid("V2 reference content exceeds byte limit"));
@@ -278,8 +299,13 @@ pub fn decode(bytes: &[u8]) -> Result<ReferenceContent> {
     Ok(content)
 }
 fn refs<T: Ord>(values: &[T], available: &BTreeSet<&T>) -> Result<()> {
-    bounded(values.len())?;
-    unique(values.iter())?;
+    refs_with_limit(values, available, 1024)
+}
+fn refs_with_limit<T: Ord>(values: &[T], available: &BTreeSet<&T>, limit: usize) -> Result<()> {
+    if values.len() > limit {
+        return Err(invalid("V2 reference list exceeds contract limit"));
+    }
+    crate::contract::unique_catalog(values.iter())?;
     if values.iter().any(|id| !available.contains(id)) {
         return Err(invalid("V2 reference does not resolve"));
     }
@@ -637,6 +663,7 @@ impl Validate for ReferenceContent {
             }
         }
         for d in &self.dungeons {
+            let reference_limit = d.reference_limit()?;
             g.evidence(&d.evidence)?;
             g.context.ensure_compatible(&d.map.context)?;
             if !g.maps.contains(&d.map) {
@@ -647,13 +674,13 @@ impl Validate for ReferenceContent {
             }
             g.predicate(&d.access)?;
             if let Some(q) = d.preparation_quests.value() {
-                refs(q, &g.quests)?;
+                refs_with_limit(q, &g.quests, reference_limit)?;
             }
             if let Some(e) = d.travel_edges.value() {
                 refs(e, &edges)?;
             }
             if let Some(r) = d.rewards.value() {
-                refs(r, &acquisitions)?;
+                refs_with_limit(r, &acquisitions, reference_limit)?;
             }
             refs(&d.bosses, &entities)?;
             if let Some(checks) = d.checklist.value() {

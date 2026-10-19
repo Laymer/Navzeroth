@@ -253,7 +253,7 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
 
     def test_boundary_and_empty_are_complete_known_values(self):
         builder = self.builder()
-        for count in (0, w.MAX_REFS):
+        for count in (0, w.MAX_REFS, w.DUNGEON_REFERENCE_LIMIT):
             ids = [f"quest:{i}" for i in range(count)]
             self.assertEqual(builder.dungeon_association("dungeon:test", "preparation_quests", ids),
                              w.known(ids))
@@ -263,14 +263,14 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
     def test_overflow_is_wholly_unsupported_with_exact_accounting(self):
         builder = self.builder()
         for field in ("preparation_quests", "rewards"):
-            ids = [f"record:{i}" for i in range(w.MAX_REFS + 1)]
+            ids = [f"record:{i}" for i in range(w.DUNGEON_REFERENCE_LIMIT + 1)]
             original = ids.copy()
             self.assertEqual(builder.dungeon_association("dungeon:test", field, ids),
                              {"status": "unsupported"})
             self.assertEqual(ids, original)  # Canonical identities are never deleted.
             expected = {"dungeon": "dungeon:test", "field": field,
-                        "actual_count": 1025, "contract_limit": 1024,
-                        "exposed_count": 0, "unresolved_count": 1025}
+                        "actual_count": 4097, "contract_limit": 4096,
+                        "exposed_count": 0, "unresolved_count": 4097}
             self.assertEqual(builder.bounded_associations[-1], expected)
             conflict = builder.conflicts[-1]
             self.assertEqual(conflict["kind"], "bounded_association_unsupported")
@@ -281,7 +281,7 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
 
     def test_generated_catalog_preserves_all_canonical_records_and_summary(self):
         shards = dict(SHARDS)
-        ids = range(100000, 101025)
+        ids = range(100000, 104097)
         shards[("quests.quests", "vanilla_1_12")] = (CMANGOS, "cross_edition_unverified", [
             {"kind": "quest", "id": i, "title": f"Quest {i}", "min_level": 1,
              "zone_or_sort": 12} for i in ids])
@@ -292,6 +292,7 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             result = Run(tmp, shards)
             dungeon = next(d for d in result.catalog["dungeons"] if d["id"] == "dungeon:the-deadmines")
+            self.assertEqual(dungeon["reference_contract_version"], 2)
             for field in ("preparation_quests", "rewards"):
                 self.assertEqual(dungeon[field], {"status": "unsupported"})
             self.assertTrue({f"quest:{i}" for i in ids} <= result.quests.keys())
@@ -301,10 +302,10 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
             self.assertEqual({r["field"] for r in rows}, {"preparation_quests", "rewards"})
             for row in rows:
                 self.assertEqual((row["actual_count"], row["exposed_count"], row["unresolved_count"]),
-                                 (1025, 0, 1025))
+                                 (4097, 0, 4097))
             self.assertEqual(sum(c["kind"] == "bounded_association_unsupported"
                                  for c in result.conflicts), 2)
-            self.assertEqual(result.summary["generator"]["version"], "3")
+            self.assertEqual(result.summary["generator"]["version"], "4")
 
 
 class MappingTest(unittest.TestCase):

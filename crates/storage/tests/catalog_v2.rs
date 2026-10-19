@@ -430,3 +430,69 @@ fn stored_original_json_rejects_nested_unknown_and_duplicate_fields_before_hash_
         );
     }
 }
+
+#[test]
+fn extended_dungeon_associations_persist_reopen_and_rollback_without_truncation() {
+    let db = TempDb::new("dungeon-reference-version");
+    let old = v1();
+    let mut value: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v2/reference-content.json"
+    ))
+    .unwrap();
+    let template = value["reference"]["payload"]["acquisitions"][0].clone();
+    let ids: Vec<_> = (0..1025).map(|n| format!("persisted-source-{n}")).collect();
+    for id in &ids {
+        let mut next = template.clone();
+        next["id"] = json!(id);
+        value["reference"]["payload"]["acquisitions"]
+            .as_array_mut()
+            .unwrap()
+            .push(next);
+    }
+    value["reference"]["payload"]["revision"] = json!("extended-dungeon");
+    value["dungeons"][0]["reference_contract_version"] = json!(2);
+    value["dungeons"][0]["rewards"] = json!({"status":"known","value":ids});
+    let extended = ContentRevisionV2 {
+        content: decode(&serde_json::to_vec(&value).unwrap()).unwrap(),
+        sources: old.sources.clone(),
+        conflicts: vec![],
+    };
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    store.stage_content_revision(&old).unwrap();
+    store.activate_content_revision(&old.key()).unwrap();
+    store.stage_content_v2_revision(&extended).unwrap();
+    store.activate_content_revision(&extended.key()).unwrap();
+    drop(store);
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    let ActiveContentRevision::V2(reopened) = store
+        .active_catalog_revision(&extended.key().scope)
+        .unwrap()
+        .unwrap()
+    else {
+        panic!("expected extended catalog")
+    };
+    assert_eq!(
+        reopened.content.dungeons[0].reference_contract_version,
+        Some(2)
+    );
+    let retained: Vec<_> = reopened.content.dungeons[0]
+        .rewards
+        .value()
+        .unwrap()
+        .iter()
+        .map(|id| id.as_str().to_owned())
+        .collect();
+    assert_eq!(retained, ids);
+    store
+        .rollback_content_revision(&extended.key().scope)
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        store
+            .active_content_revision(&old.key().scope)
+            .unwrap()
+            .unwrap()
+            .key(),
+        old.key()
+    );
+}

@@ -34,7 +34,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from navzeroth_datagen import bounded  # noqa: E402
 
 NAME = "world_to_content"
-VERSION = "3"
+VERSION = "4"
 DERIVED_SOURCE = "navzeroth-world-content"
 
 # Inferred travel (ADR 0007 §8). Yards per second.
@@ -44,6 +44,7 @@ WALK_NEIGHBOURS = 4  # k nearest nodes per node on one uiMap
 WALK_MAX_YARDS = 1000.0  # no inferred walk edge is longer than this
 OBJECTIVE_SPAWN_CAP = 3  # spawn nodes kept per quest-objective-only entity
 OBJECTIVE_NEIGHBOURS = 1  # an objective spawn node joins only its nearest service/quest node
+DUNGEON_REFERENCE_LIMIT = 4096
 MAX_REFS = 1024  # core `bounded` limit for lists inside one record
 MAX_QUEST_LOCATIONS = 64
 MAX_LOOT_ROWS = 4096  # content_v2::MAX_LOOT_ROWS
@@ -1055,11 +1056,11 @@ class Builder:
         return not self.node_services.get(node)
 
     def dungeon_association(self, dungeon, field, ids):
-        """The v2 record bound cannot express a complete overflowing association."""
-        if len(ids) <= MAX_REFS:
+        """The declared dungeon reference profile cannot express an overflowing association."""
+        if len(ids) <= DUNGEON_REFERENCE_LIMIT:
             return known(ids)
         counts = {"dungeon": dungeon, "field": field, "actual_count": len(ids),
-                  "contract_limit": MAX_REFS, "exposed_count": 0,
+                  "contract_limit": DUNGEON_REFERENCE_LIMIT, "exposed_count": 0,
                   "unresolved_count": len(ids)}
         self.bounded_associations.append(counts)
         self.conflicts.append({"fact": f"{dungeon}:{field}",
@@ -1111,6 +1112,7 @@ class Builder:
             adjacent = [edge["id"] for edge in self.edges if entrance.get("status") == "known"
                         and entrance["value"]["id"] in (edge["from"]["id"], edge["to"]["id"])]
             dungeon = {
+                "reference_contract_version": 2,
                 "access": UNKNOWN, "checklist": known(checklist), "entrance": entrance,
                 "evidence": ev, "id": did, "map": self.map_key(map_id),
                 "preparation_quests": self.dungeon_association(did, "preparation_quests", zone_quests.get(area, [])) if area else UNKNOWN,
