@@ -229,6 +229,8 @@ fn relative(root: &Path, path: &Path) -> Result<AssetPath> {
 }
 #[derive(Default)]
 struct Budget {
+    stable: bool,
+    catalogs: BTreeMap<PathBuf, (u64, String)>,
     bytes: u64,
     verified: BTreeMap<PathBuf, (u64, String)>,
     charged: BTreeMap<PathBuf, u64>,
@@ -239,7 +241,13 @@ impl Budget {
             .bytes
             .checked_add(bytes)
             .ok_or("Release byte budget exceeded")?;
-        if self.bytes > MAX_TOTAL_BYTES {
+        if self.bytes
+            > if self.stable {
+                2 * MAX_TOTAL_BYTES
+            } else {
+                MAX_TOTAL_BYTES
+            }
+        {
             return Err("Release byte budget exceeded");
         }
         Ok(())
@@ -277,6 +285,44 @@ impl Budget {
         Ok(bytes)
     }
     fn verify(&mut self, root: &Path, reference: &FileRef) -> Result<()> {
+        self.verify_limit(root, reference, MAX_FILE_BYTES)
+    }
+    fn verify_catalog(&mut self, root: &Path, reference: &FileRef) -> Result<()> {
+        let limit = if self.stable {
+            crate::pack::v2::MAX_CATALOG_BYTES as u64
+        } else {
+            MAX_FILE_BYTES
+        };
+        self.verify_limit(root, reference, limit)?;
+        if self.stable {
+            self.catalogs.insert(
+                root.join(reference.path.as_str()),
+                (reference.bytes, reference.sha256.as_str().to_owned()),
+            );
+        }
+        Ok(())
+    }
+    fn verify_material(
+        &mut self,
+        root: &Path,
+        reference: &FileRef,
+        content_pack: bool,
+    ) -> Result<()> {
+        let accepted_catalog = content_pack
+            && self.catalogs.get(&root.join(reference.path.as_str()))
+                == Some(&(reference.bytes, reference.sha256.as_str().to_owned()));
+        if accepted_catalog {
+            self.verify_catalog(root, reference)
+        } else {
+            self.verify(root, reference)
+        }
+    }
+    fn verify_limit(&mut self, root: &Path, reference: &FileRef, limit: u64) -> Result<()> {
+        // Check role-specific limits before cache lookup: a catalog allowance
+        // must never turn the same file into an oversized original source.
+        if reference.bytes == 0 || reference.bytes > limit {
+            return Err("Evidence file exceeds its size limit");
+        }
         let path = root.join(reference.path.as_str());
         let expected = (reference.bytes, reference.sha256.as_str().to_owned());
         if let Some(previous) = self.verified.get(&path) {
@@ -285,9 +331,6 @@ impl Budget {
             } else {
                 Err("Conflicting evidence file references")
             };
-        }
-        if reference.bytes == 0 || reference.bytes > MAX_FILE_BYTES {
-            return Err("Evidence file exceeds its size limit");
         }
         checked_path(&path, false)?;
         let mut file = File::open(&path).map_err(|_| "Evidence file cannot be opened")?;
@@ -837,7 +880,7 @@ fn packs(
             crate::pack::MAX_MANIFEST_BYTES,
         )?;
         // Charge each distinct material before invoking the full verifier. Multiple
-        // passes over the same bounded bytes do not shrink the 1 GiB closure limit.
+        // passes over the same bounded bytes do not shrink the versioned closure limit.
         let version = serde_json::from_slice::<Value>(&manifest_bytes)
             .map_err(|_| "Invalid pack manifest")?
             .get("schema_version")
@@ -845,8 +888,8 @@ fn packs(
         if version == Some(2) {
             let manifest: PackV2 =
                 serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid v2 manifest")?;
+            budget.verify_catalog(pack_root, &manifest.catalog)?;
             for file in std::iter::once(&manifest.sources)
-                .chain(std::iter::once(&manifest.catalog))
                 .chain(&manifest.assets)
                 .chain(&manifest.party_support)
                 .chain(&manifest.supporting_files)
@@ -1032,6 +1075,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
     versions(&root, &options.version, &mut budget)?;
     let inventory_bytes = budget.read(&root.join(INVENTORY_PATH), release::MAX_RELEASE_BYTES)?;
     let inventory = release::decode_inventory(&inventory_bytes)?;
+    budget.stable = inventory.schema_version == release::SCHEMA_STABLE;
     let world = world_inputs(&root, &inventory, &mut budget)?;
     let selected = options
         .evidence
@@ -1405,6 +1449,52 @@ mod tests {
                 .iter()
                 .any(|v| v.contains("lacks source provenance"))
         );
+    }
+    #[test]
+    fn schema4_catalog_budget_is_role_scoped_and_historical_budgets_stay_fixed() {
+        let root = Path::new("/synthetic");
+        let reference = FileRef {
+            path: AssetPath::new("catalog.json").unwrap(),
+            bytes: MAX_FILE_BYTES + 1,
+            sha256: azeroth_core::types::Sha256Hex::new("a".repeat(64)).unwrap(),
+        };
+        let pin = (reference.bytes, reference.sha256.as_str().to_owned());
+        for stable in [false, true] {
+            let mut budget = Budget {
+                stable,
+                ..Budget::default()
+            };
+            // Simulate a hash-verified bounded read; exercise authorization and
+            // cached identity checks without allocating a half-gigabyte fixture.
+            budget
+                .verified
+                .insert(root.join("catalog.json"), pin.clone());
+            assert_eq!(budget.verify_catalog(root, &reference).is_ok(), stable);
+            assert!(budget.verify(root, &reference).is_err());
+            assert_eq!(
+                budget.verify_material(root, &reference, true).is_ok(),
+                stable
+            );
+            assert!(budget.verify_material(root, &reference, false).is_err());
+            let mut altered = reference.clone();
+            altered.bytes += 1;
+            assert!(budget.verify_material(root, &altered, true).is_err());
+            budget
+                .charge(Path::new("/aggregate"), MAX_TOTAL_BYTES)
+                .unwrap();
+            assert_eq!(budget.charge(Path::new("/extra"), 1).is_ok(), stable);
+        }
+        let mut budget = Budget {
+            stable: true,
+            ..Budget::default()
+        };
+        let mut too_large = reference;
+        too_large.bytes = crate::pack::v2::MAX_CATALOG_BYTES as u64 + 1;
+        assert!(budget.verify_catalog(root, &too_large).is_err());
+        budget
+            .charge(Path::new("/aggregate"), 2 * MAX_TOTAL_BYTES)
+            .unwrap();
+        assert!(budget.charge(Path::new("/extra"), 1).is_err());
     }
     #[test]
     fn repeated_material_reads_charge_distinct_closure_bytes_once() {

@@ -405,6 +405,9 @@ pub struct Deferral {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
+    /// Schema 4 only: reviewed public corresponding-source resources.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub corresponding_source_files: Option<Vec<FileRef>>,
     /// Schema 4 only: independently verified draft installer identity.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub candidate_installer_sha256: Option<Sha256Hex>,
@@ -590,6 +593,14 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     let evidence: Evidence = decode(bytes)?;
+    if evidence.schema_version != SCHEMA_STABLE
+        && serde_json::from_slice::<serde_json::Value>(bytes)
+            .map_err(|_| "Invalid release manifest")?
+            .get("corresponding_source_files")
+            .is_some()
+    {
+        return Err("Corresponding-source fields require evidence schema 4");
+    }
     let world = is_world_schema(evidence.schema_version);
     if !matches!(
         evidence.schema_version,
@@ -600,7 +611,8 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     ) && !evidence.matrix.is_empty())
         || world != evidence.origin_policy.is_some()
         || (evidence.schema_version != SCHEMA_STABLE
-            && (evidence.candidate_installer_sha256.is_some()
+            && (evidence.corresponding_source_files.is_some()
+                || evidence.candidate_installer_sha256.is_some()
                 || evidence
                     .checks
                     .iter()
@@ -608,7 +620,20 @@ pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     {
         return Err("Unsupported evidence version");
     }
+    validate_corresponding_sources(&evidence)?;
     Ok(evidence)
+}
+/// Explicit schema-4 collection; historical schemas cannot acquire this field.
+pub fn validate_corresponding_sources(evidence: &Evidence) -> Result<(), &'static str> {
+    if let Some(files) = &evidence.corresponding_source_files
+        && (evidence.schema_version != SCHEMA_STABLE
+            || files.is_empty()
+            || files.len() > MAX_UNITS
+            || !files_present(files))
+    {
+        return Err("Invalid corresponding-source file collection");
+    }
+    Ok(())
 }
 fn decode<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, &'static str> {
     if bytes.len() > MAX_RELEASE_BYTES {
@@ -778,6 +803,9 @@ pub fn assess_with(
     policy: &ReleasePolicy<'_>,
 ) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
+    if let Some(evidence) = evidence {
+        validate_corresponding_sources(evidence)?;
+    }
     check_limits(inventory, evidence)?;
     if !matches!(
         inventory.schema_version,
@@ -1222,6 +1250,7 @@ pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> V
         }))
         .chain(evidence.admission_registry.iter())
         .chain(evidence.origin_policy.iter())
+        .chain(evidence.corresponding_source_files.iter().flatten())
         .chain(evidence.packs.iter().map(|p| &p.manifest))
         .chain(evidence.matrix.iter().flat_map(|r| &r.artifacts))
         .collect()
