@@ -145,7 +145,7 @@ export function WorldScreen({ client, refreshKey }: { client: WorldClient; refre
   const noun = current?.noun ?? "records";
   return <section aria-labelledby="world-heading" className="play-screen world-screen">
     <h2 id="world-heading">World browser</h2>
-    <p>NPCs, objects, vendors, trainers, quests and loot from the active content. Search and paging run in the desktop backend, 50 rows at a time. Facts taken from 1.12 or Classic Era data, and inferred values, are marked; unmarked facts come from Forever sources.</p>
+    <p>NPCs, objects, vendors, trainers, quests and loot from the active content. Search and paging run in the desktop backend, 50 rows at a time. Facts taken from 1.12 or Classic Era data, and inferred values, are marked. A fact without a marker has no recorded 1.12 or Classic Era origin; while origins load, or if they cannot be read, markers are absent.</p>
     {page?.fixture && <p role="note" className="play-note">SYNTHETIC — engineering fixture, not game data.</p>}
     <Field label="World profile" help="The imported character whose active content is browsed. Different builds can have different content.">{(c) => <select {...c} value={profile} onChange={(e) => setProfile(e.target.value)}>{profiles.map((p) => <option key={p.id} value={p.id}>{p.display_name}</option>)}</select>}</Field>
     <div role="group" aria-label="World views" className="world-views">

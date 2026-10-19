@@ -258,8 +258,8 @@ desktop) pay the same.
 | `ingest::pack::v2::MAX_CLOSURE_BYTES` | 1 GiB (unchanged) | build reads 114 MB, verify 274 MB |
 | `content_v2::MAX_LOOT_ROWS` | 4,096 rows per table | largest table 1,056 |
 
-`release::MAX_RECORDS` (250,000) is the release gate's and unchanged; the world
-pack's 186,665 records fit under it.
+`release::MAX_RECORDS` is 2,000,000 since the release gate task (V2.8e, ADR 0007),
+so the whole-world pack and the authored pack fit under it with headroom.
 
 ## Application use (V2.8g)
 
@@ -301,3 +301,18 @@ bosses on entities and loot templates per source (rows: item or reference table,
 chance (absent is unknown), counts, group, quest-only, conditional; at most 6 tables
 per source and 40 rows per table are listed, with totals). Real pack: first loot page
 109 ms (index build), later pages under 2 ms.
+
+## Known limits (review of V2.8)
+
+- Route search keeps a full edge path in every heap label (the label order breaks ties
+  by path). The measured 0.5 to 30 ms are for reachable targets; an unreachable target
+  searches the whole graph (up to 131,072 edges) and its memory grows with
+  pushes times path length. Predecessor pointers would change the tie order and need
+  their own equivalence tests.
+- Activating the world pack composes members through typed values and a decode, so the
+  desktop peak is a multiple of the 367 MB canonical size (3.9 to 4.8 GiB measured for
+  the world pack alone); the merge uses linear `contains` per element.
+- Quest `givers`/`enders` and `LootTable.source` are checked for uniqueness and shape
+  but not resolved against entities.
+- Evidence for wago `wowf` shards (build 1.60.1.70245) is stamped with the target
+  build (1.60.1.70450) in its context; the shard build is only in the evidence notes.

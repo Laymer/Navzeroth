@@ -25,7 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          lfs: true
+          # No LFS download: the run regenerates every LFS-tracked file it reads, and
+          # publishing only needs the clean filter to stage pointers. A full LFS pull
+          # (~800 MB per run) would exhaust the repository's monthly LFS bandwidth.
+          lfs: false
           fetch-depth: 0
       - name: Enable Git LFS filters for staging pointers
         run: git lfs install --local

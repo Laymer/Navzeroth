@@ -109,9 +109,12 @@ every hand-admitted source.
 Total: 1,685 reference facts, including 258 unknown and 26 unsupported fields.
 The generated fact sources (below) add 2,862,735 facts: 2,566,760 from CMaNGOS
 (`vanilla_1_12` 1.12.1) and 295,975 from wago.tools `wowf` (`wow_forever`
-1.60.1.70245). None is target-usable for 70374: their origin differs from the
-target, and convergence never relabels it.
-There are **zero verified target-usable facts** for Forever build 70374. The
+1.60.1.70245). None is target-usable for the plan's target (the detected client
+build, ADR 0007 §6; 1.60.1.70450 when this was written): their origin differs from
+the target, and convergence never relabels it. The release gate accepts such
+origins through `release/v1/accepted-origins.json` (ADR 0007 §3), not through this
+catalog.
+There are **zero verified target-usable facts** in this research catalog. The
 catalog reports all nine domains with unknown independently required inventory
 counts. Quests, equipment, party and reminders have no admitted facts in
 this plan. An upstream source group is not proof of an available Forever dungeon;

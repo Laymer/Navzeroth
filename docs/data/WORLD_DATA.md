@@ -22,7 +22,7 @@ Every shard is one JSON object with unknown fields refused:
 | `dataset` | Dotted lowercase name, at most 128 bytes, e.g. `professions.recipes`, `world.spawns` |
 | `record_kind` | The one kind every record in the shard has |
 | `origin` | `edition`, `build` (an observation), optional `product`, `locale`: where the data came from |
-| `target` | `edition` (`wow_forever`) and `build`, unknown until the 1.0.0 target is frozen (ADR 0006 §1) |
+| `target` | `edition` (`wow_forever`) and `build`; unknown in generated shards (the packs carry the detected client build, ADR 0007 §6) |
 | `confidence` | One of `verified_on_build`, `publisher_documented`, `limited_sample`, `cross_edition_unverified`, `inferred`, `disputed_or_stale` |
 | `sources` | 1 to 64 references: admission-registry `id`, `https` `url`, optional `revision`, `retrieved_at_utc_ms`, `snapshot_sha256` |
 | `generator` | `name`, `version` and the required `credit` text |
@@ -60,8 +60,9 @@ Origin editions are `wow_forever`, `wow_classic_era` and `vanilla_1_12`. A shard
 names exactly one origin and is never relabelled as another edition.
 
 - Data from another edition than the target must be `cross_edition_unverified`
-  (or `disputed_or_stale`). Classic Era and 1.12 data stays there until it is
-  validated against the frozen Forever target.
+  (or `disputed_or_stale`). Classic Era and 1.12 data stays there in the shards;
+  ADR 0007 §3 lets the release gate accept those origins by policy (see "Release
+  gate" below) without relabelling the data.
 - `verified_on_build` needs the same edition **and** a known build equal to the
   target build. While the target build is unknown, nothing is verified on build.
 - Generators default to `publisher_documented` for Forever origins and

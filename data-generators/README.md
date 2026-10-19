@@ -75,6 +75,9 @@ The weekly workflow `.github/workflows/world-data.yml` runs
 committed target) and opens or updates a draft PR only when the output changed. **The
 owner must enable "Allow GitHub Actions to create and approve pull requests"**
 (repository Settings > Actions > General > Workflow permissions), or the PR step fails.
+A branch pushed and a PR opened with the default `GITHUB_TOKEN` do not trigger
+`ci.yml`, so the weekly draft PR shows no checks until the owner pushes a commit to it
+or the workflow is changed to use a personal access token.
 
 ## Editions
 

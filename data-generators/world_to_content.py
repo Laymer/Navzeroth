@@ -1205,7 +1205,7 @@ SOURCES = {
         "redistribution": "conditional"},
     DERIVED_SOURCE: {
         "publisher": "Navzeroth project (repository owner)",
-        "location": "data-generators/world_to_content.py", "editions": None, "access": None,
+        "location": "data-generators/world_to_content.py", "editions": ["wow_forever"], "access": None,
         "record_class": "secondary_inference", "license": "BSD-3-Clause (repository LICENSE)",
         "attribution": "Navzeroth world content mapping (inferred travel times and loot expansion)",
         "redistribution": "permitted"},

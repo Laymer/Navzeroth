@@ -478,7 +478,8 @@ class MappingTest(unittest.TestCase):
         self.assertEqual(src["cmangos-classic-db"]["editions"], w.known(["vanilla_1_12", "wow_forever"]))
         self.assertEqual(src["wago-tools-wowf"]["editions"], w.known(["wow_forever"]))
         self.assertNotIn("wago-tools-classic-era", src)  # no kept record cites the outranked origin
-        self.assertEqual(src["navzeroth-world-content"]["editions"], w.NOT_APPLICABLE)
+        # A source without editions is refused by the release gate (V2.8 review): it lists the target.
+        self.assertEqual(src["navzeroth-world-content"]["editions"], w.known(["wow_forever"]))
         # Every evidence record cites a source of its own origin: [origin, pack edition].
         for e in self.r.p["evidence"]:
             if e["source"] == "navzeroth-world-content":
@@ -552,3 +553,4 @@ class RunTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

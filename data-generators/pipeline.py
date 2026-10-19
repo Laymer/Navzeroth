@@ -55,7 +55,7 @@ TO_FACTS = HERE / "navzeroth_datagen" / "to_facts.py"
 # Generators that need no Wowhead page (the weekly CI run).
 NETWORK_FREE = ["gen_fishing", "gen_world_cmangos", "gen_world_db2"]
 # Paths the publish stage stages, relative to ROOT.
-PUBLISHED = ["data-generators/output", "content/world", "content/source-materials",
+PUBLISHED = [".gitattributes", "data-generators/output", "content/world", "content/source-materials",
              "content/source-build-v1.json", "docs/sources/source-admission-v1.json",
              "docs/sources/source-updates-v1.json", "release/v1/world-data-target.json"]
 LFS_POINTER = b"version https://git-lfs.github.com/spec/v1"
