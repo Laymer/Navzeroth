@@ -28,3 +28,12 @@ sidecar fixture directories with bounded atomic reservation. All storage tests
 passed, as did four focused sidecar tests and all-target storage/local-data Clippy
 with warnings denied. The initial independent review found no actionable issues;
 this additional fixture-only delta requires a refreshed exact-head review/checks.
+
+## Integration receipt — 2026-10-19
+
+PR #205 merged as `e9bb77042ebaf306c8d35c82fcb8bde46eaf092c` after independent read-only approval of
+final head `8e4a59c6ef6de95e7e4b5730372daacfbe0ab106` and all ten required checks passing.
+Successful runs: CI 39221168492, Coverage 39221168487, package 39221168540 and source/parity 39221168489.
+Earlier failures/cancellations remain distinct from these passes.
+Next: [development RC verification and preparation](2026-10-19-rc-release.md).
+This repair does not establish stable/candidate readiness or release publication.

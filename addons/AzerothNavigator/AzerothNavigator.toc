@@ -5,7 +5,7 @@
 ## X-Interface-Status: UNVERIFIED
 ## Title: Azeroth Navigator Diagnostics
 ## Notes: Diagnostics and explicit bounded character snapshots. Live capture is experimental.
-## Version: 0.9.2
+## Version: 1.0.0-rc.1
 ## Author: Igor K
 ## SavedVariables: AzerothNavigatorDB
 # The SavedVariables directive name and the file load order are unverified for Forever.

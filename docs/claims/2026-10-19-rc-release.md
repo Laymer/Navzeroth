@@ -13,3 +13,7 @@ strict per-file coverage. No acceptance-candidate or stable promotion.
 
 The original checkout, existing worktrees, `.claude/` and private inputs remain
 untouched. Ordinary Windows performance and live acceptance remain unverified.
+
+All repairs merged before version preparation. Final repair baseline:
+`cb5d68b579934b324ac0e999384c64524ccbc260` (PR #206, 2026-10-19T10:05:12Z),
+integrated into this branch.
