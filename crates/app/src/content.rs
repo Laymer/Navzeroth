@@ -92,6 +92,201 @@ pub struct InspectionPage {
 fn invalid(message: &'static str) -> AppError {
     AppError::new(ErrorCode::InvalidInput, message, false)
 }
+/// Members of one composed content set (for example the authored slice pack
+/// and a generated world pack).
+pub const MAX_CONTENT_SET: usize = 8;
+/// Compose stored v2 revisions of one scope into one immutable revision.
+///
+/// Each member keeps its own evidence, sources and records; nothing is
+/// relabelled or reconciled. The game context, namespace and fixture flag must
+/// match. Collections are concatenated, byte-identical records are kept once,
+/// and the composed catalog is decoded and validated again, so a duplicate
+/// identity with different content or a dangling reference is refused. The
+/// composed revision id is derived from the sorted member revisions. Imagery is
+/// refused: member asset closures are not re-staged here.
+pub(crate) fn compose(
+    members: &[std::sync::Arc<azeroth_storage::content::ContentRevisionV2>],
+) -> Result<azeroth_storage::content::ContentRevisionV2> {
+    use serde_json::Value;
+    use sha2::{Digest, Sha256};
+    if members.len() > MAX_CONTENT_SET {
+        return Err(invalid("Content set exceeds its member limit"));
+    }
+    // Member order never changes the composed bytes or identity.
+    let mut members = members.to_vec();
+    members.sort_by(|a, b| {
+        a.content
+            .reference
+            .payload
+            .revision
+            .cmp(&b.content.reference.payload.revision)
+    });
+    let [first, rest @ ..] = members.as_slice() else {
+        return Err(invalid("A content set needs at least one revision"));
+    };
+    let encode = |c: &azeroth_core::content_v2::ReferenceContent| {
+        serde_json::to_value(c).map_err(|_| invalid("Content set member cannot be encoded"))
+    };
+    let header = |value: &Value| {
+        let mut envelope = value["reference"].clone();
+        if let Some(map) = envelope.as_object_mut() {
+            for volatile in ["payload", "producer", "provenance"] {
+                map.remove(volatile);
+            }
+        }
+        (
+            value["format"].clone(),
+            value["schema_version"].clone(),
+            envelope,
+        )
+    };
+    let mut composed = encode(&first.content)?;
+    let mut revisions = vec![first.content.reference.payload.revision.as_str().to_owned()];
+    let mut sources: std::collections::BTreeMap<_, SourceRecord> = first
+        .sources
+        .iter()
+        .map(|s| (s.id.clone(), s.clone()))
+        .collect();
+    let mut conflicts = first.conflicts.clone();
+    fn merge(target: &mut Value, extra: &Value) -> Result<()> {
+        let (Value::Object(target), Value::Object(extra)) = (target, extra) else {
+            return Err(invalid("Content set member has an unexpected shape"));
+        };
+        for (key, value) in extra {
+            match (target.get_mut(key), value) {
+                (Some(Value::Array(into)), Value::Array(values)) => {
+                    for value in values {
+                        if !into.contains(value) {
+                            into.push(value.clone());
+                        }
+                    }
+                }
+                (None, Value::Array(values)) => {
+                    target.insert(key.clone(), Value::Array(values.clone()));
+                }
+                (Some(existing), value) if existing == value => {}
+                _ => return Err(invalid("Content set members differ outside collections")),
+            }
+        }
+        Ok(())
+    }
+    for member in rest {
+        let value = encode(&member.content)?;
+        if header(&value) != header(&composed) {
+            return Err(invalid("Content set members differ in game context"));
+        }
+        let mut extensions = value.clone();
+        let mut payload = Value::Null;
+        if let Some(map) = extensions.as_object_mut() {
+            payload = map.remove("reference").unwrap_or_default()["payload"].take();
+            map.remove("format");
+            map.remove("schema_version");
+        }
+        if let Some(map) = payload.as_object_mut() {
+            map.remove("revision");
+        }
+        merge(&mut composed, &extensions)?;
+        merge(&mut composed["reference"]["payload"], &payload)?;
+        revisions.push(
+            member
+                .content
+                .reference
+                .payload
+                .revision
+                .as_str()
+                .to_owned(),
+        );
+        for source in &member.sources {
+            if sources
+                .insert(source.id.clone(), source.clone())
+                .is_some_and(|previous| previous != *source)
+            {
+                return Err(invalid(
+                    "Content set members register one source differently",
+                ));
+            }
+        }
+        conflicts.extend(member.conflicts.iter().cloned());
+    }
+    revisions.sort();
+    if revisions.windows(2).any(|w| w[0] == w[1]) {
+        return Err(invalid("Content set repeats a revision"));
+    }
+    let digest = format!("{:x}", Sha256::digest(revisions.join("\n").as_bytes()));
+    composed["reference"]["payload"]["revision"] = Value::String(format!("set-{}", &digest[..32]));
+    if composed["reference"]["payload"]["map_images"]
+        .as_array()
+        .is_some_and(|images| !images.is_empty())
+    {
+        return Err(invalid("Content sets with imagery are not supported yet"));
+    }
+    let bytes = serde_json::to_vec(&composed).map_err(|_| invalid("Invalid content set"))?;
+    Ok(azeroth_storage::content::ContentRevisionV2 {
+        content: azeroth_core::content_v2::decode(&bytes)?,
+        sources: sources.into_values().collect(),
+        conflicts,
+    })
+}
+impl crate::snapshots::SnapshotApplication {
+    /// Activate several stored v2 revisions of the profile's scope as one
+    /// composed revision (ADR 0007: the authored slice pack beside a generated
+    /// world pack). A single revision is activated unchanged. With
+    /// `accept_inferred_travel`, planning on exactly this active revision may
+    /// use unverified edges whose evidence is all `inferred` (ADR 0007 §8);
+    /// any other activation or revision keeps the strict default.
+    pub fn activate_content_set(
+        &self,
+        profile_id: &str,
+        revisions: &[azeroth_core::types::DatasetRevision],
+        accept_inferred_travel: bool,
+    ) -> Result<ContentInspection> {
+        if revisions.is_empty() || revisions.len() > MAX_CONTENT_SET {
+            return Err(invalid("Content set member count is out of range"));
+        }
+        let key = self.with_profile_store_mut(profile_id, |store, profile| {
+            let scope = azeroth_storage::content::ContentScope {
+                context: profile.context.clone(),
+                fixture: profile.fixture,
+            };
+            let mut members = vec![];
+            for revision in revisions {
+                let key = ContentRevisionKey {
+                    scope: scope.clone(),
+                    revision: revision.clone(),
+                };
+                match store.catalog_revision(&key)? {
+                    Some(azeroth_storage::content::ActiveContentRevision::V2(content)) => {
+                        members.push(content)
+                    }
+                    Some(_) if revisions.len() > 1 => {
+                        return Err(invalid("Only v2 revisions can form a content set"));
+                    }
+                    Some(_) => {}
+                    None => return Err(invalid("Content set revision is not stored")),
+                }
+            }
+            let key = if revisions.len() == 1 {
+                ContentRevisionKey {
+                    scope,
+                    revision: revisions[0].clone(),
+                }
+            } else {
+                let composed = compose(&members)?;
+                store.stage_content_v2_revision(&composed)?;
+                azeroth_storage::content::ActiveContentRevision::V2(std::sync::Arc::new(composed))
+                    .key()
+            };
+            store.activate_content_revision(&key)?;
+            Ok(key)
+        })?;
+        self.set_inferred_travel(accept_inferred_travel.then(|| key.clone()))?;
+        let content = self
+            .with_store_mut(|store| store.active_catalog_revision(&key.scope))?
+            .filter(|c| c.key() == key)
+            .ok_or_else(|| invalid("Content revision is not active"))?;
+        inspect(content)
+    }
+}
 impl crate::snapshots::SnapshotApplication {
     pub fn content_inspection_page(&self, text: &str) -> Result<InspectionPage> {
         if text.len() > 4096 {
