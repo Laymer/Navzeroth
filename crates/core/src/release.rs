@@ -857,6 +857,33 @@ pub fn assess_with(
     bindings: &Bindings<'_>,
     policy: &ReleasePolicy<'_>,
 ) -> Result<Readiness, &'static str> {
+    assess_inputs(version, inventory, evidence, bindings, policy, true)
+}
+/// Unsigned bundle preparation only: all ordinary content/source/accounting
+/// requirements remain; absent bundle artifacts cannot authorize publication.
+pub fn assess_unsigned_bundle_preparation(
+    version: &str,
+    inventory: &Inventory,
+    evidence: &Evidence,
+    bindings: &Bindings<'_>,
+    policy: &ReleasePolicy<'_>,
+) -> Result<Readiness, &'static str> {
+    if inventory.schema_version != SCHEMA_STABLE {
+        return Err("Unsigned bundle preparation requires schema4");
+    }
+    let mut report = assess_inputs(version, inventory, Some(evidence), bindings, policy, false)?;
+    report.publication_allowed = false;
+    report.stable_ready = false;
+    Ok(report)
+}
+fn assess_inputs(
+    version: &str,
+    inventory: &Inventory,
+    evidence: Option<&Evidence>,
+    bindings: &Bindings<'_>,
+    policy: &ReleasePolicy<'_>,
+    require_bundle: bool,
+) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
     if let Some(evidence) = evidence {
         validate_corresponding_sources(evidence)?;
@@ -1013,7 +1040,10 @@ pub fn assess_with(
         report.block("Acceptance evidence is missing");
         return Ok(report);
     };
-    if inventory.schema_version == SCHEMA_STABLE && evidence.bundled_content.is_none() {
+    if require_bundle
+        && inventory.schema_version == SCHEMA_STABLE
+        && evidence.bundled_content.is_none()
+    {
         report.block(
             "Stable content requires a signed bundle manifest and independent review binding",
         );

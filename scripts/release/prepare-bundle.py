@@ -124,13 +124,17 @@ def fingerprint(raw):
                                   and not entry.split(b'\t', 1)[1].startswith((b'docs/', b'release/')))).hexdigest()
 
 
-def prepare(root, preview, evidence, review, tested, production, version):
+def prepare(root, preview, evidence, review, tested, production, version, evidence_sha256):
     if preview['schema_version'] != 2 or evidence['schema_version'] != 4 or preview['version'] != version:
         raise ValueError('Preparation requires schema4/schema2 matching version')
     if (preview['production_sha256'] != production or evidence['production_sha256'] != production
             or evidence['tested_source_commit'] != tested or preview['target'] != evidence['target']
             or not preview['target'] or not re.fullmatch('[a-f0-9]{40}', tested)):
         raise ValueError('Explicit source/production/target pins differ')
+    preparation = preview.get('unsigned_preparation')
+    if (not isinstance(preparation, dict) or preparation.get('ready') is not True
+            or preparation.get('evidence_sha256') != evidence_sha256):
+        raise ValueError('Exact trusted functional/content preparation assessment must pass')
     if any(row['status'] != 'pass' or row.get('unresolved_conflicts',0) != 0 or row.get('unsupported_corrections',0) != 0 for row in evidence['coverage']):
         raise ValueError('Functional/content coverage must pass before preparation')
     if len(evidence['checks']) != len(REQUIRED_CHECKS) or {row['id']:row['method'] for row in evidence['checks']} != REQUIRED_CHECKS:
@@ -241,13 +245,14 @@ def main():
     # Source evidence is itself bounded data; the Rust preview validates its contracts.
     evidence_path = root / 'release/v1/acceptance-evidence.json'
     with evidence_path.open('rb') as source:
-        evidence = decode(source.read(MAX_JSON + 1))
+        evidence_raw = source.read(MAX_JSON + 1)
+        evidence = decode(evidence_raw)
     if preview['candidate_source_commit'] != head:
         raise ValueError('Preview source commit changed')
     reviewed = git('show', head + ':' + safe(review['path']))
     if len(reviewed) != review['bytes'] or hashlib.sha256(reviewed).hexdigest() != review['sha256'] or review['bytes'] > 16*1024**2:
         raise ValueError('Public review must match committed explicit reviewed bytes')
-    raw, identity = prepare(root, preview, evidence, review, args.tested_source, args.production, args.version)
+    raw, identity = prepare(root, preview, evidence, review, args.tested_source, args.production, args.version, hashlib.sha256(evidence_raw).hexdigest())
     manifest = decode(raw)
     if any(ref['path'] not in tracked for ref in manifest['files']):
         raise ValueError('Bundle resources must be tracked reviewed source')

@@ -1152,6 +1152,7 @@ struct Inputs {
     inventory_bytes: Vec<u8>,
     inventory: Inventory,
     evidence: Option<Evidence>,
+    evidence_sha256: Option<String>,
     head: String,
     candidate: Tree,
     world: WorldInputs,
@@ -1174,10 +1175,13 @@ fn inputs(options: &Options) -> Result<Inputs> {
         .unwrap_or(Path::new(EVIDENCE_PATH));
     let selected = relative(&root, selected)?;
     let evidence_path = root.join(selected.as_str());
+    let mut evidence_sha256 = None;
     let evidence = match fs::symlink_metadata(&evidence_path) {
-        Ok(_) => Some(release::decode_evidence(
-            &budget.read(&evidence_path, release::MAX_STABLE_RELEASE_BYTES)?,
-        )?),
+        Ok(_) => {
+            let raw = budget.read(&evidence_path, release::MAX_STABLE_RELEASE_BYTES)?;
+            evidence_sha256 = Some(hash(&raw));
+            Some(release::decode_evidence(&raw)?)
+        }
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
         Err(_) => return Err("Acceptance evidence cannot be inspected"),
     };
@@ -1194,6 +1198,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256,
         head,
         candidate,
         world,
@@ -1252,6 +1257,7 @@ pub fn report(options: &Options) -> Result<Report> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256: _,
         head,
         candidate,
         world,

@@ -54,3 +54,16 @@ issue the signed content receipt using the documented external-key CLI. Preparat
 never accesses a key. The existing compiled-trust source gate and assembler must
 validate the final signed bundle. Native/hosted checks, exact downloaded draft
 verification and owner installer smoke remain mandatory before publication.
+
+Schema2 previews additionally include `unsigned_preparation` with `ready` and
+`evidence_sha256`. The CLI reuses the full core release assessment, actual catalog
+record/source accounting, and exact evidence-file verification. It permits absent
+bundle artifacts at this phase; only pristine Windows observations may remain
+pending. Missing/duplicate coverage, missing/extra records, empty source/proof
+accounting, conflicts, corrections or stale source bindings make readiness false.
+Historical schema1 previews omit this field. Schema4 prerelease material previews
+remain available but cannot satisfy stable unsigned preparation. No readiness
+result here permits publication. The preparation script requires the trusted
+positive result bound to the same exact evidence bytes it parsed, in addition to
+existing inventory/source/target/production checks. Final signed prebuild and
+publication assessment still require the actual bundle and receipts.

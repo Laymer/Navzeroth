@@ -37,7 +37,18 @@ class Preparation(unittest.TestCase):
                              target=self.target,origin_policy=self.origins,sources=[],coverage=[],checks=[dict(id=key,method=value,status='unverified',artifacts=[]) for key,value in m.REQUIRED_CHECKS.items()])
 
     def run_prepare(self):
-        return m.prepare(self.root,self.preview,self.evidence,self.review,'b'*40,'a'*64,'1.0.0')
+        digest=hashlib.sha256(m.canonical(self.evidence)).hexdigest()
+        self.preview['unsigned_preparation']=dict(ready=True,evidence_sha256=digest)
+        return m.prepare(self.root,self.preview,self.evidence,self.review,'b'*40,'a'*64,'1.0.0',digest)
+
+    def test_exact_trusted_preparation_assessment_is_mandatory(self):
+        digest=hashlib.sha256(m.canonical(self.evidence)).hexdigest()
+        for assessment in [None,dict(ready=False,evidence_sha256=digest),
+                           dict(ready=True,evidence_sha256='c'*64),
+                           dict(ready=1,evidence_sha256=digest)]:
+            self.preview['unsigned_preparation']=assessment
+            with self.assertRaisesRegex(ValueError,'assessment'):
+                m.prepare(self.root,self.preview,self.evidence,self.review,'b'*40,'a'*64,'1.0.0',digest)
 
     def test_reproducible_exact_closure_and_rust_payload_order(self):
         first = self.run_prepare()
@@ -107,7 +118,9 @@ class Preparation(unittest.TestCase):
         (directory/'acceptance-evidence.json').write_bytes(m.canonical(self.evidence))
         original=m.command
         def command(root,args,*rest,**kwargs):
-            if args[0]=='cargo':return m.canonical(self.preview)
+            if args[0]=='cargo':
+                self.preview['unsigned_preparation']=dict(ready=True,evidence_sha256=hashlib.sha256(m.canonical(self.evidence)).hexdigest())
+                return m.canonical(self.preview)
             return original(root,args,*rest,**kwargs)
         argv=['prepare-bundle.py','--root',str(self.root),'--version','1.0.0','--tested-source',head,
               '--production',production,'--review-path',self.review['path'],'--review-sha256',self.review['sha256'],

@@ -45,7 +45,17 @@ pub struct SourceMaterial {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct Preparation {
+    pub ready: bool,
+    pub evidence_sha256: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Manifest {
+    /// Schema2 only; same core assessment plus actual catalog accounting.
+    /// This permits unsigned preparation and never authorizes publication.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unsigned_preparation: Option<Preparation>,
     /// Schema2 only: keys derived from the validated catalog, never caller guesses.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bundled_packs: Vec<azeroth_app::bundled_content::Pack>,
@@ -362,6 +372,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256,
         head,
         candidate,
         world,
@@ -485,7 +496,38 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         }
     }
     bundled_packs.sort_by(|a, b| a.manifest.path.cmp(&b.manifest.path));
+    let unsigned_preparation = if inventory.schema_version == release::SCHEMA_STABLE {
+        let non_observational = catalog.verified_non_observational();
+        let preparation_policy = ReleasePolicy {
+            verified_non_observational_sources: Some(&non_observational),
+            ..policy
+        };
+        let mut readiness = release::assess_unsigned_bundle_preparation(
+            &options.version,
+            &inventory,
+            &evidence,
+            &Bindings {
+                inventory_sha256: &hash(&inventory_bytes),
+                production_sha256: &candidate.fingerprint,
+                tested_source_commit: evidence.tested_source_commit.as_deref().unwrap_or(""),
+            },
+            &preparation_policy,
+        )?;
+        bind_records(&mut readiness, &inventory, &evidence, &catalog);
+        for reference in release::evidence_files(&inventory, &evidence) {
+            if let Err(message) = budget.verify(&root, reference) {
+                readiness.block(message);
+            }
+        }
+        Some(Preparation {
+            ready: release::BuildPhase::Prebuild.ready(&readiness),
+            evidence_sha256: evidence_sha256.ok_or("Preparation evidence identity missing")?,
+        })
+    } else {
+        None
+    };
     let manifest = Manifest {
+        unsigned_preparation,
         bundled_packs,
         normalization_conflict_files: sorted(
             evidence

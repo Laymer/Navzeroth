@@ -727,3 +727,64 @@ fn schema4_manifest_ceiling_and_world_scope_do_not_expand_historical_contracts()
     let raw = vec![b' '; MAX_STABLE_RELEASE_BYTES + 1];
     assert!(decode_inventory(&raw).is_err());
 }
+
+#[test]
+fn unsigned_preparation_reuses_full_accounting_without_allowing_publication() {
+    let (inventory, mut evidence) = stable_values();
+    evidence["bundled_content"] = Value::Null;
+    evidence["candidate_installer_sha256"] = Value::Null;
+    for row in evidence["checks"].as_array_mut().unwrap() {
+        row["status"] = json!("unverified");
+        row["artifacts"] = json!([]);
+        for field in ["operator", "recorded_at", "environment", "installer_sha256"] {
+            row[field] = Value::Null;
+        }
+    }
+    let (i, e) = decode(&inventory, &evidence);
+    let (target, origins) = (target(), origins());
+    let policy = ReleasePolicy {
+        target: Some(&target),
+        origins: Some(&origins),
+        origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: None,
+    };
+    let prepare = |i: &Inventory, e: &Evidence| {
+        assess_unsigned_bundle_preparation("1.0.0", i, e, &bindings(), &policy).unwrap()
+    };
+    let ready = prepare(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&ready), "{:?}", ready.blockers);
+    assert!(!ready.publication_allowed && !ready.stable_ready);
+    assert!(!BuildPhase::Prebuild.ready(&check(&i, &e)));
+    for mutation in 0..10 {
+        let mut bad = evidence.clone();
+        match mutation {
+            0 => bad["coverage"] = json!([]),
+            1 => {
+                let duplicate = bad["coverage"][0].clone();
+                bad["coverage"].as_array_mut().unwrap().push(duplicate);
+            }
+            2 => bad["coverage"][0]["included_record_ids"] = json!([]),
+            3 => bad["coverage"][0]["included_record_ids"] = json!(["synthetic:1", "invented:2"]),
+            4 => bad["coverage"][0]["source_ids"] = json!([]),
+            5 => bad["coverage"][0]["validation_evidence"] = json!([]),
+            6 => bad["coverage"][0]["unsupported_corrections"] = json!(1),
+            7 => bad["checks"][0]["operator"] = json!("partial pending"),
+            8 => bad["coverage"][0]["status"] = json!("unverified"),
+            _ => bad["production_sha256"] = json!(POLICY_HASH),
+        }
+        let (_, e) = decode(&inventory, &bad);
+        assert!(
+            !BuildPhase::Prebuild.ready(&prepare(&i, &e)),
+            "mutation{mutation}"
+        );
+    }
+    let prerelease =
+        assess_unsigned_bundle_preparation("1.0.0-rc.1", &i, &e, &bindings(), &policy).unwrap();
+    assert!(!BuildPhase::Prebuild.ready(&prerelease) && !prerelease.publication_allowed);
+    assert!(assess_unsigned_bundle_preparation("1.0", &i, &e, &bindings(), &policy).is_err());
+    let mut historical = i.clone();
+    historical.schema_version = 3;
+    assert!(
+        assess_unsigned_bundle_preparation("1.0.0", &historical, &e, &bindings(), &policy).is_err()
+    );
+}
