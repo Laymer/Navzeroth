@@ -2643,7 +2643,7 @@
     },
     {
       "id": "navzeroth-world-content",
-      "revision": "f0d97682610c8acb91e8a6d722a4bdfcfdbfbdea",
+      "revision": "5d9c3594c8daabac72b309c0f2edb0769c98e530",
       "publisher": "Navzeroth project (repository owner)",
       "origin": {
         "edition": "wow_forever",
@@ -2658,8 +2658,8 @@
         "obligations": "Retain copyright, BSD license and corresponding generator source; upstream data rights remain separate.",
         "evidence": [
           {
-            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/LICENSE",
-            "revision": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+            "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/daad17bbb82e2da2c2b4b26b22ad083ba2425eda/LICENSE",
+            "revision": "daad17bbb82e2da2c2b4b26b22ad083ba2425eda",
             "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
             "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
           }
@@ -2667,22 +2667,22 @@
       },
       "retrieval": {
         "method": "manual_local",
-        "max_total_bytes": 93379,
+        "max_total_bytes": 95291,
         "minimum_interval_ms": 1000,
         "max_requests": 3,
         "access_evidence": {
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/LICENSE",
-          "revision": "86756f74b30b66bac9c0104ccdfe872d15e68a0b",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/daad17bbb82e2da2c2b4b26b22ad083ba2425eda/LICENSE",
+          "revision": "daad17bbb82e2da2c2b4b26b22ad083ba2425eda",
           "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
           "reviewed_scope": "Original project-authored transformation under repository BSD-3-Clause; retain exact source and license. Does not grant upstream rights."
         }
       },
       "files": [
         {
-          "path": "content/source-materials/objects/3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
-          "bytes": 4266,
-          "sha256": "3a6d51b440d2a92f42590dab2bad5634d72ff87282874a8c68cd06ffb357fca4",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/data-generators/navzeroth_datagen/bounded.py",
+          "path": "content/source-materials/objects/f77efcf98808dcf795aa1e695e466dca089690daa924d2296fbaa163622b1858",
+          "bytes": 6178,
+          "sha256": "f77efcf98808dcf795aa1e695e466dca089690daa924d2296fbaa163622b1858",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/daad17bbb82e2da2c2b4b26b22ad083ba2425eda/data-generators/navzeroth_datagen/bounded.py",
           "fields": [
             "loot.reference-expansion",
             "travel.flight-time",
@@ -2694,7 +2694,7 @@
           "path": "content/source-materials/objects/6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
           "bytes": 87620,
           "sha256": "6f6aabd6a4aa4fcba6534381ebacb17655cd83cb10ad7149a40bf205a6055ec8",
-          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/86756f74b30b66bac9c0104ccdfe872d15e68a0b/data-generators/world_to_content.py",
+          "url": "https://raw.githubusercontent.com/Laymer/Navzeroth/daad17bbb82e2da2c2b4b26b22ad083ba2425eda/data-generators/world_to_content.py",
           "fields": [
             "loot.reference-expansion",
             "travel.flight-time",
