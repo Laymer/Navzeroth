@@ -28,7 +28,7 @@ ABSENT = 'Actual admitted world closure/policy are absent; only legacy source kn
 def safe_path(value):
     if (not isinstance(value, str) or not value or len(value) > 1024
             or not re.fullmatch(r'[A-Za-z0-9_./-]+', value)
-            or value.startswith('/') or any(p in ('', '.', '..') or p.startswith('.') for p in value.split('/'))):
+            or value.startswith(('/', '-')) or any(p in ('', '.', '..') or p.startswith('.') for p in value.split('/'))):
         raise ValueError('unsafe resource path')
     return value
 

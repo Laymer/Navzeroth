@@ -114,7 +114,7 @@ class ParityTests(unittest.TestCase):
             self.assertEqual(git.call_args.args[1:], ('lfs', 'pull', '--include=content/a.json,' + self.raw, '--exclude='))
             p.fetch(self.root, [self.raw], offline=True)
             self.assertEqual(git.call_args.args[1:], ('lfs', 'checkout', self.raw))
-            for bad in ['../secret', '/absolute', 'media/*', 'a,b', 'a/./b', 'a/.hidden', 'C:/foo']:
+            for bad in ['../secret', '/absolute', 'media/*', 'a,b', 'a/./b', 'a/.hidden', 'C:/foo', '--all']:
                 with self.assertRaises(ValueError):
                     p.fetch(self.root, [bad])
             with mock.patch.object(p, 'MAX_FILES', 1), self.assertRaises(ValueError):
