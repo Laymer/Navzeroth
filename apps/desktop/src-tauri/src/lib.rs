@@ -906,6 +906,20 @@ async fn get_catalog_page(
     blocking(state, move |app| app.catalog_page(&text)).await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn get_world_page(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::world::WorldPage, AppError> {
+    blocking(state, move |app| app.world_page(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
+async fn get_record_origins(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::world::RecordOrigins, AppError> {
+    blocking(state, move |app| app.record_origins(&text)).await
+}
+#[tauri::command(rename_all = "snake_case")]
 async fn get_authored_catalog(
     state: State<'_, Application>,
     text: String,
@@ -1241,6 +1255,8 @@ pub fn run() -> i32 {
                 get_gear_catalog,
                 get_authored_catalog,
                 get_catalog_page,
+                get_world_page,
+                get_record_origins,
                 compare_gear,
                 get_historical_snapshot,
                 promote_snapshot,
