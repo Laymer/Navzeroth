@@ -38,10 +38,13 @@ closure, then fresh exact-candidate allten/source/Windows gates. Remote intermed
 no tag, owner acceptance, publication or website deployment.
 
 Actual subsequent V14 outcome: CI39497088081 and coverage39497088020 were cancelled
-when root merged264 before their Windows collectors finished. The PR concurrency
-policy cancels older runs. Root did not explicitly cancel these V14 runs, but the
-merge triggered their replacement; this was an avoidable coordination mistake.
+after root merged264 before their Windows collectors finished. The merge and
+configured PR concurrency are consistent with supersession; the log does not
+explicitly name the cause. Root did not explicitly cancel these V14 runs; merging
+before completion was an avoidable coordination mistake.
 V14CI8jobs succeeded, RustWindows cancelled, stability skipped; no full CI pass.
+Coverage aggregate actually failed prerequisite RUST_RESULT; no verdict or combined
+90percent pass exists. Linux and TypeScript collectors succeeded; Windows cancelled.
 Root explicitly cancelled stale-binding intermediate7667 runs39498793266(source),
 39498793271(package),39498793347(coverage),39498793308(CI) to avoid spending runner
 resources on invalid bindings. Pages intermediate validation succeeded without
