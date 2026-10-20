@@ -949,3 +949,36 @@ V11identities removed ONLY after byte-exact archiveb0d9c442. Next independent V1
 public review, actual preparation/reproduction, committed identities BEFORE keys,
 new receipts/compiled-policy/source verification, then onefreshcandidatepush.
 No tag, owner result or publication; remoteee26 remains actualfailedV11.
+
+
+## V12 public review and exact unsigned preparation before key use
+
+World independent public review152c7ac0 initially69735B/d110494b had an overscoped
+LCOV attribution sentence. Root caught it BEFORE any preparation/key use; normal
+childa6e891d0 corrects only that attribution and focused handoff: tooling alone
+range-streamed selected compressed LCOV to derive summaries/hashes, no profiles
+were downloaded/streamed; root independently read/hashchecked raw verdict/receipts
+and derived summaries, not full LCOV. Initial Git history remains intact. Corrected
+review69881B SHAb22e2dbf570eb5968d64e246a9fb4a47d2e7ec3c51262917850ef230226cd98d
+was independently streamed/Git-pinned by root: all88nested/uniqueFileRefs, b378
+production3125entries, testedb615; no mutable coordinator/canonical evidence refs.
+Normal review integration7afdbc3d remained held during both actual preparations.
+
+Root actual release-materials preview passed unsigned_preparation.ready with
+evidence28c9fa0e524323d3b82b0275eba5c260efe21f2441b6552670281f9e107107e3.
+All82selectedmaterials395722450B, source/corresponding-source/normalization/catalog/
+pack/target/inventory fields equal actualV11. An initial root summing wrapper used
+files.bytes instead of actual files.input.bytes; corrected wrapper verified count/
+bytes. This was an analysis wrapper error, not a failed source preview.
+
+Actual documented prepare-bundle.py with explicit b615/b378/corrected review ran
+debugCLI (cached dev build0.42s; no new optimized build claim). Independent desktop
+ran its own optimized preview and pureprepare, streamed all84resources395793235B,
+verified all88review/Gitpins and83nonreviewresources exactly V11-identical. Its
+first comparison stopped while root outputs did not yet exist; after actual root
+completion, canonical byte equality passed. Manifest17185B SHA
+0968db00eb41a0735ea6d13b0d1c133b1ad57582bee008dd34fc10f12ac124a2;
+identity527B SHAdfd0b27e896ad8f5a727bae221cbbd694ef7d179906a54f58e29e07a3d2a5b0c.
+Separate expected identity was copied from these independently agreed prepared
+bytes, before any receipt existed. Root now commits these outputs BEFORE external
+key use. No V12signatures/Windows claims yet; exact9observations unverified.
