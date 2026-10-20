@@ -42,3 +42,26 @@ reviewed reader prerequisite. PowerShell7 execution, actual installed full bundl
 all eight hosted case results, exact draft owner smoke and public downloads remain
 unverified here. No signing, network adapter change, publication, purchase, quota
 expansion or push occurred. Root must review/integrate before protected checks.
+
+## Reviewed prerequisite union
+
+Root independently cleared readerd4b29d6d48a407b6dd4b5c3e3e5788bdb9828e23 and
+workload-state6d398ade before normal merges7c4d8ec6 and058096d6. No conflicts and
+no edits to either dependency's files. Root separately verified actual large
+contracts on the reader branch; those actual-file checks are not claimed here.
+Final workflow code667657433514d9aecec45aae5675a661d76f4f63 adds the reader's
+no-argument bounded synthetic suite to both PowerShell5.1 and7 workflow jobs.
+The previously pending reader wiring is now implemented. No ActualRoot argument
+or local final corpus dependency is added to those tests.
+
+Own final native PowerShell5.1 results: default reader20checks, actual extracted
+gate-body12checks, preparation/evidence42checks and producer-helper10checks all
+pass. The earlier expected default-reader count22 was corrected to its actual
+printed20; no omitted check is claimed. Combined Node39tests pass, including14
+reviewed workload-state tests and6 workflow guards. actionlint and diff checks
+pass. The sixth guard verifies both shell invocations and absence of ActualRoot.
+
+Actual PowerShell7/hosted installer execution, all eight hosted observations,
+owner smoke, source/installer release binding and public download acceptance
+remain unverified. This branch supplies no acceptance pass. Code is frozen for
+root independent review; no push, signing or publication was performed.
