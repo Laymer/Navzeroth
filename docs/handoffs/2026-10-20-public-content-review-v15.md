@@ -49,3 +49,14 @@ key access, signature issuance or canonical preparation by this reviewer. Next r
 independent review/normal merge, actual unsigned preview and independent exact-byte
 reproduction, committed identities before keys, renewed signed closure, then one
 frozen push for fresh complete exact-candidate gates without premature supersession.
+
+Pre-issuance correction: normal child3b3f2230a7f03bf7931c592139bb06cde5d14a4c
+changes ONLY remaining_release_gates.final_native_coverage.scope: overall workflow
+cancelled, aggregate JOB failed prerequisite RUST_RESULT after missing Windows
+receipt. Prior wording incorrectly called the aggregate cancelled. Other facts and
+all204 FileRefs remain unchanged; earlier93c52 remains in Git history. Corrected
+review120142bytes SHA256
+969d913329dde54a89703a2d4848c042cd23813cf0268c65dfd86440e7ede9ca.
+This handoff is deliberately not self-pinned by the review. No keys were used;
+coordinator will discard/recreate any provisional unsigned outputs with corrected
+review before identity commitment/signing.
