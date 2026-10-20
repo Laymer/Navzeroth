@@ -31,6 +31,15 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Latest actual outcome: V8package39424036854 FAILED finalguard after rawinstall/
+resources/first-startPASS and performanceDTOvalidationFAIL; four latercases never
+ran. RecorderSUCCESS retained4actualrows. Producer usedOrderedDictionary but
+validator expectedJSONobjectmetricmembers. Desktopowns narrowconstructor/real
+producerregression; worldauditsunrunmodes, toolingindependentlyreproducedcause.
+PreparedV9wasNEVERPUSHED; its signatures and actualV8rawcases archived2a09bf55
+before repair. Allcanonical9observations remain unverified. No stabletag/publication.
+
+
 Current continuation: reviewed coverage PR254 normally integrated6c6fda90.
 Actualroot/world12Node+actionlint pass; V8CI/source passed but combinedcoverage
 39424036847 correctlyFAILED missing WindowsCLIentrypoint execution despite0files

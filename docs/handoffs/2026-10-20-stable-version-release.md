@@ -702,3 +702,39 @@ defect if present, then push one valid V9candidate and require alltenprotected
 checks plus actualboth-platformsourceparity and independent finalreview. Fresh
 exact resulting-main checks/stability precede tag; exact verifieddraftinstaller
 owner smoke still required. No stabletag, ownerpass or publication.
+
+
+## Actual V8 hosted outcome blocks the prepared V9 candidate
+
+Package39424036854 completedFAIL at finalguard55 (13:57:24UTC). Exactsource
+5d9c89522241eff5285494503289c940a9849d1c/treeequalremotee5ec; installerSHA
+d3b1058f07862d7f926cf5517dd993662d32a10122d0127edf8bcee07d787922,
+production52d00899. Raw INSTALL/RESOURCES/FIRST-START PASS; PERFORMANCE FAIL
+'Performance metric set differs.' Four later hosted cases never ran. Recorder
+actuallySUCCESS retained exactly4cases; finalguard correctly rejected actual
+producerfailure despite continued-on-error displayed success. Rawartifact12270270379
+and overlay12270385152 downloaded oncebydesktop; toolingindependently inspected
+fulljoblog and reproduced the metric-type mismatch in actualPS7.
+
+Actual source-backed installed first-start workload passed after PR252, including
+8820nodes/6039objectives/4245quests/24359items/32365edges. Rawtimings: load340613ms,
+activation3ms,browse15464.2802ms,planning1747.5748ms,totalworkload994553ms.
+Failedperformance record also retains install8552.4756ms and nativePID observed
+peak6366273536B,4884samples at target200ms/0samplingerrors, excluding WebView2
+descendants/installer and allocations after lastsample. Host MicrosoftVM/Xeon
+Platinum8573C/RAM17174360064B, cache uncontrolled/possiblywarm. These are partial
+engineering observations tied to failedV8case, NOT completedperformance acceptance
+or currentcandidate/ordinaryPC evidence. Rawbytes all4cases/fresh report preserved
+under release/history/2026-10-20-v8-hosted-failure; no observation reclassified.
+
+Concretecause: liveproducer creates6-key OrderedDictionary measurements; validator
+counts7PowerShelladapterproperties instead of6metricmembers. Samevalues as parsed
+PSCustomObject pass. Desktop owns narrow typedproducerconstructor plus real
+InvokeStableCase regression and exactkeyvalidation; toolingindependently confirms
+repro, world reviews four unrun workload modes and actual timebudget semantics.
+No speculative gate/budget waiver. Fresh native cases remain required.
+
+V9signed3e87 was NEVERPUSHED or hosted-tested. Root archived its exactcanonical
+bytes/history at2a09bf55 BEFORE repairintegration. Remote remainsV8e5ec; no new
+dispatch, tag, ownerpass or publication. After independently reviewed repair(s),
+renew production/publicreview/receipts and require every freshgate.
