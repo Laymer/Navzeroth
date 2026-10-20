@@ -62,10 +62,10 @@ try{
  evidence.passed=true;
 }catch(error){evidence.error=String(error.message).slice(0,2048);process.exitCode=1;}
 finally{
- progress.phase('cleanup');
+ try{progress.phase('cleanup');}catch{evidence.passed=false;evidence.error??='Progress checkpoint failed during cleanup';process.exitCode=1;}
  if(browser)await browser.close().catch(()=>{});
  if(child&&!exited)spawnSync('taskkill',['/PID',String(child.pid),'/T','/F'],{timeout:15000,stdio:'ignore'});
  if(policy){const deleted=spawnSync('reg',['delete','HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\\WebView2\\AdditionalBrowserArguments','/v',exe.split(/[\\/]/).pop(),'/f'],{timeout:15000,stdio:'ignore'});if(deleted.error||deleted.status!==0){evidence.passed=false;evidence.error='Temporary debugging policy cleanup failed';process.exitCode=1;}}
- progress.phase('finished');
+ try{progress.phase('finished');}catch{evidence.passed=false;evidence.error??='Final progress checkpoint failed';process.exitCode=1;}
  evidence.elapsed_ms=Date.now()-started;evidence.finished_at=new Date().toISOString();save(out,evidence);
 }
