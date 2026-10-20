@@ -1,4 +1,8 @@
 {
+  "schema_version": 1,
+  "version": "1.0.0-rc.1",
+  "prerelease": true,
+  "signature": "unsigned",
   "tag": "v1.0.0-rc.1",
   "public_verified": true,
   "source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
