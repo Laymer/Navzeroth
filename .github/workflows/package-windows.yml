@@ -87,6 +87,12 @@ jobs:
       - name: Stable preparation and hosted evidence tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-StablePreparation.ps1
+      - name: Stable source and tag gate tests (Windows PowerShell 5.1 mocks)
+        shell: powershell
+        run: ./scripts/windows/Test-StableWorkflowGate.ps1
+      - name: Stable source and tag gate tests (PowerShell 7 mocks)
+        shell: pwsh
+        run: ./scripts/windows/Test-StableWorkflowGate.ps1
       - name: Guided acceptance kit tests (Windows PowerShell 5.1)
         shell: powershell
         run: ./scripts/windows/Test-AcceptanceKit.ps1
@@ -131,7 +137,7 @@ jobs:
           package-manager-cache: false
       - name: Native smoke pure-helper tests (synthetic, not native acceptance)
         shell: bash
-        run: node --test scripts/windows/stable-workload-lib.test.mjs scripts/windows/native-smoke-lib.test.mjs scripts/windows/native-command-boundaries.test.mjs scripts/windows/verify-installed-tree.test.mjs
+        run: node --test scripts/windows/stable-workload-lib.test.mjs scripts/windows/native-smoke-lib.test.mjs scripts/windows/native-command-boundaries.test.mjs scripts/windows/verify-installed-tree.test.mjs scripts/windows/package-windows-workflow.test.mjs
       - name: Install isolated Corepack
         shell: bash
         run: |
@@ -480,6 +486,7 @@ jobs:
           $baselineSetup = Get-NativeSmokeSetup $baseline
           ./scripts/windows/Stable-Acceptance.ps1 -Root . -Directory dist/windows -InstallerSha256 $hash -BaselineInstaller $baselineSetup.FullName -BaselineSha256 $pin[0].sha256 -BuildIdentity release/v1/bundled-content-build-identity.json -OutputDirectory (Join-Path $env:RUNNER_TEMP 'native-smoke/stable-cases')
       - name: Record schema4 hosted observations without inventing missing cases
+        id: hosted_evidence
         if: always() && steps.build_windows.outputs.stable == 'true' && steps.stable_acceptance.outcome != 'skipped'
         shell: pwsh
         run: |
@@ -503,11 +510,16 @@ jobs:
             ${{ runner.temp }}/native-smoke/stable-cases/raw/*.json
           if-no-files-found: warn
           retention-days: 90
-      - name: Hold the package when actual stable acceptance failed
+      - name: Verify stable hosted evidence and exact materials before accepting source or tag artifacts
+        id: stable_draft_gate
         if: always() && steps.build_windows.outputs.stable == 'true'
         shell: pwsh
         run: |
-          if ('${{ steps.stable_acceptance.outcome }}' -ne 'success') { throw 'Actual full-bundle hosted acceptance is missing or failed' }
+          if ('${{ steps.stable_acceptance.outcome }}' -ne 'success' -or '${{ steps.hosted_evidence.outcome }}' -ne 'success') { throw 'Actual full-bundle hosted acceptance or its evidence is missing or failed' }
+          # All eight exact-installer hosted rows must pass. Only pristine pending
+          # owner smoke may remain; preparation never authorizes publication.
+          ./scripts/windows/Verify-ReleaseArtifacts.ps1 -Version '1.0.0' -Directory dist/windows -ReadinessPhase draft -Evidence dist/acceptance-evidence/acceptance-evidence.json
+          if ($LASTEXITCODE -ne 0) { throw 'Stable source/tag draft readiness or exact release materials verification failed' }
 
   draft-release:
     name: Draft GitHub release
