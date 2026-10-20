@@ -68,6 +68,7 @@ exit 37
             Check "$version gate refusal is nonzero" ($code -ne 0)
             Check "$version refusal retains previous artifacts" (([IO.File]::ReadAllText($sentinel)) -eq 'preserve previous artifact')
         } elseif ($version -in @('1.0.0-rc.1', '0.8.1')) {
+            if ($code -ne 0) { Write-Host "Preview packaging child failed with exit $code`: $result" }
             Check "$version preview addon package succeeds without Cargo" ($code -eq 0)
             Check "$version does not invoke the stable-only packaging gate" (-not $called)
             Check "$version addon ZIP exists" (Test-Path -LiteralPath (Join-Path $output "AzerothNavigator-addon-$version.zip"))

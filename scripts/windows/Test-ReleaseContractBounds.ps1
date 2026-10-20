@@ -15,10 +15,15 @@ function Write-Sized([string] $Name, [string] $Prefix, [int] $Bytes) {
 }
 try {
     $legacy = Write-Sized 'legacy.json' '{"schema_version":3}' 16777216
+    Check 'generic exact 16 MiB succeeds' ((Read-BoundedReleaseText $legacy).Length -eq 16777216)
+    $smallGeneric = Write-Sized 'generic.txt' 'SOURCE_COMMIT' 64
+    Check 'generic small artifact succeeds' ((Read-BoundedReleaseText $smallGeneric).StartsWith('SOURCE_COMMIT'))
     Check 'historical exact 16 MiB' ((Read-BoundedReleaseContractText $legacy).Length -eq 16777216)
     $large = Write-Sized 'large.json' '{"schema_version":4}' 16777217
     Check 'schema4 above historical limit' ((Read-BoundedReleaseContractText $large).Length -eq 16777217)
-    Refuses 'generic limit unchanged' { Read-BoundedReleaseText $large }
+    $overflowError = $null
+    try { Read-BoundedReleaseText $large | Out-Null } catch { $overflowError = $_.Exception }
+    Check 'generic cap+1 refuses for actual size bound' ($null -ne $overflowError -and $overflowError.Message.Contains('Release JSON exceeds its size limit.'))
     foreach ($version in 1,2,3,5,'"4"','true','4.0','null') {
         $bad = Write-Sized 'bad.json' ('{"schema_version":' + $version + '}') 16777217
         Refuses "unsupported/oversized schema $version" { Read-BoundedReleaseContractText $bad }
@@ -41,7 +46,12 @@ try {
     Refuses 'future schema refuses even small file' { Read-BoundedReleaseContractText $small }
     $invalid = Join-Path $root 'invalid.json' 
     [IO.File]::WriteAllBytes($invalid, [byte[]]@(255))
-    Refuses 'invalid UTF8' { Read-BoundedReleaseText $invalid }
+    $utf8Error = $null
+    try { Read-BoundedReleaseText $invalid | Out-Null } catch { $utf8Error = $_.Exception.GetBaseException() }
+    Check 'generic invalid UTF8 reaches strict decoder' ($utf8Error -is [Text.DecoderFallbackException])
+    $validBom = Join-Path $root 'valid-bom.txt'
+    [IO.File]::WriteAllBytes($validBom, [byte[]]@(239,187,191,97))
+    Check 'generic UTF8 BOM succeeds' ((Read-BoundedReleaseText $validBom) -ceq 'a')
     Refuses 'directory refused' { Read-BoundedReleaseContractText $root }
     if ($ActualRoot) {
         foreach ($name in 'coverage-inventory','acceptance-evidence') {
