@@ -42,3 +42,18 @@ final aggregate candidate. Keep the separate version/release PR, final bindings,
 receipt issuance, final exact-commit checks, tag/draft downloads and owner smoke
 as subsequent gates. No stable tag, publication, keys, purchases or quota changes
 were made by this integration.
+
+## Protected foundation integration and final main refresh
+
+Foundation PR232 passed all ten protected checks and actual source platforms/parity
+on exact2b7fb253: CI39391619569, Coverage39391619549, Windows package39391619544,
+source39391619583. Final composition review confirmed its tree equals reviewed
+c357. It merged to main13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a
+at2026-10-20T08:37:39Z. Normal delivery refresh6d64505a against that main commit
+has exactly the4fb34511 tree; no file/conflict changes. Subsequent aggregate checks
+must run on the final metadata candidate, including source4 on both platforms.
+
+Corrected the documented weekly preflight command to include required --yaml with
+--ref. The first preflight stopped before dispatch or acquisition; no run occurred
+from that failed syntax. Exactly one bounded real run is separately recorded by
+the coordinator after this foundation main merge. Generated changes stay deferred.
