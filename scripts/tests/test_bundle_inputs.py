@@ -151,6 +151,29 @@ class Inputs(unittest.TestCase):
         except OSError: self.skipTest('symlinks unavailable')
         with self.assertRaises(ValueError): h.hydrate(self.root, True)
 
+    def test_authored_markdown_autocrlf_refuses_then_lf_contract_hydrates_exactly(self):
+        path = 'content/release-packs/authored-v2/evidence/authoring-statement.md'
+        raw = b'# Synthetic engineering evidence\n\nExact authored bytes.\n'
+        self.write(path, raw)
+        self.manifest['files'].append(self.ref(path))
+        self.save(); self.stub()
+        self.git('config', 'core.autocrlf', 'true')
+        p = self.root / path
+        p.unlink(); self.git('checkout', 'HEAD', '--', path)
+        self.assertIn(b'\r\n', p.read_bytes())
+        with mock.patch.object(h.parity, 'fetch') as fetch:
+            with self.assertRaisesRegex(ValueError, 'non-LFS resource differs'): h.hydrate(self.root, True)
+            fetch.assert_not_called()
+        rule = 'content/release-packs/authored-v2/**/*.md text eol=lf'
+        self.assertEqual((SCRIPT.parent.parent / '.gitattributes').read_text().splitlines().count(rule), 1)
+        with (self.root / '.gitattributes').open('a') as out: out.write(rule+'\n')
+        self.git('add', '.gitattributes'); self.git('commit', '-qm', 'authored Markdown LF contract')
+        p.unlink(); self.git('checkout', 'HEAD', '--', path)
+        self.assertEqual(p.read_bytes(), raw)
+        self.assertEqual(h.hydrate(self.root, True)['files'], 3)
+        p.write_bytes(raw + b'altered')
+        with self.assertRaisesRegex(ValueError, 'non-LFS resource differs'): h.hydrate(self.root, True)
+
     def test_replacement_review_v2_exact_lf_rule(self):
         path = REVIEW.replace('.json', '-v2.json')
         rule = path + ' text eol=lf'
