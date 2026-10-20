@@ -31,6 +31,20 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Latest actual V12 outcome: package39454144270 FAILEDnativeupgradegate before
+ALL8stablecases/recorder(SKIPPED). Native32/0, baseline5/0, verify6/1 timeoutafter
+strictprofile/activeIPC; presence diagnostics true. Newdriver redundantsame-option
+selectOption clears ContentScreen inspection without profile-effect refetch.
+Desktop/tooling independently trace source+IPC; actualReact/browser control/repair
+now ownedbydesktop, claim eec12a96, separateworktreebaseline728a. No runtimeUI/
+packchange authorized by thatrepair. SignedV12identities/raw5/actualcoverage7
+bytearchivedb5ee20a8 BEFOREintegration. CI39454144194/source39454144199/
+coverage39454144203 actuallyPASS, Pages39454144258validationnodeploy; all9canonical
+observations remain unverified. Next controlledUItest, reviewedrepair, newexact
+review/receipts and freshallten/source/Windows gates. No tag/owner/publication.
+[Failure handoff](handoffs/2026-10-20-v12-native-selection-failure.md).
+
+
 Latest V12signed closurebc43318b independently passes root/tooling owncrypto,
 assemblies and DEFAULTcompiledpolicy/sourcechecks:84resources395793235B/two packs,
 89evidence files and EXACT9pending only; buildtrue/stablefalse/publicationfalse.

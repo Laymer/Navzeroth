@@ -1031,3 +1031,50 @@ recorded; no failed evidence is promoted. Require allten/newsource/native/Window
 gates before releasePRmerge, fresh resulting-main checks/stability beforetag,
 verifieddraft beforeowner smoke. Main still807ef674; generated243 remainsdeferred.
 No stabletag, owner result, publication or website deployment exists.
+
+
+## Actual V12 checks and native-selection failure before any stable case
+
+Candidate728a9198 was pushed16:04UTC; actualPRmergecheckoutexact
+fdf83a2961eb66ac04021e6de6721cab6a188dba/tree08e9fffdcadcc9c52cbfb5d666bcb6454ea9e0c2
+is tree-identical. PR259 actuallymergedb615 at16:04:04 via normalparentpush; main
+remains807ef674. External38PRledger records37mergedancestors+239open; generated
+draft243c23 notancestor. No forcepush, unrelatedbranch merge or mainchange.
+
+Fresh V12CI39454144194 SUCCESS nineapplicablejobs, stabilitySKIPPED. ActualLinux
+1602pass/8ignored andWindows1584pass/8ignored workspace-step parsed totals from
+206summaries each; both17cachetests/actualRustDTO/boundedfile5Linux4Windows pass.
+Exactsourcefullcorpus two regeneration/committedbytes eachOS and parity
+39454144199 SUCCESS; Pages39454144258 validationSUCCESS/deploySKIPPED.
+Coverage39454144203 allcollectors/combinedgate118764881554 SUCCESS:305inventory/
+276measured all>=exact90/100 no rounding/missing/below; CLI371/409Linux18/409
+Windows, desktop18/18Windows positive. Bothnative receipts clean_source/tests_passed
+true/incomplete[]. Tooling range-streamedselectedcompressedLCOV, no profiles/full
+LCOVcopied; root independentlyhashcheckedretainedrawverdict/receipts+derivedsummaries.
+VerdictSHA6c3f96549180c2986753c2cbbb1da81c0debc8e3b97db75826c66950158bc8d5.
+Actual signedbundle/defaultcompiledtrust84/395793235B/two packs andcoverage-native
+smoke32/0passed. These are not installer acceptance.
+
+Package39454144270 FAILEDblockingnativegate after actualnative32/0 andbaseline
+populate5/0; upgradedverify6/1 timedout17:06:24.686, presenceflagsbothtrue.
+StrictissuedactiveIPC245405→245409 completes before UIwait; initialUIactivequery
+244675→245376, no lateractivequery untiltimeout275333. Driver unconditionally
+selectOption on alreadyselected issued ID fires ContentScreen.onChange, which
+clearsactive while unchangedprofile means no effectrefetch. Root/tooling independently
+review sourceandtrace; controlledactualReact/browser regression is required, not
+an assumption of productdata loss or bundled-default exception. Existing pure
+callback tests missed this realUIinteraction. Installer26117754B SHA
+90866757d5d13154f8e1ad961fe395057dab679f2b1705d292dfe1cd0fc54d11
+was actuallyverifiedunsigned/exactsourcefdf before failure. ALL8stablecases and
+recorderSKIPPED; no currentperformance/owner acceptance.
+
+Root claimed archivebaseline728; commitb5ee20a8722df59590421f3037db5a82ede5fe1c
+preserves exactV12canonical3/raw5/coverage7 plus explicitraw/derivedprovenance.
+PostcommitFileRefs and exactGitblobs checked: no WindowsJSONnormalization.
+Desktop solewriter claim eec12a96 /tmp/navzeroth-native-upgrade-selection owns
+newconditionalUIselection helper/sharedactualReactbrowser control+tests, source
+baseline728; runtimeUI/components/packs remain untouched. Next: oldunconditional
+negativecontrol, repairedsame/differentselection and missing/wrong/timeout checks,
+independentreview, normalrepairintegration then renewedproduction/review/prepared
+identities/receipts and freshallten/source/Windows checks. All9canonicalobservations
+remain unverified; no stabletag/owner/publication/website deployment.
