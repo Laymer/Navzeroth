@@ -165,3 +165,24 @@ legacy acceptance-kit test borrowing the current schema4largeinventory. No key
 was accessed and no new signature was issued. Legacy fixture/scope repair and
 remaining helper audits are pending. V2 review bytes remain immutable; final
 production review and bundle preparation will be renewed after that repair.
+
+## Final legacy fixture repair union
+
+Reviewed PR244 final61d18f7b merged normally to delivery4dd83080 at09:19:23Z.
+Root independently reviewed code9f2d57bf and ran native PowerShell5.1 through the
+GitHub-shaped wrapper:21checks passed/exit0. It owns bounded schemas1/2/3
+fixtures with exact34/34/19procedure/unit accounting and specifically refuses
+schema4. Production legacy kit behavior is unchanged (header comment only);
+actual stable packaging uses Stable-Acceptance.ps1. The author ran all12helper
+scripts through that wrapper:238assertions/exit0, with an intentional wrong
+assertion still failing. Exact testedsource/log hashes and WSL synthetic Git/
+locally unavailable PS7 limits are retained in legacy-acceptance-helper-sequence.
+
+Normal version union3fea6e4e0d60c8308751e9c7cd666d36d5ba08cf has production
+efeabca831619813b518a5eb1fbe315d12f3a59dda70bdc305337edf6e24b841/3132entries.
+Only legacy test fixtures/comment/docs changed after949. Rust/TS/addon/content
+and source pins remain unchanged; actual full-pack proof is stillf391ed9,
+portable/UI suites stillf064. Acceptance binds new3fea/production while all nine
+Windows/owner rows remain pristine pending. Fresh delivery protected checks and
+additive immutable V3 review precede final preparation/signing. No new signature
+or acceptance promotion has occurred.

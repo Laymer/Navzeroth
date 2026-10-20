@@ -34,15 +34,15 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
 independent final integration review, all ten protected checks and actual Linux/
 Windows source parity. Separate reviewed final content/native delivery PR238
-remains pending refreshed checks atdf62631f; its necessary bounded reader and
+remains pending refreshed checks at4dd83080; its necessary bounded reader and
 workflow-test exit repairs are recorded without relabeling earlier package failures.
 
 Separate draft version/release PR239 prepares six1.0.0declarations, complete
 verified bundles, historical source warnings, estimates and declared exclusions.
 Its fresh full-pack scenario passed atf3917490 on shared Linux/WSL2; this is not
-Windows or ordinary-PC performance evidence. Final repair union94947a6a has
-independent V2 review; signed content evidence is being renewed for its exact
-production identity. Initial signatures remain historical under release/history.
+Windows or ordinary-PC performance evidence. Final repair union3fea6e4e adds the reviewed legacy fixture correction;
+additive independent V3 review and signed content evidence are being prepared for
+its exact production identity. Initial signatures remain historical under release/history.
 [Version handoff](handoffs/2026-10-20-stable-version-release.md).
 
 Actual weekly run39394989774 completed one bounded network acquisition and one
