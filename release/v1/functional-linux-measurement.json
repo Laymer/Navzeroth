@@ -1,12 +1,13 @@
 {
   "schema_version": 1,
-  "source_commit": "f06470dc3af482810c15aef5d721fc4b5c51a17d",
+  "source_commit": "f3917490f35bad61de2f1b46008596286943635b",
+  "production_sha256": "3895e13e060c22c899e4729cf166a44f9f0c356c208bf444377e619e7478e432",
   "returncode": 0,
-  "seconds": 157.44070319000002,
-  "peak_child_rss_kib": 6402256,
+  "seconds": 149.9102448040012,
+  "peak_child_rss_kib": 6402156,
   "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
-  "proof_sha256": "e364457407ddefc22046c6e0cdcc0b9794d19ddeb74b587f3029636e748ab134",
+  "proof_sha256": "ed9d1ad4b64dbd084a7bfae58f8b7498431d4a93b15c9c324b2f36940b738d93",
   "platform": "shared Linux/WSL2",
   "hardware_limits": "32 logical processors; MemTotal32675952KiB; concurrent shared host workload. No Windows or ordinary-PC performance claim.",
-  "scope": "fresh 1.0.0 source manual engineering full-pack scenario"
+  "scope": "fresh full-pack scenario after bounded coverage hydration and PowerShell reader repairs"
 }

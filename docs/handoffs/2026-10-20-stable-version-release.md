@@ -114,3 +114,28 @@ delivery branch while its protected-main PR238 runs. Preliminary hosted package/
 coverage runs exercise the first signed1.0.0 bundle and may expose required repairs;
 they do not substitute for refreshed final release-head/resulting-main checks.
 No stable tag, owner result or publication exists.
+
+## Renewal after required packaging/coverage repairs
+
+The initial203220 production signatures remain archived, with their exact public
+inputs and proof, under release/history/2026-10-20-initial-signed-content. They
+are historical closure, not current-source readiness. Normal reviewed repairs
+PR240/241 produce f3917490f35bad61de2f1b46008596286943635b; production fingerprint
+3895e13e060c22c899e4729cf166a44f9f0c356c208bf444377e619e7478e432.
+
+A fresh optimized full-pack scenario on that exact revision passed149.910244804s,
+peak6402156KiB. Proof15568B SHA
+ed9d1ad4b64dbd084a7bfae58f8b7498431d4a93b15c9c324b2f36940b738d93;
+compiled test source remains924dc01e. Only test_source.commit differs from the
+previous successful proof. The1.0.0 Rust/TS/addon sources, content and transform
+pins are unchanged from tested f064. Measurements retain shared Linux/WSL scope.
+
+Inventory regeneration passed and reproduced f703 inventory/corresponding index
+exactly, retaining all nine hosted/owner rows unverified. Current canonical bundle
+manifest/identity/receipt were removed pending the final repair union, independent
+V2 review and new signatures; the archived original bytes remain immutable.
+Native package39395927777 failed the generic reader before installer verification;
+delivery39397316809 progressed past that reader and failed a workflow-test exit
+status despite12passing assertions. Neither is a Windows acceptance pass.
+PR242 separately repairs only that terminal test exit. It needs review and normal
+merge before the final production fingerprint/receipt renewal. No tag/publication.
