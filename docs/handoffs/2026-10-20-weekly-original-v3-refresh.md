@@ -46,3 +46,14 @@ debug observations, not installed Windows/ordinary-PC performance.
 [Exact generation/comparison/resources](../data/weekly-original-v3-generation-v1.json)
 and [byte-exact reproducibility receipt](../data/weekly-original-v3-parity-linux-v1.json)
 retain commands, source/products and limitations.
+
+Routine push99fae8b8 completed, uploading5 new LFS objects155MB within existing
+repository service/budget, without quota expansion. Remote exact branch identity
+was verified. All22 immutable public code/terms URLs at reviewed9cf were then
+independently downloaded (4workers,1MiB response cap/20second socket timeout each)
+and matched exact retained SHA256/length/bytes in1.54s.
+[Public source receipt](../data/weekly-original-v3-public-code-v1.json) clears only
+source reachability. It does not establish real pipeline acquisition, replay or
+draft-PR behavior. Retarget/refreshed protected checks and source-platform parity
+remain required after original212 main merge; dispatch exactly one bounded real
+weekly run only after228 is merged and workflow registered on main.
