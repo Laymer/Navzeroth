@@ -82,5 +82,9 @@ it("marks the authored dungeon, its quests, reward sources and travel edges", as
   expect(screen.getAllByText(/^demo-quest-1/, { selector: "li" }).some((li) => li.querySelector(".ui-origin")?.textContent?.includes("From Classic Era data"))).toBe(true);
   expect(screen.getAllByText(/via demo-acq-1/, { selector: "li" }).every((li) => li.querySelector(".ui-origin")?.textContent?.includes("From 1.12 data"))).toBe(true);
   expect(within(screen.getByRole("region", { name: "Authored travel dependencies" })).getByText(/demo-edge-1:/)).toHaveTextContent(/Inferred$/);
-  expect(requests[0]).toMatchObject({ revision: "demo-r1", records: [{ collection: "dungeons", id: "dungeon-1" }, { collection: "quests", id: "demo-quest-1" }, { collection: "acquisitions", id: "demo-acq-1" }, { collection: "edges", id: "demo-edge-1" }] });
+  const expected: OriginRef[] = [{ collection: "dungeons", id: "dungeon-1" }, { collection: "quests", id: "demo-quest-1" }, { collection: "acquisitions", id: "demo-acq-1" }, { collection: "edges", id: "demo-edge-1" }];
+  expect(requests.length).toBeGreaterThan(0);
+  for (const request of requests) expect(request).toMatchObject({ subject: { kind: "character", profile_id: preparation.members[0]?.profile_id }, revision: "demo-r1" });
+  const requested = requests.flatMap(request => (request as { records: OriginRef[] }).records).map(originKey);
+  expect([...new Set(requested)].sort()).toEqual(expected.map(originKey).sort());
 });
