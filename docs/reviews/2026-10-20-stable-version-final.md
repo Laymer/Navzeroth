@@ -130,3 +130,36 @@ protected checks/source parity, exact resulting-main/stability, full hosted Wind
 acceptance, verified draft/public downloads and owner exact-installer smoke remain
 required. Earlier V8 failures and all unrun observations retain their actual status.
 No stable tag or publication is established by this record.
+
+
+## V12 final composition and current gate boundary
+
+Independent repair259 final7bffde54/codea3ff4bfb normally integratedb615d6f9 after
+root/tooling code review and exact integrated43NodePASS. Initial character/profile
+identity error was blocked before integration and corrected in normal children;
+actual Rust-written DTO,650msoldplaceholder control and late-completion/deadline
+negatives are tested. Exact synthetic preservation remains required; no default
+policy exception or runtime UI/content change.
+
+Root independently verified corrected publicreviewa6e891d0:69881B/b22e2dbf,
+all88streamed/Git-pinned refs and productionb378/3125. A pre-issuance attribution
+clarification preserves152c history: tooling alone range-streamed selected LCOV,
+no profiles streamed/downloaded; root checked retained raw verdict/receipts and
+derivedsummaries. Actual preparation + desktop independent optimizedpreview/
+pureprepare reproduced84resources395793235B and canonical manifest0968db00/
+identitydfd0b27e. Preparedbc7a1819 committed BEFORE keys; receipt254c39d2/evidence
+f43e1107 committedbc43318b. Bothkeysoperatorcontrolled, no separatecustodyclaim.
+
+Root/tooling each independently verified actual crypto, own assembled exact tree,
+DEFAULTcompiledtrust and source readiness atbc433:89evidence/two packs and EXACT9
+pendingHOSTED8+OWNER only, no other blockers. build_readytrue, stable_readyfalse,
+publicationfalse. Currentfunctionalproofef3c remains actual1dd/b9/LinuxWSL2, not
+restamped after driver-only changes. V11e3f actualCI/source successes, combined
+coveragePASS276files>=exact90 and Windowsentryexecution remain historicale3f/f751.
+V11packageFAILEDnativeupgrade gate; all8stablecases/recorder SKIPPED. No current
+Windows/performance/owner pass.
+
+Final excluded/unpinned coordinator docs retain that production and canonical
+identity. Fresh final-candidate allten/source/Windows checks remain mandatory before
+merge; exact resulting-main checks/stability beforetag and exact draft independent
+verification beforeowner smoke. No tag/publication/deployment exists.

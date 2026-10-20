@@ -995,3 +995,39 @@ external expected identity copied before receipt existence. No seed values print
 Only manifest/receipt/review exact FileRefs are bound in canonical evidence; all9
 observations remain pristineunverified. Root/independent own-assembly/default-
 compiled-policy/sourceprebuild checks are next, not yet claimed here.
+
+
+## V12 signed source closure independently verified before candidate push
+
+Signed compositionbc43318b89641f830c0dab1ff430bf38d4656de1 binds testedb615 and
+productionb378b34159da86084cb20e4fc11741cd3f6d167656c4532fff50da7727f73266.
+Canonical evidence27970544B SHA
+f43e11073b88994c92be34193ec3caacdaaccdb2797f60a6539ac8e0a23b58e3
+binds exact manifest0968db00, receipt254c39d2 and corrected reviewb22e2dbf.
+Root and tooling separately performed actual cryptographic verification against
+independently agreed prepared pins, own external assemblies, DEFAULT compiled
+public signer policy verification, and full source prebuild. Both actual reports
+identify candidatebc433:84exactresources395793235B/two packs/no extras;89evidence
+files/two packs; build_readytrue/stable_readyfalse/publicationfalse and EXACT9
+pendingHOSTED8+OWNER only, with no other content/material blocker. Root explicitly
+rechecked both reports' exact blocker sets. Tooling separately streamed actual
+84resourcefiles and fixed manifest/receipt bytes.
+
+Reports: /tmp/navzeroth-stable-v12-{receipt-verification,assembled,bundle-verified,build-readiness}.json
+and /tmp/navzeroth-tooling-v12-{crypto,assembly,compiled-check,readiness}.json.
+Own bundle roots are /tmp/navzeroth-1.0.0-v12-verified-bundle and
+/tmp/navzeroth-tooling-v12-independent-bundle. Optimized CLI was actually built
+at runtime1dd; runtime bytes remain identical, so no newb615compiler/fullpack
+execution is claimed. Root also directly compared published v0.9.2/rc.1 fixture
+revision/fullscope/character with current expectedfixture: exactmatch
+synthetic-planning-v1/demo-character-paladin. This is source checking, not actual
+installed native upgrade acceptance.
+
+These final coordinator docs are excluded by the unchanged production predicate
+and are not pinned review resources. Final desktop composition review and exact
+resulting-head independent world check precede onefreshcandidatepush. All current
+9observations remain unverified. V11actual native-upgrade failure/all8skipped remain
+recorded; no failed evidence is promoted. Require allten/newsource/native/Windows
+gates before releasePRmerge, fresh resulting-main checks/stability beforetag,
+verifieddraft beforeowner smoke. Main still807ef674; generated243 remainsdeferred.
+No stabletag, owner result, publication or website deployment exists.
