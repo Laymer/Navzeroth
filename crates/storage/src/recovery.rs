@@ -278,8 +278,10 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
                     [recovered],
                 )
                 .db()?;
+            // The first full validation already checked the untouched store.
+            // Revalidate again only after changing a recovered plan's provenance.
+            validate(&store)?;
         }
-        validate(&store)?;
         Ok(RecoveryInspection {
             source_schema_version: version as u32,
             restored_schema_version: migrations::latest_version(),
@@ -307,9 +309,15 @@ fn reject(conn: &Connection, sql: &str) -> Result<()> {
         Ok(())
     }
 }
+#[cfg(test)]
+thread_local! {
+    static VALIDATION_RUNS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 /// Integrity plus semantic validation, including all historical rows, not only
 /// the current selections displayed by the application.
 pub fn validate(store: &SqliteStore) -> Result<()> {
+    #[cfg(test)]
+    VALIDATION_RUNS.with(|count| count.set(count.get() + 1));
     let conn = &store.conn;
     let trusted = canonical(migrations::MIGRATIONS.len())?;
     if schema(conn)? != schema(&trusted)? {
@@ -569,6 +577,38 @@ fn validate_local_foundation(store: &SqliteStore) -> Result<()> {
 
 #[cfg(test)]
 mod catalog_capacity_tests {
+    #[test]
+    fn reconstruction_without_a_saved_plan_runs_full_validation_once() {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let directory = std::env::temp_dir().join(format!(
+            "navzeroth-recovery-validation-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(directory.clone());
+        let source = directory.join("source.sqlite");
+        let destination = directory.join("reconstructed.sqlite");
+        let store = crate::SqliteStore::open(&source).unwrap();
+        assert!(store.current_plan().unwrap().plan.is_none());
+        drop(store);
+        let before = super::VALIDATION_RUNS.with(std::cell::Cell::get);
+        super::reconstruct_backup(&source, &destination).unwrap();
+        assert_eq!(
+            super::VALIDATION_RUNS.with(std::cell::Cell::get),
+            before + 1,
+            "unchanged reconstruction must not scan every historical catalog twice"
+        );
+        let recovered = crate::SqliteStore::open(&destination).unwrap();
+        assert!(recovered.current_plan().unwrap().plan.is_none());
+    }
     #[test]
     fn catalog_rows_have_v2_capacity_without_loosening_snapshot_rows() {
         assert_eq!(
