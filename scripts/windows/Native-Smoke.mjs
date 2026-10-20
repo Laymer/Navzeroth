@@ -595,7 +595,7 @@ async function verify(page) {
     // Derive expected identity from the exact fixtures used by populate(), not bundled defaults.
     const fixture = JSON.parse(readFileSync(join(repoRoot, "fixtures/desktop/planning/synthetic-revision.json"), "utf8")).envelope;
     const snapshot = JSON.parse(snapshotText.slice("ANAV1:".length));
-    const expected = { profile_id: snapshot.payload.character, revision: fixture.payload.revision,
+    const expected = { character: snapshot.payload.character, revision: fixture.payload.revision,
       scope: { fixture: fixture.fixture, context: { build: {
         edition: fixture.game.edition, build: fixture.game.build, interface: fixture.game.interface,
       }, namespace: fixture.namespace } } };

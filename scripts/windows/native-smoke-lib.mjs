@@ -276,8 +276,8 @@ export async function verifyPreservedSyntheticContent({ readProfiles, readActive
     return await Promise.race([
       (async () => {
         const profiles = await readProfiles();
-        const matches = Array.isArray(profiles) ? profiles.filter((p) => p.id === expected.profile_id) : [];
-        if (matches.length !== 1 || matches[0].fixture !== true || !sameContext(matches[0].context, expected.scope.context)) {
+        const matches = Array.isArray(profiles) ? profiles.filter((p) => p.display_name === expected.character && p.fixture === true && sameContext(p.context, expected.scope.context)) : [];
+        if (matches.length !== 1 || !/^stored-[a-f0-9]{64}$/.test(matches[0].id ?? "")) {
           throw new Error("Expected synthetic profile identity was not preserved");
         }
         diagnostic.profile_found = true;
@@ -287,8 +287,8 @@ export async function verifyPreservedSyntheticContent({ readProfiles, readActive
             !sameContext(active.key.scope.context, expected.scope.context)) {
           throw new Error("Expected synthetic active revision or scope was not preserved");
         }
-        await waitForInspection(expected);
-        return { profile_id: expected.profile_id, revision: expected.revision, scope: expected.scope };
+        await waitForInspection({ ...expected, profile_id: matches[0].id });
+        return { profile_id: matches[0].id, character: expected.character, revision: expected.revision, scope: expected.scope };
       })(),
       new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("Synthetic content verification timed out")), timeoutMs); }),
     ]);
