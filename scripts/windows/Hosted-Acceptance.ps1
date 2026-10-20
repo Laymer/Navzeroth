@@ -51,7 +51,8 @@ function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $Sou
         'HOSTED-PERFORMANCE' {
             if (-not (Test-HostedText $Case.workload) -or -not (Test-HostedText $Case.hardware) -or -not (Test-HostedText $Case.limitations)) { throw 'Performance requires workload/hardware/limitations.' }
             $metrics = @('install_ms','load_ms','activation_ms','browse_ms','planning_ms','peak_memory_bytes')
-            if (@($Case.measurements.PSObject.Properties.Name).Count -ne $metrics.Count) { throw 'Performance metric set differs.' }
+            $names = @($Case.measurements.PSObject.Properties.Name)
+            if ($names.Count -ne $metrics.Count -or @($names | Where-Object { $_ -cnotin $metrics }).Count -ne 0) { throw 'Performance metric set differs.' }
             foreach ($name in $metrics) {
                 $value = $Case.measurements.$name
                 if (($value -isnot [int] -and $value -isnot [long] -and $value -isnot [double] -and $value -isnot [decimal]) -or [double]::IsNaN([double]$value) -or [double]::IsInfinity([double]$value) -or $value -lt 0 -or $value -gt 9007199254740991) { throw 'Performance measurement is missing or invalid.' }

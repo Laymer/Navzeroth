@@ -15,6 +15,18 @@ function Assert-StableTargetIdentity($Expected, $Actual) {
         if ($Expected.$name -cne $Actual.$name) { throw 'Build identity differs from source-bound release target.' }
     }
 }
+# Match the JSON metadata object shape expected by the strict case validator.
+# Do not coerce measurements: missing, nonnumeric and out-of-range values refuse.
+function New-StablePerformanceMeasurements($InstallMilliseconds, $Workload) {
+    return [pscustomobject][ordered]@{
+        install_ms = $InstallMilliseconds
+        load_ms = $Workload.raw.startup_measurements.load_ms
+        activation_ms = $Workload.raw.startup_measurements.activation_ms
+        browse_ms = $Workload.raw.browse_ms
+        planning_ms = $Workload.raw.planning_ms
+        peak_memory_bytes = $Workload.peak_memory_bytes
+    }
+}
 function Invoke-StableCase([string] $Id, [hashtable] $Identity, [string] $Output, [scriptblock] $Action) {
     if ($Id -cnotin $script:HostedAcceptanceIds) { throw 'Hosted producer cannot create owner or unknown cases.' }
     $case = [ordered]@{schema_version=1;id=$Id;method='hosted_windows';status='fail';version=$Identity.version;source_commit=$Identity.source_commit;production_sha256=$Identity.production_sha256;installer_sha256=$Identity.installer_sha256;target=$Identity.target;operator=$Identity.operator;environment=$Identity.environment;recorded_at=[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')}
