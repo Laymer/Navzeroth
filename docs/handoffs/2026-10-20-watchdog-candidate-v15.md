@@ -36,3 +36,14 @@ review, actual preparation/reproduction, commit identities before key use and si
 closure, then fresh exact-candidate allten/source/Windows gates. Remote intermediate
 7667 has stale V14 bindings and is not a valid release candidate. Main unchanged;
 no tag, owner acceptance, publication or website deployment.
+
+Actual subsequent V14 outcome: CI39497088081 and coverage39497088020 were cancelled
+when root merged264 before their Windows collectors finished. The PR concurrency
+policy cancels older runs. Root did not explicitly cancel these V14 runs, but the
+merge triggered their replacement; this was an avoidable coordination mistake.
+V14CI8jobs succeeded, RustWindows cancelled, stability skipped; no full CI pass.
+Root explicitly cancelled stale-binding intermediate7667 runs39498793266(source),
+39498793271(package),39498793347(coverage),39498793308(CI) to avoid spending runner
+resources on invalid bindings. Pages intermediate validation succeeded without
+deployment. These intermediate runs provide no candidate acceptance. The final
+newly bound candidate will receive fresh complete checks without intervening pushes.
