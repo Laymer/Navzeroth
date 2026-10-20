@@ -1,5 +1,20 @@
 # Pure case construction plus bounded owned-node execution; no action on import.
 Set-StrictMode -Version 3.0
+# JSON object member order is not identity. Admit only the exact typed target shape.
+function Assert-StableTargetIdentity($Expected, $Actual) {
+    foreach ($target in @($Expected, $Actual)) {
+        if ($target -isnot [pscustomobject]) { throw 'Stable target must be a JSON object.' }
+        $names = @($target.PSObject.Properties.Name | Sort-Object)
+        if (($names -join ',') -cne 'build,edition,interface,version') { throw 'Stable target fields differ from the exact contract.' }
+        foreach ($name in @('edition','version','build')) {
+            if ($target.$name -isnot [string] -or [string]::IsNullOrWhiteSpace($target.$name)) { throw 'Stable target string field is malformed.' }
+        }
+        if (($target.interface -isnot [int] -and $target.interface -isnot [long]) -or $target.interface -lt 1 -or $target.interface -gt 4294967295) { throw 'Stable target interface must be a bounded JSON integer.' }
+    }
+    foreach ($name in @('edition','version','build','interface')) {
+        if ($Expected.$name -cne $Actual.$name) { throw 'Build identity differs from source-bound release target.' }
+    }
+}
 function Invoke-StableCase([string] $Id, [hashtable] $Identity, [string] $Output, [scriptblock] $Action) {
     if ($Id -cnotin $script:HostedAcceptanceIds) { throw 'Hosted producer cannot create owner or unknown cases.' }
     $case = [ordered]@{schema_version=1;id=$Id;method='hosted_windows';status='fail';version=$Identity.version;source_commit=$Identity.source_commit;production_sha256=$Identity.production_sha256;installer_sha256=$Identity.installer_sha256;target=$Identity.target;operator=$Identity.operator;environment=$Identity.environment;recorded_at=[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')}
