@@ -250,7 +250,7 @@
     },
     "v8_hosted_results": {
       "actual_checkout_commit": "5d9c89522241eff5285494503289c940a9849d1c",
-      "attribution": "Reviewer monitored CI/source and independently inspected Linux/Windows entry coverage evidence; coordinator/tooling downloaded retained raw artifacts. These results belong to V8, not current09b production.",
+      "attribution": "Reviewer monitored CI/source and independently inspected Linux/Windows entry coverage evidence; coordinator/tooling downloaded retained raw artifacts. These results belong only to the historical V8 installer and production52d008; they do not establish current V10 b9d5 acceptance.",
       "candidate_source_commit": "e5ecdf653ae7e1239b4af8f7e58c5cd2b2f3ee4a",
       "ci": {
         "run_id": 39424037070,
