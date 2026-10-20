@@ -39,3 +39,21 @@ These are synthetic driver checks, not actual repaired native Windows execution.
 Next: independent review, routine feature draft PR, parent normal integration with
 renewed release bindings, then fresh actual Windows package/regression and all
 applicable protected/source gates. Eight hosted cases and owner smoke remain pending.
+
+## Independent review correction
+
+Root and tooling found a blocking error in initial code9a817375: it used character
+as ProfileDto.id. Actual snapshots.rs171–180/346–355 hashes the character/context/
+fixture tuple as stored-64hex and exposes the character in display_name. The initial
+passing tests incorrectly modeled character as id and therefore did not prove the
+real contract. No native repaired pass was claimed; initial implementation is superseded.
+
+Normal child54258821 resolves exactly one issued profile by display_name(character),
+full context and fixture=true, requires its actual stored-64lowerhex id and uses
+that returned id for active-content IPC, UI selection and diagnostic identity.
+Both published v0.9.2 and v1.0.0-rc.1 writers have this same stored-id/display-name
+contract (read directly with git show). Corrected DTO-shaped tests have hashed ids
+unequal to character and reject wrong character/context/fixture, malformed id and
+duplicate matching profiles. Fresh actual41Node checks pass,0fail; diffcheck passes.
+Log /tmp/navzeroth-upgrade-readiness-corrected-tests.log. Independent re-review and
+actual Windows regression are still required; draft PR259 remains unapproved here.
