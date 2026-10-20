@@ -63,3 +63,15 @@ public hashes/source, supported scope/exclusions/origins/estimates, measured Win
 limits and honest historical capture captions, then verify gated main deployment
 and public pages/downloads. Tooling/workflow changes after that would require a
 new production identity and cannot be passed off as website-only documentation.
+
+Post-commit boundary proof on code `dc667f795ffab4a2a7a3c69c524be5b785507199`:
+using the unchanged real release-preparer fingerprint function and actual Git
+`ls-tree` records, a temporary external Git index changed only
+`docs/site/README.md`. Both trees retained production SHA
+`7db0e201e270edc117ae08aab24480cb6011292002737454bfcdb31d06a0021d`.
+Changing `scripts/site/release-metadata.mjs` in that temporary index instead
+changed production SHA to
+`568842869a3552e7b8e9cfbd2039c13b0545ccafe02d6fe4014ea2c8574875eb`.
+This proves documentation-only publication changes are excluded while validator
+code remains bound. No tracked working files were modified by this proof.
+External record: `/tmp/navzeroth-site-publication-boundary-proof.json`.
