@@ -1,4 +1,5 @@
 // Strict v2 content subset of existing bounded pack JSON rules.
+use serde::Deserialize;
 use serde_json::Value;
 type Res<T> = std::result::Result<T, &'static str>;
 fn known_fields(input: &Value, typed: &Value) -> Res<()> {
@@ -23,7 +24,7 @@ fn known_fields(input: &Value, typed: &Value) -> Res<()> {
 pub(super) fn typed(bytes: &[u8]) -> Res<super::ReferenceContent> {
     let value = crate::strict_json::value(bytes, super::MAX_CONTENT_BYTES)?;
     let parsed: super::ReferenceContent =
-        serde_json::from_value(value.clone()).map_err(|_| "Invalid typed content")?;
+        super::ReferenceContent::deserialize(&value).map_err(|_| "Invalid typed content")?;
     let mut comparison = serde_json::to_value(&parsed).map_err(|_| "Invalid typed content")?;
     for key in ["node_facts", "entities", "loot_tables"] {
         if value
