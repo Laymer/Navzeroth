@@ -1,6 +1,7 @@
 import {test} from 'node:test';import {readFileSync} from 'node:fs';import assert from 'node:assert/strict';
 import {manualSnapshot,scenario,planningRequest,assertActive,WORKLOAD,routeEdge} from './stable-workload-lib.mjs';
 const context={build:{edition:'wow_forever',build:'1.60.1.70450',interface:'16001'},namespace:'reference'};
+const catalogDto=JSON.parse(readFileSync(new URL('../../crates/app/tests/support/stable_catalog_dto.json',import.meta.url),'utf8'));
 const objective={id:'quest-stage-source',requirements:{status:'known',value:{op:'all',predicates:[{op:'level_at_least',level:10},{op:'quest_state',quest:'prerequisite',state:'turned_in',value:true}]}},evidence:['source-quest'],targets:[{kind:'quest_stage',quest:'quest-source',stage:'stage-source'}]};
 test('manual engineering observations never claim addon or live provenance',()=>{
  const selected=scenario(objective,{id:'source-node'}),snapshot=manualSnapshot(context,1000,2,selected.assertions);
@@ -28,7 +29,7 @@ import {exerciseInstalled} from './stable-workload-lib.mjs';
 function nativeMock(change={}){
  let sequence=0,settings={accessibility:{text_scale_percent:100}},revision=0;
  const active={key:{scope:{fixture:false,context},revision:'actual-r'},bundle_defaults:{app_version:'1.0.0',previous_app_version:null,revision:'actual-r'},accepts_inferred_travel:true};
- const page=collection=>({revision:'actual-r',catalog_sha256:'a'.repeat(64),collection,offset:0,total:1,next_offset:null});
+ const page=(collection,offset=0)=>{const total=change.paged&&['edges','objectives'].includes(collection)?201:1;return {revision:'actual-r',catalog_sha256:collection==='objectives'?'b'.repeat(64):'a'.repeat(64),collection,offset,total,next_offset:offset+200<total?offset+200:null};};
  const calls=[];
  const call=async(command,args)=>{
   calls.push({command,args});
@@ -42,8 +43,14 @@ function nativeMock(change={}){
    case 'list_profiles':return change.missingProfile?[]:[{id:'manual-profile',snapshot_count:sequence}];
    case 'inspect_database_backup':return {candidate_id:'candidate'};
    case 'restore_database_backup':if(change.corruptRecovery)settings.accessibility.text_scale_percent=100;if(change.recoveryActive)Object.assign(active,structuredClone(change.recoveryActive));return {};
-   case 'get_planning_catalog':return {fixture:change.fixture??false,snapshot_id:`s-${sequence}`,revision:'actual-r',nodes:[{id:'source-node'}],objectives:change.unresolved?[{...objective,requirements:{status:'unknown'}}]:[objective],pages:{quests:page('quests'),items:page('items'),objectives:page('objectives'),edges:page('edges')}};
-   case 'get_catalog_page':{const request=JSON.parse(args.text);return {...page(request.collection),records:change.emptyBrowse?[]:request.collection==='edges'?[{id:'source-edge',from:{id:'source-start'},to:{id:'source-node'},evidence:['source-edge-evidence'],requirements:{status:'known',value:{op:'all',predicates:[]}},expected_ms:{status:'known',value:30000}}]:[{id:'actual-source-record'}]};}
+   case 'get_planning_catalog':return {fixture:change.fixture??false,snapshot_id:`s-${sequence}`,revision:'actual-r',nodes:[{id:'source-node'}],objectives:change.paged?Array.from({length:200},()=>({...objective,requirements:{status:'unknown'}})):change.unresolved?[{...objective,requirements:{status:'unknown'}}]:[objective],pages:change.missingNodes?{objectives:page('objectives')}:{...structuredClone(catalogDto.planning_catalog.pages),objectives:page('objectives')}};
+   case 'get_catalog_page':{
+    const request=JSON.parse(args.text);
+    if(request.revision!=='actual-r'||request.catalog_sha256!==catalogDto.planning_catalog.pages[request.collection==='objectives'?'objectives':'nodes'].catalog_sha256)throw new Error('Wrong request pin');
+    const edge={id:'source-edge',from:{id:'source-start'},to:{id:'source-node'},evidence:['source-edge-evidence'],requirements:{status:'known',value:{op:'all',predicates:[]}},expected_ms:{status:'known',value:30000}};
+    const rows=change.emptyBrowse?[]:request.collection==='edges'?(change.paged&&request.offset===0?Array.from({length:200},()=>({...edge,requirements:{status:'unknown'}})):[edge]):request.collection==='objectives'?[objective]:[{id:'actual-source-record'}];
+    return {...page(request.collection,request.offset),...change.pageOverride,records:rows};
+   }
    case 'plan_session':return {fixture:false,result:{selected:change.emptyPlan?[]:[{candidate:JSON.parse(args.text).candidates[0].objective,travel:{hops:[{edge:'source-edge'}]}}]},filtered:[],assumptions:[]};
    default:throw new Error('Unexpected IPC '+command);
   }
@@ -156,4 +163,36 @@ test('ignored preference writes, revision or default changes fail closed and pla
  const failing=async(command,args)=>command==='plan_session'?Promise.reject(new Error('controlled plan failure')):mock.call(command,args);
  await assert.rejects(exerciseInstalled(failing,{context,version:'1.0.0',mode:'restart',saved:fresh.state}),/controlled plan failure/);
  assert.equal(mock.active.accepts_inferred_travel,false);
+});
+
+test('actual serialized planning DTO omits other collections and pages stay globally hash bound',async()=>{
+ assert.deepEqual(Object.keys(catalogDto.planning_catalog.pages).sort(),['nodes','objectives']);
+ assert.equal(catalogDto.quest_page.page,undefined);assert.equal(catalogDto.quest_page.collection,'quests');
+ const mock=nativeMock(),result=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'fresh'});
+ for(const collection of ['quests','items','edges']){
+  const request=JSON.parse(mock.calls.find(c=>c.command==='get_catalog_page'&&JSON.parse(c.args.text).collection===collection).args.text);
+  assert.equal(request.catalog_sha256,catalogDto.planning_catalog.pages.nodes.catalog_sha256);
+  assert.equal(result.evidence.catalog_totals[collection],1);
+ }
+ for(const pageOverride of [{revision:'stale'},{catalog_sha256:'c'.repeat(64)},{collection:'other'},{offset:1},{total:0},{next_offset:1}]){
+  await assert.rejects(exerciseInstalled(nativeMock({pageOverride}).call,{context,version:'1.0.0',mode:'fresh'}),/exact requested binding/);
+ }
+});
+
+test('actual flattened pages continue past unsupported first pages with separate objective binding',async()=>{
+ const mock=nativeMock({paged:true});
+ const result=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'fresh'});
+ const requests=mock.calls.filter(c=>c.command==='get_catalog_page').map(c=>JSON.parse(c.args.text));
+ assert(requests.some(r=>r.collection==='edges'&&r.offset===200&&r.catalog_sha256==='a'.repeat(64)));
+ assert(requests.some(r=>r.collection==='objectives'&&r.offset===200&&r.catalog_sha256==='b'.repeat(64)));
+ assert.equal(result.evidence.plan.selected[0].candidate,objective.id);
+ assert.equal(result.evidence.catalog_totals.edges,201);
+});
+
+test('failed catalog checks retain bounded diagnostic identities without records',async()=>{
+ let diagnostic;
+ await assert.rejects(exerciseInstalled(nativeMock({missingNodes:true}).call,{context,version:'1.0.0',mode:'fresh',onCatalog:value=>{diagnostic=value;}}),/lacks its active revision/);
+ assert.deepEqual(diagnostic,{fixture:false,revision:'actual-r',snapshot_id:'s-1',node_count:1,objective_count:1,pages:[{collection:'objectives',revision:'actual-r',catalog_sha256:'b'.repeat(64),total:1}]});
+ assert(!JSON.stringify(diagnostic).includes('source-quest'));
+ assert(JSON.stringify(diagnostic).length<16384);
 });
