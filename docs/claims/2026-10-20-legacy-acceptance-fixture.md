@@ -1,0 +1,3 @@
+# Legacy acceptance-kit owned fixture repair
+
+Owner /root/desktop_review, sole writer; fix/stable-legacy-acceptance-fixture in /tmp/navzeroth-stable-legacy-acceptance-fixture, baseline df62631fae0c6ba4e28808d321648f109fd40e2a. Actual package39398642678/job118547546426 failed Test-AcceptanceKit because its historical schemas1–3 helper test read current28MiB schema4 inventory through16MiB generic reader. Preserve production legacy schema/method/size semantics; use bounded owned legacy contracts, explicit schema4 refusal, document separate stable producer route. Audit/run all package PowerShell5.1 helpers with exact GitHub wrappers before CI; Git bridge only for synthetic Git tests. No source/pins/keys/signature/gate loosening or version/root edits.

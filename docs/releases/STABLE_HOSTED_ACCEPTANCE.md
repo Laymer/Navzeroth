@@ -115,3 +115,9 @@ interrupt cleanup, so these controls never run by default on a user/developer PC
 Actual hosted results remain unverified until the final reviewed source, signed
 bundle, compiled build identity and installer exist. Nothing in this document or
 the synthetic tests supplies a release acceptance pass.
+
+The historical `Acceptance-Kit.ps1` / `Start-AcceptanceSession.ps1` tools retain
+schemas 1–3 and their original runbook semantics. They do not accept schema 4 and
+do not supply stable hosted or owner evidence. Their tests use owned synthetic
+legacy contracts rather than the evolving release inventory. Stable schema 4 uses
+the producer above and separately recorded owner smoke of the exact draft installer.
