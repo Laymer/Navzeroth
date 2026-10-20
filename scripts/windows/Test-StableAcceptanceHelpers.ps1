@@ -114,10 +114,12 @@ try{
    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'stable-workload-progress.mjs') -Destination $scripts
    $child=@'
 import {createWorkloadProgress} from './stable-workload-progress.mjs';
+import {writeFileSync} from 'node:fs';
 const args=process.argv.slice(2),report=args[args.indexOf('--out')+1];
 const progress=createWorkloadProgress(report+'.progress.json',{mode:'recover',version:'1.0.0'});
 progress.phase('exercise');
-await progress.track('inspect_database_backup',async()=>{setInterval(()=>{},1000);await new Promise(()=>{});});
+try { await progress.track('inspect_database_backup',async()=>{setInterval(()=>{},1000);await new Promise(()=>{});}); }
+finally { writeFileSync(report,JSON.stringify({passed:false,completed:false,kind:'synthetic_finally_marker'})); }
 '@
    [IO.File]::WriteAllText((Join-Path $scripts 'Stable-Workload.mjs'),$child,(New-Object Text.UTF8Encoding($false)))
    $report=Join-Path $root 'killed-workload.json';$message=''
