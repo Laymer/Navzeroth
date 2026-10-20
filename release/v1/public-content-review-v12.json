@@ -264,7 +264,7 @@
         "verdict": 12276837697,
         "windows": 12277287747
       },
-      "attribution": "Coordinator/tooling independently audited actual raw verdict/native receipts and streamed LCOV. Entrypoint summaries/audit are derived, not raw LCOV; complete profiles/LCOV were not recopied. This reviewer independently reads retained raw verdict/receipts and derived summaries and binds exact files; does not claim new LCOV execution or download.",
+      "attribution": "Tooling alone range-streamed selected compressed LCOV to derive bounded entrypoint summaries and hashes; no raw profiles were downloaded or streamed. Coordinator independently read and hash-checked retained raw verdict/receipts and derived summaries, not full LCOV or profiles. Entrypoint summaries/audit are derived rather than raw LCOV. This reviewer independently reads retained raw verdict/receipts and derived summaries and binds exact files; no new LCOV execution or download is claimed.",
       "cli_executable_lines": 409,
       "files": {
         "independent-audit.json": {

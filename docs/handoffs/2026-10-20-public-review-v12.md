@@ -27,8 +27,10 @@ V11 successful CI/source/Pages and exact coverage evidence remain historicale3f/
 not currentb378: own prior actual monitoring/log checks retained. Independently
 read raw coverage verdict and confirmed276measured files satisfy exactinteger90%,
 no errors. Raw receipts and derived entrypoint summaries/audit are distinguished;
-full LCOV/profile streaming was performed by root/tooling, not claimed repeated
-here. PositiveWindowsCLI18/409 and desktop18/18 meets per-platform execution
+tooling alone range-streamed selected compressed LCOV to derive bounded entrypoint
+summaries/hashes; no profiles were downloaded or streamed. Root independently
+read/hash-checked retained raw verdict/receipts and derived summaries, not full LCOV
+or profiles. No such streaming is claimed repeated here. PositiveWindowsCLI18/409 and desktop18/18 meets per-platform execution
 requirement, distinct from combined per-file90%; no installer acceptance inferred.
 
 V11 actual package failed native-upgrade gate: smoke32/0, baseline5/0, verify6/1;
@@ -45,3 +47,9 @@ claim. No signing, keys, source push/dispatch or root mutation. Next coordinator
 independently verifies immutable review, prepares/reproduces exact unsigned bytes,
 commits identities BEFORE key use, renews signatures/sourceclosure, then fresh
 allten/source/native/installer/stability/draft/owner/public gates.
+
+Pre-issuance attribution correction: normal child of152c preserves prior Git history;
+JSON and this handoff now distinguish tooling selected-LCOV range reads from root
+retained-artifact checks, explicitly excluding profile streaming. No fact/reference/
+source/status change; all88FileRefs independently re-streamed and matched. No V12
+preparation or key use occurred before this correction.
