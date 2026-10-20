@@ -46,8 +46,10 @@ Markdown resources after preliminary Windows coverage correctly refused CRLF
 changes. Independent V4 review, signed-content assembly and source prebuild passed.
 Separate reviewed PR247 moved static website resources under docs/site so later
 publication updates preserve the existing application fingerprint policy. Root
-metadata/browser/actionlint checks passed atd6ecb213. V5 review and receipts are
-being renewed for production7db0e201; V4 signatures remain historical under
+metadata/browser/actionlint checks passed atd6ecb213. V5 review, signatures, independent compiled-policy assembly and fresh source
+prebuild passed at130bdcdf for production7db0e201 (89evidence files/two packs;
+exactly9pending observations). Final independent composition review is CLEAR.
+Release PR239 now targets main for exact-candidate checks. V4 signatures remain historical under
 release/history. Preliminary actual Windows package39400861524 built its exact
 40ea installer and passed unsigned rehearsal/silent install; native/full acceptance
 remain pending. V4 coverage39405119048 passed Linux/TypeScript; Windows and

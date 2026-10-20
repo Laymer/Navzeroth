@@ -330,3 +330,33 @@ release/history/2026-10-20-signed-content-v4, archived93dcf946. Root cleared cur
 bindings before renewal at11e42ab5; production is7db0e201e270edc117ae08aab24480cb6011292002737454bfcdb31d06a0021d.
 V5 independent review, preparation/signatures and source verification are next.
 No application/content change, owner result, stable tag or publication is claimed.
+
+## Signed V5 source closure and final composition review
+
+V5 public review09515cee/28044B SHA1076f33c35dbfcdf0ae0c5dd7ff68011fb877b2d54b2934331ca22f714017f9a
+was integrated6d05344a. Root independently streamed all21nested FileRefs. Actual
+preparation passed84resources395751398B; independent world review reproduced pure
+canonical preparation and confirmed all83non-review resources are V4-identical.
+Prepared manifest17183B SHA5658ccd101dd570154aa5dcee3b51261c7cab3b299221e4d412f6e84732f91b8
+and identity526B SHA8b38f63104e4f30eb478c764f6f791b4f5d587e597109ad16cb7a1a35d7b4554
+were committedece6368d before private key use. Restricted external permissions
+remained0700/0600. Two actual signatures and receipt1072B SHA
+1cdc6091c070dc914c9fc9734083f555b97aa1850f5fc04a65a58a261c2e0d28
+were verified and committed130bdcdf with exact three FileRefs. During local binding
+assembly root initially selected a signer-policy field instead of review; inspecting
+the original contract caught this before commit and corrected it. No invalid
+contract was committed or used as a passing gate.
+
+Root and independent tooling separate assemblies/default compiled policy passed
+84files/two packs; both fresh source prebuilds passed89evidence files/two packs,
+exact7db0production and exactly9pending observations. Publication remainsfalse.
+Root raw reports:/tmp/navzeroth-stable-v5-{assembled,bundle-verified,build-readiness}.json.
+Independent final composition review at130bdcdf versus main807ef674 is CLEAR;
+actual checks and scope are recorded in docs/reviews/2026-10-20-stable-version-final.md.
+This documentation-only continuation preserves that same production fingerprint.
+PR239 targets main; final exact-head checks and subsequent resulting-main/tag/draft/
+owner/publication gates remain required. Preliminary package39400861524 at40ea
+passed unsigned rehearsal, silent install/start/uninstall, native WebView and upgrade/
+downgrade regression, then entered actual eight-case full-bundle acceptance; no
+full acceptance verdict or measurements are claimed yet. V4coverage39405119048
+passed Linux/TypeScript; Windows/combined gate remain pending at recording.
