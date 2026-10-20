@@ -69,3 +69,29 @@ test.each(["restricted","unknown","known"] as const)("authored travel displays %
   if(status==="known")expect(screen.getByText('The authored list is explicitly empty.')).toBeInTheDocument();
   else expect(screen.queryByText('The authored list is explicitly empty.')).not.toBeInTheDocument();
 });
+
+test("large source lists retain all references and page visible rows with bounded origin lookups",async()=>{
+  const client={...mock(),getRecordOrigins:vi.fn(async(text:string)=>({ok:true,value:{revision:JSON.parse(text).revision,origins:JSON.parse(text).records.map(()=>[])}}))};
+  const quest=firstMember.quests[0];const reward=firstMember.rewards[0];if(!quest||!reward)throw Error("Fixture requires quest and reward");
+  const member={...firstMember,quests:Array.from({length:91},(_,i)=>({...quest,quest:`source-quest-${i}`,assessment:null})),rewards:Array.from({length:1024},(_,i)=>({...reward,source:`source-reward-${i}`}))};
+  client.getDungeonPreparation.mockResolvedValue({ok:true,value:{...report,members:[member]}});
+  render(<DungeonsScreen client={client as unknown as CommandClient} refreshKey={0}/>);await ready();
+  fireEvent.click(screen.getByRole("button",{name:"Inspect preparation gaps"}));
+  expect(await screen.findByText(/Showing 1–24 of 1024 rewards/)).toBeInTheDocument();
+  expect(screen.getByText(/source-reward-23/)).toBeInTheDocument();
+  expect(screen.queryByText(/source-reward-24;/)).toBeNull();
+  fireEvent.click(screen.getByRole("button",{name:"Next rewards"}));
+  expect(screen.getByText(/Showing 25–48 of 1024 rewards/)).toBeInTheDocument();
+  expect(screen.getByText(/source-reward-24;/)).toBeInTheDocument();
+  expect(screen.queryByText(/source-reward-0;/)).toBeNull();
+  fireEvent.click(screen.getByRole("button",{name:"Next quests"}));
+  expect(screen.getByText(/Showing 25–48 of 91 quests/)).toBeInTheDocument();
+  for(let i=0;i<41;i++)fireEvent.click(screen.getByRole("button",{name:"Next rewards"}));
+  expect(screen.getByText(/Showing 1009–1024 of 1024 rewards/)).toBeInTheDocument();
+  expect(screen.getByText(/source-reward-1023;/)).toBeInTheDocument();
+  expect(screen.getByRole("button",{name:"Next rewards"})).toBeDisabled();
+  fireEvent.click(screen.getByRole("button",{name:"Previous rewards"}));
+  expect(screen.getByText(/Showing 985–1008 of 1024 rewards/)).toBeInTheDocument();
+  await waitFor(()=>expect(client.getRecordOrigins).toHaveBeenCalled());
+  for(const [text] of client.getRecordOrigins.mock.calls){const refs=JSON.parse(text).records;expect(refs.length).toBeLessThanOrEqual(48);}
+});
