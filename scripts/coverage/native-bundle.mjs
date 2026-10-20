@@ -19,6 +19,7 @@ export function prepareNativeBundle(root, destination, run) {
   raw=new TextDecoder('utf-8',{fatal:true}).decode(buffer.subarray(0,count));
  } finally {fs.closeSync(descriptor);}
  if (Buffer.byteLength(raw)>65536 || /[\r\n\0]/.test(raw) || JSON.parse(raw).app_version !== version) throw new Error('Invalid native bundle identity JSON');
+ run('coverage-bundle-inputs',process.platform==='win32'?'python':'python3',[path.join(root,'scripts/hydrate-bundle-inputs.py'),'--root',root],{timeout:1200000});
  const directory = path.join(destination,'bundled-content');
  run('coverage-bundle-assembly','cargo',['run','--locked','-p','azeroth-cli','--','assemble-bundled-content','--root',root,'--output',directory,'--identity',identity]);
  return {directory,identity,raw};
