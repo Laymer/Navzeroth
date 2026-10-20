@@ -103,6 +103,20 @@ class Inputs(unittest.TestCase):
         with mock.patch.object(h, 'MAX_MANIFEST', 1):
             with self.assertRaises(ValueError): h.hydrate(self.root, True)
 
+    def test_head_metadata_role_bound_refuses_before_body_read_or_fetch(self):
+        # Real committed ordinary blobs exceed each role's test limit; the
+        # cat-file size query must refuse before show/tempfile streaming.
+        for path in (h.MANIFEST, h.IDENTITY):
+            with self.subTest(path=path), mock.patch.object(h.parity, 'git', wraps=h.parity.git) as git, \
+                    mock.patch.object(h.subprocess, 'run', wraps=h.subprocess.run) as run, \
+                    mock.patch.object(h.parity, 'fetch') as fetch:
+                with self.assertRaises(ValueError): h.metadata(self.root, path, 1)
+                self.assertEqual([call.args[1:] for call in git.call_args_list],
+                                 [('cat-file', '-s', 'HEAD:' + path)])
+                self.assertEqual(len(run.call_args_list), 1)
+                self.assertNotIn('show', run.call_args.args[0])
+                fetch.assert_not_called()
+
     def test_modified_metadata_and_identity_binding(self):
         self.write(h.MANIFEST, b'{}')
         with self.assertRaises(ValueError): h.hydrate(self.root, True)

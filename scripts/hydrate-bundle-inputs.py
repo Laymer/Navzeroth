@@ -21,10 +21,10 @@ MAX_FILES = 8192
 POINTER = re.compile(rb'version https://git-lfs.github.com/spec/v1\noid sha256:([a-f0-9]{64})\nsize ([1-9][0-9]*)\n')
 
 
-def pin(root, path):
+def pin(root, path, maximum=MAX_FILE):
     parity.safe_path(path)
     size = int(parity.git(root, 'cat-file', '-s', 'HEAD:' + path))
-    if size > MAX_FILE:
+    if size > maximum:
         raise ValueError('HEAD blob exceeds bundle bound')
     if size <= 1024:
         raw = parity.git(root, 'show', 'HEAD:' + path)
@@ -46,7 +46,7 @@ def pin(root, path):
 
 
 def metadata(root, path, maximum):
-    expected, pointer = pin(root, path)
+    expected, pointer = pin(root, path, maximum)
     if pointer is not None:
         raise ValueError('bundle metadata must be ordinary committed JSON')
     actual, raw = parity.read_resource(root / path, maximum, capture=True)
