@@ -60,3 +60,22 @@ is historical evidence. Main remains807ef674, PR239 is draft, generated PR243 is
 deferred. No stable tag, owner pass, publication or website deployment exists.
 Next: diagnostic repair review and measured recovery analysis, then exact renewed
 source/review/receipts and fresh applicable hosted gates. Failures hold publication.
+
+## Diagnostic review continuation
+
+Draft repair PR261 is frozen at1b89bd212604defabf94ef3b48b9fe0f5998521b,
+code1b8a7b0275f0d3d52f5e6b0bbef2c1025b293377, production12132a7c.
+World independently cleared the bounded checkpoint/watchdog and cleanup behavior,
+with46Node and26PS7 checks. Root independently ran the complete five-file workflow
+Node command (54passed, zero skipped/failed) and26PS7 helper checks, including an
+actual parent timeout retaining nonpassing progress while bypassing child finally.
+Logs: /tmp/navzeroth-root-progress-node.log and
+/tmp/navzeroth-root-progress-ps7.log. No root nativePS5 execution is claimed.
+This repair preserves diagnostics only; recovery remains failed/unlocated on Windows.
+It has not yet been integrated or promoted into a newly signed release candidate.
+
+The separate Linux full-pack diagnostic is still running. Actual backup copying
+completed409ms and inspection123727ms. Restore and subsequent checks/reopen remain
+pending at this entry. These are diagnostic timings, not a successful complete run
+or Windows acceptance. Read-only review is evaluating duplicate full validation of
+an unchanged no-plan reconstruction; destructive-boundary revalidation must remain.
