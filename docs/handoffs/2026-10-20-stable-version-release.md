@@ -412,7 +412,7 @@ planner page,54models/9classes, boundaries and26dungeons pass. New proof/current
 measurement and exactly four functional FileRefs were committed1028b5b2. Priorf391
 proof/measurement remain under release/history/2026-10-20-functional-before-file-identity.
 Production0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a
-now binds testedfcf. Canonical bundle fields were cleared for V6 renewal; no 
+now binds testedfcf. Canonical bundle fields were cleared for V6 renewal; no
 inventory regeneration or acceptance promotion occurred. Next: independent additive
 V6review, actual preparation/receipt/source closure, one final candidate push and
 fresh protected/Windows/stability gates. Main remains807ef674; no stable tag exists.
