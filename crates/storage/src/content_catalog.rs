@@ -163,18 +163,34 @@ fn check_capacity<T: Serialize>(value: &T, pretty: bool, maximum: usize) -> Resu
     result.map_err(|_| invalid("Catalog exceeds byte capacity or cannot serialize"))
 }
 
+// Borrowed staging keeps caller ownership and validates before any full clone.
 pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> {
+    validate_canonical_input(input)?;
+    canonical_validated(input.clone())
+}
+// Loading already owns its decoded input: retaining a second catalog is needless.
+fn canonical_owned(input: ContentRevisionV2) -> Result<ContentRevisionV2> {
+    validate_canonical_input(&input)?;
+    canonical_validated(input)
+}
+fn validate_canonical_input(input: &ContentRevisionV2) -> Result<()> {
     if input.sources.len() > 1024 || input.conflicts.len() > 250_000 {
         return Err(invalid("Catalog provenance capacity exceeded"));
     }
     check_capacity(input, false, MAX_CONTENT_BYTES)?;
     input.content.validate()?;
-    // Typed input cannot contain discarded wire fields. Validate all schema,
-    // domain, capacity and graph invariants above, then retain its exact typed
-    // states without serializing and reparsing the entire catalog.
-    let content = input.content.clone();
+    Ok(())
+}
+fn canonical_validated(input: ContentRevisionV2) -> Result<ContentRevisionV2> {
+    // Both entry points validated the complete typed graph and compact capacity.
+    // Move owned content while retaining the same pretty bound and provenance rules.
+    let ContentRevisionV2 {
+        content,
+        sources,
+        mut conflicts,
+    } = input;
     check_capacity(&content, true, MAX_CONTENT_BYTES)?;
-    let registry = SourceRegistry::try_from(input.sources.clone())?;
+    let registry = SourceRegistry::try_from(sources)?;
     let data = &content.reference.payload;
     for evidence in &data.evidence {
         let source = registry.ensure_registered(&evidence.source)?;
@@ -200,7 +216,6 @@ pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> 
     let items: BTreeSet<_> = data.items.iter().map(|i| &i.key).collect();
     let quests: BTreeSet<_> = data.quests.iter().map(|q| &q.id).collect();
     let context = content.reference.data_context();
-    let mut conflicts = input.conflicts.clone();
     for conflict in &mut conflicts {
         if (conflict.others.is_empty() && conflict.kind != ConflictKind::CrossEditionRelabel)
             || conflict.key.context() != &context
@@ -267,7 +282,9 @@ pub(crate) fn load_checked(
         sources: stored.sources,
         conflicts: stored.conflicts,
     };
-    let revision = canonical(&input)?;
+    // The borrowed raw wrapper is no longer needed once strict decoding finishes.
+    drop(document);
+    let revision = canonical_owned(input)?;
     if content::hash(&revision)?.as_str() != hash
         || encode(&content_report(&revision.content.reference))? != coverage
     {
@@ -473,6 +490,46 @@ pub(crate) fn stage_canonical(
 #[cfg(test)]
 mod capacity_checks {
     use super::*;
+    #[test]
+    fn owned_canonicalization_moves_graph_and_matches_borrowed_bytes_and_digest() {
+        let old: ContentRevision = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/planning/synthetic-revision.json"
+        ))
+        .unwrap();
+        let input = ContentRevisionV2 {
+            content: content_v2::decode(include_bytes!(
+                "../../../fixtures/contracts/v2/reference-content.json"
+            ))
+            .unwrap(),
+            sources: old.sources,
+            conflicts: vec![],
+        };
+        let before = serde_json::to_vec(&input).unwrap();
+        let borrowed = canonical(&input).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&input).unwrap(),
+            before,
+            "staging cannot consume or mutate caller input"
+        );
+        let graph_allocation = input.content.reference.payload.nodes.as_ptr();
+        assert!(!input.content.reference.payload.nodes.is_empty());
+        let owned = canonical_owned(input).unwrap();
+        assert_eq!(
+            owned.content.reference.payload.nodes.as_ptr(),
+            graph_allocation,
+            "owned load must retain the original graph allocation"
+        );
+        assert_eq!(encode(&owned).unwrap(), encode(&borrowed).unwrap());
+        assert_eq!(
+            content::hash(&owned).unwrap(),
+            content::hash(&borrowed).unwrap()
+        );
+        assert_eq!(
+            catalog_content_sha256(&owned.content).unwrap(),
+            catalog_content_sha256(&borrowed.content).unwrap()
+        );
+    }
+
     #[test]
     fn counting_matches_existing_compact_and_canonical_pretty_boundaries() {
         #[derive(Serialize)]
