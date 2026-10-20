@@ -42,7 +42,8 @@ function nativeMock(change={}){
    case 'activate_content_set':if(!change.ignoreChoice)active.accepts_inferred_travel=args.accept_inferred_travel;if(change.toggleRevision)active.key.revision='other';if(change.toggleDefaults)active.bundle_defaults.previous_app_version='changed';return {};
    case 'list_profiles':return change.missingProfile?[]:[{id:'manual-profile',snapshot_count:sequence}];
    case 'inspect_database_backup':return {candidate_id:'candidate'};
-   case 'restore_database_backup':if(change.corruptRecovery)settings.accessibility.text_scale_percent=100;if(change.recoveryActive)Object.assign(active,structuredClone(change.recoveryActive));return {};
+   case 'restore_database_backup':if(change.corruptRecovery)settings.accessibility.text_scale_percent=100;if(change.recoveryActive)Object.assign(active,structuredClone(change.recoveryActive));return Object.hasOwn(change,'restoreReceipt')?structuredClone(change.restoreReceipt):{pending_marker_cleanup_required:false,original_files_retained:true,recovery_directory:'synthetic-retained-originals'};
+   case 'get_database_status':return Object.hasOwn(change,'restoredStatus')?structuredClone(change.restoredStatus):{state:'ready',error:null};
    case 'get_planning_catalog':return {fixture:change.fixture??false,snapshot_id:`s-${sequence}`,revision:'actual-r',nodes:[{id:'source-node'}],objectives:change.paged?Array.from({length:200},()=>({...objective,requirements:{status:'unknown'}})):change.unresolved?[{...objective,requirements:{status:'unknown'}}]:[objective],pages:change.missingNodes?{objectives:page('objectives')}:{...structuredClone(catalogDto.planning_catalog.pages),objectives:page('objectives')}};
    case 'get_catalog_page':{
     const request=JSON.parse(args.text);
@@ -195,4 +196,42 @@ test('failed catalog checks retain bounded diagnostic identities without records
  assert.deepEqual(diagnostic,{fixture:false,revision:'actual-r',snapshot_id:'s-1',node_count:1,objective_count:1,pages:[{collection:'objectives',revision:'actual-r',catalog_sha256:'b'.repeat(64),total:1}]});
  assert(!JSON.stringify(diagnostic).includes('source-quest'));
  assert(JSON.stringify(diagnostic).length<16384);
+});
+
+test('recovery requires actual complete receipt and ready error-free status before verification',async()=>{
+ const mock=nativeMock(),fresh=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'fresh'}),start=mock.calls.length;
+ const result=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'recover',saved:fresh.state,backup:'synthetic-selected-backup.sqlite3'});
+ assert.equal(result.evidence.recovery_verified,true);
+ assert.deepEqual(result.evidence.recovery_receipt,{pending_marker_cleanup_required:false,original_files_retained:true,recovery_directory:'synthetic-retained-originals',recovery_directory_truncated:false});
+ assert.deepEqual(result.evidence.recovery_database_status,{state:'ready',error_present:false});
+ const calls=mock.calls.slice(start).map(c=>c.command);
+ assert(calls.indexOf('restore_database_backup')<calls.indexOf('get_database_status'));
+ assert(calls.indexOf('get_database_status')<calls.indexOf('check_database'));
+ assert(calls.indexOf('check_database')<calls.indexOf('plan_session'));
+});
+test('pending missing malformed and unretained restore receipts cannot pass recovery',async()=>{
+ const good={pending_marker_cleanup_required:false,original_files_retained:true,recovery_directory:'synthetic-originals'};
+ const bad=[undefined,null,{},true,...[true,'false',0,null].map(value=>({...good,pending_marker_cleanup_required:value})),...[false,'true',null].map(value=>({...good,original_files_retained:value})),...['','  ',null,1].map(value=>({...good,recovery_directory:value}))];
+ for(const field of Object.keys(good)){const missing={...good};delete missing[field];bad.push(missing);}
+ for(const restoreReceipt of bad){
+  const mock=nativeMock({restoreReceipt}),fresh=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'fresh'}),start=mock.calls.length;let diagnostic;
+  await assert.rejects(exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'recover',saved:fresh.state,backup:'selected',onRecovery:value=>{diagnostic=value;}}),/restore receipt/);
+  assert(diagnostic?.receipt);assert(JSON.stringify(diagnostic).length<2048);
+  assert(!mock.calls.slice(start).some(c=>['get_database_status','check_database','plan_session'].includes(c.command)));
+ }
+});
+test('checking failed missing or error-bearing restored database status refuses recovery',async()=>{
+ for(const restoredStatus of [undefined,null,{}, {state:'checking',error:null},{state:'recovery_required',error:null},{state:'ready'},{state:'ready',error:{code:'DatabaseError',message:'Synthetic retained marker'}}]){
+  const mock=nativeMock({restoredStatus}),fresh=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'fresh'}),start=mock.calls.length;let diagnostic;
+  await assert.rejects(exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'recover',saved:fresh.state,backup:'selected',onRecovery:value=>{diagnostic=value;}}),/not ready without an error/);
+  assert(diagnostic.database_status);
+  assert(!mock.calls.slice(start).some(c=>['check_database','plan_session'].includes(c.command)));
+ }
+});
+test('recovery diagnostics retain only bounded actual receipt metadata on failure',async()=>{
+ const restoreReceipt={pending_marker_cleanup_required:true,original_files_retained:true,recovery_directory:'x'.repeat(8192),private_dump:'not captured'};
+ const mock=nativeMock({restoreReceipt}),fresh=await exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'fresh'});let diagnostic;
+ await assert.rejects(exerciseInstalled(mock.call,{context,version:'1.0.0',mode:'recover',saved:fresh.state,backup:'selected',onRecovery:value=>{diagnostic=value;}}),/restore receipt/);
+ assert.equal(diagnostic.receipt.recovery_directory.length,512);assert.equal(diagnostic.receipt.recovery_directory_truncated,true);
+ assert(!JSON.stringify(diagnostic).includes('private_dump'));
 });
