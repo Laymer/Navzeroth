@@ -6,7 +6,7 @@
     "build": "70450",
     "interface": 16001
   },
-  "inventory_sha256": "8e94085c2ec776da2494739b8b8a879eca7af227731b319438b23ea01219cbf1",
+  "inventory_sha256": "0db9bda1a385c7f530a6bc8a3570187ca6773fc755cb4bd25b6308adb2bf32b8",
   "tested_source_commit": null,
   "production_sha256": null,
   "checks": [
