@@ -42,8 +42,10 @@ Root's actual10focused Node checks/actionlint passed after normal local integrat
 e45b302a. V6 signed artifacts remain historical. V7 independent review, exact preparation,
 signatures, two own compiled-policy assemblies and source prebuild passed at4bab8400
 (89evidence files/two packs; exactly9pending). Rust product/UI/content are unchanged
-from the actualfcf full-pack replay; its recorded scope is retained. V6 package
-39413135905 built its installer and is running unsigned verification; full eight-case
+from the actualfcf full-pack replay; its recorded scope is retained. V6 package39413135905 FAILED: install/resources cases passed but first-start driver
+incorrectly expected quest/item/travel pages in the planning-only DTO; five cases
+never ran. Recorder metadata validation also failed. V7 was not pushed; its signed
+evidence is archived before separately owned driver/recorder repairs. Full hosted
 acceptance and owner smoke remain unverified. No stable tag or publication.
 
 

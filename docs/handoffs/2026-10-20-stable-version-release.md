@@ -522,3 +522,33 @@ engineering results before the final branch update cancels that superseded run.
 Next: one finalV7candidate update and fresh required protected/source/nativecoverage/
 package checks, then resulting-main stability/exactdraft/owner gates. No stable
 tag or publication exists.
+
+
+## Actual V6 hosted failure; hold V7 before push
+
+Package39413135905 completed FAILURE. The continue-on-error displayedstep again
+masked actualproducerfailure, but finaloutcomeguard correctly refused both failed
+producer and recorder. Rawartifact12262949100 and incompleteoverlay12262499778
+are retained under release/history/2026-10-20-v6-hosted-failure with exact FileRefs.
+Onlythree actualcases exist: installPASS(6409.328ms),resourcesPASS(630installedfiles
+and exactsource/notices),firststartFAIL. Remainingfive hostedcases neverran; owner
+remains unverified. Exactinstaller73fe854cf239b5b70fdcfc01a330bc25bf325f70a94dfdc170c171db3fdf57a4
+belongs to actualffbf/b689/production0a. No V7/current acceptance is inferred.
+
+Failedfresh rawreport says readyDB,load223632ms,activation0,elapsed642561ms,then
+'Actual installed world catalog is empty'. Root/world/desktop independently traced
+a driver DTO mismatch: planning_catalog intentionally contains only nodes and
+projectedobjectives pageinformation, while driver demands quests/items/edges pins.
+This does NOT establish emptyinstalleddata. Generic catalog_page legitimately uses
+one actualglobal catalog revision/hash for othercollections; projectedobjectives
+retain their distinct pin. Actual RecordPage JSON is flattened by serde; do not
+introduce nested-page expectations from Rust field layout. Desktop is sole repair
+writer. Tooling separately owns recorderactualoperator/date/environment failure.
+
+The failedworkload measurements remain partial engineering evidence, not a completed
+performancecase or Windowsacceptance. No canonical observation is promoted. Root
+V7candidate7db6e76a was neverpushed/dispatched; its actualverified signedartifacts
+are preserved under release/history/2026-10-20-signed-content-v7 before newproduction
+changes. Next: narrow separately reviewed repairs, regression against actualserialized
+contracts/rawcase, then renew exactpublicreview/content receipts and freshgates.
+No stabletag/publication or ownerpass exists.

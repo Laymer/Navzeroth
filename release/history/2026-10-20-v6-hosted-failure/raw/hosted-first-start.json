@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "HOSTED-FIRST-START",
+  "method": "hosted_windows",
+  "status": "fail",
+  "version": "1.0.0",
+  "source_commit": "ffbf834ce9fca684d9dd3fcc357a240a81dd40e4",
+  "production_sha256": "0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a",
+  "installer_sha256": "73fe854cf239b5b70fdcfc01a330bc25bf325f70a94dfdc170c171db3fdf57a4",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  },
+  "operator": "GitHub Actions 39413135905/1",
+  "environment": "GitHub-hosted Windows Microsoft Windows NT 10.0.26100.0",
+  "recorded_at": "2026-10-20T11:59:27Z",
+  "error": "Installed native engineering workload failed."
+}
