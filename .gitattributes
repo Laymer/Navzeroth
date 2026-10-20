@@ -162,3 +162,7 @@ content/source-materials/objects/ef5518c5a3aaa7458e074a7e41e87837f8a1c74da009382
 
 # Exact stable shipped catalogs; small manifests/notices remain ordinary blobs.
 content/release-packs/**/catalog.json filter=lfs diff=lfs merge=lfs -text
+
+# Exact public review shipped in the signed stable bundle.
+docs/releases/1.0.0-independent-public-review.json text eol=lf
+docs/releases/1.0.0-independent-public-review-v2.json text eol=lf
