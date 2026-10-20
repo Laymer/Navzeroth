@@ -47,7 +47,7 @@ try{
   if(!status.startup_measurements||!['load_ms','activation_ms'].every(k=>Number.isSafeInteger(status.startup_measurements[k])&&status.startup_measurements[k]>=0))throw new Error('Successful measured verified bundle startup is required');
   evidence.startup_measurements=status.startup_measurements;
  }
- const result=await exerciseInstalled(call,{context,version,mode,saved:['fresh','baseline'].includes(mode)?undefined:json(state,65536),backup:options.backup,onCatalog:diagnostic=>{evidence.catalog_diagnostics=diagnostic;}});
+ const result=await exerciseInstalled(call,{context,version,mode,saved:['fresh','baseline'].includes(mode)?undefined:json(state,65536),backup:options.backup,onCatalog:diagnostic=>{evidence.catalog_diagnostics=diagnostic;},onRecovery:diagnostic=>{evidence.recovery_diagnostics=diagnostic;}});
  Object.assign(evidence,result.evidence);save(state,result.state);
  const closed=spawnSync('powershell.exe',gracefulCloseArgs(child.pid),{encoding:'utf8',timeout:15000,windowsHide:true});
  if(closed.error||closed.status!==0)throw new Error('Cannot request normal native shutdown');

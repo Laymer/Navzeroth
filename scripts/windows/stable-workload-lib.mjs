@@ -63,7 +63,7 @@ function assertPersisted(active, context, version, expected) {
 }
 
 // I/O-independent native workflow; the Windows driver supplies the actual IPC.
-export async function exerciseInstalled(call, {context,version,mode,saved,backup,onCatalog=()=>{}}) {
+export async function exerciseInstalled(call, {context,version,mode,saved,backup,onCatalog=()=>{},onRecovery=()=>{}}) {
  if(!['baseline','fresh','restart','recover','offline'].includes(mode))throw new Error('Unknown native engineering workload mode');
  const evidence={};
  if(mode==='baseline'){
@@ -101,7 +101,16 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
    if(!backup)throw new Error('Recovery workload requires a new selected backup path');
    await call('create_database_backup',{path:backup});
    const preview=await call('inspect_database_backup',{path:backup});
-   await call('restore_database_backup',{candidate_id:preview.candidate_id});
+   const receipt=await call('restore_database_backup',{candidate_id:preview.candidate_id});
+   evidence.recovery_receipt={pending_marker_cleanup_required:typeof receipt?.pending_marker_cleanup_required==='boolean'?receipt.pending_marker_cleanup_required:null,original_files_retained:typeof receipt?.original_files_retained==='boolean'?receipt.original_files_retained:null,recovery_directory:typeof receipt?.recovery_directory==='string'?receipt.recovery_directory.slice(0,512):null,recovery_directory_truncated:typeof receipt?.recovery_directory==='string'&&receipt.recovery_directory.length>512};
+   onRecovery({receipt:evidence.recovery_receipt});
+   // This workload restores an existing populated database: originals must remain
+   // available, and cleanup failure would require recovery on the next startup.
+   if(receipt?.pending_marker_cleanup_required!==false||receipt.original_files_retained!==true||typeof receipt.recovery_directory!=='string'||!receipt.recovery_directory.trim())throw new Error('Database restore receipt reports incomplete cleanup or missing retained originals');
+   const status=await call('get_database_status');
+   evidence.recovery_database_status={state:typeof status?.state==='string'?status.state.slice(0,64):null,error_present:status?.error!==null};
+   onRecovery({receipt:evidence.recovery_receipt,database_status:evidence.recovery_database_status});
+   if(status?.state!=='ready'||status.error!==null)throw new Error('Restored database is not ready without an error');
    assertPersisted(await call('get_active_content',{profile_id:profile}),context,version,initialContent);
    await call('check_database');
    const restoredSettings=await call('get_app_settings'),restoredProfiles=await call('list_profiles');
