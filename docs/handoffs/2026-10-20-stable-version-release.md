@@ -982,3 +982,16 @@ identity527B SHAdfd0b27e896ad8f5a727bae221cbbd694ef7d179906a54f58e29e07a3d2a5b0c
 Separate expected identity was copied from these independently agreed prepared
 bytes, before any receipt existed. Root now commits these outputs BEFORE external
 key use. No V12signatures/Windows claims yet; exact9observations unverified.
+
+
+Prepared V12 identities were committedbc7a18195bdd24d651dba87f8ed0b0e3a218d529
+BEFORE actual external key use. Restricted directory0700/files0600/ownedregular
+files rechecked; keys stay outside Git. Both identities remain operator-controlled;
+review-evidence signature binds independently recorded review, not separate custody.
+Root issued actual signatures and assembled receipt1073B SHA
+254c39d239f2cdd55352f0c0ea022461bfe6a6e8d2d1a1f095c268977bfb9835,
+cryptographically verified against unchanged public policy and independently agreed
+external expected identity copied before receipt existence. No seed values printed.
+Only manifest/receipt/review exact FileRefs are bound in canonical evidence; all9
+observations remain pristineunverified. Root/independent own-assembly/default-
+compiled-policy/sourceprebuild checks are next, not yet claimed here.
