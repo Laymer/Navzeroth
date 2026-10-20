@@ -139,3 +139,17 @@ delivery39397316809 progressed past that reader and failed a workflow-test exit
 status despite12passing assertions. Neither is a Windows acceptance pass.
 PR242 separately repairs only that terminal test exit. It needs review and normal
 merge before the final production fingerprint/receipt renewal. No tag/publication.
+
+Normal final repair union94947a6aee655f34dd5509be1b7a9871784d0f97 has
+production2be89786b8479ba0d2f0c099e941b5021927557c4f0e1b47e582e31cdb5608a6
+(3132entries). Root independently ran the native PowerShell workflow wrapper:
+first attempt was refused by local execution policy before any test; process-only
+ExecutionPolicyBypass rerun passed12checks/exit0. Existing author-controlled
+assertion/cleanup failures still exit1. Exact949also passed12bounded hydration
+tests and one native bundle adapter regression. Only the test script changed
+afterf391; full-pack proof retains its actualf391source, not restamped949.
+
+New source/production bindings preserve all nine pristine pending observations.
+Actual production material preview succeeded unsigned_preparation.ready=true,
+evidence df7441b3d8e8bba779015a41fac6c1938d2140b7daa9d89d502ad67c4cf891e7,
+82materials. Independent V2 review and new receipts remain the next step.
