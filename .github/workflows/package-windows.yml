@@ -69,6 +69,12 @@ jobs:
       - name: Release material transport tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-ReleaseMaterials.ps1
+      - name: Schema-bound release contract tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./scripts/windows/Test-ReleaseContractBounds.ps1
+      - name: Schema-bound release contract tests (PowerShell 7)
+        shell: pwsh
+        run: ./scripts/windows/Test-ReleaseContractBounds.ps1
       - name: Acceptance candidate transport tests (Windows PowerShell 5.1)
         shell: powershell
         run: ./scripts/windows/Test-AcceptanceCandidate.ps1

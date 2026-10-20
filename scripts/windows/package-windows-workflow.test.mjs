@@ -63,3 +63,15 @@ test('draft publication still waits for package success and verifies its downloa
   assert.match(draft, /--draft --verify-tag/);
   assert.doesNotMatch(draft, /release publish/);
 });
+
+test('both Windows shells run bounded synthetic contract checks without local actual-file arguments', () => {
+  for (const [name, shell] of [
+    ['Schema-bound release contract tests (Windows PowerShell 5.1)', 'powershell'],
+    ['Schema-bound release contract tests (PowerShell 7)', 'pwsh'],
+  ]) {
+    const block = step(name);
+    assert.match(block, new RegExp(`shell: ${shell}\\n`));
+    assert.match(block, /run: \.\/scripts\/windows\/Test-ReleaseContractBounds\.ps1\s*$/);
+    assert.doesNotMatch(block, /ActualRoot/);
+  }
+});
