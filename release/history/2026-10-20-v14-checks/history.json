@@ -1,6 +1,6 @@
 {
   "actual_pr_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
-  "cancellation_attribution": "V14 interrupted after normal PR264 merge triggered configured cancel-in-progress. Root recorded premature merge; no full CI/coverage success. Separate stale-binding intermediate7667 workflows were explicitly cancelled by coordinator; none supplies acceptance.",
+  "cancellation_attribution": "V14 interrupted after normal PR264 merge. Configured cancel-in-progress and successor timing are consistent with automatic supersession, inferred rather than explicit cancellation log attribution. Root recorded premature merge; no full CI/coverage success. Separate stale-binding intermediate7667 workflows were explicitly cancelled by coordinator; none supplies acceptance.",
   "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
   "ci": {
     "browser": {
