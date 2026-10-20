@@ -34,16 +34,24 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
 independent final integration review, all ten protected checks and actual Linux/
 Windows source parity. Separate reviewed final content/native delivery PR238
-remains pending refreshed checks at83577ceb; its necessary bounded reader and
-workflow-test exit repairs are recorded without relabeling earlier package failures.
+merged as807ef674ee13c15ece90e64618ccd5f122afcbdb after all ten exact-head
+checks, source parity and independent review passed at83577ceb. Earlier package
+failures remain recorded with their actual outcomes.
 
 Separate draft version/release PR239 prepares six1.0.0declarations, complete
 verified bundles, historical source warnings, estimates and declared exclusions.
 Its fresh full-pack scenario passed atf3917490 on shared Linux/WSL2; this is not
 Windows or ordinary-PC performance evidence. Final repair union273c57d3 adds the reviewed exact-LF contract for14authored
 Markdown resources after preliminary Windows coverage correctly refused CRLF
-changes. Independent V4review/preparation passed; signed content evidence is
-being renewed for this exact production identity. Initial signatures remain historical under release/history.
+changes. Independent V4 review, signed-content assembly and source prebuild passed.
+Separate reviewed PR247 moved static website resources under docs/site so later
+publication updates preserve the existing application fingerprint policy. Root
+metadata/browser/actionlint checks passed atd6ecb213. V5 review and receipts are
+being renewed for production7db0e201; V4 signatures remain historical under
+release/history. Preliminary actual Windows package39400861524 built its exact
+40ea installer and passed unsigned rehearsal/silent install; native/full acceptance
+remain pending. V4 coverage39405119048 passed Linux/TypeScript; Windows and
+combined per-file gate remain pending at recording.
 [Version handoff](handoffs/2026-10-20-stable-version-release.md).
 
 Actual weekly run39394989774 completed one bounded network acquisition and one

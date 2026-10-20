@@ -307,3 +307,26 @@ are /tmp/navzeroth-stable-v4-build-readiness.json and
 Next: push signed candidate and run one fresh Windows coverage verification of
 the repaired checkout. Final protected-main/resulting-main/tag/draft/owner gates
 remain required. No stable tag or owner result exists.
+
+## Delivery merge and website publication boundary
+
+Delivery PR238 merged as807ef674ee13c15ece90e64618ccd5f122afcbdb after all
+ten checks and source parity passed at83577cebf307c27886bb770d688f7c1aa2968a60:
+CI39401467853, coverage39401467828, package39401467818, source39401467812.
+Independent final composition review passed. Version branch refreshed normally
+as a27ea069, retaining the same V4 production identity. Deferred weekly draft243
+was not merged; only its separately reviewed evidence documents were admitted.
+
+Reviewed PR247 merged c85af68f; root archive uniond6ecb213d18ca3a31f1564b732e3b22d6af5259a
+moves only static site resources into docs/site. Fingerprint predicate is unchanged;
+site validator and Pages workflow remain production-bound. Independent desktop
+review cleared dc667f79 code/final654d3ef3 docs. Root independently passed4metadata
+tests, final browser5pages×3widths and actionlint on uniond6ec. Initial invocation
+in the isolated author tree lacked Playwright and stopped before browser checks;
+the actual parent-tree invocation passed with its existing locked dependencies.
+
+V4 three signed artifacts and scoped verification remain immutable in
+release/history/2026-10-20-signed-content-v4, archived93dcf946. Root cleared current
+bindings before renewal at11e42ab5; production is7db0e201e270edc117ae08aab24480cb6011292002737454bfcdb31d06a0021d.
+V5 independent review, preparation/signatures and source verification are next.
+No application/content change, owner result, stable tag or publication is claimed.
