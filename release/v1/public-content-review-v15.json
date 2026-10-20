@@ -1158,7 +1158,7 @@
       "status": "unverified"
     },
     "final_native_coverage": {
-      "scope": "Historical V13 coverage passed276 files. V14 aggregate was cancelled after Linux/TS collectors succeeded; Windows collector cancelled. Current cef172 requires fresh exact aggregate/native coverage, never restamped from partial runs.",
+      "scope": "Historical V13 coverage passed276 files. V14 overall coverage workflow was cancelled; its aggregate job FAILED prerequisite RUST_RESULT after the Windows collector was cancelled without a receipt. Linux/TS collectors succeeded. Current cef172 requires fresh exact aggregate/native coverage, never restamped from partial runs.",
       "status": "unverified"
     },
     "final_release_stability": {
