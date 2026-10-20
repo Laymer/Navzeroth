@@ -257,3 +257,30 @@ Preliminary stable package39400861524 and Coverage39400864456 actually run40ea.
 Delivery83577ceb refresh requires CI39401467853/Coverage39401467828/package39401467818/
 source39401467812. Results were pending at recording; final exact-head/resulting-main
 gates and all Windows/owner observations remain required.
+
+## Windows signed Markdown checkout repair and V4 renewal
+
+Actual preliminary coverage39400864456 at40ea failed collection: Linux207test
+binaries/1605passed/8ignored and TS91files>=90passed, but Windows exact bundle
+hydration refused before assembly/native execution. The combined gate failed; no
+per-file aggregate or Windows bundle pass is inferred. A real Windows-style Git
+checkout reproduced authored statement2476HEAD bytes becoming2517CRLF bytes.
+Fourteen authored evidence/procedure Markdown files lacked exact LF attributes.
+
+PR246 adds only the exact authored-v2 Markdown LF rule and a real-Git regression,
+without runtime normalization or weaker hashes. Root independently passed13tests
+and the Node adapter on union273c57d3ff42d1de3845ebebaf36d4abda4b4a91. Independent
+world review also passed13/1, verified all14actual resource hashes/LF attributes
+and confirmed runtime/content/datagen/Cargo are unchanged. Production is now
+ad274268479ce96fefc5155cf24cf4b751d4b15fbc2d285dae2a233661fdb3df/3132entries.
+
+V3signed artifacts are preserved under release/history/2026-10-20-signed-content-v3
+with their actual old source/prebuild/failedcoverage scope. Canonical bundle fields
+were cleared before renewal; all9observations remain pristine pending. V1–V3public
+reviews remain immutable. New V4review25092B SHA
+693cb1e65ad75d4d1cc4af657db8150a08e1fe2fd2118085ffff207bd1eb3b07 binds current
+273/ad274 and accurately retains f391functional/f064component executions. Root
+independently streamed all19nested FileRefs. No full scenario is restamped to273.
+Next: actual production preparation, independent prepared-byte review, receipt
+renewal and fresh Windows coverage. Original full-LFS package40ea continues as
+scoped evidence for its exact original installer, not a future acceptance result.
