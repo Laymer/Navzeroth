@@ -200,7 +200,7 @@ fn strict_future_duplicate_unknown_malformed_and_oversize_data_fail_without_echo
     let cases = [
         request
             .to_string()
-            .replacen("\"schema_version\":1", "\"schema_version\":3", 1),
+            .replacen("\"schema_version\":1", "\"schema_version\":4", 1),
         request.to_string().replacen(
             "\"schema_version\":1",
             "\"schema_version\":1,\"schema_version\":1",
@@ -224,7 +224,7 @@ fn strict_future_duplicate_unknown_malformed_and_oversize_data_fail_without_echo
     bad["package"]["hidden_code"] = json!("PLANTED_SECRET");
     assert!(app.dungeon_preparation(&bad.to_string(), now).is_err());
     let mut bad = request.clone();
-    bad["package"]["schema_version"] = json!(3);
+    bad["package"]["schema_version"] = json!(4);
     assert_eq!(
         app.dungeon_preparation(&bad.to_string(), now)
             .unwrap_err()

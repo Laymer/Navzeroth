@@ -95,3 +95,14 @@ test("large source lists retain all references and page visible rows with bounde
   await waitFor(()=>expect(client.getRecordOrigins).toHaveBeenCalled());
   for(const [text] of client.getRecordOrigins.mock.calls){const refs=JSON.parse(text).records;expect(refs.length).toBeLessThanOrEqual(48);}
 });
+
+test("schema3 source guidance renders complete UTF8 derivation text with unknown readiness",async()=>{
+  const value=structuredClone(report);const pkg=value.package;if(!pkg||pkg.checks.observation.status!=="known"||!pkg.checks.observation.value[0])throw Error("Fixture requires a declared check");
+  const label="é".repeat(256);pkg.schema_version=3;pkg.checks.observation.value[0].label=label;
+  for(const member of value.members)for(const check of member.checks)check.condition={availability:"unknown",evaluation:null};
+  const client=mock();client.getDungeonPreparation.mockResolvedValue({ok:true,value});
+  render(<DungeonsScreen client={client as unknown as CommandClient} refreshKey={0}/>);await ready();
+  fireEvent.click(screen.getByRole("button",{name:"Inspect preparation gaps"}));
+  const labels=await screen.findAllByText(label,{exact:false});
+  expect(labels.length).toBeGreaterThan(0);for(const row of labels){expect(row).toHaveTextContent(label);expect(row).toHaveTextContent("unknown");}
+});

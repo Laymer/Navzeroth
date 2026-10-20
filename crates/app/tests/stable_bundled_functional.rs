@@ -427,7 +427,7 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
                     == azeroth_core::observation::ObservationStatus::Unknown)
         );
         let package = report.package.unwrap();
-        assert_eq!(package.schema_version, 2);
+        assert_eq!(package.schema_version, 3);
         assert_associations(
             expected,
             package
