@@ -52,6 +52,7 @@
     }
   },
   "inspection": {
+    "accepts_inferred_travel": false,
     "conflicts": [],
     "key": {
       "revision": "demo-r1",

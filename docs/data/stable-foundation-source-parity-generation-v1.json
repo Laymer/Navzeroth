@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "baseline": "b3c9d67f315d52f00af1890e9d9cd01c05ce3332",
+  "generated_commit": "b638d1ad32283ea9c73f6ea0747c476ab3f1df7f",
+  "source_commit": "9cf1c0659241ec3099fb82059f7030668a997868",
+  "scope": "Original mapper3/policy3 identity correction for integrated authored r2, not functional/environment acceptance",
+  "failed_hosted_run": "39386917386",
+  "failed_local_reproduction": {
+    "old_revision": "navzeroth-world-1.60.1.70450-7bf0f1ed2f7ffd1be6a1e991",
+    "actual_revision": "navzeroth-world-1.60.1.70450-39d1516d28672fc39002afd3",
+    "error": "actual mapped bytes differ from committed output: catalog.json"
+  },
+  "authored": {
+    "revision": "navzeroth-authored-slice-r2",
+    "catalog_sha256": "7336b1f92b49d886a596bb40e056f09dd5264651bc35532c2639dfd270bfe87b"
+  },
+  "comparison": {
+    "catalog": "Entire parsed catalog equal after removing only reference.payload.revision",
+    "conflicts_changed_keys": [
+      "revision"
+    ],
+    "summary_changed_keys": [
+      "catalog_sha256",
+      "revision"
+    ],
+    "all_other_products_admissions_updates_policies_code_and_raw_bytes_unchanged": true,
+    "retained_originals": 19,
+    "exact_corresponding_code_files": 22,
+    "bounded_associations": [
+      {
+        "actual_count": 1541,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:stormwind-stockade",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 1541
+      },
+      {
+        "actual_count": 2559,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:sunken-temple",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 2559
+      },
+      {
+        "actual_count": 2147,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:zul-farrak",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 2147
+      },
+      {
+        "actual_count": 1860,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:scholomance",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 1860
+      }
+    ]
+  },
+  "actual_checks": {
+    "offline_python": 168,
+    "source_admission": 11,
+    "own_cli_build": true,
+    "two_run_exact_parity": true
+  },
+  "network_acquisition": false,
+  "retainer_repin": false,
+  "limitations": "Shared Linux/WSL; fresh exact final main checks and hosted Linux/Windows parity remain required. No Windows/manual/functional acceptance, signatures or publication.",
+  "commands": {
+    "hydrate": [
+      "python3",
+      "scripts/verify-world-source-parity.py",
+      "hydrate",
+      "--offline"
+    ],
+    "regenerate": [
+      "python3",
+      "-I",
+      "data-generators/world_to_content.py",
+      "--input",
+      "data-generators/output",
+      "--target",
+      "release/v1/world-data-target.json",
+      "--policy",
+      "release/v1/accepted-origins.json",
+      "--authored",
+      "content/authored/slice-v1",
+      "--out",
+      "content/world/1.60.1.70450",
+      "--admission",
+      "docs/sources/source-admission-v1.json",
+      "--source-closure",
+      "content/world/1.60.1.70450/source-closure.json",
+      "--normalization-policy",
+      "release/v1/source-normalization-policy.json"
+    ],
+    "parity": [
+      "python3",
+      "scripts/verify-world-source-parity.py",
+      "verify",
+      "--out",
+      "/tmp/navzeroth-foundation-parity-after"
+    ]
+  },
+  "pack_files": [
+    {
+      "path": "catalog.json",
+      "bytes": 367530282,
+      "sha256": "202afb0f1ef33bf1ec81e4364210a58de2deceda37b14cbea9b401e51dae74f4"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 523,
+      "sha256": "a11e8ecacbb36c3e1172db35d186b0b2a9e386a46a326cb322ebf9e0189bf744"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 9406,
+      "sha256": "2ef04876effd33394537f363ea1600b1c89b2ee0718fdb85d6febed9771d911c"
+    }
+  ],
+  "measurements": {
+    "source-sync": {
+      "command": [
+        "/tmp/navzeroth-stable-integration/target/debug/azeroth-cli",
+        "source-sync",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--cache",
+        "content/source-materials/objects"
+      ],
+      "returncode": 0,
+      "seconds": 8.621929190000628,
+      "peak_child_rss_kib": 33536
+    },
+    "pack-build": {
+      "command": [
+        "/tmp/navzeroth-stable-integration/target/debug/azeroth-cli",
+        "build-content-v2",
+        "--input",
+        "content/world/1.60.1.70450",
+        "--output",
+        "/tmp/navzeroth-foundation-parity-world-pack"
+      ],
+      "returncode": 0,
+      "seconds": 93.82603801500045,
+      "peak_child_rss_kib": 6535544
+    },
+    "pack-verify": {
+      "command": [
+        "/tmp/navzeroth-stable-integration/target/debug/azeroth-cli",
+        "verify-pack",
+        "--input",
+        "/tmp/navzeroth-foundation-parity-world-pack"
+      ],
+      "returncode": 0,
+      "seconds": 44.5400090789999,
+      "peak_child_rss_kib": 5361908
+    }
+  },
+  "pack_report": {
+    "report_version": 2,
+    "datasets": 1,
+    "fixtures": 0,
+    "files": 3,
+    "total_bytes": 367540211,
+    "coverage_gaps": 393601,
+    "distribution_eligible": true
+  }
+}

@@ -120,3 +120,48 @@ def json_document(raw, max_depth=64):
         return result
     return json.loads(text, object_pairs_hook=members, parse_float=number,
                       parse_constant=lambda value: (_ for _ in ()).throw(ValueError("non-finite JSON number")))
+
+
+def retain_object(path, data, limit):
+    """Restore only an exact canonical Git LFS pointer from freshly hashed bytes."""
+    import hashlib
+    import pathlib
+    import tempfile
+    path = pathlib.Path(path)
+    digest = hashlib.sha256(data).hexdigest()
+    if not data or len(data) > limit or path.name != digest:
+        raise ValueError('retained object bytes differ from content address')
+    for parent in path.parents:
+        info = parent.lstat()
+        if not stat.S_ISDIR(info.st_mode) or stat.S_ISLNK(info.st_mode):
+            raise ValueError('linked retained-object parent refused')
+    pointer = (f'version https://git-lfs.github.com/spec/v1\noid sha256:{digest}\nsize {len(data)}\n').encode()
+    before = None
+    try:
+        before = path.lstat()
+        existing = read_file(path, limit)
+        if existing == data:
+            return
+        if existing != pointer:
+            raise ValueError('existing immutable object differs from exact bytes/pointer')
+    except FileNotFoundError:
+        pass
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.retained-', delete=False) as output:
+            temporary = pathlib.Path(output.name)
+            output.write(data)
+            output.flush()
+            os.fsync(output.fileno())
+        if before is None:
+            # Hard-link creates a new name without replacing a concurrent object.
+            os.link(temporary, path)
+        else:
+            current = path.lstat()
+            stamp = lambda value: (value.st_dev,value.st_ino,value.st_size,value.st_mtime_ns,value.st_ctime_ns)
+            if stamp(current) != stamp(before) or read_file(path, 1024) != pointer:
+                raise ValueError('retained pointer changed before restoration')
+            os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)

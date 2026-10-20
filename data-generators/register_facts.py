@@ -41,7 +41,7 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from navzeroth_datagen.bounded import read_file, MAX_SHARD_BYTES, input_files, InputBudget  # noqa: E402
+from navzeroth_datagen.bounded import retain_object, read_file, MAX_SHARD_BYTES, input_files, InputBudget  # noqa: E402
 
 ROOT = HERE.parent
 PREFIX = "gen-"
@@ -231,15 +231,10 @@ def adr_evidence(adr_path, objects):
 
 def store(objects, digest, data):
     target = pathlib.Path(objects) / digest
-    if target.is_symlink():
-        raise RegisterError(f"{target}: symbolic links are refused")
-    if target.exists():
-        if target.read_bytes() != data:
-            raise RegisterError(f"{target}: existing object differs from its name; refusing to overwrite")
-        return
-    temporary = target.with_name(f".pending-{os.getpid()}-{digest}")
-    temporary.write_bytes(data)
-    os.replace(temporary, target)
+    try:
+        retain_object(target,data,MAX_FILE_BYTES)
+    except (ValueError,OSError) as error:
+        raise RegisterError(f"{target}: {error}") from error
 
 
 def build_source(generator, edition, build, files, registry_by_id, cited, access, objects, evidence_bytes):

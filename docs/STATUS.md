@@ -29,6 +29,25 @@ Independent UI correction [PR #199](https://github.com/Laymer/Navzeroth/pull/199
 merged at `506a9cb` after independent review, all nine exact-head checks and source
 parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
+## Stable release continuation (2026-10-20)
+
+PRs214–217 merged sequentially, ADR0008 merged as6148ce4c, then repaired
+PR212 merged as3cb74e6a5bf7e0697c63b538599fcee87035fe8a at07:10:52Z.
+Exact212 candidate7de0beea passed all ten protected checks: CI39382048557,
+coverage39382048560 and Windows package39382048584; source39382048559 passed
+actual Linux/Windows mapping and parity. Independent final-head reviews and
+original-source/material closure are retained in their review/handoff records.
+Earlier failed/cancelled checks retain those outcomes.
+
+The [foundation handoff](handoffs/2026-10-20-stable-foundations-integration.md) records separately reviewed219–225/228 integration and actual focused checks. Fresh combined protected-main checks remain required.
+
+The [foundation integration claim](claims/2026-10-20-stable-foundations-integration.md)
+assembles separate reviewed follow-up PRs on an isolated branch before a fully
+checked main integration. Final complete content, native bundling, actual hosted
+Windows verification, owner exact-installer smoke and stable publication remain
+pending. ADR0008 governs unsigned1.0.0; historical signing/live/freeze statements
+below describe preceding contracts. No stable tag exists.
+
 ## Current task
 
 **STABLE-1.0.0 integration (2026-10-19):** owner/sole integration writer Codex

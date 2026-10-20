@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "scope": "Weekly safeguards combined with original mapper3; no functional/environment acceptance",
+  "reviewed_code_commit": "9cf1c0659241ec3099fb82059f7030668a997868",
+  "generated_commit": "f79bde061a12f7dd4232ab606357e7c0dbf44331",
+  "network_acquisition": false,
+  "comparison": {
+    "baseline": "7de0beea07bfb4fb258ee033b0976c94f20a2f19",
+    "code_commit": "9cf1c0659241ec3099fb82059f7030668a997868",
+    "unchanged_sections": [
+      "acquisition_facts",
+      "dungeons",
+      "entities",
+      "equipment",
+      "format",
+      "loot_tables",
+      "models",
+      "node_facts",
+      "quest_facts",
+      "reference.payload.acquisitions",
+      "reference.payload.edges",
+      "reference.payload.evidence",
+      "reference.payload.items",
+      "reference.payload.map_spaces",
+      "reference.payload.nodes",
+      "reference.payload.objectives",
+      "reference.payload.quests",
+      "reference.payload.rules",
+      "schema_version"
+    ],
+    "changed_admission_ids": [
+      "navzeroth-world-content"
+    ],
+    "original_bytes_grants_scopes_proofs_unchanged": true,
+    "corresponding_files_verified_against_git": 22,
+    "bounded_associations": [
+      {
+        "actual_count": 1541,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:stormwind-stockade",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 1541
+      },
+      {
+        "actual_count": 2559,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:sunken-temple",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 2559
+      },
+      {
+        "actual_count": 2147,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:zul-farrak",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 2147
+      },
+      {
+        "actual_count": 1860,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:scholomance",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 1860
+      }
+    ]
+  },
+  "measurements": {
+    "unbound-map": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/world_to_content.py",
+        "--input",
+        "data-generators/output",
+        "--target",
+        "release/v1/world-data-target.json",
+        "--policy",
+        "release/v1/accepted-origins.json",
+        "--authored",
+        "content/authored/slice-v1",
+        "--out",
+        "content/world/1.60.1.70450"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.467031095000038,
+      "peak_rss_kib": 1102944,
+      "user_seconds": 7.88049,
+      "system_seconds": 0.579741,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "retain": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/retain_world_sources.py",
+        "--root",
+        ".",
+        "--world",
+        "data-generators/output",
+        "--cache",
+        "/home/laymer/Devel/worktrees/datagen/data-generators/.cache",
+        "--pack-sources",
+        "content/world/1.60.1.70450/sources.json",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--output",
+        "content/world/1.60.1.70450/source-closure.json",
+        "--normalization-policy",
+        "release/v1/source-normalization-policy.json",
+        "--source-commit",
+        "9cf1c0659241ec3099fb82059f7030668a997868"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.1100602270000763,
+      "peak_rss_kib": 147912,
+      "user_seconds": 1.9547089999999998,
+      "system_seconds": 0.117616,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "bound-map": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/world_to_content.py",
+        "--input",
+        "data-generators/output",
+        "--target",
+        "release/v1/world-data-target.json",
+        "--policy",
+        "release/v1/accepted-origins.json",
+        "--authored",
+        "content/authored/slice-v1",
+        "--out",
+        "content/world/1.60.1.70450",
+        "--admission",
+        "docs/sources/source-admission-v1.json",
+        "--source-closure",
+        "content/world/1.60.1.70450/source-closure.json",
+        "--normalization-policy",
+        "release/v1/source-normalization-policy.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.608476347000078,
+      "peak_rss_kib": 1112460,
+      "user_seconds": 9.827859,
+      "system_seconds": 0.746259,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "source-sync": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "source-sync",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--cache",
+        "content/source-materials/objects"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.901051926000036,
+      "peak_rss_kib": 32768,
+      "user_seconds": 8.441397,
+      "system_seconds": 0.303618,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "world-pack-build": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "build-content-v2",
+        "--input",
+        "content/world/1.60.1.70450",
+        "--output",
+        "/tmp/navzeroth-weekly-v3-world-pack"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 87.75529479099987,
+      "peak_rss_kib": 6535312,
+      "user_seconds": 84.407651,
+      "system_seconds": 3.29583,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "world-pack-verify": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "verify-pack",
+        "--input",
+        "/tmp/navzeroth-weekly-v3-world-pack"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 43.84704809599998,
+      "peak_rss_kib": 5361796,
+      "user_seconds": 41.856374,
+      "system_seconds": 1.988778,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    }
+  },
+  "pack_files": [
+    {
+      "path": "catalog.json",
+      "bytes": 367530282,
+      "sha256": "678a3656f83b52329b8ce692b0054fa96d45bffc282927352cebdaafe743ccf8"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 523,
+      "sha256": "26bca67ce0531c06a20e2e90bb968a84851a2a2b3bcf471f96c17327c3f5b8a5"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 9406,
+      "sha256": "2ef04876effd33394537f363ea1600b1c89b2ee0718fdb85d6febed9771d911c"
+    }
+  ],
+  "pack_reports": {
+    "world-pack-build": {
+      "report_version": 2,
+      "datasets": 1,
+      "fixtures": 0,
+      "files": 3,
+      "total_bytes": 367540211,
+      "coverage_gaps": 393601,
+      "distribution_eligible": true
+    },
+    "world-pack-verify": {
+      "report_version": 2,
+      "datasets": 1,
+      "fixtures": 0,
+      "files": 3,
+      "total_bytes": 367540211,
+      "coverage_gaps": 393601,
+      "distribution_eligible": true
+    }
+  },
+  "limitations": [
+    "Shared Linux debug exact-child RSS; no ordinary-PC or Windows claim.",
+    "One real GitHub network acquisition/replay/draft run still pending workflow main merge.",
+    "Functional, hosted Windows and owner manual smoke remain separate gates."
+  ]
+}

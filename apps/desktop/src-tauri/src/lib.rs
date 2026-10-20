@@ -1155,8 +1155,11 @@ async fn get_gear_catalog(
 async fn compare_gear(
     state: State<'_, Application>,
     text: String,
-) -> Result<azeroth_app::gear::GearReport, AppError> {
-    blocking(state, move |app| app.compare_gear(&text, system_now())).await
+) -> Result<azeroth_app::authored_scores::GearComparison, AppError> {
+    blocking(state, move |app| {
+        app.compare_gear_or_score(&text, system_now())
+    })
+    .await
 }
 pub fn run() -> i32 {
     tauri::Builder::default()

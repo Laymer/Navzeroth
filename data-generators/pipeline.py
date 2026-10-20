@@ -35,6 +35,7 @@ the current HEAD.
 import argparse
 import datetime
 import json
+import hashlib
 import os
 import pathlib
 import re
@@ -280,7 +281,8 @@ def stage_detect(ctx):
 
 
 def read_target(ctx):
-    return json.loads((ctx.root / "release" / "v1" / "world-data-target.json").read_text(encoding="utf-8"))
+    from navzeroth_datagen import bounded
+    return bounded.json_document(bounded.read_file(ctx.root / "release" / "v1" / "world-data-target.json", bounded.MAX_SHARD_BYTES))
 
 
 # --------------------------------------------------------------------------- generate / verify
@@ -297,7 +299,18 @@ def stage_generate(ctx):
     cmd = [py, "-I", RUN_ALL, *mode_flags(ctx.args)]
     if ctx.args.no_network_sources:
         cmd += ["--only", ",".join(NETWORK_FREE)]
-    ctx.run(cmd)
+    env=None
+    if ctx.args.weekly_verified:
+        from navzeroth_datagen import bounded
+        policy=bounded.json_document(bounded.read_file(ctx.root/'release/v1/source-normalization-policy.json',bounded.MAX_SHARD_BYTES))
+        rules=[rule for rule in policy['sources'] if rule['id']=='wago-tools-wowf']
+        if len(rules)!=1 or rules[0]['origin']['edition']!='wow_forever' or not re.fullmatch(r'[0-9]{1,9}(?:\.[0-9]{1,9}){3}',rules[0]['origin']['build']):
+            raise StageError('weekly source policy has no exact Wago build')
+        build=rules[0]['origin']['build']
+        env=dict(os.environ,NAVZEROTH_DATAGEN_WAGO_WOWF_BUILD=build,NAVZEROTH_DATAGEN_LOGS=str(ctx.logs))
+        ctx.log('weekly policy-pinned Wago wowf build: '+build)
+        cmd.append('--clean-declared')
+    ctx.run(cmd,env=env)
     return "ok", manifest_summary(ctx.root / "data-generators" / "output") or ""
 
 
@@ -547,6 +560,8 @@ def parse_args(argv=None):
     p.add_argument("--client", help="WoW client folder holding .build.info (else probed / local.json)")
     p.add_argument("--no-network-sources", action="store_true",
                    help="skip the Wowhead generators (the weekly CI run)")
+    p.add_argument("--hydrate-weekly-manifest",action="store_true",help="hydrate and verify only prior run-manifest metadata then stop")
+    p.add_argument("--weekly-verified",action="store_true",help="policy pinned generation, retention before verification, exact offline replay")
     p.add_argument("--no-publish", action="store_true", help="stop before the branch and draft PR")
     p.add_argument("--cli", help="a built azeroth-cli to use (default: cargo build once)")
     p.add_argument("--version", default=workspace_version(),
@@ -554,6 +569,8 @@ def parse_args(argv=None):
     p.add_argument("--branch", help="publish branch (default data/world-<build>-<YYYYMMDD>)")
     p.add_argument("--base", default="main", help="pull request base branch (default main)")
     args = p.parse_args(argv)
+    if args.weekly_verified and args.offline:
+        p.error('weekly verification requires one acquisition pass followed by its own offline replay')
     args.stages = [s.strip() for s in args.only.split(",") if s.strip()] if args.only else list(STAGES)
     skip = [s.strip() for s in args.skip.split(",") if s.strip()] if args.skip else []
     unknown = [s for s in args.stages + skip if s not in STAGES]
@@ -562,6 +579,12 @@ def parse_args(argv=None):
     if args.no_publish:
         skip.append("publish")
     args.stages = [s for s in STAGES if s in args.stages and s not in skip]
+    if args.weekly_verified:
+        if not args.no_network_sources or args.only or args.pages_dir or args.refresh:
+            p.error('weekly verification requires full no-Wowhead stages and default cache mode')
+        if not {'generate','verify','content','register','gate'}.issubset(args.stages):
+            p.error('weekly verification requires every generate/verify/content/register/gate stage')
+        args.stages=[stage for stage in ['detect','generate','verify','content','register','gate','publish'] if stage in args.stages]
     if not args.stages:
         p.error("no stage left to run")
     return args
@@ -602,10 +625,102 @@ def summary(results, logs):
     return "\n".join(lines)
 
 
+def hydrate_weekly_manifest(ctx):
+    """Fetch one bounded metadata object, never original/raw/media wildcards."""
+    from navzeroth_datagen import bounded
+    relative='data-generators/output/run-manifest.json'
+    size=ctx.run(['git','cat-file','-s','HEAD:'+relative],quiet=True).stdout.strip()
+    if not size.isdecimal() or not 0<int(size)<=bounded.MAX_SHARD_BYTES:
+        raise StageError('prior manifest Git blob exceeds bound')
+    raw=ctx.run(['git','show','HEAD:'+relative],quiet=True).stdout.encode()
+    match=re.fullmatch(rb'version https://git-lfs.github.com/spec/v1\noid sha256:([0-9a-f]{64})\nsize ([0-9]+)\n',raw)
+    if match:
+        expected_size=int(match[2])
+        if not 0<expected_size<=bounded.MAX_SHARD_BYTES:raise StageError('prior manifest LFS object exceeds8MiB')
+        ctx.run(['git','lfs','pull','--include='+relative,'--exclude='])
+        actual=bounded.read_file(ctx.root/relative,bounded.MAX_SHARD_BYTES)
+        if len(actual)!=expected_size or hashlib.sha256(actual).hexdigest()!=match[1].decode():raise StageError('hydrated prior manifest differs from exact Git pin')
+    elif raw.startswith(LFS_POINTER):
+        raise StageError('noncanonical prior manifest LFS pointer')
+    else:
+        actual=bounded.read_file(ctx.root/relative,bounded.MAX_SHARD_BYTES)
+        if actual!=raw:raise StageError('prior manifest differs from committed metadata')
+    if json.loads(actual).get('format')!='navzeroth-world-data-run':raise StageError('invalid prior manifest format')
+    ctx.log(f'prior manifest metadata verified: {len(actual)} bytes; no other LFS selection')
+
+
+def published_digests(ctx, paths=None, maximum=4*1024**3):
+    """Exact source bytes; only the documented readiness report is nonmaterial."""
+    from navzeroth_datagen import bounded
+    result={}
+    total=0
+    build=read_target(ctx).get('build')
+    if not isinstance(build,str) or not re.fullmatch(r'[0-9]{1,9}(?:\.[0-9]{1,9}){3}',build):
+        raise StageError('replay requires an explicit canonical target build')
+    volatile_report=f'content/world/{build}/release-readiness.json'
+    for relative in PUBLISHED if paths is None else paths:
+        base=ctx.root/relative
+        if base.is_symlink():raise StageError("linked published root refused")
+        if not base.exists():continue
+        paths=bounded.input_files(base,'*') if base.is_dir() else [base]
+        for path in paths:
+            name=path.relative_to(ctx.root).as_posix()
+            if name==volatile_report:continue
+            info=path.lstat()
+            if path.is_symlink() or not path.is_file():raise StageError('invalid published material file')
+            total+=info.st_size
+            if total>maximum or len(result)>=16384:raise StageError('published replay closure exceeds bounds')
+            digest=hashlib.sha256()
+            descriptor=os.open(path,os.O_RDONLY|getattr(os,'O_NOFOLLOW',0)|getattr(os,'O_NONBLOCK',0))
+            with os.fdopen(descriptor,'rb') as source:
+                stamp=lambda value:(value.st_dev,value.st_ino,value.st_size,value.st_mtime_ns,value.st_ctime_ns)
+                if stamp(os.fstat(source.fileno()))!=stamp(info):raise StageError('published material changed before hashing')
+                count=0
+                while chunk:=source.read(min(1024*1024,info.st_size-count+1)):
+                    count+=len(chunk)
+                    if count>info.st_size:raise StageError('published material changed while hashing')
+                    digest.update(chunk)
+                if count!=info.st_size or stamp(os.fstat(source.fileno()))!=stamp(info) or stamp(path.lstat())!=stamp(info):raise StageError('published material changed while hashing')
+            result[name]={'bytes':count,'sha256':digest.hexdigest()}
+    return result
+
+
+def verified_weekly(ctx):
+    original_stages=list(ctx.args.stages)
+    ctx.args.stages=[stage for stage in original_stages if stage!='publish']
+    results=run_stages(ctx)
+    if any(row[1]=='failed' for row in results):return results
+    first=published_digests(ctx)
+    products=published_digests(ctx,["dist/source-knowledge-world","dist/world-pack"],10*1024**3)
+    first_logs=ctx.logs
+    ctx.args.offline=True
+    ctx.logs=first_logs/'offline-replay'
+    replay=run_stages(ctx)
+    results.extend(('offline-'+stage,status,seconds,note) for stage,status,seconds,note in replay)
+    if any(row[1]=='failed' for row in replay):return results
+    second=published_digests(ctx)
+    second_products=published_digests(ctx,["dist/source-knowledge-world","dist/world-pack"],10*1024**3)
+    if first!=second or products!=second_products:
+        changed=sorted(name for before,after in [(first,second),(products,second_products)] for name in before.keys()|after.keys() if before.get(name)!=after.get(name))
+        results.append(('reproducibility','failed',0.0,'exact material bytes differ: '+','.join(changed[:16])))
+        return results
+    receipt={'schema_version':1,'verified':True,'network_passes':1,'offline_passes':1,'files':first,'unpublished_build_products':products,
+             'excluded_nonmaterial':[f"content/world/{read_target(ctx)['build']}/release-readiness.json",'pipeline/cache logs outside published paths']}
+    (first_logs/'weekly-reproducibility.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+    ctx.logs=first_logs
+    if 'publish' in original_stages:
+        ctx.args.stages=['publish']
+        results.extend(run_stages(ctx))
+    return results
+
+
 def main(argv=None, runner=None):
     args = parse_args(argv)
     ctx = Context(args, runner=runner)
-    results = run_stages(ctx)
+    if args.hydrate_weekly_manifest:
+        hydrate_weekly_manifest(ctx)
+        return 0
+    results = verified_weekly(ctx) if args.weekly_verified else run_stages(ctx)
     print(summary(results, ctx.logs))
     return 1 if any(r[1] == "failed" for r in results) else 0
 
