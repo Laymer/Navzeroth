@@ -1,4 +1,5 @@
 import "./play.css";
+import { describeObservation } from "../observation";
 import { Button, Field, HelpTip, OriginMarker } from "../ui";
 import { useRecordOrigins } from "./useRecordOrigins";
 import { originKey } from "../commands/world";
@@ -153,6 +154,11 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
       const candidate = candidates.find((c) => c.objective === objective.id);
       const update = (key: "node" | "utility" | "completion_ms" | "service_ms", value: string | number) => { invalidate(); setCandidates((old) => old.map((c) => c.objective === objective.id ? { ...c, [key]: value } : c)); };
       return <fieldset key={objective.id}><legend>{objective.id}</legend><OriginMarker marks={objectiveOrigins.get(originKey({ collection: "objectives", id: objective.id }))} />
+        <ul>{objective.targets.map((target, index) => <li key={index}>{target.kind === "quest_stage"
+          ? `Quest ${target.quest}, stage ${target.stage}. The stage identifier does not provide objective details or counts.`
+          : target.kind === "acquisition" ? `Acquisition source ${target.source}.` : `Visit node ${target.node.id}.`}</li>)}</ul>
+        <p>Requirements: {describeObservation(objective.requirements, () => "recorded conditions; eligibility is checked when planning")}. Unavailable requirements do not establish eligibility.</p>
+        <p>Source duration: {describeObservation(objective.expected_ms, (ms) => `${ms} ms`)}. Planning uses the time you enter.</p>
         <label><input type="checkbox" checked={candidate !== undefined} disabled={!candidate&&candidates.length>=128} onChange={(e) => { invalidate(); setCandidates((old) => e.target.checked ? [...old, { objective: objective.id, node: "", utility: 0, completion_ms: 0, service_ms: 0 }] : old.filter((c) => c.objective !== objective.id)); }} />Consider objective</label>
         <label><input type="checkbox" checked={excluded.includes(objective.id)} disabled={!excluded.includes(objective.id)&&excluded.length>=128} onChange={(e) => { invalidate(); setExcluded((old) => e.target.checked ? [...old, objective.id] : old.filter((id) => id !== objective.id)); }} />Exclude objective</label>
         {candidate && <><span className="play-inline"><label>Objective node <select value={candidate.node} onChange={(e) => update("node", e.target.value)}>{nodeOptions}</select></label><HelpTip label={`Objective node for ${objective.id}`}>{OBJECTIVE_NODE_HELP}</HelpTip></span>

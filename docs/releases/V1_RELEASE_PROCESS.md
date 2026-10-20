@@ -1,5 +1,54 @@
 # Full-content v1.0.0 release process
 
+## Governing stable 1.0.0 contract
+
+[ADR 0008](../decisions/0008-unsigned-stable-release.md) governs the authorized
+**unsigned stable 1.0.0** release. Its explicit exception does not change historical
+RC classification or authorize unsigned future releases. The versioned
+[schema 4 acceptance contract](SCHEMA4_ACCEPTANCE.md) replaces historical Windows
+acceptance requirements; schemas 1/2/3 and their recorded evidence retain their
+meaning. This documentation neither migrates manifests nor records a passing gate.
+
+Stable publication requires all **ten protected-main checks**, independent review,
+source-platform parity, release stability and the applicable coverage, inventory,
+source-attribution, content-integrity and material gates. Signed content receipts
+remain mandatory despite the unsigned installer. Historical origins, accepted
+unknowns, inferred travel, estimates and declared exclusions must remain explicit.
+Live-client acceptance and the launch-build freeze were removed; no live-game
+correctness or ordinary-PC performance is claimed.
+
+Schema 4 requires eight exact-installer `hosted_windows` observations: installation,
+first start, upgrade from 1.0.0-rc.1, downgrade refusal, persistence/recovery, installed
+resources, offline operation and full-pack performance. Separately,
+`OWNER-INSTALLER-SMOKE` requires `interactive_windows` evidence from the owner for
+installation/upgrade, first start, bundled activation, representative planning and
+restart/persistence. Every passing row binds the exact installer SHA256 and tested
+source/production identity. Failed, missing or stale observations remain blocking;
+historical WIN rows are not automatically promoted. Disclose measured resource use,
+hardware and limitations, including any excluded child-process memory.
+
+After the separate release PR merges, run fresh required checks on its exact
+resulting commit; tag only that verified commit. `release-build-readiness` permits
+bounded artifact preparation with pristine pending Windows rows, never publication.
+`release-draft-readiness` requires all eight hosted rows for the exact installer;
+only pristine pending owner smoke may remain. Independently download and verify
+the draft assets, checksums, declared unsigned status, source binding, content,
+notices and installed resources. Then pause for the owner's exact-draft-installer
+smoke. A relevant production change or a different installer invalidates that evidence.
+Only full `release-readiness`, including that smoke and every applicable gate,
+authorizes publication. Once they pass, publish 1.0.0 without another approval
+request; independently verify public downloads before updating/deploying the
+website and download instructions. Preparation or draft readiness never supplies
+publication permission.
+
+## Historical release process and superseded requirements
+
+The following ADR0006/0007 process is retained as historical context. Where it
+conflicts with the stable1.0.0 contract above (including signing, WIN rows, frozen
+scope/build, live acceptance or pre-draft owner evidence), ADR0008 and schema4
+govern. Historical evidence and unverified results keep their original status.
+
+
 > **Superseded in part by [ADR 0007](../decisions/0007-world-data-automation.md)
 > (2026-10-19, task V2.8e):** 1.0.0 readiness no longer requires the 15 `LIVE-*`
 > checks, the live slice matrix or a post-launch frozen target. The target is the

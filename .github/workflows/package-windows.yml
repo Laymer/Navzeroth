@@ -87,6 +87,12 @@ jobs:
       - name: Native smoke helper tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-NativeSmokeHelpers.ps1
+      - name: Unsigned release policy tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./scripts/windows/Test-ReleasePolicy.ps1
+      - name: Unsigned release policy tests (PowerShell 7)
+        shell: pwsh
+        run: ./scripts/windows/Test-ReleasePolicy.ps1
       - name: Signing verifier tests (Windows PowerShell 5.1)
         shell: powershell
         run: ./scripts/windows/Test-Signing.ps1
@@ -130,35 +136,38 @@ jobs:
           NAVZEROTH_SIGN_COMMAND: ${{ secrets.NAVZEROTH_SIGN_COMMAND }}
         run: |
           $expected = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { 'v' + (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version }
+          . ./scripts/windows/Release-Policy.ps1
+          $unsigned = Get-UnsignedReleasePolicy $PWD $expected.TrimStart('v')
+          if ($null -ne $unsigned -and $env:NAVZEROTH_SIGN_COMMAND) { throw 'Declared unsigned releases forbid NAVZEROTH_SIGN_COMMAND' }
           $candidate = $env:ACCEPTANCE_CANDIDATE -eq 'true'
           ./scripts/windows/Build-Windows.ps1 -SkipTests -ExpectedVersion $expected -OutputDirectory dist/windows -AcceptanceCandidate:$candidate
-      # Task V0.4 (ADR 0006 section 9): tags are signed through SignPath Foundation
-      # when the repository variables are set; a stable tag without signing fails.
+      # ADR 0008: only source-declared versions may publish unsigned stable assets.
       - name: Signing mode
         id: signing
-        shell: bash
+        shell: pwsh
         env:
           ORGANIZATION: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
           TEST_SIGNING: ${{ github.event_name == 'workflow_dispatch' && inputs.test_signing && !inputs.acceptance_candidate }}
           REF_TYPE: ${{ github.ref_type }}
           REF_NAME: ${{ github.ref_name }}
         run: |
-          mode=none
-          if [ "$REF_TYPE" = tag ]; then
-            version="${REF_NAME#v}"
-            if [ -n "$ORGANIZATION" ]; then mode=release-signing
-            else
-              case "$version" in
-                0.*|*-*) echo "::warning::SignPath is not configured; the $version installer is unsigned." ;;
-                *) echo "::error::Stable release $version must be signed (ADR 0006); configure SignPath first."; exit 1 ;;
-              esac
-            fi
-          elif [ "$TEST_SIGNING" = true ]; then
-            [ -n "$ORGANIZATION" ] || { echo "::error::test_signing needs the SIGNPATH_ORGANIZATION_ID variable."; exit 1; }
-            mode=test-signing
-          fi
-          echo "mode=$mode" >> "$GITHUB_OUTPUT"
-          echo "signing mode: $mode"
+          . ./scripts/windows/Release-Policy.ps1
+          $mode = 'none'
+          $version = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $unsigned = Get-UnsignedReleasePolicy $PWD $version
+          if ($env:REF_TYPE -eq 'tag') {
+            if ($env:REF_NAME -cne ('v' + $version)) { throw 'Tag and source version differ' }
+            if ($null -ne $unsigned) { Write-Warning "Release $version is explicitly unsigned" }
+            elseif ($env:ORGANIZATION) { $mode = 'release-signing' }
+            elseif (Test-StableReleaseVersion $version) { throw 'Stable release requires signing or an explicit unsigned policy' }
+            else { Write-Warning "Preview $version is unsigned" }
+          } elseif ($env:TEST_SIGNING -eq 'true') {
+            if ($null -ne $unsigned) { throw 'Test signing conflicts with the declared unsigned policy' }
+            if (-not $env:ORGANIZATION) { throw 'test_signing requires SIGNPATH_ORGANIZATION_ID' }
+            $mode = 'test-signing'
+          }
+          "mode=$mode" >> $env:GITHUB_OUTPUT
+          Write-Host "signing mode: $mode"
       - name: Upload the unsigned installer for signing
         id: unsigned
         if: steps.signing.outputs.mode != 'none'
@@ -194,19 +203,20 @@ jobs:
       - name: Test first-start observation harness
         shell: pwsh
         run: ./scripts/windows/Test-FirstStartSmoke.ps1
-      - name: Rehearse unsigned development RC artifact verification
+      - name: Rehearse declared unsigned release artifact verification
         if: steps.signing.outputs.mode == 'none'
         shell: pwsh
         run: |
           $version = (Get-Content -Raw apps/desktop/src-tauri/tauri.conf.json | ConvertFrom-Json).version
-          if ($version -eq '1.0.0-rc.1') {
+          . ./scripts/windows/Release-Policy.ps1
+          if ($null -ne (Get-UnsignedReleasePolicy $PWD $version)) {
             $setup = @(Get-ChildItem dist/windows -Filter '*-x64-setup.exe' -File)
-            if ($setup.Count -ne 1) { throw 'Expected one RC installer' }
+            if ($setup.Count -ne 1) { throw 'Expected one unsigned installer' }
             $hash = (Get-FileHash -LiteralPath $setup[0].FullName -Algorithm SHA256).Hash.ToLowerInvariant()
             $evidence = Join-Path $env:RUNNER_TEMP 'native-smoke'
             New-Item -ItemType Directory -Path $evidence -Force | Out-Null
-            ./scripts/windows/Verify-DownloadedRelease.ps1 -Directory dist/windows -Version $version -InstallerSha256 $hash -Receipt (Join-Path $evidence 'prepared-rc-verification.json')
-            if ($LASTEXITCODE -ne 0) { throw 'Prepared RC verification rehearsal failed' }
+            ./scripts/windows/Verify-DownloadedRelease.ps1 -Directory dist/windows -Version $version -InstallerSha256 $hash -Receipt (Join-Path $evidence 'prepared-release-verification.json')
+            if ($LASTEXITCODE -ne 0) { throw 'Prepared release verification rehearsal failed' }
           }
       - name: Silent install, first start and uninstall
         shell: pwsh

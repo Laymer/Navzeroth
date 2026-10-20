@@ -91,6 +91,9 @@ pub struct GearRequest {
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub authored_model: Option<SourceId>,
+    /// Explicit hypothetical role for individual arithmetic only; never capture state.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub score_role_assumption: Option<RoleId>,
     pub model: RoleProfileData,
     pub layout: SlotLayoutData,
     pub class: Observation<SourceId>,
@@ -173,6 +176,18 @@ impl SnapshotApplication {
         })
     }
     pub fn compare_gear(&self, text: &str, now: Option<UtcMillis>) -> Result<GearReport> {
+        match self.compare_gear_or_score(text, now)? {
+            crate::authored_scores::GearComparison::Full(report) => Ok(*report),
+            crate::authored_scores::GearComparison::ScoreOnly(_) => Err(invalid(
+                "Authored equipment layout or proficiency is unavailable; use individual heuristic scores only",
+            )),
+        }
+    }
+    pub fn compare_gear_or_score(
+        &self,
+        text: &str,
+        now: Option<UtcMillis>,
+    ) -> Result<crate::authored_scores::GearComparison> {
         if text.len() > MAX_REQUEST_BYTES {
             return Err(AppError::new(
                 ErrorCode::ImportTooLarge,
@@ -204,12 +219,16 @@ impl SnapshotApplication {
             if content.reference().revision != request.revision {
                 return Err(invalid("Active content changed; refresh gear inputs"));
             }
-            calculate(
-                request.clone(),
-                &snapshot,
-                &content,
-                &crate::snapshots::context(now),
-            )
+            let clock = crate::snapshots::context(now);
+            if let Some(scores) =
+                crate::authored_scores::score_only(&request, &snapshot, &content, &clock)?
+            {
+                return Ok(crate::authored_scores::GearComparison::ScoreOnly(Box::new(
+                    scores,
+                )));
+            }
+            calculate(request.clone(), &snapshot, &content, &clock)
+                .map(|report| crate::authored_scores::GearComparison::Full(Box::new(report)))
         })
     }
 }
@@ -220,6 +239,11 @@ pub fn calculate(
     content: &dyn CatalogView,
     clock: &FreshnessContext,
 ) -> Result<GearReport> {
+    if request.score_role_assumption.is_some() {
+        return Err(invalid(
+            "Declared-role assumptions apply only to individual heuristic scores, not equipment or practical comparisons",
+        ));
+    }
     if request.candidates.len() > MAX_CANDIDATES {
         return Err(invalid("Gear input exceeds 128 candidates"));
     }

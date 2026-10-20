@@ -536,3 +536,109 @@ fn exact_revision_reads_reject_mismatched_index_identity() {
         ErrorCode::StorageError
     );
 }
+
+#[test]
+fn durable_travel_and_version_defaults_preserve_choices_rollback_and_failed_activation() {
+    let db = TempDb::new("bundle-defaults");
+    let first = revision("bundle-a");
+    let second = revision("bundle-b");
+    let key = first.key();
+    let other = second.key();
+    {
+        let mut store = SqliteStore::open(&db.path).unwrap();
+        store.stage_content_revision(&first).unwrap();
+        store.stage_content_revision(&second).unwrap();
+        assert!(!store.content_accepts_inferred(&key).unwrap());
+        assert!(store.bundle_default_state(&key.scope).unwrap().is_none());
+        assert!(store.apply_bundle_default("1.0.0-rc.1", &key).unwrap());
+        assert!(store.content_accepts_inferred(&key).unwrap());
+        store.activate_content_with_travel(&other, false).unwrap();
+        assert!(!store.apply_bundle_default("1.0.0-rc.1", &key).unwrap());
+        assert!(store.apply_bundle_default("1.0.0-rc.1", &other).is_err());
+        assert_eq!(
+            store
+                .active_catalog_revision(&key.scope)
+                .unwrap()
+                .unwrap()
+                .key(),
+            other
+        );
+    }
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    assert!(!store.content_accepts_inferred(&other).unwrap());
+    assert!(store.content_accepts_inferred(&key).unwrap());
+    assert!(store.apply_bundle_default("1.0.0", &key).unwrap());
+    let state = store.bundle_default_state(&key.scope).unwrap().unwrap();
+    assert_eq!(state.previous_app_version.as_deref(), Some("1.0.0-rc.1"));
+    assert_eq!(state.app_version, "1.0.0");
+    assert!(store.content_accepts_inferred(&key).unwrap());
+    store.rollback_content_revision(&key.scope).unwrap();
+    assert_eq!(
+        store
+            .active_catalog_revision(&key.scope)
+            .unwrap()
+            .unwrap()
+            .key(),
+        other
+    );
+    assert!(!store.content_accepts_inferred(&other).unwrap());
+    let mut missing = key.clone();
+    missing.revision = azeroth_core::types::DatasetRevision::new("absent").unwrap();
+    assert!(store.activate_content_with_travel(&missing, true).is_err());
+    assert!(store.apply_bundle_default("1.0.1", &missing).is_err());
+    assert!(store.apply_bundle_default("bad-version", &key).is_err());
+    assert_eq!(
+        store
+            .active_catalog_revision(&key.scope)
+            .unwrap()
+            .unwrap()
+            .key(),
+        other
+    );
+    assert_eq!(
+        store
+            .bundle_default_state(&key.scope)
+            .unwrap()
+            .unwrap()
+            .app_version,
+        "1.0.0"
+    );
+    assert!(!store.content_accepts_inferred(&missing).unwrap());
+    let backup = TempDb::new("defaults-backup");
+    let recovered = TempDb::new("defaults-recovered");
+    store.backup_to(&backup.path).unwrap();
+    azeroth_storage::recovery::reconstruct_backup(&backup.path, &recovered.path).unwrap();
+    let restored = SqliteStore::open(&recovered.path).unwrap();
+    assert!(restored.content_accepts_inferred(&key).unwrap());
+    assert!(!restored.content_accepts_inferred(&other).unwrap());
+    assert_eq!(
+        restored
+            .bundle_default_state(&key.scope)
+            .unwrap()
+            .unwrap()
+            .app_version,
+        "1.0.0"
+    );
+    // Inject a late SQL failure after pointer mutation: transaction restores pointer and choice.
+    let raw = rusqlite::Connection::open(&db.path).unwrap();
+    raw.execute_batch("CREATE TRIGGER deny_travel BEFORE UPDATE ON content_travel_choices BEGIN SELECT RAISE(ABORT,'test failure'); END;").unwrap();
+    assert!(store.apply_bundle_default("1.0.1", &key).is_err());
+    assert!(store.activate_content_with_travel(&key, false).is_err());
+    assert!(store.content_accepts_inferred(&key).unwrap());
+    assert_eq!(
+        store
+            .active_catalog_revision(&key.scope)
+            .unwrap()
+            .unwrap()
+            .key(),
+        other
+    );
+    assert_eq!(
+        store
+            .bundle_default_state(&key.scope)
+            .unwrap()
+            .unwrap()
+            .app_version,
+        "1.0.0"
+    );
+}

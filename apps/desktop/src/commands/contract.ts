@@ -99,6 +99,8 @@ export interface PartyQuestCatalog {
 }
 type Policy<T> = { status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable" };
 export interface ContentInspection {
+  accepts_inferred_travel?: boolean;
+  bundle_defaults?: {app_version:string;previous_app_version:string|null;revision:string};
   pages?: {content_sha256:string;sources:number;conflicts:number;gaps:number;errors:number};
   key: { scope: { context: DataContext; fixture: boolean }; revision: string };
   report: {
@@ -363,7 +365,7 @@ export interface CommandMap {
   get_session_detail: { input: { profile_id: string; session_id: string }; output: import("./sessions").SessionDetail };
   delete_session: { input: { profile_id: string; session_id: string }; output: boolean };
   get_gear_catalog: { input: { profile_id: string }; output: import("./gear").GearCatalog };
-  compare_gear: { input: { text: string }; output: import("./gear").GearReport };
+  compare_gear: { input: { text: string }; output: import("./gear").GearComparison };
   export_plan: { input: { text: string }; output: { text: string; byte_count: number; plan_id: string; expires_at_utc_ms: number } };
   export_agreed_party_plan: { input: { text: string }; output: { text: string; byte_count: number; plan_id: string; expires_at_utc_ms: number } };
   get_planning_catalog: { input: { profile_id: string }; output: PlanningCatalog };
