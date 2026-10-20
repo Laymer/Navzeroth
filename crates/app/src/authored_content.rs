@@ -445,6 +445,11 @@ pub(crate) fn dungeon_package(
                 .find(|a| &a.id == id)
                 .ok_or_else(|| invalid("Dungeon reward does not resolve"))?;
             for item in &source.items {
+                if rewards.len() == crate::dungeon_preparation::MAX_REFERENCE_RECORDS {
+                    return Err(invalid(
+                        "Dungeon reward references exceed preparation bounds",
+                    ));
+                }
                 rewards.push(RewardReference {
                     item: item.clone(),
                     source: id.clone(),
@@ -473,7 +478,7 @@ pub(crate) fn dungeon_package(
         unavailable(&dungeon.checklist)?
     };
     Ok(LocalPreparationPackage {
-        schema_version: 1,
+        schema_version: 2,
         id: dungeon.id.clone(),
         title: dungeon.title.clone(),
         context: content.context(),
