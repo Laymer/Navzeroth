@@ -31,6 +31,18 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Current V11preparation: reviewedouterbudgetPR258 normally merged7379efdb.
+Onlyproductionchange since freshactualfullpack1dd is Windowsjobouter110→170min
+(existingtaglimit); inner20/60, finalguards/readiness/90/trust/permissions unchanged.
+Actualsetup+allowedfullsuite+recording envelope exceeds110; no actualtimeoutclaim.
+Root/desktop/world independentCLEAR/actionlintPASS. V10was onlyunsignedprepared/
+independentlyreproduced84resources, NOkeys/hostedrun; archivedbefore258. Runtime
+freshproofef3c retainsactual1dd/b9scope134.138s/6402732KiB sharedLinuxWSL2.
+Newproductionf7515b8c/tested7379efdb, canonicalabsent/all9unverified. Next V11review/
+preparation/signatures/sourceclosure and freshallten/source/Windowsgates. No tag/
+ownerpass/publication; remotee5ec stillfailedV8.
+
+
 Current V10preparation: independently reviewed255/256/257 normally integrated at
 1ddaa8d6. Fix typedperformanceproducer, require cleanreadyrecovery, and reuse existing
 validatedcatalog cache during travelchoices while retaining transaction/invalidation

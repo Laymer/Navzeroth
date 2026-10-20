@@ -792,3 +792,40 @@ Next additiveindependentreview, actualpreparation/reproduction, committedidentit
 beforekeys, signedclosure, then ONEfreshcandidatepush/alltenchecks/sourceparity.
 Budgetsremainunchanged; actualfullWindowsretestmustestablishsufficiency. No stabletag,
 ownerpass or publication.
+
+
+## Pre-issuance attribution clarification and reviewed outer budget
+
+InitialV10publicreview0bdbd5c6/52640B/38e77869 and actualunsignedpreparation
+211d555c passed independent84-resource streaming and canonicalreproduction.
+Desktop spotted inheritedhistoricalattribution 'current09b' wording. Solewriter
+normalchild3a2bb454 clarified onlythat sentence: historicalV8production52d008
+does not establish currentV10b9d5 acceptance. No fact/reference/source changed.
+Correctedreview52715B SHA41540385fcdb88c9912fdac19e978fc9ad3f18ddcd53037402d7adaac7482c46
+was mergedf1d83726, actualpreparation repeated and desktop ownoptimizedpreview/
+pureprepare reproduced manifest17185B SHA435e96c68160f946240123e90549bef27a28eecdc4b0353d9354513328949e84
+and identity527B SHA58268b6ac6c4172c79e28b69d527d5cc8612e258fb193230478b9f175edc3ce0.
+All84resources395776069B streamed;83nonreviewV9identical; all60reviewrefs/Gitpins
+verified. NOidentitiescommitted, NOkeys/signatures/hostedrun for V10. Rootpreserved
+unsignedidentities/history a043a76e before the next necessaryworkflowrepair.
+
+Read-onlybudgetaudit established an inconsistentouterenvelope: actualV8setup
+~51min beforeproducer, ~6min pre-suite verification, allowed60min suite, actual
+~3min recorder and estimated~6min finalverification class total~126min before
+upload/cleanup. The60min component is an allowance, NOT an observedcompletedrun;
+V8failedmetricshape, NOT timeout. Repair258 codead61fc25/final088a3f62 normally
+merged7379efdbbde943905944955bfdfd736c9d984a1c. ExactONEworkflowline makes job
+170min for source/main/draft/tag (previously170tag/110others). Existing20min case
+and60min suite, allsteps/finalguards/readiness/90coverage/trust/permissions remain.
+Root/desktop/world independentreviews CLEAR and eachactionlint/diffPASS. No quota,
+purchase, runtime/content change, actualtimeout or speedup claim. Finite170 remains
+outerfailclosed bound, not proof every synchronous worst-case stage fits.
+
+RootGitcomparison confirms onlythatworkflow line differs in production since
+actualfullpack1ddaa8d6. Runtime/UI/addon/content/scripts/Cargo bytes unchanged.
+Freshproofef3c7098/measurementec335cff remain actual1dd/b9execution; no rerun or
+restamp for workflowonly. Newtestedancestor7379efdb/production
+f7515b8cf1111828f7fb76c29f77c94439f6f3e372144261f982edc7c7d72b25
+(3125entries), metadata3fc3a0d2; unsignedoutputs removedafterarchival. All9rows
+pristineunverified. Next additiveV11independentreview and renewedactualpreparation/
+receipts/sourceclosure before onefreshcandidatepush. No stabletag/owner/publication.
