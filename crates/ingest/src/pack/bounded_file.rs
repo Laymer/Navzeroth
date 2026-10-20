@@ -7,15 +7,16 @@ use std::{
     path::{Component, Path, PathBuf},
     time::SystemTime,
 };
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 struct Stamp {
     length: u64,
     modified: SystemTime,
     #[cfg(unix)]
     identity: (u64, u64, i64, i64),
     #[cfg(windows)]
-    identity: (u64, u32),
+    identity: (u64, [u8; 16], u32),
 }
+#[cfg(not(windows))]
 fn stamp(metadata: &fs::Metadata) -> Res<Stamp> {
     Ok(Stamp {
         length: metadata.len(),
@@ -32,12 +33,53 @@ fn stamp(metadata: &fs::Metadata) -> Res<Stamp> {
                 metadata.ctime_nsec(),
             )
         },
-        #[cfg(windows)]
-        identity: {
-            use std::os::windows::fs::MetadataExt;
-            (metadata.creation_time(), metadata.file_attributes())
-        },
     })
+}
+#[cfg(windows)]
+fn windows_stamp(file: &fs::File, metadata: &fs::Metadata) -> Res<Stamp> {
+    use std::os::windows::{fs::MetadataExt, io::AsRawHandle};
+    use windows_sys::Win32::Storage::FileSystem::{
+        FILE_ATTRIBUTE_REPARSE_POINT, FILE_ID_INFO, FileIdInfo, GetFileInformationByHandleEx,
+    };
+    if metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+        return Err("Pack component is a reparse point");
+    }
+    let mut info = FILE_ID_INFO::default();
+    // SAFETY: the owned file keeps this handle live; info is a correctly sized,
+    // initialized FILE_ID_INFO output for FileIdInfo. No imported code is run.
+    if unsafe {
+        GetFileInformationByHandleEx(
+            file.as_raw_handle(),
+            FileIdInfo,
+            (&mut info as *mut FILE_ID_INFO).cast(),
+            std::mem::size_of::<FILE_ID_INFO>() as u32,
+        )
+    } == 0
+    {
+        return Err("Pack volume/file identity unavailable");
+    }
+    Ok(Stamp {
+        length: metadata.len(),
+        modified: metadata
+            .modified()
+            .map_err(|_| "Pack modification identity unavailable")?,
+        identity: (
+            info.VolumeSerialNumber,
+            info.FileId.Identifier,
+            metadata.file_attributes(),
+        ),
+    })
+}
+fn descriptor_stamp(file: &fs::File) -> Res<Stamp> {
+    let metadata = file.metadata().map_err(|_| "Pack descriptor unavailable")?;
+    #[cfg(windows)]
+    {
+        windows_stamp(file, &metadata)
+    }
+    #[cfg(not(windows))]
+    {
+        stamp(&metadata)
+    }
 }
 fn components(path: &Path) -> Res<Vec<(PathBuf, Stamp)>> {
     path_checked(path, false)?;
@@ -58,8 +100,30 @@ fn components(path: &Path) -> Res<Vec<(PathBuf, Stamp)>> {
         if matches!(part, Component::Prefix(_)) {
             continue;
         }
-        let metadata = fs::symlink_metadata(&cursor).map_err(|_| "Pack component unavailable")?;
-        let mut identity = stamp(&metadata)?;
+        #[cfg(not(windows))]
+        let (metadata, mut identity) = {
+            let metadata =
+                fs::symlink_metadata(&cursor).map_err(|_| "Pack component unavailable")?;
+            let identity = stamp(&metadata)?;
+            (metadata, identity)
+        };
+        #[cfg(windows)]
+        let (metadata, mut identity) = {
+            use std::os::windows::fs::OpenOptionsExt;
+            use windows_sys::Win32::Storage::FileSystem::{
+                FILE_FLAG_BACKUP_SEMANTICS, FILE_FLAG_OPEN_REPARSE_POINT,
+            };
+            // Metadata-only access permits directory inspection without reading
+            // its contents. Inspect the same no-follow handle that supplies ID.
+            let file = fs::OpenOptions::new()
+                .access_mode(0)
+                .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT)
+                .open(&cursor)
+                .map_err(|_| "Pack component cannot be opened safely")?;
+            let metadata = file.metadata().map_err(|_| "Pack component unavailable")?;
+            let identity = windows_stamp(&file, &metadata)?;
+            (metadata, identity)
+        };
         if metadata.is_dir() {
             // Unrelated children changing a shared ancestor must not reject a
             // read. Retain directory identity, not its mutable entry statistics.
@@ -111,7 +175,7 @@ fn read_with(path: &Path, limit: usize, mut checkpoint: impl FnMut(u8)) -> Res<V
         .open(path)
         .map_err(|_| "Pack file cannot be opened safely")?;
     let opened = file.metadata().map_err(|_| "Pack descriptor unavailable")?;
-    if !regular(&opened) || stamp(&opened)? != selected.1 {
+    if !regular(&opened) || descriptor_stamp(&file)? != selected.1 {
         return Err("Pack file changed before reading");
     }
     checkpoint(1);
@@ -125,7 +189,7 @@ fn read_with(path: &Path, limit: usize, mut checkpoint: impl FnMut(u8)) -> Res<V
     }
     checkpoint(2);
     if bytes.len() as u64 != opened.len()
-        || stamp(&file.metadata().map_err(|_| "Pack descriptor unavailable")?)? != selected.1
+        || descriptor_stamp(&file)? != selected.1
         || components(path)? != before
     {
         return Err("Pack file changed while reading");
