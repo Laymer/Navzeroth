@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "kind": "deferred_weekly_draft_downstream_check_audit",
+  "reviewer": "Codex /root/desktop_review",
+  "head": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+  "pull_request": {
+    "baseRefName": "main",
+    "headRefName": "data/world-weekly",
+    "headRefOid": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/Laymer/Navzeroth/pull/243"
+  },
+  "runs": [
+    {
+      "conclusion": "success",
+      "created_at": "2026-10-20T09:09:22Z",
+      "head": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+      "id": 39398609139,
+      "jobs": [
+        {
+          "completed_at": "2026-10-20T09:29:22Z",
+          "conclusion": "success",
+          "id": 118547433902,
+          "name": "Stability (repeat runs)",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547433902"
+        },
+        {
+          "completed_at": "2026-10-20T09:09:38Z",
+          "conclusion": "success",
+          "id": 118547433922,
+          "name": "Rust format",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547433922"
+        },
+        {
+          "completed_at": "2026-10-20T09:10:23Z",
+          "conclusion": "success",
+          "id": 118547434084,
+          "name": "pnpm Windows",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434084"
+        },
+        {
+          "completed_at": "2026-10-20T09:10:03Z",
+          "conclusion": "success",
+          "id": 118547434087,
+          "name": "pnpm Linux",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434087"
+        },
+        {
+          "completed_at": "2026-10-20T09:34:27Z",
+          "conclusion": "success",
+          "id": 118547434105,
+          "name": "Rust Windows",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434105"
+        },
+        {
+          "completed_at": "2026-10-20T09:18:50Z",
+          "conclusion": "success",
+          "id": 118547434113,
+          "name": "Rust Linux",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434113"
+        },
+        {
+          "completed_at": "2026-10-20T09:09:37Z",
+          "conclusion": "success",
+          "id": 118547434184,
+          "name": "Python data generators",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434184"
+        },
+        {
+          "completed_at": "2026-10-20T09:16:18Z",
+          "conclusion": "success",
+          "id": 118547434198,
+          "name": "Desktop shell Windows",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434198"
+        },
+        {
+          "completed_at": "2026-10-20T09:13:30Z",
+          "conclusion": "success",
+          "id": 118547434252,
+          "name": "Mocked desktop Chromium",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434252"
+        },
+        {
+          "completed_at": "2026-10-20T09:09:40Z",
+          "conclusion": "success",
+          "id": 118547434301,
+          "name": "Lua static checks",
+          "started_at": "2026-10-20T09:09:25Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139/job/118547434301"
+        }
+      ],
+      "name": "CI",
+      "status": "completed",
+      "updated_at": "2026-10-20T09:34:28Z",
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398609139"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-10-20T09:09:23Z",
+      "head": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+      "id": 39398612016,
+      "jobs": [
+        {
+          "completed_at": "2026-10-20T09:21:35Z",
+          "conclusion": "success",
+          "id": 118547445648,
+          "name": "Rust coverage Linux",
+          "started_at": "2026-10-20T09:09:27Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398612016/job/118547445648"
+        },
+        {
+          "completed_at": "2026-10-20T09:34:01Z",
+          "conclusion": "success",
+          "id": 118547445918,
+          "name": "Rust coverage Windows",
+          "started_at": "2026-10-20T09:09:27Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398612016/job/118547445918"
+        },
+        {
+          "completed_at": "2026-10-20T09:10:44Z",
+          "conclusion": "success",
+          "id": 118547446014,
+          "name": "TypeScript coverage",
+          "started_at": "2026-10-20T09:09:27Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398612016/job/118547446014"
+        },
+        {
+          "completed_at": "2026-10-20T09:34:23Z",
+          "conclusion": "success",
+          "id": 118557406498,
+          "name": "Coverage gate",
+          "started_at": "2026-10-20T09:34:04Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398612016/job/118557406498"
+        }
+      ],
+      "name": "Coverage",
+      "status": "completed",
+      "updated_at": "2026-10-20T09:34:24Z",
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398612016"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-10-20T09:09:25Z",
+      "head": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+      "id": 39398615432,
+      "jobs": [
+        {
+          "completed_at": "2026-10-20T09:10:36Z",
+          "conclusion": "success",
+          "id": 118547455208,
+          "name": "Offline sources (ubuntu-24.04)",
+          "started_at": "2026-10-20T09:09:28Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398615432/job/118547455208"
+        },
+        {
+          "completed_at": "2026-10-20T09:11:16Z",
+          "conclusion": "success",
+          "id": 118547455875,
+          "name": "Offline sources (windows-2025)",
+          "started_at": "2026-10-20T09:09:28Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398615432/job/118547455875"
+        },
+        {
+          "completed_at": "2026-10-20T09:11:25Z",
+          "conclusion": "success",
+          "id": 118548197205,
+          "name": "Source catalog platform parity",
+          "started_at": "2026-10-20T09:11:18Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398615432/job/118548197205"
+        }
+      ],
+      "name": "Independent source knowledge",
+      "status": "completed",
+      "updated_at": "2026-10-20T09:11:25Z",
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398615432"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-10-20T09:09:27Z",
+      "head": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+      "id": 39398618648,
+      "jobs": [
+        {
+          "completed_at": "2026-10-20T09:28:30Z",
+          "conclusion": "success",
+          "id": 118547469091,
+          "name": "Windows installer and addon package",
+          "started_at": "2026-10-20T09:09:39Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398618648/job/118547469091"
+        },
+        {
+          "completed_at": "2026-10-20T09:28:30Z",
+          "conclusion": "skipped",
+          "id": 118555141668,
+          "name": "Draft GitHub release",
+          "started_at": "2026-10-20T09:28:30Z",
+          "status": "completed",
+          "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398618648/job/118555141668"
+        }
+      ],
+      "name": "Windows package",
+      "status": "completed",
+      "updated_at": "2026-10-20T09:28:30Z",
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39398618648"
+    }
+  ],
+  "failures": [],
+  "disposition": "Deferred generated update; no merge or release acceptance inferred.",
+  "lineage": {
+    "release_inventory_schema": 3,
+    "acceptance_evidence_schema": 3,
+    "inventory_units": 9,
+    "schema4_stable_producer_present": false,
+    "contains_delivery_df62631f": false,
+    "cargo_lock_and_notice_sha256": "8859ab2fca5c27eabd52ee886123192d054adcf6f7b26eaa7019a98a2661dbcf"
+  },
+  "limitations": "Read-only GitHub run/PR metadata and static Git-source audit. No world acquisition, LFS hydration, regeneration, network pipeline retry, live/owner observation, independent data review or stable installer acceptance performed."
+}
