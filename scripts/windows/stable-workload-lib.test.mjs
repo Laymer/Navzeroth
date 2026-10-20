@@ -235,3 +235,39 @@ test('recovery diagnostics retain only bounded actual receipt metadata on failur
  assert.equal(diagnostic.receipt.recovery_directory.length,512);assert.equal(diagnostic.receipt.recovery_directory_truncated,true);
  assert(!JSON.stringify(diagnostic).includes('private_dump'));
 });
+
+test('bounded progress retains only command/phase timing and never acceptance success', async () => {
+ const {createWorkloadProgress}=await import('./stable-workload-progress.mjs');
+ const {mkdtempSync,readFileSync,rmSync}=await import('node:fs');
+ const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-')),path=join(dir,'partial.json');let now=100;
+ try{
+  const progress=createWorkloadProgress(path,{mode:'recover',version:'1.0.0',now:()=>now++});
+  progress.phase('exercise');
+  for(let n=0;n<100;n++)assert.equal(await progress.track('get_database_status',async()=>42),42);
+  const error=new Error('PRIVATE_ERROR_NOT_RETAINED');
+  await assert.rejects(progress.track('restore_database_backup',async()=>{throw error;}),e=>e===error);
+  const raw=readFileSync(path,'utf8'),value=JSON.parse(raw);
+  assert.equal(value.passed,false);assert.equal(value.completed,false);assert.equal(value.history.length,32);
+  assert.equal(value.active_command,'restore_database_backup');assert.equal(value.history.at(-1).stage,'error');
+  assert.ok(Buffer.byteLength(raw)<16384);assert.ok(!raw.includes('PRIVATE_ERROR'));
+  assert.throws(()=>progress.phase('bad\nlabel'),/Invalid/);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('forced child kill retains the complete pending IPC checkpoint without finally', async () => {
+ const {spawn}=await import('node:child_process');const {once}=await import('node:events');
+ const {mkdtempSync,readFileSync,rmSync}=await import('node:fs');
+ const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-kill-')),path=join(dir,'partial.json');
+ const moduleUrl=new URL('./stable-workload-progress.mjs',import.meta.url).href;
+ const script=`import {createWorkloadProgress} from ${JSON.stringify(moduleUrl)};const p=createWorkloadProgress(process.argv[1],{mode:'recover',version:'1.0.0'});p.phase('exercise');await p.track('inspect_database_backup',async()=>{process.stdout.write('ready');setInterval(()=>{},1000);await new Promise(()=>{});});`;
+ const child=spawn(process.execPath,['--input-type=module','-e',script,path],{stdio:['ignore','pipe','pipe']});
+ try{
+  await Promise.race([once(child.stdout,'data'),new Promise((_,reject)=>setTimeout(()=>reject(Error('Synthetic child did not checkpoint')),5000).unref())]);
+  const exit=once(child,'exit');child.kill('SIGKILL');await exit;
+  const partial=JSON.parse(readFileSync(path,'utf8'));
+  assert.equal(partial.active_command,'inspect_database_backup');assert.equal(partial.phase,'exercise');
+  assert.equal(partial.history.at(-1).stage,'before');assert.equal(partial.passed,false);assert.equal(partial.completed,false);
+ }finally{if(child.exitCode===null&&child.signalCode===null)child.kill('SIGKILL');rmSync(dir,{recursive:true,force:true});}
+});
