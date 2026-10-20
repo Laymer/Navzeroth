@@ -1,0 +1,21 @@
+{
+  "hydrated": [
+    "data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json",
+    "data-generators/output/run-manifest.json"
+  ],
+  "inputs": [
+    {
+      "bytes": 2026036,
+      "path": "data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json",
+      "sha256": "f5a0f00625964c0a5c215b90c282473c9441d5f117e9538bdc7bdee0647031f5"
+    },
+    {
+      "bytes": 12069,
+      "path": "data-generators/output/run-manifest.json",
+      "sha256": "7dee59b54da48dad87c6f5e4af7c1dfa31925216c5c1808659095ac55c064048"
+    }
+  ],
+  "network": false,
+  "source_commit": "5a915d3e4e09e31e33967bb2aad57dcbeb909133",
+  "status": "verified"
+}
