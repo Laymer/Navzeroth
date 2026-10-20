@@ -192,3 +192,41 @@ sequential retries succeeded without history changes or quota expansion.
 Verifier219 refreshf758d70d has all8ownedfiles identical to reviewede4ae08c;
 independent world delta review clear; root17policy+11synthetic-signing tests passed.
 These are prepared branches, not stable/main acceptance.
+
+## Original world closure and final-content continuation (2026-10-20)
+
+Necessary original-scope consumer PR229 merged into212 at1623cb90; it adds
+preparation schema2/reference paging without broadening schema1. Overflow PR230
+merged at ee36ae02, mapper/policy3, exposing four whole reference fields as
+Unsupported (8107unresolved associations), with genuine259918logical records
+and273967acceptedunknown fields. Root and tooling independently verified
+82materials394782896bytes/exacttree and all22public code URLs. Manifest
+0146dfa4dd49909613f61aad2f6eb2eac9d2a1ef98b3b2a54f5cf55445b92e97.
+The retained original source/material rehearsal is not a functional Pass.
+
+Hosted provenance test failures at1623/ee36 reflected an obsolete first-request
+assumption; actual badges passed. Test-only PR231 verifies all subject/revision-
+bound page queries and exact record union, merged into212 at
+7de0beea07bfb4fb258ee033b0976c94f20a2f19 (06:43:23Z). Root546UI tests/per-file90%
+and independent12focused tests passed. World final exact7de review clear; original
+consumer/mapper/material reviewers remain recorded in their separate handoffs.
+Fresh CI39382048557, coverage39382048560, package39382048584 and source39382048559
+were dispatched on exact7de. At this writing package and actual source-platform
+parity passed; Windows/native coverage remains pending. Main merge is still held.
+Earlier failures/cancellations are retained and are not passed checks.
+
+Separately, future full guidance uses explicit content reference profile2/mapper4
+and an independently computed source oracle. Exact final data5f65c43f has
+260113records/274059acceptedunknown fields/zero association classification gaps;
+26complete sets independently match438quest/16390reward references. Root/world
+material review verified all82files395722450bytes and22retained code files against
+a9e5e4f3; manifest6cb1fb206bbb75a5b530484cc5abfa09b1e325344f4b6c50471835ed3e989389.
+Public source URLs for that future immutable pin remain unverified.
+
+Its actual full runtime failed93.670seconds/6403580KiB sharedLinux peak on the
+legacy160byte preparation-label bound; no functional proof was written. Separate
+schema3 consumer2e4deb4f permits512UTF8bytes while preserving older limits. Root
+byte-boundary test and tooling1unit/11authored/8preparation/9UI tests passed with
+independent static review clear. Full runtime rerun, final review and source-bound
+proof remain required. WSL resource observations are not hosted Windows evidence.
+No content receipts, Windows/manual promotion, stable tag or publication occurred.
