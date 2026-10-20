@@ -31,6 +31,21 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Latest actual V11 outcome: package39441834744 FAILED at blocking native-upgrade
+gate before all eight stable hosted cases. Actual native smoke32/0; upgraded
+verify6/1 reported active-content loss before its IPC result completed. Desktop
+and tooling independently identify a supported600ms/636ms UI timing explanation,
+not proven data loss and not a bundled-default policy exception. CI39441834860
+(nine applicable jobs; stability skipped), coverage39441834710 (276measured files
+>=exact90%), full Linux/Windows source+parity39441834737 passed. Signed identities
+and five raw reports are byte-preserved in archiveb0d9c442. Desktop sole-writer
+repair259 awaits independent review; first proposed repair's character/profile-ID
+confusion was caught before integration and requires correction. All nine canonical
+observations remain unverified. No stable tag, owner smoke or publication.
+[Failure/next-task handoff](handoffs/2026-10-20-v11-native-upgrade-failure.md).
+Earlier entries below retain their status at recording.
+
+
 Latest: V11 signed closure at80ae4f2a is independently verified. Review0b9913ec
 binds tested7379efdb/productionf7515b8c. Actual preparation and independent canonical
 reproduction match84resources395780445B; identities committed before key use. Root

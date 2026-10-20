@@ -868,3 +868,51 @@ observations remain unverified; no tag, owner smoke or publication. Next: final
 exact-head independent review and ONEfreshcandidate push, all ten protected checks
 and actual source-platform parity, then normal releasePR merge. Fresh exact
 resulting-main checks and stability precede tag/draft verification and owner smoke.
+
+
+## Actual V11 hosted outcome and separately reviewed native-driver repair
+
+Candidateee26/actualPRcheckoute3fdd58 tree1c6 passed CI39441834860: nine applicable
+jobs, stability SKIPPED. Linux/Windows whole-corpus source regeneration twice and
+parity39441834737 passed; Pages39441834918 validation passed without deployment.
+Coverage39441834710 passed all three collectors and combinedgate118714134713.
+Root independently checked actual verdict SHA68911dc316fca5448755b566803c8d21ea8ee826d5c27f9f9c03e9eccd9f2ee4:
+276measured files meet exact90/100 without rounding, no missing/below-threshold
+files; both native receipts source-clean/tests-passed/incomplete[]. Independently
+streamed LCOV summaries verify CLI371/409Linux and18/409Windows positive lines,
+Windows desktop18/18; combined per-file gate is the90% requirement. Tooling's
+small-artifact audit is /tmp/navzeroth-v11-coverage-audit.json, without raw-profile
+or complete LCOV duplication. Exact84-resource signed/default-policy assembly and
+native-smoke32/0 passed inside Windows coverage.
+
+Package39441834744 actuallyFAILED before stable acceptance. Unsigned rehearsal
+verified installer26109201B SHA
+f7369af0a7ec647eadbde627218472d3e0f26bc26d7881beda383a2c0bab742b
+and exact sourcee3f, unsigned installer/application and installed resource bytes.
+Actual native smoke32/0 and baselinepopulate5/0; candidate-upgrade verify6/1 failed
+`verify: active content revision survived` with `Active content was lost`. Blocking
+native gate correctly reports smoke=success/upgrade=failure. All eight stable
+cases and recorder SKIPPED; no metrics/owner acceptance is inferred. Root initially
+called the displayed native-smoke step passed prematurely and immediately qualified
+it pending the blocking gate; final actual outcome confirms only that smoke pass.
+
+Desktop/tooling independently trace a likely false-negative: driver fixed600ms
+settle precedes actual636ms get_active_content completion, and the UI's initial
+null placeholder is rendered meanwhile. No response body or pointer was retained;
+actual product data loss is not established. Synthetic UNVERIFIED_DEMO fixture scope
+must persist and cannot be excused by admitted real-bundle upgrade defaults.
+Desktop sole-writer claim39e25512/repair draft259 fromee26 owns strict issued-IPC
+profile/revision/scope plus bounded UI verification and delayed/missing/wrong/error/
+timeout regressions. Root/tooling caught code9a817375's character-as-profile-ID
+defect before integration: actual Rust DTO returns stored-SHA256 ID and separate
+character display_name. Normal child correction and fresh independent review are
+required. No product UI, content, canonical evidence or workflow gate changes.
+
+Root claim/handoff and byte-exact signed V11 identities plus five actual raw
+reports were committedb0d9c442 BEFORE any repair integration. Histories retain
+actual failing status and source/installer identity. Current canonical nine rows
+remain unverified. Next: finish/review repair259, normal integration, renew exact
+production/review/prepared identities/receipts before one fresh candidate push and
+all ten/source/native gates. Fresh resulting-main stability still precedes tag;
+verified exact draft precedes owner smoke, then full readiness/publication/public
+verification and website deployment. No stable tag or publication exists.
