@@ -36,10 +36,55 @@ function Assert-RegularReleasePath([string] $Path, [switch] $Directory) {
     }
 }
 
-function Read-BoundedReleaseText([string] $Path) {
+# Internal byte reader: the stream itself enforces the cap, including a cap+1 probe.
+function Read-ReleaseTextWithCap([string] $Path, [int] $MaximumBytes, [ref] $BytesRead = $null) {
     Assert-RegularReleasePath $Path
-    if ((Get-Item -LiteralPath $Path).Length -gt 16777216) { throw 'Release JSON exceeds its size limit.' }
-    return [IO.File]::ReadAllText($Path, (New-Object Text.UTF8Encoding($false, $true)))
+    $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+    $memory = New-Object IO.MemoryStream
+    try {
+        $buffer = New-Object byte[] 65536
+        while ($true) {
+            $remaining = $MaximumBytes + 1 - [int]$memory.Length
+            $read = $stream.Read($buffer, 0, [Math]::Min($buffer.Length, $remaining))
+            if ($read -eq 0) { break }
+            $memory.Write($buffer, 0, $read)
+            if ($memory.Length -gt $MaximumBytes) { throw 'Release JSON exceeds its size limit.' }
+        }
+        if ($null -ne $BytesRead) { $BytesRead.Value = $memory.Length }
+        $bytes = $memory.ToArray()
+        # Preserve UTF-8 BOM handling; the BOM still counts toward the byte limit.
+        $offset = 0
+        if ($bytes.Length -ge 3 -and $bytes[0] -eq 239 -and $bytes[1] -eq 187 -and $bytes[2] -eq 191) { $offset = 3 }
+        return (New-Object Text.UTF8Encoding($false, $true)).GetString($bytes, $offset, $bytes.Length - $offset)
+    } finally { $stream.Dispose(); $memory.Dispose() }
+}
+
+function Read-BoundedReleaseText([string] $Path) {
+    return Read-ReleaseTextWithCap $Path 16777216
+}
+
+function Get-ReleaseContractByteLimit($Document) {
+    $property = $Document.PSObject.Properties['schema_version']
+    if ($null -eq $property -or ($property.Value -isnot [int] -and $property.Value -isnot [long]) -or $property.Value -notin 1, 2, 3, 4) { throw 'Unsupported release contract schema.' }
+    if ($property.Value -eq 4) { return 67108864 }
+    return 16777216
+}
+
+# Only inventory/evidence contracts opt into schema 4's reviewed 64 MiB bound.
+function Read-BoundedReleaseContractText([string] $Path) {
+    $bytesRead = 0L
+    $text = Read-ReleaseTextWithCap $Path 67108864 ([ref]$bytesRead)
+    $document = $text | ConvertFrom-Json
+    $limit = Get-ReleaseContractByteLimit $document
+    if ($bytesRead -gt $limit) { throw 'Release contract exceeds its schema size limit.' }
+    return $text
+}
+
+function ConvertTo-BoundedReleaseContractText($Document) {
+    $limit = Get-ReleaseContractByteLimit $Document
+    $text = ($Document | ConvertTo-Json -Depth 100 -Compress) + "`n"
+    if ((New-Object Text.UTF8Encoding($false, $true)).GetByteCount($text) -gt $limit) { throw 'Release contract exceeds its schema size limit.' }
+    return $text
 }
 
 function Test-EmptyMaterialSelection([string] $Root) {
@@ -47,10 +92,10 @@ function Test-EmptyMaterialSelection([string] $Root) {
     $evidence = Join-Path $Root 'release/v1/acceptance-evidence.json'
     # Historical addon-only preview fixtures have neither release contract.
     if (-not (Test-Path -LiteralPath $inventory) -and -not (Test-Path -LiteralPath $evidence)) { return $true }
-    $i = Read-BoundedReleaseText $inventory | ConvertFrom-Json
-    $e = Read-BoundedReleaseText $evidence | ConvertFrom-Json
+    $i = Read-BoundedReleaseContractText $inventory | ConvertFrom-Json
+    $e = Read-BoundedReleaseContractText $evidence | ConvertFrom-Json
     # Schemas 2 (ADR 0006) and 3 (ADR 0007) keep the material fields; both files must share a version.
-    if ($i.schema_version -notin 1, 2, 3 -or $e.schema_version -ne $i.schema_version) { throw 'Unsupported release material schema.' }
+    if ($i.schema_version -notin 1, 2, 3, 4 -or $e.schema_version -ne $i.schema_version) { throw 'Unsupported release material schema.' }
     return @($i.sources).Count -eq 0 -and @($e.sources).Count -eq 0 -and @($e.packs).Count -eq 0
 }
 
@@ -88,18 +133,31 @@ function Get-ReleaseTextHash([string] $Text) {
     finally { $sha.Dispose() }
 }
 
+function Get-ReleaseMaterialFileLimit($Manifest, $File) {
+    if ($Manifest.schema_version -notin 1, 2) { throw 'Unsupported material manifest schema.' }
+    if ($Manifest.schema_version -eq 2 -and $File.kind -ceq 'content_pack') {
+        $matching = @($Manifest.catalog_files | Where-Object { $_.path -ceq $File.input.path -and $_.bytes -eq $File.input.bytes -and $_.sha256 -ceq $File.input.sha256 })
+        if ($matching.Count -eq 1) { return 603979776L }
+    }
+    return 268435456L
+}
+
 function Test-ReleaseMaterialArchive([string] $ArchivePath, $Selection) {
     Assert-RegularReleasePath $ArchivePath
-    if ((Get-Item -LiteralPath $ArchivePath).Length -gt 1073741824) { throw 'Material ZIP exceeds its size limit.' }
+    $schema = $Selection.Manifest.schema_version
+    if ($schema -notin 1, 2) { throw 'Unsupported material manifest schema.' }
+    $closureLimit = if ($schema -eq 2) { 2147483648L } else { 1073741824L }
+    if ((Get-Item -LiteralPath $ArchivePath).Length -gt $closureLimit) { throw 'Material ZIP exceeds its size limit.' }
     $expected = New-Object 'Collections.Generic.Dictionary[string,object]' ([StringComparer]::Ordinal)
     $total = 0L
     foreach ($file in $Selection.Manifest.files) {
         if ($expected.ContainsKey($file.archive_path)) { throw 'Duplicate material path.' }
-        if ($file.input.bytes -le 0 -or $file.input.bytes -gt 268435456) { throw 'Invalid material file size.' }
+        $fileLimit = Get-ReleaseMaterialFileLimit $Selection.Manifest $file
+        if ($file.input.bytes -le 0 -or $file.input.bytes -gt $fileLimit) { throw 'Invalid material file size.' }
         $expected.Add($file.archive_path, [pscustomobject]@{Bytes=[long]$file.input.bytes; Hash=[string]$file.input.sha256})
         $total += [long]$file.input.bytes
     }
-    if ($expected.Count -gt 16384 -or $total -gt 1073741824) { throw 'Material closure exceeds bounds.' }
+    if ($expected.Count -gt 16384 -or $total -gt $closureLimit) { throw 'Material closure exceeds bounds.' }
     $expected.Add('RELEASE_MATERIALS.json', [pscustomobject]@{Bytes=[Text.Encoding]::UTF8.GetByteCount($Selection.Json); Hash=(Get-ReleaseTextHash $Selection.Json)})
     Add-Type -AssemblyName System.IO.Compression
     $stream = [IO.File]::OpenRead($ArchivePath)
@@ -228,7 +286,54 @@ function Get-AcceptanceCandidateMarker([string] $Root, [string] $Version) {
         ConvertTo-Json -Compress) + "`n")
 }
 
-function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Directory, [bool] $AddonOnly, [bool] $AcceptanceCandidate = $false) {
+function Assert-StableEvidenceOverlay([string] $Root, [string] $Evidence) {
+    if (-not $Evidence) { return }
+    if ([IO.Path]::IsPathRooted($Evidence) -or $Evidence -match '(^|[\\/])\.\.([\\/]|$)' -or $Evidence -match '\\') { throw 'Evidence overlay must be a safe repository-relative path.' }
+    $baseline = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+    $overlay = Read-BoundedReleaseContractText (Join-Path $Root $Evidence) | ConvertFrom-Json
+    if ($baseline.schema_version -ne 4 -or $overlay.schema_version -ne 4) { throw 'Evidence overlays require schema4.' }
+    $mutable = @('checks', 'candidate_installer_sha256')
+    $baseNames = @($baseline.PSObject.Properties.Name | Where-Object { $_ -notin $mutable } | Sort-Object)
+    $overlayNames = @($overlay.PSObject.Properties.Name | Where-Object { $_ -notin $mutable } | Sort-Object)
+    if (($baseNames -join ',') -cne ($overlayNames -join ',')) { throw 'Evidence overlay changes the immutable contract shape.' }
+    foreach ($name in $baseNames) {
+        if (($baseline.$name | ConvertTo-Json -Depth 100 -Compress) -cne ($overlay.$name | ConvertTo-Json -Depth 100 -Compress)) { throw "Evidence overlay changes immutable binding: $name" }
+    }
+}
+
+function Assert-StableInstallerBinding([string] $Root, [string] $Version, [string] $Directory, [string] $Evidence = '') {
+    $path = if ($Evidence) { Join-Path $Root $Evidence } else { Join-Path $Root 'release/v1/acceptance-evidence.json' }
+    $evidenceObject = Read-BoundedReleaseContractText $path | ConvertFrom-Json
+    if ($evidenceObject.schema_version -ne 4) { return }
+    $installer = Join-Path $Directory "AzerothNavigator-$Version-x64-setup.exe"
+    Assert-RegularReleasePath $installer
+    $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($evidenceObject.candidate_installer_sha256 -cnotmatch '^[a-f0-9]{64}$' -or $evidenceObject.candidate_installer_sha256 -cne $actual) { throw 'Actual installer differs from the accepted schema4 candidate hash.' }
+}
+
+function Assert-StablePhaseReadiness([string] $Root, [string] $Version, [ValidateSet('public','prebuild','draft')][string] $Phase = 'public', [string] $Evidence = '') {
+    if (-not (Test-StableReleaseVersion $Version)) { return }
+    Assert-StableEvidenceOverlay $Root $Evidence
+    $command = switch ($Phase) { 'prebuild' { 'release-build-readiness' } 'draft' { 'release-draft-readiness' } 'public' { 'release-readiness' } }
+    $arguments = @('run', '--locked', '-p', 'azeroth-cli', '--', $command, '--root', $Root, '--version', $Version)
+    if ($Evidence) { $arguments += @('--evidence', $Evidence) }
+    $saved = $ErrorActionPreference
+    Push-Location $Root
+    try { $ErrorActionPreference = 'Continue'; $lines = & cargo @arguments; $code = $LASTEXITCODE }
+    finally { $ErrorActionPreference = $saved; Pop-Location }
+    if ($code -ne 0) { throw "Stable $Phase readiness failed." }
+    $text = [string]::Join("`n", [string[]]$lines)
+    if ([Text.Encoding]::UTF8.GetByteCount($text) -gt 16777216) { throw 'Readiness report exceeds its size limit.' }
+    $result = $text | ConvertFrom-Json
+    if ($Phase -eq 'public') {
+        if ($result.stable -isnot [bool] -or -not $result.stable -or $result.stable_ready -isnot [bool] -or -not $result.stable_ready -or $result.publication_allowed -isnot [bool] -or -not $result.publication_allowed) { throw 'Invalid full publication readiness result.' }
+    } else {
+        if ($result.phase -cne $(if ($Phase -eq 'prebuild') { 'prebuild' } else { 'draft' }) -or $result.build_ready -isnot [bool] -or -not $result.build_ready -or $result.publication_allowed -isnot [bool] -or $result.publication_allowed -or $result.report.report_version -ne 4 -or $result.report.stable -isnot [bool] -or -not $result.report.stable -or $result.report.publication_allowed -isnot [bool] -or $result.report.publication_allowed) { throw 'Invalid nonpublishing preparation readiness result.' }
+    }
+}
+
+function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Directory, [bool] $AddonOnly, [bool] $AcceptanceCandidate = $false, [ValidateSet('public','prebuild','draft')][string] $ReadinessPhase = 'public', [string] $Evidence = '') {
+    if ($AcceptanceCandidate -and ($ReadinessPhase -ne 'public' -or $Evidence)) { throw 'Acceptance-candidate transport cannot use stable preparation phases.' }
     Assert-RegularReleasePath $Directory -Directory
     $marker = Join-Path $Directory 'ACCEPTANCE_CANDIDATE.json'
     if ($AcceptanceCandidate) {
@@ -238,14 +343,8 @@ function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Di
     } elseif (Test-Path -LiteralPath $marker) {
         throw 'Acceptance candidates cannot pass publication artifact verification.'
     } elseif (Test-StableReleaseVersion $Version) {
-        $saved = $ErrorActionPreference
-        Push-Location $Root
-        try {
-            $ErrorActionPreference = 'Continue'
-            & cargo run --locked -p azeroth-cli -- release-readiness --root $Root --version $Version | Out-Host
-            $code = $LASTEXITCODE
-        } finally { $ErrorActionPreference = $saved; Pop-Location }
-        if ($code -ne 0) { throw 'Stable publication readiness failed.' }
+        Assert-StablePhaseReadiness $Root $Version $ReadinessPhase $Evidence
+        if (-not $AddonOnly -and $ReadinessPhase -ne 'prebuild') { Assert-StableInstallerBinding $Root $Version $Directory $Evidence }
     }
     $selection = Get-ReleaseMaterialSelection $Root $Version
     [string[]] $names = @(Get-ExpectedArtifactNames $Root $Version $AddonOnly $selection)
@@ -276,4 +375,29 @@ function Assert-ReleaseArtifacts([string] $Root, [string] $Version, [string] $Di
     }
     if ((Read-BoundedReleaseText (Join-Path $Directory 'SHA256SUMS.txt')) -cne (($lines -join "`n") + "`n")) { throw 'Release checksums differ from exact artifact set.' }
     Write-Host "Verified $($names.Count + 1) release files against source and material selection."
+}
+
+# Build identity stays outside the shipped tree; its pins are verified by the CLI
+# against the caller-selected signed bundle before Tauri embeds those pins.
+function Read-BoundedBundleIdentity([string] $Path) {
+    Assert-RegularReleasePath $Path
+    if ((Get-Item -LiteralPath $Path).Length -gt 65536) { throw 'Bundle build identity exceeds 64 KiB.' }
+    $text = [IO.File]::ReadAllText($Path, (New-Object Text.UTF8Encoding($false, $true)))
+    if (-not $text -or $text -match '[\r\n]') { throw 'Bundle build identity must be canonical single-line JSON.' }
+    return $text
+}
+function Assert-VerifiedBundleInputs([string] $Root, [string] $Version, [string] $Directory, [string] $Identity) {
+    if (-not $Directory -and -not $Identity -and -not (Test-StableReleaseVersion $Version)) { return }
+    if (-not $Directory -or -not $Identity) { throw 'Stable desktop packaging requires a verified signed bundle and explicit build identity.' }
+    Assert-RegularReleasePath $Directory -Directory
+    $null = Read-BoundedBundleIdentity $Identity
+    $saved = $ErrorActionPreference
+    Push-Location $Root
+    try { $ErrorActionPreference = 'Continue'; $lines = & cargo run --locked -p azeroth-cli -- check-bundled-content --input ([IO.Path]::GetFullPath($Directory)) --identity ([IO.Path]::GetFullPath($Identity)); $code = $LASTEXITCODE }
+    finally { $ErrorActionPreference = $saved; Pop-Location }
+    if ($code -ne 0) { throw 'Bundled content verification failed.' }
+    $text = [string]::Join("`n", [string[]]$lines)
+    if ([Text.Encoding]::UTF8.GetByteCount($text) -gt 65536) { throw 'Bundle verification report exceeds bounds.' }
+    $report = $text | ConvertFrom-Json
+    if ($report.verified -isnot [bool] -or -not $report.verified -or $report.app_version -cne $Version -or $report.pack_count -le 0 -or $report.file_count -le 0) { throw 'Bundle verification did not confirm nonempty content for this application version.' }
 }

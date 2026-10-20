@@ -192,6 +192,7 @@ fn native_startup_requires_build_pins_and_publishes_only_after_verified_activati
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(10));
     }
+    assert!(host.status().unwrap().startup_measurements.is_some());
     assert!(
         host.with_application(|app| app.stage_content_set(&[f.manifest.packs[0].key.clone()]))
             .is_ok()
