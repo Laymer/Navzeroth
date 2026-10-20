@@ -39,6 +39,8 @@ actual Linux/Windows mapping and parity. Independent final-head reviews and
 original-source/material closure are retained in their review/handoff records.
 Earlier failed/cancelled checks retain those outcomes.
 
+The [foundation handoff](handoffs/2026-10-20-stable-foundations-integration.md) records separately reviewed219–225/228 integration and actual focused checks. Fresh combined protected-main checks remain required.
+
 The [foundation integration claim](claims/2026-10-20-stable-foundations-integration.md)
 assembles separate reviewed follow-up PRs on an isolated branch before a fully
 checked main integration. Final complete content, native bundling, actual hosted
