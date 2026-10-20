@@ -1,4 +1,45 @@
-# Forever release requirements (manifest versions 1, 2 and 3)
+# Forever release requirements (manifest versions 1, 2, 3 and 4)
+
+## Governing stable 1.0.0 authority
+
+[ADR 0008](../../docs/decisions/0008-unsigned-stable-release.md) authorizes explicitly
+**unsigned stable 1.0.0** under the [schema 4 acceptance contract](../../docs/releases/SCHEMA4_ACCEPTANCE.md).
+This exception preserves historical unsigned RC prerelease classification and does
+not authorize unsigned future releases. Schema 4 retains schema 3 target/origin,
+accepted-unknown and inferred-travel semantics, with no live-client acceptance or
+launch-build freeze. Existing schemas and historical observations keep their
+meaning; adopting this documentation does not migrate or pass any manifest.
+
+All ten protected-main checks, independent review, source-platform parity, release
+stability and applicable inventory/content/source/material gates remain mandatory.
+Signed content receipts remain required. Historical origins, estimates, exclusions,
+unknowns and measured resource use must be disclosed; neither live-game correctness
+nor ordinary-PC performance is established by hosted checks.
+
+Schema 4 replaces historical WIN acceptance with eight `hosted_windows` rows
+(install, first start, upgrade from 1.0.0-rc.1, downgrade refusal, persistence/recovery,
+installed resources, offline operation and full-pack performance), plus
+`OWNER-INSTALLER-SMOKE` using `interactive_windows`. Every passed row must bind the
+same exact installer hash and tested source/production identity. Existing WIN
+observations are not promoted; missing, failed, partial or stale evidence blocks.
+
+Fresh checks on the resulting release commit precede tagging that exact commit.
+Build readiness permits artifact preparation; draft readiness requires all eight
+hosted rows and may leave only pristine owner smoke pending. Independently verify
+the exact downloaded draft assets before pausing for the owner's installer smoke.
+Full release readiness, including owner smoke and every applicable gate, is required
+before authorized publication without another approval request. Relevant product
+or installer changes invalidate the smoke. Verify public downloads before website
+and download-instruction deployment. See the
+[release sequence](../../docs/releases/V1_RELEASE_PROCESS.md#governing-stable-100-contract).
+
+## Historical schema1/2/3 requirements
+
+The following text records earlier ADR0006/0007 contracts and their then-current
+manifest state. Signing, historical WIN rows and pre-draft stable-gate statements
+are superseded only as explicitly stated above and in schema4. Retain actual
+historical evidence without reclassifying unverified observations as passed.
+
 
 > **Schema 3 is in effect ([ADR 0007](../../docs/decisions/0007-world-data-automation.md),
 > task V2.8e, 2026-10-19).** The committed manifests are schema 3. The target is not
@@ -249,3 +290,12 @@ labels its uploaded artifacts separately. Default PR/main/tag packaging retains
 its full stable gate, with no fallback. The currently unknown content means no
 1.0 acceptance candidate can yet be built. This implements packaging separation,
 not the separately required typed party support matrix or full v2 content contracts.
+
+## Stable 1.0.0 declared exclusions (ADR 0008)
+
+Trainer-spell gameplay, talents, professions and enhancements are deferred in the
+versioned `deferred-features.json`, displayed in Content and recorded as inventory
+boundaries. Browsable source records do not enable recommendations for those
+systems. Boundaries never satisfy missing supported records. See
+[scope preparation](../../docs/releases/1.0.0-scope.md); historical acceptance
+results remain unchanged. The broader stable contract is implemented separately.

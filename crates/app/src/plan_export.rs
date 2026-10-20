@@ -17,6 +17,7 @@ use std::collections::BTreeSet;
 
 pub const MAX_EXPORT_BYTES: usize = 32768;
 pub const RULESET_VERSION: &str = "planner-same-node-clusters-v1";
+pub const QUEST_STAGE_RULESET_VERSION: &str = "planner-quest-stage-projection-v2";
 pub const MODEL_VERSION: &str = "manual-utility-v1";
 #[derive(Clone, Debug, Serialize)]
 pub struct PlanExport {
@@ -110,11 +111,22 @@ pub(crate) fn compile(
     }
     let snapshot_hash = azeroth_storage::snapshot_content_hash(snapshot)?;
     let content_hash = content.content_hash()?;
+    let ruleset = if report.request.candidates.iter().any(|c| {
+        !content
+            .reference()
+            .objectives
+            .iter()
+            .any(|o| o.id == c.objective)
+    }) {
+        QUEST_STAGE_RULESET_VERSION
+    } else {
+        RULESET_VERSION
+    };
     let canonical = serde_json::to_vec(&json!({
         "request": report.request, "result": report.result,
         "context": report.context, "fixture": report.fixture,
         "snapshot_hash": snapshot_hash, "content_hash": content_hash,
-        "ruleset": RULESET_VERSION, "model": MODEL_VERSION,
+        "ruleset": ruleset, "model": MODEL_VERSION,
     }))
     .map_err(|_| invalid("Cannot canonicalize planning inputs"))?;
     let digest = format!("{:x}", Sha256::digest(canonical));
@@ -148,10 +160,10 @@ pub(crate) fn compile(
         }
         travel.extend(route.to_travel_segments());
     }
+    let objectives = crate::planning_objectives::objectives(content, &snapshot.payload.character)?;
     let mut steps = Vec::new();
     for (index, choice) in report.result.selected.iter().enumerate() {
-        let objective = dataset
-            .objectives
+        let objective = objectives
             .iter()
             .find(|o| o.id == choice.candidate)
             .ok_or_else(|| invalid("Selected objective is absent"))?;
@@ -256,9 +268,9 @@ pub(crate) fn compile(
         "format":"azeroth-navigator","kind":"route_plan","schema_version":1,"fixture":report.fixture,
         "producer":{"component":"desktop","version":env!("CARGO_PKG_VERSION")},"game":snapshot.game,"namespace":snapshot.namespace,
         "provenance":{"source":if report.fixture {"synthetic_fixture"} else {"manual_entry"},"clock_trust":"trusted","created_at_utc_ms":now},
-        "dependencies":{"dataset_revision":report.request.revision,"ruleset_version":RULESET_VERSION,"score_model_version":MODEL_VERSION,"snapshots":inputs},
+        "dependencies":{"dataset_revision":report.request.revision,"ruleset_version":ruleset,"score_model_version":MODEL_VERSION,"snapshots":inputs},
         "payload":{"schema_version":1,"id":plan_id,"context":report.context,"generated_at_utc_ms":now,"inputs":inputs,
-            "dataset_revision":report.request.revision,"ruleset_version":RULESET_VERSION,"score_model_version":MODEL_VERSION,
+            "dataset_revision":report.request.revision,"ruleset_version":ruleset,"score_model_version":MODEL_VERSION,
             "capability_assumptions":{},"goal":report.request.goal_profile,"time_budget_ms":report.request.budget_ms,"exclusions":report.request.excluded,
             "manual_assumptions":assumptions,"steps":steps,"travel":travel,"evidence":evidence,"expires_at_utc_ms":expires,
             "revalidation":["dataset_revision_changed","build_changed","snapshot_superseded","ruleset_changed"]}

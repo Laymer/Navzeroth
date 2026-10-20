@@ -16,6 +16,7 @@ pub mod local_data;
 pub mod party;
 pub mod plan_export;
 pub mod planning;
+mod planning_objectives;
 pub mod routes;
 pub mod snapshots;
 pub mod stored_atlas;

@@ -80,6 +80,26 @@ pub struct Report {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub world_data: Option<WorldDataReport>,
 }
+/// A preparation verdict retains every checked I/O result but cannot publish.
+#[derive(Debug, Serialize)]
+pub struct BuildReport {
+    pub phase: release::BuildPhase,
+    pub build_ready: bool,
+    pub publication_allowed: bool,
+    pub report: Report,
+}
+impl BuildReport {
+    pub fn new(mut report: Report, phase: release::BuildPhase) -> Self {
+        let build_ready = phase.ready(&report.readiness);
+        report.readiness.publication_allowed = false;
+        Self {
+            phase,
+            build_ready,
+            publication_allowed: false,
+            report,
+        }
+    }
+}
 /// What the accepted-origin policy accepted (ADR 0007 §3 and §5). Accepted
 /// unknowns stay unknown; they are counted here, never written as zero.
 #[derive(Debug, Default, Serialize)]
@@ -120,7 +140,7 @@ impl WorldInputs {
     }
 }
 fn world_inputs(root: &Path, inventory: &Inventory, budget: &mut Budget) -> Result<WorldInputs> {
-    if inventory.schema_version != release::SCHEMA_WORLD_DATA {
+    if !release::is_world_schema(inventory.schema_version) {
         return Ok(WorldInputs::default());
     }
     let mut read = |path: &str| -> Result<Option<Vec<u8>>> {
@@ -682,7 +702,7 @@ fn bind_v2_pack(
         }
         // Schema 3 accepts facts by the pack source's editions, so they must name
         // the origin the release evidence records; neither can be relabelled alone.
-        if inventory.schema_version == release::SCHEMA_WORLD_DATA
+        if release::is_world_schema(inventory.schema_version)
             && !catalog
                 .origins
                 .get(source.id.as_str())
@@ -724,7 +744,7 @@ fn bind_v2_pack(
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
     require_complete_v2_facts(&content)?;
-    if inventory.schema_version == release::SCHEMA_WORLD_DATA {
+    if release::is_world_schema(inventory.schema_version) {
         classify_v2(
             pack,
             &content,
@@ -849,7 +869,7 @@ fn packs(
         // Schema 3 classifies v2 gaps under the accepted-origin policy in
         // bind_v2_pack; every other combination keeps the strict zero.
         let policy_classified =
-            version == Some(2) && inventory.schema_version == release::SCHEMA_WORLD_DATA;
+            version == Some(2) && release::is_world_schema(inventory.schema_version);
         if report.fixtures != 0
             || (!policy_classified && report.coverage_gaps != 0)
             || !report.distribution_eligible
@@ -1190,7 +1210,7 @@ pub fn report(options: &Options) -> Result<Report> {
             Err(message) => readiness.block(message),
         }
     }
-    let world_data = (inventory.schema_version == release::SCHEMA_WORLD_DATA)
+    let world_data = (release::is_world_schema(inventory.schema_version))
         .then(|| world_report(&world, &inventory, evidence.as_ref(), classifications));
     Ok(Report {
         readiness,
@@ -1319,6 +1339,35 @@ mod tests {
             pending: vec![],
             publication_allowed: true,
             blockers: vec![],
+        }
+    }
+    #[test]
+    fn preparation_wrapper_preserves_source_evidence_but_cannot_publish() {
+        for phase in [release::BuildPhase::Prebuild, release::BuildPhase::Draft] {
+            let mut readiness = mapping_report();
+            readiness.report_version = 4;
+            let prepared = BuildReport::new(
+                Report {
+                    readiness,
+                    candidate_source_commit: "a".repeat(40),
+                    production_sha256: "b".repeat(64),
+                    inventory_sha256: "c".repeat(64),
+                    verified_evidence_files: 7,
+                    verified_content_packs: 2,
+                    world_data: None,
+                },
+                phase,
+            );
+            assert!(prepared.build_ready);
+            assert!(
+                !prepared.publication_allowed && !prepared.report.readiness.publication_allowed
+            );
+            let json = serde_json::to_value(prepared).unwrap();
+            assert_eq!(json["report"]["candidate_source_commit"], "a".repeat(40));
+            assert_eq!(json["report"]["verified_evidence_files"], 7);
+            assert_eq!(json["report"]["verified_content_packs"], 2);
+            assert_eq!(json["publication_allowed"], false);
+            assert_eq!(json["report"]["publication_allowed"], false);
         }
     }
     #[test]
