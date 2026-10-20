@@ -31,6 +31,18 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Current V10preparation: independently reviewed255/256/257 normally integrated at
+1ddaa8d6. Fix typedperformanceproducer, require cleanreadyrecovery, and reuse existing
+validatedcatalog cache during travelchoices while retaining transaction/invalidation
+guards. Author167storage/297app tests pass(3ignored), affectedfiles >=90%; desktop/
+tooling each17cachetests pass andreviewsCLEAR. Root actualfreshoptimizedfullpack
+passed134.138s/6402732KiB sharedLinuxWSL2, proofef3c7098, noWindows/ordinaryPCclaim.
+Old106proof archivedbefore replacement. Productionb9d5c293/tested1ddaa8d6; canonical
+outputs cleared0a49d4d9, all9observations unverified. Root33Node/actionlint pass.
+Next V10independentreview/preparation/signing/sourceclosure and freshhostedgates.
+Remotee5ec remainsfailedV8; V9neverpushed. No budgetwaiver, stabletag or publication.
+
+
 Latest actual outcome: V8package39424036854 FAILED finalguard after rawinstall/
 resources/first-startPASS and performanceDTOvalidationFAIL; four latercases never
 ran. RecorderSUCCESS retained4actualrows. Producer usedOrderedDictionary but

@@ -738,3 +738,57 @@ V9signed3e87 was NEVERPUSHED or hosted-tested. Root archived its exactcanonical
 bytes/history at2a09bf55 BEFORE repairintegration. Remote remainsV8e5ec; no new
 dispatch, tag, ownerpass or publication. After independently reviewed repair(s),
 renew production/publicreview/receipts and require every freshgate.
+
+
+## Reviewed255–257 union and genuinely fresh V10 functional execution
+
+PR255 codeec8bc5ee/final8f10548c normally mergedf3ee076c: liveperformance
+constructor emits the exact PSCustomObject measurements consumed by strictcase
+validation, without coercion. A newly caught LOAD_MS alias now refuses by exact
+case-sensitive six-key check. Root actual25helper checks eachPS7/nativePS5 plus
+42PS7preparation passed; tooling independently25+42 ineachshell passed. Original
+OrderedDictionary failure stays historical; no oldrow promoted.
+
+PR256 codeaa2e78f0/final8b789719 normally merged0062aa72: individualrecovery
+requires actualRestoreReceipt pendingfalse/retainedtrue/nonemptydirectory and
+ready/errornull DatabaseStatus beforeexistingprofile/settings/content consistency.
+Bounded receipt/status diagnostics retained. Root/tooling each21NodePASS, with
+missing/wrongtype/pending/error negatives. Lateroffline startup would have caught
+the previouspartialrecovery, so this is not claimed a whole-releasefalsepass.
+
+PR257 code121a2a82/final6c12ad7a normally merged1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611.
+Existing generation-stamped catalog cache now serves stored catalog reads under
+managed IMMEDIATE reads and travelactivation's owned IMMEDIATE transaction, with
+readscope DROPPED before pointer/preferencewrites. No newcache/trust/schema/budget.
+All local/external content/source/coverage/hash, schema/TEMP/rollback guards remain;
+disposition checkedlive, pointer/choice failures atomic. Warm lookup/toggle tests
+prove0extra full decodes andArc/indexreuse. Author167storage/297app tests pass,
+3app ignored; Clippy/fmt pass. Root read combinedactualLLVMreport: content390/432
+90.2778%,preferences95/10095%,generation663/66599.699%, unchanged90gate. Root code
+reviewCLEAR; desktop/tooling independentcodeCLEAR andeach17actualcachetestsPASS
+using matchedauthorbinary (independent executions, not independent compiler builds).
+
+Root genuinely rebuilt optimizedfullpack binary in17.58s against exact1ddaa8d6
+runtime and optimizedCLI in7.36s. Explicitactualfullpack scenario passed
+134.13806364599805s, peakchildRSS6402732KiB on sharedLinux/WSL2,32logicalCPUs,
+MemTotal32675952KiB/concurrenthostworkload. Newproof15568B SHA
+ef3c7098a521dbe955eb945ae1f25f0bdddb08ff421f6fff0e39a707948d1fe1;
+measurement928B SHAec335cff3a6c2bed8e0f5643991fa55f70e79156b6fbb8b018b9262accfa73df.
+Results are semanticallyidentical to priorproof exceptactualtest_source.commit.
+Old106proof/measurement were archived5ff96707 BEFORE changes. This is a fresh
+execution, not restamping, not controlledcomparativeperformance or Windowsacceptance.
+The first wrapper invocation failedimmediately atsetup because root omitted
+NAVZEROTH_STABLE_BUNDLE_ROOT; correctedexternalwrapper reran successfully. Initial
+failurelog/tmp/navzeroth-v10-functional-initial-missing-root.log retained; no product
+failure/pass inferred. Actualcommands use documented ignoredtest with explicit
+NAVZEROTH_STABLE_BUNDLE_ROOT and NAVZEROTH_FUNCTIONAL_PROOF_OUTPUT.
+
+Newproductionb9d5c2938b11967e214f36435e6dd9d6b0d9d376fa29cc00196285ccea88742e
+(3125entries) binds tested1ddaa8d6. FourfunctionalFileRefs updated, canonical3removed
+and bundled_content cleared0a49d4d9 for V10renewal. All9observations pristineunverified.
+Root actual33Node union tests/actionlint passed on0a49d4d9; metadata-onlychanges
+preserve the exact production. Sharedcorpus/inventory/manifests/notices unchanged.
+Next additiveindependentreview, actualpreparation/reproduction, committedidentities
+beforekeys, signedclosure, then ONEfreshcandidatepush/alltenchecks/sourceparity.
+Budgetsremainunchanged; actualfullWindowsretestmustestablishsufficiency. No stabletag,
+ownerpass or publication.
