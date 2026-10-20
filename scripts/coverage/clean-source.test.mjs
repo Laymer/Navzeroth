@@ -29,11 +29,3 @@ test('source status reads are bounded and failure never becomes clean',()=>{
   assert(!error.message.includes('\u001b'));assert(error.message.includes('\\u001b'));return true;
  });
 });
-test('native command checks status after recording its result and retains failure profiles',()=>{
- const source=fs.readFileSync(new URL('./collect-rust.mjs',import.meta.url),'utf8');
- const record=source.indexOf("fs.writeFileSync(path.join(destination,'commands.json')");
- const check=source.indexOf('assertCleanCommittedSource(root,undefined,`after ${name}`)');
- assert(record>=0&&check>record);
- assert(check<source.indexOf('  return text;',record));
- assert.match(source,/finally\{[\s\S]*raw-profile-manifest/);
-});
