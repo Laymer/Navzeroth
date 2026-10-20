@@ -240,6 +240,7 @@ fn verify_with_policy(
         if !seen.insert(pack.manifest.path.as_str())
             || pack.manifest.path.as_str() != format!("{}/manifest.json", pack.directory.as_str())
             || pack.key.scope.fixture
+            || pack.key.scope.context.namespace != azeroth_core::types::DatasetNamespace::Reference
             || pack.key.scope.context.build.edition.as_str() != target.edition
             || pack.key.scope.context.build.build.as_str()
                 != format!("{}.{}", target.version, target.build)
