@@ -175,6 +175,17 @@ pub fn install(
     policy: &Policy,
     expected: &Expected<'_>,
 ) -> Result<ContentRevisionKey> {
+    install_measured(app, root, policy, expected).map(|(key, _)| key)
+}
+/// Explicit startup measurement: load includes verification, parsing, staging and
+/// composition; activation measures the versioned defaults transaction separately.
+pub fn install_measured(
+    app: &SnapshotApplication,
+    root: &Path,
+    policy: &Policy,
+    expected: &Expected<'_>,
+) -> Result<(ContentRevisionKey, crate::recovery::StartupMeasurements)> {
+    let loading = std::time::Instant::now();
     let manifest = verify(root, policy, expected)?;
     let origins = OriginPolicy::decode(&pinned_bytes(
         root,
@@ -260,8 +271,19 @@ pub fn install(
         keys.push(key);
     }
     let key = app.stage_content_set(&keys)?;
+    let load_ms = u64::try_from(loading.elapsed().as_millis())
+        .map_err(|_| invalid("Startup duration exceeds capacity"))?;
+    let activating = std::time::Instant::now();
     app.configure_bundled_defaults(expected.app_version, std::slice::from_ref(&key))?;
-    Ok(key)
+    let activation_ms = u64::try_from(activating.elapsed().as_millis())
+        .map_err(|_| invalid("Startup duration exceeds capacity"))?;
+    Ok((
+        key,
+        crate::recovery::StartupMeasurements {
+            load_ms,
+            activation_ms,
+        },
+    ))
 }
 
 /// Native builds supply an independently recorded identity and compiled signer
@@ -288,7 +310,7 @@ pub fn start(
     }
     let policy = receipts::policy(signer_policy).map_err(invalid)?;
     let root = resources.to_owned();
-    Ok(crate::recovery::DatabaseHost::start_initialized(
+    Ok(crate::recovery::DatabaseHost::start_initialized_measured(
         database,
         move |application| {
             let expected = Expected {
@@ -299,7 +321,8 @@ pub fn start(
                 tested_source_commit: &identity.tested_source_commit,
                 review: &identity.review,
             };
-            install(application, &root, &policy, &expected).map(|_| ())
+            install_measured(application, &root, &policy, &expected)
+                .map(|(_, measurements)| measurements)
         },
     ))
 }

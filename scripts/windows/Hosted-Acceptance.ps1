@@ -1,0 +1,53 @@
+# Schema4 hosted observations only. These helpers never perform tests or create owner smoke.
+Set-StrictMode -Version 3.0
+$script:HostedAcceptanceIds = @('HOSTED-INSTALL','HOSTED-FIRST-START','HOSTED-UPGRADE-RC1','HOSTED-DOWNGRADE-REFUSAL','HOSTED-PERSISTENCE-RECOVERY','HOSTED-RESOURCES','HOSTED-OFFLINE','HOSTED-PERFORMANCE')
+function Test-HostedText($Value) { return $Value -is [string] -and $Value.Trim().Length -gt 0 -and $Value.Length -le 1024 -and $Value -notmatch '[\x00-\x1f\x7f]' }
+function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $SourceCommit, [string] $Production, [string] $Installer, $Target) {
+    if ($Case.schema_version -ne 1 -or $Case.id -cne $Id -or $Case.method -cne 'hosted_windows' -or $Case.status -cnotin @('pass','fail') -or $Case.version -cne $Version -or $Case.source_commit -cne $SourceCommit -or $Case.production_sha256 -cne $Production -or $Case.installer_sha256 -cne $Installer -or ($Case.target | ConvertTo-Json -Depth 20 -Compress) -cne ($Target | ConvertTo-Json -Depth 20 -Compress)) { throw 'Hosted case release/installer/source identity differs.' }
+    if (-not (Test-HostedText $Case.operator) -or -not (Test-HostedText $Case.environment) -or $Case.recorded_at -cnotmatch '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$') { throw 'Hosted case lacks actual operator/date/environment.' }
+    $date = [DateTimeOffset]::MinValue
+    if (-not [DateTimeOffset]::TryParse($Case.recorded_at, [ref]$date)) { throw 'Hosted date is invalid.' }
+    if ($Case.status -ceq 'fail') { return }
+    if ($Case.completed -isnot [bool] -or -not $Case.completed) { throw 'Passing hosted case was not completed.' }
+    switch ($Id) {
+        'HOSTED-UPGRADE-RC1' { if ($Case.baseline_version -cne '1.0.0-rc.1' -or $Case.baseline_installer_sha256 -cnotmatch '^[a-f0-9]{64}$') { throw 'Upgrade must identify the exact rc.1 baseline installer.' } }
+        'HOSTED-DOWNGRADE-REFUSAL' { if ($Case.baseline_version -cne '1.0.0-rc.1' -or $Case.baseline_installer_sha256 -cnotmatch '^[a-f0-9]{64}$' -or $Case.attempted -isnot [bool] -or -not $Case.attempted -or $Case.timed_out -isnot [bool] -or $Case.timed_out -or $Case.installed_version_after -cne $Version) { throw 'Downgrade refusal was not completed against rc.1.' } }
+        'HOSTED-PERSISTENCE-RECOVERY' { if ($Case.restart_verified -isnot [bool] -or -not $Case.restart_verified -or $Case.recovery_verified -isnot [bool] -or -not $Case.recovery_verified) { throw 'Persistence and recovery must both be verified.' } }
+        'HOSTED-RESOURCES' { if ($Case.installed_resources_verified -isnot [bool] -or -not $Case.installed_resources_verified -or $Case.source_notices_verified -isnot [bool] -or -not $Case.source_notices_verified) { throw 'Exact resources and source/notices must both be verified.' } }
+        'HOSTED-OFFLINE' { if ($Case.network_disabled -isnot [bool] -or -not $Case.network_disabled) { throw 'Offline case requires an actually disabled network.' } }
+        'HOSTED-PERFORMANCE' {
+            if (-not (Test-HostedText $Case.workload) -or -not (Test-HostedText $Case.hardware) -or -not (Test-HostedText $Case.limitations)) { throw 'Performance requires workload/hardware/limitations.' }
+            $metrics = @('install_ms','load_ms','activation_ms','browse_ms','planning_ms','peak_memory_bytes')
+            if (@($Case.measurements.PSObject.Properties.Name).Count -ne $metrics.Count) { throw 'Performance metric set differs.' }
+            foreach ($name in $metrics) {
+                $value = $Case.measurements.$name
+                if (($value -isnot [int] -and $value -isnot [long] -and $value -isnot [double] -and $value -isnot [decimal]) -or [double]::IsNaN([double]$value) -or [double]::IsInfinity([double]$value) -or $value -lt 0 -or $value -gt 9007199254740991) { throw 'Performance measurement is missing or invalid.' }
+            }
+        }
+    }
+}
+function New-HostedAcceptanceEvidence($Base, [string] $Version, [string] $SourceCommit, [string] $Production, [string] $Installer, [hashtable] $Cases = @{}) {
+    if ($Base.schema_version -ne 4 -or $SourceCommit -cnotmatch '^[a-f0-9]{40}$' -or $Production -cnotmatch '^[a-f0-9]{64}$' -or $Installer -cnotmatch '^[a-f0-9]{64}$' -or $Base.production_sha256 -cne $Production) { throw 'Hosted evidence requires bound schema4 production.' }
+    $result = $Base | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+    $seen = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
+    foreach ($row in $result.checks) {
+        if (-not $seen.Add($row.id) -or ($row.id -cnotin $script:HostedAcceptanceIds -and $row.id -cne 'OWNER-INSTALLER-SMOKE')) { throw 'Unexpected or repeated acceptance row.' }
+        $expectedMethod = if ($row.id -ceq 'OWNER-INSTALLER-SMOKE') { 'interactive_windows' } else { 'hosted_windows' }
+        if ($row.method -cne $expectedMethod) { throw 'Acceptance method differs from schema4.' }
+    }
+    if ($seen.Count -ne 9) { throw 'Schema4 acceptance rows are missing.' }
+    foreach ($id in $Cases.Keys) { if ($id -cnotin $script:HostedAcceptanceIds) { throw 'Hosted recorder cannot create owner or unknown observations.' } }
+    $previousHash = $result.PSObject.Properties['candidate_installer_sha256']
+    if ($null -ne $previousHash -and $previousHash.Value -and $previousHash.Value -cne $Installer -and @($result.checks | Where-Object { $_.status -cne 'unverified' -or $_.operator -or $_.recorded_at -or $_.environment -or @($_.artifacts).Count -gt 0 }).Count -gt 0) { throw 'New installer invalidates prior observations; retain/reset them explicitly before preparing another candidate.' }
+    $result | Add-Member -NotePropertyName candidate_installer_sha256 -NotePropertyValue $Installer -Force
+    foreach ($row in $result.checks) {
+        if (-not $Cases.ContainsKey($row.id)) { continue }
+        $entry = $Cases[$row.id]
+        Assert-HostedCase $entry.Result $row.id $Version $SourceCommit $Production $Installer $Base.target
+        if ($entry.Artifact.bytes -le 0 -or $entry.Artifact.bytes -gt 16777216 -or $entry.Artifact.sha256 -cnotmatch '^[a-f0-9]{64}$' -or $entry.Artifact.path -notmatch '^[A-Za-z0-9_.\-/]+$' -or $entry.Artifact.path -match '(^|/)\.\.(/|$)' -or [IO.Path]::IsPathRooted($entry.Artifact.path)) { throw 'Hosted artifact reference is invalid.' }
+        $row.status = $entry.Result.status; $row.operator = $entry.Result.operator; $row.environment = $entry.Result.environment; $row.recorded_at = $entry.Result.recorded_at
+        $row.artifacts = @($entry.Artifact)
+        $row | Add-Member -NotePropertyName installer_sha256 -NotePropertyValue $Installer -Force
+    }
+    return $result
+}
