@@ -829,3 +829,42 @@ f7515b8cf1111828f7fb76c29f77c94439f6f3e372144261f982edc7c7d72b25
 (3125entries), metadata3fc3a0d2; unsignedoutputs removedafterarchival. All9rows
 pristineunverified. Next additiveV11independentreview and renewedactualpreparation/
 receipts/sourceclosure before onefreshcandidatepush. No stabletag/owner/publication.
+
+
+## V11 signed closure verified before the fresh candidate push
+
+World review21496c70 was normally merged3cfdf0c3. Public review57091bytes SHA
+0b9913ec50ffe9745aac2a3fb42d415e5c96199bc95c7052549221a2f19b0628 binds
+tested7379efdb and productionf7515b8c. Root and desktop independently streamed
+all66nestedFileRefs and matched actual HEAD Git blobs/LFS pointers. Actual root
+preparation and desktop own optimized preview/pureprepare independently reproduced
+84resources395780445bytes,83nonreview resources unchanged from unsignedV10.
+Manifest17185bytes SHA7ac5512700966742baa6ceec4335d36017dcb680409f999ddd4ec834a829bb87
+and identity527bytes SHA15f00d7b332378ec45b3c604093cc581f9409482197752299460e9b84ba5e614
+were committed525947fe BEFORE external key use. Receipt1073bytes SHA
+632c9cd9e390adb51da12247e95b1b30856a127d22683d90f2c7ed46694b3304 and
+the exact threecanonicalFileRefs were committed80ae4f2a2f37cb8c9809673ef0b473efbe490b21.
+External key permissions were rechecked0700directory/0600files; both signing
+identities remain operator-controlled. No independent key custody is claimed.
+
+Root and tooling separately verified both signatures, built own bundle directories,
+checked DEFAULT compiled signer policy and streamed the exact84resources/two packs
+with no undeclared files. Each fresh source prebuild verified89evidence files/two
+packs and EXACTLY9pending hosted8+owner observations, with no other blockers:
+build_readytrue, stable_readyfalse, publicationfalse. Reports are
+/tmp/navzeroth-stable-v11-{receipt-verification,assembled,bundle-verified,build-readiness}.json
+and /tmp/navzeroth-tooling-v11-{crypto,assembly,compiled-check,readiness}.json.
+The optimized CLI was actually rebuilt at runtime1dd; only the reviewed workflow
+line differs at7379, so no7379compiler build or new functional execution is claimed.
+Desktop final composition independently CLEAR at80ae4f2a; it attributes crypto/source
+checks to their executors. Its initial unsigned comparison used a wrong archive
+folder and stopped; corrected actual unsignedV10path comparison passed.
+
+This final documentation is excluded from the unchanged production predicate and
+is not a pinned resource or public-review input. V8actualCI/source successes,
+coveragefailure and partial Windows/metricfailure remain historical. V9signatures
+were never pushed; V10was unissued unsigned preparation. Current all9canonical
+observations remain unverified; no tag, owner smoke or publication. Next: final
+exact-head independent review and ONEfreshcandidate push, all ten protected checks
+and actual source-platform parity, then normal releasePR merge. Fresh exact
+resulting-main checks and stability precede tag/draft verification and owner smoke.

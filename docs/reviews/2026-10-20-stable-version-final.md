@@ -104,3 +104,29 @@ These are engineering/sourceclosure checks. Currentcanonical8hosted+owner rows
 remain unverified. ActualV8package39424036854 continues independently; no fresh
 V9hostedcoverage/package or finalresulting-main/stability/tag/publicdownload outcome
 is claimed. Actualfcffullpack proof remains scoped to its execution, no restamping.
+
+
+## V11 final signed composition and independent validation
+
+Reviewed repairs254–258 retain mandatory coverage instrumentation, strict typed
+performance evidence, complete recovery verification and generation-safe catalog
+reuse; the one-line170minute outer workflow envelope preserves inner20/60limits
+and every gate. Each repair has its own baseline, author, immutable code review,
+actual checks and normal local merge recorded in the master handoff. Root, desktop
+and tooling independently reviewed runtime121a; author167storage/297app tests(3ignored)
+and affected-file90%coverage passed. Both specialists separately executed17cachetests.
+Root genuinely rebuilt and ran full-pack proofef3c at1dd/b9:134.138seconds,6402732KiB
+child peak, sharedLinuxWSL2 only. Workflow-only258 does not restamp that execution.
+
+PublicV11 review21496c70/0b9913ec and all66nestedFileRefs are independently checked
+by root and desktop. Actual unsigned preparation and independent optimizedpreview/
+pureprepare match84resources395780445B. Prepared identities525947fe precede keyuse;
+signed80ae4f2a composition independently CLEAR by desktop. Root and tooling own
+crypto/default-compiled-policy assemblies/source checks pass84resources/2packs and
+89evidence/2packs/EXACT9pending only. Operator-controlled two-key custody is disclosed.
+
+These are engineering and source closure checks. Fresh current candidate allten
+protected checks/source parity, exact resulting-main/stability, full hosted Windows
+acceptance, verified draft/public downloads and owner exact-installer smoke remain
+required. Earlier V8 failures and all unrun observations retain their actual status.
+No stable tag or publication is established by this record.
