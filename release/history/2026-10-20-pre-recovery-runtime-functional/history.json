@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "historical_actual_functional_evidence",
+  "tested_runtime_commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+  "reason": "Preserve actual earlier runtime execution before recovery optimization and fresh rebuilt functional proof. Not current Windows acceptance.",
+  "files": [
+    {
+      "path": "release/history/2026-10-20-pre-recovery-runtime-functional/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "ef3c7098a521dbe955eb945ae1f25f0bdddb08ff421f6fff0e39a707948d1fe1"
+    },
+    {
+      "path": "release/history/2026-10-20-pre-recovery-runtime-functional/functional-linux-measurement.json",
+      "bytes": 928,
+      "sha256": "ec335cff3a6c2bed8e0f5643991fa55f70e79156b6fbb8b018b9262accfa73df"
+    }
+  ]
+}
