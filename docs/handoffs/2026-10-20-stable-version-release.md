@@ -74,3 +74,43 @@ Normal main refresh and exact-head release PR checks remain required. Final
 resulting-main stability/source/coverage/package/material gates, all eight actual
 hosted observations, verified draft downloads, owner exact-installer smoke and
 public-download verification remain outstanding. No tag or publication exists.
+
+## Independently reviewed and signed content closure
+
+Immutable public review17484B SHA c2fa49b0cb58aa8796e55b175b7febd4f8a732a66286097e6d93419b2d7a895d
+was independently authored and root verified14FileRefs, all4source attributions
+and3130production tree entries. It records actual reviewed revisions, authored
+scopes, separately attributed root tests, operator control of both receipt keys,
+and pending final/Windows/owner gates. It claims no independent key custody.
+
+Explicit preparation at69c38156 produced manifest17203B SHA
+e1767e8121c1222f59306efcbc2ef8201453b019d7130fac6f9baa257e238000 and
+identity536B SHA6d871d54e1e88cb7662879b4d588dc4d46e3f3b5d446083def82308663cb02b8.
+Independent world review streamed all84regular/nonlinked resources395740838B,
+reproduced both canonical outputs byte for byte and verified exact82materials
+plus accepted-origin policy/public review, no private or self-referential files.
+Root committed those prepared bytes as405c5dc8 before accessing keys.
+
+The externally stored seeds remain owned/restricted (directory0700/files0600).
+Two actual signatures were issued and assembled into receipt1082B SHA
+909b49f7bd2d7ab3a83f73e3c0b22ac232b365078646d3b37ab814d35104512c.
+Root cryptographically verified both ordered roles against explicit public policy
+and independently prepared expected identity; only public artifacts entered Git.
+Commitff5b1612 records the receipt and three exact evidence FileRefs.
+
+Root production assembly/check passed84files/two packs. Independent tooling
+verification on exactff5b1612 passed both cryptographic signatures and standalone
+compiled-policy verification, streamed every assembled resource, and confirmed
+exactly84declared files plus matching fixed manifest.json/receipt.json. Its fresh
+source prebuild gate also passed89evidence files/two packs, expected production,
+build_ready=true/publication_allowed=false/stable_ready=false. Exactly the nine
+hosted/owner observations remain pending; no source/material/content blocker
+remains. Full report is retained outside Git; no observation was promoted.
+
+Normal refresh d8e3b4cb against final delivery7f55cd19 and foundation main13e4ad3d
+adds only excluded documentation/release evidence. Production still equals the
+reviewed203220 fingerprint. The separate draft version PR may target the isolated
+delivery branch while its protected-main PR238 runs. Preliminary hosted package/
+coverage runs exercise the first signed1.0.0 bundle and may expose required repairs;
+they do not substitute for refreshed final release-head/resulting-main checks.
+No stable tag, owner result or publication exists.
