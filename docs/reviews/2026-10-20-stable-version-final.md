@@ -207,3 +207,49 @@ Prepared7543eecf predates keys/signing; independent publicreviewaddb3503 binds16
 Runtime actuald636/productiona3baa, freshfunctional78.31s and recovery347.80s are
 Linux engineering evidence only; memory increase retained. Fresh applicable hosted,
 main stability, draft asset, owner and public download checks remain required.
+
+## V15 signed closure and fresh-candidate checkpoint
+
+Root coordinates claim e32a31bf; test-only PR264 final6aaa4639 merged7667e18c,
+integratedcef17297. Root actual nativeWindowsPS7.6.7/Node24.15 and LinuxPS7.6.6/
+Node24.19 each26PASS; tooling independently Linux26PASS. Production20/60/170minute
+bounds/runtime unchanged; actual full-pack proof remains d636/d9c409 (not restamped).
+V14earlyhelperfailure/all8unrun and CI/coverage cancellations are archived. Coverage
+aggregate JOBfailedRUST_RESULT while overallworkflowcancelled; root merged264 too
+soon to preserve unfinishedWindowscollectors. ConfiguredPRconcurrency supports
+supersession inference; log only says cancelled. Four stale7667 intermediate runs
+were explicitly cancelled by root; no candidate acceptance inferred from them.
+
+Worldpublicreview finalaaa00866, reviewed sourcecef17297e3b03e6f2f0470840f3c44ed0ea76310,
+production6b95b6ba0ffa57f967e0a855e00fef88646ab349966c7bf828736797ad0d4627/3129entries.
+Root independently204FileRef occurrences/200unique Git-or-LFS pins verified.
+A preliminary unsigned93c52 review preparation was superseded before any keys;
+its outputs/log remain /tmp/navzeroth-v15-superseded-unsigned and
+/tmp/navzeroth-v15-root-prepare.log. Corrected review explicitly distinguishes
+cancelledworkflow from failedaggregate:120142bytes
+969d913329dde54a89703a2d4848c042cd23813cf0268c65dfd86440e7ede9ca.
+Actual rootdebugpreparation and independent desktopoptimizedpreview/pureprepare
+match84resources395843496bytes;83nonreview resources exactly V14same.
+Preparedbb938844e46cd1cd9d4c661e10336777d2ca87ba committed BEFORE external key use:
+manifest17187bytes c4f77cb46b268f136f6225d36a98183569161063a2c18755e383e5707ce9ea10;
+identity528bytes 2d53939a609db68868c180b2ae33d168497bf54c5789cfa8f30cba629d0756dc.
+Agreed external expected identity retained before receipt, not derived from receipt.
+Signed71cdb5afc6627055c25f9b905f5ae46840ae731f receipt1074bytes
+f4b09d3f999e0f7a6720879c7acbd67ab96c21188ad747c05335d160610fc8d1;
+evidence27970546bytes3cf0d3d8dd5f232b86ef5fa88d1f50defff35970b4a8af50950af25a9a6cd35a.
+Both operator-controlled existing keys remain outsideGit0700directory/0600regular
+files; public identities unchanged. No independent key-custody claim.
+
+Root and tooling separately executed public crypto, own independent assemblies,
+DEFAULT compiled-policy verification84resources/two packs and freshsource prebuild:
+89evidence files,EXACT9pending observations and matching blockers only, buildreadytrue,
+stablereadyfalse/publicationfalse. Tooling independently streams all84sourcepins and
+checks exact86installed-resource-tree files including fixedmanifest/receipt/noextras.
+Reports /tmp/navzeroth-{stable,tooling}-v15-{crypto,assembly,compiled-check,readiness}.json;
+extra tooling independent-audit.json. Desktop independently reproduced preparation.
+
+Next exact final-head review, ONEfreshcandidatepush and uninterrupted allten protected
+checks/sourceparity/Windows/coverage. Fresh exact resulting-main stability+gates before
+tag; independently verified draftinstaller before mandatory ownerWindows smoke.
+All9canonical observations remain unverified. Main807ef674, PR239draft, generated243
+remains deferred, original44df/unrelateduntracked preserved. No stabletag/publication.

@@ -31,6 +31,18 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V15 signed closure71cdb independently passes root/tooling crypto, own84-resource
+assemblies/default compiled policy and89-evidence/two-pack prebuild; EXACT9pending.
+Reviewed test-only264 fixes synthetic startup assumption, preserving production
+limits. Root actual WindowsPS7/Linux26each and tooling Linux26PASS. Actualruntime
+fullpack remainsd636; corrected publicreview binds204refs/200Gitpaths. Preparedbb938
+committed before keys. V14package failed before ALL8cases; V14CI/coverage cancelled,
+aggregatecoverage failed; all retained explicitly. Next uninterrupted freshcandidate
+allten/source/Windows checks, then exactmainstability and verifieddraftownersmoke.
+No tag/publication; main unchanged/PR239draft/generated243deferred.
+[Current candidate handoff](handoffs/2026-10-20-watchdog-candidate-v15.md).
+
+
 V14 signed closure a84be163 independently passes root/tooling public signatures,
 separate84-resource assemblies/default compiled policy and89-evidence/two-pack
 prebuild checks, with exactly9pending observations only. Reviewed runtime repairs
