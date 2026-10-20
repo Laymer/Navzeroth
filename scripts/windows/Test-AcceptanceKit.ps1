@@ -23,8 +23,8 @@ try {
     $scenarioPath = Join-Path $temp 'scenarios.json'
     Json $scenarioPath $scenarios
     $rows = @(Get-AcceptanceProcedures $root $scenarioPath)
-    Check '25 runbook procedures and all inventory units are queued' ($rows.Count -eq 34)
-    Check 'full duo procedure is presented' (($rows | Where-Object id -eq LIVE-DUO).procedure.Contains('Manual joint session planning'))
+    Check '10 Windows runbook procedures and all inventory units are queued' ($rows.Count -eq 19)
+    Check 'no live-client procedure is queued (ADR 0007)' (@($rows | Where-Object id -like 'LIVE-*').Count -eq 0)
     $scenarios.inventory_sha256 = '0' * 64
     Json $scenarioPath $scenarios
     Refuses 'stale inventory scenarios refuse' { Get-AcceptanceProcedures $root $scenarioPath }

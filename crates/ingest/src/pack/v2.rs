@@ -5,7 +5,7 @@ use azeroth_core::{
     release_party::SupportMatrix,
     sources::AccessMethod,
 };
-pub const MAX_CATALOG_BYTES: usize = 256 * 1024 * 1024;
+pub const MAX_CATALOG_BYTES: usize = 576 * 1024 * 1024;
 pub const MAX_CLOSURE_BYTES: usize = 1024 * 1024 * 1024;
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -72,28 +72,12 @@ fn gaps(content: &ReferenceContent) -> Res<u64> {
         return Err("V2 content graph has errors");
     }
     // Count every declared unavailable fact, including unknown/unsupported/restricted
-    // observations, without treating false, zero or empty as missing.
+    // observations, without treating false, zero or empty as missing. This strict
+    // count is policy-free; the release gate classifies it under the accepted-origin
+    // policy (`azeroth_core::origin_policy::classify`).
     // Extension provenance marked disputed/stale is rejected by core validation.
-    fn unavailable(value: &Value) -> u64 {
-        match value {
-            Value::Object(map) => {
-                let own = u64::from(
-                    map.get("status")
-                        .and_then(Value::as_str)
-                        .is_some_and(|s| matches!(s, "unknown" | "unsupported" | "restricted")),
-                );
-                own + map.values().map(unavailable).sum::<u64>()
-            }
-            Value::Array(values) => values.iter().map(unavailable).sum(),
-            _ => 0,
-        }
-    }
-    let mut extensions = serde_json::to_value(content).map_err(|_| "Invalid v2 content")?;
-    extensions
-        .as_object_mut()
-        .ok_or("Invalid v2 content")?
-        .remove("reference");
-    Ok(base.gaps.len() as u64 + unavailable(&extensions))
+    let (unavailable, _) = azeroth_core::origin_policy::extension_unavailable(content)?;
+    Ok(base.gaps.len() as u64 + unavailable)
 }
 fn support_records(matrix: &SupportMatrix) -> Res<Vec<FileRecord>> {
     let mut files = BTreeMap::new();

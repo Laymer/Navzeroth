@@ -84,6 +84,20 @@ fn read(path: &Path) -> Result<Vec<u8>> {
         |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
     )
 }
+fn read_material(path: &Path, material: &Material) -> Result<Vec<u8>> {
+    let maximum = material
+        .bytes
+        .unwrap_or(source_admission::MAX_FILE_BYTES)
+        .min(if material.bytes.is_some() {
+            source_admission::MAX_RETAINED_FILE_BYTES
+        } else {
+            source_admission::MAX_FILE_BYTES
+        });
+    crate::questiedb::read_local_source_limit(path, maximum).map_err(
+        |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
+    )
+}
+
 fn directory(path: &Path, create: bool) -> Result<PathBuf> {
     let path = if path.is_absolute() {
         path.to_owned()
@@ -153,6 +167,12 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
         .chain(source.retrieval.access_evidence.iter())
     {
         if let Some(old) = materials.get(&proof.sha256) {
+            if old
+                .bytes
+                .is_some_and(|size| size > source_admission::MAX_FILE_BYTES)
+            {
+                return Err("Material also used as rights/access proof exceeds eight MiB");
+            }
             if old.url != proof.url {
                 return Err("Material hash has ambiguous origin URLs");
             }
@@ -173,8 +193,15 @@ fn closure(source: &source_admission::Source) -> Result<Vec<Material>> {
     Ok(materials.into_values().collect())
 }
 fn verify(bytes: &[u8], material: &Material) -> Result<()> {
+    // Only declared originals may use schema2's larger retained-file bound.
+    // Grant/access proofs have no declared size and retain the historical cap.
+    let maximum = if material.bytes.is_some() {
+        source_admission::MAX_RETAINED_FILE_BYTES
+    } else {
+        source_admission::MAX_FILE_BYTES
+    };
     if bytes.is_empty()
-        || bytes.len() as u64 > source_admission::MAX_FILE_BYTES
+        || bytes.len() as u64 > maximum
         || material.bytes.is_some_and(|n| n != bytes.len() as u64)
         || digest(bytes) != material.sha256
     {
@@ -264,7 +291,7 @@ fn publish_blob(cache: &Path, material: &Material, bytes: &[u8]) -> Result<()> {
     verify(bytes, material)?;
     let destination = cache_path(cache, &material.sha256);
     if destination.symlink_metadata().is_ok() {
-        return verify(&read(&destination)?, material);
+        return verify(&read_material(&destination, material)?, material);
     }
     let temporary = cache.join(format!(
         ".pending-{}-{}",
@@ -283,7 +310,7 @@ fn publish_blob(cache: &Path, material: &Material, bytes: &[u8]) -> Result<()> {
         drop(f);
         // hard_link publishes without overwriting an existing immutable object.
         if fs::hard_link(&temporary, &destination).is_err() {
-            verify(&read(&destination)?, material)?;
+            verify(&read_material(&destination, material)?, material)?;
         }
         Ok(())
     })();
@@ -359,7 +386,7 @@ fn sync_registry_using(
         for material in &materials {
             let path = cache_path(&cache, &material.sha256);
             let bytes = if path.symlink_metadata().is_ok() {
-                read(&path)?
+                read_material(&path, material)?
             } else {
                 if !options.fetch {
                     return Err(
@@ -399,7 +426,7 @@ fn sync_registry_using(
                 if !retained.contains(&material.sha256)
                     && retained_bytes + bytes.len() as u64 > source_admission::MAX_RETRIEVAL_BYTES
                 {
-                    return Err("Complete material closure exceeds one GiB");
+                    return Err("Complete material closure exceeds two GiB");
                 }
                 publish_blob(&cache, material, &bytes)?;
                 bytes
@@ -408,7 +435,7 @@ fn sync_registry_using(
             if retained.insert(material.sha256.clone()) {
                 retained_bytes += bytes.len() as u64;
                 if retained_bytes > source_admission::MAX_RETRIEVAL_BYTES {
-                    return Err("Complete material closure exceeds one GiB");
+                    return Err("Complete material closure exceeds two GiB");
                 }
             }
             total = total
@@ -484,6 +511,66 @@ pub struct BuildReport {
     pub publication_authorized: bool,
     pub facts: usize,
 }
+/// Counts and hashes the bytes it forwards and refuses to pass the catalog bound.
+struct CatalogWriter<W> {
+    inner: W,
+    hasher: Sha256,
+    bytes: u64,
+    limit: u64,
+    exceeded: bool,
+}
+impl<W: Write> Write for CatalogWriter<W> {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        if self.bytes + buf.len() as u64 > self.limit {
+            self.exceeded = true;
+            return Err(std::io::Error::other("catalog byte bound"));
+        }
+        let n = self.inner.write(buf)?;
+        self.hasher.update(&buf[..n]);
+        self.bytes += n as u64;
+        Ok(n)
+    }
+    fn flush(&mut self) -> std::io::Result<()> {
+        self.inner.flush()
+    }
+}
+/// Writes the pretty catalog to a new file and returns its SHA-256.
+fn write_catalog<T: Serialize>(path: &Path, catalog: &T) -> Result<String> {
+    let file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)
+        .map_err(|_| "Cannot reserve source output file")?;
+    stream_catalog(file, catalog, knowledge::MAX_CATALOG_BYTES).and_then(|(hash, file)| {
+        file.sync_all().map_err(|_| "Cannot flush source output")?;
+        Ok(hash)
+    })
+}
+fn stream_catalog<T: Serialize, W: Write>(
+    inner: W,
+    catalog: &T,
+    limit: u64,
+) -> Result<(String, W)> {
+    let mut writer = std::io::BufWriter::with_capacity(
+        1 << 20,
+        CatalogWriter {
+            inner,
+            hasher: Sha256::new(),
+            bytes: 0,
+            limit,
+            exceeded: false,
+        },
+    );
+    let encoded = serde_json::to_writer_pretty(&mut writer, catalog).map_err(|_| ());
+    let flushed = encoded.and_then(|_| writer.flush().map_err(|_| ()));
+    // Unflushed bytes are discarded on failure; the staging directory is removed.
+    let (counted, _) = writer.into_parts();
+    if counted.exceeded {
+        return Err("Source catalog exceeds encoded byte bound");
+    }
+    flushed.map_err(|_| "Cannot write source catalog")?;
+    Ok((format!("{:x}", counted.hasher.finalize()), counted.inner))
+}
 fn output_file(root: &Path, name: &str, bytes: &[u8]) -> Result<()> {
     let mut f = OpenOptions::new()
         .write(true)
@@ -542,7 +629,13 @@ pub fn build(options: &Options) -> Result<BuildReport> {
         if file.transformation != input.adapter.transform() {
             return Err("Build transformation differs from source admission");
         }
-        let bytes = read(&cache_path(&cache, &file.sha256))?;
+        let bytes = crate::questiedb::read_local_source_limit(
+            &cache_path(&cache, &file.sha256),
+            file.bytes,
+        )
+        .map_err(
+            |_| "Source material must be bounded, unchanged and free of symlinks/reparse points",
+        )?;
         verify(
             &bytes,
             &Material {
@@ -569,9 +662,7 @@ pub fn build(options: &Options) -> Result<BuildReport> {
             {
                 return Err("Adapter fact exceeds admitted fields");
             }
-            if facts.len() >= knowledge::MAX_FACTS {
-                return Err("Source knowledge exceeds fact capacity");
-            }
+            knowledge::check_fact_capacity(facts.len() + 1)?;
             facts.push(Candidate {
                 source_id: source.id.clone(),
                 source_revision: source.revision.clone(),
@@ -584,14 +675,9 @@ pub fn build(options: &Options) -> Result<BuildReport> {
     }
     let facts_count = facts.len();
     let catalog = knowledge::converge(plan.target, plan.as_of_utc_ms, facts)?;
-    let catalog_bytes =
-        serde_json::to_vec_pretty(&catalog).map_err(|_| "Cannot encode source catalog")?;
-    if catalog_bytes.len() > knowledge::MAX_CATALOG_BYTES {
-        return Err("Source catalog exceeds encoded byte bound");
-    }
     let closure_bytes = serde_json::to_vec_pretty(&closure_report)
         .map_err(|_| "Cannot encode source closure report")?;
-    let report = BuildReport {
+    let mut report = BuildReport {
         generator_version: env!("CARGO_PKG_VERSION"),
         generator_sha256: digest(
             concat!(
@@ -608,13 +694,12 @@ pub fn build(options: &Options) -> Result<BuildReport> {
         schema_version: 1,
         registry_sha256: digest(&registry_bytes),
         plan_sha256: digest(&plan_bytes),
-        catalog_sha256: digest(&catalog_bytes),
+        // Set once the catalog is streamed into the staging directory.
+        catalog_sha256: String::new(),
         source_closure_sha256: digest(&closure_bytes),
         publication_authorized: false,
         facts: facts_count,
     };
-    let report_bytes =
-        serde_json::to_vec_pretty(&report).map_err(|_| "Cannot encode source build report")?;
     let output = options
         .output
         .as_ref()
@@ -637,7 +722,10 @@ pub fn build(options: &Options) -> Result<BuildReport> {
     let staging = parent.join(format!(".source-build-{}", std::process::id()));
     fs::create_dir(&staging).map_err(|_| "Cannot reserve source build staging")?;
     let outcome = (|| {
-        output_file(&staging, "catalog.json", &catalog_bytes)?;
+        // A whole-world catalog is gigabytes; stream it instead of holding a copy.
+        report.catalog_sha256 = write_catalog(&staging.join("catalog.json"), &catalog)?;
+        let report_bytes =
+            serde_json::to_vec_pretty(&report).map_err(|_| "Cannot encode source build report")?;
         output_file(&staging, "closure.json", &closure_bytes)?;
         output_file(&staging, "registry.json", &registry_bytes)?;
         output_file(&staging, "plan.json", &plan_bytes)?;
@@ -658,7 +746,7 @@ pub fn build(options: &Options) -> Result<BuildReport> {
             notices.push_str(&format!("\nSource: {}\nRevision: {}\nPublisher: {}\nLicence: {}\nAttribution: {}\nObligations: {}\n", source.id, source.revision, source.publisher, source.rights.license_identifier.as_deref().unwrap_or("unknown"), source.rights.attribution.as_deref().unwrap_or("unknown"), source.rights.obligations.as_deref().unwrap_or("unknown")));
             for material in closure(source)? {
                 if copied.insert(material.sha256.clone()) {
-                    let bytes = read(&cache_path(&cache, &material.sha256))?;
+                    let bytes = read_material(&cache_path(&cache, &material.sha256), &material)?;
                     verify(&bytes, &material)?;
                     output_file(
                         &staging,
@@ -833,6 +921,37 @@ fn updates_using(
 mod tests {
     use super::*;
     #[test]
+    fn larger_declared_originals_do_not_expand_legacy_proof_limits() {
+        let bytes = vec![b'x'; source_admission::MAX_FILE_BYTES as usize + 1];
+        let mut material = Material {
+            url: "https://example.invalid/source".into(),
+            sha256: digest(&bytes),
+            bytes: None,
+        };
+        assert!(verify(&bytes, &material).is_err());
+        let root =
+            std::env::temp_dir().join(format!("nav-source-read-bound-{}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        let path = root.join("original");
+        fs::write(&path, &bytes).unwrap();
+        assert!(read_material(&path, &material).is_err());
+        assert!(read(&path).is_err());
+        assert!(
+            crate::questiedb::read_local_source_limit(
+                &path,
+                source_admission::MAX_RETAINED_FILE_BYTES + 1
+            )
+            .is_err()
+        );
+        material.bytes = Some(bytes.len() as u64);
+        assert_eq!(read_material(&path, &material).unwrap(), bytes);
+        fs::remove_dir_all(&root).unwrap();
+        assert!(verify(&bytes, &material).is_ok());
+        material.bytes = Some(bytes.len() as u64 - 1);
+        assert!(verify(&bytes, &material).is_err());
+    }
+
+    #[test]
     fn admitted_retrieval_publishes_verified_blobs_and_never_overwrites_on_refusal() {
         use serde_json::json;
         let root = std::env::temp_dir().join(format!(
@@ -854,6 +973,30 @@ mod tests {
         let value = json!({"schema_version":1,"sources":[{"id":"synthetic","revision":revision,"publisher":"synthetic/fixture","origin":{"edition":"wow_forever","build":"1.60.1.70374"},"rights":{"status":"admitted","license":"permissive","license_identifier":"synthetic-test-only","reviewer":"fixture","attribution":"fixture","obligations":"fixture","evidence":[evidence.clone()]},"retrieval":{"method":"https_pinned","max_total_bytes":data.len()+license.len(),"minimum_interval_ms":1000,"max_requests":2,"access_evidence":evidence},"files":[{"path":"facts.json","url":format!("https://raw.githubusercontent.com/synthetic/fixture/{revision}/facts.json"),"sha256":digest(data),"bytes":data.len(),"fields":["quests.shareable"],"transformation":"knowledge_v1"}]}]});
         let raw = serde_json::to_vec(&value).unwrap();
         let mut registry = Registry::parse(&raw).unwrap();
+        // A declared original may also be the exact rights/access proof. Its
+        // original length pin survives, but the shared role keeps the8MiB cap.
+        let mut shared = registry.sources[0].clone();
+        let mut proof = shared.rights.evidence[0].clone();
+        proof.url = shared.files[0].url.clone();
+        proof.sha256 = shared.files[0].sha256.clone();
+        shared.rights.evidence = vec![proof.clone()];
+        shared.retrieval.access_evidence = Some(proof);
+        shared.files[0].bytes = source_admission::MAX_FILE_BYTES + 1;
+        assert_eq!(
+            closure(&shared).err(),
+            Some("Material also used as rights/access proof exceeds eight MiB")
+        );
+        shared.files[0].bytes = source_admission::MAX_FILE_BYTES;
+        assert_eq!(
+            closure(&shared).unwrap()[0].bytes,
+            Some(source_admission::MAX_FILE_BYTES)
+        );
+        shared.files[0].bytes = data.len() as u64;
+        let mut shared_material = closure(&shared).unwrap().remove(0);
+        assert_eq!(shared_material.bytes, Some(data.len() as u64));
+        assert!(verify(data, &shared_material).is_ok());
+        shared_material.bytes = Some(data.len() as u64 + 1);
+        assert!(verify(data, &shared_material).is_err());
         let policy: UpdatesPolicy = serde_json::from_value(json!({
             "schema_version":1,"registry_sha256":digest(&raw),"method":"github_commit_metadata",
             "reviewer":"synthetic","reviewed_on":"synthetic","access_evidence_url":"https://docs.github.com/en/rest/commits/commits#list-commits",
@@ -999,5 +1142,44 @@ mod tests {
             fetch(&material, &"a".repeat(40), 0).err(),
             Some("Source retrieval would exceed remaining byte budget")
         );
+    }
+    #[test]
+    fn streamed_catalog_is_hashed_and_bounded_at_the_exact_limit() {
+        let catalog = serde_json::json!({"entries": [1, 2, 3]});
+        let pretty = serde_json::to_vec_pretty(&catalog).unwrap();
+        let limit = pretty.len() as u64;
+        let (hash, bytes) = stream_catalog(Vec::new(), &catalog, limit).unwrap();
+        assert_eq!(bytes, pretty);
+        assert_eq!(hash, digest(&pretty));
+        assert_eq!(
+            stream_catalog(Vec::new(), &catalog, limit - 1).err(),
+            Some("Source catalog exceeds encoded byte bound")
+        );
+        struct Broken;
+        impl Write for Broken {
+            fn write(&mut self, _: &[u8]) -> std::io::Result<usize> {
+                Err(std::io::Error::other("synthetic disk failure"))
+            }
+            fn flush(&mut self) -> std::io::Result<()> {
+                Ok(())
+            }
+        }
+        Broken.flush().unwrap();
+        assert_eq!(
+            stream_catalog(Broken, &catalog, limit).err(),
+            Some("Cannot write source catalog")
+        );
+        let mut counted = CatalogWriter {
+            inner: Vec::new(),
+            hasher: Sha256::new(),
+            bytes: 0,
+            limit: 4,
+            exceeded: false,
+        };
+        assert_eq!(counted.write(b"1234").unwrap(), 4);
+        counted.flush().unwrap();
+        assert!(counted.write(b"5").is_err());
+        assert!(counted.exceeded);
+        assert_eq!(knowledge::MAX_CATALOG_BYTES, 8 * 1024 * 1024 * 1024);
     }
 }

@@ -119,14 +119,26 @@ fn private_refs<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a
         )
         .collect()
 }
-fn source_valid(source: &SourceEvidence) -> bool {
+fn source_valid(source: &SourceEvidence, origin_accepted: &BTreeSet<String>) -> bool {
     let text =
         |v: &str| !v.trim().is_empty() && v.len() <= 4096 && !v.chars().any(char::is_control);
+    // ADR 0007 §3: an accepted origin satisfies target validation; its target
+    // evidence list may then be empty, every other proof stays mandatory.
+    let origin = origin_accepted.contains(&source.id);
     source.redistribution == Permission::Permitted
-        && source.target_validation == Status::Pass
+        && (source.target_validation == Status::Pass || origin)
         && text(&source.id)
         && text(&source.origin_edition)
         && source.origin_build.as_deref().is_none_or(text)
+        && (origin || !source.target_evidence.is_empty())
+        && [
+            &source.files,
+            &source.license_files,
+            &source.attribution_files,
+            &source.permission_evidence,
+        ]
+        .into_iter()
+        .all(|files| !files.is_empty())
         && [
             &source.files,
             &source.license_files,
@@ -136,8 +148,7 @@ fn source_valid(source: &SourceEvidence) -> bool {
         ]
         .into_iter()
         .all(|files| {
-            !files.is_empty()
-                && files.len() <= release::MAX_UNITS
+            files.len() <= release::MAX_UNITS
                 && files.iter().map(|f| &f.path).collect::<BTreeSet<_>>().len() == files.len()
         })
 }
@@ -145,10 +156,12 @@ pub(super) fn selected_files(
     root: &Path,
     inventory: &Inventory,
     evidence: &Evidence,
+    policy: &ReleasePolicy<'_>,
     tree: &Tree,
     catalog: &Catalog,
     budget: &mut Budget,
 ) -> Result<(Vec<MaterialFile>, Vec<SourceMaterial>)> {
+    let origin_accepted = release::origin_accepted_sources(inventory, evidence, policy);
     if evidence.sources.len() != inventory.sources.len()
         || inventory.sources.len() > release::MAX_UNITS
     {
@@ -238,7 +251,7 @@ pub(super) fn selected_files(
     let mut sources = BTreeMap::new();
     for source in &evidence.sources {
         if accepted.get(source.id.as_str()) != Some(&source.revision.as_str())
-            || !source_valid(source)
+            || !source_valid(source, &origin_accepted)
         {
             return Err(
                 "Material source permission, provenance or target validation is incomplete",
@@ -289,11 +302,13 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         evidence,
         head,
         candidate,
+        world,
     } = inputs(options)?;
+    let policy = world.policy();
     let evidence = evidence.ok_or("Material selection requires an evidence manifest")?;
     // Reuse the core's early schema/collection limits without treating missing
     // unrelated live checks as permission to skip source/material verification.
-    release::assess(
+    release::assess_with(
         &options.version,
         &inventory,
         Some(&evidence),
@@ -302,12 +317,20 @@ pub fn plan(options: &Options) -> Result<Manifest> {
             production_sha256: &candidate.fingerprint,
             tested_source_commit: evidence.tested_source_commit.as_deref().unwrap_or(""),
         },
+        &policy,
     )?;
     if evidence.schema_version != inventory.schema_version
-        || inventory.target != release::expected_target(inventory.schema_version)
+        || inventory.target != release::expected_target_with(inventory.schema_version, &policy)
         || evidence.target != inventory.target
     {
         return Err("Release material target differs from frozen build");
+    }
+    if inventory.schema_version == release::SCHEMA_WORLD_DATA
+        && (policy.origins.is_none()
+            || evidence.origin_policy.as_ref().map(|f| f.sha256.as_str())
+                != policy.origin_policy_sha256)
+    {
+        return Err("Release materials require the bound accepted-origin policy");
     }
     let empty =
         inventory.sources.is_empty() && evidence.sources.is_empty() && evidence.packs.is_empty();
@@ -336,11 +359,20 @@ pub fn plan(options: &Options) -> Result<Manifest> {
     if !production_status(&root)?.is_empty() {
         return Err("Material source working tree is dirty or has untracked product files");
     }
-    let (_, catalog) = packs(&root, &inventory, &evidence, &candidate, &mut budget)?;
+    let (_, catalog) = packs(
+        &root,
+        &inventory,
+        &evidence,
+        &policy,
+        &candidate,
+        &mut budget,
+        &mut vec![],
+    )?;
     let (files, sources) = selected_files(
         &root,
         &inventory,
         &evidence,
+        &policy,
         &candidate,
         &catalog,
         &mut budget,

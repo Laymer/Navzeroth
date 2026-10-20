@@ -1,0 +1,10 @@
+{
+  "format": "navzeroth-world-data-target",
+  "schema_version": 1,
+  "decision": "ADR 0007 §6",
+  "edition": "wow_forever",
+  "build": "1.60.1.70450",
+  "interface": "16001",
+  "locale": "enUS",
+  "detected_from": "owner-recorded development build (ADR 0006 §12); replaced by data-generators/pipeline.py detect"
+}

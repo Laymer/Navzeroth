@@ -15,7 +15,8 @@ cross_edition_unverified; never relabelled as Forever data):
   quests.quests         quest_template + quest relations + item_template.startquest
   vendors.items         npc_vendor + npc_vendor_template (VendorTemplateId)
   trainers.spells       npc_trainer + npc_trainer_template (TrainerTemplateId)
-  loot.<table>          the eight *_loot_template tables
+  loot.<table>          the eight *_loot_template tables (loot.game_object keyed by game object)
+  items.items           item_template (the fallback for items the Forever client table lacks)
   dungeons.dungeons     instance_template + areatrigger_teleport + bosses
   world.graveyards      world_safe_locs + game_graveyard_zone
   world.area_levels     creature level range per zone, from located spawns
@@ -42,7 +43,15 @@ column, so reward_xp is never written. A spawn with entry 0 (random entry)
 gives one record per candidate of creature_spawn_entry / gameobject_spawn_entry
 under the same guid; a negative spawn time (despawned until a script spawns it)
 gives no respawn_secs. A loot reference row has min_count 1 and max_count = the
-times the reference is rolled (maxcount, at least 1). Area level ranges count
+times the reference is rolled (maxcount, at least 1). gameobject_loot_template is
+keyed by its lootId, which chests (type 3) and fishing holes (type 25) name in
+gameobject_template.data1; its rows are written once per such game object with
+`entry` = the game object entry (a loot ID no object names is left out and
+reported), so every loot entry except item, reference, fishing and disenchant is
+an entity ID. Disenchant loot stays keyed by DisenchantID: every ID is shared by
+several items, so it names no single entity. items.items maps item_template:
+stats are stat_typeN / stat_valueN under the ITEM_MOD_* names gen_world_db2 uses,
+plus `armor` and the `<school>_resistance` columns. Area level ranges count
 attackable, non-friendly creatures that are not critters, totems, triggers
 (creature type 10), bosses or service NPCs; they are plain min / max, so a
 stray high-level spawn widens them.
@@ -94,6 +103,11 @@ LOOT_TABLES = [("creature", "creature_loot_template"), ("game_object", "gameobje
                ("skinning", "skinning_loot_template"), ("disenchant", "disenchant_loot_template")]
 DUNGEON_INSTANCE_TYPES = {1, 2}  # Map.InstanceType: party, raid (3 pvp, 4 arena are left out)
 ENTITY_ORDER = {"npc": 0, "game_object": 1, "item": 2}
+GO_LOOT_TYPES = {3, 25}  # GAMEOBJECT_TYPE_CHEST, GAMEOBJECT_TYPE_FISHINGHOLE: data1 = lootId
+# item_template columns kept as stats beside stat_typeN (names as the ITEM_MOD_* vocabulary).
+ITEM_EXTRA_STATS = [("armor", "armor"), ("holy_res", "holy_resistance"), ("fire_res", "fire_resistance"),
+                    ("nature_res", "nature_resistance"), ("frost_res", "frost_resistance"),
+                    ("shadow_res", "shadow_resistance"), ("arcane_res", "arcane_resistance")]
 
 
 def text(value):
@@ -445,6 +459,72 @@ def loot_record(table, row):
     return rec
 
 
+def game_object_loot_owners(go_templates):
+    """loot ID -> sorted game object entries whose template names it: data1 is the lootId of
+    chests (type 3) and fishing holes (type 25); the other types use data1 for something else."""
+    out = collections.defaultdict(set)
+    for r in go_templates:
+        loot = positive(r.get("data1"))
+        if r.get("type") in GO_LOOT_TYPES and loot:
+            out[loot].add(r["entry"])
+    return {k: sorted(v) for k, v in out.items()}
+
+
+def game_object_loot(rows, owners, known_ids):
+    """gameobject_loot_template rows keyed by the game object that drops them (one copy per
+    object whose data1 names the loot ID), so `entry` is an entity ID like creature loot.
+    Returns (records, loot IDs no known object names)."""
+    out, orphans = [], set()
+    for r in rows:
+        objects = [o for o in owners.get(r["entry"], ()) if o in known_ids]
+        if not objects:
+            orphans.add(r["entry"])
+        for obj in objects:
+            out.append(loot_record("game_object", dict(r, entry=obj)))
+    return out, orphans
+
+
+# ---------------------------------------------------------------- items
+
+
+def item_stats(row):
+    """{stat name: amount} from stat_typeN / stat_valueN (ITEM_MOD_* names as gen_world_db2 uses),
+    plus armor and the six resistances; zero amounts are left out."""
+    stats = {}
+    for i in range(1, 11):
+        stat_type, value = num(row.get(f"stat_type{i}")), num(row.get(f"stat_value{i}")) or 0
+        if stat_type is None or not value:
+            continue
+        key = db2.stat_name(stat_type)
+        stats[key] = stats.get(key, 0) + value
+    for column, key in ITEM_EXTRA_STATS:
+        value = num(row.get(column)) or 0
+        if value:
+            stats[key] = stats.get(key, 0) + value
+    return {k: v for k, v in sorted(stats.items()) if v}
+
+
+def unsigned(value):
+    """A u32 column: None when absent or negative (never invented)."""
+    v = num(value)
+    return v if v is not None and v >= 0 else None
+
+
+def item_record(row):
+    """One items.items record of item_template (the 1.12 server's item table)."""
+    name = text(row.get("name"))
+    if not name:
+        return None
+    return {"id": num(row["entry"]), "name": name, "quality": unsigned(row.get("Quality")),
+            "class_id": unsigned(row.get("class")), "subclass_id": unsigned(row.get("subclass")),
+            "inventory_type": unsigned(row.get("InventoryType")), "item_level": unsigned(row.get("ItemLevel")),
+            "required_level": unsigned(row.get("RequiredLevel")),
+            "allowable_class": num(row.get("AllowableClass")), "allowable_race": num(row.get("AllowableRace")),
+            "bonding": unsigned(row.get("bonding")), "max_stack": unsigned(row.get("stackable")),
+            "buy_price": unsigned(row.get("BuyPrice")), "sell_price": unsigned(row.get("SellPrice")),
+            "stats": item_stats(row) or None}
+
+
 # ---------------------------------------------------------------- dungeons, graveyards, areas
 
 
@@ -602,8 +682,18 @@ def build(dump, wago):
                               lambda r: (r["npc_id"], r["spell_id"]), False)
     loot_key = lambda r: (r["entry"], r.get("group") or 0, r.get("item") or 0, r.get("reference") or 0,  # noqa: E731
                           r["chance"], r["min_count"], r["max_count"], r.get("condition") or 0)
+    owners = game_object_loot_owners(go_templates)
     for table, sql_table in LOOT_TABLES:
-        out[f"loot.{table}"] = ("loot", [loot_record(table, r) for r in dump.rows(sql_table)], loot_key, False)
+        if table == "game_object":
+            records, orphans = game_object_loot(dump.rows(sql_table), owners, {r["id"] for r in objects})
+            if orphans:
+                print(f"loot.game_object: {len(orphans)} loot IDs no chest or fishing hole names are left out "
+                      f"({', '.join(map(str, sorted(orphans)[:10]))})", file=sys.stderr)
+        else:
+            records = [loot_record(table, r) for r in dump.rows(sql_table)]
+        out[f"loot.{table}"] = ("loot", records, loot_key, False)
+    items = [r for r in (item_record(t) for t in dump.rows("item_template")) if r]
+    out["items.items"] = ("item", items, by_id, False)
     bosses = dungeon_bosses(templates, creature_rows, dump.rows("instance_encounters"),
                             dump.rows("instance_dungeon_encounters"))
     teleports = dump.rows("areatrigger_teleport")

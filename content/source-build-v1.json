@@ -2,7 +2,7 @@
   "schema_version": 1,
   "target": {
     "edition": "wow_forever",
-    "build": "1.60.1.70374"
+    "build": "1.60.1.70450"
   },
   "as_of_utc_ms": 1792022400000,
   "inputs": [
@@ -25,6 +25,426 @@
       "source": "allthethings-forever-riverglades",
       "file": "content/source-materials/objects/1586c93e8327f713283fc1aec1b1f8c62656aab94fc49ce2b26abd80f6f92eae",
       "adapter": "att_flight_point_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0000.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0001.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0002.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0003.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0004.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0005.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0006.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0007.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0008.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0009.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0010.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0011.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0012.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0013.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0014.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0015.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0016.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0017.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0018.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0019.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0020.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0021.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0022.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0023.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0024.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0025.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0026.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0027.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0028.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0029.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0030.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0031.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0032.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0033.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0034.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0035.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0036.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0037.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0038.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0039.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0040.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0041.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0042.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0043.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0044.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0045.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0046.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0047.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0048.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0049.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0050.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0051.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0052.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0053.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0054.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0055.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0056.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0057.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0058.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0059.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0060.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0061.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0062.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0063.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0064.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0065.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0066.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0067.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0068.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0069.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0070.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0071.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0072.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0073.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0074.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-cmangos-vanilla-1-12-1.12.1",
+      "file": "gen_world_cmangos/vanilla_1_12/1.12.1/part-0075.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0000.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0001.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0002.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0003.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0004.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0005.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0006.json",
+      "adapter": "knowledge_v1"
+    },
+    {
+      "source": "gen-world-db2-wow-forever-1.60.1.70245",
+      "file": "gen_world_db2/wow_forever/1.60.1.70245/part-0007.json",
+      "adapter": "knowledge_v1"
     }
   ]
 }

@@ -15,7 +15,7 @@ use azeroth_core::{
     evaluation::{EvaluationContext, EvaluationResult, StalePolicy, Truth, evaluate},
     observation::{Freshness, Observation, ObservationStatus, freshness},
     predicate::{Predicate, RuleLimits},
-    travel::{RouteOptions, RouteOutcome, RouteSearch, shortest_route},
+    travel::{RouteOutcome, RouteSearch, shortest_route},
     types::*,
 };
 use azeroth_storage::content::ActiveContentRevision;
@@ -30,6 +30,9 @@ pub(crate) mod json;
 pub const MAX_REQUEST_BYTES: usize = 1024 * 1024;
 pub const MAX_REPORT_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_SECTION_RECORDS: usize = 32;
+/// Schema2 reference lists accommodate admitted source catalogs. Notes, checks
+/// and each declaration's evidence retain their schema1 limit.
+pub const MAX_REFERENCE_RECORDS: usize = 4096;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -215,6 +218,15 @@ fn count(size: usize) -> Result<()> {
         Ok(())
     }
 }
+fn reference_count(size: usize, limit: usize) -> Result<()> {
+    if size > limit {
+        Err(invalid(
+            "Preparation reference section exceeds schema bounds",
+        ))
+    } else {
+        Ok(())
+    }
+}
 fn unique<T: Ord>(values: impl IntoIterator<Item = T>) -> Result<()> {
     let mut seen = BTreeSet::new();
     for value in values {
@@ -264,7 +276,7 @@ fn validate_package(
     package: &LocalPreparationPackage,
     gaps: &mut Vec<PreparationGap>,
 ) -> Result<BTreeSet<EvidenceId>> {
-    if package.schema_version != 1 {
+    if !matches!(package.schema_version, 1 | 2) {
         return Err(AppError::new(
             ErrorCode::UnsupportedSchema,
             "Unsupported preparation package schema",
@@ -303,12 +315,17 @@ fn validate_package(
     if let Some(predicate) = package.access.observation.value() {
         predicate.validate_in_context(&package.context)?;
     }
+    let reference_limit = if package.schema_version == 2 {
+        MAX_REFERENCE_RECORDS
+    } else {
+        MAX_SECTION_RECORDS
+    };
     if let Some(quests) = package.quests.observation.value() {
-        count(quests.len())?;
+        reference_count(quests.len(), reference_limit)?;
         unique(quests.iter())?;
     }
     if let Some(rewards) = package.rewards.observation.value() {
-        count(rewards.len())?;
+        reference_count(rewards.len(), reference_limit)?;
         unique(rewards.iter().map(|r| (&r.item, &r.source)))?;
         for reward in rewards {
             package.context.ensure_compatible(&reward.item.context)?;
@@ -340,6 +357,8 @@ struct Captured {
     content: Option<ActiveContentRevision>,
     disposition: Option<azeroth_storage::content_dispositions::DispositionGuard>,
     party: Option<PartyId>,
+    /// The activation accepts inferred travel for exactly this content.
+    accept_inferred: bool,
 }
 fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -> Result<Captured> {
     if keys.is_empty() || keys.len() > 40 {
@@ -380,6 +399,7 @@ fn capture(store: &SqliteStore, keys: Vec<ProfileKey>, party: Option<PartyId>) -
         snapshots,
         content,
         party,
+        accept_inferred: false,
     })
 }
 fn snapshot_hash(snapshot: &Option<Envelope<CharacterSnapshot>>) -> Result<Option<Sha256Hex>> {
@@ -476,7 +496,7 @@ impl SnapshotApplication {
         let started = Instant::now();
         let mut request = json::request(text)?;
         let mut gaps = Vec::new();
-        let captured = match &request.subject {
+        let mut captured = match &request.subject {
             PreparationSubject::Character { profile_id } => {
                 self.with_profile_store_mut(profile_id, |store, key| {
                     store.with_immediate_read(|store| capture(store, vec![key.clone()], None))
@@ -491,6 +511,9 @@ impl SnapshotApplication {
                 })
             })?,
         };
+        if let Some(content) = &captured.content {
+            captured.accept_inferred = self.accepts_inferred_travel(&content.key())?;
+        }
         if let Some(selection) = &request.authored {
             if request.package.is_some() {
                 return Err(invalid(
@@ -929,16 +952,25 @@ fn evaluate_inputs(
                             limits: RuleLimits::default(),
                         })
                         .collect::<Vec<_>>();
+                    let view =
+                        crate::catalog::TravelPolicyView::new(content, captured.accept_inferred);
+                    let travel = crate::catalog::travel_inputs(&view);
                     let mut edges = Vec::new();
-                    for edge in &content.reference().edges {
+                    for edge in travel.edges.iter() {
                         let mut usable = true;
+                        // An accepted inferred edge's unknown requirement is
+                        // assumed (the hop says so), never called satisfied.
+                        let assumed = travel.options.accept_unknown_requirements
+                            && edge.requirements.value().is_none()
+                            && travel.options.inferred_edges.contains(&edge.id);
                         for context in &contexts {
                             let assessment = condition(&edge.requirements, Some(context))?;
                             let member_usable = assessment
                                 .evaluation
                                 .as_ref()
                                 .is_some_and(|r| r.truth == Truth::True)
-                                || assessment.availability == ObservationStatus::NotApplicable;
+                                || assessment.availability == ObservationStatus::NotApplicable
+                                || assumed;
                             usable &= member_usable;
                             if !member_usable {
                                 route_exclusions.push(PreparationEdgeExclusion {
@@ -967,13 +999,18 @@ fn evaluate_inputs(
                             edges.push(edge.clone());
                         }
                     }
+                    // Options may only name edges of the searched graph.
+                    let kept: BTreeSet<&azeroth_core::types::EdgeId> =
+                        edges.iter().map(|edge| &edge.id).collect();
+                    let mut options = travel.options.clone();
+                    options.inferred_edges.retain(|id| kept.contains(id));
                     let search = shortest_route(
                         &content.reference().nodes,
                         &edges,
                         origin,
                         &entrance.id,
                         &contexts[0],
-                        &RouteOptions::default(),
+                        &options,
                     )?;
                     if !matches!(search.outcome, RouteOutcome::Complete { .. }) {
                         gap(&mut gaps, GapCode::NoSupportedRoute, "route");
@@ -1040,6 +1077,51 @@ mod tests {
             .unwrap();
         let request = json!({"schema_version":1,"subject":{"kind":"party","party_id":"prep-test"},"origin":"demo-node-1","package":serde_json::from_str::<Value>(include_str!("../../../fixtures/desktop/preparation/synthetic-package.json")).unwrap()});
         (app, request, ids[0].clone(), ids[1].clone())
+    }
+    #[test]
+    fn versioned_reference_limits_preserve_all_ids_and_other_section_limits() {
+        let mut package: LocalPreparationPackage = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/preparation/synthetic-package.json"
+        ))
+        .unwrap();
+        let quests: Vec<_> = (0..MAX_REFERENCE_RECORDS)
+            .map(|i| QuestId::new(format!("quest-{i}")).unwrap())
+            .collect();
+        let template = package.rewards.observation.value().unwrap()[0].clone();
+        let rewards: Vec<_> = (0..MAX_REFERENCE_RECORDS)
+            .map(|i| {
+                let mut reward = template.clone();
+                reward.source = AcquisitionId::new(format!("source-{i}")).unwrap();
+                reward
+            })
+            .collect();
+        package.quests.observation = Observation::known(quests, Default::default()).unwrap();
+        package.rewards.observation = Observation::known(rewards, Default::default()).unwrap();
+        assert!(validate_package(&package, &mut vec![]).is_err());
+        package.schema_version = 2;
+        validate_package(&package, &mut vec![]).unwrap();
+        package.quests.observation = Observation::known(
+            (0..=MAX_REFERENCE_RECORDS)
+                .map(|i| QuestId::new(format!("quest-{i}")).unwrap())
+                .collect(),
+            Default::default(),
+        )
+        .unwrap();
+        assert!(validate_package(&package, &mut vec![]).is_err());
+        package.quests.observation = Observation::unknown();
+        let mut rewards = package.rewards.observation.value().unwrap().clone();
+        let mut extra = template;
+        extra.source = AcquisitionId::new("extra").unwrap();
+        rewards.push(extra);
+        package.rewards.observation = Observation::known(rewards, Default::default()).unwrap();
+        assert!(validate_package(&package, &mut vec![]).is_err());
+        package.rewards.observation = Observation::unknown();
+        package.before_entry.observation = Observation::known(
+            vec![Text::new("manual note").unwrap(); 33],
+            Default::default(),
+        )
+        .unwrap();
+        assert!(validate_package(&package, &mut vec![]).is_err());
     }
     #[test]
     fn changed_snapshot_membership_or_content_refuses_prepared_report_after_unlocked_work() {

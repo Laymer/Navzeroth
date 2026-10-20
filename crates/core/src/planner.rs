@@ -12,7 +12,7 @@ use crate::{
     error::{Result, invalid},
     evaluation::{EvaluationContext, EvaluationResult, Truth, evaluate},
     predicate::Predicate,
-    travel::{Route, RouteOptions, RouteOutcome, RouteSearch, shortest_route_controlled},
+    travel::{Route, RouteOptions, RouteOutcome, RouteSearch, TravelGraph},
     types::{Millis, NodeId, ObjectiveId, SourceId},
 };
 use serde::Serialize;
@@ -164,16 +164,16 @@ pub fn plan_controlled(
         control.checkpoint(SearchPhase::ValidateInputs)?;
         bounded(c.rewards.len())?;
     }
+    // The graph is validated and assessed once for every route query.
+    let graph = TravelGraph::prepare(
+        input.nodes,
+        input.edges,
+        input.context,
+        input.travel_options,
+        control,
+    )?;
     let route = |from: &NodeId, to: &NodeId, control: &mut dyn SearchControl| {
-        shortest_route_controlled(
-            input.nodes,
-            input.edges,
-            from,
-            to,
-            input.context,
-            input.travel_options,
-            control,
-        )
+        graph.route(from, to, control)
     };
     let initial_stop = route(&input.origin, &input.stopping_node, control)?;
     let RouteOutcome::Complete {

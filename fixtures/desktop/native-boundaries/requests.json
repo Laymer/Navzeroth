@@ -101,6 +101,14 @@
     }
   },
   {
+    "command": "activate_content_set",
+    "args": {
+      "profile_id": "invalid",
+      "revisions": ["synthetic-missing-revision"],
+      "accept_inferred_travel": true
+    }
+  },
+  {
     "command": "get_party_quests",
     "args": {
       "party_id": "missing-synthetic-party"
@@ -336,6 +344,24 @@
   },
   {
     "command": "get_catalog_page",
+    "args": {
+      "text": "{\"truncated\":"
+    },
+    "codes": [
+      "INVALID_INPUT"
+    ]
+  },
+  {
+    "command": "get_world_page",
+    "args": {
+      "text": "{\"truncated\":"
+    },
+    "codes": [
+      "INVALID_INPUT"
+    ]
+  },
+  {
+    "command": "get_record_origins",
     "args": {
       "text": "{\"truncated\":"
     },

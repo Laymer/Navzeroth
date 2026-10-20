@@ -12,6 +12,14 @@ on:
       - 'docs/sources/source-admission-v1.json'
       - 'docs/sources/source-updates-v1.json'
       - 'scripts/Build-SourceKnowledge.ps1'
+      - 'scripts/verify-world-source-parity.py'
+      - 'scripts/tests/test_world_source_parity.py'
+      - 'data-generators/**'
+      - 'content/world/**'
+      - 'content/authored/**'
+      - 'release/v1/source-normalization-policy.json'
+      - 'release/v1/accepted-origins.json'
+      - 'release/v1/world-data-target.json'
       - '.gitattributes'
       - '.github/workflows/source-knowledge.yml'
   push:
@@ -26,6 +34,14 @@ on:
       - 'docs/sources/source-admission-v1.json'
       - 'docs/sources/source-updates-v1.json'
       - 'scripts/Build-SourceKnowledge.ps1'
+      - 'scripts/verify-world-source-parity.py'
+      - 'scripts/tests/test_world_source_parity.py'
+      - 'data-generators/**'
+      - 'content/world/**'
+      - 'content/authored/**'
+      - 'release/v1/source-normalization-policy.json'
+      - 'release/v1/accepted-origins.json'
+      - 'release/v1/world-data-target.json'
       - '.gitattributes'
       - '.github/workflows/source-knowledge.yml'
   workflow_dispatch:
@@ -44,7 +60,9 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-2025]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    # The legacy fact build and admitted world mapping are distinct contracts.
+    # Neither this parity job nor its hosted hardware establishes desktop memory use.
+    timeout-minutes: 60
     steps:
       - name: Preserve committed source bytes
         shell: bash
@@ -52,7 +70,36 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           lfs: false
-      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+      - name: Test bounded actual-world resource selection
+        shell: bash
+        run: python -m unittest discover -s scripts/tests -p test_world_source_parity.py
+      - name: Select admitted-world or historical source contract
+        id: contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          mode=$(python scripts/verify-world-source-parity.py mode)
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - name: Hydrate only the admitted world closure
+        if: steps.contract.outputs.mode == 'actual'
+        shell: bash
+        run: |
+          git lfs install --local
+          python scripts/verify-world-source-parity.py hydrate
+      - name: Regenerate bound world outputs twice and compare committed bytes
+        if: steps.contract.outputs.mode == 'actual'
+        shell: bash
+        run: python scripts/verify-world-source-parity.py verify --out dist/source-knowledge-a
+      # Before admission exists on main, retain the original independent source
+      # knowledge build. Its success explicitly leaves actual-world parity unverified.
+      - name: Check out retained source objects from Git LFS
+        if: steps.contract.outputs.mode == 'legacy'
+        shell: bash
+        run: |
+          git lfs install --local
+          git lfs pull --include="content/source-materials/objects/*"
+      - if: steps.contract.outputs.mode == 'legacy'
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: |
             ~/.cargo/registry
@@ -60,8 +107,10 @@ jobs:
             target
           key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', '**/Cargo.toml', 'Cargo.lock') }}
       - name: Provision pinned CLI dependencies
+        if: steps.contract.outputs.mode == 'legacy'
         run: cargo build --locked -p azeroth-cli
       - name: Build twice offline and compare exact outputs
+        if: steps.contract.outputs.mode == 'legacy'
         shell: pwsh
         run: |
           $suffix = if ($env:RUNNER_OS -eq 'Windows') { '.exe' } else { '' }
@@ -73,6 +122,13 @@ jobs:
             $b = (Get-FileHash "dist/source-knowledge-b/$file" -Algorithm SHA256).Hash
             if ($a -ne $b) { throw "Non-deterministic source build: $file" }
           }
+      - name: Disclose absence of actual-world admission
+        if: steps.contract.outputs.mode == 'legacy'
+        shell: bash
+        run: python scripts/verify-world-source-parity.py verify --out dist/source-knowledge-a
+      - name: Retain complete committed transformation source with LFS pointers
+        shell: pwsh
+        run: |
           # Include the exact original source, licence texts and transformation
           # source revision with the derived artifact, not just its hashes.
           # git archive also runs smudge filters; checkout lfs:false alone is
@@ -95,7 +151,7 @@ jobs:
             cmp "$archive_check_dir/expected" "$archive_check_dir/actual"
           done < "$archive_check_dir/lfs"
       - name: Check upstream revision metadata without changing retained inputs
-        if: runner.os == 'Linux' && github.event_name != 'pull_request' && github.event_name != 'push'
+        if: steps.contract.outputs.mode == 'legacy' && runner.os == 'Linux' && github.event_name != 'pull_request' && github.event_name != 'push'
         shell: bash
         run: |
           target/debug/azeroth-cli source-sync --registry docs/sources/source-admission-v1.json --cache content/source-materials/objects --fetch --check-updates docs/sources/source-updates-v1.json > dist/source-knowledge-a/upstream-updates.json
@@ -110,8 +166,11 @@ jobs:
     name: Source catalog platform parity
     needs: build
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: source-knowledge-*-${{ github.sha }}
@@ -121,6 +180,13 @@ jobs:
         env:
           SOURCE_REVISION: ${{ github.sha }}
         run: |
-          for file in catalog.json build.json closure.json registry.json plan.json NOTICES.txt; do
-            cmp "artifacts/source-knowledge-Linux-$SOURCE_REVISION/$file" "artifacts/source-knowledge-Windows-$SOURCE_REVISION/$file"
-          done
+          set -euo pipefail
+          linux="artifacts/source-knowledge-Linux-$SOURCE_REVISION"
+          windows="artifacts/source-knowledge-Windows-$SOURCE_REVISION"
+          python scripts/verify-world-source-parity.py compare --left "$linux/world-parity.json" --right "$windows/world-parity.json" --expected-commit "$SOURCE_REVISION"
+          mode=$(python scripts/verify-world-source-parity.py mode)
+          if [ "$mode" = legacy ]; then
+            for file in catalog.json build.json closure.json registry.json plan.json NOTICES.txt; do
+              cmp "$linux/$file" "$windows/$file"
+            done
+          fi

@@ -1,7 +1,12 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "inventory_id": "forever-1.0.0-human-1-20-v2",
-  "target": null,
+  "target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
   "slice": {
     "id": "human-1-20",
     "races": [

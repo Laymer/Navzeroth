@@ -1,0 +1,12 @@
+/* World browser rows. Colours come from theme/tokens.css only; sizes are rem so the text scale applies. */
+.world-views { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: var(--space-3) 0; }
+.world-rows { list-style: none; padding: 0; margin: var(--space-3) 0; }
+.world-row { padding: var(--space-2) 0 var(--space-3); border-top: 1px solid var(--rule); min-width: 0; }
+.world-row > h3 { margin: var(--space-2) 0; }
+.world-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-1) var(--space-3); margin: 0; }
+.world-facts dd { margin: 0; min-width: 0; }
+.world-facts ul { margin: 0; padding-inline-start: 1.2rem; }
+@media (max-width: 30rem) {
+  .world-facts { grid-template-columns: minmax(0, 1fr); }
+  .world-facts dt { font-weight: 600; }
+}

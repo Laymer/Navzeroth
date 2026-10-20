@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "transformation": "world_to_content_v3",
+  "review": "ADR 0006 section14 owner-admitted full DB/CSV, ADR0007 and stable contract historical70245; actual checked-in generated field enumeration. Independent review pending before integration.",
+  "sources": [
+    {
+      "id": "cmangos-classic-db",
+      "admission_revision": "ec4f596146be6467ea93c57397858e329e2db852",
+      "grant_sha256": "cca8aaa2d92cee2b23224ed7fc937f64560a94487037842896a69b1694072e64",
+      "origin": {
+        "edition": "vanilla_1_12",
+        "build": "1.12.1"
+      },
+      "allowed_fields": [
+        "dungeons.dungeons",
+        "items.items",
+        "loot.creature",
+        "loot.disenchant",
+        "loot.fishing",
+        "loot.game_object",
+        "loot.item",
+        "loot.pickpocketing",
+        "loot.reference",
+        "loot.skinning",
+        "quests.quests",
+        "vendors.items",
+        "world.game_objects",
+        "world.graveyards",
+        "world.npcs",
+        "world.spawns"
+      ]
+    },
+    {
+      "id": "navzeroth-world-content",
+      "allowed_fields": [
+        "loot.reference-expansion",
+        "travel.flight-time",
+        "travel.walk"
+      ],
+      "publisher": "Navzeroth project (repository owner)",
+      "attribution": "Navzeroth world content mapping (inferred travel times and loot expansion)"
+    },
+    {
+      "id": "wago-tools-wowf",
+      "admission_revision": "6841d995ed802393f8c14c040621da67b7df45ce",
+      "grant_sha256": "4c66e299e21212004ce08b993a25ed952df7235086bd662656f4831c838b2ee7",
+      "origin": {
+        "edition": "wow_forever",
+        "build": "1.60.1.70245"
+      },
+      "allowed_fields": [
+        "items.items",
+        "travel.taxi_nodes",
+        "travel.taxi_paths",
+        "world.ui_map_assignments",
+        "world.ui_maps"
+      ]
+    }
+  ]
+}

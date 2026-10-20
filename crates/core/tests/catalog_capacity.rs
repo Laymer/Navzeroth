@@ -99,8 +99,10 @@ fn indexed_pages_are_revision_bound_and_at_most_200_rows() {
 #[test]
 fn catalog_identity_and_evidence_limits_are_independent_and_do_not_truncate() {
     use azeroth_core::contract::validate_catalog_capacity;
-    assert!(validate_catalog_capacity(250_000, 250_000).is_ok());
-    assert!(validate_catalog_capacity(250_001, 0).is_err());
-    assert!(validate_catalog_capacity(0, 250_001).is_err());
+    use azeroth_core::contract::{MAX_CATALOG_EVIDENCE, MAX_CATALOG_IDENTITIES};
+    assert_eq!(MAX_CATALOG_IDENTITIES, 500_000);
+    assert!(validate_catalog_capacity(MAX_CATALOG_IDENTITIES, MAX_CATALOG_EVIDENCE).is_ok());
+    assert!(validate_catalog_capacity(MAX_CATALOG_IDENTITIES + 1, 0).is_err());
+    assert!(validate_catalog_capacity(0, MAX_CATALOG_EVIDENCE + 1).is_err());
     assert!(validate_catalog_capacity(usize::MAX, 0).is_err());
 }

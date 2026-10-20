@@ -6,13 +6,32 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::{
-    cmp::Ordering,
-    collections::{BTreeMap, BTreeSet},
-};
-pub const MAX_FACTS: usize = 250_000;
+use std::{cmp::Ordering, collections::BTreeSet};
+// Limits (V2.8c, ADR 0007 §7). The whole generated world measured 2,864,420
+// facts (2,862,735 generated plus 1,685 adapter facts), 621 MB of retained fact
+// documents and a 3.36 GB pretty catalog. Build-wide limits are about twice that;
+// per-document limits are unchanged (to_facts.py writes to them).
+/// Facts in one build (all inputs together).
+pub const MAX_FACTS: usize = 6_000_000;
+/// Facts in one knowledge_v1 document.
+pub const MAX_DOCUMENT_FACTS: usize = 250_000;
 pub const MAX_DOCUMENT_BYTES: usize = 8 * 1024 * 1024;
-pub const MAX_CATALOG_BYTES: usize = 256 * 1024 * 1024;
+/// Encoded catalog bytes: both the summed compact candidates and the pretty catalog.
+pub const MAX_CATALOG_BYTES: u64 = 8 * 1024 * 1024 * 1024;
+/// Refuses a build-wide fact count above [`MAX_FACTS`].
+pub fn check_fact_capacity(facts: usize) -> Result<()> {
+    if facts > MAX_FACTS {
+        return Err("Source knowledge exceeds fact capacity");
+    }
+    Ok(())
+}
+/// Refuses an encoded catalog size above [`MAX_CATALOG_BYTES`].
+pub fn check_catalog_bytes(bytes: u64) -> Result<()> {
+    if bytes > MAX_CATALOG_BYTES {
+        return Err("Source catalog exceeds encoded byte bound");
+    }
+    Ok(())
+}
 pub type Result<T> = std::result::Result<T, &'static str>;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "status", rename_all = "snake_case", deny_unknown_fields)]
@@ -148,7 +167,7 @@ impl Document {
     pub fn parse(bytes: &[u8], as_of: i64) -> Result<Self> {
         let raw = crate::strict_json::value(bytes, MAX_DOCUMENT_BYTES)?;
         let doc: Self = serde_json::from_value(raw).map_err(|_| "Invalid knowledge document")?;
-        if doc.schema_version != 1 || doc.facts.len() > MAX_FACTS {
+        if doc.schema_version != 1 || doc.facts.len() > MAX_DOCUMENT_FACTS {
             return Err("Unsupported knowledge document or capacity");
         }
         let mut ids = BTreeSet::new();
@@ -192,20 +211,17 @@ pub fn converge(target: Origin, as_of: i64, candidates: Vec<Candidate>) -> Resul
         || as_of.unsigned_abs() > crate::types::MAX_SAFE_INTEGER
         || target.edition.as_deref().is_none_or(|s| !text(s))
         || target.build.as_deref().is_none_or(|s| !text(s))
-        || candidates.len() > MAX_FACTS
+        || check_fact_capacity(candidates.len()).is_err()
     {
         return Err("Invalid knowledge target, date or capacity");
     }
-    type Key = (String, String, String, String, String, String);
-    let mut groups: BTreeMap<Key, Vec<Candidate>> = BTreeMap::new();
-    let mut observations = BTreeMap::new();
-    let mut encoded_bytes = 0usize;
-    for c in candidates {
+    let mut encoded_bytes = 0u64;
+    for c in &candidates {
         c.fact.validate(as_of)?;
-        encoded_bytes += serde_json::to_vec(&c)
+        encoded_bytes += serde_json::to_vec(c)
             .map_err(|_| "Invalid candidate encoding")?
-            .len();
-        if encoded_bytes > MAX_CATALOG_BYTES {
+            .len() as u64;
+        if check_catalog_bytes(encoded_bytes).is_err() {
             return Err("Aggregate source facts exceed catalog byte bound");
         }
         if !text(&c.source_id)
@@ -230,39 +246,80 @@ pub fn converge(target: Origin, as_of: i64, candidates: Vec<Candidate>) -> Resul
         {
             return Err("Verified fact requires a recorded origin build");
         }
-        let identity = (
-            c.source_id.clone(),
-            c.source_revision.clone(),
-            c.source_file.clone(),
-            c.fact.domain.clone(),
-            c.fact.record.clone(),
-            c.fact.field.clone(),
-        );
-        if let Some(old) = observations.insert(identity, c.clone()) {
-            if old != c {
+    }
+    // Work on indices so millions of candidates are neither cloned nor re-keyed
+    // (V2.8c memory bound). One source identity must carry identical evidence;
+    // exact repeats count once.
+    fn identity(c: &Candidate) -> [&str; 6] {
+        [
+            &c.source_id,
+            &c.source_revision,
+            &c.source_file,
+            &c.fact.domain,
+            &c.fact.record,
+            &c.fact.field,
+        ]
+    }
+    let mut order: Vec<usize> = (0..candidates.len()).collect();
+    order.sort_by(|&a, &b| {
+        identity(&candidates[a])
+            .cmp(&identity(&candidates[b]))
+            .then(a.cmp(&b))
+    });
+    let mut keep = vec![true; candidates.len()];
+    for pair in order.windows(2) {
+        let (a, b) = (&candidates[pair[0]], &candidates[pair[1]]);
+        if identity(a) == identity(b) {
+            if a != b {
                 return Err("Source fact identity reused with different evidence");
             }
-            continue;
+            keep[pair[1]] = false;
         }
-        // Unknown build/edition is not a shared context. Isolate such observations
-        // by source revision; never join two unrelated unknown origins.
-        let scope = if c.origin.edition.is_none() || c.origin.build.is_none() {
-            format!("{}:{}", c.source_id, c.source_revision)
-        } else {
-            String::new()
-        };
-        let key = (
-            c.origin.edition.clone().unwrap_or_default(),
-            c.origin.build.clone().unwrap_or_default(),
-            scope,
-            c.fact.domain.clone(),
-            c.fact.record.clone(),
-            c.fact.field.clone(),
-        );
-        groups.entry(key).or_default().push(c);
     }
-    let mut entries = Vec::new();
-    for (_, mut group) in groups {
+    // Unknown build/edition is not a shared context. Isolate such observations
+    // by source revision; never join two unrelated unknown origins.
+    let scopes: Vec<String> = candidates
+        .iter()
+        .map(|c| {
+            if c.origin.edition.is_none() || c.origin.build.is_none() {
+                format!("{}:{}", c.source_id, c.source_revision)
+            } else {
+                String::new()
+            }
+        })
+        .collect();
+    let group_key = |i: usize| {
+        let c = &candidates[i];
+        (
+            c.origin.edition.as_deref().unwrap_or_default(),
+            c.origin.build.as_deref().unwrap_or_default(),
+            scopes[i].as_str(),
+            c.fact.domain.as_str(),
+            c.fact.record.as_str(),
+            c.fact.field.as_str(),
+        )
+    };
+    let mut order: Vec<usize> = (0..candidates.len()).filter(|&i| keep[i]).collect();
+    drop(keep);
+    order.sort_by(|&a, &b| group_key(a).cmp(&group_key(b)).then(a.cmp(&b)));
+    let mut runs = Vec::new();
+    let mut start = 0;
+    for end in 1..=order.len() {
+        if end == order.len() || group_key(order[end]) != group_key(order[start]) {
+            runs.push(end - start);
+            start = end;
+        }
+    }
+    drop(scopes);
+    let mut slots: Vec<Option<Candidate>> = candidates.into_iter().map(Some).collect();
+    let mut taken = order.into_iter();
+    let mut entries = Vec::with_capacity(runs.len());
+    for run in runs {
+        let mut group: Vec<Candidate> = taken
+            .by_ref()
+            .take(run)
+            .map(|i| slots[i].take().expect("each candidate is grouped once"))
+            .collect();
         group.sort_by(compare);
         let first = &group[0];
         let conflict = group

@@ -767,14 +767,29 @@ fn invalid_graph_inputs_are_errors_not_exclusions() {
         call(&n, &dangling, "a", "b").unwrap_err().code,
         ErrorCode::InvalidInput
     );
-    // More than 1024 edges are rejected rather than truncated.
-    let many = edges(
-        (0..1025)
-            .map(|i| walk(&format!("e{i:04}"), "a", "b", 1))
-            .collect(),
-    );
+    // The whole-world bound replaces the old 1024-record bound: 1025 edges
+    // are searched, more than MAX_TRAVEL_EDGES are rejected, not truncated.
+    let template = walk("e", "a", "b", 1);
+    let many = |count: usize| -> Vec<TravelEdge> {
+        (0..count)
+            .map(|i| {
+                let mut value = template.clone();
+                value["id"] = json!(format!("e{i:06}"));
+                from_value(value).unwrap()
+            })
+            .collect()
+    };
+    assert!(call(&n, &many(1025), "a", "b").is_ok());
     assert_eq!(
-        call(&n, &many, "a", "b").unwrap_err().code,
+        call(&n, &many(MAX_TRAVEL_EDGES + 1), "a", "b")
+            .unwrap_err()
+            .code,
+        ErrorCode::InvalidInput
+    );
+    let crowd: Vec<String> = (0..=MAX_TRAVEL_NODES).map(|i| format!("n{i:06}")).collect();
+    let crowd = nodes(&crowd.iter().map(String::as_str).collect::<Vec<_>>());
+    assert_eq!(
+        call(&crowd, &[], "n000000", "n000001").unwrap_err().code,
         ErrorCode::InvalidInput
     );
     // Service time naming an unknown edge.
@@ -844,4 +859,192 @@ fn exclusions_are_sorted_and_carry_codes_only() {
         .unwrap(),
         json!({"code":"cost_unknown","term":"wait"})
     );
+}
+
+fn evidence(id: &str, confidence: &str, conflicts: Value) -> EvidenceRecord {
+    from_value(
+        json!({"id":id,"context":context(),"source":"synthetic-source","license":unknown(),
+        "observed_at_utc_ms":unknown(),"confidence":confidence,"conflicts":conflicts,
+        "notes":"Synthetic generator-derived duration"}),
+    )
+    .unwrap()
+}
+fn inferred_walk(id: &str, from: &str, to: &str, expected: u64) -> Value {
+    let mut value = walk(id, from, to, expected);
+    value["status"] = json!("unverified");
+    value
+}
+
+#[test]
+fn inferred_unverified_edges_are_usable_only_when_the_caller_accepts_them() {
+    let n = nodes(&["a", "b"]);
+    let e = edges(vec![inferred_walk("w1", "a", "b", 5000)]);
+    // Safe default: content without the policy keeps excluding the edge.
+    let strict = run(&n, &e, "a", "b");
+    assert!(is_incomplete(&strict));
+    assert_eq!(reason(&strict, "w1"), &TravelExclusion::Unverified);
+    let accepted = inferred_edges(&e, &[evidence("ev1", "inferred", json!([]))]);
+    assert_eq!(
+        accepted.iter().map(EdgeId::as_str).collect::<Vec<_>>(),
+        ["w1"]
+    );
+    let options = RouteOptions {
+        inferred_edges: accepted,
+        ..RouteOptions::default()
+    };
+    let search = run_with(&n, &e, &snapshot_value(), 150, &options, "a", "b").unwrap();
+    let route = complete(&search);
+    assert_eq!(route.total_ms.get(), 5000);
+    // The hop keeps its true status and the route is an estimate.
+    assert_eq!(route.hops[0].status, EdgeStatus::Unverified);
+    assert!(route.is_estimate());
+}
+
+#[test]
+fn only_conflict_free_all_inferred_evidence_marks_an_edge_inferred() {
+    let mut stateful_value = stateful("t1", "a", "b", "teleport", 1000);
+    stateful_value["status"] = json!("unverified");
+    let mut mixed = inferred_walk("w2", "a", "b", 1000);
+    mixed["evidence"] = json!(["ev1", "ev2"]);
+    let mut missing = inferred_walk("w3", "a", "b", 1000);
+    missing["evidence"] = json!(["absent"]);
+    let mut none = inferred_walk("w4", "a", "b", 1000);
+    none["evidence"] = json!([]);
+    let estimated = walk("w5", "a", "b", 1000);
+    let e = edges(vec![stateful_value, mixed, missing, none, estimated]);
+    let records = [
+        evidence("ev1", "inferred", json!([])),
+        evidence("ev2", "cross_edition_unverified", json!([])),
+    ];
+    assert!(inferred_edges(&e, &records).is_empty());
+    let conflicted = edges(vec![inferred_walk("w1", "a", "b", 1000)]);
+    assert!(inferred_edges(&conflicted, &[evidence("ev1", "inferred", json!(["ev9"]))]).is_empty());
+}
+
+#[test]
+fn accepted_inferred_edges_still_need_known_costs_and_never_relax_stateful_actions() {
+    let n = nodes(&["a", "b"]);
+    let mut unknown_cost = inferred_walk("w1", "a", "b", 1000);
+    unknown_cost["expected_ms"] = unknown();
+    let mut teleport = stateful("t1", "a", "b", "teleport", 1000);
+    teleport["status"] = json!("unverified");
+    let e = edges(vec![unknown_cost, teleport]);
+    let options = RouteOptions {
+        inferred_edges: [EdgeId::new("w1").unwrap(), EdgeId::new("t1").unwrap()].into(),
+        ..RouteOptions::default()
+    };
+    let search = run_with(&n, &e, &snapshot_value(), 150, &options, "a", "b").unwrap();
+    assert!(is_incomplete(&search));
+    assert_eq!(
+        reason(&search, "w1"),
+        &TravelExclusion::CostUnknown {
+            term: CostTerm::Expected
+        }
+    );
+    assert_eq!(reason(&search, "t1"), &TravelExclusion::StatefulNotVerified);
+    let options = RouteOptions {
+        inferred_edges: [EdgeId::new("absent").unwrap()].into(),
+        ..RouteOptions::default()
+    };
+    assert!(run_with(&n, &e, &snapshot_value(), 150, &options, "a", "b").is_err());
+}
+
+fn flight_unknown(id: &str, from: &str, to: &str, expected: u64) -> Value {
+    let mut value = edge_value(id, from, to, "flight", expected);
+    value["status"] = json!("unverified");
+    value["requirements"] = unknown();
+    value
+}
+
+#[test]
+fn unknown_requirements_of_accepted_inferred_edges_are_assumed_never_satisfied() {
+    let n = nodes(&["a", "b"]);
+    let e = edges(vec![flight_unknown("f1", "a", "b", 7000)]);
+    let records = [evidence("ev1", "inferred", json!([]))];
+    let mut options = RouteOptions {
+        inferred_edges: inferred_edges(&e, &records),
+        ..RouteOptions::default()
+    };
+    // Strict default: the unknown requirement excludes the edge.
+    let strict = run_with(&n, &e, &snapshot_value(), 150, &options, "a", "b").unwrap();
+    assert!(is_incomplete(&strict));
+    assert_eq!(
+        reason(&strict, "f1"),
+        &TravelExclusion::RequirementUnavailable {
+            status: ObservationStatus::Unknown
+        }
+    );
+    options.accept_unknown_requirements = true;
+    let search = run_with(&n, &e, &snapshot_value(), 150, &options, "a", "b").unwrap();
+    let route = complete(&search);
+    assert!(route.hops[0].requirement_assumed);
+    assert!(route.assumes_requirements());
+    assert!(route.is_estimate());
+    assert_eq!(
+        to_value(&route.hops[0]).unwrap()["requirement_assumed"],
+        json!(true)
+    );
+    // An edge the caller did not accept as inferred is never relaxed.
+    options.inferred_edges.clear();
+    let none = run_with(&n, &e, &snapshot_value(), 150, &options, "a", "b").unwrap();
+    assert_eq!(reason(&none, "f1"), &TravelExclusion::Unverified);
+    // A known requirement keeps `requirement_assumed` false and unserialized.
+    let known = edges(vec![inferred_walk("w1", "a", "b", 10)]);
+    let options = RouteOptions {
+        inferred_edges: inferred_edges(&known, &records),
+        accept_unknown_requirements: true,
+        ..RouteOptions::default()
+    };
+    let search = run_with(&n, &known, &snapshot_value(), 150, &options, "a", "b").unwrap();
+    let hop = &complete(&search).hops[0];
+    assert!(!hop.requirement_assumed);
+    assert!(to_value(hop).unwrap().get("requirement_assumed").is_none());
+}
+
+#[test]
+fn documented_evidence_with_an_inferred_record_marks_an_edge_inferred() {
+    let mut value = inferred_walk("w1", "a", "b", 1000);
+    value["evidence"] = json!(["ev1", "ev2"]);
+    let two = edges(vec![value]);
+    let records = [
+        evidence("ev1", "inferred", json!([])),
+        evidence("ev2", "publisher_documented", json!([])),
+    ];
+    assert_eq!(inferred_edges(&two, &records).len(), 1);
+    // Documented evidence alone is not an inference to accept.
+    let mut only = inferred_walk("w1", "a", "b", 1000);
+    only["evidence"] = json!(["ev2"]);
+    assert!(inferred_edges(&edges(vec![only]), &records).is_empty());
+}
+
+#[test]
+fn prepared_graph_answers_many_queries_like_single_searches() {
+    use azeroth_core::search_control::NoopSearchControl;
+    let n = nodes(&["a", "b", "c", "d"]);
+    let e = edges(vec![
+        walk("w1", "a", "b", 10),
+        walk("w2", "b", "c", 10),
+        walk("w3", "c", "d", 500),
+        stateful("t1", "a", "d", "teleport", 100),
+    ]);
+    let snapshot: CharacterSnapshot = from_value(snapshot_value()).unwrap();
+    let freshness = clock(150);
+    let context = EvaluationContext {
+        snapshot: &snapshot,
+        party: None,
+        freshness: &freshness,
+        stale_policy: StalePolicy::Reject,
+        limits: RuleLimits::default(),
+    };
+    let options = RouteOptions::default();
+    let graph = TravelGraph::prepare(&n, &e, &context, &options, &mut NoopSearchControl).unwrap();
+    for (from, to) in [("a", "d"), ("a", "c"), ("b", "a"), ("c", "c")] {
+        let from = NodeId::new(from).unwrap();
+        let to = NodeId::new(to).unwrap();
+        let single = shortest_route(&n, &e, &from, &to, &context, &options).unwrap();
+        let prepared = graph.route(&from, &to, &mut NoopSearchControl).unwrap();
+        assert_eq!(single, prepared);
+    }
+    let ghost = NodeId::new("ghost").unwrap();
+    assert!(graph.route(&ghost, &ghost, &mut NoopSearchControl).is_err());
 }

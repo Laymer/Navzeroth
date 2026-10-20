@@ -15,6 +15,8 @@ use std::{
 static NEXT: AtomicU64 = AtomicU64::new(0);
 const INVENTORY: &str = "release/v1/coverage-inventory.json";
 const EVIDENCE: &str = "release/v1/acceptance-evidence.json";
+const POLICY: &str = "release/v1/accepted-origins.json";
+const TARGET: &str = "release/v1/world-data-target.json";
 const RAW: &[u8] =
     b"-- synthetic inert source only\nreturn os.execute('never-execute-materials')\0\xff";
 struct Temp(PathBuf);
@@ -37,6 +39,8 @@ impl Temp {
             "addons/AzerothNavigator/Core/Version.lua",
             INVENTORY,
             EVIDENCE,
+            POLICY,
+            TARGET,
         ] {
             // Keep this synthetic preview independent of the release under test.
             // Stable-version policy is exercised by the readiness tests separately.
@@ -58,7 +62,7 @@ impl Temp {
                 // Content binds only to a frozen target; while the schema 2 target is
                 // pending, these material tests run on the still-supported schema 1.
                 frozen_v1(&source)
-            } else if name == INVENTORY || name == EVIDENCE {
+            } else if name.starts_with("release/") {
                 source
             } else {
                 source.replace(current, "0.8.1")
@@ -216,6 +220,19 @@ fn frozen_v1(source: &str) -> String {
         json!({"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001}),
     );
     object.remove("slice");
+    // Schema 1 has no accepted-origin binding and still lists the LIVE-* rows.
+    object.remove("origin_policy");
+    if let Some(checks) = object.get_mut("checks").and_then(Value::as_array_mut)
+        && !checks
+            .iter()
+            .any(|c| c["id"].as_str().is_some_and(|id| id.starts_with("LIVE-")))
+    {
+        let live = azeroth_core::release::LIVE_CHECKS.map(|id| {
+            json!({"id":id,"status":"unverified","method":"live_game","operator":null,
+                "recorded_at":null,"environment":null,"artifacts":[]})
+        });
+        checks.splice(0..0, live);
+    }
     if let Some(domains) = object.get_mut("domains").and_then(Value::as_array_mut) {
         for domain in domains {
             domain.as_object_mut().unwrap().remove("out_of_scope");
@@ -421,7 +438,7 @@ fn future_manifest_oversized_source_and_duplicate_pack_are_refused() {
         let temp = Temp::new(true);
         let mut evidence = temp.read(EVIDENCE);
         match kind {
-            0 => evidence["schema_version"] = json!(3),
+            0 => evidence["schema_version"] = json!(4),
             1 => {
                 evidence["sources"][0]["files"][0]["bytes"] =
                     json!(azeroth_cli::release::MAX_FILE_BYTES + 1)
@@ -874,5 +891,249 @@ fn mixed_inventory_and_evidence_schema_versions_are_refused() {
     evidence["schema_version"] = json!(2);
     temp.json(EVIDENCE, &evidence);
     temp.commit();
+    assert!(materials::plan(&temp.options()).is_err());
+}
+
+/// Schema 3 (ADR 0007): a v2 pack whose only source is of 1.12 origin. The pack
+/// source lists its origin and the target edition; release evidence records the
+/// true origin, and target validation is left to the accepted-origin policy.
+fn world_v3(temp: &Temp, origin: &str, evidence_origin: &str, policy: &Value) {
+    let context = json!({"build":{"edition":"wow_forever","build":"1.60.1.70374","interface":"16001"},"namespace":"reference"});
+    let old = temp.read("content/material-test/manifest.json");
+    let dataset_path = old["entries"][0]["dataset"]["path"].as_str().unwrap();
+    let mut reference = temp.read(&format!("content/material-test/{dataset_path}"));
+    reference["payload"]["revision"] = json!("synthetic-world-r1");
+    reference["payload"]["evidence"][0]["confidence"] = json!("cross_edition_unverified");
+    let fixture: Value = serde_json::from_slice(
+        &fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../fixtures/contracts/v1/reference-dataset.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let mut rule = fixture["payload"]["rules"][0].clone();
+    rule["context"] = context.clone();
+    let mut map = fixture["payload"]["map_spaces"][0].clone();
+    map["key"]["context"] = context;
+    map["evidence"] = json!(["demo-evidence-1"]);
+    reference["payload"]["rules"] = json!([rule]);
+    reference["payload"]["map_spaces"] = json!([map]);
+    let content = json!({"format":"navzeroth-reference-content","schema_version":2,
+        "reference":reference,"models":[],"equipment":[],"quest_facts":[],
+        "acquisition_facts":[],"dungeons":[]});
+    temp.json("world-input/catalog.json", &content);
+    let mut sources = temp.read("content/material-test/sources.json");
+    sources["sources"][0]["editions"] = json!({"status":"known","value":[origin,"wow_forever"]});
+    sources["sources"][0]["access"] = json!({"status":"known","value":"file_download"});
+    temp.json("world-input/sources.json", &sources);
+    let built = pack::v2::build(
+        &temp.0.join("world-input"),
+        &temp.0.join("content/world-test"),
+    )
+    .unwrap();
+    // The pack verifier keeps the strict, policy-free count.
+    assert!(built.coverage_gaps > 0);
+    assert!(built.distribution_eligible);
+    temp.json(POLICY, policy);
+    temp.write(
+        TARGET,
+        &serde_json::to_vec(&json!({"format":"navzeroth-world-data-target","schema_version":1,
+            "decision":"ADR 0007 §6","edition":"wow_forever","build":"1.60.1.70374","interface":"16001",
+            "locale":"enUS","detected_from":"synthetic test"}))
+        .unwrap(),
+    );
+    let mut registry = temp.read("docs/admission-registry.json");
+    registry["sources"][0]["origin"] = json!({"edition":evidence_origin,"build":null});
+    temp.json("docs/admission-registry.json", &registry);
+    let target =
+        json!({"edition":"wow_forever","version":"1.60.1","build":"70374","interface":16001});
+    let revision = "synthetic-world-r1";
+    let rule_id = json!([revision, "rules", "demo-rule-1"]).to_string();
+    let map_id = json!([revision, "map_spaces", "demo-map-1", "0", null]).to_string();
+    let mut inventory = temp.read(INVENTORY);
+    inventory["schema_version"] = json!(3);
+    inventory["target"] = target.clone();
+    inventory["slice"] = json!({"id":"synthetic-slice","races":["human"],"zones":["elwynn_forest"],
+        "dungeons":[],"level_min":1,"level_max":20,"classes":["warrior"],"party_sizes":[1]});
+    for domain in inventory["domains"].as_array_mut().unwrap() {
+        let name = domain["domain"].as_str().unwrap().to_owned();
+        domain["out_of_scope"] = json!([{"id":format!("{name}-outside"),
+            "scope":"Synthetic outside","reason":"Synthetic boundary"}]);
+        let ids = match name.as_str() {
+            "reminders" => Some(&rule_id),
+            "geography" => Some(&map_id),
+            _ => None,
+        };
+        if let Some(id) = ids {
+            domain["units"][0]["required_record_ids"] = json!([id]);
+        }
+    }
+    temp.json(INVENTORY, &inventory);
+    let mut evidence = temp.read(EVIDENCE);
+    evidence["schema_version"] = json!(3);
+    evidence["target"] = target;
+    evidence["checks"] = Value::Array(
+        evidence["checks"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|c| c["id"].as_str().unwrap().starts_with("WIN-"))
+            .cloned()
+            .collect(),
+    );
+    evidence["origin_policy"] = temp.reference(POLICY);
+    evidence["admission_registry"] = temp.reference("docs/admission-registry.json");
+    let source = &mut evidence["sources"][0];
+    source["origin_edition"] = json!(evidence_origin);
+    source["target_validation"] = json!("unverified");
+    source["target_evidence"] = json!([]);
+    let units: Vec<_> = inventory["domains"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|d| ["reminders", "geography"].contains(&d["domain"].as_str().unwrap()))
+        .map(|d| {
+            (
+                d["units"][0]["id"].clone(),
+                d["units"][0]["required_record_ids"].clone(),
+            )
+        })
+        .collect();
+    evidence["coverage"] = Value::Array(
+        units
+            .into_iter()
+            .map(|(unit, ids)| {
+                json!({"unit_id":unit,"status":"pass","included_record_ids":ids,
+                    "source_ids":["demo-source-1"],"unresolved_conflicts":0,"unsupported_corrections":0,
+                    "validation_evidence":[temp.reference("docs/private-proof.txt")]})
+            })
+            .collect(),
+    );
+    evidence["packs"] = json!([{"manifest":temp.reference("content/world-test/manifest.json"),
+        "dataset_revisions":[revision]}]);
+    temp.json(EVIDENCE, &evidence);
+    temp.bind_inventory();
+    temp.commit();
+}
+fn repository_policy() -> Value {
+    serde_json::from_slice(
+        &fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../..")
+                .join(POLICY),
+        )
+        .unwrap(),
+    )
+    .unwrap()
+}
+fn has(report: &azeroth_cli::release::Report, text: &str) -> bool {
+    report.readiness.blockers.iter().any(|b| b.contains(text))
+}
+
+#[test]
+fn accepted_origins_and_unknowns_bind_a_world_pack_under_schema_3() {
+    let temp = Temp::new(true);
+    world_v3(&temp, "vanilla_1_12", "vanilla_1_12", &repository_policy());
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert_eq!(
+        report.verified_content_packs, 1,
+        "{:?}",
+        report.readiness.blockers
+    );
+    for absent in [
+        "coverage gaps",
+        "target validation is incomplete",
+        "accepted-origin policy",
+        "Mandatory acceptance rows",
+        "Release target",
+        "frozen target",
+    ] {
+        assert!(
+            !has(&report, absent),
+            "{absent}: {:?}",
+            report.readiness.blockers
+        );
+    }
+    let world = report.world_data.as_ref().unwrap();
+    assert_eq!(world.origin_accepted_sources, ["demo-source-1"]);
+    assert!(world.accepted_origins >= 2, "{world:?}");
+    assert!(world.accepted_unknowns >= 1, "{world:?}");
+    assert_eq!(world.remaining_gaps, 0);
+    assert_eq!(world.accept_unknowns, Some(true));
+    assert_eq!(
+        world.origin_policy_sha256.as_deref(),
+        temp.reference(POLICY)["sha256"].as_str()
+    );
+    let json = serde_json::to_value(&report).unwrap();
+    assert_eq!(json["report_version"], 3);
+    assert!(json["world_data"]["packs"][0]["listed_accepted_unknowns"].is_array());
+    // Materials accept the origin-validated source without target evidence.
+    let plan = materials::plan(&temp.options()).unwrap();
+    assert_eq!(plan.sources.len(), 1);
+    assert_eq!(plan.sources[0].origin_edition, "vanilla_1_12");
+}
+
+#[test]
+fn unknowns_block_when_the_policy_does_not_accept_them() {
+    let temp = Temp::new(true);
+    let mut policy = repository_policy();
+    policy["accept_unknowns"] = json!(false);
+    world_v3(&temp, "vanilla_1_12", "vanilla_1_12", &policy);
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(has(
+        &report,
+        "coverage gaps the accepted-origin policy does not accept"
+    ));
+    let world = report.world_data.unwrap();
+    assert!(world.remaining_gaps > 0);
+    assert_eq!(world.accepted_unknowns, 0);
+}
+
+#[test]
+fn unaccepted_or_mismatched_origins_and_unbound_policies_block() {
+    let temp = Temp::new(true);
+    world_v3(
+        &temp,
+        "wow_classic_tbc",
+        "wow_classic_tbc",
+        &repository_policy(),
+    );
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(has(&report, "target validation is incomplete"));
+    assert!(has(&report, "coverage gaps"));
+    assert!(materials::plan(&temp.options()).is_err());
+
+    let temp = Temp::new(true);
+    world_v3(
+        &temp,
+        "wow_classic_era",
+        "vanilla_1_12",
+        &repository_policy(),
+    );
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(has(
+        &report,
+        "V2 source editions differ from the release source origin"
+    ));
+
+    let temp = Temp::new(true);
+    world_v3(&temp, "vanilla_1_12", "vanilla_1_12", &repository_policy());
+    let mut policy = repository_policy();
+    policy["precedence"] = json!(["authored"]);
+    temp.json(POLICY, &policy);
+    temp.commit();
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(
+        has(&report, "Evidence file hash or size does not match") || has(&report, "does not bind")
+    );
+    temp.write(POLICY, b"{\"format\":\"other\"}");
+    temp.commit();
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(has(&report, "Accepted-origin policy is missing or invalid"));
+    fs::remove_file(temp.0.join(TARGET)).unwrap();
+    temp.commit();
+    let report = azeroth_cli::release::report(&temp.options()).unwrap();
+    assert!(has(&report, "World-data target file is missing"));
     assert!(materials::plan(&temp.options()).is_err());
 }

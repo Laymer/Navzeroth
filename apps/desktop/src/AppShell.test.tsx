@@ -5,7 +5,7 @@ import { demoAdapter } from "./commands/demoAdapter";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { defaultSettings } from "./commands/today";
 
-const PLAY = ["Today", "Atlas", "Planner", "Gear", "Party", "Dungeons", "Sessions", "Reminders"];
+const PLAY = ["Today", "Atlas", "Planner", "Gear", "Party", "Dungeons", "World", "Sessions", "Reminders"];
 const SYSTEM = ["Imports", "Content", "Compatibility and coverage", "Settings", "Local diagnostics", "Backup and recovery"];
 
 describe("app shell", () => {
@@ -16,11 +16,11 @@ describe("app shell", () => {
     expect(document.querySelector(".app-ornament")).toHaveAttribute("aria-hidden", "true");
   });
 
-  it("offers exactly 14 buttons in two labelled groups inside one Primary navigation", async () => {
+  it("offers exactly 15 buttons in two labelled groups inside one Primary navigation", async () => {
     render(<App client={createClient(demoAdapter)} />);
     const nav = await screen.findByRole("navigation", { name: "Primary" });
     expect(screen.getAllByRole("navigation")).toHaveLength(1);
-    expect(within(nav).getAllByRole("button")).toHaveLength(14);
+    expect(within(nav).getAllByRole("button")).toHaveLength(15);
     const groups = within(nav).getAllByRole("group");
     expect(groups.map((group) => group.getAttribute("aria-labelledby") && document.getElementById(group.getAttribute("aria-labelledby") ?? "")?.textContent)).toEqual(["Play", "Data & system"]);
     expect(within(groups[0] as HTMLElement).getAllByRole("button").map((b) => b.textContent)).toEqual(PLAY);

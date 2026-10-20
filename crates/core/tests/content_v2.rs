@@ -295,3 +295,174 @@ fn optional_node_facts_preserve_old_serialization_and_reject_invalid_provenance(
     bad["node_facts"][0]["unexpected"] = json!(true);
     assert!(decode(&serde_json::to_vec(&bad).unwrap()).is_err());
 }
+
+fn with_entity(entity: Value) -> Value {
+    let mut v = fixture();
+    v["entities"] = json!([entity]);
+    v
+}
+fn entity() -> Value {
+    json!({"id":"npc:448","evidence":["demo-evidence-1"],"kind":"npc","name":"Hogger",
+        "subname":{"status":"unknown"},"levels":{"status":"known","value":[11,11]},
+        "services":["vendor"],"reaction":{"status":"known","value":"hostile"},"nodes":["demo-node-1"]})
+}
+#[test]
+fn entities_resolve_nodes_and_evidence() {
+    let content = parse(&with_entity(entity())).unwrap();
+    assert_eq!(content.entities.len(), 1);
+    assert_eq!(content.entities[0].name.as_str(), "Hogger");
+    let mut bad = entity();
+    bad["nodes"] = json!(["missing-node"]);
+    assert!(parse(&with_entity(bad)).is_err());
+    let mut bad = entity();
+    bad["levels"] = json!({"status":"known","value":[12,11]});
+    assert!(parse(&with_entity(bad)).is_err());
+    let mut bad = entity();
+    bad["evidence"] = json!(["missing-evidence"]);
+    assert!(parse(&with_entity(bad)).is_err());
+    let mut twice = fixture();
+    twice["entities"] = json!([entity(), entity()]);
+    assert!(parse(&twice).is_err());
+    let mut empty = fixture();
+    empty["entities"] = json!([]);
+    assert!(parse(&empty).is_ok());
+}
+
+fn loot_table(id: &str, table: &str, rows: Value) -> Value {
+    json!({"id":id,"evidence":["demo-evidence-1"],"table":table,"source":{"status":"unknown"},"rows":rows})
+}
+fn with_loot(tables: Value) -> Value {
+    let mut v = fixture();
+    v["loot_tables"] = tables;
+    v
+}
+#[test]
+fn loot_tables_keep_rows_and_references_without_expansion() {
+    let reference = loot_table(
+        "loot:reference:1",
+        "reference",
+        json!([{"item":"77","min_count":1,"max_count":1,"group":1}]),
+    );
+    let creature = json!({"id":"loot:creature:448","evidence":["demo-evidence-1"],"table":"creature",
+        "source":{"status":"known","value":"npc:448"},
+        "rows":[{"item":"1931","min_count":1,"max_count":1,"probability":1.0,"quest_only":true},
+            {"item":"2589","min_count":1,"max_count":5,"probability":0.0},
+            {"table":"loot:reference:1","min_count":1,"max_count":2,"probability":0.02,"conditional":true}]});
+    let content = parse(&with_loot(json!([reference.clone(), creature]))).unwrap();
+    assert_eq!(content.loot_tables.len(), 2);
+    let rows = &content.loot_tables[1].rows;
+    assert!(rows[0].quest_only && !rows[1].quest_only && rows[2].conditional);
+    // A stated zero stays zero; an absent probability stays unknown.
+    assert_eq!(rows[1].probability.map(|p| p.get()), Some(0.0));
+    assert!(content.loot_tables[0].rows[0].probability.is_none());
+    // Absent optional fields stay absent when serialized again.
+    let encoded = serde_json::to_value(&content.loot_tables[0]).unwrap();
+    assert!(encoded["rows"][0].get("probability").is_none());
+    assert!(encoded["rows"][0].get("quest_only").is_none());
+    assert_eq!(
+        content.identity_count(),
+        parse(&fixture()).unwrap().identity_count() + 2
+    );
+    let mut empty = fixture();
+    empty["loot_tables"] = json!([]);
+    assert!(parse(&empty).is_ok());
+
+    let bad_rows = [
+        json!([]),
+        json!([{"min_count":1,"max_count":1}]),
+        json!([{"item":"1","table":"loot:reference:1","min_count":1,"max_count":1}]),
+        json!([{"item":"1","min_count":2,"max_count":1}]),
+        json!([{"table":"loot:reference:missing","min_count":1,"max_count":1}]),
+        json!([{"table":"loot:creature:448","min_count":1,"max_count":1}]),
+        json!([{"item":"1","min_count":1,"max_count":1,"probability":1.5}]),
+        json!([{"item":"1","min_count":1,"max_count":1,"unexpected":true}]),
+    ];
+    for rows in bad_rows {
+        let table = loot_table("loot:creature:448", "creature", rows);
+        assert!(parse(&with_loot(json!([reference.clone(), table]))).is_err());
+    }
+    let row = json!({"item":"1","min_count":1,"max_count":1});
+    let full = loot_table(
+        "loot:game_object:1",
+        "game_object",
+        Value::Array(vec![row.clone(); azeroth_core::content_v2::MAX_LOOT_ROWS]),
+    );
+    assert!(parse(&with_loot(json!([full]))).is_ok());
+    let over = loot_table(
+        "loot:game_object:1",
+        "game_object",
+        Value::Array(vec![row; azeroth_core::content_v2::MAX_LOOT_ROWS + 1]),
+    );
+    assert!(parse(&with_loot(json!([over]))).is_err());
+    assert!(parse(&with_loot(json!([reference.clone(), reference.clone()]))).is_err());
+    let mut unproven = reference;
+    unproven["evidence"] = json!(["missing-evidence"]);
+    assert!(parse(&with_loot(json!([unproven]))).is_err());
+}
+#[test]
+fn optional_names_bosses_and_quest_parties_resolve_and_keep_old_bytes() {
+    let mut v = with_entity(entity());
+    v["dungeons"][0]["bosses"] = json!(["npc:448"]);
+    v["equipment"][0]["name"] = json!("Synthetic blade");
+    v["quest_facts"][0]["title"] = json!("Wanted: Hogger");
+    v["quest_facts"][0]["givers"] = json!(["object:68", "item:16305"]);
+    v["quest_facts"][0]["enders"] = json!(["npc:240"]);
+    let content = parse(&v).unwrap();
+    assert_eq!(content.dungeons[0].bosses[0].as_str(), "npc:448");
+    assert_eq!(
+        content.equipment[0].name.as_ref().map(|n| n.as_str()),
+        Some("Synthetic blade")
+    );
+    let quest = &content.quest_facts[0];
+    assert_eq!(
+        quest.title.as_ref().map(|t| t.as_str()),
+        Some("Wanted: Hogger")
+    );
+    assert_eq!((quest.givers.len(), quest.enders.len()), (2, 1));
+    let mut bad = v.clone();
+    bad["quest_facts"][0]["enders"] = json!(["npc:240", "npc:240"]);
+    assert!(parse(&bad).is_err());
+    v["dungeons"][0]["bosses"] = json!(["npc:999"]);
+    assert!(parse(&v).is_err());
+    v["dungeons"][0]["bosses"] = json!(["npc:448", "npc:448"]);
+    assert!(parse(&v).is_err());
+    // Absent optional fields keep the old serialization.
+    let encoded = serde_json::to_value(parse(&fixture()).unwrap()).unwrap();
+    assert!(encoded["dungeons"][0].get("bosses").is_none());
+    assert!(encoded["equipment"][0].get("name").is_none());
+    assert!(encoded["quest_facts"][0].get("title").is_none());
+    assert!(encoded["quest_facts"][0].get("givers").is_none());
+    assert!(encoded.get("loot_tables").is_none());
+}
+#[test]
+fn whole_world_limits_have_headroom_and_stay_bounded() {
+    use azeroth_core::contract::{MAX_CATALOG_EVIDENCE, MAX_CATALOG_IDENTITIES};
+    // Measured world pack (task V2.8d): 186,665 identities, 27 evidence records
+    // and a 273,541,841-byte canonical catalog; the limits keep about 2x headroom.
+    const WORLD_IDENTITIES: usize = 186_665;
+    const WORLD_CATALOG_BYTES: usize = 273_541_841;
+    const { assert!(MAX_CATALOG_IDENTITIES >= 2 * WORLD_IDENTITIES) };
+    const { assert!(MAX_CONTENT_BYTES >= 2 * WORLD_CATALOG_BYTES) };
+    const { assert!(MAX_CATALOG_EVIDENCE >= 27) };
+    assert!(decode(&vec![b' '; MAX_CONTENT_BYTES + 1]).is_err());
+}
+#[test]
+fn loot_tables_bind_their_own_release_identity() {
+    let table = loot_table(
+        "loot:creature:448",
+        "creature",
+        json!([{"item":"1931","min_count":1,"max_count":1,"probability":1.0}]),
+    );
+    let mut v = with_loot(json!([table]));
+    v["entities"] = json!([entity()]);
+    let content = parse(&v).unwrap();
+    let records = azeroth_core::content_v2::records::content_records(&content).unwrap();
+    let revision = content.reference.payload.revision.as_str();
+    let key = |parts: Value| {
+        let mut all = vec![json!(revision)];
+        all.extend(parts.as_array().unwrap().iter().cloned());
+        serde_json::to_string(&all).unwrap()
+    };
+    assert!(!records["acquisition"][&key(json!(["loot_tables", "loot:creature:448"]))].is_empty());
+    assert!(!records["geography"][&key(json!(["entities", "npc:448"]))].is_empty());
+}

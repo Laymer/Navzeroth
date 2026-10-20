@@ -231,3 +231,45 @@ fn exact_context_does_not_promote_explicitly_unvalidated_facts() {
         );
     }
 }
+#[test]
+fn whole_world_limits_are_recorded_and_bounded_at_the_exact_value() {
+    // V2.8c: about twice the measured 2,864,420 facts and 3.36 GB catalog.
+    assert_eq!(MAX_FACTS, 6_000_000);
+    assert_eq!(MAX_DOCUMENT_FACTS, 250_000);
+    assert_eq!(MAX_CATALOG_BYTES, 8 * 1024 * 1024 * 1024);
+    check_fact_capacity(MAX_FACTS).unwrap();
+    assert_eq!(
+        check_fact_capacity(MAX_FACTS + 1),
+        Err("Source knowledge exceeds fact capacity")
+    );
+    check_catalog_bytes(MAX_CATALOG_BYTES).unwrap();
+    assert_eq!(
+        check_catalog_bytes(MAX_CATALOG_BYTES + 1),
+        Err("Source catalog exceeds encoded byte bound")
+    );
+}
+#[test]
+fn repeated_identities_dedupe_across_input_order_and_other_origins_refuse() {
+    let row = |record: &str| {
+        let mut c = candidate("source", None, Confidence::PublisherDocumented, json!(1));
+        c.fact.record = record.into();
+        c
+    };
+    let rows = vec![row("b"), row("a"), row("b"), row("c"), row("a")];
+    let catalog = converge(target(), 10, rows).unwrap();
+    let records: Vec<_> = catalog.entries.iter().map(|e| e.record.as_str()).collect();
+    assert_eq!(records, ["a", "b", "c"]);
+    assert!(catalog.entries.iter().all(|e| e.candidates.len() == 1));
+    let mut other = row("a");
+    other.origin = origin("wow_classic", Some("1.12.1"));
+    assert_eq!(
+        converge(target(), 10, vec![row("a"), other]).err(),
+        Some("Source fact identity reused with different evidence")
+    );
+    assert!(
+        converge(target(), 10, Vec::new())
+            .unwrap()
+            .entries
+            .is_empty()
+    );
+}

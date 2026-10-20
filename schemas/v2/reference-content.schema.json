@@ -711,6 +711,13 @@
         "access": {
           "$ref": "#/$defs/Observation_Predicate"
         },
+        "bosses": {
+          "description": "Boss entities (`npc:…` identities of `entities`).",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          },
+          "type": "array"
+        },
         "checklist": {
           "$ref": "#/$defs/Observation_Array_of_DungeonCheck"
         },
@@ -820,6 +827,70 @@
       "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
     },
+    "EntityFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/SourceId",
+          "description": "Stable identity such as `npc:448`; referenced by acquisition origins."
+        },
+        "kind": {
+          "$ref": "#/$defs/EntityKind"
+        },
+        "levels": {
+          "$ref": "#/$defs/Observation_Array_size_2_of_Level",
+          "description": "Lowest and highest level."
+        },
+        "name": {
+          "$ref": "#/$defs/Text"
+        },
+        "nodes": {
+          "description": "Spawn nodes in the base graph; other spawns stay outside the travel graph.",
+          "items": {
+            "$ref": "#/$defs/NodeId"
+          },
+          "type": "array"
+        },
+        "reaction": {
+          "$ref": "#/$defs/Observation_SourceId",
+          "description": "`alliance`, `horde`, `both` or `hostile`."
+        },
+        "services": {
+          "items": {
+            "$ref": "#/$defs/ServiceKind"
+          },
+          "type": "array"
+        },
+        "subname": {
+          "$ref": "#/$defs/Observation_Text"
+        }
+      },
+      "required": [
+        "id",
+        "evidence",
+        "kind",
+        "name",
+        "subname",
+        "levels",
+        "services",
+        "reaction",
+        "nodes"
+      ],
+      "type": "object"
+    },
+    "EntityKind": {
+      "enum": [
+        "npc",
+        "game_object"
+      ],
+      "type": "string"
+    },
     "EquipmentFacts": {
       "additionalProperties": false,
       "properties": {
@@ -837,6 +908,17 @@
         },
         "item": {
           "$ref": "#/$defs/ItemKey"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Text"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Display name from the item table, when recorded."
         }
       },
       "required": [
@@ -852,6 +934,23 @@
       "minLength": 1,
       "pattern": "^[^\\p{Cc}\\p{White_Space}](?:[^\\p{Cc}]*[^\\p{Cc}\\p{White_Space}])?$",
       "type": "string"
+    },
+    "EvidenceOrigin": {
+      "additionalProperties": false,
+      "description": "Source origin is independent of the dataset in which evidence is consumed.\nHistorical catalogs may omit this; absence supplies no new origin assertion.",
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/Observation_BuildId"
+        },
+        "edition": {
+          "$ref": "#/$defs/EditionId"
+        }
+      },
+      "required": [
+        "edition",
+        "build"
+      ],
+      "type": "object"
     },
     "EvidenceRecord": {
       "additionalProperties": false,
@@ -879,6 +978,16 @@
         },
         "observed_at_utc_ms": {
           "$ref": "#/$defs/Observation_UtcMillis"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceOrigin"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "source": {
           "$ref": "#/$defs/SourceId"
@@ -1280,6 +1389,123 @@
         "master_assigned"
       ],
       "type": "string"
+    },
+    "LootKind": {
+      "enum": [
+        "creature",
+        "game_object",
+        "item",
+        "reference",
+        "fishing",
+        "pickpocketing",
+        "skinning",
+        "disenchant"
+      ],
+      "type": "string"
+    },
+    "LootRow": {
+      "additionalProperties": false,
+      "properties": {
+        "conditional": {
+          "description": "The source attaches a condition this contract does not express.",
+          "type": "boolean"
+        },
+        "group": {
+          "description": "Rows of one group drop at most one item between them.",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "item": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ItemId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Client item ID. It may be absent from `items` when the item table of the\npack's edition lacks it; the row keeps the source's statement."
+        },
+        "max_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "min_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Normalized"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Chance per kill or roll. Absent means unknown (the source leaves it\nimplicit), never zero; a stated zero is `0`."
+        },
+        "quest_only": {
+          "description": "Drops only while a quest needs it.",
+          "type": "boolean"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A `reference` loot table of this catalog."
+        }
+      },
+      "required": [
+        "min_count",
+        "max_count"
+      ],
+      "type": "object"
+    },
+    "LootTable": {
+      "additionalProperties": false,
+      "description": "One loot template with every row the source gives. A row names either an\nitem or a `reference` table rolled `max_count` times; references are never\nexpanded, so the catalog stays linear in the source rows.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/$defs/SourceId",
+          "description": "Stable identity such as `loot:creature:448`."
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/LootRow"
+          },
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/Observation_SourceId",
+          "description": "What the template belongs to (`npc:448`, `item:…`, `area:…`), when known."
+        },
+        "table": {
+          "$ref": "#/$defs/LootKind"
+        }
+      },
+      "required": [
+        "id",
+        "evidence",
+        "table",
+        "source",
+        "rows"
+      ],
+      "type": "object"
     },
     "MapEmbedding": {
       "additionalProperties": false,
@@ -3562,6 +3788,319 @@
                 "$ref": "#/$defs/Text"
               },
               "type": "array"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_Array_size_2_of_Level": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "items": {
+                "$ref": "#/$defs/Level"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "unsupported",
+                "restricted",
+                "not_applicable"
+              ]
+            },
+            "value": false
+          },
+          "required": [
+            "status"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Observation_BuildId": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clock_trust": {
+              "$ref": "#/$defs/ClockTrust",
+              "default": "uncertain"
+            },
+            "observed_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "received_at_utc_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/UtcMillis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Sequence"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_elapsed_ms": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Millis"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SessionId"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/StateSource",
+              "default": "unrecorded"
+            },
+            "status": {
+              "const": "known"
+            },
+            "value": {
+              "$ref": "#/$defs/BuildId"
             }
           },
           "required": [
@@ -7133,6 +7672,13 @@
         "access_requirements": {
           "$ref": "#/$defs/Observation_AccessRequirementsData"
         },
+        "enders": {
+          "description": "Who or what accepts the turn-in (`npc:…` or `object:…`).",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          },
+          "type": "array"
+        },
         "evidence": {
           "items": {
             "$ref": "#/$defs/EvidenceId"
@@ -7141,6 +7687,13 @@
         },
         "exclusive_groups": {
           "$ref": "#/$defs/Observation_Array_of_ExclusiveBranch"
+        },
+        "givers": {
+          "description": "Who or what starts the quest (`npc:…`, `object:…` or `item:…`).",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          },
+          "type": "array"
         },
         "quest": {
           "$ref": "#/$defs/QuestId"
@@ -7153,6 +7706,17 @@
         },
         "sharing_conditions": {
           "$ref": "#/$defs/Observation_Predicate"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Text"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Display title, when recorded."
         }
       },
       "required": [
@@ -7188,70 +7752,70 @@
           "items": {
             "$ref": "#/$defs/AcquisitionSource"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "edges": {
           "items": {
             "$ref": "#/$defs/TravelEdge"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "evidence": {
           "items": {
             "$ref": "#/$defs/EvidenceRecord"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "items": {
           "items": {
             "$ref": "#/$defs/ItemDefinition"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "map_embeddings": {
           "items": {
             "$ref": "#/$defs/MapEmbedding"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "map_images": {
           "items": {
             "$ref": "#/$defs/MapImage"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "map_spaces": {
           "items": {
             "$ref": "#/$defs/MapSpace"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "nodes": {
           "items": {
             "$ref": "#/$defs/TravelNode"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "objectives": {
           "items": {
             "$ref": "#/$defs/Objective"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "quests": {
           "items": {
             "$ref": "#/$defs/QuestDefinition"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         },
         "revision": {
@@ -7261,7 +7825,7 @@
           "items": {
             "$ref": "#/$defs/ContextRule"
           },
-          "maxItems": 250000,
+          "maxItems": 500000,
           "type": "array"
         }
       },
@@ -7904,45 +8468,61 @@
       "items": {
         "$ref": "#/$defs/AcquisitionFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "dungeons": {
       "items": {
         "$ref": "#/$defs/Dungeon"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
+      "type": "array"
+    },
+    "entities": {
+      "description": "Named NPCs and game objects (ADR 0007): who stands at which nodes.",
+      "items": {
+        "$ref": "#/$defs/EntityFacts"
+      },
+      "maxItems": 500000,
       "type": "array"
     },
     "equipment": {
       "items": {
         "$ref": "#/$defs/EquipmentFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "format": {
       "const": "navzeroth-reference-content"
     },
+    "loot_tables": {
+      "description": "Loot templates as the source states them (ADR 0007, task V2.8d).",
+      "items": {
+        "$ref": "#/$defs/LootTable"
+      },
+      "maxItems": 500000,
+      "type": "array"
+    },
     "models": {
       "items": {
         "$ref": "#/$defs/ClassRoleModel"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "node_facts": {
       "items": {
         "$ref": "#/$defs/NodeFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "quest_facts": {
       "items": {
         "$ref": "#/$defs/QuestFacts"
       },
-      "maxItems": 250000,
+      "maxItems": 500000,
       "type": "array"
     },
     "reference": {

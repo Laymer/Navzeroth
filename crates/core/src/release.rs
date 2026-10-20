@@ -7,7 +7,14 @@ use std::collections::{BTreeMap, BTreeSet};
 
 pub const MAX_RELEASE_BYTES: usize = 16 * 1024 * 1024;
 pub const MAX_UNITS: usize = 4096;
-pub const MAX_RECORDS: usize = 250_000;
+/// Required and shipped record identities. ADR 0007 §7: a whole-world pack
+/// (expected at 350,000 to 800,000 identities) plus the authored pack fits
+/// with headroom.
+pub const MAX_RECORDS: usize = 2_000_000;
+/// Schema 3 (ADR 0007, task V2.8e): the target comes from
+/// `release/v1/world-data-target.json`, the `LIVE-*` checks and the live slice
+/// matrix are no longer required, and evidence binds the accepted-origin policy.
+pub const SCHEMA_WORLD_DATA: u32 = 3;
 pub const DOMAINS: [&str; 9] = [
     "quests",
     "equipment",
@@ -74,12 +81,148 @@ impl Target {
 pub fn frozen_release_target() -> Option<Target> {
     None
 }
-/// The target a manifest of this schema version must declare.
+/// The target a manifest of this schema version must declare. Schema 3 takes
+/// its target from the world-data target file; see [`ReleasePolicy`].
 pub fn expected_target(schema_version: u32) -> Option<Target> {
     match schema_version {
         1 => Some(Target::forever_70374()),
         _ => frozen_release_target(),
     }
+}
+/// ADR 0007 §6: the owner's detected client build, recorded in
+/// `release/v1/world-data-target.json`. Unknown fields are refused.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct WorldDataTarget {
+    format: String,
+    schema_version: u32,
+    decision: String,
+    edition: String,
+    build: String,
+    interface: String,
+    locale: String,
+    detected_from: String,
+}
+pub const WORLD_DATA_TARGET_FORMAT: &str = "navzeroth-world-data-target";
+/// Decode the world-data target file into a release target. The build is
+/// `major.minor.patch.build`, all decimal; the interface is decimal.
+pub fn decode_world_data_target(bytes: &[u8]) -> Result<Target, &'static str> {
+    let value = crate::strict_json::value(bytes, 64 * 1024)
+        .map_err(|_| "Invalid world-data target file")?;
+    let file: WorldDataTarget =
+        serde_json::from_value(value).map_err(|_| "Invalid world-data target file")?;
+    let digits = |p: &str| !p.is_empty() && p.len() <= 9 && p.bytes().all(|b| b.is_ascii_digit());
+    let parts: Vec<_> = file.build.split('.').collect();
+    if file.format != WORLD_DATA_TARGET_FORMAT
+        || file.schema_version != 1
+        || [
+            &file.decision,
+            &file.edition,
+            &file.locale,
+            &file.detected_from,
+        ]
+        .into_iter()
+        .any(|t| !bounded_text(t))
+        || crate::types::EditionId::new(file.edition.clone()).is_err()
+        || parts.len() != 4
+        || !parts.iter().all(|p| digits(p))
+        || !digits(&file.interface)
+    {
+        return Err("Invalid world-data target file");
+    }
+    Ok(Target {
+        edition: file.edition,
+        version: parts[..3].join("."),
+        build: parts[3].to_owned(),
+        interface: file
+            .interface
+            .parse()
+            .map_err(|_| "Invalid world-data target file")?,
+    })
+}
+/// Release inputs outside the manifests (ADR 0007). Schema 1 and 2 ignore them.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ReleasePolicy<'a> {
+    /// The decoded `world-data-target.json`; schema 3 requires it.
+    pub target: Option<&'a Target>,
+    /// The decoded `accepted-origins.json`; schema 3 requires it.
+    pub origins: Option<&'a crate::origin_policy::OriginPolicy>,
+    /// SHA-256 of the exact policy bytes, which evidence must bind.
+    pub origin_policy_sha256: Option<&'a str>,
+}
+/// The target a manifest must declare under the supplied release inputs.
+pub fn expected_target_with(schema_version: u32, policy: &ReleasePolicy<'_>) -> Option<Target> {
+    if schema_version == SCHEMA_WORLD_DATA {
+        policy.target.cloned()
+    } else {
+        expected_target(schema_version)
+    }
+}
+/// Mandatory acceptance rows and their methods for a manifest schema. Schema 3
+/// drops the `LIVE-*` rows (ADR 0007 §5); the `WIN-*` rows are unchanged.
+pub fn required_checks(schema_version: u32) -> Vec<(&'static str, Method)> {
+    let windows = WINDOWS_CHECKS
+        .into_iter()
+        .map(|id| (id, Method::InteractiveWindows));
+    if schema_version == SCHEMA_WORLD_DATA {
+        windows.collect()
+    } else {
+        LIVE_CHECKS
+            .into_iter()
+            .map(|id| (id, Method::LiveGame))
+            .chain(windows)
+            .collect()
+    }
+}
+/// Sources whose target validation is satisfied by the accepted-origin policy
+/// (ADR 0007 §3): every domain whose coverage cites the source accepts its
+/// origin edition. A source no coverage row cites is never accepted this way.
+pub fn origin_accepted_sources(
+    inventory: &Inventory,
+    evidence: &Evidence,
+    policy: &ReleasePolicy<'_>,
+) -> BTreeSet<String> {
+    let Some(origins) = policy.origins else {
+        return BTreeSet::new();
+    };
+    if inventory.schema_version != SCHEMA_WORLD_DATA
+        || policy
+            .target
+            .is_none_or(|t| t.edition != origins.target_edition.as_str())
+    {
+        return BTreeSet::new();
+    }
+    let unit_domain: BTreeMap<_, _> = inventory
+        .domains
+        .iter()
+        .flat_map(|d| {
+            d.units
+                .iter()
+                .map(move |u| (u.id.as_str(), d.domain.as_str()))
+        })
+        .collect();
+    let mut citing: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
+    for row in &evidence.coverage {
+        if let Some(domain) = unit_domain.get(row.unit_id.as_str()) {
+            for source in &row.source_ids {
+                citing.entry(source.as_str()).or_default().insert(domain);
+            }
+        }
+    }
+    evidence
+        .sources
+        .iter()
+        .filter(|s| {
+            citing.get(s.id.as_str()).is_some_and(|domains| {
+                domains.iter().all(|d| {
+                    origins.accepts_origin(d, &s.origin_edition)
+                        || origins
+                            .accepts_historical_build(&s.origin_edition, s.origin_build.as_deref())
+                })
+            })
+        })
+        .map(|s| s.id.clone())
+        .collect()
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -252,6 +395,9 @@ pub struct Evidence {
     /// Schema 2 (task V1.4): live rows that cover the declared slice.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub matrix: Vec<MatrixRow>,
+    /// Schema 3 (ADR 0007): the exact `accepted-origins.json` the gate applies.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin_policy: Option<FileRef>,
 }
 /// One live acceptance run inside the slice: a class in a level band, in a
 /// zone, at a party size. Coverage is derived in code from the slice.
@@ -381,7 +527,7 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
         1 => {
             inventory.slice.is_none() && inventory.domains.iter().all(|d| d.out_of_scope.is_empty())
         }
-        2 => inventory.slice.is_some(),
+        2 | SCHEMA_WORLD_DATA => inventory.slice.is_some(),
         _ => false,
     };
     if !shape_matches {
@@ -391,8 +537,10 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     let evidence: Evidence = decode(bytes)?;
-    if !matches!(evidence.schema_version, 1 | 2)
-        || (evidence.schema_version == 1 && !evidence.matrix.is_empty())
+    let world = evidence.schema_version == SCHEMA_WORLD_DATA;
+    if !matches!(evidence.schema_version, 1 | 2 | SCHEMA_WORLD_DATA)
+        || (matches!(evidence.schema_version, 1 | SCHEMA_WORLD_DATA) && !evidence.matrix.is_empty())
+        || world != evidence.origin_policy.is_some()
     {
         return Err("Unsupported evidence version");
     }
@@ -446,6 +594,41 @@ pub fn upgrade_evidence(
     evidence.schema_version = 2;
     evidence.target = frozen_release_target();
     evidence.inventory_sha256 = inventory_sha256;
+    Ok(evidence)
+}
+/// Explicit v2 to v3 migration (ADR 0007, task V2.8e): the target becomes the
+/// world-data target. Slice, boundaries, units and sources are kept.
+pub fn upgrade_inventory_v3(
+    mut inventory: Inventory,
+    target: Target,
+) -> Result<Inventory, &'static str> {
+    if inventory.schema_version != 2 {
+        return Err("Only a schema 2 inventory can be upgraded to schema 3");
+    }
+    inventory.schema_version = SCHEMA_WORLD_DATA;
+    inventory.target = Some(target);
+    Ok(inventory)
+}
+/// Evidence v2 to v3: the `LIVE-*` rows and live slice matrix are removed
+/// (ADR 0007 §5), the `WIN-*` rows are kept unchanged and the accepted-origin
+/// policy file is bound.
+pub fn upgrade_evidence_v3(
+    mut evidence: Evidence,
+    inventory_sha256: Sha256Hex,
+    target: Target,
+    origin_policy: FileRef,
+) -> Result<Evidence, &'static str> {
+    if evidence.schema_version != 2 {
+        return Err("Only schema 2 evidence can be upgraded to schema 3");
+    }
+    evidence.schema_version = SCHEMA_WORLD_DATA;
+    evidence.target = Some(target);
+    evidence.inventory_sha256 = inventory_sha256;
+    evidence
+        .checks
+        .retain(|c| !LIVE_CHECKS.contains(&c.id.as_str()));
+    evidence.matrix.clear();
+    evidence.origin_policy = Some(origin_policy);
     Ok(evidence)
 }
 
@@ -514,15 +697,32 @@ pub fn assess(
     evidence: Option<&Evidence>,
     bindings: &Bindings<'_>,
 ) -> Result<Readiness, &'static str> {
+    assess_with(
+        version,
+        inventory,
+        evidence,
+        bindings,
+        &ReleasePolicy::default(),
+    )
+}
+/// [`assess`] with the release inputs outside the manifests (ADR 0007).
+pub fn assess_with(
+    version: &str,
+    inventory: &Inventory,
+    evidence: Option<&Evidence>,
+    bindings: &Bindings<'_>,
+    policy: &ReleasePolicy<'_>,
+) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
     check_limits(inventory, evidence)?;
-    if !matches!(inventory.schema_version, 1 | 2)
-        || evidence.is_some_and(|e| !matches!(e.schema_version, 1 | 2))
+    if !matches!(inventory.schema_version, 1 | 2 | SCHEMA_WORLD_DATA)
+        || evidence.is_some_and(|e| !matches!(e.schema_version, 1 | 2 | SCHEMA_WORLD_DATA))
     {
         return Err("Unsupported release manifest version");
     }
+    let world = inventory.schema_version == SCHEMA_WORLD_DATA;
     let mut report = Readiness {
-        report_version: 2,
+        report_version: if world { 3 } else { 2 },
         version: version.into(),
         stable,
         stable_ready: true,
@@ -531,13 +731,26 @@ pub fn assess(
         publication_allowed: true,
         blockers: vec![],
     };
-    if inventory.target != expected_target(inventory.schema_version)
+    if world && policy.target.is_none() {
+        report.block("World-data target file is missing or invalid (ADR 0007 §6)");
+    } else if inventory.target != expected_target_with(inventory.schema_version, policy)
         || !bounded_text(&inventory.inventory_id)
     {
         report.block("Inventory version, identifier or frozen target does not match");
     }
-    if inventory.schema_version == 2 {
-        if frozen_release_target().is_none() {
+    if world && policy.origins.is_none() {
+        report.block("Accepted-origin policy is missing or invalid (ADR 0007 §3)");
+    }
+    if world
+        && let Some(origins) = policy.origins
+        && policy
+            .target
+            .is_some_and(|t| t.edition != origins.target_edition.as_str())
+    {
+        report.block("Accepted-origin policy names a different target edition");
+    }
+    if matches!(inventory.schema_version, 2 | SCHEMA_WORLD_DATA) {
+        if !world && frozen_release_target().is_none() {
             report.block(
                 "Release target is pending the first stable live build after launch (ADR 0006)",
             );
@@ -553,7 +766,7 @@ pub fn assess(
     }
     // A slice always leaves content outside it; an omitted or empty list would
     // merge "not declared" into "nothing outside" (ADR 0006 section 2).
-    if inventory.schema_version == 2 {
+    if matches!(inventory.schema_version, 2 | SCHEMA_WORLD_DATA) {
         for domain in inventory
             .domains
             .iter()
@@ -646,6 +859,15 @@ pub fn assess(
     if evidence.inventory_sha256.as_str() != bindings.inventory_sha256 {
         report.block("Evidence refers to a different inventory revision");
     }
+    if world
+        && evidence
+            .origin_policy
+            .as_ref()
+            .map(|f| f.sha256.as_str())
+            .is_none_or(|sha| Some(sha) != policy.origin_policy_sha256)
+    {
+        report.block("Evidence does not bind the applied accepted-origin policy");
+    }
     let initial_binding =
         evidence.tested_source_commit.is_none() && evidence.production_sha256.is_none();
     if initial_binding {
@@ -660,7 +882,8 @@ pub fn assess(
     {
         report.block("Tested source revision or production fingerprint does not match");
     }
-    let expected_checks: BTreeSet<_> = LIVE_CHECKS.into_iter().chain(WINDOWS_CHECKS).collect();
+    let required = required_checks(inventory.schema_version);
+    let expected_checks: BTreeSet<_> = required.iter().map(|(id, _)| *id).collect();
     if evidence.checks.len() != expected_checks.len()
         || evidence
             .checks
@@ -672,11 +895,10 @@ pub fn assess(
         report.block("Mandatory acceptance rows are missing, duplicated or unsupported");
     }
     for check in &evidence.checks {
-        let method = if LIVE_CHECKS.contains(&check.id.as_str()) {
-            Method::LiveGame
-        } else {
-            Method::InteractiveWindows
-        };
+        let method = required
+            .iter()
+            .find(|(id, _)| *id == check.id)
+            .map_or(Method::InteractiveWindows, |(_, method)| *method);
         if check.status == Status::Unverified
             && check.method == method
             && check.operator.is_none()
@@ -707,6 +929,8 @@ pub fn assess(
             ));
         }
     }
+    // Schema 3 has no live slice matrix: 1.0.0 ships without live-client
+    // evidence (ADR 0007 §5 and Consequences).
     if inventory.schema_version == 2 {
         assess_matrix(&mut report, inventory, evidence, initial_binding);
     }
@@ -755,8 +979,12 @@ pub fn assess(
         .iter()
         .map(|s| (s.id.as_str(), s))
         .collect();
+    let origin_accepted = origin_accepted_sources(inventory, evidence, policy);
     for required in &inventory.sources {
         if sources_by_id.get(required.id.as_str()).is_none_or(|s| {
+            let target_ok = (s.target_validation == Status::Pass
+                && files_present(&s.target_evidence))
+                || origin_accepted.contains(&s.id);
             s.revision != required.revision
                 || s.redistribution != Permission::Permitted
                 || !bounded_text(&s.origin_edition)
@@ -765,8 +993,7 @@ pub fn assess(
                 || !files_present(&s.license_files)
                 || !files_present(&s.attribution_files)
                 || !files_present(&s.permission_evidence)
-                || s.target_validation != Status::Pass
-                || !files_present(&s.target_evidence)
+                || !target_ok
         }) {
             report.block(format!(
                 "Source permission, provenance or target validation is incomplete: {}",
@@ -911,6 +1138,7 @@ pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> V
                 .chain(&s.target_evidence)
         }))
         .chain(evidence.admission_registry.iter())
+        .chain(evidence.origin_policy.iter())
         .chain(evidence.packs.iter().map(|p| &p.manifest))
         .chain(evidence.matrix.iter().flat_map(|r| &r.artifacts))
         .collect()

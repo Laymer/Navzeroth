@@ -1,5 +1,7 @@
 import "./play.css";
-import { Button, Field, HelpTip } from "../ui";
+import { Button, Field, HelpTip, OriginMarker } from "../ui";
+import { useRecordOrigins } from "./useRecordOrigins";
+import { originKey } from "../commands/world";
 import { OBJECTIVE_NODE_HELP } from "./playHelp";
 import { CatalogPager, OffPageOptions } from "./CatalogPager";
 import {PlanPinControl} from "./PlanPinControl";
@@ -50,6 +52,9 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
   const visibleCatalog = catalog && catalogOwner.current?.client === client && catalogOwner.current.refreshKey === refreshKey && catalogOwner.current.profile === profile ? catalog : null;
   const visibleReport = report && reportOwner.current?.client === client && reportOwner.current.refreshKey === refreshKey && reportOwner.current.profile === profile ? report : null;
   const visibleRoute = visibleReport && routeOwner.current === visibleReport ? route : null;
+  const originSubject = profile ? { kind: "character" as const, profile_id: profile } : null;
+  const objectiveOrigins = useRecordOrigins(client, originSubject, visibleCatalog?.revision, visibleCatalog?.objectives.map((o) => ({ collection: "objectives" as const, id: o.id })) ?? []);
+  const edgeOrigins = useRecordOrigins(client, originSubject, visibleRoute?.report.request.revision, visibleRoute?.hops.map((h) => ({ collection: "edges" as const, id: h.hop.edge })) ?? []);
   const invalidate = () => { generation.current++; abortJob(); setReport(null); setPinJob(null); setRoute(null); setExported(null); setCopyStatus(""); setBusy(false); };
   useEffect(() => {
     let live = true;
@@ -147,7 +152,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
     {visibleCatalog?.objectives.map((objective) => {
       const candidate = candidates.find((c) => c.objective === objective.id);
       const update = (key: "node" | "utility" | "completion_ms" | "service_ms", value: string | number) => { invalidate(); setCandidates((old) => old.map((c) => c.objective === objective.id ? { ...c, [key]: value } : c)); };
-      return <fieldset key={objective.id}><legend>{objective.id}</legend>
+      return <fieldset key={objective.id}><legend>{objective.id}</legend><OriginMarker marks={objectiveOrigins.get(originKey({ collection: "objectives", id: objective.id }))} />
         <label><input type="checkbox" checked={candidate !== undefined} disabled={!candidate&&candidates.length>=128} onChange={(e) => { invalidate(); setCandidates((old) => e.target.checked ? [...old, { objective: objective.id, node: "", utility: 0, completion_ms: 0, service_ms: 0 }] : old.filter((c) => c.objective !== objective.id)); }} />Consider objective</label>
         <label><input type="checkbox" checked={excluded.includes(objective.id)} disabled={!excluded.includes(objective.id)&&excluded.length>=128} onChange={(e) => { invalidate(); setExcluded((old) => e.target.checked ? [...old, objective.id] : old.filter((id) => id !== objective.id)); }} />Exclude objective</label>
         {candidate && <><span className="play-inline"><label>Objective node <select value={candidate.node} onChange={(e) => update("node", e.target.value)}>{nodeOptions}</select></label><HelpTip label={`Objective node for ${objective.id}`}>{OBJECTIVE_NODE_HELP}</HelpTip></span>
@@ -164,7 +169,7 @@ export function PlannerScreen({ client, refreshKey }: { client: CommandClient; r
       <ClusterSummary clustering={visibleReport.clustering} />
       <Button disabled={busy || visibleReport.result.selected.length === 0} onClick={() => void exportPlan()}>Export plan</Button>
       <Button disabled={busy} onClick={() => void inspectRoute()}>Inspect route</Button>
-      {visibleRoute && <RouteInspection value={visibleRoute} />}
+      {visibleRoute && <RouteInspection value={visibleRoute} origins={edgeOrigins} />}
       {exported && <section aria-label="Plan export"><p>{exported.byte_count} bytes; {exported.plan_id}; expires at UTC epoch ms {exported.expires_at_utc_ms}.</p>
         <label>Plan export text <textarea readOnly value={exported.text} rows={8} onFocus={(e) => e.target.select()} /></label>
         <Button onClick={() => void copyExport()}>Copy plan</Button><p role="status">{copyStatus}</p>

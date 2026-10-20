@@ -8,9 +8,9 @@ import {
 
 const H = "a".repeat(64);
 
-test("there are exactly 14 distinct screen labels", () => {
-  assert.equal(SCREEN_LABELS.length, 14);
-  assert.equal(new Set(SCREEN_LABELS).size, 14);
+test("there are exactly 15 distinct screen labels", () => {
+  assert.equal(SCREEN_LABELS.length, 15);
+  assert.equal(new Set(SCREEN_LABELS).size, 15);
 });
 
 test("parseArgs accepts known pairs and rejects the rest", () => {

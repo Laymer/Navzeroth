@@ -222,13 +222,46 @@ fn committed_licensed_materials_build_without_network_on_every_platform() {
         .parent()
         .unwrap();
     let c = Case::new();
+    // Generated fact objects are Git LFS objects (V2.8c) and ordinary CI checks
+    // out pointers, so this build covers every hand-admitted source; the
+    // source-knowledge workflow hydrates LFS and builds the whole registry.
+    let mut registry: Value = serde_json::from_slice(
+        &fs::read(root.join("docs/sources/source-admission-v1.json")).unwrap(),
+    )
+    .unwrap();
+    let mut plan: Value =
+        serde_json::from_slice(&fs::read(root.join("content/source-build-v1.json")).unwrap())
+            .unwrap();
+    let generated = |v: &Value, key: &str| v[key].as_str().unwrap().starts_with("gen-");
+    plan["inputs"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|i| !generated(i, "source"));
+    // Newly admitted world originals are also non-gen sources, but this test's
+    // hand-written plan does not consume them. Their LFS closure is exercised
+    // separately by the actual-world platform jobs. Keep this fixture exactly
+    // the source closure of the real hand plan, rather than all registry rows.
+    let required: std::collections::BTreeSet<_> = plan["inputs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|input| input["source"].as_str().unwrap().to_owned())
+        .collect();
+    registry["sources"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|source| required.contains(source["id"].as_str().unwrap()));
+    let registry_path = c.root.join("hand-registry.json");
+    let plan_path = c.root.join("hand-plan.json");
+    fs::write(&registry_path, serde_json::to_vec(&registry).unwrap()).unwrap();
+    fs::write(&plan_path, serde_json::to_vec(&plan).unwrap()).unwrap();
     let out = c.root.join("real");
     let result = Command::new(env!("CARGO_BIN_EXE_azeroth-cli"))
         .arg("source-build")
         .arg("--registry")
-        .arg(root.join("docs/sources/source-admission-v1.json"))
+        .arg(&registry_path)
         .arg("--plan")
-        .arg(root.join("content/source-build-v1.json"))
+        .arg(&plan_path)
         .arg("--cache")
         .arg(root.join("content/source-materials/objects"))
         .arg("--output")
@@ -258,6 +291,69 @@ fn committed_licensed_materials_build_without_network_on_every_platform() {
             .iter()
             .all(|d| d["required_inventory"].is_null() && d["target_facts"] == 0)
     );
+}
+
+#[test]
+fn committed_generated_fact_sources_match_the_plan_and_lfs_rule() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap();
+    let registry: Value = serde_json::from_slice(
+        &fs::read(root.join("docs/sources/source-admission-v1.json")).unwrap(),
+    )
+    .unwrap();
+    let plan: Value =
+        serde_json::from_slice(&fs::read(root.join("content/source-build-v1.json")).unwrap())
+            .unwrap();
+    let attributes = fs::read_to_string(root.join(".gitattributes")).unwrap();
+    let mut planned: Vec<(String, String)> = plan["inputs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|i| i["source"].as_str().unwrap().starts_with("gen-"))
+        .map(|i| {
+            assert_eq!(i["adapter"], "knowledge_v1");
+            (
+                i["source"].as_str().unwrap().to_owned(),
+                i["file"].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect();
+    let mut registered = Vec::new();
+    for s in registry["sources"].as_array().unwrap() {
+        let id = s["id"].as_str().unwrap();
+        if !id.starts_with("gen-") {
+            continue;
+        }
+        assert_eq!(s["retrieval"]["method"], "manual_local", "{id}");
+        assert!(s["origin"]["edition"].is_string(), "{id}");
+        let mut file_bytes = 0;
+        for f in s["files"].as_array().unwrap() {
+            let sha = f["sha256"].as_str().unwrap();
+            assert_eq!(f["transformation"], "knowledge_v1");
+            assert!(
+                attributes.contains(&format!(
+                    "content/source-materials/objects/{sha} filter=lfs diff=lfs merge=lfs -text"
+                )),
+                "{sha} must be stored in Git LFS"
+            );
+            file_bytes += f["bytes"].as_u64().unwrap();
+            registered.push((id.to_owned(), f["path"].as_str().unwrap().to_owned()));
+        }
+        assert!(file_bytes <= s["retrieval"]["max_total_bytes"].as_u64().unwrap());
+    }
+    planned.sort();
+    registered.sort();
+    assert_eq!(planned, registered);
+    // Hand-admitted evidence objects stay plain blobs that LFS-less CI can read.
+    for s in registry["sources"].as_array().unwrap() {
+        for e in s["rights"]["evidence"].as_array().unwrap() {
+            let sha = e["sha256"].as_str().unwrap();
+            assert!(!attributes.contains(&format!("objects/{sha} filter=lfs")));
+        }
+    }
 }
 
 #[test]

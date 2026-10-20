@@ -17,6 +17,30 @@ BUILDS = "https://wago.tools/api/builds"
 CSV = "https://wago.tools/db2/{table}/csv?product={product}&build={build}"
 EDITIONS = {"wowf": envelope.FOREVER, "wow_classic_era": envelope.CLASSIC_ERA}
 
+# ITEM_MOD_* stat types (UnitDefines / ItemTemplate); others become stat_<id>. The client
+# DB2 items (gen_world_db2) and the CMaNGOS item_template (gen_world_cmangos) share them.
+STAT_NAMES = {
+    0: "mana", 1: "health", 3: "agility", 4: "strength", 5: "intellect", 6: "spirit", 7: "stamina",
+    12: "defense_skill_rating", 13: "dodge_rating", 14: "parry_rating", 15: "block_rating",
+    16: "hit_melee_rating", 17: "hit_ranged_rating", 18: "hit_spell_rating", 19: "crit_melee_rating",
+    20: "crit_ranged_rating", 21: "crit_spell_rating", 22: "hit_taken_melee_rating",
+    23: "hit_taken_ranged_rating", 24: "hit_taken_spell_rating", 25: "crit_taken_melee_rating",
+    26: "crit_taken_ranged_rating", 27: "crit_taken_spell_rating", 28: "haste_melee_rating",
+    29: "haste_ranged_rating", 30: "haste_spell_rating", 31: "hit_rating", 32: "crit_rating",
+    33: "hit_taken_rating", 34: "crit_taken_rating", 35: "resilience_rating", 36: "haste_rating",
+    37: "expertise_rating", 38: "attack_power", 39: "ranged_attack_power", 40: "feral_attack_power",
+    41: "spell_healing_done", 42: "spell_damage_done", 43: "mana_regeneration",
+    44: "armor_penetration_rating", 45: "spell_power", 46: "health_regen", 47: "spell_penetration",
+    48: "block_value", 49: "mastery_rating", 50: "extra_armor", 51: "fire_resistance",
+    52: "frost_resistance", 53: "holy_resistance", 54: "shadow_resistance", 55: "nature_resistance",
+    56: "arcane_resistance",
+}
+
+
+def stat_name(stat_type):
+    """ITEM_MOD_* name of a stat type, or stat_<id> for one without a name."""
+    return STAT_NAMES.get(stat_type, f"stat_{stat_type}")
+
 
 class Wago:
     def __init__(self, product="wowf", build=None):

@@ -1,0 +1,747 @@
+{
+  "entities": {
+    "counts": {
+      "entities": 4,
+      "loot": 2,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "boss_of": [
+          {
+            "id": "dungeon-1",
+            "title": "Synthetic dungeon"
+          }
+        ],
+        "id": "npc:448",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": [
+            11,
+            11
+          ]
+        },
+        "name": "Hogger",
+        "origin": [
+          "vanilla_1_12"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "world-node-hogger",
+            "x": 0.27,
+            "y": 0.87
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "hostile"
+        },
+        "row": "entity",
+        "services": [],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      },
+      {
+        "boss_of": [],
+        "id": "object:1",
+        "kind": "game_object",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Chest",
+        "origin": [
+          "inferred"
+        ],
+        "places": [],
+        "places_total": 0,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "row": "entity",
+        "services": [],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      },
+      {
+        "boss_of": [],
+        "id": "npc:1198",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Quartermaster",
+        "origin": [],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "world-node-vendor",
+            "x": 0.42,
+            "y": 0.66
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "alliance"
+        },
+        "row": "entity",
+        "services": [
+          "vendor",
+          "repair"
+        ],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "Synthetic Goods"
+        }
+      },
+      {
+        "boss_of": [],
+        "id": "npc:5000",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Trainer",
+        "origin": [
+          "wow_classic_era"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "demo-node-1",
+            "x": 0.1,
+            "y": 0.1
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "row": "entity",
+        "services": [
+          "trainer"
+        ],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ],
+    "schema_version": 1,
+    "total": 4,
+    "view": "entities"
+  },
+  "entities_hog": {
+    "counts": {
+      "entities": 4,
+      "loot": 2,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "  HOG ",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "boss_of": [
+          {
+            "id": "dungeon-1",
+            "title": "Synthetic dungeon"
+          }
+        ],
+        "id": "npc:448",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": [
+            11,
+            11
+          ]
+        },
+        "name": "Hogger",
+        "origin": [
+          "vanilla_1_12"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "world-node-hogger",
+            "x": 0.27,
+            "y": 0.87
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "hostile"
+        },
+        "row": "entity",
+        "services": [],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "entities"
+  },
+  "loot": {
+    "counts": {
+      "entities": 4,
+      "loot": 2,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "entity": null,
+        "id": "loot:reference:9",
+        "offers": [],
+        "offers_total": 0,
+        "row": "source",
+        "tables": [
+          {
+            "id": "loot:reference:9",
+            "kind": "reference",
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "rows": [
+              {
+                "conditional": false,
+                "group": null,
+                "item": {
+                  "item_id": "demo-item-1",
+                  "name": "Synthetic Sword"
+                },
+                "max_count": 1,
+                "min_count": 1,
+                "probability": null,
+                "quest_only": false,
+                "table": null
+              }
+            ],
+            "rows_total": 1
+          }
+        ],
+        "tables_total": 1
+      },
+      {
+        "entity": {
+          "boss_of": [
+            {
+              "id": "dungeon-1",
+              "title": "Synthetic dungeon"
+            }
+          ],
+          "id": "npc:448",
+          "kind": "npc",
+          "levels": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": [
+              11,
+              11
+            ]
+          },
+          "name": "Hogger",
+          "origin": [
+            "vanilla_1_12"
+          ],
+          "places": [
+            {
+              "floor": "0",
+              "map_id": "demo-map-1",
+              "node": "world-node-hogger",
+              "x": 0.27,
+              "y": 0.87
+            }
+          ],
+          "places_total": 1,
+          "reaction": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "hostile"
+          },
+          "services": [],
+          "subname": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "unknown"
+          }
+        },
+        "id": "npc:448",
+        "offers": [
+          {
+            "acquisition": "world-acq-drop",
+            "cost": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "cost_item_names": {},
+            "costs": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "dungeon": null,
+            "items": [
+              {
+                "item_id": "demo-item-1",
+                "name": "Synthetic Sword",
+                "variant": "base"
+              }
+            ],
+            "location": null,
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "probability": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": 0.25
+            },
+            "rewards": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            }
+          }
+        ],
+        "offers_total": 1,
+        "row": "source",
+        "tables": [
+          {
+            "id": "loot:creature:448",
+            "kind": "creature",
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "rows": [
+              {
+                "conditional": false,
+                "group": null,
+                "item": {
+                  "item_id": "demo-item-1",
+                  "name": "Synthetic Sword"
+                },
+                "max_count": 1,
+                "min_count": 1,
+                "probability": 0.4,
+                "quest_only": false,
+                "table": null
+              },
+              {
+                "conditional": false,
+                "group": 1,
+                "item": {
+                  "item_id": "9001"
+                },
+                "max_count": 2,
+                "min_count": 1,
+                "probability": null,
+                "quest_only": true,
+                "table": null
+              },
+              {
+                "conditional": true,
+                "group": null,
+                "item": {
+                  "item_id": "9002"
+                },
+                "max_count": 1,
+                "min_count": 1,
+                "probability": 0.0,
+                "quest_only": false,
+                "table": null
+              },
+              {
+                "conditional": false,
+                "group": null,
+                "item": null,
+                "max_count": 3,
+                "min_count": 1,
+                "probability": 0.05,
+                "quest_only": false,
+                "table": "loot:reference:9"
+              }
+            ],
+            "rows_total": 4
+          }
+        ],
+        "tables_total": 1
+      }
+    ],
+    "schema_version": 1,
+    "total": 2,
+    "view": "loot"
+  },
+  "origins": {
+    "origins": [
+      [],
+      [
+        "inferred"
+      ],
+      [
+        "vanilla_1_12"
+      ]
+    ],
+    "revision": "demo-r1"
+  },
+  "quests": {
+    "counts": {
+      "entities": 4,
+      "loot": 2,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "QUEST-1",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "completion": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": "unrepeatable"
+        },
+        "enders": [
+          {
+            "id": "npc:448",
+            "name": "Hogger"
+          }
+        ],
+        "enders_total": 1,
+        "givers": [
+          {
+            "id": "npc:1198",
+            "name": "Synthetic Quartermaster"
+          },
+          {
+            "id": "item:demo-item-1",
+            "name": "Synthetic Sword"
+          },
+          {
+            "id": "object:404"
+          }
+        ],
+        "givers_total": 3,
+        "id": "demo-quest-1",
+        "objectives": [
+          {
+            "id": "demo-objective-1",
+            "origin": [],
+            "targets": [
+              {
+                "kind": "quest_stage",
+                "stage": "demo-objective-1"
+              },
+              {
+                "kind": "acquisition",
+                "source": "demo-acq-1"
+              },
+              {
+                "kind": "service",
+                "node": "demo-node-1"
+              }
+            ]
+          }
+        ],
+        "objectives_total": 1,
+        "offers": [
+          {
+            "acquisition": "world-acq-quest",
+            "cost": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "not_applicable"
+            },
+            "cost_item_names": {},
+            "costs": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "dungeon": null,
+            "items": [
+              {
+                "item_id": "demo-item-1",
+                "name": "Synthetic Sword",
+                "variant": "base"
+              }
+            ],
+            "location": null,
+            "origin": [
+              "vanilla_1_12"
+            ],
+            "probability": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": 1.0
+            },
+            "rewards": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            }
+          }
+        ],
+        "offers_total": 1,
+        "origin": [
+          "vanilla_1_12"
+        ],
+        "rewards": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "known",
+          "value": [
+            {
+              "item_id": "demo-item-1",
+              "name": "Synthetic Sword",
+              "variant": "base"
+            }
+          ]
+        },
+        "row": "quest",
+        "stages": [
+          "demo-objective-1"
+        ],
+        "title": "Synthetic Quest"
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "quests"
+  },
+  "trainers": {
+    "counts": {
+      "entities": 4,
+      "loot": 2,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "boss_of": [],
+        "id": "npc:5000",
+        "kind": "npc",
+        "levels": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "name": "Synthetic Trainer",
+        "origin": [
+          "wow_classic_era"
+        ],
+        "places": [
+          {
+            "floor": "0",
+            "map_id": "demo-map-1",
+            "node": "demo-node-1",
+            "x": 0.1,
+            "y": 0.1
+          }
+        ],
+        "places_total": 1,
+        "reaction": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        },
+        "row": "entity",
+        "services": [
+          "trainer"
+        ],
+        "subname": {
+          "clock_trust": "uncertain",
+          "source": "unrecorded",
+          "status": "unknown"
+        }
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "trainers"
+  },
+  "vendors": {
+    "counts": {
+      "entities": 4,
+      "loot": 2,
+      "quests": 1,
+      "trainers": 1,
+      "vendors": 1
+    },
+    "fixture": true,
+    "next_offset": null,
+    "offset": 0,
+    "page_size": 50,
+    "query": "",
+    "revision": "demo-r1",
+    "rows": [
+      {
+        "entity": {
+          "boss_of": [],
+          "id": "npc:1198",
+          "kind": "npc",
+          "levels": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "unknown"
+          },
+          "name": "Synthetic Quartermaster",
+          "origin": [],
+          "places": [
+            {
+              "floor": "0",
+              "map_id": "demo-map-1",
+              "node": "world-node-vendor",
+              "x": 0.42,
+              "y": 0.66
+            }
+          ],
+          "places_total": 1,
+          "reaction": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "alliance"
+          },
+          "services": [
+            "vendor",
+            "repair"
+          ],
+          "subname": {
+            "clock_trust": "uncertain",
+            "source": "unrecorded",
+            "status": "known",
+            "value": "Synthetic Goods"
+          }
+        },
+        "id": "npc:1198",
+        "offers": [
+          {
+            "acquisition": "world-acq-vendor",
+            "cost": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": "250"
+            },
+            "cost_item_names": {},
+            "costs": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            },
+            "dungeon": null,
+            "items": [
+              {
+                "item_id": "demo-item-1",
+                "name": "Synthetic Sword",
+                "variant": "base"
+              }
+            ],
+            "location": "world-node-vendor",
+            "origin": [
+              "wow_classic_era"
+            ],
+            "probability": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "known",
+              "value": 1.0
+            },
+            "rewards": {
+              "clock_trust": "uncertain",
+              "source": "unrecorded",
+              "status": "unknown"
+            }
+          }
+        ],
+        "offers_total": 1,
+        "row": "source",
+        "tables": [],
+        "tables_total": 0
+      }
+    ],
+    "schema_version": 1,
+    "total": 1,
+    "view": "vendors"
+  }
+}

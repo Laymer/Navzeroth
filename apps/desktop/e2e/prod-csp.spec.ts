@@ -52,7 +52,7 @@ test("every screen of the production bundle runs under the native CSP", async ({
   const problems = watch(page);
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  await expect(nav.getByRole("button")).toHaveCount(14);
+  await expect(nav.getByRole("button")).toHaveCount(15);
   await expect(page.getByRole("heading", { name: "Azeroth Navigator", exact: true })).toBeVisible();
   for (const label of SCREENS) {
     await nav.getByRole("button", { name: label, exact: true }).click();
