@@ -47,3 +47,40 @@ remain unverified until the original pinned commit history is pushed. Root must
 review final outputs, integrate the separate consumer repair, refresh all protected
 checks and run source-platform parity on the resulting PR212 head. Windows,
 installer inclusion/performance and stable publication remain separate gates.
+
+## Parent final verification and consumer refresh (2026-10-20)
+
+Root independently reran27mapper tests and actual two-run offline parity; outputs
+match exact committed source. A newly detected inherited fixture assertion expected
+mapperv2; root changed only that exact assertion to the actual reviewed v3.
+Fullcore477passed0failed2existingignored; independent tooling11source-admission
+tests passed. This fixture change alters no production/source/grant bytes.
+
+PR229 consumer correction merged normally into212's feature branch at
+1623cb90e835447989193d646b14755bde2757dc (06:35:51Z); normal refresh9670136b
+incorporated it without conflict. Consumer changes remain the independently reviewed
+original-scope schema2 bounds/UI paging; no future content features were copied.
+
+Exact material rehearsal c1dbb295 uses the corrected original world pack plus the
+separately reviewed authored-contract/inventory tooling. Production enumeration
+retains259918 logical collection/record identities; their canonical revision keys
+correctly advance with the world revision. Genuine inventory explicitly records
+273967acceptedunknown fields,4Unsupported association fields and8107unresolved
+references. Fourfunctional units, allhosted and owner smoke remainunverified.
+Initial derivation correctly rejected the new raw annotation kind; the reviewed
+adapter now distinguishes chosen precedence from explicitly unresolved bounded
+associations. Adapter count/identity consistency is not an independent raw recount;
+reviewed mapper and exact reproduction establish actual field status/counts.
+An initial comparison against old complete revision keys failed; corrected logical
+record multiset comparison passed, preserving the explicit revision change.
+
+Actual material staging passed104.376s, peak5651704KiB sharedLinuxdebug. Root and
+independent tooling each streamed all82input/archive files394782896bytes, checked
+hash/size/exacttree/noextras. Manifest SHA256
+0146dfa4dd49909613f61aad2f6eb2eac9d2a1ef98b3b2a54f5cf55445b92e97.
+Unsigned preparation readiness remainsfalse. Public pinned2e89code history was
+routinely pushed; both reviewers independently downloaded all22immutablecode/terms
+URLs and matched exact retained bytes. Source/material records are retained in
+212-overflow-material-rehearsal-v1.json,212-overflow-materials-v1.json and
+212-overflow-public-code-v1.json. No real pipeline acquisition/signing/Windows
+or manual result was inferred. Final exact212 checks/reviews still precede main merge.

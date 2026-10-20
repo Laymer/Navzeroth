@@ -1,0 +1,226 @@
+{
+  "authored_scope": "Original r1, unchanged SHA2568bac8b20ee75bb1c6d73b1b6eb57285ef9101a22d360e5ae671d1a2511d48d86",
+  "checks": {
+    "bound_mapper_runs": "two exact committed outputs",
+    "corresponding_code": "22 retained originals equal git show exact approved commit",
+    "generator_tests_passed": 165,
+    "git_lfs_fsck": "passed",
+    "public_raw_code_urls": "unverified until original reviewed code history is publicly pushed",
+    "upstream_admission": "all non-derived records unchanged"
+  },
+  "corresponding_code_commit": "daad17bbb82e2da2c2b4b26b22ad083ba2425eda",
+  "environment": {
+    "build": "debug",
+    "hosted_windows": false,
+    "platform": "Linux WSL2",
+    "shared_host": true
+  },
+  "limitations": [
+    "No hosted Windows parity/application performance or ordinary-PC claim",
+    "No network pipeline acquisition, signed receipt, manual smoke, stable readiness or publication claim",
+    "Raw extractor regeneration remains separate; cached originals and bound mapper verified",
+    "Historical867/2ec code pins and their receipts remain preserved"
+  ],
+  "measurements": {
+    "bound-map": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/world_to_content.py",
+        "--input",
+        "data-generators/output",
+        "--target",
+        "release/v1/world-data-target.json",
+        "--policy",
+        "release/v1/accepted-origins.json",
+        "--authored",
+        "content/authored/slice-v1",
+        "--out",
+        "content/world/1.60.1.70450",
+        "--admission",
+        "docs/sources/source-admission-v1.json",
+        "--source-closure",
+        "content/world/1.60.1.70450/source-closure.json",
+        "--normalization-policy",
+        "release/v1/source-normalization-policy.json"
+      ],
+      "elapsed_seconds": 11.955235681998602,
+      "exit_code": 0,
+      "peak_rss_kib": 1094240,
+      "resource_method": "os.wait4 exact child, shared Linux host",
+      "system_seconds": 0.748926,
+      "user_seconds": 11.187794
+    },
+    "retain": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/retain_world_sources.py",
+        "--root",
+        ".",
+        "--world",
+        "data-generators/output",
+        "--cache",
+        "/home/laymer/Devel/worktrees/datagen/data-generators/.cache",
+        "--pack-sources",
+        "content/world/1.60.1.70450/sources.json",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--output",
+        "content/world/1.60.1.70450/source-closure.json",
+        "--normalization-policy",
+        "release/v1/source-normalization-policy.json",
+        "--source-commit",
+        "daad17bbb82e2da2c2b4b26b22ad083ba2425eda"
+      ],
+      "elapsed_seconds": 2.8338938240049174,
+      "exit_code": 0,
+      "peak_rss_kib": 131744,
+      "resource_method": "os.wait4 exact child, shared Linux host",
+      "system_seconds": 0.14920799999999998,
+      "user_seconds": 2.611045
+    },
+    "source-sync": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "source-sync",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--cache",
+        "content/source-materials/objects"
+      ],
+      "elapsed_seconds": 9.02945937000186,
+      "exit_code": 0,
+      "peak_rss_kib": 33280,
+      "resource_method": "os.wait4 exact child, shared Linux host",
+      "system_seconds": 0.216498,
+      "user_seconds": 8.643887
+    },
+    "unbound-map": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/world_to_content.py",
+        "--input",
+        "data-generators/output",
+        "--target",
+        "release/v1/world-data-target.json",
+        "--policy",
+        "release/v1/accepted-origins.json",
+        "--authored",
+        "content/authored/slice-v1",
+        "--out",
+        "content/world/1.60.1.70450"
+      ],
+      "elapsed_seconds": 9.76213879200077,
+      "exit_code": 0,
+      "peak_rss_kib": 1088476,
+      "resource_method": "os.wait4 exact child, shared Linux host",
+      "system_seconds": 0.735588,
+      "user_seconds": 8.958993
+    },
+    "world-pack-build": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "build-content-v2",
+        "--input",
+        "content/world/1.60.1.70450",
+        "--output",
+        "/tmp/navzeroth-weekly-212-world-pack"
+      ],
+      "elapsed_seconds": 103.21705141099665,
+      "exit_code": 0,
+      "peak_rss_kib": 6696932,
+      "resource_method": "os.wait4 exact child, shared Linux host",
+      "system_seconds": 2.311888,
+      "user_seconds": 100.799144
+    },
+    "world-pack-verify": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "verify-pack",
+        "--input",
+        "/tmp/navzeroth-weekly-212-world-pack"
+      ],
+      "elapsed_seconds": 48.557808670004306,
+      "exit_code": 0,
+      "peak_rss_kib": 5363204,
+      "resource_method": "os.wait4 exact child, shared Linux host",
+      "system_seconds": 1.659939,
+      "user_seconds": 46.890283
+    }
+  },
+  "pack": {
+    "build_report": {
+      "coverage_gaps": 393597,
+      "datasets": 1,
+      "distribution_eligible": true,
+      "files": 3,
+      "fixtures": 0,
+      "report_version": 2,
+      "total_bytes": 367731829
+    },
+    "files": {
+      "catalog.json": {
+        "bytes": 367721900,
+        "sha256": "bd701f5686ea6dc97a5fc75ea024b7c581147281d328b177e772d3da85bb8172"
+      },
+      "manifest.json": {
+        "bytes": 523,
+        "sha256": "d2000264a59a2c43a766275ea2b181c67c9924c317e28ad8763bcd82b4d2b2ff"
+      },
+      "sources.json": {
+        "bytes": 9406,
+        "sha256": "a876c3dbe23d2f9e0b16e1277deb8b0bc0a2133955ff2d0ab29ebd3be85f22eb"
+      }
+    },
+    "path": "/tmp/navzeroth-weekly-212-world-pack",
+    "verification_report": {
+      "coverage_gaps": 393597,
+      "datasets": 1,
+      "distribution_eligible": true,
+      "files": 3,
+      "fixtures": 0,
+      "report_version": 2,
+      "total_bytes": 367731829
+    }
+  },
+  "parity": {
+    "elapsed_seconds": 25.081020006997278,
+    "receipt": "docs/data/stable-weekly-world-212-parity-linux-v1.json",
+    "selected_bytes": 253642477,
+    "selected_files": 90
+  },
+  "pointer_restoration_rehearsal": {
+    "command": [
+      "python3",
+      "-I",
+      "data-generators/retain_world_sources.py",
+      "--root",
+      ".",
+      "--world",
+      "data-generators/output",
+      "--cache",
+      "/home/laymer/Devel/worktrees/datagen/data-generators/.cache",
+      "--pack-sources",
+      "content/world/1.60.1.70450/sources.json",
+      "--registry",
+      "docs/sources/source-admission-v1.json",
+      "--output",
+      "content/world/1.60.1.70450/source-closure.json",
+      "--normalization-policy",
+      "release/v1/source-normalization-policy.json",
+      "--source-commit",
+      "daad17bbb82e2da2c2b4b26b22ad083ba2425eda"
+    ],
+    "elapsed_seconds": 2.8273690809946856,
+    "exit_code": 0,
+    "material_metadata_byte_identical": true,
+    "scope": "Actual admitted cache-based original restoration from exact committed LFS pointers; no network acquisition or generic fact regeneration",
+    "upstream_originals": 19,
+    "verified": true
+  },
+  "schema_version": 1,
+  "source_output_commit": "4242022a902fc901eed1de1ab5283c942793aaad",
+  "world_revision": "navzeroth-world-1.60.1.70450-d390b8d8a9e842248d63c0f8"
+}

@@ -34,6 +34,8 @@ const TABLES: &[&str] = &[
     "catalog_asset_blobs",
     "catalog_asset_layers",
     "active_datasets",
+    "content_travel_choices",
+    "bundled_content_defaults",
     "party_profiles",
     "party_participants",
     "snapshot_promotions",

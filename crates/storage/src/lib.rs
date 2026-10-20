@@ -24,6 +24,7 @@ mod catalog_generation;
 pub mod content;
 mod content_catalog;
 pub mod content_dispositions;
+pub mod content_preferences;
 mod error;
 pub mod hash;
 #[doc(hidden)]
