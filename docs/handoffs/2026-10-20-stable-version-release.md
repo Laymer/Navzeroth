@@ -483,3 +483,42 @@ writer. Next: independently reviewed exact preparation/receipt/source closure,
 then final branch update and fresh applicable checks. Existing V6 package39413135905
 remains tied toffbf/b689; installer build passed, later acceptance remains pending.
 All nine canonical observations remain unverified. No stable tag/publication.
+
+
+## V7 independently reproduced signed closure
+
+World-authored additivepublicreview02e3e37d was normally integrated661ba398.
+Review26512B SHAfc47655fc8a0ecf0b39154e29c87949cdcbdaa6106b9c9f6f59ae14788f8f9a2
+binds testede45b302a andproduction5fb60d2e322be56c5353d5116d7d7d2021b2b249e39d64ce9da6eb56c7e28d83.
+Root independently streamed all27nested Git-pinned FileRefs and reproduced3119
+production entries. Actual preparation succeeded84resources395749866B; root and
+desktop separately streamed all84resources and verified83nonreview refs identical
+toV6. Desktop's separately captured actual optimized preview at661ba398 and pure
+prepare() reproduced both canonical outputs byte-for-byte.
+
+Manifest17183B SHA6c9e33a5755e1f93d8e0942e77b250e7d01a3d1cea26a08693355cf02ea3bc9c
+and identity526B SHAf45be516531f0483ba1994f524fe7a2f62011dcc0aa4439e0733fe1ff3e97a49
+were committedb5ce04b4 BEFORE restricted external key use. Actual two signatures
+were issued and verified against expectedidentity/publicpolicy; receipt1072B SHA
+2c86a6769e951cce91debe5ee705c03c7dc9b0244a7cd90139d60b428aab42bc and exact
+three canonical evidence FileRefs were committed4bab8400b75a7b8a7ae9ada9742522735497440c.
+Key permissions remain directory0700/files0600 outsideGit; sameoperator owns both.
+
+Root and independent tooling separately assembled and checked the DEFAULT compiled
+signer policy,84exact resources/two packs,noextras. Both fresh source prebuilds
+passed89evidence files/two packs and EXACTLY9pending observations,build_readytrue/
+stable_readyfalse/publicationfalse. Rootreports:/tmp/navzeroth-stable-v7-{preparation,
+receipt-verification,assembled,bundle-verified,build-readiness}.json; toolingreports:
+/tmp/navzeroth-tooling-v7-{crypto,assembly,compiled-check,readiness}.json. Desktop
+finalcompositionreview CLEAR at exact4bab8400: canonical refs/identity/receipt agree,
+all9pending, true historical proof scopes, unchanged runtime, no privatekey material.
+
+This excluded documentation commit preserves the exact production fingerprint.
+Existing V6package39413135905 passed build,unsignedrehearsal,silentinstall/start/
+uninstall and nativeWebView regression, and is testing publishedRCupgrade. Its
+actual fullschema4producer and all8acceptancecases remain pending at recording;
+these narrower passes do not establish currentV7acceptance. Preserve useful actual
+engineering results before the final branch update cancels that superseded run.
+Next: one finalV7candidate update and fresh required protected/source/nativecoverage/
+package checks, then resulting-main stability/exactdraft/owner gates. No stable
+tag or publication exists.

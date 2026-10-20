@@ -39,8 +39,9 @@ after instrumented assembly: the new diagnostic recorded an unowned root default
 coverage pass is claimed. Independently reviewed repairPR251 now sends every
 coverage child profile to its owned external target, retaining all guards/profiles.
 Root's actual10focused Node checks/actionlint passed after normal local integration
-e45b302a. V6 signed artifacts remain historical; additive V7 review and exact
-production/signature renewal are in progress. Rust product/UI/content are unchanged
+e45b302a. V6 signed artifacts remain historical. V7 independent review, exact preparation,
+signatures, two own compiled-policy assemblies and source prebuild passed at4bab8400
+(89evidence files/two packs; exactly9pending). Rust product/UI/content are unchanged
 from the actualfcf full-pack replay; its recorded scope is retained. V6 package
 39413135905 built its installer and is running unsigned verification; full eight-case
 acceptance and owner smoke remain unverified. No stable tag or publication.

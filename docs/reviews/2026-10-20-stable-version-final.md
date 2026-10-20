@@ -51,3 +51,18 @@ behavior tests. No core/app/storage/default/planner/content/data/inventory chang
 are present. Source dirt remains unidentified and actual native Rust Windows plus
 combined coverage remain unverified. Fresh root full-pack execution is scoped to
 fcf Linux and recorded in the version handoff, not claimed as Windows acceptance.
+
+
+## V7 final composition at4bab8400
+
+Independent desktop review CLEAR at4bab8400b75a7b8a7ae9ada9742522735497440c.
+Actual V7review27nestedrefs,84resources and purecanonical reproduction passed.
+Manifest/buildidentity were committed before key use; exactreceipt.payload agrees.
+Root and independent tooling separately verified both signatures/default compiled
+policy/own84resource assemblies and fresh89evidence/twopack buildreadiness, with
+exactly9pending observations and publicationfalse. Root10and world12focusedprofile
+checks plus actionlint passed; all actual Windows/coverage outcomes remain scoped
+to their recorded revisions. Product/content remainfcf-identical after251.
+Final excluded documentation changes preserve production5fb60d2e322be56c5353d5116d7d7d2021b2b249e39d64ce9da6eb56c7e28d83.
+Fresh finalcandidate/resulting-main/source/stability/hosted/draft/owner checks
+remain mandatory; this review does not promote any missing observation.
