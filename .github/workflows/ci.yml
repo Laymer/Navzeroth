@@ -39,7 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          lfs: false # imagery stays a pointer; CI never downloads LFS objects
+          lfs: false # only two exact role-audit inputs are selectively hydrated below
+      - name: Hydrate exact role-audit test inputs only
+        timeout-minutes: 5
+        run: python scripts/hydrate-role-audit-inputs.py --root .
       - run: rustup show
       - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
@@ -82,6 +85,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       # Offline unit tests only: generators never use the network in CI.
       - run: NAVZEROTH_DATAGEN_OFFLINE=1 python3 -m unittest discover -s data-generators/tests -v
+      - name: Exact role-audit hydration tests (local LFS objects only)
+        run: python3 -m unittest discover -s scripts/tests -p test_role_audit_inputs.py -v
   lua:
     name: Lua static checks
     runs-on: ubuntu-24.04
@@ -221,6 +226,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           lfs: false
+      - name: Hydrate exact role-audit test inputs only
+        timeout-minutes: 5
+        run: python scripts/hydrate-role-audit-inputs.py --root .
       - run: rustup show
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
