@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "portable_engineering_checkpoint_validation",
+  "tested_source_commit": "e68732ed2a632d49316ff1a307a45d337c912135",
+  "checks": {
+    "portable_rust_all_targets": {
+      "passed": 1595,
+      "failed": 0,
+      "ignored": 8,
+      "test_binaries": 205,
+      "excluded": "azeroth-desktop; missing Linux dbus-1.pc; native build unverified"
+    },
+    "desktop": {
+      "passed": 555,
+      "test_files": 66,
+      "line_coverage_percent": 95.98,
+      "measured_source_files": 91,
+      "all_source_files_at_least_90_percent_lines": true
+    },
+    "node_regressions": {
+      "passed": 39
+    },
+    "windows_powershell_5_1_synthetic_helpers": {
+      "contract_bounds_with_actual_root": 26,
+      "preparation": 42,
+      "producer_helpers": 10,
+      "actual_workflow_gate_with_synthetic_verifier": 12
+    },
+    "portable_all_target_clippy": "pass",
+    "rust_format": "pass",
+    "typescript": "pass",
+    "eslint": "pass",
+    "actionlint": "pass"
+  },
+  "initial_failed_checks": [
+    {
+      "check": "portable",
+      "exit_code": 101,
+      "observed_error": "Disk exhausted; fixture/coverage/compiler writes failed. Fresh full rerun passed after task-owner cleanup.",
+      "log": "/tmp/navzeroth-native-C-portable-enospc.log",
+      "log_bytes": 12288,
+      "log_sha256": "d0ff7a40a062188ece7ece6caa0b2c41d15e12db80f201357843e404ccc12f10"
+    },
+    {
+      "check": "ui",
+      "exit_code": 1,
+      "observed_error": "Disk exhausted; fixture/coverage/compiler writes failed. Fresh full rerun passed after task-owner cleanup.",
+      "log": "/tmp/navzeroth-native-C-ui-enospc.log",
+      "log_bytes": 4096,
+      "log_sha256": "03f39d08e8eddd20b66f161ad2d41561069b12c327cdc907e6e6219a1c2e4b05"
+    },
+    {
+      "check": "clippy",
+      "exit_code": 101,
+      "observed_error": "Disk exhausted; fixture/coverage/compiler writes failed. Fresh full rerun passed after task-owner cleanup.",
+      "log": "/tmp/navzeroth-native-C-clippy-enospc.log",
+      "log_bytes": 1599,
+      "log_sha256": "3241d2a93ea6194e9f6b51450b575c889ceeb8c4f0c0a5baf0685ddbe93d9dcd"
+    }
+  ],
+  "limitations": "Portable and synthetic-helper validation only. No actual hosted installer, performance, signed receipt or owner smoke acceptance. Existing release/source target validation remains unchanged/unverified."
+}
