@@ -1,4 +1,5 @@
-# Dot-source only. Operator records are drafts, never release-gate evidence.
+# Dot-source only. Historical schemas 1–3; operator records are unreviewed drafts.
+# Schema4 uses Stable-Acceptance.ps1 and separate exact-installer owner evidence.
 Set-StrictMode -Version 3.0
 . (Join-Path $PSScriptRoot 'Release-Materials.ps1')
 

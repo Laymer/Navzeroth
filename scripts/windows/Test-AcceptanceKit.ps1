@@ -14,24 +14,53 @@ try {
     Assert-AcceptanceToolRoot $root $PSScriptRoot
     Check 'tooling belongs to candidate checkout' $true
     Refuses 'foreign checkout tooling cannot claim candidate identity' { Assert-AcceptanceToolRoot $temp $PSScriptRoot }
-    $inventoryPath = Join-Path $root 'release/v1/coverage-inventory.json'
-    $inventory = (Read-BoundedReleaseText $inventoryPath) | ConvertFrom-Json
+    # Legacy contracts are owned bounded fixtures, never the mutable schema4 release.
+    $fixtureRoot = Join-Path $temp 'legacy-candidate'
+    New-Item -ItemType Directory -Path (Join-Path $fixtureRoot 'release/v1'), (Join-Path $fixtureRoot 'docs/compatibility') -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $root 'docs/compatibility/V1_ACCEPTANCE_RUNBOOK.md') -Destination (Join-Path $fixtureRoot 'docs/compatibility/V1_ACCEPTANCE_RUNBOOK.md')
+    $windows = @('WIN-INSTALL','WIN-UPGRADE','WIN-UNINSTALL','WIN-RECOVERY','WIN-OFFLINE','WIN-FOCUS','WIN-REFERENCE','WIN-DISPLAY','WIN-ACCESSIBILITY','WIN-PERFORMANCE')
+    $live = @('LIVE-BUILD','LIVE-CAPTURE','LIVE-TRANSFER','LIVE-RELOAD','LIVE-RESTRICTIONS','LIVE-HUD','LIVE-PLAN','LIVE-ADVANCE','LIVE-DEVIATION','LIVE-DUO','LIVE-GEAR','LIVE-DUNGEON','LIVE-REMINDERS','LIVE-SESSION','LIVE-NEXT-PLAN')
+    $domains = @('acquisition','class_roles','dungeons','equipment','geography','party','quests','reminders','travel')
+    $inventory = [ordered]@{schema_version=3; domains=@($domains | ForEach-Object { @{domain=$_; units=@(@{id=('synthetic-' + $_)})} })}
+    $manifest = [ordered]@{schema_version=3; checks=@($windows | ForEach-Object { @{id=$_; method='interactive_windows'} })}
+    $inventoryPath = Join-Path $fixtureRoot 'release/v1/coverage-inventory.json'
+    $manifestPath = Join-Path $fixtureRoot 'release/v1/acceptance-evidence.json'
+    Json $inventoryPath $inventory
+    Json $manifestPath $manifest
     $scenarios = [ordered]@{schema_version=1; inventory_sha256=(Get-AcceptanceHash $inventoryPath); scenarios=@()}
     foreach ($domain in $inventory.domains) { foreach ($unit in $domain.units) {
-        $scenarios.scenarios += @{id=('SCENARIO-' + $domain.domain.Replace('_', '-')); domain=$domain.domain; unit_id=$unit.id; method='live_game'; procedure='Synthetic procedure'; expected='Synthetic expectation'}
+        $scenarios.scenarios += @{id=('SCENARIO-' + $domain.domain.Replace('_', '-')); domain=$domain.domain; unit_id=$unit.id; method='interactive_windows'; procedure='Synthetic procedure'; expected='Synthetic expectation'}
     } }
     $scenarioPath = Join-Path $temp 'scenarios.json'
     Json $scenarioPath $scenarios
-    $rows = @(Get-AcceptanceProcedures $root $scenarioPath)
-    Check '10 Windows runbook procedures and all inventory units are queued' ($rows.Count -eq 19)
-    Check 'no live-client procedure is queued (ADR 0007)' (@($rows | Where-Object id -like 'LIVE-*').Count -eq 0)
+    foreach ($schema in 1, 2, 3) {
+        $inventory.schema_version = $schema
+        $manifest.schema_version = $schema
+        $manifest.checks = @($windows | ForEach-Object { @{id=$_; method='interactive_windows'} })
+        if ($schema -ne 3) { $manifest.checks += @($live | ForEach-Object { @{id=$_; method='live_game'} }) }
+        Json $inventoryPath $inventory
+        Json $manifestPath $manifest
+        $scenarios.inventory_sha256 = Get-AcceptanceHash $inventoryPath
+        Json $scenarioPath $scenarios
+        $rows = @(Get-AcceptanceProcedures $fixtureRoot $scenarioPath)
+        $liveCount = if ($schema -eq 3) { 0 } else { 15 }
+        Check "legacy schema $schema retains exact runbook and unit accounting" ($rows.Count -eq (10 + $liveCount + 9) -and @($rows | Where-Object method -eq 'live_game').Count -eq $liveCount -and @($rows | Where-Object inventory_unit -ne $null).Count -eq 9)
+    }
+    $inventory.schema_version = 4; $manifest.schema_version = 4
+    Json $inventoryPath $inventory; Json $manifestPath $manifest
+    $message = ''
+    try { Get-AcceptanceProcedures $fixtureRoot $scenarioPath | Out-Null } catch { $message = $_.Exception.Message }
+    Check 'schema4 refuses explicitly rather than becoming legacy acceptance' ($message -ceq 'Unsupported acceptance or inventory schema.')
+    $inventory.schema_version = 3; $manifest.schema_version = 3
+    Json $inventoryPath $inventory; Json $manifestPath $manifest
+    Check 'schema3 queues no live-client procedure' (@($rows | Where-Object method -eq 'live_game').Count -eq 0)
     $scenarios.inventory_sha256 = '0' * 64
     Json $scenarioPath $scenarios
-    Refuses 'stale inventory scenarios refuse' { Get-AcceptanceProcedures $root $scenarioPath }
+    Refuses 'stale inventory scenarios refuse' { Get-AcceptanceProcedures $fixtureRoot $scenarioPath }
     $scenarios.inventory_sha256 = Get-AcceptanceHash $inventoryPath
     $scenarios.scenarios = @($scenarios.scenarios | Select-Object -Skip 1)
     Json $scenarioPath $scenarios
-    Refuses 'missing unit scenarios refuse' { Get-AcceptanceProcedures $root $scenarioPath }
+    Refuses 'missing unit scenarios refuse' { Get-AcceptanceProcedures $fixtureRoot $scenarioPath }
     $row = $rows[0]
     Refuses 'pass without evidence refuses' { New-AcceptanceResult $row pass observed now 0 @() }
     Refuses 'unknown result vocabulary refuses' { New-AcceptanceResult $row skipped reason now 0 @() }
