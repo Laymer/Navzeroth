@@ -42,7 +42,7 @@ def object_ref(root, sha):
 
 
 FUNCTIONAL_PROOF='release/v1/functional-scenarios.json'
-FUNCTIONAL_SCENARIOS={'quests':'source_quest_projection_v1','class_roles':'authored_score_model_boundaries_v1','reminders':'authored_heuristic_reminder_boundaries_v1','dungeons':'supported_dungeon_guidance_v1'}
+FUNCTIONAL_SCENARIOS={'quests':'source_quest_projection_v1','class_roles':'authored_score_model_boundaries_v1','reminders':'authored_heuristic_reminder_boundaries_v1','dungeons':'complete_dungeon_associations_v2'}
 FUNCTIONAL_SOURCE='crates/app/tests/stable_bundled_functional.rs'
 
 def functional_proof(root,enumeration,records):
@@ -68,11 +68,18 @@ def functional_proof(root,enumeration,records):
         if result.returncode or len(committed)>128*1024 or committed!=raw:
             raise ValueError('functional test is not the exact committed implementation')
     inputs=proof['source_inputs']
-    required={'data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json','docs/data/role-coverage-v1.json','data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json'}
+    required={'data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json','docs/data/role-coverage-v1.json','data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json','docs/data/dungeon-associations-v1.json','scripts/validate-dungeon-associations.py'}
     if len(inputs)!=len(required) or {f['path'] for f in inputs}!=required:
         raise ValueError('functional input proof is incomplete')
     for ref in inputs:
         if reference(root,ref['path'])!=ref: raise ValueError('functional source input changed')
+    for name in ('docs/data/dungeon-associations-v1.json','scripts/validate-dungeon-associations.py'):
+        raw=bounded.read_file(root/name,1024*1024)
+        with tempfile.TemporaryFile() as pinned:
+            result=subprocess.run(['git','-C',str(root),'show',commit+':'+name],stdout=pinned,stderr=subprocess.DEVNULL)
+            pinned.seek(0);committed=pinned.read(1024*1024+1)
+            if result.returncode or len(committed)>1024*1024 or committed!=raw:
+                raise ValueError('independent association oracle is not the committed implementation/input')
     units=proof['units'];by_domain={u['domain']:u for u in units}
     if len(units)!=4 or set(by_domain)!=set(FUNCTIONAL_SCENARIOS):
         raise ValueError('functional scenario inventory is incomplete or duplicate')
@@ -92,8 +99,10 @@ def functional_proof(root,enumeration,records):
     if not additional or len(additional)>128 or any(f['id'] not in records.get(f['domain'],{}) for f in additional):
         raise ValueError('functional extra source record is unresolved')
     counts=proof['counts']
-    if counts!={'models':54,'classes':9,'score_boundary_cases':108,'reminder_boundary_cases':24,'dungeon_packages':26,'raw_dungeons':27,'excluded_test_maps':[169]}:
+    if counts!={'models':54,'classes':9,'score_boundary_cases':108,'reminder_boundary_cases':24,'dungeon_packages':26,'raw_dungeons':27,'excluded_test_maps':[169],'dungeon_quest_references':438,'dungeon_reward_references':16390,'restored_affected_reward_references':8107}:
         raise ValueError('functional supported scenario coverage changed; review required')
+    if len(by_domain['dungeons']['source_record_ids'])!=27:
+        raise ValueError('functional dungeon coverage omits source records')
     if len(by_domain['class_roles']['source_record_ids'])!=54 or len(by_domain['reminders']['source_record_ids'])!=18:
         raise ValueError('functional model/rule coverage is incomplete')
     return dict(reference=reference(root,FUNCTIONAL_PROOF),units=by_domain)

@@ -81,10 +81,13 @@ class StableInventoryGeneration(unittest.TestCase):
             'equipment':[key('items','i',{'status':'known','value':'base'})]}
         records={domain:{identity:['synthetic-source'] for identity in keys} for domain,keys in ids.items()}
         inputs=[]
-        for name in ('data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json','docs/data/role-coverage-v1.json','data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json'):
+        for name in ('data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json','docs/data/role-coverage-v1.json','data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json','docs/data/dungeon-associations-v1.json','scripts/validate-dungeon-associations.py'):
             path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('{"synthetic":true}')
             inputs.append(generator.reference(root,name))
-        proof=dict(schema_version=1,kind='manual_engineering_full_pack_functional_scenarios',status='pass',game_observation=False,platform='synthetic fixture only',disclosure='Synthetic contract test, no actual passing application workflow claimed.',test_source=dict(path=generator.FUNCTIONAL_SOURCE,commit=commit,sha256=hashlib.sha256(source.read_bytes()).hexdigest()),packs=[p['manifest'] for p in e['packs']],source_inputs=inputs,additional_source_records=[dict(domain='equipment',id=ids['equipment'][0])],units=[dict(domain=domain,scenario=scenario,scope='Synthetic bounded binding fixture.',source_record_ids=sorted(ids[domain])) for domain,scenario in generator.FUNCTIONAL_SCENARIOS.items()],counts=dict(models=54,classes=9,score_boundary_cases=108,reminder_boundary_cases=24,dungeon_packages=26,raw_dungeons=27,excluded_test_maps=[169]))
+        subprocess.run(['git','-C',str(root),'add','docs/data/dungeon-associations-v1.json','scripts/validate-dungeon-associations.py'],check=True,stdout=subprocess.DEVNULL)
+        subprocess.run(['git','-C',str(root),'commit','-qm','Synthetic oracle binding'],check=True,stdout=subprocess.DEVNULL)
+        commit=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD']).decode().strip()
+        proof=dict(schema_version=1,kind='manual_engineering_full_pack_functional_scenarios',status='pass',game_observation=False,platform='synthetic fixture only',disclosure='Synthetic contract test, no actual passing application workflow claimed.',test_source=dict(path=generator.FUNCTIONAL_SOURCE,commit=commit,sha256=hashlib.sha256(source.read_bytes()).hexdigest()),packs=[p['manifest'] for p in e['packs']],source_inputs=inputs,additional_source_records=[dict(domain='equipment',id=ids['equipment'][0])],units=[dict(domain=domain,scenario=scenario,scope='Synthetic bounded binding fixture.',source_record_ids=sorted(ids[domain])) for domain,scenario in generator.FUNCTIONAL_SCENARIOS.items()],counts=dict(models=54,classes=9,score_boundary_cases=108,reminder_boundary_cases=24,dungeon_packages=26,raw_dungeons=27,excluded_test_maps=[169],dungeon_quest_references=438,dungeon_reward_references=16390,restored_affected_reward_references=8107))
         (root/generator.FUNCTIONAL_PROOF).write_bytes(generator.encoded(proof))
         return root,e,records,proof
 
@@ -94,7 +97,7 @@ class StableInventoryGeneration(unittest.TestCase):
             result=generator.functional_proof(root,e,records)
             self.assertEqual(len(result['units']),4)
             self.assertEqual(result['reference'],generator.reference(root,generator.FUNCTIONAL_PROOF))
-            for kind in ('pack','runtime_id','source','missing_unit','counts','input','game_observation'):
+            for kind in ('pack','runtime_id','source','missing_unit','counts','input','game_observation','oracle'):
                 changed=copy.deepcopy(proof)
                 if kind=='pack':changed['packs'][0]['sha256']='0'*64
                 elif kind=='runtime_id':changed['units'][0]['source_record_ids'][0]='quest-stage-runtime-only'
@@ -102,6 +105,9 @@ class StableInventoryGeneration(unittest.TestCase):
                 elif kind=='missing_unit':changed['units'].pop()
                 elif kind=='counts':changed['counts']['classes']=10
                 elif kind=='input':changed['source_inputs'][0]['bytes']+=1
+                elif kind=='oracle':
+                    (root/'scripts/validate-dungeon-associations.py').write_text('Altered synthetic oracle')
+                    changed['source_inputs'][-1]=generator.reference(root,'scripts/validate-dungeon-associations.py')
                 else:changed['game_observation']=True
                 (root/generator.FUNCTIONAL_PROOF).write_bytes(generator.encoded(changed))
                 with self.subTest(kind=kind),self.assertRaises(ValueError):generator.functional_proof(root,e,records)
