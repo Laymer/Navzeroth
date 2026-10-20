@@ -321,3 +321,44 @@ fn content_sessions_annotations_and_party_proposals_survive_and_tampered_metadat
         assert!(!refused.path.exists());
     }
 }
+
+#[test]
+fn empty_plan_reconstruction_still_refuses_corrupt_noncurrent_snapshot() {
+    let source = TempDb::new("empty-plan-hidden-history");
+    let target = TempDb::new("empty-plan-hidden-history-refused");
+    let older = Doc::base().decode();
+    let newer = Doc::base()
+        .snapshot_id("newer-current")
+        .session("demo-session-001", 13)
+        .decode();
+    let key = ProfileKey::of(&older);
+    let mut store = SqliteStore::open(&source.path).unwrap();
+    for envelope in [&older, &newer] {
+        store
+            .import_character_snapshot(envelope, ImportSource::Fixture, None)
+            .unwrap();
+    }
+    assert_eq!(store.current_snapshot(&key).unwrap().unwrap(), newer);
+    assert!(store.current_plan().unwrap().plan.is_none());
+    drop(store);
+    let conn = raw(&source.path);
+    assert_eq!(
+        conn.execute(
+            "UPDATE snapshots SET content_sha256=printf('%064d',0) WHERE snapshot_id=?1",
+            [older.payload.id.as_str()]
+        )
+        .unwrap(),
+        1
+    );
+    drop(conn);
+    // Reading the current selection succeeds; reconstruction must still validate
+    // and refuse the altered historical row rather than trusting only that view.
+    let store = SqliteStore::open(&source.path).unwrap();
+    assert_eq!(store.current_snapshot(&key).unwrap().unwrap(), newer);
+    assert!(store.current_plan().unwrap().plan.is_none());
+    drop(store);
+    let before = std::fs::read(&source.path).unwrap();
+    assert!(reconstruct_backup(&source.path, &target.path).is_err());
+    assert!(!target.path.exists());
+    assert_eq!(std::fs::read(&source.path).unwrap(), before);
+}
