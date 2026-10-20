@@ -86,6 +86,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "immutable verified catalog imagery",
         sql: include_str!("schema_v12.sql"),
     },
+    Migration {
+        version: 13,
+        name: "durable content travel choices and versioned bundle defaults",
+        sql: include_str!("schema_v13.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.

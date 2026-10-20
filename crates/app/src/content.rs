@@ -10,6 +10,10 @@ use azeroth_storage::content::ContentRevisionKey;
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize)]
 pub struct ContentInspection {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bundle_defaults: Option<azeroth_storage::content_preferences::BundleDefaultState>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub accepts_inferred_travel: Option<bool>,
     pub key: ContentRevisionKey,
     pub report: ContentReport,
     pub sources: Vec<SourceRecord>,
@@ -56,6 +60,8 @@ pub(crate) fn inspect(content: impl CatalogView) -> Result<ContentInspection> {
     report.gaps.truncate(200);
     report.errors.truncate(200);
     Ok(ContentInspection {
+        bundle_defaults: None,
+        accepts_inferred_travel: None,
         key: content.key(),
         report,
         sources: content.sources().iter().take(200).cloned().collect(),
@@ -439,7 +445,7 @@ impl crate::snapshots::SnapshotApplication {
     /// world pack). A single revision is activated unchanged. With
     /// `accept_inferred_travel`, planning on exactly this active revision may
     /// use unverified edges whose evidence is all `inferred` (ADR 0007 §8);
-    /// any other activation or revision keeps the strict default.
+    /// choices persist per immutable revision; rollback restores its saved choice.
     pub fn activate_content_set(
         &self,
         profile_id: &str,
@@ -482,10 +488,9 @@ impl crate::snapshots::SnapshotApplication {
                 azeroth_storage::content::ActiveContentRevision::V2(std::sync::Arc::new(composed))
                     .key()
             };
-            store.activate_content_revision(&key)?;
+            store.activate_content_with_travel(&key, accept_inferred_travel)?;
             Ok(key)
         })?;
-        self.set_inferred_travel(accept_inferred_travel.then(|| key.clone()))?;
         let content = self
             .with_store_mut(|store| store.active_catalog_revision(&key.scope))?
             .filter(|c| c.key() == key)
@@ -574,6 +579,60 @@ impl crate::snapshots::SnapshotApplication {
         inspect(azeroth_storage::content::ActiveContentRevision::V2(
             std::sync::Arc::new(content),
         ))
+    }
+}
+
+impl crate::snapshots::SnapshotApplication {
+    /// Called only after the native loader verifies and stages the shipped packs.
+    /// Keys may name an already validated composed revision. This API does not
+    /// establish publisher authenticity or invent a shipped resource manifest.
+    pub fn configure_bundled_defaults(
+        &self,
+        version: &str,
+        keys: &[ContentRevisionKey],
+    ) -> Result<Vec<bool>> {
+        if keys.len() > MAX_CONTENT_SET || keys.is_empty() {
+            return Err(invalid("Bundled default scope count is out of range"));
+        }
+        if keys
+            .iter()
+            .enumerate()
+            .any(|(n, key)| keys[..n].iter().any(|other| other.scope == key.scope))
+        {
+            return Err(invalid("Bundled defaults repeat a scope"));
+        }
+        self.with_store_mut(|store| {
+            keys.iter()
+                .map(|key| store.apply_bundle_default(version, key))
+                .collect()
+        })
+    }
+}
+
+impl crate::snapshots::SnapshotApplication {
+    /// Prepare a deterministic bundle set without moving the active pointer.
+    pub fn stage_content_set(&self, keys: &[ContentRevisionKey]) -> Result<ContentRevisionKey> {
+        let Some(first) = keys.first() else {
+            return Err(invalid("Content set is empty"));
+        };
+        if keys.len() > MAX_CONTENT_SET || keys.iter().any(|key| key.scope != first.scope) {
+            return Err(invalid("Content set scopes differ or exceed bounds"));
+        }
+        self.with_store_mut(|store| {
+            let mut members = Vec::new();
+            for key in keys {
+                match store.catalog_revision(key)? {
+                    Some(azeroth_storage::content::ActiveContentRevision::V2(content)) => {
+                        members.push(content)
+                    }
+                    _ => return Err(invalid("Bundled content set requires stored v2 revisions")),
+                }
+            }
+            let composed = compose(&members)?;
+            let key = composed.key();
+            store.stage_content_v2_revision(&composed)?;
+            Ok(key)
+        })
     }
 }
 

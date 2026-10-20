@@ -15,6 +15,22 @@ pub const MAX_RECORDS: usize = 2_000_000;
 /// `release/v1/world-data-target.json`, the `LIVE-*` checks and the live slice
 /// matrix are no longer required, and evidence binds the accepted-origin policy.
 pub const SCHEMA_WORLD_DATA: u32 = 3;
+/// ADR 0008: hosted Windows acceptance and exact-installer owner smoke.
+pub const SCHEMA_STABLE: u32 = 4;
+pub fn is_world_schema(version: u32) -> bool {
+    matches!(version, SCHEMA_WORLD_DATA | SCHEMA_STABLE)
+}
+pub const HOSTED_WINDOWS_CHECKS: [&str; 8] = [
+    "HOSTED-INSTALL",
+    "HOSTED-FIRST-START",
+    "HOSTED-UPGRADE-RC1",
+    "HOSTED-DOWNGRADE-REFUSAL",
+    "HOSTED-PERSISTENCE-RECOVERY",
+    "HOSTED-RESOURCES",
+    "HOSTED-OFFLINE",
+    "HOSTED-PERFORMANCE",
+];
+pub const OWNER_INSTALLER_SMOKE: &str = "OWNER-INSTALLER-SMOKE";
 pub const DOMAINS: [&str; 9] = [
     "quests",
     "equipment",
@@ -152,19 +168,26 @@ pub struct ReleasePolicy<'a> {
 }
 /// The target a manifest must declare under the supplied release inputs.
 pub fn expected_target_with(schema_version: u32, policy: &ReleasePolicy<'_>) -> Option<Target> {
-    if schema_version == SCHEMA_WORLD_DATA {
+    if is_world_schema(schema_version) {
         policy.target.cloned()
     } else {
         expected_target(schema_version)
     }
 }
-/// Mandatory acceptance rows and their methods for a manifest schema. Schema 3
-/// drops the `LIVE-*` rows (ADR 0007 §5); the `WIN-*` rows are unchanged.
+/// Mandatory acceptance rows and their methods for each versioned contract.
+/// Schema 3 removes live checks; schema 4 replaces Windows rows under ADR 0008.
 pub fn required_checks(schema_version: u32) -> Vec<(&'static str, Method)> {
+    if schema_version == SCHEMA_STABLE {
+        return HOSTED_WINDOWS_CHECKS
+            .into_iter()
+            .map(|id| (id, Method::HostedWindows))
+            .chain([(OWNER_INSTALLER_SMOKE, Method::InteractiveWindows)])
+            .collect();
+    }
     let windows = WINDOWS_CHECKS
         .into_iter()
         .map(|id| (id, Method::InteractiveWindows));
-    if schema_version == SCHEMA_WORLD_DATA {
+    if is_world_schema(schema_version) {
         windows.collect()
     } else {
         LIVE_CHECKS
@@ -185,7 +208,7 @@ pub fn origin_accepted_sources(
     let Some(origins) = policy.origins else {
         return BTreeSet::new();
     };
-    if inventory.schema_version != SCHEMA_WORLD_DATA
+    if !is_world_schema(inventory.schema_version)
         || policy
             .target
             .is_none_or(|t| t.edition != origins.target_edition.as_str())
@@ -249,6 +272,7 @@ pub enum Status {
 pub enum Method {
     LiveGame,
     InteractiveWindows,
+    HostedWindows,
     Automated,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -321,6 +345,9 @@ pub struct Inventory {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Acceptance {
+    /// Schema 4 only: exact installer exercised by this observation.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub installer_sha256: Option<Sha256Hex>,
     pub id: String,
     pub status: Status,
     pub method: Method,
@@ -378,6 +405,9 @@ pub struct Deferral {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
+    /// Schema 4 only: independently verified draft installer identity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub candidate_installer_sha256: Option<Sha256Hex>,
     pub schema_version: u32,
     /// Always present; must equal the inventory target, including null.
     pub target: Option<Target>,
@@ -462,6 +492,29 @@ impl Readiness {
         self.publication_allowed = !self.stable;
     }
 }
+/// Artifact preparation phases never authorize publication. Schema 4 only.
+#[derive(Clone, Copy, Debug, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BuildPhase {
+    Prebuild,
+    Draft,
+}
+impl BuildPhase {
+    pub fn ready(self, report: &Readiness) -> bool {
+        report.report_version == SCHEMA_STABLE
+            && report.stable
+            && report.candidate_ready
+            && report.pending.iter().all(|requirement| match requirement {
+                PendingRequirement::InitialTestedBinding => false,
+                PendingRequirement::Observation { check_id } => match self {
+                    Self::Prebuild => required_checks(SCHEMA_STABLE)
+                        .iter()
+                        .any(|(id, _)| *id == check_id),
+                    Self::Draft => check_id == OWNER_INSTALLER_SMOKE,
+                },
+            })
+    }
+}
 pub struct Bindings<'a> {
     pub inventory_sha256: &'a str,
     pub production_sha256: &'a str,
@@ -527,7 +580,7 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
         1 => {
             inventory.slice.is_none() && inventory.domains.iter().all(|d| d.out_of_scope.is_empty())
         }
-        2 | SCHEMA_WORLD_DATA => inventory.slice.is_some(),
+        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE => inventory.slice.is_some(),
         _ => false,
     };
     if !shape_matches {
@@ -537,10 +590,21 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     let evidence: Evidence = decode(bytes)?;
-    let world = evidence.schema_version == SCHEMA_WORLD_DATA;
-    if !matches!(evidence.schema_version, 1 | 2 | SCHEMA_WORLD_DATA)
-        || (matches!(evidence.schema_version, 1 | SCHEMA_WORLD_DATA) && !evidence.matrix.is_empty())
+    let world = is_world_schema(evidence.schema_version);
+    if !matches!(
+        evidence.schema_version,
+        1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+    ) || (matches!(
+        evidence.schema_version,
+        1 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+    ) && !evidence.matrix.is_empty())
         || world != evidence.origin_policy.is_some()
+        || (evidence.schema_version != SCHEMA_STABLE
+            && (evidence.candidate_installer_sha256.is_some()
+                || evidence
+                    .checks
+                    .iter()
+                    .any(|c| c.installer_sha256.is_some() || c.method == Method::HostedWindows)))
     {
         return Err("Unsupported evidence version");
     }
@@ -715,14 +779,23 @@ pub fn assess_with(
 ) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
     check_limits(inventory, evidence)?;
-    if !matches!(inventory.schema_version, 1 | 2 | SCHEMA_WORLD_DATA)
-        || evidence.is_some_and(|e| !matches!(e.schema_version, 1 | 2 | SCHEMA_WORLD_DATA))
+    if !matches!(
+        inventory.schema_version,
+        1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+    ) || evidence
+        .is_some_and(|e| !matches!(e.schema_version, 1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE))
     {
         return Err("Unsupported release manifest version");
     }
-    let world = inventory.schema_version == SCHEMA_WORLD_DATA;
+    let world = is_world_schema(inventory.schema_version);
     let mut report = Readiness {
-        report_version: if world { 3 } else { 2 },
+        report_version: if inventory.schema_version == SCHEMA_STABLE {
+            4
+        } else if world {
+            3
+        } else {
+            2
+        },
         version: version.into(),
         stable,
         stable_ready: true,
@@ -749,7 +822,10 @@ pub fn assess_with(
     {
         report.block("Accepted-origin policy names a different target edition");
     }
-    if matches!(inventory.schema_version, 2 | SCHEMA_WORLD_DATA) {
+    if matches!(
+        inventory.schema_version,
+        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+    ) {
         if !world && frozen_release_target().is_none() {
             report.block(
                 "Release target is pending the first stable live build after launch (ADR 0006)",
@@ -766,7 +842,10 @@ pub fn assess_with(
     }
     // A slice always leaves content outside it; an omitted or empty list would
     // merge "not declared" into "nothing outside" (ADR 0006 section 2).
-    if matches!(inventory.schema_version, 2 | SCHEMA_WORLD_DATA) {
+    if matches!(
+        inventory.schema_version,
+        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+    ) {
         for domain in inventory
             .domains
             .iter()
@@ -905,6 +984,7 @@ pub fn assess_with(
             && check.recorded_at.is_none()
             && check.environment.is_none()
             && check.artifacts.is_empty()
+            && check.installer_sha256.is_none()
             && expected_checks.contains(check.id.as_str())
         {
             report.defer(
@@ -916,6 +996,9 @@ pub fn assess_with(
             continue;
         }
         if initial_binding
+            || (inventory.schema_version == SCHEMA_STABLE
+                && (evidence.candidate_installer_sha256.is_none()
+                    || check.installer_sha256 != evidence.candidate_installer_sha256))
             || check.status != Status::Pass
             || check.method != method
             || [&check.operator, &check.recorded_at, &check.environment]

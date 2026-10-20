@@ -69,10 +69,11 @@ pub(crate) fn calculate_controlled(
         .candidates
         .sort_by(|a, b| a.objective.cmp(&b.objective));
     let dataset = &content.reference();
+    let objectives = crate::planning_objectives::objectives(content, &snapshot.payload.character)?;
     if request
         .excluded
         .iter()
-        .any(|id| !dataset.objectives.iter().any(|o| &o.id == id))
+        .any(|id| !objectives.iter().any(|o| &o.id == id))
     {
         return Err(invalid("Excluded objective is absent from active content"));
     }
@@ -91,8 +92,7 @@ pub(crate) fn calculate_controlled(
         if !seen.insert(&estimate.objective) {
             return Err(invalid("Duplicate planning candidate"));
         }
-        let objective = dataset
-            .objectives
+        let objective = objectives
             .iter()
             .find(|o| o.id == estimate.objective)
             .ok_or_else(|| invalid("Planning objective is absent from active content"))?;
@@ -233,6 +233,7 @@ pub(crate) fn calculate_controlled(
         },
         control,
     )?;
+    let projected_assumption = request.candidates.iter().any(|candidate| !dataset.objectives.iter().any(|o| o.id == candidate.objective)).then_some("Quest stages come from source records; stage identifiers do not establish objective details or counts, and unavailable requirements remain unresolved");
     Ok(PlanningReport {
         request,
         fixture: snapshot.fixture,
@@ -247,6 +248,7 @@ pub(crate) fn calculate_controlled(
         ]
         .into_iter()
         .chain(travel.assumption())
+        .chain(projected_assumption)
         .collect(),
     })
 }

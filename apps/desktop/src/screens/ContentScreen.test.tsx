@@ -5,8 +5,8 @@ import { createClient, type CommandAdapter } from "../commands";
 import type { ContentInspection } from "../commands/contract";
 const context = { namespace: "demo" as const, build: { edition: "wow_forever", build: "synthetic", interface: "synthetic" } };
 const inspection: ContentInspection = { key: { scope: { context, fixture: true }, revision: "r1" }, report: { passes: true, report_version: 1, errors: [], gaps: [{ code: "unverified_evidence" }], coverage: { collections: { quests: { total: 1, fields: {} } }, evidence_records: { by_confidence: { verified_on_build: 0, inferred: 1 } } } }, sources: [{ id: "source", publisher: "Synthetic author", license: { status: "unknown" }, redistribution: { status: "known", value: "not_permitted" }, attribution: { status: "unknown" }, offline_usable: { status: "known", value: false } }], conflicts: [] };
-function mock(content:ContentInspection=inspection,staging:ContentInspection[]=[]) {
-  let active: ContentInspection | null = null;
+function mock(content:ContentInspection=inspection,staging:ContentInspection[]=[],initialActive=false) {
+  let active: ContentInspection | null = initialActive ? content : null;
   let fail = false;
   const calls: { command: string; input: unknown }[] = [];
   const adapter: CommandAdapter = { invoke(command, input) {
@@ -109,4 +109,12 @@ it("activates several staged packs of the selected context as one set", async ()
   await screen.findByText(/2 packs activated together as set-abc/);
   expect(calls).toContainEqual({ command: "activate_content_set", input: { profile_id: "stored-one", revisions: ["r1", "world"], accept_inferred_travel: false } });
   expect(changed).toHaveBeenCalledOnce();
+});
+
+it("discloses version default resets and the persisted revision travel choice", async () => {
+  const content:ContentInspection = {...inspection,accepts_inferred_travel:true,bundle_defaults:{app_version:"1.0.0",previous_app_version:"1.0.0-rc.1",revision:"r1"}};
+  const {client}=mock(content,[],true);
+  render(<ContentScreen client={client} onChanged={()=>{}} refreshKey={0}/>);
+  expect(await screen.findByText(/Bundled defaults applied for 1.0.0 after 1.0.0-rc.1/)).toBeInTheDocument();
+  expect(screen.getByText("Active revision travel estimates: accepted.")).toBeInTheDocument();
 });

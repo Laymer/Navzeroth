@@ -5,7 +5,7 @@ use azeroth_core::{
     error::{AppError, ErrorCode, Result},
     types::{DatasetRevision, Sha256Hex},
 };
-use azeroth_storage::{SqliteStore, content::ActiveContentRevision};
+use azeroth_storage::{SnapshotStore, SqliteStore, content::ActiveContentRevision};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
@@ -203,6 +203,26 @@ impl SnapshotApplication {
             store.with_immediate_read(|store| {
                 let content = crate::authored_content::selected_catalog(store, &r.subject)?
                     .ok_or_else(|| invalid("No active catalog"))?;
+                if r.collection == Collection::Objectives
+                    && let PreparationSubject::Character { profile_id } = &r.subject
+                {
+                    let key = crate::snapshots::resolve(store, profile_id)?;
+                    let snapshot = store
+                        .current_snapshot(&key)?
+                        .ok_or_else(|| invalid("Profile has no current snapshot"))?;
+                    return crate::planning_objectives::page(
+                        store,
+                        &content,
+                        &snapshot.payload.character,
+                        Some(&PageRequest {
+                            revision: r.revision,
+                            catalog_sha256: r.catalog_sha256,
+                            collection: r.collection,
+                            offset: r.offset,
+                            limit: MAX_PAGE_ROWS,
+                        }),
+                    );
+                }
                 page(
                     store,
                     &content,

@@ -99,6 +99,8 @@ export interface PartyQuestCatalog {
 }
 type Policy<T> = { status: "known"; value: T } | { status: "unknown" | "unsupported" | "restricted" | "not_applicable" };
 export interface ContentInspection {
+  accepts_inferred_travel?: boolean;
+  bundle_defaults?: {app_version:string;previous_app_version:string|null;revision:string};
   pages?: {content_sha256:string;sources:number;conflicts:number;gaps:number;errors:number};
   key: { scope: { context: DataContext; fixture: boolean }; revision: string };
   report: {
