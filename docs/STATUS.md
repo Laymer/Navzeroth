@@ -31,6 +31,18 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Current V12preparation: independently reviewed native-driver repair259 final7bffde54
+normally integratedb615d6f9. Exact issued synthetic profile/revision/scope must
+survive; completed IPC and matching UI replace the initial-placeholder count.
+Root/tooling blocked initial character/profile-ID confusion before integration;
+corrected real DTO and late-completion regressions pass. Author/tooling each43Node;
+root exact integrated43Node pass. Runtime/functional source remains1dd; only driver/
+helper/tests differ from7379. Newtestedb615/productionb378b341; V11identities/raw
+archived BEFORE integration; canonical outputs cleared only after archival and
+all9observations unverified. Next independent V12 review/preparation/signatures
+and fresh all-ten/source/Windows checks. No tag/owner result/publication.
+
+
 Latest actual V11 outcome: package39441834744 FAILED at blocking native-upgrade
 gate before all eight stable hosted cases. Actual native smoke32/0; upgraded
 verify6/1 reported active-content loss before its IPC result completed. Desktop

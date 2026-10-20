@@ -916,3 +916,36 @@ production/review/prepared identities/receipts before one fresh candidate push a
 all ten/source/native gates. Fresh resulting-main stability still precedes tag;
 verified exact draft precedes owner smoke, then full readiness/publication/public
 verification and website deployment. No stable tag or publication exists.
+
+
+## Reviewed PR259 integration and V12 preparation
+
+Desktop claim39e25512/initialcode9a817375 was independently blocked by root/tooling:
+character is not ProfileDto.id. Normal child54258821 resolves issued stored-ID by
+character/display_name/fullcontext/fixture. Root requested late-completion guards
+and real Rust-written golden positive; codea3ff4bfb/final7bffde54 passed both final
+reviews and43Node tests each author/tooling. Root ran exact integrated43Node checks
+at normal mergeb615d6f944748b474dce4e0ebd8f1af2dce66f68,0fail/0skip, JS syntax/diff
+PASS. PR259 marked ready after review; local normal integration awaits routine
+parent push with renewed valid signed release composition, not a main merge.
+See final review docs/reviews/2026-10-20-native-upgrade-active-final.md.
+
+The repair strictly validates completed issued profile and active synthetic
+revision/scope, then matching rendered inspection with a30s deadline. Actual
+absence/wrong identity/error/deadline still fails; late profiles/active replies
+cannot issue further IPC/UI. Initial synthetic scope is never excused by real
+bundle default resets. This source repair is not an actual Windows acceptance pass.
+All8V11stablecases remain SKIPPED. Root archived actual V11coverage verdict/native
+receipts and explicitly derived LCOV summaries0fd50561 with raw/derived provenance.
+
+Root confirms runtime Rust/UI/addon/content/Cargo bytes remain1ddaa8d6. Only
+package outer workflow line plus Native-Smoke.mjs/native-smoke-lib.mjs/test differ
+in production. Functional proofef3c7098/measurementec335cff retain actual1dd/b9
+execution and are not rerun/restamped for driver-only changes. Newtestedancestor
+b615d6f9, productionb378b34159da86084cb20e4fc11741cd3f6d167656c4532fff50da7727f73266
+(3125entries). Metadata changes only tested_source_commit, production_sha256 and
+bundled_content=null; exactly9observations pristineunverified. Three canonical
+V11identities removed ONLY after byte-exact archiveb0d9c442. Next independent V12
+public review, actual preparation/reproduction, committed identities BEFORE keys,
+new receipts/compiled-policy/source verification, then onefreshcandidatepush.
+No tag, owner result or publication; remoteee26 remains actualfailedV11.
