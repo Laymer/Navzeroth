@@ -1,0 +1,106 @@
+{
+  "actual_pr_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
+  "cancellation_attribution": "V14 interrupted after normal PR264 merge triggered configured cancel-in-progress. Root recorded premature merge; no full CI/coverage success. Separate stale-binding intermediate7667 workflows were explicitly cancelled by coordinator; none supplies acceptance.",
+  "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "ci": {
+    "browser": {
+      "e2e_passed": 195,
+      "unit_passed": 555,
+      "unit_suites": 66
+    },
+    "conclusion": "cancelled",
+    "linux_workspace": {
+      "failed": 0,
+      "ignored": 8,
+      "passed": 1607,
+      "result_summaries": 206
+    },
+    "native_shell": {
+      "passed": 10,
+      "scope": "build tests only, not installed acceptance"
+    },
+    "run_id": 39497088081,
+    "stability": "skipped; final-main pending",
+    "successful_jobs": 8,
+    "windows_workspace": "cancelled; zero completed test-result summaries"
+  },
+  "collected_by": "world_review",
+  "files": [
+    {
+      "bytes": 427221,
+      "path": "release/history/2026-10-20-v14-checks/ci-linux.log",
+      "sha256": "27344bf88cfa092500350519ccfaae524012e3b342b3e31ad7c946abcda6a0d2"
+    },
+    {
+      "bytes": 30984,
+      "path": "release/history/2026-10-20-v14-checks/ci-windows.log",
+      "sha256": "c49586a7c5d75fdbb4c23ce0298b11d4f61a38ba8c5b1ae2dd65fd114386d1a2"
+    },
+    {
+      "bytes": 135982,
+      "path": "release/history/2026-10-20-v14-checks/ci-browser.log",
+      "sha256": "c5581cb73a237bb56f27f800fb4e2e89b7fff3c5b5c3b066e16f25a39359e5e4"
+    },
+    {
+      "bytes": 130374,
+      "path": "release/history/2026-10-20-v14-checks/ci-native.log",
+      "sha256": "05dcea63810471e3a16d9d5745b5923ac28b179b3a6372b341cf022645146bf7"
+    },
+    {
+      "bytes": 43628,
+      "path": "release/history/2026-10-20-v14-checks/source-linux.log",
+      "sha256": "a819882b98d7c09f837f27d7544b4c703c91d5fb50dc0309c516957ef77630ca"
+    },
+    {
+      "bytes": 46430,
+      "path": "release/history/2026-10-20-v14-checks/source-windows.log",
+      "sha256": "238f504274954f3eb7ecf8ca0001f965b27334559bdf458b3c9eaf32c226ebea"
+    },
+    {
+      "bytes": 19362,
+      "path": "release/history/2026-10-20-v14-checks/source-parity.log",
+      "sha256": "4b96ff5c447fbd48b5945cdb0a417671b0c724acd19a2b8d8cd7647e42888f41"
+    },
+    {
+      "bytes": 42536,
+      "path": "release/history/2026-10-20-v14-checks/pages.log",
+      "sha256": "49100891b5b8c0f80e18892485a91e633919895fed899aa282f0efab1135807f"
+    },
+    {
+      "bytes": 37694,
+      "path": "release/history/2026-10-20-v14-checks/ci-workflow.json",
+      "sha256": "7c79b3bd1dbc98af30024d792bd0a12490d72b0723cc93a88760db4558f8433d"
+    },
+    {
+      "bytes": 13321,
+      "path": "release/history/2026-10-20-v14-checks/source-workflow.json",
+      "sha256": "4244a025c65de18807e5b37c81b9f45480f8b429e87bbb2834584b62c5b01304"
+    },
+    {
+      "bytes": 3994,
+      "path": "release/history/2026-10-20-v14-checks/pages-workflow.json",
+      "sha256": "fb8de82a072552fbd56b699b1c4d17dd4de050ef400b35b048098926700cf8a4"
+    }
+  ],
+  "kind": "historical_hosted_checks_not_current_acceptance",
+  "pages": {
+    "capture": "skipped",
+    "deploy": "skipped",
+    "package": "skipped",
+    "run_id": 39497088176,
+    "validation": "success"
+  },
+  "production_sha256": "a3baa49678a3492b9773ede35988a31cfcb2818bd39a341c6eb74182938b3808",
+  "schema_version": 1,
+  "source": {
+    "catalog_bytes": 153162131,
+    "conclusion": "success",
+    "linux_artifact_id": 12297707393,
+    "raw_shards": 35,
+    "run_id": 39497088032,
+    "scope": "Actual whole corpus on both operating systems twice, committed byte comparisons and final cross-platform parity. Missing-corpus fallback skipped.",
+    "upstream_originals": 19,
+    "windows_artifact_id": 12297997763
+  },
+  "tree": "1082ece90045e0bcfe2f681ef6d53da5ebbca45c"
+}
