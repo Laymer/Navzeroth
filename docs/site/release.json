@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0-rc.1",
+  "prerelease": true,
+  "signature": "unsigned",
+  "tag": "v1.0.0-rc.1",
+  "public_verified": true,
+  "source_commit": "fcf48ea5b3c7ba79cc3603bd5005fe961bca60e3",
+  "public_verification_run_id": "39245910009",
+  "application_sha256": "26012266d008136e2018b405388fd1ec3ae5edf1f0ae0bd2ac3c94182993e95c",
+  "assets": [
+    {
+      "name": "AzerothNavigator-1.0.0-rc.1-x64-setup.exe",
+      "bytes": 8382262,
+      "sha256": "0f87be628dbe7a979a4433cbc6c26faeb980b08e43307f2ef412141da0d7d3a0",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/AzerothNavigator-1.0.0-rc.1-x64-setup.exe"
+    },
+    {
+      "name": "AzerothNavigator-addon-1.0.0-rc.1.zip",
+      "bytes": 75452,
+      "sha256": "42f28af3ae6a485eb6405203326ab407a61aa65f648cc5614cb9e03e3baa866c",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/AzerothNavigator-addon-1.0.0-rc.1.zip"
+    },
+    {
+      "name": "CANDIDATE_NOTES.md",
+      "bytes": 6695,
+      "sha256": "de79c1cd0675a585eecbf82e41338b872f704f940e42d7ae4e8dba3abe584ce7",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/CANDIDATE_NOTES.md"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 381,
+      "sha256": "42f4a394176794f540ac52780f26270978f10d448ce5247542742daf2fc2a3a5",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE_COMMIT.txt",
+      "bytes": 41,
+      "sha256": "cdf6059ccc3dc399741d5c88a7ce102c9d32e7b7bd745c102d1cff662a38f783",
+      "url": "https://github.com/Laymer/Navzeroth/releases/download/v1.0.0-rc.1/SOURCE_COMMIT.txt"
+    }
+  ]
+}

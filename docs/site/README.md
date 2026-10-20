@@ -1,5 +1,10 @@
 # Navzeroth field manual
 
+Static publication files live under `docs/site/`, within the existing documentation
+exclusion from application production fingerprints. Only website documents and
+assets belong here; application, pack and release tooling inputs remain production
+files. No fingerprint policy changes are made.
+
 Five static HTML pages, local CSS/font and optional clipboard JavaScript. No
 runtime dependencies or external asset requests. Hosted under `/Navzeroth/`.
 
@@ -36,3 +41,24 @@ and collapsed optional reference controls without replacing content or styles.
 Inter OFL notice is retained byte for byte at `assets/fonts/OFL-Inter.txt`
 from `apps/desktop/src/theme/fonts/OFL-Inter.txt` (SHA-256
 `262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a`).
+
+Publication identity contracts:
+
+- `release.json` describes the current independently verified public download.
+  Versioned metadata supports only policy-admitted unsigned 1.0.0-rc.1 and stable
+  1.0.0, with exact tag, source, asset set and hashes. Stable includes its material
+  archive, RELEASE_MATERIALS.json and RELEASE_ASSETS.json; release notes retain
+  the packaging name CANDIDATE_NOTES.md. Validation does not perform network
+  verification; retain the actual public verification receipt before updating it.
+- `capture-release.json` separately preserves the verified release used for the
+  displayed synthetic screenshots. Its identity must match screenshot provenance.
+  When it differs from the current download, captions must state that release
+  version and label it historical. Never relabel an RC screenshot as stable.
+- The optional Pages `capture_release` dispatch remains explicitly a historical
+  RC capture, using `capture-release.json`; it does not verify or capture stable.
+- After stable publication, update only `docs/site/**` (copy, release metadata,
+  measurements, images and provenance) to preserve the tagged application identity.
+  Keep `scripts/site/**`, workflow code and other production files unchanged.
+  Main-only gated deployment remains required; no draft-validation deployment.
+
+Run `node --test scripts/site/release-metadata.test.mjs` before browser checks.
