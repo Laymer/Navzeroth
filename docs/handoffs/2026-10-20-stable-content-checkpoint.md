@@ -73,3 +73,19 @@ merge from reviewed foundation. Then B bundle-core/preparation and C hosted/
 coverage reviewable checkpoints. Final bundle/source/production bindings must be
 renewed on the final combined candidate. No signing, keys, status promotion,
 publication or Windows/manual smoke performed.
+
+## Independent final checkpoint review
+
+Root independently ran the exact committed fc526026 candidate against the same
+immutable packs in a distinct process/output: PASS156.748069885seconds,
+peak6402772KiB on the shared Linux host. All assertions completed; the15568byte
+proof SHA256 is277e78df5a44b95b648fb0d5d7d08e6f2fbe5e80f71144bc9e0d23c28f565afe.
+Committed separately as checkpoint-a-independent-functional-scenarios.json with
+its actual independent Linux measurement. Normalizing only test_source.commit
+makes it semantically identical to both the originalf72 proof and writer4f9 proof;
+all canonical IDs, counts, source inputs and scenario scopes are unchanged.
+Root full actual-content review and tooling finalfc metadata/delta review cleared.
+This metadata-only child does not change product/source/pack bytes or refresh
+existing inventory, target validation, Windows/manual results, receipts or keys.
+Next is the separate content PR into release/stable-content-delivery, then normal
+merge/fast-forward before checkpoint B. No publication or push by this writer.
