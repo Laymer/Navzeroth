@@ -106,7 +106,7 @@
         "source": "unrecorded",
         "status": "known",
         "value": [
-          "world_to_content_v2"
+          "world_to_content_v4"
         ]
       },
       "update_schedule": {
@@ -119,7 +119,7 @@
         "clock_trust": "uncertain",
         "source": "unrecorded",
         "status": "known",
-        "value": "0f157a99aacb704c38488054c47fdc470d2ed1b7"
+        "value": "f04d71d384e18f8857ad7e8de9a39cf7819bac99"
       }
     },
     {
@@ -133,6 +133,8 @@
         "source": "unrecorded",
         "status": "known",
         "value": [
+          "dungeon.planar-entrance",
+          "dungeon.preparation-heuristics",
           "loot.reference-expansion",
           "travel.flight-time",
           "travel.walk"
@@ -211,7 +213,7 @@
         "source": "unrecorded",
         "status": "known",
         "value": [
-          "world_to_content_v2"
+          "world_to_content_v4"
         ]
       },
       "update_schedule": {
@@ -224,7 +226,7 @@
         "clock_trust": "uncertain",
         "source": "unrecorded",
         "status": "known",
-        "value": "b09816a9ebe3b19d2ba9c22dde8d4f71ac919469"
+        "value": "38163495c86db1dceafd90512195202693a466a3"
       }
     },
     {
@@ -320,7 +322,7 @@
         "source": "unrecorded",
         "status": "known",
         "value": [
-          "world_to_content_v2"
+          "world_to_content_v4"
         ]
       },
       "update_schedule": {
@@ -333,7 +335,7 @@
         "clock_trust": "uncertain",
         "source": "unrecorded",
         "status": "known",
-        "value": "c4d220c355fce03ef5fa47bb132715c8fd788074"
+        "value": "a682d2c67d4ade40f0205634244a8ae3ea307834"
       }
     }
   ]

@@ -186,8 +186,8 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
             "wago-tools-wowf",
             "wowhead-classic",
             "wowhead-forever",
-            "navzeroth-world-content",
-            "navzeroth-authored-v1"
+            "navzeroth-authored-v1",
+            "navzeroth-world-content"
         ]
     );
     for source in &hand {
@@ -209,7 +209,7 @@ fn committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidate
         derived
             .files
             .iter()
-            .all(|f| f.transformation == "world_to_content_v3")
+            .all(|f| f.transformation == "world_to_content_v4")
     );
     // ADR 0006 §14 sources: explicit owner acceptance (or GPL share-alike for
     // CMaNGOS), generator-only retrieval, generated files registered later.
