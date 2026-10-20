@@ -57,3 +57,14 @@ unequal to character and reject wrong character/context/fixture, malformed id an
 duplicate matching profiles. Fresh actual41Node checks pass,0fail; diffcheck passes.
 Log /tmp/navzeroth-upgrade-readiness-corrected-tests.log. Independent re-review and
 actual Windows regression are still required; draft PR259 remains unapproved here.
+
+Final robustness follow-up: the shared deadline now marks verification expired and
+checks after each asynchronous completion before issuing subsequent IPC/UI. A hung
+operation cannot complete late and trigger a new readActive or UI selection after
+failure. The UI wait itself remains separately bounded; an already-issued browser
+operation is not claimed cancellable. Tests resolve profile/active requests after
+timeout and prove no further calls. An additional positive directly loads the
+Rust-written content-governance/synthetic-flow.json profiles and inspection golden:
+actual stored-1c4548c6... id, demo-r1/full synthetic scope, id distinct from character.
+Fresh affected suite43 passed,0 failed; diffcheck passed. Log
+/tmp/navzeroth-upgrade-readiness-final-tests.log. No Windows repaired run inferred.
