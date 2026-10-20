@@ -80,6 +80,11 @@
       "bytes": 3994,
       "path": "release/history/2026-10-20-v14-checks/pages-workflow.json",
       "sha256": "fb8de82a072552fbd56b699b1c4d17dd4de050ef400b35b048098926700cf8a4"
+    },
+    {
+      "bytes": 730,
+      "path": "release/history/2026-10-20-v14-checks/stale-intermediate-runs.json",
+      "sha256": "5c48722b38e20f41e3ff5fe6f2b008484de93339b3228150c7c4c6bd5be06b81"
     }
   ],
   "kind": "historical_hosted_checks_not_current_acceptance",
