@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "kind": "historical_signed_content_before_site_publication_boundary_repair",
+  "signed_source_commit": "1c0fc0525086da137e3777d533089f72ae18c848",
+  "tested_source_commit": "273c57d3ff42d1de3845ebebaf36d4abda4b4a91",
+  "production_sha256": "ad274268479ce96fefc5155cf24cf4b751d4b15fbc2d285dae2a233661fdb3df",
+  "review": {
+    "path": "release/v1/public-content-review-v4.json",
+    "bytes": 25092,
+    "sha256": "693cb1e65ad75d4d1cc4af657db8150a08e1fe2fd2118085ffff207bd1eb3b07"
+  },
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v4/bundled-content-manifest.json",
+      "bytes": 17183,
+      "sha256": "5613aeb37afdfd65b9a19fb6084cd74d689230757968e7206b60189d2735702f"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v4/bundled-content-build-identity.json",
+      "bytes": 526,
+      "sha256": "e7c8753596b5d1b43f1350f8e3c07baf5a9fb87984f4fb6c53ad574333deb144"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v4/bundled-content-receipt.json",
+      "bytes": 1072,
+      "sha256": "0171bb4e25630b8741282d6e237de7967fcb3d9911191b84b05dd1146391d865"
+    }
+  },
+  "actual_verification": {
+    "signatures": "pass",
+    "assembled_resources": 84,
+    "assembled_packs": 2,
+    "source_prebuild": "pass",
+    "evidence_files": 89,
+    "pending_observations": 9,
+    "publication_allowed": false
+  },
+  "coverage_at_recording": {
+    "run_id": 39405119048,
+    "source_commit": "f520039c907d963c34d9971941a6c2bf474d7394",
+    "status": "in_progress",
+    "linux": "success",
+    "typescript": "success",
+    "windows": "in_progress"
+  },
+  "limitation": "Exact V4 historical scope; not renewed production or publication readiness."
+}
