@@ -60,3 +60,11 @@ Release receipt/payload/policy artifacts may live under release (excluded from t
 production fingerprint); do not embed the signature into its own signed manifest
 hash. This change adds no shipped loader, release signing, gate waiver or actual
 review result. Unsigned installer status remains separate from signed content.
+
+The later stable delivery integration adds the compiled-trust source gate,
+assembler and native startup loader described in
+[bundled installer content](BUNDLED_INSTALLER_CONTENT.md). The preceding
+"no shipped loader" sentence records the original receipt-primitives task scope.
+The two signing identities remain operator-controlled; a review-evidence
+signature binds separately recorded independent review, not independent key
+custody. Integrating the loader supplies no actual receipt or acceptance pass.

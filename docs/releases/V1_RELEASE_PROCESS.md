@@ -41,6 +41,42 @@ request; independently verify public downloads before updating/deploying the
 website and download instructions. Preparation or draft readiness never supplies
 publication permission.
 
+### Current source, receipt and installer order
+
+1. Prepare a separate version PR after reviewed content/desktop delivery. Align
+   the six declarations listed in the historical version checklist below and the
+   eight internal Cargo.lock entries. Regenerate addon, Reference, Today and
+   synthetic-atlas outputs with their writers; regenerate and check dependency
+   notices. Commit every production change before selecting a tested ancestor.
+2. Run actual final-production checks and the full-pack functional scenarios.
+   Refresh genuine inventory and proof FileRefs before recording final bindings.
+   `scripts/generate-stable-inventory.py` resets bindings and Windows observations;
+   never rerun it over signed or observed release metadata. Keep earlier scoped
+   functional proofs and failures as historical evidence.
+3. Independently review the immutable source/content and record checked revisions,
+   production fingerprint, findings and corrections in a public review artifact.
+   Record both signing identities' operator control explicitly. Commit the public
+   artifact without future receipt/manifest hashes or installer claims.
+4. Bind the actual tested ancestor, production fingerprint and verified inventory
+   in schema4 evidence. Require `release-materials --root . --version 1.0.0`
+   to return `unsigned_preparation.ready=true` for those exact evidence bytes;
+   only the nine pristine pending hosted/owner rows may remain. Prepare the
+   manifest/build identity using [the explicit preparation command](BUNDLE_PREPARATION.md).
+5. Independently review those prepared bytes and actual material closure. Sign,
+   assemble and verify the receipt using [the external-key CLI](../data/BUNDLED_CONTENT_RECEIPTS.md)
+   against compiled trusted public identities and independently selected expected
+   pins. Then commit the exact manifest/receipt/review FileRefs. These release and
+   review metadata are excluded from the production fingerprint; product changes
+   require renewed testing, review and bindings.
+6. Merge the separately reviewed release PR only after its exact-head checks.
+   Recheck the resulting main commit, including stability, source parity, coverage,
+   packaging and revised material/build gates. Tag that verified source and retain
+   the eight actual hosted results bound to the exact draft installer. Draft
+   readiness permits only pristine pending owner smoke.
+7. Independently download and verify the exact draft, then obtain the owner's
+   smoke evidence. Require full release readiness before publication. Verify public
+   downloads after publication, and only then update/deploy download instructions.
+
 ## Historical release process and superseded requirements
 
 The following ADR0006/0007 process is retained as historical context. Where it
