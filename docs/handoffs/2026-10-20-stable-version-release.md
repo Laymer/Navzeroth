@@ -1104,3 +1104,8 @@ V12 canonical identities bytearchivedb5ee BEFORE removal; actual CI/source/cover
 success and package failure/all8skipped remain historical. Canonical all9 pending.
 Next independent immutable V13review, preparation and signatures after committed
 identities, independent source closure, fresh allten/source/native checks.
+
+
+## V13 actual preparation before key use
+
+Held3074155e normalmerges independently reviewed236f473e V13publicreview82999B/36c24922. Root independently streamed110FileRefs and everyGitblob/LFSpin; exacttested716/productiona8c292/3128 confirmed. Actualdebugprepare succeeded using runtime-equivalent1dd compiledCLI. Desktop ownoptimizedpreview/pureprepare at sameheldHEAD independently matches BOTHcanonical bytes: manifest17185B/577b6416, identity527B/6914c2f1;84resources395806353B,83nonreview byteidenticalV12. All9observations pristineunverified. External expectedidentity copied from independently agreed preparedbytes before anyreceipt. Preparedoutputs nowcommitted BEFORE restrictedexternalkeys; noWindows/ownerpass or newfullpackexecution claimed.
