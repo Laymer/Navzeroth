@@ -46,3 +46,14 @@ packs/oracle.22retained Python/code/terms files and a9e sourcepin are byte-ident
 no source rebind/regeneration required for this Rust consumer repair. New actual
 proof must bind the repaired committed application/test, not the failed5f65 run.
 No functional Pass, Windows/manual observation, signing, pushes or publication.
+
+Test-only follow-up corrects a demonstrated proof assumption before spending
+another full run: only20 generated entrance-estimate checks contain an unverified
+label;6 direct historical declarations have no estimate check. The scenario now
+checks the exact20/6 distinction, full estimate derivation/uncertainty text, and
+public vanilla1.12+inferred origin marks for every one of26 records. All complete
+association hashes and unknown access/readiness checks remain. No game facts are
+relabelled; the proof scope and exact committed test-source hash bind this
+distinction. Artifact count fields and Python reader stay unchanged. This
+follow-up is separate from the schema3 product repair; no retained transform
+code changes.

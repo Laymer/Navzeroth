@@ -367,6 +367,15 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
     let dungeon_page=app.catalog_page(&json!({"subject":{"kind":"character","profile_id":profile},"collection":"dungeons","revision":revision,"catalog_sha256":choices.catalog_sha256,"offset":0}).to_string()).unwrap();
     assert_eq!(dungeon_page.page.total, 26);
     assert_eq!(dungeon_page.records.len(), 26);
+    let origins = app.record_origins(&json!({"subject":{"kind":"character","profile_id":profile},"revision":revision,"records":choices.records.iter().map(|d|json!({"collection":"dungeons","id":d.id})).collect::<Vec<_>>()} ).to_string()).unwrap();
+    assert_eq!(origins.origins.len(), 26);
+    for marks in &origins.origins {
+        let marks = marks.as_ref().unwrap();
+        assert!(marks.contains(&azeroth_app::world::OriginMark::Vanilla112));
+        assert!(marks.contains(&azeroth_app::world::OriginMark::Inferred));
+    }
+    let mut estimated_entrances = 0u64;
+    let mut direct_historical_entrances = 0u64;
     let affected = [
         "dungeon:stormwind-stockade",
         "dungeon:sunken-temple",
@@ -456,17 +465,27 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
         assert!(package.access.observation.value().is_none());
         let checks = package.checks.observation.value().unwrap();
         assert!(!checks.is_empty());
-        assert!(
-            checks
-                .iter()
-                .any(|c| c.label.as_str().contains("unverified"))
-        );
+        let estimates: Vec<_> = checks
+            .iter()
+            .filter(|c| c.id.as_str().ends_with(":entrance-estimate"))
+            .collect();
+        if let Some(check) = estimates.first() {
+            assert_eq!(estimates.len(), 1);
+            assert!(check.label.as_str().starts_with("Entrance estimate: "));
+            assert!(check.label.as_str().contains("Uncertainty: "));
+            assert!(check.label.as_str().contains("unverified"));
+            estimated_entrances += 1;
+        } else {
+            direct_historical_entrances += 1;
+        }
         assert!(
             checks
                 .iter()
                 .any(|c| c.requirement.observation.value().is_none())
         );
     }
+    assert_eq!(estimated_entrances, 20);
+    assert_eq!(direct_historical_entrances, 6);
     assert_eq!(dungeon_quest_references, 438);
     assert_eq!(dungeon_reward_references, 16390);
     assert_eq!(restored_affected_reward_references, 8107);
@@ -570,7 +589,7 @@ fn actual_packs_support_source_backed_plans_roles_and_dungeon_guidance() {
             {"domain":"quests","scenario":"source_quest_projection_v1","scope":"Actual source-backed stages produce a partial plan using explicit manual time/node estimates; unknown eligibility/details remain unavailable, original quest/stage identities retained.","source_record_ids":quest_ids},
             {"domain":"class_roles","scenario":"authored_score_model_boundaries_v1","scope":"All54 original models/nine historical-input classes: both band boundaries, wrong class/outside-band refusal, explicit role assumption, positive real-item stamina arithmetic; equipment eligibility and acquisition remain unknown; strict practical paths refuse.","source_record_ids":models.iter().map(|m|json!([authored_revision,"models",m["id"]]).to_string()).collect::<Vec<_>>()},
             {"domain":"reminders","scenario":"authored_heuristic_reminder_boundaries_v1","scope":"All18 source rules retain explicit heuristic classification; twelve role prompts evaluated at both band boundaries, general level boundary and unknown-role withholding tested; unavailable predicates are not promoted.","source_record_ids":authored["reference"]["payload"]["rules"].as_array().unwrap().iter().map(|r|json!([authored_revision,"rules",r["id"]]).to_string()).collect::<Vec<_>>()},
-            {"domain":"dungeons","scenario":"complete_dungeon_associations_v2","scope":"26 complete catalog/package/member-report quest and reward association sets match an independent source-relation oracle, including8107 affected reward references; entrances and nonempty heuristic preparation preserve unknown access/conditions and unverified labels. One-hop loot scope and raw map169 test exclusion retained; eligibility/current-game correctness remain unverified.","source_record_ids":dungeon_ids}
+            {"domain":"dungeons","scenario":"complete_dungeon_associations_v2","scope":"26 complete catalog/package/member-report quest and reward association sets match an independent source-relation oracle, including8107 affected reward references; all26 records retain public historical/inferred origin marks;20 estimates preserve full derivation/uncertainty and unverified labels, six direct historical entrance declarations remain distinct. Nonempty heuristic preparation preserves unknown access/conditions. One-hop loot scope and raw map169 test exclusion retained; eligibility/current-game correctness remain unverified.","source_record_ids":dungeon_ids}
         ]);
         let artifact = json!({"schema_version":1,"kind":"manual_engineering_full_pack_functional_scenarios","status":"pass","game_observation":false,"platform":std::env::consts::OS,"test_source":{"path":source_path,"commit":head,"sha256":format!("{:x}",Sha256::digest(compiled))},"packs":[file_ref("content/release-packs/world-v2/manifest.json"),file_ref("content/release-packs/authored-v2/manifest.json")],"source_inputs":[file_ref("data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json"),file_ref("docs/data/role-coverage-v1.json"),file_ref("docs/data/dungeon-associations-v1.json"),file_ref("scripts/validate-dungeon-associations.py"),file_ref("data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json")],"additional_source_records":[{"domain":"equipment","id":json!([world_revision,"items",item.item_id,item.variant]).to_string()}],"units":units,"counts":{"models":models.len(),"classes":classes.len(),"score_boundary_cases":score_boundary_cases,"reminder_boundary_cases":reminder_scenarios,"dungeon_packages":choices.total,"raw_dungeons":27,"excluded_test_maps":[169],"dungeon_quest_references":dungeon_quest_references,"dungeon_reward_references":dungeon_reward_references,"restored_affected_reward_references":restored_affected_reward_references},"disclosure":"Permitted manual_entry engineering snapshot and explicit class/role/time/node assumptions. No addon capture, live-client correctness, Windows/manual acceptance or whole-game completeness is established."});
         std::fs::write(output, serde_json::to_vec_pretty(&artifact).unwrap()).unwrap();
