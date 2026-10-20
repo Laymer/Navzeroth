@@ -31,22 +31,20 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-Latest continuation: V6 candidateb689 normal CI39413135882 and actual Linux/
-Windows source parity39413135914 passed. Native Windows Rust genuinely passed the
-three file-identity replacement regressions. Coverage39413135940 failed immediately
-after instrumented assembly: the new diagnostic recorded an unowned root default
-.profraw. Linux1607tests and TypeScript91files>=90% passed separately; no combined
-coverage pass is claimed. Independently reviewed repairPR251 now sends every
-coverage child profile to its owned external target, retaining all guards/profiles.
-Root's actual10focused Node checks/actionlint passed after normal local integration
-e45b302a. V6 signed artifacts remain historical. V7 independent review, exact preparation,
-signatures, two own compiled-policy assemblies and source prebuild passed at4bab8400
-(89evidence files/two packs; exactly9pending). Rust product/UI/content are unchanged
-from the actualfcf full-pack replay; its recorded scope is retained. V6 package39413135905 FAILED: install/resources cases passed but first-start driver
-incorrectly expected quest/item/travel pages in the planning-only DTO; five cases
-never ran. Recorder metadata validation also failed. V7 was not pushed; its signed
-evidence is archived before separately owned driver/recorder repairs. Full hosted
-acceptance and owner smoke remain unverified. No stable tag or publication.
+Latest continuation: actual V6 package39413135905 FAILED with install/resources
+PASS(630files), first-start FAIL and five hosted cases never run. The driver
+mistook the planning-only DTO for a general catalog; recorder ISO timestamp and
+Windows-path handling also required repairs. Separately reviewed PR252 and253
+are normally integrated locally at60ab126b. Root's actual union27Node/32PS7/29nativePS5
+checks and workflow validation passed; author realRustDTO/application regressions
+and independent real-recorder boundary checks passed with their recorded scopes.
+Runtime implementation/UI/content/datagen remainfcf-identical; new Rust tests are
+explicitly test-only. V7 signatures/rawV6failures are archived. Canonical content
+fields are cleared for V8 review/receipt renewal, tested60ab and production52d00899.
+All nine canonical acceptance observations remain unverified. Earlier normalCI/
+source parity passed on V6; coverage failed the diagnosed default-profraw source
+write, repaired by251 but still requiring fresh hosted coverage. No stable tag
+or publication.
 
 
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after

@@ -552,3 +552,44 @@ are preserved under release/history/2026-10-20-signed-content-v7 before newprodu
 changes. Next: narrow separately reviewed repairs, regression against actualserialized
 contracts/rawcase, then renew exactpublicreview/content receipts and freshgates.
 No stabletag/publication or ownerpass exists.
+
+
+## Reviewed hosted-driver/recorder union and V8 binding
+
+PR252 finalcca69d01a9c1f5420c53012283f43b507dcb4d5b normally merged9f42431e.
+Root/world/tooling independently reviewed actual code01bf35a7 CLEAR and each ran
+17Node workload tests. Author actual12authored application tests plus1typedRustDTO
+serialization regression passed; the old driver against corrected DTO reproduces
+the exactemptycatalog failure. Existinggeneric pageAPI uses the actualissued
+nodesglobalrevision/hash forquests/items/edges, validatesallreturnedmetadata/count/
+offset/nextboundaries, preservesflatserdeRecordPage and separatelyissuedobjective
+pin. Snapshot_id is separately checked; syntheticdistincthash test is not a claim
+that the currentcatalog/objective hashes must differ. Boundedfailedrawdiagnostics
+retain identities/counts, never allrecords. No API/runtime/eligibility changes.
+
+PR253 final60574ec141a17fe50dc084f587e754b66e91d829 normally merged60ab126b.
+Productioneb7ea89b preserves exactUTC timestampstrings at rawcase/base/baseclone
+boundaries using DateKindString or olderPS7rawtoken restoration; PS5unchanged.
+Strictstring/date/operator/environment/source/target checks remain. A second
+concrete Windowsartifactbug was caught before rerun: replacingtwoliteralbackslashes
+did not normalizeoneWindowsseparator. Correctnormalization retains allunsafe-path
+refusals. Root independently passed32PS7.6.6 and29nativePS5.1checks/actionlint.
+Desktop independent staticreview CLEAR and realrecorder test-only36f2c45d passed
+3checks ineachshell using disclosed syntheticI/O/Gitadapter, never an installer
+or actualacceptance. Author existing42preparation/20producer checks passed each
+shell. Initialnative author missingGit environmentfailure is retained in its
+handoff; independent nativeboundary test used an externalWSLGitbridge.
+
+Root actual testedunion60ab126ba78b51f666e11226669720fdc96b31ed passed27Node
+checks(profile/clean/native/environment10+driver17),32PS7+29PS5 and actionlint for
+bothchanged workflows/diffcheck. Root Git comparison confirmed actual runtime
+implementation/UI/addon/content/datagen/Cargo bytes identicalfcf; the three new/
+changedRusttest/fixture files are explicitly test-only. Existingactualfullpack
+proof106cc6e2/measurement31d15d02 retainfcf/0a scope with no unnecessaryrerun or
+restamping. V7canonical bytes were archived before repairs atb8981c3e.
+
+Canonical3outputs were removed and evidence bundled_content cleared9981c073 for
+tested60ab and production52d0089987d97f0ade79ce839a06fa2a00da3370a1013ba150fab2c19f50a1f6
+(3124production entries). All nine rows remain pristineunverified. World is sole
+additiveV8publicreview writer; then exactpreparation/independentclosure/receipts
+and freshcandidate hostedchecks remain required. No stabletag/ownerpass/publication.
