@@ -1,0 +1,3 @@
+# Actual workflow-gate wrapper exit repair
+
+Owner /root/desktop_review, sole writer; isolated fix/stable-workflow-gate-exit /tmp/navzeroth-stable-workflow-gate-exit. Baselinef02964ec4af98a5b8dbc79e89362acfbc0fac387. Actual run39397316809/job118543149504 prints12passed gate checks then exits1 under GitHub PowerShell5.1 wrapper. Reproduce dot-source/LASTEXITCODE behavior, add only a terminal successful exit after assertions and cleanup, prove an intentional assertion failure stays nonzero. No policy/workflow/source/key/signature or other-owner helper changes. Parent authorizes separate delivery repair PR.
