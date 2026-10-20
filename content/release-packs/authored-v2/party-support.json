@@ -1,0 +1,488 @@
+{
+  "catalog_sha256": "67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea",
+  "rows": [
+    {
+      "dependencies": [
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-healer-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-healer-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-tank-1-20\"]"
+        },
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:solo-joint-planning",
+      "procedure": {
+        "bytes": 1356,
+        "path": "procedures/solo-joint-planning.md",
+        "sha256": "002b87781a737e35ffec2dd1583c51aa570d6e58ece11ffca1547ea382567518"
+      },
+      "size": 1,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "joint_planning"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:deadmines-repair-restock\"]"
+        }
+      ],
+      "id": "party:solo-stale-members",
+      "procedure": {
+        "bytes": 1011,
+        "path": "procedures/solo-stale-members.md",
+        "sha256": "c3e71ca4b4cb914964780ba078af4bc3bc78a312f70f51b9100bf763adc6fac0"
+      },
+      "size": 1,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "stale_members"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:heuristic-level-boundary\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:train-after-level-up\"]"
+        }
+      ],
+      "id": "party:solo-advancement",
+      "procedure": {
+        "bytes": 1004,
+        "path": "procedures/solo-advancement.md",
+        "sha256": "210fcf88c00e1af5191fbe886e035bb934f92b3dde63d52b56a2babc00c92b3e"
+      },
+      "size": 1,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "advancement"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:solo-review",
+      "procedure": {
+        "bytes": 835,
+        "path": "procedures/solo-review.md",
+        "sha256": "430a72e0cff724eacb5bae30472dc90ea840ff0d89e97de3a1540a6429bb4c3c"
+      },
+      "size": 1,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "review"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-healer-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-healer-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-tank-1-20\"]"
+        },
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:duo-joint-planning",
+      "procedure": {
+        "bytes": 1075,
+        "path": "procedures/duo-joint-planning.md",
+        "sha256": "cb28bf5c33ec6099c31270bd3f3f048995ff567599eedc38ebb970dc7c0b682c"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "joint_planning"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:duo-compare-progress\"]"
+        }
+      ],
+      "id": "party:duo-unequal-progress",
+      "procedure": {
+        "bytes": 1034,
+        "path": "procedures/duo-unequal-progress.md",
+        "sha256": "8c18cf5a1fa40da2cc3a88227d7ca12e6a30a6556ee58c17d3c3348c9164efb3"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "unequal_progress"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:duo-sharing",
+      "procedure": {
+        "bytes": 892,
+        "path": "procedures/duo-sharing.md",
+        "sha256": "e11a6e01c7d749e91b1de48ba9d6cb10ba0a328acd1c96a4baa3e6b796409ecc"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "sharing"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:duo-compare-progress\"]"
+        }
+      ],
+      "id": "party:duo-stale-members",
+      "procedure": {
+        "bytes": 882,
+        "path": "procedures/duo-stale-members.md",
+        "sha256": "6238ab2ed2a0f0e23de6f12e54f9717428ea3e61c75c1665f2a6c6f3c1721e2e"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "stale_members"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:mage-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-healer-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-healer-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:rogue-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warlock-ranged-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-melee-damage-1-20\"]"
+        },
+        {
+          "domain": "class_roles",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-tank-1-20\"]"
+        },
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:duo-fairness",
+      "procedure": {
+        "bytes": 866,
+        "path": "procedures/duo-fairness.md",
+        "sha256": "08fe6ecab8861a12c85a8337cda2fdfe7a145eaecf78461a4e9ab65d7fc1c5b9"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "fairness"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:duo-agreement",
+      "procedure": {
+        "bytes": 952,
+        "path": "procedures/duo-agreement.md",
+        "sha256": "346c0798c7e37600340bfa7720b0f09fe41d37b3eb84090259239ab866e0f284"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "agreement"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:deadmines-hearthstone\"]"
+        },
+        {
+          "domain": "reminders",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:train-after-level-up\"]"
+        }
+      ],
+      "id": "party:duo-advancement",
+      "procedure": {
+        "bytes": 992,
+        "path": "procedures/duo-advancement.md",
+        "sha256": "f226cce23ae014f96d74273b628c1e370caa08fafeb52045104f12aaa5ee72d2"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "advancement"
+    },
+    {
+      "dependencies": [
+        {
+          "domain": "dungeons",
+          "record_id": "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]"
+        }
+      ],
+      "id": "party:duo-review",
+      "procedure": {
+        "bytes": 741,
+        "path": "procedures/duo-review.md",
+        "sha256": "781ca47fbaefd814e888fad4bb96605986a20db97b52985e30f0035d0cd3452e"
+      },
+      "size": 2,
+      "supporting_evidence": [
+        {
+          "bytes": 2476,
+          "path": "evidence/authoring-statement.md",
+          "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258"
+        },
+        {
+          "bytes": 7276,
+          "path": "evidence/role-model-assumptions.md",
+          "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c"
+        }
+      ],
+      "workflow": "review"
+    }
+  ],
+  "schema_version": 3,
+  "supported_sizes": [
+    1,
+    2
+  ],
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  }
+}

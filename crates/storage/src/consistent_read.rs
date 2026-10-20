@@ -14,7 +14,12 @@ impl SqliteStore {
             return Err(storage("Consistent validation cannot nest a transaction"));
         }
         let tx = Transaction::new_unchecked(&self.conn, TransactionBehavior::Immediate).db()?;
-        match read(self) {
+        // The entry stamp prevents caching any transaction-local catalog after
+        // content writes/schema changes, even if a callback violates read-only.
+        let cache_read = self.catalog_generation.begin_read(&self.conn)?;
+        let result = read(self);
+        drop(cache_read);
+        match result {
             Ok(value) => {
                 tx.commit().db()?;
                 Ok(value)

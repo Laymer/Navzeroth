@@ -110,6 +110,8 @@ pub fn enrich(authored: &Dungeon, historical: &Dungeon) -> Result<(Dungeon, Vec<
         .map
         .context
         .ensure_compatible(&historical.map.context)?;
+    authored.reference_limit()?;
+    historical.reference_limit()?;
     let mut merged = authored.clone();
     let mut conflicts = vec![];
     if authored.title != historical.title {
@@ -145,6 +147,13 @@ pub fn enrich(authored: &Dungeon, historical: &Dungeon) -> Result<(Dungeon, Vec<
         DungeonField::Access,
         &mut conflicts,
     );
+    // Bounds are structural, not a game fact. Both inputs were validated; retaining
+    // the larger profile allows inherited complete lists without changing precedence.
+    merged.reference_contract_version = authored
+        .reference_contract_version
+        .into_iter()
+        .chain(historical.reference_contract_version)
+        .max();
     merged.preparation_quests = observation(
         &authored.preparation_quests,
         &historical.preparation_quests,

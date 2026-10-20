@@ -334,21 +334,20 @@ impl SqliteStore {
         })
     }
     pub(crate) fn cached_catalog(&self, id: i64) -> Result<ActiveContentRevision> {
-        let version: i64 = self
-            .conn
-            .pragma_query_value(None, "data_version", |r| r.get(0))
-            .db()?;
-        let changes = self.conn.total_changes();
-        if let Some((cached_id, cached_version, cached_changes, catalog)) =
-            self.catalog_cache.borrow().as_ref()
+        let stamp = self.catalog_generation.cache_stamp(&self.conn)?;
+        if let Some(stamp) = stamp
+            && let Some((cached_id, cached_stamp, catalog)) = self.catalog_cache.borrow().as_ref()
             && *cached_id == id
-            && *cached_version == version
-            && *cached_changes == changes
+            && *cached_stamp == stamp
         {
             return Ok(catalog.clone());
         }
         let catalog = content::load(&self.conn, id)?;
-        *self.catalog_cache.borrow_mut() = Some((id, version, changes, catalog.clone()));
+        if let Some(stamp) = stamp
+            && self.catalog_generation.cache_stamp(&self.conn)? == Some(stamp)
+        {
+            *self.catalog_cache.borrow_mut() = Some((id, stamp, catalog.clone()));
+        }
         Ok(catalog)
     }
 }
@@ -398,16 +397,12 @@ impl SqliteStore {
                 .ok_or_else(|| invalid("Catalog pages require v2 content"))?;
             let id = content::find(&store.conn, &active.key())?
                 .ok_or_else(|| storage("Active catalog identity missing"))?;
-            let version: i64 = store
-                .conn
-                .pragma_query_value(None, "data_version", |r| r.get(0))
-                .db()?;
-            let changes = store.conn.total_changes();
-            if let Some((cached_id, cached_version, cached_changes, index)) =
-                store.catalog_index_cache.borrow().as_ref()
+            let stamp = store.catalog_generation.cache_stamp(&store.conn)?;
+            if let Some(stamp) = stamp
+                && let Some((cached_id, cached_stamp, index)) =
+                    store.catalog_index_cache.borrow().as_ref()
                 && *cached_id == id
-                && *cached_version == version
-                && *cached_changes == changes
+                && *cached_stamp == stamp
             {
                 return read(index);
             }
@@ -416,7 +411,11 @@ impl SqliteStore {
                 catalog_content_sha256(content)?,
             )?);
             let page = read(&index)?;
-            *store.catalog_index_cache.borrow_mut() = Some((id, version, changes, index));
+            if let Some(stamp) = stamp
+                && store.catalog_generation.cache_stamp(&store.conn)? == Some(stamp)
+            {
+                *store.catalog_index_cache.borrow_mut() = Some((id, stamp, index));
+            }
             Ok(page)
         };
         if self.conn.is_autocommit() {
@@ -427,7 +426,7 @@ impl SqliteStore {
     }
 }
 
-pub(crate) type Cache<T> = std::cell::RefCell<Option<(i64, i64, u64, T)>>;
+pub(crate) type Cache<T> = std::cell::RefCell<Option<(i64, crate::catalog_generation::Stamp, T)>>;
 
 pub(crate) fn stage_canonical(
     conn: &Connection,

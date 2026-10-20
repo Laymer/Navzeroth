@@ -1,0 +1,286 @@
+{
+  "schema_version": 3,
+  "inventory_id": "forever-1.0.0-human-1-20-v2",
+  "target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
+  "slice": {
+    "id": "human-1-20",
+    "races": [
+      "human"
+    ],
+    "zones": [
+      "northshire_valley",
+      "elwynn_forest",
+      "westfall",
+      "redridge_mountains"
+    ],
+    "dungeons": [
+      "the_deadmines"
+    ],
+    "level_min": 1,
+    "level_max": 20,
+    "classes": null,
+    "party_sizes": [
+      1,
+      2
+    ]
+  },
+  "domains": [
+    {
+      "domain": "quests",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "quests-inventory-pending",
+          "scope": "Every quest and objective stage available to Human characters of every slice class at levels 1-20 in Northshire Valley, Elwynn Forest, Westfall and Redridge Mountains, including the Deadmines quests, with prerequisites, eligibility and rewards.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "quests-outside-human-1-20",
+          "scope": "Quests of other races and starting zones, of zones outside the slice, and above level 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        }
+      ]
+    },
+    {
+      "domain": "equipment",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "equipment-inventory-pending",
+          "scope": "Every equippable item a slice character can obtain at levels 1-20 from slice quests, vendors, trainers, crafting and the Deadmines, with supported attributes, requirements and variants.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "equipment-outside-human-1-20",
+          "scope": "Items obtainable only outside the slice zones or above level 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "equipment-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "equipment-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "equipment-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "equipment-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        }
+      ]
+    },
+    {
+      "domain": "acquisition",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "acquisition-inventory-pending",
+          "scope": "Every acquisition path in the slice: quest rewards, vendors, Deadmines drops, crafting and other sources with prerequisites and currencies.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "acquisition-outside-human-1-20",
+          "scope": "Acquisition paths located outside the slice zones or requiring more than level 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "acquisition-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "acquisition-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "acquisition-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "acquisition-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        }
+      ]
+    },
+    {
+      "domain": "geography",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "geography-inventory-pending",
+          "scope": "Maps, floors, coordinates and calibrated imagery with usage rights for Northshire Valley, Elwynn Forest, Westfall, Redridge Mountains, the Deadmines and the capital and travel points the slice routes use.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "geography-outside-human-1-20",
+          "scope": "Every other zone, city interior, continent and dungeon.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        }
+      ]
+    },
+    {
+      "domain": "travel",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "travel-inventory-pending",
+          "scope": "Every directed walk, flight, boat and access connection the slice routes use, with unlocks and costs explicit.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "travel-outside-human-1-20",
+          "scope": "Connections that neither start nor end in the slice and are not used by slice routes.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        }
+      ]
+    },
+    {
+      "domain": "dungeons",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "dungeons-inventory-pending",
+          "scope": "The Deadmines: entry and access requirements, preparation quest chains, travel and rewards for levels 1-20 slice characters.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "dungeons-outside-human-1-20",
+          "scope": "Every dungeon and raid other than the Deadmines, including the Stormwind Stockade.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        }
+      ]
+    },
+    {
+      "domain": "class_roles",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "class_roles-inventory-pending",
+          "scope": "A documented role model with weights and representative scenarios for every slice class at levels 1-20.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "class_roles-outside-human-1-20",
+          "scope": "Classes not open to Human, other races' racial traits, and levels above 20.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "class_roles-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "class_roles-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "class_roles-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "class_roles-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        }
+      ]
+    },
+    {
+      "domain": "party",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "party-inventory-pending",
+          "scope": "Solo and duo workflows, including differing progress between the two characters, across the complete slice inventory.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "party-outside-human-1-20",
+          "scope": "Parties of three to five players and raids.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        }
+      ]
+    },
+    {
+      "domain": "reminders",
+      "completeness": "unknown",
+      "enumeration_evidence": [],
+      "units": [
+        {
+          "id": "reminders-inventory-pending",
+          "scope": "Every declared reminder rule that applies to the slice, with source-backed conditions, suppression and unknown-state behaviour.",
+          "required_record_ids": null
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "reminders-outside-human-1-20",
+          "scope": "Reminder rules that only concern content outside the slice.",
+          "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "reminders-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "reminders-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "reminders-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "reminders-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        }
+      ]
+    }
+  ],
+  "sources": []
+}

@@ -25,7 +25,9 @@ const BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 /// A single-connection SQLite store. Foreign keys are enforced on the
 /// connection and verified when it opens.
 pub struct SqliteStore {
+    // The catalog generation module owns this connection's update hook.
     pub(crate) conn: Connection,
+    pub(crate) catalog_generation: crate::catalog_generation::Generation,
     pub(crate) catalog_index_cache:
         crate::content_catalog::Cache<std::sync::Arc<azeroth_core::catalog::CatalogIndex>>,
     pub(crate) catalog_cache: crate::content_catalog::Cache<crate::content::ActiveContentRevision>,
@@ -53,8 +55,10 @@ impl SqliteStore {
             return Err(storage("Foreign key enforcement is unavailable"));
         }
         migrations::migrate(&mut conn)?;
+        let catalog_generation = crate::catalog_generation::Generation::new(&conn)?;
         Ok(Self {
             conn,
+            catalog_generation,
             catalog_cache: Default::default(),
             catalog_index_cache: Default::default(),
         })

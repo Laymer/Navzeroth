@@ -317,6 +317,39 @@ chance (absent is unknown), counts, group, quest-only, conditional; at most 6 ta
 per source and 40 rows per table are listed, with totals). Real pack: first loot page
 109 ms (index build), later pages under 2 ms.
 
+## Stable dungeon expansion (converter v3)
+
+CMaNGOS generator v2 retains optional planar `entrance_estimate` metadata from
+`instance_template.ghostEntranceMap/X/Y`, with its derivation and uncertainty.
+Elevation is absent, rather than invented as zero. A precise entrance is preferred
+when the client map layout can place it; otherwise the planar exterior ghost-entry
+estimate supplies a node. Blackwing Lair's precise source portal is inside another
+instance, so its exterior ghost-entry estimate is used. Every estimated dungeon
+exposes the derivation and unverified portal/access/elevation/walkability in its
+preparation checklist; node and dungeon evidence include the inferred rule.
+
+Missing area associations use a root AreaTable row only when both instance map ID
+and normalized dungeon name match uniquely (optional leading "The" is ignored).
+Ambiguous/no matches stay unresolved. Preparation quests retain their source-backed
+zone association, eligibility, prerequisites and unresolved fields. Generic roles,
+repairs and supplies checks are explicitly authored heuristics, with unknown
+conditions rather than automatically passing readiness. A source level suggestion
+is not represented as a mandatory entry requirement.
+
+The retained corpus produces 26 supported dungeon records, 26 entrance nodes
+(20 planar estimates and six directly placed source entrances), and 26 declared
+preparation-quest lists. Deadmines links quests 166, 167, 168, 214 and 2040.
+Map 169 (Emerald Dream) stays in raw data with an explicit unused/test exclusion:
+source maxPlayers, levels and ghost-entry fields are all zero. It is omitted from
+supported catalog records and listed in `summary.json.excluded_dungeons`; those
+zeros are not converted into a real entrance. This does not verify any dungeon on
+the target client, its entry rules, terrain or current party readiness.
+
+The existing dungeon preparation command carries checklist labels and unknown
+conditions to the desktop's member checks. No new unused display-only field is
+introduced in the content catalog. Committed generated outputs still require
+integration regeneration and source/material/receipt closure.
+
 ## Known limits (review of V2.8)
 
 - Route search keeps a full edge path in every heap label (the label order breaks ties

@@ -1,0 +1,12 @@
+{
+  "source_commit": "fc526026bb2c36ffd0976c7969a8035d762d2d0a",
+  "returncode": 0,
+  "seconds": 156.7480698850004,
+  "peak_child_rss_kib": 6402772,
+  "limitations": "Shared Linux/WSL host; manual engineering full-pack scenario; no Windows or live-game acceptance.",
+  "schema_version": 1,
+  "scope": "independent root checkpoint A full-pack manual engineering functional scenario",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal32675952KiB. Concurrent shared-host workload. No Windows or ordinary-PC sufficiency claim.",
+  "proof_sha256": "277e78df5a44b95b648fb0d5d7d08e6f2fbe5e80f71144bc9e0d23c28f565afe"
+}

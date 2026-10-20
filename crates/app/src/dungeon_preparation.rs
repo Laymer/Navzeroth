@@ -33,6 +33,8 @@ pub const MAX_SECTION_RECORDS: usize = 32;
 /// Schema2 reference lists accommodate admitted source catalogs. Notes, checks
 /// and each declaration's evidence retain their schema1 limit.
 pub const MAX_REFERENCE_RECORDS: usize = 4096;
+/// Schema3 retains complete source derivation/uncertainty labels as bounded text.
+pub const MAX_EXTENDED_CHECK_LABEL_BYTES: usize = 512;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -276,7 +278,7 @@ fn validate_package(
     package: &LocalPreparationPackage,
     gaps: &mut Vec<PreparationGap>,
 ) -> Result<BTreeSet<EvidenceId>> {
-    if !matches!(package.schema_version, 1 | 2) {
+    if !matches!(package.schema_version, 1..=3) {
         return Err(AppError::new(
             ErrorCode::UnsupportedSchema,
             "Unsupported preparation package schema",
@@ -315,7 +317,7 @@ fn validate_package(
     if let Some(predicate) = package.access.observation.value() {
         predicate.validate_in_context(&package.context)?;
     }
-    let reference_limit = if package.schema_version == 2 {
+    let reference_limit = if package.schema_version >= 2 {
         MAX_REFERENCE_RECORDS
     } else {
         MAX_SECTION_RECORDS
@@ -335,10 +337,17 @@ fn validate_package(
         count(checks.len())?;
         unique(checks.iter().map(|c| &c.id))?;
         for check in checks {
-            if check.label.as_str().trim().is_empty() || check.label.as_str().len() > 160 {
-                return Err(invalid(
-                    "Preparation check label must contain at most 160 bytes",
-                ));
+            let label_limit = if package.schema_version == 3 {
+                MAX_EXTENDED_CHECK_LABEL_BYTES
+            } else {
+                160
+            };
+            if check.label.as_str().trim().is_empty() || check.label.as_str().len() > label_limit {
+                return Err(invalid(if package.schema_version == 3 {
+                    "Preparation check label must contain at most 512 bytes"
+                } else {
+                    "Preparation check label must contain at most 160 bytes"
+                }));
             }
             declaration(&check.requirement, "check", gaps, &mut ids)?;
             if let Some(predicate) = check.requirement.observation.value() {
@@ -1077,6 +1086,43 @@ mod tests {
             .unwrap();
         let request = json!({"schema_version":1,"subject":{"kind":"party","party_id":"prep-test"},"origin":"demo-node-1","package":serde_json::from_str::<Value>(include_str!("../../../fixtures/desktop/preparation/synthetic-package.json")).unwrap()});
         (app, request, ids[0].clone(), ids[1].clone())
+    }
+    #[test]
+    fn check_labels_keep_each_schema_byte_boundary_without_truncation() {
+        let template: LocalPreparationPackage = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/preparation/synthetic-package.json"
+        ))
+        .unwrap();
+        for version in [1, 2, 3] {
+            for (text, size) in [
+                ("a".repeat(160), 160),
+                ("a".repeat(161), 161),
+                ("a".repeat(512), 512),
+                ("a".repeat(513), 513),
+                ("é".repeat(256), 512),
+                (format!("{}a", "é".repeat(256)), 513),
+            ] {
+                assert_eq!(text.len(), size);
+                let mut package = template.clone();
+                package.schema_version = version;
+                let mut checks = package.checks.observation.value().unwrap().clone();
+                checks[0].label = Text::new(text.clone()).unwrap();
+                package.checks.observation =
+                    Observation::known(checks, Default::default()).unwrap();
+                let expected = size <= if version == 3 { 512 } else { 160 };
+                assert_eq!(
+                    validate_package(&package, &mut vec![]).is_ok(),
+                    expected,
+                    "schema{version} bytes{size}"
+                );
+                assert_eq!(
+                    package.checks.observation.value().unwrap()[0]
+                        .label
+                        .as_str(),
+                    text
+                );
+            }
+        }
     }
     #[test]
     fn versioned_reference_limits_preserve_all_ids_and_other_section_limits() {

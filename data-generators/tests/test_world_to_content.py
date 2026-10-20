@@ -253,7 +253,7 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
 
     def test_boundary_and_empty_are_complete_known_values(self):
         builder = self.builder()
-        for count in (0, w.MAX_REFS):
+        for count in (0, w.MAX_REFS, w.DUNGEON_REFERENCE_LIMIT):
             ids = [f"quest:{i}" for i in range(count)]
             self.assertEqual(builder.dungeon_association("dungeon:test", "preparation_quests", ids),
                              w.known(ids))
@@ -263,14 +263,14 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
     def test_overflow_is_wholly_unsupported_with_exact_accounting(self):
         builder = self.builder()
         for field in ("preparation_quests", "rewards"):
-            ids = [f"record:{i}" for i in range(w.MAX_REFS + 1)]
+            ids = [f"record:{i}" for i in range(w.DUNGEON_REFERENCE_LIMIT + 1)]
             original = ids.copy()
             self.assertEqual(builder.dungeon_association("dungeon:test", field, ids),
                              {"status": "unsupported"})
             self.assertEqual(ids, original)  # Canonical identities are never deleted.
             expected = {"dungeon": "dungeon:test", "field": field,
-                        "actual_count": 1025, "contract_limit": 1024,
-                        "exposed_count": 0, "unresolved_count": 1025}
+                        "actual_count": 4097, "contract_limit": 4096,
+                        "exposed_count": 0, "unresolved_count": 4097}
             self.assertEqual(builder.bounded_associations[-1], expected)
             conflict = builder.conflicts[-1]
             self.assertEqual(conflict["kind"], "bounded_association_unsupported")
@@ -281,7 +281,7 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
 
     def test_generated_catalog_preserves_all_canonical_records_and_summary(self):
         shards = dict(SHARDS)
-        ids = range(100000, 101025)
+        ids = range(100000, 104097)
         shards[("quests.quests", "vanilla_1_12")] = (CMANGOS, "cross_edition_unverified", [
             {"kind": "quest", "id": i, "title": f"Quest {i}", "min_level": 1,
              "zone_or_sort": 12} for i in ids])
@@ -292,6 +292,7 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             result = Run(tmp, shards)
             dungeon = next(d for d in result.catalog["dungeons"] if d["id"] == "dungeon:the-deadmines")
+            self.assertEqual(dungeon["reference_contract_version"], 2)
             for field in ("preparation_quests", "rewards"):
                 self.assertEqual(dungeon[field], {"status": "unsupported"})
             self.assertTrue({f"quest:{i}" for i in ids} <= result.quests.keys())
@@ -301,10 +302,10 @@ class DungeonAssociationBoundsTest(unittest.TestCase):
             self.assertEqual({r["field"] for r in rows}, {"preparation_quests", "rewards"})
             for row in rows:
                 self.assertEqual((row["actual_count"], row["exposed_count"], row["unresolved_count"]),
-                                 (1025, 0, 1025))
+                                 (4097, 0, 4097))
             self.assertEqual(sum(c["kind"] == "bounded_association_unsupported"
                                  for c in result.conflicts), 2)
-            self.assertEqual(result.summary["generator"]["version"], "3")
+            self.assertEqual(result.summary["generator"]["version"], "4")
 
 
 class MappingTest(unittest.TestCase):
@@ -628,6 +629,35 @@ class RunTest(unittest.TestCase):
 
 
 class ProvenanceRevisionTests(unittest.TestCase):
+    def test_planar_dungeon_estimate_and_heuristic_are_consumed_not_hidden(self):
+        import copy
+        shards = copy.deepcopy(SHARDS)
+        dungeons = shards[("dungeons.dungeons", "vanilla_1_12")][2]
+        planar = world_of(0.25,0.75)
+        planar.pop("z")
+        planar.update(derivation="CMaNGOS instance_template map36 ghost entrance XY", uncertainty="Portal, access and elevation unverified")
+        dungeons[0]["entrance"] = {"status":"known", "value":{"map_id":36,"x":0,"y":0,"z":5}}
+        dungeons[0]["entrance_estimate"] = planar
+        dungeons.append({"kind":"dungeon","map_id":169,"name":"Emerald Dream","entrance":{"status":"unknown"},
+                         "excluded_reason":"Unused/test map169 with zero players and ghost fields"})
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Run(tmp, shards=shards)
+            dungeon = next(d for d in run.catalog["dungeons"] if d["id"] == "dungeon:the-deadmines")
+            self.assertEqual(dungeon["entrance"]["status"],"known")
+            self.assertTrue(dungeon["travel_edges"]["value"])
+            checks=dungeon["checklist"]["value"]
+            self.assertIn("ghost entrance XY",checks[0]["label"])
+            self.assertIn("unverified",checks[0]["label"])
+            self.assertTrue(all(c["condition"]["status"] == "unknown" for c in checks))
+            self.assertTrue(all(c["label"].startswith("Authored heuristic:") for c in checks[1:]))
+            self.assertEqual(dungeon["access"]["status"],"unknown")
+            self.assertFalse(any(d["id"] == "dungeon:emerald-dream" for d in run.catalog["dungeons"]))
+            self.assertEqual(run.summary["excluded_dungeons"][0]["map_id"],169)
+            ev={e["id"]:e for e in run.p["evidence"]}
+            self.assertTrue(any(ev[e]["confidence"] == "inferred" for e in checks[0]["evidence"]))
+            self.assertIn("quest:176",dungeon["preparation_quests"]["value"])
+
+
     def test_versioned_policy_compatibility(self):
         policy = json.loads(json.dumps(POLICY))
         policy["schema_version"] = 2

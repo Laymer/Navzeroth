@@ -40,6 +40,7 @@ pub fn reference_content_schema() -> Value {
     value["$defs"]["NodeFacts"]["properties"]["evidence"]["minItems"] = json!(1);
     value["$defs"]["NodeFacts"]["properties"]["evidence"]["maxItems"] = json!(1024);
     value["$defs"]["NodeFacts"]["properties"]["evidence"]["uniqueItems"] = json!(true);
+    value["$defs"]["Dungeon"]["properties"]["reference_contract_version"] = json!({"type":"integer", "enum":[1,2], "description":"Absent means historical 1024 quest/reward references; version2 permits4096."});
     close_records(&mut value);
     value
 }

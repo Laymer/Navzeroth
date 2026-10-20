@@ -303,6 +303,31 @@ fn authored_dungeon_catalog_uses_exact_declared_identity_title_and_evidence() {
 }
 
 #[test]
+fn dungeon_estimate_derivation_remains_visible_and_never_passes_readiness() {
+    let mut data = bundle();
+    let label = "Entrance estimate: CMaNGOS ghost-entry XY; portal, elevation and walkability unverified. Authored heuristic.";
+    data["content"]["dungeons"][0]["checklist"]["value"][0]["label"] = json!(label);
+    let (app, profile, _) = setup(&data);
+    let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},
+        "package":null,"origin":null,"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+    let report = app
+        .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+        .unwrap();
+    let package = report.package.unwrap();
+    assert_eq!(
+        package.checks.observation.value().unwrap()[0]
+            .label
+            .as_str(),
+        label
+    );
+    assert_eq!(
+        report.members[0].checks[0].condition.availability,
+        ObservationStatus::Unknown
+    );
+    assert!(report.members[0].checks[0].condition.evaluation.is_none());
+}
+
+#[test]
 fn full_source_reward_reference_list_survives_preparation_and_keeps_unknown_requirements() {
     let mut data = bundle();
     let acquisition = data["content"]["reference"]["payload"]["acquisitions"][0].clone();
@@ -341,7 +366,7 @@ fn full_source_reward_reference_list_survives_preparation_and_keeps_unknown_requ
     let report = app
         .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
         .unwrap();
-    assert_eq!(report.package.as_ref().unwrap().schema_version, 2);
+    assert_eq!(report.package.as_ref().unwrap().schema_version, 3);
     assert_eq!(
         report
             .package
@@ -408,4 +433,28 @@ fn full_source_reward_reference_list_survives_preparation_and_keeps_unknown_requ
             );
         }
     }
+}
+
+#[test]
+fn source_guidance_labels_preserve_full_utf8_text_under_new_schema() {
+    let mut data = bundle();
+    let label = "é".repeat(256);
+    data["content"]["dungeons"][0]["checklist"]["value"][0]["label"] = json!(label);
+    let (app, profile, _) = setup(&data);
+    let request = json!({"schema_version":1,"subject":{"kind":"character","profile_id":profile},"authored":{"revision":"demo-r1","id":"dungeon-1"}});
+    let report = app
+        .dungeon_preparation(&request.to_string(), Some(UtcMillis::new(NOW).unwrap()))
+        .unwrap();
+    let package = report.package.unwrap();
+    assert_eq!(package.schema_version, 3);
+    assert_eq!(
+        package.checks.observation.value().unwrap()[0]
+            .label
+            .as_str(),
+        label
+    );
+    assert_eq!(
+        report.members[0].checks[0].condition.availability,
+        ObservationStatus::Unknown
+    );
 }

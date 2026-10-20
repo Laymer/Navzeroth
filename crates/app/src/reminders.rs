@@ -23,6 +23,7 @@ pub struct ReminderRuleSummary {
 pub enum RuleDelivery {
     Synthetic,
     Verified,
+    AuthoredHeuristic,
     MissingEvidence,
     UnverifiedEvidence,
     ConflictingEvidence,
@@ -53,6 +54,7 @@ fn delivery(
     if rule.evidence.is_empty() {
         return RuleDelivery::MissingEvidence;
     }
+    let mut heuristic = 0;
     for id in &rule.evidence {
         let Some(e) = content
             .reference()
@@ -70,17 +72,73 @@ fn delivery(
         {
             return RuleDelivery::ConflictingEvidence;
         }
-        if e.confidence != Confidence::VerifiedOnBuild {
-            return RuleDelivery::UnverifiedEvidence;
-        }
         let Some(source) = content.sources().iter().find(|s| s.id == e.source) else {
             return RuleDelivery::MissingEvidence;
         };
-        if source.verified_revision.value() != Some(&content.reference().revision) {
-            return RuleDelivery::SourceRevisionUnknown;
+        if project_authored_heuristic(e, source) {
+            heuristic += 1;
+        } else {
+            if e.confidence != Confidence::VerifiedOnBuild {
+                return RuleDelivery::UnverifiedEvidence;
+            }
+            if source.verified_revision.value() != Some(&content.reference().revision) {
+                return RuleDelivery::SourceRevisionUnknown;
+            }
         }
     }
-    RuleDelivery::Verified
+    if heuristic == rule.evidence.len()
+        && rule.result_template.as_str().len() <= 4096 - HEURISTIC_LABEL.len()
+    {
+        RuleDelivery::AuthoredHeuristic
+    } else if heuristic == 0 {
+        RuleDelivery::Verified
+    } else {
+        RuleDelivery::UnverifiedEvidence
+    }
+}
+const HEURISTIC_LABEL: &str = "Authored heuristic: ";
+/// This classifies declared original authoring, not target-game observations or
+/// cryptographic admission. Distributed built-in bytes are separately checked
+/// by bundle receipts; custom imports remain the user's supplied content.
+fn project_authored_heuristic(
+    evidence: &azeroth_core::entities::EvidenceRecord,
+    source: &azeroth_core::sources::SourceRecord,
+) -> bool {
+    use azeroth_core::sources::{AccessMethod, Redistribution};
+    source.id.as_str() == "navzeroth-authored-v1"
+        && source.publisher.as_str() == "Navzeroth project (repository owner)"
+        && source.access.value() == Some(&AccessMethod::Authored)
+        && source
+            .license
+            .value()
+            .is_some_and(|v| v.as_str() == "BSD-3-Clause (repository LICENSE)")
+        && source
+            .attribution
+            .value()
+            .is_some_and(|v| v.as_str() == "Original Navzeroth authoring, (c) 2026 Igor K")
+        && source.verified_revision.value().is_some()
+        && source.redistribution.value() == Some(&Redistribution::Permitted)
+        && source.offline_usable.value() == Some(&true)
+        && source.allowed_fields.value().is_some_and(|v| {
+            v.len() == 4
+                && [
+                    "class_roles.models",
+                    "dungeons.preparation_checklist",
+                    "party.procedures",
+                    "reminders.rules",
+                ]
+                .iter()
+                .all(|field| v.iter().any(|f| f.as_str() == *field))
+        })
+        && source
+            .transformations
+            .value()
+            .is_some_and(|v| v.len() == 1 && v[0].as_str() == "canonical_typed_serialization")
+        && evidence.origin.is_none()
+        && matches!(
+            evidence.confidence,
+            Confidence::PublisherDocumented | Confidence::Inferred
+        )
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct ReminderView {
@@ -161,10 +219,26 @@ fn evaluate(
         .filter(|r| {
             matches!(
                 deliveries.get(&r.id),
-                Some(RuleDelivery::Synthetic | RuleDelivery::Verified)
+                Some(
+                    RuleDelivery::Synthetic
+                        | RuleDelivery::Verified
+                        | RuleDelivery::AuthoredHeuristic
+                )
             )
         })
-        .cloned()
+        .map(|rule| {
+            if deliveries[&rule.id] == RuleDelivery::AuthoredHeuristic {
+                let mut data = rule.clone().into_inner();
+                data.result_template = Text::try_from(format!(
+                    "{HEURISTIC_LABEL}{}",
+                    data.result_template.as_str()
+                ))
+                .expect("delivery bounds the authored heuristic label");
+                ContextRule::try_new(data).expect("only bounded presentation text changed")
+            } else {
+                rule.clone()
+            }
+        })
         .collect::<Vec<_>>();
     let revision = content.as_ref().map(|c| c.reference().revision.clone());
     let state = store.reminder_state(key)?;
@@ -364,5 +438,116 @@ mod tests {
             .push(other);
         value["envelope"]["payload"]["evidence"][0]["conflicts"] = json!(["other"]);
         assert_eq!(check(&value), RuleDelivery::ConflictingEvidence);
+    }
+    fn authored() -> Value {
+        let content: Value = serde_json::from_str(include_str!(
+            "../../../content/authored/slice-v1/catalog.json"
+        ))
+        .unwrap();
+        let sources: Value = serde_json::from_str(include_str!(
+            "../../../content/authored/slice-v1/sources.json"
+        ))
+        .unwrap();
+        json!({"content":content,"sources":sources["sources"],"conflicts":[]})
+    }
+    fn authored_delivery(value: &Value) -> RuleDelivery {
+        let content =
+            azeroth_core::content_v2::decode(&serde_json::to_vec(&value["content"]).unwrap())
+                .unwrap();
+        let rule = content.reference.payload.rules[0].clone();
+        let catalog = azeroth_storage::content::ActiveContentRevision::V2(std::sync::Arc::new(
+            azeroth_storage::content::ContentRevisionV2 {
+                content,
+                sources: serde_json::from_value(value["sources"].clone()).unwrap(),
+                conflicts: serde_json::from_value(value["conflicts"].clone()).unwrap(),
+            },
+        ));
+        delivery(&rule, &catalog, false)
+    }
+    #[test]
+    fn original_authoring_is_heuristic_and_exact_source_policy_is_required() {
+        let original = authored();
+        assert_eq!(
+            authored_delivery(&original),
+            RuleDelivery::AuthoredHeuristic
+        );
+        for (field, value) in [
+            ("publisher", json!("Other author")),
+            ("access", json!({"status":"unknown"})),
+            ("license", json!({"status":"known","value":"Other license"})),
+            (
+                "attribution",
+                json!({"status":"known","value":"Other attribution"}),
+            ),
+            ("verified_revision", json!({"status":"unknown"})),
+            (
+                "redistribution",
+                json!({"status":"known","value":"not_permitted"}),
+            ),
+            ("offline_usable", json!({"status":"known","value":false})),
+            (
+                "allowed_fields",
+                json!({"status":"known","value":["other.field"]}),
+            ),
+            (
+                "transformations",
+                json!({"status":"known","value":["other_transform"]}),
+            ),
+        ] {
+            let mut v = original.clone();
+            v["sources"][0][field] = value;
+            assert_eq!(
+                authored_delivery(&v),
+                RuleDelivery::UnverifiedEvidence,
+                "{field}"
+            );
+        }
+        let source: azeroth_core::sources::SourceRecord =
+            serde_json::from_value(original["sources"][0].clone()).unwrap();
+        for (confidence, allowed) in [
+            ("cross_edition_unverified", false),
+            ("disputed_or_stale", false),
+            ("limited_sample", false),
+            ("inferred", true),
+        ] {
+            let mut e = original["content"]["reference"]["payload"]["evidence"][0].clone();
+            e["confidence"] = json!(confidence);
+            let e: azeroth_core::entities::EvidenceRecord = serde_json::from_value(e).unwrap();
+            assert_eq!(project_authored_heuristic(&e, &source), allowed);
+        }
+        let mut v = original.clone();
+        v["content"]["reference"]["payload"]["rules"][0]["result_template"] =
+            json!("x".repeat(4096));
+        assert_eq!(authored_delivery(&v), RuleDelivery::UnverifiedEvidence);
+    }
+    #[test]
+    fn original_reminder_provenance_is_separate_from_dungeon_evidence() {
+        let v = authored();
+        assert_eq!(
+            v["content"]["reference"]["payload"]["evidence"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e["id"] == "ev-authored-reminders-r4")
+                .unwrap()["observed_at_utc_ms"]["status"],
+            "unknown"
+        );
+        let rules = v["content"]["reference"]["payload"]["rules"]
+            .as_array()
+            .unwrap();
+        assert!(rules.iter().all(|r| {
+            !r["evidence"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|id| id == "ev-authored-v1")
+        }));
+        assert!(
+            v["content"]["reference"]["payload"]["evidence"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|e| e["id"] == "ev-authored-v1")
+        );
     }
 }

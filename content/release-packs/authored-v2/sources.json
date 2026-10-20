@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "access": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "authored"
+      },
+      "allowed_fields": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "class_roles.models",
+          "dungeons.preparation_checklist",
+          "reminders.rules",
+          "party.procedures"
+        ]
+      },
+      "attribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Original Navzeroth authoring, (c) 2026 Igor K"
+      },
+      "authentication": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "conditional_requests": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "editions": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "wow_forever"
+        ]
+      },
+      "failure_behavior": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "id": "navzeroth-authored-v1",
+      "last_retrieval_utc_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "license": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "BSD-3-Clause (repository LICENSE)"
+      },
+      "location": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "content/authored/slice-v1/"
+      },
+      "offline_usable": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": true
+      },
+      "provider": null,
+      "publisher": "Navzeroth project (repository owner)",
+      "record_class": "publisher_documentation",
+      "redistribution": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "permitted"
+      },
+      "retention": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Kept in the repository with its history"
+      },
+      "transformations": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": [
+          "canonical_typed_serialization"
+        ]
+      },
+      "update_schedule": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "Changed only by reviewed repository commits"
+      },
+      "verified_revision": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": "3efa71309317196a48ce0704d3d0f80603a71586"
+      }
+    }
+  ]
+}

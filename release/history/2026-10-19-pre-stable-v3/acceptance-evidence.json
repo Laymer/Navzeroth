@@ -1,0 +1,130 @@
+{
+  "schema_version": 3,
+  "target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
+  "inventory_sha256": "0db9bda1a385c7f530a6bc8a3570187ca6773fc755cb4bd25b6308adb2bf32b8",
+  "tested_source_commit": null,
+  "production_sha256": null,
+  "checks": [
+    {
+      "id": "WIN-INSTALL",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-UPGRADE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-UNINSTALL",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-RECOVERY",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-OFFLINE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-FOCUS",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-REFERENCE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-DISPLAY",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-ACCESSIBILITY",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    },
+    {
+      "id": "WIN-PERFORMANCE",
+      "status": "unverified",
+      "method": "interactive_windows",
+      "operator": null,
+      "recorded_at": null,
+      "environment": null,
+      "artifacts": []
+    }
+  ],
+  "coverage": [],
+  "sources": [],
+  "packs": [],
+  "optional_deferrals": [
+    {
+      "feature": "official_api",
+      "reason": "No verified official Forever endpoint, authorized response and usage terms."
+    },
+    {
+      "feature": "party_messaging",
+      "reason": "Permitted message API and limits have not been verified; individual snapshots and local party planning remain required."
+    },
+    {
+      "feature": "combat_log_analysis",
+      "reason": "Permitted format and intended use have not been verified."
+    },
+    {
+      "feature": "hosted_distribution",
+      "reason": "Local offline distribution is the required baseline; hosted delivery prerequisites are not verified."
+    }
+  ],
+  "origin_policy": {
+    "path": "release/v1/accepted-origins.json",
+    "bytes": 904,
+    "sha256": "d58e2e456fc81b35b840ae846a794e1bf1b2ada46e0fff434ad9c063d5b73dd7"
+  }
+}
