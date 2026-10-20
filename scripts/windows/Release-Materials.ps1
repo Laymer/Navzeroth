@@ -37,7 +37,7 @@ function Assert-RegularReleasePath([string] $Path, [switch] $Directory) {
 }
 
 # Internal byte reader: the stream itself enforces the cap, including a cap+1 probe.
-function Read-ReleaseTextWithCap([string] $Path, [int] $MaximumBytes, [ref] $BytesRead = $null) {
+function Read-ReleaseTextWithCap([string] $Path, [int] $MaximumBytes, [Parameter(Mandatory)][ref] $BytesRead) {
     Assert-RegularReleasePath $Path
     $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
     $memory = New-Object IO.MemoryStream
@@ -50,7 +50,7 @@ function Read-ReleaseTextWithCap([string] $Path, [int] $MaximumBytes, [ref] $Byt
             $memory.Write($buffer, 0, $read)
             if ($memory.Length -gt $MaximumBytes) { throw 'Release JSON exceeds its size limit.' }
         }
-        if ($null -ne $BytesRead) { $BytesRead.Value = $memory.Length }
+        $BytesRead.Value = $memory.Length
         $bytes = $memory.ToArray()
         # Preserve UTF-8 BOM handling; the BOM still counts toward the byte limit.
         $offset = 0
@@ -60,7 +60,8 @@ function Read-ReleaseTextWithCap([string] $Path, [int] $MaximumBytes, [ref] $Byt
 }
 
 function Read-BoundedReleaseText([string] $Path) {
-    return Read-ReleaseTextWithCap $Path 16777216
+    $bytesRead = 0L
+    return Read-ReleaseTextWithCap $Path 16777216 ([ref]$bytesRead)
 }
 
 function Get-ReleaseContractByteLimit($Document) {
