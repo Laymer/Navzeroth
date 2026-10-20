@@ -263,7 +263,13 @@ pub(crate) fn load_sql_error(e: rusqlite::Error) -> LoadFailure {
         _ => LoadFailure::Database(crate::error::from_sqlite(e)),
     }
 }
+#[cfg(test)]
+thread_local! {
+    pub(crate) static FULL_LOADS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 pub(crate) fn load(conn: &Connection, id: i64) -> Result<ActiveContentRevision> {
+    #[cfg(test)]
+    FULL_LOADS.with(|count| count.set(count.get() + 1));
     load_checked(conn, id).map_err(LoadFailure::error)
 }
 pub(crate) fn load_checked(
@@ -441,15 +447,23 @@ impl SqliteStore {
         &self,
         key: &ContentRevisionKey,
     ) -> Result<Option<ActiveContentRevision>> {
-        let Some(id) = find(&self.conn, key)? else {
-            return Ok(None);
+        let get = |store: &Self| {
+            let Some(id) = find(&store.conn, key)? else {
+                return Ok(None);
+            };
+            let revision = store.cached_catalog(id)?;
+            if revision.key() != *key {
+                return Err(storage("Stored content identity disagrees"));
+            }
+            Ok(Some(revision))
         };
-        let revision = load(&self.conn, id)?;
-        if revision.key() != *key {
-            return Err(storage("Stored content identity disagrees"));
+        if self.conn.is_autocommit() {
+            self.with_immediate_read(get)
+        } else {
+            get(self)
         }
-        Ok(Some(revision))
     }
+
     pub fn content_revision(&self, key: &ContentRevisionKey) -> Result<Option<ContentRevision>> {
         let Some(id) = find(&self.conn, key)? else {
             return Ok(None);
