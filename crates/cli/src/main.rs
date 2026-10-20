@@ -19,7 +19,7 @@ const USAGE: &str = "Unsupported command or options. Implemented: bundle-receipt
     prepare-atlas --manifest <file> --content-root <dir> [--output <dir> | --check-pointer]; \
     validate-fixtures; validate-content --input <file-or-dir> [--json]; replay --fixture <file>; \
     inventory-report --root <repository> --input <relative-file>; \
-    (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]; \
+    (release-readiness|candidate-readiness|release-build-readiness|release-draft-readiness) --root <repository> --version <version> [--evidence <relative-file>]; \
     release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]; \
     stage-questiedb <raw-file options>; stage-foreverdb --input <directory> --manifest <file>; \
     guide verify --guide <file> --facts <file> [--race <Race>] [--class <Class>]; \
@@ -261,7 +261,7 @@ fn main() -> ExitCode {
             println!(
                 "Implemented subcommands: inspect-capture --input <SavedVariables-file>; doctor; build-content --input <dir> --output <dir>; build-content-v2 --input <dir> --output <dir>; verify-pack --input <dir>; export-schemas --output <dir>; prepare-atlas --manifest \
                  <file> --content-root <dir> [--output <dir> | --check-pointer]; validate-fixtures; replay --fixture <file>. \
-                 (release-readiness|candidate-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
+                 (release-readiness|candidate-readiness|release-build-readiness|release-draft-readiness) --root <repository> --version <version> [--evidence <relative-file>]. \
                  release-materials --root <repository> --version <version> [--evidence <relative-file>] [--output <new-directory>]. \
                  stage-questiedb <raw-file options> (see docs/data/QUESTIEDB_STAGING.md); stage-foreverdb --input <dir> --manifest <file> (see docs/data/FOREVERDB_STAGING.md); guide verify --guide <file> --facts <file> (see docs/data/GUIDE_VERIFIER.md); verify-world-data --input <dir> [--manifest <file>] (see docs/data/WORLD_DATA.md). \
                  Other commands are planned; see README.md and plan section 19.3."
@@ -335,7 +335,10 @@ fn main() -> ExitCode {
             }
         }
         [command, rest @ ..]
-            if command == "release-readiness" || command == "candidate-readiness" =>
+            if command == "release-readiness"
+                || command == "candidate-readiness"
+                || command == "release-build-readiness"
+                || command == "release-draft-readiness" =>
         {
             let Some(options) = azeroth_cli::release::Options::parse(rest) else {
                 eprintln!("{USAGE}");
@@ -343,6 +346,25 @@ fn main() -> ExitCode {
             };
             match azeroth_cli::release::report(&options) {
                 Ok(mut report) => {
+                    if command == "release-build-readiness" || command == "release-draft-readiness"
+                    {
+                        let phase = if command == "release-build-readiness" {
+                            azeroth_core::release::BuildPhase::Prebuild
+                        } else {
+                            azeroth_core::release::BuildPhase::Draft
+                        };
+                        let prepared = azeroth_cli::release::BuildReport::new(report, phase);
+                        println!(
+                            "{}",
+                            serde_json::to_string_pretty(&prepared)
+                                .expect("build report serialization")
+                        );
+                        return if prepared.build_ready {
+                            ExitCode::SUCCESS
+                        } else {
+                            ExitCode::FAILURE
+                        };
+                    }
                     let candidate = command == "candidate-readiness";
                     let allowed = if candidate {
                         report.readiness.candidate_ready

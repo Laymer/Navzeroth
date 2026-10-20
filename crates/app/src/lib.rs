@@ -5,6 +5,7 @@
 //! handlers for browser fixtures and compatibility tests.
 pub mod atlas;
 pub mod authored_content;
+pub mod authored_scores;
 pub mod catalog;
 pub mod catalog_pages;
 pub mod clustering;
@@ -16,6 +17,7 @@ pub mod local_data;
 pub mod party;
 pub mod plan_export;
 pub mod planning;
+mod planning_objectives;
 pub mod routes;
 pub mod snapshots;
 pub mod stored_atlas;

@@ -9,7 +9,7 @@ use serde_json::{Value, json};
 use std::collections::BTreeSet;
 
 const CATALOG: &[u8] = include_bytes!("../../../content/authored/slice-v1/catalog.json");
-const REV: &str = "navzeroth-authored-slice-r1";
+const REV: &str = "navzeroth-authored-slice-r2";
 
 fn source() -> SourceId {
     SourceId::new("navzeroth-authored-v1").unwrap()
@@ -41,6 +41,15 @@ fn committed_catalog_is_authored_only_and_defines_the_expected_records() {
         "warrior-tank",
         "paladin-melee-damage",
         "paladin-healer",
+        "paladin-tank",
+        "hunter-ranged-damage",
+        "shaman-melee-damage",
+        "shaman-ranged-damage",
+        "shaman-healer",
+        "druid-melee-damage",
+        "druid-ranged-damage",
+        "druid-healer",
+        "druid-tank",
         "rogue-melee-damage",
         "priest-healer",
         "priest-ranged-damage",
@@ -48,24 +57,36 @@ fn committed_catalog_is_authored_only_and_defines_the_expected_records() {
         "warlock-ranged-damage",
     ]
     .iter()
-    .map(|m| id(json!(["models", format!("model:{m}-1-20")])))
+    .flat_map(|m| {
+        [(1, 20), (21, 40), (41, 60)]
+            .into_iter()
+            .map(move |(lo, hi)| id(json!(["models", format!("model:{m}-{lo}-{hi}")])))
+    })
     .collect();
     assert_eq!(domain("class_roles"), models);
     assert_eq!(
         domain("dungeons"),
         BTreeSet::from([id(json!(["dungeons", "dungeon:the-deadmines"]))])
     );
-    let rules: BTreeSet<_> = [
+    let mut rules: BTreeSet<_> = [
         "train-after-level-up",
         "deadmines-repair-restock",
         "deadmines-hearthstone",
         "learn-flight-points",
-        "slice-level-boundary",
+        "heuristic-level-boundary",
         "duo-compare-progress",
     ]
     .iter()
     .map(|r| id(json!(["rules", format!("reminder:{r}")])))
     .collect();
+    for role in ["tank", "healer", "melee_damage", "ranged_damage"] {
+        for (lo, hi) in [(1, 20), (21, 40), (41, 60)] {
+            rules.insert(id(json!([
+                "rules",
+                format!("reminder:role-{role}-{lo}-{hi}")
+            ])));
+        }
+    }
     assert_eq!(domain("reminders"), rules);
     // The only geography record is the authored placeholder the dungeon names.
     assert_eq!(
@@ -86,11 +107,14 @@ fn committed_catalog_is_authored_only_and_defines_the_expected_records() {
             &BTreeSet::from(["navzeroth-authored-v1".to_owned()])
         );
     }
-    // Every Human class of the pending launch list has a model for levels 1-20.
+    // Every admitted single-class quest restriction has a heuristic model.
     let classes: BTreeSet<_> = content.models.iter().map(|m| m.class.as_str()).collect();
     assert_eq!(
         classes,
         BTreeSet::from([
+            "class:druid",
+            "class:hunter",
+            "class:shaman",
             "class:mage",
             "class:paladin",
             "class:priest",
@@ -99,12 +123,14 @@ fn committed_catalog_is_authored_only_and_defines_the_expected_records() {
             "class:warrior"
         ])
     );
-    assert!(
-        content
-            .models
-            .iter()
-            .all(|m| m.minimum_level.get() == 1 && m.maximum_level.get() == 20)
-    );
+    assert_eq!(content.models.len(), 54);
+    for class in classes {
+        for level in 1..=60 {
+            assert!(content.models.iter().any(|m| m.class.as_str() == class
+                && m.minimum_level.get() <= level
+                && m.maximum_level.get() >= level));
+        }
+    }
 }
 
 fn refused(edit: impl FnOnce(&mut Value)) {
@@ -187,5 +213,91 @@ fn game_fact_fields_stay_unknown_not_only_unclaimed() {
             refused(|v| v["models"][0][field] = pending());
         }
         refused(|v| v["reference"]["payload"]["map_spaces"][0]["transform"] = pending());
+    }
+}
+
+#[test]
+fn authored_role_reminders_cover_each_band_without_guessing_unknown_or_stale_roles() {
+    use azeroth_core::{
+        contract::Envelope,
+        entities::CharacterSnapshot,
+        evaluation::{EvaluationContext, StalePolicy, Truth, evaluate_rule},
+        observation::{ClockTrust, FreshnessContext},
+        predicate::RuleLimits,
+        types::{Millis, UtcMillis},
+    };
+    let content = content_v2::decode(CATALOG).unwrap();
+    let envelope: Envelope<CharacterSnapshot> = serde_json::from_str(include_str!(
+        "../../../fixtures/contracts/v1/character-snapshot.json"
+    ))
+    .unwrap();
+    let mut raw = serde_json::to_value(&envelope.payload).unwrap();
+    raw["location"] = json!({"status":"unknown"});
+    raw["context"] = serde_json::to_value(&content.reference.payload.rules[0].context).unwrap();
+    for field in ["equipment", "quests", "objectives"] {
+        raw[field] = json!({});
+    }
+    let now = 1791791990100i64;
+    let known = |value: Value| json!({"status":"known","value":value,"clock_trust":"trusted","observed_at_utc_ms":now-100,"source":"synthetic_fixture"});
+    let clock = FreshnessContext {
+        now_utc_ms: Some(UtcMillis::new(now).unwrap()),
+        clock_trust: ClockTrust::Trusted,
+        session: None,
+        max_age_ms: Millis::new(1000).unwrap(),
+    };
+    let rules: Vec<_> = content
+        .reference
+        .payload
+        .rules
+        .iter()
+        .filter(|r| r.id.as_str().starts_with("reminder:role-"))
+        .collect();
+    assert_eq!(rules.len(), 12);
+    for model in &content.models {
+        for level in [model.minimum_level.get(), model.maximum_level.get()] {
+            raw["level"] = known(json!(level));
+            raw["role"] = known(json!(model.profile.role));
+            let snapshot: CharacterSnapshot = serde_json::from_value(raw.clone()).unwrap();
+            let context = EvaluationContext {
+                snapshot: &snapshot,
+                party: None,
+                freshness: &clock,
+                stale_policy: StalePolicy::Reject,
+                limits: RuleLimits::default(),
+            };
+            let truths: Vec<_> = rules
+                .iter()
+                .filter(|r| evaluate_rule(r, &context).unwrap().truth == Truth::True)
+                .collect();
+            assert_eq!(truths.len(), 1, "{} level {level}", model.id.as_str());
+            assert!(
+                truths[0]
+                    .result_template
+                    .as_str()
+                    .contains("Heuristic preparation")
+            );
+        }
+    }
+    raw["level"] = known(json!(20));
+    for role in [
+        json!({"status":"unknown"}),
+        json!({"status":"restricted"}),
+        json!({"status":"unsupported"}),
+        json!({"status":"known","value":"healer","observed_at_utc_ms":now-2000,"clock_trust":"trusted","source":"synthetic_fixture"}),
+    ] {
+        raw["role"] = role;
+        let snapshot: CharacterSnapshot = serde_json::from_value(raw.clone()).unwrap();
+        let context = EvaluationContext {
+            snapshot: &snapshot,
+            party: None,
+            freshness: &clock,
+            stale_policy: StalePolicy::Reject,
+            limits: RuleLimits::default(),
+        };
+        assert!(
+            rules
+                .iter()
+                .all(|r| evaluate_rule(r, &context).unwrap().truth != Truth::True)
+        );
     }
 }

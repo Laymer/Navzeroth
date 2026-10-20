@@ -30,6 +30,7 @@ export interface GearInput {
 export type WeightSource = { type: "user_preference" | "synthetic_test" } | { type: "documented_model" | "permitted_guide"; source: string };
 export interface GearRequest {
   authored_model?: string | null;
+  score_role_assumption?: string | null;
   profile_id: string;
   snapshot_id: string;
   revision: string;
@@ -92,6 +93,7 @@ export interface GearAcquisition {
   credited_reward: ItemKey | null;
 }
 export interface GearReport {
+  mode?: never;
   request: GearRequest;
   fixture: boolean;
   context: DataContext;
@@ -106,3 +108,20 @@ export interface GearReport {
   practical_model_version: string;
   assumptions: string[];
 }
+
+/** Individual arithmetic only; no baseline, eligibility or acquisition rankings. */
+export interface AuthoredScores {
+  mode: "authored_score_only_v1";
+  request: GearRequest;
+  fixture: boolean;
+  context: DataContext;
+  imported_role: GearObservation<string>;
+  role_assumption: string | null;
+  source_layout: GearObservation<GearRequest["layout"]>;
+  source_proficiency: GearObservation<GearRequest["proficiency"]>;
+  equipment_eligibility: GearObservation<boolean>;
+  acquisition_availability: GearObservation<boolean>;
+  candidates: { item: ItemKey; score: GearScore }[];
+  assumptions: string[];
+}
+export type GearComparison = GearReport | AuthoredScores;

@@ -1,4 +1,4 @@
-# Authoring statement: Navzeroth 1.0.0 slice, revision navzeroth-authored-slice-r1
+# Authoring statement: Navzeroth 1.0.0 slice, revision navzeroth-authored-slice-r2
 
 Source: `navzeroth-authored-v1` (original Navzeroth authoring, BSD-3-Clause, task V2.4).
 
@@ -8,7 +8,7 @@ copied from a game client, a website or a third-party guide.
 
 What the files contain:
 
-- `catalog.json`: role model assumptions for each Human class in levels 1 to 20, a
+- `catalog.json`: 54 original role models across nine historical input class identities in levels 1 to 60, a
   Deadmines preparation checklist, and reminder rules. All of it is authored advice
   or an authored assumption.
 - `party-support.json` and `procedures/`: the solo and duo party workflows and the
@@ -21,11 +21,12 @@ What the files do not contain, on purpose:
   preparation quests, travel edges, rewards, recommended level; class proficiency
   and slot layout), the field is `unknown`. Those values come later from the local
   client projection (task V2.2) or from the operator's own in-game observations
-  through the addon, and are confirmed against the frozen release target.
+  through the permitted addon. Actual source origin/build and uncertainty remain
+  explicit; acceptance of historical sources is not live verification.
 - A verified game build. The catalog is labelled with the development tuple
   `wow_forever 1.60.1.70450 / 16001` because the format requires a context; the
-  content does not depend on it and is rebuilt for the first stable live build
-  after launch. Nothing here is relabelled to that build.
+  content does not establish verification on it. ADRs 0007 and 0008 remove the
+  launch-build freeze and retain true origins and uncertainty.
 - Activation. Building or verifying this pack does not install it for planning.
 
 The Deadmines map key `authored:the-deadmines` / floor `authored:pending` is a
@@ -34,6 +35,7 @@ record must name a map. It must be joined to the projection's map identity befor
 any geography coverage counts it.
 
 Class identities use the authored vocabulary `class:<name>` (warrior, paladin,
-rogue, priest, mage, warlock). They are joined to the client class records of the
-local projection later. The class list for launch is still pending (ADR 0006 §2);
-another class is added as another `class:<name>` model without a format change.
+hunter, rogue, priest, shaman, mage, warlock, druid). They are joined to the client class records of the
+local projection later. The historical class inventory is documented in `docs/data/role-coverage-v1.json`.
+It does not establish a current Forever roster or a verified level cap. New
+identities or ranges require review; coefficients remain original heuristics.

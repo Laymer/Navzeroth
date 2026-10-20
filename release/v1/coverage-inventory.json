@@ -65,6 +65,26 @@
           "id": "equipment-outside-human-1-20",
           "scope": "Items obtainable only outside the slice zones or above level 20.",
           "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "equipment-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "equipment-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "equipment-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "equipment-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
         }
       ]
     },
@@ -84,6 +104,26 @@
           "id": "acquisition-outside-human-1-20",
           "scope": "Acquisition paths located outside the slice zones or requiring more than level 20.",
           "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "acquisition-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "acquisition-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "acquisition-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "acquisition-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
         }
       ]
     },
@@ -160,6 +200,26 @@
           "id": "class_roles-outside-human-1-20",
           "scope": "Classes not open to Human, other races' racial traits, and levels above 20.",
           "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "class_roles-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "class_roles-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "class_roles-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "class_roles-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
         }
       ]
     },
@@ -198,6 +258,26 @@
           "id": "reminders-outside-human-1-20",
           "scope": "Reminder rules that only concern content outside the slice.",
           "reason": "Outside the declared 1.0.0 slice (ADR 0006 section 2); later 1.x releases widen it."
+        },
+        {
+          "id": "reminders-deferred-trainer_spell_gameplay",
+          "scope": "Trainer-spell recommendations",
+          "reason": "Trainer references may be browsed; spell-learning plans and purchase guidance are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "reminders-deferred-talents",
+          "scope": "Talent recommendations",
+          "reason": "Talent allocation and build advice are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "reminders-deferred-professions",
+          "scope": "Profession recommendations",
+          "reason": "Profession progression, recipes and crafting plans are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
+        },
+        {
+          "id": "reminders-deferred-enhancements",
+          "scope": "Enhancement recommendations",
+          "reason": "Enchantments and other item enhancements are deferred. Owner-declared 1.0.0 exclusion (ADR 0008)."
         }
       ]
     }
