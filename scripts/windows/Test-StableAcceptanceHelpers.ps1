@@ -2,6 +2,7 @@
 Set-StrictMode -Version 3.0
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'Hosted-Acceptance.ps1')
+. (Join-Path $PSScriptRoot 'Release-Materials.ps1')
 . (Join-Path $PSScriptRoot 'Stable-Acceptance-Helpers.ps1')
 $root=Join-Path ([IO.Path]::GetTempPath()) ('anav-hosted-helper-'+[Guid]::NewGuid().ToString('N'))
 $count=0
@@ -14,6 +15,39 @@ function Disable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param([strin
 function Enable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param([string]$InterfaceDescription) $script:nics[$InterfaceDescription]='Up';$script:enabled+=$InterfaceDescription;if($script:enableFailure -eq $InterfaceDescription){throw 'Synthetic enable failure after state changed'} }
 try{
  New-Item -ItemType Directory -Path $root|Out-Null
+ $expectedTarget='{"build":"70450","edition":"wow_forever","interface":16001,"version":"1.60.1"}' | ConvertFrom-Json
+ $actualTarget='{"edition":"wow_forever","version":"1.60.1","build":"70450","interface":16001}' | ConvertFrom-Json
+ Check 'actual current target identity accepts different JSON field order' {
+  if (($expectedTarget|ConvertTo-Json -Compress) -ceq ($actualTarget|ConvertTo-Json -Compress)) {throw 'Regression fixture does not reproduce original order mismatch'}
+  Assert-StableTargetIdentity $expectedTarget $actualTarget
+ }
+ Check 'current source-bound release and committed build identity targets match' {
+  $repository=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
+  $release=Read-BoundedReleaseContractText (Join-Path $repository 'release/v1/acceptance-evidence.json')|ConvertFrom-Json
+  $build=Read-BoundedBundleIdentity (Join-Path $repository 'release/v1/bundled-content-build-identity.json')|ConvertFrom-Json
+  Assert-StableTargetIdentity $release.target $build.target
+ }
+ Check 'integer widths from supported PowerShell JSON parsers retain identity' {$actualTarget.interface=[long]16001;Assert-StableTargetIdentity $expectedTarget $actualTarget}
+ foreach($field in @('edition','version','build','interface')) {
+  Check "wrong target $field is refused" {
+   $bad=$actualTarget|ConvertTo-Json|ConvertFrom-Json
+   if($field -eq 'interface'){$bad.$field=16002}else{$bad.$field='different'}
+   Refuse {Assert-StableTargetIdentity $expectedTarget $bad}
+  }
+ }
+ Check 'missing and additional target fields are refused' {
+  $bad=$actualTarget|ConvertTo-Json|ConvertFrom-Json;$bad.PSObject.Properties.Remove('build');Refuse {Assert-StableTargetIdentity $expectedTarget $bad}
+  $bad=$actualTarget|ConvertTo-Json|ConvertFrom-Json;$bad|Add-Member extra 'unbound';Refuse {Assert-StableTargetIdentity $expectedTarget $bad}
+ }
+ Check 'malformed interface types and bounds are refused' {
+  foreach($value in @('16001',$true,16001.0,0,-1,4294967296,$null)) {
+   $bad=$actualTarget|ConvertTo-Json|ConvertFrom-Json;$bad.interface=$value;Refuse {Assert-StableTargetIdentity $expectedTarget $bad}
+  }
+ }
+ Check 'non-object targets and malformed string fields are refused on either side' {
+  foreach($bad in @($null,'target',@($actualTarget),@{edition='wow_forever'})) {Refuse {Assert-StableTargetIdentity $expectedTarget $bad};Refuse {Assert-StableTargetIdentity $bad $actualTarget}}
+  foreach($name in @('edition','version','build')) {$bad=$actualTarget|ConvertTo-Json|ConvertFrom-Json;$bad.$name=16001;Refuse {Assert-StableTargetIdentity $expectedTarget $bad}}
+ }
  Check 'completed actual details create a pass' {Invoke-StableCase 'HOSTED-INSTALL' $identity $root {return @{install_ms=123}};$case=Get-Content -Raw (Join-Path $root 'hosted-install.json')|ConvertFrom-Json;if($case.status -ne 'pass' -or $case.install_ms -ne 123){throw 'Missing actual measurement'}}
  Check 'actual failure is retained as fail and thrown' {Refuse {Invoke-StableCase 'HOSTED-INSTALL' $identity $root {throw 'Synthetic failure'}};$case=Get-Content -Raw (Join-Path $root 'hosted-install.json')|ConvertFrom-Json;if($case.status -ne 'fail'){throw 'Failure promoted'}}
  Check 'hosted producer cannot record owner smoke' {Refuse {Invoke-StableCase 'OWNER-INSTALLER-SMOKE' $identity $root {return @{}}}}
