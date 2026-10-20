@@ -8,7 +8,7 @@ if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hoste
 . (Join-Path $PSScriptRoot 'Hosted-Acceptance.ps1')
 $Root = [IO.Path]::GetFullPath($Root)
 Assert-StablePhaseReadiness $Root $Version 'prebuild'
-$base = Read-BoundedReleaseText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+$base = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
 $source = & git -C $Root rev-parse HEAD
 if ($LASTEXITCODE -ne 0) { throw 'Cannot identify hosted source commit.' }
 $setup = Get-NativeSmokeSetup $InstallerDirectory
@@ -28,5 +28,5 @@ foreach ($id in $script:HostedAcceptanceIds) {
     $cases[$id] = @{ Result = ($text | ConvertFrom-Json); Artifact = [ordered]@{path=$destination.Substring($Root.Length+1).Replace('\','/');bytes=$bytes;sha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()} }
 }
 $evidence = New-HostedAcceptanceEvidence $base $Version $source $base.production_sha256 $hash $cases
-[IO.File]::WriteAllText((Join-Path $output 'acceptance-evidence.json'), (($evidence | ConvertTo-Json -Depth 100) + "`n"), (New-Object Text.UTF8Encoding($false)))
+[IO.File]::WriteAllText((Join-Path $output 'acceptance-evidence.json'), (ConvertTo-BoundedReleaseContractText $evidence), (New-Object Text.UTF8Encoding($false)))
 Write-Host "Recorded $($cases.Count) actual hosted case records; missing cases remain unchanged/unverified. Owner smoke is never created here."

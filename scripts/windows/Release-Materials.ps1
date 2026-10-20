@@ -36,10 +36,55 @@ function Assert-RegularReleasePath([string] $Path, [switch] $Directory) {
     }
 }
 
-function Read-BoundedReleaseText([string] $Path) {
+# Internal byte reader: the stream itself enforces the cap, including a cap+1 probe.
+function Read-ReleaseTextWithCap([string] $Path, [int] $MaximumBytes, [ref] $BytesRead = $null) {
     Assert-RegularReleasePath $Path
-    if ((Get-Item -LiteralPath $Path).Length -gt 16777216) { throw 'Release JSON exceeds its size limit.' }
-    return [IO.File]::ReadAllText($Path, (New-Object Text.UTF8Encoding($false, $true)))
+    $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+    $memory = New-Object IO.MemoryStream
+    try {
+        $buffer = New-Object byte[] 65536
+        while ($true) {
+            $remaining = $MaximumBytes + 1 - [int]$memory.Length
+            $read = $stream.Read($buffer, 0, [Math]::Min($buffer.Length, $remaining))
+            if ($read -eq 0) { break }
+            $memory.Write($buffer, 0, $read)
+            if ($memory.Length -gt $MaximumBytes) { throw 'Release JSON exceeds its size limit.' }
+        }
+        if ($null -ne $BytesRead) { $BytesRead.Value = $memory.Length }
+        $bytes = $memory.ToArray()
+        # Preserve UTF-8 BOM handling; the BOM still counts toward the byte limit.
+        $offset = 0
+        if ($bytes.Length -ge 3 -and $bytes[0] -eq 239 -and $bytes[1] -eq 187 -and $bytes[2] -eq 191) { $offset = 3 }
+        return (New-Object Text.UTF8Encoding($false, $true)).GetString($bytes, $offset, $bytes.Length - $offset)
+    } finally { $stream.Dispose(); $memory.Dispose() }
+}
+
+function Read-BoundedReleaseText([string] $Path) {
+    return Read-ReleaseTextWithCap $Path 16777216
+}
+
+function Get-ReleaseContractByteLimit($Document) {
+    $property = $Document.PSObject.Properties['schema_version']
+    if ($null -eq $property -or ($property.Value -isnot [int] -and $property.Value -isnot [long]) -or $property.Value -notin 1, 2, 3, 4) { throw 'Unsupported release contract schema.' }
+    if ($property.Value -eq 4) { return 67108864 }
+    return 16777216
+}
+
+# Only inventory/evidence contracts opt into schema 4's reviewed 64 MiB bound.
+function Read-BoundedReleaseContractText([string] $Path) {
+    $bytesRead = 0L
+    $text = Read-ReleaseTextWithCap $Path 67108864 ([ref]$bytesRead)
+    $document = $text | ConvertFrom-Json
+    $limit = Get-ReleaseContractByteLimit $document
+    if ($bytesRead -gt $limit) { throw 'Release contract exceeds its schema size limit.' }
+    return $text
+}
+
+function ConvertTo-BoundedReleaseContractText($Document) {
+    $limit = Get-ReleaseContractByteLimit $Document
+    $text = ($Document | ConvertTo-Json -Depth 100 -Compress) + "`n"
+    if ((New-Object Text.UTF8Encoding($false, $true)).GetByteCount($text) -gt $limit) { throw 'Release contract exceeds its schema size limit.' }
+    return $text
 }
 
 function Test-EmptyMaterialSelection([string] $Root) {
@@ -47,8 +92,8 @@ function Test-EmptyMaterialSelection([string] $Root) {
     $evidence = Join-Path $Root 'release/v1/acceptance-evidence.json'
     # Historical addon-only preview fixtures have neither release contract.
     if (-not (Test-Path -LiteralPath $inventory) -and -not (Test-Path -LiteralPath $evidence)) { return $true }
-    $i = Read-BoundedReleaseText $inventory | ConvertFrom-Json
-    $e = Read-BoundedReleaseText $evidence | ConvertFrom-Json
+    $i = Read-BoundedReleaseContractText $inventory | ConvertFrom-Json
+    $e = Read-BoundedReleaseContractText $evidence | ConvertFrom-Json
     # Schemas 2 (ADR 0006) and 3 (ADR 0007) keep the material fields; both files must share a version.
     if ($i.schema_version -notin 1, 2, 3, 4 -or $e.schema_version -ne $i.schema_version) { throw 'Unsupported release material schema.' }
     return @($i.sources).Count -eq 0 -and @($e.sources).Count -eq 0 -and @($e.packs).Count -eq 0
@@ -244,8 +289,8 @@ function Get-AcceptanceCandidateMarker([string] $Root, [string] $Version) {
 function Assert-StableEvidenceOverlay([string] $Root, [string] $Evidence) {
     if (-not $Evidence) { return }
     if ([IO.Path]::IsPathRooted($Evidence) -or $Evidence -match '(^|[\\/])\.\.([\\/]|$)' -or $Evidence -match '\\') { throw 'Evidence overlay must be a safe repository-relative path.' }
-    $baseline = Read-BoundedReleaseText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
-    $overlay = Read-BoundedReleaseText (Join-Path $Root $Evidence) | ConvertFrom-Json
+    $baseline = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+    $overlay = Read-BoundedReleaseContractText (Join-Path $Root $Evidence) | ConvertFrom-Json
     if ($baseline.schema_version -ne 4 -or $overlay.schema_version -ne 4) { throw 'Evidence overlays require schema4.' }
     $mutable = @('checks', 'candidate_installer_sha256')
     $baseNames = @($baseline.PSObject.Properties.Name | Where-Object { $_ -notin $mutable } | Sort-Object)
@@ -258,7 +303,7 @@ function Assert-StableEvidenceOverlay([string] $Root, [string] $Evidence) {
 
 function Assert-StableInstallerBinding([string] $Root, [string] $Version, [string] $Directory, [string] $Evidence = '') {
     $path = if ($Evidence) { Join-Path $Root $Evidence } else { Join-Path $Root 'release/v1/acceptance-evidence.json' }
-    $evidenceObject = Read-BoundedReleaseText $path | ConvertFrom-Json
+    $evidenceObject = Read-BoundedReleaseContractText $path | ConvertFrom-Json
     if ($evidenceObject.schema_version -ne 4) { return }
     $installer = Join-Path $Directory "AzerothNavigator-$Version-x64-setup.exe"
     Assert-RegularReleasePath $installer
