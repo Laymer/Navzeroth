@@ -1,0 +1,3 @@
+# Checkpoint B: native bundled content and preparation
+
+Owner /root/desktop_review, sole writer in /tmp/navzeroth-stable-native-content-integration. Baseline a3c1ac24de3383e5c239e8f491bd4fc90002fffb, normal delivery merge of independently reviewed checkpoint A/PR233. Integrate only reviewed89858903 and084b76bb (fcc31f9f inventory docs if absent). Keep final r4 mapper4/profile2/source22 a9 products, existing proofs, atomic persisted defaults, cache generation, source objectives and versioned long guidance. Hostedafa/nativecoverage781 are checkpoint C and held. No keys, signing, status promotion, source regeneration, push or publication.
