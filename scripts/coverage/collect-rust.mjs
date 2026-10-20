@@ -1,16 +1,17 @@
 // Native first-party instrumentation. Every process is repository-owned or a
 // declared synthetic workload; this collector never selects game/private inputs.
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
-import {execFileSync} from 'node:child_process';import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
 import {verifyBuildConfiguration} from '../measure-continuation.mjs';
 import {prepareNativeBundle,stageNativeBundle} from './native-bundle.mjs';
 import {loggedProcess} from './process-output.mjs';
+import {assertCleanCommittedSource} from './clean-source.mjs';
 import {inventory} from './inventory.mjs';import {coverageEnvironment,compilerIdentity,requireMatchingLlvm} from './rust-environment.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const require=createRequire(path.join(root,'apps/desktop/package.json'));
 function snapshot(){
- if(execFileSync('git',['status','--porcelain','--untracked-files=normal'],{cwd:root,encoding:'utf8'}).trim())throw new Error('Native coverage requires clean committed source');
+ assertCleanCommittedSource(root);
  return JSON.stringify(inventory(root),null,2)+'\n';
 }
 export function collectRust(destination){
@@ -33,6 +34,7 @@ export function collectRust(destination){
   commands.push({name,executable:path.basename(exe),arguments:args,expected_exit_code:expected,exit_code:result.status,signal:result.signal,error:result.error?.code??null});
   fs.writeFileSync(path.join(destination,'commands.json'),JSON.stringify(commands,null,2)+'\n');
   if(result.error||result.status!==expected)throw new Error(`Native coverage command failed: ${name}`);
+  assertCleanCommittedSource(root,undefined,`after ${name}`);
   return text;
  }
  const common=['--include-build-script','--no-default-ignore-filename-regex','--ignore-filename-regex','(/vendor/|/tests/|/rustc/|/registry/|/target/)'];
