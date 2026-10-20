@@ -163,3 +163,31 @@ Final excluded/unpinned coordinator docs retain that production and canonical
 identity. Fresh final-candidate allten/source/Windows checks remain mandatory before
 merge; exact resulting-main checks/stability beforetag and exact draft independent
 verification beforeowner smoke. No tag/publication/deployment exists.
+
+
+## V13 signed source closure independently verified
+
+Signedhead1fe3e3f33c3ad9c9ea37fcaa57172e9136331c3e binds tested716af3e8 and
+productiona8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620.
+Publicreview82999B/36c24922 independently streams110Git-pinnedrefs. Rootactual
+debugprepare and desktopownoptimizedpreview/pureprepare agree17185Bmanifest577b6416/
+527Bidentity6914c2f1; prepared44f5 BEFOREkeys, receipt1073B/0e3e426b binds them.
+Root/tooling EACH actualcrypto/OWNassembly/DEFAULTcompiledtrust/sourceprebuildPASS:
+84exactresources395806353B/two packs/noextras;89evidencefiles/two packs;
+build_readytrue/stable_readyfalse/publicationfalse and EXACT9HOSTED8+OWNERpending
+only/nootherblockers. Root independently rechecked bothreports' exactblockers and
+streamed own84resourceclosure; tooling separately streamed its own84. Reports
+/tmp/navzeroth-{stable,tooling}-v13-{crypto,assembly,compiled-check,readiness}.json.
+Expectedidentity external/tmp/navzeroth-v13-expected-identity.json copiedbefore
+receipt and independentlyagreed. Bothkeys operatorcontrolled; no independentcustody.
+Desktop finalcompositionCLEAR exact1fe3, ownpreparedbytes and3evidenceFileRefs
+unchanged; crypto/sourceexecutions attributedroot/tooling. Own260authorship/other
+reviewers' independent3devbrowser/43Node evidence remainsaccurate. Actualfullpack
+ef3c/ec335 stays actual1dd/b9 sharedLinuxWSL2; no716rebuild/rerun/Windowsclaim.
+
+Only3excludedunpinnedcoordinatordocs change aftersignedclosure; finalexacthead
+worldreview precedes ONEfreshcandidatepush. All9canonicalobservations unverified.
+HistoricalV12 actualCI/source/coveragePASS/packageFAIL/all8skipped remainhistory.
+Main807ef674 unchanged; generated243deferred. Require newallten/source/Windows
+gates beforePR239merge, freshresultingmain+stability beforetag, verifieddraft
+beforeowner exactinstaller smoke and publication. No tag/owner/publication/site.
