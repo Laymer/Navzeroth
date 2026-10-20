@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "historical_signed_content_before_actual_hosted_metric_dto_repair",
+  "signed_source_commit": "541b7e0952dc51bf2795db8e5da8f55bdd50656d",
+  "documented_candidate": "3e87ee2fff5f5f30c8fdd2fdfb0a882968c0b715",
+  "candidate_pushed": false,
+  "tested_source_commit": "6c6fda90c9e22cd7acebca179c5c688699b84354",
+  "production_sha256": "09b66c070b3b3b8d472f03850b1009422c78b407db4dc7905961b09870d61cbe",
+  "review": {
+    "path": "release/v1/public-content-review-v9.json",
+    "bytes": 40873,
+    "sha256": "42a4cd3403e73b9de01c510ceb90e3ccd6f2ef4c8279ceaae8c50a121d8034da"
+  },
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v9/bundled-content-manifest.json",
+      "bytes": 17183,
+      "sha256": "af6e0af572e25de53e081f38c6eab94b2bcbbee54868e173e5b3e88c779c13d3"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v9/bundled-content-build-identity.json",
+      "bytes": 526,
+      "sha256": "c417091414becc6b576a533a14231b6a31121518c0267e131fd1514f0eb9f629"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v9/bundled-content-receipt.json",
+      "bytes": 1072,
+      "sha256": "fb7fbdda97d2da0231ecbf8bc120c4bf7ba4fb277e86bf4197e031296de02501"
+    }
+  },
+  "actual_source_prebuild": {
+    "build_ready": true,
+    "verified_evidence_files": 89,
+    "verified_content_packs": 2,
+    "pending_observations": 9,
+    "publication_allowed": false
+  },
+  "limitation": "Two independent cryptographic/own-assembly/default compiled policy and source checks passed, but no V9 hosted checks were dispatched. Existing V8 package failed performance DTO validation before four later hosted cases; new repair changes production. No tag, owner smoke or publication."
+}
