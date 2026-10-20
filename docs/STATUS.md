@@ -40,9 +40,10 @@ workflow-test exit repairs are recorded without relabeling earlier package failu
 Separate draft version/release PR239 prepares six1.0.0declarations, complete
 verified bundles, historical source warnings, estimates and declared exclusions.
 Its fresh full-pack scenario passed atf3917490 on shared Linux/WSL2; this is not
-Windows or ordinary-PC performance evidence. Final repair union3fea6e4e adds the reviewed legacy fixture correction;
-additive independent V3 review and signed content evidence are being prepared for
-its exact production identity. Initial signatures remain historical under release/history.
+Windows or ordinary-PC performance evidence. Final repair union273c57d3 adds the reviewed exact-LF contract for14authored
+Markdown resources after preliminary Windows coverage correctly refused CRLF
+changes. Independent V4review/preparation passed; signed content evidence is
+being renewed for this exact production identity. Initial signatures remain historical under release/history.
 [Version handoff](handoffs/2026-10-20-stable-version-release.md).
 
 Actual weekly run39394989774 completed one bounded network acquisition and one
