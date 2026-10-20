@@ -1,0 +1,8 @@
+{
+  "platform": "linux",
+  "elapsed_seconds": 347.8049998570059,
+  "exit_code": 0,
+  "timed_out": false,
+  "maximum_resident_set_kib": 12508668,
+  "scope": "actual diagnostic Rust test process and its threads; newly rebuilt optimized app dependencies at d636c539; original V13 signed bundle unchanged, not Windows acceptance; whole benchmark bound1200s"
+}
