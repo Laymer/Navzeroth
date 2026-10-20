@@ -87,3 +87,14 @@ upgrade/resources/performance checks and owner installer smoke. Later product or
 pack changes must reassess these source/code bindings; this snapshot authorizes
 no publication. No keys, signing, pushes, manual/Windows or public-URL verification
 was performed by this task.
+
+## Root public source verification
+
+Root routinely pushed reviewed final-content history, making immutable a9e5e4f3
+reachable. A bounded four-worker download independently verified all22code/terms
+URLs against exact retained lengths/SHA256 in1.567seconds. Actual receipt:
+`docs/data/stable-final-public-code-v1.json`. Allinputs were bounded8MiB each
+with25second socket timeouts; these are immutable public sources, not game data
+observations. No purchases, quota expansion, signing or release occurred.
+The proof still binds exact testedf72; metadata-only public verification does not
+change source production identity or any Windows/owner result.
