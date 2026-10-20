@@ -1,10 +1,43 @@
 # Schema4 hosted observations only. These helpers never perform tests or create owner smoke.
 Set-StrictMode -Version 3.0
 $script:HostedAcceptanceIds = @('HOSTED-INSTALL','HOSTED-FIRST-START','HOSTED-UPGRADE-RC1','HOSTED-DOWNGRADE-REFUSAL','HOSTED-PERSISTENCE-RECOVERY','HOSTED-RESOURCES','HOSTED-OFFLINE','HOSTED-PERFORMANCE')
+# Preserve literal evidence timestamps before validation. PS7 normally converts
+# ISO JSON strings to DateTime, whose culture formatting is not the source value.
+function Restore-HostedTimestampStrings([string] $Text, $Value) {
+    $document = [System.Text.Json.JsonDocument]::Parse($Text)
+    try {
+        $root = $document.RootElement
+        if ($Value.PSObject.Properties['recorded_at']) {
+            $timestamp = $root.GetProperty('recorded_at')
+            if ($timestamp.ValueKind -eq [System.Text.Json.JsonValueKind]::String) { $Value.recorded_at = $timestamp.GetString() }
+        }
+        if ($Value.PSObject.Properties['checks'] -and $root.GetProperty('checks').ValueKind -eq [System.Text.Json.JsonValueKind]::Array) {
+            $checks = @($Value.checks)
+            $tokens = $root.GetProperty('checks')
+            if ($checks.Count -ne $tokens.GetArrayLength()) { throw 'Hosted JSON check count differs.' }
+            for ($i = 0; $i -lt $checks.Count; $i++) {
+                if ($checks[$i].PSObject.Properties['recorded_at']) {
+                    $timestamp = $tokens[$i].GetProperty('recorded_at')
+                    if ($timestamp.ValueKind -eq [System.Text.Json.JsonValueKind]::String) { $checks[$i].recorded_at = $timestamp.GetString() }
+                }
+            }
+        }
+    } finally { $document.Dispose() }
+}
+function ConvertFrom-HostedJsonText([string] $Text) {
+    if ((Get-Command ConvertFrom-Json).Parameters.ContainsKey('DateKind')) { return ConvertFrom-Json -InputObject $Text -DateKind String }
+    $value = ConvertFrom-Json -InputObject $Text
+    # Windows PowerShell5.1 already keeps strings. Older PS7 uses the raw JSON
+    # token for only the two supported shapes: a case or evidence.checks rows.
+    if ($PSVersionTable.PSVersion.Major -ge 6) { Restore-HostedTimestampStrings $Text $value }
+    return $value
+}
+# Relative Windows file paths become portable FileRef paths before validation.
+function ConvertTo-HostedArtifactPath([string] $Relative) { return $Relative.Replace('\', '/') }
 function Test-HostedText($Value) { return $Value -is [string] -and $Value.Trim().Length -gt 0 -and $Value.Length -le 1024 -and $Value -notmatch '[\x00-\x1f\x7f]' }
 function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $SourceCommit, [string] $Production, [string] $Installer, $Target) {
     if ($Case.schema_version -ne 1 -or $Case.id -cne $Id -or $Case.method -cne 'hosted_windows' -or $Case.status -cnotin @('pass','fail') -or $Case.version -cne $Version -or $Case.source_commit -cne $SourceCommit -or $Case.production_sha256 -cne $Production -or $Case.installer_sha256 -cne $Installer -or ($Case.target | ConvertTo-Json -Depth 20 -Compress) -cne ($Target | ConvertTo-Json -Depth 20 -Compress)) { throw 'Hosted case release/installer/source identity differs.' }
-    if (-not (Test-HostedText $Case.operator) -or -not (Test-HostedText $Case.environment) -or $Case.recorded_at -cnotmatch '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$') { throw 'Hosted case lacks actual operator/date/environment.' }
+    if (-not (Test-HostedText $Case.operator) -or -not (Test-HostedText $Case.environment) -or $Case.recorded_at -isnot [string] -or $Case.recorded_at -cnotmatch '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$') { throw 'Hosted case lacks actual operator/date/environment.' }
     $date = [DateTimeOffset]::MinValue
     if (-not [DateTimeOffset]::TryParse($Case.recorded_at, [ref]$date)) { throw 'Hosted date is invalid.' }
     if ($Case.status -ceq 'fail') { return }
@@ -28,7 +61,7 @@ function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $Sou
 }
 function New-HostedAcceptanceEvidence($Base, [string] $Version, [string] $SourceCommit, [string] $Production, [string] $Installer, [hashtable] $Cases = @{}) {
     if ($Base.schema_version -ne 4 -or $SourceCommit -cnotmatch '^[a-f0-9]{40}$' -or $Production -cnotmatch '^[a-f0-9]{64}$' -or $Installer -cnotmatch '^[a-f0-9]{64}$' -or $Base.production_sha256 -cne $Production) { throw 'Hosted evidence requires bound schema4 production.' }
-    $result = $Base | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+    $result = ConvertFrom-HostedJsonText ($Base | ConvertTo-Json -Depth 100)
     $seen = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
     foreach ($row in $result.checks) {
         if (-not $seen.Add($row.id) -or ($row.id -cnotin $script:HostedAcceptanceIds -and $row.id -cne 'OWNER-INSTALLER-SMOKE')) { throw 'Unexpected or repeated acceptance row.' }
