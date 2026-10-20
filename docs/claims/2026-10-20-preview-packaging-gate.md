@@ -1,0 +1,3 @@
+# Preview packaging gate regression
+
+Owner /root/desktop_review; sole writer in fix/stable-preview-packaging-gate, isolated /tmp/navzeroth-stable-preview-packaging-gate. Baseline7f55cd19270e09ad0d6d622c44953275973dde23. Actual delivery PR238 package run39395175310/job118536022883 failed the PowerShell5.1 RC preview addon success assertion after stable-refusal assertions passed. Diagnose child failure, repair narrowly and preserve all source/receipt/unsigned/gate policies. No source pin/key/signing or other-owner coverage-reader edits; parent separately owns final release. Root authorized separate repair PR against delivery.
