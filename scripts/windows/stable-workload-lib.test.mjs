@@ -271,3 +271,17 @@ test('forced child kill retains the complete pending IPC checkpoint without fina
   assert.equal(partial.history.at(-1).stage,'before');assert.equal(partial.passed,false);assert.equal(partial.completed,false);
  }finally{if(child.exitCode===null&&child.signalCode===null)child.kill('SIGKILL');rmSync(dir,{recursive:true,force:true});}
 });
+
+test('interrupted diagnostic replacement preserves previous complete checkpoint and fails closed', async()=>{
+ const {createWorkloadProgress}=await import('./stable-workload-progress.mjs');
+ const {mkdtempSync,readFileSync,writeFileSync,rmSync}=await import('node:fs');
+ const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-write-')),path=join(dir,'partial.json');
+ try{
+  const progress=createWorkloadProgress(path,{mode:'recover',version:'1.0.0'}),before=readFileSync(path,'utf8');
+  writeFileSync(path+'.pending','interrupted synthetic replacement',{flag:'wx'});
+  assert.throws(()=>progress.phase('exercise'),/EEXIST/);
+  assert.equal(readFileSync(path,'utf8'),before);
+  assert.equal(JSON.parse(before).passed,false);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
