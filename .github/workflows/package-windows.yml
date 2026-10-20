@@ -86,10 +86,14 @@ jobs:
         run: ./scripts/windows/Test-StablePreparation.ps1
       - name: Hosted timestamp parsing tests (Windows PowerShell 5.1)
         shell: powershell
-        run: ./scripts/windows/Test-HostedTimestampParsing.ps1
+        run: |
+          ./scripts/windows/Test-HostedTimestampParsing.ps1
+          ./scripts/windows/Test-HostedRecorderBoundary.ps1
       - name: Hosted timestamp parsing tests (PowerShell 7)
         shell: pwsh
-        run: ./scripts/windows/Test-HostedTimestampParsing.ps1
+        run: |
+          ./scripts/windows/Test-HostedTimestampParsing.ps1
+          ./scripts/windows/Test-HostedRecorderBoundary.ps1
       - name: Hosted producer helper tests (Windows PowerShell 5.1 mocks)
         shell: powershell
         run: ./scripts/windows/Test-StableAcceptanceHelpers.ps1
