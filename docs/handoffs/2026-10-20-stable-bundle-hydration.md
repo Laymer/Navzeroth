@@ -49,3 +49,13 @@ and rebound by the release owner after independent review of this production
 repair. Next: independent review, then normal integration and renewed frozen
 production/public review/receipt; run actual required hosted checks. No push or
 merge has been performed by this task.
+
+Independent root review found an early-bound defect in53bb: metadata's HEAD pin
+used the generic576MiB bound before the smaller working-file role check. Repair
+`66c667defbdaefbfef0da0833aaca48bf406e350` passes each metadata role maximum into
+HEAD pin admission, rejecting oversized Git blobs from their size before body
+streaming/hashing. A real committed manifest/identity fixture with smaller test
+role limits asserts that only Git's size query executes, with no body command,
+tempfile streaming or fetch. All12 bundle tests PASS, including the preceding11;
+`git diff --check` PASS. This supersedes the initial11-test count and closes the
+reported review finding without changing resource bounds or trust authority.
