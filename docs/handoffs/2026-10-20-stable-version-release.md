@@ -234,3 +234,26 @@ No content/source/material blocker remains. Raw actual report is retained at
 not final resulting-main or Windows acceptance. Push this signed candidate and
 run preliminary actual stable Windows packaging/coverage; refresh normally after
 delivery main merge and require all exact-head/resulting-main gates separately.
+
+## Normal refresh after RC-only dependency manifest repair
+
+Delivery package39399831462 passed all24hosted helpers and CLI/LFS integration
+then failed stale dependency manifest verification before installer compilation.
+Independent diagnosis found only the RC Cargo.lock SHA mismatch; all275external
+package records and retained notice pins were identical. PR245 regenerated that
+one field and passed506files/four existing tests; root independently verified the
+field and506files. Root's first check could not spawn Cargo due PATH before any
+validation; documented Cargo PATH rerun passed. Failure remains separately recorded.
+
+Normal mergee901e2c2b468b0d50d3ab88b0e0e8210a9693afe from delivery83577ceb
+resolved only DEPENDENCIES.json by retaining the correct stable-generated
+Cargo.lock6e42931da232c271e73b2425c4f56cd0991e41a7c71d898f31d420d5dd61abc1
+pair. Root506file check passed. Independent world review confirmed only two
+excluded docs files differ from40ea, unchanged3132entry efeabproduction, unchanged
+V3review/manifest/identity/receipt bytes, and3fea ancestry. Existing signed bindings
+remain applicable; no observation is restamped from40ea to e901.
+
+Preliminary stable package39400861524 and Coverage39400864456 actually run40ea.
+Delivery83577ceb refresh requires CI39401467853/Coverage39401467828/package39401467818/
+source39401467812. Results were pending at recording; final exact-head/resulting-main
+gates and all Windows/owner observations remain required.

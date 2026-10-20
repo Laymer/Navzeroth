@@ -34,7 +34,7 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
 independent final integration review, all ten protected checks and actual Linux/
 Windows source parity. Separate reviewed final content/native delivery PR238
-remains pending refreshed checks at4dd83080; its necessary bounded reader and
+remains pending refreshed checks at83577ceb; its necessary bounded reader and
 workflow-test exit repairs are recorded without relabeling earlier package failures.
 
 Separate draft version/release PR239 prepares six1.0.0declarations, complete
