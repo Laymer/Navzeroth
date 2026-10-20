@@ -69,6 +69,28 @@ class Inputs(unittest.TestCase):
             self.assertEqual(h.hydrate(self.root)['hydrated'], [])
             fetch.assert_not_called()
 
+    def test_autocrlf_checkout_preserves_exact_report_with_repository_attribute(self):
+        # Reproduce the Windows failure first: an ordinary LF JSON blob becomes
+        # CRLF under core.autocrlf=true and strict verification correctly refuses.
+        canonical = (self.root / h.REPORT).read_bytes()
+        self.git('config', 'core.autocrlf', 'true')
+        (self.root / h.REPORT).unlink()
+        self.git('checkout', 'HEAD', '--', h.REPORT)
+        self.assertIn(b'\r\n', (self.root / h.REPORT).read_bytes())
+        with self.assertRaises(ValueError): h.hydrate(self.root, offline=True)
+        # Apply the real, exact repository rule without normalizing read bytes.
+        attributes = (SCRIPT.parent.parent / '.gitattributes').read_text()
+        rule = h.REPORT + ' text eol=lf'
+        self.assertEqual(attributes.splitlines().count(rule), 1)
+        with (self.root / '.gitattributes').open('a') as output:
+            output.write(rule + '\n')
+        self.commit()
+        (self.root / h.REPORT).unlink()
+        self.git('checkout', 'HEAD', '--', h.REPORT)
+        self.assertEqual((self.root / h.REPORT).read_bytes(), canonical)
+        self.assertNotIn(b'\r', (self.root / h.REPORT).read_bytes())
+        self.assertEqual(h.hydrate(self.root, offline=True)['status'], 'verified')
+
     def test_wrong_working_bytes_refused_before_fetch(self):
         (self.root / h.QUEST).write_bytes(b'wrong')
         with mock.patch.object(h.parity, 'fetch') as fetch:
