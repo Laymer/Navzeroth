@@ -191,3 +191,19 @@ HistoricalV12 actualCI/source/coveragePASS/packageFAIL/all8skipped remainhistory
 Main807ef674 unchanged; generated243deferred. Require newallten/source/Windows
 gates beforePR239merge, freshresultingmain+stability beforetag, verifieddraft
 beforeowner exactinstaller smoke and publication. No tag/owner/publication/site.
+
+
+## V14 signed composition at a84be163
+
+Desktop independently CLEAR exacta84be16304fd3f251c27b88f8ef28a21fa4c12c8: reviewed
+261/262/263 union and newfunctional/source/review bindings, canonical outputs match
+its independent optimized preview/pure preparation byte-for-byte, receipt payload
+matches agreed pre-receipt identity. Its263 authorship is distinct from root/tooling
+independent approval. All nine observations remain pristine unverified.
+Root and tooling separately executed public cryptographic verification, own84resource
+assemblies395828752B, DEFAULTcompiledpolicy and fresh89evidence/twopack source gates.
+Exactly9pending and no other blocker; buildtrue/stablefalse/publicationfalse.
+Prepared7543eecf predates keys/signing; independent publicreviewaddb3503 binds161refs.
+Runtime actuald636/productiona3baa, freshfunctional78.31s and recovery347.80s are
+Linux engineering evidence only; memory increase retained. Fresh applicable hosted,
+main stability, draft asset, owner and public download checks remain required.

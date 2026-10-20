@@ -31,6 +31,19 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V14 signed closure a84be163 independently passes root/tooling public signatures,
+separate84-resource assemblies/default compiled policy and89-evidence/two-pack
+prebuild checks, with exactly9pending observations only. Reviewed runtime repairs
+261–263 at d636/a3baa avoid unchanged validation and redundant catalog copies while
+preserving strict boundaries. Actual Linux recovery721.43→347.80s, but peakRSS
+increased11.39→11.93GiB; freshly rebuilt full-pack functional scenario78.31s passed.
+Shared-host diagnostics establish no Windows result. Prepared7543 identities were
+committed before keys; publicreviewV14 binds161FileRefs. V13 hosted failure and
+old signed/functional evidence remain archived. Next fresh exact-candidate checks;
+main807ef674/draft239/generated243deferred; no tag/owner/publication.
+[Current handoff](handoffs/2026-10-20-recovery-runtime-v14.md).
+
+
 Latest actual V13 outcome: CI, source parity and coverage passed; package39466044590
 failed after four hosted cases passed and recovery exceeded its20-minute workload
 bound. Standalone restart passed. Offline/RC1 upgrade/downgrade never ran; owner

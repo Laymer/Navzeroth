@@ -1204,3 +1204,39 @@ is historical evidence. Main remains807ef674, PR239 is draft, generated PR243 is
 deferred. No stable tag, owner pass, publication or website deployment exists.
 Next: diagnostic repair review and measured recovery analysis, then exact renewed
 source/review/receipts and fresh applicable hosted gates. Failures hold publication.
+
+
+## V14 independently reviewed rebuilt runtime and signed closure
+
+Normal local merges261484fbab8,2625ca9a475,263d636c539 repair diagnostic retention,
+unchanged empty-plan duplicate validation and full-catalog copies. Exact independent
+review/test/filtered90% attribution is in reviews/2026-10-20-recovery-runtime-repairs.md.
+Fresh actual Linux recovery comparison721.4337→347.805s passes every strict check;
+peakRSS INCREASE11946608→12508668KiB retained. Root rebuilt functional test1.35s/CLI
+7.77s and actually passed78.30829478700616s/RSS6206148KiB; newproofd9c409844872f8369050cd22054aa9a99c498ce6c015f0ab4ca1e0e97bb72070.
+Oldfunctional37376 and V13signed/actualfailedhosted histories preceded replacement.
+
+Independent reviewaddb3503 normally merged3d526166; root161refs/158Git-or-LFS paths
+verified. Tested d636c539ef90fed43d237d04bbacc1ab74071ad7/production
+a3baa49678a3492b9773ede35988a31cfcb2818bd39a341c6eb74182938b3808/3129 entries.
+Root actualdebugprepare (newCLI build14.73s) and desktop OWNoptimizedpreview/pure
+preparation agree exactly84resources395828752B;83nonreview remain V13-identical.
+Manifest17187B/0eb36d978a196ca38ee9feaa8aed17571f6dda72c4dc430b752ea6724013639b;
+identity528B/3489e818be7a29560347a9a23a8ef58f62aede1895e05a77f72bf05cecbadd8b;
+review105398B/08d7d37b78c8a3b27e35d078106513b7b9208ba7751abedf0d621f1d1899befa.
+Prepared7543eecf committed BEFORE external restricted keys; expectedidentity copied
+before receipt. Signed a84be163 receipt1074B/a8d4c71f4f0f209fec7444980aab3401af82ec8e2229b1489087d050ae6c2806;
+evidence27970546B/af93b3e15bdf9f9a07a816e0402e42b055e02d046fb935a7acdedd9c567f6eb9.
+
+Root/tooling EACH independently verified crypto, own84-resource assembly, DEFAULT
+compiled policy and fresh89-evidence/two-pack source prebuild: buildtrue,stablefalse,
+publicationfalse, EXACT9pending observations and no other blocker. Desktop independently
+cleared final signed composition a84be163, attributing its263 authorship separately
+from root/tooling approval. Reports /tmp/navzeroth-{stable,tooling}-v14-{crypto,assembly,
+compiled-check,readiness}.json. No private bytes emitted or committed. Root removed
+only idle rebuildable debug incremental cache to maintain disk space; all test
+binaries/profiles/reports and raw failure evidence were retained.
+
+Next final exact-head review and one candidate push, fresh allten/source/coverage/
+Windows gates, then resulting-main stability, verified draft installer and owner
+manual smoke. V13 failure stays historical; no new Windows, owner or publication pass.
