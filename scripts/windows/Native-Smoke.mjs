@@ -19,7 +19,7 @@ import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
   IpcLog, freshenSnapshotText, migrationSummary, gracefulCloseArgs,
-  invokeNative, waitForDatabaseReady, verifyPreservedSyntheticContent,
+  invokeNative, waitForDatabaseReady, verifyPreservedSyntheticContent, waitForSyntheticContentInspection,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -602,12 +602,7 @@ async function verify(page) {
     const identity = await verifyPreservedSyntheticContent({ expected,
       readProfiles: () => invokeNative(page, "list_profiles"),
       readActive: (profile_id) => invokeNative(page, "get_active_content", { profile_id }),
-      waitForInspection: async (value) => {
-        await page.getByLabel("Content profile", { exact: true }).selectOption(value.profile_id);
-        const build = value.scope.context.build;
-        await page.getByText(`${value.revision}: ${build.edition}/${build.build}/${build.interface}, ${value.scope.context.namespace}`, { exact: true }).waitFor({ timeout: 30000 });
-        if (await page.getByText("No active content for this profile.", { exact: true }).count()) throw new Error("Active inspection is absent");
-      },
+      waitForInspection: (value) => waitForSyntheticContentInspection(page, value),
     });
     return { identity, alerts: await alertTexts(page) };
   });

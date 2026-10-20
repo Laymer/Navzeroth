@@ -303,3 +303,14 @@ export async function verifyPreservedSyntheticContent({ readProfiles, readActive
     throw new Error(`${String(error?.message ?? error).slice(0, 300)}; content diagnostic=${JSON.stringify(diagnostic)}`);
   } finally { expired = true; clearTimeout(timer); }
 }
+
+/** Do not clear ContentScreen's inspection with a redundant change event. */
+export async function waitForSyntheticContentInspection(page, value, timeoutMs = 30000) {
+  const select = page.getByLabel("Content profile", { exact: true });
+  if (await select.inputValue({ timeout: timeoutMs }) !== value.profile_id) {
+    await select.selectOption(value.profile_id, { timeout: timeoutMs });
+  }
+  const build = value.scope.context.build;
+  await page.getByText(`${value.revision}: ${build.edition}/${build.build}/${build.interface}, ${value.scope.context.namespace}`, { exact: true }).waitFor({ timeout: timeoutMs });
+  if (await page.getByText("No active content for this profile.", { exact: true }).count()) throw new Error("Active inspection is absent");
+}
