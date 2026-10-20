@@ -1,0 +1,76 @@
+# Separate stable1.0.0 version and evidence preparation
+
+Owner/sole writer `/root`; claimc757e2c5; baseline hosted codee68732ed.
+Version production commit9db4ca06, notes correction85ad2090, normal reviewed
+delivery/foundation union f06470dc3af482810c15aef5d721fc4b5c51a17d.
+
+Six documented application declarations and eight internal lock entries are1.0.0.
+Third-party resolutions are unchanged. Actual addon, Reference and Today writers
+passed7/3/11tests and regenerated their version fields. Actual CLI synthetic atlas
+generation and its end-to-end regression passed; image bytes are unchanged.
+Dependency notices were regenerated and506 retained notice/source files verified;
+only the actual Cargo.lock SHA changes. Contract generation/check passed73fixtures.
+Frozen pnpm install reused229packages with no downloads. No game edition/build,
+admission source, transform a9e5e4f3, world ce0/r4 identity or pack changed.
+
+Independent world review cleared version production9db4 and identified imprecise
+Classic Era wording. Correction85ad explicitly separates accepted origins from
+actually shipped1.12/Forever70245 sources. Independent desktop review cleared
+exact f064 including that correction, source/packs/evidence byte preservation,
+eight lock entries, generated outputs and four notice tests. Additive contract
+clarifications document the real addon writer, receipt-before-FileRef order,
+integrated loader and measured schema4 bounds without promoting old evidence.
+
+Actual root validation on the version source:
+
+- Documented golden drift:786tests pass/5existing ignored across100 binaries;
+  committed generators reproduce identical bytes. Addon writer separately passed.
+- Final portable workspace/all-targets:1595pass/0fail/8existing ignored across205
+  binaries, excluding native desktop. Native Linux remains unavailable without
+  dbus-1.pc; this is not a native/Windows pass.
+- UI555tests/66suites pass;91source files all >=90%lines (minimum90,total95.9%).
+  Typecheck and lint pass. Owned coverage outputs retained outside the checkout.
+- Fresh optimized full-pack scenario at exact f064 passes157.440703190seconds,
+  peak child RSS6402256KiB on shared Linux/WSL2,32logical CPUs/MemTotal32675952KiB.
+  Compiled executable590f is new1.0.0 source, not reused A executable. Proof SHA
+  e364457407ddefc22046c6e0cdcc0b9794d19ddeb74b587f3029636e748ab134;
+  compiled test source SHA924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008.
+  It covers source objectives/unknown eligibility,54models/9classes/108boundaries,
+  24reminder boundaries and26dungeon packages/438quest/16390reward references,
+  including8107restored affected references. Twenty entrances remain estimates,
+  six direct historical. No live-client, ordinary-PC or Windows performance claim.
+
+The new proof is semantically identical to the older f72 proof after changing only
+test_source.commit. Preserve f72 bytes under
+release/history/2026-10-20-pre-release-functional/functional-scenarios.json;
+A proofs/measurements also retain their original scope. The inventory generator
+verified actual packs and reproduced inventory bytes exactly: SHA
+f7030627acbc61fbbec32deeacc9bfc4dc1f8adc8fb6a183771559c656ce9eac,
+260113logical records and274059accepted unknowns. Corresponding-source index is
+also unchanged. Only four functional proof FileRefs changed before binding.
+
+Actual initial build-readiness was false: missing source/production bindings,
+signed bundle and nine pending Windows/owner rows;87evidence files/two packs
+verified, no other content blocker. It measured production fingerprint
+2032200e0d877e60d96858022151ff922e69e2c63e09bbab7aa24036afc7c200.
+Bind exact tested ancestor f064 and that fingerprint; all nine observations and
+four source target-validation states stay unverified. Release-materials then
+reports unsigned_preparation.ready=true for evidence SHA
+bcc90fad8dba0382dbd2a3cac93cb2bd015413c0349b63fe081a2fa7f6b820c7.
+The82selected files total395722450bytes; files/corresponding-source/normalization
+equal reviewed B exactly. Retained preview SHA
+9bdf78060b30dbd25748ca46f0fe0200d207fab840abc6731328a86c9201e110.
+Preparation readiness never authorizes publication.
+
+The first root foundation compile encountered ENOSPC before a test verdict;
+obsolete inactive task-owned build caches were removed and the17affected tests
+then passed. Separate C ENOSPC failures/reruns remain recorded in its handoff.
+No failed command is relabeled as passing.
+
+Next: immutable independently recorded public review; prepare/review exact bundle
+manifest and identity; separately issue/assemble/verify receipts with restricted
+external keys and compiled public trust; then bind all three exact FileRefs.
+Normal main refresh and exact-head release PR checks remain required. Final
+resulting-main stability/source/coverage/package/material gates, all eight actual
+hosted observations, verified draft downloads, owner exact-installer smoke and
+public-download verification remain outstanding. No tag or publication exists.
