@@ -290,3 +290,12 @@ labels its uploaded artifacts separately. Default PR/main/tag packaging retains
 its full stable gate, with no fallback. The currently unknown content means no
 1.0 acceptance candidate can yet be built. This implements packaging separation,
 not the separately required typed party support matrix or full v2 content contracts.
+
+## Stable 1.0.0 declared exclusions (ADR 0008)
+
+Trainer-spell gameplay, talents, professions and enhancements are deferred in the
+versioned `deferred-features.json`, displayed in Content and recorded as inventory
+boundaries. Browsable source records do not enable recommendations for those
+systems. Boundaries never satisfy missing supported records. See
+[scope preparation](../../docs/releases/1.0.0-scope.md); historical acceptance
+results remain unchanged. The broader stable contract is implemented separately.
