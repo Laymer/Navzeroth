@@ -31,7 +31,7 @@ jobs:
     name: Windows installer and addon package
     runs-on: windows-2025
     # A release-signing request waits for a manual SignPath approval.
-    timeout-minutes: ${{ github.ref_type == 'tag' && 170 || 110 }}
+    timeout-minutes: 170
     permissions:
       contents: read
       actions: read # the SignPath connector reads this job and downloads the unsigned artifact
