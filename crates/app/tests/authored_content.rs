@@ -458,3 +458,26 @@ fn source_guidance_labels_preserve_full_utf8_text_under_new_schema() {
         ObservationStatus::Unknown
     );
 }
+
+#[test]
+fn planning_nodes_pin_binds_other_collections_without_inventing_page_descriptors() {
+    use azeroth_core::catalog::Collection;
+    let (app, profile, _) = setup(&bundle());
+    let catalog = app.planning_catalog(&profile).unwrap();
+    assert_eq!(catalog.pages.len(), 2);
+    assert!(catalog.pages.contains_key(&Collection::Nodes));
+    assert!(catalog.pages.contains_key(&Collection::Objectives));
+    let pin = &catalog.pages[&Collection::Nodes];
+    for collection in ["quests", "items", "edges"] {
+        let mut request = json!({"subject":{"kind":"character","profile_id":profile},"collection":collection,"revision":pin.revision,"catalog_sha256":pin.catalog_sha256,"offset":0});
+        let page = app.catalog_page(&request.to_string()).unwrap();
+        assert!(!page.records.is_empty());
+        assert_eq!(page.page.revision, pin.revision);
+        assert_eq!(page.page.catalog_sha256, pin.catalog_sha256);
+        let value = serde_json::to_value(&page).unwrap();
+        assert_eq!(value["collection"], collection);
+        assert!(value.get("page").is_none());
+        request["catalog_sha256"] = json!("0".repeat(64));
+        assert!(app.catalog_page(&request.to_string()).is_err());
+    }
+}

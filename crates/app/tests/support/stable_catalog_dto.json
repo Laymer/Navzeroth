@@ -1,0 +1,40 @@
+{
+  "planning_catalog": {
+    "fixture": false,
+    "nodes": [],
+    "objectives": [],
+    "pages": {
+      "nodes": {
+        "catalog_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "collection": "nodes",
+        "next_offset": null,
+        "offset": 0,
+        "revision": "actual-r",
+        "total": 1
+      },
+      "objectives": {
+        "catalog_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "collection": "objectives",
+        "next_offset": null,
+        "offset": 0,
+        "revision": "actual-r",
+        "total": 1
+      }
+    },
+    "revision": "actual-r",
+    "snapshot_id": null
+  },
+  "quest_page": {
+    "catalog_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "collection": "quests",
+    "next_offset": null,
+    "offset": 0,
+    "records": [
+      {
+        "id": "actual-source-record"
+      }
+    ],
+    "revision": "actual-r",
+    "total": 1
+  }
+}
