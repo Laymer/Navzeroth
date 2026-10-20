@@ -31,6 +31,13 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V13 preparation: reviewed260 normally integrated 716af3e8. Root independently
+3dev Chromium/43Node pass; old same-selection React failure reproduced, conditional
+helper repaired. Runtime/content unchanged1dd; V12actualfailure archived before
+canonical reset. All9observations unverified; next independent review/receipts and
+fresh allten/source/Windows gates. No tag/owner/publication.
+
+
 Latest actual V12 outcome: package39454144270 FAILEDnativeupgradegate before
 ALL8stablecases/recorder(SKIPPED). Native32/0, baseline5/0, verify6/1 timeoutafter
 strictprofile/activeIPC; presence diagnostics true. Newdriver redundantsame-option
