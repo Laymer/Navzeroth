@@ -62,3 +62,18 @@ Next: independent root review, separate bundled-content PR and normal delivery
 merge. Fast-forward that merge before C. Do not replace immutable final source
 products with older dependency fixtures or promote f72/A evidence to final native
 acceptance. Keep per-file90% gates unchanged.
+
+## Reviewed namespace-binding follow-up
+
+Normally merged root3003bb12a1e467b2bf0c04a3c4ffcf2dab2efe36 at15c053c0.
+World independently cleared the narrow fix. A signed pack must now bind reference
+namespace as well as exact fixture/context/revision/manifest/material/source and
+production identity. Root's meaningful signed synthetic regression demonstrably
+failed the prior gate, then all29CLI library tests passed. Writer independently
+reran all29CLI library tests on the merged candidate:29passed,0failed; CLIall-target
+Clippy -D warnings, cargo fmt and diff checks passed. No source/content/evidence/
+policy/key changes or signatures. Actual b5 material preview above remains an
+explicit historical observation; it is not relabeled as a new candidate proof.
+Separate B draft PR is authorized against release/stable-content-delivery. C stays
+held until root's final review/normal B merge; actual Windows/owner evidence stays
+unverified.
