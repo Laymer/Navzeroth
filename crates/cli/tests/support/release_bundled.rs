@@ -106,6 +106,18 @@ impl Fixture {
     }
 }
 #[test]
+fn signed_bundle_cannot_substitute_a_demo_namespace_for_reference_content() {
+    let mut fixture = Fixture::new();
+    assert!(fixture.verify());
+    fixture.bundle.manifest.packs[0].key.scope.context.namespace =
+        azeroth_core::types::DatasetNamespace::Demo;
+    fixture.bind();
+    assert!(
+        !fixture.verify(),
+        "a valid signature must not admit a namespace unlike the reference pack"
+    );
+}
+#[test]
 fn source_bundle_binds_review_materials_production_and_caller_trust() {
     let f = Fixture::new();
     assert!(f.verify());
