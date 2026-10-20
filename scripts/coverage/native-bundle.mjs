@@ -1,6 +1,11 @@
 // Production CLI establishes trust; this adapter never selects receipt-owned pins.
 import fs from 'node:fs';
 import path from 'node:path';
+// Bundle CLI commands share the collector's actual instrumented toolchain.
+// Ordinary cargo run would replace its instrumented CLI executable before report.
+export function instrumentedBundleRun(run, environment) {
+ return (name,exe,args,options={})=>run(name,exe,args,{...options,env:environment});
+}
 export function prepareNativeBundle(root, destination, run) {
  const version = /^version\s*=\s*"([^"]+)"$/m.exec(fs.readFileSync(path.join(root,'Cargo.toml'),'utf8'))?.[1];
  if (!version) throw new Error('Missing workspace version');

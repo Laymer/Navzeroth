@@ -3,7 +3,7 @@
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
 import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
 import {verifyBuildConfiguration} from '../measure-continuation.mjs';
-import {prepareNativeBundle,stageNativeBundle} from './native-bundle.mjs';
+import {prepareNativeBundle,stageNativeBundle,instrumentedBundleRun} from './native-bundle.mjs';
 import {loggedProcess} from './process-output.mjs';
 import {assertCleanCommittedSource} from './clean-source.mjs';
 import {ownedProfileOutput} from './profile-output.mjs';
@@ -72,13 +72,14 @@ export function collectRust(destination){
   if(process.platform==='win32'){
    const vite=path.join(path.dirname(require.resolve('vite/package.json')),'bin','vite.js');
    run('frontend-build',process.execPath,[vite,'build'],{cwd:path.join(root,'apps/desktop')});
-   const bundle=prepareNativeBundle(root,destination,run);
+   const bundleRun=instrumentedBundleRun(run,instrumented);
+   const bundle=prepareNativeBundle(root,destination,bundleRun);
    const nativeBuildEnv={...instrumented,...(bundle?{NAVZEROTH_BUNDLE_IDENTITY_JSON:bundle.raw}:{})};
    const output=run('native-build','cargo',['build','--locked','-p','azeroth-desktop','--features','tauri/custom-protocol','--message-format=json'],{env:nativeBuildEnv});
    const artifacts=output.split(/\r?\n/).filter(line=>line.startsWith('{')).map(line=>JSON.parse(line));
    const binaries=artifacts.filter(item=>item.reason==='compiler-artifact'&&item.target.name==='azeroth-desktop'&&item.executable).map(item=>item.executable);
    if(binaries.length!==1)throw new Error('Missing unique native executable');
-   stageNativeBundle(bundle,binaries[0],run);
+   stageNativeBundle(bundle,binaries[0],bundleRun);
    const state=path.join(destination,'synthetic-desktop-state'),nativeEnv={...instrumented,APPDATA:path.join(state,'roaming'),LOCALAPPDATA:path.join(state,'local'),...(bundle?{NAVZEROTH_NATIVE_STARTUP_MS:'1200000'}:{})};
    for(const dir of [nativeEnv.APPDATA,nativeEnv.LOCALAPPDATA])fs.mkdirSync(dir,{recursive:true});
    run('native-extraction-worker-refusal',binaries[0],['--navzeroth-local-data-worker-v1'],{env:nativeEnv,expected:2});
