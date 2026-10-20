@@ -129,9 +129,6 @@ struct State {
     watch: Option<RunningWatch>,
     watch_state: WatchState,
     watch_generation: u64,
-    /// The active revision whose planning may use accepted inferred travel
-    /// edges (ADR 0007 §8). In memory only: a restart restores the strict default.
-    inferred_travel: Option<azeroth_storage::content::ContentRevisionKey>,
 }
 /// Shared application service; SQLite access is serialized, and no filesystem
 /// path or profile key is accepted as an arbitrary database query.
@@ -258,7 +255,6 @@ impl SnapshotApplication {
                 watch: None,
                 watch_state: WatchState::default(),
                 watch_generation: 0,
-                inferred_travel: None,
             })),
         })
     }
@@ -441,20 +437,13 @@ impl SnapshotApplication {
         call(&mut self.lock()?.store)
     }
 
-    pub(crate) fn set_inferred_travel(
-        &self,
-        key: Option<azeroth_storage::content::ContentRevisionKey>,
-    ) -> Result<()> {
-        self.lock()?.inferred_travel = key;
-        Ok(())
-    }
     /// True when planning on exactly this revision may use accepted inferred
     /// travel (ADR 0007 §5 and §8).
     pub(crate) fn accepts_inferred_travel(
         &self,
         key: &azeroth_storage::content::ContentRevisionKey,
     ) -> Result<bool> {
-        Ok(self.lock()?.inferred_travel.as_ref() == Some(key))
+        self.lock()?.store.content_accepts_inferred(key)
     }
     pub(crate) fn with_profile_store_mut<T>(
         &self,
@@ -566,55 +555,55 @@ impl SnapshotApplication {
         let request: crate::planning::PlanningRequest =
             serde_json::from_str(text).map_err(|_| invalid("Invalid planning request"))?;
         let state = self.lock()?;
-        let inferred_travel = state.inferred_travel.clone();
-        let (snapshot, content, guard) = state.store.with_immediate_read(|store| {
-            let key = resolve(store, &request.profile_id)?;
-            let snapshot = store
-                .current_snapshot(&key)?
-                .ok_or_else(|| invalid("Profile has no current snapshot"))?;
-            if snapshot.payload.id != request.snapshot_id {
-                return Err(invalid("Snapshot changed; refresh planning inputs"));
-            }
-            if !matches!(
-                freshness(&snapshot.payload.capture, &context(now)),
-                Freshness::Fresh { .. }
-            ) {
-                return Err(error(
-                    ErrorCode::SnapshotOutdated,
-                    "Planning requires a fresh capture with trusted age",
-                ));
-            }
-            let content = store
-                .active_catalog_revision(&azeroth_storage::content::ContentScope {
-                    context: key.context.clone(),
-                    fixture: key.fixture,
-                })?
-                .ok_or_else(|| {
-                    error(
-                        ErrorCode::DatasetIncomplete,
-                        "No active content for this profile",
-                    )
-                })?;
-            if content.reference().revision != request.revision {
-                return Err(invalid("Active content changed; refresh planning inputs"));
-            }
-            let guard = crate::planning_job_service::PublicationGuard::new(
-                None,
-                std::slice::from_ref(&snapshot),
-                &content,
-                &context(now),
-            )?
-            .bind_disposition(
-                store
-                    .usable_catalog_revision(&content.key())?
-                    .ok_or_else(|| invalid("Active content unavailable"))?
-                    .1
-                    .guard(),
-            )?;
-            Ok((snapshot, content, guard))
-        })?;
+        let (snapshot, content, guard, accept_inferred) =
+            state.store.with_immediate_read(|store| {
+                let key = resolve(store, &request.profile_id)?;
+                let snapshot = store
+                    .current_snapshot(&key)?
+                    .ok_or_else(|| invalid("Profile has no current snapshot"))?;
+                if snapshot.payload.id != request.snapshot_id {
+                    return Err(invalid("Snapshot changed; refresh planning inputs"));
+                }
+                if !matches!(
+                    freshness(&snapshot.payload.capture, &context(now)),
+                    Freshness::Fresh { .. }
+                ) {
+                    return Err(error(
+                        ErrorCode::SnapshotOutdated,
+                        "Planning requires a fresh capture with trusted age",
+                    ));
+                }
+                let content = store
+                    .active_catalog_revision(&azeroth_storage::content::ContentScope {
+                        context: key.context.clone(),
+                        fixture: key.fixture,
+                    })?
+                    .ok_or_else(|| {
+                        error(
+                            ErrorCode::DatasetIncomplete,
+                            "No active content for this profile",
+                        )
+                    })?;
+                if content.reference().revision != request.revision {
+                    return Err(invalid("Active content changed; refresh planning inputs"));
+                }
+                let guard = crate::planning_job_service::PublicationGuard::new(
+                    None,
+                    std::slice::from_ref(&snapshot),
+                    &content,
+                    &context(now),
+                )?
+                .bind_disposition(
+                    store
+                        .usable_catalog_revision(&content.key())?
+                        .ok_or_else(|| invalid("Active content unavailable"))?
+                        .1
+                        .guard(),
+                )?;
+                let accept_inferred = store.content_accepts_inferred(&content.key())?;
+                Ok((snapshot, content, guard, accept_inferred))
+            })?;
         drop(state);
-        let accept_inferred = inferred_travel.as_ref() == Some(&content.key());
         let view = crate::catalog::TravelPolicyView::new(&content, accept_inferred);
         let result = calculate(request, &snapshot, &view, &context(now), &guard)?;
         guard.publish(
@@ -702,7 +691,13 @@ impl SnapshotApplication {
         state
             .store
             .active_catalog_revision(&scope)?
-            .map(crate::content::inspect)
+            .map(|content| {
+                let mut result = crate::content::inspect(content)?;
+                result.bundle_defaults = state.store.bundle_default_state(&scope)?;
+                result.accepts_inferred_travel =
+                    Some(state.store.content_accepts_inferred(&result.key)?);
+                Ok(result)
+            })
             .transpose()
     }
     pub fn activate_content(
@@ -719,8 +714,7 @@ impl SnapshotApplication {
             },
             revision: revision.clone(),
         };
-        state.store.activate_content_revision(&key)?;
-        state.inferred_travel = None;
+        state.store.activate_content_with_travel(&key, false)?;
         let content = state
             .store
             .active_catalog_revision(&key.scope)?
@@ -739,7 +733,6 @@ impl SnapshotApplication {
             .store
             .rollback_content_revision(&scope)?
             .is_some_and(|result| result.changed);
-        state.inferred_travel = None;
         Ok(crate::content::ContentRollback {
             changed,
             active: state

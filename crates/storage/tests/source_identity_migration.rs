@@ -35,7 +35,7 @@ fn widen_source_bytes_preserves_every_row_tombstone_counter_and_foreign_key() {
     let mut conn = raw(&db.path);
     // Reconstruct the exact trusted old table rather than rewriting its migration.
     conn.execute_batch(
-        "DROP TABLE catalog_asset_layers; DROP TABLE catalog_asset_blobs; ALTER TABLE dataset_revisions DROP COLUMN content_version; DROP TABLE local_submissions; DELETE FROM schema_migrations WHERE version>=10",
+        "DROP TABLE bundled_content_defaults; DROP TABLE content_travel_choices; DROP TABLE catalog_asset_layers; DROP TABLE catalog_asset_blobs; ALTER TABLE dataset_revisions DROP COLUMN content_version; DROP TABLE local_submissions; DELETE FROM schema_migrations WHERE version>=10",
     )
     .unwrap();
     let old = include_str!("../src/schema_v9.sql");
@@ -105,7 +105,7 @@ fn widen_source_bytes_preserves_every_row_tombstone_counter_and_foreign_key() {
         .is_err()
     );
     migrate(&mut conn).unwrap();
-    assert_eq!(latest_version(), 12);
+    assert_eq!(latest_version(), 13);
     assert_eq!(rows(&conn), before);
     conn.execute(
         insert,
