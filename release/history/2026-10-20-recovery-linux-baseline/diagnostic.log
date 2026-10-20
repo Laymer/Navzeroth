@@ -1,0 +1,41 @@
+
+running 1 test
+{"bundle":"/tmp/navzeroth-tooling-v13-independent-bundle","kind":"diagnostic_not_acceptance","platform":"linux","source_baseline":"d271bba67e8fa274e44953c9f78198b1d8fc5f6d"}
+{"event":"start","phase":"initial_signed_bundle_start"}
+test diagnostic_actual_fullpack_recovery has been running for over 60 seconds
+{"startup_measurements":{"activation_ms":14562,"load_ms":56474}}
+{"elapsed_ms":71148,"event":"complete","phase":"initial_signed_bundle_start"}
+{"event":"start","phase":"manual_profile_and_settings"}
+{"elapsed_ms":24,"event":"complete","phase":"manual_profile_and_settings"}
+{"event":"start","phase":"select_false_inferred_travel"}
+{"elapsed_ms":17334,"event":"complete","phase":"select_false_inferred_travel"}
+{"event":"start","phase":"initial_state"}
+{"elapsed_ms":572,"event":"complete","phase":"initial_state"}
+{"event":"start","phase":"backup"}
+{"elapsed_ms":409,"event":"complete","phase":"backup"}
+{"backup_bytes":463335424}
+{"event":"start","phase":"inspect_backup"}
+{"elapsed_ms":123727,"event":"complete","phase":"inspect_backup"}
+{"event":"start","phase":"restore_and_initializer_reopen"}
+{"elapsed_ms":151689,"event":"complete","phase":"restore_and_initializer_reopen"}
+{"event":"start","phase":"restored_ready"}
+{"startup_measurements":{"activation_ms":14562,"load_ms":56474}}
+{"elapsed_ms":0,"event":"complete","phase":"restored_ready"}
+{"event":"start","phase":"restored_profiles_settings_content_choice"}
+{"elapsed_ms":15462,"event":"complete","phase":"restored_profiles_settings_content_choice"}
+{"event":"start","phase":"restored_check_database"}
+{"elapsed_ms":66012,"event":"complete","phase":"restored_check_database"}
+{"event":"start","phase":"drop_restored_host"}
+{"elapsed_ms":245,"event":"complete","phase":"drop_restored_host"}
+{"event":"start","phase":"explicit_close_reopen_signed_initializer"}
+{"startup_measurements":{"activation_ms":0,"load_ms":91268}}
+{"elapsed_ms":200546,"event":"complete","phase":"explicit_close_reopen_signed_initializer"}
+{"event":"start","phase":"reopened_profiles_settings_content_choice"}
+{"elapsed_ms":13847,"event":"complete","phase":"reopened_profiles_settings_content_choice"}
+{"event":"start","phase":"reopened_check_database"}
+{"elapsed_ms":59985,"event":"complete","phase":"reopened_check_database"}
+{"acceptance_observations_promoted":false,"diagnostic_passed":true}
+test diagnostic_actual_fullpack_recovery ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 721.39s
+
