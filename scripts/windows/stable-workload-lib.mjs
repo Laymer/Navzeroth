@@ -50,8 +50,16 @@ export function planningRequest(profile, catalog, selected) {
     candidates:[{objective:selected.objective,node:selected.node,utility:10,completion_ms:1000,service_ms:0}],excluded:[]};
 }
 export function assertActive(active, context, version, requireDefaults = true) {
-  if (!active || active.key.scope.fixture || JSON.stringify(active.key.scope.context) !== JSON.stringify(context) || (requireDefaults && (active.bundle_defaults?.app_version !== version || active.accepts_inferred_travel !== true))) throw new Error('Verified bundled defaults are not active for the engineering scope');
+  const defaults=active?.bundle_defaults;
+  if (!active || active.key?.scope?.fixture !== false || JSON.stringify(active.key.scope.context) !== JSON.stringify(context) || !active.key.revision || defaults?.app_version !== version || !defaults.revision || !(defaults.previous_app_version === null || typeof defaults.previous_app_version === 'string') || typeof active.accepts_inferred_travel !== 'boolean' || (requireDefaults && (active.accepts_inferred_travel !== true || defaults.revision !== active.key.revision))) throw new Error('Verified bundled defaults are not active for the engineering scope');
   return active.key.revision;
+}
+function contentState(active) {
+  return {active_revision:active.key.revision,accepts_inferred_travel:active.accepts_inferred_travel,bundle_defaults:structuredClone(active.bundle_defaults)};
+}
+function assertPersisted(active, context, version, expected) {
+  assertActive(active,context,version,false);
+  if(typeof expected.accepts_inferred_travel !== 'boolean' || !expected.bundle_defaults || JSON.stringify(contentState(active)) !== JSON.stringify({active_revision:expected.active_revision,accepts_inferred_travel:expected.accepts_inferred_travel,bundle_defaults:expected.bundle_defaults})) throw new Error('Content revision, inferred choice or bundled-default state did not persist');
 }
 
 // I/O-independent native workflow; the Windows driver supplies the actual IPC.
@@ -64,10 +72,13 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
   await call('select_profile',{profile_id:receipt.profile_id});
   const settings=await call('get_app_settings');settings.settings.accessibility.text_scale_percent=125;
   const changed=await call('update_app_settings',{text:JSON.stringify({schema_version:1,expected_revision:settings.revision,settings:settings.settings})});
-  saved={schema_version:1,profile_id:receipt.profile_id,context,sequence:1,baseline_version:version,settings:changed.settings,workload:WORKLOAD};
+  saved={schema_version:2,phase:'baseline',profile_id:receipt.profile_id,context,sequence:1,baseline_version:version,settings:changed.settings,workload:WORKLOAD};
   evidence.profile_id=receipt.profile_id;
  }else{
-  saved=mode==='fresh'?{context,sequence:1}:structuredClone(saved);
+  saved=mode==='fresh'?{schema_version:2,context,sequence:1}:structuredClone(saved);
+  const baselineUpgrade=saved?.phase==='baseline' && mode==='restart' && typeof saved.baseline_version==='string' && saved.baseline_version!==version && !saved.active_revision && !saved.bundle_defaults && saved.accepts_inferred_travel===undefined;
+  const selectedContent=saved?.phase==='selected_content' && typeof saved.active_revision==='string' && saved.active_revision && typeof saved.accepts_inferred_travel==='boolean' && saved.bundle_defaults;
+  if(saved?.schema_version!==2 || (mode!=='fresh' && !baselineUpgrade && !selectedContent))throw new Error('Saved workload state lacks versioned content persistence evidence');
   if(JSON.stringify(saved.context)!==JSON.stringify(context))throw new Error('Saved manual scope differs from installed bundle');
   let profile=saved.profile_id;
   if(mode==='fresh'){
@@ -82,19 +93,32 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
   }
   const active=await call('get_active_content',{profile_id:profile});
   const revision=assertActive(active,context,version,mode==='fresh'||!saved.active_revision);
-  if(mode!=='fresh'&&saved.active_revision&&revision!==saved.active_revision)throw new Error('Active revision did not persist');
+  if(saved.active_revision)assertPersisted(active,context,version,saved);
+  const initialContent=contentState(active);
+  evidence.initial_content=structuredClone(initialContent);
   const profiles=await call('list_profiles');if(!profiles.some(p=>p.id===profile))throw new Error('Manual engineering profile did not persist');
   if(mode==='recover'){
    if(!backup)throw new Error('Recovery workload requires a new selected backup path');
    await call('create_database_backup',{path:backup});
    const preview=await call('inspect_database_backup',{path:backup});
    await call('restore_database_backup',{candidate_id:preview.candidate_id});
-   assertActive(await call('get_active_content',{profile_id:profile}),context,version,false);
+   assertPersisted(await call('get_active_content',{profile_id:profile}),context,version,initialContent);
    await call('check_database');
    const restoredSettings=await call('get_app_settings'),restoredProfiles=await call('list_profiles');
    if(JSON.stringify(restoredSettings.settings)!==JSON.stringify(saved.settings)||JSON.stringify(restoredProfiles)!==JSON.stringify(profiles))throw new Error('Backup recovery did not retain profiles and settings');
    evidence.recovery_verified=true;
   }
+  // A repeated engineering plan explicitly opts in for this operation, after
+  // checking the persisted false choice above. Every run leaves false selected.
+  async function chooseInferred(accept) {
+   await call('activate_content_set',{profile_id:profile,revisions:[revision],accept_inferred_travel:accept});
+   const changed=await call('get_active_content',{profile_id:profile});
+   assertPersisted(changed,context,version,{...initialContent,accepts_inferred_travel:accept});
+   return contentState(changed);
+  }
+  let retainedContent;
+  try {
+  if(!initialContent.accepts_inferred_travel)await chooseInferred(true);
   const browse=performance.now();
   let catalog=await call('get_planning_catalog',{profile_id:profile});
   if(catalog.fixture||!catalog.revision||!catalog.nodes?.length||!catalog.pages?.quests?.total)throw new Error('Actual installed world catalog is empty');
@@ -127,7 +151,13 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
   evidence.planning_ms=performance.now()-planning;
   if(report.fixture||!report.result?.selected?.some(row=>row.candidate===selected.objective&&row.travel?.hops?.length>0))throw new Error('Actual source-backed objective was not selected by the planner');
   evidence.scenario=selected;evidence.plan={selected:report.result.selected,filtered:report.filtered,assumptions:report.assumptions};
-  saved={...saved,profile_id:profile,active_revision:revision,workload:WORKLOAD};
+  } finally {
+   retainedContent=await chooseInferred(false);
+  }
+  saved={...saved,phase:'selected_content',profile_id:profile,...retainedContent,workload:WORKLOAD};
+  evidence.persisted_content=structuredClone(retainedContent);
+  evidence.planning_inferred_travel=true;
+  evidence.preference_disclosure='Checked saved content choice before work; explicitly enabled inferred travel for engineering planning, then selected false for restart/recovery persistence.';
   evidence.profile_id=profile;evidence.active_revision=revision;evidence.restart_verified=mode==='restart';
  }
  return {state:saved,evidence};
