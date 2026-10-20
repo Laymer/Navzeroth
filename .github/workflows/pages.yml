@@ -2,18 +2,18 @@ name: Pages
 on:
   pull_request:
     branches: [main]
-    paths: ['site/**', 'scripts/site/**', '.github/workflows/pages.yml', 'pnpm-lock.yaml']
+    paths: ['docs/site/**', 'scripts/site/**', '.github/workflows/pages.yml', 'pnpm-lock.yaml']
   push:
     branches: [main]
     paths:
-      - "site/**"
+      - "docs/site/**"
       - ".github/workflows/pages.yml"
       - "scripts/site/**"
       - "pnpm-lock.yaml"
   workflow_dispatch:
     inputs:
       capture_release:
-        description: Capture the verified public RC in a disposable Windows runner (no deployment)
+        description: Capture the historical verified public RC in a disposable Windows runner (no deployment)
         type: boolean
         default: false
 permissions:
@@ -42,6 +42,8 @@ jobs:
           echo "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm install --frozen-lockfile
           "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm --dir apps/desktop exec playwright install --with-deps chromium
+      - name: Check supported publication metadata contracts
+        run: node --test scripts/site/release-metadata.test.mjs
       - name: Check links, project paths, release identity and browser accessibility
         run: node scripts/site/validate.mjs
   build:
@@ -57,7 +59,7 @@ jobs:
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: site
+          path: docs/site
   deploy:
     name: Deploy site
     needs: build
@@ -87,7 +89,7 @@ jobs:
         id: release
         shell: pwsh
         run: |
-          $release = Get-Content -Raw site/release.json | ConvertFrom-Json
+          $release = Get-Content -Raw docs/site/capture-release.json | ConvertFrom-Json
           if ($release.tag -cne 'v1.0.0-rc.1' -or -not $release.public_verified -or $release.source_commit -cnotmatch '^[a-f0-9]{40}$') { throw 'Expected verified public RC metadata' }
           "commit=$($release.source_commit)" >> $env:GITHUB_OUTPUT
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -113,7 +115,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $ErrorActionPreference = 'Stop'
-          $release = Get-Content -Raw site/release.json | ConvertFrom-Json
+          $release = Get-Content -Raw docs/site/capture-release.json | ConvertFrom-Json
           $metadataJson = gh release view $release.tag --repo $env:GITHUB_REPOSITORY --json isDraft,isPrerelease,tagName
           if ($LASTEXITCODE -ne 0) { throw 'Cannot read public release' }
           $metadata = $metadataJson | ConvertFrom-Json
