@@ -416,3 +416,34 @@ now binds testedfcf. Canonical bundle fields were cleared for V6 renewal; no
 inventory regeneration or acceptance promotion occurred. Next: independent additive
 V6review, actual preparation/receipt/source closure, one final candidate push and
 fresh protected/Windows/stability gates. Main remains807ef674; no stable tag exists.
+
+## V6 signed closure verified before final candidate push
+
+Additive desktop-authored review2af5be50 pins exact testedfcf/production0a359,
+prior review histories and actual failures without acceptance promotion. Review
+21594B SHAd1d79a495b49f6650e30d9f1dad9ed9ae5b107fc25ff87602814c3cdee0cc0c8
+was independently verified by root across25nested FileRefs. Actual preparation
+succeeded84resources395744948B; world independent streaming/pure preparation
+reproduction passed and all83non-review resources remain V5-identical. Manifest
+17183B SHA8f019ab5f35ce591ac624d9ebae9c410c3098cedf061fa491dc3cd201169a68c
+and identity526B SHA06a53076ffe6448e293e3009aff1bb3b3ac1256517fb0abfdbe03b898437a79c
+were committedd952cfe0 before restricted external key use. Actual two signatures
+and public receipt1072B SHA4c53c449130b394a787288c24c41df7817f5aca52192ae2f34942712b5c40dd9
+were verified/committedb8d05a1d840e1fa8b2339c7011410d35702b68bb with three exact
+bundle FileRefs. Both keys remain operator-controlled, directory0700/files0600.
+
+Root and independent tooling used separate assemblies and checked the default
+compiled signer policy,84exact resources/two packs, no extras or omissions. Both
+fresh prebuilds passed89evidence files/two packs and exactly nine pending installer
+observations; build_readytrue/stable_readyfalse/publicationfalse. Raw reports:
+/tmp/navzeroth-stable-v6-{assembled,bundle-verified,build-readiness}.json and
+/tmp/navzeroth-tooling-v6-{crypto,assembly,compiled-check,readiness}.json. Root
+rebuilt the optimized CLI against current source for subsequent read-only checks;
+actual V6 preparation/signing/verification above used the newly compiled debugCLI.
+
+The V5 candidate CI39408816458 ultimately passed its normal checks after Windows
+cache upload; that does not replace failed coverage or prove repaired Windows
+behavior. Final V6 candidate push is next, after this excluded documentation commit.
+The candidate must pass all ten protected checks/source parity/independent review,
+then resulting-main stability/coverage/packaging and exact tag/draft verification.
+No owner smoke, full hosted acceptance, stable tag or publication exists.

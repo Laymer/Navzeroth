@@ -39,7 +39,9 @@ pack identity. Reviewed repairs248/249/250 are integrated locally atfcf170ad:
 strict typed target comparison, bounded cleanliness diagnostics and true Windows
 volume/full128-bit file identity. Fresh Linux full-pack replay passed138.945s/
 6402372KiB child peak; this does not execute the Windows branch. Independent V6
-review/receipts and fresh hosted gates are next. No stable tag or publication.
+review, signed assembly/default policy and fresh source prebuild passed atb8d05a1d
+(89evidence files/two packs; exactly9pending). Final candidate hosted gates are next.
+No stable tag or publication.
 
 
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
