@@ -60,7 +60,16 @@ function Invoke-StableWorkload([string] $Root,[string] $Exe,[string] $Manifest,[
     try {
         if (-not $process.Start()) { throw 'Cannot start installed engineering workload.' }; $started = $true
         while (-not $process.WaitForExit(200)) {
-            if ($timer.Elapsed.TotalSeconds -gt $MaximumSeconds) { throw 'Installed engineering workload exceeded its selected finite time bound.' }
+            if ($timer.Elapsed.TotalSeconds -gt $MaximumSeconds) {
+                # Persist before the finally block kills Node: its finally/raw
+                # report may never run. Partial diagnostics are never a case pass.
+                $pids = @($observations.Keys | Sort-Object | Select-Object -First 16 | ForEach-Object { @{pid=[int]$_;peak_memory_bytes=$observations[$_]} })
+                $watchdog = [ordered]@{schema_version=1;kind='workload_watchdog';passed=$false;completed=$false;mode=$Mode;version=$Version;reason='selected_time_bound_exceeded';maximum_seconds=$MaximumSeconds;elapsed_ms=$timer.Elapsed.TotalMilliseconds;samples=$samples;sampling_errors=$samplingErrors;native_pids=$pids;native_pids_truncated=($observations.Count -gt 16);partial_progress_file=([IO.Path]::GetFileName($Report)+'.progress.json')}
+                $text=($watchdog | ConvertTo-Json -Depth 10)+"`n"
+                if ([Text.Encoding]::UTF8.GetByteCount($text) -gt 16384) { throw 'Watchdog diagnostics exceed bounded capacity.' }
+                [IO.File]::WriteAllText($Report+'.watchdog.json',$text,(New-Object Text.UTF8Encoding($false)))
+                throw 'Installed engineering workload exceeded its selected finite time bound.'
+            }
             foreach ($native in @(Get-Process -Name azeroth-desktop -ErrorAction SilentlyContinue)) {
                 try {
                     if ([string]::Equals($native.Path,$Exe,[StringComparison]::OrdinalIgnoreCase)) {

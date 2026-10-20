@@ -107,5 +107,29 @@ try{
  }
  Check 'lack of controllable adapter is unverified/failure' {$script:nics=@{A='Disabled'};Refuse {Invoke-StableOffline {throw 'Should not run'}}}
  Check 'offline controls refuse non-hosted environments' {$env:RUNNER_ENVIRONMENT='self-hosted';Refuse {Invoke-StableOffline {throw 'Should not run'}}}
+ if ($PSVersionTable.PSVersion.Major -ge 7) {
+  Check 'actual parent timeout retains pending child phase and watchdog without a pass' {
+   $synthetic=Join-Path $root 'timeout-root';$scripts=Join-Path $synthetic 'scripts/windows'
+   New-Item -ItemType Directory -Path $scripts -Force|Out-Null
+   Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'stable-workload-progress.mjs') -Destination $scripts
+   $child=@'
+import {createWorkloadProgress} from './stable-workload-progress.mjs';
+import {writeFileSync} from 'node:fs';
+const args=process.argv.slice(2),report=args[args.indexOf('--out')+1];
+const progress=createWorkloadProgress(report+'.progress.json',{mode:'recover',version:'1.0.0'});
+progress.phase('exercise');
+try { await progress.track('inspect_database_backup',async()=>{setInterval(()=>{},1000);await new Promise(()=>{});}); }
+finally { writeFileSync(report,JSON.stringify({passed:false,completed:false,kind:'synthetic_finally_marker'})); }
+'@
+   [IO.File]::WriteAllText((Join-Path $scripts 'Stable-Workload.mjs'),$child,(New-Object Text.UTF8Encoding($false)))
+   $report=Join-Path $root 'killed-workload.json';$message=''
+   try {Invoke-StableWorkload $synthetic 'not-an-installed-executable' 'synthetic-manifest' '1.0.0' 'recover' 'synthetic-state' $report '' 2|Out-Null} catch {$message=$_.Exception.Message}
+   if($message -cne 'Installed engineering workload exceeded its selected finite time bound.'){throw ('Wrong timeout failure: '+$message)}
+   $progress=Read-BoundedReleaseText ($report+'.progress.json')|ConvertFrom-Json
+   $watchdog=Read-BoundedReleaseText ($report+'.watchdog.json')|ConvertFrom-Json
+   if((Test-Path -LiteralPath $report) -or $progress.passed -ne $false -or $progress.completed -ne $false -or $progress.active_command -cne 'inspect_database_backup' -or $progress.phase -cne 'exercise'){throw 'Killed child progress was lost or promoted'}
+   if($watchdog.passed -ne $false -or $watchdog.completed -ne $false -or $watchdog.maximum_seconds -ne 2 -or $watchdog.elapsed_ms -lt 2000 -or $watchdog.reason -cne 'selected_time_bound_exceeded' -or $watchdog.native_pids.Count -gt 16){throw 'Watchdog metadata differs'}
+  }
+ } else {Write-Host 'Actual parent timeout regression requires PS7 argument-list API; not executed in PS5.1.'}
  Write-Host "Passed $count hosted producer helper checks."
 }finally{$env:GITHUB_ACTIONS=$savedActions;$env:RUNNER_ENVIRONMENT=$savedRunner;$env:OS=$savedOS;Remove-Item -LiteralPath $root -Recurse -Force}
