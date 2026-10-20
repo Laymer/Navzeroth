@@ -381,3 +381,35 @@ fn reader_limits_and_schema_artifact() {
     );
     assert_eq!(schema["properties"]["records"]["maxItems"], 250_000);
 }
+
+#[test]
+fn planar_dungeon_estimate_keeps_height_absent_and_validates_derivation() {
+    let mut value = shard(
+        "dungeon",
+        json!({"map_id":36,"name":"Deadmines","entrance":{"status":"unknown"},
+        "entrance_estimate":{"map_id":0,"x":-11207.8,"y":1681.15,
+            "derivation":"CMaNGOS instance_template ghost-entry XY", "uncertainty":"Portal and elevation unverified"}}),
+    );
+    let data = check(&value).unwrap();
+    let mut nonfinite = data.clone();
+    if let Record::Dungeon(dungeon) = &mut nonfinite.records[0] {
+        dungeon.entrance_estimate.as_mut().unwrap().x = f64::NAN;
+    }
+    assert!(nonfinite.validate().is_err());
+    let serialized = serde_json::to_value(&data).unwrap();
+    assert!(
+        serialized["records"][0]["entrance_estimate"]
+            .get("z")
+            .is_none()
+    );
+    assert_eq!(serialized["records"][0]["entrance"]["status"], "unknown");
+    for field in ["derivation", "uncertainty"] {
+        let mut bad = value.clone();
+        bad["records"][0]["entrance_estimate"][field] = json!("");
+        assert!(check(&bad).is_err());
+    }
+    value["records"][0]["excluded_reason"] = json!("Unused/test map with zero source capacity");
+    assert!(check(&value).is_ok());
+    value["records"][0]["excluded_reason"] = json!("");
+    assert!(check(&value).is_err());
+}

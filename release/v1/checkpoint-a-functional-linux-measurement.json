@@ -1,0 +1,21 @@
+{
+  "resource_method": "os.wait4 exact child process",
+  "command": [
+    "timeout",
+    "600",
+    "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-f0713c3b97bf0547",
+    "--ignored",
+    "--nocapture"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 168.20949122399998,
+  "peak_rss_kib": 6402916,
+  "user_seconds": 158.903735,
+  "system_seconds": 9.214006,
+  "schema_version": 1,
+  "scope": "checkpoint A full-pack manual engineering functional scenario",
+  "tested_source_commit": "4f9be214eaed9077dd5ca96c8a5fd1621f567f40",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal32675952KiB. Concurrent shared-host workload. No Windows or ordinary-PC sufficiency claim.",
+  "proof_sha256": "aae367298d53bc8d66633b0f13f7e3eb56882546a37397fb9e82d9ed368dc168"
+}

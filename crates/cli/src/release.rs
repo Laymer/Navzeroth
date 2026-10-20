@@ -1,6 +1,14 @@
 //! Release gate I/O: bounded evidence, exact Git/source binding and verified packs.
 //! All referenced game/source material is data; no Lua or SQL is executed.
 mod admission;
+#[cfg(test)]
+#[path = "../../app/tests/support/bundled_content_fixture.rs"]
+#[allow(dead_code)]
+mod bundle_test_fixture;
+
+mod bundled;
+mod bundled_stage;
+pub mod enumeration;
 pub mod materials;
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -136,6 +144,7 @@ impl WorldInputs {
             target: self.target.as_ref(),
             origins: self.origins.as_ref(),
             origin_policy_sha256: self.origin_sha256.as_deref(),
+            verified_non_observational_sources: None,
         }
     }
 }
@@ -229,6 +238,8 @@ fn relative(root: &Path, path: &Path) -> Result<AssetPath> {
 }
 #[derive(Default)]
 struct Budget {
+    stable: bool,
+    catalogs: BTreeMap<PathBuf, (u64, String)>,
     bytes: u64,
     verified: BTreeMap<PathBuf, (u64, String)>,
     charged: BTreeMap<PathBuf, u64>,
@@ -239,7 +250,13 @@ impl Budget {
             .bytes
             .checked_add(bytes)
             .ok_or("Release byte budget exceeded")?;
-        if self.bytes > MAX_TOTAL_BYTES {
+        if self.bytes
+            > if self.stable {
+                2 * MAX_TOTAL_BYTES
+            } else {
+                MAX_TOTAL_BYTES
+            }
+        {
             return Err("Release byte budget exceeded");
         }
         Ok(())
@@ -277,6 +294,44 @@ impl Budget {
         Ok(bytes)
     }
     fn verify(&mut self, root: &Path, reference: &FileRef) -> Result<()> {
+        self.verify_limit(root, reference, MAX_FILE_BYTES)
+    }
+    fn verify_catalog(&mut self, root: &Path, reference: &FileRef) -> Result<()> {
+        let limit = if self.stable {
+            crate::pack::v2::MAX_CATALOG_BYTES as u64
+        } else {
+            MAX_FILE_BYTES
+        };
+        self.verify_limit(root, reference, limit)?;
+        if self.stable {
+            self.catalogs.insert(
+                root.join(reference.path.as_str()),
+                (reference.bytes, reference.sha256.as_str().to_owned()),
+            );
+        }
+        Ok(())
+    }
+    fn verify_material(
+        &mut self,
+        root: &Path,
+        reference: &FileRef,
+        content_pack: bool,
+    ) -> Result<()> {
+        let accepted_catalog = content_pack
+            && self.catalogs.get(&root.join(reference.path.as_str()))
+                == Some(&(reference.bytes, reference.sha256.as_str().to_owned()));
+        if accepted_catalog {
+            self.verify_catalog(root, reference)
+        } else {
+            self.verify(root, reference)
+        }
+    }
+    fn verify_limit(&mut self, root: &Path, reference: &FileRef, limit: u64) -> Result<()> {
+        // Check role-specific limits before cache lookup: a catalog allowance
+        // must never turn the same file into an oversized original source.
+        if reference.bytes == 0 || reference.bytes > limit {
+            return Err("Evidence file exceeds its size limit");
+        }
         let path = root.join(reference.path.as_str());
         let expected = (reference.bytes, reference.sha256.as_str().to_owned());
         if let Some(previous) = self.verified.get(&path) {
@@ -285,9 +340,6 @@ impl Budget {
             } else {
                 Err("Conflicting evidence file references")
             };
-        }
-        if reference.bytes == 0 || reference.bytes > MAX_FILE_BYTES {
-            return Err("Evidence file exceeds its size limit");
         }
         checked_path(&path, false)?;
         let mut file = File::open(&path).map_err(|_| "Evidence file cannot be opened")?;
@@ -359,11 +411,13 @@ fn git(root: &Path, args: &[&str]) -> Result<Vec<u8>> {
 struct Tree {
     fingerprint: String,
     files: BTreeSet<String>,
+    all_files: BTreeSet<String>,
 }
 fn tree(root: &Path, revision: &str) -> Result<Tree> {
     let bytes = git(root, &["ls-tree", "-r", "-z", "--full-tree", revision])?;
     let mut digest = Sha256::new();
     let mut files = BTreeSet::new();
+    let mut all_files = BTreeSet::new();
     for entry in bytes.split_inclusive(|b| *b == 0) {
         if entry.last() != Some(&0) {
             return Err("Invalid Git tree output");
@@ -373,6 +427,9 @@ fn tree(root: &Path, revision: &str) -> Result<Tree> {
             .position(|b| *b == b'\t')
             .ok_or("Invalid Git tree entry")?;
         let path = &entry[tab + 1..entry.len() - 1];
+        if let Ok(path) = std::str::from_utf8(path) {
+            all_files.insert(path.to_owned());
+        }
         if production(path) {
             digest.update(entry);
             let path = std::str::from_utf8(path).map_err(|_| "Production paths must be UTF-8")?;
@@ -382,6 +439,7 @@ fn tree(root: &Path, revision: &str) -> Result<Tree> {
     Ok(Tree {
         fingerprint: format!("{:x}", digest.finalize()),
         files,
+        all_files,
     })
 }
 fn addon_inputs(root: &Path, candidate: &Tree) -> Result<()> {
@@ -528,6 +586,7 @@ struct PackSources {
 }
 #[derive(Default)]
 struct Catalog {
+    bundled_packs: Vec<azeroth_app::bundled_content::Pack>,
     admitted: BTreeMap<String, azeroth_core::source_admission::Source>,
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
@@ -535,6 +594,16 @@ struct Catalog {
     files: BTreeMap<String, FileRef>,
     /// Release source id to its evidenced origin edition.
     origins: BTreeMap<String, String>,
+    non_observational: BTreeSet<String>,
+    observational: BTreeSet<String>,
+}
+impl Catalog {
+    fn verified_non_observational(&self) -> BTreeSet<String> {
+        self.non_observational
+            .difference(&self.observational)
+            .cloned()
+            .collect()
+    }
 }
 fn catalog_dataset(catalog: &mut Catalog, dataset: &Envelope<ReferenceDataset>) -> Result<()> {
     if !catalog
@@ -657,6 +726,43 @@ fn classify_v2(
     }
     Ok(())
 }
+fn non_observational_source(
+    content: &azeroth_core::content_v2::ReferenceContent,
+    all_sources: &[SourceRecord],
+    source: &SourceRecord,
+    policy: &ReleasePolicy<'_>,
+) -> Result<bool> {
+    use azeroth_core::{entities::Confidence, sources::AccessMethod};
+    if source.access.value() == Some(&AccessMethod::Authored) {
+        if all_sources.len() != 1 {
+            return Ok(false);
+        }
+        return Ok(
+            azeroth_core::content_v2::authored::validate_authored(content, &source.id).is_ok(),
+        );
+    }
+    if !policy.origins.is_some_and(|p| p.accept_inferred) {
+        return Ok(false);
+    }
+    let evidence: Vec<_> = content
+        .reference
+        .payload
+        .evidence
+        .iter()
+        .filter(|e| e.source == source.id)
+        .collect();
+    Ok(!evidence.is_empty()
+        && evidence
+            .iter()
+            .all(|e| e.confidence == Confidence::Inferred)
+        && !content
+            .reference
+            .payload
+            .map_images
+            .iter()
+            .any(|image| image.source == source.id))
+}
+
 #[allow(clippy::too_many_arguments)]
 fn bind_v2_pack(
     root: &Path,
@@ -743,6 +849,21 @@ fn bind_v2_pack(
     {
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
+    catalog
+        .bundled_packs
+        .push(azeroth_app::bundled_content::Pack {
+            directory: relative(root, pack_root)?,
+            manifest: pack.manifest.clone(),
+            key: azeroth_storage::content::ContentRevisionKey {
+                scope: azeroth_storage::content::ContentScope {
+                    context: data.data_context(),
+                    fixture: data.fixture,
+                },
+                revision: data.payload.revision.clone(),
+            },
+            conflicts: None,
+            normalization_conflicts: None,
+        });
     require_complete_v2_facts(&content)?;
     if release::is_world_schema(inventory.schema_version) {
         classify_v2(
@@ -755,6 +876,16 @@ fn bind_v2_pack(
         )?;
     }
     let mut records = v2_catalog_records(&content)?;
+    if inventory.schema_version == release::SCHEMA_STABLE {
+        for source in &sources.sources {
+            let id = source.id.as_str().to_owned();
+            if non_observational_source(&content, &sources.sources, source, policy)? {
+                catalog.non_observational.insert(id);
+            } else {
+                catalog.observational.insert(id);
+            }
+        }
+    }
     if let Some(support) = &manifest.party_support {
         let matrix = azeroth_core::release_party::SupportMatrix::decode(&checked_ref_bytes(
             budget,
@@ -837,7 +968,7 @@ fn packs(
             crate::pack::MAX_MANIFEST_BYTES,
         )?;
         // Charge each distinct material before invoking the full verifier. Multiple
-        // passes over the same bounded bytes do not shrink the 1 GiB closure limit.
+        // passes over the same bounded bytes do not shrink the versioned closure limit.
         let version = serde_json::from_slice::<Value>(&manifest_bytes)
             .map_err(|_| "Invalid pack manifest")?
             .get("schema_version")
@@ -845,8 +976,8 @@ fn packs(
         if version == Some(2) {
             let manifest: PackV2 =
                 serde_json::from_slice(&manifest_bytes).map_err(|_| "Invalid v2 manifest")?;
+            budget.verify_catalog(pack_root, &manifest.catalog)?;
             for file in std::iter::once(&manifest.sources)
-                .chain(std::iter::once(&manifest.catalog))
                 .chain(&manifest.assets)
                 .chain(&manifest.party_support)
                 .chain(&manifest.supporting_files)
@@ -1021,6 +1152,7 @@ struct Inputs {
     inventory_bytes: Vec<u8>,
     inventory: Inventory,
     evidence: Option<Evidence>,
+    evidence_sha256: Option<String>,
     head: String,
     candidate: Tree,
     world: WorldInputs,
@@ -1030,8 +1162,12 @@ fn inputs(options: &Options) -> Result<Inputs> {
     let root = root_path(&options.root)?;
     let mut budget = Budget::default();
     versions(&root, &options.version, &mut budget)?;
-    let inventory_bytes = budget.read(&root.join(INVENTORY_PATH), release::MAX_RELEASE_BYTES)?;
+    let inventory_bytes = budget.read(
+        &root.join(INVENTORY_PATH),
+        release::MAX_STABLE_RELEASE_BYTES,
+    )?;
     let inventory = release::decode_inventory(&inventory_bytes)?;
+    budget.stable = inventory.schema_version == release::SCHEMA_STABLE;
     let world = world_inputs(&root, &inventory, &mut budget)?;
     let selected = options
         .evidence
@@ -1039,10 +1175,13 @@ fn inputs(options: &Options) -> Result<Inputs> {
         .unwrap_or(Path::new(EVIDENCE_PATH));
     let selected = relative(&root, selected)?;
     let evidence_path = root.join(selected.as_str());
+    let mut evidence_sha256 = None;
     let evidence = match fs::symlink_metadata(&evidence_path) {
-        Ok(_) => Some(release::decode_evidence(
-            &budget.read(&evidence_path, release::MAX_RELEASE_BYTES)?,
-        )?),
+        Ok(_) => {
+            let raw = budget.read(&evidence_path, release::MAX_STABLE_RELEASE_BYTES)?;
+            evidence_sha256 = Some(hash(&raw));
+            Some(release::decode_evidence(&raw)?)
+        }
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
         Err(_) => return Err("Acceptance evidence cannot be inspected"),
     };
@@ -1059,6 +1198,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256,
         head,
         candidate,
         world,
@@ -1117,6 +1257,7 @@ pub fn report(options: &Options) -> Result<Report> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256: _,
         head,
         candidate,
         world,
@@ -1126,6 +1267,51 @@ pub fn report(options: &Options) -> Result<Report> {
         .as_ref()
         .and_then(|e| e.tested_source_commit.as_deref())
         .unwrap_or("");
+    release::assess_with(
+        &options.version,
+        &inventory,
+        evidence.as_ref(),
+        &Bindings {
+            inventory_sha256: &hash(&inventory_bytes),
+            production_sha256: &candidate.fingerprint,
+            tested_source_commit: tested,
+        },
+        &policy,
+    )?;
+    let (mut verified_packs, mut classifications, mut verification_errors) = (0, vec![], vec![]);
+    let mut verified_catalog = None;
+    if let Some(evidence) = &evidence {
+        for reference in release::evidence_files(&inventory, evidence) {
+            if let Err(message) = budget.verify(&root, reference) {
+                verification_errors.push(message);
+                break;
+            }
+        }
+        match packs(
+            &root,
+            &inventory,
+            evidence,
+            &policy,
+            &candidate,
+            &mut budget,
+            &mut classifications,
+        ) {
+            Ok((count, catalog)) => {
+                verified_packs = count;
+                verified_catalog = Some(catalog);
+            }
+            Err(message) => verification_errors.push(message),
+        }
+    }
+    let non_observational = verified_catalog
+        .as_ref()
+        .filter(|_| verification_errors.is_empty())
+        .map(Catalog::verified_non_observational)
+        .unwrap_or_default();
+    let policy = ReleasePolicy {
+        verified_non_observational_sources: Some(&non_observational),
+        ..policy
+    };
     let mut readiness = release::assess_with(
         &options.version,
         &inventory,
@@ -1137,6 +1323,9 @@ pub fn report(options: &Options) -> Result<Report> {
         },
         &policy,
     )?;
+    for message in verification_errors {
+        readiness.block(message);
+    }
     let status = production_status(&root)?;
     // Historical repositories without a delivery policy retain their original
     // bundled rules. An explicit policy is strict and production-fingerprinted.
@@ -1174,39 +1363,33 @@ pub fn report(options: &Options) -> Result<Report> {
     {
         readiness.block("Tested source commit is missing or invalid");
     }
-    let mut verified_packs = 0;
-    let mut classifications = vec![];
-    if let Some(evidence) = &evidence {
-        for reference in release::evidence_files(&inventory, evidence) {
-            if let Err(message) = budget.verify(&root, reference) {
-                readiness.block(message);
-                break;
-            }
-        }
-        match packs(
+    if let Some(evidence) = &evidence
+        && let Some(catalog) = &verified_catalog
+    {
+        bind_records(&mut readiness, &inventory, evidence, catalog);
+        match materials::selected_files(
             &root,
             &inventory,
             evidence,
             &policy,
             &candidate,
+            catalog,
             &mut budget,
-            &mut classifications,
         ) {
-            Ok((count, catalog)) => {
-                verified_packs = count;
-                bind_records(&mut readiness, &inventory, evidence, &catalog);
-                if let Err(message) = materials::selected_files(
+            Ok((materials, _)) if inventory.schema_version == release::SCHEMA_STABLE => {
+                if let Err(message) = bundled::verify(
                     &root,
+                    &options.version,
                     &inventory,
                     evidence,
-                    &policy,
                     &candidate,
-                    &catalog,
                     &mut budget,
+                    &materials,
                 ) {
                     readiness.block(message);
                 }
             }
+            Ok(_) => {}
             Err(message) => readiness.block(message),
         }
     }
@@ -1277,6 +1460,33 @@ fn require_complete_v2_facts(
     Ok(())
 }
 
+pub fn assemble_bundle(options: &Options, output: &Path, identity_path: &Path) -> Result<()> {
+    let selected = materials::plan(options)?;
+    let Inputs {
+        root,
+        mut budget,
+        inventory,
+        evidence,
+        candidate,
+        ..
+    } = inputs(options)?;
+    bundled::assemble(
+        &bundled::Context {
+            root: &root,
+            version: &options.version,
+            inventory: &inventory,
+            evidence: evidence
+                .as_ref()
+                .ok_or("Bundle assembly requires source evidence")?,
+            tree: &candidate,
+            selected_materials: &selected.files,
+        },
+        &mut budget,
+        output,
+        identity_path,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1298,8 +1508,13 @@ mod tests {
         let mut catalog = Catalog::default();
         catalog_dataset(&mut catalog, &dataset).unwrap();
         let records = &catalog.records["quests"];
-        let mut inventory =
-            release::decode_inventory(&fs::read(root.join(INVENTORY_PATH)).unwrap()).unwrap();
+        let mut inventory = release::decode_inventory(
+            &fs::read(
+                root.join("release/history/2026-10-19-pre-stable-v3/coverage-inventory.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
         inventory.domains = vec![DomainInventory {
             domain: "quests".into(),
             completeness: Completeness::Complete,
@@ -1311,8 +1526,13 @@ mod tests {
             }],
             out_of_scope: vec![],
         }];
-        let mut evidence =
-            release::decode_evidence(&fs::read(root.join(EVIDENCE_PATH)).unwrap()).unwrap();
+        let mut evidence = release::decode_evidence(
+            &fs::read(
+                root.join("release/history/2026-10-19-pre-stable-v3/acceptance-evidence.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
         evidence.coverage = vec![UnitCoverage {
             unit_id: "synthetic-only".into(),
             status: Status::Pass,
@@ -1407,6 +1627,52 @@ mod tests {
         );
     }
     #[test]
+    fn schema4_catalog_budget_is_role_scoped_and_historical_budgets_stay_fixed() {
+        let root = Path::new("/synthetic");
+        let reference = FileRef {
+            path: AssetPath::new("catalog.json").unwrap(),
+            bytes: MAX_FILE_BYTES + 1,
+            sha256: azeroth_core::types::Sha256Hex::new("a".repeat(64)).unwrap(),
+        };
+        let pin = (reference.bytes, reference.sha256.as_str().to_owned());
+        for stable in [false, true] {
+            let mut budget = Budget {
+                stable,
+                ..Budget::default()
+            };
+            // Simulate a hash-verified bounded read; exercise authorization and
+            // cached identity checks without allocating a half-gigabyte fixture.
+            budget
+                .verified
+                .insert(root.join("catalog.json"), pin.clone());
+            assert_eq!(budget.verify_catalog(root, &reference).is_ok(), stable);
+            assert!(budget.verify(root, &reference).is_err());
+            assert_eq!(
+                budget.verify_material(root, &reference, true).is_ok(),
+                stable
+            );
+            assert!(budget.verify_material(root, &reference, false).is_err());
+            let mut altered = reference.clone();
+            altered.bytes += 1;
+            assert!(budget.verify_material(root, &altered, true).is_err());
+            budget
+                .charge(Path::new("/aggregate"), MAX_TOTAL_BYTES)
+                .unwrap();
+            assert_eq!(budget.charge(Path::new("/extra"), 1).is_ok(), stable);
+        }
+        let mut budget = Budget {
+            stable: true,
+            ..Budget::default()
+        };
+        let mut too_large = reference;
+        too_large.bytes = crate::pack::v2::MAX_CATALOG_BYTES as u64 + 1;
+        assert!(budget.verify_catalog(root, &too_large).is_err());
+        budget
+            .charge(Path::new("/aggregate"), 2 * MAX_TOTAL_BYTES)
+            .unwrap();
+        assert!(budget.charge(Path::new("/extra"), 1).is_err());
+    }
+    #[test]
     fn repeated_material_reads_charge_distinct_closure_bytes_once() {
         let mut budget = Budget::default();
         let path = Path::new("/synthetic/catalog.json");
@@ -1473,5 +1739,91 @@ mod tests {
             assert!(result.blockers[0].contains("No validated pack record binding"));
             assert!(!result.publication_allowed);
         }
+    }
+    #[test]
+    fn non_observational_materials_require_authored_only_or_wholly_inferred_evidence() {
+        use azeroth_core::content_v2;
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let original: Value = serde_json::from_slice(
+            &fs::read(root.join("content/authored/slice-v1/catalog.json")).unwrap(),
+        )
+        .unwrap();
+        let mut source_value: Value = serde_json::from_slice(
+            &fs::read(root.join("content/authored/slice-v1/sources.json")).unwrap(),
+        )
+        .unwrap();
+        let mut origins =
+            OriginPolicy::decode(&fs::read(root.join(ORIGIN_POLICY_PATH)).unwrap()).unwrap();
+        let content = content_v2::decode(&serde_json::to_vec(&original).unwrap()).unwrap();
+        let sources: PackSources = serde_json::from_value(source_value.clone()).unwrap();
+        let policy = ReleasePolicy {
+            origins: Some(&origins),
+            ..Default::default()
+        };
+        assert!(
+            non_observational_source(&content, &sources.sources, &sources.sources[0], &policy)
+                .unwrap()
+        );
+        let duplicate = vec![sources.sources[0].clone(), sources.sources[0].clone()];
+        assert!(
+            !non_observational_source(&content, &duplicate, &sources.sources[0], &policy).unwrap()
+        );
+        let mut stronger = original.clone();
+        stronger["reference"]["payload"]["evidence"][0]["confidence"] = json!("verified_on_build");
+        let mixed = content_v2::decode(&serde_json::to_vec(&stronger).unwrap()).unwrap();
+        assert!(
+            !non_observational_source(&mixed, &sources.sources, &sources.sources[0], &policy)
+                .unwrap()
+        );
+        source_value["sources"][0]["access"]["value"] = json!("file_download");
+        let sources: PackSources = serde_json::from_value(source_value).unwrap();
+        let mut inferred = original.clone();
+        for row in inferred["reference"]["payload"]["evidence"]
+            .as_array_mut()
+            .unwrap()
+        {
+            row["confidence"] = json!("inferred");
+        }
+        let inferred_content = content_v2::decode(&serde_json::to_vec(&inferred).unwrap()).unwrap();
+        assert!(
+            non_observational_source(
+                &inferred_content,
+                &sources.sources,
+                &sources.sources[0],
+                &policy
+            )
+            .unwrap()
+        );
+        assert!(
+            !non_observational_source(&mixed, &sources.sources, &sources.sources[0], &policy)
+                .unwrap()
+        );
+        origins.accept_inferred = false;
+        let policy = ReleasePolicy {
+            origins: Some(&origins),
+            ..Default::default()
+        };
+        assert!(
+            !non_observational_source(
+                &inferred_content,
+                &sources.sources,
+                &sources.sources[0],
+                &policy
+            )
+            .unwrap()
+        );
+        assert!(
+            !non_observational_source(
+                &inferred_content,
+                &sources.sources,
+                &sources.sources[0],
+                &ReleasePolicy::default()
+            )
+            .unwrap()
+        );
+        let mut catalog = Catalog::default();
+        catalog.non_observational.insert("same-source".into());
+        catalog.observational.insert("same-source".into());
+        assert!(catalog.verified_non_observational().is_empty());
     }
 }

@@ -849,6 +849,39 @@
       ],
       "type": "object"
     },
+    "PlanarEntranceEstimate": {
+      "additionalProperties": false,
+      "description": "A planar entrance estimate; elevation is intentionally absent.",
+      "properties": {
+        "derivation": {
+          "type": "string"
+        },
+        "map_id": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "uncertainty": {
+          "type": "string"
+        },
+        "x": {
+          "format": "double",
+          "type": "number"
+        },
+        "y": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "map_id",
+        "x",
+        "y",
+        "derivation",
+        "uncertainty"
+      ],
+      "type": "object"
+    },
     "QuestObjective": {
       "additionalProperties": false,
       "properties": {
@@ -2546,6 +2579,22 @@
             },
             "entrance": {
               "$ref": "#/$defs/Observation_WorldPoint"
+            },
+            "entrance_estimate": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PlanarEntranceEstimate"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "excluded_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "kind": {
               "const": "dungeon",

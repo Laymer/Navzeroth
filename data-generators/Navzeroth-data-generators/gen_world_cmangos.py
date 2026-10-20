@@ -541,7 +541,7 @@ def trigger_entrances(teleports, client_triggers):
     return out
 
 
-def dungeon_records(instances, maps, entrances, bosses, teleports=()):
+def dungeon_records(instances, maps, entrances, bosses, teleports=(), areas=()):
     """instances: instance_template rows; maps: client Map rows by ID; bosses: map -> creature IDs."""
     fallback = {}
     for t in sorted(teleports, key=lambda t: t["id"]):
@@ -557,11 +557,32 @@ def dungeon_records(instances, maps, entrances, bosses, teleports=()):
         if not name:
             continue
         point = entrances.get(inst["map"])
+        estimate = None
+        gx, gy = inst.get("ghostEntranceX"), inst.get("ghostEntranceY")
+        ghost_map = inst.get("ghostEntranceMap")
+        if ghost_map in (0, 1) and gx is not None and gy is not None and (gx != 0 or gy != 0):
+            estimate = {"map_id": ghost_map, "x": gx, "y": gy,
+                        "derivation": f"CMaNGOS instance_template map {inst['map']}: ghostEntranceMap={ghost_map}, "
+                                      f"ghostEntranceX={gx}, ghostEntranceY={gy}; used as a planar entry estimate.",
+                        "uncertainty": "Historical 1.12 ghost-entry location; portal position, elevation, access and walkability are unverified."}
+        excluded = None
+        if inst["map"] == 169 and all(inst.get(field) == 0 for field in
+                ("maxPlayers", "levelMin", "levelMax", "ghostEntranceMap", "ghostEntranceX", "ghostEntranceY")):
+            excluded = "Unused/test map 169 (Emerald Dream): instance_template maxPlayers, levelMin, levelMax and ghost entrance fields are zero; no supported playable entrance basis."
+        area_id = positive(m.get("AreaTableID")) if m is not None else None
+        if area_id is None:
+            normalize = lambda value: re.sub(r"^the\s+", "", re.sub(r"[^a-z0-9]+", " ", value.lower()).strip())
+            matches = [int(a["ID"]) for a in areas
+                       if int(a["ContinentID"]) == inst["map"] and int(a.get("ParentAreaID") or 0) == 0
+                       and normalize(a.get("AreaName_lang") or "") == normalize(name)]
+            if len(matches) == 1:
+                area_id = matches[0]
         out.append({"map_id": inst["map"], "name": name, "min_level": positive(inst.get("levelMin")),
                     "max_level": positive(inst.get("levelMax")),
                     "entrance": envelope.known(point) if point else envelope.unknown(),
+                    "entrance_estimate": estimate, "excluded_reason": excluded,
                     "bosses": sorted(bosses.get(inst["map"], ())) or None,
-                    "area_id": positive(m.get("AreaTableID")) if m is not None else None})
+                    "area_id": area_id})
     return out
 
 
@@ -651,7 +672,8 @@ def build(dump, wago):
                       quest_zones, zone_of_ui)
     locator = coords.Locator(assignments, ui_maps, hints)
     reactions = Reactions(wago.table("FactionTemplate"))
-    area_names = {int(r["ID"]): text(r["AreaName_lang"]) for r in wago.table("AreaTable") if text(r["AreaName_lang"])}
+    areas = wago.table("AreaTable")
+    area_names = {int(r["ID"]): text(r["AreaName_lang"]) for r in areas if text(r["AreaName_lang"])}
     maps = {int(r["ID"]): r for r in wago.table("Map")}
     client_triggers = wago.table("AreaTrigger") if wago.has("AreaTrigger") else []
 
@@ -699,7 +721,7 @@ def build(dump, wago):
     teleports = dump.rows("areatrigger_teleport")
     out["dungeons.dungeons"] = ("dungeon", dungeon_records(dump.rows("instance_template"), maps,
                                                            trigger_entrances(teleports, client_triggers), bosses,
-                                                           teleports), lambda r: r["map_id"], True)
+                                                           teleports, areas), lambda r: r["map_id"], True)
     out["world.graveyards"] = ("graveyard", graveyard_records(dump.rows("world_safe_locs"),
                                                               dump.rows("game_graveyard_zone"), locator), by_id, True)
     out["world.area_levels"] = ("area", area_level_records(spawns, templates, area_names, reactions), by_id, True)
@@ -720,7 +742,7 @@ def main(argv=None):
         datasets = build(dump, wago)
         client = wago.source()  # after every client table is read
         origin = envelope.origin(envelope.VANILLA, "1.12.1", product="cmangos-classic-db")
-        gen = envelope.generator(NAME, credit=envelope.NAVZEROTH_CREDIT + " " + envelope.CREDIT)
+        gen = envelope.generator(NAME, version="2", credit=envelope.NAVZEROTH_CREDIT + " " + envelope.CREDIT)
         written = []
         for dataset, (kind, records, key, uses_client) in datasets.items():
             paths = envelope.write(dataset, kind, records, origin=origin,

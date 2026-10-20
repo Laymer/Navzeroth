@@ -60,7 +60,14 @@ impl Temp {
             "release/v1/accepted-origins.json",
             "release/v1/world-data-target.json",
         ] {
-            temp.write(file, &fs::read_to_string(source.join(file)).unwrap());
+            let source_path = if file == INVENTORY || file == EVIDENCE {
+                source
+                    .join("release/history/2026-10-19-pre-stable-v3")
+                    .join(Path::new(file).file_name().unwrap())
+            } else {
+                source.join(file)
+            };
+            temp.write(file, &fs::read_to_string(source_path).unwrap());
         }
         temp.git(&["init", "-q"]);
         temp.git(&["config", "user.name", "Synthetic Release Test"]);

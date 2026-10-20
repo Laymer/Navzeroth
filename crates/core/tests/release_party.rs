@@ -67,7 +67,7 @@ fn stale_catalog_mixed_target_empty_evidence_and_unknown_version_refuse() {
     matrix.rows[0].supporting_evidence.clear();
     assert!(matrix.validate().is_err());
     let mut value = serde_json::to_value(sample()).unwrap();
-    value["schema_version"] = json!(3);
+    value["schema_version"] = json!(4);
     assert!(SupportMatrix::decode(&serde_json::to_vec(&value).unwrap()).is_err());
     value["schema_version"] = json!(2);
     assert!(SupportMatrix::decode(&serde_json::to_vec(&value).unwrap()).is_err());
@@ -135,4 +135,40 @@ fn schema_two_admits_solo_with_code_fixed_workflows_and_a_pending_target() {
         matrix.supported_sizes[0] = size;
         assert!(matrix.validate().is_err());
     }
+}
+
+#[test]
+fn explicit_world_target_is_versioned_without_changing_historical_freeze() {
+    let mut matrix = sample();
+    matrix.schema_version = 3;
+    assert!(matrix.validate().is_ok());
+    for target in [
+        None,
+        Some(Target {
+            edition: "wow_forever".into(),
+            version: "1.60".into(),
+            build: "70450".into(),
+            interface: 16001,
+        }),
+        Some(Target {
+            edition: "wow_forever".into(),
+            version: "1.60.1".into(),
+            build: "wrong".into(),
+            interface: 16001,
+        }),
+    ] {
+        matrix.target = target;
+        assert!(matrix.validate().is_err());
+    }
+    matrix.target = Some(Target {
+        edition: "wow_forever".into(),
+        version: "1.60.1".into(),
+        build: "70450".into(),
+        interface: 16001,
+    });
+    assert!(SupportMatrix::decode(&serde_json::to_vec(&matrix).unwrap()).is_ok());
+    matrix.schema_version = 2;
+    assert!(matrix.validate().is_err());
+    matrix.target = None;
+    assert!(matrix.validate().is_ok());
 }

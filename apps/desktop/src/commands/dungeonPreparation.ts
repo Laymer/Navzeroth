@@ -5,7 +5,7 @@ export type Observed<T> = { status: "known"; value: T } | { status: Exclude<Avai
 export interface Declared<T> { observation: Observed<T>; evidence: string[] }
 export interface ConditionAssessment { availability: Availability; evaluation: { truth: "true" | "false" | "unknown"; reasons: unknown[]; warnings: unknown[]; steps: number } | null }
 export interface LocalPreparationPackage {
-  schema_version: 1 | 2; id: string; title: string; context: DataContext; fixture: boolean; revision: string;
+  schema_version: 1 | 2 | 3; id: string; title: string; context: DataContext; fixture: boolean; revision: string;
   entrance: Declared<{ id: string; map: unknown }>; access: Declared<unknown>; quests: Declared<string[]>;
   rewards: Declared<{ item: ItemKey; source: string; declared_role: Observed<string> }[]>;
   checks: Declared<{ id: string; label: string; category: "role" | "consumables" | "equipment" | "before_departure" | "before_entry"; requirement: Declared<unknown> }[]>;
