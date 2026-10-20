@@ -166,3 +166,6 @@ content/release-packs/**/catalog.json filter=lfs diff=lfs merge=lfs -text
 # Exact public review shipped in the signed stable bundle.
 docs/releases/1.0.0-independent-public-review.json text eol=lf
 docs/releases/1.0.0-independent-public-review-v2.json text eol=lf
+
+# Authored evidence/procedures are exact signed bundle resources.
+content/release-packs/authored-v2/**/*.md text eol=lf
