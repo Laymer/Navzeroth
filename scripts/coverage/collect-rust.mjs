@@ -3,6 +3,7 @@
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';import {createRequire} from 'node:module';import {fileURLToPath} from 'node:url';
 import {verifyBuildConfiguration} from '../measure-continuation.mjs';
+import {prepareNativeBundle,stageNativeBundle} from './native-bundle.mjs';
 import {loggedProcess} from './process-output.mjs';
 import {inventory} from './inventory.mjs';import {coverageEnvironment,compilerIdentity,requireMatchingLlvm} from './rust-environment.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
@@ -15,6 +16,7 @@ function snapshot(){
 export function collectRust(destination){
  if(!['linux','win32'].includes(process.platform))throw new Error('Unsupported native platform');
  verifyBuildConfiguration(process.env,root);
+ if(process.env.NAVZEROTH_BUNDLE_IDENTITY_JSON)throw new Error('Inherited native bundle identity is unsupported');
  if(Object.keys(process.env).some(key=>process.env[key]&&/^(?:CARGO_LLVM_COV|LLVM_PROFILE)|^(?:LLVM_COV|LLVM_PROFDATA)$/.test(key)))throw new Error('Inherited coverage configuration is unsupported');
  if(process.platform==='win32'&&process.env.GITHUB_ACTIONS!=='true')throw new Error('Native Windows smoke requires an ephemeral hosted runner');
  if(fs.existsSync(destination)||path.resolve(destination).startsWith(root+path.sep))throw new Error('Use a new native coverage directory outside the checkout');
@@ -63,15 +65,18 @@ export function collectRust(destination){
   if(process.platform==='win32'){
    const vite=path.join(path.dirname(require.resolve('vite/package.json')),'bin','vite.js');
    run('frontend-build',process.execPath,[vite,'build'],{cwd:path.join(root,'apps/desktop')});
-   const output=run('native-build','cargo',['build','--locked','-p','azeroth-desktop','--features','tauri/custom-protocol','--message-format=json'],{env:instrumented});
+   const bundle=prepareNativeBundle(root,destination,run);
+   const nativeBuildEnv={...instrumented,...(bundle?{NAVZEROTH_BUNDLE_IDENTITY_JSON:bundle.raw}:{})};
+   const output=run('native-build','cargo',['build','--locked','-p','azeroth-desktop','--features','tauri/custom-protocol','--message-format=json'],{env:nativeBuildEnv});
    const artifacts=output.split(/\r?\n/).filter(line=>line.startsWith('{')).map(line=>JSON.parse(line));
    const binaries=artifacts.filter(item=>item.reason==='compiler-artifact'&&item.target.name==='azeroth-desktop'&&item.executable).map(item=>item.executable);
    if(binaries.length!==1)throw new Error('Missing unique native executable');
-   const state=path.join(destination,'synthetic-desktop-state'),nativeEnv={...instrumented,APPDATA:path.join(state,'roaming'),LOCALAPPDATA:path.join(state,'local')};
+   stageNativeBundle(bundle,binaries[0],run);
+   const state=path.join(destination,'synthetic-desktop-state'),nativeEnv={...instrumented,APPDATA:path.join(state,'roaming'),LOCALAPPDATA:path.join(state,'local'),...(bundle?{NAVZEROTH_NATIVE_STARTUP_MS:'1200000'}:{})};
    for(const dir of [nativeEnv.APPDATA,nativeEnv.LOCALAPPDATA])fs.mkdirSync(dir,{recursive:true});
    run('native-extraction-worker-refusal',binaries[0],['--navzeroth-local-data-worker-v1'],{env:nativeEnv,expected:2});
    run('native-media-worker-refusal',binaries[0],['--navzeroth-media-worker-v1'],{env:nativeEnv,expected:1});
-   run('native-smoke',process.execPath,[path.join(root,'scripts/windows/Native-Smoke.mjs'),'--mode','smoke','--exe',binaries[0],'--shutdown','graceful','--port',String(19000+process.pid%10000),'--out',path.join(destination,'native-smoke.json')],{env:nativeEnv,timeout:300000});
+   run('native-smoke',process.execPath,[path.join(root,'scripts/windows/Native-Smoke.mjs'),'--mode','smoke','--exe',binaries[0],'--shutdown','graceful','--port',String(19000+process.pid%10000),'--out',path.join(destination,'native-smoke.json')],{env:nativeEnv,timeout:bundle?1800000:300000});
   }
   report('debug');
   cargoExample('search-release','azeroth-core','search_performance',[],true);
