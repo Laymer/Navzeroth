@@ -186,3 +186,34 @@ portable/UI suites stillf064. Acceptance binds new3fea/production while all nine
 Windows/owner rows remain pristine pending. Fresh delivery protected checks and
 additive immutable V3 review precede final preparation/signing. No new signature
 or acceptance promotion has occurred.
+
+## Final independently reviewed content receipt issuance
+
+V3 review22648B/2556ab8496d36f10f4ac3b6bf0b1933cde02abdddb11154176d23522974357e9
+is stored byte-identically at release/v1/public-content-review-v3.json. Existing
+release/v1 LF attributes preserve exact bytes; root real-Git autocrlf=true fixture
+passed without any production attribute change. All18nested FileRefs were also
+independently root verified. V1/V2 reviews remain immutable.
+
+Actual production preparation succeeded84resources/395746002B. Independent world
+review streamed every regular resource, independently compared all22retained a9
+code files, and reproduced canonical pure preparation byte-for-byte using unchanged
+82material inputs with current explicit source/production/evidence bindings. That
+reproduction is not represented as a new independent CLI readiness execution.
+All83non-review resource pins match the initial signed content exactly.
+
+Manifest17183B SHA dfb99c0502e87aa9a643372cb33a42e146656247d173263b80c4266844520fbc
+and identity526B SHA543a7bb66abdb4e5c23cfdfe2e04580c40f3dc6e395240a679fb7ebe2cffa6fb
+were committed5485d79a before accessing keys. Actual hosted delivery4dd package
+39399831462 cleared all24helpersteps across PS5.1/7 and actualCLI/LFS integration;
+installer build remained running. No full packaging/acceptance pass is inferred.
+
+Root checked existing external key directory0700/files0600, then separately issued
+the operator and review-evidence signatures and cryptographically verified them
+against the unchanged compiled public policy and explicit expected identity. Both
+keys remain operator-controlled; independent review is process evidence, not
+independent key custody. Only public receipt1072B SHA
+e649627946eb82f7b1937f82658e275704e5d55f8277277991cac06edcc781f6 enters Git.
+Current three bundle FileRefs bind these exact artifacts. All nine hosted/owner
+rows remain unverified. Next: assembled compiled-policy/source gate verification
+and independent signed closure audit, then exact-candidate hosted checks.
