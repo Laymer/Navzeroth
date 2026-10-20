@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "scope": "Original PR212 mapper overflow correction; no future authored features",
+  "reviewed_code_commit": "2e89b1ff9761bbb3a320e20a68c350e71fc63608",
+  "generated_commit": "cef5e1688276c0dda0e72567d72e405749468e4b",
+  "network_acquisition": false,
+  "comparison": {
+    "baseline": "3fc850c33dfd720b6cb54b4c19ea8082f474b932",
+    "unchanged_catalog_sections": [
+      "reference.payload.acquisitions",
+      "reference.payload.edges",
+      "reference.payload.items",
+      "reference.payload.map_spaces",
+      "reference.payload.nodes",
+      "reference.payload.objectives",
+      "reference.payload.quests",
+      "reference.payload.rules",
+      "entities",
+      "equipment",
+      "loot_tables",
+      "node_facts",
+      "quest_facts",
+      "acquisition_facts",
+      "models"
+    ],
+    "evidence_change": "exact mapper v2 to v3 notes only",
+    "only_dungeon_changes": [
+      {
+        "dungeon": "dungeon:scholomance",
+        "field": "rewards",
+        "old_exposed_count": 1024,
+        "new_exposed_count": 0
+      },
+      {
+        "dungeon": "dungeon:stormwind-stockade",
+        "field": "rewards",
+        "old_exposed_count": 1024,
+        "new_exposed_count": 0
+      },
+      {
+        "dungeon": "dungeon:sunken-temple",
+        "field": "rewards",
+        "old_exposed_count": 1024,
+        "new_exposed_count": 0
+      },
+      {
+        "dungeon": "dungeon:zul-farrak",
+        "field": "rewards",
+        "old_exposed_count": 1024,
+        "new_exposed_count": 0
+      }
+    ],
+    "changed_admission_ids": [
+      "cmangos-classic-db",
+      "wago-tools-wowf",
+      "navzeroth-world-content"
+    ],
+    "upstream_admissions_change": "file transformation v2 to v3 and recomputed exact file-list revision only; all original bytes, grants, scopes and proofs unchanged",
+    "bounded_associations": [
+      {
+        "actual_count": 1541,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:stormwind-stockade",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 1541
+      },
+      {
+        "actual_count": 2559,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:sunken-temple",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 2559
+      },
+      {
+        "actual_count": 2147,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:zul-farrak",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 2147
+      },
+      {
+        "actual_count": 1860,
+        "contract_limit": 1024,
+        "dungeon": "dungeon:scholomance",
+        "exposed_count": 0,
+        "field": "rewards",
+        "unresolved_count": 1860
+      }
+    ],
+    "previously_omitted_references": 4011,
+    "all_unresolved_associations": 8107
+  },
+  "measurements": {
+    "unbound-map": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/world_to_content.py",
+        "--input",
+        "data-generators/output",
+        "--target",
+        "release/v1/world-data-target.json",
+        "--policy",
+        "release/v1/accepted-origins.json",
+        "--authored",
+        "content/authored/slice-v1",
+        "--out",
+        "content/world/1.60.1.70450"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.01923209499364,
+      "peak_rss_kib": 1088632,
+      "user_seconds": 8.365775,
+      "system_seconds": 0.6081289999999999,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "retain": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/retain_world_sources.py",
+        "--root",
+        ".",
+        "--world",
+        "data-generators/output",
+        "--cache",
+        "/home/laymer/Devel/worktrees/datagen/data-generators/.cache",
+        "--pack-sources",
+        "content/world/1.60.1.70450/sources.json",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--output",
+        "content/world/1.60.1.70450/source-closure.json",
+        "--normalization-policy",
+        "release/v1/source-normalization-policy.json",
+        "--source-commit",
+        "2e89b1ff9761bbb3a320e20a68c350e71fc63608"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.7036333569994895,
+      "peak_rss_kib": 131704,
+      "user_seconds": 2.512219,
+      "system_seconds": 0.151622,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "bound-map": {
+      "command": [
+        "python3",
+        "-I",
+        "data-generators/world_to_content.py",
+        "--input",
+        "data-generators/output",
+        "--target",
+        "release/v1/world-data-target.json",
+        "--policy",
+        "release/v1/accepted-origins.json",
+        "--authored",
+        "content/authored/slice-v1",
+        "--out",
+        "content/world/1.60.1.70450",
+        "--admission",
+        "docs/sources/source-admission-v1.json",
+        "--source-closure",
+        "content/world/1.60.1.70450/source-closure.json",
+        "--normalization-policy",
+        "release/v1/source-normalization-policy.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.743107813999814,
+      "peak_rss_kib": 1100756,
+      "user_seconds": 11.065507,
+      "system_seconds": 0.630416,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "source-sync": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "source-sync",
+        "--registry",
+        "docs/sources/source-admission-v1.json",
+        "--cache",
+        "content/source-materials/objects"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.684071292998851,
+      "peak_rss_kib": 33280,
+      "user_seconds": 8.585211,
+      "system_seconds": 0.09197,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "world-pack-build": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "build-content-v2",
+        "--input",
+        "content/world/1.60.1.70450",
+        "--output",
+        "/tmp/navzeroth-212-overflow-world-pack"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 107.20136140900286,
+      "peak_rss_kib": 6695980,
+      "user_seconds": 104.559038,
+      "system_seconds": 2.5196870000000002,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    },
+    "world-pack-verify": {
+      "command": [
+        "target/debug/azeroth-cli",
+        "verify-pack",
+        "--input",
+        "/tmp/navzeroth-212-overflow-world-pack"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 49.885649156996806,
+      "peak_rss_kib": 5362404,
+      "user_seconds": 47.952123,
+      "system_seconds": 1.932004,
+      "resource_method": "os.wait4 exact child, shared Linux host"
+    }
+  },
+  "pack_reports": {
+    "world-pack-build": {
+      "report_version": 2,
+      "datasets": 1,
+      "fixtures": 0,
+      "files": 3,
+      "total_bytes": 367540211,
+      "coverage_gaps": 393601,
+      "distribution_eligible": true
+    },
+    "world-pack-verify": {
+      "report_version": 2,
+      "datasets": 1,
+      "fixtures": 0,
+      "files": 3,
+      "total_bytes": 367540211,
+      "coverage_gaps": 393601,
+      "distribution_eligible": true
+    }
+  },
+  "pack_files": [
+    {
+      "path": "catalog.json",
+      "bytes": 367530282,
+      "sha256": "5614be1fd5897e584b6129b9a9c50740ede817d2afede678e476e820cdef3310"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 523,
+      "sha256": "44bcb59372f5a3fcb40e46830ff48f304660d35596c0a5ce77ffb56e2114d0c8"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 9406,
+      "sha256": "3d2a7dbe6c1322c56beaaab1cf6ce42d2674113a37025760cf795c85f236e94a"
+    }
+  ],
+  "limitations": [
+    "Shared Linux host exact-child measurements; no ordinary-PC or Windows performance claim.",
+    "Public immutable source URL reachability awaits approved push.",
+    "Hosted Windows, installed fullpack, live client and stable release readiness remain unverified."
+  ]
+}

@@ -34,7 +34,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from navzeroth_datagen import bounded  # noqa: E402
 
 NAME = "world_to_content"
-VERSION = "2"
+VERSION = "3"
 DERIVED_SOURCE = "navzeroth-world-content"
 
 # Inferred travel (ADR 0007 §8). Yards per second.
@@ -214,6 +214,7 @@ class Builder:
                                   "interface": target["interface"]}, "namespace": "reference"}
         self.rank = {name: i for i, name in enumerate(policy["precedence"])}
         self.conflicts = []
+        self.bounded_associations = []
         self.dropped = collections.Counter()
         self.unmapped = collections.Counter()
         self.skipped_origins = []
@@ -1028,6 +1029,20 @@ class Builder:
     def objective_node(self, node):
         return not self.node_services.get(node)
 
+    def dungeon_association(self, dungeon, field, ids):
+        """The v2 record bound cannot express a complete overflowing association."""
+        if len(ids) <= MAX_REFS:
+            return known(ids)
+        counts = {"dungeon": dungeon, "field": field, "actual_count": len(ids),
+                  "contract_limit": MAX_REFS, "exposed_count": 0,
+                  "unresolved_count": len(ids)}
+        self.bounded_associations.append(counts)
+        self.conflicts.append({"fact": f"{dungeon}:{field}",
+                               "kind": "bounded_association_unsupported", **counts,
+                               "rule": "Complete association exceeds content-v2 limit; "
+                                       "no partial value is exposed. Canonical records are retained."})
+        return {"status": "unsupported"}
+
     def build_dungeons(self):
         self.dungeons = []
         authored = self.authored_dungeons()
@@ -1055,8 +1070,8 @@ class Builder:
             dungeon = {
                 "access": UNKNOWN, "checklist": UNKNOWN, "entrance": entrance,
                 "evidence": ev, "id": did, "map": self.map_key(map_id),
-                "preparation_quests": known(zone_quests.get(area, [])[:MAX_REFS]) if area else UNKNOWN,
-                "rewards": known(sorted(self.drops_by_entity.get(did, []), key=natural)[:MAX_REFS]),
+                "preparation_quests": self.dungeon_association(did, "preparation_quests", zone_quests.get(area, [])) if area else UNKNOWN,
+                "rewards": self.dungeon_association(did, "rewards", sorted(self.drops_by_entity.get(did, []), key=natural)),
                 "title": self.dungeon_title(record), "travel_edges": UNKNOWN}
             if bosses:
                 dungeon["bosses"] = bosses
@@ -1440,6 +1455,7 @@ def summary(catalog, sources, conflicts, builder, revision, catalog_bytes):
         "counts": counts, "sources": [s["id"] for s in sources["sources"]],
         "conflicts": dict(sorted(collections.Counter(c["kind"] for c in conflicts).items())),
         "dropped": dict(sorted(builder.dropped.items())),
+        "bounded_associations": builder.bounded_associations,
         "not_mapped": dict(sorted(builder.unmapped.items())),
         "skipped_origins": builder.skipped_origins,
         "parameters": {"run_speed_yards_per_s": RUN_SPEED, "flight_speed_yards_per_s": FLIGHT_SPEED,
