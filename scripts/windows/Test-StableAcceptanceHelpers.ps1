@@ -48,6 +48,46 @@ try{
   foreach($bad in @($null,'target',@($actualTarget),@{edition='wow_forever'})) {Refuse {Assert-StableTargetIdentity $expectedTarget $bad};Refuse {Assert-StableTargetIdentity $bad $actualTarget}}
   foreach($name in @('edition','version','build')) {$bad=$actualTarget|ConvertTo-Json|ConvertFrom-Json;$bad.$name=16001;Refuse {Assert-StableTargetIdentity $expectedTarget $bad}}
  }
+ # Same pure constructor used by the real producer, through real case validation.
+ $workload=[pscustomobject]@{raw=[pscustomobject]@{startup_measurements=[pscustomobject]@{load_ms=1;activation_ms=0};browse_ms=2.5;planning_ms=3};peak_memory_bytes=4L}
+ function PerformanceCase($Measurements) { Invoke-StableCase 'HOSTED-PERFORMANCE' $identity $root {return @{workload='Synthetic measured workload';hardware='Synthetic hardware';limitations='Synthetic helper only, not installed acceptance';measurements=$Measurements}} }
+ function ReadPerformance { ConvertFrom-HostedJsonText ([IO.File]::ReadAllText((Join-Path $root 'hosted-performance.json'))) }
+ Check 'old six-key ordered dictionary reproduces actual performance admission failure' {
+  $old=[ordered]@{install_ms=0;load_ms=1;activation_ms=0;browse_ms=2.5;planning_ms=3;peak_memory_bytes=4L}
+  if($old.Keys.Count -ne 6 -or @($old.PSObject.Properties.Name).Count -eq 6){throw 'Regression fixture does not reproduce dictionary adapter mismatch'}
+  Refuse {PerformanceCase $old}
+  if((ReadPerformance).status -cne 'fail'){throw 'Original failure was not retained'}
+ }
+ Check 'actual performance constructor passes live case validation and JSON roundtrip' {
+  $measurements=New-StablePerformanceMeasurements 0 $workload
+  PerformanceCase $measurements
+  $case=ReadPerformance
+  Assert-HostedCase $case 'HOSTED-PERFORMANCE' $identity.version $identity.source_commit $identity.production_sha256 $identity.installer_sha256 $identity.target
+  if($case.status -cne 'pass' -or @($case.measurements.PSObject.Properties.Name).Count -ne 6 -or $case.measurements.activation_ms -ne 0 -or $case.measurements.browse_ms -ne 2.5){throw 'Exact actual measurements were lost'}
+ }
+ Check 'extra missing and renamed performance metrics still refuse live admission' {
+  foreach($kind in @('extra','missing','renamed')) {
+   $measurements=New-StablePerformanceMeasurements 0 $workload
+   if($kind -eq 'extra'){$measurements|Add-Member extra 1}else{$measurements.PSObject.Properties.Remove('load_ms');if($kind -eq 'renamed'){$measurements|Add-Member LOAD_MS 1}}
+   Refuse {PerformanceCase $measurements}
+   if((ReadPerformance).status -cne 'fail'){throw 'Invalid metric keys were promoted'}
+  }
+ }
+ Check 'all six metrics retain strict numeric type finite and range validation' {
+  foreach($field in @('install_ms','load_ms','activation_ms','browse_ms','planning_ms','peak_memory_bytes')) {
+   foreach($bad in @($null,'1',$true,-1,[double]::NaN,[double]::PositiveInfinity,[double]::NegativeInfinity,9007199254740992L)) {
+    $measurements=New-StablePerformanceMeasurements 0 $workload;$measurements.$field=$bad
+    Refuse {PerformanceCase $measurements}
+    if((ReadPerformance).status -cne 'fail'){throw 'Invalid metric value was promoted'}
+   }
+  }
+ }
+ Check 'performance constructor never coerces raw string values to numbers' {
+  $changed=ConvertFrom-HostedJsonText ($workload|ConvertTo-Json -Depth 100);$changed.raw.startup_measurements.load_ms='1'
+  $measurements=New-StablePerformanceMeasurements 0 $changed
+  if($measurements.load_ms -isnot [string]){throw 'Measurement was coerced'}
+  Refuse {PerformanceCase $measurements}
+ }
  Check 'completed actual details create a pass' {Invoke-StableCase 'HOSTED-INSTALL' $identity $root {return @{install_ms=123}};$case=Get-Content -Raw (Join-Path $root 'hosted-install.json')|ConvertFrom-Json;if($case.status -ne 'pass' -or $case.install_ms -ne 123){throw 'Missing actual measurement'}}
  Check 'actual failure is retained as fail and thrown' {Refuse {Invoke-StableCase 'HOSTED-INSTALL' $identity $root {throw 'Synthetic failure'}};$case=Get-Content -Raw (Join-Path $root 'hosted-install.json')|ConvertFrom-Json;if($case.status -ne 'fail'){throw 'Failure promoted'}}
  Check 'hosted producer cannot record owner smoke' {Refuse {Invoke-StableCase 'OWNER-INSTALLER-SMOKE' $identity $root {return @{}}}}
