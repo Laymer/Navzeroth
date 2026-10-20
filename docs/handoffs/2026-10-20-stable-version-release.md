@@ -153,3 +153,15 @@ New source/production bindings preserve all nine pristine pending observations.
 Actual production material preview succeeded unsigned_preparation.ready=true,
 evidence df7441b3d8e8bba779015a41fac6c1938d2140b7daa9d89d502ad67c4cf891e7,
 82materials. Independent V2 review and new receipts remain the next step.
+
+Independent V2 review was committed225db8db before preparation:20379B SHA
+d1b746c2e1a31ff3326047bab3a38256712ffbde26671b835d681130ce0a5ed7; root
+independently verified all15nested FileRefs. Preparation succeeded84files, manifest
+4b8593ace743f23320d2ad7bc6ab64fd32d4501fbf02583a79fb029bc558b2d9,
+identity7c24c4b86d32e50f16e24569faf9dd456e932b8c952ba3248f7652262d1c6f9a.
+These are provisional only and were retained outside Git, then removed from
+canonical paths before signing: delivery package39398642678 failed a later
+legacy acceptance-kit test borrowing the current schema4largeinventory. No key
+was accessed and no new signature was issued. Legacy fixture/scope repair and
+remaining helper audits are pending. V2 review bytes remain immutable; final
+production review and bundle preparation will be renewed after that repair.

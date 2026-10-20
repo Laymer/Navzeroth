@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-19.
+Updated: 2026-10-20.
 
 Parallel continuation requested 2026-10-19: isolated writers are auditing desktop
 locale restoration, guide objective replay, archive failure dispositions and
@@ -31,6 +31,29 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
+independent final integration review, all ten protected checks and actual Linux/
+Windows source parity. Separate reviewed final content/native delivery PR238
+remains pending refreshed checks atdf62631f; its necessary bounded reader and
+workflow-test exit repairs are recorded without relabeling earlier package failures.
+
+Separate draft version/release PR239 prepares six1.0.0declarations, complete
+verified bundles, historical source warnings, estimates and declared exclusions.
+Its fresh full-pack scenario passed atf3917490 on shared Linux/WSL2; this is not
+Windows or ordinary-PC performance evidence. Final repair union94947a6a has
+independent V2 review; signed content evidence is being renewed for its exact
+production identity. Initial signatures remain historical under release/history.
+[Version handoff](handoffs/2026-10-20-stable-version-release.md).
+
+Actual weekly run39394989774 completed one bounded network acquisition and one
+cache-only reproducible replay, opening deferred draftPR243. Explicit draft-head
+checks were dispatched; its historical RC readiness summary does not establish
+stable readiness. [Weekly evidence](handoffs/2026-10-20-weekly-network-results.md).
+
+Final exact resulting-main checks, stability, hosted Windows full-bundle acceptance,
+verified draft assets and owner exact-installer smoke remain required. All nine
+Windows/owner observations remain unverified. No stable tag/publication exists.
+
 PRs214–217 merged sequentially, ADR0008 merged as6148ce4c, then repaired
 PR212 merged as3cb74e6a5bf7e0697c63b538599fcee87035fe8a at07:10:52Z.
 Exact212 candidate7de0beea passed all ten protected checks: CI39382048557,
@@ -39,7 +62,7 @@ actual Linux/Windows mapping and parity. Independent final-head reviews and
 original-source/material closure are retained in their review/handoff records.
 Earlier failed/cancelled checks retain those outcomes.
 
-The [foundation handoff](handoffs/2026-10-20-stable-foundations-integration.md) records separately reviewed219–225/228 integration and actual focused checks. Fresh combined protected-main checks remain required.
+The [foundation handoff](handoffs/2026-10-20-stable-foundations-integration.md) records separately reviewed219–225/228 integration and actual focused checks. Its combined protected-main checks passed before PR232 merged; see the current continuation above.
 
 The [foundation integration claim](claims/2026-10-20-stable-foundations-integration.md)
 assembles separate reviewed follow-up PRs on an isolated branch before a fully
