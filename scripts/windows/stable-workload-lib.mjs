@@ -129,7 +129,7 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
   async function records(collection,offset=0){
    // PlanningCatalog publishes only nodes and snapshot-projected objectives.
    // The nodes pin identifies the entire immutable catalog for other collections;
-   // projected objective paging retains its own snapshot-bound pin.
+   // projected objective paging retains its separately issued catalog pin.
    const pin=collection==='objectives'?catalog.pages.objectives:catalog.pages.nodes;
    if(pin.revision!==revision||!/^[a-f0-9]{64}$/.test(pin.catalog_sha256))throw new Error('Invalid installed catalog revision/hash binding');
    const page=await call('get_catalog_page',{text:JSON.stringify({subject:{kind:'character',profile_id:profile},collection,revision:pin.revision,catalog_sha256:pin.catalog_sha256,offset})});

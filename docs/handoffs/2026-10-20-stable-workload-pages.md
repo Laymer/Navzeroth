@@ -32,7 +32,10 @@ existing top-level next_offset shape was correct and remains unchanged.
 The existing nodes descriptor supplies the real global immutable catalog revision
 and SHA for generic quests/items/edges requests. Core/storage indexes bind those
 values to the entire catalog and validate the requested collection. Projected
-objectives retain their separate snapshot-bound descriptor. No fabricated SHA,
+objectives retain their separately issued catalog-bound descriptor; the planning
+request validates snapshot_id separately. The current implementation uses the same
+global hash for both descriptors; the distinct-hash test is explicitly synthetic
+and checks that the driver respects each issued binding. No fabricated SHA,
 new API, eligibility promotion, record truncation or source change is used.
 Returned pages must match collection/revision/hash/offset, safe total, <=200rows,
 exact remaining row count and next offset. Actual quest/item browsing and supported
@@ -75,3 +78,9 @@ Next: separate repair PR into release/stable-1.0.0-version, independent review,
 normal integration with the separate recorder repair, renewed production closure
 and fresh exact-installer hosted acceptance. Owner smoke still requires that exact
 verified draft installer; no tag or publication is supplied by these tests.
+
+Independent final review: coordinator and world specialist each ran17Node checks
+and cleared the implementation. World correctly identified terminology: current
+objective catalog_sha256 binds content, not a snapshot; snapshot_id is validated
+separately. Only comment/handoff wording was corrected after that review. The
+synthetic distinct-hash fixture is not claimed to be an actual source hash.
