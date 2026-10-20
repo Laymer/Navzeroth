@@ -217,3 +217,20 @@ e649627946eb82f7b1937f82658e275704e5d55f8277277991cac06edcc781f6 enters Git.
 Current three bundle FileRefs bind these exact artifacts. All nine hosted/owner
 rows remain unverified. Next: assembled compiled-policy/source gate verification
 and independent signed closure audit, then exact-candidate hosted checks.
+
+Final signed commitd8b291d4504902ed565e9226df7e804fdd972a72 passed actual root
+assembly/check:84declared resources/two packs and exact compiled public trust.
+Independent tooling cryptography and compiled-policy verification also passed;
+all84resources plus only manifest.json/receipt.json matched exact bytes. Its first
+read raced unfinished assembly and failed resource verification; completed-tree
+streaming and compiled verification passed, with that transient failure retained.
+
+Root and independent fresh source prebuild gates both passed89evidence files/two
+packs, expectedefeabproduction, build_ready=true. Exactly the nine required
+hosted/owner observations remain pending; stable_ready/publication_allowed=false.
+No content/source/material blocker remains. Raw actual report is retained at
+/tmp/navzeroth-stable-v3-build-readiness.json and independent invocation at
+/tmp/navzeroth-tooling-v3-independent-readiness.json. These are exactd8b checks,
+not final resulting-main or Windows acceptance. Push this signed candidate and
+run preliminary actual stable Windows packaging/coverage; refresh normally after
+delivery main merge and require all exact-head/resulting-main gates separately.
