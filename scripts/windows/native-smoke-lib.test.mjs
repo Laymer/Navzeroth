@@ -217,3 +217,41 @@ test("synthetic upgrade refuses absent wrong identity IPC errors UI errors and t
   await assert.rejects(verifyPreservedSyntheticContent({ ...base, waitForInspection: () => new Promise(() => {}), timeoutMs: 10 }), /timed out/);
   await assert.rejects(verifyPreservedSyntheticContent({ ...base, timeoutMs: 0 }), /Invalid/);
 });
+
+test("synthetic preservation consumes actual Rust-written governance DTO golden", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { verifyPreservedSyntheticContent } = await import("./native-smoke-lib.mjs");
+  const golden = JSON.parse(readFileSync(new URL("../../fixtures/desktop/content-governance/synthetic-flow.json", import.meta.url), "utf8"));
+  const profile = golden.profiles[0];
+  assert.notEqual(profile.id, profile.display_name);
+  const expected = { character: profile.display_name, ...golden.inspection.key };
+  let inspected;
+  const result = await verifyPreservedSyntheticContent({ expected,
+    readProfiles: async () => golden.profiles,
+    readActive: async (id) => { assert.equal(id, profile.id); return golden.inspection; },
+    waitForInspection: async (identity) => { inspected = identity; } });
+  assert.deepEqual(result, { profile_id: profile.id, ...expected });
+  assert.deepEqual(inspected, { ...expected, profile_id: profile.id });
+});
+
+test("expired synthetic verification never issues later IPC or UI after late completion", async () => {
+  const { verifyPreservedSyntheticContent } = await import("./native-smoke-lib.mjs");
+  const expected = { character: "p", revision: "r", scope: { fixture: true, context: {
+    namespace: "demo", build: { edition: "wow_forever", build: "UNVERIFIED_DEMO", interface: "UNVERIFIED_DEMO" } } } };
+  const profiles = [{ id: `stored-${"a".repeat(64)}`, display_name: "p", fixture: true, context: expected.scope.context }];
+  for (const latePhase of ["profiles", "active"]) {
+    let resolveLate;
+    const late = new Promise((resolve) => { resolveLate = resolve; });
+    const calls = [];
+    const operation = verifyPreservedSyntheticContent({ expected, timeoutMs: 10,
+      readProfiles: async () => { calls.push("profiles"); return latePhase === "profiles" ? late : profiles; },
+      readActive: async () => { calls.push("active"); return late; },
+      waitForInspection: async () => { calls.push("UI"); } });
+    await assert.rejects(operation, /timed out/);
+    const atFailure = [...calls];
+    resolveLate(latePhase === "profiles" ? profiles : { key: { revision: "r", scope: expected.scope } });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.deepEqual(calls, atFailure);
+    assert.ok(!calls.includes("UI"));
+  }
+});
