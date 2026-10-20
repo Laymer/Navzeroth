@@ -2,7 +2,10 @@
 
 LocalPreparationPackage schema1 retains its historical 32-entry section limits.
 Schema2 supports up to 4096 unique quest IDs and expanded item/acquisition reward
-references in each list. The installed v2 catalog adapter emits schema2. Other
+references in each list. Schema3 retains those reference bounds and permits
+check labels through512UTF8bytes, preserving source derivation and uncertainty.
+Schema1/2 check labels remain bounded to160bytes; labels are never truncated.
+The installed v2 catalog adapter emits schema3. Other
 sections, individual evidence lists and notes retain 32 entries; total evidence
 remains limited to 1024. Titles, note lengths and predicate limits are unchanged.
 The outer preparation request and explanatory report remain schema1.
