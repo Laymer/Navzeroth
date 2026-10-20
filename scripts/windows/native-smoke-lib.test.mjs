@@ -176,3 +176,39 @@ test("native IPC errors preserve safe codes and omit private fields", async () =
     globalThis.window = previous;
   }
 });
+
+test("synthetic upgrade waits for issued active IPC beyond the former 600ms sleep", async () => {
+  const { verifyPreservedSyntheticContent } = await import("./native-smoke-lib.mjs");
+  const expected = { profile_id: "demo-character-paladin", revision: "synthetic-planning-v1", scope: {
+    fixture: true, context: { build: { edition: "wow_forever", build: "UNVERIFIED_DEMO", interface: "UNVERIFIED_DEMO" }, namespace: "demo" } } };
+  let rendered = false;
+  const operation = verifyPreservedSyntheticContent({ expected,
+    readProfiles: async () => [{ id: expected.profile_id, fixture: true, context: expected.scope.context }],
+    readActive: async (id) => { assert.equal(id, expected.profile_id); await new Promise((r) => setTimeout(r, 650)); rendered = true; return { key: { revision: expected.revision, scope: expected.scope } }; },
+    waitForInspection: async () => assert.equal(rendered, true), timeoutMs: 3000 });
+  await new Promise((r) => setTimeout(r, 600));
+  assert.equal(rendered, false, "old immediate placeholder assertion would falsely report content lost");
+  assert.deepEqual(await operation, expected);
+});
+
+test("synthetic upgrade refuses absent wrong identity IPC errors UI errors and timeouts", async () => {
+  const { verifyPreservedSyntheticContent } = await import("./native-smoke-lib.mjs");
+  const expected = { profile_id: "p", revision: "r", scope: { fixture: true, context: {
+    namespace: "demo", build: { edition: "wow_forever", build: "UNVERIFIED_DEMO", interface: "UNVERIFIED_DEMO" } } } };
+  const profile = { id: "p", fixture: true, context: expected.scope.context };
+  const active = { key: { revision: "r", scope: expected.scope } };
+  const base = { expected, readProfiles: async () => [profile], readActive: async () => active, waitForInspection: async () => {}, timeoutMs: 100 };
+  for (const value of [null, {}, { key: { ...active.key, revision: "wrong" } },
+    { key: { ...active.key, scope: { ...expected.scope, fixture: false } } },
+    { key: { ...active.key, scope: { ...expected.scope, context: { ...expected.scope.context, namespace: "reference" } } } },
+    { key: { ...active.key, scope: { ...expected.scope, context: { ...expected.scope.context, build: { ...expected.scope.context.build, build: "70450" } } } } }]) {
+    await assert.rejects(verifyPreservedSyntheticContent({ ...base, readActive: async () => value }), /revision or scope/);
+  }
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, readProfiles: async () => [] }), /profile identity/);
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, readProfiles: async () => [profile, profile] }), /profile identity/);
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, readActive: async () => { throw new Error("IPC refused"); } }), /IPC refused/);
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, waitForInspection: async () => { throw new Error("UI absent"); } }), /UI absent/);
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, readActive: () => new Promise(() => {}), timeoutMs: 10 }), /timed out/);
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, waitForInspection: () => new Promise(() => {}), timeoutMs: 10 }), /timed out/);
+  await assert.rejects(verifyPreservedSyntheticContent({ ...base, timeoutMs: 0 }), /Invalid/);
+});

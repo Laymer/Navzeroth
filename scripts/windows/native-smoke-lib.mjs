@@ -262,3 +262,37 @@ export async function waitForDatabaseReady(readStatus, timeoutMs = 30000, interv
     clearTimeout(timer);
   }
 }
+
+/** Verify the exact synthetic baseline through issued IPC, then its rendered inspection.
+ * One deadline includes hung IPC and UI; absence and mismatches are never retried as success.
+ */
+export async function verifyPreservedSyntheticContent({ readProfiles, readActive, waitForInspection, expected, timeoutMs = 30000 }) {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error("Invalid content verification deadline");
+  let timer;
+  const sameContext = (a, b) => a?.namespace === b?.namespace &&
+    ["edition", "build", "interface"].every((key) => a?.build?.[key] === b?.build?.[key]);
+  const diagnostic = { profile_found: false, active_present: false };
+  try {
+    return await Promise.race([
+      (async () => {
+        const profiles = await readProfiles();
+        const matches = Array.isArray(profiles) ? profiles.filter((p) => p.id === expected.profile_id) : [];
+        if (matches.length !== 1 || matches[0].fixture !== true || !sameContext(matches[0].context, expected.scope.context)) {
+          throw new Error("Expected synthetic profile identity was not preserved");
+        }
+        diagnostic.profile_found = true;
+        const active = await readActive(matches[0].id);
+        diagnostic.active_present = active !== null && active !== undefined;
+        if (!active || active.key?.revision !== expected.revision || active.key?.scope?.fixture !== true ||
+            !sameContext(active.key.scope.context, expected.scope.context)) {
+          throw new Error("Expected synthetic active revision or scope was not preserved");
+        }
+        await waitForInspection(expected);
+        return { profile_id: expected.profile_id, revision: expected.revision, scope: expected.scope };
+      })(),
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("Synthetic content verification timed out")), timeoutMs); }),
+    ]);
+  } catch (error) {
+    throw new Error(`${String(error?.message ?? error).slice(0, 300)}; content diagnostic=${JSON.stringify(diagnostic)}`);
+  } finally { clearTimeout(timer); }
+}
