@@ -116,19 +116,30 @@ try{
 import {createWorkloadProgress} from './stable-workload-progress.mjs';
 import {writeFileSync} from 'node:fs';
 const args=process.argv.slice(2),report=args[args.indexOf('--out')+1];
+// Deliberate startup work before the first checkpoint; not a product delay.
+await new Promise(resolve=>setTimeout(resolve,5000));
 const progress=createWorkloadProgress(report+'.progress.json',{mode:'recover',version:'1.0.0'});
 progress.phase('exercise');
 try { await progress.track('inspect_database_backup',async()=>{setInterval(()=>{},1000);await new Promise(()=>{});}); }
 finally { writeFileSync(report,JSON.stringify({passed:false,completed:false,kind:'synthetic_finally_marker'})); }
 '@
    [IO.File]::WriteAllText((Join-Path $scripts 'Stable-Workload.mjs'),$child,(New-Object Text.UTF8Encoding($false)))
+   Write-Host ('Synthetic watchdog uses Node '+(& node --version)+' at '+(Get-Command node).Source)
+   # A valid child need not reach its first checkpoint inside the former2s test
+   # limit. Prove that assumption fails, then allow bounded startup separately
+   # in this TEST ONLY. Production MaximumSeconds/20min/60min are unchanged.
+   $early=Join-Path $root 'startup-timeout.json';$earlyMessage=''
+   try {Invoke-StableWorkload $synthetic 'not-an-installed-executable' 'synthetic-manifest' '1.0.0' 'recover' 'synthetic-state' $early '' 2|Out-Null} catch {$earlyMessage=$_.Exception.Message}
+   if($earlyMessage -cne 'Installed engineering workload exceeded its selected finite time bound.' -or (Test-Path -LiteralPath ($early+'.progress.json')) -or (Test-Path -LiteralPath $early)){throw 'Delayed startup did not reproduce the original checkpoint assumption'}
+   $earlyWatchdog=Read-BoundedReleaseText ($early+'.watchdog.json')|ConvertFrom-Json
+   if($earlyWatchdog.passed -ne $false -or $earlyWatchdog.completed -ne $false -or $earlyWatchdog.maximum_seconds -ne 2){throw 'Startup timeout was lost or promoted'}
    $report=Join-Path $root 'killed-workload.json';$message=''
-   try {Invoke-StableWorkload $synthetic 'not-an-installed-executable' 'synthetic-manifest' '1.0.0' 'recover' 'synthetic-state' $report '' 2|Out-Null} catch {$message=$_.Exception.Message}
+   try {Invoke-StableWorkload $synthetic 'not-an-installed-executable' 'synthetic-manifest' '1.0.0' 'recover' 'synthetic-state' $report '' 15|Out-Null} catch {$message=$_.Exception.Message}
    if($message -cne 'Installed engineering workload exceeded its selected finite time bound.'){throw ('Wrong timeout failure: '+$message)}
    $progress=Read-BoundedReleaseText ($report+'.progress.json')|ConvertFrom-Json
    $watchdog=Read-BoundedReleaseText ($report+'.watchdog.json')|ConvertFrom-Json
    if((Test-Path -LiteralPath $report) -or $progress.passed -ne $false -or $progress.completed -ne $false -or $progress.active_command -cne 'inspect_database_backup' -or $progress.phase -cne 'exercise'){throw 'Killed child progress was lost or promoted'}
-   if($watchdog.passed -ne $false -or $watchdog.completed -ne $false -or $watchdog.maximum_seconds -ne 2 -or $watchdog.elapsed_ms -lt 2000 -or $watchdog.reason -cne 'selected_time_bound_exceeded' -or $watchdog.native_pids.Count -gt 16){throw 'Watchdog metadata differs'}
+   if($watchdog.passed -ne $false -or $watchdog.completed -ne $false -or $watchdog.maximum_seconds -ne 15 -or $watchdog.elapsed_ms -lt 15000 -or $watchdog.reason -cne 'selected_time_bound_exceeded' -or $watchdog.native_pids.Count -gt 16){throw 'Watchdog metadata differs'}
   }
  } else {Write-Host 'Actual parent timeout regression requires PS7 argument-list API; not executed in PS5.1.'}
  Write-Host "Passed $count hosted producer helper checks."
