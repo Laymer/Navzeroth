@@ -31,6 +31,17 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Latest continuation: actual Windows failures hold publication. Preliminary40ea
+producer rejected identical targets by JSON field order before all eight cases;
+all nine observations remain unverified. V4 coverage passed native smoke but
+failed unidentified source dirt; aeb coverage exposed timestamp-only Windows
+pack identity. Reviewed repairs248/249/250 are integrated locally atfcf170ad:
+strict typed target comparison, bounded cleanliness diagnostics and true Windows
+volume/full128-bit file identity. Fresh Linux full-pack replay passed138.945s/
+6402372KiB child peak; this does not execute the Windows branch. Independent V6
+review/receipts and fresh hosted gates are next. No stable tag or publication.
+
+
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
 independent final integration review, all ten protected checks and actual Linux/
 Windows source parity. Separate reviewed final content/native delivery PR238

@@ -37,3 +37,17 @@ Next: full checks on final documented candidate, resulting-main stability/covera
 source/package gates, verified tag/draft assets, exact-installer owner smoke, full
 readiness, publication and independent public download verification. Missing or
 failed checks remain blocking; this review supplies none of those future results.
+
+## Repair-union continuation
+
+Read-only independent union review atfcf170ad50722d8406f4662e6b2173c3c1c756a2
+is CLEAR. Production0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a
+was independently recomputed. Reviewer `/root/desktop_review` authored248; its
+independent approval and20PS5.1/20PS7 executions are coordinator evidence.
+Reviewer `/root/tooling_review` independently cleared250 actual code; root
+independently passed17Linux library/3non-execution checks. Root independently
+reviewed249 and passed3Node tests; desktop separately passed its two diagnostic
+behavior tests. No core/app/storage/default/planner/content/data/inventory changes
+are present. Source dirt remains unidentified and actual native Rust Windows plus
+combined coverage remain unverified. Fresh root full-pack execution is scoped to
+fcf Linux and recorded in the version handoff, not claimed as Windows acceptance.

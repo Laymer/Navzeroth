@@ -360,3 +360,59 @@ passed unsigned rehearsal, silent install/start/uninstall, native WebView and up
 downgrade regression, then entered actual eight-case full-bundle acceptance; no
 full acceptance verdict or measurements are claimed yet. V4coverage39405119048
 passed Linux/TypeScript; Windows/combined gate remain pending at recording.
+
+## Actual Windows failures, focused repairs and fresh full-pack replay
+
+Final documented V5 candidateaeb7fd8f retains failed gates. V4 coverage39405119048
+atf520 passed actual84resource hydration/assembly/default policy and32native smoke
+steps, then failed the final clean-source guard without recording dirty paths. All
+624retained profiles were nav-*; logs expose no root cause. Controlled offline
+actual84resource hydration in a core.autocrlf=true checkout stayed clean. Source
+dirt remains unidentified; no coverage receipt or combined90%pass is claimed.
+
+Preliminary package39400861524 at40ea FAILED before all eight hosted cases. Its
+producer compared identical typed target values using order-sensitive JSON text.
+Root initially reported case success from the continued-on-error step presentation;
+actual retained logs disproved it and the user update was corrected. Downloaded
+artifact contains only nine pristine pending rows; no measurements or acceptance
+are promoted. Actual unsigned rehearsal/silent install/native WebView/RC upgrade/
+downgrade regressions retain their narrower passed scope. Full failure log:
+/tmp/navzeroth-preliminary-package-39400861524-full.log; pending artifact:
+/tmp/navzeroth-preliminary-40ea-hosted-evidence/.
+
+Candidate coverage39408816589 failed earlier on Windows workspace tests: the pack
+reader accepted same-size replacement when timestamps/creation/attributes collided.
+Linux and TypeScript passed; aggregate failed. Actual Windows workspace log:
+/tmp/navzeroth-aeb-coverage-windows/logs/workspace-tests.log. Superseded candidate
+package39408816606 was cancelled because it still contains the demonstrated target
+comparison defect. Earlier successes, cancellations and failures retain their heads.
+
+Separately reviewed repairs were merged normally locally after V5 public artifacts
+were archived5694016e. PR248 exact336f9723 mergeded47c7a9: strict exact-field/type/value
+target equality independent of JSON ordering; root independently passed20checks
+on nativePS5.1 and20on PS7. PR249 exact29e6a2dd mergede11fd71f: bounded escaped Git
+status after each successful native coverage command, preserving dirty-source
+refusal/raw profiles. Root independently passed3Node tests and reviewed the diff;
+this is diagnostics, not a source-dirt fix. PR250 exactaa846e70 mergedfcf170ad: true
+Windows volume/full128-bit file IDs from the same component/read descriptors,
+reparse refusal and fail-closed API errors. Exact-single-call structural exception
+retains all other non-execution guards. Root/tooling independent code review CLEAR;
+root Linux17library+3non-execution tests passed. Author Linux138ingest/cross-target
+actual-crate check/nativeWin32API probe are accurately scoped; native Rust Windows
+execution and Windows coverage still require hosted checks. No code/data/version
+changes outside these reviewed repair scopes.
+
+Fresh optimized full-pack scenario at exactfcf170ad50722d8406f4662e6b2173c3c1c756a2
+passed138.945234232seconds, peak childRSS6402372KiB on the same disclosed shared
+Linux/WSL2 host. Actual newly compiled executable retains the same Cargo output
+name590f but was rebuilt against the repaired ingest source; it is not an old
+execution restamped. Proof15568B SHA106cc6e2143aca3aa7cd188668b73587636687ddb5de84c01df946ab6e2dd8d1
+differs semantically fromf391 only in test_source.commit. Both packs,200objective
+planner page,54models/9classes, boundaries and26dungeons pass. New proof/current
+measurement and exactly four functional FileRefs were committed1028b5b2. Priorf391
+proof/measurement remain under release/history/2026-10-20-functional-before-file-identity.
+Production0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a
+now binds testedfcf. Canonical bundle fields were cleared for V6 renewal; no 
+inventory regeneration or acceptance promotion occurred. Next: independent additive
+V6review, actual preparation/receipt/source closure, one final candidate push and
+fresh protected/Windows/stability gates. Main remains807ef674; no stable tag exists.
