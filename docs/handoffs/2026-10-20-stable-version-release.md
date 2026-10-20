@@ -666,3 +666,39 @@ rehearsal, silent install, native WebView and published-baseline upgrade regress
 passed. Actual8-case producer started13:31:13UTC; recording/finalguard remain pending
 at this record. No source push or cancellation while useful actual cases execute.
 No installer acceptance, owner smoke, stabletag or publication is inferred.
+
+
+## V9 signed closure, independently checked before remote update
+
+World additive reviewbe0e47f8 normally merged80fc6b07. Review40873B SHA
+42a4cd3403e73b9de01c510ceb90e3ccd6f2ef4c8279ceaae8c50a121d8034da binds
+tested6c6fda90/production09b66c07. Root independently streamed43nested refs and
+matchedHEADblobs/LFSpointers. Actual preparation at80fc6b07 and desktop's own
+optimizedCLIpreview/pureprepare reproduction matched84resources395764227B; all
+83nonreview resources remainV8-identical. Preparedmanifest17183B SHA
+af6e0af572e25de53e081f38c6eab94b2bcbbee54868e173e5b3e88c779c13d3 and
+identity526B SHAc417091414becc6b576a533a14231b6a31121518c0267e131fd1514f0eb9f629
+were committed461e3777 BEFORE external restrictedkey use. Operator and review-evidence
+signatures were actually verified, then receipt1072B SHA
+fb7fbdda97d2da0231ecbf8bc120c4bf7ba4fb277e86bf4197e031296de02501 and exact
+threecanonicalFileRefs committed541b7e0952dc51bf2795db8e5da8f55bdd50656d.
+Keys remain outsideGit directory0700/files0600; both operator-controlled.
+
+Root and independent tooling separately performed crypto verification, own
+assemblies, DEFAULTcompiledsignerpolicy checks, streamed84resources/two packs/noextras
+and freshsource readiness89evidence/two packs. Both build_readytrue, stable_readyfalse,
+publicationfalse and EXACT9pending hosted8+owner observations, nootherblockers.
+Rootreports/tmp/navzeroth-stable-v9-{preparation,receipt-verification,assembled,
+bundle-verified,build-readiness}.json; independent reports
+/tmp/navzeroth-tooling-v9-{crypto,assembly,compiled-check,readiness}.json.
+Desktop independently reviewed final541bcomposition CLEAR: allcanonical/payload/
+manifest/review/testedsource/production bindings agree; actualscope of previous
+executions retained. Source/runtime/content remain unchanged by PR254.
+
+Remote remainsV8e5ec while its actual8-case producer39424036854 runs; root does not
+cancel useful installer evidence or publish these localchanges prematurely.
+Next: retain actualV8case/recorder/finalguard outcome, address any concrete new
+defect if present, then push one valid V9candidate and require alltenprotected
+checks plus actualboth-platformsourceparity and independent finalreview. Fresh
+exact resulting-main checks/stability precede tag; exact verifieddraftinstaller
+owner smoke still required. No stabletag, ownerpass or publication.

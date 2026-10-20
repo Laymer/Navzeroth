@@ -82,3 +82,25 @@ Whole-diff whitespace validation passes with process-onlycr-at-eol plusall defau
 checks because preservedhistoricalrawcaseJSON has exactCRLF. No rawbytes changed.
 Final excluded documentation preserves production52d0089987d97f0ade79ce839a06fa2a00da3370a1013ba150fab2c19f50a1f6.
 Fresh currentcandidate/resulting-main/hosted/stability/draft/owner gates stillrequired.
+
+
+## Reviewed V9 composition at541b7e09
+
+PR254 frozena6a48ea0/final98577549 independently CLEAR byworld; root/world each
+12focusedNode tests and actionlint passed. Instrumented bundle callbacks preserve
+all command controls/full actualLLVMenvironment; no gate/profile/hash/signature
+waiver. ActualV8combinedcoverage39424036847 staysFAILED, not accepted on merged
+371/409mainpercent: Windowsentrypoint0positive. V8signatures/exactverdict archived.
+
+PublicreviewV9be0e47f8/42a4cd34 independently43FileRefs+Git/LFSpins checked byroot
+anddesktop. Desktopownoptimizedpreview/pureprepare independently byte-reproduced
+84-resource manifest/identity at80fc6b07 before preparedcommit461e3777/keyuse.
+Finalsigned541bcomposition independently CLEAR bydesktop. Root andtooling separately
+verified both signatures, own84resource395764227B/defaultcompiledpolicy assemblies
+and freshsource89evidence/2packs/EXACT9pending only. Both operator-controlledkeys
+remain externalrestricted; independentreviewprocess is not independentkeycustody.
+
+These are engineering/sourceclosure checks. Currentcanonical8hosted+owner rows
+remain unverified. ActualV8package39424036854 continues independently; no fresh
+V9hostedcoverage/package or finalresulting-main/stability/tag/publicdownload outcome
+is claimed. Actualfcffullpack proof remains scoped to its execution, no restamping.
