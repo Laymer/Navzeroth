@@ -26,17 +26,25 @@ Actual checks before code freeze:
   local/external catalog/source/coverage/hash corruption; DDL and TEMP shadows;
   rolled-back content corruption; preference-write fault atomic pointer/choice
   rollback; disposition changes refused even with a cached catalog.
-- Instrumented storage suite passes. Storage-only line coverage is95% for
-  content_preferences,99.69% catalog_generation,88.65% content (broader caller
-  tests needed). Combined app caller coverage is running; no per-file90pass yet.
+- Instrumented storage suite:167passed,0failed; additional app caller suite:
+  297passed,0failed,3ignored across44 binaries. Ignored full-pack/environment
+  scenarios remain unverified here.
+- Combined storage/app LLVM coverage meets the unchanged per-file90% threshold
+  in every affected file: content390/432=90.2778%; content_preferences95/100=95%;
+  catalog_generation663/665=99.6992%. Storage-only content88.65% was an incomplete
+  caller scope, not a gate waiver; existing app callers supplied actual execution.
+
 
 Logs: `/tmp/navzeroth-travel-activation-{all-storage,clippy,coverage}.log`;
-coverage JSON `/tmp/navzeroth-travel-activation-coverage.json`.
+coverage JSON `/tmp/navzeroth-travel-activation-coverage.json`; app execution log
+`/tmp/navzeroth-travel-activation-app-coverage.log`; final combined report
+`/tmp/navzeroth-travel-activation-combined-coverage.json` (cargo llvm-cov report
+-p azeroth-storage -p azeroth-app after both actual instrumented suites).
 
 Startup pack verification/parsing/staging/composition, inspection report/hash,
 and recovery initialization remain. No elapsed speedup, Windows/ordinary-PC
 performance, complete suite budget sufficiency or installed acceptance claimed.
 Previous106cc6functional proof remains actualfcf/0a history; this runtime change
 requires a fresh coordinator optimized full-pack run and measurements after review.
-Next: independent code review, complete affected-file coverage, then reviewed
+Next: independent code review, then reviewed
 integration and fresh functional/native/hosted gates. No keys/sign/push performed.
