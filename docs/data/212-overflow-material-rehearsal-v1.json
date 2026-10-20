@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "source_pack_code_commit": "2e89b1ff9761bbb3a320e20a68c350e71fc63608",
+  "generated_source_commit": "cef5e1688276c0dda0e72567d72e405749468e4b",
+  "rehearsal_source_commit": "c1dbb295",
+  "validator_source_commit": "89858903",
+  "measurement": {
+    "command": [
+      "/tmp/navzeroth-stable-bundle-normalization/target/debug/azeroth-cli",
+      "release-materials",
+      "--root",
+      ".",
+      "--version",
+      "1.0.0-rc.1",
+      "--output",
+      "/tmp/navzeroth-212-overflow-verified-materials"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 104.37608074699529,
+    "peak_rss_kib": 5651704,
+    "environment": "Shared Linux debug; no Windows/ordinaryPC claim"
+  },
+  "independent_verification": {
+    "files": 82,
+    "bytes": 394782896,
+    "manifest_sha256": "0146dfa4dd49909613f61aad2f6eb2eac9d2a1ef98b3b2a54f5cf55445b92e97",
+    "exact_tree": true,
+    "all_input_archive_hashes": true,
+    "unsigned_preparation_ready": false,
+    "claim": "Source/material closure only; all functional and environment checks remain unverified"
+  },
+  "logical_records": 259918,
+  "logical_record_multisets_preserved": true,
+  "canonical_revision_keys": "advance with exact new world revision; not byte-identical historical keys",
+  "accepted_unknown_fields": 273967,
+  "unsupported_association_fields": 4,
+  "unresolved_association_references": 8107,
+  "functional_acceptance": "unverified",
+  "windows_and_owner_smoke": "unverified",
+  "limitations": [
+    "Inventory adapter validates report accounting/canonical identity; exact mapper review/reproduction establishes association counts and field status.",
+    "Corresponding code identities do not imply current-game verification.",
+    "No signing, release readiness, Windows/ordinary-PC performance or publication claim."
+  ]
+}
