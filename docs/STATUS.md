@@ -39,8 +39,9 @@ are normally integrated locally at60ab126b. Root's actual union27Node/32PS7/29na
 checks and workflow validation passed; author realRustDTO/application regressions
 and independent real-recorder boundary checks passed with their recorded scopes.
 Runtime implementation/UI/content/datagen remainfcf-identical; new Rust tests are
-explicitly test-only. V7 signatures/rawV6failures are archived. Canonical content
-fields are cleared for V8 review/receipt renewal, tested60ab and production52d00899.
+explicitly test-only. V7 signatures/rawV6failures are archived. V8 independent review/preparation/signatures, two owncompiled-policy assemblies
+and freshsource prebuild passed atf0feaac9:89evidence/two packs,exact9pendingonly,
+tested60ab/production52d00899. Final repairedcandidate hosted checks are next.
 All nine canonical acceptance observations remain unverified. Earlier normalCI/
 source parity passed on V6; coverage failed the diagnosed default-profraw source
 write, repaired by251 but still requiring fresh hosted coverage. No stable tag

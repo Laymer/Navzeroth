@@ -593,3 +593,39 @@ tested60ab and production52d0089987d97f0ade79ce839a06fa2a00da3370a1013ba150fab2c
 (3124production entries). All nine rows remain pristineunverified. World is sole
 additiveV8publicreview writer; then exactpreparation/independentclosure/receipts
 and freshcandidate hostedchecks remain required. No stabletag/ownerpass/publication.
+
+
+## V8 signed closure independently verified before candidate push
+
+Worldreview78f7c838 was normally integrated766c763c; publicartifact34034B SHA
+de39b925336443421d087eac575cfd71a47ff533873348eaa9500812f8daff9d binds exact
+60ab/52d008 production. Root independently verified35nested streamedFileRefs and
+HEADordinary/LFSpins. Actual preparation and independent desktop actualoptimized
+preview/pureprepare reproduction matched84resources395757388B;83nonreview refs
+remainV7-identical. Manifest17183B SHA707eba6680cb9441520776b4ccc0c1f3a13aa1a2507e8b8fc51a63f1a2766b11
+and identity526B SHA35c9e8470cb1adbbe0af0ed6fd518e2c5865bdd5188a535e1735fe68308a00f1
+were committed20afc48a BEFORE restricted externalkey use. Actual two signatures
+were verified and receipt1072B SHAfb5f4a4caf2115e28b0616c93658a8767f48bf247bdc2d69a077767b5b01eea3
+plus exactthreecanonicalFileRefs committedf0feaac955f71c4cb5f78c2e4b6134034d1df125.
+Keys remain operator-controlled outsideGit with directory0700/files0600; no separate
+key custody claim.
+
+Root and independent tooling separately verified signatures, ownassemblies with
+DEFAULTcompiled signerpolicy, all84resources/two packs/noextras and freshsource
+prebuild89evidence/two packs. Both build_readytrue/stable_readyfalse/publicationfalse
+and EXACTLY9pending hosted/owner observations; noother blockers. Rootreports
+/tmp/navzeroth-stable-v8-{preparation,receipt-verification,assembled,bundle-verified,
+build-readiness}.json; tooling/tmp/navzeroth-tooling-v8-{crypto,assembly,compiled-check,
+readiness}.json. Desktopfinalcomposition CLEAR exactf0fe: canonicalrefs/receipt/
+identity/review agree, honestfcfproof andoldV6failures, no privatekey material.
+
+Default broad807-to-candidate whitespacecheck flags preserved exacthistorical
+rawV6CRLF JSON bytes only. Root process-only explicitcore.whitespace including
+defaultblank-at-eol/blank-at-eof/space-before-tab pluscr-at-eol passed the whole
+diff; no configuration or evidencebytes normalized. Currentcanonicaldelta/working
+diff checks passed normally. This excluded documentation commit preserves52d008.
+
+Next: one finalcandidate push; allten protected checks/sourceparity and freshnative
+coverage/package results required before merge. Then exact resulting-main fresh
+checks/stability, verifiedtag/draft assets and ownerexactinstaller smoke. V7never
+pushed; V6package/coverage remain failed, not reclassified. No stabletag/publication.

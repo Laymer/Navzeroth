@@ -66,3 +66,19 @@ to their recorded revisions. Product/content remainfcf-identical after251.
 Final excluded documentation changes preserve production5fb60d2e322be56c5353d5116d7d7d2021b2b249e39d64ce9da6eb56c7e28d83.
 Fresh finalcandidate/resulting-main/source/stability/hosted/draft/owner checks
 remain mandatory; this review does not promote any missing observation.
+
+
+## V8 final composition atf0feaac9
+
+Desktop independent finalreview CLEAR exactf0feaac955f71c4cb5f78c2e4b6134034d1df125.
+World independent publicreview verifies35nested exactGit/FileRefs; desktop pure
+preparation reproduces84resources/identity/manifest; root independently verifies
+these pins. Both restrictedkeys signed only AFTER preparedidentitycommit20afc48a.
+Root and tooling separateactualsignature/defaultcompiledpolicy/ownassembly/source
+prebuild checks pass84resources/395757388B,89evidence/two packs,exact9pendingonly.
+No installer/owner acceptance or ordinaryPC performance is promoted. Runtimeimpl
+remainsfcf-identical; newRusttest-only fixture/regressions accuratelyseparated.
+Whole-diff whitespace validation passes with process-onlycr-at-eol plusall default
+checks because preservedhistoricalrawcaseJSON has exactCRLF. No rawbytes changed.
+Final excluded documentation preserves production52d0089987d97f0ade79ce839a06fa2a00da3370a1013ba150fab2c19f50a1f6.
+Fresh currentcandidate/resulting-main/hosted/stability/draft/owner gates stillrequired.
