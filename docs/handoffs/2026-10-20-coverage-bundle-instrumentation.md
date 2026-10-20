@@ -49,3 +49,27 @@ Next: independent review and focused normal repair integration, renewed producti
 and signed receipt bindings, then fresh required coverage on the valid candidate.
 Keep failed V8 combined gate failed. No keys, signing, runtime/content changes,
 workflow retry, package cancellation or acceptance promotion occurred here.
+
+Independent final review: root repeated the exact workflow four-file suite8/8
+PASS at14252c6c; world independently reviewed CLEAR. Author's12-test command
+additionally included `scripts/coverage/rust-environment.test.mjs` (4 cases):
+
+```
+CARGO=/home/laymer/.cargo/bin/cargo RUSTC=/home/laymer/.cargo/bin/rustc PATH=/home/laymer/.cargo/bin:$PATH node --test scripts/coverage/bundle-instrumentation.test.mjs scripts/coverage/native-bundle.test.mjs scripts/coverage/profile-output.test.mjs scripts/coverage/clean-source.test.mjs scripts/coverage/rust-environment.test.mjs
+```
+
+V8 retained artifact identities (run39424036847): Linux12264644445,
+Windows12266554990, verdict12267302615, TypeScript12264568824 and baseline12264608783.
+SHA-256 of extracted historical evidence:
+
+| Platform/file | Bytes | SHA-256 |
+|---|---:|---|
+| Linux rust-receipt.json |41617|4d8de54614c9b1fe0f2f482e2ad556f530ac51a3e6638f208ab3d50f7053e344|
+| Linux native.lcov |9063670|e026a42bdc5bb18794c86eed5a605eab1f7ba161999ab7e71ff21d14b32ea61b|
+| Linux debug.lcov |6545153|a721be69fff4104de661b321b84f70d6274b84c2bf464b8a7334cef23758f7f2|
+| Linux release.lcov |2518515|15b8a75dc2e3559af8b4d06f0c0b9578370e4beeea1e4d1666cdcd90aa8c028e|
+| Windows rust-receipt.json |44792|566f5cce706ce0b43c3f36229cb71f2ad61b9e8c005639c6cd9d6aba8f80702b|
+| Windows native.lcov |10723136|ec9bc7655c9b86aec90b5cda65eaca97be7381eb47cdfed1b6de5dc5e77b376f|
+| Windows debug.lcov |8217934|7f20d8c21074ca5c2888c04488bd915f47eb357f4dd437b6d5f3efad3b79563f|
+| Windows release.lcov |2505200|4576441cac40df3fc3787b20145d82c1e3d0a3a9fdce996f757a3b7113492e2e|
+| per-file-verdict.json |50810|880f9658162e415416fcc912a5b86bb166e63eee78d3683d46a079735d652ad6|
