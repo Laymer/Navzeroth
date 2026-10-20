@@ -6,6 +6,7 @@ import {verifyBuildConfiguration} from '../measure-continuation.mjs';
 import {prepareNativeBundle,stageNativeBundle} from './native-bundle.mjs';
 import {loggedProcess} from './process-output.mjs';
 import {assertCleanCommittedSource} from './clean-source.mjs';
+import {ownedProfileOutput} from './profile-output.mjs';
 import {inventory} from './inventory.mjs';import {coverageEnvironment,compilerIdentity,requireMatchingLlvm} from './rust-environment.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -25,8 +26,11 @@ export function collectRust(destination){
  fs.writeFileSync(path.join(destination,'inventory.json'),before,{flag:'wx'});
  const target=path.join(destination,'build'),logs=path.join(destination,'logs');fs.mkdirSync(logs);
  const environment={...process.env,CARGO_TARGET_DIR:target,CARGO_LLVM_COV_TARGET_DIR:target,CARGO_INCREMENTAL:'0',CARGO_PROFILE_DEV_DEBUG:'0',CARGO_PROFILE_TEST_DEBUG:'0',
-  RUSTFLAGS:process.platform==='linux'?'-C llvm-args=-runtime-counter-relocation':'',LLVM_PROFILE_FILE_NAME:process.platform==='linux'?'nav-%p-%c.profraw':'nav-%p-%m.profraw'};
+  RUSTFLAGS:process.platform==='linux'?'-C llvm-args=-runtime-counter-relocation':''};
  for(const key of ['CARGO_ENCODED_RUSTFLAGS','RUSTC_WORKSPACE_WRAPPER','RUSTC_WRAPPER','LLVM_PROFILE_FILE','CARGO_BUILD_RUSTFLAGS'])delete environment[key];
+ // Ordinary cargo-run children can reuse instrumented dependencies: give their
+ // profiling runtime the same owned output instead of a default in root cwd.
+ Object.assign(environment,ownedProfileOutput(target,process.platform));
  const commands=[];let instrumented=environment;
  function run(name,exe,args,{env=environment,cwd=root,expected=0,timeout=2400000,stdoutOnly=false}={}){
   console.log(`Native coverage: ${name}`);
