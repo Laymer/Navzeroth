@@ -22,6 +22,7 @@ in ItemSparse here and is omitted.
     python3 gen_world_db2.py [--out DIR] [--refresh | --offline] [--wago-product wowf] [--wago-build B]
 """
 import argparse
+import os
 import hashlib
 import json
 import math
@@ -356,6 +357,8 @@ def run(out, product="wowf", build=None):
         tables = TABLES[dataset]
         source, rows = primary, primary.all(tables)
         if rows is None and product != FALLBACK_PRODUCT:
+            if os.environ.get('NAVZEROTH_DATAGEN_WAGO_WOWF_BUILD'):
+                raise RuntimeError('policy-pinned build lacks tables; an unadmitted fallback is not fetched')
             if not fallback:
                 fallback.append(Tables(db2.Wago(FALLBACK_PRODUCT)))
             source, rows = fallback[0], fallback[0].all(tables)
