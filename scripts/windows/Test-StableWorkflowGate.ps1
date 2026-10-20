@@ -57,3 +57,6 @@ $global:LASTEXITCODE = [int]$env:NAVZEROTH_TEST_GATE_EXIT
     $env:NAVZEROTH_TEST_GATE_EXIT = $oldExit
     if (Test-Path -LiteralPath $root) { Remove-Item -LiteralPath $root -Recurse -Force }
 }
+# Expected verifier refusals leave LASTEXITCODE nonzero. Report successful tests
+# only after all assertions and cleanup; failures throw before this terminal exit.
+exit 0
