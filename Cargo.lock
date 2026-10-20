@@ -140,10 +140,12 @@ version = "1.0.0-rc.1"
 dependencies = [
  "azeroth-core",
  "image",
+ "libc",
  "proptest",
  "serde",
  "serde_json",
  "sha2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

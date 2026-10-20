@@ -1,6 +1,13 @@
 //! Release gate I/O: bounded evidence, exact Git/source binding and verified packs.
 //! All referenced game/source material is data; no Lua or SQL is executed.
 mod admission;
+#[cfg(test)]
+#[path = "../../app/tests/support/bundled_content_fixture.rs"]
+#[allow(dead_code)]
+mod bundle_test_fixture;
+
+mod bundled;
+mod bundled_stage;
 pub mod enumeration;
 pub mod materials;
 use azeroth_core::{
@@ -404,11 +411,13 @@ fn git(root: &Path, args: &[&str]) -> Result<Vec<u8>> {
 struct Tree {
     fingerprint: String,
     files: BTreeSet<String>,
+    all_files: BTreeSet<String>,
 }
 fn tree(root: &Path, revision: &str) -> Result<Tree> {
     let bytes = git(root, &["ls-tree", "-r", "-z", "--full-tree", revision])?;
     let mut digest = Sha256::new();
     let mut files = BTreeSet::new();
+    let mut all_files = BTreeSet::new();
     for entry in bytes.split_inclusive(|b| *b == 0) {
         if entry.last() != Some(&0) {
             return Err("Invalid Git tree output");
@@ -418,6 +427,9 @@ fn tree(root: &Path, revision: &str) -> Result<Tree> {
             .position(|b| *b == b'\t')
             .ok_or("Invalid Git tree entry")?;
         let path = &entry[tab + 1..entry.len() - 1];
+        if let Ok(path) = std::str::from_utf8(path) {
+            all_files.insert(path.to_owned());
+        }
         if production(path) {
             digest.update(entry);
             let path = std::str::from_utf8(path).map_err(|_| "Production paths must be UTF-8")?;
@@ -427,6 +439,7 @@ fn tree(root: &Path, revision: &str) -> Result<Tree> {
     Ok(Tree {
         fingerprint: format!("{:x}", digest.finalize()),
         files,
+        all_files,
     })
 }
 fn addon_inputs(root: &Path, candidate: &Tree) -> Result<()> {
@@ -573,6 +586,7 @@ struct PackSources {
 }
 #[derive(Default)]
 struct Catalog {
+    bundled_packs: Vec<azeroth_app::bundled_content::Pack>,
     admitted: BTreeMap<String, azeroth_core::source_admission::Source>,
     records: BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
     revisions: BTreeSet<String>,
@@ -835,6 +849,21 @@ fn bind_v2_pack(
     {
         return Err("V2 catalog revisions differ or duplicate another pack");
     }
+    catalog
+        .bundled_packs
+        .push(azeroth_app::bundled_content::Pack {
+            directory: relative(root, pack_root)?,
+            manifest: pack.manifest.clone(),
+            key: azeroth_storage::content::ContentRevisionKey {
+                scope: azeroth_storage::content::ContentScope {
+                    context: data.data_context(),
+                    fixture: data.fixture,
+                },
+                revision: data.payload.revision.clone(),
+            },
+            conflicts: None,
+            normalization_conflicts: None,
+        });
     require_complete_v2_facts(&content)?;
     if release::is_world_schema(inventory.schema_version) {
         classify_v2(
@@ -1123,6 +1152,7 @@ struct Inputs {
     inventory_bytes: Vec<u8>,
     inventory: Inventory,
     evidence: Option<Evidence>,
+    evidence_sha256: Option<String>,
     head: String,
     candidate: Tree,
     world: WorldInputs,
@@ -1145,10 +1175,13 @@ fn inputs(options: &Options) -> Result<Inputs> {
         .unwrap_or(Path::new(EVIDENCE_PATH));
     let selected = relative(&root, selected)?;
     let evidence_path = root.join(selected.as_str());
+    let mut evidence_sha256 = None;
     let evidence = match fs::symlink_metadata(&evidence_path) {
-        Ok(_) => Some(release::decode_evidence(
-            &budget.read(&evidence_path, release::MAX_STABLE_RELEASE_BYTES)?,
-        )?),
+        Ok(_) => {
+            let raw = budget.read(&evidence_path, release::MAX_STABLE_RELEASE_BYTES)?;
+            evidence_sha256 = Some(hash(&raw));
+            Some(release::decode_evidence(&raw)?)
+        }
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
         Err(_) => return Err("Acceptance evidence cannot be inspected"),
     };
@@ -1165,6 +1198,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256,
         head,
         candidate,
         world,
@@ -1223,6 +1257,7 @@ pub fn report(options: &Options) -> Result<Report> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256: _,
         head,
         candidate,
         world,
@@ -1332,7 +1367,7 @@ pub fn report(options: &Options) -> Result<Report> {
         && let Some(catalog) = &verified_catalog
     {
         bind_records(&mut readiness, &inventory, evidence, catalog);
-        if let Err(message) = materials::selected_files(
+        match materials::selected_files(
             &root,
             &inventory,
             evidence,
@@ -1341,7 +1376,21 @@ pub fn report(options: &Options) -> Result<Report> {
             catalog,
             &mut budget,
         ) {
-            readiness.block(message);
+            Ok((materials, _)) if inventory.schema_version == release::SCHEMA_STABLE => {
+                if let Err(message) = bundled::verify(
+                    &root,
+                    &options.version,
+                    &inventory,
+                    evidence,
+                    &candidate,
+                    &mut budget,
+                    &materials,
+                ) {
+                    readiness.block(message);
+                }
+            }
+            Ok(_) => {}
+            Err(message) => readiness.block(message),
         }
     }
     let world_data = (release::is_world_schema(inventory.schema_version))
@@ -1409,6 +1458,33 @@ fn require_complete_v2_facts(
         return Err("V2 catalog lacks mandatory node, equipment, quest or acquisition facts");
     }
     Ok(())
+}
+
+pub fn assemble_bundle(options: &Options, output: &Path, identity_path: &Path) -> Result<()> {
+    let selected = materials::plan(options)?;
+    let Inputs {
+        root,
+        mut budget,
+        inventory,
+        evidence,
+        candidate,
+        ..
+    } = inputs(options)?;
+    bundled::assemble(
+        &bundled::Context {
+            root: &root,
+            version: &options.version,
+            inventory: &inventory,
+            evidence: evidence
+                .as_ref()
+                .ok_or("Bundle assembly requires source evidence")?,
+            tree: &candidate,
+            selected_materials: &selected.files,
+        },
+        &mut budget,
+        output,
+        identity_path,
+    )
 }
 
 #[cfg(test)]

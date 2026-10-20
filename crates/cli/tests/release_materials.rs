@@ -1170,6 +1170,13 @@ fn schema4_corresponding_sources_export_exact_bytes_as_their_real_category() {
     let plan = materials::plan(&temp.options()).unwrap();
     assert_eq!(plan.schema_version, 2);
     assert_eq!(plan.corresponding_source_files.len(), 1);
+    assert_eq!(plan.bundled_packs.len(), 1);
+    assert!(!plan.bundled_packs[0].key.scope.fixture);
+    assert_eq!(plan.bundled_packs[0].manifest, plan.packs[0].manifest);
+    assert_eq!(
+        plan.bundled_packs[0].key.revision.as_str(),
+        plan.packs[0].dataset_revisions[0]
+    );
     assert_eq!(plan.catalog_files.len(), 1);
     assert!(
         plan.catalog_files[0]
@@ -1315,6 +1322,10 @@ fn raw_normalization_conflicts_remain_versioned_policy_bound_materials() {
         if mutation == "none" {
             let plan = result.unwrap();
             assert_eq!(plan.normalization_conflict_files.len(), 1);
+            assert_eq!(
+                plan.bundled_packs[0].normalization_conflicts.as_ref(),
+                Some(&plan.normalization_conflict_files[0])
+            );
             assert!(
                 plan.files
                     .iter()

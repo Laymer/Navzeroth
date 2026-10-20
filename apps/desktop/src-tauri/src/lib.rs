@@ -1167,7 +1167,16 @@ pub fn run() -> i32 {
             let directory = app.path().app_data_dir()?;
             std::fs::create_dir_all(&directory)?;
             let database = directory.join("snapshots.sqlite3");
-            let service = azeroth_app::recovery::DatabaseHost::start(&database);
+            let resources = app.path().resource_dir()?.join("bundled-content");
+            let service = azeroth_app::bundled_content::start(
+                &database,
+                &resources,
+                env!("CARGO_PKG_VERSION"),
+                option_env!("NAVZEROTH_BUNDLE_IDENTITY_JSON")
+                    .filter(|raw| !raw.is_empty())
+                    .map(str::as_bytes),
+                include_bytes!("../../../../content/bundled/signers-v1.json"),
+            )?;
             app.manage(service);
             app.manage(Arc::new(azeroth_app::local_data::LocalDataService::new(
                 directory.join("local-data-v1"),

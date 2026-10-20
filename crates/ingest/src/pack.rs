@@ -1,4 +1,5 @@
 //! Deterministic local reference packs. Files are bounded data, never executable inputs.
+mod bounded_file;
 pub mod v2;
 use azeroth_core::selection_path::{PrefixRefusal, check_prefix};
 use azeroth_core::{
@@ -14,8 +15,8 @@ use sha2::{Digest, Sha256};
 use std::{
     cell::{Cell, RefCell},
     collections::{BTreeMap, BTreeSet},
-    fs::{self, File, OpenOptions},
-    io::{Cursor, Read, Write},
+    fs::{self, OpenOptions},
+    io::{Cursor, Write},
     path::{Component, Path, PathBuf},
     sync::atomic::{AtomicU64, Ordering},
 };
@@ -245,23 +246,8 @@ struct Budget {
 }
 impl Budget {
     fn read(&mut self, path: &Path, limit: usize) -> Res<Vec<u8>> {
-        path_checked(path, false)?;
-        let file = File::open(path).map_err(|_| "Pack file cannot be read")?;
-        if file
-            .metadata()
-            .map_err(|_| "Pack file cannot be inspected")?
-            .len()
-            > limit as u64
-        {
-            return Err("Pack file exceeds size limit");
-        }
-        let mut bytes = Vec::new();
-        file.take(limit as u64 + 1)
-            .read_to_end(&mut bytes)
-            .map_err(|_| "Pack file cannot be read")?;
-        if bytes.len() > limit || bytes.len() > self.limit.saturating_sub(self.bytes) {
-            return Err("Pack byte budget exceeded");
-        }
+        let available = self.limit.saturating_sub(self.bytes);
+        let bytes = bounded_file::read(path, limit.min(available))?;
         self.bytes += bytes.len();
         Ok(bytes)
     }
