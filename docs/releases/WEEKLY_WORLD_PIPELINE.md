@@ -44,7 +44,7 @@ manual world run is already queued/running at that exact source, use that run's
 results; do not dispatch a duplicate or race the Tuesday schedule.
 
 ```sh
-gh workflow view world-data.yml --ref main
+gh workflow view world-data.yml --ref main --yaml
 gh run list --workflow world-data.yml --branch main --limit 10 \
   --json databaseId,event,headSha,status,conclusion,url
 # Record the independently checked merged main SHA and UTC dispatch start first.
