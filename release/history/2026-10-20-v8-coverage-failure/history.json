@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "run_id": 39424036847,
+  "status": "failed",
+  "candidate_commit": "e5ecdf653ae7e1239b4af8f7e58c5cd2b2f3ee4a",
+  "actual_checkout": "5d9c89522241eff5285494503289c940a9849d1c",
+  "verdict": {
+    "path": "release/history/2026-10-20-v8-coverage-failure/per-file-verdict.json",
+    "bytes": 50810,
+    "sha256": "880f9658162e415416fcc912a5b86bb166e63eee78d3683d46a079735d652ad6"
+  },
+  "cause": "Both native bundle cargo callbacks used base environment and recompiled CLI without instrumentation before LLVM reporting. Retained instrumented dependency profiles did not establish main execution.",
+  "main_executable_lines": 409,
+  "linux_positive_main_lines": 371,
+  "windows_positive_main_lines": 0,
+  "missing_files": 0,
+  "below_threshold_files": 0,
+  "raw_profiles_preserved": true,
+  "windows_raw_profile_files": 605,
+  "actual_repair_pending": "a6a48ea0092c1411044359b5ded7f19c5d7d7e5d",
+  "limitation": "No threshold or per-platform entrypoint waiver. Fresh actual Windows coverage remains required. No installer acceptance inferred.",
+  "artifact_files": [
+    {
+      "platform": "linux",
+      "artifact_relative_path": "rust-receipt.json",
+      "bytes": 41617,
+      "sha256": "4d8de54614c9b1fe0f2f482e2ad556f530ac51a3e6638f208ab3d50f7053e344"
+    },
+    {
+      "platform": "linux",
+      "artifact_relative_path": "native.lcov",
+      "bytes": 9063670,
+      "sha256": "e026a42bdc5bb18794c86eed5a605eab1f7ba161999ab7e71ff21d14b32ea61b"
+    },
+    {
+      "platform": "linux",
+      "artifact_relative_path": "debug.lcov",
+      "bytes": 6545153,
+      "sha256": "a721be69fff4104de661b321b84f70d6274b84c2bf464b8a7334cef23758f7f2"
+    },
+    {
+      "platform": "windows",
+      "artifact_relative_path": "rust-receipt.json",
+      "bytes": 44792,
+      "sha256": "566f5cce706ce0b43c3f36229cb71f2ad61b9e8c005639c6cd9d6aba8f80702b"
+    },
+    {
+      "platform": "windows",
+      "artifact_relative_path": "native.lcov",
+      "bytes": 10723136,
+      "sha256": "ec9bc7655c9b86aec90b5cda65eaca97be7381eb47cdfed1b6de5dc5e77b376f"
+    },
+    {
+      "platform": "windows",
+      "artifact_relative_path": "debug.lcov",
+      "bytes": 8217934,
+      "sha256": "7f20d8c21074ca5c2888c04488bd915f47eb357f4dd437b6d5f3efad3b79563f"
+    }
+  ]
+}
