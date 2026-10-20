@@ -31,6 +31,17 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Latest actual V13 outcome: CI, source parity and coverage passed; package39466044590
+failed after four hosted cases passed and recovery exceeded its20-minute workload
+bound. Standalone restart passed. Offline/RC1 upgrade/downgrade never ran; owner
+remains unverified. Native smoke32/0 and upgrade7/0 passed. Exact raw/overlay/signed
+identities/coverage archived7472db34 before repair integration. Desktop owns bounded
+progress diagnostics; tooling owns a separate full-pack recovery timing benchmark.
+No runtime cause is established yet; no bounds or assertions are waived. Canonical
+nine observations remain unverified; main unchanged, no tag/publication.
+[Current failure and next task](handoffs/2026-10-20-v13-recovery-timeout.md).
+
+
 Latest V13signedclosure1fe3 independently root/tooling owncrypto/84resourceassembly/
 DEFAULTcompiledpolicy/sourceprebuildPASS:395806353B/2packs/89evidence/EXACT9pending.
 DesktopfinalcompositionCLEAR; prepared44f5 beforekeys, review110refs/36c24922.
