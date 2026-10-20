@@ -284,3 +284,26 @@ independently streamed all19nested FileRefs. No full scenario is restamped to273
 Next: actual production preparation, independent prepared-byte review, receipt
 renewal and fresh Windows coverage. Original full-LFS package40ea continues as
 scoped evidence for its exact original installer, not a future acceptance result.
+
+V4actual production preparation succeeded84resources/395748446B. Independent
+world review streamed all84pins and reproduced canonical pure preparation exactly;
+all83non-review pins remain V3-identical. Manifest17183B SHA
+5613aeb37afdfd65b9a19fb6084cd74d689230757968e7206b60189d2735702f and
+identity526B SHAe7c8753596b5d1b43f1350f8e3c07baf5a9fb87984f4fb6c53ad574333deb144
+were committedc658896b before renewed key use. Restricted existing external key
+permissions were checked; two real signatures were issued/assembled/verified.
+Public receipt1072B SHA0171bb4e25630b8741282d6e237de7967fcb3d9911191b84b05dd1146391d865
+and three exact FileRefs were committed1c0fc0525086da137e3777d533089f72ae18c848.
+
+Root assembly/compiled-policy verification passed84files/two packs; actual root
+source prebuild passed89evidence files/two packs, expectedad274production, exactly
+9pending, build_readytrue/stable_readyfalse/publicationfalse. Independent tooling
+used its own separate assembly directory, verified both signatures/all supplied
+identity hashes, streamed every exact resource and checked no extra/missing files.
+Its fresh source gate matched89/2/9pending and current production. These are actual
+1c0checks, not future Windows/native or publication acceptance. External raw reports
+are /tmp/navzeroth-stable-v4-build-readiness.json and
+/tmp/navzeroth-tooling-v4-{crypto,assembly,compiled-check,readiness}.json.
+Next: push signed candidate and run one fresh Windows coverage verification of
+the repaired checkout. Final protected-main/resulting-main/tag/draft/owner gates
+remain required. No stable tag or owner result exists.
