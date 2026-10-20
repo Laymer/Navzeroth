@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+  "actual_source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+  "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+  "files": {
+    "per-file-verdict.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/per-file-verdict.json",
+      "bytes": 50732,
+      "sha256": "0b2128bc11d85bfdb009708e220c14f23db75e11b9554242f5058de074e0c959"
+    },
+    "linux-rust-receipt.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/linux-rust-receipt.json",
+      "bytes": 41617,
+      "sha256": "b70a7af4b402e04991f831bb1fbbd005892698ca58c964cdff34673003c777d4"
+    },
+    "windows-rust-receipt.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/windows-rust-receipt.json",
+      "bytes": 44792,
+      "sha256": "b4bf9ae4c994cdd4f88eb0c2fa2ae3cb089c394e1a826a81274b3341fe14fa60"
+    },
+    "linux-entrypoint-summary.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/linux-entrypoint-summary.json",
+      "bytes": 315,
+      "sha256": "f9d2d6a7b9a858de3f33e1ddc60e28b97a1f7dcbcc4726d75f30c222443a78f5"
+    },
+    "windows-entrypoint-summary.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/windows-entrypoint-summary.json",
+      "bytes": 316,
+      "sha256": "8e8748fe76fc3aa33b21a1d98788973e573ade4da4d6ed5e89b528ceee4d2760"
+    },
+    "windows-native-smoke.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/windows-native-smoke.json",
+      "bytes": 26716,
+      "sha256": "26b051ff8837c5b8572609e7e73c06b595a0175af41993e270293def153435d5"
+    },
+    "independent-audit.json": {
+      "path": "release/history/2026-10-20-v13-coverage-success/independent-audit.json",
+      "bytes": 2252,
+      "sha256": "c6ffa19e0d4b5fa7ac810ea9ba19282254604f2a47b43b54a9fcf0154794a1fd"
+    }
+  },
+  "run_id": 39466044635,
+  "status": "success",
+  "scope": "Raw verdict/native receipts/native smoke; entrypoint summaries and audit are explicitly derived. Tooling alone range-streamed selected compressed LCOV; no profiles or full LCOV copied. Root independently checked raw verdict integer276threshold and receipt hashes/clean flags. No installer acceptance claim."
+}
