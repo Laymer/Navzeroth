@@ -629,3 +629,40 @@ Next: one finalcandidate push; allten protected checks/sourceparity and freshnat
 coverage/package results required before merge. Then exact resulting-main fresh
 checks/stability, verifiedtag/draft assets and ownerexactinstaller smoke. V7never
 pushed; V6package/coverage remain failed, not reclassified. No stabletag/publication.
+
+
+## Actual V8 coverage refusal and reviewed V9 preparation
+
+Exact candidatee5ecdf65/actualPRmerge5d9c8952 passed normalCI39424037070
+(all9applicable jobs; stability skipped, not passed) and actual both-platform
+regeneration/parity39424037090. Coverage39424036847 FAILED its combined gate,
+even though TypeScript/Linux/Windows collectors succeeded and no files were missing
+or below90%. Windows CLI main had0positive lines; Linux371/409. Ordinary bundle
+assembly/verification recompiled CLI without instrumentation before LLVM reporting.
+Windows retained605raw profiles,32native smoke passes, exact84-resource verification
+and clean-source evidence; none substitutes for native-entrypoint execution.
+Exact50810B failedverdict and signedV8canonical bytes are immutable in release/history.
+
+Separately reviewed PR254 codea6a48ea0/final98577549 normally integrated6c6fda90.
+Both bundle callbacks now retain the actual full show-env instrumentation environment
+and preserve command controls. Author/world/root independently passed12focusedNode
+checks (the workflow four-file subset contains8), including real pinnedLLVM ordinary
+forced replacement refusal vs instrumented replacement positive-main evidence.
+Actionlint/diff checks passed. No threshold, entrypoint rule, source guard, signature,
+raw-profile retention or product/runtime/content changes. Fresh hosted coverage is
+still required. Root archivedV8a5f0b8b BEFORE integration.
+
+V9testedancestor6c6fda90c9e22cd7acebca179c5c688699b84354 has production
+09b66c070b3b3b8d472f03850b1009422c78b407db4dc7905961b09870d61cbe (3125entries).
+Canonical outputs were cleared; all9observations remain pristine unverified.
+Preparation initially emitted pretty JSON4a1bede8; root immediately restored the
+established compact bounded serializationeff60e2f (27970092B), before review,
+preparation or hosted use. No generated inventory or historical observations changed.
+World owns the additive V9public review. Existingfcf full-pack proof remains its
+actual execution scope and is not restamped or rerun for tooling-only changes.
+
+Existing Windowspackage39424036854 remains active on exactV8source: build, unsigned
+rehearsal, silent install, native WebView and published-baseline upgrade regressions
+passed. Actual8-case producer started13:31:13UTC; recording/finalguard remain pending
+at this record. No source push or cancellation while useful actual cases execute.
+No installer acceptance, owner smoke, stabletag or publication is inferred.

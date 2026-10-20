@@ -56,5 +56,10 @@
       "bytes": 8217934,
       "sha256": "7f20d8c21074ca5c2888c04488bd915f47eb357f4dd437b6d5f3efad3b79563f"
     }
-  ]
+  ],
+  "artifact_ids": {
+    "windows": 12266554990,
+    "linux": 12264644445,
+    "combined_verdict": 12267302615
+  }
 }

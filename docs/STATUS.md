@@ -31,6 +31,17 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+Current continuation: V8normalCI39424037070 and actual Linux/Windows source/parity
+39424037090 passed. Coverage39424036847 FAILED combined native-entrypoint evidence:
+Windows CLI main0positive lines, despite0missing/0below90% and successful collectors.
+Reviewed PR254 normally integrated locally6c6fda90; root/world12focused checks pass.
+Both bundle commands preserve actual instrumentation. V8 signatures/verdict are
+archived; V9preparation binds tested6c6fda90/production09b66c07 with all9canonical
+observations unverified. Fresh hosted gates remain required. ExistingV8package
+39424036854 continues actual8-case producer after successful build/native regressions;
+no final acceptance result yet. No release-branch push, stabletag or publication.
+
+
 Latest continuation: actual V6 package39413135905 FAILED with install/resources
 PASS(630files), first-start FAIL and five hosted cases never run. The driver
 mistook the planning-only DTO for a general catalog; recorder ISO timestamp and
