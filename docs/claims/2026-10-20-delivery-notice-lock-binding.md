@@ -1,0 +1,3 @@
+# Delivery dependency notice lock binding
+
+Owner /root/desktop_review, sole writer; fix/stable-delivery-notice-lock-binding in /tmp/navzeroth-stable-delivery-notice-lock-binding. Baseline4dd8308087e4ca7021eff6557bff331e80abe386. Actual package39399831462/job118551492626 passed all24helpers then failed documented dependency-notices --check with stale manifest. Diagnose confirmed only recorded Cargo.lock hash stale; all275package records and notice bytes match already-correct stable40ea generated metadata. Regenerate through existing --write/--check, no script changes/new tests. Stable version merge must retain its own6e4293 lock/notice bytes so final production identity remains unchanged. No source/packs/policy/key/signing edits.
