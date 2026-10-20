@@ -447,3 +447,39 @@ behavior. Final V6 candidate push is next, after this excluded documentation com
 The candidate must pass all ten protected checks/source parity/independent review,
 then resulting-main stability/coverage/packaging and exact tag/draft verification.
 No owner smoke, full hosted acceptance, stable tag or publication exists.
+
+
+## V6 actual checks and V7 coverage-output repair
+
+Root resumes the existing integration claim at localbaselineae3b591d. Actual
+V6 PR merge checkoutffbf834ce9fca684d9dd3fcc357a240a81dd40e4 has the exact
+b689 tree43885c504ab8502d8f82e3cab2b3e52dbc79ca45. CI39413135882 and actual
+both-platform source/parity39413135914 passed. The native Windows Rust job
+passed all three replacement regressions; retained log/tmp/navzeroth-b689-ci-windows.log.
+
+Coverage39413135940 failed with the first dirty path explicitly diagnosed as
+default_1146472104454006394_0_5104.profraw after instrumented bundle assembly.
+Native build/smoke were not reached in this run. Linux raw receipt1607pass/0fail/
+8ignored/207binaries and TypeScript91files>=90%,global95.98% retain their narrower
+passed scope. This is not combined coverage success. V6 public/signature artifacts
+are preserved under release/history/2026-10-20-signed-content-v6 at0980f5b0.
+
+Tooling-authored separatePR251 exact5e5b7fb0, codeb62e5733, was independently
+reviewed CLEAR by desktop and root. Normal local mergee45b302a passed root's
+10Node checks across profile-output/clean-source/native-bundle/rust-env, actionlint
+and diffcheck. Author's12checks additionally cover process-output. The instrumented
+Rust regression proves default-root output is refused and controlled external
+output stays clean while preserving raw files. Both absolute LLVM_PROFILE_FILE
+and LLVM_PROFILE_FILE_NAME are controlled for every child; no source guard is
+relaxed and no profile is ignored/deleted. Fresh hosted Windows/combined coverage
+is still required. PR251 was marked ready after review; no branch update yet.
+
+Canonical fields were cleared atae3b591d for testedancestore45b302a and production
+5fb60d2e322be56c5353d5116d7d7d2021b2b249e39d64ce9da6eb56c7e28d83.
+Rust product/TypeScript/content/datagen trees are identical tofcf170ad; the actual
+functional proof106cc6e2 and measurement retain their originalfcf/0a identities.
+No unnecessary workload rerun or restamping occurs. World is sole additiveV7review
+writer. Next: independently reviewed exact preparation/receipt/source closure,
+then final branch update and fresh applicable checks. Existing V6 package39413135905
+remains tied toffbf/b689; installer build passed, later acceptance remains pending.
+All nine canonical observations remain unverified. No stable tag/publication.

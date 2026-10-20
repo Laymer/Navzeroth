@@ -31,17 +31,19 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-Latest continuation: actual Windows failures hold publication. Preliminary40ea
-producer rejected identical targets by JSON field order before all eight cases;
-all nine observations remain unverified. V4 coverage passed native smoke but
-failed unidentified source dirt; aeb coverage exposed timestamp-only Windows
-pack identity. Reviewed repairs248/249/250 are integrated locally atfcf170ad:
-strict typed target comparison, bounded cleanliness diagnostics and true Windows
-volume/full128-bit file identity. Fresh Linux full-pack replay passed138.945s/
-6402372KiB child peak; this does not execute the Windows branch. Independent V6
-review, signed assembly/default policy and fresh source prebuild passed atb8d05a1d
-(89evidence files/two packs; exactly9pending). Final candidate hosted gates are next.
-No stable tag or publication.
+Latest continuation: V6 candidateb689 normal CI39413135882 and actual Linux/
+Windows source parity39413135914 passed. Native Windows Rust genuinely passed the
+three file-identity replacement regressions. Coverage39413135940 failed immediately
+after instrumented assembly: the new diagnostic recorded an unowned root default
+.profraw. Linux1607tests and TypeScript91files>=90% passed separately; no combined
+coverage pass is claimed. Independently reviewed repairPR251 now sends every
+coverage child profile to its owned external target, retaining all guards/profiles.
+Root's actual10focused Node checks/actionlint passed after normal local integration
+e45b302a. V6 signed artifacts remain historical; additive V7 review and exact
+production/signature renewal are in progress. Rust product/UI/content are unchanged
+from the actualfcf full-pack replay; its recorded scope is retained. V6 package
+39413135905 built its installer and is running unsigned verification; full eight-case
+acceptance and owner smoke remain unverified. No stable tag or publication.
 
 
 Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
