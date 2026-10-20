@@ -443,6 +443,12 @@ fn stable_values() -> (Value, Value) {
     let mut evidence = evidence_value();
     inventory["schema_version"] = json!(SCHEMA_STABLE);
     evidence["schema_version"] = json!(SCHEMA_STABLE);
+    let bundle_file = |path: &str| {
+        let mut value = file();
+        value["path"] = json!(path);
+        value
+    };
+    evidence["bundled_content"] = json!({"manifest":bundle_file("release/bundle-manifest.json"),"receipt":bundle_file("release/bundle-receipt.json"),"review":bundle_file("docs/review.json")});
     evidence["candidate_installer_sha256"] = json!(HASH);
     evidence["checks"] =
         json!(required_checks(SCHEMA_STABLE).into_iter().map(|(id, method)| {
@@ -609,6 +615,50 @@ fn preparation_never_admits_failed_partial_stale_or_content_blockers() {
 }
 
 #[test]
+fn signed_bundle_binding_is_required_and_new_fields_never_promote_historical_evidence() {
+    let (inventory, mut evidence) = stable_values();
+    evidence.as_object_mut().unwrap().remove("bundled_content");
+    let (i, e) = decode(&inventory, &evidence);
+    let report = check(&i, &e);
+    assert!(!report.candidate_ready);
+    assert!(report.blockers.iter().any(|b| b.contains("signed bundle")));
+    for version in [1, 2, 3] {
+        let mut old = evidence_value();
+        old["schema_version"] = json!(version);
+        old["bundled_content"] = Value::Null;
+        assert!(decode_evidence(&serde_json::to_vec(&old).unwrap()).is_err());
+    }
+    for change in [
+        "duplicate",
+        "manifest-size",
+        "receipt-size",
+        "review-size",
+        "production-metadata",
+    ] {
+        let (_, mut value) = stable_values();
+        match change {
+            "duplicate" => {
+                value["bundled_content"]["receipt"] = value["bundled_content"]["manifest"].clone()
+            }
+            "manifest-size" => {
+                value["bundled_content"]["manifest"]["bytes"] = json!(4 * 1024 * 1024 + 1)
+            }
+            "receipt-size" => value["bundled_content"]["receipt"]["bytes"] = json!(64 * 1024 + 1),
+            "review-size" => {
+                value["bundled_content"]["review"]["bytes"] = json!(MAX_RELEASE_BYTES + 1)
+            }
+            _ => {
+                value["bundled_content"]["receipt"]["path"] = json!("content/circular-receipt.json")
+            }
+        }
+        assert!(
+            decode_evidence(&serde_json::to_vec(&value).unwrap()).is_err(),
+            "{change}"
+        );
+    }
+}
+
+#[test]
 fn only_schema4_accepts_checked_non_observational_source_contracts_without_promoting_observations()
 {
     let (mut i, mut e) = stable_values();
@@ -634,6 +684,7 @@ fn only_schema4_accepts_checked_non_observational_source_contracts_without_promo
         i["schema_version"] = json!(schema);
         e["schema_version"] = json!(schema);
         if schema == 3 {
+            e.as_object_mut().unwrap().remove("bundled_content");
             e.as_object_mut()
                 .unwrap()
                 .remove("candidate_installer_sha256");
@@ -675,4 +726,65 @@ fn schema4_manifest_ceiling_and_world_scope_do_not_expand_historical_contracts()
     assert!(decode_inventory(&serde_json::to_vec(&inventory).unwrap()).is_err());
     let raw = vec![b' '; MAX_STABLE_RELEASE_BYTES + 1];
     assert!(decode_inventory(&raw).is_err());
+}
+
+#[test]
+fn unsigned_preparation_reuses_full_accounting_without_allowing_publication() {
+    let (inventory, mut evidence) = stable_values();
+    evidence["bundled_content"] = Value::Null;
+    evidence["candidate_installer_sha256"] = Value::Null;
+    for row in evidence["checks"].as_array_mut().unwrap() {
+        row["status"] = json!("unverified");
+        row["artifacts"] = json!([]);
+        for field in ["operator", "recorded_at", "environment", "installer_sha256"] {
+            row[field] = Value::Null;
+        }
+    }
+    let (i, e) = decode(&inventory, &evidence);
+    let (target, origins) = (target(), origins());
+    let policy = ReleasePolicy {
+        target: Some(&target),
+        origins: Some(&origins),
+        origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: None,
+    };
+    let prepare = |i: &Inventory, e: &Evidence| {
+        assess_unsigned_bundle_preparation("1.0.0", i, e, &bindings(), &policy).unwrap()
+    };
+    let ready = prepare(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&ready), "{:?}", ready.blockers);
+    assert!(!ready.publication_allowed && !ready.stable_ready);
+    assert!(!BuildPhase::Prebuild.ready(&check(&i, &e)));
+    for mutation in 0..10 {
+        let mut bad = evidence.clone();
+        match mutation {
+            0 => bad["coverage"] = json!([]),
+            1 => {
+                let duplicate = bad["coverage"][0].clone();
+                bad["coverage"].as_array_mut().unwrap().push(duplicate);
+            }
+            2 => bad["coverage"][0]["included_record_ids"] = json!([]),
+            3 => bad["coverage"][0]["included_record_ids"] = json!(["synthetic:1", "invented:2"]),
+            4 => bad["coverage"][0]["source_ids"] = json!([]),
+            5 => bad["coverage"][0]["validation_evidence"] = json!([]),
+            6 => bad["coverage"][0]["unsupported_corrections"] = json!(1),
+            7 => bad["checks"][0]["operator"] = json!("partial pending"),
+            8 => bad["coverage"][0]["status"] = json!("unverified"),
+            _ => bad["production_sha256"] = json!(POLICY_HASH),
+        }
+        let (_, e) = decode(&inventory, &bad);
+        assert!(
+            !BuildPhase::Prebuild.ready(&prepare(&i, &e)),
+            "mutation{mutation}"
+        );
+    }
+    let prerelease =
+        assess_unsigned_bundle_preparation("1.0.0-rc.1", &i, &e, &bindings(), &policy).unwrap();
+    assert!(!BuildPhase::Prebuild.ready(&prerelease) && !prerelease.publication_allowed);
+    assert!(assess_unsigned_bundle_preparation("1.0", &i, &e, &bindings(), &policy).is_err());
+    let mut historical = i.clone();
+    historical.schema_version = 3;
+    assert!(
+        assess_unsigned_bundle_preparation("1.0.0", &historical, &e, &bindings(), &policy).is_err()
+    );
 }

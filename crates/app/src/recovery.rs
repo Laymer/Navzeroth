@@ -92,6 +92,7 @@ pub struct RestoreReceipt {
     pub original_files_retained: bool,
     pub recovery_directory: String,
 }
+type Initializer = Arc<dyn Fn(&SnapshotApplication) -> Result<()> + Send + Sync>;
 struct Candidate {
     id: String,
     path: PathBuf,
@@ -108,6 +109,7 @@ pub struct DatabaseHost {
     candidate: Mutex<Option<Candidate>>,
     planning_jobs: crate::planning_jobs::PlanningJobs,
     telemetry: Mutex<crate::diagnostics::DiagnosticTelemetry>,
+    initializer: Option<Initializer>,
 }
 impl DatabaseHost {
     /// Observe only explicitly wrapped foreground attempts, never watcher/history data.
@@ -176,6 +178,17 @@ impl DatabaseHost {
         &self.planning_jobs
     }
     pub fn start(path: &Path) -> Arc<Self> {
+        Self::start_with(path, None)
+    }
+    /// Initialization runs on the startup worker before application commands can
+    /// observe ready state, and again after a compatible backup is restored.
+    pub fn start_initialized(
+        path: &Path,
+        initialize: impl Fn(&SnapshotApplication) -> Result<()> + Send + Sync + 'static,
+    ) -> Arc<Self> {
+        Self::start_with(path, Some(Arc::new(initialize)))
+    }
+    fn start_with(path: &Path, initializer: Option<Initializer>) -> Arc<Self> {
         let host = Arc::new(Self {
             path: path.to_owned(),
             gate: RwLock::new(Hosted {
@@ -186,6 +199,7 @@ impl DatabaseHost {
             candidate: Mutex::new(None),
             planning_jobs: crate::planning_jobs::PlanningJobs::default(),
             telemetry: Mutex::new(crate::diagnostics::DiagnosticTelemetry::observed()),
+            initializer,
         });
         let worker = host.clone();
         let spawned = std::thread::Builder::new()
@@ -194,6 +208,12 @@ impl DatabaseHost {
                 let opened = Self::open(&worker.path);
                 if let (Ok(mut live), Ok(mut checked)) = (worker.gate.write(), opened.gate.write())
                 {
+                    if let (Some(app), Some(initialize)) = (&checked.app, &worker.initializer)
+                        && let Err(error) = initialize(app)
+                    {
+                        checked.app = None;
+                        checked.error = Some(error);
+                    }
                     live.app = checked.app.take();
                     live.error = checked.error.take();
                     live.checking = false;
@@ -206,6 +226,13 @@ impl DatabaseHost {
             live.checking = false;
         }
         host
+    }
+    fn open_application(&self) -> Result<SnapshotApplication> {
+        let app = SnapshotApplication::open(&self.path)?;
+        if let Some(initialize) = &self.initializer {
+            initialize(&app)?;
+        }
+        Ok(app)
     }
     pub fn open(path: &Path) -> Self {
         let opened = (|| {
@@ -244,6 +271,7 @@ impl DatabaseHost {
             candidate: Mutex::new(None),
             planning_jobs: crate::planning_jobs::PlanningJobs::default(),
             telemetry: Mutex::new(crate::diagnostics::DiagnosticTelemetry::observed()),
+            initializer: None,
         }
     }
     /// The read lease covers the entire operation, including any detached work
@@ -451,7 +479,7 @@ impl DatabaseHost {
             }
             install_candidate(&candidate.path, &self.path)
                 .map_err(|_| fail("Validated recovery candidate cannot be installed"))?;
-            SnapshotApplication::open(&self.path)
+            self.open_application()
         })();
         match install {
             Ok(app) => {
@@ -488,7 +516,7 @@ impl DatabaseHost {
                 let marker_cleanup_failed =
                     rollback_ok && !marker_was_present && cleanup_marker(&marker_path).is_err();
                 hosted.app = if rollback_ok && was_ready {
-                    SnapshotApplication::open(&self.path).ok()
+                    self.open_application().ok()
                 } else {
                     None
                 };
@@ -615,6 +643,62 @@ mod tests {
         assert!(!pending_path(&live).exists());
         assert_eq!(host.status().unwrap().state, "ready");
     }
+    fn wait_started(host: &DatabaseHost) -> DatabaseStatus {
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        loop {
+            let status = host.status().unwrap();
+            if status.state != "checking" {
+                return status;
+            }
+            assert!(std::time::Instant::now() < deadline);
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+    }
+    #[test]
+    fn initialization_finishes_before_ready_and_repeats_after_restore() {
+        let dir = Directory::new();
+        let live = dir.path("initialized.sqlite3");
+        let backup = dir.path("backup.sqlite3");
+        seed(&live);
+        seed(&backup);
+        let attempts = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let count = attempts.clone();
+        let host = DatabaseHost::start_initialized(&live, move |app| {
+            assert_eq!(app.profiles()?.len(), 1);
+            count.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        });
+        assert_eq!(wait_started(&host).state, "ready");
+        assert_eq!(attempts.load(Ordering::SeqCst), 1);
+        let preview = host.inspect(&backup).unwrap();
+        assert_eq!(
+            attempts.load(Ordering::SeqCst),
+            1,
+            "preview cannot reset preferences"
+        );
+        host.restore(&preview.candidate_id).unwrap();
+        assert_eq!(attempts.load(Ordering::SeqCst), 2);
+    }
+    #[test]
+    fn failed_initializer_never_publishes_ready_application_or_changes_profiles() {
+        let dir = Directory::new();
+        let live = dir.path("rejected.sqlite3");
+        seed(&live);
+        let host =
+            DatabaseHost::start_initialized(&live, |_| Err(fail("Synthetic bundle rejection")));
+        let status = wait_started(&host);
+        assert_eq!(status.state, "recovery_required");
+        assert!(host.with_application(|app| app.profiles()).is_err());
+        assert_eq!(
+            SnapshotApplication::open(&live)
+                .unwrap()
+                .profiles()
+                .unwrap()
+                .len(),
+            1
+        );
+    }
+
     #[test]
     fn asynchronous_startup_publishes_ready_service_without_dropping_it() {
         let dir = Directory::new();

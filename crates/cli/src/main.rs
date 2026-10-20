@@ -226,6 +226,12 @@ fn main() -> ExitCode {
         return ExitCode::from(azeroth_local_data::media::worker_entry() as u8);
     }
     match args.as_slice() {
+        [command, rest @ ..] if command == "assemble-bundled-content" => {
+            azeroth_cli::bundled_content::run_assembly(rest)
+        }
+        [command, rest @ ..] if command == "check-bundled-content" => {
+            azeroth_cli::bundled_content::run(rest)
+        }
         [command, rest @ ..]
             if command == "bundle-receipt-sign"
                 || command == "bundle-receipt-assemble"

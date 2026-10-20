@@ -20,3 +20,9 @@ image = { version = "=0.25.10", default-features = false, features = ["png"] }
 [dev-dependencies]
 # Pinned test-only property testing; deterministic seeds live in the tests.
 proptest = { version = "=1.12.0", default-features = false, features = ["std"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem"] }

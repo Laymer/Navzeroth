@@ -1,0 +1,28 @@
+{
+  "resource_method": "os.wait4 exact child process",
+  "command": [
+    "/tmp/navzeroth-stable-inventory/target/release/azeroth-cli",
+    "release-materials",
+    "--root",
+    ".",
+    "--version",
+    "1.0.0-rc.1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 27.77128480600004,
+  "peak_rss_kib": 5640740,
+  "user_seconds": 24.401988,
+  "system_seconds": 3.151843,
+  "schema_version": 1,
+  "scope": "checkpoint B actual RC material preview; not bundle acceptance",
+  "tested_source_commit": "b5f88d4262b7fef886e4c9f7db50f1cc4cff6bf6",
+  "platform": "shared Linux/WSL2",
+  "preview_sha256": "4babe88b94e5a604722006ee699240bb0b4b135fbcb28c4b914f4f9e93a1f3e2",
+  "independent_file_validation": {
+    "files": 82,
+    "bytes": 395722450,
+    "method": "separate bounded 64KiB stream SHA256/length checks on every selected input; exact admitted pack revisions/scopes checked",
+    "status": "pass"
+  },
+  "limitations": "No installer, actual signed receipt, native Windows run or ordinary-PC performance claim. Preparation readiness is false."
+}
