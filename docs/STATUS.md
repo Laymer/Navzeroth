@@ -31,6 +31,8 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V17 result (run 39603870404): CI, coverage, source parity and Pages passed; the Windows package failed. Six hosted acceptance rows passed (including offline), HOSTED-UPGRADE-RC1 failed with the RC1 installer exiting 2 right after the 1.0.0 uninstall, HOSTED-DOWNGRADE-REFUSAL did not run, and owner smoke and the nine canonical rows remain unverified. The likely cause is that the uninstall wait ignored the registry entry; the repair is in PR 268 and unverified on a hosted runner. Evidence is archived under release/history. Next: review and merge PR 268, then a V18 candidate. No main merge, tag or publication. [Handoff](handoffs/2026-10-21-v17-upgrade-failure.md).
+
 V17 signed315cd94b root/tooling independently pass signatures, OWN84resource
 assemblies/defaulttrust and89evidence/twopack prebuild with EXACT9pending only.
 Prepared2ff1d868 committed beforekeys; independent review356paths and reproducible

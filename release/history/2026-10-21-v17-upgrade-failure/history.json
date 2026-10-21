@@ -1,0 +1,142 @@
+{
+  "candidate": "8b12aec1bb28bdb35a3014c365ec500da8876af0",
+  "actual_checkout": "7361c873a1ba0c3366703917033f7397c74d07c3",
+  "scope": "Actual V17 final package FAILURE (run 39603870404). Six hosted passes including offline; HOSTED-UPGRADE-RC1 failed (RC1 installer exit 2 about 1 s after the 1.0.0 uninstall); HOSTED-DOWNGRADE-REFUSAL never ran; owner smoke unverified. Case source_commit is the pull request merge ref; candidate is the PR head. Continue-on-error step conclusion is not the producer outcome. Recovery passed in 774.6 s.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-first-start.json",
+      "bytes": 11523,
+      "sha256": "96167db2df94bff9794bee0bdd1cecbde40e0163be98c2cfcf09376e2dc74ea1"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-install.json",
+      "bytes": 751,
+      "sha256": "bcb5165464e3545e33199fa92bfbcd20f6d44422db44b0e105ec821342a2efe8"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-offline.json",
+      "bytes": 11793,
+      "sha256": "d56d3c14251b8982b5a9eb89bd2bca0028344166baf0be1819f88a5648692a39"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-performance.json",
+      "bytes": 12714,
+      "sha256": "76d7b6373f320da64644fda8e3a97d46843d03c0c6ff64f9e00b237853e46e9f"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-persistence-recovery.json",
+      "bytes": 23336,
+      "sha256": "606049bbda74a862259bdcada7eac4fdf490380d2ffe589a7e3b2819573f4eb9"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "7a02e49304955f55613e2b3edf2ff6897946da282b58e10cdd4a5d6743cf64a6"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/hosted-upgrade-rc1.json",
+      "bytes": 777,
+      "sha256": "7f34a065925bc4c9a4166853501810ea7d97fd71652ddfa38b63a57c1e2d452a"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/candidate-manifest.json",
+      "bytes": 17187,
+      "sha256": "6a15c4e908855fa6e14279d8bd31cd6ddab4621a7e27b4dd273c26e5d61e3cad"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/fresh-8f2ac827b08042e39fed9f40db987df1.json",
+      "bytes": 9875,
+      "sha256": "0cd348c94b5db221ac69d6f458ac72e397d2364f9e5f6cef869143f339ebb487"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/fresh-8f2ac827b08042e39fed9f40db987df1.json.progress.json",
+      "bytes": 2690,
+      "sha256": "e617bb0043b3b1ba2eae920f6261ad29819643559286f470f1955ca723d6827a"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/offline-efa7edbf568746809d9f52dc9405b5f5.json",
+      "bytes": 9878,
+      "sha256": "f8df93b65281e217ace10b50a265929bb05212e5257457a6a8fb7c37f9a9b9d0"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/offline-efa7edbf568746809d9f52dc9405b5f5.json.progress.json",
+      "bytes": 2700,
+      "sha256": "c879bda68d503bc8767f7554f2d60ce7e95861dbb12fdaf6fb49814480cf5e07"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/recover-585c5426b57a4fd4b93b60e70696755e.json",
+      "bytes": 10726,
+      "sha256": "b4d5987d196529bef5f92ee7753e167b6c7cbd18e7c2bdb11c1ac36e79305093"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/recover-585c5426b57a4fd4b93b60e70696755e.json.progress.json",
+      "bytes": 2694,
+      "sha256": "61ed10eaeb3c6e657eb0d97fcdde32a12d7930e9d98dd5ccea3860beb7371c5e"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/restart-08b322a102974860a9bec8b6d1a8dff3.json",
+      "bytes": 9876,
+      "sha256": "ddf488658bfe1ce385139eb88d19eeefa1bc5f10bb78dda7623932f28ab9ad70"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/restart-08b322a102974860a9bec8b6d1a8dff3.json.progress.json",
+      "bytes": 2700,
+      "sha256": "e51b9507b34b10913d094054c5d8c2ec6244572bbe7c226e9248fe475c85ecaf"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/cases/raw/state.json",
+      "bytes": 1311,
+      "sha256": "2a8da943ed1fc891f9164d362023ecdeb74fc5a8139c19ff5c59a837118359ae"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/package-full.log",
+      "bytes": 667988,
+      "sha256": "bbf23ca5293f230aefc99c107b9d1e907b6077aeb3c76fa2f5c40b8275a781ec"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/acceptance-evidence.json",
+      "bytes": 27972983,
+      "sha256": "ce4ab79d1b964b6b25f33b344633e3013f0360bdad52d7818bcd2478889f3053"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-first-start.json",
+      "bytes": 11523,
+      "sha256": "96167db2df94bff9794bee0bdd1cecbde40e0163be98c2cfcf09376e2dc74ea1"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "bcb5165464e3545e33199fa92bfbcd20f6d44422db44b0e105ec821342a2efe8"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-offline.json",
+      "bytes": 11793,
+      "sha256": "d56d3c14251b8982b5a9eb89bd2bca0028344166baf0be1819f88a5648692a39"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-performance.json",
+      "bytes": 12714,
+      "sha256": "76d7b6373f320da64644fda8e3a97d46843d03c0c6ff64f9e00b237853e46e9f"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 23336,
+      "sha256": "606049bbda74a862259bdcada7eac4fdf490380d2ffe589a7e3b2819573f4eb9"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "7a02e49304955f55613e2b3edf2ff6897946da282b58e10cdd4a5d6743cf64a6"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/recorded-overlay/evidence/hosted-upgrade-rc1.json",
+      "bytes": 777,
+      "sha256": "7f34a065925bc4c9a4166853501810ea7d97fd71652ddfa38b63a57c1e2d452a"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-upgrade-failure/workflow.json",
+      "bytes": 11956,
+      "sha256": "c05f29adf7eff99d1ffe341d4707ca45da7009e1e3620495aa3fa99d28fe1eb0"
+    }
+  ]
+}
