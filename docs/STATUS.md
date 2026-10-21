@@ -31,6 +31,13 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V16 local integration ac45a4f4 includes reviewed PR265 storage repairs. Actual full
+recovery287.96s and freshly rebuilt functional75.65s passed on shared Linux; all
+strict assertions retained. Combined475tests and allfivefiles>=90percent PASS.
+Old evidence archived; nine canonical observations remain unverified. Next fresh
+public review/receipts and complete hosted candidate, then exactmain/draft gates.
+[Current handoff](handoffs/2026-10-21-storage-runtime-v16.md).
+
 V15 final: CI/sourceparity/coveragePASS; Windowspackage39500462035FAIL at recovery
 check_database pending under unchanged1200s bound, after restoreIPC completed.
 FourhostedcasesPASS, persistence-recoveryFAIL, three latercasesNEVERRAN/ownerunverified.
