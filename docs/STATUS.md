@@ -31,6 +31,13 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V17 local reviewed offline repair/probe integration7ac0b1a5: actual hosted tiny
+probe39602331404 passed all four original adapter restorations. Native mocks and
+independent reviews passed. Full installed-app acceptance remains pending; V16
+failure retained. New source metadata prepared, nine canonical rows unverified.
+Next independent review/receipts and fresh candidate gates; no mainmerge/tag.
+[Current handoff](handoffs/2026-10-21-offline-candidate-v17.md).
+
 V16 final: CI/source/coveragePASS; Windowspackage39586958727FAILoffline adapter
 restoration. FivehostedcasesPASS includingrecovery1187.756s, offlineFAIL, RC1upgrade/
 downgradeUNRUN, ownerunverified. ActualproduceroutcomeFAIL despite continue-on-error
