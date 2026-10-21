@@ -1286,3 +1286,45 @@ checks/sourceparity/Windows/coverage. Fresh exact resulting-main stability+gates
 tag; independently verified draftinstaller before mandatory ownerWindows smoke.
 All9canonical observations remain unverified. Main807ef674, PR239draft, generated243
 remains deferred, original44df/unrelateduntracked preserved. No stabletag/publication.
+
+## V16 signed candidate continuation (2026-10-21)
+
+Reviewed PR265 head163a5193 normally integrated ac45a4f4; tested source
+ac45a4f4a3552783242e4785840119db71d9cee7, production
+23b4f54dbd7c567c727a5c2431c332a49f8e3b0b79f3423fd27c95d6dbac1535/3129entries.
+Strict decode, SQL-validated duplicate cache and streaming canonical hash preserve
+all historical/destructive checks. Root/world/desktop independent review attribution
+is recorded in the repair handoffs; world authored only the cache scope. Combined
+475tests/0fail/3ignored and exact90percent production gate on allfivefiles passed.
+Actual Linux recovery287.96s/12304676KiB versus prior347.80s/12508668KiB; root fresh
+functional75.647942633s/6205204KiB passed, proof f3610610. Shared uncontrolled host,
+not Windows or ordinary-PC acceptance. Old signed, functional and failed hosted
+evidence preserved before replacement; V15 fourpasses/recoveryfailure/threeunrun
+and ownerunverified remain historical.
+
+Publicreview9518f6b7:149799B/c7cdb2a72ea1a279a0a532d15b583c2aebaab9ecf5a31772303896155f14ee08,
+294refs/285unique actual+Git/LFS independently verified by root and desktop. Desktop
+independently cleared composition854b and reproduced actual optimized preview/pure
+preparation at eb553. Root actual documented preparation used freshly rebuilt debug
+CLI. Both produce84resources395873153B;83nonreview resources identicalV15. Manifest
+17187B/8f1a184800a5a34f8d69e554081a234e7d3b699788c1223935ed6501bdf170d3;
+identity528B/e8eb0c6b1fbed2ea58c890611c83ff24633573e608b285ca5a9df16b65e904bf.
+Prepared identities committed32e382c83ff1ae657262650efb23829aa9cd81d0 BEFOREkey use;
+root and tooling independently recorded expected identity before receipt. Signed
+closure1a43bf1c7aacf4309dffc03a435717fb2378e329 receipt1074B/
+c35d608c7122cec24dcba0cee1f13edbad09e5eca046f76101d8f103a340da42.
+Both keys remain operator-controlled outsideGit; signature binds independent review
+evidence without claiming independent key custody. Installer explicitlyunsigned.
+
+Root and tooling each independently verified crypto, own distinct84resource bundle,
+DEFAULTcompiled trust and sourceprebuild:89evidence files/twopacks/buildtrue,
+stablefalse/publicationfalse and EXACT9pendingobservation blockers only. Tooling
+additionally streamed allsource+assembled resources and exact86-filetree. Reports
+/tmp/navzeroth-{stable,tooling}-v16-{crypto,assembly,compiled-check,readiness}.json;
+toolingindependent-audit/source-pins include exact identities. No checks promoted.
+
+Only three unpinned coordination docs change after signedclosure; final exacthead
+review precedes ONE candidatepush. Await fresh allten/source/Windowschecks on that
+commit, exact resulting-main stability beforetag, verifieddraft and ownerinstaller
+smoke, then publication/publicdownload verification/website. Main807ef674 remains
+unchanged, PR239draft, unrelated generated243deferred; no tag/publication yet.

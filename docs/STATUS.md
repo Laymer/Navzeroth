@@ -31,6 +31,14 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V16 signed closure1a43bf1c independently passes root/tooling crypto, separate84-resource
+assembly/defaulttrust and sourceprebuild89evidence/twopacks/EXACT9pending. Prepared
+32e382c8 committed beforekeys; publicreview285unique refs; desktop independently
+reproduced identities. Reviewed265 runtimeac45 actualfullpack functional/recovery
+PASS on Linux; freshWindows/allten/source gates still required. Next finalexacthead
+review/onecandidatepush, then resultingmainstability and verifieddraftownersmoke.
+No tag/publication/mainmerge; historicalV15 failure retained.
+
 V16 local integration ac45a4f4 includes reviewed PR265 storage repairs. Actual full
 recovery287.96s and freshly rebuilt functional75.65s passed on shared Linux; all
 strict assertions retained. Combined475tests and allfivefiles>=90percent PASS.
