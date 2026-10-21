@@ -1,0 +1,35 @@
+name: Hosted Windows offline adapter engineering probe
+# Opt-in diagnostic only. No protected gate, product build or acceptance result.
+on:
+  push:
+    branches: ['verify/offline-adapters-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: offline-adapter-probe-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-adapter-engineering-probe:
+    name: Offline adapter engineering probe (not acceptance)
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Preserve exact source line endings
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+          persist-credentials: false
+      - name: Probe real adapter disablement and exact restoration
+        shell: pwsh
+        run: ./scripts/windows/Probe-HostedOfflineAdapters.ps1 -OutputDirectory "$env:RUNNER_TEMP/offline-adapter-probe"
+      - name: Retain bounded engineering diagnostics after restoration
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: offline-adapter-engineering-probe-${{ github.sha }}
+          path: ${{ runner.temp }}/offline-adapter-probe/
+          if-no-files-found: warn
+          retention-days: 7
