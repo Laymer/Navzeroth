@@ -31,6 +31,13 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V17 signed315cd94b root/tooling independently pass signatures, OWN84resource
+assemblies/defaulttrust and89evidence/twopack prebuild with EXACT9pending only.
+Prepared2ff1d868 committed beforekeys; independent review356paths and reproducible
+identities. Actual tinyhostedprobe passed; full installed acceptance still pending.
+Next exactfinalreview/onecandidatepush and all applicable gates; no tag/publication.
+
+
 V17 local reviewed offline repair/probe integration7ac0b1a5: actual hosted tiny
 probe39602331404 passed all four original adapter restorations. Native mocks and
 independent reviews passed. Full installed-app acceptance remains pending; V16

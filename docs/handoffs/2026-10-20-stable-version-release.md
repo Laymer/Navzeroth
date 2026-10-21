@@ -1328,3 +1328,40 @@ review precedes ONE candidatepush. Await fresh allten/source/Windowschecks on th
 commit, exact resulting-main stability beforetag, verifieddraft and ownerinstaller
 smoke, then publication/publicdownload verification/website. Main807ef674 remains
 unchanged, PR239draft, unrelated generated243deferred; no tag/publication yet.
+
+## V17 signed offline repair candidate
+
+Reviewed repair266 head567beb34 and probe267 head5d22c5a8 normally compose at
+7ac0b1a50ce77fc73b76b6614570cb7709e60882; production
+77e88f41fca10d12b37beca8eecc305e8f059d3364367ed3a5d076d1b0d51324/3132entries.
+Root actual native helper mocks36PS5/37PS7 and independent world37 passed;
+root/world/desktop probe11mocks passed. The actual dedicated hosted probe39602331404
+passed four original GUIDs, zero-Up marker and restoration2442.646ms. Root and
+tooling independently downloaded/audited exact report/source; this is engineering
+network-control evidence only. Historical V16 five passes/offline failure/two
+unrun cases and ownerunverified remain archived, including recovery1187.756s
+with12.244s margin. No original hidden adapter cause is asserted.
+
+Runtime/content and actual full-pack functional proof retain true ac45 execution.
+Only five helper/probe workflow/test production paths change. World reviewe117f494
+binds366FileRefs/356unique paths; root and desktop independently verify them.
+Public review174405B SHAa55dfa2c6879d95bba547dbd259742ce319d056469a577e5831f053d3e479c24.
+Root actual documented preparation and desktop own optimized preview/pureprepare
+produce byte-identical84resources395897759B;83nonreviewresources unchangedV16.
+Manifest17187B SHA6a15c4e908855fa6e14279d8bd31cd6ddab4621a7e27b4dd273c26e5d61e3cad;
+identity528B SHAe2e460884443ffa94ea658ace78a1e8afa6d20a9dacd7e372d670ee46aa02545.
+Prepared2ff1d868 committed BEFORE key use. Root and tooling each fixed independent
+expected identity before signing. Signedclosure315cd94b receipt1074B
+SHA9c5c31e6e13074e2254c766d1b2b9717cb1b8f7c7eef669fd90005460a846412.
+
+Root and tooling separately executed signature verification, OWN assemblies and
+DEFAULT compiled trust checks;84resources/twopacks PASS. Tooling exact86-file
+assembly inventory includes manifest/receipt with no extras. Fresh source prebuild
+checks both PASS89evidence/twopacks with EXACT9pending observations/9blockers only,
+build_readytrue/stable_readyfalse/publicationfalse. Both keys remain operator-owned;
+review-evidence signature binds separately recorded independent review.
+Reports /tmp/navzeroth-{stable,tooling}-v17-{crypto,assembly,compiled-check,readiness}.json.
+No canonical observation promoted. Next exact final review and ONE candidate push;
+all ten protected checks/source/Windows gates, fresh resulting-main stability
+beforetag, independently verified draft then required owner smoke remain mandatory.
+No mainmerge, tag, publication or website deployment.
