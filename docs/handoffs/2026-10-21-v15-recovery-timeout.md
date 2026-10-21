@@ -45,3 +45,11 @@ legacyhash/keyorder/scalar semantics. World independent reviewer; root independe
 reviews and measures final composition. Historical/allrow/destructive-boundary
 validation remains required. No runtime change is yet integrated or claimed faster.
 Main807ef674/PR239draft/generated243deferred; no tag/publication/owneracceptance.
+
+Follow-up measurement constraint: desktop observed warm active-content reads about
+0.94s versus cold45–55s. Root HOLDs proposed appmetadata memoization until targeted
+measurement separates cold strictload from warm inspection; claim is investigation,
+not authorization to ship an unmeasured optimization. Tooling owns optimizedtarget
+exclusively for baseline/after diagnostic; root will independently review results.
+Only idle root-owned debug incremental cache3.2GiB was removed to recover space;
+all binaries, profiles and evidence retained. No production change integrated.

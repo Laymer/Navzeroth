@@ -31,6 +31,15 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V15 final: CI/sourceparity/coveragePASS; Windowspackage39500462035FAIL at recovery
+check_database pending under unchanged1200s bound, after restoreIPC completed.
+FourhostedcasesPASS, persistence-recoveryFAIL, three latercasesNEVERRAN/ownerunverified.
+Signed/raw/coverage history preserved30657061/9e93146a before repairs. Toolingowns
+narrow duplicatevalidation/streamedhash investigation; desktopmeasures coldload vs
+warmmetadata before any cachechange; world/root review. No tag/publication/mainmerge.
+[Failure and next task](handoffs/2026-10-21-v15-recovery-timeout.md).
+
+
 V15 signed closure71cdb independently passes root/tooling crypto, own84-resource
 assemblies/default compiled policy and89-evidence/two-pack prebuild; EXACT9pending.
 Reviewed test-only264 fixes synthetic startup assumption, preserving production
