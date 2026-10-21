@@ -1,0 +1,97 @@
+{
+  "candidate": "764fcac347f0c75ee628df619e9bd224ebf00b6f",
+  "actual_checkout": "277a6e6ab6160d7e16b00cfe711fbf100103841e",
+  "scope": "Actual three collectors and final exact90percent gate pass:276measured/305inventory, no missing/below/errors. Tooling independently audited receipts/streamed LCOV; root verified audit/verdict hashes and recomputed all276integer thresholds. Not installed stable acceptance.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v16-coverage/linux/entrypoint-summary.json",
+      "bytes": 315,
+      "sha256": "5a60b0cb3e54642a6bf2777691e80cb8e72cf69bfb8d4a87d61c6272e30e98a4"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/linux/inventory.json",
+      "bytes": 202378,
+      "sha256": "03d35aecab9477a18c274c73977f902a0a418b9b6d7d2baef919a11e6de5c140"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/linux/rust-receipt.json",
+      "bytes": 41617,
+      "sha256": "d059c3342aa57fd031bb242bab561298d7ce20dde24483e0a24b113a78f92bf8"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/typescript/configuration-receipt.json",
+      "bytes": 34411,
+      "sha256": "a19db219f1bf0f2a58437a3e7d6493b03706eb09bfc54879165cc6fb5bddc9ec"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/typescript/inventory.json",
+      "bytes": 202378,
+      "sha256": "03d35aecab9477a18c274c73977f902a0a418b9b6d7d2baef919a11e6de5c140"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/typescript/typescript-receipt.json",
+      "bytes": 34396,
+      "sha256": "f32be027ff7f3f960e174d694275ae892eaa7ec5b4fa45861ae6855eeca3a8ab"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/typescript/v8/coverage-summary.json",
+      "bytes": 29559,
+      "sha256": "31fc05143f261280fb3f82eeffcf50ecc9640d5b7f7e6041e4340eb0377ce485"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/verdict/per-file-verdict.json",
+      "bytes": 50732,
+      "sha256": "ae580416661d5343e17c346c2056a9e2c582d1d96ce11e46ee86dcd4015dfe45"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/commands.json",
+      "bytes": 9561,
+      "sha256": "b75c6cc8ef50690434577a917650fe1437953a1105a01c911a4ed5ef734277d3"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/entrypoint-summary.json",
+      "bytes": 316,
+      "sha256": "67c6d23e8adb634b6ddc0c8d7856be6019005e9e06322bbdbbeb8441c1ef87ad"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/inventory.json",
+      "bytes": 202378,
+      "sha256": "03d35aecab9477a18c274c73977f902a0a418b9b6d7d2baef919a11e6de5c140"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/logs/coverage-bundle-assembly.log",
+      "bytes": 434,
+      "sha256": "38adcdfaf99b11e68539be8774252cdfe7469f75577383f1ebbbfb046373b2d9"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/logs/coverage-bundle-inputs.log",
+      "bytes": 2233,
+      "sha256": "6672c2cf972c270f7d509bf9fed114125eae839ebfa74c8f9ef6b77587e3013a"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/logs/coverage-bundle-verification.log",
+      "bytes": 405,
+      "sha256": "200b29dc8644ab6aa6eb919bed196df345739aa2c0c4fe24877ca7344dd80e36"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/native-smoke.json",
+      "bytes": 25958,
+      "sha256": "700bac9435ae9a69e9e38e69dfd37495d7bfc125923173a76bff3363bb53655e"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/raw-profile-manifest.json",
+      "bytes": 109900,
+      "sha256": "1a15f9add3965737bedfe5724320d8b88548b2c6b4b6247e961c24387ef3e621"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/windows/rust-receipt.json",
+      "bytes": 44792,
+      "sha256": "cefb026a1240d2cecd0d246c416e27466321603c38c2e4c87de785364091ac5a"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-coverage/independent-audit.json",
+      "bytes": 5792,
+      "sha256": "a23ea633de15c77a4637863aa3a167cf1811b9e4db4d46c4e527f2a5c0ce9e9b"
+    }
+  ]
+}
