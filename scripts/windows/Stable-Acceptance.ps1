@@ -126,8 +126,12 @@ try {
         $after=Workload 'restart'
         return @{baseline_version='1.0.0-rc.1';baseline_installer_sha256=$BaselineSha256;attempted=$true;timed_out=$false;installed_version_after=$Version;exit_code=$attempt.ExitCode;raw_report=$after.raw}
     }
+} catch {
+    $suiteFailure = $_
+    throw
 } finally {
-    try { Remove-OwnedInstallation } finally {
+    # A failed cleanup must not replace the case failure that is already propagating.
+    try { Remove-OwnedInstallation } catch { if ($null -eq (Get-Variable suiteFailure -Scope Script -ValueOnly -ErrorAction SilentlyContinue)) { throw }; Write-Warning ('Cleanup also failed: '+$_.Exception.Message) } finally {
         $env:APPDATA=$previousAppData
         Remove-ItemProperty -LiteralPath $policyPath -Name 'azeroth-desktop.exe' -ErrorAction SilentlyContinue
     }
