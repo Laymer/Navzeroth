@@ -5,7 +5,7 @@
   "status": "generated_public_identities_only_not_active_receipt_policy",
   "control": "Both private keys are held by the local repository operator. Distinct keys do not establish independent control or independent review.",
   "identities": [
-    { "id": "stable-1.0.0-operator", "purpose": "operator attestation", "public_key_hex": "3d407b80a7bd6275e69993c179bb08df6837037c94e1a8af57d284151b8007f4" },
-    { "id": "stable-1.0.0-review-evidence", "purpose": "bind independently recorded review evidence; not proof of reviewer identity", "public_key_hex": "26119b03b6b8cee1d1f348e06c8c4dd991a104afcec9740926a3e6dda65f5995" }
+    { "id": "stable-1.0.0-operator-r2", "purpose": "operator attestation", "public_key_hex": "99d1e684161ddecf5bbad4b8e478d9448e626a6f53ebd80f55d1f467d13e15d1" },
+    { "id": "stable-1.0.0-review-evidence-r2", "purpose": "bind independently recorded review evidence; not proof of reviewer identity", "public_key_hex": "a72b6350394e1e6c9f093c12b26b74a665005add969bb8ac5f7d2acd6fccc737" }
   ]
 }
