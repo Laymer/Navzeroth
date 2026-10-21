@@ -1,0 +1,37 @@
+{
+  "source_commit": "7ac0b1a50ce77fc73b76b6614570cb7709e60882",
+  "run_id": 39602331404,
+  "scope": "Actual disposable hosted adapter engineering probe passed for all four originally-Up adapters. Not offline application acceptance. Root native helper tests use mocks only; PS5 36 and PS7 37 passed.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-offline-adapter-probe/probe.json",
+      "bytes": 701,
+      "sha256": "19fb95db8557cf5cf556cb2e10188a27e6bf976810809ab8c8996ce30cdb763a"
+    },
+    {
+      "path": "release/history/2026-10-21-offline-adapter-probe/offline-marker.txt",
+      "bytes": 30,
+      "sha256": "7814fbc09389a32b5799233646008d3b56e64ffacb7488930a41ead02ef80bac"
+    },
+    {
+      "path": "release/history/2026-10-21-offline-adapter-probe/workflow.json",
+      "bytes": 1674,
+      "sha256": "41aae0a26409ce962403bad619d9b8d463d1de2a8d1ae903e3e30553916ee88c"
+    },
+    {
+      "path": "release/history/2026-10-21-offline-adapter-probe/workflow.log",
+      "bytes": 57316,
+      "sha256": "7a4cc800127ca7229345a631c7a7c69160ddf147f5c4816194cbc9ee43e5ed20"
+    },
+    {
+      "path": "release/history/2026-10-21-offline-adapter-probe/root-native-ps5.log",
+      "bytes": 2535,
+      "sha256": "fa5b0a7f562267bc6b8b158bbae0cc81dd6f2996028a2af4f43a56e9cb8e3973"
+    },
+    {
+      "path": "release/history/2026-10-21-offline-adapter-probe/root-native-ps7.log",
+      "bytes": 2678,
+      "sha256": "771444b5774b6d010b437b64f5f04facdddb34f73b591d0b10cd22aa0def3248"
+    }
+  ]
+}
