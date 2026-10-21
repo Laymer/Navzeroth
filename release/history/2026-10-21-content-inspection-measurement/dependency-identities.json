@@ -1,0 +1,527 @@
+[
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libadler2-24dc1aad05db5f65.rlib",
+    "bytes": 25084,
+    "sha256": "0824c5435840a525d703f2c086005483be4f72461174286de47bbc866608b208"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libautocfg-ee29d917e79a7208.rlib",
+    "bytes": 653694,
+    "sha256": "81a0ba8b3a8c903b9143192660757af712bdb345a7b4ad7badf00e73d480789d"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_app-1aec9d38ffbe582a.rlib",
+    "bytes": 28709994,
+    "sha256": "1000a1bd96ab627b9bbdef34332fd49b2ce1a8f9510819fa8f23c75effd8d981"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_app-56cefb75fabdc75b.rlib",
+    "bytes": 29035120,
+    "sha256": "83f326edb70b02d412a27451337bf1bf6d4d9ac757b5393bcd2f1b818ab59251"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_app-594e8ebef44c323e.rlib",
+    "bytes": 29019482,
+    "sha256": "7fc733fac2bc60c71ccdfb3c5973600611eb6f572106fb7db5d71e9b40ec331c"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_app-b685c6edaece0b5a.rlib",
+    "bytes": 28350386,
+    "sha256": "3d69d3ee6738ab65124b8d2e3b1f53a874503ffcf214888f21c1156df3eda50e"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_cli-1dab8f3565cd24a2.rlib",
+    "bytes": 17025272,
+    "sha256": "7b1b50253b3640038d2a24df6c4e9046be93ce81d1fbe1cfe7994ed98708c718"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_cli-2a502f5601a689b1.rlib",
+    "bytes": 17531092,
+    "sha256": "6f14f4367d0cfbaa5b7006eea8154d2fa842245884b2dd310b2ecbcf415f9b26"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_cli-464d41ef766cbe90.rlib",
+    "bytes": 17024484,
+    "sha256": "bef20de3487cedd3ccb105f96c7d6a10a327ead4609a242c118802eebecce549"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_cli-8548bf8032b08b28.rlib",
+    "bytes": 17528372,
+    "sha256": "05e6d07078c71dbd86791533e2b8fd4e9b2392d7b0382b2b66369c7f3749ab69"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_core-3d18c778503ad162.rlib",
+    "bytes": 54163726,
+    "sha256": "17782c037b4f62e4ba6be9b50e4348d3a68cb13eeab3de0cc7c3a47babc6faf9"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_core-8e7f2b79f4efbb73.rlib",
+    "bytes": 53883864,
+    "sha256": "b169abad55dec74f967e4b4e75766dacb099d89dd43bff99d4eafbb44e78da77"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_ingest-01c9d1e942058f3e.rlib",
+    "bytes": 12926254,
+    "sha256": "bc78ee9af17720904765af9c24266879b909c1620ae6f8112f5f4b085b32839e"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_ingest-26efa0cd43a95b7c.rlib",
+    "bytes": 12953978,
+    "sha256": "8df56179474f7fd1abdc7c90095327650b3ba3714f8b9ac3cc1ef6e10ace5a60"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_ingest-d4efeeafaded8ca2.rlib",
+    "bytes": 12948336,
+    "sha256": "80a09f597d0e18547f43a9c3ad5e09fdd16b7f0a629af8d87fac3b97f4e30909"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_local_data-0656e0011901e149.rlib",
+    "bytes": 55997414,
+    "sha256": "d9859b5289c4ecea7c24be94ace90e73b4c5b5787b35a1c968b7d022a895de2e"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_local_data-0c36d5fd22cc3eb3.rlib",
+    "bytes": 56685882,
+    "sha256": "f1fed4c353a9b91947b23aa5dc91e8d8758020ae872eaf56fab7528ea6ce080f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_local_data-422d247175196c94.rlib",
+    "bytes": 56687524,
+    "sha256": "5552e243a8a6250a75defe1f1e5ca098a84f9a3866fccd5571564d588726dc3b"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_local_data-f38d48009aeb4592.rlib",
+    "bytes": 56657964,
+    "sha256": "4b44eefda8cefe902e5a246856960b4340f16a97fe700441e1a537265f0b5752"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_storage-4a3c24e0b5fc7882.rlib",
+    "bytes": 19569476,
+    "sha256": "705f860910e1bc337426dfd5480c2ba2852cca905d6e3866321f512b575bc7ee"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_storage-a4991bdf913149b5.rlib",
+    "bytes": 19400494,
+    "sha256": "48fb2e6a4ae2d347b95addbeaa804a27b407db86280f2af80b2e080f441be6fe"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libazeroth_storage-ee8b99a7d1ab7d9b.rlib",
+    "bytes": 19579304,
+    "sha256": "a507660c675de13aa4c1e79b9895f8d6d22f05c30ed02a548904c1bb1612c3a5"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libbitflags-199cf991ab2e2a73.rlib",
+    "bytes": 46086,
+    "sha256": "d427943d0f9c717fa8af603ec7fb5ef8aa7a9f5e6bdea86d7c00ab6a44b22bff"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libbitflags-9781f1f1219a69ff.rlib",
+    "bytes": 260754,
+    "sha256": "c2e7ecef0b06aae60fbe4f1e38b0ab9692a8619cf96e770197232ba8fd0b55ab"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libblock_buffer-8e0cd294d31e9dcc.rlib",
+    "bytes": 69094,
+    "sha256": "4b16fb581ca7e212eef8b33d69bf8b06961a957edcea9c4ace39dbb6ce1c72be"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libblock_buffer-de3598121611a3f5.rlib",
+    "bytes": 53558,
+    "sha256": "5a8be9d98f7fb21c3c8e4133030db4e855b5b1e6ea47e73853ac8e5b2790b0eb"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libbytemuck-5ec2126a477c2b34.rlib",
+    "bytes": 661614,
+    "sha256": "33151889a08c584c322463d293ded6120eedbc6e1f8c69a80d00a842a4a58e23"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libbyteorder_lite-021a806aadaca1f9.rlib",
+    "bytes": 409384,
+    "sha256": "8e3331378acf5e560434370ad5654c8b4e9349fb00a365ede18c95aaa69e649c"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcc-4bacb962205bbc6b.rlib",
+    "bytes": 4148944,
+    "sha256": "948b4b6485f9fc7be513a37ede0e03ec41cdeed7d7938469e33b6d757fcbf8a2"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcfg_if-777e02205acad7e6.rlib",
+    "bytes": 8098,
+    "sha256": "ad8319d4a147031f9a63e7605d660a51ac7ae9833b09f9082c14a31e2c408687"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcfg_if-94db89fda2177de8.rlib",
+    "bytes": 8098,
+    "sha256": "c6bc22246b67666c66218ee9bbbef00f1dfdf206425cd6cb09687d090c078eb6"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcpufeatures-3185d3ba6e5ab6ed.rlib",
+    "bytes": 41572,
+    "sha256": "8ff46275e1fcbe861cf4d27fd552a3ebb9cc7955a72d85948d6663f3a6dc02e0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcpufeatures-33dc65b48e93df46.rlib",
+    "bytes": 41572,
+    "sha256": "afc28363d2fbeeccacf678c80ca65af4c51a39ef4b0f3fb88bc1a2e3a7602949"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcrc32fast-6c723698029d32f9.rlib",
+    "bytes": 90778,
+    "sha256": "d314442546e42dc626ad166a4e31f135042d5225babde69d9fb7a4fcfe13def8"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcrypto_common-5caa30fd05d13dc1.rlib",
+    "bytes": 31450,
+    "sha256": "0261eceeba54f65a01f9137b6c0d9deb4fc39bdaa6e2e14ad0cf73429eba32b0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcrypto_common-e73146fd9c024149.rlib",
+    "bytes": 34634,
+    "sha256": "8b3e1de7d3dd8d212b32ed9641ef560ad5931bc73e91c34e3d9135b6537ca9a9"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcurve25519_dalek-851136579c044054.rlib",
+    "bytes": 1834338,
+    "sha256": "8e2845ebc7129de8859f6e94ff293cab963f8e8482c837af9c136363bacfb2ef"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libcurve25519_dalek_derive-122cdcc4af2332f9.so",
+    "bytes": 3234584,
+    "sha256": "f2e9b2a6f1063724d69807752d4aaa06376d6cdab8b8d0b5d0bc2c2fd40c2df9"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libdigest-26c56454965055dd.rlib",
+    "bytes": 202840,
+    "sha256": "7372d32f1acc212169fdd58a434ec05d5db783b8b056e0ca2a3b4588dbbc4f31"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libdigest-c6bd300a0917eedc.rlib",
+    "bytes": 178688,
+    "sha256": "e8e8b6faa344303a2afe1bc65ce69bd3cb2e61a7d8fe8f0d1df0301839d44520"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libdyn_clone-5ff09eb6a8e4ab79.rlib",
+    "bytes": 41274,
+    "sha256": "f7f6a5bb51fe63ac6e1dd48c6f22f2aca97da076a118d5ef272b159f9a21ae4a"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libed25519-0fccb30c1a8ee061.rlib",
+    "bytes": 52364,
+    "sha256": "286645a6ca73bbfead5c7d101255e6da9ea5b99d3f1e53edc97b59b72ad8f3cf"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libed25519_dalek-490fb7be3f6fa5fd.rlib",
+    "bytes": 164134,
+    "sha256": "c00e22824c3c9b17c4f20a1f87b37b17d0cada9946a068631a24ea22a63062de"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libfallible_iterator-1d9dc843b76a7b8b.rlib",
+    "bytes": 529936,
+    "sha256": "04d61913e4eea82450585870773feea0b27abc293026b4cd1330977a22e04aa6"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libfallible_streaming_iterator-cab636b64d3a3f29.rlib",
+    "bytes": 107260,
+    "sha256": "40c1d581f10ac5534fdf89b9723d0f0acc8b9277847b3ae97caa2c096d116264"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libfdeflate-503eb519a9395ee4.rlib",
+    "bytes": 263882,
+    "sha256": "b83db1b7e6fe42621a12dfa8704edfbb360bae4b600fe0c04644b1a167998a51"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libfind_msvc_tools-67cc5e87f4117557.rlib",
+    "bytes": 254438,
+    "sha256": "2aea9dfcaa5e34ad6c3f8b050edf3e1ec5823acca65a1eb4b3c250b4a1bfc5d0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libflate2-a7cd724761f8e346.rlib",
+    "bytes": 761218,
+    "sha256": "4d7f843b1a5080939d8b20101b1d04fb26c57e701a83932b5cb6103401c52dfc"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libfoldhash-abd3aa13c844053e.rlib",
+    "bytes": 102280,
+    "sha256": "25d17f64621fe78f7117efbc7c9af334eabd765aa69a9d72bbe4c210bf6f6032"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libgeneric_array-14417f87a40f8ab9.rlib",
+    "bytes": 1016332,
+    "sha256": "20ab88dbe00adb23f1462ba7767448f1fac35def4f431ec28985c195281e9588"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libgeneric_array-dd2c43177a873994.rlib",
+    "bytes": 819112,
+    "sha256": "7206da89d2b1e413f4e9711927ff85f542d802dce9d373d690c2f3d386de0a73"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libhashbrown-ff66a6c5dcd9742f.rlib",
+    "bytes": 1550416,
+    "sha256": "5ba36250e551397e271edf4a5ca2be5d0a1cec1330cb2955be9dc38e1e057d6d"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libhashlink-b610e74fb8e9d1bb.rlib",
+    "bytes": 628910,
+    "sha256": "26cd34da402a61e674bd98247cd6125a16e1280b0db8c6a64668b8828c94c4fa"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libimage-14e4f97924678a32.rlib",
+    "bytes": 5626016,
+    "sha256": "a75304dcd3097512724df4120602a673493b3951bcb2f797fbc0be4c5730515e"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libitoa-2b2c5b6868ce4b7e.rlib",
+    "bytes": 107078,
+    "sha256": "aa0b02970396e3481980de734db68f283a737f7620930aa8640249b368e13ad8"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libitoa-441121d0e6b40e98.rlib",
+    "bytes": 87594,
+    "sha256": "d8089638bc38dcb89100d8d861c09c16801369940ba02d11912dea91690dcfae"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/liblibc-92e41b27eba0fdb0.rlib",
+    "bytes": 4498656,
+    "sha256": "3144babbb05b0c58b65f27c6c692c30dd1a19291ba3a3b1fa4ac3f414a1d31a0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/liblibsqlite3_sys-cd51cba31fee9bdb.rlib",
+    "bytes": 3773980,
+    "sha256": "da8bd336247e63677cadde81ba7aa092e112ed3c66c67fd32ab5ecfe331606cc"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libmemchr-5287711cb5f04ebe.rlib",
+    "bytes": 1461532,
+    "sha256": "af70809ba9030822cf3d6fb650085639d1ca13ce8e5db681eff103ce61f1c79e"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libmemchr-7267291fd9ca989e.rlib",
+    "bytes": 1645954,
+    "sha256": "49b61e355dc11773a743850f5687b517d5d65525cb27b509d23fc8c1a45a1bc6"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libminiz_oxide-1608ca7508d71889.rlib",
+    "bytes": 547980,
+    "sha256": "0722e522379c06c1279d9984185564bfa9bd54948f1befe0416b9e9cd200a4c0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libminiz_oxide-b7ec852004a764ce.rlib",
+    "bytes": 524210,
+    "sha256": "69eb38770c9dcba3d50c45766d8b77b8ac28fbea5b04171230892929b6748000"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libmoxcms-e5b829899a49e060.rlib",
+    "bytes": 8701594,
+    "sha256": "3e771fcae60fa4549f59194de23a944b8fe079c7cda9e9530877fc7cc60584c4"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libnum_traits-a1762ec7cad9be16.rlib",
+    "bytes": 2041388,
+    "sha256": "3758d54c6009c585baddcbb707ff118eb3d20b1adc5ff4ec8e611c700e54b6e9"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libpkg_config-5a9271c829db5745.rlib",
+    "bytes": 932352,
+    "sha256": "e8ba4f203aa3180d77c57e2a3d9ed856b91177a8c75b35c27765eb8e7b55c5d6"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libpng-77b26f23cf1c4bb0.rlib",
+    "bytes": 1603376,
+    "sha256": "8006889c65c6f22ab0076e1d3434ca04087cd163cc0465d775177a38f7c2003d"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libpng-ce4629dd0581e966.rlib",
+    "bytes": 1422870,
+    "sha256": "719557089320268ff6a9ef1c111e297ed273a99b012ce50c0b20a29c93619cfc"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libproc_macro2-29b3df8e78d31f9c.rlib",
+    "bytes": 1187548,
+    "sha256": "343b29e2d41d42a73e20c5977439daecf8369ea028031bd5f7b82c00c6acf3bb"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libpxfm-6645d6058c02d2ef.rlib",
+    "bytes": 5399846,
+    "sha256": "70fa299a77548a56331686a4e696678b821cbf27eee66d478aa885fa86e342ca"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libquote-5fe96d8942458552.rlib",
+    "bytes": 506216,
+    "sha256": "47e6c803849559b0e4b68f7a1217fe49772298c9ef681ef96cc70adf802a8bc8"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libref_cast-b3a89d9c34b50cfc.rlib",
+    "bytes": 32854,
+    "sha256": "497e187a48c19574ee2311ca084a5ef3123407cd66a27da0a61eea0d8c1a742e"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libref_cast_impl-a9b6b380909976fa.so",
+    "bytes": 2133376,
+    "sha256": "75ba73a25d71ccdd4a1bc18ffc8856a2fa2e9620d4bad7823e4c0c0613e6360f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/librusqlite-6e67f7d4183d9bb4.rlib",
+    "bytes": 2680556,
+    "sha256": "8e2328ee211fdee6be8dd20d19d7d76352ba8d2738c157000c4cd4373b0aecc4"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/librusqlite-9d2539870f60d94a.rlib",
+    "bytes": 2480910,
+    "sha256": "4ff6ee6c9fa349bdf4f9be23f4bccae4700d7ca56babbd5fdc39021507500b2d"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/librustc_version-f24369abdad50ce5.rlib",
+    "bytes": 377914,
+    "sha256": "43c8bc21375ad3125118d36f54a5b2ea7b860691dd86b7e096f841a74f990b26"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libschemars-02ad58fc22c4c453.rlib",
+    "bytes": 3052556,
+    "sha256": "ea8175c65bcb505ad1b84a4702ac6cbed8446fffe17f7c53247fe2bafa35ce1f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libschemars_derive-7bfbf4252be17558.so",
+    "bytes": 3947968,
+    "sha256": "32c6a3f19ae8926b0c1d3479d5981ba4ef9f7dc9453add4328995ea3d91b75e2"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsemver-8927c6bb531c2ae3.rlib",
+    "bytes": 356748,
+    "sha256": "dd3dddf8931c12433be3f88097f1669f532350f43846b28460a83c02d9c2edc7"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde-19204a51d770062f.rlib",
+    "bytes": 1007846,
+    "sha256": "5bb34ae10722db2e9d0291447647a17257364310fc606ed150673d827b9ed920"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde_core-1c1993893b298380.rlib",
+    "bytes": 5545378,
+    "sha256": "f98b60c0be0acd5bf37438c84777b4a743636605798b35604f2a3868e6e04572"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde_core-c88ea63ff71699ef.rlib",
+    "bytes": 4986178,
+    "sha256": "6f735b4f5a336ca1839af3b0eb54035d168c7318c1c1825ef923f45bd53a2fdc"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde_derive-4c9f0fef53bf840f.so",
+    "bytes": 3957832,
+    "sha256": "fefc0490ead8c84679c8d274d67a89f14ed0c281dcb9900edcc67639bf45a235"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde_derive_internals-07b8c2402340ab6d.rlib",
+    "bytes": 2055494,
+    "sha256": "d1122a525e8bd4e7a7437b5afc1f0617c096e5b341e614a23e066d9a629d69a6"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde_json-47e2d60717653f16.rlib",
+    "bytes": 2327556,
+    "sha256": "2115791c954670c1f1246dcfb7dd432ece935646c0ecb1a185d57a68615b365f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libserde_json-a8d303e4d8d61fc3.rlib",
+    "bytes": 2371752,
+    "sha256": "431a10602cb9377d95255fa5c5e82768db067c7aac3915f73a05cffda324d1a0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsha2-a6cbaebd853e6a45.rlib",
+    "bytes": 712648,
+    "sha256": "0df0ec47452ece422b5014f37a4045a759cfd6f1fef7b5d932a6672819dcbc7a"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsha2-f39034aaa8dd0486.rlib",
+    "bytes": 873752,
+    "sha256": "c4baab9fb9f2ebd8b6aa5aeef5a4bcb794f2d0bae4aa663113dcc7f56b00b18a"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libshlex-ce3534c012835b30.rlib",
+    "bytes": 122884,
+    "sha256": "f875483999412cdf33e26880e6e4c6766cb93fc4e626bfda92fdf30d3467668f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsignature-ee17222786050c73.rlib",
+    "bytes": 53160,
+    "sha256": "c45ce30e67392155f9ca6fa29519b4157782008d681dc06f697b9737cf74c09f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsimd_adler32-cc4d4f95e2f3fb8a.rlib",
+    "bytes": 634994,
+    "sha256": "db1d32dc9a81719c07d0c173b5db627ed37a65f5053d266185af5a7c8da66cd5"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsmallvec-178c72032267ce81.rlib",
+    "bytes": 337262,
+    "sha256": "9f16f796704b06ace8df2b02f8c374a23cb61339b432b1a432cb07117979e357"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsubtle-6b319aead5e81a29.rlib",
+    "bytes": 133410,
+    "sha256": "52ce8ef662cf5fa947a93c9bda309347c2e8ef79f53a8a96e2e90deab3d113cc"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsyn-87276e2692a2b8ab.rlib",
+    "bytes": 6256496,
+    "sha256": "8ccfc1f93e1af5e458c1a88849dbd56101db3cda745077e293c8d693448ee475"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libsyn-e0f5b28d3f8ab0bf.rlib",
+    "bytes": 9053160,
+    "sha256": "e2984523097a460fa2e8994ab6aec87599fc05a4e7780bfd621e7b5e5d26d259"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libthiserror-75a7bd500aaa692e.rlib",
+    "bytes": 35208,
+    "sha256": "22a90971e9dfe26e30b203a6ae15ecabb517cc92bbdf122869fa03dace9aecb5"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libthiserror_impl-1042dee53cf20c69.so",
+    "bytes": 2956056,
+    "sha256": "60d1d23324fa6ba7294ea3b9b4d6841d3f30692ee44b2a0ff479b5ce017f7b88"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libtypenum-47576d98feca3c85.rlib",
+    "bytes": 2788272,
+    "sha256": "d91d06d70489cb3e7a03da4bba57e462999a9373ce03f539601aa99010e54616"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libtypenum-c917daa6f6e0080b.rlib",
+    "bytes": 2853700,
+    "sha256": "ef0912d4be4392a2f10f808f562d44b7b24cf0cf7b2623465cb63b357adaf270"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libunicode_ident-b76a039454b1fdf7.rlib",
+    "bytes": 52662,
+    "sha256": "906b1e74946fb0eb89ce371c5e64b166cd9630f71e26f8a4efd659b2f74609b3"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libvcpkg-4c7286128f4f1831.rlib",
+    "bytes": 1307568,
+    "sha256": "3acdfa037b58cd3b6143fb701a858d7ddc334fa6d050264a5b7f81f84d13d2f0"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libversion_check-0516b876e198845e.rlib",
+    "bytes": 415352,
+    "sha256": "746fe9dc4fa56526eb9b6002551a4fc2dd5d12daf2cf58622a9d821b2aa9ea85"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libwowdbdefs_rs-699124c231231bf0.rlib",
+    "bytes": 576036,
+    "sha256": "84c2f2cdd998ebdb5e84e00c677f4397532dc8fe30158c6506a26e4a9ea9056d"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libzeroize-563da660ebe35bd6.rlib",
+    "bytes": 413498,
+    "sha256": "8ef266508db8f667e2a3b70eaa757ca7aa7999bb95f5bc88c0845e7ed115fc5f"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libzmij-e847f3dfbecb4932.rlib",
+    "bytes": 447732,
+    "sha256": "b0e225a095f31a153c140a0679009b31231b34f23d94d3a3d34c8c4d2e653e81"
+  },
+  {
+    "path": "/tmp/navzeroth-inspection-baseline-deps/libzmij-fd82fefb04f6bd39.rlib",
+    "bytes": 492184,
+    "sha256": "d9b63ff6e9b445d4da9b811c12f78d804b0ecd8053f883b8cf2b6f71ff04070f"
+  }
+]
