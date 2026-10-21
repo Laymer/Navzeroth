@@ -31,6 +31,14 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+V16 final: CI/source/coveragePASS; Windowspackage39586958727FAILoffline adapter
+restoration. FivehostedcasesPASS includingrecovery1187.756s, offlineFAIL, RC1upgrade/
+downgradeUNRUN, ownerunverified. ActualproduceroutcomeFAIL despite continue-on-error
+stepconclusionSUCCESS. Exactsigned/raw/overlay/checks archivedde9fa566/05fa3988 and
+all52Gitrefsverified. Desktopowns narrowofflineGUID/diagnostics repair; toolingowns
+boundedhostedadapterprobe. No mainmerge/tag/publication; ninecanonicalrowsunverified.
+[Failure and next task](handoffs/2026-10-21-v16-offline-failure.md).
+
 V16 signed closure1a43bf1c independently passes root/tooling crypto, separate84-resource
 assembly/defaulttrust and sourceprebuild89evidence/twopacks/EXACT9pending. Prepared
 32e382c8 committed beforekeys; publicreview285unique refs; desktop independently
