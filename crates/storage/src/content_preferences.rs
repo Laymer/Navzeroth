@@ -86,10 +86,8 @@ impl SqliteStore {
             return Err(invalid("Invalid default application version"));
         }
         let scope = scope_json(&key.scope)?;
-        let tx = self
-            .conn
-            .transaction_with_behavior(TransactionBehavior::Immediate)
-            .db()?;
+        let tx = Transaction::new_unchecked(&self.conn, TransactionBehavior::Immediate).db()?;
+        let cache_read = self.catalog_generation.begin_read(&self.conn)?;
         let previous: Option<(String, i64)> = tx
             .query_row(
                 "SELECT app_version,revision_id FROM bundled_content_defaults WHERE scope_json=?1",
@@ -110,9 +108,10 @@ impl SqliteStore {
             }
             return Ok(false);
         }
-        if content::load(&tx, id)?.key() != *key {
+        if self.cached_catalog(id)?.key() != *key {
             return Err(storage("Stored content identity disagrees"));
         }
+        drop(cache_read);
         content::activate(&tx, id, key.clone())?;
         tx.execute("INSERT INTO content_travel_choices VALUES(?1,1) ON CONFLICT(revision_id) DO UPDATE SET accept_inferred=1", [id]).db()?;
         tx.execute("INSERT INTO bundled_content_defaults VALUES(?1,?2,?3,?4) ON CONFLICT(scope_json) DO UPDATE SET app_version=excluded.app_version,previous_app_version=excluded.previous_app_version,revision_id=excluded.revision_id", params![scope,version,previous.map(|(version,_)| version),id]).db()?;

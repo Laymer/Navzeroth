@@ -192,6 +192,155 @@ mod tests {
         crate::content::FULL_LOADS.with(Cell::get)
     }
     #[test]
+    fn duplicate_staging_retains_strict_sql_catalog_but_new_insert_stays_cold() {
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        let input = input("retained-duplicate", "original");
+        let before = loads();
+        store.stage_content_v2_revision(&input).unwrap();
+        assert_eq!(loads(), before);
+        assert!(store.catalog_cache.borrow().is_none());
+        store.stage_content_v2_revision(&input).unwrap();
+        assert_eq!(loads(), before + 1);
+        let cached = store.catalog_cache.borrow().as_ref().unwrap().2.clone();
+        store.stage_content_v2_revision(&input).unwrap();
+        store.apply_bundle_default("1.0.0", &input.key()).unwrap();
+        let active = store
+            .active_content_v2_revision(&input.key().scope)
+            .unwrap()
+            .unwrap();
+        assert!(
+            matches!(cached, crate::content::ActiveContentRevision::V2(value) if Arc::ptr_eq(&value, &active))
+        );
+        assert_eq!(
+            loads(),
+            before + 1,
+            "duplicate/default/first-active must reuse strict SQL decode"
+        );
+        store
+            .activate_content_with_travel(&input.key(), false)
+            .unwrap();
+        assert!(!store.apply_bundle_default("1.0.0", &input.key()).unwrap());
+        assert!(!store.content_accepts_inferred(&input.key()).unwrap());
+        assert!(store.apply_bundle_default("1.0.1", &input.key()).unwrap());
+        assert!(store.content_accepts_inferred(&input.key()).unwrap());
+        assert_eq!(loads(), before + 1);
+        assert!(store.catalog_generation.read.get().is_none());
+    }
+
+    #[test]
+    fn duplicate_cache_never_admits_conflicting_input_or_changed_provenance() {
+        for sql in [
+            "UPDATE source_records SET document=document||' '",
+            "INSERT INTO source_conflicts VALUES(1,0,'{}')",
+            "UPDATE dataset_manifests SET coverage_document='{}'",
+            "UPDATE dataset_manifests SET content_sha256=printf('%064d',0)",
+            "UPDATE dataset_revisions SET document='{}'",
+        ] {
+            let (mut store, original) = store();
+            store.conn.execute_batch("DROP TRIGGER source_records_no_update; DROP TRIGGER source_conflicts_sealed; DROP TRIGGER dataset_manifests_no_update; DROP TRIGGER dataset_revisions_no_update").unwrap();
+            store.stage_content_v2_revision(&original).unwrap();
+            assert!(
+                store
+                    .stage_content_v2_revision(&input("cache-base", "different input"))
+                    .is_err()
+            );
+            store.conn.execute_batch(sql).unwrap();
+            assert!(store.stage_content_v2_revision(&original).is_err(), "{sql}");
+            assert!(
+                store
+                    .apply_bundle_default("1.0.0", &original.key())
+                    .is_err(),
+                "{sql}"
+            );
+            assert!(store.catalog_generation.read.get().is_none());
+        }
+    }
+
+    #[test]
+    fn duplicate_default_trigger_rollback_and_historical_corruption_remain_checked() {
+        let (mut store, first) = store();
+        let second = input("retained-next", "second");
+        store.stage_content_v2_revision(&second).unwrap();
+        store.stage_content_v2_revision(&second).unwrap();
+        let original_pointer = crate::content::pointers(&store.conn, &first.key().scope).unwrap();
+        let manifest_guard: String = store
+            .conn
+            .query_row(
+                "SELECT sql FROM sqlite_schema WHERE name='dataset_manifests_no_update'",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        store
+            .conn
+            .execute_batch("DROP TRIGGER dataset_manifests_no_update")
+            .unwrap();
+        store.conn.execute_batch("CREATE TRIGGER reject_default BEFORE INSERT ON bundled_content_defaults BEGIN UPDATE dataset_manifests SET coverage_document='{}'; SELECT RAISE(ABORT,'injected default failure'); END").unwrap();
+        assert!(store.apply_bundle_default("1.0.0", &second.key()).is_err());
+        assert_eq!(
+            crate::content::pointers(&store.conn, &first.key().scope).unwrap(),
+            original_pointer
+        );
+        assert!(
+            store
+                .bundle_default_state(&first.key().scope)
+                .unwrap()
+                .is_none()
+        );
+        assert!(!store.content_accepts_inferred(&second.key()).unwrap());
+        assert!(store.catalog_generation.read.get().is_none());
+        store
+            .conn
+            .execute_batch("DROP TRIGGER reject_default")
+            .unwrap();
+        let before = loads();
+        store.stage_content_v2_revision(&second).unwrap();
+        assert_eq!(
+            loads(),
+            before + 1,
+            "rollback/schema mutation cannot preserve the old cache stamp"
+        );
+        store.conn.execute("UPDATE dataset_manifests SET coverage_document='{}' WHERE revision_id=(SELECT id FROM dataset_revisions WHERE revision=?1)", [first.key().revision.as_str()]).unwrap();
+        store.conn.execute_batch(&manifest_guard).unwrap();
+        store.stage_content_v2_revision(&second).unwrap();
+        assert!(
+            crate::recovery::validate(&store).is_err(),
+            "unrelated duplicate must not exempt corrupt historical rows"
+        );
+    }
+
+    #[test]
+    fn duplicate_staging_rechecks_external_file_changes_before_reusing_arc() {
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let path = std::env::temp_dir().join(format!(
+            "navzeroth-duplicate-file-{}-{}.sqlite",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let mut store = SqliteStore::open(&path).unwrap();
+        let input = input("external-duplicate", "original");
+        store.stage_content_v2_revision(&input).unwrap();
+        store.stage_content_v2_revision(&input).unwrap();
+        let before = store
+            .active_content_v2_revision(&input.key().scope)
+            .unwrap();
+        assert!(before.is_none());
+        let writer = rusqlite::Connection::open(&path).unwrap();
+        writer
+            .execute_batch("DROP TRIGGER source_records_no_update")
+            .unwrap();
+        store.stage_content_v2_revision(&input).unwrap();
+        writer
+            .execute("UPDATE source_records SET document=document||' '", [])
+            .unwrap();
+        assert!(store.stage_content_v2_revision(&input).is_err());
+        assert!(store.apply_bundle_default("1.0.0", &input.key()).is_err());
+        drop(writer);
+        drop(store);
+        std::fs::remove_file(path).unwrap();
+    }
+
+    #[test]
     fn travel_activation_and_catalog_lookup_reuse_validated_immutable_catalog() {
         let (mut store, input) = store();
         let before = pair(&store, &input);
