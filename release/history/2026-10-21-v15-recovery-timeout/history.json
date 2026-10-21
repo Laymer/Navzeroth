@@ -89,6 +89,36 @@
       "path": "release/history/2026-10-21-v15-recovery-timeout/workflow.json",
       "bytes": 12011,
       "sha256": "fe2bfdb53e58b0cdd656cda1d3fd2b7f76a74b49a36b5ce70f384ec6fe16d882"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/acceptance-evidence.json",
+      "bytes": 27972317,
+      "sha256": "7d0d3e4b9c4431896764733cdd16005911ea6f3b0084fbe816dd272caedeb679"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-first-start.json",
+      "bytes": 11525,
+      "sha256": "0dde846f3bbedfe1f3d8854380e689b753d35202b08d0c8108c7d917d14995cc"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "60ac0308fb1f96abe20b614c6480ee95cb5e946193e3f1d35c6184cd21a6183b"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-performance.json",
+      "bytes": 12718,
+      "sha256": "0acc3249aba9cf529316365a6d990309dd5ca38d3ebf8649442ac75cc3ee51c4"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 768,
+      "sha256": "5245a44e38333df7870e8b663d61156b83fdd1cda76abf45b09e1b7ae2051ecf"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "8d6ddf9bacca3bf3d141fc167e729e3a9272bcfb954f6a098f5168c5ae47cb45"
     }
   ]
 }
