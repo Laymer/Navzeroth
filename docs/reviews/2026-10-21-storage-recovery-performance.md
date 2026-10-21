@@ -44,3 +44,27 @@ Next: independently review tooling exactcanonical streaming hash change, one com
 existing-target coverage build at exactunion, and actualfullpack/recovery comparison.
 Only then reviewed repair integration, fresh functional proof/review/receipts and
 fresh allten/source/Windows gates. No timeoutwaiver, owner result or publication.
+
+Continuation: root independently reviewed streaming canonical hash33674568 and
+combined runtime419fcaecfcb208867e280140215c6e5e01891e27. Recursive key ordering,
+scalar serialization and exact historical hashes remain unchanged; write_all handles
+partial sinks and failures. The digest path removes the canonical byte Vec, retaining
+the serde Value. Root and world each ran the two canonical writer tests and ten
+catalog tests against matched author binaries; all passed. No buffered sink change
+was introduced after the measured standalone union load8.936836335s.
+
+Tooling ran the combined app/storage all-target LLVM suite:475passed,0failed,3ignored.
+Root independently used unchanged gate/inventory helpers on exact current LCOV
+paths, excluding inline test code: content374/412; catalog363/381; preferences89/93;
+generation52/52; hash51/51. Each meets the existing90percent production threshold.
+Two earlier attempts exhausted local disk before tests; only inactive rebuildable
+incremental caches were removed, retaining source, binaries, profiles and evidence.
+The successful third attempt used the same code with CARGO_INCREMENTAL=0.
+
+Before the new whole recovery diagnostic, root independently verified all four
+preexecution source/binary/library sizes and SHA256s in the external audit. Runtime
+419fcaec and unchanged harness3447bcbf are separate from the explicitly old signed
+V13 input bundle. New output paths preserve prior raw results. Actual diagnostic is
+still running; no completed recovery or Windows pass is asserted here. Root also
+verified all four committed inspection measurement references and archived existing
+d636 functional evidence at9aaf8319 before any product integration.
