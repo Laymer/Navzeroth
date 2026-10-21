@@ -4,7 +4,7 @@
 use crate::{
     SqliteStore,
     error::{SqliteResult, invalid, storage},
-    hash::write_canonical,
+    hash::write_canonical_to,
 };
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -213,9 +213,19 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
 pub(crate) fn hash<T: Serialize>(revision: &T) -> Result<Sha256Hex> {
     let value =
         serde_json::to_value(revision).map_err(|_| storage("Content cannot be serialized"))?;
-    let mut bytes = Vec::new();
-    write_canonical(&value, &mut bytes)?;
-    let digest = Sha256::digest(bytes);
+    struct DigestWriter(Sha256);
+    impl std::io::Write for DigestWriter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.0.update(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut writer = DigestWriter(Sha256::new());
+    write_canonical_to(&value, &mut writer)?;
+    let digest = writer.0.finalize();
     Sha256Hex::new(
         digest
             .iter()
