@@ -12,7 +12,7 @@ use azeroth_core::{
     sources::{ConflictKind, RecordKey, SourceConflict, SourceRecord, SourceRegistry},
     types::{DataContext, DatasetRevision},
 };
-use rusqlite::{Connection, TransactionBehavior, params};
+use rusqlite::{Connection, Transaction, TransactionBehavior, params};
 use serde::{Deserialize, Serialize, Serializer};
 use std::{collections::BTreeSet, sync::Arc};
 
@@ -340,11 +340,12 @@ pub(crate) fn load_checked(
 impl SqliteStore {
     pub fn stage_content_v2_revision(&mut self, input: &ContentRevisionV2) -> Result<StageOutcome> {
         let revision = canonical(input)?;
-        let tx = self
-            .conn
-            .transaction_with_behavior(TransactionBehavior::Immediate)
-            .db()?;
-        let outcome = stage_canonical(&tx, &revision)?;
+        let tx = Transaction::new_unchecked(&self.conn, TransactionBehavior::Immediate).db()?;
+        // Only an existing SQL-validated duplicate can populate this original
+        // stamp. New inserts change the generation and never cache input values.
+        let cache_read = self.catalog_generation.begin_read(&self.conn)?;
+        let outcome = stage_canonical_using(&tx, &revision, |id| self.cached_catalog(id))?;
+        drop(cache_read);
         tx.commit().db()?;
         Ok(outcome)
     }
@@ -456,17 +457,24 @@ pub(crate) fn stage_canonical(
     conn: &Connection,
     revision: &ContentRevisionV2,
 ) -> Result<StageOutcome> {
+    stage_canonical_using(conn, revision, |id| content::load(conn, id))
+}
+fn stage_canonical_using(
+    conn: &Connection,
+    revision: &ContentRevisionV2,
+    load_duplicate: impl FnOnce(i64) -> Result<ActiveContentRevision>,
+) -> Result<StageOutcome> {
     let key = revision.key();
     let hash = content::hash(&revision)?;
-    let document = encode(&revision)?;
-    let report = encode(&content_report(&revision.content.reference))?;
     if let Some(id) = content::find(conn, &key)? {
-        let old = content::load(conn, id)?;
+        let old = load_duplicate(id)?;
         if !matches!(old, ActiveContentRevision::V2(_)) || content::hash(&old)? != hash {
             return Err(invalid("Immutable catalog revision already differs"));
         }
         return Ok(StageOutcome::Duplicate);
     }
+    let document = encode(&revision)?;
+    let report = encode(&content_report(&revision.content.reference))?;
     let count: i64 = conn
         .query_row("SELECT count(*) FROM dataset_revisions", [], |r| r.get(0))
         .db()?;
