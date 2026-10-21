@@ -92,31 +92,93 @@ function Invoke-StableWorkload([string] $Root,[string] $Exe,[string] $Manifest,[
 }
 function Invoke-StableOffline([scriptblock] $Workload) {
     if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:OS -ne 'Windows_NT') { throw 'Offline workload requires a disposable hosted Windows runner.' }
-    # Restore the exact originally-up adapters; never enable others.
-    $adapters = @(Get-NetAdapter -IncludeHidden -ErrorAction Stop | Where-Object Status -eq 'Up')
-    if ($adapters.Count -eq 0) { throw 'No active adapter can be controlled to prove offline behavior.' }
-    $disabled = @()
-    try {
-        foreach ($adapter in $adapters) {
-            $disabled += $adapter.InterfaceDescription
-            Disable-NetAdapter -InterfaceDescription $adapter.InterfaceDescription -Confirm:$false -ErrorAction Stop
-        }
-        if (@(Get-NetAdapter -IncludeHidden -ErrorAction Stop | Where-Object Status -eq 'Up').Count -ne 0) { throw 'External network adapters remain active.' }
-        $result = & $Workload
-    } finally {
-        $failed = $false
-        foreach ($description in $disabled) {
-            try { Enable-NetAdapter -InterfaceDescription $description -Confirm:$false -ErrorAction Stop } catch { $failed = $true }
-        }
-        $restore = [Diagnostics.Stopwatch]::StartNew()
-        do {
-            $pending = @()
-            foreach ($description in $disabled) {
-                try { if (@(Get-NetAdapter -InterfaceDescription $description -IncludeHidden -ErrorAction Stop | Where-Object Status -eq 'Up').Count -ne 1) { $pending += $description } } catch { $failed = $true }
-            }
-            if ($pending.Count -gt 0) { Start-Sleep -Milliseconds 200 }
-        } while ($pending.Count -gt 0 -and $restore.Elapsed.TotalSeconds -lt 60)
-        if ($failed -or $pending.Count -gt 0) { throw 'Controlled adapters could not all be restored to their original active states.' }
+    function Guid-Of($Adapter) {
+        $parsed=[Guid]::Empty
+        if (-not [Guid]::TryParse([string]$Adapter.InterfaceGuid,[ref]$parsed) -or $parsed -eq [Guid]::Empty) { throw 'Adapter has no valid stable interface GUID.' }
+        return $parsed.ToString('D')
     }
-    return @{workload=$result;network_disabled=$true;restored=$true;adapters=$disabled}
+    function Inventory {
+        $items=@(Get-NetAdapter -IncludeHidden -ErrorAction Stop)
+        if ($items.Count -gt 64) { throw 'Adapter inventory exceeds bounded capacity.' }
+        return $items
+    }
+    function Exact-Adapter([string]$Id) {
+        $found=@(foreach ($item in @(Inventory)) {
+            # A new unrelated malformed identity must not prevent restoration
+            # of a known controlled NIC. The target still needs exactly one match.
+            $candidate=$null; try { $candidate=Guid-Of $item } catch { }
+            if ($candidate -ceq $Id) { $item }
+        })
+        if ($found.Count -ne 1) { throw 'Stable adapter GUID is absent or ambiguous.' }
+        return $found[0]
+    }
+    function Bound-DiagnosticText([string]$Text,[int]$MaxBytes,[int]$MaxChars) {
+        $length=$Text.Length; $truncated=$length -gt $MaxChars
+        if ($truncated) { $length=$MaxChars-11 }
+        do {
+            # Do not end a retained prefix inside a UTF16 surrogate pair.
+            if ($length -gt 0 -and [char]::IsHighSurrogate($Text[$length-1])) { $length--; $truncated=$true }
+            $value=$Text.Substring(0,$length)
+            if ($truncated) { $value+='[truncated]' }
+            if ([Text.Encoding]::UTF8.GetByteCount(($value|ConvertTo-Json -Compress)) -le $MaxBytes) { return $value }
+            $length--; $truncated=$true
+        } while ($length -ge 0)
+        return '[truncated]'
+    }
+    function Short-Error($Failure) {
+        return Bound-DiagnosticText ([string]$Failure.Exception.Message) 320 256
+    }
+    # Descriptions/names can collide or contain wildcard syntax. Resolve each
+    # originally-up GUID to one freshly issued CIM instance, including hidden NICs.
+    $inventory=@(Inventory)
+    $inventoryIds=@(); foreach ($adapter in $inventory) { $inventoryIds+=Guid-Of $adapter }
+    if (@($inventoryIds | Sort-Object -Unique).Count -ne $inventoryIds.Count) { throw 'Adapter inventory GUIDs are ambiguous.' }
+    $adapters=@($inventory | Where-Object Status -eq 'Up')
+    if ($adapters.Count -eq 0) { throw 'No active adapter can be controlled to prove offline behavior.' }
+    $ids=@(); foreach ($adapter in $adapters) { $ids+=Guid-Of $adapter }
+    if (@($ids | Sort-Object -Unique).Count -ne $ids.Count) { throw 'Originally active adapter GUIDs are ambiguous.' }
+    $attempted=@(); $primary=$null; $rows=@(); $result=$null; $stage='disable'; $current=$null
+    try {
+        foreach ($id in $ids) {
+            $current=$id
+            $issued=Exact-Adapter $id
+            # Append before mutation: even a partially successful cmdlet must be restored.
+            $attempted+=$id
+            Disable-NetAdapter -InputObject $issued -Confirm:$false -ErrorAction Stop
+        }
+        $stage='verify_offline'; $current=$null
+        if (@(Inventory | Where-Object Status -eq 'Up').Count -ne 0) { throw 'External network adapters remain active.' }
+        $stage='workload'; $result=& $Workload
+    } catch {
+        $primary=[ordered]@{stage=$stage;interface_guid=$current;error=(Short-Error $_)}
+    } finally {
+        foreach ($id in $attempted) {
+            $row=[ordered]@{interface_guid=$id;enable_error=$null;state_error=$null;status=$null}
+            try { $issued=Exact-Adapter $id; Enable-NetAdapter -InputObject $issued -Confirm:$false -ErrorAction Stop } catch { $row.enable_error=Short-Error $_ }
+            $rows+=,$row
+        }
+        $restore=[Diagnostics.Stopwatch]::StartNew()
+        do {
+            $pending=0
+            foreach ($row in $rows) {
+                try {
+                    $issued=Exact-Adapter $row.interface_guid
+                    $state=[string]$issued.Status
+                    if ([string]::IsNullOrWhiteSpace($state) -or $state.Length -gt 64) { throw 'Adapter restoration status is malformed.' }
+                    $row.status=Bound-DiagnosticText $state 128 64
+                    if ($state -cne 'Up') { $pending++ }
+                } catch { $row.state_error=Short-Error $_; $pending++ }
+            }
+            if ($pending -gt 0) { Start-Sleep -Milliseconds 200 }
+        } while ($pending -gt 0 -and $restore.Elapsed.TotalSeconds -lt 60)
+    }
+    $cleanupFailed=@($rows | Where-Object { $null -ne $_.enable_error -or $null -ne $_.state_error -or $_.status -cne 'Up' }).Count -gt 0
+    $diagnostics=[ordered]@{primary=$primary;restoration=$rows;restore_elapsed_ms=$restore.ElapsedMilliseconds}
+    if ($null -ne $primary -or $cleanupFailed) {
+        # Preserve both failure paths; cleanup must never replace the original cause.
+        $text=$diagnostics|ConvertTo-Json -Depth 6 -Compress
+        if ([Text.Encoding]::UTF8.GetByteCount($text) -gt 65536) { throw 'Offline adapter diagnostics exceed bounded capacity.' }
+        throw ('Hosted offline control failed: '+$text)
+    }
+    return @{workload=$result;network_disabled=$true;restored=$true;adapters=$ids;diagnostics=$diagnostics}
 }

@@ -10,9 +10,16 @@ function Check($Name,[scriptblock]$Action){&$Action;$script:count++;Write-Host "
 function Refuse([scriptblock]$Action){$failed=$false;try{&$Action|Out-Null}catch{$failed=$true};if(-not $failed){throw 'Expected refusal'}}
 $identity=@{version='1.0.0';source_commit=('a'*40);production_sha256=('b'*64);installer_sha256=('c'*64);target=@{edition='wow_forever';version='1.60.1';build='70450';interface=16001};operator='Synthetic hosted helper test';environment='Synthetic mock only'}
 $savedActions=$env:GITHUB_ACTIONS;$savedRunner=$env:RUNNER_ENVIRONMENT;$savedOS=$env:OS
-function Get-NetAdapter { [CmdletBinding()]param([string]$InterfaceDescription,[switch]$IncludeHidden) foreach($id in $script:nics.Keys){if(-not $InterfaceDescription -or $InterfaceDescription -eq $id){[pscustomobject]@{InterfaceDescription=$id;Status=$script:nics[$id]}}} }
-function Disable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param([string]$InterfaceDescription) $script:nics[$InterfaceDescription]='Disabled';$script:disabled+=$InterfaceDescription }
-function Enable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param([string]$InterfaceDescription) $script:nics[$InterfaceDescription]='Up';$script:enabled+=$InterfaceDescription;if($script:enableFailure -eq $InterfaceDescription){throw 'Synthetic enable failure after state changed'} }
+function Mock-Guid([string]$Id) { return ('00000000-0000-0000-0000-'+([int][char]$Id).ToString('000000000000')) }
+$script:guidOverrides=@{};$script:disableFailure='';$script:leaveUp='';$script:queryFailure=$false;$script:failQueryAfterDisable=$false;$script:pollDelay=0;$script:enablePending=$false;$script:failStateQuery=$false;$script:appendMalformed=$false;$script:appearMalformed=$false;$script:malformedStatus='Disabled';$script:allEnableError=$null
+function Get-NetAdapter { [CmdletBinding()]param([switch]$IncludeHidden)
+ if($script:queryFailure){$script:queryFailure=$false;throw 'Synthetic adapter inventory failure'}
+ if($script:enablePending){if($script:pollDelay -gt 0){$script:pollDelay--}else{$script:nics.A='Up';$script:enablePending=$false}}
+ foreach($id in $script:nics.Keys){$guid=Mock-Guid $id;if($script:guidOverrides.ContainsKey($id)){$guid=$script:guidOverrides[$id]};[pscustomobject]@{InterfaceGuid=$guid;InterfaceDescription='Duplicate [description]';Name=$id;Status=$script:nics[$id]}}
+ if($script:appendMalformed){[pscustomobject]@{InterfaceGuid='malformed-new-unrelated';InterfaceDescription='Other';Name='foreign';Status=$script:malformedStatus}}
+}
+function Disable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param($InputObject) $id=$InputObject.Name;$script:nics[$id]='Disabled';$script:disabled+=$id;if($script:appearMalformed){$script:appendMalformed=$true};if($script:leaveUp -eq $id){$script:nics[$id]='Up'};if($script:failQueryAfterDisable){$script:queryFailure=$true;$script:failQueryAfterDisable=$false};if($script:disableFailure -eq $id){throw 'Synthetic partial disable failure'} }
+function Enable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param($InputObject) $id=$InputObject.Name;$script:nics[$id]='Up';$script:enabled+=$id;if($script:failStateQuery){$script:queryFailure=$true;$script:failStateQuery=$false};if($script:pollDelay -gt 0){$script:nics[$id]='Disconnected';$script:enablePending=$true};if($null -ne $script:allEnableError){throw $script:allEnableError};if($script:enableFailure -eq $id){throw 'Synthetic enable failure after state changed'} }
 try{
  New-Item -ItemType Directory -Path $root|Out-Null
  $expectedTarget='{"build":"70450","edition":"wow_forever","interface":16001,"version":"1.60.1"}' | ConvertFrom-Json
@@ -104,6 +111,85 @@ try{
   $script:nics=@{A='Up';B='Up'};$script:enableFailure='A';$script:enabled=@()
   Refuse {Invoke-StableOffline {return @{actual='workload'}}}
   if($script:enabled.Count -ne 2 -or $script:nics.A -ne 'Up' -or $script:nics.B -ne 'Up'){throw 'Restore skipped adapter'};$script:enableFailure=''
+ }
+ Check 'duplicate descriptions select distinct issued GUID objects and never enable originally-down adapters' {
+  $script:nics=@{A='Up';B='Up';C='Disabled'};$script:enabled=@();$script:disabled=@()
+  $actual=Invoke-StableOffline {return @{actual='workload'}}
+  if($actual.adapters.Count -ne 2 -or @($actual.adapters|Sort-Object -Unique).Count -ne 2 -or ($script:enabled|Sort-Object) -join ',' -ne 'A,B' -or $script:nics.C -ne 'Disabled'){throw 'Ambiguous description affected identity scope'}
+ }
+ Check 'missing malformed and duplicate GUIDs refuse before any mutation' {
+  foreach($bad in @('', 'invalid', '00000000-0000-0000-0000-000000000000',(Mock-Guid 'A'))){
+   $script:nics=@{A='Up';B='Up'};$script:guidOverrides=@{B=$bad};$script:disabled=@();$script:enabled=@()
+   Refuse {Invoke-StableOffline {throw 'Must not run'}}
+   if($script:disabled.Count -ne 0 -or $script:enabled.Count -ne 0){throw 'Invalid GUID mutated adapters'}
+  };$script:guidOverrides=@{}
+ }
+ Check 'partial disable failure restores every attempted GUID and preserves original error' {
+  $script:nics=[ordered]@{A='Up';B='Up';C='Disabled'};$script:disableFailure='B';$script:enabled=@()
+  $failure=$null;try{Invoke-StableOffline {throw 'Must not run'}|Out-Null}catch{$failure=$_.Exception.Message}
+  if($failure -notlike '*Synthetic partial disable failure*' -or ($script:enabled|Sort-Object) -join ',' -ne 'A,B' -or $script:nics.C -ne 'Disabled'){throw 'Partial disable recovery lost scope/cause'}
+  $script:disableFailure=''
+ }
+ Check 'primary workload and cleanup errors are both retained with exact final state' {
+  $script:nics=@{A='Up'};$script:enableFailure='A';$failure=$null
+  try{Invoke-StableOffline {throw 'Synthetic original workload failure'}|Out-Null}catch{$failure=$_.Exception.Message}
+  if($failure -notlike 'Hosted offline control failed: *'){throw 'Diagnostic envelope missing'}
+  $diag=$failure.Substring('Hosted offline control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.stage -cne 'workload' -or $diag.primary.error -cne 'Synthetic original workload failure' -or $diag.restoration[0].enable_error -cne 'Synthetic enable failure after state changed' -or $diag.restoration[0].status -cne 'Up'){throw 'One failure masked another'}
+  $script:enableFailure=''
+ }
+ Check 'remaining active interface refuses workload even when restoration succeeds' {
+  $script:nics=@{A='Up'};$script:leaveUp='A';$failure=$null
+  try{Invoke-StableOffline {throw 'Must not run'}|Out-Null}catch{$failure=$_.Exception.Message}
+  if($failure -notlike '*External network adapters remain active*'){throw 'Offline assertion bypassed'};$script:leaveUp=''
+ }
+ Check 'fresh inventory failure is preserved while exact original adapter is restored' {
+  $script:nics=@{A='Up'};$script:failQueryAfterDisable=$true;$script:enabled=@();$failure=$null
+  try{Invoke-StableOffline {throw 'Must not run'}|Out-Null}catch{$failure=$_.Exception.Message}
+  if($failure -notlike '*Synthetic adapter inventory failure*' -or ($script:enabled -join ',') -cne 'A' -or $script:nics.A -cne 'Up'){throw 'Inventory failure lost cleanup'}
+ }
+ Check 'originally-down duplicate GUID refuses before mutations and delayed restoration waits for exact Up' {
+  $script:nics=@{A='Up';B='Disabled'};$script:guidOverrides=@{B=(Mock-Guid 'A')};$script:disabled=@()
+  Refuse {Invoke-StableOffline {throw 'Must not run'}}
+  if($script:disabled.Count -ne 0){throw 'Ambiguous down adapter mutated inventory'};$script:guidOverrides=@{}
+  $script:nics=@{A='Up'};$script:pollDelay=2
+  $actual=Invoke-StableOffline {return @{actual='workload'}}
+  if($actual.diagnostics.restoration[0].status -cne 'Up' -or $script:enablePending -or $script:pollDelay -ne 0){throw 'Restoration did not wait for precise Up'}
+ }
+ Check 'transient restoration query failure remains a failure even after exact Up is observed' {
+  $script:nics=@{A='Up'};$script:failStateQuery=$true;$failure=$null
+  try{Invoke-StableOffline {return @{actual='workload'}}|Out-Null}catch{$failure=$_.Exception.Message}
+  $diag=$failure.Substring('Hosted offline control failed: '.Length)|ConvertFrom-Json
+  if($diag.restoration[0].status -cne 'Up' -or $diag.restoration[0].state_error -cne 'Synthetic adapter inventory failure'){throw 'Transient restoration failure was promoted'}
+ }
+ Check 'new malformed unrelated NIC cannot block cleanup or bypass the zero-Up proof' {
+  foreach($state in @('Disabled','Up')){
+   $script:nics=@{A='Up';B='Up'};$script:enabled=@();$script:appearMalformed=$true;$script:malformedStatus=$state;$script:workloadRan=$false
+   if($state -ceq 'Disabled'){
+    $actual=Invoke-StableOffline {$script:workloadRan=$true;return @{actual='workload'}}
+    if(-not $script:workloadRan -or @($actual.diagnostics.restoration|Where-Object status -cne 'Up').Count -ne 0){throw 'Controlled restoration failed'}
+   }else{
+    $failure=$null;try{Invoke-StableOffline {$script:workloadRan=$true;throw 'Must not run'}|Out-Null}catch{$failure=$_.Exception.Message}
+    if($script:workloadRan -or $failure -notlike '*External network adapters remain active*'){throw 'New active adapter bypassed offline proof'}
+   }
+   if(($script:enabled|Sort-Object) -join ',' -ne 'A,B'){throw 'Unrelated identity prevented original restoration'}
+   $script:appearMalformed=$false;$script:appendMalformed=$false
+  };$script:malformedStatus='Disabled'
+ }
+ Check '64 adapter escaped errors retain primary and every cleanup failure within the final byte cap' {
+  $script:nics=@{};foreach($n in 33..96){$script:nics[[string][char]$n]='Up'}
+  $script:allEnableError=([string][char]1)*256;$failure=$null
+  try{Invoke-StableOffline {throw ('PRIMARY '+(([string][char]1)*256))}|Out-Null}catch{$failure=$_.Exception.Message}
+  if($failure -notlike 'Hosted offline control failed: *' -or [Text.Encoding]::UTF8.GetByteCount($failure) -gt 65536){throw 'Worst-case diagnostics lost bounded envelope'}
+  $diag=$failure.Substring('Hosted offline control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.error -notlike 'PRIMARY *' -or $diag.restoration.Count -ne 64 -or @($diag.restoration|Where-Object {$null -eq $_.enable_error -or $_.status -cne 'Up'}).Count -ne 0){throw 'Worst-case diagnostic masked primary or cleanup'}
+  $script:allEnableError=$null
+ }
+ Check 'diagnostic messages are bounded without losing failure status' {
+  $script:nics=@{A='Up'};$failure=$null
+  try{Invoke-StableOffline {throw ('x'*10000)}|Out-Null}catch{$failure=$_.Exception.Message}
+  $diag=$failure.Substring('Hosted offline control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.error.Length -ne 256 -or [Text.Encoding]::UTF8.GetByteCount($failure) -gt 65536){throw 'Failure diagnostics unbounded'}
  }
  Check 'lack of controllable adapter is unverified/failure' {$script:nics=@{A='Disabled'};Refuse {Invoke-StableOffline {throw 'Should not run'}}}
  Check 'offline controls refuse non-hosted environments' {$env:RUNNER_ENVIRONMENT='self-hosted';Refuse {Invoke-StableOffline {throw 'Should not run'}}}
