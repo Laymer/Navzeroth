@@ -1,0 +1,1 @@
+{"elapsed_ms":10031,"identities":260100,"kind":"diagnostic_not_acceptance","phase":"fresh_catalog_revision","revision":{"revision":"set-88fc99070bf008b1e07b63bda9bd99f0","scope":{"context":{"build":{"build":"1.60.1.70450","edition":"wow_forever","interface":"16001"},"namespace":"reference"},"fixture":false}},"runtime":"2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e"}

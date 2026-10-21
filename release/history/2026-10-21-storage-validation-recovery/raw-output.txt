@@ -1,0 +1,41 @@
+
+running 1 test
+{"bundle":"/tmp/navzeroth-tooling-v13-independent-bundle","diagnostic_harness_commit":"3447bcbfdeeb771589f6773bad6a70b81bdf0681","diagnostic_runtime_commit":"419fcaecfcb208867e280140215c6e5e01891e27","kind":"diagnostic_not_acceptance","platform":"linux","signed_bundle_identity":{"app_version":"1.0.0","bundle_manifest_sha256":"577b641649345316a3540791c8d7d6c6f1cb705ef5d441cedb4578415f03ef83","production_sha256":"a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620","review":{"bytes":82999,"path":"release/v1/public-content-review-v13.json","sha256":"36c24922fe07bd33b903895e1fe9779430bdd0cb6380c68761c59fbc3a711309"},"schema_version":1,"target":{"build":"70450","edition":"wow_forever","interface":16001,"version":"1.60.1"},"tested_source_commit":"716af3e8fca641f896ea322ada66a40425906d41"},"signed_bundle_receipt":{"format":"navzeroth-bundled-content-receipt","operator_controls_both_keys":true,"payload":{"app_version":"1.0.0","bundle_manifest_sha256":"577b641649345316a3540791c8d7d6c6f1cb705ef5d441cedb4578415f03ef83","production_sha256":"a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620","review":{"bytes":82999,"path":"release/v1/public-content-review-v13.json","sha256":"36c24922fe07bd33b903895e1fe9779430bdd0cb6380c68761c59fbc3a711309"},"schema_version":1,"target":{"build":"70450","edition":"wow_forever","interface":16001,"version":"1.60.1"},"tested_source_commit":"716af3e8fca641f896ea322ada66a40425906d41"},"schema_version":1,"signatures":[{"key_id":"navzeroth-1.0.0-operator","role":"operator","signature_hex":"32532f3749e4834a157ccbd95837b982e2f48644acb80ff03b83b34610b9cf87455869de0bc8ab1d7edeea0c0b09fbf7caae498e8880e8dd753c703ba0d2970c"},{"key_id":"navzeroth-1.0.0-review-evidence","role":"review_evidence","signature_hex":"b55b0120c3041d47ee74b7c21b0a86d011f861e0c40ce82830f9dab26f383f0b36e399b22b9fb44a8cb18f99f48f226d2daeda9b67875d582d66182531686c0a"}]}}
+{"event":"start","phase":"initial_signed_bundle_start"}
+{"startup_measurements":{"activation_ms":7191,"load_ms":33703}}
+{"elapsed_ms":41034,"event":"complete","phase":"initial_signed_bundle_start"}
+{"event":"start","phase":"manual_profile_and_settings"}
+{"elapsed_ms":24,"event":"complete","phase":"manual_profile_and_settings"}
+{"event":"start","phase":"select_false_inferred_travel"}
+{"elapsed_ms":787,"event":"complete","phase":"select_false_inferred_travel"}
+{"event":"start","phase":"initial_state"}
+{"elapsed_ms":349,"event":"complete","phase":"initial_state"}
+{"event":"start","phase":"backup"}
+{"elapsed_ms":310,"event":"complete","phase":"backup"}
+{"backup_bytes":463335424}
+{"event":"start","phase":"inspect_backup"}
+test diagnostic_actual_fullpack_recovery has been running for over 60 seconds
+{"elapsed_ms":31348,"event":"complete","phase":"inspect_backup"}
+{"event":"start","phase":"restore_and_initializer_reopen"}
+{"elapsed_ms":77106,"event":"complete","phase":"restore_and_initializer_reopen"}
+{"event":"start","phase":"restored_ready"}
+{"startup_measurements":{"activation_ms":7191,"load_ms":33703}}
+{"elapsed_ms":0,"event":"complete","phase":"restored_ready"}
+{"event":"start","phase":"restored_profiles_settings_content_choice"}
+{"elapsed_ms":358,"event":"complete","phase":"restored_profiles_settings_content_choice"}
+{"event":"start","phase":"restored_check_database"}
+{"elapsed_ms":28603,"event":"complete","phase":"restored_check_database"}
+{"event":"start","phase":"drop_restored_host"}
+{"elapsed_ms":41,"event":"complete","phase":"drop_restored_host"}
+{"event":"start","phase":"explicit_close_reopen_signed_initializer"}
+{"startup_measurements":{"activation_ms":0,"load_ms":47786}}
+{"elapsed_ms":78862,"event":"complete","phase":"explicit_close_reopen_signed_initializer"}
+{"event":"start","phase":"reopened_profiles_settings_content_choice"}
+{"elapsed_ms":358,"event":"complete","phase":"reopened_profiles_settings_content_choice"}
+{"event":"start","phase":"reopened_check_database"}
+{"elapsed_ms":28429,"event":"complete","phase":"reopened_check_database"}
+{"acceptance_observations_promoted":false,"diagnostic_passed":true}
+test diagnostic_actual_fullpack_recovery ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 287.91s
+
