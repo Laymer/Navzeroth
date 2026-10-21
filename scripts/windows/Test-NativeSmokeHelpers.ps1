@@ -40,6 +40,37 @@ try {
     Install-NativeSmokeSetup -SetupPath $fakeSetup -TimeoutSeconds 60
     Check 'installer success is accepted' $true
 
+    # Uninstall completion needs the executable AND the registered version gone (silent downgrade refusal).
+    $install = Join-Path $temp 'install'
+    New-Item -ItemType Directory -Path $install | Out-Null
+    $exePath = Join-Path $install 'azeroth-desktop.exe'
+    $script:probes = 0
+    $registered = { $script:probes++; if ($script:probes -lt 4) { '1.0.0' } else { $null } }
+    $elapsed = Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds 30 -RegisteredVersion $registered -PollMilliseconds 20
+    Check 'wait outlasts a registered version after the files are gone' ($script:probes -eq 4 -and $elapsed -ge 40)
+    [IO.File]::WriteAllText($exePath, 'x')
+    $remover = Start-Job { param($Path) Start-Sleep -Milliseconds 400; Remove-Item -LiteralPath $Path -Force } -ArgumentList $exePath
+    $elapsed = Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds 30 -RegisteredVersion { $null } -PollMilliseconds 20
+    $null = Wait-Job $remover; Remove-Job $remover -Force
+    Check 'wait outlasts a present executable' ($elapsed -ge 300 -and -not (Test-Path -LiteralPath $exePath))
+    $script:probes = 0
+    $flaky = { $script:probes++; if ($script:probes -lt 3) { throw 'key vanished during enumeration' }; $null }
+    $null = Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds 30 -RegisteredVersion $flaky -PollMilliseconds 20
+    Check 'an unreadable registry is retried, not treated as uninstalled' ($script:probes -eq 3)
+    Refuses 'a persistently unreadable registry times out' 'registry unreadable' {
+        Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds 1 -RegisteredVersion { throw 'denied' } -PollMilliseconds 20
+    }
+    Refuses 'a lingering registered version times out and names it' 'registered version: 1.0.0' {
+        Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds 1 -RegisteredVersion { '1.0.0' } -PollMilliseconds 20
+    }
+    Refuses 'a lingering executable times out and is reported' 'executable present: True' {
+        [IO.File]::WriteAllText($exePath, 'x')
+        try { Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds 1 -RegisteredVersion { $null } -PollMilliseconds 20 }
+        finally { Remove-Item -LiteralPath $exePath -Force }
+    }
+    Uninstall-NativeSmokeApp -InstallDirectory $install
+    Check 'uninstall without an uninstaller is a no-op' $true
+
     Refuses 'dialog cancellation refuses a different executable before looking for windows' 'does not match' {
         & (Join-Path $PSScriptRoot 'Cancel-OwnedDialog.ps1') -TargetProcessId $PID -ExpectedExecutable (Join-Path $temp 'unrelated.exe') -TimeoutSeconds 1
     }

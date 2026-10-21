@@ -71,9 +71,9 @@ function Remove-OwnedInstallation {
     if (-not (Test-Path -LiteralPath $uninstaller)) { return }
     $result = Invoke-BoundedProcess $uninstaller @('/S') 300
     if ($result.TimedOut -or $result.ExitCode -ne 0) { throw 'Owned uninstaller did not complete within bounds.' }
-    $timer=[Diagnostics.Stopwatch]::StartNew()
-    while ((Test-Path -LiteralPath $exe) -and $timer.Elapsed.TotalSeconds -lt 120) { Start-Sleep -Milliseconds 250 }
-    if (Test-Path -LiteralPath $exe) { throw 'Owned installation was not removed.' }
+    # Files and the registered version must both be gone, or the next installer sees the old version.
+    $waitedMs = Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds (Remaining 120)
+    [IO.File]::WriteAllText((Join-Path $reports ('uninstall-'+[Guid]::NewGuid().ToString('N')+'.json')),((@{schema_version=1;kind='uninstall_completion';waited_ms=$waitedMs}|ConvertTo-Json)+"`n"),(New-Object Text.UTF8Encoding($false)))
 }
 try {
     $script:installMs = $null; $script:fresh = $null

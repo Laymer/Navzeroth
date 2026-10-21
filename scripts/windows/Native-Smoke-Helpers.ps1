@@ -66,7 +66,12 @@ function Install-NativeSmokeSetup {
     param([Parameter(Mandatory)] [string] $SetupPath, [ValidateRange(1, 1800)] [int] $TimeoutSeconds = 300)
     $result = Invoke-BoundedProcess -FilePath $SetupPath -ArgumentList @('/S') -TimeoutSeconds $TimeoutSeconds
     if ($result.TimedOut) { throw "Installer $SetupPath did not finish within $TimeoutSeconds s" }
-    if ($result.ExitCode -ne 0) { throw "Installer $SetupPath exit code $($result.ExitCode)" }
+    if ($result.ExitCode -ne 0) {
+        # A silent installer refuses to replace a newer registered version with exit 2, so name it.
+        $registered = 'unavailable'
+        try { $found = Get-InstalledDisplayVersion; $registered = if ($null -eq $found) { 'none' } else { $found } } catch { }
+        throw "Installer $SetupPath exit code $($result.ExitCode) (registered version: $registered)"
+    }
 }
 
 function Invoke-NativeSmokeNode {
@@ -76,6 +81,31 @@ function Invoke-NativeSmokeNode {
     if ($LASTEXITCODE -ne 0) { throw "node $($Arguments -join ' ') exited with $LASTEXITCODE" }
 }
 
+function Wait-NativeSmokeUninstalled {
+    # The NSIS uninstaller re-launches itself from TEMP and removes the Uninstall registry entry after the
+    # files. A silent installer started in between still sees the old version and refuses to replace it
+    # (exit 2), so completion means the executable AND the registered version are both gone.
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $InstallDirectory,
+        [ValidateRange(1, 600)] [int] $TimeoutSeconds = 120,
+        [scriptblock] $RegisteredVersion = { Get-InstalledDisplayVersion },
+        [ValidateRange(1, 5000)] [int] $PollMilliseconds = 250
+    )
+    $exe = Join-Path $InstallDirectory 'azeroth-desktop.exe'
+    $timer = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        $registered = $null; $probeFailed = $false
+        # The key can vanish while it is enumerated; an unreadable registry is "not yet", never "gone".
+        try { $registered = & $RegisteredVersion } catch { $probeFailed = $true }
+        $exeGone = -not (Test-Path -LiteralPath $exe)
+        if ($exeGone -and -not $probeFailed -and $null -eq $registered) { return [int]$timer.Elapsed.TotalMilliseconds }
+        Start-Sleep -Milliseconds $PollMilliseconds
+    } while ($timer.Elapsed.TotalSeconds -lt $TimeoutSeconds)
+    $state = if ($probeFailed) { 'registry unreadable' } elseif ($null -eq $registered) { 'none' } else { [string]$registered }
+    throw "The application is still installed after uninstall (executable present: $(-not $exeGone), registered version: $state)"
+}
+
 function Uninstall-NativeSmokeApp {
     # The NSIS uninstaller re-launches itself from TEMP, so wait for its effect rather than its exit.
     [CmdletBinding()]
@@ -83,8 +113,5 @@ function Uninstall-NativeSmokeApp {
     $uninstaller = Join-Path $InstallDirectory 'uninstall.exe'
     if (-not (Test-Path -LiteralPath $uninstaller)) { return }
     Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait
-    $exe = Join-Path $InstallDirectory 'azeroth-desktop.exe'
-    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
-    while ((Test-Path -LiteralPath $exe) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 2 }
-    if (Test-Path -LiteralPath $exe) { throw 'The application is still installed after uninstall' }
+    $null = Wait-NativeSmokeUninstalled -InstallDirectory $InstallDirectory -TimeoutSeconds $TimeoutSeconds
 }
