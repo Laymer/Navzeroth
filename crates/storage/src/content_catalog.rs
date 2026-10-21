@@ -168,21 +168,47 @@ pub(crate) fn canonical(input: &ContentRevisionV2) -> Result<ContentRevisionV2> 
     validate_canonical_input(input)?;
     canonical_validated(input.clone())
 }
-// Loading already owns its decoded input: retaining a second catalog is needless.
-fn canonical_owned(input: ContentRevisionV2) -> Result<ContentRevisionV2> {
-    validate_canonical_input(&input)?;
+// This boundary owns strict decoding: no caller can supply an unvalidated graph.
+// decode validates the graph; nothing mutates it before provenance canonicalization.
+fn canonical_decoded(document: String) -> Result<ContentRevisionV2> {
+    // Borrow raw content so unknown nested fields reach the strict decoder.
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct StoredRevision<'a> {
+        #[serde(borrow)]
+        content: &'a serde_json::value::RawValue,
+        sources: Vec<SourceRecord>,
+        conflicts: Vec<SourceConflict>,
+    }
+    let stored: StoredRevision<'_> =
+        serde_json::from_str(&document).map_err(|_| storage("Stored v2 catalog is invalid"))?;
+    let input = ContentRevisionV2 {
+        content: content_v2::decode(stored.content.get().as_bytes())?,
+        sources: stored.sources,
+        conflicts: stored.conflicts,
+    };
+    // Release the large stored document before canonicalization, as before.
+    drop(document);
+    validate_canonical_capacity(&input)?;
     canonical_validated(input)
 }
-fn validate_canonical_input(input: &ContentRevisionV2) -> Result<()> {
+fn validate_canonical_capacity(input: &ContentRevisionV2) -> Result<()> {
     if input.sources.len() > 1024 || input.conflicts.len() > 250_000 {
         return Err(invalid("Catalog provenance capacity exceeded"));
     }
     check_capacity(input, false, MAX_CONTENT_BYTES)?;
-    input.content.validate()?;
     Ok(())
 }
+#[cfg(test)]
+thread_local! { static TYPED_GRAPH_VALIDATIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) }; }
+fn validate_canonical_input(input: &ContentRevisionV2) -> Result<()> {
+    validate_canonical_capacity(input)?;
+    #[cfg(test)]
+    TYPED_GRAPH_VALIDATIONS.with(|count| count.set(count.get() + 1));
+    input.content.validate()
+}
 fn canonical_validated(input: ContentRevisionV2) -> Result<ContentRevisionV2> {
-    // Both entry points validated the complete typed graph and compact capacity.
+    // Both entry points validated the complete graph and compact capacity.
     // Move owned content while retaining the same pretty bound and provenance rules.
     let ContentRevisionV2 {
         content,
@@ -265,26 +291,7 @@ pub(crate) fn load_checked(
     id: i64,
 ) -> std::result::Result<ContentRevisionV2, content::LoadFailure> {
     let (document, hash, coverage): (String,String,String) = conn.query_row("SELECT r.document,m.content_sha256,m.coverage_document FROM dataset_revisions r JOIN dataset_manifests m ON m.revision_id=r.id WHERE r.id=?1 AND r.content_version=2 AND length(CAST(r.document AS BLOB))<=?2 AND length(CAST(m.coverage_document AS BLOB))<=?2 AND m.manifest_version=1",params![id,MAX_CONTENT_BYTES as i64],|row| Ok((row.get(0)?,row.get(1)?,row.get(2)?))).map_err(content::load_sql_error)?;
-    // Borrow the original content JSON: decoding a typed wrapper first would
-    // silently discard nested unknown fields before the strict content boundary.
-    #[derive(Deserialize)]
-    #[serde(deny_unknown_fields)]
-    struct StoredRevision<'a> {
-        #[serde(borrow)]
-        content: &'a serde_json::value::RawValue,
-        sources: Vec<SourceRecord>,
-        conflicts: Vec<SourceConflict>,
-    }
-    let stored: StoredRevision<'_> =
-        serde_json::from_str(&document).map_err(|_| storage("Stored v2 catalog is invalid"))?;
-    let input = ContentRevisionV2 {
-        content: content_v2::decode(stored.content.get().as_bytes())?,
-        sources: stored.sources,
-        conflicts: stored.conflicts,
-    };
-    // The borrowed raw wrapper is no longer needed once strict decoding finishes.
-    drop(document);
-    let revision = canonical_owned(input)?;
+    let revision = canonical_decoded(document)?;
     if content::hash(&revision)?.as_str() != hash
         || encode(&content_report(&revision.content.reference))? != coverage
     {
@@ -490,8 +497,31 @@ pub(crate) fn stage_canonical(
 #[cfg(test)]
 mod capacity_checks {
     use super::*;
+    fn decoded(
+        bytes: &[u8],
+        sources: Vec<SourceRecord>,
+        conflicts: Vec<SourceConflict>,
+    ) -> Result<ContentRevisionV2> {
+        let raw =
+            serde_json::value::RawValue::from_string(String::from_utf8(bytes.to_vec()).unwrap())
+                .unwrap();
+        #[derive(Serialize)]
+        struct Input<'a> {
+            content: &'a serde_json::value::RawValue,
+            sources: Vec<SourceRecord>,
+            conflicts: Vec<SourceConflict>,
+        }
+        canonical_decoded(
+            serde_json::to_string(&Input {
+                content: &raw,
+                sources,
+                conflicts,
+            })
+            .unwrap(),
+        )
+    }
     #[test]
-    fn owned_canonicalization_moves_graph_and_matches_borrowed_bytes_and_digest() {
+    fn decoded_canonicalization_validates_once_and_matches_borrowed_bytes_and_digest() {
         let old: ContentRevision = serde_json::from_str(include_str!(
             "../../../fixtures/desktop/planning/synthetic-revision.json"
         ))
@@ -511,14 +541,21 @@ mod capacity_checks {
             before,
             "staging cannot consume or mutate caller input"
         );
-        let graph_allocation = input.content.reference.payload.nodes.as_ptr();
         assert!(!input.content.reference.payload.nodes.is_empty());
-        let owned = canonical_owned(input).unwrap();
-        assert_eq!(
-            owned.content.reference.payload.nodes.as_ptr(),
-            graph_allocation,
-            "owned load must retain the original graph allocation"
-        );
+        TYPED_GRAPH_VALIDATIONS.with(|count| count.set(0));
+        let owned = decoded(
+            &serde_json::to_vec(&input.content).unwrap(),
+            input.sources,
+            input.conflicts,
+        )
+        .unwrap();
+        TYPED_GRAPH_VALIDATIONS.with(|count| {
+            assert_eq!(
+                count.get(),
+                0,
+                "strict decode already validates the graph; storage must not repeat it"
+            )
+        });
         assert_eq!(encode(&owned).unwrap(), encode(&borrowed).unwrap());
         assert_eq!(
             content::hash(&owned).unwrap(),
@@ -528,6 +565,58 @@ mod capacity_checks {
             catalog_content_sha256(&owned.content).unwrap(),
             catalog_content_sha256(&borrowed.content).unwrap()
         );
+    }
+
+    #[test]
+    fn decoded_boundary_rejects_invalid_graph_unknown_fields_and_provenance() {
+        let old: ContentRevision = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/planning/synthetic-revision.json"
+        ))
+        .unwrap();
+        let bytes = include_bytes!("../../../fixtures/contracts/v2/reference-content.json");
+        let valid_graph = content_v2::decode(bytes).unwrap();
+        let mut invalid_graph = valid_graph.clone();
+        invalid_graph.node_facts.push(
+            serde_json::from_value(serde_json::json!({
+                "node":"absent-node", "evidence":[]
+            }))
+            .unwrap(),
+        );
+        assert!(
+            decoded(
+                &serde_json::to_vec(&invalid_graph).unwrap(),
+                old.sources.clone(),
+                vec![]
+            )
+            .is_err()
+        );
+        let input = ContentRevisionV2 {
+            content: invalid_graph,
+            sources: old.sources.clone(),
+            conflicts: vec![],
+        };
+        TYPED_GRAPH_VALIDATIONS.with(|count| count.set(0));
+        assert!(
+            canonical(&input).is_err(),
+            "typed staging must still validate its graph"
+        );
+        TYPED_GRAPH_VALIDATIONS.with(|count| assert_eq!(count.get(), 1));
+        let mut unknown: serde_json::Value = serde_json::from_slice(bytes).unwrap();
+        unknown["not_a_typed_field"] = true.into();
+        assert!(
+            decoded(
+                &serde_json::to_vec(&unknown).unwrap(),
+                old.sources.clone(),
+                vec![]
+            )
+            .is_err()
+        );
+        assert!(
+            decoded(bytes, vec![], vec![]).is_err(),
+            "registered provenance is still mandatory"
+        );
+        assert!(decoded(bytes, vec![old.sources[0].clone(); 1025], vec![]).is_err());
+        assert!(decoded(bytes, old.sources, vec![]).is_ok());
     }
 
     #[test]
