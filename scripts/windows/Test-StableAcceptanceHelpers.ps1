@@ -11,7 +11,7 @@ function Refuse([scriptblock]$Action){$failed=$false;try{&$Action|Out-Null}catch
 $identity=@{version='1.0.0';source_commit=('a'*40);production_sha256=('b'*64);installer_sha256=('c'*64);target=@{edition='wow_forever';version='1.60.1';build='70450';interface=16001};operator='Synthetic hosted helper test';environment='Synthetic mock only'}
 $savedActions=$env:GITHUB_ACTIONS;$savedRunner=$env:RUNNER_ENVIRONMENT;$savedOS=$env:OS
 function Mock-Guid([string]$Id) { return ('00000000-0000-0000-0000-'+([int][char]$Id).ToString('000000000000')) }
-$script:guidOverrides=@{};$script:disableFailure='';$script:leaveUp='';$script:queryFailure=$false;$script:failQueryAfterDisable=$false;$script:pollDelay=0;$script:enablePending=$false;$script:failStateQuery=$false;$script:appendMalformed=$false;$script:appearMalformed=$false;$script:malformedStatus='Disabled'
+$script:guidOverrides=@{};$script:disableFailure='';$script:leaveUp='';$script:queryFailure=$false;$script:failQueryAfterDisable=$false;$script:pollDelay=0;$script:enablePending=$false;$script:failStateQuery=$false;$script:appendMalformed=$false;$script:appearMalformed=$false;$script:malformedStatus='Disabled';$script:allEnableError=$null
 function Get-NetAdapter { [CmdletBinding()]param([switch]$IncludeHidden)
  if($script:queryFailure){$script:queryFailure=$false;throw 'Synthetic adapter inventory failure'}
  if($script:enablePending){if($script:pollDelay -gt 0){$script:pollDelay--}else{$script:nics.A='Up';$script:enablePending=$false}}
@@ -19,7 +19,7 @@ function Get-NetAdapter { [CmdletBinding()]param([switch]$IncludeHidden)
  if($script:appendMalformed){[pscustomobject]@{InterfaceGuid='malformed-new-unrelated';InterfaceDescription='Other';Name='foreign';Status=$script:malformedStatus}}
 }
 function Disable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param($InputObject) $id=$InputObject.Name;$script:nics[$id]='Disabled';$script:disabled+=$id;if($script:appearMalformed){$script:appendMalformed=$true};if($script:leaveUp -eq $id){$script:nics[$id]='Up'};if($script:failQueryAfterDisable){$script:queryFailure=$true;$script:failQueryAfterDisable=$false};if($script:disableFailure -eq $id){throw 'Synthetic partial disable failure'} }
-function Enable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param($InputObject) $id=$InputObject.Name;$script:nics[$id]='Up';$script:enabled+=$id;if($script:failStateQuery){$script:queryFailure=$true;$script:failStateQuery=$false};if($script:pollDelay -gt 0){$script:nics[$id]='Disconnected';$script:enablePending=$true};if($script:enableFailure -eq $id){throw 'Synthetic enable failure after state changed'} }
+function Enable-NetAdapter { [CmdletBinding(SupportsShouldProcess)]param($InputObject) $id=$InputObject.Name;$script:nics[$id]='Up';$script:enabled+=$id;if($script:failStateQuery){$script:queryFailure=$true;$script:failStateQuery=$false};if($script:pollDelay -gt 0){$script:nics[$id]='Disconnected';$script:enablePending=$true};if($null -ne $script:allEnableError){throw $script:allEnableError};if($script:enableFailure -eq $id){throw 'Synthetic enable failure after state changed'} }
 try{
  New-Item -ItemType Directory -Path $root|Out-Null
  $expectedTarget='{"build":"70450","edition":"wow_forever","interface":16001,"version":"1.60.1"}' | ConvertFrom-Json
@@ -175,6 +175,15 @@ try{
    if(($script:enabled|Sort-Object) -join ',' -ne 'A,B'){throw 'Unrelated identity prevented original restoration'}
    $script:appearMalformed=$false;$script:appendMalformed=$false
   };$script:malformedStatus='Disabled'
+ }
+ Check '64 adapter escaped errors retain primary and every cleanup failure within the final byte cap' {
+  $script:nics=@{};foreach($n in 33..96){$script:nics[[string][char]$n]='Up'}
+  $script:allEnableError=([string][char]1)*256;$failure=$null
+  try{Invoke-StableOffline {throw ('PRIMARY '+(([string][char]1)*256))}|Out-Null}catch{$failure=$_.Exception.Message}
+  if($failure -notlike 'Hosted offline control failed: *' -or [Text.Encoding]::UTF8.GetByteCount($failure) -gt 65536){throw 'Worst-case diagnostics lost bounded envelope'}
+  $diag=$failure.Substring('Hosted offline control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.error -notlike 'PRIMARY *' -or $diag.restoration.Count -ne 64 -or @($diag.restoration|Where-Object {$null -eq $_.enable_error -or $_.status -cne 'Up'}).Count -ne 0){throw 'Worst-case diagnostic masked primary or cleanup'}
+  $script:allEnableError=$null
  }
  Check 'diagnostic messages are bounded without losing failure status' {
   $script:nics=@{A='Up'};$failure=$null

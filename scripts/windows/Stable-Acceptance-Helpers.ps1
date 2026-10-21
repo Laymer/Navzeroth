@@ -112,10 +112,21 @@ function Invoke-StableOffline([scriptblock] $Workload) {
         if ($found.Count -ne 1) { throw 'Stable adapter GUID is absent or ambiguous.' }
         return $found[0]
     }
+    function Bound-DiagnosticText([string]$Text,[int]$MaxBytes,[int]$MaxChars) {
+        $length=$Text.Length; $truncated=$length -gt $MaxChars
+        if ($truncated) { $length=$MaxChars-11 }
+        do {
+            # Do not end a retained prefix inside a UTF16 surrogate pair.
+            if ($length -gt 0 -and [char]::IsHighSurrogate($Text[$length-1])) { $length--; $truncated=$true }
+            $value=$Text.Substring(0,$length)
+            if ($truncated) { $value+='[truncated]' }
+            if ([Text.Encoding]::UTF8.GetByteCount(($value|ConvertTo-Json -Compress)) -le $MaxBytes) { return $value }
+            $length--; $truncated=$true
+        } while ($length -ge 0)
+        return '[truncated]'
+    }
     function Short-Error($Failure) {
-        $text=[string]$Failure.Exception.Message
-        if ($text.Length -gt 256) { $text=$text.Substring(0,256) }
-        return $text
+        return Bound-DiagnosticText ([string]$Failure.Exception.Message) 320 256
     }
     # Descriptions/names can collide or contain wildcard syntax. Resolve each
     # originally-up GUID to one freshly issued CIM instance, including hidden NICs.
@@ -154,7 +165,7 @@ function Invoke-StableOffline([scriptblock] $Workload) {
                     $issued=Exact-Adapter $row.interface_guid
                     $state=[string]$issued.Status
                     if ([string]::IsNullOrWhiteSpace($state) -or $state.Length -gt 64) { throw 'Adapter restoration status is malformed.' }
-                    $row.status=$state
+                    $row.status=Bound-DiagnosticText $state 128 64
                     if ($state -cne 'Up') { $pending++ }
                 } catch { $row.state_error=Short-Error $_; $pending++ }
             }
