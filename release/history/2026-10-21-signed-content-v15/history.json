@@ -1,0 +1,21 @@
+{
+  "candidate": "2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e",
+  "scope": "Exact signed V15 bytes preserved before repair. No acceptance promotion.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-signed-content-v15/bundled-content-manifest.json",
+      "bytes": 17187,
+      "sha256": "c4f77cb46b268f136f6225d36a98183569161063a2c18755e383e5707ce9ea10"
+    },
+    {
+      "path": "release/history/2026-10-21-signed-content-v15/bundled-content-build-identity.json",
+      "bytes": 528,
+      "sha256": "2d53939a609db68868c180b2ae33d168497bf54c5789cfa8f30cba629d0756dc"
+    },
+    {
+      "path": "release/history/2026-10-21-signed-content-v15/bundled-content-receipt.json",
+      "bytes": 1074,
+      "sha256": "f4b09d3f999e0f7a6720879c7acbd67ab96c21188ad747c05335d160610fc8d1"
+    }
+  ]
+}
