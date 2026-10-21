@@ -71,9 +71,9 @@ function Remove-OwnedInstallation {
     if (-not (Test-Path -LiteralPath $uninstaller)) { return }
     $result = Invoke-BoundedProcess $uninstaller @('/S') 300
     if ($result.TimedOut -or $result.ExitCode -ne 0) { throw 'Owned uninstaller did not complete within bounds.' }
-    $timer=[Diagnostics.Stopwatch]::StartNew()
-    while ((Test-Path -LiteralPath $exe) -and $timer.Elapsed.TotalSeconds -lt 120) { Start-Sleep -Milliseconds 250 }
-    if (Test-Path -LiteralPath $exe) { throw 'Owned installation was not removed.' }
+    # Files and the registered version must both be gone, or the next installer sees the old version.
+    $waitedMs = Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds (Remaining 120)
+    [IO.File]::WriteAllText((Join-Path $reports ('uninstall-'+[Guid]::NewGuid().ToString('N')+'.json')),((@{schema_version=1;kind='uninstall_completion';waited_ms=$waitedMs}|ConvertTo-Json)+"`n"),(New-Object Text.UTF8Encoding($false)))
 }
 try {
     $script:installMs = $null; $script:fresh = $null
@@ -126,8 +126,12 @@ try {
         $after=Workload 'restart'
         return @{baseline_version='1.0.0-rc.1';baseline_installer_sha256=$BaselineSha256;attempted=$true;timed_out=$false;installed_version_after=$Version;exit_code=$attempt.ExitCode;raw_report=$after.raw}
     }
+} catch {
+    $suiteFailure = $_
+    throw
 } finally {
-    try { Remove-OwnedInstallation } finally {
+    # A failed cleanup must not replace the case failure that is already propagating.
+    try { Remove-OwnedInstallation } catch { if ($null -eq (Get-Variable suiteFailure -Scope Script -ValueOnly -ErrorAction SilentlyContinue)) { throw }; Write-Warning ('Cleanup also failed: '+$_.Exception.Message) } finally {
         $env:APPDATA=$previousAppData
         Remove-ItemProperty -LiteralPath $policyPath -Name 'azeroth-desktop.exe' -ErrorAction SilentlyContinue
     }
