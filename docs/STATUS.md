@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-20.
+Updated: 2026-10-23.
 
 Parallel continuation requested 2026-10-19: isolated writers are auditing desktop
 locale restoration, guide objective replay, archive failure dispositions and
@@ -30,6 +30,14 @@ merged at `506a9cb` after independent review, all nine exact-head checks and sou
 parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
+
+2026-10-23: reviewed schema5 contract, inventory generator, Windows transport and
+exact-draft UI driver are integrated locally through PR271–274. Synthetic checks
+pass; current release instructions follow ADR0009. Recovery repair has passing
+Linux full-pack evidence and awaits hosted Windows measurement. The exporter
+coverage audit found one additional executable to instrument. Canonical release
+evidence/receipts still need renewal; no candidate push, main merge, tag or public
+release. [Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
 
 2026-10-23: V19 attempt1 cancelled; attempt2 recovery1200s timeout, four hosted
 passes and three later cases unrun. Exact attempt evidence preserved/verified.
