@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
-  "production_sha256": "abde826deab18e4e9b98add5b8a6e226c3f58d786baaf77234e4a39de6abdf07",
+  "source_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+  "production_sha256": "d2cebaecebb068b1c27fb2a8d6d5f4955627d54301a20ee1c75c54049f5a9f6a",
   "production_entries": 3158,
   "command": "azeroth-cli release-materials --root . --version 1.0.0",
   "cli_sha256": "fbbf4571c063766931bea46ded663d4b06073c648589c56713b72d132a2f76c2",
@@ -10,7 +10,7 @@
   "selected_packs": 2,
   "unsigned_preparation": {
     "ready": true,
-    "evidence_sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9"
+    "evidence_sha256": "23c0cd9a8365bf417c9176fbb274d8c23c41192511be286b3bef2d5066feb871"
   },
   "pristine_pending_observations": [
     "HOSTED-INSTALL",
@@ -29,17 +29,17 @@
     {
       "path": "release/v1/verification-v20/functional-run.log",
       "bytes": 843,
-      "sha256": "0c655fc217ce06e71ed71e800521602129d9418b5c7088d97c1c7f4d809ba32c"
+      "sha256": "02fd7039d71118d353ee81b930a9aee6f3a9f1db43876d31fd4e73023fa92b2c"
     },
     {
       "path": "release/v1/verification-v20/functional-build.log",
       "bytes": 62,
-      "sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b"
+      "sha256": "5089e1c94f049189c2882fc87c84f7dc7b10bacee71a9d1d0a37f5d69d73d594"
     },
     {
       "path": "release/v1/verification-v20/cli-build.log",
       "bytes": 62,
-      "sha256": "92434e198f27984c035c376ec77a7cf9e6ebdde782f8ccb1336ae3329b66ddb7"
+      "sha256": "403998d7813def59ff54ef8942a37a928b6a42f3aea6f4660bbd1cdb0d4ebac8"
     },
     {
       "path": "release/v1/verification-v20/inventory-generation.json",
@@ -49,12 +49,12 @@
     {
       "path": "release/v1/verification-v20/unsigned-material-preview.json",
       "bytes": 55727,
-      "sha256": "53460988fb261e8f825b3bab60718c0f8212924c6174b0a2eff3f0c98b459e5d"
+      "sha256": "b9676ded9503d20a2332f81ec607fe568862e1edc941b2ad2dcb753d4f246421"
     },
     {
       "path": "release/v1/verification-v20/prebundle-evidence.json",
       "bytes": 27970074,
-      "sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9"
+      "sha256": "23c0cd9a8365bf417c9176fbb274d8c23c41192511be286b3bef2d5066feb871"
     }
   ]
 }

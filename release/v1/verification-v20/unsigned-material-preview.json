@@ -1,7 +1,7 @@
 {
   "unsigned_preparation": {
     "ready": true,
-    "evidence_sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9"
+    "evidence_sha256": "23c0cd9a8365bf417c9176fbb274d8c23c41192511be286b3bef2d5066feb871"
   },
   "bundled_packs": [
     {
@@ -59,8 +59,8 @@
   ],
   "schema_version": 2,
   "version": "1.0.0",
-  "candidate_source_commit": "6773085451956e23d87057e6c8c5f530574cb8df",
-  "production_sha256": "abde826deab18e4e9b98add5b8a6e226c3f58d786baaf77234e4a39de6abdf07",
+  "candidate_source_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+  "production_sha256": "d2cebaecebb068b1c27fb2a8d6d5f4955627d54301a20ee1c75c54049f5a9f6a",
   "inventory_sha256": "4d3b844ee3d5d624531dea878e4e06a795f1dea29f0ba1436ebc4573361bf72e",
   "target": {
     "edition": "wow_forever",

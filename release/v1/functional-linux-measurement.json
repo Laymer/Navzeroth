@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
-  "production_sha256": "abde826deab18e4e9b98add5b8a6e226c3f58d786baaf77234e4a39de6abdf07",
+  "source_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+  "production_sha256": "d2cebaecebb068b1c27fb2a8d6d5f4955627d54301a20ee1c75c54049f5a9f6a",
   "returncode": 0,
   "timed_out": false,
-  "seconds": 78.54150760099947,
-  "peak_child_rss_kib": 6206004,
+  "seconds": 79.54280483299954,
+  "peak_child_rss_kib": 6205356,
   "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
   "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
   "platform": "shared Linux/WSL2",
   "hardware_limits": "32 logical processors; MemTotal:       32675956 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
-  "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; application/core/storage/ingest/local-data/CLI/content/Cargo bytes were compared unchanged from de2; production app source and functional test remain identical to ca94. The separate hosted engineering test added since ca94 is outside this executable. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
-  "proof_sha256": "7b1bf81ae2bb01260a5d997ddd3ec279266d8310f070fe71b2a4a82918df1f67"
+  "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; Application/desktop/core/storage/ingest/local-data/CLI/content/addon/Cargo bytes were compared unchanged from 23c804; production app source and functional test remain identical to ca94. README and engineering-probe Python/tests/workflow changes are outside this executable. The separate hosted engineering test added since ca94 is outside this executable. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
+  "proof_sha256": "3144fe33f6f4f0819d08932a7bcac0da34742578738a3b1e63f8ed77caccc461"
 }
