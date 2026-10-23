@@ -37,9 +37,15 @@ disabling adapters:
 - An external TCP connection to an address resolved beforehand must succeed
   before isolation, be refused during isolation and after the workload, and
   return after restoration.
-- The snapshot of profiles and allow rules must be restored exactly and the
-  isolation rules removed, verified by re-reading state. Cleanup failures never
-  replace the original failure.
+- Enabled outbound allow rules in the effective (ActiveStore) policy outside the
+  isolation group are inventoried. Isolation is refused if any rule is unscoped
+  (any program and any service) or names `azeroth-desktop.exe`,
+  `msedgewebview2.exe`, `node.exe`, `pwsh.exe` or `powershell.exe`.
+- Cleanup restores the profiles first, then re-enables the snapshot rules, and
+  removes the isolation rules last. If the profiles cannot be restored, the
+  runner's rules are kept so the job can report the failure. The restored state is
+  re-read and compared to the snapshot. Cleanup failures never replace the
+  original failure.
 
 The case records `network_isolation=windows_firewall_runner_agent_only`,
 `network_isolated`, `external_connection_refused`, `network_restored`,
@@ -48,20 +54,21 @@ The validator accepts exactly one of the two shapes and refuses mixtures.
 
 ## Consequences and limits
 
-- This proves the app, its WebView2 processes and the test driver work without
-  external connections. It does not prove the machine had no network at all: the
-  runner agent stayed connected and name resolution through the system DNS client
-  remained possible.
+- The direct proof is a refused TCP connection from the PowerShell process that
+  drives the case, plus the absence of any persistent or effective allow rule that
+  would admit the app, its WebView2 processes or the Node driver. Under
+  default-deny that makes the app's external connections fail. It does not prove
+  the machine had no network at all: the runner agent stayed connected and name
+  resolution through the system DNS client remained possible.
 - Loopback stays available, as it was under disabled adapters.
-- Allow rules held only in non-persistent stores, such as service hardening,
-  are outside the snapshot. The refused external connection is the operational
-  proof that these rules do not admit test processes.
+- Service-scoped effective allow rules (for example Dnscache) stay active. They
+  apply only to their service, not to the test processes.
 - Historical adapter-based cases, including V17's passing `HOSTED-OFFLINE`,
   keep their `network_disabled` meaning. The adapter helper and its engineering
   probe remain for that purpose.
 - The 20-minute workload and 60-minute suite bounds are unchanged.
-- The opt-in `windows-offline-firewall-probe.yml` holds isolation for 600 s,
-  about twice the offline workload. It is engineering evidence, never an
+- The opt-in `windows-offline-firewall-probe.yml` holds isolation for 1260 s,
+  past the 1200 s workload bound. It is engineering evidence, never an
   acceptance observation.
 
 ## Engineering probe results
@@ -71,8 +78,10 @@ The validator accepts exactly one of the two shapes and refuses mixtures.
   replaced its case-insensitively equal `$Hold` parameter and failed after 38 s.
 - Run 39972424100 (`19f9ca28`): passed. The job survived 600 s of isolation with
   40 checks of refused external TCP and working loopback, 177 allow rules disabled,
-  exact restoration and returned connectivity (restore and re-verification took
-  35 s of the 60 s window). The allowed agents were
+  exact restoration and returned connectivity. Its 35 s "restore" figure was
+  mostly a per-rule re-verification loop (one firewall query per snapshot rule)
+  sharing the 60 s connectivity window. Independent review found this. The rules
+  are now read once and connectivity has its own timer. The allowed agents were
   `C:\actions-runner\cached\2.338.0\bin\Runner.Worker.exe` and `Runner.Listener.exe`.
   Before isolation, `hosted-compute-agent`, `WindowsAzureGuestAgent`, `WaAppAgent`,
   `provjobd`, `lsass`, `svchost`, Defender and the Start menu host also held

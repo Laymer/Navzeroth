@@ -53,6 +53,7 @@ function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $Sou
             $names = @($Case.PSObject.Properties.Name)
             if ($names -contains 'network_isolation') {
                 if ($names -contains 'network_disabled' -or $Case.network_isolation -cne 'windows_firewall_runner_agent_only' -or $Case.network_isolated -isnot [bool] -or -not $Case.network_isolated -or $Case.external_connection_refused -isnot [bool] -or -not $Case.external_connection_refused -or $Case.network_restored -isnot [bool] -or -not $Case.network_restored) { throw 'Offline case requires verified firewall isolation and restoration.' }
+            } elseif (@($names | Where-Object { $_ -cin @('network_isolated','external_connection_refused','allowed_programs','dns_allowed') }).Count -ne 0) { throw 'Offline case mixes adapter and firewall evidence.'
             } elseif ($Case.network_disabled -isnot [bool] -or -not $Case.network_disabled) { throw 'Offline case requires an actually disabled network.' }
         }
         'HOSTED-PERFORMANCE' {

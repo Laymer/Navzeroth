@@ -196,7 +196,7 @@ try{
  function New-MockFirewall {
   $script:fwProfiles=[ordered]@{Domain=@{e='True';i='NotConfigured';o='NotConfigured'};Private=@{e='True';i='Block';o='Allow'};Public=@{e='False';i='NotConfigured';o='NotConfigured'}}
   $script:fwRules=[ordered]@{};foreach($n in @('core-dns','edge-mdns','ssh-in')){$script:fwRules[$n]=@{Enabled=$true;Action='Allow';Group=''}};$script:fwRules['wsh-block']=@{Enabled=$true;Action='Block';Group=''}
-  $script:fwOnline=$true;$script:fwLeak=$false;$script:fwDisableFail=$false;$script:fwEnableFail='';$script:fwStickyRule='';$script:fwNoReturn=$false;$script:fwAgents=@('C:\actions\runner\bin\Runner.Listener.exe','C:\actions\runner\bin\Runner.Worker.exe');$script:fwSeen=$null;$script:fwSequence=0;$script:fwWasIsolated=$false
+  $script:fwOnline=$true;$script:fwLeak=$false;$script:fwDisableFail=$false;$script:fwEnableFail='';$script:fwStickyRule='';$script:fwNoReturn=$false;$script:fwAgents=@('C:\actions\runner\bin\Runner.Listener.exe','C:\actions\runner\bin\Runner.Worker.exe');$script:fwSeen=$null;$script:fwSequence=0;$script:fwWasIsolated=$false;$script:fwCalls=@();$script:fwRestoreProfileFail=$false;$script:fwCreateFail=$false;$script:fwActive=@()
  }
  function Get-StableRunnerAgentPrograms { if($script:fwAgents.Count -ne 2){throw 'Synthetic missing runner ancestry'};return $script:fwAgents }
  function Resolve-StableProbeAddress([string]$HostName) { return '192.0.2.1' }
@@ -209,26 +209,30 @@ try{
   foreach($n in $script:fwProfiles.Keys){$p=$script:fwProfiles[$n];[pscustomobject]@{Name=$n;Enabled=$p.e;DefaultInboundAction=$p.i;DefaultOutboundAction=$p.o}}
  }
  function Set-NetFirewallProfile { [CmdletBinding()]param([string[]]$Name,[string]$Enabled,[string]$DefaultInboundAction,[string]$DefaultOutboundAction,[string]$PolicyStore)
+  if($DefaultOutboundAction -ne 'Block'){$script:fwCalls+='restore-profile';if($script:fwRestoreProfileFail){throw 'Synthetic profile restore failure'}}
   foreach($n in $Name){$script:fwProfiles[$n]=@{e=$Enabled;i=$DefaultInboundAction;o=$DefaultOutboundAction}}
  }
- function Get-NetFirewallRule { [CmdletBinding()]param([string]$PolicyStore,[string]$Enabled,[string]$Action,[string]$Group)
+ function Get-NetFirewallRule { [CmdletBinding()]param([string]$PolicyStore,[string]$Enabled,[string]$Action,[string]$Group,[string]$Direction)
   foreach($n in @($script:fwRules.Keys)){$r=$script:fwRules[$n]
    if(($Enabled -and ([string]$r.Enabled) -ne $Enabled) -or ($Action -and $r.Action -ne $Action) -or ($Group -and $r.Group -ne $Group)){continue}
    [pscustomobject]@{Name=$n}}
  }
  function New-NetFirewallRule { [CmdletBinding()]param([string]$DisplayName,[string]$Group,[string]$Direction,[string]$Action,[string]$Program,[string]$Service,[string]$Protocol,[string]$RemotePort,[string]$PolicyStore)
-  $script:fwSequence++;$script:fwRules[('{iso-'+$script:fwSequence+'}')]=@{Enabled=$true;Action=$Action;Group=$Group;Program=$Program}
+  if($script:fwCreateFail){throw 'Synthetic rule creation failure'};$script:fwSequence++;$script:fwRules[('{iso-'+$script:fwSequence+'}')]=@{Enabled=$true;Action=$Action;Group=$Group;Program=$Program}
  }
  function Remove-NetFirewallRule { [CmdletBinding()]param([string]$Group,[string]$PolicyStore)
-  foreach($n in @($script:fwRules.Keys)){if($script:fwRules[$n].Group -eq $Group){$script:fwRules.Remove($n)}}
+  $script:fwCalls+='remove-group';$matched=@($script:fwRules.Keys|Where-Object {$script:fwRules[$_].Group -eq $Group})
+  if($matched.Count -eq 0){throw 'No MSFT_NetFirewallRule objects found with property Group'}
+  foreach($n in $matched){$script:fwRules.Remove($n)}
  }
  function Disable-NetFirewallRule { [CmdletBinding()]param([string[]]$Name,[string]$PolicyStore)
   foreach($n in $Name){if($script:fwDisableFail -and $n -eq 'edge-mdns'){throw 'Synthetic partial disable failure'};if($n -ne $script:fwStickyRule){$script:fwRules[$n].Enabled=$false}}
  }
  function Enable-NetFirewallRule { [CmdletBinding()]param([string[]]$Name,[string]$PolicyStore)
-  foreach($n in $Name){if($n -eq $script:fwEnableFail){throw 'Synthetic enable failure'}}
+  $script:fwCalls+='enable-rules';foreach($n in $Name){if($n -eq $script:fwEnableFail){throw 'Synthetic enable failure'}}
   foreach($n in $Name){$script:fwRules[$n].Enabled=$true}
  }
+ function Get-StableActiveAllowInventory([string]$Group) { return $script:fwActive }
  function Snapshot-MockFirewall { return (@{p=$script:fwProfiles;r=@($script:fwRules.Keys|ForEach-Object {$_+'='+$script:fwRules[$_].Enabled})}|ConvertTo-Json -Depth 5 -Compress) }
  function FirewallFailure([scriptblock]$Workload,[int]$RestoreSeconds=60) {
   $failure=$null;try{Invoke-StableFirewallOffline $Workload -RestoreSeconds $RestoreSeconds|Out-Null}catch{$failure=$_.Exception.Message};return $failure
@@ -280,6 +284,42 @@ try{
   $failure=FirewallFailure {return @{actual='workload'}} 1
   $diag=$failure.Substring('Hosted offline firewall control failed: '.Length)|ConvertFrom-Json
   if($diag.restoration.connectivity -notlike 'external connection did not return*'){throw 'Unrestored connectivity accepted'}
+ }
+ Check 'cleanup lifts default-deny before removing the runner rules' {
+  New-MockFirewall;Invoke-StableFirewallOffline {return @{}}|Out-Null
+  if(($script:fwCalls -join ',') -cne 'restore-profile,restore-profile,restore-profile,enable-rules,remove-group'){throw ('Unsafe cleanup order: '+($script:fwCalls -join ','))}
+ }
+ Check 'failed profile restore keeps the runner rules and reports both causes' {
+  New-MockFirewall;$script:fwRestoreProfileFail=$true
+  $failure=FirewallFailure {throw 'Synthetic native failure'} 1
+  $diag=$failure.Substring('Hosted offline firewall control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.error -cne 'Synthetic native failure' -or $diag.restoration.profiles -notlike '*Synthetic profile restore failure*' -or $diag.restoration.rules_removed -cne 'kept because profiles were not restored' -or @($script:fwRules.Values|Where-Object {$_.Group -and $_.Program -like '*Runner.*'}).Count -ne 2){throw 'Runner rules removed while still default-deny'}
+ }
+ Check 'failed first rule creation reports only its own cause' {
+  New-MockFirewall;$before=Snapshot-MockFirewall;$script:fwCreateFail=$true
+  $failure=FirewallFailure {throw 'Must not run'}
+  $diag=$failure.Substring('Hosted offline firewall control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.error -cne 'Synthetic rule creation failure' -or $diag.restoration.rules_removed -cne 'ok' -or $diag.restoration.verification -cne 'ok' -or (Snapshot-MockFirewall) -cne $before){throw 'Empty group removal hid the cause'}
+ }
+ Check 'effective-store allow rules that admit the workload refuse isolation' {
+  foreach($item in @(@{program='Any';service='Any'},@{program='';service=''},@{program='C:\Program Files (x86)\Microsoft\EdgeWebView\Application\1\msedgewebview2.exe';service='Any'},@{program='C:\a\node.exe';service='Any'})){
+   New-MockFirewall;$before=Snapshot-MockFirewall;$script:fwActive=@([ordered]@{program=$item.program;service=$item.service});$script:workloadRan=$false
+   $failure=FirewallFailure {$script:workloadRan=$true;return @{}}
+   if($script:workloadRan -or $failure -notlike '*admits the offline workload processes*' -or (Snapshot-MockFirewall) -cne $before){throw ('Admitting rule accepted: '+$item.program)}
+  }
+  New-MockFirewall;$script:fwActive=@([ordered]@{program='Any';service='Dnscache'},[ordered]@{program='%SystemRoot%\system32\svchost.exe';service='Any'})
+  $result=Invoke-StableFirewallOffline {return @{}}
+  if($result.diagnostics.effective_outbound_allow.count -ne 2){throw 'Effective inventory not recorded'}
+ }
+ Check 'offline validator refuses mixed shapes parsed from JSON' {
+  $base=[ordered]@{schema_version=1;id='HOSTED-OFFLINE';method='hosted_windows';status='pass';version='1.0.0';source_commit=$identity.source_commit;production_sha256=$identity.production_sha256;installer_sha256=$identity.installer_sha256;target=$identity.target;operator='Synthetic';environment='Synthetic';recorded_at='2026-10-23T00:00:00Z';completed=$true}
+  function ParseCase($Extra){$c=[ordered]@{};foreach($k in $base.Keys){$c[$k]=$base[$k]};foreach($k in $Extra.Keys){$c[$k]=$Extra[$k]};return ConvertFrom-HostedJsonText ($c|ConvertTo-Json -Depth 10)}
+  function AssertCase($Case){Assert-HostedCase $Case 'HOSTED-OFFLINE' '1.0.0' $identity.source_commit $identity.production_sha256 $identity.installer_sha256 $identity.target}
+  AssertCase (ParseCase @{network_disabled=$true})
+  AssertCase (ParseCase @{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true})
+  Refuse {AssertCase (ParseCase @{network_disabled=$true;network_isolated=$true;external_connection_refused=$true})}
+  Refuse {AssertCase (ParseCase @{network_disabled=$true;dns_allowed=$true})}
+  Refuse {AssertCase (ParseCase @{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored='true'})}
  }
  Check 'offline case accepts exactly one offline evidence shape' {
   $firewall=@{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true}

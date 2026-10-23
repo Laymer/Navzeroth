@@ -4,7 +4,7 @@
 [CmdletBinding()]
 param(
     [string] $OutputDirectory = ([IO.Path]::Combine([IO.Path]::GetTempPath(),'navzeroth-offline-firewall-probe')),
-    [ValidateRange(60,900)][int] $HoldSeconds = 600
+    [ValidateRange(60,1500)][int] $HoldSeconds = 1260
 )
 Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'

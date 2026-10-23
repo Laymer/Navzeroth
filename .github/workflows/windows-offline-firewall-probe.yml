@@ -13,7 +13,7 @@ jobs:
   offline-firewall-engineering-probe:
     name: Offline firewall engineering probe (not acceptance)
     runs-on: windows-2025
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - name: Preserve exact source line endings
         shell: pwsh
@@ -22,9 +22,9 @@ jobs:
         with:
           lfs: false
           persist-credentials: false
-      - name: Hold firewall isolation longer than the offline workload and restore exactly
+      - name: Hold firewall isolation past the 1200 s workload bound and restore exactly
         shell: pwsh
-        run: ./scripts/windows/Probe-HostedOfflineFirewall.ps1 -OutputDirectory "$env:RUNNER_TEMP/offline-firewall-probe" -HoldSeconds 600
+        run: ./scripts/windows/Probe-HostedOfflineFirewall.ps1 -OutputDirectory "$env:RUNNER_TEMP/offline-firewall-probe" -HoldSeconds 1260
       - name: Retain bounded engineering diagnostics after restoration
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

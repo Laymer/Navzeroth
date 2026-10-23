@@ -238,6 +238,28 @@ function Limit-StableDiagnostic($Failure) {
     if ($text.Length -gt 256) { $text = $text.Substring(0, 245) + '[truncated]' }
     return $text
 }
+# Enabled outbound allow rules in the effective store, outside the isolation group.
+# PersistentStore rules are disabled, but other stores (service hardening, GPO)
+# can still allow traffic. Each returned item names its program and service.
+function Get-StableActiveAllowInventory([string] $Group) {
+    $rules = @(Get-NetFirewallRule -PolicyStore ActiveStore -Enabled True -Action Allow -Direction Outbound -ErrorAction SilentlyContinue | Where-Object { [string]$_.Group -cne $Group })
+    if ($rules.Count -gt 256) { throw 'Effective outbound allow rule inventory exceeds bounded capacity.' }
+    return @(foreach ($rule in $rules) {
+        $program = [string](@($rule | Get-NetFirewallApplicationFilter -ErrorAction Stop)[0].Program)
+        $service = [string](@($rule | Get-NetFirewallServiceFilter -ErrorAction Stop)[0].Service)
+        [ordered]@{program=$program;service=$service}
+    })
+}
+# A rule admits the test processes when it is unscoped (any program, any service)
+# or names an executable the offline workload runs.
+function Test-StableAllowAdmitsWorkload($Item) {
+    $program = [string]$Item.program; $service = [string]$Item.service
+    $unscopedProgram = [string]::IsNullOrWhiteSpace($program) -or $program -ceq 'Any'
+    $unscopedService = [string]::IsNullOrWhiteSpace($service) -or $service -ceq 'Any'
+    if ($unscopedProgram) { return $unscopedService }
+    $leaf = $program.Replace('/','\').Split('\')[-1]
+    return $leaf -in @('azeroth-desktop.exe','msedgewebview2.exe','node.exe','pwsh.exe','powershell.exe')
+}
 function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHost = 'github.com', [int] $ProbePort = 443, [ValidateRange(1,60)][int] $RestoreSeconds = 60) {
     if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:OS -ne 'Windows_NT') { throw 'Offline workload requires a disposable hosted Windows runner.' }
     # Everything below is read-only until the first firewall change.
@@ -247,7 +269,7 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
     $profiles = @(Get-StableFirewallProfiles 'PersistentStore')
     $allow = @(Get-StableEnabledAllowRules)
     $group = 'Navzeroth hosted offline isolation ' + [Guid]::NewGuid().ToString('N')
-    $stage = 'isolate'; $primary = $null; $result = $null; $disabled = @(); $changed = $false; $remainingAllow = $null
+    $stage = 'isolate'; $primary = $null; $result = $null; $disabled = @(); $changed = $false; $remainingAllow = $null; $activeAllow = $null
     try {
         $changed = $true
         foreach ($program in $agents) {
@@ -268,6 +290,9 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
         # Only the isolation group's own agent and DNS rules may remain enabled.
         $remainingAllow = @(Get-StableEnabledAllowRules).Count
         if ($remainingAllow -ne $agents.Count + 2) { throw 'Allow rules other than the runner agent and DNS remain enabled.' }
+        $inventory = @(Get-StableActiveAllowInventory $group)
+        $activeAllow = [ordered]@{count=$inventory.Count;programs=@($inventory | ForEach-Object { ([string]$_.program).Replace('/','\').Split('\')[-1] } | Sort-Object -Unique | Select-Object -First 32)}
+        if (@($inventory | Where-Object { Test-StableAllowAdmitsWorkload $_ }).Count -ne 0) { throw 'An effective outbound allow rule admits the offline workload processes.' }
         if (Test-StableExternalTcp $address $ProbePort) { throw 'External connection still succeeds under isolation.' }
         $stage = 'workload'; $result = & $Workload
         $stage = 'verify_after_workload'
@@ -275,9 +300,14 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
     } catch {
         $primary = [ordered]@{stage=$stage;error=(Limit-StableDiagnostic $_)}
     } finally {
-        $restoration = [ordered]@{rules_removed=$null;rules_enabled=$null;profiles=$null;connectivity=$null}
+        $restoration = [ordered]@{profiles=$null;rules_enabled=$null;rules_removed=$null;verification=$null;connectivity=$null}
         if ($changed) {
-            try { Remove-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction Stop; $restoration.rules_removed = 'ok' } catch { $restoration.rules_removed = Limit-StableDiagnostic $_ }
+            # Lift default-deny first: until then the runner relies on the
+            # isolation group, which therefore goes last.
+            try {
+                foreach ($saved in $profiles) { Set-NetFirewallProfile -Name $saved.name -Enabled $saved.enabled -DefaultInboundAction $saved.inbound -DefaultOutboundAction $saved.outbound -PolicyStore PersistentStore -ErrorAction Stop }
+                $restoration.profiles = 'ok'
+            } catch { $restoration.profiles = Limit-StableDiagnostic $_ }
             $enableErrors = 0
             if ($disabled.Count -gt 0) {
                 try { Enable-NetFirewallRule -Name $disabled -PolicyStore PersistentStore -ErrorAction Stop } catch {
@@ -286,27 +316,41 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
                 }
             }
             $restoration.rules_enabled = if ($enableErrors -eq 0) { 'ok' } else { [string]$enableErrors + ' rule(s) not re-enabled' }
-            try {
-                foreach ($saved in $profiles) { Set-NetFirewallProfile -Name $saved.name -Enabled $saved.enabled -DefaultInboundAction $saved.inbound -DefaultOutboundAction $saved.outbound -PolicyStore PersistentStore -ErrorAction Stop }
-                $restoration.profiles = 'ok'
-            } catch { $restoration.profiles = Limit-StableDiagnostic $_ }
+            if ($restoration.profiles -cne 'ok') {
+                # Still default-deny: keep the runner's own rules so the job can
+                # report this failure instead of losing its connection.
+                $restoration.rules_removed = 'kept because profiles were not restored'
+            } else {
+                try {
+                    # Removing an empty group throws; a failed first rule creation leaves none.
+                    if (@(Get-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction SilentlyContinue).Count -gt 0) { Remove-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction Stop }
+                    $restoration.rules_removed = 'ok'
+                } catch { $restoration.rules_removed = Limit-StableDiagnostic $_ }
+            }
         }
     }
-    $restore = [Diagnostics.Stopwatch]::StartNew()
+    $verify = [Diagnostics.Stopwatch]::StartNew()
     if ($changed) {
         # Independently re-read the restored state instead of trusting cmdlet success.
         try {
-            if ((@(Get-StableFirewallProfiles 'PersistentStore') | ConvertTo-Json -Compress) -cne ($profiles | ConvertTo-Json -Compress)) { $restoration.profiles = 'restored profiles differ from the snapshot' }
-            $missing = @($allow | Where-Object { $_ -cnotin @(Get-StableEnabledAllowRules) }).Count
-            if ($missing -ne 0) { $restoration.rules_enabled = [string]$missing + ' snapshot rule(s) not enabled' }
-            if (@(Get-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction SilentlyContinue).Count -ne 0) { $restoration.rules_removed = 'isolation rules remain' }
-        } catch { $restoration.profiles = Limit-StableDiagnostic $_ }
+            # Keep an earlier, more specific cause when one was already recorded.
+            if ($restoration.profiles -ceq 'ok' -and (@(Get-StableFirewallProfiles 'PersistentStore') | ConvertTo-Json -Compress) -cne ($profiles | ConvertTo-Json -Compress)) { $restoration.profiles = 'restored profiles differ from the snapshot' }
+            $enabledNow = @(Get-StableEnabledAllowRules)
+            $missing = @($allow | Where-Object { $_ -cnotin $enabledNow }).Count
+            if ($missing -ne 0 -and $restoration.rules_enabled -ceq 'ok') { $restoration.rules_enabled = [string]$missing + ' snapshot rule(s) not enabled' }
+            if ($restoration.rules_removed -ceq 'ok' -and @(Get-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction SilentlyContinue).Count -ne 0) { $restoration.rules_removed = 'isolation rules remain' }
+            $restoration.verification = 'ok'
+        } catch { $restoration.verification = Limit-StableDiagnostic $_ }
+    }
+    $verify.Stop()
+    $restore = [Diagnostics.Stopwatch]::StartNew()
+    if ($changed) {
         $online = $false
         do { $online = Test-StableExternalTcp $address $ProbePort; if (-not $online) { Start-Sleep -Milliseconds 500 } } while (-not $online -and $restore.Elapsed.TotalSeconds -lt $RestoreSeconds)
         $restoration.connectivity = if ($online) { 'ok' } else { ('external connection did not return within ' + $RestoreSeconds + ' s') }
     }
     $cleanupFailed = $changed -and @($restoration.Values | Where-Object { $_ -cne 'ok' }).Count -gt 0
-    $diagnostics = [ordered]@{primary=$primary;restoration=$restoration;restore_elapsed_ms=$restore.ElapsedMilliseconds;disabled_allow_rules=$disabled.Count;remaining_enabled_allow_rules=$remainingAllow}
+    $diagnostics = [ordered]@{primary=$primary;restoration=$restoration;verify_elapsed_ms=$verify.ElapsedMilliseconds;restore_elapsed_ms=$restore.ElapsedMilliseconds;disabled_allow_rules=$disabled.Count;remaining_enabled_allow_rules=$remainingAllow;effective_outbound_allow=$activeAllow}
     if ($null -ne $primary -or $cleanupFailed) {
         # Preserve both failure paths; cleanup must never replace the original cause.
         throw ('Hosted offline firewall control failed: ' + ($diagnostics | ConvertTo-Json -Depth 6 -Compress))
