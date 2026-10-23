@@ -9,11 +9,18 @@ the earlier [0.9.2 publication record](../handoffs/2026-10-17-v0.9.2-publication
 the [original handoff](../handoffs/2026-10-13-M9.4-windows-packaging.md) and
 [PR #39 review](../handoffs/2026-10-13-PR39-review.md)). Interactive
 installer pages, a non-runner Windows machine and the addon on a live Forever
-client are not fully verified. The current download is the published
-[1.0.0-rc.1 unsigned development prerelease](https://github.com/Laymer/Navzeroth/releases/tag/v1.0.0-rc.1).
-It does not contain a verified playable-content catalog. Under [ADR 0006](../decisions/0006-v1-program.md), full-content v1.0.0 targets
-the first verified stable live build after launch and remains subject to the
-[v1 release gates](../releases/V1_RELEASE_PROCESS.md).
+client are not fully verified. The independently verified public download is identified by the
+[installation guide](../site/installation.html) and
+[versioned public metadata](../site/release.json); a prepared source version does
+not establish publication. Historical RC and older receipts above keep their
+original scope. The prepared 1.0.0 dataset target is Forever 1.60.1.70450 / interface 16001,
+with historical 1.12.1/70245 origins retained, under
+[ADR 0007](../decisions/0007-world-data-automation.md),
+[ADR 0008](../decisions/0008-unsigned-stable-release.md) and
+[ADR 0009](../decisions/0009-automated-draft-release-acceptance.md).
+Live-addon admission remains experimental/unverified; no frozen launch build or
+full live acceptance is implied. Current exact-installer verification is recorded
+separately in the [v1 release gates](../releases/V1_RELEASE_PROCESS.md).
 
 Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Windows.ps1)):
 
@@ -28,9 +35,14 @@ Release files (built by [`Build-Windows.ps1`](../../scripts/windows/Build-Window
 The 1.0.0-rc.1 release has all five files. Its checksum manifest covers the
 four payload files, not itself. A local `-AddonOnly` build omits the installer;
 an untagged version without notes also omits `CANDIDATE_NOTES.md`. Neither is the
-complete Windows release asset set. The current development selection includes no production content pack or content
-source archive. The application does bundle dependency notices and retained
-dependency sources; these are verified against the committed source.
+complete Windows release asset set. The prepared unsigned stable contract additionally requires the content/source
+material archive, RELEASE_MATERIALS.json and RELEASE_ASSETS.json: eight release
+assets in total, rather than the historical RC's five. It bundles verified
+world/authored packs, notices, source materials and signed content receipts.
+This describes required prepared scope, not completed publication or Windows
+acceptance. Installer Authenticode status and content-receipt signatures are
+separate checks. Dependency notices and retained sources are also verified against
+the committed source.
 
 ## For users
 
@@ -194,8 +206,10 @@ a Developer PowerShell where `signtool` is on `PATH`:
 $env:NAVZEROTH_SIGN_COMMAND = 'signtool sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /sha1 <thumbprint> %1'
 ```
 
-This hook is for local builds. Release builds in GitHub Actions are signed through
-SignPath Foundation after the build instead; see [code signing](CODE_SIGNING.md).
+This hook is for local builds. The explicit 1.0.0 release policy permits unsigned
+Windows artifacts, verified as NotSigned with their exact hashes/source. Other releases follow their committed
+version-specific policy; optional SignPath configuration is documented in
+[code signing](CODE_SIGNING.md), without claiming approval or signing availability.
 Obtaining a certificate or a signing account is an owner decision (AGENTS.md).
 
 ## For maintainers: releases
@@ -212,18 +226,22 @@ diagnostics before stopping the process. File presence does not prove completed
 migrations or interactive readiness. The workflow then uninstalls, checks retained
 user/addon data and uploads the release files as a workflow artifact (kept 14 days).
 
-Tag runs also require version-specific release notes and draft a release containing
-the five normal files. Versions beginning `0.` or containing `-` are marked
-prerelease. The tag-only **Draft GitHub release** job does not replace the ten
+Tag runs also require version-specific release notes and draft the complete
+policy-required asset set. The historical RC set had five files; stable 1.0.0 also
+requires the three content/source material assets described above. Versions
+beginning `0.` or containing `-` are marked prerelease. The tag-only **Draft GitHub release** job does not replace the ten
 required PR/main checks.
 
-For the authorized v1.0.0 program, follow the
-[v1 release process](../releases/V1_RELEASE_PROCESS.md): enumerate full content,
-verify source rights and actual client/Windows behavior, pass stable-readiness
-enforcement, then create the reviewed version PR and tag. The baseline workflow
-only builds and drafts; the new stable-evidence gate and content/source-asset
-packaging are separate required implementation work. A successful 0.9.x-style
-five-file package alone cannot satisfy full-content v1 release acceptance.
+For the authorized 1.0.0 program, follow the
+[v1 release process](../releases/V1_RELEASE_PROCESS.md): exact admitted content and
+source closure, all protected checks, stability, source-platform parity, independent
+review and eight hosted installer observations remain mandatory. Schema 5 then
+requires independently reviewed automated UI/native acceptance of the exact
+independently downloaded draft installer before publication. The real UI must
+activate the bundled content, create a source-backed engineering plan, and prove
+restart/persistence; no human result is fabricated. Human smoke and supplemental
+Windows 11 upgrade remain separate, unperformed observations. A historical five-file
+package, a prepared build, or synthetic browser tests cannot satisfy these gates.
 
 Publication is already authorized for this program once all mandatory gates pass.
 It remains an explicit coordinator action; the workflow never publishes by itself.
