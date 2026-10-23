@@ -45,10 +45,11 @@ function Invoke-HostedOfflineFirewallProbe([string] $Directory,[int] $Hold) {
     $null = New-Item -ItemType Directory -Path $directoryPath -ErrorAction Stop
     $reportPath = Join-Path $directoryPath 'probe.json'
     $timer = [Diagnostics.Stopwatch]::StartNew()
-    $report = [ordered]@{schema_version=1;kind='hosted_offline_firewall_engineering_probe';acceptance_observations_promoted=$false;passed=$false;source_commit=$source;run_id=$env:GITHUB_RUN_ID;run_attempt=$env:GITHUB_RUN_ATTEMPT;runner_os=$env:OS;powershell_version=$PSVersionTable.PSVersion.ToString();hold_seconds=$Hold;phase='inventory';external_connection_owners=@();checks=0;isolation=$null;elapsed_ms=0;error=$null}
+    $report = [ordered]@{schema_version=1;kind='hosted_offline_firewall_engineering_probe';acceptance_observations_promoted=$false;passed=$false;source_commit=$source;run_id=$env:GITHUB_RUN_ID;run_attempt=$env:GITHUB_RUN_ATTEMPT;runner_os=$env:OS;powershell_version=$PSVersionTable.PSVersion.ToString();hold_seconds=$Hold;phase='inventory';external_connection_owners=@();infrastructure_programs=@();checks=0;isolation=$null;elapsed_ms=0;error=$null}
     $failure = $null
     try {
         $report.external_connection_owners = @(Get-ExternalConnectionOwners)
+        $report.infrastructure_programs = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in @('hosted-compute-agent','WindowsAzureGuestAgent','WaAppAgent') -or $_.ProcessName -like 'provjobd*' } | Select-Object -First 8 | ForEach-Object { [ordered]@{name=$_.ProcessName;path=[string]$_.Path} })
         # Written before isolation, so a lost job still leaves this inventory.
         Write-FirewallProbeReport $report $reportPath
         $report.phase = 'isolated_hold'
