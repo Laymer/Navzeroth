@@ -28,6 +28,28 @@ function Get-ExternalConnectionOwners {
     }
     return @($owners.Keys | Sort-Object | Select-Object -First 32 | ForEach-Object { [ordered]@{process=$_;connections=$owners[$_]} })
 }
+# Which agent paths Windows Firewall accepts as program filters, as given and
+# in long-path form. Rules are created disabled in a throwaway group and removed.
+function Get-ProgramRuleAcceptance($Programs) {
+    if (-not ('NavzerothProbe.LongPath' -as [type])) {
+        Add-Type -Namespace NavzerothProbe -Name LongPath -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode)] public static extern uint GetLongPathName(string shortPath, System.Text.StringBuilder longPath, uint size);'
+    }
+    $group = 'Navzeroth probe program acceptance ' + [Guid]::NewGuid().ToString('N')
+    try {
+        return @(foreach ($item in $Programs) {
+            $buffer = New-Object Text.StringBuilder 1024
+            $long = if ([NavzerothProbe.LongPath]::GetLongPathName($item.path, $buffer, 1024) -gt 0) { $buffer.ToString() } else { $null }
+            $results = [ordered]@{name=$item.name;path=$item.path;long_path=$long}
+            foreach ($variant in @(@('as_given',$item.path),@('long',$long))) {
+                if (-not $variant[1]) { $results[$variant[0]] = 'no path'; continue }
+                try { New-NetFirewallRule -DisplayName $group -Group $group -Direction Outbound -Action Allow -Enabled False -Program $variant[1] -PolicyStore PersistentStore -ErrorAction Stop | Out-Null; $results[$variant[0]] = 'accepted' } catch { $results[$variant[0]] = [string]$_.Exception.Message }
+            }
+            $results
+        })
+    } finally {
+        if (@(Get-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction SilentlyContinue).Count -gt 0) { Remove-NetFirewallRule -Group $group -PolicyStore PersistentStore -ErrorAction Stop }
+    }
+}
 function Test-LoopbackTcp {
     $listener = New-Object Net.Sockets.TcpListener ([Net.IPAddress]::Loopback),0
     $listener.Start()
@@ -49,7 +71,8 @@ function Invoke-HostedOfflineFirewallProbe([string] $Directory,[int] $Hold) {
     $failure = $null
     try {
         $report.external_connection_owners = @(Get-ExternalConnectionOwners)
-        $report.infrastructure_programs = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in @('hosted-compute-agent','WindowsAzureGuestAgent','WaAppAgent') -or $_.ProcessName -like 'provjobd*' } | Select-Object -First 8 | ForEach-Object { [ordered]@{name=$_.ProcessName;path=[string]$_.Path} })
+        $infrastructure = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in @('hosted-compute-agent','WindowsAzureGuestAgent','WaAppAgent') -or $_.ProcessName -like 'provjobd*' } | Select-Object -First 8 | ForEach-Object { [ordered]@{name=$_.ProcessName;path=[string]$_.Path} })
+        $report.infrastructure_programs = @(Get-ProgramRuleAcceptance $infrastructure)
         # Written before isolation, so a lost job still leaves this inventory.
         Write-FirewallProbeReport $report $reportPath
         $report.phase = 'isolated_hold'
