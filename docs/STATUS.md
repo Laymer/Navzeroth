@@ -31,13 +31,15 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-2026-10-23: reviewed schema5 contract, inventory generator, Windows transport and
-exact-draft UI driver are integrated locally through PR271–274. Synthetic checks
-pass; current release instructions follow ADR0009. Recovery repair has passing
-Linux full-pack evidence and awaits hosted Windows measurement. The exporter
-coverage audit found one additional executable to instrument. Canonical release
-evidence/receipts still need renewal; no candidate push, main merge, tag or public
-release. [Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
+2026-10-23: reviewed PR271–276 are integrated locally throughca94. Schema5 contract,
+Windows transport/UI driver, recovery validation and supplemental backup helpers
+have actual scoped tests; all six affected contract/exporter Rust files meet90%.
+Two full-content functional executions produced identical proofs on sharedLinux.
+Regenerated inventory preserves260113records/274059acceptedunknowns and all nine
+Windows observations remain unverified. Hosted recovery probe review found two
+cleanup defects under repair. Final-source proof/review/receipts and fresh hosted
+checks remain required; remotePR239 stillV19, no main merge/tag/publication.
+[Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
 
 2026-10-23: V19 attempt1 cancelled; attempt2 recovery1200s timeout, four hosted
 passes and three later cases unrun. Exact attempt evidence preserved/verified.
