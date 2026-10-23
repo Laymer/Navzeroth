@@ -1,7 +1,10 @@
 //! External downloaded-draft evidence. No network, signatures or human claims.
 //! API snapshots are independently reviewed recorded evidence, not API authentication.
 use super::{Budget, Evidence, Result, hash};
-use azeroth_core::release::{self, FileRef};
+use azeroth_core::{
+    release::{self, FileRef},
+    types::AssetPath,
+};
 use serde::{Deserialize, de::DeserializeOwned};
 use std::path::Path;
 
@@ -18,6 +21,7 @@ struct Policy {
     os: String,
     runner_label: String,
     runner_group_name: String,
+    native_test_step_name: String,
 }
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -137,7 +141,14 @@ struct Repository {
     full_name: String,
 }
 #[derive(Deserialize)]
+struct JobStep {
+    name: String,
+    status: String,
+    conclusion: String,
+}
+#[derive(Deserialize)]
 struct JobApi {
+    steps: Vec<JobStep>,
     labels: Vec<String>,
     runner_group_name: String,
     id: u64,
@@ -212,6 +223,12 @@ pub(super) fn verify(
     let p: Provenance = read(root, budget, &refs.provenance)?;
     let review: Review = read(root, budget, &refs.independent_review)?;
     let i = &raw.identity;
+    let suffix = policy
+        .workflow_path
+        .strip_prefix(".github/workflows/")
+        .filter(|p| !p.contains('/'))
+        .ok_or("Invalid downloaded-draft workflow policy")?;
+    AssetPath::new(suffix).map_err(|_| "Invalid downloaded-draft workflow policy")?;
     let workflow = budget.read(&root.join(&policy.workflow_path), MAX)?;
     if evidence.schema_version != release::SCHEMA_AUTOMATED_DRAFT
         || policy.schema_version != 1
@@ -270,7 +287,13 @@ pub(super) fn verify(
     let download: DownloadReceipt = read(root, budget, &raw.download_receipt)?;
     let native: NativeResult = read(root, budget, &raw.native_result)?;
     let downloaded_asset = download.assets.iter().find(|a| a.name == i.asset_name);
-    if download.schema_version != 3
+    if download
+        .assets
+        .iter()
+        .filter(|a| a.name == i.asset_name)
+        .count()
+        != 1
+        || download.schema_version != 3
         || download.phase != "draft"
         || download.version != version
         || download.source_commit != source
@@ -308,7 +331,22 @@ pub(super) fn verify(
     let job: JobApi = read(root, budget, &p.job_api)?;
     let release: ReleaseApi = read(root, budget, &p.release_api)?;
     let asset = release.assets.iter().find(|a| a.id == i.asset_id);
-    if run.id != i.run_id
+    let steps: Vec<_> = job
+        .steps
+        .iter()
+        .filter(|s| s.name == policy.native_test_step_name)
+        .collect();
+    if steps.len() != 1
+        || steps[0].status != "completed"
+        || steps[0].conclusion != "success"
+        || release.assets.iter().filter(|a| a.id == i.asset_id).count() != 1
+        || release
+            .assets
+            .iter()
+            .filter(|a| a.name == i.asset_name)
+            .count()
+            != 1
+        || run.id != i.run_id
         || run.run_attempt != i.run_attempt
         || run.head_sha != source
         || run.repository.full_name != policy.repository
@@ -397,7 +435,7 @@ mod tests {
             let provenance = json!({"schema_version":1,"identity":identity,"repository":"Laymer/Navzeroth","workflow_path":".github/workflows/verify-release-downloads.yml","job_name":"Verify downloaded unsigned release","runner_environment":"github-hosted","os":"Windows","phase":"draft"});
             let review = json!({"schema_version":1,"identity":identity,"status":"pass","reviewer":"independent synthetic engineering reviewer","recorded_at":"2026-10-23T12:00:00Z","human_performed":false});
             let run = json!({"id":13,"run_attempt":2,"head_sha":SOURCE,"repository":{"full_name":"Laymer/Navzeroth"},"path":".github/workflows/verify-release-downloads.yml","event":"workflow_dispatch","status":"completed","conclusion":"success"});
-            let job = json!({"id":14,"run_id":13,"run_attempt":2,"head_sha":SOURCE,"name":"Verify downloaded unsigned release","status":"completed","conclusion":"success","labels":["windows-2025"],"runner_group_name":"GitHub Actions"});
+            let job = json!({"id":14,"run_id":13,"run_attempt":2,"head_sha":SOURCE,"name":"Verify downloaded unsigned release","status":"completed","conclusion":"success","labels":["windows-2025"],"runner_group_name":"GitHub Actions","steps":[{"name":"Download and verify exact release","status":"completed","conclusion":"success"}]});
             let release = json!({"id":11,"tag_name":"v1.0.0","draft":true,"prerelease":false,"assets":[{"id":12,"name":"setup.exe","size":50}]});
             let download = json!({"schema_version":3,"phase":"draft","version":"1.0.0","source_commit":SOURCE,"installer_signature":"NotSigned","application_signature":"NotSigned","dependency_closure_verified":true,"addon_zip_matches_source":true,"assets":[{"name":"setup.exe","bytes":50,"sha256":PROD}]});
             let native = json!({"schema_version":1,"source_commit":SOURCE,"installer_sha256":PROD,"completed":true,"passed":true,"human_performed":false,"phase":"draft","ui_interaction_verified":true,"checks":{"first_start":true,"bundled_activation":true,"source_backed_planning":true,"restart_persistence":true},"stages":["synthetic only"]});
@@ -673,5 +711,50 @@ mod tests {
         let mut f = Fixture::new();
         f.native["checks"]["unexpected"] = json!(true);
         assert!(f.check().is_err());
+    }
+    #[test]
+    fn malformed_caller_policy_cannot_read_outside_source_tree() {
+        for path in ["../outside.yml", "/tmp/outside.yml", "C:\\outside.yml"] {
+            let f = Fixture::new();
+            let mut policy: Value = serde_json::from_slice(include_bytes!(
+                "../../../../config/release-draft-smoke-v1.json"
+            ))
+            .unwrap();
+            policy["workflow_path"] = json!(path);
+            fs::write(f.root.join(POLICY), serde_json::to_vec(&policy).unwrap()).unwrap();
+            assert_eq!(f.check(), Err("Invalid downloaded-draft workflow policy"));
+        }
+    }
+    #[test]
+    fn ambiguous_assets_and_unexecuted_native_step_cannot_pass() {
+        let mut f = Fixture::new();
+        let asset = f.download["assets"][0].clone();
+        f.download["assets"].as_array_mut().unwrap().push(asset);
+        assert!(f.check().is_err());
+        for mutation in ["same", "id", "name"] {
+            let mut f = Fixture::new();
+            let mut asset = f.release["assets"][0].clone();
+            if mutation == "id" {
+                asset["name"] = json!("other.exe");
+            }
+            if mutation == "name" {
+                asset["id"] = json!(99);
+            }
+            f.release["assets"].as_array_mut().unwrap().push(asset);
+            assert!(f.check().is_err());
+        }
+        for mutation in ["missing", "duplicate", "skipped", "failure", "in_progress"] {
+            let mut f = Fixture::new();
+            match mutation {
+                "missing" => f.job["steps"] = json!([]),
+                "duplicate" => {
+                    let step = f.job["steps"][0].clone();
+                    f.job["steps"].as_array_mut().unwrap().push(step);
+                }
+                "in_progress" => f.job["steps"][0]["status"] = json!("in_progress"),
+                other => f.job["steps"][0]["conclusion"] = json!(other),
+            }
+            assert!(f.check().is_err(), "{mutation}");
+        }
     }
 }

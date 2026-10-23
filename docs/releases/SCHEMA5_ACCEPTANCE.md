@@ -79,7 +79,10 @@ These snapshots are original GitHub REST run, job and release responses. Require
 API fields are typed; extra provider fields are retained. The run must be a
 completed successful workflow_dispatch of the exact source/repository/workflow;
 the job must belong to that run/attempt/source, be completed successful and match
-policy name, Windows runner label and GitHub Actions runner group. The recorded
+policy name, Windows runner label and GitHub Actions runner group. The exact policy-named native test step must occur once, completed and successful;
+missing, duplicated or skipped steps cannot pass. Installer asset ID and name
+must each identify one asset, and the download receipt must have one matching name.
+The recorded
 release must be the exact stable draft/tag/release ID with the matching asset.
 
 Review fields (unknown fields refused): `identity`, exact `raw_result` and
@@ -92,6 +95,7 @@ API evidence and source binding, rather than copying producer claims.
 
 `config/release-draft-smoke-v1.json` is production-tracked caller policy. It fixes
 repository, existing download-verifier workflow/job and hosted Windows provider.
+It pins `Download and verify exact release` as the actual native test step.
 It cannot be selected by evidence. The coordinator fetches run/job/release API
 snapshots from the trusted repository and expected IDs **after** the test job
 completes, independently reviews them and retains their hashes before assembling
