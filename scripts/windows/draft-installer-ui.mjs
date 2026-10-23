@@ -1,8 +1,8 @@
 // Actual UI actions plus native readback. Pure injected I/O enables dev mocks;
 // only the installed Windows driver can produce draft engineering evidence.
-import {manualSnapshot,scenario,planningRequest,assertActive,WORKLOAD} from './stable-workload-lib.mjs';
+import {manualSnapshot,scenario,planningRequest,assertActive} from './stable-workload-lib.mjs';
 import {waitForSyntheticContentInspection} from './native-smoke-lib.mjs';
-export const DRAFT_WORKLOAD=WORKLOAD+'; same-node candidate/origin/stop are explicit manual engineering inputs, not source-backed geometry or route coverage';
+export const DRAFT_WORKLOAD='Actual source-backed quest-stage objective; candidate location, same-node origin/stop, utility, and completion/service times are explicit manual engineering inputs, not source-backed geometry or route coverage';
 export function canonical(value){return JSON.stringify(value,(_k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);}
 export function draftSnapshot(context,now,sequence=1,assertions={}){
  const value=manualSnapshot(context,now,sequence,assertions);
@@ -33,7 +33,7 @@ export async function sourceScenario(call,profile,catalog,wanted){
  for(let scan=0;scan<128;scan++){
   for(const objective of records){
    if(wanted&&objective.id!==wanted)continue;
-   try{return {selected:scenario(objective,catalog.nodes[0]),offset};}catch{}
+   try{return {selected:{...scenario(objective,catalog.nodes[0]),disclosure:DRAFT_WORKLOAD},offset};}catch{}
   }
   if(next===null||next===undefined)break;
   if(!Number.isSafeInteger(next)||next!==offset+200)throw Error('Draft objective pagination is not bounded');

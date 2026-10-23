@@ -78,3 +78,10 @@ Next independent frozen-source review and routine draft PR; integrate with separ
 reviewed schema5 and root PS/workflow transport, renew exact source/review/receipts,
 then actual hosted gates and independent downloaded-draft UI execution. No tag,
 publication or canonical observation promotion by this task.
+
+Review correction: root identified inherited travel-edge wording in the reused
+scenario disclosure. A normal child defines the draft disclosure directly as
+same-node manual engineering inputs and applies it to every selected scenario,
+including the post-snapshot selection. No route coverage is asserted. The seven
+Node tests and three actual React browser regressions reran and passed after this
+wording correction; native installed Windows execution remains unverified.
