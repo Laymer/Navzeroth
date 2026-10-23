@@ -102,10 +102,14 @@ jobs:
         run: ./scripts/windows/Test-StableAcceptanceHelpers.ps1
       - name: Downloaded draft producer tests (Windows PowerShell 5.1 mocks)
         shell: powershell
-        run: ./scripts/windows/Test-DraftInstallerSmoke.ps1
+        run: |
+          ./scripts/windows/Test-DraftInstallerSmoke.ps1
+          ./scripts/windows/Test-SupplementalUpgrade.ps1
       - name: Downloaded draft producer tests (PowerShell 7 mocks)
         shell: pwsh
-        run: ./scripts/windows/Test-DraftInstallerSmoke.ps1
+        run: |
+          ./scripts/windows/Test-DraftInstallerSmoke.ps1
+          ./scripts/windows/Test-SupplementalUpgrade.ps1
       - name: Stable preparation and hosted evidence tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-StablePreparation.ps1
