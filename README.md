@@ -35,7 +35,7 @@ The content receipt is not an Authenticode publisher signature. Full protected
 checks, independent review, source parity, stability, hosted Windows acceptance
 and schema 5 automated UI/native smoke of the exact independently downloaded draft
 installer remain required. Human smoke and the supplemental Windows 11 upgrade
-are separate, unperformed observations, not invented substitutes. See the
+are separate observations; their actual results belong in STATUS, not assumptions. See the
 [v1 release process](docs/releases/V1_RELEASE_PROCESS.md) and
 [schema 5 contract](docs/releases/SCHEMA5_ACCEPTANCE.md).
 

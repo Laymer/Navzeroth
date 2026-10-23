@@ -33,3 +33,12 @@ functional/probe execution keeps its real source identity and runtime scope.
 Next: independent world/root review and coordinator integration before final
 source/material binding and hosted acceptance. Website copy branch911419e1 and
 other unrelated working trees are unchanged.
+
+Root review found two remaining installation claims: a later addon paragraph
+still mentioned a pending post-launch target, and current-user installation
+unconditionally claimed no administrator rights. A normal child corrects the
+addon paragraph to historical RC admission without live70450 acceptance and
+states configured current-user installation without claiming an elevation result
+(including the repeated decisions bullet). README/install copy now refers human
+and supplemental observations to STATUS rather than permanently declaring them
+unperformed. All original fenced commands and local links remain unchanged/valid.

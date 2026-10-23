@@ -55,7 +55,7 @@ the committed source.
    checksum shows the download is intact; it does
    not prove who published it (plan §8.7). Download only from the project's release page.
 3. Run the setup file. It installs for the current Windows user into
-   `%LOCALAPPDATA%\Azeroth Navigator` and needs no administrator rights.
+   `%LOCALAPPDATA%\Azeroth Navigator`.
    - Until releases are code-signed, Windows SmartScreen may show "Windows protected
      your PC". Choose *More info* > *Run anyway* only for a file from the release page
      whose checksum matches.
@@ -103,8 +103,9 @@ that `AddOns\AzerothNavigator\AzerothNavigator.toc` exists, as described in
 Then start the game and enable *Azeroth Navigator Diagnostics* in the AddOns list.
 Record the actual client build before capture. The 1.0.0-rc.1 adapters experimentally admit
 1.60.1 builds 70338, 70374, 70425 and 70450, each with interface 16001.
-70425 and 70450 remain development-only and UNVERIFIED; full acceptance for the
-pending post-launch v1 target is not enabled by this installer.
+These historical RC adapter admissions do not establish live acceptance. Builds
+70425 and 70450 remain development-only and UNVERIFIED in that addon contract;
+installing the addon does not verify live 70450 behavior or the prepared content target.
 
 ### Update
 
@@ -240,7 +241,8 @@ requires independently reviewed automated UI/native acceptance of the exact
 independently downloaded draft installer before publication. The real UI must
 activate the bundled content, create a source-backed engineering plan, and prove
 restart/persistence; no human result is fabricated. Human smoke and supplemental
-Windows 11 upgrade remain separate, unperformed observations. A historical five-file
+Windows 11 upgrade are separate observations; consult [STATUS](../STATUS.md) for
+their actual recorded results. A historical five-file
 package, a prepared build, or synthetic browser tests cannot satisfy these gates.
 
 Publication is already authorized for this program once all mandatory gates pass.
@@ -248,7 +250,7 @@ It remains an explicit coordinator action; the workflow never publishes by itsel
 
 ## Decisions
 
-- **NSIS, per user.** No administrator rights, and uninstall hooks for the addon. MSI
+- **NSIS, per user.** Configured for current-user installation, with uninstall hooks for the addon. MSI
   would need WiX and a per-machine install.
 - **The addon ships twice.** Inside the installer (with the helper, for one download)
   and as a zip (for manual installation). Both come from the same folder at the same
