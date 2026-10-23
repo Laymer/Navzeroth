@@ -201,7 +201,7 @@ function Get-StableRunnerAgentPrograms {
         $name = [string]$process[0].Name
         if ($name -cin @('Runner.Worker.exe','Runner.Listener.exe')) {
             if ($found.Contains($name)) { throw 'Runner agent ancestry repeats.' }
-            $found[$name] = [string]$process[0].ExecutablePath
+            $found[$name] = ConvertTo-StableLongPath ([string]$process[0].ExecutablePath)
         }
         $current = [int]$process[0].ParentProcessId
     }
@@ -215,8 +215,19 @@ function Get-StableRunnerAgentPrograms {
 # 600 s (run 39972424100) but lost it during a 1260 s hold (run 39975150461),
 # so the VM's own health/provisioning agents need their connections too. They
 # are matched by process name and recorded by exact path; none runs test code.
+# Windows Firewall refuses 8.3 short program paths such as C:\Users\RUNNER~1
+# ("The parameter is incorrect", run 39982567901) and accepts their long form.
+function ConvertTo-StableLongPath([string] $Path) {
+    if (-not ('NavzerothStable.LongPath' -as [type])) {
+        Add-Type -Namespace NavzerothStable -Name LongPath -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] public static extern uint GetLongPathName(string shortPath, System.Text.StringBuilder longPath, uint size);'
+    }
+    $buffer = New-Object Text.StringBuilder 1024
+    $length = [NavzerothStable.LongPath]::GetLongPathName($Path, $buffer, 1024)
+    if ($length -eq 0 -or $length -ge 1024) { throw 'Agent program path has no bounded long form.' }
+    return $buffer.ToString()
+}
 function Get-StableHostedInfrastructurePrograms {
-    $paths = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in @('hosted-compute-agent','WindowsAzureGuestAgent','WaAppAgent') -or $_.ProcessName -like 'provjobd*' } | ForEach-Object { [string]$_.Path } | Where-Object { $_ } | Sort-Object -Unique)
+    $paths = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in @('hosted-compute-agent','WindowsAzureGuestAgent','WaAppAgent') -or $_.ProcessName -like 'provjobd*' } | ForEach-Object { [string]$_.Path } | Where-Object { $_ } | ForEach-Object { ConvertTo-StableLongPath $_ } | Sort-Object -Unique)
     if ($paths.Count -gt 8) { throw 'Hosted infrastructure agent inventory exceeds bounded capacity.' }
     foreach ($path in $paths) {
         if (-not [IO.Path]::IsPathRooted($path) -or $path.Length -gt 260 -or -not (Test-Path -LiteralPath $path -PathType Leaf)) { throw 'Hosted infrastructure agent path is invalid.' }

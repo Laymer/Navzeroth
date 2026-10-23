@@ -31,14 +31,10 @@ function Get-ExternalConnectionOwners {
 # Which agent paths Windows Firewall accepts as program filters, as given and
 # in long-path form. Rules are created disabled in a throwaway group and removed.
 function Get-ProgramRuleAcceptance($Programs) {
-    if (-not ('NavzerothProbe.LongPath' -as [type])) {
-        Add-Type -Namespace NavzerothProbe -Name LongPath -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode)] public static extern uint GetLongPathName(string shortPath, System.Text.StringBuilder longPath, uint size);'
-    }
     $group = 'Navzeroth probe program acceptance ' + [Guid]::NewGuid().ToString('N')
     try {
         return @(foreach ($item in $Programs) {
-            $buffer = New-Object Text.StringBuilder 1024
-            $long = if ([NavzerothProbe.LongPath]::GetLongPathName($item.path, $buffer, 1024) -gt 0) { $buffer.ToString() } else { $null }
+            $long = try { ConvertTo-StableLongPath $item.path } catch { $null }
             $results = [ordered]@{name=$item.name;path=$item.path;long_path=$long}
             foreach ($variant in @(@('as_given',$item.path),@('long',$long))) {
                 if (-not $variant[1]) { $results[$variant[0]] = 'no path'; continue }
