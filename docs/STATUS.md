@@ -31,6 +31,23 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+2026-10-23 (V21): candidate V20 2c6fe762's Windows package was cancelled twice,
+280–306 s after HOSTED-OFFLINE disabled every adapter, so the upgrade and
+downgrade cases never ran. ADR 0010 / PR #285 replaces adapter disablement with
+Windows Firewall isolation that keeps only the runner, the hosted VM agents and
+DNS. A hosted probe held it for 1260 s with exact restore. The fix had three
+independent review rounds.
+
+V21 is re-bound and signed:
+- tested source 1f972145, production 7e1bb463;
+- review V21 7542fb89;
+- receipt eccd6b63 with the existing r2 keys;
+- root and independent closure: 84 resources, 89 evidence files, exactly nine
+  pending observations.
+
+Fresh candidate gates are next. No main merge, tag or publication.
+[V21 handoff](handoffs/2026-10-23-v21-offline-firewall-signed-closure.md).
+
 2026-10-23: reviewed PRs271–282 are normally integrated locally. Final V20 signed
 closure49ce3e47 passes root/tooling independent signatures, separate84-resource
 assemblies with default compiled trust, and89-evidence/two-pack source prebuild.
