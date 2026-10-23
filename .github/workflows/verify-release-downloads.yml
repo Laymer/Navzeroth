@@ -12,6 +12,11 @@ on:
         type: string
         default: ''
         required: false
+      reviewed_evidence_commit:
+        description: Public stable only, independently reviewed inert evidence commit (excludes evidence_run_id)
+        type: string
+        default: ''
+        required: false
       phase:
         description: Release state to verify
         type: choice
@@ -58,6 +63,22 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
           "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm install --frozen-lockfile
           cargo fetch --locked
+      - name: Test inert reviewed evidence transport
+        shell: pwsh
+        run: |
+          python -m unittest discover -s scripts/windows -p test_import_reviewed_evidence.py
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed evidence transport regression failed' }
+      - name: Import explicitly reviewed public evidence data
+        shell: pwsh
+        env:
+          REVIEWED_EVIDENCE_COMMIT: ${{ inputs.reviewed_evidence_commit }}
+          EVIDENCE_RUN_ID: ${{ inputs.evidence_run_id }}
+          EXPECTED_SOURCE: ${{ inputs.source_commit }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_PHASE: ${{ inputs.phase }}
+        run: |
+          python scripts/windows/import-reviewed-evidence.py --commit "$env:REVIEWED_EVIDENCE_COMMIT" --expected-source "$env:EXPECTED_SOURCE" --repository "$env:GITHUB_REPOSITORY" --version "$env:RELEASE_VERSION" --phase "$env:RELEASE_PHASE" --evidence-run "$env:EVIDENCE_RUN_ID"
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed evidence data transport refused' }
       - name: Download separately reviewed acceptance evidence
         if: inputs.evidence_run_id != ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -93,7 +114,8 @@ jobs:
           New-Item -ItemType Directory -Path $downloads | Out-Null
           gh release download $tag --repo $env:GITHUB_REPOSITORY --dir $downloads
           if ($LASTEXITCODE -ne 0) { throw 'Release download failed' }
-          $receiptDir = Join-Path $PWD 'dist/draft-evidence'
+          $receiptPath = if ($env:RELEASE_PHASE -ceq 'public') { 'dist/public-download-evidence' } else { 'dist/draft-evidence' }
+          $receiptDir = Join-Path $PWD $receiptPath
           New-Item -ItemType Directory -Path $receiptDir | Out-Null
           $json | Set-Content -LiteralPath (Join-Path $receiptDir 'github-release.json') -Encoding utf8
           $options = @{}
@@ -120,5 +142,5 @@ jobs:
         if: always()
         with:
           name: release-download-receipt-${{ inputs.phase }}-${{ github.run_id }}
-          path: dist/draft-evidence
+          path: ${{ inputs.phase == 'public' && 'dist/public-download-evidence' || 'dist/draft-evidence' }}
           if-no-files-found: error
