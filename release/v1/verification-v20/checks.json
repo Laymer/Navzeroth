@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "source_commit": "de2fd3e69bcce8db55c73d98fed492e2ee485261",
+  "production_sha256": "02c1012cfb6d413f93e6406c3327d2118769121f5655fa9a410956245999a713",
+  "production_entries": 3158,
+  "command": "azeroth-cli release-materials --root . --version 1.0.0",
+  "cli_sha256": "fbbf4571c063766931bea46ded663d4b06073c648589c56713b72d132a2f76c2",
+  "cli_build": "Cargo confirmed cached optimized CLI; CLI/dependencies/runtime bytes unchanged from genuine ca94 build",
+  "selected_files": 82,
+  "selected_packs": 2,
+  "unsigned_preparation": {
+    "ready": true,
+    "evidence_sha256": "aa8884049a777e540187e767f89a5809a01e63b4ae694605998b1ba4f1c3cc7b"
+  },
+  "pristine_pending_observations": [
+    "HOSTED-INSTALL",
+    "HOSTED-FIRST-START",
+    "HOSTED-UPGRADE-RC1",
+    "HOSTED-DOWNGRADE-REFUSAL",
+    "HOSTED-PERSISTENCE-RECOVERY",
+    "HOSTED-RESOURCES",
+    "HOSTED-OFFLINE",
+    "HOSTED-PERFORMANCE",
+    "DRAFT-INSTALLER-SMOKE"
+  ],
+  "publication_allowed": false,
+  "scope": "Actual exact-source functional and unsigned material preparation only. Signed content closure, all protected checks, hosted acceptance, resulting-main stability and exact downloaded draft UI/native independent review remain required.",
+  "files": [
+    {
+      "path": "release/v1/verification-v20/functional-run.log",
+      "bytes": 843,
+      "sha256": "49b3aec32eae0851a7bb9260f7b320303d1ce3c5482c947131ec8d4d88c80dc4"
+    },
+    {
+      "path": "release/v1/verification-v20/functional-build.log",
+      "bytes": 62,
+      "sha256": "1ff8bbcb4151dc887e69b78a29bc241d5062cba4757aa5f4639926ae712a8181"
+    },
+    {
+      "path": "release/v1/verification-v20/cli-build.log",
+      "bytes": 62,
+      "sha256": "79ebf1c9ff5e05f48fb0c6ea52b184a87bded725e977ad03d405ba503c7f18b6"
+    },
+    {
+      "path": "release/v1/verification-v20/inventory-generation.json",
+      "bytes": 444,
+      "sha256": "222d547e9e91149f05fc5be50b886b4b32250017607e888227599346507de134"
+    },
+    {
+      "path": "release/v1/verification-v20/unsigned-material-preview.json",
+      "bytes": 55727,
+      "sha256": "c0fdfd22a7d4b205b8d2aaefe4c5d0bba3cc165e3be72a0226d0536cbe3287dd"
+    }
+  ]
+}
