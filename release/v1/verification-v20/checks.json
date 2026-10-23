@@ -50,6 +50,11 @@
       "path": "release/v1/verification-v20/unsigned-material-preview.json",
       "bytes": 55727,
       "sha256": "c0fdfd22a7d4b205b8d2aaefe4c5d0bba3cc165e3be72a0226d0536cbe3287dd"
+    },
+    {
+      "path": "release/v1/verification-v20/prebundle-evidence.json",
+      "bytes": 27970074,
+      "sha256": "aa8884049a777e540187e767f89a5809a01e63b4ae694605998b1ba4f1c3cc7b"
     }
   ]
 }
