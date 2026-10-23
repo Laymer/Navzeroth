@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca94ec5d749519b7b656f34f9c9a3739b322020e",
+  "production_sha256": "eb6025b1457ede1ba2df727a8bf5b708e0059861598edbe73bbae67144d28ee0",
+  "kind": "full_pack_functional_rehearsal_before_probe_integration",
+  "coordinator": "Codex /root",
+  "independent_execution": "Codex /root/world_review",
+  "independent_build": false,
+  "coordinator_rebuilt_binary_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+  "proofs_byte_equal": true,
+  "proof_sha256": "cbbdb705a2b1e6fea3fc3506205994dbf033c940efd667cf2e667899652ff13a",
+  "inventory_semantic_delta": "schema_version4 to5 only; every domain, record, source, target and unknown preserved",
+  "evidence_delta": "schema5, inventory hash, four actual functional-proof hashes, final automated row; clear old production/source/bundled identities; exactly nine pristine unverified observations",
+  "canonical_independent_review": "world_review read the complete semantic delta and proof identities; no observations promoted",
+  "scope": "Actual source-backed functional assertions on shared Linux/WSL2 using explicit manual engineering inputs. Does not establish Windows installer, live-client, human or ordinary-PC acceptance. Any subsequent final-source execution is separately recorded.",
+  "files": [
+    {
+      "path": "release/history/2026-10-23-v20-ca94-functional/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "cbbdb705a2b1e6fea3fc3506205994dbf033c940efd667cf2e667899652ff13a"
+    },
+    {
+      "path": "release/history/2026-10-23-v20-ca94-functional/coordinator-measurement.json",
+      "bytes": 993,
+      "sha256": "d199cbb69af05aa408b7652f32ba75a3578be7301caa1aeea3811cf2a34ebee1"
+    },
+    {
+      "path": "release/history/2026-10-23-v20-ca94-functional/independent-measurement.json",
+      "bytes": 1079,
+      "sha256": "4a97cc33ff157d3138e6268a2621d18506d6f3f89af10ea47190dad50da140ab"
+    },
+    {
+      "path": "release/history/2026-10-23-v20-ca94-functional/coordinator-run.log",
+      "bytes": 843,
+      "sha256": "15dc34dabbfb1d1111f01bdde50775056a4c8df1360079876cfa9854bfee5609"
+    },
+    {
+      "path": "release/history/2026-10-23-v20-ca94-functional/independent-run.log",
+      "bytes": 843,
+      "sha256": "1eb61564702d297e3903f9aa8c896825c5b439ff9b156ab1bd0958a4cbe68c69"
+    },
+    {
+      "path": "release/history/2026-10-23-v20-ca94-functional/inventory-generator-summary.json",
+      "bytes": 444,
+      "sha256": "222d547e9e91149f05fc5be50b886b4b32250017607e888227599346507de134"
+    }
+  ]
+}
