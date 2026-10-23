@@ -241,8 +241,12 @@ function Limit-StableDiagnostic($Failure) {
 # Enabled outbound allow rules in the effective store, outside the isolation group.
 # PersistentStore rules are disabled, but other stores (service hardening, GPO)
 # can still allow traffic. Each returned item names its program and service.
-function Get-StableActiveAllowInventory([string] $Group) {
-    $rules = @(Get-NetFirewallRule -PolicyStore ActiveStore -Enabled True -Action Allow -Direction Outbound -ErrorAction SilentlyContinue | Where-Object { [string]$_.Group -cne $Group })
+function Get-StableActiveAllowInventory([string] $Group, [int] $OwnRules) {
+    # Fail closed: the isolation group's own rules must be visible, so an empty
+    # or failed query cannot pass as "no other allow rules".
+    $all = @(Get-NetFirewallRule -PolicyStore ActiveStore -Enabled True -Action Allow -Direction Outbound -ErrorAction Stop)
+    if (@($all | Where-Object { [string]$_.Group -ceq $Group }).Count -ne $OwnRules) { throw 'Effective policy does not show exactly the isolation rules.' }
+    $rules = @($all | Where-Object { [string]$_.Group -cne $Group })
     if ($rules.Count -gt 256) { throw 'Effective outbound allow rule inventory exceeds bounded capacity.' }
     return @(foreach ($rule in $rules) {
         $program = [string](@($rule | Get-NetFirewallApplicationFilter -ErrorAction Stop)[0].Program)
@@ -290,7 +294,7 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
         # Only the isolation group's own agent and DNS rules may remain enabled.
         $remainingAllow = @(Get-StableEnabledAllowRules).Count
         if ($remainingAllow -ne $agents.Count + 2) { throw 'Allow rules other than the runner agent and DNS remain enabled.' }
-        $inventory = @(Get-StableActiveAllowInventory $group)
+        $inventory = @(Get-StableActiveAllowInventory $group ($agents.Count + 2))
         $activeAllow = [ordered]@{count=$inventory.Count;programs=@($inventory | ForEach-Object { ([string]$_.program).Replace('/','\').Split('\')[-1] } | Sort-Object -Unique | Select-Object -First 32)}
         if (@($inventory | Where-Object { Test-StableAllowAdmitsWorkload $_ }).Count -ne 0) { throw 'An effective outbound allow rule admits the offline workload processes.' }
         if (Test-StableExternalTcp $address $ProbePort) { throw 'External connection still succeeds under isolation.' }

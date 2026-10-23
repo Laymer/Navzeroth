@@ -232,7 +232,7 @@ try{
   $script:fwCalls+='enable-rules';foreach($n in $Name){if($n -eq $script:fwEnableFail){throw 'Synthetic enable failure'}}
   foreach($n in $Name){$script:fwRules[$n].Enabled=$true}
  }
- function Get-StableActiveAllowInventory([string]$Group) { return $script:fwActive }
+ function Get-StableActiveAllowInventory([string]$Group,[int]$OwnRules) { if($OwnRules -ne 4){throw 'Synthetic wrong own-rule count'};return $script:fwActive }
  function Snapshot-MockFirewall { return (@{p=$script:fwProfiles;r=@($script:fwRules.Keys|ForEach-Object {$_+'='+$script:fwRules[$_].Enabled})}|ConvertTo-Json -Depth 5 -Compress) }
  function FirewallFailure([scriptblock]$Workload,[int]$RestoreSeconds=60) {
   $failure=$null;try{Invoke-StableFirewallOffline $Workload -RestoreSeconds $RestoreSeconds|Out-Null}catch{$failure=$_.Exception.Message};return $failure
