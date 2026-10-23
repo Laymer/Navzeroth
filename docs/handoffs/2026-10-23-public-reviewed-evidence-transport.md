@@ -58,3 +58,33 @@ construct the strict final overlay, archive only its inert evidence subtree in
 an immutable same-repository commit, and record that exact reviewed commit. Public
 verification imports it without changing the tag and still requires full readiness.
 No hypothetical future proof is classified as passed here.
+
+## Process-tree and Windows output-boundary review corrections
+
+Root review found that killing only git could leave git-remote-https descendants
+and inherited pipes alive. Normal merge of the separately reviewed probe CODE
+90086c215484a17c47fdf36d25ea99bc61380fe7 supplies the unchanged generic
+recovery_probe_process.OwnedTree. Transport CODEa2ebc8b4e2903d09888916b38e9884df827eaf93
+uses it for every Git command, waiting for root exit, pipe completion AND owned
+process-tree completion under the same deadline, then kill/close in finally.
+Windows uses the existing suspended-create/job-assignment-before-resume contract;
+POSIX uses only the freshly owned process group. No helper implementation was
+copied or altered by this task. Output bounds remain unchanged.
+
+Existing dist is additionally checked by lstat for Windows reparse attributes,
+including junctions, rather than relying only on is_symlink. Eighteen Linux tests
+ran:17PASS and the actual native-junction test explicitly SKIPPED. New real inert
+process regressions prove a parent exiting0 cannot abandon a live child holding
+pipes: deadline fails, owned child terminates; output overrun and live-parent
+timeout also fail. actionlint/diff checks passed again.
+
+Actual native Windows verification used the already available portable official
+Python3.14.0, without installation/registry changes. Four inert checks PASS3.367s:
+byte-overrun/owned-timeout, parent-exit/orphan cleanup, reparse-attribute refusal,
+and an actual temporary NTFS directory junction refusal. Exact three copied code
+inputs and their hashes are recorded externally in
+/tmp/navzeroth-reviewed-evidence-native-inputs.json; output is
+/tmp/navzeroth-reviewed-evidence-native-checks.log. No Windows Git is installed
+(shutil.which returnedNone), so this is not a claim that the complete synthetic
+Git suite ran natively. No app, installer, profile, live-game state, network
+adapter or real evidence archive was touched by these tests.
