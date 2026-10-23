@@ -108,12 +108,15 @@ writeFileSync(arg('--out'),JSON.stringify(result));
     $result=Clone $native;$result|Add-Member mode $Mode
     if($Mode -ceq 'restart' -and $script:failRestart){$result.checks.restart_persistence=$false}
     WriteJson $Report $result
+    $screens=Join-Path ([IO.Path]::GetDirectoryName($Report)) ($Mode+'.screenshots')
+    $null=New-Item -ItemType Directory -Path $screens
+    [IO.File]::WriteAllText((Join-Path $screens 'screen.png'),'synthetic screenshot bytes')
     [IO.File]::WriteAllText($State,'synthetic private state must be excluded')
     return @{raw=$result}
    }
    Check 'orchestrator executes both modes and pins actual reports excluding state' {
     $result=Invoke-DownloadedDraftUiSmoke $root 'synthetic' 'synthetic' '1.0.0' $hash (Join-Path $root 'native-success')
-    if(($script:modes -join ',') -cne 'fresh,restart' -or $result.detail_files.Count -ne 2 -or @($result.detail_files|Where-Object path -match 'state').Count -ne 0 -or -not $result.checks.restart_persistence){throw 'Incomplete native orchestration'}
+    if(($script:modes -join ',') -cne 'fresh,restart' -or $result.detail_files.Count -ne 4 -or @($result.detail_files|Where-Object path -match 'state').Count -ne 0 -or @($result.detail_files|Where-Object path -match 'screenshots/screen.png$').Count -ne 2 -or -not $result.checks.restart_persistence){throw 'Incomplete native orchestration'}
    }
    Check 'orchestrator refuses failed restart and existing or outside output' {
     $script:failRestart=$true;Refuse {Invoke-DownloadedDraftUiSmoke $root 'synthetic' 'synthetic' '1.0.0' $hash (Join-Path $root 'native-failed')}

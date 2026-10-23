@@ -64,7 +64,7 @@ function Invoke-DownloadedDraftUiSmoke([string] $Root,[string] $Exe,[string] $Ma
     }
     Assert-DraftUiChecks $results.fresh.raw $results.restart.raw
     # Retain only bounded actual diagnostic files, not the isolated profile DB.
-    $details=@(Get-ChildItem -LiteralPath $OutputDirectory -File | Where-Object { $_.Name -ne 'state.json' } | Sort-Object Name)
+    $details=@(Get-ChildItem -LiteralPath $OutputDirectory -File -Recurse | Where-Object { $_.FullName -cne $state } | Sort-Object FullName)
     if ($details.Count -lt 2 -or $details.Count -gt 16) { throw 'Draft native detail inventory exceeds its finite bounds.' }
     $pins=@($details | ForEach-Object { Get-DraftEvidenceRef $Root $_.FullName })
     return [ordered]@{schema_version=1;phase='draft';source_commit=$source;installer_sha256=$InstallerSha256;completed=$true;passed=$true;human_performed=$false;ui_interaction_verified=$true;checks=[ordered]@{first_start=$true;bundled_activation=$true;source_backed_planning=$true;restart_persistence=$true};detail_files=$pins;elapsed_ms=$clock.Elapsed.TotalMilliseconds;limitations='Actual downloaded installed application on disposable hosted Windows. Source-backed engineering scenario with manual location/time/utility; no human, live-client or ordinary-PC acceptance.'}
