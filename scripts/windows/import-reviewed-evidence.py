@@ -4,10 +4,11 @@ import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
+import stat
 import tempfile
 import threading
 import time
+from recovery_probe_process import OwnedTree
 
 PREFIX = 'release/evidence/1.0.0/'
 MAX_FILE = 64 * 1024 * 1024
@@ -18,16 +19,13 @@ DEADLINE = None
 RESERVED = re.compile(r'^(con|prn|aux|nul|com[0-9]|lpt[0-9])(?:\.|$)', re.I)
 
 
-def command(root, args, limit=MAX_TREE, timeout=60):
-    """Bound both pipes while reading; no shell, Git filters or checkout."""
-    if DEADLINE is not None:
-        timeout = min(timeout, DEADLINE - time.monotonic())
-        if timeout <= 0:
-            raise ValueError('Evidence transport exceeded its overall deadline')
-    process = subprocess.Popen(['git', '-C', str(root), *args], stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
+def owned_output(argv, limit, timeout):
+    """Bound both pipes and the entire freshly owned process tree, including orphans."""
+    owner = OwnedTree(argv)
+    process = owner.process
     outputs = [bytearray(), bytearray()]
     errors = []
+    deadline = time.monotonic() + timeout
 
     def drain(pipe, slot, ceiling):
         try:
@@ -37,10 +35,9 @@ def command(root, args, limit=MAX_TREE, timeout=60):
                     break
                 if len(outputs[slot]) + len(block) > ceiling:
                     errors.append('Git output exceeds transport bounds')
-                    process.kill()
                     break
                 outputs[slot].extend(block)
-        except OSError:
+        except (OSError, ValueError):
             errors.append('Git output read failed')
         finally:
             pipe.close()
@@ -50,19 +47,50 @@ def command(root, args, limit=MAX_TREE, timeout=60):
     for thread in threads:
         thread.start()
     try:
-        process.wait(timeout=timeout)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait()
-        errors.append('Git command exceeded deadline')
+        while True:
+            parent_done = process.poll() is not None
+            capture_done = all(not thread.is_alive() for thread in threads)
+            if parent_done and capture_done and not owner.active():
+                break
+            if errors or time.monotonic() >= deadline:
+                if not errors:
+                    errors.append('Git process tree exceeded deadline')
+                owner.kill()
+                break
+            time.sleep(0.02)
+        process.wait(timeout=2)
     finally:
+        try:
+            if process.poll() is None or owner.active():
+                owner.kill()
+        finally:
+            owner.close()
+        cleanup_deadline = time.monotonic() + 2
         for thread in threads:
-            thread.join(timeout=1)
-            if thread.is_alive():
-                errors.append('Git pipe remained open after command deadline')
+            thread.join(timeout=max(0, cleanup_deadline - time.monotonic()))
+        if any(thread.is_alive() for thread in threads):
+            errors.append('Git pipe remained open after owned-tree cleanup')
     if errors or process.returncode:
         raise ValueError(errors[0] if errors else 'Git transport command failed')
     return bytes(outputs[0])
+
+
+def command(root, args, limit=MAX_TREE, timeout=60):
+    """No shell, Git filters or checkout; all subprocess descendants remain owned."""
+    if DEADLINE is not None:
+        timeout = min(timeout, DEADLINE - time.monotonic())
+        if timeout <= 0:
+            raise ValueError('Evidence transport exceeded its overall deadline')
+    return owned_output(['git', '-C', str(root), *args], limit, timeout)
+
+
+def refuse_reparse(path):
+    try:
+        metadata = path.lstat()
+    except FileNotFoundError:
+        return
+    if stat.S_ISLNK(metadata.st_mode) or getattr(metadata, 'st_file_attributes', 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+        raise ValueError('Reparse evidence output directory refused')
 
 
 def identity(value):
@@ -146,7 +174,8 @@ def import_blobs(root, commit, expected):
     before = assert_clean(root, expected)
     files = inventory(root, commit)
     destination = root / 'dist'
-    if destination.is_symlink() or (destination.exists() and not destination.is_dir()):
+    refuse_reparse(destination)
+    if destination.exists() and not destination.is_dir():
         raise ValueError('Unsafe dist directory')
     for name in ('acceptance-evidence', 'draft-evidence', 'public-download-evidence'):
         if os.path.lexists(destination / name):

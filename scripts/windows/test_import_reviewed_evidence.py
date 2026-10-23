@@ -1,5 +1,8 @@
 import importlib.util
 import json
+import os
+import stat
+import types
 from pathlib import Path
 import subprocess
 import sys
@@ -8,6 +11,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+sys.path.insert(0, str(Path(__file__).parent))
 spec = importlib.util.spec_from_file_location('transport', Path(__file__).with_name('import-reviewed-evidence.py'))
 transport = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(transport)
@@ -165,6 +169,58 @@ class TransportTests(unittest.TestCase):
         with patch.object(transport, 'DEADLINE', time.monotonic() - 1):
             with self.assertRaisesRegex(ValueError, 'overall deadline'):
                 transport.command(self.root, ['rev-parse', 'HEAD'])
+
+    def test_parent_exit_does_not_abandon_owned_descendant_or_pipes(self):
+        pidfile = self.root / 'owned-child.pid'
+        child = f"import os,time,pathlib;pathlib.Path({str(pidfile)!r}).write_text(str(os.getpid()));time.sleep(30)"
+        parent = f"import subprocess,sys;subprocess.Popen([sys.executable,'-c',{child!r}]);print('parent exit',flush=True)"
+        start = time.monotonic()
+        with self.assertRaisesRegex(ValueError, 'deadline'):
+            transport.owned_output([sys.executable, '-c', parent], 4096, 3)
+        self.assertLess(time.monotonic() - start, 8)
+        self.assertTrue(pidfile.exists(), 'Owned child actually started')
+        pid = int(pidfile.read_text())
+        if os.name == 'nt':
+            import ctypes as c
+            from ctypes import wintypes as w
+            api = c.WinDLL('kernel32', use_last_error=True)
+            api.OpenProcess.argtypes = [w.DWORD, w.BOOL, w.DWORD]; api.OpenProcess.restype = w.HANDLE
+            api.GetExitCodeProcess.argtypes = [w.HANDLE, c.POINTER(w.DWORD)]; api.GetExitCodeProcess.restype = w.BOOL
+            api.CloseHandle.argtypes = [w.HANDLE]
+            handle = api.OpenProcess(0x1000, False, pid)
+            if handle:
+                try:
+                    code = w.DWORD(); self.assertTrue(api.GetExitCodeProcess(handle, c.byref(code)))
+                    self.assertNotEqual(code.value, 259)
+                finally:
+                    api.CloseHandle(handle)
+        else:
+            status = Path(f'/proc/{pid}/stat')
+            self.assertTrue(not status.exists() or status.read_text().split(') ', 1)[1].startswith('Z '))
+
+    def test_output_bound_and_owned_timeout(self):
+        with self.assertRaisesRegex(ValueError, 'bounds'):
+            transport.owned_output([sys.executable, '-c', "print('x'*10000)"], 16, 5)
+        with self.assertRaisesRegex(ValueError, 'deadline'):
+            transport.owned_output([sys.executable, '-c', 'import time;time.sleep(30)'], 4096, 0.2)
+
+    def test_windows_reparse_attribute_refused(self):
+        path = self.root / 'mock-dist'
+        metadata = types.SimpleNamespace(st_mode=stat.S_IFDIR, st_file_attributes=stat.FILE_ATTRIBUTE_REPARSE_POINT)
+        with patch.object(Path, 'lstat', return_value=metadata), self.assertRaisesRegex(ValueError, 'Reparse'):
+            transport.refuse_reparse(path)
+
+    @unittest.skipUnless(os.name == 'nt', 'Actual Windows junction requires Windows')
+    def test_native_junction_destination_refused(self):
+        commit = self.archive()
+        junction = self.root / 'dist'
+        subprocess.run(['cmd.exe', '/c', 'mklink', '/J', str(junction), str(self.root)], check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=10)
+        try:
+            with self.assertRaisesRegex(ValueError, 'Reparse'):
+                self.import_archive(commit)
+        finally:
+            os.rmdir(junction)
 
     def test_symlink_destination_refused(self):
         commit = self.archive()
