@@ -31,15 +31,17 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-2026-10-23: reviewed PR271–278 are integrated locally; exactde2 source has passing
-full-content functional and unsigned material preparation, independently verified
-82-file source/content closure. Schema5 inventory preserves260113records and
-274059acceptedunknowns; all nine Windows observations remain unverified. Probe
-39916898751 passed native tests and compilation but failed before installation or
-recovery because a fresh HKCU uninstall registry root was absent. Exact raw failure
-evidence is archived; the narrowly reviewed absent-root repair is next. Final
-source/proof/review/receipts must be renewed after that repair. RemotePR239 still
-V19; no main merge, tag or publication.
+2026-10-23: reviewed PRs 271–279 are integrated locally. Source `41b52c8f` includes
+the narrow fresh-account registry repair and passes actual full-content functional
+execution plus unsigned material preparation. Independent review verified the
+82-file source/content closure and all current proof references. The schema 5
+inventory retains 260,113 records and 274,059 accepted unknown fields; all nine
+Windows observations remain unverified. Probe 39916898751 failed before installing
+because the fresh HKCU uninstall key was absent; its original evidence is archived.
+The new probe 39921053021 passed early helper/transport steps and remains in its
+combined compilation/recovery step. Final public review and signed receipts await
+the actual outcome. Remote PR239 remains V19; no main merge, tag or publication.
+[Repaired source and actual checks](handoffs/2026-10-23-registry-repaired-source-v20.md).
 [Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
 [Actual probe failure](handoffs/2026-10-23-recovery-probe-de2-result.md).
 
