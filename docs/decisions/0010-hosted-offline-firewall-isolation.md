@@ -31,9 +31,15 @@ disabling adapters:
 
 - Every profile is enabled with default-deny inbound and outbound.
 - Every enabled persistent allow rule is disabled. Only the isolation group's
-  rules may remain enabled: outbound for the exact `Runner.Listener.exe` and
-  `Runner.Worker.exe` executables found in the current process ancestry, and
-  outbound UDP/TCP port 53 for the DNS client service (`Dnscache`).
+  rules may remain enabled. They allow outbound traffic for:
+  - the exact `Runner.Listener.exe` and `Runner.Worker.exe` executables found in
+    the current process ancestry;
+  - the hosted VM's own agents when present (`hosted-compute-agent`, `provjobd*`,
+    `WaAppAgent`, `WindowsAzureGuestAgent`), by exact path, each refused if it
+    matches a workload executable;
+  - UDP/TCP port 53 for the DNS client service (`Dnscache`).
+  All program paths are expanded to their long form, because the firewall
+  refuses 8.3 short paths.
 - An external TCP connection to an address resolved beforehand must succeed
   before isolation, be refused during isolation and after the workload, and
   return after restoration.
@@ -47,9 +53,9 @@ disabling adapters:
   re-read and compared to the snapshot. Cleanup failures never replace the
   original failure.
 
-The case records `network_isolation=windows_firewall_runner_agent_only`,
+The case records `network_isolation=windows_firewall_runner_and_host_agents_only`,
 `network_isolated`, `external_connection_refused`, `network_restored`,
-`allowed_programs` and `dns_allowed`. It does not claim `network_disabled`.
+`allowed_programs`, `allowed_infrastructure_programs` and `dns_allowed`. It does not claim `network_disabled`.
 The validator accepts exactly one of the two shapes and refuses mixtures.
 
 ## Consequences and limits
@@ -58,8 +64,8 @@ The validator accepts exactly one of the two shapes and refuses mixtures.
   drives the case, plus the absence of any persistent or effective allow rule that
   would admit the app, its WebView2 processes or the Node driver. Under
   default-deny that makes the app's external connections fail. It does not prove
-  the machine had no network at all: the runner agent stayed connected and name
-  resolution through the system DNS client remained possible.
+  the machine had no network at all: the runner and hosted VM agents stayed
+  connected and name resolution through the system DNS client remained possible.
 - Loopback stays available, as it was under disabled adapters.
 - Service-scoped effective allow rules (for example Dnscache) stay active. They
   apply only to their service, not to the test processes.
@@ -85,4 +91,20 @@ The validator accepts exactly one of the two shapes and refuses mixtures.
   `C:\actions-runner\cached\2.338.0\bin\Runner.Worker.exe` and `Runner.Listener.exe`.
   Before isolation, `hosted-compute-agent`, `WindowsAzureGuestAgent`, `WaAppAgent`,
   `provjobd`, `lsass`, `svchost`, Defender and the Start menu host also held
-  connections; the job did not need them during the hold.
+  connections.
+- Runs 39975150461 (`a4f93b69`) and 39975523710 (`c0c2f6c6`), both runner-only
+  with a 1260 s hold, were lost. Neither recorded a step result, logs or artifact,
+  and both were cancelled at the 40-minute job limit. Runner-only isolation keeps
+  the job for at least 600 s but not for 1260 s, so the hosted VM agents are now
+  allowed too.
+- Runs 39982055447 and 39982387411 refused to isolate with "The parameter is
+  incorrect" and restored cleanly. Run 39982567901 created disabled test rules
+  and showed that the firewall refuses `provjobd`'s 8.3 short path
+  (`C:\Users\RUNNER~1\...`) and accepts its long form. `hosted-compute-agent`
+  (no extension) and the Azure guest agents were accepted as given.
+- Run 39982856528 (`c9d0d418`): passed. The job survived 1260 s of isolation, past
+  the 1200 s workload bound, with 84 checks of refused external TCP and working
+  loopback. Results: 177 allow rules disabled, exactly eight isolation rules
+  enabled (two runner, four host agents, two DNS), zero other effective outbound
+  allow rules, exact restoration (re-verification 421 ms), and connectivity back
+  within 8 ms.

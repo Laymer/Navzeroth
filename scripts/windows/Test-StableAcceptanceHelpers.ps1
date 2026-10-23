@@ -245,7 +245,7 @@ try{
    return @{actual='workload'}}
   if($script:fwSeen.blocked -ne 3 -or $script:fwSeen.enabled.Count -ne 5 -or @($script:fwSeen.programs|Where-Object {$_ -like '*hosted-compute-agent.exe'}).Count -ne 1 -or @($script:fwSeen.enabled|Where-Object {$_ -notlike '{iso-*'}).Count -ne 0 -or @($script:fwSeen.programs|Where-Object {$_ -like '*Runner.*'}).Count -ne 2){throw 'Isolation scope differs from runner agent plus DNS only'}
   if((Snapshot-MockFirewall) -cne $before){throw 'Firewall state was not restored exactly'}
-  if(-not $result.network_isolated -or -not $result.external_connection_refused -or -not $result.restored -or $result.isolation -cne 'windows_firewall_runner_agent_only' -or $result.workload.actual -ne 'workload' -or $result.allowed_programs.Count -ne 2 -or @($result.allowed_infrastructure_programs).Count -ne 1 -or $result.diagnostics.disabled_allow_rules -ne 3){throw 'Isolation result differs'}
+  if(-not $result.network_isolated -or -not $result.external_connection_refused -or -not $result.restored -or $result.isolation -cne 'windows_firewall_runner_and_host_agents_only' -or $result.workload.actual -ne 'workload' -or $result.allowed_programs.Count -ne 2 -or @($result.allowed_infrastructure_programs).Count -ne 1 -or $result.diagnostics.disabled_allow_rules -ne 3){throw 'Isolation result differs'}
  }
  Check 'isolation works when no hosted infrastructure agent is present' {
   New-MockFirewall;$script:fwInfra=@();$before=Snapshot-MockFirewall
@@ -322,13 +322,13 @@ try{
   function ParseCase($Extra){$c=[ordered]@{};foreach($k in $base.Keys){$c[$k]=$base[$k]};foreach($k in $Extra.Keys){$c[$k]=$Extra[$k]};return ConvertFrom-HostedJsonText ($c|ConvertTo-Json -Depth 10)}
   function AssertCase($Case){Assert-HostedCase $Case 'HOSTED-OFFLINE' '1.0.0' $identity.source_commit $identity.production_sha256 $identity.installer_sha256 $identity.target}
   AssertCase (ParseCase @{network_disabled=$true})
-  AssertCase (ParseCase @{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true})
+  AssertCase (ParseCase @{network_isolation='windows_firewall_runner_and_host_agents_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true})
   Refuse {AssertCase (ParseCase @{network_disabled=$true;network_isolated=$true;external_connection_refused=$true})}
   Refuse {AssertCase (ParseCase @{network_disabled=$true;dns_allowed=$true})}
-  Refuse {AssertCase (ParseCase @{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored='true'})}
+  Refuse {AssertCase (ParseCase @{network_isolation='windows_firewall_runner_and_host_agents_only';network_isolated=$true;external_connection_refused=$true;network_restored='true'})}
  }
  Check 'offline case accepts exactly one offline evidence shape' {
-  $firewall=@{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true}
+  $firewall=@{network_isolation='windows_firewall_runner_and_host_agents_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true}
   Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return $firewall.Clone()}
   Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return @{network_disabled=$true;network_restored=$true}}
   $mixed=$firewall.Clone();$mixed.network_disabled=$true;Refuse {Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return $mixed}}
