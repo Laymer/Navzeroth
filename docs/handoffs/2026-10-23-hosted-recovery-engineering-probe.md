@@ -107,7 +107,7 @@ verification was NOT independently performed. Exact URLs/hashes are in the check
 record. No registry or persistent interpreter policy was changed.
 
 The hosted workflow retains bounded logs/phase results only, never SQLite backups,
-profile data, installer ZIP/executable, compiled binary or Cargo cache. The result
+private app-data directories, installer ZIP/executable, compiled binary or Cargo cache. The result
 always declares acceptance_observations_promoted:false. It still needs ONE actual
 reviewed opt-in hosted execution by root; no hosted probe or current installer/UI
 acceptance has run as part of this author task. Successful engineering results
