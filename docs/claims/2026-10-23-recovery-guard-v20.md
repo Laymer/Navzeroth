@@ -1,0 +1,7 @@
+# Recovery guard transition and bounded workload diagnostics
+
+Owner desktop_review. Baseline9cc774e4f2656f26d544071d6bd174367ccca16a; sole writer in /tmp/navzeroth-recovery-guard-v20 on fix/recovery-guard-v20. Read STATUS, V19 public-review handoff, V19 offline-startup claim and implementation plan M9/offline/recovery requirements before code.
+
+Approved scope: storage recovery and meaningful tests; bounded workload progress/diagnostic hooks and tests only. Hold one owned IMMEDIATE transaction across full historical validation and the sole RecoveredReference guard update, validate exact changed plan/readback and preserve revision/request/summary. Remove only redundant second whole validation. Destructive candidate validation, explicit check_database, post-restore planning/toggles and finite20min/60min budgets remain required. No schema/PowerShell/ADR/canonical/signing changes.
+
+Actual latest V19 attempt2 fails1200s recovery watchdog after full check_database completed; attempt1 was cancelled during offline startup without a terminal diagnosis. Both remain historical/unverified beyond actual passes. No local real network controls or installation. Coordinate shared build targets and full-pack measurement with root; freeze code and obtain independent review before routine draft PR. Automated exact downloaded draft-installer verification is owned separately; no fabricated manual owner result.
