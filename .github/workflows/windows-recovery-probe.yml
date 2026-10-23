@@ -1,0 +1,56 @@
+name: Hosted Windows historical full-pack recovery engineering probe
+# Explicit opt-in only; never a protected check or acceptance observation.
+on:
+  push:
+    branches: ['verify/recovery-probe-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: recovery-engineering-probe-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  recovery-engineering-probe:
+    name: Recovery engineering probe (not installer acceptance)
+    runs-on: windows-2025
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact fixture metadata bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          lfs: false
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Test bounded probe inputs and process watchdogs without installing
+        shell: pwsh
+        run: |
+          python -m unittest discover -s scripts/tests -p test_hosted_recovery_probe.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Bounded recovery probe regression failed' }
+          ./scripts/windows/Test-RecoveryProbeOwnership.ps1
+      - name: Compile reviewed runtime and exercise historical full-pack recovery
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/windows/hosted-recovery-probe.py --root . --output "$env:RUNNER_TEMP/recovery-engineering-probe"
+      - name: Retain bounded engineering diagnostics only
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: recovery-engineering-probe-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/recovery-engineering-probe/engineering-result.json
+            ${{ runner.temp }}/recovery-engineering-probe/artifact-api.stdout
+            ${{ runner.temp }}/recovery-engineering-probe/fixture-commit-api.stdout
+            ${{ runner.temp }}/recovery-engineering-probe/rustc-identity.stdout
+            ${{ runner.temp }}/recovery-engineering-probe/build.json
+            ${{ runner.temp }}/recovery-engineering-probe/build.stderr
+            ${{ runner.temp }}/recovery-engineering-probe/whole-recovery.*
+            ${{ runner.temp }}/recovery-engineering-probe/install-fixture.json
+            ${{ runner.temp }}/recovery-engineering-probe/install-fixture.stderr
+            ${{ runner.temp }}/recovery-engineering-probe/cleanup.json
+            ${{ runner.temp }}/recovery-engineering-probe/cleanup.stderr
+          if-no-files-found: warn
+          retention-days: 7
