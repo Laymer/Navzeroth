@@ -52,6 +52,7 @@ jobs:
             ${{ runner.temp }}/recovery-engineering-probe/fixture-commit-api.stdout
             ${{ runner.temp }}/recovery-engineering-probe/rustc-identity.stdout
             ${{ runner.temp }}/recovery-engineering-probe/build.json
+            ${{ runner.temp }}/recovery-engineering-probe/build.stdout
             ${{ runner.temp }}/recovery-engineering-probe/build.stderr
             ${{ runner.temp }}/recovery-engineering-probe/whole-recovery.*
             ${{ runner.temp }}/recovery-engineering-probe/install-fixture.json

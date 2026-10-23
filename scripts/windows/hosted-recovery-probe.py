@@ -14,6 +14,7 @@ import time
 import zipfile
 import sys
 import uuid
+import re
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from recovery_probe_process import OwnedTree
@@ -72,14 +73,16 @@ def digest(path, maximum):
     return result.hexdigest()
 
 
-def run(command, output, name, seconds, env=None, maximum=MAX_LOG, cwd=None):
-    """Bound whole process-tree lifetime and each retained byte stream."""
+def run(command, output, name, seconds, env=None, maximum=MAX_LOG, cwd=None, *, compiler_build=False):
+    """Strict trees by default; Cargo alone may clean its owned children on root exit."""
     stdout = output / (name + '.stdout')
     stderr = output / (name + '.stderr')
     start = time.monotonic()
     failures = []
-    owner=OwnedTree(command,env=env,cwd=cwd)
-    process=owner.process
+    owner = OwnedTree(command, env=env, cwd=cwd)
+    process = owner.process
+    boundary = None
+    cleanup = dict(attempted=False, completed=False, job_inactive=None)
 
     def capture(stream, path):
         try:
@@ -104,34 +107,103 @@ def run(command, output, name, seconds, env=None, maximum=MAX_LOG, cwd=None):
     timed_out = False
     try:
         while True:
-            parent_done=process.poll() is not None
-            capture_done=all(not thread.is_alive() for thread in threads)
-            if parent_done and capture_done and not owner.active():
-                break
+            parent_done = process.poll() is not None
+            pipes = [not thread.is_alive() for thread in threads]
+            active = owner.active()
+            if parent_done and boundary is None:
+                boundary = dict(elapsed_ms=(time.monotonic()-start)*1000,
+                                exit_code=process.returncode, owned_tree_active=active,
+                                stdout_eof=pipes[0], stderr_eof=pipes[1])
             if failures or time.monotonic() - start >= seconds:
                 timed_out = not failures
+                cleanup['attempted'] = True
                 owner.kill()
+                break
+            if parent_done and compiler_build:
+                # Cargo's root protocol is validated separately after bounded EOF.
+                # Do not exempt/detach any descendant: terminate only this owned tree.
+                if active:
+                    cleanup['attempted'] = True
+                    owner.kill()
+                break
+            if parent_done and all(pipes) and not active:
                 break
             time.sleep(0.05)
         process.wait(timeout=2)
+    except Exception as error:
+        failures.append('process lifecycle failed: ' + type(error).__name__)
     finally:
+        cleanup_deadline = time.monotonic()+2
         try:
             if process.poll() is None or owner.active():
+                cleanup['attempted'] = True
                 owner.kill()
+            if owner.job is not None:
+                # Job accounting excludes terminated processes. POSIX killpg(0)
+                # may include orphan zombies, so it is not an equivalent wait.
+                while owner.active() and time.monotonic() < cleanup_deadline:
+                    time.sleep(.01)
+                cleanup['job_inactive'] = not owner.active()
+                if not cleanup['job_inactive']:
+                    failures.append('owned JobObject did not terminate within cleanup bound')
+        except Exception as error:
+            failures.append('owned cleanup failed: ' + type(error).__name__)
         finally:
-            owner.close()
-        cleanup_deadline=time.monotonic()+2
+            try:
+                owner.close()
+                cleanup['completed'] = True
+            except Exception as error:
+                failures.append('owned close failed: ' + type(error).__name__)
         for thread in threads:
-            thread.join(timeout=max(0,cleanup_deadline-time.monotonic()))
+            thread.join(timeout=max(0, cleanup_deadline-time.monotonic()))
         if any(thread.is_alive() for thread in threads):
             failures.append('process output capture did not finish')
     result = dict(command=command, exit_code=process.returncode, timed_out=timed_out,
-                  elapsed_seconds=time.monotonic()-start, capture_errors=failures)
+                  elapsed_seconds=time.monotonic()-start, capture_errors=failures,
+                  completion_policy='cargo_root_then_owned_cleanup' if compiler_build else 'strict_tree',
+                  root_exit=boundary, owned_cleanup=cleanup,
+                  stdout_eof=not threads[0].is_alive(), stderr_eof=not threads[1].is_alive())
     (output / (name + '.json')).write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(dict(probe_phase=name, **result)), flush=True)
     if timed_out or failures or process.returncode != 0:
         raise ValueError('bounded probe process failed: ' + name)
     return stdout
+
+
+def validate_cargo_build(stdout, root, target):
+    """Validate the completed Cargo protocol and source-owned test artifact, not stderr."""
+    raw = read_limited(stdout, 16*1024*1024)
+    events = [strict_json(line) for line in raw.splitlines()]
+    if not events or any(not isinstance(value, dict) for value in events):
+        raise ValueError('invalid Cargo build protocol')
+    finished = [value for value in events if value.get('reason') == 'build-finished']
+    if len(finished) != 1 or finished[0] is not events[-1] or finished[0].get('success') is not True:
+        raise ValueError('Cargo build did not finish uniquely and successfully')
+    if any(value.get('reason') == 'compiler-message' and value.get('message', {}).get('level') == 'error' for value in events):
+        raise ValueError('Cargo protocol contains compiler error')
+    artifacts = [value for value in events if value.get('reason') == 'compiler-artifact'
+                 and value.get('target', {}).get('name') == 'hosted_recovery_probe'
+                 and value.get('executable') is not None]
+    if len(artifacts) != 1:
+        raise ValueError('expected one actual compiled probe executable')
+    artifact = artifacts[0]
+    manifest = root/'crates/app/Cargo.toml'
+    harness = root/'crates/app/tests/hosted_recovery_probe.rs'
+    if (artifact.get('target', {}).get('kind') != ['test']
+            or artifact.get('manifest_path') != str(manifest)
+            or artifact.get('target', {}).get('src_path') != str(harness)
+            or not isinstance(artifact['executable'], str)):
+        raise ValueError('Cargo artifact differs from reviewed test source')
+    binary = Path(artifact['executable'])
+    if (not binary.is_absolute() or binary.parent != target/'release/deps'
+            or not re.fullmatch(r'hosted_recovery_probe-[0-9a-f]{16}(?:\.exe)?', binary.name)
+            or binary.resolve() != binary or target.resolve() != target):
+        raise ValueError('Cargo executable is outside the owned release target')
+    metadata = dict(binary_sha256=digest(binary,256*1024*1024),
+                    manifest_sha256=digest(manifest,1024*1024),
+                    harness_sha256=digest(harness,1024*1024),
+                    build_stdout_sha256=hashlib.sha256(raw).hexdigest())
+    return binary, metadata
 
 
 def extract_installer(archive, output, spec):
@@ -271,15 +343,9 @@ def main(root, output):
                            NAVZEROTH_DIAGNOSTIC_HARNESS_COMMIT=source)
         run(['rustc', '-vV'], output, 'rustc-identity', 30, environment, 1024*1024)
         build = run(['cargo', 'test', '--locked', '--release', '-p', 'azeroth-app', '--test',
-                     'hosted_recovery_probe', '--no-run', '--message-format=json'], output, 'build', 1200, environment, 16*1024*1024, cwd=root)
-        binaries = [value['executable'] for line in build.read_bytes().splitlines()
-                    if (value := strict_json(line)).get('reason') == 'compiler-artifact'
-                    and value.get('target', {}).get('name') == 'hosted_recovery_probe' and value.get('executable')]
-        if len(binaries) != 1:
-            raise ValueError('expected one actual compiled probe executable')
-        binary = Path(binaries[0])
-        binary.resolve().relative_to((output/'build').resolve())
-        summary['binary_sha256'] = digest(binary, 256*1024*1024)
+                     'hosted_recovery_probe', '--no-run', '--message-format=json'], output, 'build', 1200, environment, 16*1024*1024, cwd=root, compiler_build=True)
+        binary, build_metadata = validate_cargo_build(build, root, output/'build')
+        summary.update(build_metadata)
         run(['pwsh', '-NoProfile', '-File', str(root/'scripts/windows/Recovery-Probe-Install.ps1'),
              '-Installer', str(installer), '-ExpectedSha256', spec['installer_sha256'],
              '-OwnershipMarker', str(ownership), '-OwnershipNonce', nonce], output, 'install-fixture', 360)

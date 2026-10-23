@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "historical_readme_source_functional_execution_before_compiler_harness_repair",
+  "source_commit": "23c8047832c03e07dd96dba359b1dcefe9b2fae7",
+  "production_sha256": "3af2dc70969602ac310551f4528a92a1214114f219fa4f21e2b7b3547175a2cb",
+  "scope": "Actual coordinator functional execution at exact reviewed README integration; cached ca94-built executable. No canonical replacement was made because the 41b engineering probe independently failed process-tree completion before installation. Any subsequent harness changes require renewed source bindings; this proof retains its actual source. No Windows result is claimed.",
+  "seconds": 79.04264988499926,
+  "peak_child_rss_kib": 6204360,
+  "files": [
+    {
+      "path": "release/history/2026-10-23-23c804-readme-functional/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "5354c87d5e326ebc26a0778cdb617ecd50f42e995c58173d5d75602866330db9"
+    },
+    {
+      "path": "release/history/2026-10-23-23c804-readme-functional/functional-linux-measurement.json",
+      "bytes": 1421,
+      "sha256": "d32c866932e45fe6cae7785ea2d9c959e862d84443a1d2f0f97975c099e020a5"
+    },
+    {
+      "path": "release/history/2026-10-23-23c804-readme-functional/functional-build.log",
+      "bytes": 62,
+      "sha256": "bc91a3ed6ff9b29145787c6d9882965f4f24899753f0d8be62d8adc772989545"
+    },
+    {
+      "path": "release/history/2026-10-23-23c804-readme-functional/functional-run.log",
+      "bytes": 843,
+      "sha256": "a4bfed03b41c0fed383ae77683ccdf4b72fbee8a9f4ee5a261956a5925d1ccdf"
+    }
+  ]
+}

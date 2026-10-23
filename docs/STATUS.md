@@ -31,16 +31,19 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-2026-10-23: reviewed PRs 271–279 are integrated locally. Source `41b52c8f` includes
-the narrow fresh-account registry repair and passes actual full-content functional
-execution plus unsigned material preparation. Independent review verified the
-82-file source/content closure and all current proof references. The schema 5
-inventory retains 260,113 records and 274,059 accepted unknown fields; all nine
-Windows observations remain unverified. Probe 39916898751 failed before installing
-because the fresh HKCU uninstall key was absent; its original evidence is archived.
-The new probe 39921053021 passed early helper/transport steps and remains in its
-combined compilation/recovery step. Final public review and signed receipts await
-the actual outcome. Remote PR239 remains V19; no main merge, tag or publication.
+2026-10-23: reviewed PRs 271–280 are integrated locally. Probe 39921053021 failed
+the compiler process-tree watchdog: Cargo exited successfully and reported a
+5m40s build, but descendant/pipe completion exceeded 1200s. Installation and
+recovery never ran; the exact remaining process or pipe condition is unknown.
+Original raw evidence is archived. A compiler-specific owned-descendant cleanup
+repair is in progress; all other process checks and workload bounds stay strict.
+The earlier registry failure is separately preserved. README/install instructions
+now reflect the approved release contract. Actual functional execution on that
+source `23c80478` passed in 79.04s on shared Linux; its proof is archived separately.
+Canonical preparation still binds the earlier `41b52c8f` and must be renewed after
+the harness repair. Its 260,113 records/274,059 unknown fields and nine unverified
+Windows rows retain their meaning. Remote PR239 remains V19; no tag or publication.
+[Compiler watchdog result](handoffs/2026-10-23-recovery-probe-41b52-result.md).
 [Repaired source and actual checks](handoffs/2026-10-23-registry-repaired-source-v20.md).
 [Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
 [Actual probe failure](handoffs/2026-10-23-recovery-probe-de2-result.md).
