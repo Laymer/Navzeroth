@@ -161,9 +161,10 @@ Actual logs, generator summary and preview are retained in
 
 One explicit opt-in push started [probe39916898751](https://github.com/Laymer/Navzeroth/actions/runs/39916898751)
 on exactde2. Its guarded native process/ownership and native Git transport steps
-completed successfully; individual counts/skips await completed logs. The compiled
-historical full-pack recovery workload was still running when this entry was
-written. No workload pass is inferred. The old signed fixture remains distinct
+completed successfully; individual counts/skips await completed logs. The combined
+compilation/recovery step was still in progress when this entry was written; the
+workload's start was not independently verified. No workload pass is inferred.
+The old signed fixture remains distinct
 from current runtime and final-installer acceptance. PR239's remote branch still
 holdsV19; the opt-in engineering branch is not a signed release candidate.
 
