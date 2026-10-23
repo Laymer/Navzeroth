@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "scope": "Manual engineering full-pack functional scenarios on a shared Linux/WSL2 host; no Windows, ordinary-PC, live-client correctness or installer performance claim.",
+  "environment": {
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "architecture": "x86_64",
+    "logical_processors": 32,
+    "mem_total_kib": 32675952
+  },
+  "proof_sha256": "36f26c99891fcfb98ebb568a36c8cdd7e4fd99d086670befb70fb6c66f11c6f3",
+  "identical_independent_proof": true,
+  "measurements": [
+    {
+      "operator": "/root/desktop_review implementation execution",
+      "source_commit": "f72abcab67707e4d15aca2cb0890547f7f7cd82d",
+      "recorded_measurement": {
+        "resource_method": "os.wait4 exact child process",
+        "command": [
+          "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-f0713c3b97bf0547",
+          "--ignored",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 145.55155452000008,
+        "peak_rss_kib": 6403756,
+        "user_seconds": 137.904429,
+        "system_seconds": 7.6243739999999995
+      }
+    },
+    {
+      "operator": "/root separate review execution",
+      "source_commit": "f72abcab67707e4d15aca2cb0890547f7f7cd82d",
+      "recorded_measurement": {
+        "source_commit": "f72abcab67707e4d15aca2cb0890547f7f7cd82d",
+        "returncode": 0,
+        "seconds": 136.7369148920002,
+        "peak_child_rss_kib": 6403660,
+        "limitations": "Shared Linux/WSL host; release-mode manual engineering scenario; no Windows or live-game acceptance."
+      }
+    }
+  ],
+  "prior_failure": {
+    "source_commit": "5f65c43f3715ee488704d1cf483deece603de127",
+    "recorded_measurement": {
+      "resource_method": "os.wait4 exact child process",
+      "command": [
+        "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-f0713c3b97bf0547",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "elapsed_seconds": 93.67025350499989,
+      "peak_rss_kib": 6403580,
+      "user_seconds": 87.158257,
+      "system_seconds": 6.503869
+    },
+    "reason": "Preparation check label exceeds schema2 160-byte bound; repaired by separately reviewed schema3 consumer, with original packs unchanged."
+  }
+}
