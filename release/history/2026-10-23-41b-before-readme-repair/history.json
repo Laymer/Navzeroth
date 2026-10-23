@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "kind": "historical_41b_preparation_before_README_source_renewal",
+  "archive_baseline_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+  "tested_source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
+  "production_sha256": "abde826deab18e4e9b98add5b8a6e226c3f58d786baaf77234e4a39de6abdf07",
+  "scope": "Exact original bytes; embedded old paths remain historical source-scoped records, not claims about later regenerated canonical files. This explicit mapping preserves original Git identity without editing source evidence. Inventory is not duplicated.",
+  "functional_execution": {
+    "operator": "coordinator root",
+    "seconds": 78.54150760099947,
+    "peak_child_rss_kib": 6206004,
+    "binary_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+    "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; application/core/storage/ingest/local-data/CLI/content/Cargo bytes were compared unchanged from de2; production app source and functional test remain identical to ca94. The separate hosted engineering test added since ca94 is outside this executable. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
+    "independent_execution": "Reviewer actual ca94 replay is separately archived; no reviewer41b execution or new independent compiler build is claimed."
+  },
+  "material_preparation": {
+    "ready": true,
+    "selected_files": 82,
+    "selected_packs": 2,
+    "selected_bytes": 395722450,
+    "prebundle_evidence_sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9",
+    "publication_allowed": false,
+    "observations": "Nine pristine unverified; no bundled content or signature."
+  },
+  "hosted_engineering_probe": {
+    "run_id": 39921053021,
+    "source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
+    "status_at_archive": "pending",
+    "scope": "Actual later outcome must retain its exact41b source and historical V19 fixture identity. A subsequent README-only fingerprint change does not restamp this run as the new commit; no current installed/UI acceptance follows."
+  },
+  "files": [
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "7b1bf81ae2bb01260a5d997ddd3ec279266d8310f070fe71b2a4a82918df1f67",
+      "original_path": "release/v1/functional-scenarios.json",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "4baa46795daa1be34096a40e4b1092705fc0fc4f"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/functional-linux-measurement.json",
+      "bytes": 1333,
+      "sha256": "6eccc92ec61ed3953398ccb3b36c268c5700b90cbaff625c2e940a593af2609e",
+      "original_path": "release/v1/functional-linux-measurement.json",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "4de98d70c0a9915501db1b6e30e2e3e7141b5a42"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/checks.json",
+      "bytes": 2444,
+      "sha256": "9fabcc0ad1c2a9961577474f432557173cbc972752fcb32e53ba6ccda4c2579f",
+      "original_path": "release/v1/verification-v20/checks.json",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "76e3576f6d0a8ef184680bd807f06b1d946a4e1e"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/cli-build.log",
+      "bytes": 62,
+      "sha256": "92434e198f27984c035c376ec77a7cf9e6ebdde782f8ccb1336ae3329b66ddb7",
+      "original_path": "release/v1/verification-v20/cli-build.log",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "c1980dcecd566d7ad81afa8566eabe1765f7c0eb"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/functional-build.log",
+      "bytes": 62,
+      "sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b",
+      "original_path": "release/v1/verification-v20/functional-build.log",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "833a445ce0070bff46236f0a31b1f4469808478c"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/functional-run.log",
+      "bytes": 843,
+      "sha256": "0c655fc217ce06e71ed71e800521602129d9418b5c7088d97c1c7f4d809ba32c",
+      "original_path": "release/v1/verification-v20/functional-run.log",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "9b0c713e5b7c384e04ed023c5fb1faec60fca154"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/inventory-generation.json",
+      "bytes": 444,
+      "sha256": "222d547e9e91149f05fc5be50b886b4b32250017607e888227599346507de134",
+      "original_path": "release/v1/verification-v20/inventory-generation.json",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "6d0c26399026c1c4934bb37acd1637e37a26db4c"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/prebundle-evidence.json",
+      "bytes": 27970074,
+      "sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9",
+      "original_path": "release/v1/verification-v20/prebundle-evidence.json",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "e3a1001b1f29352b7f171d79d036c3a294d69ebf"
+    },
+    {
+      "path": "release/history/2026-10-23-41b-before-readme-repair/verification-v20/unsigned-material-preview.json",
+      "bytes": 55727,
+      "sha256": "53460988fb261e8f825b3bab60718c0f8212924c6174b0a2eff3f0c98b459e5d",
+      "original_path": "release/v1/verification-v20/unsigned-material-preview.json",
+      "original_commit": "77de350665e811b06a39073f3dd82b94077beaf4",
+      "original_git_blob": "83e478d0e214a577c1e50eef3b1c8b741423d534"
+    }
+  ]
+}
