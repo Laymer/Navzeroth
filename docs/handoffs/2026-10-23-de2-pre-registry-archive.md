@@ -32,3 +32,8 @@ of app, installer, profile, network controls or keys.
 Next: root independently verify/normalmerge archive before replacing current
 functional/material metadata for the registry-repaired source. V20 publicreview
 remains unfrozen until actual revised probe and final bindings are available.
+
+The first postcommit validation caught three copied .log files omitted by the
+repository's ignore rule. A normal child force-adds only those exact reviewed
+bounded logs; the nine-file postcommit validation then runs against tracked blobs.
+No archive content or original evidence bytes were changed to hide that omission.
