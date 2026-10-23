@@ -74,9 +74,18 @@ class TransportTests(unittest.TestCase):
         self.assertFalse((self.root / 'dist/acceptance-evidence').exists())
 
     def test_case_collision(self):
-        commit = self.archive({'draft-evidence/RAW.json': b'{}'})
-        with self.assertRaises(ValueError):
-            self.import_archive(commit)
+        commit = self.archive()
+        self.git('checkout', '-q', commit)
+        oid = self.git('hash-object', '-w', '--stdin', data=b'{}').strip()
+        # Build the ambiguous tree in Git, never on a case-insensitive filesystem.
+        self.git('-c', 'core.ignorecase=false', 'update-index', '--add', '--cacheinfo',
+                 f'100644,{oid},{transport.PREFIX}draft-evidence/RAW.json')
+        tree = self.git('write-tree').strip()
+        ambiguous = self.git('commit-tree', tree, '-p', commit, '-m', 'ambiguous paths').strip()
+        self.git('reset', '-q', commit)
+        self.git('checkout', '-q', self.source)
+        with self.assertRaisesRegex(ValueError, 'Case-colliding'):
+            self.import_archive(ambiguous)
 
     def test_limits(self):
         commit = self.archive()

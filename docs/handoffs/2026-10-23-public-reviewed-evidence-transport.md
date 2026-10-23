@@ -88,3 +88,11 @@ inputs and their hashes are recorded externally in
 (shutil.which returnedNone), so this is not a claim that the complete synthetic
 Git suite ran natively. No app, installer, profile, live-game state, network
 adapter or real evidence archive was touched by these tests.
+
+Root final review found the case-collision test used two filesystem writes; NTFS
+could collapse raw.json/RAW.json before Git saw an ambiguous tree. A test-only
+normal child now constructs both paths directly in the Git index with explicit
+core.ignorecase=false and commits that tree without checking it out. The importer
+must raise the exact Case-colliding refusal. No production code changed. The full
+Linux18-test suite reran:17PASS/1Windows-junctionSKIP; actionlint/diffPASS. This
+corrects native test portability, not an asserted native Git execution result.
