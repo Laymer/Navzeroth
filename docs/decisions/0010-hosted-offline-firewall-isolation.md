@@ -66,6 +66,10 @@ The validator accepts exactly one of the two shapes and refuses mixtures.
   default-deny that makes the app's external connections fail. It does not prove
   the machine had no network at all: the runner and hosted VM agents stayed
   connected and name resolution through the system DNS client remained possible.
+- `provjobd` runs from a randomly named file in the user-writable `%TEMP%` of the
+  account that also runs the workload. Anything executed from that exact path
+  would be admitted. The workload never runs from it, and the agent list is
+  taken before the workload starts.
 - Loopback stays available, as it was under disabled adapters.
 - Service-scoped effective allow rules (for example Dnscache) stay active. They
   apply only to their service, not to the test processes.

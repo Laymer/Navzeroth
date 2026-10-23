@@ -49,7 +49,7 @@ function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $Sou
         'HOSTED-RESOURCES' { if ($Case.installed_resources_verified -isnot [bool] -or -not $Case.installed_resources_verified -or $Case.source_notices_verified -isnot [bool] -or -not $Case.source_notices_verified) { throw 'Exact resources and source/notices must both be verified.' } }
         'HOSTED-OFFLINE' {
             # Historical cases disabled adapters; ADR 0010 cases isolate by firewall
-            # with only the runner agent and DNS allowed. Never mix the two shapes.
+            # with only the runner, hosted VM agents and DNS allowed. Never mix the two shapes.
             $names = @($Case.PSObject.Properties.Name)
             if ($names -contains 'network_isolation') {
                 if ($names -contains 'network_disabled' -or $Case.network_isolation -cne 'windows_firewall_runner_and_host_agents_only' -or $Case.network_isolated -isnot [bool] -or -not $Case.network_isolated -or $Case.external_connection_refused -isnot [bool] -or -not $Case.external_connection_refused -or $Case.network_restored -isnot [bool] -or -not $Case.network_restored) { throw 'Offline case requires verified firewall isolation and restoration.' }

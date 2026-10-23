@@ -189,8 +189,8 @@ function Invoke-StableOffline([scriptblock] $Workload) {
 # Hosted runners lose their job about 4.5 minutes after every adapter is disabled
 # (runs 39641767585/1 and 39931563703/1-2), shorter than the full-pack offline
 # workload. ADR 0010: isolate by firewall instead. Both directions default to
-# block, every enabled allow rule is disabled, and only the runner agent that
-# holds the job plus the system DNS client stay allowed.
+# block, every enabled allow rule is disabled, and only the runner that holds
+# the job, the hosted VM's own agents and the system DNS client stay allowed.
 $script:StableFirewallIsolation = 'windows_firewall_runner_and_host_agents_only'
 function Get-StableRunnerAgentPrograms {
     $found = [ordered]@{}; $seen = @{}; $current = $PID
