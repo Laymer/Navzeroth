@@ -104,3 +104,32 @@ Python preparation's nine tests passed again. All Rust production/test bytes are
 unchanged from the recorded 63190bde coverage run; no repeated Rust build or
 Windows acceptance is claimed for this Python-only followup. Root owns actual
 canonical regeneration after complete reviewed integration.
+
+## Eligible schema-export executable coverage closure
+
+Claim 360d234b, code d55286a2. The coordinator identified an incomplete changed-file
+closure: the prior five-file claim was true for those five production modules,
+but omitted eligible crates/core/examples/export_release_schema.rs. It was not
+excluded or waived. The existing native collector now executes inventory and
+evidence selectors plus missing/unsupported selectors (both expected exit 101)
+under its instrumented environment before debug reporting, on both OS paths.
+A regression in the already workflow-invoked bundle-instrumentation.test.mjs
+executes those actual call declarations and checks selectors/refusal codes,
+instrumentation and report ordering. Author focused wiring test: one passed.
+Coordinator independently executed the full existing file: three passed.
+
+After desktop's timed run completed, all four real cached instrumented example
+invocations produced expected exits, and both successful outputs matched the
+committed generated schemas byte for byte. Actual example coverage is 8/8 (100%);
+all prior five files retain their reported counts. The revised six-file compact
+report uses the existing collector's include-build-script,
+no-default-ignore-filename-regex and unchanged filename exclusion settings. The
+first local report used default cargo-llvm-cov filtering, omitted the example,
+and correctly failed the six-file closure check; rerunning the report with the
+actual collector settings established coverage. An initial full Node regression
+run lacked cargo on PATH and failed setup before compiling its tiny fixture;
+the coordinator's corrected Cargo-PATH run passed all three. No failed setup or
+missing-source report is called a pass. Local raw evidence:
+/tmp/navzeroth-schema5-export-commands.json, export-*.stdout/stderr,
+/tmp/navzeroth-schema5-export-wiring-tests.log and the updated LCOV/checker.
+No heavy workload ran concurrently with the measured desktop benchmark.
