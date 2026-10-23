@@ -1,0 +1,6 @@
+[31;1mGet-ChildItem: [0mD:\a\Navzeroth\Navzeroth\scripts\windows\Native-Smoke-Helpers.ps1:58[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  58 | [0m     $key = [36;1mGet-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVer[0m …[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mCannot find path 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall' because it does not[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m[31;1m[36;1m     | [31;1mexist.[0m
