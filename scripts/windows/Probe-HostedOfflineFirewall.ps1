@@ -53,15 +53,15 @@ function Invoke-HostedOfflineFirewallProbe([string] $Directory,[int] $Hold) {
         Write-FirewallProbeReport $report $reportPath
         $report.phase = 'isolated_hold'
         $offline = Invoke-StableFirewallOffline {
-            $hold = [Diagnostics.Stopwatch]::StartNew()
+            $holdTimer = [Diagnostics.Stopwatch]::StartNew()
             $address = Resolve-StableProbeAddress 'github.com'
-            while ($hold.Elapsed.TotalSeconds -lt $Hold) {
+            while ($holdTimer.Elapsed.TotalSeconds -lt $Hold) {
                 if (Test-StableExternalTcp $address 443 3000) { throw 'External connection succeeded during the isolated hold.' }
                 if (-not (Test-LoopbackTcp)) { throw 'Loopback connection failed during isolation.' }
                 $report.checks++
                 Start-Sleep -Seconds 15
             }
-            return @{held_ms=$hold.ElapsedMilliseconds}
+            return @{held_ms=$holdTimer.ElapsedMilliseconds}
         }
         $report.isolation = [ordered]@{isolation=$offline.isolation;allowed_programs=$offline.allowed_programs;held_ms=$offline.workload.held_ms;diagnostics=$offline.diagnostics}
         $report.passed = $true
