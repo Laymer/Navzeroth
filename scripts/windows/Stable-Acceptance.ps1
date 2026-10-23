@@ -1,4 +1,4 @@
-# Actual schema4 acceptance producers. Only the disposable hosted runner is touched.
+# Actual stable hosted acceptance. Only the disposable hosted runner is touched.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string] $Root,
@@ -34,7 +34,7 @@ $identityDocument = Read-BoundedBundleIdentity $BuildIdentity | ConvertFrom-Json
 $source = & git -C $Root rev-parse HEAD
 if ($LASTEXITCODE -ne 0 -or $source -cnotmatch '^[a-f0-9]{40}$' -or $identityDocument.app_version -cne $Version) { throw 'Hosted source/build identity is unavailable.' }
 $release = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
-if ($release.schema_version -ne 4 -or $release.production_sha256 -cne $identityDocument.production_sha256) { throw 'Build identity differs from source-bound release production/target.' }
+if ($release.schema_version -notin 4, 5 -or $release.production_sha256 -cne $identityDocument.production_sha256) { throw 'Build identity differs from source-bound release production/target.' }
 Assert-StableTargetIdentity $release.target $identityDocument.target
 $identity = @{version=$Version;source_commit=$source;production_sha256=$release.production_sha256;installer_sha256=$InstallerSha256;target=$release.target;operator=('GitHub Actions '+$env:GITHUB_RUN_ID+'/'+$env:GITHUB_RUN_ATTEMPT);environment=('GitHub-hosted Windows '+[Environment]::OSVersion.VersionString)}
 $install = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'

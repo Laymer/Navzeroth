@@ -1,4 +1,4 @@
-# Schema4 hosted observations only. These helpers never perform tests or create owner smoke.
+# Stable hosted observations only. This recorder cannot create either final smoke gate.
 Set-StrictMode -Version 3.0
 $script:HostedAcceptanceIds = @('HOSTED-INSTALL','HOSTED-FIRST-START','HOSTED-UPGRADE-RC1','HOSTED-DOWNGRADE-REFUSAL','HOSTED-PERSISTENCE-RECOVERY','HOSTED-RESOURCES','HOSTED-OFFLINE','HOSTED-PERFORMANCE')
 # Preserve literal evidence timestamps before validation. PS7 normally converts
@@ -61,15 +61,17 @@ function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $Sou
     }
 }
 function New-HostedAcceptanceEvidence($Base, [string] $Version, [string] $SourceCommit, [string] $Production, [string] $Installer, [hashtable] $Cases = @{}) {
-    if ($Base.schema_version -ne 4 -or $SourceCommit -cnotmatch '^[a-f0-9]{40}$' -or $Production -cnotmatch '^[a-f0-9]{64}$' -or $Installer -cnotmatch '^[a-f0-9]{64}$' -or $Base.production_sha256 -cne $Production) { throw 'Hosted evidence requires bound schema4 production.' }
+    if ($Base.schema_version -notin 4, 5 -or $SourceCommit -cnotmatch '^[a-f0-9]{40}$' -or $Production -cnotmatch '^[a-f0-9]{64}$' -or $Installer -cnotmatch '^[a-f0-9]{64}$' -or $Base.production_sha256 -cne $Production) { throw 'Hosted evidence requires bound stable production.' }
     $result = ConvertFrom-HostedJsonText ($Base | ConvertTo-Json -Depth 100)
+    $finalId = if ($Base.schema_version -eq 5) { 'DRAFT-INSTALLER-SMOKE' } else { 'OWNER-INSTALLER-SMOKE' }
+    $finalMethod = if ($Base.schema_version -eq 5) { 'automated_draft_windows' } else { 'interactive_windows' }
     $seen = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
     foreach ($row in $result.checks) {
-        if (-not $seen.Add($row.id) -or ($row.id -cnotin $script:HostedAcceptanceIds -and $row.id -cne 'OWNER-INSTALLER-SMOKE')) { throw 'Unexpected or repeated acceptance row.' }
-        $expectedMethod = if ($row.id -ceq 'OWNER-INSTALLER-SMOKE') { 'interactive_windows' } else { 'hosted_windows' }
-        if ($row.method -cne $expectedMethod) { throw 'Acceptance method differs from schema4.' }
+        if (-not $seen.Add($row.id) -or ($row.id -cnotin $script:HostedAcceptanceIds -and $row.id -cne $finalId)) { throw 'Unexpected or repeated acceptance row.' }
+        $expectedMethod = if ($row.id -ceq $finalId) { $finalMethod } else { 'hosted_windows' }
+        if ($row.method -cne $expectedMethod) { throw 'Acceptance method differs from its stable schema.' }
     }
-    if ($seen.Count -ne 9) { throw 'Schema4 acceptance rows are missing.' }
+    if ($seen.Count -ne 9) { throw 'Stable acceptance rows are missing.' }
     foreach ($id in $Cases.Keys) { if ($id -cnotin $script:HostedAcceptanceIds) { throw 'Hosted recorder cannot create owner or unknown observations.' } }
     $previousHash = $result.PSObject.Properties['candidate_installer_sha256']
     if ($null -ne $previousHash -and $previousHash.Value -and $previousHash.Value -cne $Installer -and @($result.checks | Where-Object { $_.status -cne 'unverified' -or $_.operator -or $_.recorded_at -or $_.environment -or @($_.artifacts).Count -gt 0 }).Count -gt 0) { throw 'New installer invalidates prior observations; retain/reset them explicitly before preparing another candidate.' }
