@@ -32,7 +32,7 @@ Classic Era data is claimed. Forever70532 is future/unadmitted backlog. Unknown,
 unsupported, restricted, stale, false and zero remain distinct. Travel/dungeon/role
 estimates are labelled and derived; trainer-spell gameplay, talents, professions,
 enhancements are explicitly excluded. Addon live-client completeness is unverified;
-no socket bridge, memory access, injection, packet reading or input automation.
+no socket bridge, memory access, injection, packet reading or game-input automation.
 
 Unsigned installer/application is deliberate. Content receipts are signed by TWO
 OPERATOR-CONTROLLED identities; that is not independent key custody. Independent
@@ -78,7 +78,7 @@ are implemented and reviewed. Do not duplicate them. Current bundled inventory:
 260113 records,274059 accepted unknown fields; two packs. Actual functional proof
 covers54 models/nine classes/108 score bounds/24 reminder bounds/26 dungeons,
 27 raw dungeon entries excluding169,438 quest refs,16390 reward refs,8107 restored
-objectives. Partial eligibility/manual engineering geometry remain explicit.
+affected reward references. Partial eligibility/manual engineering geometry remain explicit.
 
 PRs271–282 final heads are normally merged locally into PR239, not squashed away:
 271 ADR0009;272 schema5;273 automated exact-draft gate;274 actual native UI driver;
