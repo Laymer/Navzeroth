@@ -6,8 +6,8 @@ d2cebaecebb068b1c27fb2a8d6d5f4955627d54301a20ee1c75c54049f5a9f6a/3158entries.
 All source/archive/metadata changes arrived by normal merges. Only this additive
 public review and own claim/handoff are authored on this review branch.
 
-Public review release/v1/public-content-review-v20.json is124110B, SHA256
-7edaef4b6f31d4a4129c1849f8a0483135f4e13e0b1885e78569a10ca2c2884f.
+Public review release/v1/public-content-review-v20.json is124512B, SHA256
+a718402099c6fcb13dbafa9538e5a0d1e811895c3267ff7bebd74c62a0322adf.
 All322 nested FileRefs/238unique paths were independently streamed/hash+length
 checked and compared with actual Git blobs or canonical LFS OID/size. Opaque V19
 review8ec52b22 separately matches original9cc Git identity; its nested stale paths
@@ -57,3 +57,9 @@ release-branch mutation was performed by this review writer.
 Next: coordinator independently read exact artifact/ref/Git bindings, normalmerge,
 actualunsigned preparation, independent84resource/payload reproduction BEFOREkeys,
 then signed closure and one frozen candidate with all fresh mandatory checks.
+
+Normal child adds explicit reviewed_evidence_commit076a799cedc9e3ba8042e9fe2c9cec9a67156c91
+for the post-source metadata/archive baseline, distinct from productionb040. All238
+unique Git/LFS pins also independently match that exact baseline; the review and
+its own unpinned handoff are excluded, so no self-reference is created. No source,
+proof or acceptance fact changed. Previous review bytes remain in Git history.

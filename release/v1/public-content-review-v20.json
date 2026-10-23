@@ -2434,6 +2434,8 @@
     "unknowns_are_not_missing_records": true,
     "unresolved_association_references": 0
   },
+  "reviewed_evidence_commit": "076a799cedc9e3ba8042e9fe2c9cec9a67156c91",
+  "reviewed_evidence_scope": "Immutable coordinator metadata/archive baseline for all referenced FileRefs, created after tested production source b040. Production fingerprint is unchanged. This baseline excludes this later review and its own handoff, avoiding self-reference; tested/reviewed production identity remains b040.",
   "reviewed_source_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
   "schema_version": 1,
   "scope": "Independent source/content/material/evidence review for explicitly unsigned stable1.0.0 preparation. This artifact records completed checks with actual execution attribution, not Windows acceptance, publication authorization or a third-party certification. Current acceptance remains pristine pending.",
