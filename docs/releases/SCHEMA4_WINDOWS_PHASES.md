@@ -65,7 +65,10 @@ completed=true. Additionally:
 - HOSTED-PERSISTENCE-RECOVERY: restart_verified=true and recovery_verified=true.
 - HOSTED-RESOURCES: installed_resources_verified=true and
   source_notices_verified=true.
-- HOSTED-OFFLINE: network_disabled=true, from an actually disabled network test.
+- HOSTED-OFFLINE: network_disabled=true, from an actually disabled network test;
+  or, per [ADR 0010](../decisions/0010-hosted-offline-firewall-isolation.md),
+  network_isolation=`windows_firewall_runner_agent_only` with network_isolated,
+  external_connection_refused and network_restored all true. Never both shapes.
 - HOSTED-PERFORMANCE: workload, hardware, limitations, measurements containing
   install_ms, load_ms, activation_ms, browse_ms, planning_ms, peak_memory_bytes.
   Measurements are finite nonnegative numbers; missing is distinct from zero.

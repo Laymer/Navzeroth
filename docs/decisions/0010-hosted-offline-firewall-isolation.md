@@ -1,0 +1,79 @@
+# ADR 0010: Hosted offline acceptance by firewall isolation
+
+Accepted 2026-10-23 by the owner during the PR239 candidate repair.
+Baseline: `2c6fe762d975a558542230b9383a990948afd9eb` (V20 candidate).
+Owner: Claude Code release continuation.
+
+## Context
+
+`HOSTED-OFFLINE` disabled every network adapter on the GitHub-hosted runner for
+the whole offline workload. With the full V20 pack that workload needs about
+270–310 s (content load alone about 228 s). Three package attempts were
+cancelled by the platform shortly after the adapters went down, with no user
+cancellation annotation, and the later cases never ran:
+
+| Run/attempt | Offline started | Cancelled | Into offline |
+| --- | --- | --- | --- |
+| 39641767585/1 (V19) | 18:34:26Z | 18:39:04Z | 278 s |
+| 39931563703/1 (V20) | 10:50:13Z | 10:55:19Z | 306 s |
+| 39931563703/2 (V20) | 13:11:52Z | 13:16:32Z | 280 s |
+
+V17's offline workload finished in 267 s and passed. The likely mechanism is the
+runner losing its job lease while it cannot reach GitHub. That cause is inferred
+from this timing pattern; no runner diagnostic log confirms it.
+Attempt 1 of run 39931563703 was later attributed to a manual cancel by the
+owner; attempt 2 was not. The final gate correctly refused every cancelled step.
+
+## Decision
+
+For hosted acceptance, isolate the runner with Windows Firewall instead of
+disabling adapters:
+
+- Every profile is enabled with default-deny inbound and outbound.
+- Every enabled persistent allow rule is disabled. Only the isolation group's
+  rules may remain enabled: outbound for the exact `Runner.Listener.exe` and
+  `Runner.Worker.exe` executables found in the current process ancestry, and
+  outbound UDP/TCP port 53 for the DNS client service (`Dnscache`).
+- An external TCP connection to an address resolved beforehand must succeed
+  before isolation, be refused during isolation and after the workload, and
+  return after restoration.
+- The snapshot of profiles and allow rules must be restored exactly and the
+  isolation rules removed, verified by re-reading state. Cleanup failures never
+  replace the original failure.
+
+The case records `network_isolation=windows_firewall_runner_agent_only`,
+`network_isolated`, `external_connection_refused`, `network_restored`,
+`allowed_programs` and `dns_allowed`. It does not claim `network_disabled`.
+The validator accepts exactly one of the two shapes and refuses mixtures.
+
+## Consequences and limits
+
+- This proves the app, its WebView2 processes and the test driver work without
+  external connections. It does not prove the machine had no network at all: the
+  runner agent stayed connected and name resolution through the system DNS client
+  remained possible.
+- Loopback stays available, as it was under disabled adapters.
+- Allow rules held only in non-persistent stores, such as service hardening,
+  are outside the snapshot. The refused external connection is the operational
+  proof that these rules do not admit test processes.
+- Historical adapter-based cases, including V17's passing `HOSTED-OFFLINE`,
+  keep their `network_disabled` meaning. The adapter helper and its engineering
+  probe remain for that purpose.
+- The 20-minute workload and 60-minute suite bounds are unchanged.
+- The opt-in `windows-offline-firewall-probe.yml` holds isolation for 600 s,
+  about twice the offline workload. It is engineering evidence, never an
+  acceptance observation.
+
+## Engineering probe results
+
+- Run 39972105651 (`674e1bd6`): isolation and exact restoration worked (180 allow
+  rules disabled, four isolation rules left), but the probe's own hold timer
+  replaced its case-insensitively equal `$Hold` parameter and failed after 38 s.
+- Run 39972424100 (`19f9ca28`): passed. The job survived 600 s of isolation with
+  40 checks of refused external TCP and working loopback, 177 allow rules disabled,
+  exact restoration and returned connectivity (restore and re-verification took
+  35 s of the 60 s window). The allowed agents were
+  `C:\actions-runner\cached\2.338.0\bin\Runner.Worker.exe` and `Runner.Listener.exe`.
+  Before isolation, `hosted-compute-agent`, `WindowsAzureGuestAgent`, `WaAppAgent`,
+  `provjobd`, `lsass`, `svchost`, Defender and the Start menu host also held
+  connections; the job did not need them during the hold.
