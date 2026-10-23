@@ -1,0 +1,20 @@
+{
+  "command": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "D:\\a\\Navzeroth\\Navzeroth\\scripts\\windows\\Recovery-Probe-Install.ps1",
+    "-Installer",
+    "D:\\a\\_temp\\recovery-engineering-probe\\AzerothNavigator-1.0.0-x64-setup.exe",
+    "-ExpectedSha256",
+    "ffcb98661a1310458a663aa06451e765b99bdb07dba40a997f1e57aad5fc3225",
+    "-OwnershipMarker",
+    "D:\\a\\_temp\\recovery-engineering-probe\\fixture-ownership.json",
+    "-OwnershipNonce",
+    "c82536a20b32467f9be685ee3047b613"
+  ],
+  "exit_code": 1,
+  "timed_out": false,
+  "elapsed_seconds": 0.515999999999849,
+  "capture_errors": []
+}

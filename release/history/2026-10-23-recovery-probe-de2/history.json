@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "kind": "failed_engineering_probe_not_acceptance",
+  "run_id": 39916898751,
+  "job_id": 120292303530,
+  "source_commit": "de2fd3e69bcce8db55c73d98fed492e2ee485261",
+  "conclusion": "failure",
+  "native_python_tests_passed": 8,
+  "inert_ownership_checks_passed": 6,
+  "native_git_transport_tests_passed": 18,
+  "tests_skipped": 0,
+  "build_elapsed_seconds": 1128.7659999999998,
+  "build_passed": true,
+  "binary_sha256": "37c0ca08adf4728b3f05f295fc4cae16f4570171fe98adc07325078ae46ab525",
+  "install_helper_elapsed_seconds": 0.515999999999849,
+  "install_helper_passed": false,
+  "diagnosis": "Native-Smoke-Helpers.ps1:58 Get-InstalledDisplayVersion enumerates an absent fresh HKCU Uninstall registry root under ErrorActionPreference Stop.",
+  "ownership_marker_issued": false,
+  "cleanup_attempted": false,
+  "recovery_workload_executed": false,
+  "peak_memory_bytes": null,
+  "acceptance_observations_promoted": false,
+  "artifact_id": 12486660622,
+  "artifact_zip_sha256": "7e807c1c3de7cdc2ff307684da30dbb04563687d8be06898541eeae2254d8a92",
+  "artifact_member_count": 8,
+  "files": [
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/run-api.json",
+      "bytes": 11795,
+      "sha256": "2bb170e85727eda039d665505b9d7da34ebe0a33762f0c2fc86c1b58262c45e1"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/jobs-api.json",
+      "bytes": 2721,
+      "sha256": "afd5fe13064311370a25c0b398c60891a571851f8f1c7d9df4cb830bc22ee7d4"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact-api.json",
+      "bytes": 757,
+      "sha256": "451f9fc98a74b4e52881b38ad1662559dd3e54ff840f890349fe81b4304d0a9e"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/job.log",
+      "bytes": 147960,
+      "sha256": "1a160f8d93b2c8331dfc44d6df5fa20ffde4f73bd4d12880ab4e59bee0cfb601"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/engineering-artifact.zip",
+      "bytes": 6112,
+      "sha256": "7e807c1c3de7cdc2ff307684da30dbb04563687d8be06898541eeae2254d8a92"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/build.json",
+      "bytes": 320,
+      "sha256": "f6cd793316a5cfcc4cd927ae6e87004e4c1acb389d59723d86b90724224287e5"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/build.stderr",
+      "bytes": 5208,
+      "sha256": "dd748300cf8123ae26197a29ff77a255682fbf9a745c23f6d2be25e6ad6fe9c6"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/artifact-api.stdout",
+      "bytes": 752,
+      "sha256": "8ff61535d3a83d156635708adddde5f4282d8bd3f79b6301e79293f44c9227d9"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/engineering-result.json",
+      "bytes": 2317,
+      "sha256": "26f45bb40b0a6caa1ee43d1249c6695276edd45ab7650352cc032a272b06e6c5"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/fixture-commit-api.stdout",
+      "bytes": 2583,
+      "sha256": "6a551829a372955de6ca1e003c90b8cb5806c53a2039eec05ca04bbe3b1369a7"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/install-fixture.json",
+      "bytes": 628,
+      "sha256": "2e7aed00dc294dff5a104f5a0110019177ddb2755cad5a86ea1c2538ff8ab18d"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/install-fixture.stderr",
+      "bytes": 698,
+      "sha256": "3263d59e0a31e485e77535f9f870d8e7c8a84f6da5a58e38885f8d39085de49b"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-de2/artifact/rustc-identity.stdout",
+      "bytes": 194,
+      "sha256": "5477f9bad65b15c4c5b31fc050fc72feba651ea1b330bc75cf356a4d6b0fbc80"
+    }
+  ]
+}
