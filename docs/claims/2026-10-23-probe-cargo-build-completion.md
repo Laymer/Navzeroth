@@ -10,3 +10,7 @@ in hosted-recovery-probe.py plus focused tests and bounded diagnostics. Preserve
 shared OwnedTree/importer, generic strict mode, all1200s/60min bounds and real
 artifact/source validation. No installer/network/profile/registry controls,
 dispatch, canonical receipt/key edits or runtime performance claims.
+
+Coordinator explicitly expanded sole-writer scope before workflow edit: add only
+the existing <=16MiB build.stdout to the engineering diagnostic artifact. No
+workflow timeout, dispatch, permissions or other execution change.
