@@ -109,6 +109,8 @@ struct NativeChecks {
 }
 #[derive(Deserialize)]
 struct DownloadReceipt {
+    workflow_run_id: String,
+    workflow_run_attempt: String,
     schema_version: u32,
     phase: String,
     version: String,
@@ -297,6 +299,8 @@ pub(super) fn verify(
         || download.phase != "draft"
         || download.version != version
         || download.source_commit != source
+        || download.workflow_run_id != i.run_id.to_string()
+        || download.workflow_run_attempt != i.run_attempt.to_string()
         || download.installer_signature != "NotSigned"
         || download.application_signature != "NotSigned"
         || !download.dependency_closure_verified
@@ -437,7 +441,7 @@ mod tests {
             let run = json!({"id":13,"run_attempt":2,"head_sha":SOURCE,"repository":{"full_name":"Laymer/Navzeroth"},"path":".github/workflows/verify-release-downloads.yml","event":"workflow_dispatch","status":"completed","conclusion":"success"});
             let job = json!({"id":14,"run_id":13,"run_attempt":2,"head_sha":SOURCE,"name":"Verify downloaded unsigned release","status":"completed","conclusion":"success","labels":["windows-2025"],"runner_group_name":"GitHub Actions","steps":[{"name":"Download and verify exact release","status":"completed","conclusion":"success"}]});
             let release = json!({"id":11,"tag_name":"v1.0.0","draft":true,"prerelease":false,"assets":[{"id":12,"name":"setup.exe","size":50}]});
-            let download = json!({"schema_version":3,"phase":"draft","version":"1.0.0","source_commit":SOURCE,"installer_signature":"NotSigned","application_signature":"NotSigned","dependency_closure_verified":true,"addon_zip_matches_source":true,"assets":[{"name":"setup.exe","bytes":50,"sha256":PROD}]});
+            let download = json!({"schema_version":3,"phase":"draft","version":"1.0.0","source_commit":SOURCE,"installer_signature":"NotSigned","application_signature":"NotSigned","dependency_closure_verified":true,"addon_zip_matches_source":true,"workflow_run_id":"13","workflow_run_attempt":"2","assets":[{"name":"setup.exe","bytes":50,"sha256":PROD}]});
             let native = json!({"schema_version":1,"source_commit":SOURCE,"installer_sha256":PROD,"completed":true,"passed":true,"human_performed":false,"phase":"draft","ui_interaction_verified":true,"checks":{"first_start":true,"bundled_activation":true,"source_backed_planning":true,"restart_persistence":true},"stages":["synthetic only"]});
             Self {
                 root,
@@ -632,6 +636,8 @@ mod tests {
             "application_signature",
             "dependency_closure_verified",
             "addon_zip_matches_source",
+            "workflow_run_id",
+            "workflow_run_attempt",
         ] {
             let mut f = Fixture::new();
             f.download[key] = json!("wrong");
@@ -755,6 +761,16 @@ mod tests {
                 other => f.job["steps"][0]["conclusion"] = json!(other),
             }
             assert!(f.check().is_err(), "{mutation}");
+        }
+    }
+    #[test]
+    fn download_receipt_run_identity_is_exact_not_coerced() {
+        for key in ["workflow_run_id", "workflow_run_attempt"] {
+            for value in [json!(13), json!("013"), json!("13 "), Value::Null] {
+                let mut f = Fixture::new();
+                f.download[key] = value;
+                assert!(f.check().is_err());
+            }
         }
     }
 }

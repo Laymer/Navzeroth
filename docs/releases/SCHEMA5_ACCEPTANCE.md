@@ -63,6 +63,8 @@ plus `download_receipt` and `native_result` FileRefs (each JSON <=1 MiB).
 The existing download receipt is schema 3, exact version/source and draft phase,
 installer and application signatures `NotSigned`, verified dependency closure and
 addon/source equality, and an asset matching installer name/bytes/SHA256.
+Its `workflow_run_id` and `workflow_run_attempt` strings must exactly equal the
+identity numbers in decimal form, preventing prior-run receipt reuse or coercion.
 Additional verification detail fields are retained. Native result is schema 1,
 exact source/installer, `phase:"draft"`, `completed:true`, `passed:true`,
 `human_performed:false`, `ui_interaction_verified:true`; `checks` contains exactly
