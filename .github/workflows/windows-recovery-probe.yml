@@ -30,6 +30,7 @@ jobs:
           python -m unittest discover -s scripts/tests -p test_hosted_recovery_probe.py -v
           if ($LASTEXITCODE -ne 0) { throw 'Bounded recovery probe regression failed' }
           ./scripts/windows/Test-RecoveryProbeOwnership.ps1
+          ./scripts/windows/Test-NativeSmokeHelpers.ps1 -RegistryOnly
       - name: Test inert reviewed evidence transport with native Windows Git
         shell: pwsh
         run: |

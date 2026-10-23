@@ -1,0 +1,5 @@
+# Preserve original raw evidence across checkout platforms.
+* -text
+artifact/** -diff
+job.log -diff
+engineering-artifact.zip -diff

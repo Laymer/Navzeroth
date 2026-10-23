@@ -13,3 +13,9 @@ retain its actual outcome, and repeat the final functional scenario at the same
 committed production identity before renewing review/receipts. The probe remains
 engineering evidence, never installer acceptance or a publication waiver. Preserve
 all historical evidence, unknown states, workload bounds and unrelated changes.
+
+Continuation baselinec39f71d0: root remains the sole workflow writer. After the
+independently reviewed absent-uninstall-root repair, also invoke its twelve inert
+RegistryOnly checks in the existing early test step before compilation. Preserve
+the failed de2 probe as historical evidence. Review the new wiring before one new
+bounded source-specific probe; do not relabel or silently retry the old source.
