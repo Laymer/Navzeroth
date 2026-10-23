@@ -26,8 +26,10 @@ build identity before stable 1.0.0 packaging. It then runs these cases on the ex
 prepared installer. Draft verification independently downloads and binds the same
 installer hash; the producer can also run directly on those downloaded assets.
 Historical RC behavior is retained. A missing or failed case blocks the package
-and draft; preparation never grants publication permission. Owner smoke remains a
-separate interactive test of the independently verified draft.
+and draft; preparation never grants publication permission. Schema5 separately
+requires independently reviewed automated UI/native acceptance of the exact
+downloaded draft, documented in [schema5](SCHEMA5_ACCEPTANCE.md). Historical
+schema4 retains its owner interactive-smoke requirement.
 
 The eight case files use the recorder's schema 1 and `hosted_windows` method:
 

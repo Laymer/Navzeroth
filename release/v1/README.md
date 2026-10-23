@@ -1,43 +1,45 @@
-# Forever release requirements (manifest versions 1, 2, 3 and 4)
+# Forever release requirements (manifest versions 1–5)
 
 ## Governing stable 1.0.0 authority
 
 [ADR 0008](../../docs/decisions/0008-unsigned-stable-release.md) authorizes explicitly
-**unsigned stable 1.0.0** under the [schema 4 acceptance contract](../../docs/releases/SCHEMA4_ACCEPTANCE.md).
-This exception preserves historical unsigned RC prerelease classification and does
-not authorize unsigned future releases. Schema 4 retains schema 3 target/origin,
-accepted-unknown and inferred-travel semantics, with no live-client acceptance or
-launch-build freeze. Existing schemas and historical observations keep their
-meaning; adopting this documentation does not migrate or pass any manifest.
+**unsigned stable 1.0.0**; [ADR 0009](../../docs/decisions/0009-automated-draft-release-acceptance.md)
+revises its final Windows acceptance under [schema5](../../docs/releases/SCHEMA5_ACCEPTANCE.md).
+Historical schemas1–4 and their failed, skipped and unverified observations retain
+their original semantics. In particular schema4 still requires its original
+OWNER-INSTALLER-SMOKE / interactive_windows row. No old result is promoted.
 
-All ten protected-main checks, independent review, source-platform parity, release
-stability and applicable inventory/content/source/material gates remain mandatory.
-Signed content receipts remain required. Historical origins, estimates, exclusions,
-unknowns and measured resource use must be disclosed; neither live-game correctness
-nor ordinary-PC performance is established by hosted checks.
+The eight hosted Windows rows still cover installation, first start, RC1 upgrade,
+downgrade refusal, persistence/recovery, exact installed resources, offline use and
+full-pack performance. Schema5's ninth row is DRAFT-INSTALLER-SMOKE with method
+`automated_draft_windows`: actual independently downloaded draft bytes must pass
+rendered Windows UI plus native-state checks, with exact source/production,
+installer/release asset and workflow run/attempt/job binding and independent review.
 
-Schema 4 replaces historical WIN acceptance with eight `hosted_windows` rows
-(install, first start, upgrade from 1.0.0-rc.1, downgrade refusal, persistence/recovery,
-installed resources, offline operation and full-pack performance), plus
-`OWNER-INSTALLER-SMOKE` using `interactive_windows`. Every passed row must bind the
-same exact installer hash and tested source/production identity. Existing WIN
-observations are not promoted; missing, failed, partial or stale evidence blocks.
+All ten protected-main checks, source-platform parity, release stability, coverage,
+genuine inventory, attribution, content integrity, material closure and signed
+content receipts remain required. Target70450, the explicitly historical70245
+warning, accepted unknowns, inferred travel and declared exclusions remain. No
+live-client or ordinary-PC performance claim follows from these engineering tests.
 
-Fresh checks on the resulting release commit precede tagging that exact commit.
-Build readiness permits artifact preparation; draft readiness requires all eight
-hosted rows and may leave only pristine owner smoke pending. Independently verify
-the exact downloaded draft assets before pausing for the owner's installer smoke.
-Full release readiness, including owner smoke and every applicable gate, is required
-before authorized publication without another approval request. Relevant product
-or installer changes invalidate the smoke. Verify public downloads before website
-and download-instruction deployment. See the
+After fresh checks on the resulting main commit, tag only that verified commit.
+Build readiness permits nine pristine pending observations; draft readiness
+requires the eight hosted passes and leaves only pristine draft smoke pending.
+Dispatch the download verifier on the exact release tag. After its actual run,
+independently retrieve completed API snapshots and review the exact pinned results.
+Retain the final proof as an external evidence overlay; never rewrite signed
+bundle resources or tagged source to record the later observation. Full release
+readiness and every applicable gate must pass before authorized publication.
+Relevant product/installer changes invalidate the smoke. Verify public downloads
+before website deployment. Human smoke and the supplemental owner Windows11/0.8.1
+upgrade remain explicitly unperformed until separately evidenced. See the
 [release sequence](../../docs/releases/V1_RELEASE_PROCESS.md#governing-stable-100-contract).
 
 ## Historical schema1/2/3 requirements
 
 The following text records earlier ADR0006/0007 contracts and their then-current
 manifest state. Signing, historical WIN rows and pre-draft stable-gate statements
-are superseded only as explicitly stated above and in schema4. Retain actual
+are superseded only as explicitly stated above and in schemas4/5. Retain actual
 historical evidence without reclassifying unverified observations as passed.
 
 

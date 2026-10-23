@@ -51,12 +51,14 @@ No adversarial filesystem sandbox or multi-file atomic publication is claimed.
 Review these outputs against the immutable public review artifact. Separately
 issue, assemble and verify the signed content receipt using the documented
 external-key CLI and independently supplied expected identity. Only then record
-all three exact manifest, receipt and review FileRefs in schema4
+all three exact manifest, receipt and review FileRefs in matching schema4/5
 `Evidence.bundled_content` and commit metadata. The receipt hash cannot be known
 before issuance; keep the receipt outside its own hashed manifest. Preparation
 never accesses a key. The compiled-trust source gate and assembler must
 validate the final signed bundle. Native/hosted checks, exact downloaded draft
-verification and owner installer smoke remain mandatory before publication.
+verification and the applicable final installer smoke remain mandatory before
+publication: independently reviewed automated UI/native draft smoke for schema5;
+historical owner interactive smoke for schema4. See [schema5](SCHEMA5_ACCEPTANCE.md).
 
 Schema2 previews additionally include `unsigned_preparation` with `ready` and
 `evidence_sha256`. The CLI reuses the full core release assessment, actual catalog
