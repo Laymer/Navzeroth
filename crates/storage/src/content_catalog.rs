@@ -358,6 +358,23 @@ impl SqliteStore {
             _ => None,
         })
     }
+    /// Reuse only a prior strict SQL decode inside an unchanged managed read.
+    /// Validation must not evict the warm active catalog while checking history.
+    pub(crate) fn existing_validated_catalog(
+        &self,
+        id: i64,
+    ) -> Result<Option<ActiveContentRevision>> {
+        let Some(stamp) = self.catalog_generation.cache_stamp(&self.conn)? else {
+            return Ok(None);
+        };
+        Ok(self
+            .catalog_cache
+            .borrow()
+            .as_ref()
+            .and_then(|(cached_id, cached_stamp, catalog)| {
+                (*cached_id == id && *cached_stamp == stamp).then(|| catalog.clone())
+            }))
+    }
     pub(crate) fn cached_catalog(&self, id: i64) -> Result<ActiveContentRevision> {
         let stamp = self.catalog_generation.cache_stamp(&self.conn)?;
         if let Some(stamp) = stamp

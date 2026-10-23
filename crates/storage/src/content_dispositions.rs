@@ -371,6 +371,20 @@ impl SqliteStore {
 }
 /// Strict recovery registration hook. Imported schema must already be validated.
 pub fn validate_content_dispositions(conn: &Connection) -> Result<()> {
+    validate_content_dispositions_with(conn, |id, expected| {
+        if content::load(conn, id)?.key() != *expected {
+            return Err(storage("Content disposition identity disagrees"));
+        }
+        Ok(())
+    })
+}
+/// Recovery supplies the complete catalog/asset/column verifier, so each
+/// historical catalog is strictly loaded once under the same owned SQL snapshot.
+/// The public registration hook retains its original strict loading behavior.
+pub(crate) fn validate_content_dispositions_with(
+    conn: &Connection,
+    mut validate_catalog: impl FnMut(i64, &ContentRevisionKey) -> Result<()>,
+) -> Result<()> {
     let count: i64 = conn
         .query_row("SELECT COUNT(*) FROM content_dispositions", [], |row| {
             row.get(0)
@@ -397,9 +411,7 @@ pub fn validate_content_dispositions(conn: &Connection) -> Result<()> {
         if !unique_order(conn, &d)? {
             return Err(storage("Content activation history is ambiguous"));
         }
-        if content::load(conn, id)?.key() != d.key {
-            return Err(storage("Content disposition identity disagrees"));
-        }
+        validate_catalog(id, &d.key)?;
     }
     let mut stmt = conn
         .prepare("SELECT revision_id FROM active_datasets LIMIT 1025")

@@ -285,3 +285,54 @@ test('interrupted diagnostic replacement preserves previous complete checkpoint 
   assert.equal(JSON.parse(before).passed,false);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+
+test('slow completed recovery timings survive long startup polling without private data', async()=>{
+ const {createWorkloadProgress}=await import('./stable-workload-progress.mjs');
+ const {mkdtempSync,readFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-summary-')),path=join(dir,'partial.json');let now=0;
+ try{
+  const p=createWorkloadProgress(path,{mode:'recover',version:'1.0.0',now:()=>now});
+  for(const [name,duration] of [['create_database_backup',55000],['inspect_database_backup',138000],['restore_database_backup',463000],['check_database',184000]])await p.track(name,async()=>{now+=duration;return {PRIVATE_DATA:'never retain'};});
+  for(let n=0;n<100;n++)await p.track('get_database_status',async()=>{now+=200;return {state:'checking',error:null,PRIVATE_DATA:'never retain'};});
+  const raw=readFileSync(path,'utf8'),v=JSON.parse(raw);
+  assert.equal(v.history.length,32);assert(v.history.every(row=>row.name==='get_database_status'));
+  assert.deepEqual(v.commands.find(row=>row.command==='restore_database_backup'),{command:'restore_database_backup',completed:1,failed:0,total_ms:463000,maximum_ms:463000,last_ms:463000});
+  assert.equal(v.commands.find(row=>row.command==='get_database_status').completed,100);
+  assert.deepEqual(v.database_status,{state:'checking',error_present:false,load_ms:null,activation_ms:null});
+  assert.equal(v.passed,false);assert.equal(v.completed,false);assert(!raw.includes('PRIVATE_DATA'));assert(Buffer.byteLength(raw)<16384);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('database status diagnostics preserve zero and unknown separately without retaining error details',async()=>{
+ const {createWorkloadProgress}=await import('./stable-workload-progress.mjs');const {mkdtempSync,readFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-state-')),path=join(dir,'partial.json');
+ try{
+  const p=createWorkloadProgress(path,{mode:'offline',version:'1.0.0'});
+  const issued={state:'recovery_required',error:{message:'PRIVATE_PATH'},startup_measurements:{load_ms:0,activation_ms:0}};
+  assert.equal(await p.track('get_database_status',async()=>issued),issued);
+  let v=JSON.parse(readFileSync(path,'utf8'));assert.deepEqual(v.database_status,{state:'recovery_required',error_present:true,load_ms:0,activation_ms:0});
+  p.observeDatabaseStatus({state:'PRIVATE_UNKNOWN_STATE',startup_measurements:{load_ms:'0',activation_ms:-1}});
+  const raw=readFileSync(path,'utf8');v=JSON.parse(raw);assert.deepEqual(v.database_status,{state:'unknown',error_present:null,load_ms:null,activation_ms:null});assert(!raw.includes('PRIVATE'));assert.equal(v.passed,false);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('command summaries remain bounded and refuse new command before invoking it',async()=>{
+ const {createWorkloadProgress}=await import('./stable-workload-progress.mjs');const {mkdtempSync,readFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-cap-')),path=join(dir,'partial.json');
+ try{
+  const p=createWorkloadProgress(path,{mode:'recover',version:'v'.repeat(64)});
+  for(let n=0;n<32;n++)await p.track('a'.repeat(60)+n,async()=>{});
+  let called=false;await assert.rejects(p.track('one_too_many',async()=>{called=true;}),/command capacity/);assert.equal(called,false);
+  const raw=readFileSync(path,'utf8');assert(Buffer.byteLength(raw)<16384);assert.equal(JSON.parse(raw).commands.length,32);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('progress write failure during failed operation preserves original failure and nonpassing checkpoint',async()=>{
+ const {createWorkloadProgress}=await import('./stable-workload-progress.mjs');const {mkdtempSync,readFileSync,writeFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+ const dir=mkdtempSync(join(tmpdir(),'anav-progress-primary-')),path=join(dir,'partial.json');
+ try{
+  const p=createWorkloadProgress(path,{mode:'recover',version:'1.0.0'}),original=new Error('Original controlled IPC failure');
+  await assert.rejects(p.track('restore_database_backup',async()=>{writeFileSync(path+'.pending','interrupted',{flag:'wx'});throw original;}),e=>e===original);
+  const v=JSON.parse(readFileSync(path,'utf8'));assert.equal(v.active_command,'restore_database_backup');assert.equal(v.passed,false);assert.equal(v.completed,false);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
