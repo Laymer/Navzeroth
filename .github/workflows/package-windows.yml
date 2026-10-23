@@ -478,7 +478,7 @@ jobs:
           echo "smoke=${{ steps.native_smoke.outcome }} upgrade=${{ steps.native_upgrade.outcome }}"
           [ "${{ steps.native_smoke.outcome }}" != failure ] && [ "${{ steps.native_upgrade.outcome }}" != failure ]
 
-      - name: Actual schema4 hosted Windows acceptance over the signed full bundle
+      - name: Actual stable hosted Windows acceptance over the signed full bundle
         id: stable_acceptance
         if: steps.build_windows.outputs.stable == 'true'
         continue-on-error: true
@@ -507,13 +507,13 @@ jobs:
           $hash = (Get-FileHash $setup.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
           $baselineSetup = Get-NativeSmokeSetup $baseline
           ./scripts/windows/Stable-Acceptance.ps1 -Root . -Directory dist/windows -InstallerSha256 $hash -BaselineInstaller $baselineSetup.FullName -BaselineSha256 $pin[0].sha256 -BuildIdentity release/v1/bundled-content-build-identity.json -OutputDirectory (Join-Path $env:RUNNER_TEMP 'native-smoke/stable-cases')
-      - name: Record schema4 hosted observations without inventing missing cases
+      - name: Record stable hosted observations without inventing missing cases
         id: hosted_evidence
         if: always() && steps.build_windows.outputs.stable == 'true' && steps.stable_acceptance.outcome != 'skipped'
         shell: pwsh
         run: |
           ./scripts/windows/Write-HostedAcceptanceEvidence.ps1 -Root . -Version '1.0.0' -InstallerDirectory dist/windows -ResultsDirectory (Join-Path $env:RUNNER_TEMP 'native-smoke/stable-cases') -OutputDirectory dist/acceptance-evidence
-      - name: Retain schema4 acceptance evidence separately from release assets
+      - name: Retain stable acceptance evidence separately from release assets
         if: always() && steps.build_windows.outputs.stable == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -560,7 +560,7 @@ jobs:
         with:
           name: azeroth-navigator-windows-${{ github.sha }}
           path: dist/release-artifacts
-      - name: Download schema4 hosted evidence
+      - name: Download stable hosted evidence
         if: github.ref_name == 'v1.0.0'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

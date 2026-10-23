@@ -10,8 +10,8 @@ function step(name) {
   return matches[0];
 }
 const build = step('Build installer and addon package (Windows PowerShell 5.1)');
-const producer = step('Actual schema4 hosted Windows acceptance over the signed full bundle');
-const overlay = step('Record schema4 hosted observations without inventing missing cases');
+const producer = step('Actual stable hosted Windows acceptance over the signed full bundle');
+const overlay = step('Record stable hosted observations without inventing missing cases');
 const gate = step('Verify stable hosted evidence and exact materials before accepting source or tag artifacts');
 
 test('source and tag stable builds select the same mandatory bundle and prebuild path', () => {
