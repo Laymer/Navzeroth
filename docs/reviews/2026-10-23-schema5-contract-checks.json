@@ -230,5 +230,13 @@
     "/tmp/navzeroth-schema5-coverage.lcov",
     "/tmp/navzeroth-schema5-clippy.log",
     "/tmp/navzeroth-schema5-python-tests.log"
-  ]
+  ],
+  "generator_followup": {
+    "code_commit": "c9585cafef8fd9a763a70b0ce257bcfbbcc12607",
+    "synthetic_tests_passed": 4,
+    "prepare_tests_passed": 9,
+    "canonical_generation_performed": false,
+    "rust_files_unchanged_from_coverage": true,
+    "log": "/tmp/navzeroth-schema5-inventory-generator-tests.log"
+  }
 }
