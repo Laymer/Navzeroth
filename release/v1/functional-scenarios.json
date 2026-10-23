@@ -65,7 +65,7 @@
   ],
   "status": "pass",
   "test_source": {
-    "commit": "de2fd3e69bcce8db55c73d98fed492e2ee485261",
+    "commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
     "path": "crates/app/tests/stable_bundled_functional.rs",
     "sha256": "924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008"
   },

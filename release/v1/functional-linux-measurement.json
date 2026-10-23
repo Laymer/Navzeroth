@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "source_commit": "de2fd3e69bcce8db55c73d98fed492e2ee485261",
-  "production_sha256": "02c1012cfb6d413f93e6406c3327d2118769121f5655fa9a410956245999a713",
+  "source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
+  "production_sha256": "abde826deab18e4e9b98add5b8a6e226c3f58d786baaf77234e4a39de6abdf07",
   "returncode": 0,
   "timed_out": false,
-  "seconds": 80.04390392999994,
-  "peak_child_rss_kib": 6205684,
+  "seconds": 78.54150760099947,
+  "peak_child_rss_kib": 6206004,
   "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
   "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
   "platform": "shared Linux/WSL2",
   "hardware_limits": "32 logical processors; MemTotal:       32675956 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
-  "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; application/core/storage/ingest/local-data/CLI/content/Cargo bytes were independently compared unchanged. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
-  "proof_sha256": "fea08eda898c71a043a629eba69df66b53b9429f783d4b2bb8d381e772d53f7a"
+  "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; application/core/storage/ingest/local-data/CLI/content/Cargo bytes were compared unchanged from de2; production app source and functional test remain identical to ca94. The separate hosted engineering test added since ca94 is outside this executable. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
+  "proof_sha256": "7b1bf81ae2bb01260a5d997ddd3ec279266d8310f070fe71b2a4a82918df1f67"
 }
