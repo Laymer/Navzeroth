@@ -36,6 +36,15 @@ function Convert-SupplementalCanonical($Value) { return ConvertTo-Json -InputObj
 function Assert-SupplementalPin([string]$Hash,[string]$Commit) {
     if($Hash -cnotmatch '^[a-f0-9]{64}$' -or $Commit -cnotmatch '^[a-f0-9]{40}$'){throw 'Independently selected lowercase SHA256/source commit required.'}
 }
+function Assert-SupplementalCopy([string]$Original,[string]$Copy,$Expected) {
+    foreach($path in @($Original,$Copy)) {
+        if((Convert-SupplementalCanonical (Get-SupplementalInventory $path)) -cne (Convert-SupplementalCanonical $Expected)){throw 'Backup or original changed; backup is not usable.'}
+    }
+}
+function Assert-SupplementalOutsideGit([string]$Path) {
+    $ancestor=[IO.Path]::GetFullPath($Path)
+    while($ancestor){if(Test-Path -LiteralPath (Join-Path $ancestor '.git')){throw 'Private backups cannot be inside any Git worktree.'};$ancestor=[IO.Path]::GetDirectoryName($ancestor)}
+}
 function Assert-SupplementalIdle {
     if(@(Get-Process -Name azeroth-desktop -ErrorAction SilentlyContinue).Count){throw 'Close Azeroth Navigator before backup/upgrade.'}
 }
@@ -58,8 +67,7 @@ function Invoke-SupplementalUpgrade {
     # Always outside this Git worktree; no arbitrary output under tracked source.
     $repository=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..')).TrimEnd('\')+'\'
     if($backup.StartsWith($repository,[StringComparison]::OrdinalIgnoreCase)){throw 'Private backups must be outside Git.'}
-    $ancestor=[IO.Path]::GetDirectoryName($backup)
-    while($ancestor){if(Test-Path -LiteralPath (Join-Path $ancestor '.git')){throw 'Private backups cannot be inside any Git worktree.'};$ancestor=[IO.Path]::GetDirectoryName($ancestor)}
+    Assert-SupplementalOutsideGit $backup
     foreach($root in $roots.Values){if($backup.StartsWith($root.TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)-or $backup -ieq $root){throw 'Backup cannot be inside a protected source directory.'}}
     $manifestPath=Join-Path $backup 'backup-manifest.json'
     if($Phase -ceq 'Backup') {
@@ -78,7 +86,7 @@ function Invoke-SupplementalUpgrade {
             if($exists){
                 $destination=Join-Path $backup $name;$null=New-Item -ItemType Directory -Path $destination
                 foreach($file in $before){$to=Join-Path $destination $file.path;$null=New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($to)) -Force;[IO.File]::Copy((Join-Path $root $file.path),$to,$false)}
-                if((Convert-SupplementalCanonical (Get-SupplementalInventory $destination)) -cne (Convert-SupplementalCanonical $before) -or (Convert-SupplementalCanonical (Get-SupplementalInventory $root)) -cne (Convert-SupplementalCanonical $before)){throw 'Backup or original changed during copy; partial backup is not usable.'}
+                Assert-SupplementalCopy $root $destination $before
             }
             $records+=@{name=$name;source=$root;present=$exists;files=$before}
         }
@@ -95,12 +103,12 @@ function Invoke-SupplementalUpgrade {
     foreach($name in $roots.Keys){
         $entry=@($saved.roots|Where-Object name -CEQ $name)
         if($entry.Count -ne 1 -or $entry[0].source -cne $roots[$name] -or $entry[0].present -ne (Test-Path -LiteralPath $roots[$name])){throw 'Backup source identity changed.'}
-        if($entry[0].present){foreach($path in @($roots[$name],(Join-Path $backup $name))){if((Convert-SupplementalCanonical (Get-SupplementalInventory $path)) -cne (Convert-SupplementalCanonical $entry[0].files)){throw 'Backup/current files changed since backup; make a new backup.'}}}
+        if($entry[0].present){Assert-SupplementalCopy $roots[$name] (Join-Path $backup $name) $entry[0].files}
     }
     Assert-SupplementalIdle
     if((Get-FileHash -LiteralPath $setup.FullName -Algorithm SHA256).Hash.ToLowerInvariant() -cne $InstallerSha256){throw 'Installer changed during backup verification.'}
-    # Ordinary Windows UAC. No /S, policy changes, automatic approval or app launch.
-    $process=Start-Process -FilePath $setup.FullName -Verb RunAs -PassThru
+    # Ordinary current-user interactive installation. OS-requested prompts remain user controlled.
+    $process=Start-Process -FilePath $setup.FullName -PassThru
     if(-not $process.WaitForExit(1200000)){throw 'Installer remains running after20 minutes; inspect it manually. No process was killed.'}
     $after=Get-Item -LiteralPath $exe.FullName -ErrorAction Stop
     $result=@{schema_version=1;purpose='supplemental_installation_observation_not_smoke';source_commit=$SourceCommit;installer_sha256=$InstallerSha256;finished_at=[DateTime]::UtcNow.ToString('o');installer_exit_code=$process.ExitCode;after_version=$after.VersionInfo.ProductVersion;after_exe_sha256=(Get-FileHash -LiteralPath $after.FullName -Algorithm SHA256).Hash.ToLowerInvariant();human_smoke_performed=$false}

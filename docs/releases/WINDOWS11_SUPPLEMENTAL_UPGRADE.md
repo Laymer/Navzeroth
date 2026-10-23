@@ -60,8 +60,9 @@ $arguments = @{
 ```
 
 Review the private backup manifest and available storage before proceeding. The
-following is a separate explicit action. The owner supplies elevation through the
-normal UAC prompt; the launcher cannot approve it and does not suppress prompts,
+following is a separate explicit action. The configured installer is current-user: the launcher does not force elevation.
+If Windows actually requests UAC, the owner controls that prompt; the launcher
+cannot approve it and does not suppress prompts,
 change security policy, install silently, stop processes or control networking.
 
 ```powershell
@@ -69,7 +70,7 @@ change security policy, install silently, stop processes or control networking.
 ```
 
 The launcher rechecks original0.8.1 executable/data and all backup files before
-opening the exact installer via `Start-Process -Verb RunAs`. Follow installer
+opening the exact installer via ordinary interactive `Start-Process`. Follow installer
 prompts. Decline an automatic application launch on the finish screen; first start
 is a separate observation. Cancellation is not a pass. The20-minute wait is finite;
 on timeout it leaves the interactive installer untouched and requires manual
