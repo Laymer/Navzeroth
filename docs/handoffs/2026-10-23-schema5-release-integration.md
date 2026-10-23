@@ -115,3 +115,59 @@ final functional execution, independent public review, prepared identities and
 external-key signatures remain next. RemotePR239 still holdsV19; all ten required
 main checks were read back unchanged, and no open issues remain after the already
 authorized270 closure. No new candidate push, main merge, tag or publication.
+
+## Final integrated production and material preparation
+
+Reviewed PR278 probe final80e3dfd5 is normally merged ata1ca248f; reviewed PR277
+transport finald8d6ece0 is normally merged in the following integration. Root's
+five-line probe wiring commitde2fd3e69bcce8db55c73d98fed492e2ee485261 adds the
+actual native Git transport tests before compilation/fixture installation. Tooling
+independently reviewed that exact diff and actionlint passed. Root and desktop
+cleared transport CODEa2eb; root independently passed17Linux tests/one explicit
+Windows-junction skip, then repeated after correcting the case-collision fixture
+to construct ambiguous Git entries without relying on a case-sensitive filesystem.
+Four direct native Windows process/junction tests passed separately. The full
+native Git suite was unavailable locally and is checked by the hosted probe.
+
+This closes a concrete public-download path gap: packaging's eight observations
+cannot include future completed-draft provenance/review. The reviewed immutable
+data-commit transport reads only bounded inert evidence subtrees, preserves tagged
+HEAD/source, rejects links/reparse/case collisions and never executes archive code.
+Public verification still requires full Rust readiness and writes separate public
+receipts so it cannot overwrite its consumed draft proof. See the
+[transport handoff](2026-10-23-public-reviewed-evidence-transport.md).
+
+Exactde2 productionSHA256 is
+`02c1012cfb6d413f93e6406c3327d2118769121f5655fa9a410956245999a713`
+over3158 tracked entries excludingdocs/release. Runtime/content/Cargo bytes compared
+identically toca94; new changes are the reviewed probe/transport/tests/workflows.
+Cargo confirmed the cached functional binaryd1745d72 (not a new compiler build).
+The actual final-source execution passed80.043903930s/peak6205684KiB on the same
+disclosed sharedLinux host. Proof15568B SHA256
+`fea08eda898c71a043a629eba69df66b53b9429f783d4b2bb8d381e772d53f7a`
+differs from the independentca94 proof only in its recorded tested commit; world
+independently verified that semantic comparison and exact production fingerprint.
+Final execution remains attributed to root, not to the independent earlier replay.
+
+The generator ran again with the final proof. Inventory bytes remain4d3b844e;
+exactde2 source/production bindings are now recorded while all nine observations
+stay pristine unverified. Actual optimized CLI material preview completed with
+schema2 unsigned_preparation.ready=true for evidenceSHA256
+`aa8884049a777e540187e767f89a5809a01e63b4ae694605998b1ba4f1c3cc7b`:
+82selected files/two packs, preview55727B SHA256
+`c0fdfd22a7d4b205b8d2aaefe4c5d0bba3cc165e3be72a0226d0536cbe3287dd`.
+Actual logs, generator summary and preview are retained in
+`release/v1/verification-v20/`; this authorizes preparation only.
+
+One explicit opt-in push started [probe39916898751](https://github.com/Laymer/Navzeroth/actions/runs/39916898751)
+on exactde2. Its guarded native process/ownership and native Git transport steps
+completed successfully; individual counts/skips await completed logs. The combined
+compilation/recovery step was still in progress when this entry was written; the
+workload's start was not independently verified. No workload pass is inferred.
+The old signed fixture remains distinct
+from current runtime and final-installer acceptance. PR239's remote branch still
+holdsV19; the opt-in engineering branch is not a signed release candidate.
+
+Next: actual probe outcome, final independent V20 public review, committed prepared
+identities and independent byte reproduction before external-key use. Then signed
+closure and one frozen release-candidate push with every applicable fresh gate.
