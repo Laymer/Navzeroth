@@ -58,7 +58,7 @@ function installedBundle(repo, add) {
   if (!fs.existsSync(evidencePath)) return;
   noLinkedComponents(evidencePath);
   const evidence = JSON.parse(hash(evidencePath, 64 * 1024 * 1024, true).bytes.toString('utf8'));
-  if (evidence.schema_version !== 4 || !evidence.bundled_content) return;
+  if (![4, 5].includes(evidence.schema_version) || !evidence.bundled_content) return;
   const binding = evidence.bundled_content;
   const source = (ref, maximum = MAX_FILE, capture = false) => {
     if (!ref || !/^[a-z0-9_./-]+$/.test(ref.path) || !/^[a-f0-9]{64}$/.test(ref.sha256)

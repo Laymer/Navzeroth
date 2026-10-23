@@ -46,7 +46,7 @@ test('installed inventory binds bytes and refuses missing, extra, altered and li
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
 
-test('schema4 installed bundles bind every resource to explicit source pins', () => {
+for (const schema of [4, 5]) test(`schema${schema} installed bundles bind every resource to explicit source pins`, () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'anav-installed-bundle-'));
   try {
     const repo = path.join(root, 'source'), installed = path.join(root, 'installed');
@@ -59,7 +59,7 @@ test('schema4 installed bundles bind every resource to explicit source pins', ()
     write(repo, 'release/v1/bundle-receipt.json', 'Synthetic bytes: cryptography is tested by the Rust receipt verifier');
     const manifest = { format: 'navzeroth-installed-content', schema_version: 1, review: pin('docs/public-review.json'), files: [pin('content/raw-source.txt'), pin('docs/public-review.json')] };
     write(repo, 'release/v1/bundle-manifest.json', JSON.stringify(manifest));
-    const evidence = { schema_version: 4, bundled_content: { manifest: pin('release/v1/bundle-manifest.json'), receipt: pin('release/v1/bundle-receipt.json'), review: manifest.review } };
+    const evidence = { schema_version: schema, bundled_content: { manifest: pin('release/v1/bundle-manifest.json'), receipt: pin('release/v1/bundle-receipt.json'), review: manifest.review } };
     write(repo, 'release/v1/acceptance-evidence.json', JSON.stringify(evidence));
     for (const resource of manifest.files) write(installed, 'bundled-content/' + resource.path, fs.readFileSync(path.join(repo, resource.path)));
     write(installed, 'bundled-content/manifest.json', fs.readFileSync(path.join(repo, evidence.bundled_content.manifest.path)));

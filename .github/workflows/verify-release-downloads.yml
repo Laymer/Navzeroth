@@ -37,7 +37,9 @@ jobs:
       contents: write
       actions: read
     runs-on: windows-2025
-    timeout-minutes: 30
+    # Includes dependency/source checks and the new bounded native UI suite.
+    # Each workload remains capped at 20 minutes; the UI suite at 60 minutes.
+    timeout-minutes: 90
     steps:
       - shell: bash
         run: git config --global core.autocrlf false
@@ -75,6 +77,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           if ($env:EXPECTED_COMMIT -cnotmatch '^[a-f0-9]{40}$') { throw 'Expected a full source commit' }
+          if ($env:GITHUB_SHA -cne $env:EXPECTED_COMMIT) { throw 'Dispatch this workflow on the exact release tag' }
           . ./scripts/windows/Release-Policy.ps1
           $version = $env:RELEASE_VERSION
           $policy = Get-UnsignedReleasePolicy $PWD $version
@@ -90,16 +93,32 @@ jobs:
           New-Item -ItemType Directory -Path $downloads | Out-Null
           gh release download $tag --repo $env:GITHUB_REPOSITORY --dir $downloads
           if ($LASTEXITCODE -ne 0) { throw 'Release download failed' }
-          $receiptDir = Join-Path $env:RUNNER_TEMP 'download-receipt'
+          $receiptDir = Join-Path $PWD 'dist/draft-evidence'
           New-Item -ItemType Directory -Path $receiptDir | Out-Null
           $json | Set-Content -LiteralPath (Join-Path $receiptDir 'github-release.json') -Encoding utf8
           $options = @{}
           if (Test-Path -LiteralPath 'dist/acceptance-evidence/acceptance-evidence.json') { $options['Evidence'] = 'dist/acceptance-evidence/acceptance-evidence.json' }
           ./scripts/windows/Verify-DownloadedRelease.ps1 -Directory $downloads -Version $version -InstallerSha256 $env:EXPECTED_INSTALLER -Receipt (Join-Path $receiptDir 'verification.json') -Phase $env:RELEASE_PHASE @options
           if ($LASTEXITCODE -ne 0) { throw 'Downloaded release verification failed' }
+          $contract=Read-BoundedReleaseContractText (Join-Path $PWD 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+          if ($env:RELEASE_PHASE -ceq 'draft' -and $contract.schema_version -eq 5) {
+            . ./scripts/windows/Draft-Installer-Smoke.ps1
+            $releaseJson=gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$tag"
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain draft release API identity' }
+            $releaseApi=$releaseJson | ConvertFrom-Json
+            $jobsJson=gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID/attempts/$env:GITHUB_RUN_ATTEMPT/jobs?per_page=100"
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain current workflow job identity' }
+            $jobs=$jobsJson | ConvertFrom-Json
+            if ($jobs.total_count -gt 100) { throw 'Workflow job list exceeds the bounded query' }
+            $current=@($jobs.jobs | Where-Object { $_.name -ceq 'Verify downloaded unsigned release' })
+            if ($current.Count -ne 1) { throw 'Current verifier job is absent or ambiguous' }
+            $raw=New-DraftDownloadResult -Root $PWD -ReceiptDirectory $receiptDir -Release $releaseApi -Job $current[0] -SourceCommit $env:EXPECTED_COMMIT -InstallerSha256 $env:EXPECTED_INSTALLER -RunId ([long]$env:GITHUB_RUN_ID) -RunAttempt ([long]$env:GITHUB_RUN_ATTEMPT)
+            [IO.File]::WriteAllText((Join-Path $receiptDir 'raw-result.json'),(($raw | ConvertTo-Json -Depth 16)+"`n"),(New-Object Text.UTF8Encoding($false)))
+          }
           [ordered]@{ schema_version = 2; version = $version; signature = $policy.signature; prerelease = $policy.prerelease; phase = $env:RELEASE_PHASE; tag = $tag; commit = $env:EXPECTED_COMMIT; run_id = $env:GITHUB_RUN_ID; repository = $env:GITHUB_REPOSITORY } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $receiptDir 'identity.json') -Encoding utf8
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
           name: release-download-receipt-${{ inputs.phase }}-${{ github.run_id }}
-          path: ${{ runner.temp }}/download-receipt
+          path: dist/draft-evidence
           if-no-files-found: error

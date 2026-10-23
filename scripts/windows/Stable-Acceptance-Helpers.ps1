@@ -46,11 +46,14 @@ function Invoke-StableCase([string] $Id, [hashtable] $Identity, [string] $Output
         [IO.File]::WriteAllText((Join-Path $Output ($Id.ToLowerInvariant()+'.json')), $text, (New-Object Text.UTF8Encoding($false)))
     }
 }
-function Invoke-StableWorkload([string] $Root,[string] $Exe,[string] $Manifest,[string] $Version,[string] $Mode,[string] $State,[string] $Report,[string] $Backup = '',[ValidateRange(1,1200)][int] $MaximumSeconds = 1200) {
+function Invoke-StableWorkload([string] $Root,[string] $Exe,[string] $Manifest,[string] $Version,[string] $Mode,[string] $State,[string] $Report,[string] $Backup = '',[ValidateRange(1,1200)][int] $MaximumSeconds = 1200,[ValidateSet('stable','draft-ui')][string] $Driver = 'stable',[string] $SourceCommit = '',[string] $InstallerSha256 = '') {
     if ($PSVersionTable.PSVersion.Major -lt 7) { throw 'Bounded hosted workload requires PowerShell 7 argument-list support.' }
+    if ($Driver -ceq 'draft-ui' -and ($Mode -cnotin @('fresh','restart') -or $SourceCommit -cnotmatch '^[a-f0-9]{40}$' -or $InstallerSha256 -cnotmatch '^[a-f0-9]{64}$' -or $Backup)) { throw 'Draft UI workload requires exact source/installer identity and fresh/restart mode.' }
     $start = New-Object Diagnostics.ProcessStartInfo
     $start.FileName = (Get-Command node -ErrorAction Stop).Source; $start.UseShellExecute = $false
-    foreach ($value in @((Join-Path $Root 'scripts/windows/Stable-Workload.mjs'),'--mode',$Mode,'--exe',$Exe,'--manifest',$Manifest,'--version',$Version,'--state',$State,'--out',$Report)) { $start.ArgumentList.Add($value) }
+    $scriptPath = if ($Driver -ceq 'draft-ui') { 'scripts/windows/Draft-Installer-Workload.mjs' } else { 'scripts/windows/Stable-Workload.mjs' }
+    foreach ($value in @((Join-Path $Root $scriptPath),'--mode',$Mode,'--exe',$Exe,'--manifest',$Manifest,'--version',$Version,'--state',$State,'--out',$Report)) { $start.ArgumentList.Add($value) }
+    if ($Driver -ceq 'draft-ui') { foreach ($value in @('--source-commit',$SourceCommit,'--installer-sha256',$InstallerSha256)) { $start.ArgumentList.Add($value) } }
     if ($Backup) { $start.ArgumentList.Add('--backup'); $start.ArgumentList.Add($Backup) }
     $process = New-Object Diagnostics.Process
     $process.StartInfo = $start
@@ -83,6 +86,7 @@ function Invoke-StableWorkload([string] $Root,[string] $Exe,[string] $Manifest,[
         if ($process.ExitCode -ne 0) { throw 'Installed native engineering workload failed.' }
         $raw = Read-BoundedReleaseText $Report | ConvertFrom-Json
         if ($raw.passed -isnot [bool] -or -not $raw.passed -or $raw.version -cne $Version -or $raw.mode -cne $Mode) { throw 'Installed native workload report is incomplete.' }
+        if ($Driver -ceq 'draft-ui' -and ($raw.source_commit -cne $SourceCommit -or $raw.installer_sha256 -cne $InstallerSha256 -or $raw.phase -cne 'draft' -or $raw.completed -isnot [bool] -or -not $raw.completed -or $raw.human_performed -isnot [bool] -or $raw.human_performed -or $raw.ui_interaction_verified -isnot [bool] -or -not $raw.ui_interaction_verified)) { throw 'Draft UI report lacks exact identity or completed native UI evidence.' }
         if ($observations.ContainsKey([int]$raw.pid)) { $peak = $observations[[int]$raw.pid] }
         return @{raw=$raw;peak_memory_bytes=$peak;memory_observation=@{pid=$raw.pid;samples=$samples;sampling_errors=$samplingErrors;target_interval_ms=200};memory_scope='Maximum observed PeakWorkingSet64 of the exact native app PID; WebView2 descendants and installer excluded. Samples target 200 ms; allocations after the last successful sample may be missed.'}
     } finally {
