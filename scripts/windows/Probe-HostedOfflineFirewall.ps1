@@ -63,7 +63,7 @@ function Invoke-HostedOfflineFirewallProbe([string] $Directory,[int] $Hold) {
             }
             return @{held_ms=$holdTimer.ElapsedMilliseconds}
         }
-        $report.isolation = [ordered]@{isolation=$offline.isolation;allowed_programs=$offline.allowed_programs;held_ms=$offline.workload.held_ms;diagnostics=$offline.diagnostics}
+        $report.isolation = [ordered]@{isolation=$offline.isolation;allowed_programs=$offline.allowed_programs;allowed_infrastructure_programs=$offline.allowed_infrastructure_programs;held_ms=$offline.workload.held_ms;diagnostics=$offline.diagnostics}
         $report.passed = $true
         $report.phase = 'complete'
     } catch {

@@ -211,6 +211,19 @@ function Get-StableRunnerAgentPrograms {
     }
     return @($found.Values)
 }
+# Hosted VM infrastructure agents. Allowing only the runner kept the job for
+# 600 s (run 39972424100) but lost it during a 1260 s hold (run 39975150461),
+# so the VM's own health/provisioning agents need their connections too. They
+# are matched by process name and recorded by exact path; none runs test code.
+function Get-StableHostedInfrastructurePrograms {
+    $paths = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in @('hosted-compute-agent','WindowsAzureGuestAgent','WaAppAgent') -or $_.ProcessName -like 'provjobd*' } | ForEach-Object { [string]$_.Path } | Where-Object { $_ } | Sort-Object -Unique)
+    if ($paths.Count -gt 8) { throw 'Hosted infrastructure agent inventory exceeds bounded capacity.' }
+    foreach ($path in $paths) {
+        if (-not [IO.Path]::IsPathRooted($path) -or $path.Length -gt 260 -or -not (Test-Path -LiteralPath $path -PathType Leaf)) { throw 'Hosted infrastructure agent path is invalid.' }
+        if (Test-StableAllowAdmitsWorkload @{program=$path;service='Any'}) { throw 'Hosted infrastructure agent matches a workload executable.' }
+    }
+    return $paths
+}
 function Resolve-StableProbeAddress([string] $HostName) {
     $addresses = @([Net.Dns]::GetHostAddresses($HostName) | Where-Object AddressFamily -eq ([Net.Sockets.AddressFamily]::InterNetwork))
     if ($addresses.Count -eq 0) { throw 'External probe host has no IPv4 address.' }
@@ -268,6 +281,7 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
     if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:OS -ne 'Windows_NT') { throw 'Offline workload requires a disposable hosted Windows runner.' }
     # Everything below is read-only until the first firewall change.
     $agents = @(Get-StableRunnerAgentPrograms)
+    $infrastructure = @(Get-StableHostedInfrastructurePrograms)
     $address = Resolve-StableProbeAddress $ProbeHost
     if (-not (Test-StableExternalTcp $address $ProbePort)) { throw 'External network is unavailable before isolation; offline behavior cannot be proven.' }
     $profiles = @(Get-StableFirewallProfiles 'PersistentStore')
@@ -276,7 +290,7 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
     $stage = 'isolate'; $primary = $null; $result = $null; $disabled = @(); $changed = $false; $remainingAllow = $null; $activeAllow = $null
     try {
         $changed = $true
-        foreach ($program in $agents) {
+        foreach ($program in @($agents + $infrastructure)) {
             New-NetFirewallRule -DisplayName ($group + ' agent') -Group $group -Direction Outbound -Action Allow -Program $program -PolicyStore PersistentStore -ErrorAction Stop | Out-Null
         }
         foreach ($protocol in @('UDP','TCP')) {
@@ -293,8 +307,8 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
         }
         # Only the isolation group's own agent and DNS rules may remain enabled.
         $remainingAllow = @(Get-StableEnabledAllowRules).Count
-        if ($remainingAllow -ne $agents.Count + 2) { throw 'Allow rules other than the runner agent and DNS remain enabled.' }
-        $inventory = @(Get-StableActiveAllowInventory $group ($agents.Count + 2))
+        if ($remainingAllow -ne $agents.Count + $infrastructure.Count + 2) { throw 'Allow rules other than the runner agent, hosted infrastructure and DNS remain enabled.' }
+        $inventory = @(Get-StableActiveAllowInventory $group ($agents.Count + $infrastructure.Count + 2))
         $activeAllow = [ordered]@{count=$inventory.Count;programs=@($inventory | ForEach-Object { ([string]$_.program).Replace('/','\').Split('\')[-1] } | Sort-Object -Unique | Select-Object -First 32)}
         if (@($inventory | Where-Object { Test-StableAllowAdmitsWorkload $_ }).Count -ne 0) { throw 'An effective outbound allow rule admits the offline workload processes.' }
         if (Test-StableExternalTcp $address $ProbePort) { throw 'External connection still succeeds under isolation.' }
@@ -359,5 +373,5 @@ function Invoke-StableFirewallOffline([scriptblock] $Workload, [string] $ProbeHo
         # Preserve both failure paths; cleanup must never replace the original cause.
         throw ('Hosted offline firewall control failed: ' + ($diagnostics | ConvertTo-Json -Depth 6 -Compress))
     }
-    return @{workload=$result;network_isolated=$true;isolation=$script:StableFirewallIsolation;allowed_programs=$agents;dns_allowed=$true;external_connection_refused=$true;restored=$true;diagnostics=$diagnostics}
+    return @{workload=$result;network_isolated=$true;isolation=$script:StableFirewallIsolation;allowed_programs=$agents;allowed_infrastructure_programs=$infrastructure;dns_allowed=$true;external_connection_refused=$true;restored=$true;diagnostics=$diagnostics}
 }

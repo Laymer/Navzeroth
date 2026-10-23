@@ -103,7 +103,7 @@ try {
     Invoke-StableCase 'HOSTED-OFFLINE' $identity $OutputDirectory {
         # ADR 0010: firewall isolation; disabled adapters cost the runner its job.
         $offline=Invoke-StableFirewallOffline { Workload 'offline' }
-        return @{network_isolation=$offline.isolation;network_isolated=$offline.network_isolated;external_connection_refused=$offline.external_connection_refused;network_restored=$offline.restored;allowed_programs=$offline.allowed_programs;dns_allowed=$offline.dns_allowed;raw_report=$offline.workload.raw}
+        return @{network_isolation=$offline.isolation;network_isolated=$offline.network_isolated;external_connection_refused=$offline.external_connection_refused;network_restored=$offline.restored;allowed_programs=$offline.allowed_programs;allowed_infrastructure_programs=$offline.allowed_infrastructure_programs;dns_allowed=$offline.dns_allowed;raw_report=$offline.workload.raw}
     }
     Invoke-StableCase 'HOSTED-UPGRADE-RC1' $identity $OutputDirectory {
         # Baseline needs the same explicit manual scope, supplied by the verified

@@ -196,9 +196,10 @@ try{
  function New-MockFirewall {
   $script:fwProfiles=[ordered]@{Domain=@{e='True';i='NotConfigured';o='NotConfigured'};Private=@{e='True';i='Block';o='Allow'};Public=@{e='False';i='NotConfigured';o='NotConfigured'}}
   $script:fwRules=[ordered]@{};foreach($n in @('core-dns','edge-mdns','ssh-in')){$script:fwRules[$n]=@{Enabled=$true;Action='Allow';Group=''}};$script:fwRules['wsh-block']=@{Enabled=$true;Action='Block';Group=''}
-  $script:fwOnline=$true;$script:fwLeak=$false;$script:fwDisableFail=$false;$script:fwEnableFail='';$script:fwStickyRule='';$script:fwNoReturn=$false;$script:fwAgents=@('C:\actions\runner\bin\Runner.Listener.exe','C:\actions\runner\bin\Runner.Worker.exe');$script:fwSeen=$null;$script:fwSequence=0;$script:fwWasIsolated=$false;$script:fwCalls=@();$script:fwRestoreProfileFail=$false;$script:fwCreateFail=$false;$script:fwActive=@()
+  $script:fwOnline=$true;$script:fwLeak=$false;$script:fwDisableFail=$false;$script:fwEnableFail='';$script:fwStickyRule='';$script:fwNoReturn=$false;$script:fwAgents=@('C:\actions\runner\bin\Runner.Listener.exe','C:\actions\runner\bin\Runner.Worker.exe');$script:fwSeen=$null;$script:fwSequence=0;$script:fwWasIsolated=$false;$script:fwCalls=@();$script:fwRestoreProfileFail=$false;$script:fwCreateFail=$false;$script:fwActive=@();$script:fwInfra=@('C:\Program Files\hosted-compute-agent\hosted-compute-agent.exe')
  }
  function Get-StableRunnerAgentPrograms { if($script:fwAgents.Count -ne 2){throw 'Synthetic missing runner ancestry'};return $script:fwAgents }
+ function Get-StableHostedInfrastructurePrograms { return $script:fwInfra }
  function Resolve-StableProbeAddress([string]$HostName) { return '192.0.2.1' }
  function Test-StableExternalTcp([string]$Address,[int]$Port,[int]$TimeoutMs=5000) {
   if(-not $script:fwOnline){return $false}
@@ -232,7 +233,7 @@ try{
   $script:fwCalls+='enable-rules';foreach($n in $Name){if($n -eq $script:fwEnableFail){throw 'Synthetic enable failure'}}
   foreach($n in $Name){$script:fwRules[$n].Enabled=$true}
  }
- function Get-StableActiveAllowInventory([string]$Group,[int]$OwnRules) { if($OwnRules -ne 4){throw 'Synthetic wrong own-rule count'};return $script:fwActive }
+ function Get-StableActiveAllowInventory([string]$Group,[int]$OwnRules) { if($OwnRules -ne 4+$script:fwInfra.Count){throw 'Synthetic wrong own-rule count'};return $script:fwActive }
  function Snapshot-MockFirewall { return (@{p=$script:fwProfiles;r=@($script:fwRules.Keys|ForEach-Object {$_+'='+$script:fwRules[$_].Enabled})}|ConvertTo-Json -Depth 5 -Compress) }
  function FirewallFailure([scriptblock]$Workload,[int]$RestoreSeconds=60) {
   $failure=$null;try{Invoke-StableFirewallOffline $Workload -RestoreSeconds $RestoreSeconds|Out-Null}catch{$failure=$_.Exception.Message};return $failure
@@ -242,9 +243,14 @@ try{
   $result=Invoke-StableFirewallOffline {
    $script:fwSeen=@{blocked=@($script:fwProfiles.Values|Where-Object {$_.e -eq 'True' -and $_.i -eq 'Block' -and $_.o -eq 'Block'}).Count;enabled=@($script:fwRules.Keys|Where-Object {$script:fwRules[$_].Enabled -and $script:fwRules[$_].Action -eq 'Allow'});programs=@($script:fwRules.Values|Where-Object {$_.Group}|ForEach-Object {$_.Program})}
    return @{actual='workload'}}
-  if($script:fwSeen.blocked -ne 3 -or $script:fwSeen.enabled.Count -ne 4 -or @($script:fwSeen.enabled|Where-Object {$_ -notlike '{iso-*'}).Count -ne 0 -or @($script:fwSeen.programs|Where-Object {$_ -like '*Runner.*'}).Count -ne 2){throw 'Isolation scope differs from runner agent plus DNS only'}
+  if($script:fwSeen.blocked -ne 3 -or $script:fwSeen.enabled.Count -ne 5 -or @($script:fwSeen.programs|Where-Object {$_ -like '*hosted-compute-agent.exe'}).Count -ne 1 -or @($script:fwSeen.enabled|Where-Object {$_ -notlike '{iso-*'}).Count -ne 0 -or @($script:fwSeen.programs|Where-Object {$_ -like '*Runner.*'}).Count -ne 2){throw 'Isolation scope differs from runner agent plus DNS only'}
   if((Snapshot-MockFirewall) -cne $before){throw 'Firewall state was not restored exactly'}
-  if(-not $result.network_isolated -or -not $result.external_connection_refused -or -not $result.restored -or $result.isolation -cne 'windows_firewall_runner_agent_only' -or $result.workload.actual -ne 'workload' -or $result.allowed_programs.Count -ne 2 -or $result.diagnostics.disabled_allow_rules -ne 3){throw 'Isolation result differs'}
+  if(-not $result.network_isolated -or -not $result.external_connection_refused -or -not $result.restored -or $result.isolation -cne 'windows_firewall_runner_agent_only' -or $result.workload.actual -ne 'workload' -or $result.allowed_programs.Count -ne 2 -or @($result.allowed_infrastructure_programs).Count -ne 1 -or $result.diagnostics.disabled_allow_rules -ne 3){throw 'Isolation result differs'}
+ }
+ Check 'isolation works when no hosted infrastructure agent is present' {
+  New-MockFirewall;$script:fwInfra=@();$before=Snapshot-MockFirewall
+  $result=Invoke-StableFirewallOffline {return @{actual='workload'}}
+  if(@($result.allowed_infrastructure_programs).Count -ne 0 -or (Snapshot-MockFirewall) -cne $before){throw 'Optional infrastructure agents became required'}
  }
  Check 'firewall workload failure restores state and keeps the original cause' {
   New-MockFirewall;$before=Snapshot-MockFirewall
@@ -273,7 +279,7 @@ try{
  Check 'an allow rule that stays enabled refuses isolation' {
   New-MockFirewall;$script:fwStickyRule='ssh-in'
   $failure=FirewallFailure {throw 'Must not run'}
-  if($failure -notlike '*Allow rules other than the runner agent and DNS remain enabled*'){throw 'Unclean isolation accepted'}
+  if($failure -notlike '*Allow rules other than the runner agent, hosted infrastructure and DNS remain enabled*'){throw 'Unclean isolation accepted'}
  }
  Check 'restore failures are reported without replacing a pass into success' {
   New-MockFirewall;$script:fwEnableFail='core-dns'
