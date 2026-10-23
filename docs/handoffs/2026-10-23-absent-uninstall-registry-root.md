@@ -27,8 +27,18 @@ registry access/writes, application/process controls, installer or network actio
 ran. Original baseline helper fails the new absent-root check (negative control).
 Existing broader process tests were not rerun for this narrow registry change.
 
-Initial nativePS7 UNC launch refused script signature; process-only
--ExecutionPolicy Bypass allowed the inert test. No persistent policy changed.
+Exact author native commands used the existing portable/native executables:
+
+- `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w /tmp/navzeroth-uninstall-root-guard/scripts/windows/Test-NativeSmokeHelpers.ps1)" -RegistryOnly`
+- `/tmp/navzeroth-native-pwsh-7.6.7/pwsh.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w /tmp/navzeroth-uninstall-root-guard/scripts/windows/Test-NativeSmokeHelpers.ps1)" -RegistryOnly`
+
+Both author native runs used process-only ExecutionPolicy Bypass; no persistent
+policy changed. Initial nativePS7 UNC launch without that option refused script
+signature before tests. Root independently cleared code and ran12 LinuxPS7 plus
+12 nativePS7 tests on hash-verified WindowsTemp copies, without an override.
+Root nativePS5 normal-File invocation was denied by script policy BEFORE tests;
+it is not a pass. Tooling independently cleared code and ran12 nativePS5 tests.
+These differing invocation scopes do not establish hosted installation acceptance.
 git diff --check passes. Logs retained externally:
 
 - /tmp/navzeroth-uninstall-registry-linux.log and -native5.log:
