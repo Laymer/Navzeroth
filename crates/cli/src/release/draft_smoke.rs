@@ -405,6 +405,14 @@ mod tests {
             let _ = fs::remove_dir_all(&self.root);
         }
     }
+    // Preserve JSON types so negatives exercise binding checks, not just parsing.
+    fn wrong(value: &Value) -> Value {
+        match value {
+            Value::Number(_) => json!(999),
+            Value::Bool(value) => json!(!value),
+            _ => json!("wrong"),
+        }
+    }
     fn pin(root: &Path, path: &str, value: &Value) -> Value {
         let bytes = serde_json::to_vec(value).unwrap();
         let file = root.join(path);
@@ -592,7 +600,7 @@ mod tests {
             "conclusion",
         ] {
             let mut f = Fixture::new();
-            f.run[key] = json!("wrong");
+            f.run[key] = wrong(&f.run[key]);
             assert!(f.check().is_err(), "run {key}");
         }
         for key in [
@@ -605,7 +613,7 @@ mod tests {
             "conclusion",
         ] {
             let mut f = Fixture::new();
-            f.job[key] = json!("wrong");
+            f.job[key] = wrong(&f.job[key]);
             assert!(f.check().is_err(), "job {key}");
         }
         let mut f = Fixture::new();
@@ -624,7 +632,7 @@ mod tests {
         }
         for key in ["name", "size"] {
             let mut f = Fixture::new();
-            f.release["assets"][0][key] = json!("wrong");
+            f.release["assets"][0][key] = wrong(&f.release["assets"][0][key]);
             assert!(f.check().is_err());
         }
         for key in [
@@ -640,12 +648,12 @@ mod tests {
             "workflow_run_attempt",
         ] {
             let mut f = Fixture::new();
-            f.download[key] = json!("wrong");
+            f.download[key] = wrong(&f.download[key]);
             assert!(f.check().is_err(), "download {key}");
         }
         for key in ["bytes", "sha256"] {
             let mut f = Fixture::new();
-            f.download["assets"][0][key] = json!("wrong");
+            f.download["assets"][0][key] = wrong(&f.download["assets"][0][key]);
             assert!(f.check().is_err());
         }
         for key in [
@@ -657,7 +665,7 @@ mod tests {
             "human_performed",
         ] {
             let mut f = Fixture::new();
-            f.native[key] = json!("wrong");
+            f.native[key] = wrong(&f.native[key]);
             assert!(f.check().is_err(), "native {key}");
         }
     }
