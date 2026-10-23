@@ -41,3 +41,27 @@ trust, execute prebuild source/readiness gates, review the frozen candidate and
 push PR239. Fresh protected checks, source parity, coverage, exact resulting-main
 stability, all eight hosted installed cases and reviewed exact downloaded-draft
 UI/native smoke remain required. No main merge, tag or publication yet.
+
+## Actual final independent verification
+
+At49ce3e4760cba311c418feb6fd652fd8f3b1e23d root and tooling EACH executed
+separate assembly, default COMPILED public-trust check without policy override,
+and source prebuild readiness. Both passed84 resources/two packs/89 evidence
+files and EXACTLY nine pending observations with no other blockers. Tooling
+independently streamed all84 assembled file hashes/395847866 bytes and proved
+an exact86-file tree including manifest/receipt, no extras. Actual public reports
+are retained under release/v1/verification-v20/signed-closure with exact FileRefs.
+Both report build_ready:true/publication_allowed:false; stable_ready:false.
+
+Desktop final composition review independently recomputed the Git production
+fingerprint equal to testedb040, checked all signed/payload/evidence identities,
+confirmed only bundled_content differs from immutable prebundle evidence, and
+checked nine pristine pending rows/correct schema5 methods and unchanged20/60
+bounds. CLEAR for candidate push. It did not rerun crypto/assembly/full suites;
+those actual checks are explicitly attributed to root/tooling. All future hosted,
+resulting-main, draft and public gates remain unverified at this checkpoint.
+
+The owner requested a Claude Code continuation prompt before credits run out.
+Detailed current scope/authority/state/ordered remaining work is recorded in
+2026-10-23-claude-release-continuation.md; the separate schema5 draft/public recipe
+records exact postjob provenance, independent review and inert public transport.

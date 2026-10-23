@@ -31,24 +31,23 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-2026-10-23: reviewed PRs 271–281 are integrated locally; all eleven final published
-heads were checked as ancestors. Probe 39921053021 failed compiler process-tree
-completion after Cargo reported success; its exact raw evidence remains archived.
-The compiler-specific repair is independently reviewed and passes twelve inert
-checks on Linux and native Windows. Generic process checks and all bounds remain.
-New probe 39925184911 runs at `b040778a`; its early steps passed and the combined
-compilation/recovery step remains in progress. No actual workload result is inferred.
-Full-content functional execution at b040 passed in 79.54s on disclosed shared
-Linux hardware. Renewed material preparation passes, with all 88 proof/material
-references independently verified, 82 selected files/two packs, 260,113 records
-and 274,059 accepted unknowns. All nine Windows observations remain unverified.
-Final public review and receipts await the actual probe. Remote PR239 remains V19;
-no main merge, tag or publication.
+2026-10-23: reviewed PRs271–282 are normally integrated locally. Final V20 signed
+closure49ce3e47 passes root/tooling independent signatures, separate84-resource
+assemblies with default compiled trust, and89-evidence/two-pack source prebuild.
+Desktop final composition review is CLEAR. All nine canonical Windows observations
+remain unverified; build readiness does not permit publication. Prepared identities
+were committed before key use; existing r2 keys matched, no new rotation required.
+Hosted engineering probe39925184911 atb040 succeeded: actual full recovery915.984s
+on Windows2025 using the explicitly historicalV19fixture. Memory was not measured;
+this is not current-installer acceptance. Both failed prior probes are preserved.
+Full-pack functional79.54s is shared-Linux evidence only. Next: one final candidate
+push, fresh protected/source/coverage/eight-case Windows gates, exact resulting-main
+stability, then tag/draft and independently reviewed schema5 exact downloaded UI
+acceptance. No main merge, stable tag or publication at this checkpoint.
+[Signed closure and actual reviews](handoffs/2026-10-23-v20-signed-closure.md).
+[Durable continuation plan](handoffs/2026-10-23-claude-release-continuation.md).
+[Actual engineering probe](handoffs/2026-10-23-recovery-probe-b040-result.md).
 [Current source and checks](handoffs/2026-10-23-cargo-completion-source-v20.md).
-[Compiler watchdog result](handoffs/2026-10-23-recovery-probe-41b52-result.md).
-[Repaired source and actual checks](handoffs/2026-10-23-registry-repaired-source-v20.md).
-[Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
-[Actual probe failure](handoffs/2026-10-23-recovery-probe-de2-result.md).
 
 2026-10-23: V19 attempt1 cancelled; attempt2 recovery1200s timeout, four hosted
 passes and three later cases unrun. Exact attempt evidence preserved/verified.
