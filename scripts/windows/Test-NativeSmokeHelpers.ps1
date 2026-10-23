@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([switch] $RegistryOnly)
 Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Native-Smoke-Helpers.ps1')
@@ -16,6 +16,65 @@ function Start-Synthetic([string] $Body) {
     return (Get-Process -Id $PID).Path, @('-NoProfile', '-NonInteractive', '-EncodedCommand', $encoded)
 }
 try {
+    # Scope all registry mocks locally; no real registry access or mutation.
+    & {
+        $script:registryMode = 'absent'
+        $script:enumerations = 0
+        function Get-Item {
+            [CmdletBinding()] param([string] $LiteralPath)
+            if ($LiteralPath -cne 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall') { throw 'Unexpected root' }
+            if ($script:registryMode -eq 'absent') { throw [System.Management.Automation.ItemNotFoundException]::new('synthetic absent root') }
+            if ($script:registryMode -eq 'denied') { throw [UnauthorizedAccessException]::new('synthetic lookup denied') }
+            return [pscustomobject]@{ PSPath = $LiteralPath }
+        }
+        function Get-ChildItem {
+            [CmdletBinding()] param([string] $LiteralPath)
+            $script:enumerations++
+            if ($script:registryMode -eq 'enumeration-error') { throw 'synthetic enumeration failed' }
+            if ($script:registryMode -eq 'vanished') { throw [System.Management.Automation.ItemNotFoundException]::new('synthetic root vanished after lookup') }
+            if ($script:registryMode -eq 'empty') { return }
+            if ($script:registryMode -eq 'missing-name') { [pscustomobject]@{PSPath='synthetic-no-name'} }
+            [pscustomobject]@{PSPath='synthetic-other'}
+            if ($script:registryMode -ne 'other-only') { [pscustomobject]@{PSPath='synthetic-nav'} }
+        }
+        function Get-ItemProperty {
+            [CmdletBinding()] param([string] $LiteralPath)
+            if ($script:registryMode -eq 'property-error') { throw 'synthetic property denied' }
+            if ($LiteralPath -eq 'synthetic-no-name') { return [pscustomobject]@{Unrelated='inert'} }
+            if ($LiteralPath -eq 'synthetic-nav' -and $script:registryMode -eq 'missing-version') { return [pscustomobject]@{DisplayName='Azeroth Navigator'} }
+            if ($LiteralPath -eq 'synthetic-nav' -and $script:registryMode -eq 'invalid-version') { return [pscustomobject]@{DisplayName='Azeroth Navigator';DisplayVersion=42} }
+            if ($LiteralPath -eq 'synthetic-nav' -and $script:registryMode -eq 'blank-version') { return [pscustomobject]@{DisplayName='Azeroth Navigator';DisplayVersion='  '} }
+            if ($LiteralPath -eq 'synthetic-nav') { return [pscustomobject]@{DisplayName='Azeroth Navigator';DisplayVersion='1.0.0-rc.1'} }
+            return [pscustomobject]@{DisplayName='Other software';DisplayVersion='5.0'}
+        }
+        Check 'absent root is no registration without enumeration' ($null -eq (Get-InstalledDisplayVersion) -and $script:enumerations -eq 0)
+        $script:registryMode='empty'
+        Check 'present empty root is no registration' ($null -eq (Get-InstalledDisplayVersion))
+        $script:registryMode='other-only'
+        Check 'unrelated registration is not a match' ($null -eq (Get-InstalledDisplayVersion))
+        $script:registryMode='normal'
+        Check 'matching registration among unrelated entries retains its version' ((Get-InstalledDisplayVersion) -ceq '1.0.0-rc.1')
+        $script:registryMode='missing-name'
+        Check 'unrelated key without DisplayName does not hide the actual registration' ((Get-InstalledDisplayVersion) -ceq '1.0.0-rc.1')
+        $script:registryMode='missing-version'
+        Refuses 'matching registration missing its version is not treated as absent' 'DisplayVersion' {Get-InstalledDisplayVersion}
+        foreach ($mode in @('invalid-version','blank-version')) {
+            $script:registryMode=$mode
+            Refuses "matching registration $mode is not treated as absent" 'invalid DisplayVersion' {Get-InstalledDisplayVersion}
+        }
+        $script:registryMode='denied'
+        Refuses 'root access denial propagates' 'synthetic lookup denied' {Get-InstalledDisplayVersion}
+        $script:registryMode='enumeration-error'
+        Refuses 'existing root enumeration failure propagates' 'synthetic enumeration failed' {Get-InstalledDisplayVersion}
+        $script:registryMode='vanished'
+        Refuses 'root disappearing after lookup remains an enumeration failure' 'synthetic root vanished' {Get-InstalledDisplayVersion}
+        $script:registryMode='property-error'
+        Refuses 'registration property failure propagates' 'synthetic property denied' {Get-InstalledDisplayVersion}
+    }
+    if ($RegistryOnly) {
+        Write-Host "$count inert registry helper checks passed; no real registry or process controls"
+        return
+    }
     New-Item -ItemType Directory -Path $temp | Out-Null
     Refuses 'no setup executable is refused' 'found 0' { Get-NativeSmokeSetup -Directory $temp }
     [IO.File]::WriteAllText((Join-Path $temp 'A-1.0.0-x64-setup.exe'), 'x')
