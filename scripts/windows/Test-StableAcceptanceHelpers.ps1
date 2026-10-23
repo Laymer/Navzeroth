@@ -192,6 +192,104 @@ try{
   if($diag.primary.error.Length -ne 256 -or [Text.Encoding]::UTF8.GetByteCount($failure) -gt 65536){throw 'Failure diagnostics unbounded'}
  }
  Check 'lack of controllable adapter is unverified/failure' {$script:nics=@{A='Disabled'};Refuse {Invoke-StableOffline {throw 'Should not run'}}}
+ # ADR 0010 firewall isolation: mocked profiles/rules and connectivity only.
+ function New-MockFirewall {
+  $script:fwProfiles=[ordered]@{Domain=@{e='True';i='NotConfigured';o='NotConfigured'};Private=@{e='True';i='Block';o='Allow'};Public=@{e='False';i='NotConfigured';o='NotConfigured'}}
+  $script:fwRules=[ordered]@{};foreach($n in @('core-dns','edge-mdns','ssh-in')){$script:fwRules[$n]=@{Enabled=$true;Action='Allow';Group=''}};$script:fwRules['wsh-block']=@{Enabled=$true;Action='Block';Group=''}
+  $script:fwOnline=$true;$script:fwLeak=$false;$script:fwDisableFail=$false;$script:fwEnableFail='';$script:fwStickyRule='';$script:fwNoReturn=$false;$script:fwAgents=@('C:\actions\runner\bin\Runner.Listener.exe','C:\actions\runner\bin\Runner.Worker.exe');$script:fwSeen=$null;$script:fwSequence=0;$script:fwWasIsolated=$false
+ }
+ function Get-StableRunnerAgentPrograms { if($script:fwAgents.Count -ne 2){throw 'Synthetic missing runner ancestry'};return $script:fwAgents }
+ function Resolve-StableProbeAddress([string]$HostName) { return '192.0.2.1' }
+ function Test-StableExternalTcp([string]$Address,[int]$Port,[int]$TimeoutMs=5000) {
+  if(-not $script:fwOnline){return $false}
+  $blocked=@($script:fwProfiles.Values|Where-Object {$_.e -eq 'True' -and $_.o -eq 'Block'}).Count -eq 3
+  if($blocked){$script:fwWasIsolated=$true;return $script:fwLeak};if($script:fwNoReturn -and $script:fwWasIsolated){return $false};return $true
+ }
+ function Get-NetFirewallProfile { [CmdletBinding()]param([string]$PolicyStore)
+  foreach($n in $script:fwProfiles.Keys){$p=$script:fwProfiles[$n];[pscustomobject]@{Name=$n;Enabled=$p.e;DefaultInboundAction=$p.i;DefaultOutboundAction=$p.o}}
+ }
+ function Set-NetFirewallProfile { [CmdletBinding()]param([string[]]$Name,[string]$Enabled,[string]$DefaultInboundAction,[string]$DefaultOutboundAction,[string]$PolicyStore)
+  foreach($n in $Name){$script:fwProfiles[$n]=@{e=$Enabled;i=$DefaultInboundAction;o=$DefaultOutboundAction}}
+ }
+ function Get-NetFirewallRule { [CmdletBinding()]param([string]$PolicyStore,[string]$Enabled,[string]$Action,[string]$Group)
+  foreach($n in @($script:fwRules.Keys)){$r=$script:fwRules[$n]
+   if(($Enabled -and ([string]$r.Enabled) -ne $Enabled) -or ($Action -and $r.Action -ne $Action) -or ($Group -and $r.Group -ne $Group)){continue}
+   [pscustomobject]@{Name=$n}}
+ }
+ function New-NetFirewallRule { [CmdletBinding()]param([string]$DisplayName,[string]$Group,[string]$Direction,[string]$Action,[string]$Program,[string]$Service,[string]$Protocol,[string]$RemotePort,[string]$PolicyStore)
+  $script:fwSequence++;$script:fwRules[('{iso-'+$script:fwSequence+'}')]=@{Enabled=$true;Action=$Action;Group=$Group;Program=$Program}
+ }
+ function Remove-NetFirewallRule { [CmdletBinding()]param([string]$Group,[string]$PolicyStore)
+  foreach($n in @($script:fwRules.Keys)){if($script:fwRules[$n].Group -eq $Group){$script:fwRules.Remove($n)}}
+ }
+ function Disable-NetFirewallRule { [CmdletBinding()]param([string[]]$Name,[string]$PolicyStore)
+  foreach($n in $Name){if($script:fwDisableFail -and $n -eq 'edge-mdns'){throw 'Synthetic partial disable failure'};if($n -ne $script:fwStickyRule){$script:fwRules[$n].Enabled=$false}}
+ }
+ function Enable-NetFirewallRule { [CmdletBinding()]param([string[]]$Name,[string]$PolicyStore)
+  foreach($n in $Name){if($n -eq $script:fwEnableFail){throw 'Synthetic enable failure'}}
+  foreach($n in $Name){$script:fwRules[$n].Enabled=$true}
+ }
+ function Snapshot-MockFirewall { return (@{p=$script:fwProfiles;r=@($script:fwRules.Keys|ForEach-Object {$_+'='+$script:fwRules[$_].Enabled})}|ConvertTo-Json -Depth 5 -Compress) }
+ function FirewallFailure([scriptblock]$Workload,[int]$RestoreSeconds=60) {
+  $failure=$null;try{Invoke-StableFirewallOffline $Workload -RestoreSeconds $RestoreSeconds|Out-Null}catch{$failure=$_.Exception.Message};return $failure
+ }
+ Check 'firewall isolation blocks external access during the workload and restores exactly' {
+  New-MockFirewall;$before=Snapshot-MockFirewall
+  $result=Invoke-StableFirewallOffline {
+   $script:fwSeen=@{blocked=@($script:fwProfiles.Values|Where-Object {$_.e -eq 'True' -and $_.i -eq 'Block' -and $_.o -eq 'Block'}).Count;enabled=@($script:fwRules.Keys|Where-Object {$script:fwRules[$_].Enabled -and $script:fwRules[$_].Action -eq 'Allow'});programs=@($script:fwRules.Values|Where-Object {$_.Group}|ForEach-Object {$_.Program})}
+   return @{actual='workload'}}
+  if($script:fwSeen.blocked -ne 3 -or $script:fwSeen.enabled.Count -ne 4 -or @($script:fwSeen.enabled|Where-Object {$_ -notlike '{iso-*'}).Count -ne 0 -or @($script:fwSeen.programs|Where-Object {$_ -like '*Runner.*'}).Count -ne 2){throw 'Isolation scope differs from runner agent plus DNS only'}
+  if((Snapshot-MockFirewall) -cne $before){throw 'Firewall state was not restored exactly'}
+  if(-not $result.network_isolated -or -not $result.external_connection_refused -or -not $result.restored -or $result.isolation -cne 'windows_firewall_runner_agent_only' -or $result.workload.actual -ne 'workload' -or $result.allowed_programs.Count -ne 2 -or $result.diagnostics.disabled_allow_rules -ne 3){throw 'Isolation result differs'}
+ }
+ Check 'firewall workload failure restores state and keeps the original cause' {
+  New-MockFirewall;$before=Snapshot-MockFirewall
+  $failure=FirewallFailure {throw 'Synthetic native failure'}
+  if($failure -notlike 'Hosted offline firewall control failed: *'){throw 'Diagnostic envelope missing'}
+  $diag=$failure.Substring('Hosted offline firewall control failed: '.Length)|ConvertFrom-Json
+  if($diag.primary.stage -cne 'workload' -or $diag.primary.error -cne 'Synthetic native failure' -or (Snapshot-MockFirewall) -cne $before){throw 'Workload failure lost cause or state'}
+ }
+ Check 'external access under isolation refuses before the workload' {
+  New-MockFirewall;$before=Snapshot-MockFirewall;$script:fwLeak=$true;$script:workloadRan=$false
+  $failure=FirewallFailure {$script:workloadRan=$true;return @{}}
+  if($script:workloadRan -or $failure -notlike '*External connection still succeeds under isolation*' -or (Snapshot-MockFirewall) -cne $before){throw 'Leaking isolation was accepted'}
+ }
+ Check 'unprovable offline state changes nothing' {
+  New-MockFirewall;$before=Snapshot-MockFirewall;$script:fwOnline=$false
+  Refuse {Invoke-StableFirewallOffline {throw 'Must not run'}}
+  New-MockFirewall;$script:fwAgents=@('only-one')
+  Refuse {Invoke-StableFirewallOffline {throw 'Must not run'}}
+  if((Snapshot-MockFirewall) -cne $before -or @($script:fwRules.Values|Where-Object {$_.Group}).Count -ne 0){throw 'Refusal changed firewall state'}
+ }
+ Check 'partial rule disable is restored with its cause' {
+  New-MockFirewall;$before=Snapshot-MockFirewall;$script:fwDisableFail=$true
+  $failure=FirewallFailure {throw 'Must not run'}
+  if($failure -notlike '*Synthetic partial disable failure*' -or (Snapshot-MockFirewall) -cne $before){throw 'Partial disable recovery lost scope/cause'}
+ }
+ Check 'an allow rule that stays enabled refuses isolation' {
+  New-MockFirewall;$script:fwStickyRule='ssh-in'
+  $failure=FirewallFailure {throw 'Must not run'}
+  if($failure -notlike '*Allow rules other than the runner agent and DNS remain enabled*'){throw 'Unclean isolation accepted'}
+ }
+ Check 'restore failures are reported without replacing a pass into success' {
+  New-MockFirewall;$script:fwEnableFail='core-dns'
+  $failure=FirewallFailure {return @{actual='workload'}}
+  $diag=$failure.Substring('Hosted offline firewall control failed: '.Length)|ConvertFrom-Json
+  if($null -ne $diag.primary -or $diag.restoration.rules_enabled -notlike '*not*enabled*' -or $script:fwRules['edge-mdns'].Enabled -ne $true){throw 'Restore failure hidden or other rules left disabled'}
+  New-MockFirewall;$script:fwNoReturn=$true
+  $failure=FirewallFailure {return @{actual='workload'}} 1
+  $diag=$failure.Substring('Hosted offline firewall control failed: '.Length)|ConvertFrom-Json
+  if($diag.restoration.connectivity -notlike 'external connection did not return*'){throw 'Unrestored connectivity accepted'}
+ }
+ Check 'offline case accepts exactly one offline evidence shape' {
+  $firewall=@{network_isolation='windows_firewall_runner_agent_only';network_isolated=$true;external_connection_refused=$true;network_restored=$true;allowed_programs=@('a','b');dns_allowed=$true}
+  Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return $firewall.Clone()}
+  Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return @{network_disabled=$true;network_restored=$true}}
+  $mixed=$firewall.Clone();$mixed.network_disabled=$true;Refuse {Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return $mixed}}
+  foreach($field in @('network_isolated','external_connection_refused','network_restored')){$bad=$firewall.Clone();$bad[$field]=$false;Refuse {Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return $bad}}}
+  $bad=$firewall.Clone();$bad.network_isolation='adapter';Refuse {Invoke-StableCase 'HOSTED-OFFLINE' $identity $root {return $bad}}
+ }
+ Check 'firewall controls refuse non-hosted environments' {New-MockFirewall;$env:RUNNER_ENVIRONMENT='self-hosted';try{Refuse {Invoke-StableFirewallOffline {throw 'Should not run'}}}finally{$env:RUNNER_ENVIRONMENT='github-hosted'}}
  Check 'offline controls refuse non-hosted environments' {$env:RUNNER_ENVIRONMENT='self-hosted';Refuse {Invoke-StableOffline {throw 'Should not run'}}}
  if ($PSVersionTable.PSVersion.Major -ge 7) {
   Check 'actual parent timeout retains pending child phase and watchdog without a pass' {
