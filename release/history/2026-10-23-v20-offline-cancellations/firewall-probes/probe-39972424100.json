@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "hosted_offline_firewall_engineering_probe",
+  "acceptance_observations_promoted": false,
+  "passed": true,
+  "source_commit": "19f9ca28debcc8fe2719067ad1595402d4b2f8b5",
+  "run_id": "39972424100",
+  "run_attempt": "1",
+  "runner_os": "Windows_NT",
+  "powershell_version": "7.6.7",
+  "hold_seconds": 600,
+  "phase": "complete",
+  "external_connection_owners": [
+    {
+      "process": "hosted-compute-agent",
+      "connections": 3
+    },
+    {
+      "process": "lsass",
+      "connections": 1
+    },
+    {
+      "process": "MpDefenderCoreService",
+      "connections": 2
+    },
+    {
+      "process": "provjobd.exe3956508070",
+      "connections": 1
+    },
+    {
+      "process": "Runner.Listener",
+      "connections": 3
+    },
+    {
+      "process": "Runner.Worker",
+      "connections": 5
+    },
+    {
+      "process": "StartMenuExperienceHost",
+      "connections": 3
+    },
+    {
+      "process": "svchost",
+      "connections": 3
+    },
+    {
+      "process": "WaAppAgent",
+      "connections": 1
+    },
+    {
+      "process": "WindowsAzureGuestAgent",
+      "connections": 2
+    }
+  ],
+  "checks": 40,
+  "isolation": {
+    "isolation": "windows_firewall_runner_agent_only",
+    "allowed_programs": [
+      "C:\\actions-runner\\cached\\2.338.0\\bin\\Runner.Worker.exe",
+      "C:\\actions-runner\\cached\\2.338.0\\bin\\Runner.Listener.exe"
+    ],
+    "held_ms": 600274,
+    "diagnostics": {
+      "primary": null,
+      "restoration": {
+        "rules_removed": "ok",
+        "rules_enabled": "ok",
+        "profiles": "ok",
+        "connectivity": "ok"
+      },
+      "restore_elapsed_ms": 34924,
+      "disabled_allow_rules": 177,
+      "remaining_enabled_allow_rules": 4
+    }
+  },
+  "elapsed_ms": 652007.0354,
+  "error": null
+}
