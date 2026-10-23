@@ -88,3 +88,19 @@ all eight exact-installer hosted cases and independently reviewed downloaded-dra
 native UI acceptance remain required. Actual Windows execution, human smoke and
 publication were not performed by this task. No time limits, live-client claims,
 content exclusions or ordinary-PC performance claims changed.
+
+## Reproducible inventory followup
+
+Updated scope claim bdf97ced from final a1a33fc5. The coordinator found that
+scripts/generate-stable-inventory.py still emitted schema 4 / OWNER rows.
+Followup c9585caf changes only output schema versions to 5, the final pristine
+DRAFT-INSTALLER-SMOKE / automated_draft_windows row, and matching documentation.
+Existing historical artifacts are read only for their existing deferrals; none
+are rewritten. No canonical generation command was run and release/v1 outputs
+remain untouched. The four synthetic generator tests passed with exact nine-row
+methods, deterministic bytes, absent installer/final-evidence binding, null tested
+source/production, pristine observation fields and unchanged history assertions.
+Python preparation's nine tests passed again. All Rust production/test bytes are
+unchanged from the recorded 63190bde coverage run; no repeated Rust build or
+Windows acceptance is claimed for this Python-only followup. Root owns actual
+canonical regeneration after complete reviewed integration.
