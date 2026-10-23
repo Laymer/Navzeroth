@@ -26,7 +26,10 @@ jobs:
           persist-credentials: false
       - name: Test bounded probe inputs and process watchdogs without installing
         shell: pwsh
-        run: python -m unittest discover -s scripts/tests -p test_hosted_recovery_probe.py -v
+        run: |
+          python -m unittest discover -s scripts/tests -p test_hosted_recovery_probe.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Bounded recovery probe regression failed' }
+          ./scripts/windows/Test-RecoveryProbeOwnership.ps1
       - name: Compile reviewed runtime and exercise historical full-pack recovery
         shell: pwsh
         env:

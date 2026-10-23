@@ -7,12 +7,16 @@ import os
 import platform
 import shutil
 from pathlib import Path, PurePosixPath
-import signal
 import stat
 import subprocess
 import threading
 import time
 import zipfile
+import sys
+import uuid
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from recovery_probe_process import OwnedTree
 
 MAX_ZIP = 64 * 1024 * 1024
 MAX_INSTALLER = 128 * 1024 * 1024
@@ -38,6 +42,16 @@ def regular(path):
     return value.st_size
 
 
+def read_limited(path, maximum):
+    if regular(path) > maximum:
+        raise ValueError('probe input exceeds finite role limit')
+    with path.open('rb') as stream:
+        raw=stream.read(maximum+1)
+    if len(raw) > maximum:
+        raise ValueError('probe input grew beyond its role limit')
+    return raw
+
+
 def digest(path, maximum):
     size = regular(path)
     if not 0 < size <= maximum:
@@ -58,29 +72,14 @@ def digest(path, maximum):
     return result.hexdigest()
 
 
-def kill_tree(process):
-    if os.name == 'nt':
-        subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                       timeout=10, check=False)
-    else:
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-    if process.poll() is None:
-        process.kill()
-
-
 def run(command, output, name, seconds, env=None, maximum=MAX_LOG, cwd=None):
     """Bound whole process-tree lifetime and each retained byte stream."""
     stdout = output / (name + '.stdout')
     stderr = output / (name + '.stderr')
     start = time.monotonic()
     failures = []
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                               env=env, cwd=cwd, stdin=subprocess.DEVNULL,
-                               start_new_session=os.name != 'nt')
+    owner=OwnedTree(command,env=env,cwd=cwd)
+    process=owner.process
 
     def capture(stream, path):
         try:
@@ -104,18 +103,26 @@ def run(command, output, name, seconds, env=None, maximum=MAX_LOG, cwd=None):
         thread.start()
     timed_out = False
     try:
-        while process.poll() is None:
+        while True:
+            parent_done=process.poll() is not None
+            capture_done=all(not thread.is_alive() for thread in threads)
+            if parent_done and capture_done and not owner.active():
+                break
             if failures or time.monotonic() - start >= seconds:
                 timed_out = not failures
-                kill_tree(process)
+                owner.kill()
                 break
             time.sleep(0.05)
-        process.wait(timeout=10)
+        process.wait(timeout=2)
     finally:
-        if process.poll() is None:
-            kill_tree(process)
+        try:
+            if process.poll() is None or owner.active():
+                owner.kill()
+        finally:
+            owner.close()
+        cleanup_deadline=time.monotonic()+2
         for thread in threads:
-            thread.join(timeout=10)
+            thread.join(timeout=max(0,cleanup_deadline-time.monotonic()))
         if any(thread.is_alive() for thread in threads):
             failures.append('process output capture did not finish')
     result = dict(command=command, exit_code=process.returncode, timed_out=timed_out,
@@ -137,7 +144,7 @@ def extract_installer(archive, output, spec):
         names = set()
         for entry in members:
             name = PurePosixPath(entry.filename)
-            if (name.is_absolute() or '..' in name.parts or '\\' in entry.filename
+            if (entry.orig_filename != entry.filename or name.is_absolute() or '..' in name.parts or '\\' in entry.filename
                     or ':' in entry.filename or entry.filename in names
                     or stat.S_IFMT(entry.external_attr >> 16) == stat.S_IFLNK):
                 raise ValueError('unsafe or duplicate artifact member')
@@ -174,6 +181,24 @@ def artifact_metadata(value, spec):
         raise ValueError('historical artifact API identity differs')
 
 
+def owns_fixture(marker, nonce, source, installer_hash, install_directory):
+    if not marker.exists():
+        return False
+    try:
+        if not 0 < regular(marker) <= 4096:
+            return False
+        record = strict_json(read_limited(marker,4096))
+        expected = dict(schema_version=1, ownership_nonce=nonce, source_commit=source,
+                        installer_sha256=installer_hash, install_directory=str(install_directory))
+        return (type(record.get('schema_version')) is int
+                and set(record) == set(expected)
+                and isinstance(record.get('install_directory'),str)
+                and all(record[k] == v for k, v in expected.items() if k != 'install_directory')
+                and os.path.normcase(record['install_directory']) == os.path.normcase(str(install_directory)))
+    except (OSError, ValueError, TypeError, AttributeError):
+        return False
+
+
 def guarded_source(root, output):
     if (os.name != 'nt' or os.environ.get('GITHUB_ACTIONS') != 'true'
             or os.environ.get('RUNNER_ENVIRONMENT') != 'github-hosted'):
@@ -196,7 +221,7 @@ def main(root, output):
     output.mkdir()
     if regular(root / SPEC) > 16384:
         raise ValueError('fixture policy exceeds limit')
-    spec = strict_json((root / SPEC).read_bytes())
+    spec = strict_json(read_limited(root / SPEC,16384))
     if spec['schema_version'] != 1 or spec['repository'] != os.environ.get('GITHUB_REPOSITORY'):
         raise ValueError('fixture policy repository/version differs')
     if len(spec['metadata_files']) != 3 or {f['git_path'] for f in spec['metadata_files']} != {'release/v1/bundled-content-build-identity.json', 'content/bundled/signers-v1.json', 'crates/app/tests/support/stable_engineering_snapshot.json'}:
@@ -206,16 +231,18 @@ def main(root, output):
                    platform=platform.platform(), python_version=platform.python_version(),
                    logical_processors=os.cpu_count(), disk_free_bytes=shutil.disk_usage(output).free,
                    peak_memory_bytes=None, memory_scope='Not measured by this probe; no ordinary-PC claim.')
-    installed = False
+    ownership = output/'fixture-ownership.json'
+    nonce = uuid.uuid4().hex
+    install_directory = Path(os.environ['LOCALAPPDATA'])/'Azeroth Navigator'
     primary = None
     cleanup = None
     try:
         metadata = run(['gh', 'api', f"repos/{spec['repository']}/actions/artifacts/{spec['artifact_id']}"],
                        output, 'artifact-api', 60, maximum=1024*1024)
-        artifact_metadata(strict_json(metadata.read_bytes()), spec)
+        artifact_metadata(strict_json(read_limited(metadata,1024*1024)), spec)
         commit_api = run(['gh', 'api', f"repos/{spec['repository']}/git/commits/{spec['installer_source_commit']}"],
                          output, 'fixture-commit-api', 60, maximum=1024*1024)
-        commit = strict_json(commit_api.read_bytes())
+        commit = strict_json(read_limited(commit_api,1024*1024))
         if commit['sha'] != spec['installer_source_commit'] or commit['tree']['sha'] != spec['fixture_tree']:
             raise ValueError('historical installer source tree differs')
         tree = subprocess.check_output(['git', '-C', str(root), 'rev-parse', spec['fixture_metadata_commit']+'^{tree}'], timeout=30).decode().strip()
@@ -234,8 +261,8 @@ def main(root, output):
                 raise ValueError('historical metadata differs from reviewed fixture pin')
             path = fixture / reference['git_path']
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(raw.read_bytes())
-        identity = strict_json((fixture/'release/v1/bundled-content-build-identity.json').read_bytes())
+            path.write_bytes(read_limited(raw,1024*1024))
+        identity = strict_json(read_limited(fixture/'release/v1/bundled-content-build-identity.json',65536))
         if identity['production_sha256'] != spec['fixture_production_sha256']:
             raise ValueError('fixture production identity differs')
         environment = os.environ.copy()
@@ -253,9 +280,11 @@ def main(root, output):
         binary = Path(binaries[0])
         binary.resolve().relative_to((output/'build').resolve())
         summary['binary_sha256'] = digest(binary, 256*1024*1024)
-        installed = True  # cleanup is attempted even after partial installer failure
         run(['pwsh', '-NoProfile', '-File', str(root/'scripts/windows/Recovery-Probe-Install.ps1'),
-             '-Installer', str(installer), '-ExpectedSha256', spec['installer_sha256']], output, 'install-fixture', 360)
+             '-Installer', str(installer), '-ExpectedSha256', spec['installer_sha256'],
+             '-OwnershipMarker', str(ownership), '-OwnershipNonce', nonce], output, 'install-fixture', 360)
+        if not owns_fixture(ownership, nonce, source, spec['installer_sha256'], install_directory):
+            raise ValueError('fixture installation did not issue a valid ownership marker')
         resources = Path(os.environ['LOCALAPPDATA'])/'Azeroth Navigator/bundled-content'
         environment.update(NAVZEROTH_RECOVERY_SOURCE_ROOT=str(fixture), NAVZEROTH_RECOVERY_BUNDLE=str(resources),
                            NAVZEROTH_RECOVERY_OUTPUT=str(output/'workload'))
@@ -283,8 +312,11 @@ def main(root, output):
         summary['primary_error'] = type(error).__name__ + ': ' + str(error)[:1024]
     finally:
         try:
-            if installed:
-                run(['pwsh', '-NoProfile', '-File', str(root/'scripts/windows/Recovery-Probe-Install.ps1'), '-Cleanup'], output, 'cleanup', 360)
+            if owns_fixture(ownership, nonce, source, spec['installer_sha256'], install_directory):
+                run(['pwsh', '-NoProfile', '-File', str(root/'scripts/windows/Recovery-Probe-Install.ps1'), '-Cleanup', '-ExpectedSha256', spec['installer_sha256'],
+                     '-OwnershipMarker', str(ownership), '-OwnershipNonce', nonce], output, 'cleanup', 360)
+            else:
+                summary['cleanup_not_attempted'] = 'No valid marker: do not touch an unowned pre-existing application.'
         except BaseException as error:
             cleanup = error
             summary['cleanup_error'] = type(error).__name__ + ': ' + str(error)[:1024]

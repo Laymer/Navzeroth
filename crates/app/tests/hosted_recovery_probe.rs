@@ -65,7 +65,7 @@ fn hosted_historical_fullpack_recovery() {
     };
     eprintln!(
         "{}",
-        json!({"kind":"diagnostic_not_acceptance","diagnostic_runtime_commit":option_env!("NAVZEROTH_DIAGNOSTIC_RUNTIME_COMMIT").expect("compile with reviewed runtime commit"),"diagnostic_harness_commit":option_env!("NAVZEROTH_DIAGNOSTIC_HARNESS_COMMIT").expect("compile with harness commit"),"signed_bundle_identity":serde_json::from_slice::<Value>(&identity).unwrap(),"signed_bundle_receipt":serde_json::from_slice::<Value>(&std::fs::read(Path::new(&bundle).join("receipt.json")).unwrap()).unwrap(),"platform":std::env::consts::OS,"bundle":bundle})
+        json!({"kind":"diagnostic_not_acceptance","diagnostic_runtime_commit":match option_env!("NAVZEROTH_DIAGNOSTIC_RUNTIME_COMMIT") { Some(commit) => commit, None => panic!("compile with reviewed runtime commit") },"diagnostic_harness_commit":match option_env!("NAVZEROTH_DIAGNOSTIC_HARNESS_COMMIT") { Some(commit) => commit, None => panic!("compile with harness commit") },"signed_bundle_identity":serde_json::from_slice::<Value>(&identity).unwrap(),"signed_bundle_receipt":serde_json::from_slice::<Value>(&std::fs::read(Path::new(&bundle).join("receipt.json")).unwrap()).unwrap(),"platform":std::env::consts::OS,"bundle":bundle})
     );
     let host = timed("initial_signed_bundle_start", || {
         let host = start_host();
