@@ -47,7 +47,15 @@ function Assert-HostedCase($Case, [string] $Id, [string] $Version, [string] $Sou
         'HOSTED-DOWNGRADE-REFUSAL' { if ($Case.baseline_version -cne '1.0.0-rc.1' -or $Case.baseline_installer_sha256 -cnotmatch '^[a-f0-9]{64}$' -or $Case.attempted -isnot [bool] -or -not $Case.attempted -or $Case.timed_out -isnot [bool] -or $Case.timed_out -or $Case.installed_version_after -cne $Version) { throw 'Downgrade refusal was not completed against rc.1.' } }
         'HOSTED-PERSISTENCE-RECOVERY' { if ($Case.restart_verified -isnot [bool] -or -not $Case.restart_verified -or $Case.recovery_verified -isnot [bool] -or -not $Case.recovery_verified) { throw 'Persistence and recovery must both be verified.' } }
         'HOSTED-RESOURCES' { if ($Case.installed_resources_verified -isnot [bool] -or -not $Case.installed_resources_verified -or $Case.source_notices_verified -isnot [bool] -or -not $Case.source_notices_verified) { throw 'Exact resources and source/notices must both be verified.' } }
-        'HOSTED-OFFLINE' { if ($Case.network_disabled -isnot [bool] -or -not $Case.network_disabled) { throw 'Offline case requires an actually disabled network.' } }
+        'HOSTED-OFFLINE' {
+            # Historical cases disabled adapters; ADR 0010 cases isolate by firewall
+            # with only the runner, hosted VM agents and DNS allowed. Never mix the two shapes.
+            $names = @($Case.PSObject.Properties.Name)
+            if ($names -contains 'network_isolation') {
+                if ($names -contains 'network_disabled' -or $Case.network_isolation -cne 'windows_firewall_runner_and_host_agents_only' -or $Case.network_isolated -isnot [bool] -or -not $Case.network_isolated -or $Case.external_connection_refused -isnot [bool] -or -not $Case.external_connection_refused -or $Case.network_restored -isnot [bool] -or -not $Case.network_restored) { throw 'Offline case requires verified firewall isolation and restoration.' }
+            } elseif (@($names | Where-Object { $_ -cin @('network_isolated','external_connection_refused','allowed_programs','allowed_infrastructure_programs','dns_allowed') }).Count -ne 0) { throw 'Offline case mixes adapter and firewall evidence.'
+            } elseif ($Case.network_disabled -isnot [bool] -or -not $Case.network_disabled) { throw 'Offline case requires an actually disabled network.' }
+        }
         'HOSTED-PERFORMANCE' {
             if (-not (Test-HostedText $Case.workload) -or -not (Test-HostedText $Case.hardware) -or -not (Test-HostedText $Case.limitations)) { throw 'Performance requires workload/hardware/limitations.' }
             $metrics = @('install_ms','load_ms','activation_ms','browse_ms','planning_ms','peak_memory_bytes')
