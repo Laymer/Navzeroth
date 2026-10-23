@@ -55,10 +55,24 @@ function Stop-NativeSmokeProcesses {
 function Get-InstalledDisplayVersion {
     [CmdletBinding()]
     param()
-    $key = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
-        Where-Object { (Get-ItemProperty $_.PSPath).DisplayName -eq 'Azeroth Navigator' }
+    $root = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall'
+    # A fresh account may have no uninstall root. Only absence is benign;
+    # unreadable roots and failures after this lookup must remain failures.
+    try { $null = Get-Item -LiteralPath $root -ErrorAction Stop }
+    catch [System.Management.Automation.ItemNotFoundException] { return $null }
+    $key = Get-ChildItem -LiteralPath $root -ErrorAction Stop |
+        Where-Object {
+            $properties = Get-ItemProperty -LiteralPath $_.PSPath -ErrorAction Stop
+            $name = $properties.PSObject.Properties['DisplayName']
+            $null -ne $name -and $name.Value -eq 'Azeroth Navigator'
+        }
     if (-not $key) { return $null }
-    return [string](Get-ItemProperty @($key)[0].PSPath).DisplayVersion
+    $registration = Get-ItemProperty -LiteralPath @($key)[0].PSPath -ErrorAction Stop
+    $version = $registration.PSObject.Properties['DisplayVersion']
+    if ($null -eq $version -or $version.Value -isnot [string] -or [string]::IsNullOrWhiteSpace($version.Value)) {
+        throw 'Installed registration has missing or invalid DisplayVersion.'
+    }
+    return $version.Value
 }
 
 function Install-NativeSmokeSetup {
