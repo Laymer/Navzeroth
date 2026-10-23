@@ -1,0 +1,29 @@
+{
+  "command": [
+    "D:\\a\\_temp\\recovery-engineering-probe\\build\\release\\deps\\hosted_recovery_probe-ad2edf7916ac3a7b.exe",
+    "--ignored",
+    "--exact",
+    "hosted_historical_fullpack_recovery",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 915.9839999999999,
+  "capture_errors": [],
+  "completion_policy": "strict_tree",
+  "root_exit": {
+    "elapsed_ms": 915983.9999999999,
+    "exit_code": 0,
+    "owned_tree_active": false,
+    "stdout_eof": true,
+    "stderr_eof": true
+  },
+  "owned_cleanup": {
+    "attempted": false,
+    "completed": true,
+    "job_inactive": true
+  },
+  "stdout_eof": true,
+  "stderr_eof": true
+}

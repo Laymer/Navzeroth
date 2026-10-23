@@ -31,18 +31,20 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
-2026-10-23: reviewed PRs 271–280 are integrated locally. Probe 39921053021 failed
-the compiler process-tree watchdog: Cargo exited successfully and reported a
-5m40s build, but descendant/pipe completion exceeded 1200s. Installation and
-recovery never ran; the exact remaining process or pipe condition is unknown.
-Original raw evidence is archived. A compiler-specific owned-descendant cleanup
-repair is in progress; all other process checks and workload bounds stay strict.
-The earlier registry failure is separately preserved. README/install instructions
-now reflect the approved release contract. Actual functional execution on that
-source `23c80478` passed in 79.04s on shared Linux; its proof is archived separately.
-Canonical preparation still binds the earlier `41b52c8f` and must be renewed after
-the harness repair. Its 260,113 records/274,059 unknown fields and nine unverified
-Windows rows retain their meaning. Remote PR239 remains V19; no tag or publication.
+2026-10-23: reviewed PRs 271–281 are integrated locally; all eleven final published
+heads were checked as ancestors. Probe 39921053021 failed compiler process-tree
+completion after Cargo reported success; its exact raw evidence remains archived.
+The compiler-specific repair is independently reviewed and passes twelve inert
+checks on Linux and native Windows. Generic process checks and all bounds remain.
+New probe 39925184911 runs at `b040778a`; its early steps passed and the combined
+compilation/recovery step remains in progress. No actual workload result is inferred.
+Full-content functional execution at b040 passed in 79.54s on disclosed shared
+Linux hardware. Renewed material preparation passes, with all 88 proof/material
+references independently verified, 82 selected files/two packs, 260,113 records
+and 274,059 accepted unknowns. All nine Windows observations remain unverified.
+Final public review and receipts await the actual probe. Remote PR239 remains V19;
+no main merge, tag or publication.
+[Current source and checks](handoffs/2026-10-23-cargo-completion-source-v20.md).
 [Compiler watchdog result](handoffs/2026-10-23-recovery-probe-41b52-result.md).
 [Repaired source and actual checks](handoffs/2026-10-23-registry-repaired-source-v20.md).
 [Integration and actual reviews](handoffs/2026-10-23-schema5-release-integration.md).
