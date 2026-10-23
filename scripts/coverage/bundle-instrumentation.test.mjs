@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 import {execFileSync} from 'node:child_process';
@@ -56,4 +57,22 @@ test('actual pinned LLVM binary report loses ordinary replaced main and retains 
   assertCleanCommittedSource(root);
   const profiles=fs.readdirSync(target).filter(name=>name.endsWith('.profraw'));assert(profiles.length>0);assert(profiles.some(name=>fs.statSync(path.join(target,name)).size>0));
  } finally {fs.rmSync(temporary,{recursive:true,force:true});}
+});
+
+test('native collector exercises both release schema branches and real panic refusals before reporting',()=>{
+ const source=fs.readFileSync(new URL('./collect-rust.mjs',import.meta.url),'utf8');
+ const calls=source.split('\n').filter(line=>line.includes("'export_release_schema'"));
+ const actual=[];
+ vm.runInNewContext(calls.join('\n'),{cargoExample:(...args)=>actual.push(JSON.parse(JSON.stringify(args)))});
+ assert.deepEqual(actual,[
+  ['release-inventory-schema-export','azeroth-core','export_release_schema',['inventory']],
+  ['release-evidence-schema-export','azeroth-core','export_release_schema',['evidence']],
+  ['release-schema-missing-selector','azeroth-core','export_release_schema',[],false,101],
+  ['release-schema-invalid-selector','azeroth-core','export_release_schema',['unsupported'],false,101],
+ ]);
+ for(const line of calls){
+  assert(source.indexOf(line)>source.indexOf("run('instrumentation-environment'"));
+  assert(source.indexOf(line)<source.indexOf("report('debug')"));
+ }
+ assert.match(source,/function cargoExample\([^\n]+env:instrumented,expected/);
 });

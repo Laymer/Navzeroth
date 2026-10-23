@@ -1,6 +1,6 @@
 {
-  "source": "63190bde153c777296658faff54c4860cf1a763c",
-  "lcov_sha256": "124a1a7ab8a951a1083dde2e15ab01b0b2c0ab21a9008a6c02c0c8bd7cff43eb",
+  "source": "d55286a2992220a267eab9140ea38321dd2f7f9a",
+  "lcov_sha256": "76aeb6e071a698837bf8d6f04723e8c0ea3614e8f998bbe6ebaf13802b32500d",
   "files": [
     {
       "path": "crates/core/src/release.rs",
@@ -205,6 +205,14 @@
       "uncovered": [
         208
       ]
+    },
+    {
+      "path": "crates/core/examples/export_release_schema.rs",
+      "covered": 8,
+      "executable": 8,
+      "percent": 100,
+      "pass": true,
+      "uncovered": []
     }
   ],
   "core_profile_scope": "Core production bytes unchanged since cbf2b70a; matched core497 tests/2 ignored profiles retained; CLI77 tests/2 ignored freshly rerun on63190bde.",
@@ -238,5 +246,36 @@
     "canonical_generation_performed": false,
     "rust_files_unchanged_from_coverage": true,
     "log": "/tmp/navzeroth-schema5-inventory-generator-tests.log"
+  },
+  "executable_closure_followup": {
+    "code_commit": "d55286a2992220a267eab9140ea38321dd2f7f9a",
+    "example": "crates/core/examples/export_release_schema.rs",
+    "selectors": [
+      {
+        "arguments": [
+          "inventory"
+        ],
+        "exit_code": 0
+      },
+      {
+        "arguments": [
+          "evidence"
+        ],
+        "exit_code": 0
+      },
+      {
+        "arguments": [],
+        "exit_code": 101
+      },
+      {
+        "arguments": [
+          "unsupported"
+        ],
+        "exit_code": 101
+      }
+    ],
+    "author_wiring_test_passed": 1,
+    "coordinator_full_instrumentation_tests_passed": 3,
+    "report_configuration": "Same collector include-build-script/no-default-ignore-filename-regex and vendor/tests/rustc/registry/target exclusion regex; no threshold or inventory exclusions added."
   }
 }
