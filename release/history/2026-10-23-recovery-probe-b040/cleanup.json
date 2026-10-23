@@ -1,0 +1,34 @@
+{
+  "command": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "D:\\a\\Navzeroth\\Navzeroth\\scripts\\windows\\Recovery-Probe-Install.ps1",
+    "-Cleanup",
+    "-ExpectedSha256",
+    "ffcb98661a1310458a663aa06451e765b99bdb07dba40a997f1e57aad5fc3225",
+    "-OwnershipMarker",
+    "D:\\a\\_temp\\recovery-engineering-probe\\fixture-ownership.json",
+    "-OwnershipNonce",
+    "298daa1df1ff460797ff7b3578146e13"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 2.2349999999999,
+  "capture_errors": [],
+  "completion_policy": "strict_tree",
+  "root_exit": {
+    "elapsed_ms": 2234.9999999999,
+    "exit_code": 0,
+    "owned_tree_active": false,
+    "stdout_eof": true,
+    "stderr_eof": true
+  },
+  "owned_cleanup": {
+    "attempted": false,
+    "completed": true,
+    "job_inactive": true
+  },
+  "stdout_eof": true,
+  "stderr_eof": true
+}
