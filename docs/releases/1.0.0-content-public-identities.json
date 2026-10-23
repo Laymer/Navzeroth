@@ -2,7 +2,7 @@
   "schema_version": 1,
   "version": "1.0.0",
   "algorithm": "Ed25519",
-  "status": "generated_public_identities_only_not_active_receipt_policy",
+  "status": "public_key_bytes_match_active_receipt_policy_not_release_acceptance",
   "control": "Both private keys are held by the local repository operator. Distinct keys do not establish independent control or independent review.",
   "identities": [
     { "id": "stable-1.0.0-operator-r2", "purpose": "operator attestation", "public_key_hex": "99d1e684161ddecf5bbad4b8e478d9448e626a6f53ebd80f55d1f467d13e15d1" },
