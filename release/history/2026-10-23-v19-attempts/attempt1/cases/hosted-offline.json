@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "HOSTED-OFFLINE",
+  "method": "hosted_windows",
+  "status": "fail",
+  "version": "1.0.0",
+  "source_commit": "90e0d4dd3e574b1b0760e8f4a7a77f28933b02cc",
+  "production_sha256": "2aefc67b79569a01a461315648b64b860599cabb2f67de1b52911025e3ef47e6",
+  "installer_sha256": "ad7f8264371039e50c8dedc6a73e7bf141c41ca05d51e1597b40c347209192d2",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  },
+  "operator": "GitHub Actions 39641767585/1",
+  "environment": "GitHub-hosted Windows Microsoft Windows NT 10.0.26100.0",
+  "recorded_at": "2026-10-21T18:34:26Z"
+}
