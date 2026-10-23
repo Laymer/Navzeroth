@@ -41,6 +41,19 @@ class Preparation(unittest.TestCase):
         self.preview['unsigned_preparation']=dict(ready=True,evidence_sha256=digest)
         return m.prepare(self.root,self.preview,self.evidence,self.review,'b'*40,'a'*64,'1.0.0',digest)
 
+    def test_schema5_exact_automated_final_row_preserves_schema4(self):
+        self.evidence['schema_version'] = 5
+        row = self.evidence['checks'][-1]
+        row.update(id='DRAFT-INSTALLER-SMOKE',method='automated_draft_windows')
+        self.run_prepare()
+        for method in ('interactive_windows','hosted_windows'):
+            row['method'] = method
+            with self.assertRaisesRegex(ValueError,'rows/methods'):
+                self.run_prepare()
+        row.update(id='OWNER-INSTALLER-SMOKE',method='interactive_windows')
+        with self.assertRaisesRegex(ValueError,'rows/methods'):
+            self.run_prepare()
+
     def test_exact_trusted_preparation_assessment_is_mandatory(self):
         digest=hashlib.sha256(m.canonical(self.evidence)).hexdigest()
         for assessment in [None,dict(ready=False,evidence_sha256=digest),

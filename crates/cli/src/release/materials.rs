@@ -200,7 +200,7 @@ pub(super) fn selected_files(
     budget: &mut Budget,
 ) -> Result<(Vec<MaterialFile>, Vec<SourceMaterial>)> {
     let mut origin_accepted = release::origin_accepted_sources(inventory, evidence, policy);
-    if inventory.schema_version == release::SCHEMA_STABLE {
+    if release::is_stable_schema(inventory.schema_version) {
         origin_accepted.extend(catalog.verified_non_observational());
     }
     if evidence.sources.len() != inventory.sources.len()
@@ -455,7 +455,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         pack.dataset_revisions.sort();
     }
     packs.sort_by(|a, b| a.manifest.path.cmp(&b.manifest.path));
-    let catalog_files = if inventory.schema_version == release::SCHEMA_STABLE {
+    let catalog_files = if release::is_stable_schema(inventory.schema_version) {
         sorted(
             &files
                 .iter()
@@ -470,7 +470,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
     } else {
         vec![]
     };
-    let mut bundled_packs = if inventory.schema_version == release::SCHEMA_STABLE {
+    let mut bundled_packs = if release::is_stable_schema(inventory.schema_version) {
         catalog.bundled_packs.clone()
     } else {
         vec![]
@@ -496,7 +496,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         }
     }
     bundled_packs.sort_by(|a, b| a.manifest.path.cmp(&b.manifest.path));
-    let unsigned_preparation = if inventory.schema_version == release::SCHEMA_STABLE {
+    let unsigned_preparation = if release::is_stable_schema(inventory.schema_version) {
         let non_observational = catalog.verified_non_observational();
         let preparation_policy = ReleasePolicy {
             verified_non_observational_sources: Some(&non_observational),
@@ -519,6 +519,16 @@ pub fn plan(options: &Options) -> Result<Manifest> {
                 readiness.block(message);
             }
         }
+        if let Err(message) = super::draft_smoke::verify(
+            &root,
+            &evidence,
+            &head,
+            &candidate.fingerprint,
+            &options.version,
+            &mut budget,
+        ) {
+            readiness.block(message);
+        }
         Some(Preparation {
             ready: release::BuildPhase::Prebuild.ready(&readiness),
             evidence_sha256: evidence_sha256.ok_or("Preparation evidence identity missing")?,
@@ -536,7 +546,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
                 .unwrap_or_default(),
         ),
         catalog_files,
-        schema_version: if inventory.schema_version == release::SCHEMA_STABLE {
+        schema_version: if release::is_stable_schema(inventory.schema_version) {
             2
         } else {
             1

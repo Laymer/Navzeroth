@@ -125,8 +125,8 @@ def fingerprint(raw):
 
 
 def prepare(root, preview, evidence, review, tested, production, version, evidence_sha256):
-    if preview['schema_version'] != 2 or evidence['schema_version'] != 4 or preview['version'] != version:
-        raise ValueError('Preparation requires schema4/schema2 matching version')
+    if preview['schema_version'] != 2 or evidence['schema_version'] not in (4, 5) or preview['version'] != version:
+        raise ValueError('Preparation requires schema4/5 and schema2 matching version')
     if (preview['production_sha256'] != production or evidence['production_sha256'] != production
             or evidence['tested_source_commit'] != tested or preview['target'] != evidence['target']
             or not preview['target'] or not re.fullmatch('[a-f0-9]{40}', tested)):
@@ -137,7 +137,11 @@ def prepare(root, preview, evidence, review, tested, production, version, eviden
         raise ValueError('Exact trusted functional/content preparation assessment must pass')
     if any(row['status'] != 'pass' or row.get('unresolved_conflicts',0) != 0 or row.get('unsupported_corrections',0) != 0 for row in evidence['coverage']):
         raise ValueError('Functional/content coverage must pass before preparation')
-    if len(evidence['checks']) != len(REQUIRED_CHECKS) or {row['id']:row['method'] for row in evidence['checks']} != REQUIRED_CHECKS:
+    required = dict(REQUIRED_CHECKS)
+    if evidence['schema_version'] == 5:
+        del required['OWNER-INSTALLER-SMOKE']
+        required['DRAFT-INSTALLER-SMOKE'] = 'automated_draft_windows'
+    if len(evidence['checks']) != len(required) or {row['id']:row['method'] for row in evidence['checks']} != required:
         raise ValueError('Schema4 acceptance rows/methods are incomplete')
     for check in evidence['checks']:
         if check['status'] == 'unverified':

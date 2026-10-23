@@ -74,7 +74,7 @@ fn assemble_with_policy(
     identity_path: &Path,
     trusted_policy: &[u8],
 ) -> Result<()> {
-    if context.inventory.schema_version != release::SCHEMA_STABLE {
+    if !release::is_stable_schema(context.inventory.schema_version) {
         return Err("Bundle assembly requires schema4 source contracts");
     }
     verify_with_policy(context, budget, trusted_policy)?;
