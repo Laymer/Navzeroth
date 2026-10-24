@@ -355,6 +355,26 @@ try{
  }
  Check 'firewall controls refuse non-hosted environments' {New-MockFirewall;$env:RUNNER_ENVIRONMENT='self-hosted';try{Refuse {Invoke-StableFirewallOffline {throw 'Should not run'}}}finally{$env:RUNNER_ENVIRONMENT='github-hosted'}}
  Check 'offline controls refuse non-hosted environments' {$env:RUNNER_ENVIRONMENT='self-hosted';Refuse {Invoke-StableOffline {throw 'Should not run'}}}
+ Check 'application data resolves the known folder and ignores an APPDATA override' {
+  $saved=$env:APPDATA;$override=Join-Path $root 'override-appdata'
+  try{$env:APPDATA=$override;$resolved=Get-StableAppDataDirectory 'io.github.laymer.azeroth-navigator'}finally{$env:APPDATA=$saved}
+  $expected=Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData,[Environment+SpecialFolderOption]::DoNotVerify)) 'io.github.laymer.azeroth-navigator'
+  if($resolved -cne $expected -or $resolved.StartsWith($override)){throw 'Application data followed the environment override'}
+ }
+ Check 'invalid application identifiers are refused' {foreach($bad in @('','..','a/b','io.github..x','IO.Github.x')){Refuse {Get-StableAppDataDirectory $bad}}}
+ Check 'application data is moved aside intact and never deleted' {
+  $data=Join-Path $root 'appdata-source';$aside=Join-Path $root 'appdata-aside'
+  New-Item -ItemType Directory -Path (Join-Path $data 'nested')|Out-Null;[IO.File]::WriteAllText((Join-Path $data 'nested/snapshots.sqlite3'),'synthetic')
+  if((Move-StableAppDataAside $data $aside) -ne $true -or (Test-Path -LiteralPath $data)){throw 'Data was not moved aside'}
+  if([IO.File]::ReadAllText((Join-Path $aside 'nested/snapshots.sqlite3')) -cne 'synthetic'){throw 'Moved data differs'}
+ }
+ Check 'absent application data reports nothing moved' {if((Move-StableAppDataAside (Join-Path $root 'appdata-absent') (Join-Path $root 'appdata-absent-aside')) -ne $false -or (Test-Path -LiteralPath (Join-Path $root 'appdata-absent-aside'))){throw 'Absent data was reported or created'}}
+ Check 'an existing destination or a file refuses moving and keeps the data' {
+  $data=Join-Path $root 'appdata-kept';$taken=Join-Path $root 'appdata-taken';$file=Join-Path $root 'appdata-file'
+  New-Item -ItemType Directory -Path $data,$taken|Out-Null;[IO.File]::WriteAllText($file,'synthetic')
+  Refuse {Move-StableAppDataAside $data $taken};if(-not (Test-Path -LiteralPath $data -PathType Container)){throw 'Refused move lost the data'}
+  Refuse {Move-StableAppDataAside $file (Join-Path $root 'appdata-file-aside')};if(-not (Test-Path -LiteralPath $file -PathType Leaf)){throw 'Refused move lost the file'}
+ }
  if ($PSVersionTable.PSVersion.Major -ge 7) {
   Check 'actual parent timeout retains pending child phase and watchdog without a pass' {
    $synthetic=Join-Path $root 'timeout-root';$scripts=Join-Path $synthetic 'scripts/windows'
