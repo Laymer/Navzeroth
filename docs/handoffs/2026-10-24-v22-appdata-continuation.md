@@ -48,7 +48,16 @@ over 3,160 entries, excluding only docs/ and release/ under the existing contrac
 
 ## Remaining
 
-V22 unsigned material preview, current content/binding review, committed unsigned
+V22 unsigned material preview passed (82 selected files, two packs, preparation
+ready) and the proof/inventory/preview checkpoint is committed at `c6cd6749`.
+The old active manifest/identity/receipt were removed after their exact archive;
+this is deliberately an unsigned preparation checkpoint, not a pushable candidate.
+All nine observation rows remain pristine pending. Both archive hash ledgers and
+the tested-source/final-checkpoint production fingerprint were rechecked.
+Plain git diff --check reports the retained native CRLF bytes and the original
+functional log's final blank line; raw evidence was not reformatted.
+
+Current independent content/binding review, committed unsigned manifest/identity
 preparation, two-key receipt and independent signed closure must finish before
 one candidate push. The coordinator authored the new proof/binding metadata and
 cannot describe its own audit as independent review of that work. A read-only
