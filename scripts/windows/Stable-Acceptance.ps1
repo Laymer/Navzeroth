@@ -42,9 +42,9 @@ if (Test-Path -LiteralPath $install) { throw 'Acceptance requires an initially a
 if (@(Get-Process -Name azeroth-desktop -ErrorAction SilentlyContinue).Count -ne 0) { throw 'Acceptance requires no other native application process.' }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 $reports = Join-Path $OutputDirectory 'raw'; New-Item -ItemType Directory -Path $reports | Out-Null
-$previousAppData = $env:APPDATA
-$env:APPDATA = Join-Path $OutputDirectory 'isolated-appdata'
-New-Item -ItemType Directory -Path $env:APPDATA | Out-Null
+$data = Get-StableAppDataDirectory 'io.github.laymer.azeroth-navigator'
+# FIRST-START and PERFORMANCE claim a fresh database: earlier job data must be gone.
+if (Test-Path -LiteralPath $data) { throw 'Acceptance requires initially absent application data.' }
 $exe = Join-Path $install 'azeroth-desktop.exe'; $manifest = Join-Path $install 'bundled-content/manifest.json'
 $state = Join-Path $reports 'state.json'; $suite = [Diagnostics.Stopwatch]::StartNew()
 function Remaining([int] $Maximum) {
@@ -110,7 +110,9 @@ try {
         # candidate manifest outside the installation while the RC is installed.
         $savedManifest=Join-Path $reports 'candidate-manifest.json'; Copy-Item -LiteralPath $manifest -Destination $savedManifest
         Remove-OwnedInstallation
-        $env:APPDATA=Join-Path $OutputDirectory 'upgrade-appdata';New-Item -ItemType Directory -Path $env:APPDATA | Out-Null
+        # The RC baseline must start without the candidate's newer database.
+        $moved=Move-StableAppDataAside $data (Join-Path $OutputDirectory 'candidate-appdata')
+        [IO.File]::WriteAllText((Join-Path $reports 'appdata-aside.json'),((@{schema_version=1;kind='application_data_isolation';moved_aside=$moved}|ConvertTo-Json)+"`n"),(New-Object Text.UTF8Encoding($false)))
         Install-Owned $BaselineInstaller
         $previousManifest=$manifest; $manifest=$savedManifest
         try { $baseline=Workload 'baseline' '1.0.0-rc.1' } finally { $manifest=$previousManifest }
@@ -133,7 +135,6 @@ try {
 } finally {
     # A failed cleanup must not replace the case failure that is already propagating.
     try { Remove-OwnedInstallation } catch { if ($null -eq (Get-Variable suiteFailure -Scope Script -ValueOnly -ErrorAction SilentlyContinue)) { throw }; Write-Warning ('Cleanup also failed: '+$_.Exception.Message) } finally {
-        $env:APPDATA=$previousAppData
         Remove-ItemProperty -LiteralPath $policyPath -Name 'azeroth-desktop.exe' -ErrorAction SilentlyContinue
     }
 }

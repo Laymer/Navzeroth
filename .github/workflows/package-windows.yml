@@ -510,6 +510,9 @@ jobs:
           $setup = Get-NativeSmokeSetup dist/windows
           $hash = (Get-FileHash $setup.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
           $baselineSetup = Get-NativeSmokeSetup $baseline
+          # Uninstall keeps user data: drop the native smoke database so the cases start fresh.
+          $data = Join-Path ([Environment]::GetFolderPath('ApplicationData')) 'io.github.laymer.azeroth-navigator'
+          if (Test-Path -LiteralPath $data) { Remove-Item -LiteralPath $data -Recurse -Force }
           ./scripts/windows/Stable-Acceptance.ps1 -Root . -Directory dist/windows -InstallerSha256 $hash -BaselineInstaller $baselineSetup.FullName -BaselineSha256 $pin[0].sha256 -BuildIdentity release/v1/bundled-content-build-identity.json -OutputDirectory (Join-Path $env:RUNNER_TEMP 'native-smoke/stable-cases')
       - name: Record stable hosted observations without inventing missing cases
         id: hosted_evidence

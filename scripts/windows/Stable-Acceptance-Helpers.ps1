@@ -46,6 +46,23 @@ function Invoke-StableCase([string] $Id, [hashtable] $Identity, [string] $Output
         [IO.File]::WriteAllText((Join-Path $Output ($Id.ToLowerInvariant()+'.json')), $text, (New-Object Text.UTF8Encoding($false)))
     }
 }
+function Get-StableAppDataDirectory([string] $Identifier) {
+    if ($Identifier -cnotmatch '^[a-z0-9]+(\.[a-z0-9-]+)+$') { throw 'Invalid application identifier.' }
+    # The app resolves the Roaming known folder (SHGetKnownFolderPath), which
+    # ignores $env:APPDATA; overriding that variable never isolated its data.
+    $base = [Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData, [Environment+SpecialFolderOption]::DoNotVerify)
+    if (-not [IO.Path]::IsPathRooted($base)) { throw 'Application data folder is unavailable.' }
+    return Join-Path $base $Identifier
+}
+function Move-StableAppDataAside([string] $Data, [string] $Destination) {
+    if (Test-Path -LiteralPath $Destination) { throw 'Application data destination already exists.' }
+    if (-not (Test-Path -LiteralPath $Data)) { return $false }
+    if (-not (Test-Path -LiteralPath $Data -PathType Container)) { throw 'Application data is not a directory.' }
+    # Retained, never deleted: the earlier cases' database stays inspectable.
+    Move-Item -LiteralPath $Data -Destination $Destination
+    if (Test-Path -LiteralPath $Data) { throw 'Application data remained after moving it aside.' }
+    return $true
+}
 function Invoke-StableWorkload([string] $Root,[string] $Exe,[string] $Manifest,[string] $Version,[string] $Mode,[string] $State,[string] $Report,[string] $Backup = '',[ValidateRange(1,1200)][int] $MaximumSeconds = 1200,[ValidateSet('stable','draft-ui')][string] $Driver = 'stable',[string] $SourceCommit = '',[string] $InstallerSha256 = '') {
     if ($PSVersionTable.PSVersion.Major -lt 7) { throw 'Bounded hosted workload requires PowerShell 7 argument-list support.' }
     if ($Driver -ceq 'draft-ui' -and ($Mode -cnotin @('fresh','restart') -or $SourceCommit -cnotmatch '^[a-f0-9]{40}$' -or $InstallerSha256 -cnotmatch '^[a-f0-9]{64}$' -or $Backup)) { throw 'Draft UI workload requires exact source/installer identity and fresh/restart mode.' }
