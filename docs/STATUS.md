@@ -6,12 +6,14 @@ Updated: 2026-10-24.
 isolation repair and integrated it locally at `2d33c2fd`; the original checkout
 is preserved. Both failed V21 attempts and signed inputs are archived. Actual
 Linux/native PS helper checks, workflow checks and full-pack functional assertions
-pass; the 76.209 s functional run is shared-Linux engineering evidence only.
-V22 unsigned preparation is ready at `c6cd6749`, production `a947d2f0`, with all
-nine acceptance observations still pending. Independent review of the new metadata
-and prepared/signed closure is required before candidate push. A read-only reviewer
-was requested under the explicit-subagent-request rule. No new candidate push,
-main merge, tag or publication. See the
+pass; the corrected fixed-HEAD 80.568 s functional run is shared-Linux engineering
+evidence only. The initial source-binding mismatch is preserved and superseded.
+Independent review `6131a419`, pre-sign byte reproduction, and signed closure at
+`c5586b6e` pass: 84 resources, 89 evidence files, two packs, exactly nine pending
+observations and no other blockers. Production remains `a947d2f0`; receipt is
+`79686be6`. Both keys are operator-controlled, separate from independent review.
+Next: push one V22 candidate and read fresh protected/coverage/source-parity and
+all eight installed-case outcomes. No main merge, tag or publication. See the
 [V22 handoff](handoffs/2026-10-24-v22-appdata-continuation.md).
 
 Parallel continuation requested 2026-10-19: isolated writers are auditing desktop

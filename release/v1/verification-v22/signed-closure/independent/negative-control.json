@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "bundled-content receipt: Bundled-content signature verification failed\n",
+  "scope": "One operator-signature hex digit changed in a scratch canonical receipt; expected payload and source policy unchanged."
+}

@@ -52,26 +52,49 @@ Tested source: `3609c2b574d5302711a40cc08128b1e9c76f8955`.
 Production fingerprint: `a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537`
 over 3,160 entries, excluding only docs/ and release/ under the existing contract.
 
-## Remaining
+## Review, preparation and signed closure
 
 V22 unsigned material preview passed (82 selected files, two packs, preparation
 ready). The initial checkpoint `c6cd6749` is superseded by the fixed-HEAD binding.
-The old active manifest/identity/receipt were removed after their exact archive;
-this is deliberately an unsigned preparation checkpoint, not a pushable candidate.
-All nine observation rows remain pristine pending. Both archive hash ledgers and
+The old active manifest/identity/receipt were removed after their exact archive
+and have now been replaced by reviewed V22 identities. All nine observation rows
+remain pristine pending. Both archive hash ledgers and
 the tested-source/final-checkpoint production fingerprint were rechecked.
 Plain git diff --check reports the retained native CRLF bytes and the original
 functional log's final blank line; raw evidence was not reformatted.
 
-Current independent content/binding review, committed unsigned manifest/identity
-preparation, two-key receipt and independent signed closure must finish before
-one candidate push. The coordinator authored the new proof/binding metadata and
-cannot describe its own audit as independent review of that work. The user approved
+The coordinator authored the new proof/binding metadata and cannot describe its
+own audit as independent review of that work. The user approved
 the read-only reviewer request; `/root/v22_independent_review` independently reran
 the full-pack assertions (80.668 s, 6,205,284 KiB), verified source/content/archive
 FileRefs and identified the corrected binding issue. Its raw results are retained
-under `release/v1/verification-v22/independent-review`. The final frozen review and
-pre-sign reproduction follow the corrected metadata checkpoint.
+under `release/v1/verification-v22/independent-review`.
+
+- Frozen independent review committed `546a54b3`: 15,109 bytes, SHA256
+  `6131a419eeaea47e7ab2f7e8d974628dd5991eb9e1637fbbc188f622e06f7190`.
+- Unsigned preparation committed `16226936` before any key use: manifest 17,185
+  bytes, SHA256 `a912304e5815eb2ae4246b8810f96c91900a136ed514bc7f8dbdc64ddb000935`;
+  identity 527 bytes, SHA256
+  `744c83712454f01acf138ecafbc03b5abe2a318cde07017c2276d7b8cbe557b5`.
+- Reviewer independently reproduced both byte-for-byte from source/preview pins
+  and constructed its own expected payload before any receipt existed. Raw
+  reproduction evidence committed `8289ae28`, also before key use.
+- Receipt committed `c5586b6e`: 1,079 bytes, SHA256
+  `79686be6c729e0c694ff9be356b58b8216fc1f5759ddfd79bed62558dd202a91`.
+  Existing r2 keys matched; no rotation. Both keys remain operator-controlled.
+- Coordinator and reviewer independently verified crypto, separate assembled
+  86-file trees (84 resources, 395,738,463 resource bytes), default compiled trust
+  without a policy override, and prebuild readiness: 89 evidence files, two packs,
+  build_ready true, publication false, exactly nine pending observations and no
+  other blockers. Reviewer's altered-signature negative control refused.
+  Actual public outputs/ledger: `release/v1/verification-v22/signed-closure`.
+
+The adjacent downloaded-draft verifier's APPDATA assignment is also ineffective,
+but its separate fresh hosted job launches no earlier installed app. No analogous
+contamination path was found. It is not isolation evidence; inspect actual fresh
+draft results. No unrelated production change was made.
+
+## Next
 
 Then require fresh protected checks, per-file coverage, two-platform source parity
 and all eight real installed cases. Follow the existing 2026-10-23 continuation
