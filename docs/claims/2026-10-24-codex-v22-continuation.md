@@ -7,8 +7,11 @@ Repair reviewed independently from Claude Code: PR #286,
 
 Scope: review and integrate application-data isolation; preserve V21 attempt
 evidence; renew V22 source/proof/review/preparation/receipt closure; run candidate
-gates and continue the existing gated stable-release recipe. One writer per repair;
-no subagents. Preserve unrelated work and the untracked V19 claim verbatim.
+gates and continue the existing gated stable-release recipe. One writer per repair.
+The user approved continuation after the explicit read-only subagent review request;
+`/root/v22_independent_review` independently reviews metadata, preparation and
+closure without tracked writes or private-key access. Codex `/root` remains the
+sole integration writer. Preserve unrelated work and the untracked V19 claim verbatim.
 
 Checks: acceptance-helper tests on available Linux/native Windows shells,
 workflow tests/gate and actionlint; fresh functional/content closure and exact-source
