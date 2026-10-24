@@ -1,7 +1,7 @@
 {
   "unsigned_preparation": {
     "ready": true,
-    "evidence_sha256": "8b82b8a875733a20b6c0a412728b6c1fb1adae226e15bbe640e8c986ea6390de"
+    "evidence_sha256": "c0fff41fa76ace5ef62232f8721cecc0d65af9fd5996091eb5e1ca916657e61a"
   },
   "bundled_packs": [
     {
@@ -59,7 +59,7 @@
   ],
   "schema_version": 2,
   "version": "1.0.0",
-  "candidate_source_commit": "3647efdc583e3010cf91dbfb56159c2e2a396930",
+  "candidate_source_commit": "3609c2b574d5302711a40cc08128b1e9c76f8955",
   "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
   "inventory_sha256": "4d3b844ee3d5d624531dea878e4e06a795f1dea29f0ba1436ebc4573361bf72e",
   "target": {

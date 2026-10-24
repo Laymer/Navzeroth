@@ -1,0 +1,60 @@
+ok actual current target identity accepts different JSON field order
+ok current source-bound release and committed build identity targets match
+ok integer widths from supported PowerShell JSON parsers retain identity
+ok wrong target edition is refused
+ok wrong target version is refused
+ok wrong target build is refused
+ok wrong target interface is refused
+ok missing and additional target fields are refused
+ok malformed interface types and bounds are refused
+ok non-object targets and malformed string fields are refused on either side
+ok old six-key ordered dictionary reproduces actual performance admission failure
+ok actual performance constructor passes live case validation and JSON roundtrip
+ok extra missing and renamed performance metrics still refuse live admission
+ok all six metrics retain strict numeric type finite and range validation
+ok performance constructor never coerces raw string values to numbers
+ok completed actual details create a pass
+ok actual failure is retained as fail and thrown
+ok hosted producer cannot record owner smoke
+ok action cannot replace release identity
+ok unsupported or missing results cannot pass
+ok offline workload runs with external adapters disabled and restores only originally-up ones
+ok workload failure restores adapters before propagating error
+ok all original adapters get a restoration attempt after one failure
+ok duplicate descriptions select distinct issued GUID objects and never enable originally-down adapters
+ok missing malformed and duplicate GUIDs refuse before any mutation
+ok partial disable failure restores every attempted GUID and preserves original error
+ok primary workload and cleanup errors are both retained with exact final state
+ok remaining active interface refuses workload even when restoration succeeds
+ok fresh inventory failure is preserved while exact original adapter is restored
+ok originally-down duplicate GUID refuses before mutations and delayed restoration waits for exact Up
+ok transient restoration query failure remains a failure even after exact Up is observed
+ok new malformed unrelated NIC cannot block cleanup or bypass the zero-Up proof
+ok 64 adapter escaped errors retain primary and every cleanup failure within the final byte cap
+ok diagnostic messages are bounded without losing failure status
+ok lack of controllable adapter is unverified/failure
+ok firewall isolation blocks external access during the workload and restores exactly
+ok isolation works when no hosted infrastructure agent is present
+Hosted infrastructure path selection uses Windows drive paths; not executed on this platform.
+ok firewall workload failure restores state and keeps the original cause
+ok external access under isolation refuses before the workload
+ok unprovable offline state changes nothing
+ok partial rule disable is restored with its cause
+ok an allow rule that stays enabled refuses isolation
+ok restore failures are reported without replacing a pass into success
+ok cleanup lifts default-deny before removing the runner rules
+ok failed profile restore keeps the runner rules and reports both causes
+ok failed first rule creation reports only its own cause
+ok effective-store allow rules that admit the workload refuse isolation
+ok offline validator refuses mixed shapes parsed from JSON
+ok offline case accepts exactly one offline evidence shape
+ok firewall controls refuse non-hosted environments
+ok offline controls refuse non-hosted environments
+ok application data resolves the known folder and ignores an APPDATA override
+ok invalid application identifiers are refused
+ok application data is moved aside intact and never deleted
+ok absent application data reports nothing moved
+ok an existing destination or a file refuses moving and keeps the data
+Synthetic watchdog uses Node v24.19.0 at /usr/bin/node
+ok actual parent timeout retains pending child phase and watchdog without a pass
+Passed 57 hosted producer helper checks.

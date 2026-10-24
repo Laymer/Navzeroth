@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_commit": "2d33c2fd935c6b91754170862eda36b2d64561cc",
+  "source_commit": "3609c2b574d5302711a40cc08128b1e9c76f8955",
   "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
   "production_entries": 3160,
   "operator": "Codex /root (V22 metadata author)",
@@ -10,7 +10,7 @@
   "selected_packs": 2,
   "unsigned_preparation": {
     "ready": true,
-    "evidence_sha256": "8b82b8a875733a20b6c0a412728b6c1fb1adae226e15bbe640e8c986ea6390de"
+    "evidence_sha256": "c0fff41fa76ace5ef62232f8721cecc0d65af9fd5996091eb5e1ca916657e61a"
   },
   "publication_allowed": false,
   "scope": "Actual exact-source functional and unsigned material preparation only. Independent V22 metadata/preparation/closure review and all current Windows acceptance remain required.",
@@ -28,7 +28,7 @@
     {
       "path": "release/v1/verification-v22/functional-run.log",
       "bytes": 953,
-      "sha256": "a0a0d764a150271d0687776f833c106f2ea429fe225e48f189359ce6bb6c38ad"
+      "sha256": "0648c3cc4dc6c9473baa3ee2a1da58b5ebb16019f4c16c8e26c620b273434802"
     },
     {
       "path": "release/v1/verification-v22/helper-linux.log",
@@ -53,7 +53,7 @@
     {
       "path": "release/v1/verification-v22/prebundle-evidence.json",
       "bytes": 27970074,
-      "sha256": "8b82b8a875733a20b6c0a412728b6c1fb1adae226e15bbe640e8c986ea6390de"
+      "sha256": "c0fff41fa76ace5ef62232f8721cecc0d65af9fd5996091eb5e1ca916657e61a"
     },
     {
       "path": "release/v1/verification-v22/prior-review-audit.json",
@@ -63,7 +63,7 @@
     {
       "path": "release/v1/verification-v22/unsigned-material-preview.json",
       "bytes": 55727,
-      "sha256": "a0c02bed1ffe6aa776e46d6dc53bd3d1795eb006537cf27d56b852d89aa7212c"
+      "sha256": "1c722fed999bb430456cd17ee474b4746b1155c9d99192575b3ea6f297eefc50"
     }
   ]
 }
