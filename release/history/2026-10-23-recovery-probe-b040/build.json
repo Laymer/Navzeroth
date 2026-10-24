@@ -1,0 +1,33 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--release",
+    "-p",
+    "azeroth-app",
+    "--test",
+    "hosted_recovery_probe",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 353.64000000000004,
+  "capture_errors": [],
+  "completion_policy": "cargo_root_then_owned_cleanup",
+  "root_exit": {
+    "elapsed_ms": 353640.00000000006,
+    "exit_code": 0,
+    "owned_tree_active": true,
+    "stdout_eof": true,
+    "stderr_eof": true
+  },
+  "owned_cleanup": {
+    "attempted": true,
+    "completed": true,
+    "job_inactive": true
+  },
+  "stdout_eof": true,
+  "stderr_eof": true
+}

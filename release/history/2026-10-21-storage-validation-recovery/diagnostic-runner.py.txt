@@ -1,0 +1,10 @@
+import subprocess,os,time,json,resource,pathlib
+log=pathlib.Path('/tmp/navzeroth-v16-fullpack-recovery.log');start=time.monotonic();env=os.environ.copy();env.update(NAVZEROTH_RECOVERY_SOURCE_ROOT='/tmp/navzeroth-recovery-fullpack-benchmark',NAVZEROTH_RECOVERY_BUNDLE='/tmp/navzeroth-tooling-v13-independent-bundle',NAVZEROTH_RECOVERY_OUTPUT='/tmp/navzeroth-v16-fullpack-recovery-data')
+assert not pathlib.Path(env['NAVZEROTH_RECOVERY_OUTPUT']).exists()
+with log.open('w') as output:
+ child=subprocess.Popen(['/tmp/navzeroth-v16-fullpack-recovery-diagnostic','--ignored','--nocapture'],env=env,stdout=output,stderr=subprocess.STDOUT)
+ timed_out=False
+ try:code=child.wait(timeout=1200)
+ except subprocess.TimeoutExpired:timed_out=True;child.kill();code=child.wait(timeout=15)
+measurement={'platform':'linux','runtime_commit':'419fcaecfcb208867e280140215c6e5e01891e27','harness_commit':'3447bcbfdeeb771589f6773bad6a70b81bdf0681','elapsed_seconds':time.monotonic()-start,'exit_code':code,'timed_out':timed_out,'maximum_resident_set_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,'scope':'actual diagnostic Rust process and threads; genuinely rebuilt optimized app419fcaec; OLD signed V13 bundle identity explicit, not relabelled as new production; Linux shared host uncontrolled cache; whole1200s bound; not Windows or acceptance'}
+pathlib.Path('/tmp/navzeroth-v16-fullpack-recovery-measurement.json').write_text(json.dumps(measurement,indent=2)+'\n');print(json.dumps(measurement));raise SystemExit(0 if code==0 and not timed_out else 1)

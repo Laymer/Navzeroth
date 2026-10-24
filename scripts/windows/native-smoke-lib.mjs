@@ -262,3 +262,55 @@ export async function waitForDatabaseReady(readStatus, timeoutMs = 30000, interv
     clearTimeout(timer);
   }
 }
+
+/** Verify the exact synthetic baseline through issued IPC, then its rendered inspection.
+ * One deadline includes hung IPC and UI; absence and mismatches are never retried as success.
+ */
+export async function verifyPreservedSyntheticContent({ readProfiles, readActive, waitForInspection, expected, timeoutMs = 30000 }) {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error("Invalid content verification deadline");
+  let timer;
+  let expired = false;
+  const sameContext = (a, b) => a?.namespace === b?.namespace &&
+    ["edition", "build", "interface"].every((key) => a?.build?.[key] === b?.build?.[key]);
+  const diagnostic = { profile_found: false, active_present: false };
+  try {
+    return await Promise.race([
+      (async () => {
+        if (expired) return;
+        const profiles = await readProfiles();
+        if (expired) return;
+        const matches = Array.isArray(profiles) ? profiles.filter((p) => p.display_name === expected.character && p.fixture === true && sameContext(p.context, expected.scope.context)) : [];
+        if (matches.length !== 1 || !/^stored-[a-f0-9]{64}$/.test(matches[0].id ?? "")) {
+          throw new Error("Expected synthetic profile identity was not preserved");
+        }
+        diagnostic.profile_found = true;
+        if (expired) return;
+        const active = await readActive(matches[0].id);
+        if (expired) return;
+        diagnostic.active_present = active !== null && active !== undefined;
+        if (!active || active.key?.revision !== expected.revision || active.key?.scope?.fixture !== true ||
+            !sameContext(active.key.scope.context, expected.scope.context)) {
+          throw new Error("Expected synthetic active revision or scope was not preserved");
+        }
+        if (expired) return;
+        await waitForInspection({ ...expected, profile_id: matches[0].id });
+        if (expired) return;
+        return { profile_id: matches[0].id, character: expected.character, revision: expected.revision, scope: expected.scope };
+      })(),
+      new Promise((_, reject) => { timer = setTimeout(() => { expired = true; reject(new Error("Synthetic content verification timed out")); }, timeoutMs); }),
+    ]);
+  } catch (error) {
+    throw new Error(`${String(error?.message ?? error).slice(0, 300)}; content diagnostic=${JSON.stringify(diagnostic)}`);
+  } finally { expired = true; clearTimeout(timer); }
+}
+
+/** Do not clear ContentScreen's inspection with a redundant change event. */
+export async function waitForSyntheticContentInspection(page, value, timeoutMs = 30000) {
+  const select = page.getByLabel("Content profile", { exact: true });
+  if (await select.inputValue({ timeout: timeoutMs }) !== value.profile_id) {
+    await select.selectOption(value.profile_id, { timeout: timeoutMs });
+  }
+  const build = value.scope.context.build;
+  await page.getByText(`${value.revision}: ${build.edition}/${build.build}/${build.interface}, ${value.scope.context.namespace}`, { exact: true }).waitFor({ timeout: timeoutMs });
+  if (await page.getByText("No active content for this profile.", { exact: true }).count()) throw new Error("Active inspection is absent");
+}

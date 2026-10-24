@@ -1,6 +1,11 @@
 // Production CLI establishes trust; this adapter never selects receipt-owned pins.
 import fs from 'node:fs';
 import path from 'node:path';
+// Bundle CLI commands share the collector's actual instrumented toolchain.
+// Ordinary cargo run would replace its instrumented CLI executable before report.
+export function instrumentedBundleRun(run, environment) {
+ return (name,exe,args,options={})=>run(name,exe,args,{...options,env:environment});
+}
 export function prepareNativeBundle(root, destination, run) {
  const version = /^version\s*=\s*"([^"]+)"$/m.exec(fs.readFileSync(path.join(root,'Cargo.toml'),'utf8'))?.[1];
  if (!version) throw new Error('Missing workspace version');
@@ -19,6 +24,7 @@ export function prepareNativeBundle(root, destination, run) {
   raw=new TextDecoder('utf-8',{fatal:true}).decode(buffer.subarray(0,count));
  } finally {fs.closeSync(descriptor);}
  if (Buffer.byteLength(raw)>65536 || /[\r\n\0]/.test(raw) || JSON.parse(raw).app_version !== version) throw new Error('Invalid native bundle identity JSON');
+ run('coverage-bundle-inputs',process.platform==='win32'?'python':'python3',[path.join(root,'scripts/hydrate-bundle-inputs.py'),'--root',root],{timeout:1200000});
  const directory = path.join(destination,'bundled-content');
  run('coverage-bundle-assembly','cargo',['run','--locked','-p','azeroth-cli','--','assemble-bundled-content','--root',root,'--output',directory,'--identity',identity]);
  return {directory,identity,raw};

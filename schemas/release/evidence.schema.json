@@ -1,0 +1,616 @@
+{
+  "$defs": {
+    "Acceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "environment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "installer_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Hex"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Schema 4 only: exact installer exercised by this observation."
+        },
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "operator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recorded_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "method",
+        "artifacts"
+      ],
+      "type": "object"
+    },
+    "AssetPath": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?(?:/[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?)*$",
+      "type": "string"
+    },
+    "BundledContentEvidence": {
+      "additionalProperties": false,
+      "description": "Schema4 public bundle receipts bind exact source resources to independent review.",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "receipt": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "review": {
+          "$ref": "#/$defs/FileRef"
+        }
+      },
+      "required": [
+        "manifest",
+        "receipt",
+        "review"
+      ],
+      "type": "object"
+    },
+    "Deferral": {
+      "additionalProperties": false,
+      "properties": {
+        "feature": {
+          "$ref": "#/$defs/OptionalFeature"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "feature",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "DraftInstallerSmoke": {
+      "additionalProperties": false,
+      "properties": {
+        "independent_review": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "provenance": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "raw_result": {
+          "$ref": "#/$defs/FileRef"
+        }
+      },
+      "required": [
+        "raw_result",
+        "provenance",
+        "independent_review"
+      ],
+      "type": "object"
+    },
+    "FileRef": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "$ref": "#/$defs/AssetPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "MatrixRow": {
+      "additionalProperties": false,
+      "description": "One live acceptance run inside the slice: a class in a level band, in a\nzone, at a party size. Coverage is derived in code from the slice.",
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "class": {
+          "type": "string"
+        },
+        "environment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "level_max": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "level_min": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "operator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "party_size": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "recorded_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "zone": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "class",
+        "level_min",
+        "level_max",
+        "zone",
+        "party_size",
+        "status",
+        "method",
+        "artifacts"
+      ],
+      "type": "object"
+    },
+    "Method": {
+      "enum": [
+        "live_game",
+        "interactive_windows",
+        "hosted_windows",
+        "automated_draft_windows",
+        "automated"
+      ],
+      "type": "string"
+    },
+    "OptionalFeature": {
+      "enum": [
+        "official_api",
+        "party_messaging",
+        "combat_log_analysis",
+        "hosted_distribution"
+      ],
+      "type": "string"
+    },
+    "PackRef": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset_revisions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "manifest": {
+          "$ref": "#/$defs/FileRef"
+        }
+      },
+      "required": [
+        "manifest",
+        "dataset_revisions"
+      ],
+      "type": "object"
+    },
+    "Permission": {
+      "enum": [
+        "unknown",
+        "conditional",
+        "prohibited",
+        "permitted"
+      ],
+      "type": "string"
+    },
+    "Sha256Hex": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "SourceEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution_files": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "license_files": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "origin_build": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "origin_edition": {
+          "type": "string"
+        },
+        "permission_evidence": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "redistribution": {
+          "$ref": "#/$defs/Permission"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "target_evidence": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "target_validation": {
+          "$ref": "#/$defs/Status"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "origin_edition",
+        "redistribution",
+        "files",
+        "license_files",
+        "attribution_files",
+        "permission_evidence",
+        "target_validation",
+        "target_evidence"
+      ],
+      "type": "object"
+    },
+    "Status": {
+      "enum": [
+        "unverified",
+        "fail",
+        "pass"
+      ],
+      "type": "string"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "interface": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "edition",
+        "version",
+        "build",
+        "interface"
+      ],
+      "type": "object"
+    },
+    "UnitCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "included_record_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "unit_id": {
+          "type": "string"
+        },
+        "unresolved_conflicts": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unsupported_corrections": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "validation_evidence": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "unit_id",
+        "status",
+        "included_record_ids",
+        "source_ids",
+        "unresolved_conflicts",
+        "unsupported_corrections",
+        "validation_evidence"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "not": {
+          "required": [
+            "draft_installer_smoke"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": 5
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "draft_installer_smoke": {
+            "$ref": "#/$defs/DraftInstallerSmoke"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "admission_registry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FileRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "bundled_content": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BundledContentEvidence"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_installer_sha256": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Schema 4 only: independently verified draft installer identity."
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/Acceptance"
+      },
+      "type": "array"
+    },
+    "corresponding_source_files": {
+      "description": "Schema 4 only: reviewed public corresponding-source resources.",
+      "items": {
+        "$ref": "#/$defs/FileRef"
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "coverage": {
+      "items": {
+        "$ref": "#/$defs/UnitCoverage"
+      },
+      "type": "array"
+    },
+    "draft_installer_smoke": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DraftInstallerSmoke"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Schema 5 only; external downloaded-draft results, never signed bundled resources."
+    },
+    "inventory_sha256": {
+      "$ref": "#/$defs/Sha256Hex"
+    },
+    "matrix": {
+      "description": "Schema 2 (task V1.4): live rows that cover the declared slice.",
+      "items": {
+        "$ref": "#/$defs/MatrixRow"
+      },
+      "type": "array"
+    },
+    "normalization_conflict_files": {
+      "description": "Schema4 raw normalization conflict reports.",
+      "items": {
+        "$ref": "#/$defs/FileRef"
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "optional_deferrals": {
+      "items": {
+        "$ref": "#/$defs/Deferral"
+      },
+      "type": "array"
+    },
+    "origin_policy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FileRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Schema 3 (ADR 0007): the exact `accepted-origins.json` the gate applies."
+    },
+    "packs": {
+      "items": {
+        "$ref": "#/$defs/PackRef"
+      },
+      "type": "array"
+    },
+    "production_sha256": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceEvidence"
+      },
+      "type": "array"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Target"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Always present; must equal the inventory target, including null."
+    },
+    "tested_source_commit": {
+      "description": "The actual tested ancestor, not the later commit that records evidence.",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "inventory_sha256",
+    "checks",
+    "coverage",
+    "sources",
+    "packs",
+    "optional_deferrals"
+  ],
+  "title": "Evidence",
+  "type": "object"
+}

@@ -1,0 +1,124 @@
+{
+  "candidate": "2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e",
+  "actual_checkout": "6dfe820bc36e4aaffaa30e900b6b80dd207d2c51",
+  "workflow": 39500462035,
+  "conclusion": "failure",
+  "passed_hosted": [
+    "INSTALL",
+    "RESOURCES",
+    "FIRST-START",
+    "PERFORMANCE"
+  ],
+  "failed_hosted": [
+    "PERSISTENCE-RECOVERY"
+  ],
+  "unrun_hosted": [
+    "OFFLINE",
+    "UPGRADE-RC1",
+    "DOWNGRADE-REFUSAL"
+  ],
+  "owner_smoke": "unverified",
+  "failure_scope": "Recover pending check_database after completed inspect and restore IPC; parent1200s bound. No completed recovery/integrity or corruption claim.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/hosted-first-start.json",
+      "bytes": 11525,
+      "sha256": "0dde846f3bbedfe1f3d8854380e689b753d35202b08d0c8108c7d917d14995cc"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/hosted-install.json",
+      "bytes": 751,
+      "sha256": "60ac0308fb1f96abe20b614c6480ee95cb5e946193e3f1d35c6184cd21a6183b"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/hosted-performance.json",
+      "bytes": 12718,
+      "sha256": "0acc3249aba9cf529316365a6d990309dd5ca38d3ebf8649442ac75cc3ee51c4"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/hosted-persistence-recovery.json",
+      "bytes": 768,
+      "sha256": "5245a44e38333df7870e8b663d61156b83fdd1cda76abf45b09e1b7ae2051ecf"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "8d6ddf9bacca3bf3d141fc167e729e3a9272bcfb954f6a098f5168c5ae47cb45"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/fresh-98d9f4b406c64ef9bec04b8e747a3284.json",
+      "bytes": 9877,
+      "sha256": "864d50e526f1d0251c97f776c7899cbd24bcbddabe9477984d5d664308ebc7b5"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/fresh-98d9f4b406c64ef9bec04b8e747a3284.json.progress.json",
+      "bytes": 2690,
+      "sha256": "fa425e8a2f54bc826c9ef5086b05e6f2fef749d290937fe2182da8f83c2ed569"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/recover-67b22135e95d4bad8bfb0d3582c86111.json.progress.json",
+      "bytes": 2768,
+      "sha256": "d25ee6b2e91c7c1cdb9b26c9adc740034dfec67dbc23a7d405b2733a9bf68ad5"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/recover-67b22135e95d4bad8bfb0d3582c86111.json.watchdog.json",
+      "bytes": 522,
+      "sha256": "df28bce6e494f8c5343bafaf05c9177c99a75214db4eee972e03965ff3e95cef"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/restart-0b17bc99f41a4686af644e77dfabcc94.json",
+      "bytes": 9877,
+      "sha256": "286cd30f99733580ffb98c20476780d9636decef0983f6e14c76f67b228044d0"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/restart-0b17bc99f41a4686af644e77dfabcc94.json.progress.json",
+      "bytes": 2700,
+      "sha256": "9344ffe54147b51a46479b9d381086110dd6e3d7cb7088cd0821a66ebd50f837"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/cases/raw/state.json",
+      "bytes": 1311,
+      "sha256": "75c657aeda3617a36d7b090189e78600bde5149ab36aeb08f073add4e0ece00b"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/package-failed.log",
+      "bytes": 663672,
+      "sha256": "653235885099c0b8b07f90f28bdeb1310483f507e01e2482763ac4c6937a9f3b"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/workflow.json",
+      "bytes": 12011,
+      "sha256": "fe2bfdb53e58b0cdd656cda1d3fd2b7f76a74b49a36b5ce70f384ec6fe16d882"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/acceptance-evidence.json",
+      "bytes": 27972317,
+      "sha256": "7d0d3e4b9c4431896764733cdd16005911ea6f3b0084fbe816dd272caedeb679"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-first-start.json",
+      "bytes": 11525,
+      "sha256": "0dde846f3bbedfe1f3d8854380e689b753d35202b08d0c8108c7d917d14995cc"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "60ac0308fb1f96abe20b614c6480ee95cb5e946193e3f1d35c6184cd21a6183b"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-performance.json",
+      "bytes": 12718,
+      "sha256": "0acc3249aba9cf529316365a6d990309dd5ca38d3ebf8649442ac75cc3ee51c4"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 768,
+      "sha256": "5245a44e38333df7870e8b663d61156b83fdd1cda76abf45b09e1b7ae2051ecf"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-recovery-timeout/recorded-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "8d6ddf9bacca3bf3d141fc167e729e3a9272bcfb954f6a098f5168c5ae47cb45"
+    }
+  ]
+}

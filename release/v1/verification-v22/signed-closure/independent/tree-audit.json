@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "regular_files": 86,
+  "resources": 84,
+  "resource_bytes": 395738463,
+  "missing": 0,
+  "extras": 0,
+  "mismatches": 0,
+  "symlinks_or_special": 0,
+  "manifest_equals_committed_source": true,
+  "receipt_equals_committed_source": true,
+  "method": "Reviewer streamed SHA256/length of every regular file in its own assembled directory, refused symlinks/special files and required exact set equality with source manifest plus manifest.json/receipt.json."
+}

@@ -587,3 +587,26 @@ fn dungeon_reference_schema_is_optional_and_nonnullable() {
             .contains(&json!("reference_contract_version"))
     );
 }
+
+#[test]
+fn borrowed_value_decode_matches_historical_consuming_deserializer_for_optional_forms() {
+    let original = fixture();
+    for explicit_empty in [false, true] {
+        let mut value = original.clone();
+        if explicit_empty {
+            for key in ["node_facts", "entities", "loot_tables"] {
+                value[key] = json!([]);
+            }
+            value["reference"]["payload"]["map_images"] = json!([]);
+            value["reference"]["payload"]["map_embeddings"] = json!([]);
+            value["reference"]["dependencies"] = json!([]);
+        }
+        let legacy: azeroth_core::content_v2::ReferenceContent =
+            serde_json::from_value(value.clone()).unwrap();
+        let current = parse(&value).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&current).unwrap(),
+            serde_json::to_vec(&legacy).unwrap()
+        );
+    }
+}

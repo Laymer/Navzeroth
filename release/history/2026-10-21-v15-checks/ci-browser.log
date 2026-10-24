@@ -1,0 +1,1408 @@
+﻿2026-10-20T21:27:13.4553568Z Current runner version: '2.337.0'
+2026-10-20T21:27:13.4580452Z ##[group]Runner Image Provisioner
+2026-10-20T21:27:13.4581356Z Hosted Compute Agent
+2026-10-20T21:27:13.4582001Z Version: 20261015.610
+2026-10-20T21:27:13.4583186Z Commit: 267fdb4e8bbec4ab5ea31367f3a00d5c480c7656
+2026-10-20T21:27:13.4583975Z Build Date: 2026-10-14T17:06:54Z
+2026-10-20T21:27:13.4584796Z Worker ID: {8efc51bd-d7f9-4a5e-af6d-b6e97897534c}
+2026-10-20T21:27:13.4585537Z Region: westus
+2026-10-20T21:27:13.4586114Z Cloud: Azure
+2026-10-20T21:27:13.4586735Z ##[endgroup]
+2026-10-20T21:27:13.4588275Z ##[group]Operating System
+2026-10-20T21:27:13.4589002Z Ubuntu
+2026-10-20T21:27:13.4589577Z 24.04.5
+2026-10-20T21:27:13.4590142Z LTS
+2026-10-20T21:27:13.4590720Z ##[endgroup]
+2026-10-20T21:27:13.4591294Z ##[group]Runner Image
+2026-10-20T21:27:13.4592079Z Image: ubuntu-24.04
+2026-10-20T21:27:13.4593093Z Version: 20261018.339.1
+2026-10-20T21:27:13.4594564Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261018.339/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-20T21:27:13.4596206Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261018.339
+2026-10-20T21:27:13.4597227Z ##[endgroup]
+2026-10-20T21:27:13.4598382Z ##[group]GITHUB_TOKEN Permissions
+2026-10-20T21:27:13.4600419Z Contents: read
+2026-10-20T21:27:13.4601079Z Metadata: read
+2026-10-20T21:27:13.4601661Z ##[endgroup]
+2026-10-20T21:27:13.4604135Z Secret source: Actions
+2026-10-20T21:27:13.4605166Z Cache mode: write
+2026-10-20T21:27:13.4605975Z Prepare workflow directory
+2026-10-20T21:27:13.4951136Z Prepare all required actions
+2026-10-20T21:27:13.5005007Z Getting action download info
+2026-10-20T21:27:13.8886243Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-20T21:27:13.9955715Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-10-20T21:27:14.0869987Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-20T21:27:14.2608294Z Complete job name: Mocked desktop Chromium
+2026-10-20T21:27:14.3457895Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-20T21:27:14.3458987Z with:
+2026-10-20T21:27:14.3459421Z   lfs: false
+2026-10-20T21:27:14.3459896Z   repository: Laymer/Navzeroth
+2026-10-20T21:27:14.3464124Z   token: ***
+2026-10-20T21:27:14.3464586Z   ssh-strict: true
+2026-10-20T21:27:14.3465038Z   ssh-user: git
+2026-10-20T21:27:14.3465496Z   persist-credentials: true
+2026-10-20T21:27:14.3466010Z   clean: true
+2026-10-20T21:27:14.3466478Z   sparse-checkout-cone-mode: true
+2026-10-20T21:27:14.3467030Z   fetch-depth: 1
+2026-10-20T21:27:14.3467476Z   fetch-tags: false
+2026-10-20T21:27:14.3467941Z   show-progress: true
+2026-10-20T21:27:14.3468411Z   submodules: false
+2026-10-20T21:27:14.3468874Z   set-safe-directory: true
+2026-10-20T21:27:14.3469397Z   allow-unsafe-pr-checkout: false
+2026-10-20T21:27:14.3470223Z ##[endgroup]
+2026-10-20T21:27:14.4501334Z Syncing repository: Laymer/Navzeroth
+2026-10-20T21:27:14.4504139Z ##[group]Getting Git version info
+2026-10-20T21:27:14.4505384Z Working directory is '/home/runner/work/Navzeroth/Navzeroth'
+2026-10-20T21:27:14.4507012Z [command]/usr/bin/git version
+2026-10-20T21:27:14.4575596Z git version 2.55.0
+2026-10-20T21:27:14.4598001Z ##[endgroup]
+2026-10-20T21:27:14.4610167Z Temporarily overriding HOME='/home/runner/work/_temp/c80c7f06-992a-4fcc-86ea-ba06c55b1768' before making global git config changes
+2026-10-20T21:27:14.4612979Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:27:14.4616931Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+2026-10-20T21:27:14.4672073Z Deleting the contents of '/home/runner/work/Navzeroth/Navzeroth'
+2026-10-20T21:27:14.4676363Z ##[group]Determining repository object format
+2026-10-20T21:27:14.4678912Z ##[endgroup]
+2026-10-20T21:27:14.4680494Z ##[group]Initializing the repository
+2026-10-20T21:27:14.4683607Z [command]/usr/bin/git init /home/runner/work/Navzeroth/Navzeroth
+2026-10-20T21:27:14.4781295Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-20T21:27:14.4783502Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-20T21:27:14.4785670Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-20T21:27:14.4787050Z hint: call:
+2026-10-20T21:27:14.4787846Z hint:
+2026-10-20T21:27:14.4788936Z hint: 	git config --global init.defaultBranch <name>
+2026-10-20T21:27:14.4790197Z hint:
+2026-10-20T21:27:14.4791299Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-20T21:27:14.4793201Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-20T21:27:14.4794743Z hint:
+2026-10-20T21:27:14.4795622Z hint: 	git branch -m <name>
+2026-10-20T21:27:14.4796649Z hint:
+2026-10-20T21:27:14.4797904Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-20T21:27:14.4799665Z Initialized empty Git repository in /home/runner/work/Navzeroth/Navzeroth/.git/
+2026-10-20T21:27:14.4801849Z [command]/usr/bin/git remote add origin https://github.com/Laymer/Navzeroth
+2026-10-20T21:27:14.4849630Z ##[endgroup]
+2026-10-20T21:27:14.4850825Z ##[group]Disabling automatic garbage collection
+2026-10-20T21:27:14.4853341Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-20T21:27:14.4889201Z ##[endgroup]
+2026-10-20T21:27:14.4890439Z ##[group]Setting up auth
+2026-10-20T21:27:14.4891289Z Removing SSH command configuration
+2026-10-20T21:27:14.4895996Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:27:14.4932949Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-20T21:27:14.5350629Z Removing HTTP extra header
+2026-10-20T21:27:14.5364847Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:27:14.5436181Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-20T21:27:14.5775710Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:27:14.5779637Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:27:14.5834781Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-20T21:27:14.6098342Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-20T21:27:14.6148658Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path /home/runner/work/_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:27:14.6194443Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:27:14.6242142Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:27:14.6287231Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:27:14.6326400Z ##[endgroup]
+2026-10-20T21:27:14.6327194Z ##[group]Fetching the repository
+2026-10-20T21:27:14.6414094Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6dfe820bc36e4aaffaa30e900b6b80dd207d2c51:refs/remotes/pull/239/merge
+2026-10-20T21:27:16.0584363Z From https://github.com/Laymer/Navzeroth
+2026-10-20T21:27:16.0587504Z  * [new ref]         6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 -> pull/239/merge
+2026-10-20T21:27:16.0593782Z ##[endgroup]
+2026-10-20T21:27:16.0595927Z ##[group]Determining the checkout info
+2026-10-20T21:27:16.0598312Z ##[endgroup]
+2026-10-20T21:27:16.0599624Z [command]/usr/bin/git sparse-checkout disable
+2026-10-20T21:27:16.0663970Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-20T21:27:16.0707685Z ##[group]Checking out the ref
+2026-10-20T21:27:16.0710870Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/239/merge
+2026-10-20T21:27:17.0876835Z Updating files:  94% (3945/4163)
+2026-10-20T21:27:17.0955346Z Updating files:  95% (3955/4163)
+2026-10-20T21:27:17.1574599Z Updating files:  96% (3997/4163)
+2026-10-20T21:27:17.1606435Z Updating files:  97% (4039/4163)
+2026-10-20T21:27:17.1638412Z Updating files:  98% (4080/4163)
+2026-10-20T21:27:17.1668032Z Updating files:  99% (4122/4163)
+2026-10-20T21:27:17.1668708Z Updating files: 100% (4163/4163)
+2026-10-20T21:27:17.1669348Z Updating files: 100% (4163/4163), done.
+2026-10-20T21:27:17.1716591Z Note: switching to 'refs/remotes/pull/239/merge'.
+2026-10-20T21:27:17.1716955Z 
+2026-10-20T21:27:17.1717238Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-20T21:27:17.1718280Z changes and commit them, and you can discard any commits you make in this
+2026-10-20T21:27:17.1719311Z state without impacting any branches by switching back to a branch.
+2026-10-20T21:27:17.1719900Z 
+2026-10-20T21:27:17.1720328Z If you want to create a new branch to retain commits you create, you may
+2026-10-20T21:27:17.1721262Z do so (now or later) by using -c with the switch command. Example:
+2026-10-20T21:27:17.1721755Z 
+2026-10-20T21:27:17.1722050Z   git switch -c <new-branch-name>
+2026-10-20T21:27:17.1722447Z 
+2026-10-20T21:27:17.1722960Z Or undo this operation with:
+2026-10-20T21:27:17.1723344Z 
+2026-10-20T21:27:17.1723548Z   git switch -
+2026-10-20T21:27:17.1723823Z 
+2026-10-20T21:27:17.1724548Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-20T21:27:17.1725214Z 
+2026-10-20T21:27:17.1725907Z HEAD is now at 6dfe820 Merge 2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+2026-10-20T21:27:17.2311156Z ##[endgroup]
+2026-10-20T21:27:17.2393535Z [command]/usr/bin/git log -1 --format=%H
+2026-10-20T21:27:17.2432220Z 6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:27:17.2714738Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-10-20T21:27:17.2715277Z with:
+2026-10-20T21:27:17.2715574Z   node-version-file: .node-version
+2026-10-20T21:27:17.2715922Z   package-manager-cache: false
+2026-10-20T21:27:17.2716242Z   check-latest: false
+2026-10-20T21:27:17.2719006Z   token: ***
+2026-10-20T21:27:17.2719282Z ##[endgroup]
+2026-10-20T21:27:17.4045379Z Node version file is not JSON file
+2026-10-20T21:27:17.4052014Z Node version file is not TOML file
+2026-10-20T21:27:17.4053104Z Resolved .node-version as 24.15.0
+2026-10-20T21:27:17.4069531Z Attempting to download 24.15.0...
+2026-10-20T21:27:18.0051977Z Acquiring 24.15.0 - x64 from https://github.com/actions/node-versions/releases/download/24.15.0-24511264946/node-24.15.0-linux-x64.tar.gz
+2026-10-20T21:27:18.4675754Z Extracting ...
+2026-10-20T21:27:18.4833345Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/ef6a250d-ac6c-4fe0-8e10-9bf8d07b1fce -f /home/runner/work/_temp/03a30ed8-8251-41f9-9300-f57948c2f9c8
+2026-10-20T21:27:19.7108352Z Adding to the cache ...
+2026-10-20T21:27:21.5407760Z ##[group]Environment details
+2026-10-20T21:27:21.8071998Z node: v24.15.0
+2026-10-20T21:27:21.8073009Z npm: 11.12.1
+2026-10-20T21:27:21.8073521Z yarn: 1.22.22
+2026-10-20T21:27:21.8074476Z ##[endgroup]
+2026-10-20T21:27:21.8283409Z ##[group]Run npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+2026-10-20T21:27:21.8284634Z [36;1mnpm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0[0m
+2026-10-20T21:27:21.8285266Z [36;1mecho "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"[0m
+2026-10-20T21:27:21.8454833Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:27:21.8455260Z ##[endgroup]
+2026-10-20T21:27:22.3276967Z 
+2026-10-20T21:27:22.3282191Z added 1 package in 423ms
+2026-10-20T21:27:22.3686768Z ##[group]Run pnpm install --frozen-lockfile
+2026-10-20T21:27:22.3687177Z [36;1mpnpm install --frozen-lockfile[0m
+2026-10-20T21:27:22.3740329Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:27:22.3740599Z ##[endgroup]
+2026-10-20T21:27:22.4376305Z ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-12.11.2.tgz
+2026-10-20T21:27:22.8871879Z Downloading the pnpm 12.11.2 binary for linux-x64...
+2026-10-20T21:27:23.5664360Z Scope: all 2 workspace projects
+2026-10-20T21:27:23.5879100Z ? Verifying lockfile against supply-chain policies (283 entries)...
+2026-10-20T21:27:23.8240204Z Packages are hard linked from the content-addressable store to the virtual store.
+2026-10-20T21:27:23.8241870Z   Content-addressable store is at: /home/runner/.local/share/pnpm/store/v11
+2026-10-20T21:27:23.8243437Z   Virtual store is at:             node_modules/.pnpm
+2026-10-20T21:27:24.2766067Z Downloading @tauri-apps/cli-linux-x64-gnu@2.12.2: 0.00 B/8.97 MB
+2026-10-20T21:27:24.4280560Z Downloading @rolldown/binding-linux-x64-gnu@1.2.13: 0.00 B/8.18 MB
+2026-10-20T21:27:24.4950148Z Downloading @typescript/typescript-linux-x64@7.0.2: 0.00 B/9.66 MB
+2026-10-20T21:27:25.7147666Z ✓ Lockfile passes supply-chain policies (283 entries in 2.1s)
+2026-10-20T21:27:25.7148725Z Lockfile is up to date, resolution step is skipped
+2026-10-20T21:27:25.7181707Z Packages: +229
+2026-10-20T21:27:25.7182202Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-20T21:27:25.7343275Z Progress: resolved 229, reused 0, downloaded 229, added 229, done
+2026-10-20T21:27:25.7731960Z 
+2026-10-20T21:27:25.7732711Z devDependencies:
+2026-10-20T21:27:25.7733507Z + @types/node 24.19.0
+2026-10-20T21:27:25.7733935Z + ajv 8.20.0
+2026-10-20T21:27:25.7734409Z + json-schema-to-typescript 16.0.0
+2026-10-20T21:27:25.7734894Z + typescript 7.0.2
+2026-10-20T21:27:25.7735108Z 
+2026-10-20T21:27:25.7773584Z Done in 2.2s using pnpm v12.11.2
+2026-10-20T21:27:25.8265477Z ##[group]Run pnpm --dir apps/desktop typecheck
+2026-10-20T21:27:25.8265866Z [36;1mpnpm --dir apps/desktop typecheck[0m
+2026-10-20T21:27:25.8319479Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:27:25.8319735Z ##[endgroup]
+2026-10-20T21:27:25.9152211Z $ tsc --noEmit
+2026-10-20T21:27:33.4874936Z ##[group]Run pnpm --dir apps/desktop lint
+2026-10-20T21:27:33.4875297Z [36;1mpnpm --dir apps/desktop lint[0m
+2026-10-20T21:27:33.4928150Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:27:33.4928403Z ##[endgroup]
+2026-10-20T21:27:33.5750863Z $ eslint .
+2026-10-20T21:27:37.5210996Z ##[group]Run pnpm --dir apps/desktop test:unit
+2026-10-20T21:27:37.5211378Z [36;1mpnpm --dir apps/desktop test:unit[0m
+2026-10-20T21:27:37.5263091Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:27:37.5263351Z ##[endgroup]
+2026-10-20T21:27:37.6060555Z $ vitest run
+2026-10-20T21:27:37.9193805Z 
+2026-10-20T21:27:37.9198411Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90m/home/runner/work/Navzeroth/Navzeroth/apps/desktop[39m
+2026-10-20T21:27:37.9199326Z 
+2026-10-20T21:27:41.8255630Z  [32m✓[39m src/screens/WorldScreen.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 2459[2mms[22m[39m
+2026-10-20T21:27:41.8257675Z    [33m[2m✓[22m[39m searches on the backend and marks Hogger as 1.12 data with his map position[33m 467[2mms[22m[39m
+2026-10-20T21:27:41.8259947Z    [33m[2m✓[22m[39m describes unresolved sources, alternative costs and missing objective details[33m 1135[2mms[22m[39m
+2026-10-20T21:27:41.9295288Z  [32m✓[39m src/screens/PlannerScreen.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 2263[2mms[22m[39m
+2026-10-20T21:27:41.9297882Z    [33m[2m✓[22m[39m cancels registration that arrives after input edits and ignores its old result[33m 431[2mms[22m[39m
+2026-10-20T21:27:41.9300612Z    [33m[2m✓[22m[39m exports only the calculated request and reports clipboard failure without changing export text[33m 339[2mms[22m[39m
+2026-10-20T21:27:43.8244727Z  [32m✓[39m src/screens/GearExplanations.test.tsx [2m([22m[2m52 tests[22m[2m)[22m[33m 677[2mms[22m[39m
+2026-10-20T21:27:46.0359000Z  [32m✓[39m src/screens/TodaySettings.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 844[2mms[22m[39m
+2026-10-20T21:27:46.6137638Z  [32m✓[39m src/screens/AtlasScreen.test.tsx [2m([22m[2m23 tests[22m[2m)[22m[33m 6528[2mms[22m[39m
+2026-10-20T21:27:46.6139305Z    [32m✓[39m dense reference search [2m(1)[22m
+2026-10-20T21:27:46.6141171Z      [33m[2m✓[22m[39m filters pins on the map and list, navigates by keyboard, and preserves selection on refresh[33m 1957[2mms[22m[39m
+2026-10-20T21:27:46.6143499Z    [33m[2m✓[22m[39m bounds dense map/list pages and keeps global keyboard focus across pages[33m 3354[2mms[22m[39m
+2026-10-20T21:27:46.7091097Z  [32m✓[39m src/screens/GearScreen.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 3426[2mms[22m[39m
+2026-10-20T21:27:46.7092879Z    [33m[2m✓[22m[39m requires explicit manual weights and budgets and labels the synthetic example[33m 1077[2mms[22m[39m
+2026-10-20T21:27:46.7094723Z    [33m[2m✓[22m[39m ignores superseded comparison responses and refreshes captured inputs[33m 347[2mms[22m[39m
+2026-10-20T21:27:46.7096426Z    [33m[2m✓[22m[39m retains model edits while pruning removed candidate and hand references[33m 317[2mms[22m[39m
+2026-10-20T21:27:46.7098200Z    [33m[2m✓[22m[39m retains bounded candidates when browsing and refreshing an immutable catalog[33m 465[2mms[22m[39m
+2026-10-20T21:27:46.7100285Z    [33m[2m✓[22m[39m requires explicit role opt-in to score an unknown imported role and never shows practical rankings[33m 676[2mms[22m[39m
+2026-10-20T21:27:48.8952357Z  [32m✓[39m src/screens/PartyAgreement.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 909[2mms[22m[39m
+2026-10-20T21:27:48.8954917Z    [33m[2m✓[22m[39m proposes for one explicit participant then requires every local acceptance and permits withdrawal[33m 511[2mms[22m[39m
+2026-10-20T21:27:49.6599024Z  [32m✓[39m src/screens/PartyPlanning.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1652[2mms[22m[39m
+2026-10-20T21:27:49.6614344Z    [33m[2m✓[22m[39m requires manual fields and sends every member snapshot and utility[33m 585[2mms[22m[39m
+2026-10-20T21:27:49.6616536Z    [33m[2m✓[22m[39m retains prior joint advice through cancellation/ordinary failure and clears it on outdated publication[33m 349[2mms[22m[39m
+2026-10-20T21:27:49.6819508Z  [32m✓[39m src/screens/LocalDataPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2390[2mms[22m[39m
+2026-10-20T21:27:49.6844797Z    [33m[2m✓[22m[39m reviews explicit selection, extracts research only and requests bounded revision pages[33m 538[2mms[22m[39m
+2026-10-20T21:27:49.6879154Z    [33m[2m✓[22m[39m stops polling after status refusal and forgets the retained job without touching extraction state[33m 1100[2mms[22m[39m
+2026-10-20T21:27:51.2570660Z  [32m✓[39m src/screens/ImportScreen.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1233[2mms[22m[39m
+2026-10-20T21:27:51.2573450Z    [33m[2m✓[22m[39m recovers from malformed input and explains history-only imports without replacing current[33m 500[2mms[22m[39m
+2026-10-20T21:27:51.2575980Z    [33m[2m✓[22m[39m requires a reason and compares the previewed current snapshot before an explicit promotion[33m 334[2mms[22m[39m
+2026-10-20T21:27:53.0557191Z  [32m✓[39m src/screens/ContentScreen.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2122[2mms[22m[39m
+2026-10-20T21:27:53.0564102Z    [33m[2m✓[22m[39m stages separately from activation and exposes uncertainty and source policy negatives[33m 755[2mms[22m[39m
+2026-10-20T21:27:53.0566504Z    [33m[2m✓[22m[39m requests bounded inspection pages using the staged revision hash[33m 363[2mms[22m[39m
+2026-10-20T21:27:53.0568326Z    [33m[2m✓[22m[39m activates several staged packs of the selected context as one set[33m 333[2mms[22m[39m
+2026-10-20T21:27:53.6900645Z  [32m✓[39m src/screens/PartyScreen.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 999[2mms[22m[39m
+2026-10-20T21:27:53.6903233Z    [33m[2m✓[22m[39m creates a manual party, displays individual stale/missing state and removes only configuration[33m 367[2mms[22m[39m
+2026-10-20T21:27:53.6905694Z    [33m[2m✓[22m[39m keeps saved membership and draft edits after a rejected replacement and refresh[33m 329[2mms[22m[39m
+2026-10-20T21:27:54.3980267Z  [32m✓[39m src/screens/DungeonsScreen.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 3479[2mms[22m[39m
+2026-10-20T21:27:54.3982852Z    [33m[2m✓[22m[39m browser demo cannot claim imported preparation state or invoke evaluation[33m 397[2mms[22m[39m
+2026-10-20T21:27:54.3994457Z    [33m[2m✓[22m[39m explicit local party inspection exposes evidence gaps, false and zero without promoting readiness[33m 344[2mms[22m[39m
+2026-10-20T21:27:54.3996966Z    [33m[2m✓[22m[39m large source lists retain all references and page visible rows with bounded origin lookups[33m 1864[2mms[22m[39m
+2026-10-20T21:27:55.6124663Z  [32m✓[39m src/ui/ui.test.tsx [2m([22m[2m21 tests[22m[2m)[22m[33m 605[2mms[22m[39m
+2026-10-20T21:27:56.2521652Z  [32m✓[39m src/screens/SessionsScreen.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1823[2mms[22m[39m
+2026-10-20T21:27:56.2524548Z    [33m[2m✓[22m[39m manual text/file import, duplicate detail and explicit deletion preserve distinctions[33m 1018[2mms[22m[39m
+2026-10-20T21:27:56.2526902Z    [33m[2m✓[22m[39m a superseded detail response cannot restore another profile's session[33m 318[2mms[22m[39m
+2026-10-20T21:27:56.9132438Z  [32m✓[39m src/screens/SettingsRefresh.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1199[2mms[22m[39m
+2026-10-20T21:27:56.9134567Z    [33m[2m✓[22m[39m the refresh tick keeps unsaved edits and the revision they were made against[33m 416[2mms[22m[39m
+2026-10-20T21:27:56.9136443Z    [33m[2m✓[22m[39m a stale save is rejected, the conflict stays through later ticks, and Keep my edits recovers[33m 338[2mms[22m[39m
+2026-10-20T21:27:57.9762147Z  [32m✓[39m src/ui/followups.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 424[2mms[22m[39m
+2026-10-20T21:27:58.6225380Z  [32m✓[39m src/App.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1566[2mms[22m[39m
+2026-10-20T21:27:58.6227641Z    [33m[2m✓[22m[39m backend recovery does not reapply a saved or newly changed next-launch workflow[33m 973[2mms[22m[39m
+2026-10-20T21:27:59.4130171Z  [32m✓[39m src/screens/RecoveryPanel.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 1246[2mms[22m[39m
+2026-10-20T21:27:59.4146618Z    [33m[2m✓[22m[39m requires inspection and explicit replacement acknowledgment, then sends only staged identity[33m 321[2mms[22m[39m
+2026-10-20T21:27:59.4148676Z    [33m[2m✓[22m[39m startup checking is visible and polls until the host becomes ready[33m 536[2mms[22m[39m
+2026-10-20T21:27:59.4824022Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps explicit edits made while durable choices are still loading
+2026-10-20T21:27:59.4826079Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.4826755Z 
+2026-10-20T21:27:59.4827390Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.4828006Z 
+2026-10-20T21:27:59.4828151Z act(() => {
+2026-10-20T21:27:59.4828568Z   /* fire events that update state */
+2026-10-20T21:27:59.4829029Z });
+2026-10-20T21:27:59.4829393Z /* assert on the output */
+2026-10-20T21:27:59.4830124Z 
+2026-10-20T21:27:59.4831237Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.4832199Z 
+2026-10-20T21:27:59.5731724Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps save refusals explicit and never starts extraction or activation
+2026-10-20T21:27:59.5734456Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.5735467Z 
+2026-10-20T21:27:59.5736341Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.5737245Z 
+2026-10-20T21:27:59.5737633Z act(() => {
+2026-10-20T21:27:59.5738315Z   /* fire events that update state */
+2026-10-20T21:27:59.5739126Z });
+2026-10-20T21:27:59.5739745Z /* assert on the output */
+2026-10-20T21:27:59.5740328Z 
+2026-10-20T21:27:59.5741671Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.5743893Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.5744762Z 
+2026-10-20T21:27:59.5745612Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.5746474Z 
+2026-10-20T21:27:59.5746854Z act(() => {
+2026-10-20T21:27:59.5747548Z   /* fire events that update state */
+2026-10-20T21:27:59.5748263Z });
+2026-10-20T21:27:59.5748890Z /* assert on the output */
+2026-10-20T21:27:59.5749430Z 
+2026-10-20T21:27:59.5750692Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.5752749Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.5753633Z 
+2026-10-20T21:27:59.5754450Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.5755353Z 
+2026-10-20T21:27:59.5755738Z act(() => {
+2026-10-20T21:27:59.5756440Z   /* fire events that update state */
+2026-10-20T21:27:59.5757181Z });
+2026-10-20T21:27:59.5757792Z /* assert on the output */
+2026-10-20T21:27:59.5758319Z 
+2026-10-20T21:27:59.5759585Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.5760806Z 
+2026-10-20T21:27:59.6821027Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps status refusals explicit and never starts extraction or activation
+2026-10-20T21:27:59.6831557Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.6832333Z 
+2026-10-20T21:27:59.6833219Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.6833845Z 
+2026-10-20T21:27:59.6834017Z act(() => {
+2026-10-20T21:27:59.6834450Z   /* fire events that update state */
+2026-10-20T21:27:59.6834887Z });
+2026-10-20T21:27:59.6835706Z /* assert on the output */
+2026-10-20T21:27:59.6836044Z 
+2026-10-20T21:27:59.6837115Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.6838594Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.6839176Z 
+2026-10-20T21:27:59.6839790Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.6840416Z 
+2026-10-20T21:27:59.6840578Z act(() => {
+2026-10-20T21:27:59.6841022Z   /* fire events that update state */
+2026-10-20T21:27:59.6841483Z });
+2026-10-20T21:27:59.6841856Z /* assert on the output */
+2026-10-20T21:27:59.6842153Z 
+2026-10-20T21:27:59.6843470Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.6844986Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.6845887Z 
+2026-10-20T21:27:59.6846516Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.6847114Z 
+2026-10-20T21:27:59.6847275Z act(() => {
+2026-10-20T21:27:59.6847697Z   /* fire events that update state */
+2026-10-20T21:27:59.6848165Z });
+2026-10-20T21:27:59.6848536Z /* assert on the output */
+2026-10-20T21:27:59.6848809Z 
+2026-10-20T21:27:59.6849860Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.6850795Z 
+2026-10-20T21:27:59.7856848Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps acknowledge refusals explicit and never starts extraction or activation
+2026-10-20T21:27:59.7883905Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.7912956Z 
+2026-10-20T21:27:59.7913615Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.7914319Z 
+2026-10-20T21:27:59.7914495Z act(() => {
+2026-10-20T21:27:59.7914939Z   /* fire events that update state */
+2026-10-20T21:27:59.7915408Z });
+2026-10-20T21:27:59.7915794Z /* assert on the output */
+2026-10-20T21:27:59.7916091Z 
+2026-10-20T21:27:59.7917142Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.7918659Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.7919250Z 
+2026-10-20T21:27:59.7919859Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.7920563Z 
+2026-10-20T21:27:59.7941451Z act(() => {
+2026-10-20T21:27:59.7944727Z   /* fire events that update state */
+2026-10-20T21:27:59.7945628Z });
+2026-10-20T21:27:59.7946384Z /* assert on the output */
+2026-10-20T21:27:59.7947090Z 
+2026-10-20T21:27:59.7948321Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.7950084Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.7950940Z 
+2026-10-20T21:27:59.7951696Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.7952809Z 
+2026-10-20T21:27:59.7953201Z act(() => {
+2026-10-20T21:27:59.7953818Z   /* fire events that update state */
+2026-10-20T21:27:59.7973350Z });
+2026-10-20T21:27:59.7974264Z /* assert on the output */
+2026-10-20T21:27:59.7977097Z 
+2026-10-20T21:27:59.8074010Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.8132834Z 
+2026-10-20T21:27:59.8977366Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles a non-English locale before enabling extraction choices
+2026-10-20T21:27:59.8984721Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.8985406Z 
+2026-10-20T21:27:59.8985894Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.8986243Z 
+2026-10-20T21:27:59.8986327Z act(() => {
+2026-10-20T21:27:59.8986575Z   /* fire events that update state */
+2026-10-20T21:27:59.8986836Z });
+2026-10-20T21:27:59.8987049Z /* assert on the output */
+2026-10-20T21:27:59.8987205Z 
+2026-10-20T21:27:59.8987773Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.8988567Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.8988880Z 
+2026-10-20T21:27:59.8989201Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.8989519Z 
+2026-10-20T21:27:59.8989606Z act(() => {
+2026-10-20T21:27:59.8989839Z   /* fire events that update state */
+2026-10-20T21:27:59.8990094Z });
+2026-10-20T21:27:59.8990474Z /* assert on the output */
+2026-10-20T21:27:59.8990627Z 
+2026-10-20T21:27:59.8991180Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.8991974Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.8992280Z 
+2026-10-20T21:27:59.8992911Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.8993243Z 
+2026-10-20T21:27:59.8993326Z act(() => {
+2026-10-20T21:27:59.8993558Z   /* fire events that update state */
+2026-10-20T21:27:59.8993810Z });
+2026-10-20T21:27:59.8994008Z /* assert on the output */
+2026-10-20T21:27:59.8994193Z 
+2026-10-20T21:27:59.8994729Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.8995346Z 
+2026-10-20T21:27:59.9803913Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles an absent locale among installed choices before enabling extraction choices
+2026-10-20T21:27:59.9807872Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.9808804Z 
+2026-10-20T21:27:59.9809660Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.9810553Z 
+2026-10-20T21:27:59.9810881Z act(() => {
+2026-10-20T21:27:59.9811765Z   /* fire events that update state */
+2026-10-20T21:27:59.9812452Z });
+2026-10-20T21:27:59.9813326Z /* assert on the output */
+2026-10-20T21:27:59.9813796Z 
+2026-10-20T21:27:59.9818850Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.9843193Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.9843769Z 
+2026-10-20T21:27:59.9844402Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.9845022Z 
+2026-10-20T21:27:59.9845197Z act(() => {
+2026-10-20T21:27:59.9845672Z   /* fire events that update state */
+2026-10-20T21:27:59.9846217Z });
+2026-10-20T21:27:59.9846673Z /* assert on the output */
+2026-10-20T21:27:59.9846966Z 
+2026-10-20T21:27:59.9847963Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.9849365Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.9849915Z 
+2026-10-20T21:27:59.9850972Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.9851693Z 
+2026-10-20T21:27:59.9851958Z act(() => {
+2026-10-20T21:27:59.9852749Z   /* fire events that update state */
+2026-10-20T21:27:59.9853207Z });
+2026-10-20T21:27:59.9853546Z /* assert on the output */
+2026-10-20T21:27:59.9853794Z 
+2026-10-20T21:27:59.9855228Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.9856539Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:27:59.9857053Z 
+2026-10-20T21:27:59.9857582Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:27:59.9858125Z 
+2026-10-20T21:27:59.9858278Z act(() => {
+2026-10-20T21:27:59.9858658Z   /* fire events that update state */
+2026-10-20T21:27:59.9859065Z });
+2026-10-20T21:27:59.9859414Z /* assert on the output */
+2026-10-20T21:27:59.9859676Z 
+2026-10-20T21:27:59.9860642Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:27:59.9861505Z 
+2026-10-20T21:28:00.0609189Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles only absent locales without falling back before enabling extraction choices
+2026-10-20T21:28:00.0624430Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.0627858Z 
+2026-10-20T21:28:00.0629295Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.0629927Z 
+2026-10-20T21:28:00.0630102Z act(() => {
+2026-10-20T21:28:00.0630535Z   /* fire events that update state */
+2026-10-20T21:28:00.0631008Z });
+2026-10-20T21:28:00.0631380Z /* assert on the output */
+2026-10-20T21:28:00.0631655Z 
+2026-10-20T21:28:00.0633003Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.0634531Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.0635109Z 
+2026-10-20T21:28:00.0635727Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.0636325Z 
+2026-10-20T21:28:00.0636499Z act(() => {
+2026-10-20T21:28:00.0636936Z   /* fire events that update state */
+2026-10-20T21:28:00.0637441Z });
+2026-10-20T21:28:00.0637812Z /* assert on the output */
+2026-10-20T21:28:00.0638105Z 
+2026-10-20T21:28:00.0639144Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.0640668Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.0641258Z 
+2026-10-20T21:28:00.0641882Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.0642765Z 
+2026-10-20T21:28:00.0642926Z act(() => {
+2026-10-20T21:28:00.0643371Z   /* fire events that update state */
+2026-10-20T21:28:00.0643859Z });
+2026-10-20T21:28:00.0644231Z /* assert on the output */
+2026-10-20T21:28:00.0644502Z 
+2026-10-20T21:28:00.0645555Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.0647085Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.0647704Z 
+2026-10-20T21:28:00.0648308Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.0648917Z 
+2026-10-20T21:28:00.0649078Z act(() => {
+2026-10-20T21:28:00.0649521Z   /* fire events that update state */
+2026-10-20T21:28:00.0649991Z });
+2026-10-20T21:28:00.0650358Z /* assert on the output */
+2026-10-20T21:28:00.0650622Z 
+2026-10-20T21:28:00.0654564Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.0655523Z 
+2026-10-20T21:28:00.1305469Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles unknown installed locales before enabling extraction choices
+2026-10-20T21:28:00.1314578Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1315279Z 
+2026-10-20T21:28:00.1316333Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1317000Z 
+2026-10-20T21:28:00.1317164Z act(() => {
+2026-10-20T21:28:00.1317614Z   /* fire events that update state */
+2026-10-20T21:28:00.1318086Z });
+2026-10-20T21:28:00.1318466Z /* assert on the output */
+2026-10-20T21:28:00.1318750Z 
+2026-10-20T21:28:00.1319806Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1321278Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1321860Z 
+2026-10-20T21:28:00.1322476Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1323276Z 
+2026-10-20T21:28:00.1323443Z act(() => {
+2026-10-20T21:28:00.1323869Z   /* fire events that update state */
+2026-10-20T21:28:00.1324404Z });
+2026-10-20T21:28:00.1324784Z /* assert on the output */
+2026-10-20T21:28:00.1325070Z 
+2026-10-20T21:28:00.1326431Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1327937Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1328520Z 
+2026-10-20T21:28:00.1329141Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1329744Z 
+2026-10-20T21:28:00.1329897Z act(() => {
+2026-10-20T21:28:00.1330320Z   /* fire events that update state */
+2026-10-20T21:28:00.1330777Z });
+2026-10-20T21:28:00.1331149Z /* assert on the output */
+2026-10-20T21:28:00.1331421Z 
+2026-10-20T21:28:00.1332741Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1334244Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1334826Z 
+2026-10-20T21:28:00.1335439Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1336060Z 
+2026-10-20T21:28:00.1336227Z act(() => {
+2026-10-20T21:28:00.1336655Z   /* fire events that update state */
+2026-10-20T21:28:00.1337120Z });
+2026-10-20T21:28:00.1337489Z /* assert on the output */
+2026-10-20T21:28:00.1337770Z 
+2026-10-20T21:28:00.1338766Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1339685Z 
+2026-10-20T21:28:00.1948928Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles different English locale identities before enabling extraction choices
+2026-10-20T21:28:00.1950988Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1952372Z 
+2026-10-20T21:28:00.1954894Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1955761Z 
+2026-10-20T21:28:00.1956199Z act(() => {
+2026-10-20T21:28:00.1957033Z   /* fire events that update state */
+2026-10-20T21:28:00.1957557Z });
+2026-10-20T21:28:00.1957972Z /* assert on the output */
+2026-10-20T21:28:00.1958257Z 
+2026-10-20T21:28:00.1959260Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1960771Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1961362Z 
+2026-10-20T21:28:00.1961986Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1962884Z 
+2026-10-20T21:28:00.1963053Z act(() => {
+2026-10-20T21:28:00.1963478Z   /* fire events that update state */
+2026-10-20T21:28:00.1963939Z });
+2026-10-20T21:28:00.1964339Z /* assert on the output */
+2026-10-20T21:28:00.1964622Z 
+2026-10-20T21:28:00.1965695Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1967741Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1968394Z 
+2026-10-20T21:28:00.1969013Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1969622Z 
+2026-10-20T21:28:00.1969788Z act(() => {
+2026-10-20T21:28:00.1970228Z   /* fire events that update state */
+2026-10-20T21:28:00.1970715Z });
+2026-10-20T21:28:00.1971102Z /* assert on the output */
+2026-10-20T21:28:00.1971398Z 
+2026-10-20T21:28:00.1972425Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1974181Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.1974791Z 
+2026-10-20T21:28:00.1975424Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.1976031Z 
+2026-10-20T21:28:00.1976204Z act(() => {
+2026-10-20T21:28:00.1976658Z   /* fire events that update state */
+2026-10-20T21:28:00.1977738Z });
+2026-10-20T21:28:00.1978134Z /* assert on the output */
+2026-10-20T21:28:00.1978436Z 
+2026-10-20T21:28:00.1979495Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.1980403Z 
+2026-10-20T21:28:00.2628302Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles duplicate and unsorted saved choices before enabling extraction choices
+2026-10-20T21:28:00.2638173Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.2639294Z 
+2026-10-20T21:28:00.2640265Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.2641116Z 
+2026-10-20T21:28:00.2641484Z act(() => {
+2026-10-20T21:28:00.2642125Z   /* fire events that update state */
+2026-10-20T21:28:00.2643079Z });
+2026-10-20T21:28:00.2643690Z /* assert on the output */
+2026-10-20T21:28:00.2644176Z 
+2026-10-20T21:28:00.2645409Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.2647190Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.2649116Z 
+2026-10-20T21:28:00.2649929Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.2650873Z 
+2026-10-20T21:28:00.2651255Z act(() => {
+2026-10-20T21:28:00.2651906Z   /* fire events that update state */
+2026-10-20T21:28:00.2652823Z });
+2026-10-20T21:28:00.2653391Z /* assert on the output */
+2026-10-20T21:28:00.2653877Z 
+2026-10-20T21:28:00.2655126Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.2656906Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:00.2684181Z 
+2026-10-20T21:28:00.2693571Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:00.2694384Z 
+2026-10-20T21:28:00.2694712Z act(() => {
+2026-10-20T21:28:00.2695355Z   /* fire events that update state */
+2026-10-20T21:28:00.2696010Z });
+2026-10-20T21:28:00.2696524Z /* assert on the output */
+2026-10-20T21:28:00.2696968Z 
+2026-10-20T21:28:00.2698154Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:00.2699411Z 
+2026-10-20T21:28:00.3764494Z  [32m✓[39m src/screens/LocalWorkflowChoices.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 1245[2mms[22m[39m
+2026-10-20T21:28:00.3802069Z    [33m[2m✓[22m[39m restores durable locales, saves with a generation guard and acknowledges only a staged build[33m 321[2mms[22m[39m
+2026-10-20T21:28:00.5537513Z  [32m✓[39m src/theme/composite.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+2026-10-20T21:28:00.5578073Z  [32m✓[39m src/screens/ResearchDeliveryPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 834[2mms[22m[39m
+2026-10-20T21:28:00.5579916Z    [33m[2m✓[22m[39m requires a selected locale and explicit activation while matched research stays unavailable for advice[33m 386[2mms[22m[39m
+2026-10-20T21:28:01.8004698Z  [32m✓[39m src/commands/planningJobs.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+2026-10-20T21:28:02.2420827Z [90mstderr[2m | src/screens/ResearchFactsTools.test.tsx[2m > [22m[2mbinds subsequent guide findings to the replay digest and clears findings when class changes
+2026-10-20T21:28:02.2422998Z [22m[39mAn update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.2424732Z 
+2026-10-20T21:28:02.2425548Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.2427136Z 
+2026-10-20T21:28:02.2427465Z act(() => {
+2026-10-20T21:28:02.2439811Z   /* fire events that update state */
+2026-10-20T21:28:02.2440950Z });
+2026-10-20T21:28:02.2441622Z /* assert on the output */
+2026-10-20T21:28:02.2442057Z 
+2026-10-20T21:28:02.2443383Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.2473689Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.2474336Z 
+2026-10-20T21:28:02.2474950Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.2475556Z 
+2026-10-20T21:28:02.2475709Z act(() => {
+2026-10-20T21:28:02.2476061Z   /* fire events that update state */
+2026-10-20T21:28:02.2476448Z });
+2026-10-20T21:28:02.2476808Z /* assert on the output */
+2026-10-20T21:28:02.2477079Z 
+2026-10-20T21:28:02.2478095Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.2479057Z 
+2026-10-20T21:28:02.5973164Z  [32m✓[39m src/screens/OriginPlacement.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 852[2mms[22m[39m
+2026-10-20T21:28:02.6054733Z    [33m[2m✓[22m[39m marks the authored dungeon, its quests, reward sources and travel edges[33m 477[2mms[22m[39m
+2026-10-20T21:28:02.6629181Z [90mstderr[2m | src/screens/ResearchFactsTools.test.tsx[2m > [22m[2mrestores scoped materials, pages exact IDs and clears imported views when the pack is forgotten
+2026-10-20T21:28:02.6635531Z [22m[39mAn update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.6636540Z 
+2026-10-20T21:28:02.6637354Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.6638092Z 
+2026-10-20T21:28:02.6638367Z act(() => {
+2026-10-20T21:28:02.6638917Z   /* fire events that update state */
+2026-10-20T21:28:02.6639484Z });
+2026-10-20T21:28:02.6639969Z /* assert on the output */
+2026-10-20T21:28:02.6640347Z 
+2026-10-20T21:28:02.6641498Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.6643350Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.6644056Z 
+2026-10-20T21:28:02.6644718Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.6645462Z 
+2026-10-20T21:28:02.6645759Z act(() => {
+2026-10-20T21:28:02.6646333Z   /* fire events that update state */
+2026-10-20T21:28:02.6646943Z });
+2026-10-20T21:28:02.6647418Z /* assert on the output */
+2026-10-20T21:28:02.6653094Z 
+2026-10-20T21:28:02.6654288Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.6655896Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.6656556Z 
+2026-10-20T21:28:02.6657146Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.6658096Z 
+2026-10-20T21:28:02.6658206Z act(() => {
+2026-10-20T21:28:02.6658457Z   /* fire events that update state */
+2026-10-20T21:28:02.6658722Z });
+2026-10-20T21:28:02.6658937Z /* assert on the output */
+2026-10-20T21:28:02.6659102Z 
+2026-10-20T21:28:02.6659666Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.6660466Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.6660781Z 
+2026-10-20T21:28:02.6661110Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.6661441Z 
+2026-10-20T21:28:02.6661520Z act(() => {
+2026-10-20T21:28:02.6661748Z   /* fire events that update state */
+2026-10-20T21:28:02.6662004Z });
+2026-10-20T21:28:02.6662207Z /* assert on the output */
+2026-10-20T21:28:02.6662356Z 
+2026-10-20T21:28:02.6663274Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.6664238Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:28:02.6664554Z 
+2026-10-20T21:28:02.6664864Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:02.6665188Z 
+2026-10-20T21:28:02.6665272Z act(() => {
+2026-10-20T21:28:02.6665498Z   /* fire events that update state */
+2026-10-20T21:28:02.6665773Z });
+2026-10-20T21:28:02.6665976Z /* assert on the output */
+2026-10-20T21:28:02.6666134Z 
+2026-10-20T21:28:02.6666679Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:02.6667182Z 
+2026-10-20T21:28:02.7241228Z  [32m✓[39m src/screens/ResearchFactsTools.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1015[2mms[22m[39m
+2026-10-20T21:28:02.7243871Z    [33m[2m✓[22m[39m shows exact IDs while preserving unavailable source and unknown independent completeness[33m 361[2mms[22m[39m
+2026-10-20T21:28:02.7246301Z    [33m[2m✓[22m[39m restores scoped materials, pages exact IDs and clears imported views when the pack is forgotten[33m 395[2mms[22m[39m
+2026-10-20T21:28:03.8940187Z  [32m✓[39m src/atlas/viewport.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-10-20T21:28:04.5255481Z [90mstderr[2m | src/screens/ContentDispositionPanel.test.tsx[2m > [22m[2mreleases only the confirmed quarantine identity and refreshes without activating content
+2026-10-20T21:28:04.5273889Z [22m[39mAn update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:28:04.5280484Z 
+2026-10-20T21:28:04.5281469Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:04.5282310Z 
+2026-10-20T21:28:04.5282892Z act(() => {
+2026-10-20T21:28:04.5283490Z   /* fire events that update state */
+2026-10-20T21:28:04.5284144Z });
+2026-10-20T21:28:04.5284709Z /* assert on the output */
+2026-10-20T21:28:04.5285154Z 
+2026-10-20T21:28:04.5286381Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:04.5288130Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:28:04.5288946Z 
+2026-10-20T21:28:04.5289675Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:04.5290451Z 
+2026-10-20T21:28:04.5290788Z act(() => {
+2026-10-20T21:28:04.5291396Z   /* fire events that update state */
+2026-10-20T21:28:04.5292032Z });
+2026-10-20T21:28:04.5292793Z /* assert on the output */
+2026-10-20T21:28:04.5293243Z 
+2026-10-20T21:28:04.5294431Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:04.5295563Z 
+2026-10-20T21:28:04.5686210Z [90mstderr[2m | src/screens/ContentDispositionPanel.test.tsx[2m > [22m[2mreleases only the confirmed quarantine identity and refreshes without activating content
+2026-10-20T21:28:04.5711777Z [22m[39mAn update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:28:04.5733081Z 
+2026-10-20T21:28:04.5775255Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:04.5793108Z 
+2026-10-20T21:28:04.5793458Z act(() => {
+2026-10-20T21:28:04.5794093Z   /* fire events that update state */
+2026-10-20T21:28:04.5794736Z });
+2026-10-20T21:28:04.5797571Z /* assert on the output */
+2026-10-20T21:28:04.5798022Z 
+2026-10-20T21:28:04.5799201Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:04.5800907Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:28:04.5801753Z 
+2026-10-20T21:28:04.5802757Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:04.5803992Z 
+2026-10-20T21:28:04.5804314Z act(() => {
+2026-10-20T21:28:04.5804892Z   /* fire events that update state */
+2026-10-20T21:28:04.5805482Z });
+2026-10-20T21:28:04.5805955Z /* assert on the output */
+2026-10-20T21:28:04.5806339Z 
+2026-10-20T21:28:04.5807520Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:04.5809274Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:28:04.5810082Z 
+2026-10-20T21:28:04.5810816Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:04.5811625Z 
+2026-10-20T21:28:04.5811896Z act(() => {
+2026-10-20T21:28:04.5812386Z   /* fire events that update state */
+2026-10-20T21:28:04.5813216Z });
+2026-10-20T21:28:04.5813732Z /* assert on the output */
+2026-10-20T21:28:04.5814121Z 
+2026-10-20T21:28:04.5815296Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:04.5817033Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:28:04.5817833Z 
+2026-10-20T21:28:04.5818569Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:04.5819390Z 
+2026-10-20T21:28:04.5819668Z act(() => {
+2026-10-20T21:28:04.5820273Z   /* fire events that update state */
+2026-10-20T21:28:04.5820888Z });
+2026-10-20T21:28:04.5821418Z /* assert on the output */
+2026-10-20T21:28:04.5821863Z 
+2026-10-20T21:28:04.5823291Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:04.5824382Z 
+2026-10-20T21:28:04.6067038Z  [32m✓[39m src/screens/ContentDispositionPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 726[2mms[22m[39m
+2026-10-20T21:28:04.6084601Z    [33m[2m✓[22m[39m requires explicit confirmation and sends full CAS identity before restriction[33m 390[2mms[22m[39m
+2026-10-20T21:28:05.2188711Z  [32m✓[39m src/screens/RouteAcquisitionPanel.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1974[2mms[22m[39m
+2026-10-20T21:28:05.2205100Z    [33m[2m✓[22m[39m preview and assessment use explicit assumptions and current fingerprint; known manual binding stays explicit[33m 639[2mms[22m[39m
+2026-10-20T21:28:05.2206883Z    [33m[2m✓[22m[39m profile, refresh, model and client changes discard deferred assessments[33m 880[2mms[22m[39m
+2026-10-20T21:28:05.8243872Z  [32m✓[39m src/screens/ReminderScreen.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 548[2mms[22m[39m
+2026-10-20T21:28:06.2394769Z  [32m✓[39m src/screens/DiagnosticsPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 496[2mms[22m[39m
+2026-10-20T21:28:07.3431945Z  [32m✓[39m src/screens/LocalSubmissionsPanel.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 775[2mms[22m[39m
+2026-10-20T21:28:07.3444982Z    [33m[2m✓[22m[39m requires opt-in, sends the explicit declaration and resets consent after storage[33m 420[2mms[22m[39m
+2026-10-20T21:28:07.7354888Z  [32m✓[39m src/screens/CompatibilityPanel.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 552[2mms[22m[39m
+2026-10-20T21:28:07.9731136Z  [32m✓[39m src/screens/ReferenceView.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 492[2mms[22m[39m
+2026-10-20T21:28:09.2288562Z  [32m✓[39m src/screens/LocalResearchInputs.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 592[2mms[22m[39m
+2026-10-20T21:28:09.2324442Z    [33m[2m✓[22m[39m stages only an explicit opaque input and preserves unknown counts and unsupported disposition[33m 304[2mms[22m[39m
+2026-10-20T21:28:09.4931832Z  [32m✓[39m src/screens/LocalResearchMedia.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 497[2mms[22m[39m
+2026-10-20T21:28:09.4934424Z    [33m[2m✓[22m[39m extracts explicitly selected IDs and presents opaque previews alongside unsupported assets[33m 336[2mms[22m[39m
+2026-10-20T21:28:11.0651316Z  [32m✓[39m src/screens/ReferenceControls.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 522[2mms[22m[39m
+2026-10-20T21:28:11.0653633Z    [33m[2m✓[22m[39m requires explicit opt-in, passes declared mode, ignores busy and editing keys[33m 335[2mms[22m[39m
+2026-10-20T21:28:11.4608463Z  [32m✓[39m src/screens/RouteInspection.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 2102[2mms[22m[39m
+2026-10-20T21:28:11.4610824Z    [33m[2m✓[22m[39m preserves zero/false observations and fits only exact same-context frame endpoints[33m 339[2mms[22m[39m
+2026-10-20T21:28:11.4613302Z    [33m[2m✓[22m[39m keeps the tail reachable with global keyboard selection and page controls, including focus[33m 1067[2mms[22m[39m
+2026-10-20T21:28:11.4615695Z    [33m[2m✓[22m[39m selects the hop's exact frame and resets projection, page and selection for a new guarded response[33m 624[2mms[22m[39m
+2026-10-20T21:28:11.9543208Z  [32m✓[39m src/screens/helpCopy.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 997[2mms[22m[39m
+2026-10-20T21:28:11.9554483Z    [33m[2m✓[22m[39m puts Help on the Gear per-item labels without renaming the controls[33m 815[2mms[22m[39m
+2026-10-20T21:28:12.5503481Z  [32m✓[39m src/atlas/describe.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-10-20T21:28:12.7358719Z  [32m✓[39m src/screens/PartyEligibility.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 323[2mms[22m[39m
+2026-10-20T21:28:13.2777893Z  [32m✓[39m src/atlas/markerState.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-20T21:28:13.7295667Z  [32m✓[39m src/atlas/golden.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-10-20T21:28:14.1717768Z  [32m✓[39m src/screens/useRecordOrigins.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+2026-10-20T21:28:15.3515490Z [90mstderr[2m | src/screens/LocalStartupChoices.test.tsx[2m > [22m[2mpersists the explicit startup choice before navigating without starting extraction
+2026-10-20T21:28:15.3517362Z [22m[39mAn update to LocalStartupChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:15.3517953Z 
+2026-10-20T21:28:15.3518520Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:15.3519122Z 
+2026-10-20T21:28:15.3519289Z act(() => {
+2026-10-20T21:28:15.3519748Z   /* fire events that update state */
+2026-10-20T21:28:15.3520227Z });
+2026-10-20T21:28:15.3520608Z /* assert on the output */
+2026-10-20T21:28:15.3520891Z 
+2026-10-20T21:28:15.3521920Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:15.3523656Z An update to LocalStartupChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:15.3524233Z 
+2026-10-20T21:28:15.3524837Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:15.3525419Z 
+2026-10-20T21:28:15.3526150Z act(() => {
+2026-10-20T21:28:15.3526614Z   /* fire events that update state */
+2026-10-20T21:28:15.3527084Z });
+2026-10-20T21:28:15.3527457Z /* assert on the output */
+2026-10-20T21:28:15.3527734Z 
+2026-10-20T21:28:15.3528757Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:15.3529689Z 
+2026-10-20T21:28:15.4321009Z  [32m✓[39m src/AppShell.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 813[2mms[22m[39m
+2026-10-20T21:28:15.4323455Z    [32m✓[39m app shell [2m(4)[22m
+2026-10-20T21:28:15.4324900Z      [33m[2m✓[22m[39m derives unique, instance-scoped group ids from the whole title, not its first letter[33m 427[2mms[22m[39m
+2026-10-20T21:28:15.4608014Z [90mstderr[2m | src/screens/LocalStartupChoices.test.tsx[2m > [22m[2mrestores the saved starting workflow without importing or activating anything
+2026-10-20T21:28:15.4664103Z [22m[39mAn update to LocalStartupChoices inside a test was not wrapped in act(...).
+2026-10-20T21:28:15.4665229Z 
+2026-10-20T21:28:15.4693376Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:15.4722959Z 
+2026-10-20T21:28:15.4723246Z act(() => {
+2026-10-20T21:28:15.4723676Z   /* fire events that update state */
+2026-10-20T21:28:15.4724125Z });
+2026-10-20T21:28:15.4724470Z /* assert on the output */
+2026-10-20T21:28:15.4724720Z 
+2026-10-20T21:28:15.4725690Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:15.4726532Z 
+2026-10-20T21:28:15.5658482Z  [32m✓[39m src/screens/LocalStartupChoices.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 470[2mms[22m[39m
+2026-10-20T21:28:15.5670448Z    [33m[2m✓[22m[39m persists the explicit startup choice before navigating without starting extraction[33m 307[2mms[22m[39m
+2026-10-20T21:28:15.6591494Z  [32m✓[39m src/atlas/MapView.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 342[2mms[22m[39m
+2026-10-20T21:28:15.6603982Z    [33m[2m✓[22m[39m supports bounded wheel, keyboard and pointer navigation with resize cleanup[33m 338[2mms[22m[39m
+2026-10-20T21:28:16.6887179Z  [32m✓[39m src/theme/contrast.test.ts [2m([22m[2m106 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+2026-10-20T21:28:17.1802003Z  [32m✓[39m src/screens/CatalogPager.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 306[2mms[22m[39m
+2026-10-20T21:28:17.4091431Z  [32m✓[39m src/screens/CalibrationPanel.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 607[2mms[22m[39m
+2026-10-20T21:28:17.4093978Z    [33m[2m✓[22m[39m comparison transmits explicit assumptions and exposes excluded sparse samples[33m 342[2mms[22m[39m
+2026-10-20T21:28:17.8982862Z  [32m✓[39m src/commands/demoBoundaries.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+2026-10-20T21:28:18.3955553Z  [32m✓[39m src/commands/clientBoundary.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-20T21:28:18.6344994Z  [32m✓[39m src/commands/atlasClient.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-20T21:28:19.3536000Z  [32m✓[39m src/main.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 212[2mms[22m[39m
+2026-10-20T21:28:20.0881962Z  [32m✓[39m src/screens/ResearchBindings.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 407[2mms[22m[39m
+2026-10-20T21:28:20.0883977Z    [33m[2m✓[22m[39m pages unverified candidates and keeps explicit dependency selections separate by kind[33m 404[2mms[22m[39m
+2026-10-20T21:28:20.3533822Z  [32m✓[39m src/screens/AuthoredContentPicker.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 370[2mms[22m[39m
+2026-10-20T21:28:20.3535495Z    [33m[2m✓[22m[39m binds selection and subsequent pages to the returned immutable revision[33m 315[2mms[22m[39m
+2026-10-20T21:28:20.4774557Z  [32m✓[39m src/atlas/layers.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-10-20T21:28:21.3774790Z  [32m✓[39m src/csp.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-10-20T21:28:21.7300395Z  [32m✓[39m src/ui/OriginMarker.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+2026-10-20T21:28:21.8144686Z  [32m✓[39m src/theme/fonts.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-20T21:28:22.5214752Z  [32m✓[39m src/screens/referenceShortcut.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+2026-10-20T21:28:23.2157211Z  [32m✓[39m src/screens/ClusterSummary.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 228[2mms[22m[39m
+2026-10-20T21:28:23.3475380Z [90mstderr[2m | src/screens/ResearchReferenceHistory.test.tsx[2m > [22m[2mverifies the retained reference against the current catalog before opening it
+2026-10-20T21:28:23.3494624Z [22m[39mAn update to ResearchReferenceHistory inside a test was not wrapped in act(...).
+2026-10-20T21:28:23.3503509Z 
+2026-10-20T21:28:23.3504139Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:23.3505088Z 
+2026-10-20T21:28:23.3505360Z act(() => {
+2026-10-20T21:28:23.3506010Z   /* fire events that update state */
+2026-10-20T21:28:23.3506512Z });
+2026-10-20T21:28:23.3506996Z /* assert on the output */
+2026-10-20T21:28:23.3507378Z 
+2026-10-20T21:28:23.3508147Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:23.3509195Z An update to ResearchReferenceHistory inside a test was not wrapped in act(...).
+2026-10-20T21:28:23.3509840Z 
+2026-10-20T21:28:23.3510318Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:28:23.3510840Z 
+2026-10-20T21:28:23.3511113Z act(() => {
+2026-10-20T21:28:23.3511583Z   /* fire events that update state */
+2026-10-20T21:28:23.3522950Z });
+2026-10-20T21:28:23.3525891Z /* assert on the output */
+2026-10-20T21:28:23.3526268Z 
+2026-10-20T21:28:23.3527236Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:28:23.3527873Z 
+2026-10-20T21:28:23.4074801Z  [32m✓[39m src/screens/ResearchReferenceHistory.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 342[2mms[22m[39m
+2026-10-20T21:28:23.4099565Z    [33m[2m✓[22m[39m verifies the retained reference against the current catalog before opening it[33m 332[2mms[22m[39m
+2026-10-20T21:28:23.8024748Z  [32m✓[39m src/commands/tauriAdapter.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-20T21:28:24.4644552Z  [32m✓[39m src/gear/golden.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-10-20T21:28:24.5630017Z  [32m✓[39m src/commands/demoVersion.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-10-20T21:28:24.8694783Z  [32m✓[39m src/buildPolicy.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 95[2mms[22m[39m
+2026-10-20T21:28:24.8740213Z 
+2026-10-20T21:28:24.8751819Z [2m Test Files [22m [1m[32m66 passed[39m[22m[90m (66)[39m
+2026-10-20T21:28:24.8754703Z [2m      Tests [22m [1m[32m555 passed[39m[22m[90m (555)[39m
+2026-10-20T21:28:24.8755872Z [2m   Start at [22m 21:27:37
+2026-10-20T21:28:24.8761479Z [2m   Duration [22m 46.94s[2m (environment 44%, tests 42%, setup 8%, import 3%, transform 2%, worker 1%)[22m
+2026-10-20T21:28:24.8770119Z 
+2026-10-20T21:28:24.8771963Z [2mEnvironment [22m [33mjsdom was created 66 times[39m[2m · 56.87s total, 44% of tracked time[22m
+2026-10-20T21:28:24.8774352Z [2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+2026-10-20T21:28:24.8787178Z [2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m
+2026-10-20T21:28:24.8787892Z 
+2026-10-20T21:28:24.9531485Z ##[group]Run pnpm --dir apps/desktop build
+2026-10-20T21:28:24.9531860Z [36;1mpnpm --dir apps/desktop build[0m
+2026-10-20T21:28:24.9582116Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:28:24.9582374Z ##[endgroup]
+2026-10-20T21:28:25.0393152Z $ tsc --noEmit && vite build
+2026-10-20T21:28:32.4214127Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-10-20T21:28:32.4306619Z transforming...
+2026-10-20T21:28:32.5120903Z ✓ 110 modules transformed.
+2026-10-20T21:28:32.5468232Z rendering chunks...
+2026-10-20T21:28:32.6193810Z computing gzip size...
+2026-10-20T21:28:32.6252411Z dist/index.html                                      0.40 kB │ gzip:   0.27 kB
+2026-10-20T21:28:32.6253685Z dist/assets/overview-B6_tIHze.png                    2.25 kB
+2026-10-20T21:28:32.6254594Z dist/assets/roads-Fv1zo2Fg.png                       4.42 kB
+2026-10-20T21:28:32.6255472Z dist/assets/flight-ntNMPwcn.png                      4.46 kB
+2026-10-20T21:28:32.6256482Z dist/assets/Cinzel-VariableFont_wght-Dzu6Mfm8.ttf  125.46 kB
+2026-10-20T21:28:32.6257822Z dist/assets/InterVariable-DiVDrmQJ.woff2           352.24 kB
+2026-10-20T21:28:32.6259024Z dist/assets/index-DNBJu1d0.css                      27.39 kB │ gzip:   5.89 kB
+2026-10-20T21:28:32.6260247Z dist/assets/index-CrhJdBN1.js                      552.97 kB │ gzip: 156.56 kB
+2026-10-20T21:28:32.6260802Z 
+2026-10-20T21:28:32.6261144Z [32m✓ built in 204ms[39m
+2026-10-20T21:28:32.6265160Z [33m[plugin builtin:vite-reporter] 
+2026-10-20T21:28:32.6266367Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-20T21:28:32.6267326Z - Using dynamic import() to code-split the application
+2026-10-20T21:28:32.6268847Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-10-20T21:28:32.6270488Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-10-20T21:28:32.6553292Z ##[group]Run node scripts/check-dist.mjs
+2026-10-20T21:28:32.6553706Z [36;1mnode scripts/check-dist.mjs[0m
+2026-10-20T21:28:32.6604827Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:28:32.6605087Z ##[endgroup]
+2026-10-20T21:28:32.7008776Z check-dist: 3 text files and 8 files clean in apps/desktop/dist
+2026-10-20T21:28:32.7071854Z ##[group]Run pnpm --dir apps/desktop exec playwright install --with-deps chromium
+2026-10-20T21:28:32.7072454Z [36;1mpnpm --dir apps/desktop exec playwright install --with-deps chromium[0m
+2026-10-20T21:28:32.7124675Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:28:32.7124937Z ##[endgroup]
+2026-10-20T21:28:33.3039472Z Installing dependencies...
+2026-10-20T21:28:33.3129333Z Switching to root user to install dependencies...
+2026-10-20T21:28:33.4014126Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-20T21:28:33.4319752Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-20T21:28:33.4321320Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-20T21:28:33.4337898Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-20T21:28:33.4384848Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-20T21:28:33.4412206Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-20T21:28:33.5660646Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [565 kB]
+2026-10-20T21:28:33.5804430Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [626 kB]
+2026-10-20T21:28:33.6171387Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1397 kB]
+2026-10-20T21:28:33.6242077Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1704 kB]
+2026-10-20T21:28:33.7275037Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1145 kB]
+2026-10-20T21:28:33.7333353Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-10-20T21:28:33.7349539Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+2026-10-20T21:28:36.4049114Z Fetched 7272 kB in 1s (9550 kB/s)
+2026-10-20T21:28:37.4582850Z Reading package lists...
+2026-10-20T21:28:37.4897917Z Reading package lists...
+2026-10-20T21:28:37.7019167Z Building dependency tree...
+2026-10-20T21:28:37.7027101Z Reading state information...
+2026-10-20T21:28:37.8495909Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-20T21:28:37.8496830Z libasound2t64 set to manually installed.
+2026-10-20T21:28:37.8497770Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-20T21:28:37.8498629Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-20T21:28:37.8499396Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-20T21:28:37.8500068Z libatk1.0-0t64 set to manually installed.
+2026-10-20T21:28:37.8500728Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-20T21:28:37.8501369Z libatspi2.0-0t64 set to manually installed.
+2026-10-20T21:28:37.8502348Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-20T21:28:37.8503122Z libcairo2 set to manually installed.
+2026-10-20T21:28:37.8503569Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-20T21:28:37.8503980Z libcups2t64 set to manually installed.
+2026-10-20T21:28:37.8504534Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-20T21:28:37.8505067Z libdbus-1-3 set to manually installed.
+2026-10-20T21:28:37.8505491Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-20T21:28:37.8505897Z libdrm2 set to manually installed.
+2026-10-20T21:28:37.8506306Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-10-20T21:28:37.8506885Z libgbm1 set to manually installed.
+2026-10-20T21:28:37.8507316Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-20T21:28:37.8507740Z libglib2.0-0t64 set to manually installed.
+2026-10-20T21:28:37.8508148Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-20T21:28:37.8508544Z libnspr4 set to manually installed.
+2026-10-20T21:28:37.8508927Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-20T21:28:37.8509801Z libnss3 set to manually installed.
+2026-10-20T21:28:37.8510533Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-20T21:28:37.8511265Z libpango-1.0-0 set to manually installed.
+2026-10-20T21:28:37.8511971Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-10-20T21:28:37.8512788Z libx11-6 set to manually installed.
+2026-10-20T21:28:37.8513228Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-20T21:28:37.8513596Z libxcb1 set to manually installed.
+2026-10-20T21:28:37.8514012Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-20T21:28:37.8514520Z libxcomposite1 set to manually installed.
+2026-10-20T21:28:37.8515289Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-20T21:28:37.8515992Z libxdamage1 set to manually installed.
+2026-10-20T21:28:37.8516616Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-20T21:28:37.8517002Z libxext6 set to manually installed.
+2026-10-20T21:28:37.8517406Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-20T21:28:37.8517790Z libxfixes3 set to manually installed.
+2026-10-20T21:28:37.8518392Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-20T21:28:37.8519092Z libxkbcommon0 set to manually installed.
+2026-10-20T21:28:37.8519834Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-20T21:28:37.8520525Z libxrandr2 set to manually installed.
+2026-10-20T21:28:37.8521386Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-20T21:28:37.8522372Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-20T21:28:37.8523385Z libfontconfig1 set to manually installed.
+2026-10-20T21:28:37.8524197Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-10-20T21:28:37.8524949Z libfreetype6 set to manually installed.
+2026-10-20T21:28:37.8525695Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-20T21:28:37.8526418Z fonts-liberation set to manually installed.
+2026-10-20T21:28:37.8527116Z The following additional packages will be installed:
+2026-10-20T21:28:37.8527785Z   xfonts-encodings xfonts-utils xserver-common
+2026-10-20T21:28:37.8528353Z Recommended packages:
+2026-10-20T21:28:37.8528924Z   fonts-ipafont-mincho fonts-tlwg-loma xfonts-base
+2026-10-20T21:28:37.8704914Z The following NEW packages will be installed:
+2026-10-20T21:28:37.8705879Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-20T21:28:37.8712411Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-20T21:28:37.8713398Z   xfonts-utils
+2026-10-20T21:28:37.8722326Z The following packages will be upgraded:
+2026-10-20T21:28:37.8723153Z   xserver-common xvfb
+2026-10-20T21:28:37.8923077Z 2 upgraded, 9 newly installed, 0 to remove and 41 not upgraded.
+2026-10-20T21:28:37.8924118Z Need to get 22.0 MB of archives.
+2026-10-20T21:28:37.8924934Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-20T21:28:37.8925875Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-20T21:28:37.9858989Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-20T21:28:38.4253795Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-20T21:28:39.1581459Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-20T21:28:39.2317552Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-20T21:28:39.3321823Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-20T21:28:39.5633729Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-20T21:28:39.6374980Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-20T21:28:39.7095457Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-20T21:28:39.7872226Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-20T21:28:39.8621907Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 xserver-common all 2:21.1.12-1ubuntu1.9 [35.0 kB]
+2026-10-20T21:28:39.9320219Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 xvfb amd64 2:21.1.12-1ubuntu1.9 [877 kB]
+2026-10-20T21:28:40.2461737Z Fetched 22.0 MB in 2s (10.5 MB/s)
+2026-10-20T21:28:40.2732823Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-20T21:28:40.2993143Z (Reading database ... 
+2026-10-20T21:28:40.2993682Z (Reading database ... 5%
+2026-10-20T21:28:40.2994401Z (Reading database ... 10%
+2026-10-20T21:28:40.2994882Z (Reading database ... 15%
+2026-10-20T21:28:40.2995340Z (Reading database ... 20%
+2026-10-20T21:28:40.2995805Z (Reading database ... 25%
+2026-10-20T21:28:40.2996248Z (Reading database ... 30%
+2026-10-20T21:28:40.2996687Z (Reading database ... 35%
+2026-10-20T21:28:40.2997126Z (Reading database ... 40%
+2026-10-20T21:28:40.2997576Z (Reading database ... 45%
+2026-10-20T21:28:40.2998013Z (Reading database ... 50%
+2026-10-20T21:28:40.3036839Z (Reading database ... 55%
+2026-10-20T21:28:40.4521514Z (Reading database ... 60%
+2026-10-20T21:28:40.6554201Z (Reading database ... 65%
+2026-10-20T21:28:40.7543354Z (Reading database ... 70%
+2026-10-20T21:28:40.9050186Z (Reading database ... 75%
+2026-10-20T21:28:41.0938090Z (Reading database ... 80%
+2026-10-20T21:28:41.2964704Z (Reading database ... 85%
+2026-10-20T21:28:41.4628196Z (Reading database ... 90%
+2026-10-20T21:28:41.6106762Z (Reading database ... 95%
+2026-10-20T21:28:41.6107352Z (Reading database ... 100%
+2026-10-20T21:28:41.6108268Z (Reading database ... 214410 files and directories currently installed.)
+2026-10-20T21:28:41.6153069Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-20T21:28:41.6253953Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-20T21:28:41.8584647Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-20T21:28:41.8726734Z Preparing to unpack .../01-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-20T21:28:41.8733516Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-20T21:28:41.9589394Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-20T21:28:41.9731553Z Preparing to unpack .../02-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-20T21:28:41.9737672Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-20T21:28:41.9973429Z Selecting previously unselected package fonts-unifont.
+2026-10-20T21:28:42.0117571Z Preparing to unpack .../03-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-20T21:28:42.0126789Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-20T21:28:42.1231674Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-20T21:28:42.1373646Z Preparing to unpack .../04-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-20T21:28:42.1485892Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-20T21:28:42.6380211Z Selecting previously unselected package xfonts-encodings.
+2026-10-20T21:28:42.6525311Z Preparing to unpack .../05-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-20T21:28:42.6532112Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-20T21:28:42.6850149Z Selecting previously unselected package xfonts-utils.
+2026-10-20T21:28:42.6995677Z Preparing to unpack .../06-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-20T21:28:42.7003240Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-20T21:28:42.7388147Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-20T21:28:42.7533146Z Preparing to unpack .../07-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-20T21:28:42.7540212Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-20T21:28:42.7926910Z Selecting previously unselected package xfonts-scalable.
+2026-10-20T21:28:42.8072735Z Preparing to unpack .../08-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-20T21:28:42.8079399Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-20T21:28:42.8527882Z Preparing to unpack .../09-xserver-common_2%3a21.1.12-1ubuntu1.9_all.deb ...
+2026-10-20T21:28:42.8544871Z Unpacking xserver-common (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+2026-10-20T21:28:42.8938400Z Preparing to unpack .../10-xvfb_2%3a21.1.12-1ubuntu1.9_amd64.deb ...
+2026-10-20T21:28:42.8956392Z Unpacking xvfb (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+2026-10-20T21:28:42.9523931Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-20T21:28:42.9640435Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-20T21:28:42.9658122Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-20T21:28:42.9675913Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-20T21:28:42.9691867Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-20T21:28:42.9754346Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-20T21:28:42.9768048Z Setting up xserver-common (2:21.1.12-1ubuntu1.9) ...
+2026-10-20T21:28:42.9785728Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-20T21:28:42.9801873Z Setting up xvfb (2:21.1.12-1ubuntu1.9) ...
+2026-10-20T21:28:42.9817777Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-20T21:28:42.9856114Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-20T21:28:43.0151671Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-20T21:28:43.0432987Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-20T21:28:43.0453899Z Not building database; man-db/auto-update is not 'true'.
+2026-10-20T21:28:43.0468388Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-20T21:28:43.8064363Z 
+2026-10-20T21:28:43.8065153Z Running kernel seems to be up-to-date.
+2026-10-20T21:28:43.8065642Z 
+2026-10-20T21:28:43.8065997Z No services need to be restarted.
+2026-10-20T21:28:43.8066261Z 
+2026-10-20T21:28:43.8066595Z No containers need to be restarted.
+2026-10-20T21:28:43.8066840Z 
+2026-10-20T21:28:43.8067087Z No user sessions are running outdated binaries.
+2026-10-20T21:28:43.8067376Z 
+2026-10-20T21:28:43.8067774Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-20T21:28:44.7549069Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+2026-10-20T21:28:45.2376455Z |                                                                                |   0% of 191.1 MiB
+2026-10-20T21:28:45.5304331Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+2026-10-20T21:28:45.6171484Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+2026-10-20T21:28:45.7115003Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+2026-10-20T21:28:45.8024932Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+2026-10-20T21:28:45.8630154Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+2026-10-20T21:28:45.9444637Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+2026-10-20T21:28:46.0387135Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+2026-10-20T21:28:46.1262785Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+2026-10-20T21:28:46.2134317Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+2026-10-20T21:28:46.2898925Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+2026-10-20T21:28:49.4228264Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+2026-10-20T21:28:49.4232184Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+2026-10-20T21:28:49.7879722Z |                                                                                |   0% of 2.2 MiB
+2026-10-20T21:28:49.7917075Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+2026-10-20T21:28:49.7947372Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+2026-10-20T21:28:49.7971718Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+2026-10-20T21:28:49.7991156Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+2026-10-20T21:28:49.8029880Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+2026-10-20T21:28:49.8062132Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+2026-10-20T21:28:49.8082329Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+2026-10-20T21:28:49.8104016Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+2026-10-20T21:28:49.8116351Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+2026-10-20T21:28:49.8126071Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+2026-10-20T21:28:49.8735287Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+2026-10-20T21:28:49.8737808Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+2026-10-20T21:28:50.3136988Z |                                                                                |   0% of 120 MiB
+2026-10-20T21:28:50.4623539Z |■■■■■■■■                                                                        |  10% of 120 MiB
+2026-10-20T21:28:50.5281563Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+2026-10-20T21:28:50.6103270Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+2026-10-20T21:28:50.6986881Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+2026-10-20T21:28:50.7811247Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+2026-10-20T21:28:50.8722785Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+2026-10-20T21:28:50.9773997Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+2026-10-20T21:28:51.0954070Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+2026-10-20T21:28:51.1667932Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+2026-10-20T21:28:51.2479602Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+2026-10-20T21:28:53.5418040Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+2026-10-20T21:28:53.5735519Z ##[group]Run pnpm --dir apps/desktop test:e2e
+2026-10-20T21:28:53.5735912Z [36;1mpnpm --dir apps/desktop test:e2e[0m
+2026-10-20T21:28:53.5791076Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:28:53.5791356Z ##[endgroup]
+2026-10-20T21:28:53.6643972Z $ playwright test
+2026-10-20T21:28:55.9385343Z [WebServer] $ vite --host 127.0.0.1
+2026-10-20T21:28:56.3434375Z [WebServer] $ tsc --noEmit && vite build
+2026-10-20T21:29:03.8715151Z [WebServer] [plugin builtin:vite-reporter] 
+2026-10-20T21:29:03.8716445Z [WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-20T21:29:03.8717608Z [WebServer] - Using dynamic import() to code-split the application
+2026-10-20T21:29:03.8720148Z [WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-10-20T21:29:03.8721896Z [WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-10-20T21:29:05.8246389Z 
+2026-10-20T21:29:05.8247125Z Running 195 tests using 1 worker
+2026-10-20T21:29:05.8247517Z 
+2026-10-20T21:29:07.9343882Z   ✓    1 [dev] › e2e/a11y.spec.ts:33:7 › Today at 320px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:09.3444123Z   ✓    2 [dev] › e2e/a11y.spec.ts:33:7 › Atlas at 320px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:10.7105635Z   ✓    3 [dev] › e2e/a11y.spec.ts:33:7 › Planner at 320px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:12.3947497Z   ✓    4 [dev] › e2e/a11y.spec.ts:33:7 › Gear at 320px in default mode has no serious or critical violations (1.7s)
+2026-10-20T21:29:13.5759669Z   ✓    5 [dev] › e2e/a11y.spec.ts:33:7 › Party at 320px in default mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:14.8119155Z   ✓    6 [dev] › e2e/a11y.spec.ts:33:7 › Dungeons at 320px in default mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:16.0402762Z   ✓    7 [dev] › e2e/a11y.spec.ts:33:7 › World at 320px in default mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:17.4239664Z   ✓    8 [dev] › e2e/a11y.spec.ts:33:7 › Sessions at 320px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:18.6027705Z   ✓    9 [dev] › e2e/a11y.spec.ts:33:7 › Reminders at 320px in default mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:19.8817882Z   ✓   10 [dev] › e2e/a11y.spec.ts:33:7 › Imports at 320px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:21.1713189Z   ✓   11 [dev] › e2e/a11y.spec.ts:33:7 › Content at 320px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:22.3609523Z   ✓   12 [dev] › e2e/a11y.spec.ts:33:7 › Compatibility and coverage at 320px in default mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:23.6987293Z   ✓   13 [dev] › e2e/a11y.spec.ts:33:7 › Settings at 320px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:24.8513951Z   ✓   14 [dev] › e2e/a11y.spec.ts:33:7 › Local diagnostics at 320px in default mode has no serious or critical violations (1.1s)
+2026-10-20T21:29:26.0655508Z   ✓   15 [dev] › e2e/a11y.spec.ts:33:7 › Backup and recovery at 320px in default mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:27.0833494Z   ✓   16 [dev] › e2e/a11y.spec.ts:33:7 › Imported reference (#reference) at 320px in default mode has no serious or critical violations (1.0s)
+2026-10-20T21:29:28.3062096Z   ✓   17 [dev] › e2e/a11y.spec.ts:33:7 › Today at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:29.6787318Z   ✓   18 [dev] › e2e/a11y.spec.ts:33:7 › Atlas at 320px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:31.0284445Z   ✓   19 [dev] › e2e/a11y.spec.ts:33:7 › Planner at 320px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:32.7498349Z   ✓   20 [dev] › e2e/a11y.spec.ts:33:7 › Gear at 320px in high-contrast mode has no serious or critical violations (1.7s)
+2026-10-20T21:29:33.9598388Z   ✓   21 [dev] › e2e/a11y.spec.ts:33:7 › Party at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:35.2352234Z   ✓   22 [dev] › e2e/a11y.spec.ts:33:7 › Dungeons at 320px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:36.4726047Z   ✓   23 [dev] › e2e/a11y.spec.ts:33:7 › World at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:37.8769852Z   ✓   24 [dev] › e2e/a11y.spec.ts:33:7 › Sessions at 320px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:39.0486249Z   ✓   25 [dev] › e2e/a11y.spec.ts:33:7 › Reminders at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:40.3428897Z   ✓   26 [dev] › e2e/a11y.spec.ts:33:7 › Imports at 320px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:41.6859345Z   ✓   27 [dev] › e2e/a11y.spec.ts:33:7 › Content at 320px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:42.9289926Z   ✓   28 [dev] › e2e/a11y.spec.ts:33:7 › Compatibility and coverage at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:44.3114964Z   ✓   29 [dev] › e2e/a11y.spec.ts:33:7 › Settings at 320px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:29:45.5034366Z   ✓   30 [dev] › e2e/a11y.spec.ts:33:7 › Local diagnostics at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:46.6814647Z   ✓   31 [dev] › e2e/a11y.spec.ts:33:7 › Backup and recovery at 320px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:47.6981076Z   ✓   32 [dev] › e2e/a11y.spec.ts:33:7 › Imported reference (#reference) at 320px in high-contrast mode has no serious or critical violations (1.0s)
+2026-10-20T21:29:48.8762354Z   ✓   33 [dev] › e2e/a11y.spec.ts:33:7 › Today at 320px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:50.1911147Z   ✓   34 [dev] › e2e/a11y.spec.ts:33:7 › Atlas at 320px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:51.5247913Z   ✓   35 [dev] › e2e/a11y.spec.ts:33:7 › Planner at 320px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:53.1625000Z   ✓   36 [dev] › e2e/a11y.spec.ts:33:7 › Gear at 320px in forced-colors mode has no serious or critical violations (1.6s)
+2026-10-20T21:29:54.3035920Z   ✓   37 [dev] › e2e/a11y.spec.ts:33:7 › Party at 320px in forced-colors mode has no serious or critical violations (1.1s)
+2026-10-20T21:29:55.4887022Z   ✓   38 [dev] › e2e/a11y.spec.ts:33:7 › Dungeons at 320px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:56.6734726Z   ✓   39 [dev] › e2e/a11y.spec.ts:33:7 › World at 320px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:29:58.0277411Z   ✓   40 [dev] › e2e/a11y.spec.ts:33:7 › Sessions at 320px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:29:59.1753183Z   ✓   41 [dev] › e2e/a11y.spec.ts:33:7 › Reminders at 320px in forced-colors mode has no serious or critical violations (1.1s)
+2026-10-20T21:30:00.4702982Z   ✓   42 [dev] › e2e/a11y.spec.ts:33:7 › Imports at 320px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:01.8074470Z   ✓   43 [dev] › e2e/a11y.spec.ts:33:7 › Content at 320px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:03.0384298Z   ✓   44 [dev] › e2e/a11y.spec.ts:33:7 › Compatibility and coverage at 320px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:04.3874932Z   ✓   45 [dev] › e2e/a11y.spec.ts:33:7 › Settings at 320px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:05.5276481Z   ✓   46 [dev] › e2e/a11y.spec.ts:33:7 › Local diagnostics at 320px in forced-colors mode has no serious or critical violations (1.1s)
+2026-10-20T21:30:06.7010129Z   ✓   47 [dev] › e2e/a11y.spec.ts:33:7 › Backup and recovery at 320px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:07.7104973Z   ✓   48 [dev] › e2e/a11y.spec.ts:33:7 › Imported reference (#reference) at 320px in forced-colors mode has no serious or critical violations (997ms)
+2026-10-20T21:30:09.0414938Z   ✓   49 [dev] › e2e/a11y.spec.ts:33:7 › Today at 1100px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:10.5755600Z   ✓   50 [dev] › e2e/a11y.spec.ts:33:7 › Atlas at 1100px in default mode has no serious or critical violations (1.5s)
+2026-10-20T21:30:12.0451308Z   ✓   51 [dev] › e2e/a11y.spec.ts:33:7 › Planner at 1100px in default mode has no serious or critical violations (1.5s)
+2026-10-20T21:30:13.9903351Z   ✓   52 [dev] › e2e/a11y.spec.ts:33:7 › Gear at 1100px in default mode has no serious or critical violations (1.9s)
+2026-10-20T21:30:15.2727132Z   ✓   53 [dev] › e2e/a11y.spec.ts:33:7 › Party at 1100px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:16.6444666Z   ✓   54 [dev] › e2e/a11y.spec.ts:33:7 › Dungeons at 1100px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:18.0434586Z   ✓   55 [dev] › e2e/a11y.spec.ts:33:7 › World at 1100px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:19.6235003Z   ✓   56 [dev] › e2e/a11y.spec.ts:33:7 › Sessions at 1100px in default mode has no serious or critical violations (1.6s)
+2026-10-20T21:30:20.9224334Z   ✓   57 [dev] › e2e/a11y.spec.ts:33:7 › Reminders at 1100px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:22.3398616Z   ✓   58 [dev] › e2e/a11y.spec.ts:33:7 › Imports at 1100px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:23.8526630Z   ✓   59 [dev] › e2e/a11y.spec.ts:33:7 › Content at 1100px in default mode has no serious or critical violations (1.5s)
+2026-10-20T21:30:25.1931317Z   ✓   60 [dev] › e2e/a11y.spec.ts:33:7 › Compatibility and coverage at 1100px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:26.7074380Z   ✓   61 [dev] › e2e/a11y.spec.ts:33:7 › Settings at 1100px in default mode has no serious or critical violations (1.5s)
+2026-10-20T21:30:28.0601379Z   ✓   62 [dev] › e2e/a11y.spec.ts:33:7 › Local diagnostics at 1100px in default mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:29.4237303Z   ✓   63 [dev] › e2e/a11y.spec.ts:33:7 › Backup and recovery at 1100px in default mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:30.5854198Z   ✓   64 [dev] › e2e/a11y.spec.ts:33:7 › Imported reference (#reference) at 1100px in default mode has no serious or critical violations (1.1s)
+2026-10-20T21:30:31.8359425Z   ✓   65 [dev] › e2e/a11y.spec.ts:33:7 › Today at 1100px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:33.3179018Z   ✓   66 [dev] › e2e/a11y.spec.ts:33:7 › Atlas at 1100px in high-contrast mode has no serious or critical violations (1.5s)
+2026-10-20T21:30:34.7044968Z   ✓   67 [dev] › e2e/a11y.spec.ts:33:7 › Planner at 1100px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:36.4298657Z   ✓   68 [dev] › e2e/a11y.spec.ts:33:7 › Gear at 1100px in high-contrast mode has no serious or critical violations (1.7s)
+2026-10-20T21:30:37.6441309Z   ✓   69 [dev] › e2e/a11y.spec.ts:33:7 › Party at 1100px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:38.9417992Z   ✓   70 [dev] › e2e/a11y.spec.ts:33:7 › Dungeons at 1100px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:40.2524479Z   ✓   71 [dev] › e2e/a11y.spec.ts:33:7 › World at 1100px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:41.7054772Z   ✓   72 [dev] › e2e/a11y.spec.ts:33:7 › Sessions at 1100px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:42.9302280Z   ✓   73 [dev] › e2e/a11y.spec.ts:33:7 › Reminders at 1100px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:44.2970079Z   ✓   74 [dev] › e2e/a11y.spec.ts:33:7 › Imports at 1100px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:45.7259384Z   ✓   75 [dev] › e2e/a11y.spec.ts:33:7 › Content at 1100px in high-contrast mode has no serious or critical violations (1.4s)
+2026-10-20T21:30:46.9746877Z   ✓   76 [dev] › e2e/a11y.spec.ts:33:7 › Compatibility and coverage at 1100px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:48.4707651Z   ✓   77 [dev] › e2e/a11y.spec.ts:33:7 › Settings at 1100px in high-contrast mode has no serious or critical violations (1.5s)
+2026-10-20T21:30:49.7324929Z   ✓   78 [dev] › e2e/a11y.spec.ts:33:7 › Local diagnostics at 1100px in high-contrast mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:50.9755270Z   ✓   79 [dev] › e2e/a11y.spec.ts:33:7 › Backup and recovery at 1100px in high-contrast mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:52.0674304Z   ✓   80 [dev] › e2e/a11y.spec.ts:33:7 › Imported reference (#reference) at 1100px in high-contrast mode has no serious or critical violations (1.1s)
+2026-10-20T21:30:53.2987346Z   ✓   81 [dev] › e2e/a11y.spec.ts:33:7 › Today at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:54.6527308Z   ✓   82 [dev] › e2e/a11y.spec.ts:33:7 › Atlas at 1100px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:55.9505972Z   ✓   83 [dev] › e2e/a11y.spec.ts:33:7 › Planner at 1100px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:30:57.5750724Z   ✓   84 [dev] › e2e/a11y.spec.ts:33:7 › Gear at 1100px in forced-colors mode has no serious or critical violations (1.6s)
+2026-10-20T21:30:58.7465755Z   ✓   85 [dev] › e2e/a11y.spec.ts:33:7 › Party at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:30:59.9953757Z   ✓   86 [dev] › e2e/a11y.spec.ts:33:7 › Dungeons at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:31:01.2118621Z   ✓   87 [dev] › e2e/a11y.spec.ts:33:7 › World at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:31:02.5844705Z   ✓   88 [dev] › e2e/a11y.spec.ts:33:7 › Sessions at 1100px in forced-colors mode has no serious or critical violations (1.4s)
+2026-10-20T21:31:03.7426275Z   ✓   89 [dev] › e2e/a11y.spec.ts:33:7 › Reminders at 1100px in forced-colors mode has no serious or critical violations (1.1s)
+2026-10-20T21:31:05.0349035Z   ✓   90 [dev] › e2e/a11y.spec.ts:33:7 › Imports at 1100px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:31:06.3770121Z   ✓   91 [dev] › e2e/a11y.spec.ts:33:7 › Content at 1100px in forced-colors mode has no serious or critical violations (1.3s)
+2026-10-20T21:31:07.5779945Z   ✓   92 [dev] › e2e/a11y.spec.ts:33:7 › Compatibility and coverage at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:31:08.9425034Z   ✓   93 [dev] › e2e/a11y.spec.ts:33:7 › Settings at 1100px in forced-colors mode has no serious or critical violations (1.4s)
+2026-10-20T21:31:10.1067482Z   ✓   94 [dev] › e2e/a11y.spec.ts:33:7 › Local diagnostics at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:31:11.3033564Z   ✓   95 [dev] › e2e/a11y.spec.ts:33:7 › Backup and recovery at 1100px in forced-colors mode has no serious or critical violations (1.2s)
+2026-10-20T21:31:12.3173560Z   ✓   96 [dev] › e2e/a11y.spec.ts:33:7 › Imported reference (#reference) at 1100px in forced-colors mode has no serious or critical violations (989ms)
+2026-10-20T21:31:13.5851061Z {"count":1000,"run":0,"elapsed_ms":308.5999999999767,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:14.3654307Z {"count":1000,"run":1,"elapsed_ms":297.8999999999651,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:15.1436384Z {"count":1000,"run":2,"elapsed_ms":252,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:15.2487747Z   ✓   97 [dev] › e2e/atlas-dense.spec.ts:23:3 › synthetic 1000-pin rendering measurement (2.9s)
+2026-10-20T21:31:16.4737778Z {"count":5000,"run":0,"elapsed_ms":285.9000000000233,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:17.2826528Z {"count":5000,"run":1,"elapsed_ms":259.9000000000233,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:18.1022868Z {"count":5000,"run":2,"elapsed_ms":315.70000000001164,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:18.2014651Z   ✓   98 [dev] › e2e/atlas-dense.spec.ts:23:3 › synthetic 5000-pin rendering measurement (2.9s)
+2026-10-20T21:31:19.4119471Z {"count":10000,"run":0,"elapsed_ms":289.5,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:20.2201099Z {"count":10000,"run":1,"elapsed_ms":266.70000000001164,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:21.0218271Z {"count":10000,"run":2,"elapsed_ms":295.20000000001164,"list_buttons":200,"svg_pins":200}
+2026-10-20T21:31:21.1571763Z   ✓   99 [dev] › e2e/atlas-dense.spec.ts:23:3 › synthetic 10000-pin rendering measurement (2.9s)
+2026-10-20T21:31:23.3540868Z   ✓  100 [dev] › e2e/atlas-dense.spec.ts:43:3 › dense keyboard and schematic reflow at 320px and 200% text (2.2s)
+2026-10-20T21:31:25.5381584Z   ✓  101 [dev] › e2e/atlas-dense.spec.ts:43:3 › dense keyboard and schematic reflow at 640px and 200% text (2.2s)
+2026-10-20T21:31:26.4055365Z   ✓  102 [dev] › e2e/busy-fieldset-help.spec.ts:51:1 › Imports: Help inside the busy file fieldset stays focusable while an import runs (845ms)
+2026-10-20T21:31:27.3156876Z   ✓  103 [dev] › e2e/busy-fieldset-help.spec.ts:64:1 › Settings: Help inside the busy settings fieldset stays focusable while a save runs (898ms)
+2026-10-20T21:31:28.4469934Z   ✓  104 [dev] › e2e/calibration.spec.ts:5:1 › explicit session association and conditional comparison retain excluded evidence (1.1s)
+2026-10-20T21:31:29.1700355Z   ✓  105 [dev] › e2e/compatibility.spec.ts:2:1 › compatibility inspection labels historical presence and unavailable active scope (710ms)
+2026-10-20T21:31:30.2828372Z   ✓  106 [dev] › e2e/content-dispositions.spec.ts:4:1 › explicit content restriction and guarded release retain no-active fallback without activating (1.1s)
+2026-10-20T21:31:31.1060662Z   ✓  107 [dev] › e2e/data-screens-reflow.spec.ts:7:3 › Local diagnostics does not overflow horizontally at 320px and 200% text (806ms)
+2026-10-20T21:31:31.9284590Z   ✓  108 [dev] › e2e/data-screens-reflow.spec.ts:7:3 › Backup and recovery does not overflow horizontally at 320px and 200% text (808ms)
+2026-10-20T21:31:32.7664330Z   ✓  109 [dev] › e2e/data-screens-reflow.spec.ts:7:3 › Compatibility and coverage does not overflow horizontally at 320px and 200% text (824ms)
+2026-10-20T21:31:33.6122338Z   ✓  110 [dev] › e2e/data-screens-reflow.spec.ts:7:3 › Settings does not overflow horizontally at 320px and 200% text (835ms)
+2026-10-20T21:31:34.4337525Z   ✓  111 [dev] › e2e/data-screens-reflow.spec.ts:7:3 › Imports does not overflow horizontally at 320px and 200% text (811ms)
+2026-10-20T21:31:35.2806634Z   ✓  112 [dev] › e2e/data-screens-reflow.spec.ts:7:3 › Content does not overflow horizontally at 320px and 200% text (836ms)
+2026-10-20T21:31:36.1191536Z   ✓  113 [dev] › e2e/diagnostics.spec.ts:2:1 › local diagnostics require explicit preview/export and expose only fixed failure codes (824ms)
+2026-10-20T21:31:37.0813645Z   ✓  114 [dev] › e2e/dungeons.spec.ts:4:1 › local dungeon reference keeps stale members and unknown source evidence explicit (937ms)
+2026-10-20T21:31:38.4875116Z   ✓  115 [dev] › e2e/gear.spec.ts:5:1 › gear manual assumptions display actual Rust fixture explanations and invalidate results (1.4s)
+2026-10-20T21:31:39.1130197Z   ✓  116 [dev] › e2e/heading-reflow.spec.ts:4:3 › main headings reflow at 320px and 100% text (610ms)
+2026-10-20T21:31:39.7239602Z   ✓  117 [dev] › e2e/heading-reflow.spec.ts:4:3 › main headings reflow at 320px and 200% text (600ms)
+2026-10-20T21:31:40.9417203Z   ✓  118 [dev] › e2e/joint.spec.ts:5:1 › joint planning sends exact participant guards and hard exclusions, then invalidates refreshed advice (1.2s)
+2026-10-20T21:31:42.5045033Z   ✓  119 [dev] › e2e/local-research-workflow.spec.ts:5:31 › synthetic local choices stay explicit, accessible and bounded at 320px (1.5s)
+2026-10-20T21:31:44.1925618Z   ✓  120 [dev] › e2e/local-research-workflow.spec.ts:5:31 › synthetic local choices stay explicit, accessible and bounded at 1100px (1.7s)
+2026-10-20T21:31:45.4237280Z   ✓  121 [dev] › e2e/local-submissions.spec.ts:3:1 › local opt-in review refuses unpermitted export and preserves an erased duplicate tombstone (1.2s)
+2026-10-20T21:31:46.1499672Z   ✓  122 [dev] › e2e/native-upgrade-selection.spec.ts:16:1 › old unconditional same selection clears actual React inspection without refetch (710ms)
+2026-10-20T21:31:46.9185284Z   ✓  123 [dev] › e2e/native-upgrade-selection.spec.ts:26:1 › production helper preserves selected inspection and switches other profile with actual refetch (747ms)
+2026-10-20T21:31:48.0655125Z   ✓  124 [dev] › e2e/native-upgrade-selection.spec.ts:40:1 › production helper still refuses absent or wrong inspection within its bound (1.1s)
+2026-10-20T21:31:49.0323707Z   ✓  125 [dev] › e2e/navigation-reflow.spec.ts:4:5 › primary navigation fits 320px with 16px root text and retains keyboard access (949ms)
+2026-10-20T21:31:49.9735123Z   ✓  126 [dev] › e2e/navigation-reflow.spec.ts:4:5 › primary navigation fits 320px with 32px root text and retains keyboard access (927ms)
+2026-10-20T21:31:50.9639272Z   ✓  127 [dev] › e2e/navigation-reflow.spec.ts:4:5 › primary navigation fits 640px with 16px root text and retains keyboard access (981ms)
+2026-10-20T21:31:51.9167022Z   ✓  128 [dev] › e2e/navigation-reflow.spec.ts:4:5 › primary navigation fits 640px with 32px root text and retains keyboard access (942ms)
+2026-10-20T21:31:52.5104191Z   ✓  129 [dev] › e2e/navigation-reflow.spec.ts:28:3 › a 1100px window shows the rail at 16px root text (581ms)
+2026-10-20T21:31:53.1467602Z   ✓  130 [dev] › e2e/navigation-reflow.spec.ts:28:3 › a 1100px window shows the bar at 32px root text (621ms)
+2026-10-20T21:31:53.8032860Z   ✓  131 [dev] › e2e/navigation-reflow.spec.ts:60:1 › the rail switches on at 58em of shell content width, not before (643ms)
+2026-10-20T21:31:54.5184267Z   ✓  132 [dev] › e2e/navigation-reflow.spec.ts:75:1 › without container-query support the wrapping bar is used and stays usable (702ms)
+2026-10-20T21:31:55.3741952Z   ✓  133 [dev] › e2e/nested-panel-reflow.spec.ts:36:3 › Compatibility and coverage: nested panels are flat and the page does not overflow at 320px and 200% text (835ms)
+2026-10-20T21:31:56.2181336Z   ✓  134 [dev] › e2e/nested-panel-reflow.spec.ts:36:3 › Content: nested panels are flat and the page does not overflow at 320px and 200% text (832ms)
+2026-10-20T21:31:57.0502989Z   ✓  135 [dev] › e2e/nested-panel-reflow.spec.ts:68:3 › Atlas: play screen panels reflow at 320px and 200% text (822ms)
+2026-10-20T21:31:57.9581086Z   ✓  136 [dev] › e2e/nested-panel-reflow.spec.ts:68:3 › Gear: play screen panels reflow at 320px and 200% text (895ms)
+2026-10-20T21:31:58.8494773Z   ✓  137 [dev] › e2e/nested-panel-reflow.spec.ts:68:3 › Planner: play screen panels reflow at 320px and 200% text (877ms)
+2026-10-20T21:31:59.6935466Z   ✓  138 [dev] › e2e/nested-panel-reflow.spec.ts:68:3 › Sessions: play screen panels reflow at 320px and 200% text (833ms)
+2026-10-20T21:32:00.5330194Z   ✓  139 [dev] › e2e/nested-panel-reflow.spec.ts:68:3 › Dungeons: play screen panels reflow at 320px and 200% text (826ms)
+2026-10-20T21:32:01.4866729Z   ✓  140 [dev] › e2e/nested-panel-reflow.spec.ts:89:1 › Party with two participants: joint planning panels reflow at 320px and 200% text (940ms)
+2026-10-20T21:32:02.9368364Z   ✓  141 [dev] › e2e/planning-jobs.spec.ts:3:1 › planning progress and cancellation keep navigation available and preserve only current advice (1.4s)
+2026-10-20T21:32:03.6757500Z   ✓  142 [dev] › e2e/pressed-button.spec.ts:40:1 › pressed pin is distinct by shape and weight, and list buttons have no form margin (722ms)
+2026-10-20T21:32:04.4122805Z   ✓  143 [dev] › e2e/pressed-button.spec.ts:51:1 › high contrast keeps the pressed edge, not just bold and underline (722ms)
+2026-10-20T21:32:05.2105005Z   ✓  144 [dev] › e2e/pressed-button.spec.ts:62:1 › forced colours draw a pressed button with the system selection pair (787ms)
+2026-10-20T21:32:06.3617561Z   ✓  145 [dev] › e2e/proposals.spec.ts:3:1 › local proposal retains per-member acceptance and invalidates after refresh (1.1s)
+2026-10-20T21:32:07.1990521Z   ✓  146 [dev] › e2e/recovery.spec.ts:2:1 › startup failure permits explicit inspected recovery and preserves normal navigation afterward (822ms)
+2026-10-20T21:32:07.8639218Z   ✓  147 [dev] › e2e/reference.spec.ts:4:1 › fixed reference page renders only imported facts with separate ages and reflows (644ms)
+2026-10-20T21:32:08.7784918Z   ✓  148 [dev] › e2e/reference.spec.ts:30:1 › main reference controls require explicit show/topmost and retain fallback after native failure (897ms)
+2026-10-20T21:32:09.6704429Z   ✓  149 [dev] › e2e/reference.spec.ts:63:1 › focused desktop shortcut is explicitly enabled and interaction dispatch failures stay truthful (878ms)
+2026-10-20T21:32:10.4805560Z   ✓  150 [dev] › e2e/refresh-tick.spec.ts:29:3 › Settings keeps unsaved "Manual goal identifier" across the 60 s refresh tick (791ms)
+2026-10-20T21:32:11.2000996Z   ✓  151 [dev] › e2e/refresh-tick.spec.ts:29:3 › Local diagnostics keeps unsaved "New diagnostic file path" across the 60 s refresh tick (707ms)
+2026-10-20T21:32:11.9094922Z   ✓  152 [dev] › e2e/refresh-tick.spec.ts:29:3 › Backup and recovery keeps unsaved "New backup file path" across the 60 s refresh tick (692ms)
+2026-10-20T21:32:12.6848061Z   ✓  153 [dev] › e2e/refresh-tick.spec.ts:29:3 › Atlas keeps unsaved "Search reference pins" across the 60 s refresh tick (757ms)
+2026-10-20T21:32:13.4349119Z   ✓  154 [dev] › e2e/refresh-tick.spec.ts:29:3 › Imports keeps unsaved "Snapshot export text" across the 60 s refresh tick (737ms)
+2026-10-20T21:32:14.1889081Z   ✓  155 [dev] › e2e/refresh-tick.spec.ts:29:3 › Dungeons keeps unsaved "Local preparation package JSON" across the 60 s refresh tick (742ms)
+2026-10-20T21:32:14.9519460Z   ✓  156 [dev] › e2e/refresh-tick.spec.ts:29:3 › Content keeps unsaved "Content revision JSON" across the 60 s refresh tick (753ms)
+2026-10-20T21:32:15.7134617Z   ✓  157 [dev] › e2e/refresh-tick.spec.ts:29:3 › Planner keeps unsaved "Versioned goal identifier" across the 60 s refresh tick (747ms)
+2026-10-20T21:32:16.5468205Z   ✓  158 [dev] › e2e/refresh-tick.spec.ts:29:3 › Gear keeps unsaved "Route goal" across the 60 s refresh tick (821ms)
+2026-10-20T21:32:17.3044886Z   ✓  159 [dev] › e2e/refresh-tick.spec.ts:29:3 › Sessions keeps unsaved "Session export text" across the 60 s refresh tick (745ms)
+2026-10-20T21:32:18.0314373Z   ✓  160 [dev] › e2e/refresh-tick.spec.ts:43:1 › the tick never changes the screen the person is on (708ms)
+2026-10-20T21:32:19.0998222Z   ✓  161 [dev] › e2e/reminders.spec.ts:4:1 › imported synthetic profile reminder hide restore acknowledgment and checklist (1.1s)
+2026-10-20T21:32:21.0115330Z   ✓  162 [dev] › e2e/route-acquisition.spec.ts:7:1 › explicit Gear route opportunities use Rust fixture detour/residual budget and invalidate edited assumptions (1.9s)
+2026-10-20T21:32:21.7447576Z   ✓  163 [dev] › e2e/screenshots.spec.ts:8:3 › capture Today (716ms)
+2026-10-20T21:32:22.5759954Z   ✓  164 [dev] › e2e/screenshots.spec.ts:8:3 › capture Atlas (819ms)
+2026-10-20T21:32:23.3583652Z   ✓  165 [dev] › e2e/screenshots.spec.ts:8:3 › capture Planner (766ms)
+2026-10-20T21:32:24.3133556Z   ✓  166 [dev] › e2e/screenshots.spec.ts:8:3 › capture Gear (942ms)
+2026-10-20T21:32:25.0485638Z   ✓  167 [dev] › e2e/screenshots.spec.ts:8:3 › capture Party (723ms)
+2026-10-20T21:32:25.8059588Z   ✓  168 [dev] › e2e/screenshots.spec.ts:8:3 › capture Dungeons (743ms)
+2026-10-20T21:32:26.5427696Z   ✓  169 [dev] › e2e/screenshots.spec.ts:8:3 › capture World (724ms)
+2026-10-20T21:32:27.4026894Z   ✓  170 [dev] › e2e/screenshots.spec.ts:8:3 › capture Sessions (842ms)
+2026-10-20T21:32:28.1392893Z   ✓  171 [dev] › e2e/screenshots.spec.ts:8:3 › capture Reminders (723ms)
+2026-10-20T21:32:28.9410265Z   ✓  172 [dev] › e2e/screenshots.spec.ts:8:3 › capture Imports (790ms)
+2026-10-20T21:32:29.9144338Z   ✓  173 [dev] › e2e/screenshots.spec.ts:8:3 › capture Content (958ms)
+2026-10-20T21:32:30.6674460Z   ✓  174 [dev] › e2e/screenshots.spec.ts:8:3 › capture Compatibility and coverage (742ms)
+2026-10-20T21:32:31.5109633Z   ✓  175 [dev] › e2e/screenshots.spec.ts:8:3 › capture Settings (828ms)
+2026-10-20T21:32:32.2522431Z   ✓  176 [dev] › e2e/screenshots.spec.ts:8:3 › capture Local diagnostics (725ms)
+2026-10-20T21:32:33.0619807Z   ✓  177 [dev] › e2e/screenshots.spec.ts:8:3 › capture Backup and recovery (793ms)
+2026-10-20T21:32:34.2383938Z   ✓  178 [dev] › e2e/sessions.spec.ts:4:1 › Sessions manual import, duplicate, analytics and deletion at command boundary (1.2s)
+2026-10-20T21:32:35.1510910Z   ✓  179 [dev] › e2e/today-settings.spec.ts:3:30 › Today and explicit Settings remain readable at 320px and 100% text (894ms)
+2026-10-20T21:32:36.0592912Z   ✓  180 [dev] › e2e/today-settings.spec.ts:3:30 › Today and explicit Settings remain readable at 320px and 200% text (897ms)
+2026-10-20T21:32:36.6905427Z   ✓  181 [dev] › e2e/today-settings.spec.ts:30:1 › historical advice keeps original steps without a next action (617ms)
+2026-10-20T21:32:37.4334298Z   ✓  182 [dev] › e2e/today-settings.spec.ts:39:1 › Imports applies the saved file editor choice only after an explicit click (731ms)
+2026-10-20T21:32:38.9613204Z   ✓  183 [dev] › e2e/workflow.spec.ts:94:1 › manual party keeps stale and missing participants separate across navigation (1.5s)
+2026-10-20T21:32:40.0765057Z   ✓  184 [dev] › e2e/workflow.spec.ts:123:1 › imports recover from failure and preserve duplicate/history-only current state (1.1s)
+2026-10-20T21:32:41.2119966Z   ✓  185 [dev] › e2e/workflow.spec.ts:145:1 › profile selection, explicit file import and watch cancellation use command DTOs (1.1s)
+2026-10-20T21:32:42.4546040Z   ✓  186 [dev] › e2e/workflow.spec.ts:166:1 › dense atlas filters and keyboard navigation retain selection after completed refresh (1.2s)
+2026-10-20T21:32:43.3156785Z   ✓  187 [dev] › e2e/workflow.spec.ts:195:1 › open imported views requery backend freshness without local age calculations (847ms)
+2026-10-20T21:32:44.2544620Z   ✓  188 [dev] › e2e/workflow.spec.ts:209:1 › explicit promotion previews and confirms the expected current snapshot (921ms)
+2026-10-20T21:32:46.0295238Z   ✓  189 [dev] › e2e/workflow.spec.ts:220:1 › content activation enables explicit planning and editing invalidates the result (1.8s)
+2026-10-20T21:32:48.5066984Z   ✓  190 [dev] › e2e/workflow.spec.ts:251:1 › route segment keyboard selection retains the tail and fits only schematic frame endpoints (2.5s)
+2026-10-20T21:32:50.5384556Z   ✓  191 [dev] › e2e/world.spec.ts:12:1 › the world browser finds Hogger and marks him as 1.12 data (2.0s)
+2026-10-20T21:32:51.5953305Z   ✓  192 [prod-csp] › e2e/prod-csp.spec.ts:46:1 › the served document carries exactly the native CSP (248ms)
+2026-10-20T21:32:53.0020224Z   ✓  193 [prod-csp] › e2e/prod-csp.spec.ts:51:1 › every screen of the production bundle runs under the native CSP (1.4s)
+2026-10-20T21:32:53.2752827Z   ✓  194 [prod-csp] › e2e/prod-csp.spec.ts:70:1 › the fixed reference page runs under the native CSP (254ms)
+2026-10-20T21:32:53.5735392Z   ✓  195 [prod-csp] › e2e/prod-csp.spec.ts:79:1 › the self-hosted Inter and Cinzel faces load under the native CSP (282ms)
+2026-10-20T21:32:53.6810358Z 
+2026-10-20T21:32:53.6819988Z   195 passed (4.0m)
+2026-10-20T21:32:53.7309828Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-10-20T21:32:53.7310251Z with:
+2026-10-20T21:32:53.7310438Z   name: desktop-screens
+2026-10-20T21:32:53.7310668Z   path: apps/desktop/screenshots/
+2026-10-20T21:32:53.7310922Z   if-no-files-found: warn
+2026-10-20T21:32:53.7311141Z   retention-days: 14
+2026-10-20T21:32:53.7311349Z   compression-level: 6
+2026-10-20T21:32:53.7311566Z   overwrite: false
+2026-10-20T21:32:53.7311778Z   include-hidden-files: false
+2026-10-20T21:32:53.7312006Z   archive: true
+2026-10-20T21:32:53.7312193Z ##[endgroup]
+2026-10-20T21:32:53.8798078Z With the provided path, there will be 15 files uploaded
+2026-10-20T21:32:53.8805200Z Artifact name is valid!
+2026-10-20T21:32:53.8806018Z Root directory input is valid!
+2026-10-20T21:32:54.2543189Z Uploading artifact: desktop-screens.zip
+2026-10-20T21:32:54.2593579Z Beginning upload of artifact content to blob storage
+2026-10-20T21:32:55.1283167Z Uploaded bytes 2762366
+2026-10-20T21:32:55.1988560Z Finished uploading artifact content to blob storage!
+2026-10-20T21:32:55.1990750Z SHA256 digest of uploaded artifact is f43432f850c51315b799a2fba0f84874b3ee028f3a9556f7d53f421a4ac87793
+2026-10-20T21:32:55.1991839Z Finalizing artifact upload
+2026-10-20T21:32:55.6169957Z Artifact desktop-screens successfully finalized. Artifact ID 12299922139
+2026-10-20T21:32:55.6171549Z Artifact desktop-screens has been successfully uploaded! Final size is 2762366 bytes. Artifact ID is 12299922139
+2026-10-20T21:32:55.6173142Z Artifact download URL: https://github.com/Laymer/Navzeroth/actions/runs/39500462040/artifacts/12299922139
+2026-10-20T21:32:55.6323365Z ##[group]Run git diff --exit-code
+2026-10-20T21:32:55.6323719Z [36;1mgit diff --exit-code[0m
+2026-10-20T21:32:55.6374231Z shell: /usr/bin/bash -e {0}
+2026-10-20T21:32:55.6374517Z ##[endgroup]
+2026-10-20T21:32:55.9524301Z Post job cleanup.
+2026-10-20T21:32:56.0817792Z Post job cleanup.
+2026-10-20T21:32:56.1800726Z [command]/usr/bin/git version
+2026-10-20T21:32:56.1855598Z git version 2.55.0
+2026-10-20T21:32:56.1904496Z Temporarily overriding HOME='/home/runner/work/_temp/47537f12-0526-4348-8fde-64c6856ea633' before making global git config changes
+2026-10-20T21:32:56.1908010Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:32:56.1911618Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+2026-10-20T21:32:56.1963460Z Removing SSH command configuration
+2026-10-20T21:32:56.1973324Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:32:56.2035540Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-20T21:32:56.2357638Z Removing HTTP extra header
+2026-10-20T21:32:56.2364362Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:32:56.2412003Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-20T21:32:56.2699666Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:32:56.2707948Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:32:56.2743788Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:32:56.2745410Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:32:56.2746125Z includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:32:56.2746727Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:32:56.2754687Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:32:56.2793169Z /home/runner/work/_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:32:56.2805700Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-7df0be6d\-7524\-4fd6\-a16a\-43250ba7dbdc\.config
+2026-10-20T21:32:56.2869105Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:32:56.2913822Z /home/runner/work/_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:32:56.2925058Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-7df0be6d\-7524\-4fd6\-a16a\-43250ba7dbdc\.config
+2026-10-20T21:32:56.2972627Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:32:56.3008669Z /github/runner_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:32:56.3016985Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-7df0be6d\-7524\-4fd6\-a16a\-43250ba7dbdc\.config
+2026-10-20T21:32:56.3063983Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:32:56.3100717Z /github/runner_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config
+2026-10-20T21:32:56.3109704Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-7df0be6d\-7524\-4fd6\-a16a\-43250ba7dbdc\.config
+2026-10-20T21:32:56.3156701Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-20T21:32:56.3414608Z Removing credentials config '/home/runner/work/_temp/git-credentials-7df0be6d-7524-4fd6-a16a-43250ba7dbdc.config'
+2026-10-20T21:32:56.3596217Z Cleaning up orphan processes

@@ -1,0 +1,10 @@
+{
+  "platform": "linux",
+  "runtime_commit": "419fcaecfcb208867e280140215c6e5e01891e27",
+  "harness_commit": "3447bcbfdeeb771589f6773bad6a70b81bdf0681",
+  "elapsed_seconds": 287.95965361399976,
+  "exit_code": 0,
+  "timed_out": false,
+  "maximum_resident_set_kib": 12304676,
+  "scope": "actual diagnostic Rust process and threads; genuinely rebuilt optimized app419fcaec; OLD signed V13 bundle identity explicit, not relabelled as new production; Linux shared host uncontrolled cache; whole1200s bound; not Windows or acceptance"
+}

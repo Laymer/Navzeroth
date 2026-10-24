@@ -1,0 +1,54 @@
+{
+  "run_id": 39497088020,
+  "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "actual_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
+  "tree": "1082ece90045e0bcfe2f681ef6d53da5ebbca45c",
+  "conclusion": "cancelled",
+  "jobs": {
+    "typescript": {
+      "id": 118884828687,
+      "conclusion": "success"
+    },
+    "linux": {
+      "id": 118884828957,
+      "conclusion": "success",
+      "clean_source": true,
+      "tests_passed": true,
+      "incomplete_profiles": [],
+      "cli_entrypoint": {
+        "covered": 371,
+        "executable": 409
+      },
+      "lcov_sha256": "a7e162fb15a329762d77198bd097cea22c63cc9700eeadb5bec3cea98304e5f9"
+    },
+    "windows": {
+      "id": 118884828888,
+      "conclusion": "cancelled",
+      "collector_started_at": "2026-10-20T21:04:58Z",
+      "collector_cancelled_at": "2026-10-20T21:15:04Z",
+      "fast_profile_regression_step": "success",
+      "receipt_present": false,
+      "native_entrypoint_verification": "unverified",
+      "full_bundle_verification": "unverified"
+    },
+    "aggregate": {
+      "id": 118890805336,
+      "conclusion": "failure",
+      "reason": "Coverage collection failed RUST_RESULT",
+      "verdict_artifact_present": false,
+      "combined_90_percent_gate": "not passed"
+    }
+  },
+  "artifacts": {
+    "linux": 12299066859,
+    "typescript": 12298582101,
+    "baseline_inventory": 12298945931,
+    "cancelled_windows": 12297859579
+  },
+  "cancellation_cause": "Windows log states only operation canceled. Superseding PR239 run39498793347 created21:14:54 after normal merge21:14:46; cancel-in-progress PR concurrency makes automatic supersession consistent, inferred rather than explicit log attribution. Root later explicitly cancelled successor run; distinct event.",
+  "limitations": [
+    "Completed Linux and TS collection do not establish combined gate or Windows entrypoint/clean-source/native bundle result.",
+    "No installer acceptance or owner smoke result.",
+    "Only bounded ZIP member range reads retained; full LCOV was streamed and hashed for derived entrypoints, no raw profiles or full archive copied."
+  ]
+}

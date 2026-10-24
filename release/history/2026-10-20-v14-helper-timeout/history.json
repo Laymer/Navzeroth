@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "actual_pr_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
+  "run_id": 39497088109,
+  "status": "failure",
+  "scope": "Actual PS7 helper test selected two-second watchdog error then could not read child progress. Specific cause unproven. No installer, native smoke, or any of eight stable acceptance cases ran; owner unverified.",
+  "full_external_log": {
+    "path": "/tmp/navzeroth-v14-package-39497088109.log",
+    "bytes": 202368,
+    "sha256": "55e34ec1ee8d0c4e2a325c69456492b83ff70c9c02e82f3d5212c3b9670c6c17"
+  },
+  "excerpt_scope": "Exact full PS7 helper-step lines, including raw terminal escapes/newlines; not the entire workflow log.",
+  "files": [
+    {
+      "path": "release/history/2026-10-20-v14-helper-timeout/workflow.json",
+      "bytes": 11529,
+      "sha256": "015690e812ddd015a38a491cb5666241a077f0dac6c852871830469782b9e31c"
+    },
+    {
+      "path": "release/history/2026-10-20-v14-helper-timeout/actual-helper-step.log",
+      "bytes": 6652,
+      "sha256": "3d963ab4e7de123dc75d2c0eeef44068b7b7abc9bc7e400b650dff3a2929ecd7"
+    }
+  ]
+}

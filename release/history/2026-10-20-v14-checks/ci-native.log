@@ -1,0 +1,1771 @@
+﻿2026-10-20T21:02:32.9830454Z Current runner version: '2.337.0'
+2026-10-20T21:02:32.9850538Z ##[group]Runner Image Provisioner
+2026-10-20T21:02:32.9851138Z Hosted Compute Agent
+2026-10-20T21:02:32.9851511Z Version: 20261002.596
+2026-10-20T21:02:32.9851852Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-20T21:02:32.9852370Z Build Date: 2026-10-02T22:28:27Z
+2026-10-20T21:02:32.9852775Z Worker ID: {e4606eef-efe4-4b9e-adc1-2f89a93d1731}
+2026-10-20T21:02:32.9853236Z Region: westus3
+2026-10-20T21:02:32.9853560Z Cloud: Azure
+2026-10-20T21:02:32.9853875Z ##[endgroup]
+2026-10-20T21:02:32.9854713Z ##[group]Operating System
+2026-10-20T21:02:32.9855055Z Microsoft Windows Server 2025
+2026-10-20T21:02:32.9855409Z 10.0.26100
+2026-10-20T21:02:32.9855705Z Datacenter
+2026-10-20T21:02:32.9856020Z ##[endgroup]
+2026-10-20T21:02:32.9856371Z ##[group]Runner Image
+2026-10-20T21:02:32.9856720Z Image: windows-2025-vs2026
+2026-10-20T21:02:32.9857100Z Version: 20261007.264.1
+2026-10-20T21:02:32.9858085Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+2026-10-20T21:02:32.9859189Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+2026-10-20T21:02:32.9859742Z ##[endgroup]
+2026-10-20T21:02:32.9860648Z ##[group]GITHUB_TOKEN Permissions
+2026-10-20T21:02:32.9861921Z Contents: read
+2026-10-20T21:02:32.9862297Z Metadata: read
+2026-10-20T21:02:32.9862607Z ##[endgroup]
+2026-10-20T21:02:32.9864045Z Secret source: Actions
+2026-10-20T21:02:32.9864588Z Cache mode: write
+2026-10-20T21:02:32.9865067Z Prepare workflow directory
+2026-10-20T21:02:33.0095339Z Prepare all required actions
+2026-10-20T21:02:33.0133822Z Getting action download info
+2026-10-20T21:02:33.3055699Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-20T21:02:33.4053107Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-10-20T21:02:34.1683633Z Complete job name: Desktop shell Windows
+2026-10-20T21:02:34.2769108Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-20T21:02:34.2769999Z with:
+2026-10-20T21:02:34.2770253Z   lfs: false
+2026-10-20T21:02:34.2770503Z   repository: Laymer/Navzeroth
+2026-10-20T21:02:34.2773082Z   token: ***
+2026-10-20T21:02:34.2773330Z   ssh-strict: true
+2026-10-20T21:02:34.2773577Z   ssh-user: git
+2026-10-20T21:02:34.2773828Z   persist-credentials: true
+2026-10-20T21:02:34.2774102Z   clean: true
+2026-10-20T21:02:34.2774354Z   sparse-checkout-cone-mode: true
+2026-10-20T21:02:34.2774650Z   fetch-depth: 1
+2026-10-20T21:02:34.2774890Z   fetch-tags: false
+2026-10-20T21:02:34.2775156Z   show-progress: true
+2026-10-20T21:02:34.2775417Z   submodules: false
+2026-10-20T21:02:34.2775681Z   set-safe-directory: true
+2026-10-20T21:02:34.2775973Z   allow-unsafe-pr-checkout: false
+2026-10-20T21:02:34.2776381Z ##[endgroup]
+2026-10-20T21:02:34.3844020Z Syncing repository: Laymer/Navzeroth
+2026-10-20T21:02:34.3845596Z ##[group]Getting Git version info
+2026-10-20T21:02:34.3846017Z Working directory is 'D:\a\Navzeroth\Navzeroth'
+2026-10-20T21:02:34.4321652Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-20T21:02:34.7966785Z git version 2.56.0.windows.2
+2026-10-20T21:02:34.8009071Z ##[endgroup]
+2026-10-20T21:02:34.8021414Z Temporarily overriding HOME='D:\a\_temp\855b08e5-9717-467f-b1c6-59c093e26bdb' before making global git config changes
+2026-10-20T21:02:34.8023286Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:02:34.8028101Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+2026-10-20T21:02:34.8665586Z Deleting the contents of 'D:\a\Navzeroth\Navzeroth'
+2026-10-20T21:02:34.8670146Z ##[group]Determining repository object format
+2026-10-20T21:02:34.8672158Z ##[endgroup]
+2026-10-20T21:02:34.8675654Z ##[group]Initializing the repository
+2026-10-20T21:02:34.8680453Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Navzeroth\Navzeroth
+2026-10-20T21:02:34.9530982Z Initialized empty Git repository in D:/a/Navzeroth/Navzeroth/.git/
+2026-10-20T21:02:34.9606134Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Laymer/Navzeroth
+2026-10-20T21:02:35.0324020Z ##[endgroup]
+2026-10-20T21:02:35.0325432Z ##[group]Disabling automatic garbage collection
+2026-10-20T21:02:35.0330506Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-20T21:02:35.0682080Z ##[endgroup]
+2026-10-20T21:02:35.0683570Z ##[group]Setting up auth
+2026-10-20T21:02:35.0684775Z Removing SSH command configuration
+2026-10-20T21:02:35.0692349Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:02:35.1003720Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-20T21:02:36.6383496Z Removing HTTP extra header
+2026-10-20T21:02:36.6393095Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:02:36.6676353Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-20T21:02:37.1048458Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:02:37.1056683Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:02:37.1340246Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-20T21:02:37.5815478Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-20T21:02:37.6110755Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D:\a\_temp\git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:02:37.6434426Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D:\a\_temp\git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:02:37.6792060Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:02:37.7081855Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:02:37.7343929Z ##[endgroup]
+2026-10-20T21:02:37.7344485Z ##[group]Fetching the repository
+2026-10-20T21:02:37.7352410Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8d9fc3922e3433b45755ef68602a62c054faee4e:refs/remotes/pull/239/merge
+2026-10-20T21:02:39.6139021Z From https://github.com/Laymer/Navzeroth
+2026-10-20T21:02:39.6139667Z  * [new ref]         8d9fc3922e3433b45755ef68602a62c054faee4e -> pull/239/merge
+2026-10-20T21:02:39.6178048Z ##[endgroup]
+2026-10-20T21:02:39.6178527Z ##[group]Determining the checkout info
+2026-10-20T21:02:39.6179178Z ##[endgroup]
+2026-10-20T21:02:39.6185804Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-20T21:02:39.6600659Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-20T21:02:39.6887410Z ##[group]Checking out the ref
+2026-10-20T21:02:39.6895358Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/239/merge
+2026-10-20T21:02:41.4401904Z Updating files:   8% (335/4117)
+2026-10-20T21:02:41.4601995Z Updating files:   9% (371/4117)
+2026-10-20T21:02:41.4772601Z Updating files:  10% (412/4117)
+2026-10-20T21:02:41.4897107Z Updating files:  11% (453/4117)
+2026-10-20T21:02:41.5058234Z Updating files:  12% (495/4117)
+2026-10-20T21:02:41.5137352Z Updating files:  13% (536/4117)
+2026-10-20T21:02:41.5217569Z Updating files:  14% (577/4117)
+2026-10-20T21:02:41.5281192Z Updating files:  15% (618/4117)
+2026-10-20T21:02:41.5340758Z Updating files:  16% (659/4117)
+2026-10-20T21:02:41.5399237Z Updating files:  17% (700/4117)
+2026-10-20T21:02:41.5461383Z Updating files:  18% (742/4117)
+2026-10-20T21:02:41.5521475Z Updating files:  19% (783/4117)
+2026-10-20T21:02:41.5613036Z Updating files:  20% (824/4117)
+2026-10-20T21:02:41.5667711Z Updating files:  21% (865/4117)
+2026-10-20T21:02:41.6140386Z Updating files:  22% (906/4117)
+2026-10-20T21:02:41.6196032Z Updating files:  23% (947/4117)
+2026-10-20T21:02:41.6254821Z Updating files:  24% (989/4117)
+2026-10-20T21:02:41.6307448Z Updating files:  25% (1030/4117)
+2026-10-20T21:02:41.6359627Z Updating files:  26% (1071/4117)
+2026-10-20T21:02:41.6411796Z Updating files:  27% (1112/4117)
+2026-10-20T21:02:41.6467978Z Updating files:  28% (1153/4117)
+2026-10-20T21:02:41.6519560Z Updating files:  29% (1194/4117)
+2026-10-20T21:02:41.6571932Z Updating files:  30% (1236/4117)
+2026-10-20T21:02:41.6623215Z Updating files:  31% (1277/4117)
+2026-10-20T21:02:41.6743291Z Updating files:  32% (1318/4117)
+2026-10-20T21:02:41.6764086Z Updating files:  33% (1359/4117)
+2026-10-20T21:02:41.6838643Z Updating files:  34% (1400/4117)
+2026-10-20T21:02:41.6918200Z Updating files:  35% (1441/4117)
+2026-10-20T21:02:41.6979611Z Updating files:  36% (1483/4117)
+2026-10-20T21:02:41.7036880Z Updating files:  37% (1524/4117)
+2026-10-20T21:02:41.7094800Z Updating files:  38% (1565/4117)
+2026-10-20T21:02:41.7149360Z Updating files:  39% (1606/4117)
+2026-10-20T21:02:41.7205166Z Updating files:  40% (1647/4117)
+2026-10-20T21:02:41.7256636Z Updating files:  41% (1688/4117)
+2026-10-20T21:02:41.7307512Z Updating files:  42% (1730/4117)
+2026-10-20T21:02:41.7358151Z Updating files:  43% (1771/4117)
+2026-10-20T21:02:41.7360375Z Updating files:  44% (1812/4117)
+2026-10-20T21:02:41.7415884Z Updating files:  44% (1813/4117)
+2026-10-20T21:02:41.7468742Z Updating files:  45% (1853/4117)
+2026-10-20T21:02:41.7518785Z Updating files:  46% (1894/4117)
+2026-10-20T21:02:41.7571352Z Updating files:  47% (1935/4117)
+2026-10-20T21:02:41.7621192Z Updating files:  48% (1977/4117)
+2026-10-20T21:02:41.7673883Z Updating files:  49% (2018/4117)
+2026-10-20T21:02:41.7731477Z Updating files:  50% (2059/4117)
+2026-10-20T21:02:41.7781836Z Updating files:  51% (2100/4117)
+2026-10-20T21:02:41.7832483Z Updating files:  52% (2141/4117)
+2026-10-20T21:02:41.7883396Z Updating files:  53% (2183/4117)
+2026-10-20T21:02:41.7934150Z Updating files:  54% (2224/4117)
+2026-10-20T21:02:41.7985418Z Updating files:  55% (2265/4117)
+2026-10-20T21:02:41.8042073Z Updating files:  56% (2306/4117)
+2026-10-20T21:02:41.8096044Z Updating files:  57% (2347/4117)
+2026-10-20T21:02:41.8151224Z Updating files:  58% (2388/4117)
+2026-10-20T21:02:41.8203451Z Updating files:  59% (2430/4117)
+2026-10-20T21:02:41.8252807Z Updating files:  60% (2471/4117)
+2026-10-20T21:02:41.8305619Z Updating files:  61% (2512/4117)
+2026-10-20T21:02:41.8364280Z Updating files:  62% (2553/4117)
+2026-10-20T21:02:41.8420049Z Updating files:  63% (2594/4117)
+2026-10-20T21:02:41.8485627Z Updating files:  64% (2635/4117)
+2026-10-20T21:02:41.8538750Z Updating files:  65% (2677/4117)
+2026-10-20T21:02:41.8678016Z Updating files:  66% (2718/4117)
+2026-10-20T21:02:41.8783859Z Updating files:  67% (2759/4117)
+2026-10-20T21:02:41.8829757Z Updating files:  68% (2800/4117)
+2026-10-20T21:02:41.8872474Z Updating files:  69% (2841/4117)
+2026-10-20T21:02:41.8918447Z Updating files:  70% (2882/4117)
+2026-10-20T21:02:41.8957978Z Updating files:  71% (2924/4117)
+2026-10-20T21:02:41.8997426Z Updating files:  72% (2965/4117)
+2026-10-20T21:02:41.9036204Z Updating files:  73% (3006/4117)
+2026-10-20T21:02:41.9099338Z Updating files:  74% (3047/4117)
+2026-10-20T21:02:41.9153322Z Updating files:  75% (3088/4117)
+2026-10-20T21:02:41.9211644Z Updating files:  76% (3129/4117)
+2026-10-20T21:02:41.9271383Z Updating files:  77% (3171/4117)
+2026-10-20T21:02:41.9324027Z Updating files:  78% (3212/4117)
+2026-10-20T21:02:41.9377810Z Updating files:  79% (3253/4117)
+2026-10-20T21:02:41.9429323Z Updating files:  80% (3294/4117)
+2026-10-20T21:02:41.9482477Z Updating files:  81% (3335/4117)
+2026-10-20T21:02:41.9533557Z Updating files:  82% (3376/4117)
+2026-10-20T21:02:41.9585871Z Updating files:  83% (3418/4117)
+2026-10-20T21:02:41.9685590Z Updating files:  84% (3459/4117)
+2026-10-20T21:02:41.9747737Z Updating files:  85% (3500/4117)
+2026-10-20T21:02:41.9848064Z Updating files:  86% (3541/4117)
+2026-10-20T21:02:41.9939875Z Updating files:  87% (3582/4117)
+2026-10-20T21:02:42.0001088Z Updating files:  88% (3623/4117)
+2026-10-20T21:02:42.0061084Z Updating files:  89% (3665/4117)
+2026-10-20T21:02:42.0127726Z Updating files:  90% (3706/4117)
+2026-10-20T21:02:42.0181893Z Updating files:  91% (3747/4117)
+2026-10-20T21:02:42.0240188Z Updating files:  92% (3788/4117)
+2026-10-20T21:02:42.0295581Z Updating files:  93% (3829/4117)
+2026-10-20T21:02:42.0354851Z Updating files:  94% (3870/4117)
+2026-10-20T21:02:42.0885615Z Updating files:  95% (3912/4117)
+2026-10-20T21:02:42.1627772Z Updating files:  96% (3953/4117)
+2026-10-20T21:02:42.1691019Z Updating files:  97% (3994/4117)
+2026-10-20T21:02:42.1748780Z Updating files:  98% (4035/4117)
+2026-10-20T21:02:42.1809414Z Updating files:  99% (4076/4117)
+2026-10-20T21:02:42.1809689Z Updating files: 100% (4117/4117)
+2026-10-20T21:02:42.1809924Z Updating files: 100% (4117/4117), done.
+2026-10-20T21:02:42.1917255Z Note: switching to 'refs/remotes/pull/239/merge'.
+2026-10-20T21:02:42.1917522Z 
+2026-10-20T21:02:42.1917940Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-20T21:02:42.1918389Z changes and commit them, and you can discard any commits you make in this
+2026-10-20T21:02:42.1918791Z state without impacting any branches by switching back to a branch.
+2026-10-20T21:02:42.1919013Z 
+2026-10-20T21:02:42.1919150Z If you want to create a new branch to retain commits you create, you may
+2026-10-20T21:02:42.1919517Z do so (now or later) by using -c with the switch command. Example:
+2026-10-20T21:02:42.1919726Z 
+2026-10-20T21:02:42.1919841Z   git switch -c <new-branch-name>
+2026-10-20T21:02:42.1919987Z 
+2026-10-20T21:02:42.1920064Z Or undo this operation with:
+2026-10-20T21:02:42.1920190Z 
+2026-10-20T21:02:42.1920260Z   git switch -
+2026-10-20T21:02:42.1920347Z 
+2026-10-20T21:02:42.1920522Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-20T21:02:42.1920767Z 
+2026-10-20T21:02:42.1924957Z HEAD is now at 8d9fc39 Merge 97a81de9fd8d07270ed86f55ca9bf445b010e60a into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+2026-10-20T21:02:42.4580063Z ##[endgroup]
+2026-10-20T21:02:42.4995933Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-20T21:02:42.5248685Z 8d9fc3922e3433b45755ef68602a62c054faee4e
+2026-10-20T21:02:42.5589316Z ##[group]Run rustup show
+2026-10-20T21:02:42.5589559Z [36;1mrustup show[0m
+2026-10-20T21:02:42.6279386Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:02:42.6279599Z ##[endgroup]
+2026-10-20T21:02:43.5575637Z Default host: x86_64-pc-windows-msvc
+2026-10-20T21:02:43.5575849Z rustup home:  C:\Users\runneradmin\.rustup
+2026-10-20T21:02:43.5575962Z 
+2026-10-20T21:02:43.6197198Z info: syncing channel updates for 1.99.0-x86_64-pc-windows-msvc
+2026-10-20T21:02:44.2382589Z info: latest update on 2026-10-01 for version 1.99.0 (b940084d7 2026-09-28)
+2026-10-20T21:02:44.2540983Z info: downloading 5 components
+2026-10-20T21:02:55.4633740Z warn: the missing active toolchain `1.99.0-x86_64-pc-windows-msvc` has been auto-installed
+2026-10-20T21:02:55.4634167Z warn: auto-installation is deprecated for most `rustup` commands
+2026-10-20T21:02:55.4634532Z warn: scripts relying on this behavior in `rustup` may stop working in the future
+2026-10-20T21:02:55.4634958Z warn: to install the active toolchain, use `rustup install` instead
+2026-10-20T21:02:55.4635391Z warn: see <https://github.com/rust-lang/rustup/issues/4836> for more info
+2026-10-20T21:02:55.4635798Z installed toolchains
+2026-10-20T21:02:55.4635966Z --------------------
+2026-10-20T21:02:55.4636149Z stable-x86_64-pc-windows-msvc (default)
+2026-10-20T21:02:55.4636298Z 
+2026-10-20T21:02:55.4636355Z active toolchain
+2026-10-20T21:02:55.4636498Z ----------------
+2026-10-20T21:02:55.4636671Z name: 1.99.0-x86_64-pc-windows-msvc
+2026-10-20T21:02:55.4636984Z active because: overridden by 'D:\a\Navzeroth\Navzeroth\rust-toolchain.toml'
+2026-10-20T21:02:55.4637310Z installed targets:
+2026-10-20T21:02:55.4770645Z   x86_64-pc-windows-msvc
+2026-10-20T21:02:55.5609047Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-10-20T21:02:55.5609296Z with:
+2026-10-20T21:02:55.5609420Z   node-version-file: .node-version
+2026-10-20T21:02:55.5609574Z   package-manager-cache: false
+2026-10-20T21:02:55.5609723Z   check-latest: false
+2026-10-20T21:02:55.5611229Z   token: ***
+2026-10-20T21:02:55.5611339Z ##[endgroup]
+2026-10-20T21:02:55.6636328Z Node version file is not JSON file
+2026-10-20T21:02:55.6640076Z Node version file is not TOML file
+2026-10-20T21:02:55.6640636Z Resolved .node-version as 24.15.0
+2026-10-20T21:02:55.6647705Z Attempting to download 24.15.0...
+2026-10-20T21:02:56.6517075Z Acquiring 24.15.0 - x64 from https://github.com/actions/node-versions/releases/download/24.15.0-24511264946/node-24.15.0-win32-x64.7z
+2026-10-20T21:02:57.0742834Z Extracting ...
+2026-10-20T21:02:58.5066109Z Adding to the cache ...
+2026-10-20T21:03:03.5851621Z ##[group]Environment details
+2026-10-20T21:03:05.6736408Z node: v24.15.0
+2026-10-20T21:03:05.6736603Z npm: 11.12.1
+2026-10-20T21:03:05.6736709Z yarn: 1.22.22
+2026-10-20T21:03:05.6737121Z ##[endgroup]
+2026-10-20T21:03:05.6955058Z ##[group]Run npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+2026-10-20T21:03:05.6955545Z [36;1mnpm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0[0m
+2026-10-20T21:03:05.6955880Z [36;1mecho "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"[0m
+2026-10-20T21:03:05.6966901Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:03:05.6967130Z ##[endgroup]
+2026-10-20T21:03:06.7621129Z 
+2026-10-20T21:03:06.7627940Z added 1 package in 563ms
+2026-10-20T21:03:07.9094810Z ##[group]Run pnpm install --frozen-lockfile
+2026-10-20T21:03:07.9095159Z [36;1mpnpm install --frozen-lockfile[0m
+2026-10-20T21:03:07.9145929Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:03:07.9146136Z ##[endgroup]
+2026-10-20T21:03:08.6905467Z ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-12.11.2.tgz
+2026-10-20T21:03:12.0769289Z Downloading the pnpm 12.11.2 binary for win32-x64...
+2026-10-20T21:03:13.5829029Z Scope: all 2 workspace projects
+2026-10-20T21:03:13.6111896Z ? Verifying lockfile against supply-chain policies (283 entries)...
+2026-10-20T21:03:13.8945293Z Packages are hard linked from the content-addressable store to the virtual store.
+2026-10-20T21:03:13.8945843Z   Content-addressable store is at: D:\.pnpm-store\v11
+2026-10-20T21:03:13.8946189Z   Virtual store is at:             node_modules/.pnpm
+2026-10-20T21:03:13.9206404Z Downloading @tauri-apps/cli-win32-x64-msvc@2.12.2: 0.00 B/7.98 MB
+2026-10-20T21:03:14.8137750Z Downloading @rolldown/binding-win32-x64-msvc@1.2.13: 0.00 B/8.25 MB
+2026-10-20T21:03:14.8383063Z Downloading @typescript/typescript-win32-x64@7.0.2: 0.00 B/9.77 MB
+2026-10-20T21:03:15.8367902Z Progress: resolved 229, reused 0, downloaded 224, added 210
+2026-10-20T21:03:16.4149923Z ✓ Lockfile passes supply-chain policies (283 entries in 2.8s)
+2026-10-20T21:03:16.4150280Z Lockfile is up to date, resolution step is skipped
+2026-10-20T21:03:16.4195106Z Packages: +229
+2026-10-20T21:03:16.4195417Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-20T21:03:16.4729468Z Progress: resolved 229, reused 0, downloaded 229, added 229, done
+2026-10-20T21:03:16.5212422Z 
+2026-10-20T21:03:16.5213128Z devDependencies:
+2026-10-20T21:03:16.5213452Z + @types/node 24.19.0
+2026-10-20T21:03:16.5213611Z + ajv 8.20.0
+2026-10-20T21:03:16.5213788Z + json-schema-to-typescript 16.0.0
+2026-10-20T21:03:16.5214112Z + typescript 7.0.2
+2026-10-20T21:03:16.5214226Z 
+2026-10-20T21:03:16.5263452Z Done in 2.9s using pnpm v12.11.2
+2026-10-20T21:03:16.8893574Z ##[group]Run pnpm --dir apps/desktop typecheck
+2026-10-20T21:03:16.8893872Z [36;1mpnpm --dir apps/desktop typecheck[0m
+2026-10-20T21:03:16.8942381Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:03:16.8942592Z ##[endgroup]
+2026-10-20T21:03:17.1962662Z $ tsc --noEmit
+2026-10-20T21:03:21.7408427Z ##[group]Run pnpm --dir apps/desktop lint
+2026-10-20T21:03:21.7408680Z [36;1mpnpm --dir apps/desktop lint[0m
+2026-10-20T21:03:21.7456824Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:03:21.7457039Z ##[endgroup]
+2026-10-20T21:03:22.0601818Z $ eslint .
+2026-10-20T21:03:28.0176806Z ##[group]Run pnpm --dir apps/desktop test:unit
+2026-10-20T21:03:28.0177079Z [36;1mpnpm --dir apps/desktop test:unit[0m
+2026-10-20T21:03:28.0226355Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:03:28.0226568Z ##[endgroup]
+2026-10-20T21:03:28.3624733Z $ vitest run
+2026-10-20T21:03:28.6386372Z 
+2026-10-20T21:03:28.6389414Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mD:/a/Navzeroth/Navzeroth/apps/desktop[39m
+2026-10-20T21:03:28.6389700Z 
+2026-10-20T21:03:31.6654365Z  [32m✓[39m src/screens/PlannerScreen.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 1562[2mms[22m[39m
+2026-10-20T21:03:31.6655032Z    [33m[2m✓[22m[39m cancels registration that arrives after input edits and ignores its old result[32m 300[2mms[22m[39m
+2026-10-20T21:03:31.8067309Z  [32m✓[39m src/screens/WorldScreen.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1947[2mms[22m[39m
+2026-10-20T21:03:31.8068028Z    [33m[2m✓[22m[39m describes unresolved sources, alternative costs and missing objective details[33m 1102[2mms[22m[39m
+2026-10-20T21:03:33.3637694Z  [32m✓[39m src/screens/GearExplanations.test.tsx [2m([22m[2m52 tests[22m[2m)[22m[33m 504[2mms[22m[39m
+2026-10-20T21:03:34.7243179Z  [32m✓[39m src/screens/AtlasScreen.test.tsx [2m([22m[2m23 tests[22m[2m)[22m[33m 4113[2mms[22m[39m
+2026-10-20T21:03:34.7243823Z    [32m✓[39m dense reference search [2m(1)[22m
+2026-10-20T21:03:34.7244437Z      [33m[2m✓[22m[39m filters pins on the map and list, navigates by keyboard, and preserves selection on refresh[33m 1384[2mms[22m[39m
+2026-10-20T21:03:34.7244987Z    [33m[2m✓[22m[39m bounds dense map/list pages and keeps global keyboard focus across pages[33m 1955[2mms[22m[39m
+2026-10-20T21:03:35.4146295Z  [32m✓[39m src/screens/GearScreen.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2439[2mms[22m[39m
+2026-10-20T21:03:35.4148206Z    [33m[2m✓[22m[39m requires explicit manual weights and budgets and labels the synthetic example[33m 685[2mms[22m[39m
+2026-10-20T21:03:35.4149108Z    [33m[2m✓[22m[39m ignores superseded comparison responses and refreshes captured inputs[33m 318[2mms[22m[39m
+2026-10-20T21:03:35.4150073Z    [33m[2m✓[22m[39m requires explicit role opt-in to score an unknown imported role and never shows practical rankings[33m 456[2mms[22m[39m
+2026-10-20T21:03:36.3261517Z  [32m✓[39m src/screens/TodaySettings.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 487[2mms[22m[39m
+2026-10-20T21:03:36.5749589Z  [32m✓[39m src/screens/LocalDataPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2009[2mms[22m[39m
+2026-10-20T21:03:36.5751553Z    [33m[2m✓[22m[39m reviews explicit selection, extracts research only and requests bounded revision pages[33m 419[2mms[22m[39m
+2026-10-20T21:03:36.5755024Z    [33m[2m✓[22m[39m stops polling after status refusal and forgets the retained job without touching extraction state[33m 1080[2mms[22m[39m
+2026-10-20T21:03:37.7118846Z  [32m✓[39m src/screens/PartyPlanning.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1330[2mms[22m[39m
+2026-10-20T21:03:37.7119717Z    [33m[2m✓[22m[39m requires manual fields and sends every member snapshot and utility[33m 369[2mms[22m[39m
+2026-10-20T21:03:37.7121236Z    [33m[2m✓[22m[39m retains prior joint advice through cancellation/ordinary failure and clears it on outdated publication[33m 356[2mms[22m[39m
+2026-10-20T21:03:38.2438729Z  [32m✓[39m src/screens/PartyAgreement.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 726[2mms[22m[39m
+2026-10-20T21:03:38.2442830Z    [33m[2m✓[22m[39m proposes for one explicit participant then requires every local acceptance and permits withdrawal[33m 317[2mms[22m[39m
+2026-10-20T21:03:38.6514550Z  [32m✓[39m src/screens/ImportScreen.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 890[2mms[22m[39m
+2026-10-20T21:03:38.6540142Z    [33m[2m✓[22m[39m recovers from malformed input and explains history-only imports without replacing current[33m 356[2mms[22m[39m
+2026-10-20T21:03:40.4288392Z  [32m✓[39m src/screens/ContentScreen.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1458[2mms[22m[39m
+2026-10-20T21:03:40.4290426Z    [33m[2m✓[22m[39m stages separately from activation and exposes uncertainty and source policy negatives[33m 427[2mms[22m[39m
+2026-10-20T21:03:40.7309423Z  [32m✓[39m src/screens/PartyScreen.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 891[2mms[22m[39m
+2026-10-20T21:03:40.7310508Z    [33m[2m✓[22m[39m creates a manual party, displays individual stale/missing state and removes only configuration[33m 356[2mms[22m[39m
+2026-10-20T21:03:41.6024643Z  [32m✓[39m src/screens/DungeonsScreen.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 2154[2mms[22m[39m
+2026-10-20T21:03:41.6029578Z    [33m[2m✓[22m[39m large source lists retain all references and page visible rows with bounded origin lookups[33m 1132[2mms[22m[39m
+2026-10-20T21:03:42.3284825Z  [32m✓[39m src/ui/ui.test.tsx [2m([22m[2m21 tests[22m[2m)[22m[33m 444[2mms[22m[39m
+2026-10-20T21:03:42.9564843Z  [32m✓[39m src/screens/SessionsScreen.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1345[2mms[22m[39m
+2026-10-20T21:03:42.9566495Z    [33m[2m✓[22m[39m manual text/file import, duplicate detail and explicit deletion preserve distinctions[33m 719[2mms[22m[39m
+2026-10-20T21:03:43.7832829Z  [32m✓[39m src/screens/SettingsRefresh.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 876[2mms[22m[39m
+2026-10-20T21:03:44.4870713Z  [32m✓[39m src/ui/followups.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[32m 256[2mms[22m[39m
+2026-10-20T21:03:44.8342622Z  [32m✓[39m src/App.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1219[2mms[22m[39m
+2026-10-20T21:03:44.8344614Z    [33m[2m✓[22m[39m backend recovery does not reapply a saved or newly changed next-launch workflow[33m 789[2mms[22m[39m
+2026-10-20T21:03:45.7990729Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps explicit edits made while durable choices are still loading
+2026-10-20T21:03:45.7991796Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.7992098Z 
+2026-10-20T21:03:45.7992377Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.7992674Z 
+2026-10-20T21:03:45.7992745Z act(() => {
+2026-10-20T21:03:45.7992957Z   /* fire events that update state */
+2026-10-20T21:03:45.7993586Z });
+2026-10-20T21:03:45.7993766Z /* assert on the output */
+2026-10-20T21:03:45.7993900Z 
+2026-10-20T21:03:45.7994374Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.7994816Z 
+2026-10-20T21:03:45.8684526Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps save refusals explicit and never starts extraction or activation
+2026-10-20T21:03:45.8685477Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.8685804Z 
+2026-10-20T21:03:45.8686096Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.8686391Z 
+2026-10-20T21:03:45.8686471Z act(() => {
+2026-10-20T21:03:45.8686685Z   /* fire events that update state */
+2026-10-20T21:03:45.8686915Z });
+2026-10-20T21:03:45.8687103Z /* assert on the output */
+2026-10-20T21:03:45.8687247Z 
+2026-10-20T21:03:45.8687709Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.8688407Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.8688680Z 
+2026-10-20T21:03:45.8688931Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.8689218Z 
+2026-10-20T21:03:45.8689282Z act(() => {
+2026-10-20T21:03:45.8690703Z   /* fire events that update state */
+2026-10-20T21:03:45.8690960Z });
+2026-10-20T21:03:45.8691135Z /* assert on the output */
+2026-10-20T21:03:45.8691275Z 
+2026-10-20T21:03:45.8691741Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.8692451Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.8692738Z 
+2026-10-20T21:03:45.8693023Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.8693290Z 
+2026-10-20T21:03:45.8693341Z act(() => {
+2026-10-20T21:03:45.8693471Z   /* fire events that update state */
+2026-10-20T21:03:45.8693607Z });
+2026-10-20T21:03:45.8693717Z /* assert on the output */
+2026-10-20T21:03:45.8693804Z 
+2026-10-20T21:03:45.8694058Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.8694337Z 
+2026-10-20T21:03:45.9400606Z  [32m✓[39m src/screens/RecoveryPanel.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 1033[2mms[22m[39m
+2026-10-20T21:03:45.9402601Z    [33m[2m✓[22m[39m startup checking is visible and polls until the host becomes ready[33m 529[2mms[22m[39m
+2026-10-20T21:03:45.9684009Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps status refusals explicit and never starts extraction or activation
+2026-10-20T21:03:45.9686244Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.9687101Z 
+2026-10-20T21:03:45.9687549Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.9688848Z 
+2026-10-20T21:03:45.9689053Z act(() => {
+2026-10-20T21:03:45.9689264Z   /* fire events that update state */
+2026-10-20T21:03:45.9689474Z });
+2026-10-20T21:03:45.9689645Z /* assert on the output */
+2026-10-20T21:03:45.9689779Z 
+2026-10-20T21:03:45.9690254Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.9690841Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.9691009Z 
+2026-10-20T21:03:45.9691170Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.9691340Z 
+2026-10-20T21:03:45.9691390Z act(() => {
+2026-10-20T21:03:45.9691786Z   /* fire events that update state */
+2026-10-20T21:03:45.9691927Z });
+2026-10-20T21:03:45.9692046Z /* assert on the output */
+2026-10-20T21:03:45.9692135Z 
+2026-10-20T21:03:45.9692404Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.9692803Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:45.9692970Z 
+2026-10-20T21:03:45.9693126Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:45.9693305Z 
+2026-10-20T21:03:45.9693346Z act(() => {
+2026-10-20T21:03:45.9693477Z   /* fire events that update state */
+2026-10-20T21:03:45.9693616Z });
+2026-10-20T21:03:45.9693726Z /* assert on the output */
+2026-10-20T21:03:45.9693810Z 
+2026-10-20T21:03:45.9694193Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:45.9694633Z 
+2026-10-20T21:03:46.0781286Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mkeeps acknowledge refusals explicit and never starts extraction or activation
+2026-10-20T21:03:46.0782283Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.0782588Z 
+2026-10-20T21:03:46.0782858Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.0783162Z 
+2026-10-20T21:03:46.0783643Z act(() => {
+2026-10-20T21:03:46.0783863Z   /* fire events that update state */
+2026-10-20T21:03:46.0784103Z });
+2026-10-20T21:03:46.0784282Z /* assert on the output */
+2026-10-20T21:03:46.0784412Z 
+2026-10-20T21:03:46.0784888Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.0785555Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.0785857Z 
+2026-10-20T21:03:46.0786106Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.0786841Z 
+2026-10-20T21:03:46.0786899Z act(() => {
+2026-10-20T21:03:46.0787034Z   /* fire events that update state */
+2026-10-20T21:03:46.0787170Z });
+2026-10-20T21:03:46.0787284Z /* assert on the output */
+2026-10-20T21:03:46.0787369Z 
+2026-10-20T21:03:46.0787808Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.0788466Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.0788735Z 
+2026-10-20T21:03:46.0788989Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.0789276Z 
+2026-10-20T21:03:46.0789340Z act(() => {
+2026-10-20T21:03:46.0789530Z   /* fire events that update state */
+2026-10-20T21:03:46.0789748Z });
+2026-10-20T21:03:46.0789930Z /* assert on the output */
+2026-10-20T21:03:46.0790058Z 
+2026-10-20T21:03:46.0790505Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.0790935Z 
+2026-10-20T21:03:46.1919131Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles a non-English locale before enabling extraction choices
+2026-10-20T21:03:46.1920195Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.1920515Z 
+2026-10-20T21:03:46.1920778Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.1921077Z 
+2026-10-20T21:03:46.1921154Z act(() => {
+2026-10-20T21:03:46.1921359Z   /* fire events that update state */
+2026-10-20T21:03:46.1921580Z });
+2026-10-20T21:03:46.1921758Z /* assert on the output */
+2026-10-20T21:03:46.1921900Z 
+2026-10-20T21:03:46.1922393Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.1924420Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.1924703Z 
+2026-10-20T21:03:46.1924957Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.1925245Z 
+2026-10-20T21:03:46.1925315Z act(() => {
+2026-10-20T21:03:46.1925532Z   /* fire events that update state */
+2026-10-20T21:03:46.1925751Z });
+2026-10-20T21:03:46.1925936Z /* assert on the output */
+2026-10-20T21:03:46.1926062Z 
+2026-10-20T21:03:46.1926515Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.1927202Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.1927481Z 
+2026-10-20T21:03:46.1927738Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.1928023Z 
+2026-10-20T21:03:46.1928101Z act(() => {
+2026-10-20T21:03:46.1928295Z   /* fire events that update state */
+2026-10-20T21:03:46.1928504Z });
+2026-10-20T21:03:46.1928671Z /* assert on the output */
+2026-10-20T21:03:46.1928950Z 
+2026-10-20T21:03:46.1929393Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.1929695Z 
+2026-10-20T21:03:46.2635763Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles an absent locale among installed choices before enabling extraction choices
+2026-10-20T21:03:46.2638334Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.2638686Z 
+2026-10-20T21:03:46.2638989Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.2639290Z 
+2026-10-20T21:03:46.2639370Z act(() => {
+2026-10-20T21:03:46.2639604Z   /* fire events that update state */
+2026-10-20T21:03:46.2639820Z });
+2026-10-20T21:03:46.2639994Z /* assert on the output */
+2026-10-20T21:03:46.2640132Z 
+2026-10-20T21:03:46.2640609Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.2641297Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.2641580Z 
+2026-10-20T21:03:46.2641846Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.2642333Z 
+2026-10-20T21:03:46.2642403Z act(() => {
+2026-10-20T21:03:46.2642601Z   /* fire events that update state */
+2026-10-20T21:03:46.2642819Z });
+2026-10-20T21:03:46.2642991Z /* assert on the output */
+2026-10-20T21:03:46.2643118Z 
+2026-10-20T21:03:46.2643568Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.2644253Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.2644520Z 
+2026-10-20T21:03:46.2644775Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.2645049Z 
+2026-10-20T21:03:46.2645120Z act(() => {
+2026-10-20T21:03:46.2645314Z   /* fire events that update state */
+2026-10-20T21:03:46.2645523Z });
+2026-10-20T21:03:46.2645688Z /* assert on the output */
+2026-10-20T21:03:46.2645821Z 
+2026-10-20T21:03:46.2646272Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.2646948Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.2647204Z 
+2026-10-20T21:03:46.2647461Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.2647737Z 
+2026-10-20T21:03:46.2647816Z act(() => {
+2026-10-20T21:03:46.2648281Z   /* fire events that update state */
+2026-10-20T21:03:46.2648504Z });
+2026-10-20T21:03:46.2648675Z /* assert on the output */
+2026-10-20T21:03:46.2648802Z 
+2026-10-20T21:03:46.2649264Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.2649703Z 
+2026-10-20T21:03:46.3507685Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles only absent locales without falling back before enabling extraction choices
+2026-10-20T21:03:46.3519315Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.3519833Z 
+2026-10-20T21:03:46.3520282Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.3520844Z 
+2026-10-20T21:03:46.3521051Z act(() => {
+2026-10-20T21:03:46.3521368Z   /* fire events that update state */
+2026-10-20T21:03:46.3521701Z });
+2026-10-20T21:03:46.3522009Z /* assert on the output */
+2026-10-20T21:03:46.3522254Z 
+2026-10-20T21:03:46.3522848Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.3523668Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.3523951Z 
+2026-10-20T21:03:46.3524222Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.3524523Z 
+2026-10-20T21:03:46.3526169Z act(() => {
+2026-10-20T21:03:46.3526432Z   /* fire events that update state */
+2026-10-20T21:03:46.3526653Z });
+2026-10-20T21:03:46.3526819Z /* assert on the output */
+2026-10-20T21:03:46.3526942Z 
+2026-10-20T21:03:46.3527379Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.3528021Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.3528293Z 
+2026-10-20T21:03:46.3528535Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.3528809Z 
+2026-10-20T21:03:46.3528879Z act(() => {
+2026-10-20T21:03:46.3529070Z   /* fire events that update state */
+2026-10-20T21:03:46.3529270Z });
+2026-10-20T21:03:46.3529427Z /* assert on the output */
+2026-10-20T21:03:46.3529559Z 
+2026-10-20T21:03:46.3529995Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.3530638Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.3530897Z 
+2026-10-20T21:03:46.3531151Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.3531429Z 
+2026-10-20T21:03:46.3531495Z act(() => {
+2026-10-20T21:03:46.3531674Z   /* fire events that update state */
+2026-10-20T21:03:46.3531873Z });
+2026-10-20T21:03:46.3532043Z /* assert on the output */
+2026-10-20T21:03:46.3532162Z 
+2026-10-20T21:03:46.3532582Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.3533003Z 
+2026-10-20T21:03:46.4171618Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles unknown installed locales before enabling extraction choices
+2026-10-20T21:03:46.4172574Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4172898Z 
+2026-10-20T21:03:46.4173181Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4173487Z 
+2026-10-20T21:03:46.4173563Z act(() => {
+2026-10-20T21:03:46.4173780Z   /* fire events that update state */
+2026-10-20T21:03:46.4174010Z });
+2026-10-20T21:03:46.4174186Z /* assert on the output */
+2026-10-20T21:03:46.4174326Z 
+2026-10-20T21:03:46.4174794Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4175916Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4176195Z 
+2026-10-20T21:03:46.4176474Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4176778Z 
+2026-10-20T21:03:46.4176846Z act(() => {
+2026-10-20T21:03:46.4177046Z   /* fire events that update state */
+2026-10-20T21:03:46.4177288Z });
+2026-10-20T21:03:46.4177462Z /* assert on the output */
+2026-10-20T21:03:46.4177589Z 
+2026-10-20T21:03:46.4178068Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4178774Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4179060Z 
+2026-10-20T21:03:46.4179324Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4179636Z 
+2026-10-20T21:03:46.4179713Z act(() => {
+2026-10-20T21:03:46.4179917Z   /* fire events that update state */
+2026-10-20T21:03:46.4180139Z });
+2026-10-20T21:03:46.4180307Z /* assert on the output */
+2026-10-20T21:03:46.4180448Z 
+2026-10-20T21:03:46.4180917Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4181826Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4182096Z 
+2026-10-20T21:03:46.4182360Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4182679Z 
+2026-10-20T21:03:46.4182746Z act(() => {
+2026-10-20T21:03:46.4184712Z   /* fire events that update state */
+2026-10-20T21:03:46.4185221Z });
+2026-10-20T21:03:46.4185476Z /* assert on the output */
+2026-10-20T21:03:46.4185659Z 
+2026-10-20T21:03:46.4186176Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4186662Z 
+2026-10-20T21:03:46.4211402Z  [32m✓[39m src/screens/ResearchDeliveryPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 557[2mms[22m[39m
+2026-10-20T21:03:46.4901753Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles different English locale identities before enabling extraction choices
+2026-10-20T21:03:46.4903161Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4903638Z 
+2026-10-20T21:03:46.4904076Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4920773Z 
+2026-10-20T21:03:46.4921050Z act(() => {
+2026-10-20T21:03:46.4921386Z   /* fire events that update state */
+2026-10-20T21:03:46.4921734Z });
+2026-10-20T21:03:46.4922887Z /* assert on the output */
+2026-10-20T21:03:46.4923171Z 
+2026-10-20T21:03:46.4923799Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4924616Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4924996Z 
+2026-10-20T21:03:46.4925369Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4925751Z 
+2026-10-20T21:03:46.4925923Z act(() => {
+2026-10-20T21:03:46.4926228Z   /* fire events that update state */
+2026-10-20T21:03:46.4926533Z });
+2026-10-20T21:03:46.4926793Z /* assert on the output */
+2026-10-20T21:03:46.4927024Z 
+2026-10-20T21:03:46.4927587Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4928306Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4928611Z 
+2026-10-20T21:03:46.4928887Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4929556Z 
+2026-10-20T21:03:46.4929632Z act(() => {
+2026-10-20T21:03:46.4929840Z   /* fire events that update state */
+2026-10-20T21:03:46.4930073Z });
+2026-10-20T21:03:46.4930256Z /* assert on the output */
+2026-10-20T21:03:46.4930393Z 
+2026-10-20T21:03:46.4930887Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4931615Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.4931912Z 
+2026-10-20T21:03:46.4932190Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.4932489Z 
+2026-10-20T21:03:46.4932562Z act(() => {
+2026-10-20T21:03:46.4932760Z   /* fire events that update state */
+2026-10-20T21:03:46.4932990Z });
+2026-10-20T21:03:46.4933161Z /* assert on the output */
+2026-10-20T21:03:46.4933299Z 
+2026-10-20T21:03:46.4933792Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.4934268Z 
+2026-10-20T21:03:46.5520043Z [90mstderr[2m | src/screens/LocalWorkflowChoices.test.tsx[2m > [22m[2mreconciles duplicate and unsorted saved choices before enabling extraction choices
+2026-10-20T21:03:46.5527915Z [22m[39mAn update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.5528432Z 
+2026-10-20T21:03:46.5529229Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.5529595Z 
+2026-10-20T21:03:46.5529672Z act(() => {
+2026-10-20T21:03:46.5529873Z   /* fire events that update state */
+2026-10-20T21:03:46.5530097Z });
+2026-10-20T21:03:46.5530278Z /* assert on the output */
+2026-10-20T21:03:46.5530416Z 
+2026-10-20T21:03:46.5530899Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.5531599Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.5531865Z 
+2026-10-20T21:03:46.5532121Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.5532417Z 
+2026-10-20T21:03:46.5532487Z act(() => {
+2026-10-20T21:03:46.5532680Z   /* fire events that update state */
+2026-10-20T21:03:46.5532897Z });
+2026-10-20T21:03:46.5533049Z /* assert on the output */
+2026-10-20T21:03:46.5533169Z 
+2026-10-20T21:03:46.5533569Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.5534160Z An update to LocalWorkflowChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:46.5534402Z 
+2026-10-20T21:03:46.5534627Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:46.5534884Z 
+2026-10-20T21:03:46.5536194Z act(() => {
+2026-10-20T21:03:46.5536340Z   /* fire events that update state */
+2026-10-20T21:03:46.5536474Z });
+2026-10-20T21:03:46.5536587Z /* assert on the output */
+2026-10-20T21:03:46.5536669Z 
+2026-10-20T21:03:46.5537001Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:46.5537422Z 
+2026-10-20T21:03:46.6761664Z  [32m✓[39m src/screens/LocalWorkflowChoices.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 1086[2mms[22m[39m
+2026-10-20T21:03:46.9733997Z  [32m✓[39m src/theme/composite.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-10-20T21:03:47.9369701Z [90mstderr[2m | src/screens/ResearchFactsTools.test.tsx[2m > [22m[2mbinds subsequent guide findings to the replay digest and clears findings when class changes
+2026-10-20T21:03:47.9370987Z [22m[39mAn update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:47.9377591Z 
+2026-10-20T21:03:47.9386173Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:47.9386522Z 
+2026-10-20T21:03:47.9386592Z act(() => {
+2026-10-20T21:03:47.9386797Z   /* fire events that update state */
+2026-10-20T21:03:47.9387028Z });
+2026-10-20T21:03:47.9387203Z /* assert on the output */
+2026-10-20T21:03:47.9387332Z 
+2026-10-20T21:03:47.9387840Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:47.9388522Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:47.9388802Z 
+2026-10-20T21:03:47.9389069Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:47.9389363Z 
+2026-10-20T21:03:47.9389432Z act(() => {
+2026-10-20T21:03:47.9389623Z   /* fire events that update state */
+2026-10-20T21:03:47.9389833Z });
+2026-10-20T21:03:47.9390002Z /* assert on the output */
+2026-10-20T21:03:47.9390148Z 
+2026-10-20T21:03:47.9390606Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:47.9391048Z 
+2026-10-20T21:03:48.0629230Z  [32m✓[39m src/commands/planningJobs.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-10-20T21:03:48.2571313Z [90mstderr[2m | src/screens/ResearchFactsTools.test.tsx[2m > [22m[2mrestores scoped materials, pages exact IDs and clears imported views when the pack is forgotten
+2026-10-20T21:03:48.2572724Z [22m[39mAn update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:48.2573049Z 
+2026-10-20T21:03:48.2573341Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:48.2573632Z 
+2026-10-20T21:03:48.2573705Z act(() => {
+2026-10-20T21:03:48.2573908Z   /* fire events that update state */
+2026-10-20T21:03:48.2574052Z });
+2026-10-20T21:03:48.2574188Z /* assert on the output */
+2026-10-20T21:03:48.2574272Z 
+2026-10-20T21:03:48.2574563Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:48.2574972Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:48.2575142Z 
+2026-10-20T21:03:48.2575301Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:48.2575478Z 
+2026-10-20T21:03:48.2575530Z act(() => {
+2026-10-20T21:03:48.2575655Z   /* fire events that update state */
+2026-10-20T21:03:48.2575790Z });
+2026-10-20T21:03:48.2575900Z /* assert on the output */
+2026-10-20T21:03:48.2575983Z 
+2026-10-20T21:03:48.2576248Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:48.2576642Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:48.2576869Z 
+2026-10-20T21:03:48.2577116Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:48.2577388Z 
+2026-10-20T21:03:48.2577461Z act(() => {
+2026-10-20T21:03:48.2577650Z   /* fire events that update state */
+2026-10-20T21:03:48.2577856Z });
+2026-10-20T21:03:48.2578013Z /* assert on the output */
+2026-10-20T21:03:48.2578142Z 
+2026-10-20T21:03:48.2578427Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:48.2578817Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:48.2578977Z 
+2026-10-20T21:03:48.2579131Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:48.2579308Z 
+2026-10-20T21:03:48.2579351Z act(() => {
+2026-10-20T21:03:48.2579474Z   /* fire events that update state */
+2026-10-20T21:03:48.2579605Z });
+2026-10-20T21:03:48.2579930Z /* assert on the output */
+2026-10-20T21:03:48.2580008Z 
+2026-10-20T21:03:48.2580271Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:48.2580658Z An update to ResearchFactsTools inside a test was not wrapped in act(...).
+2026-10-20T21:03:48.2580816Z 
+2026-10-20T21:03:48.2580970Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:48.2581137Z 
+2026-10-20T21:03:48.2581185Z act(() => {
+2026-10-20T21:03:48.2581304Z   /* fire events that update state */
+2026-10-20T21:03:48.2581441Z });
+2026-10-20T21:03:48.2581546Z /* assert on the output */
+2026-10-20T21:03:48.2581627Z 
+2026-10-20T21:03:48.2581882Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:48.2582147Z 
+2026-10-20T21:03:48.3238055Z  [32m✓[39m src/screens/ResearchFactsTools.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 794[2mms[22m[39m
+2026-10-20T21:03:48.4102724Z  [32m✓[39m src/screens/OriginPlacement.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 515[2mms[22m[39m
+2026-10-20T21:03:49.3786552Z  [32m✓[39m src/atlas/viewport.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-20T21:03:49.9973471Z  [32m✓[39m src/screens/ReminderScreen.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 474[2mms[22m[39m
+2026-10-20T21:03:50.6117893Z  [32m✓[39m src/screens/RouteAcquisitionPanel.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1377[2mms[22m[39m
+2026-10-20T21:03:50.6120111Z    [33m[2m✓[22m[39m preview and assessment use explicit assumptions and current fingerprint; known manual binding stays explicit[33m 418[2mms[22m[39m
+2026-10-20T21:03:50.6121319Z    [33m[2m✓[22m[39m profile, refresh, model and client changes discard deferred assessments[33m 648[2mms[22m[39m
+2026-10-20T21:03:51.0079642Z [90mstderr[2m | src/screens/ContentDispositionPanel.test.tsx[2m > [22m[2mreleases only the confirmed quarantine identity and refreshes without activating content
+2026-10-20T21:03:51.0082573Z [22m[39mAn update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:03:51.0083094Z 
+2026-10-20T21:03:51.0083529Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:51.0084308Z 
+2026-10-20T21:03:51.0084491Z act(() => {
+2026-10-20T21:03:51.0084833Z   /* fire events that update state */
+2026-10-20T21:03:51.0085166Z });
+2026-10-20T21:03:51.0085453Z /* assert on the output */
+2026-10-20T21:03:51.0103298Z 
+2026-10-20T21:03:51.0105181Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:51.0107037Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:03:51.0109267Z 
+2026-10-20T21:03:51.0109690Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:51.0110124Z 
+2026-10-20T21:03:51.0110306Z act(() => {
+2026-10-20T21:03:51.0110620Z   /* fire events that update state */
+2026-10-20T21:03:51.0110955Z });
+2026-10-20T21:03:51.0111242Z /* assert on the output */
+2026-10-20T21:03:51.0111485Z 
+2026-10-20T21:03:51.0112089Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:51.0112750Z 
+2026-10-20T21:03:51.0481600Z [90mstderr[2m | src/screens/ContentDispositionPanel.test.tsx[2m > [22m[2mreleases only the confirmed quarantine identity and refreshes without activating content
+2026-10-20T21:03:51.0483039Z [22m[39mAn update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:03:51.0483565Z 
+2026-10-20T21:03:51.0483983Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:51.0485215Z 
+2026-10-20T21:03:51.0485425Z act(() => {
+2026-10-20T21:03:51.0487088Z   /* fire events that update state */
+2026-10-20T21:03:51.0487740Z });
+2026-10-20T21:03:51.0488057Z /* assert on the output */
+2026-10-20T21:03:51.0488308Z 
+2026-10-20T21:03:51.0488921Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:51.0490919Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:03:51.0491385Z 
+2026-10-20T21:03:51.0491782Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:51.0492203Z 
+2026-10-20T21:03:51.0492389Z act(() => {
+2026-10-20T21:03:51.0492702Z   /* fire events that update state */
+2026-10-20T21:03:51.0493042Z });
+2026-10-20T21:03:51.0493336Z /* assert on the output */
+2026-10-20T21:03:51.0493715Z 
+2026-10-20T21:03:51.0495727Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:51.0496624Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:03:51.0497052Z 
+2026-10-20T21:03:51.0497434Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:51.0497858Z 
+2026-10-20T21:03:51.0498046Z act(() => {
+2026-10-20T21:03:51.0498360Z   /* fire events that update state */
+2026-10-20T21:03:51.0498695Z });
+2026-10-20T21:03:51.0499271Z /* assert on the output */
+2026-10-20T21:03:51.0499537Z 
+2026-10-20T21:03:51.0500515Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:51.0501410Z An update to ContentDispositionPanel inside a test was not wrapped in act(...).
+2026-10-20T21:03:51.0501890Z 
+2026-10-20T21:03:51.0502272Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:51.0510761Z 
+2026-10-20T21:03:51.0515718Z act(() => {
+2026-10-20T21:03:51.0516127Z   /* fire events that update state */
+2026-10-20T21:03:51.0533681Z });
+2026-10-20T21:03:51.0534440Z /* assert on the output */
+2026-10-20T21:03:51.0534765Z 
+2026-10-20T21:03:51.0535414Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:51.0536101Z 
+2026-10-20T21:03:51.0708203Z  [32m✓[39m src/screens/ContentDispositionPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 448[2mms[22m[39m
+2026-10-20T21:03:51.5564109Z  [32m✓[39m src/screens/DiagnosticsPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 385[2mms[22m[39m
+2026-10-20T21:03:52.3463789Z  [32m✓[39m src/screens/LocalSubmissionsPanel.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 558[2mms[22m[39m
+2026-10-20T21:03:52.3464769Z    [33m[2m✓[22m[39m requires opt-in, sends the explicit declaration and resets consent after storage[33m 321[2mms[22m[39m
+2026-10-20T21:03:52.6494976Z  [32m✓[39m src/screens/CompatibilityPanel.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 325[2mms[22m[39m
+2026-10-20T21:03:53.2913836Z  [32m✓[39m src/screens/LocalResearchInputs.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 516[2mms[22m[39m
+2026-10-20T21:03:53.8383641Z  [32m✓[39m src/screens/ReferenceView.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 356[2mms[22m[39m
+2026-10-20T21:03:54.1898654Z  [32m✓[39m src/screens/LocalResearchMedia.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 379[2mms[22m[39m
+2026-10-20T21:03:55.2554150Z  [32m✓[39m src/screens/ReferenceControls.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 323[2mms[22m[39m
+2026-10-20T21:03:55.9742389Z  [32m✓[39m src/screens/RouteInspection.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1466[2mms[22m[39m
+2026-10-20T21:03:55.9748637Z    [33m[2m✓[22m[39m keeps the tail reachable with global keyboard selection and page controls, including focus[33m 769[2mms[22m[39m
+2026-10-20T21:03:55.9750070Z    [33m[2m✓[22m[39m selects the hop's exact frame and resets projection, page and selection for a new guarded response[33m 457[2mms[22m[39m
+2026-10-20T21:03:56.1383686Z  [32m✓[39m src/screens/helpCopy.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 675[2mms[22m[39m
+2026-10-20T21:03:56.1385587Z    [33m[2m✓[22m[39m puts Help on the Gear per-item labels without renaming the controls[33m 582[2mms[22m[39m
+2026-10-20T21:03:56.7925226Z  [32m✓[39m src/screens/PartyEligibility.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 206[2mms[22m[39m
+2026-10-20T21:03:57.0453504Z  [32m✓[39m src/atlas/describe.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-10-20T21:03:57.2139066Z  [32m✓[39m src/atlas/markerState.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-10-20T21:03:57.8691775Z  [32m✓[39m src/atlas/golden.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-20T21:03:58.2768671Z  [32m✓[39m src/screens/useRecordOrigins.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 145[2mms[22m[39m
+2026-10-20T21:03:58.9660425Z  [32m✓[39m src/AppShell.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 537[2mms[22m[39m
+2026-10-20T21:03:59.2228240Z [90mstderr[2m | src/screens/LocalStartupChoices.test.tsx[2m > [22m[2mpersists the explicit startup choice before navigating without starting extraction
+2026-10-20T21:03:59.2229944Z [22m[39mAn update to LocalStartupChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:59.2230455Z 
+2026-10-20T21:03:59.2230867Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:59.2231276Z 
+2026-10-20T21:03:59.2231453Z act(() => {
+2026-10-20T21:03:59.2231769Z   /* fire events that update state */
+2026-10-20T21:03:59.2232087Z });
+2026-10-20T21:03:59.2232371Z /* assert on the output */
+2026-10-20T21:03:59.2234018Z 
+2026-10-20T21:03:59.2234783Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:59.2236365Z An update to LocalStartupChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:59.2236778Z 
+2026-10-20T21:03:59.2237167Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:59.2238096Z 
+2026-10-20T21:03:59.2238412Z act(() => {
+2026-10-20T21:03:59.2238655Z   /* fire events that update state */
+2026-10-20T21:03:59.2238889Z });
+2026-10-20T21:03:59.2239057Z /* assert on the output */
+2026-10-20T21:03:59.2239197Z 
+2026-10-20T21:03:59.2239668Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:59.2240107Z 
+2026-10-20T21:03:59.3090921Z [90mstderr[2m | src/screens/LocalStartupChoices.test.tsx[2m > [22m[2mrestores the saved starting workflow without importing or activating anything
+2026-10-20T21:03:59.3092287Z [22m[39mAn update to LocalStartupChoices inside a test was not wrapped in act(...).
+2026-10-20T21:03:59.3092797Z 
+2026-10-20T21:03:59.3093215Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:03:59.3093622Z 
+2026-10-20T21:03:59.3093807Z act(() => {
+2026-10-20T21:03:59.3094110Z   /* fire events that update state */
+2026-10-20T21:03:59.3094445Z });
+2026-10-20T21:03:59.3094725Z /* assert on the output */
+2026-10-20T21:03:59.3094969Z 
+2026-10-20T21:03:59.3095550Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:03:59.3096201Z 
+2026-10-20T21:03:59.4460857Z  [32m✓[39m src/screens/LocalStartupChoices.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 361[2mms[22m[39m
+2026-10-20T21:03:59.7114177Z  [32m✓[39m src/atlas/MapView.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 230[2mms[22m[39m
+2026-10-20T21:04:00.4976266Z  [32m✓[39m src/screens/CalibrationPanel.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 340[2mms[22m[39m
+2026-10-20T21:04:00.8460314Z  [32m✓[39m src/theme/contrast.test.ts [2m([22m[2m106 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+2026-10-20T21:04:00.8696676Z  [32m✓[39m src/screens/CatalogPager.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 239[2mms[22m[39m
+2026-10-20T21:04:01.6026820Z  [32m✓[39m src/commands/demoBoundaries.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-10-20T21:04:01.8998144Z  [32m✓[39m src/commands/atlasClient.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-10-20T21:04:01.9056238Z  [32m✓[39m src/commands/clientBoundary.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-10-20T21:04:02.8834349Z  [32m✓[39m src/main.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 201[2mms[22m[39m
+2026-10-20T21:04:03.2332595Z  [32m✓[39m src/screens/AuthoredContentPicker.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 256[2mms[22m[39m
+2026-10-20T21:04:03.2692054Z  [32m✓[39m src/screens/ResearchBindings.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 288[2mms[22m[39m
+2026-10-20T21:04:04.0739932Z  [32m✓[39m src/atlas/layers.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-10-20T21:04:04.4010955Z  [32m✓[39m src/csp.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-10-20T21:04:04.4174911Z  [32m✓[39m src/ui/OriginMarker.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+2026-10-20T21:04:05.1562463Z  [32m✓[39m src/theme/fonts.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-20T21:04:05.4609320Z  [32m✓[39m src/screens/referenceShortcut.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-10-20T21:04:05.5945821Z  [32m✓[39m src/screens/ClusterSummary.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 154[2mms[22m[39m
+2026-10-20T21:04:06.4574876Z [90mstderr[2m | src/screens/ResearchReferenceHistory.test.tsx[2m > [22m[2mverifies the retained reference against the current catalog before opening it
+2026-10-20T21:04:06.4576076Z [22m[39mAn update to ResearchReferenceHistory inside a test was not wrapped in act(...).
+2026-10-20T21:04:06.4579435Z 
+2026-10-20T21:04:06.4579908Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:04:06.4580534Z 
+2026-10-20T21:04:06.4580808Z act(() => {
+2026-10-20T21:04:06.4581181Z   /* fire events that update state */
+2026-10-20T21:04:06.4581525Z });
+2026-10-20T21:04:06.4581808Z /* assert on the output */
+2026-10-20T21:04:06.4582050Z 
+2026-10-20T21:04:06.4582664Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:04:06.4583534Z An update to ResearchReferenceHistory inside a test was not wrapped in act(...).
+2026-10-20T21:04:06.4583916Z 
+2026-10-20T21:04:06.4584252Z When testing, code that causes React state updates should be wrapped into act(...):
+2026-10-20T21:04:06.4584644Z 
+2026-10-20T21:04:06.4584800Z act(() => {
+2026-10-20T21:04:06.4585083Z   /* fire events that update state */
+2026-10-20T21:04:06.4585381Z });
+2026-10-20T21:04:06.4585626Z /* assert on the output */
+2026-10-20T21:04:06.4587222Z 
+2026-10-20T21:04:06.4625932Z This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+2026-10-20T21:04:06.4627329Z 
+2026-10-20T21:04:06.4827300Z  [32m✓[39m src/commands/tauriAdapter.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-10-20T21:04:06.5096655Z  [32m✓[39m src/screens/ResearchReferenceHistory.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 238[2mms[22m[39m
+2026-10-20T21:04:06.5913128Z  [32m✓[39m src/gear/golden.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-10-20T21:04:07.3654750Z  [32m✓[39m src/commands/demoVersion.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-10-20T21:04:07.4424011Z  [32m✓[39m src/buildPolicy.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 80[2mms[22m[39m
+2026-10-20T21:04:07.4464344Z 
+2026-10-20T21:04:07.4479973Z [2m Test Files [22m [1m[32m66 passed[39m[22m[90m (66)[39m
+2026-10-20T21:04:07.4481981Z [2m      Tests [22m [1m[32m555 passed[39m[22m[90m (555)[39m
+2026-10-20T21:04:07.4482395Z [2m   Start at [22m 21:03:28
+2026-10-20T21:04:07.4499969Z [2m   Duration [22m 38.80s[2m (environment 47%, tests 37%, setup 9%, transform 3%, import 3%, worker 1%)[22m
+2026-10-20T21:04:07.4500344Z 
+2026-10-20T21:04:07.4500779Z [2mEnvironment [22m [33mjsdom was created 66 times[39m[2m · 49.89s total, 47% of tracked time[22m
+2026-10-20T21:04:07.4501823Z [2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+2026-10-20T21:04:07.4502813Z [2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m
+2026-10-20T21:04:07.4503167Z 
+2026-10-20T21:04:07.5645355Z ##[group]Run pnpm --dir apps/desktop build
+2026-10-20T21:04:07.5645588Z [36;1mpnpm --dir apps/desktop build[0m
+2026-10-20T21:04:07.5692919Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:04:07.5693124Z ##[endgroup]
+2026-10-20T21:04:07.8898587Z $ tsc --noEmit && vite build
+2026-10-20T21:04:12.7156686Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-10-20T21:04:12.7239409Z transforming...
+2026-10-20T21:04:12.7861329Z ✓ 110 modules transformed.
+2026-10-20T21:04:12.8116077Z rendering chunks...
+2026-10-20T21:04:12.8673111Z computing gzip size...
+2026-10-20T21:04:12.8748136Z dist/index.html                                      0.41 kB │ gzip:   0.27 kB
+2026-10-20T21:04:12.8750832Z dist/assets/overview-B6_tIHze.png                    2.25 kB
+2026-10-20T21:04:12.8751249Z dist/assets/roads-Fv1zo2Fg.png                       4.42 kB
+2026-10-20T21:04:12.8751700Z dist/assets/flight-ntNMPwcn.png                      4.46 kB
+2026-10-20T21:04:12.8752117Z dist/assets/Cinzel-VariableFont_wght-Dzu6Mfm8.ttf  125.46 kB
+2026-10-20T21:04:12.8752513Z dist/assets/InterVariable-DiVDrmQJ.woff2           352.24 kB
+2026-10-20T21:04:12.8753071Z dist/assets/index-DNBJu1d0.css                      27.39 kB │ gzip:   5.89 kB
+2026-10-20T21:04:12.8753603Z dist/assets/index-CrhJdBN1.js                      552.97 kB │ gzip: 156.56 kB
+2026-10-20T21:04:12.8753863Z 
+2026-10-20T21:04:12.8753997Z [32m✓ built in 158ms[39m
+2026-10-20T21:04:12.8756551Z [33m[plugin builtin:vite-reporter] 
+2026-10-20T21:04:12.8756953Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-20T21:04:12.8757361Z - Using dynamic import() to code-split the application
+2026-10-20T21:04:12.8758044Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-10-20T21:04:12.8758789Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-10-20T21:04:13.1755538Z ##[group]Run cargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings
+2026-10-20T21:04:13.1755956Z [36;1mcargo clippy --locked -p azeroth-desktop --all-targets -- -D warnings[0m
+2026-10-20T21:04:13.1756193Z [36;1mcargo test --locked -p azeroth-desktop[0m
+2026-10-20T21:04:13.1806378Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:04:13.1806583Z ##[endgroup]
+2026-10-20T21:04:14.8912823Z     Updating crates.io index
+2026-10-20T21:04:16.6699607Z  Downloading crates ...
+2026-10-20T21:04:16.8556871Z   Downloaded adler2 v2.0.1
+2026-10-20T21:04:16.8662124Z   Downloaded idna_adapter v1.2.2
+2026-10-20T21:04:16.8715113Z   Downloaded precomputed-hash v0.1.1
+2026-10-20T21:04:16.8797569Z   Downloaded jsonptr v0.7.1
+2026-10-20T21:04:16.8974975Z   Downloaded plist v1.10.1
+2026-10-20T21:04:16.9248284Z   Downloaded crossbeam-channel v0.5.17
+2026-10-20T21:04:16.9555997Z   Downloaded spki v0.7.3
+2026-10-20T21:04:17.2114706Z   Downloaded jiff-tzdb-platform v0.1.3
+2026-10-20T21:04:17.2159745Z   Downloaded itoa v1.0.18
+2026-10-20T21:04:17.2226919Z   Downloaded phf_codegen v0.13.1
+2026-10-20T21:04:17.2320406Z   Downloaded phf_generator v0.13.1
+2026-10-20T21:04:17.2462489Z   Downloaded jiff-tzdb v0.1.9
+2026-10-20T21:04:17.2559527Z   Downloaded lock_api v0.4.14
+2026-10-20T21:04:17.2614807Z   Downloaded fdeflate v0.3.7
+2026-10-20T21:04:17.2719574Z   Downloaded new_debug_unreachable v1.0.6
+2026-10-20T21:04:17.2778634Z   Downloaded phf v0.13.1
+2026-10-20T21:04:17.2856489Z   Downloaded infer v0.22.0
+2026-10-20T21:04:17.3015064Z   Downloaded cargo_toml v1.0.1
+2026-10-20T21:04:17.3090161Z   Downloaded parking_lot_core v0.9.12
+2026-10-20T21:04:17.3242646Z   Downloaded litemap v0.8.3
+2026-10-20T21:04:17.3361924Z   Downloaded serde_derive_internals v0.30.0
+2026-10-20T21:04:17.3442029Z   Downloaded pkg-config v0.3.34
+2026-10-20T21:04:17.3541507Z   Downloaded crypto-common v0.1.7
+2026-10-20T21:04:17.3588947Z   Downloaded ident_case v1.0.1
+2026-10-20T21:04:17.3673511Z   Downloaded ref-cast v1.0.27
+2026-10-20T21:04:17.3854392Z   Downloaded cfb v0.14.0
+2026-10-20T21:04:17.4092870Z   Downloaded dirs v7.0.0
+2026-10-20T21:04:17.4157307Z   Downloaded embed-resource v3.0.12
+2026-10-20T21:04:17.4270344Z   Downloaded rustc-hash v2.1.3
+2026-10-20T21:04:17.4330675Z   Downloaded serde_repr v0.1.21
+2026-10-20T21:04:17.4439638Z   Downloaded cpufeatures v0.2.17
+2026-10-20T21:04:17.4539271Z   Downloaded dom_query v0.28.0
+2026-10-20T21:04:17.4860782Z   Downloaded mime v0.3.17
+2026-10-20T21:04:17.4956256Z   Downloaded phf_shared v0.13.1
+2026-10-20T21:04:17.5023690Z   Downloaded rustc_version v0.4.1
+2026-10-20T21:04:17.5098830Z   Downloaded serialize-to-javascript v0.1.2
+2026-10-20T21:04:17.5149589Z   Downloaded http v1.5.0
+2026-10-20T21:04:17.5354648Z   Downloaded percent-encoding v2.3.2
+2026-10-20T21:04:17.5402347Z   Downloaded strsim v0.11.1
+2026-10-20T21:04:17.5465196Z   Downloaded synstructure v0.14.0
+2026-10-20T21:04:17.5512370Z   Downloaded webview2-com-macros v0.8.1
+2026-10-20T21:04:17.5573887Z   Downloaded curve25519-dalek-derive v0.1.1
+2026-10-20T21:04:17.5626951Z   Downloaded defmt v1.1.1
+2026-10-20T21:04:17.6521535Z   Downloaded erased-serde v0.4.10
+2026-10-20T21:04:17.6638629Z   Downloaded option-ext v0.2.0
+2026-10-20T21:04:17.6687426Z   Downloaded cssparser-macros v0.7.1
+2026-10-20T21:04:17.6724333Z   Downloaded tauri-winres v0.3.6
+2026-10-20T21:04:17.6808200Z   Downloaded hashbrown v0.17.1
+2026-10-20T21:04:17.7020835Z   Downloaded icu_provider v2.3.1
+2026-10-20T21:04:17.7152535Z   Downloaded pkcs8 v0.10.2
+2026-10-20T21:04:17.7386128Z   Downloaded raw-window-handle v0.6.2
+2026-10-20T21:04:17.7514762Z   Downloaded same-file v1.0.6
+2026-10-20T21:04:17.7580137Z   Downloaded signature v2.1.0
+2026-10-20T21:04:17.7695015Z   Downloaded chrono v0.4.45
+2026-10-20T21:04:17.7966399Z   Downloaded equivalent v1.0.2
+2026-10-20T21:04:17.8018240Z   Downloaded markup5ever v0.39.0
+2026-10-20T21:04:17.8075232Z   Downloaded num-conv v0.2.2
+2026-10-20T21:04:17.8121505Z   Downloaded phf_macros v0.13.1
+2026-10-20T21:04:17.8168527Z   Downloaded potential_utf v0.1.6
+2026-10-20T21:04:17.8219191Z   Downloaded quote v1.0.47
+2026-10-20T21:04:17.8504027Z   Downloaded string_cache_codegen v0.6.1
+2026-10-20T21:04:17.8545789Z   Downloaded miniz_oxide v0.9.1
+2026-10-20T21:04:17.8660178Z   Downloaded ref-cast-impl v1.0.27
+2026-10-20T21:04:17.8707458Z   Downloaded serialize-to-javascript-impl v0.1.2
+2026-10-20T21:04:17.8754737Z   Downloaded windows-result v0.4.1
+2026-10-20T21:04:17.8850209Z   Downloaded powerfmt v0.2.1
+2026-10-20T21:04:17.8919204Z   Downloaded scopeguard v1.2.0
+2026-10-20T21:04:17.8977496Z   Downloaded serde_spanned v1.1.2
+2026-10-20T21:04:17.9028785Z   Downloaded siphasher v1.0.4
+2026-10-20T21:04:17.9098161Z   Downloaded typeid v1.0.3
+2026-10-20T21:04:17.9158072Z   Downloaded windows-version v0.1.7
+2026-10-20T21:04:17.9206476Z   Downloaded alloc-no-stdlib v3.0.0
+2026-10-20T21:04:17.9304573Z   Downloaded pin-project-lite v0.2.17
+2026-10-20T21:04:17.9779409Z   Downloaded schemars_derive v0.8.22
+2026-10-20T21:04:17.9884337Z   Downloaded schemars_derive v1.2.2
+2026-10-20T21:04:18.0005699Z   Downloaded serde-untagged v0.1.9
+2026-10-20T21:04:18.0086426Z   Downloaded serde_derive_internals v0.29.1
+2026-10-20T21:04:18.0190227Z   Downloaded servo_arc v0.4.3
+2026-10-20T21:04:18.0249043Z   Downloaded shlex v2.0.1
+2026-10-20T21:04:18.0311822Z   Downloaded version_check v0.9.5
+2026-10-20T21:04:18.0373119Z   Downloaded walkdir v2.5.0
+2026-10-20T21:04:18.0484232Z   Downloaded find-msvc-tools v0.1.14
+2026-10-20T21:04:18.0575879Z   Downloaded hex v0.4.3
+2026-10-20T21:04:18.0652999Z   Downloaded fastrand v2.5.0
+2026-10-20T21:04:18.0719255Z   Downloaded icu_normalizer_data v2.3.0
+2026-10-20T21:04:18.0812892Z   Downloaded num-traits v0.2.19
+2026-10-20T21:04:18.0953368Z   Downloaded smallvec v1.16.3
+2026-10-20T21:04:18.1009860Z   Downloaded tray-icon v0.25.1
+2026-10-20T21:04:18.1138340Z   Downloaded cfg-if v1.0.5
+2026-10-20T21:04:18.1199121Z   Downloaded tinyvec v1.13.3
+2026-10-20T21:04:18.1393057Z   Downloaded fallible-streaming-iterator v0.1.9
+2026-10-20T21:04:18.1489145Z   Downloaded heck v0.5.0
+2026-10-20T21:04:18.1569574Z   Downloaded stable_deref_trait v1.2.1
+2026-10-20T21:04:18.1617390Z   Downloaded simd-adler32 v0.3.10
+2026-10-20T21:04:18.1734474Z   Downloaded windows-implement v0.60.2
+2026-10-20T21:04:18.1788893Z   Downloaded base64ct v1.5.3
+2026-10-20T21:04:18.1930983Z   Downloaded byteorder-lite v0.1.0
+2026-10-20T21:04:18.1981987Z   Downloaded der v0.7.10
+2026-10-20T21:04:18.2263602Z   Downloaded dtoa-short v0.3.5
+2026-10-20T21:04:18.2303565Z   Downloaded icu_collections v2.3.0
+2026-10-20T21:04:18.2704868Z   Downloaded json-patch v4.2.0
+2026-10-20T21:04:18.2754104Z   Downloaded toml_datetime v1.1.2+spec-1.1.0
+2026-10-20T21:04:18.2811769Z   Downloaded digest v0.10.7
+2026-10-20T21:04:18.2906645Z   Downloaded fallible-iterator v0.3.0
+2026-10-20T21:04:18.2966003Z   Downloaded once_cell v1.21.4
+2026-10-20T21:04:18.3107671Z   Downloaded parking_lot v0.12.5
+2026-10-20T21:04:19.0437283Z   Downloaded semver v1.0.28
+2026-10-20T21:04:20.3037004Z   Downloaded sha2 v0.10.9
+2026-10-20T21:04:20.3233245Z   Downloaded memchr v2.8.3
+2026-10-20T21:04:20.3505210Z   Downloaded mio v1.2.4
+2026-10-20T21:04:20.3785630Z   Downloaded rfd v0.17.2
+2026-10-20T21:04:20.4147605Z   Downloaded serde_core v1.0.229
+2026-10-20T21:04:20.4278603Z   Downloaded socket2 v0.6.5
+2026-10-20T21:04:20.4339517Z   Downloaded yoke v0.8.3
+2026-10-20T21:04:20.4427198Z   Downloaded log v0.4.34
+2026-10-20T21:04:20.4523558Z   Downloaded serde_derive v1.0.229
+2026-10-20T21:04:20.4729055Z   Downloaded serde_with_macros v3.24.0
+2026-10-20T21:04:20.4817933Z   Downloaded softbuffer v0.4.8
+2026-10-20T21:04:20.4989811Z   Downloaded urlpattern v0.6.0
+2026-10-20T21:04:20.5092577Z   Downloaded dunce v1.0.5
+2026-10-20T21:04:20.5167311Z   Downloaded miniz_oxide v0.8.9
+2026-10-20T21:04:20.5273244Z   Downloaded schemars v0.8.22
+2026-10-20T21:04:20.6105021Z   Downloaded zerovec-derive v0.11.6
+2026-10-20T21:04:20.6231967Z   Downloaded indexmap v1.9.3
+2026-10-20T21:04:20.6365190Z   Downloaded proc-macro2 v1.0.107
+2026-10-20T21:04:20.6518882Z   Downloaded indexmap v2.14.2
+2026-10-20T21:04:20.6696040Z   Downloaded schemars v0.9.0
+2026-10-20T21:04:20.7597616Z   Downloaded png v0.18.1
+2026-10-20T21:04:20.7777109Z   Downloaded keyboard-types v0.8.3
+2026-10-20T21:04:20.7924577Z   Downloaded foldhash v0.2.0
+2026-10-20T21:04:20.7978314Z   Downloaded form_urlencoded v1.2.2
+2026-10-20T21:04:20.8069783Z   Downloaded schemars v1.2.2
+2026-10-20T21:04:20.9206537Z   Downloaded selectors v0.38.0
+2026-10-20T21:04:20.9337756Z   Downloaded serde v1.0.229
+2026-10-20T21:04:20.9485380Z   Downloaded url v2.5.8
+2026-10-20T21:04:20.9600155Z   Downloaded webview2-com v0.39.1
+2026-10-20T21:04:20.9656426Z   Downloaded base64 v0.23.1
+2026-10-20T21:04:20.9816154Z   Downloaded icu_properties v2.3.0
+2026-10-20T21:04:20.9928370Z   Downloaded muda v0.20.0
+2026-10-20T21:04:21.0205829Z   Downloaded windows-threading v0.2.1
+2026-10-20T21:04:21.0256854Z   Downloaded jiff-core v0.1.1
+2026-10-20T21:04:21.0400300Z   Downloaded png v0.17.16
+2026-10-20T21:04:21.0580307Z   Downloaded idna v1.1.0
+2026-10-20T21:04:21.0695200Z   Downloaded web_atoms v0.2.6
+2026-10-20T21:04:21.0747316Z   Downloaded moxcms v0.8.1
+2026-10-20T21:04:21.1332753Z   Downloaded regex v1.13.1
+2026-10-20T21:04:21.1592565Z   Downloaded icu_properties_data v2.3.0
+2026-10-20T21:04:21.2244339Z   Downloaded serde_json v1.0.154
+2026-10-20T21:04:21.2686504Z   Downloaded rusqlite v0.40.2
+2026-10-20T21:04:22.3897862Z   Downloaded winapi-util v0.1.11
+2026-10-20T21:04:22.9380154Z   Downloaded dtoa v1.0.11
+2026-10-20T21:04:23.4873076Z   Downloaded fnv v1.0.7
+2026-10-20T21:04:23.9269329Z   Downloaded serde_with v3.24.0
+2026-10-20T21:04:24.0058831Z   Downloaded quick-xml v0.42.0
+2026-10-20T21:04:24.0294317Z   Downloaded yoke-derive v0.8.4
+2026-10-20T21:04:24.0347820Z   Downloaded winnow v1.0.4
+2026-10-20T21:04:24.0882407Z   Downloaded wry v0.57.0
+2026-10-20T21:04:24.1261145Z   Downloaded windows-link v0.2.1
+2026-10-20T21:04:24.1319374Z   Downloaded vcpkg v0.2.15
+2026-10-20T21:04:25.2303165Z   Downloaded image v0.25.10
+2026-10-20T21:04:25.2722197Z   Downloaded generic-array v0.14.7
+2026-10-20T21:04:25.2806618Z   Downloaded glob v0.3.4
+2026-10-20T21:04:25.2873420Z   Downloaded thiserror-impl v2.0.21
+2026-10-20T21:04:25.3045063Z   Downloaded toml_writer v1.1.3+spec-1.1.0
+2026-10-20T21:04:25.3108649Z   Downloaded brotli-decompressor v6.0.1
+2026-10-20T21:04:25.3314525Z   Downloaded subtle v2.6.1
+2026-10-20T21:04:25.3367694Z   Downloaded windows-collections v0.3.2
+2026-10-20T21:04:25.3424110Z   Downloaded defmt-parser v1.0.0
+2026-10-20T21:04:25.3472643Z   Downloaded dpi v0.1.2
+2026-10-20T21:04:25.3520965Z   Downloaded time-core v0.1.9
+2026-10-20T21:04:25.3569574Z   Downloaded windows-core v0.62.2
+2026-10-20T21:04:25.3756511Z   Downloaded zeroize v1.6.0
+2026-10-20T21:04:25.3817576Z   Downloaded darling_macro v0.24.1
+2026-10-20T21:04:25.3858552Z   Downloaded camino v1.2.6
+2026-10-20T21:04:25.3934265Z   Downloaded dyn-clone v1.0.20
+2026-10-20T21:04:25.4060976Z   Downloaded regex-syntax v0.8.11
+2026-10-20T21:04:25.4294855Z   Downloaded zmij v1.0.23
+2026-10-20T21:04:25.4397036Z   Downloaded alloc-stdlib v0.3.0
+2026-10-20T21:04:25.4533626Z   Downloaded bit-set v0.8.0
+2026-10-20T21:04:25.4645446Z   Downloaded byteorder v1.5.0
+2026-10-20T21:04:25.4746394Z   Downloaded windows-numerics v0.3.1
+2026-10-20T21:04:25.4821861Z   Downloaded cargo-platform v0.1.9
+2026-10-20T21:04:25.4878501Z   Downloaded bs58 v0.5.1
+2026-10-20T21:04:25.4970150Z   Downloaded windows-strings v0.5.1
+2026-10-20T21:04:25.5068325Z   Downloaded bitflags v1.3.2
+2026-10-20T21:04:25.5304150Z   Downloaded time-macros v0.2.32
+2026-10-20T21:04:25.5448015Z   Downloaded writeable v0.6.4
+2026-10-20T21:04:25.5628573Z   Downloaded cargo_metadata v0.19.2
+2026-10-20T21:04:25.5735852Z   Downloaded crossbeam-utils v0.8.23
+2026-10-20T21:04:25.5918141Z   Downloaded deranged v0.5.8
+2026-10-20T21:04:25.5974088Z   Downloaded tauri-runtime v2.12.1
+2026-10-20T21:04:25.6053824Z   Downloaded bytes v1.12.1
+2026-10-20T21:04:25.6242797Z   Downloaded bytemuck v1.25.2
+2026-10-20T21:04:25.6456384Z   Downloaded const-oid v0.9.6
+2026-10-20T21:04:25.6550400Z   Downloaded ctor v1.0.13
+2026-10-20T21:04:25.6699960Z   Downloaded web-time v1.1.0
+2026-10-20T21:04:25.6793745Z   Downloaded windows-interface v0.59.3
+2026-10-20T21:04:25.6840733Z   Downloaded dirs-sys v0.5.0
+2026-10-20T21:04:25.6898536Z   Downloaded string_cache v0.9.0
+2026-10-20T21:04:25.6984702Z   Downloaded windows-future v0.3.2
+2026-10-20T21:04:25.7067731Z   Downloaded winreg v0.56.0
+2026-10-20T21:04:25.7234075Z   Downloaded block-buffer v0.10.4
+2026-10-20T21:04:25.7317225Z   Downloaded defmt-macros v1.1.1
+2026-10-20T21:04:25.7500512Z   Downloaded aho-corasick v1.1.5
+2026-10-20T21:04:25.7715651Z   Downloaded displaydoc v0.2.7
+2026-10-20T21:04:25.7835585Z   Downloaded vswhom v0.1.0
+2026-10-20T21:04:25.7890024Z   Downloaded vswhom-sys v0.1.3
+2026-10-20T21:04:25.7957012Z   Downloaded zerofrom v0.1.8
+2026-10-20T21:04:25.8032026Z   Downloaded zerofrom-derive v0.1.8
+2026-10-20T21:04:25.8079781Z   Downloaded utf8_iter v1.0.4
+2026-10-20T21:04:25.8129532Z   Downloaded cssparser v0.37.0
+2026-10-20T21:04:25.8265563Z   Downloaded regex-automata v0.4.18
+2026-10-20T21:04:26.2452995Z   Downloaded tauri-macros v2.7.2
+2026-10-20T21:04:26.7853668Z   Downloaded hashlink v0.12.2
+2026-10-20T21:04:27.6457783Z   Downloaded tauri-codegen v2.7.2
+2026-10-20T21:04:27.6543071Z   Downloaded crc32fast v1.5.2
+2026-10-20T21:04:27.6625777Z   Downloaded getrandom v0.3.4
+2026-10-20T21:04:27.6858261Z   Downloaded toml v1.1.8+spec-1.1.0
+2026-10-20T21:04:27.7074960Z   Downloaded cookie v0.18.2
+2026-10-20T21:04:27.7195623Z   Downloaded html5ever v0.39.0
+2026-10-20T21:04:27.7417588Z   Downloaded tauri-build v2.7.2
+2026-10-20T21:04:27.7501801Z   Downloaded ed25519 v2.2.3
+2026-10-20T21:04:27.7580349Z   Downloaded thiserror v2.0.21
+2026-10-20T21:04:27.8080890Z   Downloaded tendril v0.5.1
+2026-10-20T21:04:27.8188211Z   Downloaded tracing-core v0.1.36
+2026-10-20T21:04:27.8358215Z   Downloaded bit-vec v0.8.0
+2026-10-20T21:04:27.8434019Z   Downloaded toml_parser v1.1.5+spec-1.1.0
+2026-10-20T21:04:27.8536397Z   Downloaded anyhow v1.0.104
+2026-10-20T21:04:27.8740948Z   Downloaded autocfg v1.5.1
+2026-10-20T21:04:27.8852371Z   Downloaded darling v0.24.1
+2026-10-20T21:04:27.9393846Z   Downloaded getrandom v0.4.3
+2026-10-20T21:04:27.9590214Z   Downloaded tinystr v0.8.4
+2026-10-20T21:04:27.9688717Z   Downloaded unicode-ident v1.0.27
+2026-10-20T21:04:27.9885348Z   Downloaded derive_more-impl v2.1.1
+2026-10-20T21:04:28.1938521Z   Downloaded flate2 v1.1.10
+2026-10-20T21:04:28.2221273Z   Downloaded icu_locale_core v2.3.0
+2026-10-20T21:04:28.2668599Z   Downloaded jiff v0.2.38
+2026-10-20T21:04:28.3218508Z   Downloaded tauri-runtime-wry v2.12.1
+2026-10-20T21:04:28.3332414Z   Downloaded ico v0.5.0
+2026-10-20T21:04:28.3511194Z   Downloaded hashbrown v0.12.3
+2026-10-20T21:04:28.3662741Z   Downloaded ed25519-dalek v2.2.0
+2026-10-20T21:04:28.3828862Z   Downloaded bitflags v2.13.2
+2026-10-20T21:04:28.4083011Z   Downloaded derive_more v2.1.1
+2026-10-20T21:04:28.4978752Z   Downloaded darling_core v0.24.1
+2026-10-20T21:04:28.5374836Z   Downloaded zerotrie v0.2.5
+2026-10-20T21:04:29.0572656Z   Downloaded uuid v1.28.0
+2026-10-20T21:04:29.0721136Z   Downloaded pxfm v0.1.30
+2026-10-20T21:04:29.1976785Z   Downloaded brotli v9.0.0
+2026-10-20T21:04:29.2450058Z   Downloaded libc v0.2.190
+2026-10-20T21:04:29.8931452Z   Downloaded unicode-segmentation v1.13.3
+2026-10-20T21:04:29.9041297Z   Downloaded typenum v1.20.1
+2026-10-20T21:04:29.9162532Z   Downloaded zerovec v0.11.8
+2026-10-20T21:04:29.9544925Z   Downloaded cc v1.8.0
+2026-10-20T21:04:29.9728067Z   Downloaded tauri-utils v2.10.1
+2026-10-20T21:04:30.3687573Z   Downloaded zlib-rs v0.6.8
+2026-10-20T21:04:30.4006489Z   Downloaded curve25519-dalek v4.1.3
+2026-10-20T21:04:30.4387457Z   Downloaded tao v0.37.1
+2026-10-20T21:04:30.5075964Z   Downloaded time v0.3.55
+2026-10-20T21:04:30.5880377Z   Downloaded syn v3.0.8
+2026-10-20T21:04:30.6436608Z   Downloaded syn v2.0.119
+2026-10-20T21:04:30.6874539Z   Downloaded tauri v2.12.3
+2026-10-20T21:04:30.7583463Z   Downloaded window-vibrancy v0.8.1
+2026-10-20T21:04:30.7814016Z   Downloaded tracing v0.1.44
+2026-10-20T21:04:30.8333848Z   Downloaded icu_normalizer v2.3.0
+2026-10-20T21:04:30.8633615Z   Downloaded tokio v1.53.2
+2026-10-20T21:04:31.1442083Z   Downloaded windows-sys v0.61.2
+2026-10-20T21:04:31.3309627Z   Downloaded libsqlite3-sys v0.38.2
+2026-10-20T21:04:31.3954116Z   Downloaded webview2-com-sys v0.39.1
+2026-10-20T21:04:31.4688027Z   Downloaded windows v0.62.2
+2026-10-20T21:04:34.0819588Z    Compiling proc-macro2 v1.0.107
+2026-10-20T21:04:34.0819958Z    Compiling quote v1.0.47
+2026-10-20T21:04:34.0821304Z    Compiling unicode-ident v1.0.27
+2026-10-20T21:04:34.0821818Z    Compiling serde_core v1.0.229
+2026-10-20T21:04:37.4069602Z    Compiling cfg-if v1.0.5
+2026-10-20T21:04:37.4496389Z     Checking windows-link v0.2.1
+2026-10-20T21:04:37.5011464Z    Compiling zmij v1.0.23
+2026-10-20T21:04:37.9244915Z    Compiling siphasher v1.0.4
+2026-10-20T21:04:38.3911094Z    Compiling syn v3.0.8
+2026-10-20T21:04:38.4137122Z    Compiling syn v2.0.119
+2026-10-20T21:04:39.2595630Z    Compiling phf_shared v0.13.1
+2026-10-20T21:04:39.4893662Z    Compiling version_check v0.9.5
+2026-10-20T21:04:39.5927770Z    Compiling thiserror v2.0.21
+2026-10-20T21:04:39.7794460Z    Compiling fastrand v2.5.0
+2026-10-20T21:04:39.9025943Z    Compiling phf_generator v0.13.1
+2026-10-20T21:04:40.0662082Z    Compiling icu_normalizer_data v2.3.0
+2026-10-20T21:04:40.1194969Z    Compiling stable_deref_trait v1.2.1
+2026-10-20T21:04:40.1875251Z    Compiling icu_properties_data v2.3.0
+2026-10-20T21:04:40.3871757Z    Compiling memchr v2.8.3
+2026-10-20T21:04:40.3924480Z    Compiling smallvec v1.16.3
+2026-10-20T21:04:40.5801619Z    Compiling serde v1.0.229
+2026-10-20T21:04:41.0157958Z    Compiling generic-array v0.14.7
+2026-10-20T21:04:41.0219228Z    Compiling itoa v1.0.18
+2026-10-20T21:04:41.1676578Z    Compiling find-msvc-tools v0.1.14
+2026-10-20T21:04:41.3557996Z    Compiling shlex v2.0.1
+2026-10-20T21:04:41.5085928Z    Compiling autocfg v1.5.1
+2026-10-20T21:04:41.8539222Z    Compiling synstructure v0.14.0
+2026-10-20T21:04:41.9475902Z    Compiling cc v1.8.0
+2026-10-20T21:04:42.8256299Z    Compiling parking_lot_core v0.9.12
+2026-10-20T21:04:43.1058626Z    Compiling phf_macros v0.13.1
+2026-10-20T21:04:43.1136652Z    Compiling semver v1.0.28
+2026-10-20T21:04:43.3634655Z    Compiling zerofrom-derive v0.1.8
+2026-10-20T21:04:43.3711797Z    Compiling yoke-derive v0.8.4
+2026-10-20T21:04:43.6700945Z    Compiling serde_derive v1.0.229
+2026-10-20T21:04:43.9689270Z    Compiling zerovec-derive v0.11.6
+2026-10-20T21:04:44.4991443Z    Compiling displaydoc v0.2.7
+2026-10-20T21:04:44.7400310Z    Compiling thiserror-impl v2.0.21
+2026-10-20T21:04:45.1227240Z    Compiling zerofrom v0.1.8
+2026-10-20T21:04:45.1991062Z    Compiling yoke v0.8.3
+2026-10-20T21:04:45.3609274Z    Compiling zerovec v0.11.8
+2026-10-20T21:04:45.6565227Z    Compiling serde_json v1.0.154
+2026-10-20T21:04:45.9009751Z    Compiling num-conv v0.2.2
+2026-10-20T21:04:45.9225567Z    Compiling time-core v0.1.9
+2026-10-20T21:04:45.9963395Z    Compiling typeid v1.0.3
+2026-10-20T21:04:46.0951213Z    Compiling tinystr v0.8.4
+2026-10-20T21:04:46.2371650Z    Compiling phf_codegen v0.13.1
+2026-10-20T21:04:46.2636933Z    Compiling litemap v0.8.3
+2026-10-20T21:04:46.3406824Z    Compiling ident_case v1.0.1
+2026-10-20T21:04:46.4221992Z    Compiling strsim v0.11.1
+2026-10-20T21:04:46.4725019Z    Compiling crc32fast v1.5.2
+2026-10-20T21:04:46.5076473Z    Compiling writeable v0.6.4
+2026-10-20T21:04:46.7057142Z    Compiling icu_locale_core v2.3.0
+2026-10-20T21:04:46.7404102Z    Compiling darling_core v0.24.1
+2026-10-20T21:04:47.2238183Z    Compiling potential_utf v0.1.6
+2026-10-20T21:04:47.3430142Z    Compiling zerotrie v0.2.5
+2026-10-20T21:04:47.5986066Z    Compiling windows-sys v0.61.2
+2026-10-20T21:04:47.8079415Z    Compiling utf8_iter v1.0.4
+2026-10-20T21:04:47.9223079Z    Compiling libc v0.2.190
+2026-10-20T21:04:48.0854145Z    Compiling erased-serde v0.4.10
+2026-10-20T21:04:48.3356139Z    Compiling icu_collections v2.3.0
+2026-10-20T21:04:48.3594957Z    Compiling icu_provider v2.3.1
+2026-10-20T21:04:49.3054264Z    Compiling new_debug_unreachable v1.0.6
+2026-10-20T21:04:49.3680498Z    Compiling scopeguard v1.2.0
+2026-10-20T21:04:49.4389738Z    Compiling lock_api v0.4.14
+2026-10-20T21:04:49.6307659Z    Compiling phf v0.13.1
+2026-10-20T21:04:49.7160671Z    Compiling darling_macro v0.24.1
+2026-10-20T21:04:50.2267213Z    Compiling darling v0.24.1
+2026-10-20T21:04:50.2348808Z    Compiling string_cache_codegen v0.6.1
+2026-10-20T21:04:50.2908698Z    Compiling precomputed-hash v0.1.1
+2026-10-20T21:04:50.3563763Z    Compiling getrandom v0.4.3
+2026-10-20T21:04:50.6579582Z    Compiling anyhow v1.0.104
+2026-10-20T21:04:50.8843100Z    Compiling web_atoms v0.2.6
+2026-10-20T21:04:51.0423944Z    Compiling serde_with_macros v3.24.0
+2026-10-20T21:04:51.4878634Z    Compiling icu_normalizer v2.3.0
+2026-10-20T21:04:51.9713325Z    Compiling icu_properties v2.3.0
+2026-10-20T21:04:52.0355654Z    Compiling parking_lot v0.12.5
+2026-10-20T21:04:52.0950888Z    Compiling rustc_version v0.4.1
+2026-10-20T21:04:52.3712763Z    Compiling winnow v1.0.4
+2026-10-20T21:04:52.6865282Z    Compiling toml_parser v1.1.5+spec-1.1.0
+2026-10-20T21:04:52.6992561Z    Compiling string_cache v0.9.0
+2026-10-20T21:04:53.1430508Z    Compiling idna_adapter v1.2.2
+2026-10-20T21:04:53.2556213Z    Compiling toml_datetime v1.1.2+spec-1.1.0
+2026-10-20T21:04:53.2641149Z    Compiling serde_spanned v1.1.2
+2026-10-20T21:04:53.3915505Z    Compiling percent-encoding v2.3.2
+2026-10-20T21:04:53.4172828Z    Compiling toml_writer v1.1.3+spec-1.1.0
+2026-10-20T21:04:53.5377820Z    Compiling log v0.4.34
+2026-10-20T21:04:53.5533076Z    Compiling dtoa v1.0.11
+2026-10-20T21:04:53.5757642Z    Compiling toml v1.1.8+spec-1.1.0
+2026-10-20T21:04:53.6671620Z    Compiling dtoa-short v0.3.5
+2026-10-20T21:04:53.6875747Z    Compiling form_urlencoded v1.2.2
+2026-10-20T21:04:53.7546227Z    Compiling idna v1.1.0
+2026-10-20T21:04:53.8166372Z    Compiling uuid v1.28.0
+2026-10-20T21:04:54.3524636Z    Compiling tendril v0.5.1
+2026-10-20T21:04:54.4440273Z    Compiling selectors v0.38.0
+2026-10-20T21:04:54.8183038Z    Compiling cssparser-macros v0.7.1
+2026-10-20T21:04:54.8592192Z    Compiling derive_more-impl v2.1.1
+2026-10-20T21:04:54.8595601Z    Compiling windows-interface v0.59.3
+2026-10-20T21:04:55.1357983Z    Compiling windows-implement v0.60.2
+2026-10-20T21:04:55.2267722Z    Compiling indexmap v1.9.3
+2026-10-20T21:04:55.4841386Z    Compiling aho-corasick v1.1.5
+2026-10-20T21:04:55.6030323Z     Checking bitflags v2.13.2
+2026-10-20T21:04:55.7305456Z     Checking windows-strings v0.5.1
+2026-10-20T21:04:55.7743452Z     Checking windows-result v0.4.1
+2026-10-20T21:04:55.7965278Z    Compiling camino v1.2.6
+2026-10-20T21:04:55.8586018Z    Compiling regex-syntax v0.8.11
+2026-10-20T21:04:55.9646040Z     Checking foldhash v0.2.0
+2026-10-20T21:04:56.0541664Z    Compiling typenum v1.20.1
+2026-10-20T21:04:56.0622779Z    Compiling alloc-no-stdlib v3.0.0
+2026-10-20T21:04:56.2949492Z    Compiling alloc-stdlib v0.3.0
+2026-10-20T21:04:56.4252571Z     Checking hashbrown v0.17.1
+2026-10-20T21:04:57.1420007Z     Checking windows-core v0.62.2
+2026-10-20T21:04:57.2407635Z    Compiling derive_more v2.1.1
+2026-10-20T21:04:57.3520778Z    Compiling cssparser v0.37.0
+2026-10-20T21:04:57.4290079Z    Compiling markup5ever v0.39.0
+2026-10-20T21:04:57.4688833Z    Compiling regex-automata v0.4.18
+2026-10-20T21:04:57.8376570Z    Compiling url v2.5.8
+2026-10-20T21:04:58.0759213Z    Compiling winapi-util v0.1.11
+2026-10-20T21:04:58.3716755Z    Compiling vswhom-sys v0.1.3
+2026-10-20T21:04:58.4667564Z    Compiling serde_derive_internals v0.29.1
+2026-10-20T21:04:58.5893393Z    Compiling servo_arc v0.4.3
+2026-10-20T21:04:58.7158232Z    Compiling web-time v1.1.0
+2026-10-20T21:04:58.7711202Z    Compiling fnv v1.0.7
+2026-10-20T21:04:58.8456548Z    Compiling equivalent v1.0.2
+2026-10-20T21:04:58.8988624Z     Checking simd-adler32 v0.3.10
+2026-10-20T21:04:59.0079269Z    Compiling powerfmt v0.2.1
+2026-10-20T21:04:59.1363379Z    Compiling rustc-hash v2.1.3
+2026-10-20T21:04:59.2367592Z    Compiling schemars v0.8.22
+2026-10-20T21:04:59.2435172Z    Compiling hashbrown v0.12.3
+2026-10-20T21:04:59.3238670Z    Compiling deranged v0.5.8
+2026-10-20T21:04:59.6722025Z    Compiling bit-vec v0.8.0
+2026-10-20T21:04:59.8624708Z    Compiling bit-set v0.8.0
+2026-10-20T21:05:00.3344055Z    Compiling time v0.3.55
+2026-10-20T21:05:00.3710626Z    Compiling regex v1.13.1
+2026-10-20T21:05:00.7070883Z    Compiling schemars_derive v0.8.22
+2026-10-20T21:05:00.8771720Z    Compiling indexmap v2.14.2
+2026-10-20T21:05:01.5039786Z    Compiling cfb v0.14.0
+2026-10-20T21:05:02.1129723Z    Compiling same-file v1.0.6
+2026-10-20T21:05:02.2098499Z    Compiling html5ever v0.39.0
+2026-10-20T21:05:02.4136446Z    Compiling brotli-decompressor v6.0.1
+2026-10-20T21:05:02.7533151Z    Compiling jsonptr v0.7.1
+2026-10-20T21:05:02.9321280Z    Compiling cargo-platform v0.1.9
+2026-10-20T21:05:03.0974583Z    Compiling quick-xml v0.42.0
+2026-10-20T21:05:03.3858825Z    Compiling dyn-clone v1.0.20
+2026-10-20T21:05:03.4674131Z    Compiling base64 v0.23.1
+2026-10-20T21:05:03.6191369Z    Compiling dunce v1.0.5
+2026-10-20T21:05:03.7162894Z    Compiling bytes v1.12.1
+2026-10-20T21:05:03.7784845Z     Checking adler2 v2.0.1
+2026-10-20T21:05:03.8276992Z    Compiling plist v1.10.1
+2026-10-20T21:05:04.2122980Z    Compiling http v1.5.0
+2026-10-20T21:05:04.5716803Z    Compiling dom_query v0.28.0
+2026-10-20T21:05:05.1830131Z    Compiling brotli v9.0.0
+2026-10-20T21:05:05.9033298Z    Compiling cargo_metadata v0.19.2
+2026-10-20T21:05:05.9121798Z    Compiling json-patch v4.2.0
+2026-10-20T21:05:06.2455244Z    Compiling serde-untagged v0.1.9
+2026-10-20T21:05:06.4201693Z    Compiling walkdir v2.5.0
+2026-10-20T21:05:06.6479351Z    Compiling infer v0.22.0
+2026-10-20T21:05:07.0368840Z    Compiling urlpattern v0.6.0
+2026-10-20T21:05:07.0731686Z    Compiling crypto-common v0.1.7
+2026-10-20T21:05:07.1340040Z    Compiling block-buffer v0.10.4
+2026-10-20T21:05:07.2035696Z    Compiling serde_with v3.24.0
+2026-10-20T21:05:07.9165738Z     Checking windows-threading v0.2.1
+2026-10-20T21:05:07.9961838Z    Compiling ctor v1.0.13
+2026-10-20T21:05:08.0171482Z    Compiling glob v0.3.4
+2026-10-20T21:05:08.0703682Z     Checking windows-future v0.3.2
+2026-10-20T21:05:08.1070299Z    Compiling vswhom v0.1.0
+2026-10-20T21:05:08.1940386Z    Compiling digest v0.10.7
+2026-10-20T21:05:08.3463253Z     Checking miniz_oxide v0.9.1
+2026-10-20T21:05:08.5037670Z     Checking windows-numerics v0.3.1
+2026-10-20T21:05:08.5938932Z     Checking windows-collections v0.3.2
+2026-10-20T21:05:08.6019473Z    Compiling winreg v0.56.0
+2026-10-20T21:05:08.6836920Z    Compiling tauri-utils v2.10.1
+2026-10-20T21:05:08.8364868Z    Compiling time-macros v0.2.32
+2026-10-20T21:05:08.8768945Z    Compiling num-traits v0.2.19
+2026-10-20T21:05:08.9676340Z     Checking raw-window-handle v0.6.2
+2026-10-20T21:05:09.2787919Z    Compiling option-ext v0.2.0
+2026-10-20T21:05:09.3416258Z    Compiling cpufeatures v0.2.17
+2026-10-20T21:05:09.7134011Z    Compiling ref-cast v1.0.27
+2026-10-20T21:05:10.0979341Z    Compiling sha2 v0.10.9
+2026-10-20T21:05:10.1369094Z    Compiling dirs-sys v0.5.0
+2026-10-20T21:05:10.4276003Z     Checking windows v0.62.2
+2026-10-20T21:05:10.4495431Z     Checking flate2 v1.1.10
+2026-10-20T21:05:10.6998559Z    Compiling embed-resource v3.0.12
+2026-10-20T21:05:11.8748980Z     Checking miniz_oxide v0.8.9
+2026-10-20T21:05:11.9514026Z     Checking fdeflate v0.3.7
+2026-10-20T21:05:12.2482370Z    Compiling webview2-com-sys v0.39.1
+2026-10-20T21:05:12.7891753Z    Compiling ref-cast-impl v1.0.27
+2026-10-20T21:05:13.0105607Z    Compiling serde_derive_internals v0.30.0
+2026-10-20T21:05:13.8478753Z    Compiling crossbeam-utils v0.8.23
+2026-10-20T21:05:14.6329689Z    Compiling heck v0.5.0
+2026-10-20T21:05:14.9024279Z    Compiling pkg-config v0.3.34
+2026-10-20T21:05:14.9203648Z    Compiling vcpkg v0.2.15
+2026-10-20T21:05:15.5191839Z    Compiling libsqlite3-sys v0.38.2
+2026-10-20T21:05:16.0519586Z    Compiling schemars_derive v1.2.2
+2026-10-20T21:05:17.9719541Z    Compiling tauri-winres v0.3.6
+2026-10-20T21:05:18.2370119Z    Compiling dirs v7.0.0
+2026-10-20T21:05:18.9533101Z    Compiling cargo_toml v1.0.1
+2026-10-20T21:05:19.1694551Z     Checking dpi v0.1.2
+2026-10-20T21:05:19.4813152Z    Compiling cookie v0.18.2
+2026-10-20T21:05:20.9022270Z     Checking pxfm v0.1.30
+2026-10-20T21:05:22.9969349Z     Checking moxcms v0.8.1
+2026-10-20T21:05:23.4825860Z     Checking schemars v1.2.2
+2026-10-20T21:05:23.6664466Z    Compiling tauri-build v2.7.2
+2026-10-20T21:05:25.9237571Z     Checking png v0.18.1
+2026-10-20T21:05:26.6037138Z    Compiling curve25519-dalek v4.1.3
+2026-10-20T21:05:26.9386672Z    Compiling webview2-com-macros v0.8.1
+2026-10-20T21:05:27.5224345Z     Checking windows-version v0.1.7
+2026-10-20T21:05:27.5417167Z     Checking bytemuck v1.25.2
+2026-10-20T21:05:27.7267643Z     Checking pin-project-lite v0.2.17
+2026-10-20T21:05:27.7846609Z    Compiling bitflags v1.3.2
+2026-10-20T21:05:27.8283371Z     Checking byteorder-lite v0.1.0
+2026-10-20T21:05:28.0198604Z     Checking image v0.25.10
+2026-10-20T21:05:28.2571988Z    Compiling png v0.17.16
+2026-10-20T21:05:29.3438284Z     Checking crossbeam-channel v0.5.17
+2026-10-20T21:05:29.9448123Z     Checking azeroth-core v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\core)
+2026-10-20T21:05:30.3652393Z     Checking hashlink v0.12.2
+2026-10-20T21:05:32.2537816Z    Compiling curve25519-dalek-derive v0.1.1
+2026-10-20T21:05:32.6615138Z     Checking signature v2.1.0
+2026-10-20T21:05:32.7435550Z    Compiling wry v0.57.0
+2026-10-20T21:05:32.8571512Z     Checking subtle v2.6.1
+2026-10-20T21:05:32.9598246Z     Checking fallible-streaming-iterator v0.1.9
+2026-10-20T21:05:33.0485075Z    Compiling tauri-runtime v2.12.1
+2026-10-20T21:05:33.0915154Z     Checking zeroize v1.6.0
+2026-10-20T21:05:33.1880249Z    Compiling byteorder v1.5.0
+2026-10-20T21:05:33.3475312Z     Checking once_cell v1.21.4
+2026-10-20T21:05:33.3595903Z     Checking tracing-core v0.1.36
+2026-10-20T21:05:33.4847101Z     Checking fallible-iterator v0.3.0
+2026-10-20T21:05:33.6402058Z     Checking tracing v0.1.44
+2026-10-20T21:05:33.7444747Z     Checking rusqlite v0.40.2
+2026-10-20T21:05:33.7806233Z    Compiling ico v0.5.0
+2026-10-20T21:05:34.5766792Z     Checking ed25519 v2.2.3
+2026-10-20T21:05:35.2248278Z    Compiling tauri v2.12.3
+2026-10-20T21:05:37.4196509Z    Compiling azeroth-local-data v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\local-data)
+2026-10-20T21:05:38.1811872Z    Compiling getrandom v0.3.4
+2026-10-20T21:05:38.5288201Z     Checking webview2-com v0.39.1
+2026-10-20T21:05:38.7528461Z     Checking unicode-segmentation v1.13.3
+2026-10-20T21:05:38.9408385Z    Compiling muda v0.20.0
+2026-10-20T21:05:39.0980404Z    Compiling tauri-runtime-wry v2.12.1
+2026-10-20T21:05:39.3099047Z     Checking tao v0.37.1
+2026-10-20T21:05:40.7863620Z    Compiling tauri-codegen v2.7.2
+2026-10-20T21:05:40.9316986Z     Checking ed25519-dalek v2.2.0
+2026-10-20T21:05:41.0582799Z     Checking softbuffer v0.4.8
+2026-10-20T21:05:41.2207573Z     Checking keyboard-types v0.8.3
+2026-10-20T21:05:41.9540241Z    Compiling serialize-to-javascript-impl v0.1.2
+2026-10-20T21:05:42.3502192Z     Checking wowdbdefs-rs v0.1.0 (D:\a\Navzeroth\Navzeroth\vendor\wowdbdefs-rs)
+2026-10-20T21:05:42.4385052Z    Compiling rfd v0.17.2
+2026-10-20T21:05:42.5240336Z    Compiling tauri-macros v2.7.2
+2026-10-20T21:05:42.7381462Z     Checking serialize-to-javascript v0.1.2
+2026-10-20T21:05:44.0629170Z     Checking azeroth-storage v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\storage)
+2026-10-20T21:05:44.1073454Z     Checking azeroth-ingest v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\ingest)
+2026-10-20T21:05:44.1798598Z     Checking tokio v1.53.2
+2026-10-20T21:05:45.5867597Z     Checking window-vibrancy v0.8.1
+2026-10-20T21:05:45.6998311Z    Compiling azeroth-desktop v1.0.0 (D:\a\Navzeroth\Navzeroth\apps\desktop\src-tauri)
+2026-10-20T21:05:45.9437347Z    Compiling serde_repr v0.1.21
+2026-10-20T21:05:46.3837800Z     Checking mime v0.3.17
+2026-10-20T21:05:51.9811641Z     Checking azeroth-app v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\app)
+2026-10-20T21:05:56.5505529Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 41s
+2026-10-20T21:05:57.1510622Z    Compiling windows-link v0.2.1
+2026-10-20T21:05:57.1512720Z    Compiling cfg-if v1.0.5
+2026-10-20T21:05:57.1517513Z    Compiling zerofrom v0.1.8
+2026-10-20T21:05:57.1521287Z    Compiling memchr v2.8.3
+2026-10-20T21:05:57.2070799Z    Compiling smallvec v1.16.3
+2026-10-20T21:05:57.2166090Z    Compiling serde_core v1.0.229
+2026-10-20T21:05:57.2458353Z    Compiling itoa v1.0.18
+2026-10-20T21:05:57.4030129Z    Compiling siphasher v1.0.4
+2026-10-20T21:05:57.4202777Z    Compiling litemap v0.8.3
+2026-10-20T21:05:57.5812290Z    Compiling writeable v0.6.4
+2026-10-20T21:05:57.6105205Z    Compiling phf_shared v0.13.1
+2026-10-20T21:05:57.8245483Z    Compiling zmij v1.0.23
+2026-10-20T21:05:57.8409210Z    Compiling utf8_iter v1.0.4
+2026-10-20T21:05:57.9936082Z    Compiling phf_generator v0.13.1
+2026-10-20T21:05:57.9997631Z    Compiling thiserror v2.0.21
+2026-10-20T21:05:58.0785638Z    Compiling icu_properties_data v2.3.0
+2026-10-20T21:05:58.1336622Z    Compiling icu_normalizer_data v2.3.0
+2026-10-20T21:05:58.1578619Z    Compiling yoke v0.8.3
+2026-10-20T21:05:58.1875757Z    Compiling phf_macros v0.13.1
+2026-10-20T21:05:58.2063767Z    Compiling num-conv v0.2.2
+2026-10-20T21:05:58.3154439Z    Compiling zerovec v0.11.8
+2026-10-20T21:05:58.3235139Z    Compiling time-core v0.1.9
+2026-10-20T21:05:58.5066679Z    Compiling stable_deref_trait v1.2.1
+2026-10-20T21:05:58.7254611Z    Compiling phf_codegen v0.13.1
+2026-10-20T21:05:58.8223637Z    Compiling tinystr v0.8.4
+2026-10-20T21:05:58.8815902Z    Compiling log v0.4.34
+2026-10-20T21:05:58.9502476Z    Compiling winnow v1.0.4
+2026-10-20T21:05:59.0131474Z    Compiling deranged v0.5.8
+2026-10-20T21:05:59.0707967Z    Compiling powerfmt v0.2.1
+2026-10-20T21:05:59.2173461Z    Compiling scopeguard v1.2.0
+2026-10-20T21:05:59.2945030Z    Compiling serde v1.0.229
+2026-10-20T21:05:59.3162234Z    Compiling lock_api v0.4.14
+2026-10-20T21:05:59.4946123Z    Compiling toml_parser v1.1.5+spec-1.1.0
+2026-10-20T21:05:59.5381917Z    Compiling icu_locale_core v2.3.0
+2026-10-20T21:05:59.9318352Z    Compiling potential_utf v0.1.6
+2026-10-20T21:06:00.0908571Z    Compiling serde_json v1.0.154
+2026-10-20T21:06:00.2000632Z    Compiling parking_lot_core v0.9.12
+2026-10-20T21:06:00.4344531Z    Compiling zerotrie v0.2.5
+2026-10-20T21:06:00.5203705Z    Compiling windows-sys v0.61.2
+2026-10-20T21:06:00.7794764Z    Compiling toml_writer v1.1.3+spec-1.1.0
+2026-10-20T21:06:00.9562302Z    Compiling icu_provider v2.3.1
+2026-10-20T21:06:01.0374720Z    Compiling parking_lot v0.12.5
+2026-10-20T21:06:01.1919134Z    Compiling icu_collections v2.3.0
+2026-10-20T21:06:01.2600889Z    Compiling typeid v1.0.3
+2026-10-20T21:06:01.5021494Z    Compiling aho-corasick v1.1.5
+2026-10-20T21:06:01.9153681Z    Compiling regex-syntax v0.8.11
+2026-10-20T21:06:04.4346471Z    Compiling dyn-clone v1.0.20
+2026-10-20T21:06:04.5539880Z    Compiling equivalent v1.0.2
+2026-10-20T21:06:04.6204527Z    Compiling web-time v1.1.0
+2026-10-20T21:06:04.6719193Z    Compiling simd-adler32 v0.3.10
+2026-10-20T21:06:05.0050310Z    Compiling typenum v1.20.1
+2026-10-20T21:06:05.2915137Z    Compiling fnv v1.0.7
+2026-10-20T21:06:05.3687009Z    Compiling regex-automata v0.4.18
+2026-10-20T21:06:05.8792598Z    Compiling generic-array v0.14.7
+2026-10-20T21:06:05.8907294Z    Compiling phf v0.13.1
+2026-10-20T21:06:06.0186073Z    Compiling string_cache_codegen v0.6.1
+2026-10-20T21:06:06.4160939Z    Compiling adler2 v2.0.1
+2026-10-20T21:06:06.4721833Z    Compiling alloc-no-stdlib v3.0.0
+2026-10-20T21:06:06.5109710Z    Compiling bytes v1.12.1
+2026-10-20T21:06:06.5545045Z    Compiling alloc-stdlib v0.3.0
+2026-10-20T21:06:06.6415306Z    Compiling web_atoms v0.2.6
+2026-10-20T21:06:07.0171311Z    Compiling libc v0.2.190
+2026-10-20T21:06:07.1144761Z    Compiling icu_properties v2.3.0
+2026-10-20T21:06:07.1853251Z    Compiling icu_normalizer v2.3.0
+2026-10-20T21:06:07.1854313Z    Compiling quick-xml v0.42.0
+2026-10-20T21:06:07.8805740Z    Compiling regex v1.13.1
+2026-10-20T21:06:08.3519018Z    Compiling dunce v1.0.5
+2026-10-20T21:06:08.4948090Z    Compiling base64 v0.23.1
+2026-10-20T21:06:08.5143534Z    Compiling idna_adapter v1.2.2
+2026-10-20T21:06:08.6975491Z    Compiling http v1.5.0
+2026-10-20T21:06:08.9412081Z    Compiling getrandom v0.4.3
+2026-10-20T21:06:09.1174230Z    Compiling brotli-decompressor v6.0.1
+2026-10-20T21:06:09.9808283Z    Compiling crc32fast v1.5.2
+2026-10-20T21:06:10.1749176Z    Compiling string_cache v0.9.0
+2026-10-20T21:06:10.3724494Z    Compiling miniz_oxide v0.9.1
+2026-10-20T21:06:10.4387654Z    Compiling crypto-common v0.1.7
+2026-10-20T21:06:10.5260879Z    Compiling block-buffer v0.10.4
+2026-10-20T21:06:10.7765700Z    Compiling serde_spanned v1.1.2
+2026-10-20T21:06:10.8059769Z    Compiling toml_datetime v1.1.2+spec-1.1.0
+2026-10-20T21:06:10.8206601Z    Compiling form_urlencoded v1.2.2
+2026-10-20T21:06:10.9650559Z    Compiling flate2 v1.1.10
+2026-10-20T21:06:11.1254933Z    Compiling toml v1.1.8+spec-1.1.0
+2026-10-20T21:06:11.1752463Z    Compiling digest v0.10.7
+2026-10-20T21:06:11.3937588Z    Compiling brotli v9.0.0
+2026-10-20T21:06:12.1772771Z    Compiling uuid v1.28.0
+2026-10-20T21:06:12.1880723Z    Compiling idna v1.1.0
+2026-10-20T21:06:12.5861035Z    Compiling anyhow v1.0.104
+2026-10-20T21:06:13.0527286Z    Compiling miniz_oxide v0.8.9
+2026-10-20T21:06:13.2057573Z    Compiling fdeflate v0.3.7
+2026-10-20T21:06:13.3572703Z    Compiling bitflags v2.13.2
+2026-10-20T21:06:13.5684949Z    Compiling selectors v0.38.0
+2026-10-20T21:06:13.8424914Z    Compiling windows-result v0.4.1
+2026-10-20T21:06:13.9819513Z    Compiling windows-strings v0.5.1
+2026-10-20T21:06:14.0105341Z    Compiling ctor v1.0.13
+2026-10-20T21:06:14.1152292Z    Compiling glob v0.3.4
+2026-10-20T21:06:14.1162634Z    Compiling cpufeatures v0.2.17
+2026-10-20T21:06:14.1739694Z    Compiling foldhash v0.2.0
+2026-10-20T21:06:14.3179111Z    Compiling hashbrown v0.17.1
+2026-10-20T21:06:14.3181872Z    Compiling windows-core v0.62.2
+2026-10-20T21:06:14.6814983Z    Compiling cssparser v0.37.0
+2026-10-20T21:06:14.9587439Z    Compiling markup5ever v0.39.0
+2026-10-20T21:06:15.1820472Z    Compiling url v2.5.8
+2026-10-20T21:06:15.2096615Z    Compiling winapi-util v0.1.11
+2026-10-20T21:06:15.4296690Z    Compiling indexmap v2.14.2
+2026-10-20T21:06:15.4842641Z    Compiling same-file v1.0.6
+2026-10-20T21:06:15.6156153Z    Compiling html5ever v0.39.0
+2026-10-20T21:06:16.1143260Z    Compiling sha2 v0.10.9
+2026-10-20T21:06:16.3218298Z    Compiling cfb v0.14.0
+2026-10-20T21:06:16.4714165Z    Compiling erased-serde v0.4.10
+2026-10-20T21:06:16.5028598Z    Compiling jsonptr v0.7.1
+2026-10-20T21:06:16.5255853Z    Compiling time v0.3.55
+2026-10-20T21:06:17.0263482Z    Compiling option-ext v0.2.0
+2026-10-20T21:06:17.1018612Z    Compiling dom_query v0.28.0
+2026-10-20T21:06:17.2238174Z    Compiling cargo_metadata v0.19.2
+2026-10-20T21:06:17.2701913Z    Compiling serde-untagged v0.1.9
+2026-10-20T21:06:17.5184744Z    Compiling infer v0.22.0
+2026-10-20T21:06:18.1760564Z    Compiling json-patch v4.2.0
+2026-10-20T21:06:18.5869954Z    Compiling plist v1.10.1
+2026-10-20T21:06:18.6242690Z    Compiling schemars v0.8.22
+2026-10-20T21:06:18.6789172Z    Compiling urlpattern v0.6.0
+2026-10-20T21:06:18.8293092Z    Compiling walkdir v2.5.0
+2026-10-20T21:06:19.2401991Z    Compiling vswhom-sys v0.1.3
+2026-10-20T21:06:19.6752980Z    Compiling serde_with v3.24.0
+2026-10-20T21:06:20.0649072Z    Compiling windows-threading v0.2.1
+2026-10-20T21:06:20.2068451Z    Compiling windows-future v0.3.2
+2026-10-20T21:06:20.4350759Z    Compiling vswhom v0.1.0
+2026-10-20T21:06:20.5274207Z    Compiling windows-collections v0.3.2
+2026-10-20T21:06:20.8168897Z    Compiling windows-numerics v0.3.1
+2026-10-20T21:06:20.8501644Z    Compiling winreg v0.56.0
+2026-10-20T21:06:20.9316862Z    Compiling time-macros v0.2.32
+2026-10-20T21:06:20.9693368Z    Compiling percent-encoding v2.3.2
+2026-10-20T21:06:21.1345230Z    Compiling raw-window-handle v0.6.2
+2026-10-20T21:06:21.3291431Z    Compiling tauri-utils v2.10.1
+2026-10-20T21:06:21.3397190Z    Compiling embed-resource v3.0.12
+2026-10-20T21:06:21.4547172Z    Compiling windows v0.62.2
+2026-10-20T21:06:22.6164471Z    Compiling dirs-sys v0.5.0
+2026-10-20T21:06:22.7232063Z    Compiling webview2-com-sys v0.39.1
+2026-10-20T21:06:23.3538875Z    Compiling bitflags v1.3.2
+2026-10-20T21:06:23.4304470Z    Compiling heck v0.5.0
+2026-10-20T21:06:23.6634625Z    Compiling png v0.17.16
+2026-10-20T21:06:24.8097175Z    Compiling ref-cast v1.0.27
+2026-10-20T21:06:24.9642845Z    Compiling dirs v7.0.0
+2026-10-20T21:06:25.0668910Z    Compiling tauri-winres v0.3.6
+2026-10-20T21:06:25.3844124Z    Compiling num-traits v0.2.19
+2026-10-20T21:06:26.0475125Z    Compiling cargo_toml v1.0.1
+2026-10-20T21:06:26.3275554Z    Compiling dpi v0.1.2
+2026-10-20T21:06:27.0669646Z    Compiling pxfm v0.1.30
+2026-10-20T21:06:28.9310672Z    Compiling tauri-build v2.7.2
+2026-10-20T21:06:30.1003257Z    Compiling moxcms v0.8.1
+2026-10-20T21:06:31.9860535Z    Compiling schemars v1.2.2
+2026-10-20T21:06:34.0322931Z    Compiling crossbeam-utils v0.8.23
+2026-10-20T21:06:35.1874778Z    Compiling png v0.18.1
+2026-10-20T21:06:37.4683088Z    Compiling windows-version v0.1.7
+2026-10-20T21:06:37.5412813Z    Compiling pin-project-lite v0.2.17
+2026-10-20T21:06:37.5503255Z    Compiling byteorder-lite v0.1.0
+2026-10-20T21:06:37.6097690Z    Compiling bytemuck v1.25.2
+2026-10-20T21:06:37.8440479Z    Compiling image v0.25.10
+2026-10-20T21:06:40.3803988Z    Compiling libsqlite3-sys v0.38.2
+2026-10-20T21:06:40.5935719Z    Compiling crossbeam-channel v0.5.17
+2026-10-20T21:06:40.9725126Z    Compiling azeroth-core v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\core)
+2026-10-20T21:06:42.2670489Z    Compiling cookie v0.18.2
+2026-10-20T21:06:43.9498091Z    Compiling hashlink v0.12.2
+2026-10-20T21:06:44.3081322Z    Compiling semver v1.0.28
+2026-10-20T21:06:44.6612835Z    Compiling fallible-streaming-iterator v0.1.9
+2026-10-20T21:06:44.7686211Z    Compiling zeroize v1.6.0
+2026-10-20T21:06:44.9312862Z    Compiling once_cell v1.21.4
+2026-10-20T21:06:45.1016777Z    Compiling signature v2.1.0
+2026-10-20T21:06:45.2014166Z    Compiling fallible-iterator v0.3.0
+2026-10-20T21:06:45.5071648Z    Compiling subtle v2.6.1
+2026-10-20T21:06:45.6620249Z    Compiling tracing-core v0.1.36
+2026-10-20T21:06:46.2046285Z    Compiling tracing v0.1.44
+2026-10-20T21:06:46.3793566Z    Compiling curve25519-dalek v4.1.3
+2026-10-20T21:06:47.7645537Z    Compiling rusqlite v0.40.2
+2026-10-20T21:06:53.5959038Z    Compiling webview2-com v0.39.1
+2026-10-20T21:06:57.7499030Z    Compiling ed25519 v2.2.3
+2026-10-20T21:06:57.9194810Z    Compiling ico v0.5.0
+2026-10-20T21:06:58.0347030Z    Compiling tauri v2.12.3
+2026-10-20T21:06:58.3361142Z    Compiling azeroth-local-data v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\local-data)
+2026-10-20T21:06:58.9427055Z    Compiling unicode-segmentation v1.13.3
+2026-10-20T21:06:59.3686886Z    Compiling tauri-codegen v2.7.2
+2026-10-20T21:06:59.5198905Z    Compiling tao v0.37.1
+2026-10-20T21:07:00.9908108Z    Compiling tauri-runtime v2.12.1
+2026-10-20T21:07:01.4204165Z    Compiling ed25519-dalek v2.2.0
+2026-10-20T21:07:01.6584763Z    Compiling wry v0.57.0
+2026-10-20T21:07:02.8275540Z    Compiling azeroth-storage v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\storage)
+2026-10-20T21:07:02.8625196Z    Compiling azeroth-ingest v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\ingest)
+2026-10-20T21:07:11.0278953Z    Compiling softbuffer v0.4.8
+2026-10-20T21:07:11.8319451Z    Compiling keyboard-types v0.8.3
+2026-10-20T21:07:12.3937481Z    Compiling wowdbdefs-rs v0.1.0 (D:\a\Navzeroth\Navzeroth\vendor\wowdbdefs-rs)
+2026-10-20T21:07:13.2180473Z    Compiling muda v0.20.0
+2026-10-20T21:07:15.7442743Z    Compiling serialize-to-javascript v0.1.2
+2026-10-20T21:07:15.9499652Z    Compiling tauri-runtime-wry v2.12.1
+2026-10-20T21:07:17.0539579Z    Compiling tauri-macros v2.7.2
+2026-10-20T21:07:17.3186579Z    Compiling getrandom v0.3.4
+2026-10-20T21:07:17.4591607Z    Compiling tokio v1.53.2
+2026-10-20T21:07:18.9465282Z    Compiling window-vibrancy v0.8.1
+2026-10-20T21:07:19.1092066Z    Compiling azeroth-desktop v1.0.0 (D:\a\Navzeroth\Navzeroth\apps\desktop\src-tauri)
+2026-10-20T21:07:20.3723173Z    Compiling mime v0.3.17
+2026-10-20T21:07:24.3557672Z    Compiling rfd v0.17.2
+2026-10-20T21:07:25.1929899Z    Compiling azeroth-app v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\app)
+2026-10-20T21:08:00.1866819Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 03s
+2026-10-20T21:08:00.2252923Z      Running unittests src\lib.rs (target\debug\deps\azeroth_desktop_lib-0a71cc3c610e793c.exe)
+2026-10-20T21:08:00.2442710Z 
+2026-10-20T21:08:00.2444003Z running 9 tests
+2026-10-20T21:08:00.2492545Z test atlas_protocol::tests::native_scheme_preserves_checked_png_and_empty_refusals ... ok
+2026-10-20T21:08:00.2493896Z test atlas_protocol::tests::private_transport_refuses_query_aliases_before_consulting_a_verified_provider ... ok
+2026-10-20T21:08:00.2604905Z test command_tests::missing_managed_services_refuse_before_application_dispatch ... ok
+2026-10-20T21:08:00.2605813Z test reference_window::tests::actual_caller_policy_has_one_read_only_reference_command ... ok
+2026-10-20T21:08:00.2608267Z test reference_window::tests::fixed_bundled_path_retains_reference_fragment ... ok
+2026-10-20T21:08:00.2622183Z test reference_window::tests::official_mock_runtime_exercises_dispatch_without_claiming_native_observations ... ok
+2026-10-20T21:08:01.6945523Z test atlas_protocol::tests::private_schemes_reject_methods_and_unbound_assets_without_cacheable_errors ... ok
+2026-10-20T21:08:01.9470589Z test command_tests::invalid_native_ipc_preserves_current_reference_and_structured_errors ... ok
+2026-10-20T21:08:01.9995346Z test command_tests::native_planning_jobs_publish_then_pin_only_the_verified_synthetic_result ... ok
+2026-10-20T21:08:01.9995656Z 
+2026-10-20T21:08:01.9995880Z test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.76s
+2026-10-20T21:08:01.9996119Z 
+2026-10-20T21:08:02.0061266Z      Running unittests src\main.rs (target\debug\deps\azeroth_desktop-3848884983a7445a.exe)
+2026-10-20T21:08:02.0156860Z 
+2026-10-20T21:08:02.0157333Z running 1 test
+2026-10-20T21:08:02.0159234Z test tests::exit_status_preserves_success_and_worker_refusals ... ok
+2026-10-20T21:08:02.0159559Z 
+2026-10-20T21:08:02.0159859Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-20T21:08:02.0160264Z 
+2026-10-20T21:08:02.0171543Z    Doc-tests azeroth_desktop_lib
+2026-10-20T21:08:02.2663242Z 
+2026-10-20T21:08:02.2664610Z running 0 tests
+2026-10-20T21:08:02.2664805Z 
+2026-10-20T21:08:02.2665085Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-20T21:08:02.2665305Z 
+2026-10-20T21:08:02.3683947Z ##[group]Run git diff --exit-code
+2026-10-20T21:08:02.3684267Z [36;1mgit diff --exit-code[0m
+2026-10-20T21:08:02.3748200Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:08:02.3748476Z ##[endgroup]
+2026-10-20T21:08:03.0244010Z Post job cleanup.
+2026-10-20T21:08:03.1593912Z Post job cleanup.
+2026-10-20T21:08:03.2850455Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-20T21:08:03.3108690Z git version 2.56.0.windows.2
+2026-10-20T21:08:03.3159166Z Temporarily overriding HOME='D:\a\_temp\f73af244-4822-44d1-9c8b-620ca230ab41' before making global git config changes
+2026-10-20T21:08:03.3159666Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:08:03.3166751Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+2026-10-20T21:08:03.3472123Z Removing SSH command configuration
+2026-10-20T21:08:03.3481317Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:08:03.3801712Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-20T21:08:03.8807958Z Removing HTTP extra header
+2026-10-20T21:08:03.8816398Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:08:03.9114352Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-20T21:08:04.3698455Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:08:04.3712087Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:08:04.3961208Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:08:04.3961653Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:08:04.3961997Z includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:08:04.3962342Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:08:04.3999520Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:08:04.4237172Z D:\a\_temp\git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:08:04.4269655Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D\:\\a\\_temp\\git\-credentials\-be4f029e\-7c48\-4fe3\-85cd\-c8ab73838b93\.config
+2026-10-20T21:08:04.4530624Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:08:04.4757204Z D:\a\_temp\git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:08:04.4784468Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-be4f029e\-7c48\-4fe3\-85cd\-c8ab73838b93\.config
+2026-10-20T21:08:04.5041302Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:08:04.5268512Z /github/runner_temp/git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:08:04.5296698Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-be4f029e\-7c48\-4fe3\-85cd\-c8ab73838b93\.config
+2026-10-20T21:08:04.5556988Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:08:04.5774391Z /github/runner_temp/git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config
+2026-10-20T21:08:04.5833576Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-be4f029e\-7c48\-4fe3\-85cd\-c8ab73838b93\.config
+2026-10-20T21:08:04.6098165Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-20T21:08:05.0292551Z Removing credentials config 'D:\a\_temp\git-credentials-be4f029e-7c48-4fe3-85cd-c8ab73838b93.config'
+2026-10-20T21:08:05.0453059Z Cleaning up orphan processes
+2026-10-20T21:08:05.0582481Z Terminate orphan process: pid (8232) (vctip)

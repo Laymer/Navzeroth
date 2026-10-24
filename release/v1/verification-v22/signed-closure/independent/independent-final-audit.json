@@ -1,0 +1,120 @@
+{
+  "format": "navzeroth-independent-signed-closure-audit",
+  "schema_version": 1,
+  "review_revision": "v22",
+  "recorded_at": "2026-10-24T10:20:03.005600+00:00",
+  "reviewer": "Codex /root/v22_independent_review",
+  "verified_commit": "c5586b6e68668e5b0e55bff232e5da4b420e0dfc",
+  "tested_source_commit": "3609c2b574d5302711a40cc08128b1e9c76f8955",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "verdict": "signed_closure_verified_build_ready_publication_not_allowed",
+  "cli": {
+    "path": "/tmp/navzeroth-stable-inventory/target/release/azeroth-cli",
+    "sha256": "fbbf4571c063766931bea46ded663d4b06073c648589c56713b72d132a2f76c2",
+    "scope": "Existing Cargo-confirmed cached CLI with unchanged runtime source; separately invoked by reviewer, not a new reviewer compiler build."
+  },
+  "checks": {
+    "crypto": "Verified receipt against committed public policy and reviewer-owned payload constructed BEFORE key use, byte-equal to prepared identity. Verified result byte-equals committed receipt1079B.",
+    "receipt_sha256": "79686be6c729e0c694ff9be356b58b8216fc1f5759ddfd79bed62558dd202a91",
+    "independent_expected_payload_sha256": "744c83712454f01acf138ecafbc03b5abe2a318cde07017c2276d7b8cbe557b5",
+    "negative_control": "Changed one operator-signature hex digit in a separate canonical scratch receipt; verifier exit1 with Bundled-content signature verification failed.",
+    "source_binding": "Production fingerprint unchanged; manifest and identity equal committed pre-key preparation. Canonical acceptance JSON differs from prebundle only by bundled_content; allnine original pending observations untouched. Bound manifest/receipt/review FileRefs match actual committed blobs.",
+    "assembly": "Own fresh assembly directory produced by assemble-bundled-content; exact86-file tree verified independently by streaming bytes/hash, noextras/missing/links/special files.",
+    "default_trust": "check-bundled-content with NO --policy override passed:84resources,2packs,signed-resource-closure.",
+    "prebuild": {
+      "phase": "prebuild",
+      "build_ready": true,
+      "candidate_ready": true,
+      "stable_ready": false,
+      "publication_allowed": false,
+      "verified_evidence_files": 89,
+      "verified_content_packs": 2,
+      "pending_observations": [
+        "HOSTED-INSTALL",
+        "HOSTED-FIRST-START",
+        "HOSTED-UPGRADE-RC1",
+        "HOSTED-DOWNGRADE-REFUSAL",
+        "HOSTED-PERSISTENCE-RECOVERY",
+        "HOSTED-RESOURCES",
+        "HOSTED-OFFLINE",
+        "HOSTED-PERFORMANCE",
+        "DRAFT-INSTALLER-SMOKE"
+      ],
+      "blocker_count": 9,
+      "additional_blockers": 0
+    },
+    "tree": {
+      "schema_version": 1,
+      "regular_files": 86,
+      "resources": 84,
+      "resource_bytes": 395738463,
+      "missing": 0,
+      "extras": 0,
+      "mismatches": 0,
+      "symlinks_or_special": 0,
+      "manifest_equals_committed_source": true,
+      "receipt_equals_committed_source": true,
+      "method": "Reviewer streamed SHA256/length of every regular file in its own assembled directory, refused symlinks/special files and required exact set equality with source manifest plus manifest.json/receipt.json."
+    }
+  },
+  "commands": [
+    {
+      "command": "azeroth-cli bundle-receipt-verify --receipt release/v1/bundled-content-receipt.json --policy content/bundled/signers-v1.json --expected /tmp/navzeroth-v22-reviewer-expected-identity.json",
+      "returncode": 0
+    },
+    {
+      "command": "same verifier against scratch negative-receipt.json",
+      "returncode": 1
+    },
+    {
+      "command": "azeroth-cli assemble-bundled-content --root . --output /tmp/navzeroth-reviewer-v22/signed-bundle --identity release/v1/bundled-content-build-identity.json",
+      "returncode": 0
+    },
+    {
+      "command": "azeroth-cli check-bundled-content --input /tmp/navzeroth-reviewer-v22/signed-bundle --identity release/v1/bundled-content-build-identity.json",
+      "returncode": 0
+    },
+    {
+      "command": "azeroth-cli release-build-readiness --root . --version 1.0.0",
+      "returncode": 0
+    }
+  ],
+  "files": [
+    {
+      "file": "crypto.json",
+      "bytes": 1079,
+      "sha256": "79686be6c729e0c694ff9be356b58b8216fc1f5759ddfd79bed62558dd202a91"
+    },
+    {
+      "file": "negative-control.json",
+      "bytes": 282,
+      "sha256": "3151b27d17430a5d67fd76517214dd2fae2da1c73350582e75d539deeebd0768"
+    },
+    {
+      "file": "source-binding-audit.json",
+      "bytes": 1063,
+      "sha256": "2c707948e1bf9405e1f6f73a2c95622db9d2795314f7fb92c536b2fcc8269d4f"
+    },
+    {
+      "file": "assembly.json",
+      "bytes": 46,
+      "sha256": "124665f8e2760b90f9f03abc574e4e75898f24d65d594525cc3d9007754f1103"
+    },
+    {
+      "file": "default-trust.json",
+      "bytes": 111,
+      "sha256": "c1a8adfd4c5f29d4a33bade6f05e68cb295b10ee6838a4f6c0da3eeb941789b1"
+    },
+    {
+      "file": "prebuild.json",
+      "bytes": 1014320,
+      "sha256": "143bdbd4d8f56612c377352a4b6fbcb1c7ad07ac1861a5b67ecfdd14a64169aa"
+    },
+    {
+      "file": "tree-audit.json",
+      "bytes": 482,
+      "sha256": "445c6a4aecf74777b2f62db3fd8ba421f9ee7104e738560d215b92c444e82548"
+    }
+  ],
+  "limits": "No private key was read, listed or used by reviewer. Both public signing identities remain operator-controlled. No hosted Windows installed case, downloaded-draft native/UI, live client, performance, resulting-main stability or publication result is established. Exact-source candidate checks remain required; allnine observations pending. Commands were not duration/memory-instrumented and supply no performance claim."
+}

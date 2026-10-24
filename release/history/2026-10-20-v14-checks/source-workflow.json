@@ -1,0 +1,392 @@
+{
+  "conclusion": "success",
+  "headSha": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "jobs": [
+    {
+      "completedAt": "2026-10-20T21:04:51Z",
+      "conclusion": "success",
+      "databaseId": 118884828769,
+      "name": "Offline sources (windows-2025)",
+      "startedAt": "2026-10-20T21:02:32Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-20T21:02:34Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-20T21:02:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:36Z",
+          "conclusion": "success",
+          "name": "Preserve committed source bytes",
+          "number": 2,
+          "startedAt": "2026-10-20T21:02:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 3,
+          "startedAt": "2026-10-20T21:02:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:47Z",
+          "conclusion": "success",
+          "name": "Test bounded actual-world resource selection",
+          "number": 4,
+          "startedAt": "2026-10-20T21:02:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:47Z",
+          "conclusion": "success",
+          "name": "Select admitted-world or historical source contract",
+          "number": 5,
+          "startedAt": "2026-10-20T21:02:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:19Z",
+          "conclusion": "success",
+          "name": "Hydrate only the admitted world closure",
+          "number": 6,
+          "startedAt": "2026-10-20T21:02:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:26Z",
+          "conclusion": "success",
+          "name": "Regenerate bound world outputs twice and compare committed bytes",
+          "number": 7,
+          "startedAt": "2026-10-20T21:03:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:26Z",
+          "conclusion": "skipped",
+          "name": "Check out retained source objects from Git LFS",
+          "number": 8,
+          "startedAt": "2026-10-20T21:04:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:26Z",
+          "conclusion": "skipped",
+          "name": "Run actions/cache@caa296126883cff596d87d8935842f9db880ef25",
+          "number": 9,
+          "startedAt": "2026-10-20T21:04:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:26Z",
+          "conclusion": "skipped",
+          "name": "Provision pinned CLI dependencies",
+          "number": 10,
+          "startedAt": "2026-10-20T21:04:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:26Z",
+          "conclusion": "skipped",
+          "name": "Build twice offline and compare exact outputs",
+          "number": 11,
+          "startedAt": "2026-10-20T21:04:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:26Z",
+          "conclusion": "skipped",
+          "name": "Disclose absence of actual-world admission",
+          "number": 12,
+          "startedAt": "2026-10-20T21:04:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:27Z",
+          "conclusion": "success",
+          "name": "Retain complete committed transformation source with LFS pointers",
+          "number": 13,
+          "startedAt": "2026-10-20T21:04:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:43Z",
+          "conclusion": "success",
+          "name": "Verify source archive retains exact LFS pointer bytes",
+          "number": 14,
+          "startedAt": "2026-10-20T21:04:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:43Z",
+          "conclusion": "skipped",
+          "name": "Check upstream revision metadata without changing retained inputs",
+          "number": 15,
+          "startedAt": "2026-10-20T21:04:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:43Z",
+          "conclusion": "success",
+          "name": "Run git diff --exit-code",
+          "number": 16,
+          "startedAt": "2026-10-20T21:04:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:47Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+          "number": 17,
+          "startedAt": "2026-10-20T21:04:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:49Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 34,
+          "startedAt": "2026-10-20T21:04:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:49Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 35,
+          "startedAt": "2026-10-20T21:04:49Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088032/job/118884828769"
+    },
+    {
+      "completedAt": "2026-10-20T21:04:08Z",
+      "conclusion": "success",
+      "databaseId": 118884829180,
+      "name": "Offline sources (ubuntu-24.04)",
+      "startedAt": "2026-10-20T21:02:32Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-20T21:02:35Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-20T21:02:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:35Z",
+          "conclusion": "success",
+          "name": "Preserve committed source bytes",
+          "number": 2,
+          "startedAt": "2026-10-20T21:02:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:39Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 3,
+          "startedAt": "2026-10-20T21:02:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:39Z",
+          "conclusion": "success",
+          "name": "Test bounded actual-world resource selection",
+          "number": 4,
+          "startedAt": "2026-10-20T21:02:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:39Z",
+          "conclusion": "success",
+          "name": "Select admitted-world or historical source contract",
+          "number": 5,
+          "startedAt": "2026-10-20T21:02:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:04Z",
+          "conclusion": "success",
+          "name": "Hydrate only the admitted world closure",
+          "number": 6,
+          "startedAt": "2026-10-20T21:02:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:54Z",
+          "conclusion": "success",
+          "name": "Regenerate bound world outputs twice and compare committed bytes",
+          "number": 7,
+          "startedAt": "2026-10-20T21:03:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:54Z",
+          "conclusion": "skipped",
+          "name": "Check out retained source objects from Git LFS",
+          "number": 8,
+          "startedAt": "2026-10-20T21:03:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:54Z",
+          "conclusion": "skipped",
+          "name": "Run actions/cache@caa296126883cff596d87d8935842f9db880ef25",
+          "number": 9,
+          "startedAt": "2026-10-20T21:03:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:54Z",
+          "conclusion": "skipped",
+          "name": "Provision pinned CLI dependencies",
+          "number": 10,
+          "startedAt": "2026-10-20T21:03:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:54Z",
+          "conclusion": "skipped",
+          "name": "Build twice offline and compare exact outputs",
+          "number": 11,
+          "startedAt": "2026-10-20T21:03:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:54Z",
+          "conclusion": "skipped",
+          "name": "Disclose absence of actual-world admission",
+          "number": 12,
+          "startedAt": "2026-10-20T21:03:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:00Z",
+          "conclusion": "success",
+          "name": "Retain complete committed transformation source with LFS pointers",
+          "number": 13,
+          "startedAt": "2026-10-20T21:03:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:02Z",
+          "conclusion": "success",
+          "name": "Verify source archive retains exact LFS pointer bytes",
+          "number": 14,
+          "startedAt": "2026-10-20T21:04:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:02Z",
+          "conclusion": "skipped",
+          "name": "Check upstream revision metadata without changing retained inputs",
+          "number": 15,
+          "startedAt": "2026-10-20T21:04:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:02Z",
+          "conclusion": "success",
+          "name": "Run git diff --exit-code",
+          "number": 16,
+          "startedAt": "2026-10-20T21:04:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:05Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+          "number": 17,
+          "startedAt": "2026-10-20T21:04:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:06Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 34,
+          "startedAt": "2026-10-20T21:04:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:06Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 35,
+          "startedAt": "2026-10-20T21:04:06Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088032/job/118884829180"
+    },
+    {
+      "completedAt": "2026-10-20T21:05:02Z",
+      "conclusion": "success",
+      "databaseId": 118885964408,
+      "name": "Source catalog platform parity",
+      "startedAt": "2026-10-20T21:04:53Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-20T21:04:55Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-20T21:04:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:04:58Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-10-20T21:04:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:05:00Z",
+          "conclusion": "success",
+          "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+          "number": 3,
+          "startedAt": "2026-10-20T21:04:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:05:00Z",
+          "conclusion": "success",
+          "name": "Compare Linux and Windows source products",
+          "number": 4,
+          "startedAt": "2026-10-20T21:05:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:05:00Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 8,
+          "startedAt": "2026-10-20T21:05:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:05:00Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 9,
+          "startedAt": "2026-10-20T21:05:00Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088032/job/118885964408"
+    }
+  ],
+  "status": "completed"
+}

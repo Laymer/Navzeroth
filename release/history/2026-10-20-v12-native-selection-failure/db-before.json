@@ -1,0 +1,78 @@
+{
+  "label": "db-before",
+  "mode": "db-summary",
+  "platform": "win32",
+  "node": "v24.15.0",
+  "startedAt": "2026-10-20T17:01:38.322Z",
+  "db": {
+    "migrations": 12,
+    "max_migration_version": 12,
+    "tables": [
+      "active_datasets",
+      "app_settings",
+      "catalog_asset_blobs",
+      "catalog_asset_layers",
+      "content_dispositions",
+      "current_plan",
+      "dataset_manifests",
+      "dataset_revisions",
+      "imports",
+      "local_submissions",
+      "party_participants",
+      "party_plan_proposals",
+      "party_profiles",
+      "profile_preferences",
+      "profiles",
+      "reminder_state",
+      "schema_migrations",
+      "session_calibration_annotations",
+      "sessions",
+      "snapshot_observations",
+      "snapshot_promotions",
+      "snapshots",
+      "source_conflicts",
+      "source_records"
+    ]
+  },
+  "finishedAt": "2026-10-20T17:01:38.325Z",
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "ok": true
+  },
+  "steps": [
+    {
+      "name": "read schema_migrations from the app database",
+      "status": "passed",
+      "migrations": 12,
+      "max_migration_version": 12,
+      "tables": [
+        "active_datasets",
+        "app_settings",
+        "catalog_asset_blobs",
+        "catalog_asset_layers",
+        "content_dispositions",
+        "current_plan",
+        "dataset_manifests",
+        "dataset_revisions",
+        "imports",
+        "local_submissions",
+        "party_participants",
+        "party_plan_proposals",
+        "party_profiles",
+        "profile_preferences",
+        "profiles",
+        "reminder_state",
+        "schema_migrations",
+        "session_calibration_annotations",
+        "sessions",
+        "snapshot_observations",
+        "snapshot_promotions",
+        "snapshots",
+        "source_conflicts",
+        "source_records"
+      ]
+    }
+  ]
+}

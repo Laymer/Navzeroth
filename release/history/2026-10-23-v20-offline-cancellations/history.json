@@ -1,0 +1,208 @@
+{
+ "candidate": "2c6fe762d975a558542230b9383a990948afd9eb",
+ "merge_ref": "28bf5ec39d47502c59eb4b421a75e9f1e6687334",
+ "package_run_id": 39931563703,
+ "scope": "Package attempts 1 and 2 were cancelled 306 s and 280 s into HOSTED-OFFLINE after every network adapter was disabled; attempt 1 was later attributed to a manual owner cancel, attempt 2 was not. Five hosted cases passed in each attempt; HOSTED-OFFLINE was interrupted (recorded fail), HOSTED-UPGRADE-RC1 and HOSTED-DOWNGRADE-REFUSAL never ran. Firewall probes are engineering evidence for ADR 0010 only: 39975150461 and 39975523710 (runner-only, 1260 s) were lost with no artifact and are absent here. Nothing here is current acceptance or is promoted.",
+ "files": [
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/hosted-first-start.json",
+   "bytes": 11524,
+   "sha256": "adb292c781202d8d4bce2c4301962615f111b8083f023aa8f6feca994dcab1e9"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/hosted-install.json",
+   "bytes": 750,
+   "sha256": "c6551a1ad17b548cf941741c14f5226a552cb359175b79c23a6c4e3fd424d34f"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/hosted-offline.json",
+   "bytes": 668,
+   "sha256": "182103336ea34c41959ef77030fcc3d79b60ab2fea9c3fe8d6036246eb9654b5"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/hosted-performance.json",
+   "bytes": 12715,
+   "sha256": "2c50310f0b98a0c94f962c508f88551ffb90b901ad2ff9cbff64612dd100b93a"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/hosted-persistence-recovery.json",
+   "bytes": 23335,
+   "sha256": "86cbae46f40c8552066b5e5ed3c38d32d877339da7fb31fa0f04acab94581e3d"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/hosted-resources.json",
+   "bytes": 132137,
+   "sha256": "ac88298e0f212954129d9a16f64df4fa60cd2205a5f99848058e6bf8fddafd25"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/fresh-3fe81f4877a540e894993b00bbe35d65.json",
+   "bytes": 9876,
+   "sha256": "2ca0a7647d4bb6d2d93fa89c902a575b75be58015217de060bba98c2fc8776cc"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/fresh-3fe81f4877a540e894993b00bbe35d65.json.progress.json",
+   "bytes": 4023,
+   "sha256": "247e6881acf640cf57c2a16ccb56698a8da161dee609d1399849d714966adfbd"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/offline-f4d34701823042b8923cbb3a2dadd7e7.json.progress.json",
+   "bytes": 3668,
+   "sha256": "f3afb1ee430aa614dd3a4b43ed9821ffe79ca0ce62a159801bb3302784c0891f"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/recover-2a3c086680bf46d2a0ec41b7c54ec28d.json",
+   "bytes": 10723,
+   "sha256": "8b4d707c1a8e68d1d7323f4374cc189667d251e24b6301601119e3865bad9c85"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/recover-2a3c086680bf46d2a0ec41b7c54ec28d.json.progress.json",
+   "bytes": 4378,
+   "sha256": "18275f643888c20d2ec541fa1fc52761464a8f5a482e52d01817e4782b8c74a7"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/restart-e0154307d3ac4188bbe67939530f62ae.json",
+   "bytes": 9878,
+   "sha256": "a98bc6923fc680b5857dab1735e3ae56614077c7cd07b6d471b1ebd114b43c57"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/restart-e0154307d3ac4188bbe67939530f62ae.json.progress.json",
+   "bytes": 3928,
+   "sha256": "6e8adcbb21d7b5c564c10fbe0bbfcf3c8eef6f61eae5daee43196f7f5f63e88d"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/state.json",
+   "bytes": 1311,
+   "sha256": "dd139ab154dd6c9b740be498bf9f2501fafec836af108748a95ec8077866677c"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/cases/raw/uninstall-d5fe824e872b43c09a580ed0cbc80983.json",
+   "bytes": 85,
+   "sha256": "866f03101ed97e663be34a979be753565bc6b21ead2d6974fd55be757996d8db"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/jobs.json",
+   "bytes": 13598,
+   "sha256": "4fdcf64935b3761416e014984117b835a0c628f576511b7b2e4eacef27403732"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt1/package.log",
+   "bytes": 427908,
+   "sha256": "d1f18514142fb932cca66e56db7f588a198c69979886eaf5ffafeca9dfa6a848"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/hosted-first-start.json",
+   "bytes": 11524,
+   "sha256": "77aa512c363f5f4289665e0c882e125530176cb349eb239f7a3c7d53a08e497e"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/hosted-install.json",
+   "bytes": 750,
+   "sha256": "e2fcebd7c43dfe5929aaa215193547de496dc6d7a8357e8df522decea7ad8c26"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/hosted-offline.json",
+   "bytes": 668,
+   "sha256": "29d4fadb980b697907e4aa7297e7fa7735187c3da4dc6561ac2cdb0b6abd9e18"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/hosted-performance.json",
+   "bytes": 12715,
+   "sha256": "6eba89ae85264727337b7d68e4f6e084a24f5c513bad365ed27f7ab8ca70df76"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/hosted-persistence-recovery.json",
+   "bytes": 23336,
+   "sha256": "acfa38b3f61be2cc1ad8f4110af4b7a76f457c7067f95e4994568889d52473fd"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/hosted-resources.json",
+   "bytes": 132137,
+   "sha256": "96cf1b09cebd44b0d9403fd79d9ac63cfa3a1421196df41275618ac66b9a3bcc"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/fresh-83321f31833f4624b2757237cf87b6b7.json",
+   "bytes": 9876,
+   "sha256": "e5984ec4533186d5257701fe750341c92968295eba732e26ac7d8e4ab60d405b"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/fresh-83321f31833f4624b2757237cf87b6b7.json.progress.json",
+   "bytes": 4021,
+   "sha256": "76aa34e52e09ac3f119f92c1c74800be8e0bc0dd0d92d4bccd3ff678c032eaa2"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/offline-bcb786a70aea4825acba0102216ea8c5.json.progress.json",
+   "bytes": 2988,
+   "sha256": "e2a6bcb6e649c9944314fcc5f890ef064bedd4fc586da146087a1a59815846ae"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/recover-08c060caa0a24c8a90f23233b98d6b3a.json",
+   "bytes": 10725,
+   "sha256": "9b655ecbd5dd3a0a8ac754f80a9dfc1b5a7c8b7c6d2d9327670835a6ed4ed483"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/recover-08c060caa0a24c8a90f23233b98d6b3a.json.progress.json",
+   "bytes": 4382,
+   "sha256": "80dd6a1b3f406b6975f89698a55ddf4ae8ba8df49548a6a9284938d9c6e934ee"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/restart-f0ffa8d46ee94b2f9eb62d3a7c243486.json",
+   "bytes": 9878,
+   "sha256": "baf60499e21507379fceb3fc4d9364c001591d17a950b82d816a6cd70dfc7bd8"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/restart-f0ffa8d46ee94b2f9eb62d3a7c243486.json.progress.json",
+   "bytes": 3931,
+   "sha256": "81fb67f00640e59ea09779171c1755799aad1bceb63b56e0a34601575bfbfbe7"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/state.json",
+   "bytes": 1311,
+   "sha256": "dd139ab154dd6c9b740be498bf9f2501fafec836af108748a95ec8077866677c"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/cases/raw/uninstall-d85fe808ae3b40f28b2c0eb509fadb1f.json",
+   "bytes": 85,
+   "sha256": "4a21f779777eea96d6865846f2c90954f9832fa15915f32a89464327f28c288c"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/jobs.json",
+   "bytes": 13598,
+   "sha256": "d2676b1a687c6c4b9abb6b20883bb1942c600c04246f6fe784a7cc6696f004cb"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/attempt2/package.log",
+   "bytes": 474818,
+   "sha256": "8e81eb1e37e7755c4459390d30a6943a2d8428ee17a176c38f56bf74c0646fd5"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/firewall-probes/probe-39972105651.json",
+   "bytes": 1776,
+   "sha256": "d3ee2aadc7a5ff8440cdcc60081ec38f1c7ee232ea2f9768147c44de7fcce141"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/firewall-probes/probe-39972424100.json",
+   "bytes": 1851,
+   "sha256": "c70a7720f8fa3136beb25898526008d1067d562f6aae8acf0aa07526d15e4b11"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/firewall-probes/probe-39982055447.json",
+   "bytes": 1515,
+   "sha256": "64acf38327b45cb0b49cfd813142607c204e0ad1282119ef2a479b50ddeb153e"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/firewall-probes/probe-39982387411.json",
+   "bytes": 2295,
+   "sha256": "5ca0ac32efb452b659066d5b33386216920f1063af9798ad513d29ea47c04eaf"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/firewall-probes/probe-39982567901.json",
+   "bytes": 2862,
+   "sha256": "d31f7cb5ae408462920c10dd0f36a994765ab7b5334435d1ab1d5d2888e4dc60"
+  },
+  {
+   "path": "release/history/2026-10-23-v20-offline-cancellations/firewall-probes/probe-39982856528.json",
+   "bytes": 3573,
+   "sha256": "974be3b476bcbe161b0b4ab7ac3933990def1b07cfd64aa2decfe5b663c7a9ff"
+  }
+ ]
+}

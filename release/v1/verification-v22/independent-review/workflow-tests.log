@@ -1,0 +1,14 @@
+✔ source and tag stable builds select the same mandatory bundle and prebuild path (1.117921ms)
+✔ both generic smoke paths retain a bounded stable startup and historical default (0.125657ms)
+✔ actual installer-bound producer runs before the evidence overlay and final material gate (0.254975ms)
+✔ source and tag artifacts fail closed on missing producer or overlay before draft materials verification (0.16785ms)
+✔ draft publication still waits for package success and verifies its downloaded evidence (0.144408ms)
+✔ both Windows shells run bounded synthetic contract checks without local actual-file arguments (0.227313ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53.353916

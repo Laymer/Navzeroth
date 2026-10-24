@@ -1,0 +1,1 @@
+{"schema_version":1,"repository":"Laymer/Navzeroth","workflow_path":".github/workflows/verify-release-downloads.yml","job_name":"Verify downloaded unsigned release","runner_environment":"github-hosted","os":"Windows","runner_label":"windows-2025","runner_group_name":"GitHub Actions","native_test_step_name":"Download and verify exact release"}

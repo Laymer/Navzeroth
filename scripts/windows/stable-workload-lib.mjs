@@ -63,7 +63,7 @@ function assertPersisted(active, context, version, expected) {
 }
 
 // I/O-independent native workflow; the Windows driver supplies the actual IPC.
-export async function exerciseInstalled(call, {context,version,mode,saved,backup}) {
+export async function exerciseInstalled(call, {context,version,mode,saved,backup,onCatalog=()=>{},onRecovery=()=>{}}) {
  if(!['baseline','fresh','restart','recover','offline'].includes(mode))throw new Error('Unknown native engineering workload mode');
  const evidence={};
  if(mode==='baseline'){
@@ -101,7 +101,16 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
    if(!backup)throw new Error('Recovery workload requires a new selected backup path');
    await call('create_database_backup',{path:backup});
    const preview=await call('inspect_database_backup',{path:backup});
-   await call('restore_database_backup',{candidate_id:preview.candidate_id});
+   const receipt=await call('restore_database_backup',{candidate_id:preview.candidate_id});
+   evidence.recovery_receipt={pending_marker_cleanup_required:typeof receipt?.pending_marker_cleanup_required==='boolean'?receipt.pending_marker_cleanup_required:null,original_files_retained:typeof receipt?.original_files_retained==='boolean'?receipt.original_files_retained:null,recovery_directory:typeof receipt?.recovery_directory==='string'?receipt.recovery_directory.slice(0,512):null,recovery_directory_truncated:typeof receipt?.recovery_directory==='string'&&receipt.recovery_directory.length>512};
+   onRecovery({receipt:evidence.recovery_receipt});
+   // This workload restores an existing populated database: originals must remain
+   // available, and cleanup failure would require recovery on the next startup.
+   if(receipt?.pending_marker_cleanup_required!==false||receipt.original_files_retained!==true||typeof receipt.recovery_directory!=='string'||!receipt.recovery_directory.trim())throw new Error('Database restore receipt reports incomplete cleanup or missing retained originals');
+   const status=await call('get_database_status');
+   evidence.recovery_database_status={state:typeof status?.state==='string'?status.state.slice(0,64):null,error_present:status?.error!==null};
+   onRecovery({receipt:evidence.recovery_receipt,database_status:evidence.recovery_database_status});
+   if(status?.state!=='ready'||status.error!==null)throw new Error('Restored database is not ready without an error');
    assertPersisted(await call('get_active_content',{profile_id:profile}),context,version,initialContent);
    await call('check_database');
    const restoredSettings=await call('get_app_settings'),restoredProfiles=await call('list_profiles');
@@ -121,11 +130,25 @@ export async function exerciseInstalled(call, {context,version,mode,saved,backup
   if(!initialContent.accepts_inferred_travel)await chooseInferred(true);
   const browse=performance.now();
   let catalog=await call('get_planning_catalog',{profile_id:profile});
-  if(catalog.fixture||!catalog.revision||!catalog.nodes?.length||!catalog.pages?.quests?.total)throw new Error('Actual installed world catalog is empty');
-  async function records(collection,offset=0){const pin=catalog.pages[collection];if(!pin)throw new Error('Missing actual catalog collection');return call('get_catalog_page',{text:JSON.stringify({subject:{kind:'character',profile_id:profile},collection,revision:pin.revision,catalog_sha256:pin.catalog_sha256,offset})});}
+  const boundedText=value=>typeof value==='string'?value.slice(0,256):null;
+  evidence.catalog_diagnostics={fixture:typeof catalog.fixture==='boolean'?catalog.fixture:null,revision:boundedText(catalog.revision),snapshot_id:boundedText(catalog.snapshot_id),node_count:Array.isArray(catalog.nodes)?catalog.nodes.length:null,objective_count:Array.isArray(catalog.objectives)?catalog.objectives.length:null,pages:Object.entries(catalog.pages??{}).slice(0,16).map(([collection,pin])=>({collection:collection.slice(0,64),revision:boundedText(pin?.revision),catalog_sha256:boundedText(pin?.catalog_sha256),total:Number.isSafeInteger(pin?.total)?pin.total:null}))};
+  onCatalog(evidence.catalog_diagnostics);
+  if(catalog.fixture!==false||catalog.revision!==revision||typeof catalog.snapshot_id!=='string'||!catalog.snapshot_id||!Array.isArray(catalog.nodes)||!catalog.nodes.length||catalog.nodes.length>200||catalog.pages?.nodes?.collection!=='nodes'||catalog.pages?.objectives?.collection!=='objectives')throw new Error('Installed planning catalog lacks its active revision, nodes or projected-objective binding');
+  const totals=Object.fromEntries(Object.entries(catalog.pages).map(([k,v])=>[k,v.total]));
+  async function records(collection,offset=0){
+   // PlanningCatalog publishes only nodes and snapshot-projected objectives.
+   // The nodes pin identifies the entire immutable catalog for other collections;
+   // projected objective paging retains its separately issued catalog pin.
+   const pin=collection==='objectives'?catalog.pages.objectives:catalog.pages.nodes;
+   if(pin.revision!==revision||!/^[a-f0-9]{64}$/.test(pin.catalog_sha256))throw new Error('Invalid installed catalog revision/hash binding');
+   const page=await call('get_catalog_page',{text:JSON.stringify({subject:{kind:'character',profile_id:profile},collection,revision:pin.revision,catalog_sha256:pin.catalog_sha256,offset})});
+   if(page.collection!==collection||page.revision!==pin.revision||page.catalog_sha256!==pin.catalog_sha256||page.offset!==offset||!Number.isSafeInteger(page.total)||page.total<offset||!Array.isArray(page.records)||page.records.length>200||page.records.length!==Math.min(200,page.total-offset)||page.next_offset!==(offset+page.records.length<page.total?offset+page.records.length:null))throw new Error('Installed catalog page differs from its exact requested binding or bounded totals');
+   totals[collection]=page.total;
+   return page;
+  }
   const questPage=await records('quests');if(!questPage.records.length)throw new Error('Actual quest browsing returned no records');
   const itemPage=await records('items');if(!itemPage.records.length)throw new Error('Actual item browsing returned no records');
-  evidence.browse_ms=performance.now()-browse;evidence.catalog_totals=Object.fromEntries(Object.entries(catalog.pages).map(([k,v])=>[k,v.total]));
+  evidence.browse_ms=performance.now()-browse;evidence.catalog_totals=totals;
   let edge,edgeOffset=0;
   for(let scanned=0;scanned<128&&!edge;scanned++){
    const page=await records('edges',edgeOffset);

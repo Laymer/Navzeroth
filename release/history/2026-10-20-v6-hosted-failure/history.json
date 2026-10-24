@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "workflow_run_id": 39413135905,
+  "workflow_url": "https://github.com/Laymer/Navzeroth/actions/runs/39413135905",
+  "result": "failure",
+  "source_commit": "ffbf834ce9fca684d9dd3fcc357a240a81dd40e4",
+  "head_commit": "b689659844eeee8e3a9ee83769e2d9e1a5b50780",
+  "production_sha256": "0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a",
+  "installer_sha256": "73fe854cf239b5b70fdcfc01a330bc25bf325f70a94dfdc170c171db3fdf57a4",
+  "raw_artifact_id": 12262949100,
+  "incomplete_overlay_artifact_id": 12262499778,
+  "actual_cases": {
+    "HOSTED-INSTALL": "pass",
+    "HOSTED-RESOURCES": "pass",
+    "HOSTED-FIRST-START": "fail"
+  },
+  "missing_hosted_cases": 5,
+  "owner_smoke": "unverified",
+  "installed_files_verified": 630,
+  "first_start_error": "Actual installed world catalog is empty",
+  "diagnosis": "Planning API intentionally supplies nodes and projected objectives page information, but driver incorrectly requires quests/items/edges there. Real installed data is not established empty. Driver must request other collections using the actual issued global catalog revision/hash. Recorder separately rejected actual date/operator/environment metadata; its precise repair is under investigation.",
+  "first_load_ms": 223632,
+  "activation_ms": 0,
+  "failed_workload_elapsed_ms": 642561,
+  "measurement_scope": "Partial failed engineering workload only. No completed performance case or peak memory measurement; not current V7 acceptance.",
+  "files": [
+    {
+      "path": "release/history/2026-10-20-v6-hosted-failure/raw/hosted-first-start.json",
+      "bytes": 733,
+      "sha256": "9c080cfaa255349e8eee8b31054c77829f1da02e3fc5fd3f4e91aae30fbdb4de"
+    },
+    {
+      "path": "release/history/2026-10-20-v6-hosted-failure/raw/hosted-install.json",
+      "bytes": 750,
+      "sha256": "8d93ecb9f3e580f557f65ad82829c513276915d209555f0af599e06e4588cc3d"
+    },
+    {
+      "path": "release/history/2026-10-20-v6-hosted-failure/raw/hosted-resources.json",
+      "bytes": 132136,
+      "sha256": "f1487761a129708ebfddf51fc347e44a25d5338686ddc7174a6c2d64c12822fa"
+    },
+    {
+      "path": "release/history/2026-10-20-v6-hosted-failure/raw/fresh-016fae9c9c3f45cc98356b10eacf95d7.json",
+      "bytes": 700,
+      "sha256": "8dbca4e4d2f034abe9ca5950f5900f098b687e8c3501291a1d3e6c4d4d291aa7"
+    }
+  ],
+  "publication_allowed": false
+}

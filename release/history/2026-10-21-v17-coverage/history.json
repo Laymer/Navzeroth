@@ -1,0 +1,62 @@
+{
+  "candidate": "8b12aec1bb28bdb35a3014c365ec500da8876af0",
+  "actual_checkout": "7361c873a1ba0c3366703917033f7397c74d07c3",
+  "scope": "Actual V17 coverage verdict and TypeScript receipts only. The Rust Linux/Windows raw profiles (about 155 MB) were not archived; the Coverage run and its artifacts are on GitHub (run 39603870184) until expiry. Not installed stable acceptance.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/configuration-receipt.json",
+      "bytes": 34411,
+      "sha256": "acb5db56f93120ba0190a7cefd0f3d900648223a89ffa838de8516c8a0cc6aa4"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/configuration/configuration-istanbul.json",
+      "bytes": 1213,
+      "sha256": "b2866622882f32fad05218cec40872b05d7e25928c01cac4a4fbb1300719b04d"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/configuration/configuration-receipt.json",
+      "bytes": 506,
+      "sha256": "467fd49e8f8843df9dea1d3226ba64e6e67b17c74caaa25e4d84a998d75bd6a2"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/configuration/configuration-v8.json",
+      "bytes": 6785,
+      "sha256": "42374fa9ff6e0975f41ac26d9c429130005c3d0d21aff3e49ef36ef8fbd32cf6"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/inventory.json",
+      "bytes": 202378,
+      "sha256": "c58ce60a376074ee9f5b9ba7ef203ca4ce7981b140fe458bb8b7a1343cf198af"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/tests.json",
+      "bytes": 1712572,
+      "sha256": "22cba9cadd7fa7acd7d85afc97890e8337d9825d925e645087faf5787de52acf"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/typescript-receipt.json",
+      "bytes": 34396,
+      "sha256": "b1376ad938f9fc774271c64b53670b26a119fe0d996857deb7c240634ec47994"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/v8/coverage-final.json",
+      "bytes": 1527284,
+      "sha256": "3f8a85d458747cf53caa0303c7873e0775908005fa4d01fdc7fe4a999f13d812"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/v8/coverage-summary.json",
+      "bytes": 29558,
+      "sha256": "dd4ece152bff0bdfd6430a2f59807a7764f954354462cadb23fa8a805c947734"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/typescript/v8/lcov.info",
+      "bytes": 169437,
+      "sha256": "fc276d25ef5d093e91f54688198f9d1c646912c80bf6047350e3636ed68aede4"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-coverage/verdict/per-file-verdict.json",
+      "bytes": 50732,
+      "sha256": "a97dff5280224626c8c0645a301139f66a966df096a82dba9d89cb12334e492c"
+    }
+  ]
+}

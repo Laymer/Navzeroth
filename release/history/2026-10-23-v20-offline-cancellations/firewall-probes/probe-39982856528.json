@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "kind": "hosted_offline_firewall_engineering_probe",
+  "acceptance_observations_promoted": false,
+  "passed": true,
+  "source_commit": "c9d0d418a864925a6575080a00ac29941dd7b0d2",
+  "run_id": "39982856528",
+  "run_attempt": "1",
+  "runner_os": "Windows_NT",
+  "powershell_version": "7.6.7",
+  "hold_seconds": 1260,
+  "phase": "complete",
+  "external_connection_owners": [
+    {
+      "process": "hosted-compute-agent",
+      "connections": 3
+    },
+    {
+      "process": "lsass",
+      "connections": 1
+    },
+    {
+      "process": "provjobd.exe659296089",
+      "connections": 1
+    },
+    {
+      "process": "Runner.Listener",
+      "connections": 3
+    },
+    {
+      "process": "Runner.Worker",
+      "connections": 5
+    },
+    {
+      "process": "StartMenuExperienceHost",
+      "connections": 2
+    },
+    {
+      "process": "svchost",
+      "connections": 2
+    },
+    {
+      "process": "WaAppAgent",
+      "connections": 2
+    },
+    {
+      "process": "WindowsAzureGuestAgent",
+      "connections": 2
+    }
+  ],
+  "infrastructure_programs": [
+    {
+      "name": "hosted-compute-agent",
+      "path": "C:\\ProgramData\\GitHub\\HostedComputeAgent\\hosted-compute-agent",
+      "long_path": "C:\\ProgramData\\GitHub\\HostedComputeAgent\\hosted-compute-agent",
+      "as_given": "accepted",
+      "long": "accepted"
+    },
+    {
+      "name": "provjobd.exe659296089",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\provjobd.exe659296089",
+      "long_path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\provjobd.exe659296089",
+      "as_given": "The parameter is incorrect. ",
+      "long": "accepted"
+    },
+    {
+      "name": "WaAppAgent",
+      "path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WaAppAgent.exe",
+      "long_path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WaAppAgent.exe",
+      "as_given": "accepted",
+      "long": "accepted"
+    },
+    {
+      "name": "WindowsAzureGuestAgent",
+      "path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WindowsAzureGuestAgent.exe",
+      "long_path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WindowsAzureGuestAgent.exe",
+      "as_given": "accepted",
+      "long": "accepted"
+    }
+  ],
+  "checks": 84,
+  "isolation": {
+    "isolation": "windows_firewall_runner_agent_only",
+    "allowed_programs": [
+      "C:\\actions-runner\\cached\\2.338.0\\bin\\Runner.Worker.exe",
+      "C:\\actions-runner\\cached\\2.338.0\\bin\\Runner.Listener.exe"
+    ],
+    "allowed_infrastructure_programs": [
+      "C:\\ProgramData\\GitHub\\HostedComputeAgent\\hosted-compute-agent",
+      "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\provjobd.exe659296089",
+      "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WaAppAgent.exe",
+      "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WindowsAzureGuestAgent.exe"
+    ],
+    "held_ms": 1260560,
+    "diagnostics": {
+      "primary": null,
+      "restoration": {
+        "profiles": "ok",
+        "rules_enabled": "ok",
+        "rules_removed": "ok",
+        "verification": "ok",
+        "connectivity": "ok"
+      },
+      "verify_elapsed_ms": 421,
+      "restore_elapsed_ms": 8,
+      "disabled_allow_rules": 177,
+      "remaining_enabled_allow_rules": 8,
+      "effective_outbound_allow": {
+        "count": 0,
+        "programs": []
+      }
+    }
+  },
+  "elapsed_ms": 1281388.1605,
+  "error": null
+}

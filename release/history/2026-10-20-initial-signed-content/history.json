@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "scope": "Historical first signed content closure; not current production acceptance",
+  "verified_source_commit": "ff5b1612e20f23316c516d1476fdacd208b66d36",
+  "tested_source_commit": "f06470dc3af482810c15aef5d721fc4b5c51a17d",
+  "production_sha256": "2032200e0d877e60d96858022151ff922e69e2c63e09bbab7aa24036afc7c200",
+  "original_prebuild_result": {
+    "build_ready": true,
+    "publication_allowed": false,
+    "stable_ready": false,
+    "verified_evidence_files": 89,
+    "verified_content_packs": 2,
+    "blockers": [
+      "Required acceptance observation is pending: HOSTED-INSTALL",
+      "Required acceptance observation is pending: HOSTED-FIRST-START",
+      "Required acceptance observation is pending: HOSTED-UPGRADE-RC1",
+      "Required acceptance observation is pending: HOSTED-DOWNGRADE-REFUSAL",
+      "Required acceptance observation is pending: HOSTED-PERSISTENCE-RECOVERY",
+      "Required acceptance observation is pending: HOSTED-RESOURCES",
+      "Required acceptance observation is pending: HOSTED-OFFLINE",
+      "Required acceptance observation is pending: HOSTED-PERFORMANCE",
+      "Required acceptance observation is pending: OWNER-INSTALLER-SMOKE"
+    ]
+  },
+  "reason_for_renewal": "Stable coverage needs exact LFS resource hydration/canonical review bytes; subsequent PowerShell reader repair also changes production. Original cryptographic and source-gate results retain their original source scope.",
+  "observations_promoted": false,
+  "private_keys_included": false,
+  "artifacts": [
+    {
+      "source_path": "release/v1/bundled-content-manifest.json",
+      "archive_path": "release/history/2026-10-20-initial-signed-content/bundled-content-manifest.json",
+      "bytes": 17203,
+      "sha256": "e1767e8121c1222f59306efcbc2ef8201453b019d7130fac6f9baa257e238000"
+    },
+    {
+      "source_path": "release/v1/bundled-content-build-identity.json",
+      "archive_path": "release/history/2026-10-20-initial-signed-content/bundled-content-build-identity.json",
+      "bytes": 536,
+      "sha256": "6d871d54e1e88cb7662879b4d588dc4d46e3f3b5d446083def82308663cb02b8"
+    },
+    {
+      "source_path": "release/v1/bundled-content-receipt.json",
+      "archive_path": "release/history/2026-10-20-initial-signed-content/bundled-content-receipt.json",
+      "bytes": 1082,
+      "sha256": "909b49f7bd2d7ab3a83f73e3c0b22ac232b365078646d3b37ab814d35104512c"
+    },
+    {
+      "source_path": "release/v1/functional-scenarios.json",
+      "archive_path": "release/history/2026-10-20-initial-signed-content/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "e364457407ddefc22046c6e0cdcc0b9794d19ddeb74b587f3029636e748ab134"
+    },
+    {
+      "source_path": "release/v1/functional-linux-measurement.json",
+      "archive_path": "release/history/2026-10-20-initial-signed-content/functional-linux-measurement.json",
+      "bytes": 626,
+      "sha256": "d4b6c46eb1d9d8314408a977926ddaab34a73351d648ee706fd95d7bf768b793"
+    },
+    {
+      "source_path": "docs/releases/1.0.0-independent-public-review.json",
+      "archive_path": "release/history/2026-10-20-initial-signed-content/1.0.0-independent-public-review.json",
+      "bytes": 17484,
+      "sha256": "c2fa49b0cb58aa8796e55b175b7febd4f8a732a66286097e6d93419b2d7a895d"
+    }
+  ]
+}

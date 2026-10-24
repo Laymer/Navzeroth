@@ -1,0 +1,492 @@
+{
+  "app_version": "1.0.0",
+  "completed_independent_reviews": [
+    {
+      "checked_commit": "a14b8b02643c978bbd34bc83626adf0d160b168b",
+      "scope": "Final content and scoped functional metadata; four functional units replaced pending placeholders while all source target/Windows/owner observations remained unverified."
+    },
+    {
+      "checked_commit": "5f65c43f3715ee488704d1cf483deece603de127",
+      "scope": "All82 actual selected source/material input and archive files matched exact hashes and sizes; no extra tree files;22 retained code files matched immutable a9 source; all26 dungeon association identity sets matched the independent oracle."
+    },
+    {
+      "checked_commit": "f72abcab67707e4d15aca2cb0890547f7f7cd82d",
+      "scope": "Exact test-source, pack, input and oracle bindings and unknown-handling reviewed. Its earlier execution is historical and is superseded for this production identity by the fresh final-source run below."
+    },
+    {
+      "checked_commit": "3003bb12a1e467b2bf0c04a3c4ffcf2dab2efe36",
+      "scope": "Controlled signed Demo-namespace source-gate gap closed by reference-namespace guard; independent signed regression passed. Native key equality remained fail-closed."
+    },
+    {
+      "checked_commit": "9db4ca067e310a92ed4f8c36d98894e4300f669c",
+      "scope": "Six app versions align; only eight internal lock versions change; seven regenerated fixture/atlas files contain only producer/addon version substitutions;506 notice entries unchanged with correct updated Cargo.lock SHA."
+    },
+    {
+      "checked_commit": "85ad2090750df03ac4f1ab4491cc168125cdc8e3",
+      "scope": "Release-note finding corrected: distinguish admitted Classic Era policy from actual shipped source origins."
+    },
+    {
+      "checked_commit": "f06470dc3af482810c15aef5d721fc4b5c51a17d",
+      "scope": "Normal integration retains mapper4/a9 source, r4/ce0 packs and source oracles; exact production fingerprint independently recomputed; final functional source remains SHA924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008."
+    },
+    {
+      "checked_commit": "94947a6aee655f34dd5509be1b7a9871784d0f97",
+      "scope": "Independent final production delta review f064 through f391 and 949: bounded Git-pinned coverage hydration, native coverage assembly order, narrowly scoped LF attributes, mandatory PowerShell byte-counter reference and terminal successful workflow-test exit. Rust/TypeScript/addon/content/datagen and corresponding-source pins byte-identical to f064. No content confidence or acceptance-status promotion. Final wrapper adds exit 0 only after assertions and cleanup; thrown failures remain failures."
+    },
+    {
+      "checked_commit": "3fea6e4e0d60c8308751e9c7cd666d36d5ba08cf",
+      "scope": "Final delta949 to3fea: legacy Acceptance-Kit production code changed only header comment. Test-AcceptanceKit now owns bounded nine-unit historical fixtures, proves exact schema1/2/3 row counts34/34/19 and explicit schema4 refusal. Stable-Acceptance production path unchanged. Application, game data, Cargo and22 corresponding-source pins unchanged. No acceptance status promotion."
+    },
+    {
+      "checked_commit": "273c57d3ff42d1de3845ebebaf36d4abda4b4a91",
+      "scope": "Independent final delta e901 to273: only production changes are exact authored-pack Markdown LF attribute and meaningful real-Git regression. All14 actual authored Markdown resources match immutable signed-content pins and text/eol=lf attributes. Runtime/checker/content/catalog/game/Cargo/source22 pins unchanged. No hash normalization or trust loosening; CRLF bytes still refuse."
+    }
+  ],
+  "completed_independent_targeted_checks": [
+    {
+      "checked_commit": "963f05e1aad79969515bdc67d67c37bd59479f71",
+      "checks": {
+        "app_bundle_tests": 8,
+        "cli_bundle_tests": 2,
+        "installed_tree_node_tests": 2,
+        "preparer_python_tests": 8
+      },
+      "scope": "Portable/synthetic checks and82 real material pin checks, not actual installer acceptance."
+    },
+    {
+      "checked_commit": "3003bb12a1e467b2bf0c04a3c4ffcf2dab2efe36",
+      "checks": {
+        "signed_namespace_regression": 1
+      },
+      "scope": "Synthetic signing fixture only; no actual private keys."
+    },
+    {
+      "checked_commit": "f06470dc3af482810c15aef5d721fc4b5c51a17d",
+      "checks": {
+        "role_audit_hydration_python_tests": 12
+      },
+      "scope": "Temporary Git/LFS caches, exact-pointer hydration, bounds and Windows-style CRLF refusal; local Linux execution, not Windows runner acceptance."
+    },
+    {
+      "checked_commit": "f3917490f35bad61de2f1b46008596286943635b",
+      "checks": {
+        "bundle_hydration_python": 12,
+        "coverage_adapter_node": 1
+      },
+      "scope": "Independently executed local temporary Git/LFS tests and adapter test. Logs /tmp/navzeroth-public-review-v2-bundle-hydration-python.log and /tmp/navzeroth-public-review-v2-bundle-hydration-node.log. These files are unchanged at reviewed candidate949."
+    },
+    {
+      "checked_commit": "f3917490f35bad61de2f1b46008596286943635b",
+      "checks": {
+        "native_powershell_contract_bounds": 29
+      },
+      "scope": "Independently executed PowerShell5.1.26100.9711 using external immutable git-show f064 fixture: inventory f703 and acceptance evidence61c3 exact pins. Reader code unchanged at949. Log /tmp/navzeroth-public-review-v2-ps-contract-original-actual.log. This verifies parser boundaries, not hosted installation or owner acceptance."
+    },
+    {
+      "checked_commit": "94947a6aee655f34dd5509be1b7a9871784d0f97",
+      "checks": {
+        "native_powershell_workflow_gate": 12
+      },
+      "scope": "Independent native PowerShell5.1 test run with process-only ExecutionPolicy Bypass. Log /tmp/navzeroth-public-review-v2-workflow-native-ps.log. No persistent execution-policy change and no hosted installer acceptance."
+    },
+    {
+      "checked_commit": "3fea6e4e0d60c8308751e9c7cd666d36d5ba08cf",
+      "checks": {
+        "native_powershell_legacy_acceptance_kit": 21
+      },
+      "scope": "Independently executed native PowerShell5.1 with process-only ExecutionPolicy Bypass,21 checks passed. Log /tmp/navzeroth-public-review-v3-legacy-native-ps.log. Synthetic legacy fixtures, not hosted installer or owner smoke."
+    },
+    {
+      "checked_commit": "273c57d3ff42d1de3845ebebaf36d4abda4b4a91",
+      "checks": {
+        "actual_authored_markdown_attribute_and_hash_checks": 14,
+        "bundle_hydration_python": 13,
+        "coverage_adapter_node": 1
+      },
+      "scope": "Independently executed13Python tests including realGit autocrlf true mismatch/refusal then exact LF checkout then tamper refusal;1Node adapter test;14 actual Markdown hashes/attributes verified. Logs /tmp/navzeroth-public-review-v4-hydration.log and /tmp/navzeroth-public-review-v4-node.log. Not hosted coverage or installer acceptance."
+    }
+  ],
+  "coordinator_recorded_final_validation": {
+    "attribution": "Executed by the release coordinator and independently inspected as recorded evidence by this reviewer; not executed again by this reviewer.",
+    "checked_source_commit": "f06470dc3af482810c15aef5d721fc4b5c51a17d",
+    "component_validation_scope": "Portable workspace1595/8ignored and UI555 are actual f064 executions. Their Rust/TS/application/content components remain byte-identical at273; these suites were not represented as rerun on273.",
+    "final_ui": {
+      "configured_per_file_threshold_percent": 90,
+      "lint": "pass",
+      "measured_source_files": 91,
+      "minimum_per_file_line_coverage_percent": 90,
+      "scope": "Coordinator executed on final source f064; local UI/browser evidence, not protected CI, native Windows, installed resources or owner acceptance.",
+      "status": "pass",
+      "suites": 66,
+      "tests_passed": 555,
+      "total_line_coverage_percent": 95.9,
+      "typecheck": "pass"
+    },
+    "fresh_full_pack_functional": {
+      "execution_scope": "Fresh coordinator execution at f391 using verified unchanged Rust binary/test source. Final273 adds CI helper/test fixtures, exact newline attributes and metadata; this is not a full-scenario execution on273.",
+      "hardware_limits": "32 logical processors; MemTotal32675952KiB; shared concurrent host workload. No Windows or ordinary-PC performance claim.",
+      "peak_child_rss_kib": 6402156,
+      "platform": "shared Linux/WSL2",
+      "proof": {
+        "bytes": 15568,
+        "path": "release/v1/functional-scenarios.json",
+        "sha256": "ed9d1ad4b64dbd084a7bfae58f8b7498431d4a93b15c9c324b2f36940b738d93"
+      },
+      "seconds": 149.9102448040012,
+      "status": "pass",
+      "test_source": {
+        "commit": "f3917490f35bad61de2f1b46008596286943635b",
+        "path": "crates/app/tests/stable_bundled_functional.rs",
+        "sha256": "924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008"
+      },
+      "workload": "Manual engineering snapshots and explicit class/role/node/time assumptions; both actual packs verified/staged/composed; source-backed partial plan, heuristic model/reminder boundaries and all26 complete dungeon association sets."
+    },
+    "historical_package_in_progress": {
+      "checked_source_commit": "40ea",
+      "scope": "Coordinator reported still running at review request. No installer pass claimed by this review.",
+      "status": "unverified",
+      "workflow_run_id": "39400861524"
+    },
+    "historical_partial_coverage": {
+      "aggregate_status": "failed",
+      "attribution": "Coordinator recorded actual hosted observations; not executed by this reviewer.",
+      "checked_source_commit": "40ea",
+      "linux_portable_ignored": 8,
+      "linux_portable_passed": 1605,
+      "linux_test_binaries": 207,
+      "typescript_measured_files": 91,
+      "typescript_per_file_line_threshold_percent": 90,
+      "windows_failure": "Before assembly, exact authored Markdown resource2476B checked out as2517B CRLF; source pins correctly refused. Current LF repair requires fresh exact hosted validation.",
+      "workflow_run_id": "39400864456"
+    },
+    "legacy_helper_sequence": {
+      "assertions": 238,
+      "attribution": "Recorded by desktop author at exact9f2d57bf and inspected by this reviewer; not rerun as an entire sequence by this reviewer. Coordinator independently recorded21 legacy checks.",
+      "checked_source_commit": "9f2d57bfd88df71278f656ff6c436e18dd612b74",
+      "independent_packaging_helper_audit": {
+        "bytes": 1987,
+        "path": "docs/reviews/2026-10-20-packaging-helper-audit.json",
+        "sha256": "72dd976f275ebd7c5b2c64b3b5eec78a079f30988360508543419d91c80a1676"
+      },
+      "limitations": "Native PowerShell5.1 with WSL Git forwarding only for synthetic Git fixtures; no installer/hosted/owner acceptance. Intentional failure control exit1 preserved.",
+      "scripts": 12,
+      "sequence_evidence": {
+        "bytes": 4535,
+        "path": "release/v1/legacy-acceptance-helper-sequence.json",
+        "sha256": "63078644a25ca7296cfea4bd67fee815f7e26420d5ee5412b98ae99fd57f43ef"
+      },
+      "status": "pass"
+    },
+    "portable_rust_workspace": {
+      "failed": 0,
+      "ignored": 8,
+      "passed": 1595,
+      "scope": "Portable workspace excludes native desktop. Ignored tests remain ignored; the actual full-pack scenario was run separately.",
+      "test_binaries": 205
+    },
+    "public_corresponding_code_reachability": {
+      "attribution": "Earlier bounded coordinator download of all22 immutable a9 code/terms URLs; retained exact-byte source pins remain unchanged.",
+      "evidence": {
+        "bytes": 8344,
+        "path": "docs/data/stable-final-public-code-v1.json",
+        "sha256": "70568d7ea174355532084bf8ffb0bf648faadb793993965a717d2aad3f463585"
+      },
+      "status": "pass"
+    },
+    "unsigned_preparation": {
+      "material_bytes": 395722450,
+      "material_files": 82,
+      "phase": "historical f064 initial unsigned preparation, not current receipt readiness",
+      "preview_hash_scope": "Historical initial material preview before bundle metadata; not a future bundle manifest or content receipt identity.",
+      "recorded_preview_sha256": "9bdf78060b30dbd25748ca46f0fe0200d207fab840abc6731328a86c9201e110",
+      "scope": "Historical f064 initial unsigned-preparation result only. Current949 signed bundle, installed resources and publication readiness remain pending; the82 content files and their source closure are unchanged.",
+      "status": "pass"
+    }
+  },
+  "format": "navzeroth-independent-public-content-review",
+  "independence": {
+    "compiled_public_policy": {
+      "bytes": 604,
+      "path": "content/bundled/signers-v1.json",
+      "sha256": "aa1b086988baf0d7d131b8dd8a5e260edf97313b5e2622ef0490788b24052573"
+    },
+    "disclosure": "The reviewer independently inspected work from other implementation sessions. This reviewer also authored earlier world provenance, dungeon/composition and storage performance/cache repairs; coordinator review of those scopes is separately attributed, not presented as independent self-review. Separate agent sessions are not third-party certification or separate signing operators.",
+    "operator_controls_both_receipt_keys": true,
+    "public_signing_identities": [
+      {
+        "identity": "Navzeroth operator; both release keys controlled by the same operator",
+        "key_id": "navzeroth-1.0.0-operator",
+        "public_key_hex": "3d407b80a7bd6275e69993c179bb08df6837037c94e1a8af57d284151b8007f4",
+        "revoked": false,
+        "role": "operator"
+      },
+      {
+        "identity": "Navzeroth operator; both release keys controlled by the same operator",
+        "key_id": "navzeroth-1.0.0-review-evidence",
+        "public_key_hex": "26119b03b6b8cee1d1f348e06c8c4dd991a104afcec9740926a3e6dda65f5995",
+        "revoked": false,
+        "role": "review_evidence"
+      }
+    ],
+    "review_evidence_signature_meaning": "Binds this independently recorded review artifact; does not establish independent key custody, reviewer authorship by cryptography, Windows acceptance or protected-check completion.",
+    "separate_review_sessions": true
+  },
+  "installer_signature_policy": "Explicit unsigned stable1.0.0 exception under ADR0008; signed content receipts remain mandatory.",
+  "no_live_client_verification_claim": true,
+  "prior_reviews": [
+    {
+      "bytes": 17484,
+      "path": "docs/releases/1.0.0-independent-public-review.json",
+      "scope": "V1 remains immutable historical evidence for f064/2032200e production. Its archived receipts do not authenticate current production. This v2 review binds the new candidate without reclassifying earlier checks as current executions.",
+      "sha256": "c2fa49b0cb58aa8796e55b175b7febd4f8a732a66286097e6d93419b2d7a895d"
+    },
+    {
+      "bytes": 20379,
+      "path": "docs/releases/1.0.0-independent-public-review-v2.json",
+      "scope": "Immutable historical review for949/2be89786 production. Provisional unsigned manifest and identity were not signed; these are not current readiness.",
+      "sha256": "d1b746c2e1a31ff3326047bab3a38256712ffbde26671b835d681130ce0a5ed7"
+    },
+    {
+      "bytes": 22648,
+      "path": "release/v1/public-content-review-v3.json",
+      "scope": "V3 remains immutable historical review for3fea/efeab production. Its signed manifest, identity and receipt are archived under release/history/2026-10-20-signed-content-v3 and do not authenticate current production.",
+      "sha256": "2556ab8496d36f10f4ac3b6bf0b1933cde02abdddb11154176d23522974357e9"
+    }
+  ],
+  "production_fingerprint_entry_count": 3132,
+  "production_fingerprint_method": "SHA256 of exact git ls-tree -r -z --full-tree entries, each including its terminal NUL, excluding paths under docs/ and release/. Actual resource bytes are separately pinned below.",
+  "production_sha256": "ad274268479ce96fefc5155cf24cf4b751d4b15fbc2d285dae2a233661fdb3df",
+  "publication_allowed_by_this_review": false,
+  "receipt_preparation_conditions": [
+    "Keep this public review immutable once its exact FileRef is included in the bundle manifest.",
+    "Manifest/build identity and receipt must bind the reviewed production fingerprint and an actual tested ancestor with identical production bytes; no self-referential commit or signature hash.",
+    "Receipt signatures use the committed caller-owned public policy and separately supplied expected identity. Both keys are operator-controlled; independent review is a recorded process, not independent key custody.",
+    "Do not classify missing Windows/owner/live observations as passed. Relevant production or installer changes invalidate affected bindings and acceptance.",
+    "Private admission/permission/validation evidence and private keys are not reproduced in this public artifact."
+  ],
+  "recorded_on": "2026-10-20",
+  "remaining_release_gates": {
+    "all_ten_final_protected_checks": {
+      "required_count": 10,
+      "scope": "Fresh exact release candidate/resulting-main checks are not established by local tests.",
+      "status": "unverified"
+    },
+    "bounded_weekly_network_replay_and_draft_pr": {
+      "status": "unverified"
+    },
+    "draft_asset_download_and_installed_resource_verification": {
+      "status": "unverified"
+    },
+    "final_native_coverage": {
+      "status": "unverified"
+    },
+    "final_release_stability": {
+      "status": "unverified"
+    },
+    "final_source_platform_parity": {
+      "status": "unverified"
+    },
+    "hosted_windows": [
+      {
+        "id": "HOSTED-INSTALL",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-FIRST-START",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-UPGRADE-RC1",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-DOWNGRADE-REFUSAL",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-PERSISTENCE-RECOVERY",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-RESOURCES",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-OFFLINE",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-PERFORMANCE",
+        "method": "hosted_windows",
+        "status": "unverified"
+      }
+    ],
+    "owner_installer_smoke": {
+      "id": "OWNER-INSTALLER-SMOKE",
+      "method": "interactive_windows",
+      "status": "unverified"
+    },
+    "public_asset_download_verification": {
+      "status": "unverified"
+    },
+    "signed_bundle_and_compiled_identity_assembly": {
+      "scope": "Not issued, signed or assembled by this review.",
+      "status": "unverified"
+    }
+  },
+  "review_owner": "Codex world-data and release-gate specialist (/root/world_review)",
+  "review_revision": 4,
+  "review_status": "completed_with_release_gates_pending",
+  "reviewed_content": {
+    "accepted_unknown_fields": 274059,
+    "corresponding_code_commit": "a9e5e4f35710c05e80283ae318f5a70882702110",
+    "corresponding_code_files": 22,
+    "corresponding_source_index": {
+      "bytes": 9050,
+      "path": "content/source-materials/corresponding-source-index.json",
+      "sha256": "67de5051b5051068313272a36a47dc912b7f3733ebaa5aeced6b1fa3b72c5a20"
+    },
+    "coverage_scope": {
+      "classes": 9,
+      "dungeon_packages": 26,
+      "dungeon_quest_references": 438,
+      "dungeon_reward_references": 16390,
+      "excluded_test_maps": [
+        169
+      ],
+      "models": 54,
+      "raw_dungeons": 27,
+      "reminder_boundary_cases": 24,
+      "restored_affected_reward_references": 8107,
+      "score_boundary_cases": 108
+    },
+    "declared_exclusions": [
+      "trainer-spell gameplay",
+      "talent recommendations",
+      "profession recommendations",
+      "enhancement recommendations"
+    ],
+    "entrance_scope": {
+      "direct_historical_entrances": 6,
+      "estimated_entrances": 20,
+      "excluded_raw_test_map": 169,
+      "limits": "Planar estimates preserve unknown elevation, access, derivation and uncertainty; historical declarations are not promoted to live verified entrances.",
+      "supported_records": 26
+    },
+    "historical_origin_disclosure": "Actual bundled historical sources are CMaNGOS 1.12.1 and Forever 1.60.1.70245, plus original authored and inferred sources. Policy acceptance of Classic Era is not a claim that a Classic Era source ships. Neither historical origin nor policy acceptance is target-build gameplay verification.",
+    "inventory": {
+      "bytes": 27957511,
+      "path": "release/v1/coverage-inventory.json",
+      "sha256": "f7030627acbc61fbbec32deeacc9bfc4dc1f8adc8fb6a183771559c656ce9eac"
+    },
+    "logical_records": 260113,
+    "mixed_terms_disclosure": "Corresponding generator source includes project and TALOD-permitted material, not a blanket BSD relicensing. Exact notices, source originals and original permissions retain their own categories and obligations.",
+    "normalization_conflicts": {
+      "bytes": 2212410,
+      "path": "content/world/1.60.1.70450/conflicts.json",
+      "sha256": "a56df26dd8359810b9809a625df3569190a504930f9c4bec0492cda11f4022f2"
+    },
+    "normalization_scope": "7933 retained raw normalization records represent reported precedence/conflict information, not independently observed game truth; raw reports stay distinct from typed SourceConflict records.",
+    "packs": [
+      {
+        "catalog": {
+          "bytes": 368258075,
+          "path": "content/release-packs/world-v2/catalog.json",
+          "sha256": "0e41ec752aa4e0e9abecb1b2a2f04f708d415db654bda34ccb58452b288eaffe"
+        },
+        "dataset_revision": "navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11",
+        "manifest": {
+          "bytes": 523,
+          "path": "content/release-packs/world-v2/manifest.json",
+          "sha256": "3c1613de6bb5585180c275dfb892d2c32176ed273275c6b607b4d48722a9c831"
+        }
+      },
+      {
+        "catalog": {
+          "bytes": 121103,
+          "path": "content/release-packs/authored-v2/catalog.json",
+          "sha256": "67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea"
+        },
+        "dataset_revision": "navzeroth-authored-slice-r4-heuristic-reminders",
+        "manifest": {
+          "bytes": 2951,
+          "path": "content/release-packs/authored-v2/manifest.json",
+          "sha256": "8af2189fa04d5e228cdb65204bc54c22be3371247acb5bb9b8aec1fa19ba62b9"
+        }
+      }
+    ],
+    "remaining_classification_gaps": 0,
+    "retained_upstream_originals": 19,
+    "source_attribution": [
+      {
+        "id": "cmangos-classic-db",
+        "origin_build": "1.12.1",
+        "origin_edition": "vanilla_1_12",
+        "revision": "f04d71d384e18f8857ad7e8de9a39cf7819bac99",
+        "target_validation": "unverified"
+      },
+      {
+        "id": "navzeroth-authored-v1",
+        "origin_build": null,
+        "origin_edition": "wow_forever",
+        "revision": "3efa71309317196a48ce0704d3d0f80603a71586",
+        "target_validation": "unverified"
+      },
+      {
+        "id": "navzeroth-world-content",
+        "origin_build": null,
+        "origin_edition": "wow_forever",
+        "revision": "38163495c86db1dceafd90512195202693a466a3",
+        "target_validation": "unverified"
+      },
+      {
+        "id": "wago-tools-wowf",
+        "origin_build": "1.60.1.70245",
+        "origin_edition": "wow_forever",
+        "revision": "a682d2c67d4ade40f0205634244a8ae3ea307834",
+        "target_validation": "unverified"
+      }
+    ],
+    "source_closure": {
+      "bytes": 24985,
+      "path": "content/world/1.60.1.70450/source-closure.json",
+      "sha256": "ea7a6c15998e870282b2734287ff0dc926ae87df809e6e941cafba1cd8e87538"
+    },
+    "source_oracles": [
+      {
+        "bytes": 13518,
+        "path": "docs/data/dungeon-associations-v1.json",
+        "sha256": "15ba356f748e33adc1eec39503bb9909eb4782a245d48740dde6d7a6f58fbd1c"
+      },
+      {
+        "bytes": 8239,
+        "path": "scripts/validate-dungeon-associations.py",
+        "sha256": "6dbea943eb7bc6eb6b9900e810808fde3e22794bedb0b3d092f33610da6468c4"
+      },
+      {
+        "bytes": 3671,
+        "path": "docs/data/role-coverage-v1.json",
+        "sha256": "d4599c1cbf9df545b31b5bac3a2a6fce188087406dafc5cb1f7cbc5549db1712"
+      }
+    ],
+    "transformation": "world_to_content_v4",
+    "unknowns_are_not_missing_records": true,
+    "unresolved_association_references": 0
+  },
+  "reviewed_source_commit": "273c57d3ff42d1de3845ebebaf36d4abda4b4a91",
+  "schema_version": 1,
+  "scope": "Static and targeted independent content, source, pack, release-gate and version review, with separately attributed coordinator validation of the final production candidate. This artifact is not Windows acceptance, publication authorization or independent key-control evidence.",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  }
+}

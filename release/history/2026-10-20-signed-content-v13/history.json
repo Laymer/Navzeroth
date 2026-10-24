@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+  "actual_source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+  "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v13/bundled-content-manifest.json",
+      "bytes": 17185,
+      "sha256": "577b641649345316a3540791c8d7d6c6f1cb705ef5d441cedb4578415f03ef83"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v13/bundled-content-build-identity.json",
+      "bytes": 527,
+      "sha256": "6914c2f105cbb852a003dbb6d03935615b29852847d4e34aeaa84fdecd92804d"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v13/bundled-content-receipt.json",
+      "bytes": 1073,
+      "sha256": "0e3e426b0b78f7178586710defe06e5a30a040103cd21091f7ea074217819afb"
+    }
+  },
+  "scope": "Exact signed historical V13 identities before any next repair integration. Both keys operator controlled. Current acceptance is not promoted."
+}

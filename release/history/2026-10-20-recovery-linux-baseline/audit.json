@@ -1,0 +1,182 @@
+{
+  "diagnostic_baseline": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+  "compiled_app_library": "/tmp/navzeroth-stable-inventory/target/release/deps/libazeroth_app-56cefb75fabdc75b.rlib",
+  "compiled_app_sha256": "10f3e9f4eb6fe3ffc5be823060277ac1e983494c0dea95e676857fb6363c5e92",
+  "binary_sha256": "f84ef8b0baf656573206272c07dfd24c37372156d88e7b1dbc0961559da308e8",
+  "test_source_sha256": "b6a07a33721a2d1a0ab39087d5abe90f29e9cfd151cca6d32b822d119644a884",
+  "log_sha256": "9e4dbba2f355dd6879c29bae761faef17ab1fe8e08f9eb3a201601e6dd272a39",
+  "measurement": {
+    "platform": "linux",
+    "elapsed_seconds": 721.433693646999,
+    "exit_code": 0,
+    "timed_out": false,
+    "maximum_resident_set_kib": 11946608,
+    "scope": "actual diagnostic Rust test process and its threads; cached optimized app dependencies, not Windows acceptance; whole benchmark bound1200s"
+  },
+  "events": [
+    {
+      "bundle": "/tmp/navzeroth-tooling-v13-independent-bundle",
+      "kind": "diagnostic_not_acceptance",
+      "platform": "linux",
+      "source_baseline": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d"
+    },
+    {
+      "event": "start",
+      "phase": "initial_signed_bundle_start"
+    },
+    {
+      "startup_measurements": {
+        "activation_ms": 14562,
+        "load_ms": 56474
+      }
+    },
+    {
+      "elapsed_ms": 71148,
+      "event": "complete",
+      "phase": "initial_signed_bundle_start"
+    },
+    {
+      "event": "start",
+      "phase": "manual_profile_and_settings"
+    },
+    {
+      "elapsed_ms": 24,
+      "event": "complete",
+      "phase": "manual_profile_and_settings"
+    },
+    {
+      "event": "start",
+      "phase": "select_false_inferred_travel"
+    },
+    {
+      "elapsed_ms": 17334,
+      "event": "complete",
+      "phase": "select_false_inferred_travel"
+    },
+    {
+      "event": "start",
+      "phase": "initial_state"
+    },
+    {
+      "elapsed_ms": 572,
+      "event": "complete",
+      "phase": "initial_state"
+    },
+    {
+      "event": "start",
+      "phase": "backup"
+    },
+    {
+      "elapsed_ms": 409,
+      "event": "complete",
+      "phase": "backup"
+    },
+    {
+      "backup_bytes": 463335424
+    },
+    {
+      "event": "start",
+      "phase": "inspect_backup"
+    },
+    {
+      "elapsed_ms": 123727,
+      "event": "complete",
+      "phase": "inspect_backup"
+    },
+    {
+      "event": "start",
+      "phase": "restore_and_initializer_reopen"
+    },
+    {
+      "elapsed_ms": 151689,
+      "event": "complete",
+      "phase": "restore_and_initializer_reopen"
+    },
+    {
+      "event": "start",
+      "phase": "restored_ready"
+    },
+    {
+      "startup_measurements": {
+        "activation_ms": 14562,
+        "load_ms": 56474
+      }
+    },
+    {
+      "elapsed_ms": 0,
+      "event": "complete",
+      "phase": "restored_ready"
+    },
+    {
+      "event": "start",
+      "phase": "restored_profiles_settings_content_choice"
+    },
+    {
+      "elapsed_ms": 15462,
+      "event": "complete",
+      "phase": "restored_profiles_settings_content_choice"
+    },
+    {
+      "event": "start",
+      "phase": "restored_check_database"
+    },
+    {
+      "elapsed_ms": 66012,
+      "event": "complete",
+      "phase": "restored_check_database"
+    },
+    {
+      "event": "start",
+      "phase": "drop_restored_host"
+    },
+    {
+      "elapsed_ms": 245,
+      "event": "complete",
+      "phase": "drop_restored_host"
+    },
+    {
+      "event": "start",
+      "phase": "explicit_close_reopen_signed_initializer"
+    },
+    {
+      "startup_measurements": {
+        "activation_ms": 0,
+        "load_ms": 91268
+      }
+    },
+    {
+      "elapsed_ms": 200546,
+      "event": "complete",
+      "phase": "explicit_close_reopen_signed_initializer"
+    },
+    {
+      "event": "start",
+      "phase": "reopened_profiles_settings_content_choice"
+    },
+    {
+      "elapsed_ms": 13847,
+      "event": "complete",
+      "phase": "reopened_profiles_settings_content_choice"
+    },
+    {
+      "event": "start",
+      "phase": "reopened_check_database"
+    },
+    {
+      "elapsed_ms": 59985,
+      "event": "complete",
+      "phase": "reopened_check_database"
+    },
+    {
+      "acceptance_observations_promoted": false,
+      "diagnostic_passed": true
+    }
+  ],
+  "current_plan": {
+    "kind": null,
+    "request_json": null,
+    "guard_json": null,
+    "summary_json": null
+  },
+  "acceptance_observations_promoted": false
+}

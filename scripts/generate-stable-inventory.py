@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enumerate verified shipped content without promoting environment observations."""
+"""Emit schema5 verified shipped inventory; never promote acceptance observations."""
 import argparse
 import hashlib
 import json
@@ -193,7 +193,7 @@ def derive(root, enumeration, canonical_sha):
         boundaries=[dict(id=domain+'-outside-admitted-records',scope='Records absent from the admitted source corpus and later additions are not covered by this exact enumeration.',reason='Historical source corpus scope does not establish completeness or eligibility for the whole Forever game. Promised missing functionality remains unverified separately.')]
         boundaries.append(dict(id=domain+'-deferred-gameplay',scope='Trainer-spell gameplay, talents, professions and enhancements.',reason='Explicit stable1.0.0 exclusions; no planner, scoring or acquisition gameplay support is promised for these systems.'))
         domains.append(dict(domain=domain,completeness='complete' if ids else 'unknown',enumeration_evidence=[artifact_ref],units=units,out_of_scope=boundaries))
-    inventory=dict(schema_version=4,inventory_id='forever-1.0.0-admitted-world-records-v1',target=enumeration['target'],slice=None,domains=domains,sources=[dict(id=sid,revision=admitted[sid]['revision']) for sid in sorted(pack_sources)])
+    inventory=dict(schema_version=5,inventory_id='forever-1.0.0-admitted-world-records-v1',target=enumeration['target'],slice=None,domains=domains,sources=[dict(id=sid,revision=admitted[sid]['revision']) for sid in sorted(pack_sources)])
     inventory_raw=encoded(inventory)
     sources=[]
     notice_raw=bounded.read_file(root/'data-generators/NOTICE.md',8*1024*1024)
@@ -217,9 +217,9 @@ def derive(root, enumeration, canonical_sha):
         if sid=='navzeroth-authored-v1':
             attributions=[next(reference(root,f['path']) for f in src['files'] if f['url'].endswith('/evidence/authoring-statement.md'))]
         sources.append(dict(id=sid,revision=src['revision'],origin_edition=src['origin']['edition'],origin_build=src['origin']['build'],redistribution='permitted',files=original,license_files=licenses,attribution_files=attributions,permission_evidence=list(proofs.values()),target_validation='unverified',target_evidence=[]))
-    checks=[dict(id=name,status='unverified',method='hosted_windows' if name!='OWNER-INSTALLER-SMOKE' else 'interactive_windows',operator=None,recorded_at=None,environment=None,artifacts=[]) for name in ('HOSTED-INSTALL','HOSTED-FIRST-START','HOSTED-UPGRADE-RC1','HOSTED-DOWNGRADE-REFUSAL','HOSTED-PERSISTENCE-RECOVERY','HOSTED-RESOURCES','HOSTED-OFFLINE','HOSTED-PERFORMANCE','OWNER-INSTALLER-SMOKE')]
+    checks=[dict(id=name,status='unverified',method='hosted_windows' if name!='DRAFT-INSTALLER-SMOKE' else 'automated_draft_windows',operator=None,recorded_at=None,environment=None,artifacts=[]) for name in ('HOSTED-INSTALL','HOSTED-FIRST-START','HOSTED-UPGRADE-RC1','HOSTED-DOWNGRADE-REFUSAL','HOSTED-PERSISTENCE-RECOVERY','HOSTED-RESOURCES','HOSTED-OFFLINE','HOSTED-PERFORMANCE','DRAFT-INSTALLER-SMOKE')]
     old=read(root/'release/history/2026-10-19-pre-stable-v3/acceptance-evidence.json')
-    evidence=dict(schema_version=4,target=enumeration['target'],inventory_sha256=hashlib.sha256(inventory_raw).hexdigest(),admission_registry=reference(root,'docs/sources/source-admission-v1.json'),tested_source_commit=None,production_sha256=None,checks=checks,coverage=coverage,sources=sources,packs=[dict(manifest=p['manifest'],dataset_revisions=[p['dataset_revision']]) for p in enumeration['packs']],optional_deferrals=old['optional_deferrals'],matrix=[],origin_policy=enumeration['origin_policy'],corresponding_source_files=[{k:f[k] for k in ('path','bytes','sha256')} for f in closure['corresponding_source']['files']],normalization_conflict_files=[reference(root,'content/world/1.60.1.70450/conflicts.json')])
+    evidence=dict(schema_version=5,target=enumeration['target'],inventory_sha256=hashlib.sha256(inventory_raw).hexdigest(),admission_registry=reference(root,'docs/sources/source-admission-v1.json'),tested_source_commit=None,production_sha256=None,checks=checks,coverage=coverage,sources=sources,packs=[dict(manifest=p['manifest'],dataset_revisions=[p['dataset_revision']]) for p in enumeration['packs']],optional_deferrals=old['optional_deferrals'],matrix=[],origin_policy=enumeration['origin_policy'],corresponding_source_files=[{k:f[k] for k in ('path','bytes','sha256')} for f in closure['corresponding_source']['files']],normalization_conflict_files=[reference(root,'content/world/1.60.1.70450/conflicts.json')])
     # Public reconstruction mapping excludes private admission/permission rows.
     commit=closure['source_commit']
     if len(commit)!=40 or any(c not in '0123456789abcdef' for c in commit):
@@ -239,7 +239,7 @@ def derive(root, enumeration, canonical_sha):
     index_path='content/source-materials/corresponding-source-index.json'
     evidence['corresponding_source_files'].append(dict(path=index_path,bytes=len(index),sha256=hashlib.sha256(index).hexdigest()))
     evidence_raw=encoded(evidence)
-    if max(len(inventory_raw),len(evidence_raw))>MAX_MANIFEST: raise ValueError('schema4 output exceeds measured finite bound')
+    if max(len(inventory_raw),len(evidence_raw))>MAX_MANIFEST: raise ValueError('schema5 output exceeds measured finite bound')
     return {index_path:index,artifact_path:artifact,'release/v1/coverage-inventory.json':inventory_raw,'release/v1/acceptance-evidence.json':evidence_raw},summary
 
 

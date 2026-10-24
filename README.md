@@ -5,64 +5,60 @@ for World of Warcraft: Forever. Desktop character state comes from
 explicitly imported snapshots; live game observations remain inside the permitted
 addon environment. Synthetic fixtures are always labelled.
 
-The current build is the **[0.9.2 developer preview](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.2)**
-(published 2026-10-17; the previous build is [0.9.1](https://github.com/Laymer/Navzeroth/releases/tag/v0.9.1)).
-It contains tested engineering foundations, but no verified playable quest, item,
-acquisition or travel catalog. Interactive Windows and complete live-game acceptance
-remain unverified. See the [release notes](docs/releases/0.9.2.md),
-[preparation record](docs/handoffs/2026-10-17-v0.9.2-release.md) and the
-[0.9.2 publication evidence](docs/handoffs/2026-10-17-v0.9.2-publication.md).
+## Releases and prepared stable scope
 
-The v1.0.0 target ([ADR 0006](docs/decisions/0006-v1-program.md)) is a declared slice
-(Human, levels 1-20, Elwynn Forest, Westfall, Redridge Mountains and the Deadmines)
-on the **first stable live WoW Forever build after the 4 Nov 2026 launch**, with
-Windows desktop support; see [TODO.md](TODO.md). The earlier target was
-**Forever 1.60.1.70374**. The user reports that build and
-interface 16001 on Windows 11, out of combat, with pre-version-bump 0.8.1 diagnostics reporting no
-errors; source-identified development captures now verify quest completion flags and one
-opt-in turn-in/export flow. These limited observations do not establish full
-compatibility or frozen-candidate acceptance. Missing mandatory content, source permissions or
-real acceptance evidence blocks v1.0.0 publication. Acceptance candidates also
-require complete licensed content and static validation; see the
-[v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
+Find the independently verified public download and its exact source/asset hashes
+in the [download metadata](docs/site/release.json) and
+[installation guide](docs/site/installation.html). Those versioned records, not
+the version of this source checkout, identify the published release. See
+[STATUS](docs/STATUS.md) for current candidate work and actual verification results.
+Prepared 1.0.0 is not a publication claim; missing or failed required checks hold
+publication. Historical release receipts retain their original identities.
 
-## Try the current preview
+The prepared dataset target is **Forever 1.60.1.70450 / interface 16001**.
+[ADR 0007](docs/decisions/0007-world-data-automation.md),
+[ADR 0008](docs/decisions/0008-unsigned-stable-release.md) and
+[ADR 0009](docs/decisions/0009-automated-draft-release-acceptance.md) supersede the
+earlier launch-build freeze and Human levels 1–20 slice. Historical
+CMaNGOS 1.12.1 and Forever 1.60.1.70245 inputs retain their actual origins; admission does not establish
+current-build gameplay validity. The prepared corpus has 260,113 records and 274,059
+accepted unknown fields, source-backed partial quest plans, 54 authored heuristic
+models across nine classes, 18 class-role combinations and three level bands,
+18 reminder rules and 26 dungeon records (20 estimated entrances, six directly sourced historical ones).
+Unknown eligibility, prerequisites, access, stale state and unsupported fields
+remain explicit. Trainer-spell gameplay, talents, professions and enhancements
+are excluded from promised coverage. See [1.0.0 notes](docs/releases/1.0.0.md).
 
-1. Download the Windows installer, `SHA256SUMS.txt`, `SOURCE_COMMIT.txt` and notes
-   from the linked 0.9.2 release. Check the installer hash before running it.
-2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md), including
-   the separate, explicit addon installation into the client-selected AddOns folder.
-3. Use [addon setup](docs/compatibility/ADDON_INSTALL.md) to record the actual client
-   build. The snapshot, clock, position, plan and recording adapters admit
-   `1.60.1.70338` and `1.60.1.70374`, and for development capture only (UNVERIFIED)
-   `1.60.1.70425`, each with interface `16001`, experimentally. `/anav` opens the
-   in-game window described in [the addon window guide](docs/compatibility/ADDON_GUI.md).
-   Selectable exports and opt-in quest-turn-in recording are included. Full live
-   acceptance remains required. A matching TOC interface alone does not establish compatibility.
-4. Imported profiles remain local. The browser demo and bundled reference imagery
-   are synthetic; they do not establish game-content coverage. Keep personal
-   SavedVariables and backups private.
+The 1.0.0 contract explicitly permits an **unsigned installer and application**;
+checksums/source binding and signed content receipts protect separate boundaries.
+The content receipt is not an Authenticode publisher signature. Full protected
+checks, independent review, source parity, stability, hosted Windows acceptance
+and schema 5 automated UI/native smoke of the exact independently downloaded draft
+installer remain required. Human smoke and the supplemental Windows 11 upgrade
+are separate observations; their actual results belong in STATUS, not assumptions. See the
+[v1 release process](docs/releases/V1_RELEASE_PROCESS.md) and
+[schema 5 contract](docs/releases/SCHEMA5_ACCEPTANCE.md).
 
-| Identity | Current evidence |
-| --- | --- |
-| Application/addon 0.9.2 | Published developer preview; hashes and hosted Windows results are in the [publication record](docs/handoffs/2026-10-17-v0.9.2-publication.md) |
-| Forever 1.60.1.70338 / interface 16001 | Limited user-reported diagnostic, level and clock-age flows; other bindings and full live acceptance remain unverified |
-| Reference atlas 1.60.1.70205 | Historical content identity; imagery rights incomplete and local pack distribution-ineligible |
-| Forever 1.60.1.70374 / interface 16001 | Frozen v1 target; source-identified development capture/turn-in checks, with full acceptance still unverified |
-| Forever 1.60.1.70425 / interface 16001 | Development capture only, UNVERIFIED: installation metadata, no addon-run evidence; never the 1.0 target |
-| Forever 1.60.1.70450 / interface 16001 | Current source only (after 0.9.2): development capture, UNVERIFIED; installation metadata and owner-reported interface, no addon-run evidence; never the 1.0 target |
+### Use an explicitly verified release
 
-Current source includes a bounded QuestieDB raw-table staging adapter and
-[versioned release checks](release/v1/README.md). Staging preserves partial facts
-and reports unsupported corrections. The [pinned source audit](docs/sources/v1-public-source-audit.md)
-accepts neither QuestieDB nor historical CMaNGOS for shipped assets (CMaNGOS
-classic-db is now admitted for the data generators, ADR 0006 §14). Unknown
-content inventory, source rights, real class/role models and live/Windows acceptance
-continue to block v1.0.0.
+1. Select the public release linked by the installation guide, retain its notes,
+   SHA256SUMS.txt and SOURCE_COMMIT.txt, and verify hashes before installation.
+2. Follow [Windows installation](docs/compatibility/WINDOWS_INSTALL.md) and the
+   separate, explicit addon installation into the client-selected AddOns folder.
+3. Record the actual client build using [addon setup](docs/compatibility/ADDON_INSTALL.md).
+   The addon admits 70338/70374 and development-only unverified 70425/70450 with
+   interface 16001. This experimental addon admission is distinct from the 70450
+   content target; a matching TOC or historical observation is not live acceptance.
+   See [the addon window guide](docs/compatibility/ADDON_GUI.md).
+4. Imported profiles remain local. Synthetic browser demonstrations and reference
+   imagery do not establish gameplay facts. Keep SavedVariables and backups private.
 
-[Claude Code 1.0.0 execution prompt](initial.md) — detailed continuation steps and release gates.
+[Versioned release checks](release/v1/README.md) and the explicit source admission
+registry preserve source rights, bounded facts and unresolved references. Historical
+private reference imagery can remain distribution-ineligible even when separately
+admitted world/authored release packs have verified resource/source closure.
 
-[Repository identity gallery](docs/brand/README.md) — planned after the verified 1.0.0 release.
+[Repository identity gallery](docs/brand/README.md) — planned after verified release.
 
 ## Development
 
@@ -83,9 +79,9 @@ Settings and a read-only desktop reference window. The addon has guarded manual
 capture, bounded plan import, runtime HUD controls and opt-in manual session recording.
 Rust/Lua synthetic tests cover predicate and gear parity.
 
-Playable catalogs, documented real class/role models and complete duo/session
-acceptance remain prerequisites. Party messaging, combat-log analysis, official API
-access and hosted distribution remain explicitly deferred or blocked. See the
+Prepared admitted content and authored heuristic models retain their documented
+source and uncertainty limits; complete live duo/session acceptance is not claimed.
+Party messaging, combat-log analysis and official API access remain deferred. See the
 [task ledger](docs/IMPLEMENTATION_TASKS.md) for individual dispositions.
 
 ### Independent source builds
@@ -153,10 +149,10 @@ JSON/human reports and separate nonfatal gaps. See [coverage](docs/data/COVERAGE
 Content packs require a typed `sources.json` sidecar and registered evidence/image
 sources. They preserve exact dataset identities and verified PNG bytes, refuse
 overwrite, and report declared distribution eligibility separately from gaps.
-See [local reference pack format](docs/data/CONTENT_PACK.md). Real Forever content
-has a typed registry and can be built and verified as a `local_reference` pack in
-0.9.2, but its recorded source rights remain incomplete and
-`distribution_eligible=false`. It is not a release asset or a playable-content pack.
+See [local reference pack format](docs/data/CONTENT_PACK.md). Historical reference imagery has a typed registry and can be inspected as a
+`local_reference` pack; its recorded incomplete rights and
+`distribution_eligible=false` remain explicit. This is distinct from the prepared
+admitted world/authored release packs and their source/material closure.
 
 ## Windows installer
 
@@ -168,17 +164,19 @@ updating and removing the application and addon:
 The full-content v1 publication gates and required content/source assets are in the
 [v1 release process](docs/releases/V1_RELEASE_PROCESS.md).
 
-**Code signing policy:** free code signing provided by [SignPath.io](https://about.signpath.io/),
-certificate by [SignPath Foundation](https://signpath.org/), once the project's
-application is approved; until then installers are unsigned. Roles, privacy
-statement and setup: [CODE_SIGNING.md](docs/compatibility/CODE_SIGNING.md).
+**Code signing policy:** the explicit unsigned 1.0.0 exception is governed by
+ADR 0008/0009 above; exact unsigned status still requires verification. Optional
+future Authenticode/SignPath setup is documented in
+[CODE_SIGNING.md](docs/compatibility/CODE_SIGNING.md); no approved signing service
+or signed Windows publisher identity is claimed. Content receipts remain required.
 
 ## Content and imagery
 
 Owner-supplied imagery under `content/forever/atlas/` uses Git LFS and separate
 usage terms in its NOTICE; it is not covered by the repository BSD-3-Clause license.
-See [sources](docs/data/SOURCES.md). CI keeps committed LFS pointers and never
-fetches imagery. Its pointer check is:
+See [sources](docs/data/SOURCES.md). CI preserves committed LFS pointer identities. Jobs hydrate only explicitly
+required, hash-verified resources; pointer checks remain distinct from hydrated
+content and release-material checks. Its pointer check is:
 
 ```sh
 cargo run --locked -p azeroth-cli -- prepare-atlas --manifest content/forever/atlas/eastern-kingdoms/atlas.manifest.json --content-root content/forever --check-pointer

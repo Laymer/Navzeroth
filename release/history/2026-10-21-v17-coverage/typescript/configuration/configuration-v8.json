@@ -1,0 +1,74 @@
+{
+  "result": [
+    {
+      "scriptId": "266",
+      "url": "file:///home/runner/work/Navzeroth/Navzeroth/apps/desktop/vite.config.ts",
+      "functions": [
+        {
+          "functionName": "",
+          "ranges": [
+            {
+              "startOffset": 0,
+              "endOffset": 1372,
+              "count": 1
+            }
+          ],
+          "isBlockCoverage": true
+        }
+      ]
+    },
+    {
+      "scriptId": "274",
+      "url": "file:///home/runner/work/Navzeroth/Navzeroth/apps/desktop/csp.ts",
+      "functions": [
+        {
+          "functionName": "",
+          "ranges": [
+            {
+              "startOffset": 0,
+              "endOffset": 527,
+              "count": 1
+            }
+          ],
+          "isBlockCoverage": true
+        }
+      ]
+    }
+  ],
+  "compiled": {
+    "file:///home/runner/work/Navzeroth/Navzeroth/apps/desktop/vite.config.ts": {
+      "code": "import react from \"@vitejs/plugin-react\";\nimport { defineConfig } from \"vitest/config\";\nimport { contentSecurityPolicy } from \"./csp.ts\";\n// Fixed dev port: src-tauri/tauri.conf.json points devUrl at it.\nexport default defineConfig({\n    plugins: [react()],\n    clearScreen: false,\n    server: { port: 1420, strictPort: true },\n    // Never inline assets: a `data:` URI would be blocked by the native CSP.\n    build: { target: \"es2024\", assetsInlineLimit: 0 },\n    // Production-build pre-check: serve dist with the native CSP (see csp.ts).\n    preview: {\n        host: \"127.0.0.1\",\n        port: 4173,\n        strictPort: true,\n        headers: { \"Content-Security-Policy\": contentSecurityPolicy },\n    },\n    test: {\n        include: [\"src/**/*.test.{ts,tsx}\"],\n        coverage: {\n            provider: \"v8\",\n            include: [\"src/**/*.{ts,tsx}\", \"csp.ts\", \"vite.config.ts\"],\n            exclude: [\"src/**/*.test.{ts,tsx}\", \"src/test-setup.ts\", \"src/**/test-fixtures/**\"],\n            reporter: [\"text\", \"json\", \"json-summary\", \"lcovonly\"],\n            thresholds: { perFile: true, lines: 90 },\n        },\n        environment: \"jsdom\",\n        globals: true,\n        setupFiles: [\"./src/test-setup.ts\"],\n        // Dense-map tests took 5.3 s on a loaded runner against the 5 s default.\n        testTimeout: 15000,\n    },\n});\n//# sourceMappingURL=vite.config.js.map",
+      "sourceMap": {
+        "version": 3,
+        "file": "vite.config.js",
+        "sourceRoot": "",
+        "sources": [
+          "file:///home/runner/work/Navzeroth/Navzeroth/apps/desktop/vite.config.ts"
+        ],
+        "names": [],
+        "mappings": "AAAA,OAAO,KAAK,MAAM,sBAAsB,CAAC;AACzC,OAAO,EAAE,YAAY,EAAE,MAAM,eAAe,CAAC;AAC7C,OAAO,EAAE,qBAAqB,EAAE,MAAM,UAAU,CAAC;AAEjD,iEAAiE;AACjE,eAAe,YAAY,CAAC;IAC1B,OAAO,EAAE,CAAC,KAAK,EAAE,CAAC;IAClB,WAAW,EAAE,KAAK;IAClB,MAAM,EAAE,EAAE,IAAI,EAAE,IAAI,EAAE,UAAU,EAAE,IAAI,EAAE;IACxC,yEAAyE;IACzE,KAAK,EAAE,EAAE,MAAM,EAAE,QAAQ,EAAE,iBAAiB,EAAE,CAAC,EAAE;IACjD,2EAA2E;IAC3E,OAAO,EAAE;QACP,IAAI,EAAE,WAAW;QACjB,IAAI,EAAE,IAAI;QACV,UAAU,EAAE,IAAI;QAChB,OAAO,EAAE,EAAE,yBAAyB,EAAE,qBAAqB,EAAE;KAC9D;IACD,IAAI,EAAE;QACJ,OAAO,EAAE,CAAC,wBAAwB,CAAC;QACnC,QAAQ,EAAE;YACR,QAAQ,EAAE,IAAI;YACd,OAAO,EAAE,CAAC,mBAAmB,EAAE,QAAQ,EAAE,gBAAgB,CAAC;YAC1D,OAAO,EAAE,CAAC,wBAAwB,EAAE,mBAAmB,EAAE,yBAAyB,CAAC;YACnF,QAAQ,EAAE,CAAC,MAAM,EAAE,MAAM,EAAE,cAAc,EAAE,UAAU,CAAC;YACtD,UAAU,EAAE,EAAE,OAAO,EAAE,IAAI,EAAE,KAAK,EAAE,EAAE,EAAE;SACzC;QACD,WAAW,EAAE,OAAO;QACpB,OAAO,EAAE,IAAI;QACb,UAAU,EAAE,CAAC,qBAAqB,CAAC;QACnC,yEAAyE;QACzE,WAAW,EAAE,KAAK;KACnB;CACF,CAAC,CAAC",
+        "sourcesContent": [
+          "import react from \"@vitejs/plugin-react\";\nimport { defineConfig } from \"vitest/config\";\nimport { contentSecurityPolicy } from \"./csp.ts\";\n\n// Fixed dev port: src-tauri/tauri.conf.json points devUrl at it.\nexport default defineConfig({\n  plugins: [react()],\n  clearScreen: false,\n  server: { port: 1420, strictPort: true },\n  // Never inline assets: a `data:` URI would be blocked by the native CSP.\n  build: { target: \"es2024\", assetsInlineLimit: 0 },\n  // Production-build pre-check: serve dist with the native CSP (see csp.ts).\n  preview: {\n    host: \"127.0.0.1\",\n    port: 4173,\n    strictPort: true,\n    headers: { \"Content-Security-Policy\": contentSecurityPolicy },\n  },\n  test: {\n    include: [\"src/**/*.test.{ts,tsx}\"],\n    coverage: {\n      provider: \"v8\",\n      include: [\"src/**/*.{ts,tsx}\", \"csp.ts\", \"vite.config.ts\"],\n      exclude: [\"src/**/*.test.{ts,tsx}\", \"src/test-setup.ts\", \"src/**/test-fixtures/**\"],\n      reporter: [\"text\", \"json\", \"json-summary\", \"lcovonly\"],\n      thresholds: { perFile: true, lines: 90 },\n    },\n    environment: \"jsdom\",\n    globals: true,\n    setupFiles: [\"./src/test-setup.ts\"],\n    // Dense-map tests took 5.3 s on a loaded runner against the 5 s default.\n    testTimeout: 15000,\n  },\n});\n"
+        ]
+      },
+      "source_sha256": "af36994665d62c90df2d539b341c890ad478c66b4a1a11a180fef94ac99016eb"
+    },
+    "file:///home/runner/work/Navzeroth/Navzeroth/apps/desktop/csp.ts": {
+      "code": "// The one Content-Security-Policy string. The native shell reads it from\n// src-tauri/tauri.conf.json; the Playwright \"prod-csp\" project serves the built\n// bundle through `vite preview` with exactly this value. Tauri rewrites the CSP at\n// runtime (nonces and hashes), so this is a cheap pre-check, not the authority;\n// the native Windows smoke is.\nimport tauriConfig from \"./src-tauri/tauri.conf.json\" with { type: \"json\" };\nexport const contentSecurityPolicy = tauriConfig.app.security.csp;\n//# sourceMappingURL=csp.js.map",
+      "sourceMap": {
+        "version": 3,
+        "file": "csp.js",
+        "sourceRoot": "",
+        "sources": [
+          "file:///home/runner/work/Navzeroth/Navzeroth/apps/desktop/csp.ts"
+        ],
+        "names": [],
+        "mappings": "AAAA,yEAAyE;AACzE,gFAAgF;AAChF,mFAAmF;AACnF,gFAAgF;AAChF,+BAA+B;AAC/B,OAAO,WAAW,MAAM,6BAA6B,CAAC,OAAO,IAAI,EAAE,MAAM,EAAE,CAAC;AAE5E,MAAM,CAAC,MAAM,qBAAqB,GAAW,WAAW,CAAC,GAAG,CAAC,QAAQ,CAAC,GAAG,CAAC",
+        "sourcesContent": [
+          "// The one Content-Security-Policy string. The native shell reads it from\n// src-tauri/tauri.conf.json; the Playwright \"prod-csp\" project serves the built\n// bundle through `vite preview` with exactly this value. Tauri rewrites the CSP at\n// runtime (nonces and hashes), so this is a cheap pre-check, not the authority;\n// the native Windows smoke is.\nimport tauriConfig from \"./src-tauri/tauri.conf.json\" with { type: \"json\" };\n\nexport const contentSecurityPolicy: string = tauriConfig.app.security.csp;\n"
+        ]
+      },
+      "source_sha256": "0a0bf0cd6fa1baac0ef83bf0a4907548f8e2bcf9920218d2a9b79c40d9e90810"
+    }
+  }
+}

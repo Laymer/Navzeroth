@@ -24,6 +24,8 @@ try {
     New-Item -ItemType Directory -Path (Join-Path $root 'release/v1') -Force | Out-Null
     $basePath=Join-Path $root 'release/v1/acceptance-evidence.json'
     [IO.File]::WriteAllText($basePath, ($base|ConvertTo-Json -Depth 100))
+    $inventoryPath=Join-Path $root 'release/v1/coverage-inventory.json'
+    [IO.File]::WriteAllText($inventoryPath, '{"schema_version":4}')
     $script:exitCode=0
     $script:report=@{stable=$true;stable_ready=$true;publication_allowed=$true}
     Check 'public default uses full release gate' { Assert-StablePhaseReadiness $root '1.0.0'; if($script:command -ne 'release-readiness'){throw 'Wrong CLI command.'} }
@@ -55,6 +57,52 @@ try {
         Check "wrong $property refused" { $entry=Case 'HOSTED-INSTALL'; $entry.Result.$property='wrong'; Refuse { New-HostedAcceptanceEvidence $base '1.0.0' $source $sha $installer @{'HOSTED-INSTALL'=$entry} } }
     }
     Check 'owner cannot be recorded by hosted helper' { Refuse { New-HostedAcceptanceEvidence $base '1.0.0' $source $sha $installer @{'OWNER-INSTALLER-SMOKE'=(Case 'OWNER-INSTALLER-SMOKE')} } }
+    $automated=Clone $base; $automated.schema_version=5
+    $automated.checks[-1].id='DRAFT-INSTALLER-SMOKE'; $automated.checks[-1].method='automated_draft_windows'
+    Check 'schema5 hosted recording preserves the separate draft gate' {
+        $result=New-HostedAcceptanceEvidence $automated '1.0.0' $source $sha $installer $cases
+        if(@($result.checks|Where-Object status -eq 'pass').Count -ne 8 -or $result.checks[-1].status -cne 'unverified' -or $result.checks[-1].method -cne 'automated_draft_windows'){throw 'Draft gate was changed or promoted.'}
+    }
+    Check 'hosted producer cannot manufacture automated draft acceptance' { Refuse { New-HostedAcceptanceEvidence $automated '1.0.0' $source $sha $installer @{'DRAFT-INSTALLER-SMOKE'=(Case 'DRAFT-INSTALLER-SMOKE')} } }
+    Check 'schema5 refuses historical owner row and wrong method' {
+        $wrong=Clone $automated; $wrong.checks[-1].id='OWNER-INSTALLER-SMOKE'
+        Refuse { New-HostedAcceptanceEvidence $wrong '1.0.0' $source $sha $installer }
+        $wrong=Clone $automated; $wrong.checks[-1].method='hosted_windows'
+        Refuse { New-HostedAcceptanceEvidence $wrong '1.0.0' $source $sha $installer }
+    }
+    Check 'historical schema4 cannot accept the new final gate' {
+        $wrong=Clone $automated; $wrong.schema_version=4
+        Refuse { New-HostedAcceptanceEvidence $wrong '1.0.0' $source $sha $installer }
+    }
+    Check 'schema5 overlays add only final proof binding, never immutable source fields' {
+        [IO.File]::WriteAllText($basePath, ($automated|ConvertTo-Json -Depth 100))
+        $newOverlay=Clone $automated
+        $newOverlay|Add-Member draft_installer_smoke ([pscustomobject]@{raw_result=@{path='dist/raw.json';bytes=1;sha256=$sha}})
+        [IO.File]::WriteAllText($overlayPath, ($newOverlay|ConvertTo-Json -Depth 100))
+        # Shape/hash/content of the final proof is checked by the typed CLI gate.
+        Assert-StableEvidenceOverlay $root 'observed.json'
+        $newOverlay.production_sha256='f'*64
+        [IO.File]::WriteAllText($overlayPath, ($newOverlay|ConvertTo-Json -Depth 100))
+        Refuse { Assert-StableEvidenceOverlay $root 'observed.json' }
+        $newOverlay=Clone $automated; $newOverlay.schema_version=4
+        [IO.File]::WriteAllText($overlayPath, ($newOverlay|ConvertTo-Json -Depth 100))
+        Refuse { Assert-StableEvidenceOverlay $root 'observed.json' }
+        [IO.File]::WriteAllText($basePath, ($base|ConvertTo-Json -Depth 100))
+    }
+    Check 'schema4 overlay cannot add automated draft proof' {
+        $newOverlay=Clone $base; $newOverlay|Add-Member draft_installer_smoke @{}
+        [IO.File]::WriteAllText($overlayPath, ($newOverlay|ConvertTo-Json -Depth 100))
+        Refuse { Assert-StableEvidenceOverlay $root 'observed.json' }
+    }
+    Check 'preparation reports must match the actual stable contract version' {
+        $script:report=@{phase='draft';build_ready=$true;publication_allowed=$false;report=@{report_version=5;stable=$true;publication_allowed=$false}}
+        Refuse { Assert-StablePhaseReadiness $root '1.0.0' 'draft' }
+        [IO.File]::WriteAllText($inventoryPath, '{"schema_version":5}')
+        Assert-StablePhaseReadiness $root '1.0.0' 'draft'
+        $script:report.report.report_version=4
+        Refuse { Assert-StablePhaseReadiness $root '1.0.0' 'draft' }
+        [IO.File]::WriteAllText($inventoryPath, '{"schema_version":4}')
+    }
     Check 'timed out downgrade not passed' { $entry=Case 'HOSTED-DOWNGRADE-REFUSAL'; $entry.Result.timed_out=$true; Refuse { New-HostedAcceptanceEvidence $base '1.0.0' $source $sha $installer @{'HOSTED-DOWNGRADE-REFUSAL'=$entry} } }
     Check 'wrong upgrade baseline refused' { $entry=Case 'HOSTED-UPGRADE-RC1'; $entry.Result.baseline_version='0.9.2'; Refuse { New-HostedAcceptanceEvidence $base '1.0.0' $source $sha $installer @{'HOSTED-UPGRADE-RC1'=$entry} } }
     Check 'unverified offline assertion refused' { $entry=Case 'HOSTED-OFFLINE'; $entry.Result.network_disabled=$false; Refuse { New-HostedAcceptanceEvidence $base '1.0.0' $source $sha $installer @{'HOSTED-OFFLINE'=$entry} } }

@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "kind": "actual_coverage_success_before_native_driver_repair",
+  "run_id": 39441834710,
+  "candidate_head": "ee26d119b8fc63454771e963cfd28ae6cb1b6aab",
+  "source_commit": "e3fdd58a9fe969f972d2796c47f4b114e5b0d661",
+  "conclusion": "success",
+  "inventory_entries": 305,
+  "measured_files": 276,
+  "threshold": {
+    "numerator": 90,
+    "denominator": 100,
+    "rounding": false
+  },
+  "files": {
+    "per-file-verdict.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/per-file-verdict.json",
+      "bytes": 50732,
+      "sha256": "68911dc316fca5448755b566803c8d21ea8ee826d5c27f9f9c03e9eccd9f2ee4",
+      "kind": "raw_artifact"
+    },
+    "linux-rust-receipt.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/linux-rust-receipt.json",
+      "bytes": 41617,
+      "sha256": "ee3357c1f5e9b80338b73ff17b5eb0cfc166ea06075f11788a4cac11eec09d7d",
+      "kind": "raw_artifact"
+    },
+    "windows-rust-receipt.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/windows-rust-receipt.json",
+      "bytes": 44792,
+      "sha256": "5a286764fd453661afe06a91cec3ac4a3da36cde4701025cd3872a6fca563285",
+      "kind": "raw_artifact"
+    },
+    "windows-native-smoke.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/windows-native-smoke.json",
+      "bytes": 27554,
+      "sha256": "7f6e4b0e913db0e157a2c2a0e01856da3a675bdb577d6c9a7f437868baf657d1",
+      "kind": "raw_artifact"
+    },
+    "linux-entrypoint-summary.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/linux-entrypoint-summary.json",
+      "bytes": 315,
+      "sha256": "b85677075394c1b5f1be3173ee398a09077ffa57f069ead808b735b4a1ebef19",
+      "kind": "derived_from_streamed_hash_bound_lcov"
+    },
+    "windows-entrypoint-summary.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/windows-entrypoint-summary.json",
+      "bytes": 316,
+      "sha256": "026b08ecf50f05be13abaffd9fbc84875a8c59515db31ba6c827689bc1ab373e",
+      "kind": "derived_from_streamed_hash_bound_lcov"
+    },
+    "independent-audit.json": {
+      "path": "release/history/2026-10-20-v11-coverage-success/independent-audit.json",
+      "bytes": 2164,
+      "sha256": "a4f4b682cf9b2576c22338f36b771766c057594f2b85d7542bf6832bffaa2f37",
+      "kind": "independent_derived_summary"
+    }
+  },
+  "limitation": "Raw verdict/native receipts/native-smoke report are byte-exact hosted artifacts. Entrypoint summaries and audit are independently derived from streamed LCOV and retained receipt hashes; full LCOV/profiles were not copied. Coverage is not installer acceptance; separate package39441834744 failed native upgrade before all eight stable cases."
+}

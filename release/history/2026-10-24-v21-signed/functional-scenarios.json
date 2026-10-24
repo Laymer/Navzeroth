@@ -1,0 +1,205 @@
+{
+  "additional_source_records": [
+    {
+      "domain": "equipment",
+      "id": "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"items\",\"10002\",\"base\"]"
+    }
+  ],
+  "counts": {
+    "classes": 9,
+    "dungeon_packages": 26,
+    "dungeon_quest_references": 438,
+    "dungeon_reward_references": 16390,
+    "excluded_test_maps": [
+      169
+    ],
+    "models": 54,
+    "raw_dungeons": 27,
+    "reminder_boundary_cases": 24,
+    "restored_affected_reward_references": 8107,
+    "score_boundary_cases": 108
+  },
+  "disclosure": "Permitted manual_entry engineering snapshot and explicit class/role/time/node assumptions. No addon capture, live-client correctness, Windows/manual acceptance or whole-game completeness is established.",
+  "game_observation": false,
+  "kind": "manual_engineering_full_pack_functional_scenarios",
+  "packs": [
+    {
+      "bytes": 523,
+      "path": "content/release-packs/world-v2/manifest.json",
+      "sha256": "3c1613de6bb5585180c275dfb892d2c32176ed273275c6b607b4d48722a9c831"
+    },
+    {
+      "bytes": 2951,
+      "path": "content/release-packs/authored-v2/manifest.json",
+      "sha256": "8af2189fa04d5e228cdb65204bc54c22be3371247acb5bb9b8aec1fa19ba62b9"
+    }
+  ],
+  "platform": "linux",
+  "schema_version": 1,
+  "source_inputs": [
+    {
+      "bytes": 15109,
+      "path": "data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json",
+      "sha256": "ad28727ae00b4e08621570f90e1053859ae2eda63d58b05d900efd5a136c49ed"
+    },
+    {
+      "bytes": 3671,
+      "path": "docs/data/role-coverage-v1.json",
+      "sha256": "d4599c1cbf9df545b31b5bac3a2a6fce188087406dafc5cb1f7cbc5549db1712"
+    },
+    {
+      "bytes": 13518,
+      "path": "docs/data/dungeon-associations-v1.json",
+      "sha256": "15ba356f748e33adc1eec39503bb9909eb4782a245d48740dde6d7a6f58fbd1c"
+    },
+    {
+      "bytes": 8239,
+      "path": "scripts/validate-dungeon-associations.py",
+      "sha256": "6dbea943eb7bc6eb6b9900e810808fde3e22794bedb0b3d092f33610da6468c4"
+    },
+    {
+      "bytes": 2026036,
+      "path": "data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json",
+      "sha256": "85f5820f1ce7a24cee07bda5cc641cc772b496b94aabf9e972ab1a50b4a645d8"
+    }
+  ],
+  "status": "pass",
+  "test_source": {
+    "commit": "1f972145f5adba8f253a92d924195563f24329dd",
+    "path": "crates/app/tests/stable_bundled_functional.rs",
+    "sha256": "924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008"
+  },
+  "units": [
+    {
+      "domain": "quests",
+      "scenario": "source_quest_projection_v1",
+      "scope": "Actual source-backed stages produce a partial plan using explicit manual time/node estimates; unknown eligibility/details remain unavailable, original quest/stage identities retained.",
+      "source_record_ids": [
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"quest_stages\",\"quest:272\",\"quest:272:objective:1\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"quest_stages\",\"quest:9267\",\"quest:9267:objective:1\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"quests\",\"quest:272\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"quests\",\"quest:9267\"]"
+      ]
+    },
+    {
+      "domain": "class_roles",
+      "scenario": "authored_score_model_boundaries_v1",
+      "scope": "All54 original models/nine historical-input classes: both band boundaries, wrong class/outside-band refusal, explicit role assumption, positive real-item stamina arithmetic; equipment eligibility and acquisition remain unknown; strict practical paths refuse.",
+      "source_record_ids": [
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-healer-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-healer-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-healer-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-melee-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-melee-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-melee-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-ranged-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-ranged-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-ranged-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-tank-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-tank-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:druid-tank-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:hunter-ranged-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:hunter-ranged-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:hunter-ranged-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:mage-ranged-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:mage-ranged-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:mage-ranged-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-healer-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-healer-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-healer-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-melee-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-melee-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-melee-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-tank-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-tank-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:paladin-tank-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-healer-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-healer-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-healer-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-ranged-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-ranged-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:priest-ranged-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:rogue-melee-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:rogue-melee-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:rogue-melee-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-healer-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-healer-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-healer-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-melee-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-melee-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-melee-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-ranged-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-ranged-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:shaman-ranged-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warlock-ranged-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warlock-ranged-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warlock-ranged-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-melee-damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-melee-damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-melee-damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-tank-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-tank-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"models\",\"model:warrior-tank-41-60\"]"
+      ]
+    },
+    {
+      "domain": "reminders",
+      "scenario": "authored_heuristic_reminder_boundaries_v1",
+      "scope": "All18 source rules retain explicit heuristic classification; twelve role prompts evaluated at both band boundaries, general level boundary and unknown-role withholding tested; unavailable predicates are not promoted.",
+      "source_record_ids": [
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:deadmines-hearthstone\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:deadmines-repair-restock\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:duo-compare-progress\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:heuristic-level-boundary\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:learn-flight-points\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-healer-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-healer-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-healer-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-melee_damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-melee_damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-melee_damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-ranged_damage-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-ranged_damage-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-ranged_damage-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-tank-1-20\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-tank-21-40\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:role-tank-41-60\"]",
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"rules\",\"reminder:train-after-level-up\"]"
+      ]
+    },
+    {
+      "domain": "dungeons",
+      "scenario": "complete_dungeon_associations_v2",
+      "scope": "26 complete catalog/package/member-report quest and reward association sets match an independent source-relation oracle, including8107 affected reward references; all26 records retain public historical/inferred origin marks;20 estimates preserve full derivation/uncertainty and unverified labels, six direct historical entrance declarations remain distinct. Nonempty heuristic preparation preserves unknown access/conditions. One-hop loot scope and raw map169 test exclusion retained; eligibility/current-game correctness remain unverified.",
+      "source_record_ids": [
+        "[\"navzeroth-authored-slice-r4-heuristic-reminders\",\"dungeons\",\"dungeon:the-deadmines\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:ahn-qiraj-temple\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:blackfathom-deeps\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:blackrock-depths\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:blackrock-spire\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:blackwing-lair\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:dire-maul\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:gnomeregan\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:maraudon\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:molten-core\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:naxxramas\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:onyxia-s-lair\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:ragefire-chasm\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:razorfen-downs\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:razorfen-kraul\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:ruins-of-ahn-qiraj\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:scarlet-monastery\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:scholomance\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:shadowfang-keep\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:stormwind-stockade\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:stratholme\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:sunken-temple\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:the-deadmines\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:uldaman\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:wailing-caverns\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:zul-farrak\"]",
+        "[\"navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11\",\"dungeons\",\"dungeon:zul-gurub\"]"
+      ]
+    }
+  ]
+}

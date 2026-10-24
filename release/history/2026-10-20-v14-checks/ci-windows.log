@@ -1,0 +1,369 @@
+﻿2026-10-20T21:02:32.9687655Z Current runner version: '2.337.0'
+2026-10-20T21:02:32.9722582Z ##[group]Runner Image Provisioner
+2026-10-20T21:02:32.9723739Z Hosted Compute Agent
+2026-10-20T21:02:32.9724600Z Version: 20261002.596
+2026-10-20T21:02:32.9725464Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-20T21:02:32.9726455Z Build Date: 2026-10-02T22:28:27Z
+2026-10-20T21:02:32.9727369Z Worker ID: {228dd633-fac3-4833-ba95-58b2eaf8a0eb}
+2026-10-20T21:02:32.9728431Z Region: northcentralus
+2026-10-20T21:02:32.9729155Z Cloud: Azure
+2026-10-20T21:02:32.9729889Z ##[endgroup]
+2026-10-20T21:02:32.9731691Z ##[group]Operating System
+2026-10-20T21:02:32.9732542Z Microsoft Windows Server 2025
+2026-10-20T21:02:32.9733348Z 10.0.26100
+2026-10-20T21:02:32.9734038Z Datacenter
+2026-10-20T21:02:32.9734725Z ##[endgroup]
+2026-10-20T21:02:32.9735414Z ##[group]Runner Image
+2026-10-20T21:02:32.9736176Z Image: windows-2025-vs2026
+2026-10-20T21:02:32.9736961Z Version: 20261007.264.1
+2026-10-20T21:02:32.9739029Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+2026-10-20T21:02:32.9741789Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+2026-10-20T21:02:32.9743096Z ##[endgroup]
+2026-10-20T21:02:32.9744591Z ##[group]GITHUB_TOKEN Permissions
+2026-10-20T21:02:32.9746978Z Contents: read
+2026-10-20T21:02:32.9747725Z Metadata: read
+2026-10-20T21:02:32.9748410Z ##[endgroup]
+2026-10-20T21:02:32.9751028Z Secret source: Actions
+2026-10-20T21:02:32.9752234Z Cache mode: write
+2026-10-20T21:02:32.9753166Z Prepare workflow directory
+2026-10-20T21:02:33.0095508Z Prepare all required actions
+2026-10-20T21:02:33.0144664Z Getting action download info
+2026-10-20T21:02:33.2103947Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-20T21:02:33.3203469Z Download action repository 'actions/cache@caa296126883cff596d87d8935842f9db880ef25' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-20T21:02:33.5693391Z Complete job name: Rust Windows
+2026-10-20T21:02:33.7128408Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-20T21:02:33.7129972Z with:
+2026-10-20T21:02:33.7130958Z   lfs: false
+2026-10-20T21:02:33.7131473Z   repository: Laymer/Navzeroth
+2026-10-20T21:02:33.7135235Z   token: ***
+2026-10-20T21:02:33.7135788Z   ssh-strict: true
+2026-10-20T21:02:33.7136264Z   ssh-user: git
+2026-10-20T21:02:33.7136843Z   persist-credentials: true
+2026-10-20T21:02:33.7137373Z   clean: true
+2026-10-20T21:02:33.7137856Z   sparse-checkout-cone-mode: true
+2026-10-20T21:02:33.7138437Z   fetch-depth: 1
+2026-10-20T21:02:33.7138911Z   fetch-tags: false
+2026-10-20T21:02:33.7139385Z   show-progress: true
+2026-10-20T21:02:33.7139894Z   submodules: false
+2026-10-20T21:02:33.7140386Z   set-safe-directory: true
+2026-10-20T21:02:33.7140935Z   allow-unsafe-pr-checkout: false
+2026-10-20T21:02:33.7141821Z ##[endgroup]
+2026-10-20T21:02:33.8632287Z Syncing repository: Laymer/Navzeroth
+2026-10-20T21:02:33.8634234Z ##[group]Getting Git version info
+2026-10-20T21:02:33.8634908Z Working directory is 'D:\a\Navzeroth\Navzeroth'
+2026-10-20T21:02:33.9457749Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-20T21:02:34.3167669Z git version 2.56.0.windows.2
+2026-10-20T21:02:34.3220587Z ##[endgroup]
+2026-10-20T21:02:34.3237686Z Temporarily overriding HOME='D:\a\_temp\f35a5ada-2195-4c19-af2a-72e9d425e18f' before making global git config changes
+2026-10-20T21:02:34.3239065Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:02:34.3247396Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+2026-10-20T21:02:34.3980873Z Deleting the contents of 'D:\a\Navzeroth\Navzeroth'
+2026-10-20T21:02:34.3987038Z ##[group]Determining repository object format
+2026-10-20T21:02:34.3988978Z ##[endgroup]
+2026-10-20T21:02:34.3990004Z ##[group]Initializing the repository
+2026-10-20T21:02:34.3997758Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Navzeroth\Navzeroth
+2026-10-20T21:02:34.4922136Z Initialized empty Git repository in D:/a/Navzeroth/Navzeroth/.git/
+2026-10-20T21:02:34.4975113Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Laymer/Navzeroth
+2026-10-20T21:02:34.5709781Z ##[endgroup]
+2026-10-20T21:02:34.5711183Z ##[group]Disabling automatic garbage collection
+2026-10-20T21:02:34.5717511Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-20T21:02:34.6105908Z ##[endgroup]
+2026-10-20T21:02:34.6107500Z ##[group]Setting up auth
+2026-10-20T21:02:34.6108830Z Removing SSH command configuration
+2026-10-20T21:02:34.6114356Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:02:34.6492763Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-20T21:02:36.1639629Z Removing HTTP extra header
+2026-10-20T21:02:36.1649799Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:02:36.2043157Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-20T21:02:36.7840099Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:02:36.7841467Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:02:36.8223477Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-20T21:02:37.3746167Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-20T21:02:37.4159744Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D:\a\_temp\git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:02:37.4553616Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D:\a\_temp\git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:02:37.4989755Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:02:37.5371721Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:02:37.5753213Z ##[endgroup]
+2026-10-20T21:02:37.5754013Z ##[group]Fetching the repository
+2026-10-20T21:02:37.5768919Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8d9fc3922e3433b45755ef68602a62c054faee4e:refs/remotes/pull/239/merge
+2026-10-20T21:02:39.1879939Z From https://github.com/Laymer/Navzeroth
+2026-10-20T21:02:39.1881863Z  * [new ref]         8d9fc3922e3433b45755ef68602a62c054faee4e -> pull/239/merge
+2026-10-20T21:02:39.1931824Z ##[endgroup]
+2026-10-20T21:02:39.1932838Z ##[group]Determining the checkout info
+2026-10-20T21:02:39.1933527Z ##[endgroup]
+2026-10-20T21:02:39.1947093Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-20T21:02:39.2482912Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-20T21:02:39.2872088Z ##[group]Checking out the ref
+2026-10-20T21:02:39.2880504Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/239/merge
+2026-10-20T21:02:40.9819373Z Updating files:   8% (335/4117)
+2026-10-20T21:02:41.0063766Z Updating files:   9% (371/4117)
+2026-10-20T21:02:41.0286403Z Updating files:  10% (412/4117)
+2026-10-20T21:02:41.0572376Z Updating files:  11% (453/4117)
+2026-10-20T21:02:41.0741132Z Updating files:  12% (495/4117)
+2026-10-20T21:02:41.0847222Z Updating files:  13% (536/4117)
+2026-10-20T21:02:41.0925512Z Updating files:  14% (577/4117)
+2026-10-20T21:02:41.1018179Z Updating files:  15% (618/4117)
+2026-10-20T21:02:41.1098314Z Updating files:  16% (659/4117)
+2026-10-20T21:02:41.1177459Z Updating files:  17% (700/4117)
+2026-10-20T21:02:41.1261469Z Updating files:  18% (742/4117)
+2026-10-20T21:02:41.1343904Z Updating files:  19% (783/4117)
+2026-10-20T21:02:41.1732456Z Updating files:  20% (824/4117)
+2026-10-20T21:02:41.1812766Z Updating files:  21% (865/4117)
+2026-10-20T21:02:41.1882585Z Updating files:  22% (906/4117)
+2026-10-20T21:02:41.1950868Z Updating files:  23% (947/4117)
+2026-10-20T21:02:41.2020064Z Updating files:  24% (989/4117)
+2026-10-20T21:02:41.2097759Z Updating files:  25% (1030/4117)
+2026-10-20T21:02:41.2169559Z Updating files:  26% (1071/4117)
+2026-10-20T21:02:41.2236760Z Updating files:  27% (1112/4117)
+2026-10-20T21:02:41.2304920Z Updating files:  28% (1153/4117)
+2026-10-20T21:02:41.2370124Z Updating files:  29% (1194/4117)
+2026-10-20T21:02:41.2439151Z Updating files:  30% (1236/4117)
+2026-10-20T21:02:41.2497397Z Updating files:  31% (1277/4117)
+2026-10-20T21:02:41.2566593Z Updating files:  32% (1318/4117)
+2026-10-20T21:02:41.2663945Z Updating files:  33% (1359/4117)
+2026-10-20T21:02:41.2765631Z Updating files:  34% (1400/4117)
+2026-10-20T21:02:41.2879514Z Updating files:  35% (1441/4117)
+2026-10-20T21:02:41.2962318Z Updating files:  36% (1483/4117)
+2026-10-20T21:02:41.3038869Z Updating files:  37% (1524/4117)
+2026-10-20T21:02:41.3115608Z Updating files:  38% (1565/4117)
+2026-10-20T21:02:41.3186688Z Updating files:  39% (1606/4117)
+2026-10-20T21:02:41.3258739Z Updating files:  40% (1647/4117)
+2026-10-20T21:02:41.3322022Z Updating files:  41% (1688/4117)
+2026-10-20T21:02:41.3386151Z Updating files:  42% (1730/4117)
+2026-10-20T21:02:41.3450382Z Updating files:  43% (1771/4117)
+2026-10-20T21:02:41.3518490Z Updating files:  44% (1812/4117)
+2026-10-20T21:02:41.3526625Z Updating files:  45% (1853/4117)
+2026-10-20T21:02:41.3593649Z Updating files:  45% (1857/4117)
+2026-10-20T21:02:41.3656892Z Updating files:  46% (1894/4117)
+2026-10-20T21:02:41.3725701Z Updating files:  47% (1935/4117)
+2026-10-20T21:02:41.3787753Z Updating files:  48% (1977/4117)
+2026-10-20T21:02:41.3854796Z Updating files:  49% (2018/4117)
+2026-10-20T21:02:41.3915126Z Updating files:  50% (2059/4117)
+2026-10-20T21:02:41.3981917Z Updating files:  51% (2100/4117)
+2026-10-20T21:02:41.4043012Z Updating files:  52% (2141/4117)
+2026-10-20T21:02:41.4106603Z Updating files:  53% (2183/4117)
+2026-10-20T21:02:41.4168531Z Updating files:  54% (2224/4117)
+2026-10-20T21:02:41.4230701Z Updating files:  55% (2265/4117)
+2026-10-20T21:02:41.4293531Z Updating files:  56% (2306/4117)
+2026-10-20T21:02:41.4380464Z Updating files:  57% (2347/4117)
+2026-10-20T21:02:41.4499780Z Updating files:  58% (2388/4117)
+2026-10-20T21:02:41.5787434Z Updating files:  59% (2430/4117)
+2026-10-20T21:02:41.5897098Z Updating files:  60% (2471/4117)
+2026-10-20T21:02:41.6016071Z Updating files:  61% (2512/4117)
+2026-10-20T21:02:41.6108023Z Updating files:  62% (2553/4117)
+2026-10-20T21:02:41.6187486Z Updating files:  63% (2594/4117)
+2026-10-20T21:02:41.6278261Z Updating files:  64% (2635/4117)
+2026-10-20T21:02:41.6348127Z Updating files:  65% (2677/4117)
+2026-10-20T21:02:41.6542824Z Updating files:  66% (2718/4117)
+2026-10-20T21:02:41.6711545Z Updating files:  67% (2759/4117)
+2026-10-20T21:02:41.6777600Z Updating files:  68% (2800/4117)
+2026-10-20T21:02:41.6835883Z Updating files:  69% (2841/4117)
+2026-10-20T21:02:41.6890664Z Updating files:  70% (2882/4117)
+2026-10-20T21:02:41.6941832Z Updating files:  71% (2924/4117)
+2026-10-20T21:02:41.7004292Z Updating files:  72% (2965/4117)
+2026-10-20T21:02:41.7056260Z Updating files:  73% (3006/4117)
+2026-10-20T21:02:41.7150540Z Updating files:  74% (3047/4117)
+2026-10-20T21:02:41.7227438Z Updating files:  75% (3088/4117)
+2026-10-20T21:02:41.7311295Z Updating files:  76% (3129/4117)
+2026-10-20T21:02:41.7383946Z Updating files:  77% (3171/4117)
+2026-10-20T21:02:41.7466589Z Updating files:  78% (3212/4117)
+2026-10-20T21:02:41.7539181Z Updating files:  79% (3253/4117)
+2026-10-20T21:02:41.7607889Z Updating files:  80% (3294/4117)
+2026-10-20T21:02:41.7679135Z Updating files:  81% (3335/4117)
+2026-10-20T21:02:41.7746224Z Updating files:  82% (3376/4117)
+2026-10-20T21:02:41.7811918Z Updating files:  83% (3418/4117)
+2026-10-20T21:02:41.7961457Z Updating files:  84% (3459/4117)
+2026-10-20T21:02:41.8047721Z Updating files:  85% (3500/4117)
+2026-10-20T21:02:41.8170899Z Updating files:  86% (3541/4117)
+2026-10-20T21:02:41.8272179Z Updating files:  87% (3582/4117)
+2026-10-20T21:02:41.8330547Z Updating files:  88% (3623/4117)
+2026-10-20T21:02:41.8390714Z Updating files:  89% (3665/4117)
+2026-10-20T21:02:41.8484519Z Updating files:  90% (3706/4117)
+2026-10-20T21:02:41.8551974Z Updating files:  91% (3747/4117)
+2026-10-20T21:02:41.8622836Z Updating files:  92% (3788/4117)
+2026-10-20T21:02:41.8688705Z Updating files:  93% (3829/4117)
+2026-10-20T21:02:41.8775947Z Updating files:  94% (3870/4117)
+2026-10-20T21:02:41.9987079Z Updating files:  95% (3912/4117)
+2026-10-20T21:02:42.1050641Z Updating files:  96% (3953/4117)
+2026-10-20T21:02:42.1138268Z Updating files:  97% (3994/4117)
+2026-10-20T21:02:42.1220289Z Updating files:  98% (4035/4117)
+2026-10-20T21:02:42.1294699Z Updating files:  99% (4076/4117)
+2026-10-20T21:02:42.1299559Z Updating files: 100% (4117/4117)
+2026-10-20T21:02:42.1300238Z Updating files: 100% (4117/4117), done.
+2026-10-20T21:02:42.1437212Z Note: switching to 'refs/remotes/pull/239/merge'.
+2026-10-20T21:02:42.1437980Z 
+2026-10-20T21:02:42.1438714Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-20T21:02:42.1440919Z changes and commit them, and you can discard any commits you make in this
+2026-10-20T21:02:42.1441713Z state without impacting any branches by switching back to a branch.
+2026-10-20T21:02:42.1442040Z 
+2026-10-20T21:02:42.1442319Z If you want to create a new branch to retain commits you create, you may
+2026-10-20T21:02:42.1442926Z do so (now or later) by using -c with the switch command. Example:
+2026-10-20T21:02:42.1443259Z 
+2026-10-20T21:02:42.1443470Z   git switch -c <new-branch-name>
+2026-10-20T21:02:42.1443701Z 
+2026-10-20T21:02:42.1443842Z Or undo this operation with:
+2026-10-20T21:02:42.1444104Z 
+2026-10-20T21:02:42.1444275Z   git switch -
+2026-10-20T21:02:42.1444737Z 
+2026-10-20T21:02:42.1444998Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-20T21:02:42.1445358Z 
+2026-10-20T21:02:42.1445954Z HEAD is now at 8d9fc39 Merge 97a81de9fd8d07270ed86f55ca9bf445b010e60a into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+2026-10-20T21:02:42.5013434Z ##[endgroup]
+2026-10-20T21:02:42.5557002Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-20T21:02:42.5928660Z 8d9fc3922e3433b45755ef68602a62c054faee4e
+2026-10-20T21:02:42.6430647Z ##[group]Run python scripts/hydrate-role-audit-inputs.py --root .
+2026-10-20T21:02:42.6431855Z [36;1mpython scripts/hydrate-role-audit-inputs.py --root .[0m
+2026-10-20T21:02:42.7108519Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:02:42.7109014Z ##[endgroup]
+2026-10-20T21:02:47.6097179Z {"hydrated": ["data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json", "data-generators/output/run-manifest.json"], "inputs": [{"bytes": 2026036, "path": "data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json", "sha256": "85f5820f1ce7a24cee07bda5cc641cc772b496b94aabf9e972ab1a50b4a645d8"}, {"bytes": 12070, "path": "data-generators/output/run-manifest.json", "sha256": "6cd8c78edd93bed34d71678cbf0d31bb0719449ce4fce908a7266fa4f2eeee7c"}], "network": true, "source_commit": "8d9fc3922e3433b45755ef68602a62c054faee4e", "status": "verified"}
+2026-10-20T21:02:47.7575588Z ##[group]Run rustup show
+2026-10-20T21:02:47.7576088Z [36;1mrustup show[0m
+2026-10-20T21:02:47.7644551Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:02:47.7645611Z ##[endgroup]
+2026-10-20T21:02:48.6471828Z Default host: x86_64-pc-windows-msvc
+2026-10-20T21:02:48.6472542Z rustup home:  C:\Users\runneradmin\.rustup
+2026-10-20T21:02:48.6472894Z 
+2026-10-20T21:02:48.7013506Z info: syncing channel updates for 1.99.0-x86_64-pc-windows-msvc
+2026-10-20T21:02:49.1988310Z info: latest update on 2026-10-01 for version 1.99.0 (b940084d7 2026-09-28)
+2026-10-20T21:02:49.2137354Z info: downloading 5 components
+2026-10-20T21:03:02.2539324Z warn: the missing active toolchain `1.99.0-x86_64-pc-windows-msvc` has been auto-installed
+2026-10-20T21:03:02.2540469Z warn: auto-installation is deprecated for most `rustup` commands
+2026-10-20T21:03:02.2541139Z warn: scripts relying on this behavior in `rustup` may stop working in the future
+2026-10-20T21:03:02.2541944Z warn: to install the active toolchain, use `rustup install` instead
+2026-10-20T21:03:02.2542521Z warn: see <https://github.com/rust-lang/rustup/issues/4836> for more info
+2026-10-20T21:03:02.2542959Z installed toolchains
+2026-10-20T21:03:02.2543258Z --------------------
+2026-10-20T21:03:02.2543721Z stable-x86_64-pc-windows-msvc (default)
+2026-10-20T21:03:02.2543931Z 
+2026-10-20T21:03:02.2544074Z active toolchain
+2026-10-20T21:03:02.2544383Z ----------------
+2026-10-20T21:03:02.2544693Z name: 1.99.0-x86_64-pc-windows-msvc
+2026-10-20T21:03:02.2545145Z active because: overridden by 'D:\a\Navzeroth\Navzeroth\rust-toolchain.toml'
+2026-10-20T21:03:02.2545606Z installed targets:
+2026-10-20T21:03:02.2743869Z   x86_64-pc-windows-msvc
+2026-10-20T21:03:03.2028522Z ##[group]Run actions/cache@caa296126883cff596d87d8935842f9db880ef25
+2026-10-20T21:03:03.2029274Z with:
+2026-10-20T21:03:03.2029698Z   path: ~/.cargo/registry
+~/.cargo/git
+target
+
+2026-10-20T21:03:03.2030259Z   key: cargo-Windows-d6fbca39f28bbe61c67aa42b0984670a5fd321debef905997e06a9f906baac87
+2026-10-20T21:03:03.2030782Z   enableCrossOsArchive: false
+2026-10-20T21:03:03.2031137Z   fail-on-cache-miss: false
+2026-10-20T21:03:03.2031455Z   lookup-only: false
+2026-10-20T21:03:03.2031739Z   save-always: false
+2026-10-20T21:03:03.2032042Z ##[endgroup]
+2026-10-20T21:03:03.6392090Z Cache hit for: cargo-Windows-d6fbca39f28bbe61c67aa42b0984670a5fd321debef905997e06a9f906baac87
+2026-10-20T21:03:04.7752498Z Received 125829120 of 4084779384 (3.1%), 119.9 MBs/sec
+2026-10-20T21:03:05.7904815Z Received 163577856 of 4084779384 (4.0%), 77.4 MBs/sec
+2026-10-20T21:03:06.9165345Z Received 268435456 of 4084779384 (6.6%), 81.5 MBs/sec
+2026-10-20T21:03:07.9266949Z Received 398458880 of 4084779384 (9.8%), 91.6 MBs/sec
+2026-10-20T21:03:08.9288621Z Received 461373440 of 4084779384 (11.3%), 85.4 MBs/sec
+2026-10-20T21:03:10.0805617Z Received 536870912 of 4084779384 (13.1%), 81.2 MBs/sec
+2026-10-20T21:03:11.5449693Z Received 671088640 of 4084779384 (16.4%), 82.4 MBs/sec
+2026-10-20T21:03:12.5531122Z Received 792723456 of 4084779384 (19.4%), 86.2 MBs/sec
+2026-10-20T21:03:13.5482475Z Received 817889280 of 4084779384 (20.0%), 79.8 MBs/sec
+2026-10-20T21:03:14.9687233Z Received 939524096 of 4084779384 (23.0%), 80.0 MBs/sec
+2026-10-20T21:03:15.9705743Z Received 1040187392 of 4084779384 (25.5%), 81.3 MBs/sec
+2026-10-20T21:03:16.9699257Z Received 1073741824 of 4084779384 (26.3%), 77.6 MBs/sec
+2026-10-20T21:03:17.9702135Z Received 1191182336 of 4084779384 (29.2%), 80.0 MBs/sec
+2026-10-20T21:03:18.9702919Z Received 1207959552 of 4084779384 (29.6%), 75.8 MBs/sec
+2026-10-20T21:03:19.9706395Z Received 1329594368 of 4084779384 (32.5%), 78.3 MBs/sec
+2026-10-20T21:03:20.9737878Z Received 1375731712 of 4084779384 (33.7%), 76.3 MBs/sec
+2026-10-20T21:03:22.3110003Z Received 1476395008 of 4084779384 (36.1%), 76.0 MBs/sec
+2026-10-20T21:03:23.3085259Z Received 1585446912 of 4084779384 (38.8%), 77.4 MBs/sec
+2026-10-20T21:03:24.3090886Z Received 1623195648 of 4084779384 (39.7%), 75.4 MBs/sec
+2026-10-20T21:03:25.7338780Z Received 1744830464 of 4084779384 (42.7%), 75.8 MBs/sec
+2026-10-20T21:03:26.7432890Z Received 1849688064 of 4084779384 (45.3%), 76.8 MBs/sec
+2026-10-20T21:03:27.7382512Z Received 1904214016 of 4084779384 (46.6%), 75.8 MBs/sec
+2026-10-20T21:03:29.0603058Z Received 2013265920 of 4084779384 (49.3%), 75.9 MBs/sec
+2026-10-20T21:03:30.0588874Z Received 2113929216 of 4084779384 (51.8%), 76.7 MBs/sec
+2026-10-20T21:03:31.0601085Z Received 2155872256 of 4084779384 (52.8%), 75.3 MBs/sec
+2026-10-20T21:03:32.0624423Z Received 2273312768 of 4084779384 (55.7%), 76.6 MBs/sec
+2026-10-20T21:03:33.0629117Z Received 2306867200 of 4084779384 (56.5%), 75.1 MBs/sec
+2026-10-20T21:03:34.0641811Z Received 2411724800 of 4084779384 (59.0%), 75.9 MBs/sec
+2026-10-20T21:03:35.0641649Z Received 2453667840 of 4084779384 (60.1%), 74.8 MBs/sec
+2026-10-20T21:03:36.4916154Z Received 2550136832 of 4084779384 (62.4%), 74.3 MBs/sec
+2026-10-20T21:03:37.4899395Z Received 2650800128 of 4084779384 (64.9%), 75.0 MBs/sec
+2026-10-20T21:03:38.4970790Z Received 2709520384 of 4084779384 (66.3%), 74.4 MBs/sec
+2026-10-20T21:03:39.7822019Z Received 2818572288 of 4084779384 (69.0%), 74.7 MBs/sec
+2026-10-20T21:03:40.7773831Z Received 2936012800 of 4084779384 (71.9%), 75.7 MBs/sec
+2026-10-20T21:03:41.7768401Z Received 2956984320 of 4084779384 (72.4%), 74.2 MBs/sec
+2026-10-20T21:03:42.7775899Z Received 3082813440 of 4084779384 (75.5%), 75.4 MBs/sec
+2026-10-20T21:03:43.7777380Z Received 3137339392 of 4084779384 (76.8%), 74.8 MBs/sec
+2026-10-20T21:03:44.9987457Z Received 3221225472 of 4084779384 (78.9%), 74.5 MBs/sec
+2026-10-20T21:03:45.9992595Z Received 3338665984 of 4084779384 (81.7%), 75.4 MBs/sec
+2026-10-20T21:03:46.9993080Z Received 3401580544 of 4084779384 (83.3%), 75.0 MBs/sec
+2026-10-20T21:03:48.4193064Z Received 3489660928 of 4084779384 (85.4%), 74.5 MBs/sec
+2026-10-20T21:03:49.4302429Z Received 3598712832 of 4084779384 (88.1%), 75.2 MBs/sec
+2026-10-20T21:03:50.4259567Z Received 3632267264 of 4084779384 (88.9%), 74.3 MBs/sec
+2026-10-20T21:03:51.8722416Z Received 3758096384 of 4084779384 (92.0%), 74.5 MBs/sec
+2026-10-20T21:03:52.8720337Z Received 3846176768 of 4084779384 (94.2%), 74.7 MBs/sec
+2026-10-20T21:03:53.8739934Z Received 3892314112 of 4084779384 (95.3%), 74.1 MBs/sec
+2026-10-20T21:03:54.8742402Z Received 4009754624 of 4084779384 (98.2%), 74.8 MBs/sec
+2026-10-20T21:03:55.8738318Z Received 4039114752 of 4084779384 (98.9%), 73.9 MBs/sec
+2026-10-20T21:03:56.3787110Z Received 4084779384 of 4084779384 (100.0%), 74.1 MBs/sec
+2026-10-20T21:03:56.3787691Z Cache Size: ~3896 MB (4084779384 B)
+2026-10-20T21:03:56.3846420Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/6c696a0f-4dc5-4115-89f8-d4037455304d/cache.tzst -P -C D:/a/Navzeroth/Navzeroth --force-local --use-compress-program "zstd -d"
+2026-10-20T21:07:50.1446288Z Cache restored successfully
+2026-10-20T21:07:51.0586979Z Cache restored from key: cargo-Windows-d6fbca39f28bbe61c67aa42b0984670a5fd321debef905997e06a9f906baac87
+2026-10-20T21:07:51.2778612Z ##[group]Run cargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings
+2026-10-20T21:07:51.2779896Z [36;1mcargo clippy --locked --workspace --all-targets --exclude azeroth-desktop -- -D warnings[0m
+2026-10-20T21:07:51.3090664Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:07:51.3091223Z ##[endgroup]
+2026-10-20T21:08:05.4433456Z     Checking azeroth-core v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\core)
+2026-10-20T21:08:05.4476427Z    Compiling azeroth-local-data v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\local-data)
+2026-10-20T21:08:05.4478547Z     Checking wowdbdefs-rs v0.1.0 (D:\a\Navzeroth\Navzeroth\vendor\wowdbdefs-rs)
+2026-10-20T21:08:05.4497948Z     Checking azeroth-lua-harness v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\lua-harness)
+2026-10-20T21:08:24.5170425Z     Checking azeroth-storage v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\storage)
+2026-10-20T21:08:24.5172585Z     Checking azeroth-ingest v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\ingest)
+2026-10-20T21:08:40.3158083Z     Checking azeroth-app v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\app)
+2026-10-20T21:08:46.4003523Z     Checking azeroth-cli v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\cli)
+2026-10-20T21:08:54.9194047Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 00s
+2026-10-20T21:08:57.0649658Z ##[group]Run cargo test --locked --workspace --exclude azeroth-desktop
+2026-10-20T21:08:57.0650447Z [36;1mcargo test --locked --workspace --exclude azeroth-desktop[0m
+2026-10-20T21:08:57.0718288Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:08:57.0718843Z ##[endgroup]
+2026-10-20T21:08:57.8272251Z    Compiling azeroth-core v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\core)
+2026-10-20T21:08:57.8313164Z    Compiling azeroth-local-data v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\local-data)
+2026-10-20T21:08:57.8322081Z    Compiling wowdbdefs-rs v0.1.0 (D:\a\Navzeroth\Navzeroth\vendor\wowdbdefs-rs)
+2026-10-20T21:08:57.8335551Z    Compiling azeroth-lua-harness v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\lua-harness)
+2026-10-20T21:09:29.9949114Z    Compiling azeroth-storage v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\storage)
+2026-10-20T21:09:29.9950632Z    Compiling azeroth-ingest v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\ingest)
+2026-10-20T21:10:06.7474603Z    Compiling azeroth-app v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\app)
+2026-10-20T21:10:16.5529149Z    Compiling azeroth-cli v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\cli)
+2026-10-20T21:15:27.8065623Z ##[error]The operation was canceled.
+2026-10-20T21:15:28.7127667Z Post job cleanup.
+2026-10-20T21:15:34.1983289Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-20T21:15:34.6031336Z git version 2.56.0.windows.2
+2026-10-20T21:15:34.6410636Z Temporarily overriding HOME='D:\a\_temp\9ebfcf0d-f101-4b82-860a-f6c48867d0ec' before making global git config changes
+2026-10-20T21:15:34.6411925Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:15:34.6463902Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+2026-10-20T21:15:34.7496043Z Removing SSH command configuration
+2026-10-20T21:15:34.7507215Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:15:34.8016425Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-20T21:15:36.5257865Z Removing HTTP extra header
+2026-10-20T21:15:36.5268999Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:15:36.5674655Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-20T21:15:37.1503200Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:15:37.1517734Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:15:37.1864331Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:15:37.1865197Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:15:37.1865732Z includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:15:37.1866308Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:15:37.1911148Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:15:37.2248049Z D:\a\_temp\git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:15:37.2296730Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D\:\\a\\_temp\\git\-credentials\-9ff2ed19\-21ba\-49bc\-92ff\-e39714d6133b\.config
+2026-10-20T21:15:37.2689869Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:15:37.3026018Z D:\a\_temp\git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:15:37.3072423Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-9ff2ed19\-21ba\-49bc\-92ff\-e39714d6133b\.config
+2026-10-20T21:15:37.3458813Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:15:37.3793475Z /github/runner_temp/git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:15:37.3841906Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-9ff2ed19\-21ba\-49bc\-92ff\-e39714d6133b\.config
+2026-10-20T21:15:37.4231576Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:15:37.4568768Z /github/runner_temp/git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config
+2026-10-20T21:15:37.4614898Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-9ff2ed19\-21ba\-49bc\-92ff\-e39714d6133b\.config
+2026-10-20T21:15:37.5008608Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-20T21:15:38.0669629Z Removing credentials config 'D:\a\_temp\git-credentials-9ff2ed19-21ba-49bc-92ff-e39714d6133b.config'
+2026-10-20T21:15:38.1682220Z Cleaning up orphan processes
+2026-10-20T21:15:41.1049659Z Terminate orphan process: pid (3472) (vctip)

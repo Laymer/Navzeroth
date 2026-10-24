@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "kind": "failed_engineering_probe_not_acceptance",
+  "run_id": 39921053021,
+  "job_id": 120306097605,
+  "source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
+  "conclusion": "failure",
+  "native_python_tests_passed": 8,
+  "inert_ownership_checks_passed": 6,
+  "inert_registry_checks_passed": 12,
+  "native_git_transport_tests_passed": 18,
+  "tests_skipped": 0,
+  "build_exit_code": 0,
+  "build_timed_out": true,
+  "build_elapsed_seconds": 1200.032,
+  "build_phase_passed": false,
+  "cargo_reported_build_seconds": 340,
+  "diagnosis": "Cargo reports optimized compilation finished in 5m40s and exits0, but process-tree/capture watchdog remains active until1200.032s. Exact lingering process/capture cause unverified.",
+  "ownership_marker_issued": false,
+  "cleanup_attempted": false,
+  "recovery_workload_executed": false,
+  "peak_memory_bytes": null,
+  "acceptance_observations_promoted": false,
+  "artifact_id": 12487598357,
+  "artifact_zip_sha256": "07eb8d0004eb09ddac3a94ed9a067737e037a39806ffa99da30e47d567f2aaa7",
+  "artifact_member_count": 6,
+  "files": [
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/artifact-api.stdout",
+      "bytes": 752,
+      "sha256": "8ff61535d3a83d156635708adddde5f4282d8bd3f79b6301e79293f44c9227d9"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/artifact.zip",
+      "bytes": 5145,
+      "sha256": "07eb8d0004eb09ddac3a94ed9a067737e037a39806ffa99da30e47d567f2aaa7"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/artifacts-api.json",
+      "bytes": 792,
+      "sha256": "bbb4c59121c0a0fd5b21a1c4cd5861b6950fa39c76f67828aaf8d63026a97716"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/build.json",
+      "bytes": 309,
+      "sha256": "e0c1fe39015d7cca7690e30dc5b589792e4b4aa2f82c34dcb5cf71a0ecdc0f4f"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/build.stderr",
+      "bytes": 5208,
+      "sha256": "3b91ddae3de957bf21d31daee97dd848b09e4bd5842c2a3c915657253a64c1b2"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/engineering-result.json",
+      "bytes": 2220,
+      "sha256": "62c59d99306eec3fc73eefe544a0ae4d16f62572f9e213d03b1805fbbb53e3eb"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/fixture-commit-api.stdout",
+      "bytes": 2583,
+      "sha256": "6a551829a372955de6ca1e003c90b8cb5806c53a2039eec05ca04bbe3b1369a7"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/job.log",
+      "bytes": 151070,
+      "sha256": "13c5357f7cdcb94c7bebd2d65b972d533f0941faa41a1321cbe07919d62b07a9"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/jobs.json",
+      "bytes": 2724,
+      "sha256": "d1ec052ed8d64b563a60bdf55b29562c580160401f63a54bbec1887e451e34bf"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/run.json",
+      "bytes": 11801,
+      "sha256": "39db53d198968fefbd9f7d1b5eebfd9347ad99405682be4154a090fc4c09fe7c"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-41b52/rustc-identity.stdout",
+      "bytes": 194,
+      "sha256": "5477f9bad65b15c4c5b31fc050fc72feba651ea1b330bc75cf356a4d6b0fbc80"
+    }
+  ]
+}

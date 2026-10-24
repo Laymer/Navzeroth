@@ -1,0 +1,64 @@
+{
+  "/home/runner/work/Navzeroth/Navzeroth/apps/desktop/vite.config.ts": {
+    "path": "/home/runner/work/Navzeroth/Navzeroth/apps/desktop/vite.config.ts",
+    "statementMap": {
+      "0": {
+        "start": {
+          "line": 6,
+          "column": 15
+        },
+        "end": {
+          "line": 34,
+          "column": 2
+        }
+      }
+    },
+    "fnMap": {},
+    "branchMap": {},
+    "s": {
+      "0": 1
+    },
+    "f": {},
+    "b": {},
+    "meta": {
+      "lastBranch": 0,
+      "lastFunction": 0,
+      "lastStatement": 1,
+      "seen": {
+        "s:6:15:34:2": 0
+      },
+      "fnNames": {}
+    }
+  },
+  "/home/runner/work/Navzeroth/Navzeroth/apps/desktop/csp.ts": {
+    "path": "/home/runner/work/Navzeroth/Navzeroth/apps/desktop/csp.ts",
+    "statementMap": {
+      "0": {
+        "start": {
+          "line": 8,
+          "column": 45
+        },
+        "end": {
+          "line": 8,
+          "column": 73
+        }
+      }
+    },
+    "fnMap": {},
+    "branchMap": {},
+    "s": {
+      "0": 1
+    },
+    "f": {},
+    "b": {},
+    "meta": {
+      "lastBranch": 0,
+      "lastFunction": 0,
+      "lastStatement": 1,
+      "seen": {
+        "s:8:45:8:73": 0
+      },
+      "fnNames": {}
+    }
+  }
+}

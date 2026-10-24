@@ -1,0 +1,22 @@
+{
+  "candidate": "8b12aec1bb28bdb35a3014c365ec500da8876af0",
+  "actual_checkout": "7361c873a1ba0c3366703917033f7397c74d07c3",
+  "scope": "Exact signed V17 bytes preserved before the next repair integration. No acceptance promotion.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-signed-content-v17/bundled-content-build-identity.json",
+      "bytes": 528,
+      "sha256": "e2e460884443ffa94ea658ace78a1e8afa6d20a9dacd7e372d670ee46aa02545"
+    },
+    {
+      "path": "release/history/2026-10-21-signed-content-v17/bundled-content-manifest.json",
+      "bytes": 17187,
+      "sha256": "6a15c4e908855fa6e14279d8bd31cd6ddab4621a7e27b4dd273c26e5d61e3cad"
+    },
+    {
+      "path": "release/history/2026-10-21-signed-content-v17/bundled-content-receipt.json",
+      "bytes": 1074,
+      "sha256": "9c5c31e6e13074e2254c766d1b2b9717cb1b8f7c7eef669fd90005460a846412"
+    }
+  ]
+}

@@ -1,0 +1,2148 @@
+{
+  "format_version": 1,
+  "source_commit": "277a6e6ab6160d7e16b00cfe711fbf100103841e",
+  "threshold": {
+    "covered_numerator": 90,
+    "executable_denominator": 100,
+    "rounding": false
+  },
+  "passes": true,
+  "errors": [],
+  "files": [
+    {
+      "path": "apps/desktop/csp.ts",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src-tauri/build.rs",
+      "disposition": "measured",
+      "executable": 8,
+      "covered": 8,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/atlas_protocol.rs",
+      "disposition": "measured",
+      "executable": 60,
+      "covered": 60,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "disposition": "measured",
+      "executable": 1356,
+      "covered": 1229,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/main.rs",
+      "disposition": "measured",
+      "executable": 18,
+      "covered": 18,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/reference_window.rs",
+      "disposition": "measured",
+      "executable": 120,
+      "covered": 120,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/App.tsx",
+      "disposition": "measured",
+      "executable": 56,
+      "covered": 52,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/atlas/MapView.tsx",
+      "disposition": "measured",
+      "executable": 89,
+      "covered": 89,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/atlas/describe.ts",
+      "disposition": "measured",
+      "executable": 48,
+      "covered": 48,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/atlas/golden.shapes.ts",
+      "disposition": "measured",
+      "executable": 58,
+      "covered": 57,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/atlas/layers.ts",
+      "disposition": "measured",
+      "executable": 4,
+      "covered": 4,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/atlas/markerState.ts",
+      "disposition": "measured",
+      "executable": 16,
+      "covered": 16,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/atlas/viewport.ts",
+      "disposition": "measured",
+      "executable": 42,
+      "covered": 41,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/authoredContent.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/calibration.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/catalogPages.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/client.ts",
+      "disposition": "measured",
+      "executable": 134,
+      "covered": 125,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/clustering.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/compatibility.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/contentDispositions.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/contract.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/demoAdapter.ts",
+      "disposition": "measured",
+      "executable": 59,
+      "covered": 58,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/diagnostics.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/dungeonPreparation.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/gear.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/index.ts",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/localData.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/localSubmissions.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/planningJobs.ts",
+      "disposition": "measured",
+      "executable": 42,
+      "covered": 41,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/recovery.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/reference.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/reminders.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/routeAcquisition.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/routes.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/sessions.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/tauriAdapter.ts",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/today.ts",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/commands/world.ts",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/main.tsx",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/observation.ts",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/party/contract.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/party/proposals.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/AtlasScreen.tsx",
+      "disposition": "measured",
+      "executable": 85,
+      "covered": 82,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/AuthoredContentPicker.tsx",
+      "disposition": "measured",
+      "executable": 13,
+      "covered": 13,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/CalibrationPanel.tsx",
+      "disposition": "measured",
+      "executable": 33,
+      "covered": 31,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/CatalogPager.tsx",
+      "disposition": "measured",
+      "executable": 14,
+      "covered": 14,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ClusterSummary.tsx",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/CompatibilityPanel.tsx",
+      "disposition": "measured",
+      "executable": 15,
+      "covered": 15,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ContentDispositionPanel.tsx",
+      "disposition": "measured",
+      "executable": 16,
+      "covered": 16,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ContentScreen.tsx",
+      "disposition": "measured",
+      "executable": 87,
+      "covered": 81,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/DiagnosticsPanel.tsx",
+      "disposition": "measured",
+      "executable": 21,
+      "covered": 19,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/DungeonsScreen.tsx",
+      "disposition": "measured",
+      "executable": 74,
+      "covered": 71,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/GearExplanations.tsx",
+      "disposition": "measured",
+      "executable": 105,
+      "covered": 104,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/GearScreen.tsx",
+      "disposition": "measured",
+      "executable": 121,
+      "covered": 111,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ImportScreen.tsx",
+      "disposition": "measured",
+      "executable": 124,
+      "covered": 120,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalDataPanel.tsx",
+      "disposition": "measured",
+      "executable": 69,
+      "covered": 66,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalResearchInputs.tsx",
+      "disposition": "measured",
+      "executable": 19,
+      "covered": 18,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalResearchMedia.tsx",
+      "disposition": "measured",
+      "executable": 26,
+      "covered": 24,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalStartupChoices.tsx",
+      "disposition": "measured",
+      "executable": 17,
+      "covered": 16,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalSubmissionsPanel.tsx",
+      "disposition": "measured",
+      "executable": 50,
+      "covered": 46,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/LocalWorkflowChoices.tsx",
+      "disposition": "measured",
+      "executable": 42,
+      "covered": 42,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyAgreement.tsx",
+      "disposition": "measured",
+      "executable": 59,
+      "covered": 55,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyEligibility.tsx",
+      "disposition": "measured",
+      "executable": 38,
+      "covered": 36,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyPlanning.tsx",
+      "disposition": "measured",
+      "executable": 99,
+      "covered": 91,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/PartyScreen.tsx",
+      "disposition": "measured",
+      "executable": 66,
+      "covered": 65,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/PlanPinControl.tsx",
+      "disposition": "measured",
+      "executable": 6,
+      "covered": 6,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/PlannerScreen.tsx",
+      "disposition": "measured",
+      "executable": 129,
+      "covered": 121,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/RecoveryPanel.tsx",
+      "disposition": "measured",
+      "executable": 39,
+      "covered": 36,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ReferenceView.tsx",
+      "disposition": "measured",
+      "executable": 7,
+      "covered": 7,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ReferenceWindowControls.tsx",
+      "disposition": "measured",
+      "executable": 28,
+      "covered": 26,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ReminderScreen.tsx",
+      "disposition": "measured",
+      "executable": 29,
+      "covered": 28,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchBindings.tsx",
+      "disposition": "measured",
+      "executable": 10,
+      "covered": 9,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchDeliveryPanel.tsx",
+      "disposition": "measured",
+      "executable": 57,
+      "covered": 56,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchFactsTools.tsx",
+      "disposition": "measured",
+      "executable": 26,
+      "covered": 26,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/ResearchReferenceHistory.tsx",
+      "disposition": "measured",
+      "executable": 5,
+      "covered": 5,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/RouteAcquisitionPanel.tsx",
+      "disposition": "measured",
+      "executable": 39,
+      "covered": 36,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/RouteInspection.tsx",
+      "disposition": "measured",
+      "executable": 30,
+      "covered": 27,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/SavedPlanCard.tsx",
+      "disposition": "measured",
+      "executable": 6,
+      "covered": 6,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/SessionsScreen.tsx",
+      "disposition": "measured",
+      "executable": 74,
+      "covered": 72,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/SettingsScreen.tsx",
+      "disposition": "measured",
+      "executable": 116,
+      "covered": 109,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/TodayScreen.tsx",
+      "disposition": "measured",
+      "executable": 9,
+      "covered": 9,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/WorldScreen.tsx",
+      "disposition": "measured",
+      "executable": 79,
+      "covered": 79,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/playHelp.ts",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/referenceShortcut.ts",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/routeSegments.ts",
+      "disposition": "measured",
+      "executable": 14,
+      "covered": 14,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/screens/useRecordOrigins.ts",
+      "disposition": "measured",
+      "executable": 16,
+      "covered": 16,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/theme/Backdrop.tsx",
+      "disposition": "measured",
+      "executable": 14,
+      "covered": 14,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/theme/contrastLib.ts",
+      "disposition": "measured",
+      "executable": 38,
+      "covered": 36,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/Button.tsx",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/Field.tsx",
+      "disposition": "measured",
+      "executable": 5,
+      "covered": 5,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/HelpTip.tsx",
+      "disposition": "measured",
+      "executable": 64,
+      "covered": 64,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/OriginMarker.tsx",
+      "disposition": "measured",
+      "executable": 6,
+      "covered": 6,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/Panel.tsx",
+      "disposition": "measured",
+      "executable": 6,
+      "covered": 6,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/StatusBadge.tsx",
+      "disposition": "measured",
+      "executable": 2,
+      "covered": 2,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/ui/index.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/src/vite-env.d.ts",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "apps/desktop/vite.config.ts",
+      "disposition": "measured",
+      "executable": 1,
+      "covered": 1,
+      "passes": true
+    },
+    {
+      "path": "crates/app/examples/workflow_performance.rs",
+      "disposition": "measured",
+      "executable": 165,
+      "covered": 165,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/atlas.rs",
+      "disposition": "measured",
+      "executable": 388,
+      "covered": 370,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/authored_content.rs",
+      "disposition": "measured",
+      "executable": 393,
+      "covered": 370,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/authored_scores.rs",
+      "disposition": "measured",
+      "executable": 163,
+      "covered": 160,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/bundled_content.rs",
+      "disposition": "measured",
+      "executable": 254,
+      "covered": 246,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/calibration.rs",
+      "disposition": "measured",
+      "executable": 33,
+      "covered": 31,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/catalog.rs",
+      "disposition": "measured",
+      "executable": 152,
+      "covered": 148,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/catalog_pages.rs",
+      "disposition": "measured",
+      "executable": 169,
+      "covered": 163,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/clustering.rs",
+      "disposition": "measured",
+      "executable": 11,
+      "covered": 11,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/compatibility.rs",
+      "disposition": "measured",
+      "executable": 194,
+      "covered": 183,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/content.rs",
+      "disposition": "measured",
+      "executable": 473,
+      "covered": 450,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/content_dispositions.rs",
+      "disposition": "measured",
+      "executable": 45,
+      "covered": 45,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/diagnostics.rs",
+      "disposition": "measured",
+      "executable": 219,
+      "covered": 214,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/dungeon_preparation.rs",
+      "disposition": "measured",
+      "executable": 731,
+      "covered": 687,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/dungeon_preparation/json.rs",
+      "disposition": "measured",
+      "executable": 81,
+      "covered": 78,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/gear.rs",
+      "disposition": "measured",
+      "executable": 401,
+      "covered": 376,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/joint_planning.rs",
+      "disposition": "measured",
+      "executable": 418,
+      "covered": 398,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/lib.rs",
+      "disposition": "measured",
+      "executable": 33,
+      "covered": 33,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/local_changes.rs",
+      "disposition": "measured",
+      "executable": 117,
+      "covered": 108,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/local_data.rs",
+      "disposition": "measured",
+      "executable": 734,
+      "covered": 673,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/local_submissions.rs",
+      "disposition": "measured",
+      "executable": 160,
+      "covered": 157,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/party.rs",
+      "disposition": "measured",
+      "executable": 57,
+      "covered": 57,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/party_proposals.rs",
+      "disposition": "measured",
+      "executable": 339,
+      "covered": 325,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/plan_export.rs",
+      "disposition": "measured",
+      "executable": 237,
+      "covered": 223,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/planning.rs",
+      "disposition": "measured",
+      "executable": 198,
+      "covered": 184,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/planning_job_service.rs",
+      "disposition": "measured",
+      "executable": 380,
+      "covered": 357,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/planning_jobs.rs",
+      "disposition": "measured",
+      "executable": 359,
+      "covered": 340,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/planning_objectives.rs",
+      "disposition": "measured",
+      "executable": 113,
+      "covered": 104,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/recipient_export.rs",
+      "disposition": "measured",
+      "executable": 419,
+      "covered": 389,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/recovery.rs",
+      "disposition": "measured",
+      "executable": 452,
+      "covered": 420,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/reference.rs",
+      "disposition": "measured",
+      "executable": 46,
+      "covered": 43,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/reference_controls.rs",
+      "disposition": "measured",
+      "executable": 150,
+      "covered": 139,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/reminders.rs",
+      "disposition": "measured",
+      "executable": 267,
+      "covered": 257,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/route_acquisition.rs",
+      "disposition": "measured",
+      "executable": 413,
+      "covered": 396,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/routes.rs",
+      "disposition": "measured",
+      "executable": 31,
+      "covered": 31,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/sessions.rs",
+      "disposition": "measured",
+      "executable": 73,
+      "covered": 73,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/snapshots.rs",
+      "disposition": "measured",
+      "executable": 925,
+      "covered": 865,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/stored_atlas.rs",
+      "disposition": "measured",
+      "executable": 279,
+      "covered": 255,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/today.rs",
+      "disposition": "measured",
+      "executable": 195,
+      "covered": 180,
+      "passes": true
+    },
+    {
+      "path": "crates/app/src/world.rs",
+      "disposition": "measured",
+      "executable": 719,
+      "covered": 704,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/atlas.rs",
+      "disposition": "measured",
+      "executable": 400,
+      "covered": 367,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/bundled_content.rs",
+      "disposition": "measured",
+      "executable": 80,
+      "covered": 78,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/bundled_receipts.rs",
+      "disposition": "measured",
+      "executable": 68,
+      "covered": 66,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/capture.rs",
+      "disposition": "measured",
+      "executable": 165,
+      "covered": 157,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/content.rs",
+      "disposition": "measured",
+      "executable": 89,
+      "covered": 86,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/doctor.rs",
+      "disposition": "measured",
+      "executable": 118,
+      "covered": 115,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/foreverdb.rs",
+      "disposition": "measured",
+      "executable": 70,
+      "covered": 68,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/guide.rs",
+      "disposition": "measured",
+      "executable": 55,
+      "covered": 55,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/lib.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/local_data.rs",
+      "disposition": "measured",
+      "executable": 827,
+      "covered": 749,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "disposition": "measured",
+      "executable": 409,
+      "covered": 371,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/pack.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/questiedb.rs",
+      "disposition": "measured",
+      "executable": 164,
+      "covered": 154,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release.rs",
+      "disposition": "measured",
+      "executable": 1162,
+      "covered": 1088,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release/admission.rs",
+      "disposition": "measured",
+      "executable": 110,
+      "covered": 109,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release/bundled.rs",
+      "disposition": "measured",
+      "executable": 273,
+      "covered": 267,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release/bundled_stage.rs",
+      "disposition": "measured",
+      "executable": 96,
+      "covered": 90,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release/enumeration.rs",
+      "disposition": "measured",
+      "executable": 167,
+      "covered": 159,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release/materials.rs",
+      "disposition": "measured",
+      "executable": 491,
+      "covered": 467,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/release_inventory.rs",
+      "disposition": "measured",
+      "executable": 106,
+      "covered": 97,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/replay.rs",
+      "disposition": "measured",
+      "executable": 310,
+      "covered": 290,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/source_pipeline.rs",
+      "disposition": "measured",
+      "executable": 687,
+      "covered": 642,
+      "passes": true
+    },
+    {
+      "path": "crates/cli/src/world_data.rs",
+      "disposition": "measured",
+      "executable": 309,
+      "covered": 304,
+      "passes": true
+    },
+    {
+      "path": "crates/core/examples/export_content_schema.rs",
+      "disposition": "measured",
+      "executable": 4,
+      "covered": 4,
+      "passes": true
+    },
+    {
+      "path": "crates/core/examples/export_world_data_schema.rs",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "crates/core/examples/search_performance.rs",
+      "disposition": "measured",
+      "executable": 73,
+      "covered": 73,
+      "passes": true
+    },
+    {
+      "path": "crates/core/examples/support/mod.rs",
+      "disposition": "measured",
+      "executable": 116,
+      "covered": 116,
+      "passes": true
+    },
+    {
+      "path": "crates/core/examples/validate_knowledge.rs",
+      "disposition": "measured",
+      "executable": 34,
+      "covered": 34,
+      "passes": true
+    },
+    {
+      "path": "crates/core/examples/validate_world_data.rs",
+      "disposition": "measured",
+      "executable": 38,
+      "covered": 38,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/analytics.rs",
+      "disposition": "measured",
+      "executable": 87,
+      "covered": 85,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/atlas.rs",
+      "disposition": "measured",
+      "executable": 254,
+      "covered": 246,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/calibration.rs",
+      "disposition": "measured",
+      "executable": 127,
+      "covered": 116,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/catalog.rs",
+      "disposition": "measured",
+      "executable": 68,
+      "covered": 67,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/content_v2.rs",
+      "disposition": "measured",
+      "executable": 355,
+      "covered": 340,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/content_v2/authored.rs",
+      "disposition": "measured",
+      "executable": 91,
+      "covered": 87,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/content_v2/json.rs",
+      "disposition": "measured",
+      "executable": 43,
+      "covered": 43,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/content_v2/records.rs",
+      "disposition": "measured",
+      "executable": 231,
+      "covered": 210,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/content_v2/schema.rs",
+      "disposition": "measured",
+      "executable": 83,
+      "covered": 79,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/dataset.rs",
+      "disposition": "measured",
+      "executable": 269,
+      "covered": 263,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/evidence.rs",
+      "disposition": "measured",
+      "executable": 39,
+      "covered": 38,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/gear.rs",
+      "disposition": "measured",
+      "executable": 26,
+      "covered": 25,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/mod.rs",
+      "disposition": "measured",
+      "executable": 363,
+      "covered": 340,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/plan.rs",
+      "disposition": "measured",
+      "executable": 23,
+      "covered": 22,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/schema.rs",
+      "disposition": "measured",
+      "executable": 54,
+      "covered": 54,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/contract/snapshot.rs",
+      "disposition": "measured",
+      "executable": 18,
+      "covered": 17,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/coverage.rs",
+      "disposition": "measured",
+      "executable": 559,
+      "covered": 537,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/dungeon_composition.rs",
+      "disposition": "measured",
+      "executable": 128,
+      "covered": 128,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/eligibility.rs",
+      "disposition": "measured",
+      "executable": 533,
+      "covered": 514,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/entities/character.rs",
+      "disposition": "measured",
+      "executable": 29,
+      "covered": 28,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/entities/imagery.rs",
+      "disposition": "measured",
+      "executable": 94,
+      "covered": 94,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/entities/mod.rs",
+      "disposition": "measured",
+      "executable": 23,
+      "covered": 23,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/entities/planning.rs",
+      "disposition": "measured",
+      "executable": 129,
+      "covered": 121,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/entities/reference.rs",
+      "disposition": "measured",
+      "executable": 103,
+      "covered": 99,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/entities/spatial.rs",
+      "disposition": "measured",
+      "executable": 54,
+      "covered": 52,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/error.rs",
+      "disposition": "measured",
+      "executable": 38,
+      "covered": 38,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/evaluation.rs",
+      "disposition": "measured",
+      "executable": 305,
+      "covered": 302,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/acquisition.rs",
+      "disposition": "measured",
+      "executable": 206,
+      "covered": 192,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/configuration.rs",
+      "disposition": "measured",
+      "executable": 464,
+      "covered": 433,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/eligibility.rs",
+      "disposition": "measured",
+      "executable": 98,
+      "covered": 97,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/inputs.rs",
+      "disposition": "measured",
+      "executable": 19,
+      "covered": 18,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/lua.rs",
+      "disposition": "measured",
+      "executable": 90,
+      "covered": 87,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/mod.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/profile.rs",
+      "disposition": "measured",
+      "executable": 12,
+      "covered": 12,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/gear/score.rs",
+      "disposition": "measured",
+      "executable": 130,
+      "covered": 130,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/joint_planner.rs",
+      "disposition": "measured",
+      "executable": 187,
+      "covered": 178,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/json.rs",
+      "disposition": "measured",
+      "executable": 21,
+      "covered": 21,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data.rs",
+      "disposition": "measured",
+      "executable": 217,
+      "covered": 215,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_catalog.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_delivery.rs",
+      "disposition": "measured",
+      "executable": 134,
+      "covered": 129,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_gameplay.rs",
+      "disposition": "measured",
+      "executable": 155,
+      "covered": 145,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_guide.rs",
+      "disposition": "measured",
+      "executable": 27,
+      "covered": 26,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_inputs.rs",
+      "disposition": "measured",
+      "executable": 248,
+      "covered": 228,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_inventory.rs",
+      "disposition": "measured",
+      "executable": 109,
+      "covered": 107,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_lifecycle.rs",
+      "disposition": "measured",
+      "executable": 48,
+      "covered": 47,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_media.rs",
+      "disposition": "measured",
+      "executable": 51,
+      "covered": 50,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_projection.rs",
+      "disposition": "measured",
+      "executable": 188,
+      "covered": 177,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_release.rs",
+      "disposition": "measured",
+      "executable": 149,
+      "covered": 145,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/local_data_workflow.rs",
+      "disposition": "measured",
+      "executable": 120,
+      "covered": 109,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/objective_clustering.rs",
+      "disposition": "measured",
+      "executable": 332,
+      "covered": 329,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/observation.rs",
+      "disposition": "measured",
+      "executable": 134,
+      "covered": 133,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/origin_policy.rs",
+      "disposition": "measured",
+      "executable": 265,
+      "covered": 263,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/planner.rs",
+      "disposition": "measured",
+      "executable": 183,
+      "covered": 176,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/predicate.rs",
+      "disposition": "measured",
+      "executable": 70,
+      "covered": 69,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/release.rs",
+      "disposition": "measured",
+      "executable": 859,
+      "covered": 848,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/release_inventory.rs",
+      "disposition": "measured",
+      "executable": 372,
+      "covered": 363,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/release_party.rs",
+      "disposition": "measured",
+      "executable": 128,
+      "covered": 126,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/reminders.rs",
+      "disposition": "measured",
+      "executable": 416,
+      "covered": 409,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/search_control.rs",
+      "disposition": "measured",
+      "executable": 3,
+      "covered": 3,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/selection_path.rs",
+      "disposition": "measured",
+      "executable": 11,
+      "covered": 11,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/sessions.rs",
+      "disposition": "measured",
+      "executable": 373,
+      "covered": 368,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/source_admission.rs",
+      "disposition": "measured",
+      "executable": 203,
+      "covered": 198,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/source_pipeline.rs",
+      "disposition": "measured",
+      "executable": 250,
+      "covered": 246,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/sources.rs",
+      "disposition": "measured",
+      "executable": 311,
+      "covered": 307,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/strict_json.rs",
+      "disposition": "measured",
+      "executable": 53,
+      "covered": 53,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/submissions.rs",
+      "disposition": "measured",
+      "executable": 66,
+      "covered": 64,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/tooltip.rs",
+      "disposition": "measured",
+      "executable": 150,
+      "covered": 139,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/travel.rs",
+      "disposition": "measured",
+      "executable": 383,
+      "covered": 381,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/types.rs",
+      "disposition": "measured",
+      "executable": 247,
+      "covered": 238,
+      "passes": true
+    },
+    {
+      "path": "crates/core/src/world_data.rs",
+      "disposition": "measured",
+      "executable": 250,
+      "covered": 249,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/anav1.rs",
+      "disposition": "measured",
+      "executable": 63,
+      "covered": 62,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/error.rs",
+      "disposition": "measured",
+      "executable": 9,
+      "covered": 9,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/fixtures.rs",
+      "disposition": "measured",
+      "executable": 185,
+      "covered": 175,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/foreverdb.rs",
+      "disposition": "measured",
+      "executable": 251,
+      "covered": 233,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/import.rs",
+      "disposition": "measured",
+      "executable": 123,
+      "covered": 118,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/lib.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/pack.rs",
+      "disposition": "measured",
+      "executable": 656,
+      "covered": 616,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/pack/bounded_file.rs",
+      "disposition": "measured",
+      "executable": 131,
+      "covered": 124,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/pack/v2.rs",
+      "disposition": "measured",
+      "executable": 268,
+      "covered": 252,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/questiedb.rs",
+      "disposition": "measured",
+      "executable": 314,
+      "covered": 299,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/rxp.rs",
+      "disposition": "measured",
+      "executable": 533,
+      "covered": 509,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/rxp_verify.rs",
+      "disposition": "measured",
+      "executable": 824,
+      "covered": 800,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/savedvars.rs",
+      "disposition": "measured",
+      "executable": 392,
+      "covered": 382,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/session.rs",
+      "disposition": "measured",
+      "executable": 59,
+      "covered": 57,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/source_adapters.rs",
+      "disposition": "measured",
+      "executable": 243,
+      "covered": 231,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/texture.rs",
+      "disposition": "measured",
+      "executable": 210,
+      "covered": 199,
+      "passes": true
+    },
+    {
+      "path": "crates/ingest/src/watcher.rs",
+      "disposition": "measured",
+      "executable": 118,
+      "covered": 113,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/build.rs",
+      "disposition": "measured",
+      "executable": 221,
+      "covered": 221,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/build_support.rs",
+      "disposition": "measured",
+      "executable": 57,
+      "covered": 53,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/bundled_receipts.rs",
+      "disposition": "measured",
+      "executable": 214,
+      "covered": 212,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/bundled_resources.rs",
+      "disposition": "measured",
+      "executable": 132,
+      "covered": 126,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/changes.rs",
+      "disposition": "measured",
+      "executable": 152,
+      "covered": 143,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/delivery.rs",
+      "disposition": "measured",
+      "executable": 285,
+      "covered": 264,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/delivery_receipts.rs",
+      "disposition": "measured",
+      "executable": 125,
+      "covered": 116,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/extraction.rs",
+      "disposition": "measured",
+      "executable": 693,
+      "covered": 636,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/gameplay.rs",
+      "disposition": "measured",
+      "executable": 272,
+      "covered": 247,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/guide_facts.rs",
+      "disposition": "measured",
+      "executable": 299,
+      "covered": 273,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/guide_review.rs",
+      "disposition": "measured",
+      "executable": 110,
+      "covered": 105,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/input_guard.rs",
+      "disposition": "measured",
+      "executable": 65,
+      "covered": 59,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/inputs.rs",
+      "disposition": "measured",
+      "executable": 357,
+      "covered": 334,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/inventory.rs",
+      "disposition": "measured",
+      "executable": 304,
+      "covered": 280,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/isolation.rs",
+      "disposition": "measured",
+      "executable": 79,
+      "covered": 73,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/lib.rs",
+      "disposition": "measured",
+      "executable": 234,
+      "covered": 221,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/lifecycle.rs",
+      "disposition": "measured",
+      "executable": 157,
+      "covered": 153,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/media.rs",
+      "disposition": "measured",
+      "executable": 534,
+      "covered": 483,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/metadata.rs",
+      "disposition": "measured",
+      "executable": 52,
+      "covered": 50,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/native.rs",
+      "disposition": "measured",
+      "executable": 224,
+      "covered": 223,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/partial.rs",
+      "disposition": "measured",
+      "executable": 126,
+      "covered": 123,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/projection.rs",
+      "disposition": "measured",
+      "executable": 659,
+      "covered": 623,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/receipts.rs",
+      "disposition": "measured",
+      "executable": 212,
+      "covered": 209,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/tables.rs",
+      "disposition": "measured",
+      "executable": 741,
+      "covered": 673,
+      "passes": true
+    },
+    {
+      "path": "crates/local-data/src/worker.rs",
+      "disposition": "measured",
+      "executable": 204,
+      "covered": 189,
+      "passes": true
+    },
+    {
+      "path": "crates/lua-harness/examples/callback_performance.rs",
+      "disposition": "measured",
+      "executable": 54,
+      "covered": 54,
+      "passes": true
+    },
+    {
+      "path": "crates/lua-harness/src/lib.rs",
+      "disposition": "measured",
+      "executable": 269,
+      "covered": 249,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/calibration.rs",
+      "disposition": "measured",
+      "executable": 42,
+      "covered": 38,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/catalog_assets.rs",
+      "disposition": "measured",
+      "executable": 265,
+      "covered": 242,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/catalog_generation.rs",
+      "disposition": "measured",
+      "executable": 52,
+      "covered": 52,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/consistent_read.rs",
+      "disposition": "measured",
+      "executable": 16,
+      "covered": 16,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/content.rs",
+      "disposition": "measured",
+      "executable": 412,
+      "covered": 374,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/content_catalog.rs",
+      "disposition": "measured",
+      "executable": 381,
+      "covered": 363,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/content_dispositions.rs",
+      "disposition": "measured",
+      "executable": 309,
+      "covered": 286,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/content_preferences.rs",
+      "disposition": "measured",
+      "executable": 93,
+      "covered": 89,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/error.rs",
+      "disposition": "measured",
+      "executable": 19,
+      "covered": 19,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/hash.rs",
+      "disposition": "measured",
+      "executable": 51,
+      "covered": 51,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/lib.rs",
+      "disposition": "declaration_only",
+      "executable": 0,
+      "covered": 0,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/local_data.rs",
+      "disposition": "measured",
+      "executable": 638,
+      "covered": 611,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/local_submissions.rs",
+      "disposition": "measured",
+      "executable": 324,
+      "covered": 312,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/migrations.rs",
+      "disposition": "measured",
+      "executable": 64,
+      "covered": 62,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/model.rs",
+      "disposition": "measured",
+      "executable": 14,
+      "covered": 14,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/ordering.rs",
+      "disposition": "measured",
+      "executable": 36,
+      "covered": 36,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/party.rs",
+      "disposition": "measured",
+      "executable": 109,
+      "covered": 109,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/party_proposals.rs",
+      "disposition": "measured",
+      "executable": 83,
+      "covered": 80,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/recovery.rs",
+      "disposition": "measured",
+      "executable": 449,
+      "covered": 418,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/reminders.rs",
+      "disposition": "measured",
+      "executable": 63,
+      "covered": 58,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/sessions.rs",
+      "disposition": "measured",
+      "executable": 159,
+      "covered": 153,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/sqlite.rs",
+      "disposition": "measured",
+      "executable": 668,
+      "covered": 647,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/today.rs",
+      "disposition": "measured",
+      "executable": 334,
+      "covered": 311,
+      "passes": true
+    },
+    {
+      "path": "crates/storage/src/today_json.rs",
+      "disposition": "measured",
+      "executable": 78,
+      "covered": 75,
+      "passes": true
+    }
+  ]
+}

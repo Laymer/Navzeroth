@@ -2,11 +2,13 @@
 
 ## Governing stable 1.0.0 contract
 
-[ADR 0008](../decisions/0008-unsigned-stable-release.md) governs the authorized
+[ADR 0008](../decisions/0008-unsigned-stable-release.md), revised by
+[ADR 0009](../decisions/0009-automated-draft-release-acceptance.md), governs the authorized
 **unsigned stable 1.0.0** release. Its explicit exception does not change historical
 RC classification or authorize unsigned future releases. The versioned
-[schema 4 acceptance contract](SCHEMA4_ACCEPTANCE.md) replaces historical Windows
-acceptance requirements; schemas 1/2/3 and their recorded evidence retain their
+[schema 5 acceptance contract](SCHEMA5_ACCEPTANCE.md) replaces the mandatory owner
+smoke with independently reviewed automated exact-draft UI/native acceptance.
+Schemas 1/2/3/4 and their recorded evidence retain their
 meaning. This documentation neither migrates manifests nor records a passing gate.
 
 Stable publication requires all **ten protected-main checks**, independent review,
@@ -17,12 +19,15 @@ unknowns, inferred travel, estimates and declared exclusions must remain explici
 Live-client acceptance and the launch-build freeze were removed; no live-game
 correctness or ordinary-PC performance is claimed.
 
-Schema 4 requires eight exact-installer `hosted_windows` observations: installation,
+Schema 5 requires eight exact-installer `hosted_windows` observations: installation,
 first start, upgrade from 1.0.0-rc.1, downgrade refusal, persistence/recovery, installed
 resources, offline operation and full-pack performance. Separately,
-`OWNER-INSTALLER-SMOKE` requires `interactive_windows` evidence from the owner for
+`DRAFT-INSTALLER-SMOKE` requires `automated_draft_windows` evidence for
 installation/upgrade, first start, bundled activation, representative planning and
-restart/persistence. Every passing row binds the exact installer SHA256 and tested
+restart/persistence on the exact independently downloaded draft installer. Actual
+rendered Windows UI and native state must both be exercised; mocked-browser or
+IPC-only assertions do not satisfy this row. Human smoke is not performed by the
+automated verifier. Every passing row binds the exact installer SHA256 and tested
 source/production identity. Failed, missing or stale observations remain blocking;
 historical WIN rows are not automatically promoted. Disclose measured resource use,
 hardware and limitations, including any excluded child-process memory.
@@ -31,22 +36,68 @@ After the separate release PR merges, run fresh required checks on its exact
 resulting commit; tag only that verified commit. `release-build-readiness` permits
 bounded artifact preparation with pristine pending Windows rows, never publication.
 `release-draft-readiness` requires all eight hosted rows for the exact installer;
-only pristine pending owner smoke may remain. Independently download and verify
+only pristine pending automated draft smoke may remain. Independently download and verify
 the draft assets, checksums, declared unsigned status, source binding, content,
-notices and installed resources. Then pause for the owner's exact-draft-installer
-smoke. A relevant production change or a different installer invalidates that evidence.
+notices and installed resources. Dispatch `verify-release-downloads.yml` on the
+exact tag with separately recorded source and installer hashes. After the actual
+UI/native run completes, independently retrieve completed run/job/release API
+snapshots and review the pinned results. Record the final proof in an external
+evidence overlay; do not alter signed bundle resources or tagged source. A relevant
+production change or a different installer invalidates that evidence.
 Only full `release-readiness`, including that smoke and every applicable gate,
 authorizes publication. Once they pass, publish 1.0.0 without another approval
 request; independently verify public downloads before updating/deploying the
 website and download instructions. Preparation or draft readiness never supplies
 publication permission.
 
+### Current source, receipt and installer order
+
+1. Prepare a separate version PR after reviewed content/desktop delivery. Align
+   the six declarations listed in the historical version checklist below and the
+   eight internal Cargo.lock entries. Regenerate addon, Reference, Today and
+   synthetic-atlas outputs with their writers; regenerate and check dependency
+   notices. Commit every production change before selecting a tested ancestor.
+2. Run actual final-production checks and the full-pack functional scenarios.
+   Refresh genuine inventory and proof FileRefs before recording final bindings.
+   `scripts/generate-stable-inventory.py` resets bindings and Windows observations;
+   never rerun it over signed or observed release metadata. Keep earlier scoped
+   functional proofs and failures as historical evidence.
+3. Independently review the immutable source/content and record checked revisions,
+   production fingerprint, findings and corrections in a public review artifact.
+   Record both signing identities' operator control explicitly. Commit the public
+   artifact without future receipt/manifest hashes or installer claims.
+4. Bind the actual tested ancestor, production fingerprint and verified inventory
+   in schema5 evidence. Require `release-materials --root . --version 1.0.0`
+   to return `unsigned_preparation.ready=true` for those exact evidence bytes;
+   only the nine pristine pending hosted/draft rows may remain. Prepare the
+   manifest/build identity using [the explicit preparation command](BUNDLE_PREPARATION.md).
+5. Independently review those prepared bytes and actual material closure. Sign,
+   assemble and verify the receipt using [the external-key CLI](../data/BUNDLED_CONTENT_RECEIPTS.md)
+   against compiled trusted public identities and independently selected expected
+   pins. Then commit the exact manifest/receipt/review FileRefs. These release and
+   review metadata are excluded from the production fingerprint; product changes
+   require renewed testing, review and bindings.
+6. Merge the separately reviewed release PR only after its exact-head checks.
+   Recheck the resulting main commit, including stability, source parity, coverage,
+   packaging and revised material/build gates. Tag that verified source and retain
+   the eight actual hosted results bound to the exact draft installer. Draft
+   readiness permits only pristine pending automated draft smoke.
+7. Independently download and verify the exact draft, then execute the actual
+   native UI smoke on those downloaded installed bytes. Retain source/production,
+   release/asset/run/attempt/job identities, actual results and completed API
+   snapshots. Obtain independent review and require full release readiness with
+   the verified external overlay before publication. Verify public downloads after
+   publication, and only then update/deploy download instructions. Disclose that
+   automated hosted acceptance does not establish human or ordinary-PC acceptance.
+   The owner's Windows11/0.8.1 upgrade is supplemental and unperformed until
+   separately recorded; any observed relevant defect still holds publication.
+
 ## Historical release process and superseded requirements
 
 The following ADR0006/0007 process is retained as historical context. Where it
 conflicts with the stable1.0.0 contract above (including signing, WIN rows, frozen
-scope/build, live acceptance or pre-draft owner evidence), ADR0008 and schema4
-govern. Historical evidence and unverified results keep their original status.
+scope/build, live acceptance or pre-draft owner evidence), ADR0008/0009 and schema5
+govern. Historical schema4 owner-smoke semantics remain readable unchanged. Historical evidence and unverified results keep their original status.
 
 
 > **Superseded in part by [ADR 0007](../decisions/0007-world-data-automation.md)

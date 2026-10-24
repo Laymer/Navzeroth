@@ -1,0 +1,468 @@
+[
+  {
+    "name": "cargo-llvm-cov-version",
+    "executable": "cargo",
+    "arguments": [
+      "llvm-cov",
+      "--version"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "rust-version",
+    "executable": "rustc",
+    "arguments": [
+      "-vV"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "rust-sysroot",
+    "executable": "rustc",
+    "arguments": [
+      "--print",
+      "sysroot"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "llvm-tools-version",
+    "executable": "llvm-profdata.exe",
+    "arguments": [
+      "--version"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "role-audit-inputs",
+    "executable": "python",
+    "arguments": [
+      "D:\\a\\Navzeroth\\Navzeroth\\scripts\\hydrate-role-audit-inputs.py",
+      "--root",
+      "D:\\a\\Navzeroth\\Navzeroth"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "workspace-tests",
+    "executable": "cargo",
+    "arguments": [
+      "llvm-cov",
+      "test",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--no-report"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "instrumentation-environment",
+    "executable": "cargo",
+    "arguments": [
+      "llvm-cov",
+      "show-env",
+      "--sh"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "schema-export",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-core",
+      "--example",
+      "export_content_schema",
+      "--"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "world-data-schema-export",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-core",
+      "--example",
+      "export_world_data_schema",
+      "--"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "world-data-validation",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-core",
+      "--example",
+      "validate_world_data",
+      "--",
+      "fixtures/world-data/shards",
+      "fixtures/world-data/shards/world/npcs/vanilla_1_12/1.12.1/part-0000.json"
+    ],
+    "expected_exit_code": 1,
+    "exit_code": 1,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "knowledge-validation",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-core",
+      "--example",
+      "validate_knowledge",
+      "--",
+      "fixtures/world-data/facts"
+    ],
+    "expected_exit_code": 1,
+    "exit_code": 1,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "workflow-verification",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-app",
+      "--example",
+      "workflow_performance",
+      "--",
+      "--verify"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "workflow-bad-option",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-app",
+      "--example",
+      "workflow_performance",
+      "--",
+      "--unsupported"
+    ],
+    "expected_exit_code": 2,
+    "exit_code": 2,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "workflow-debug-refusal",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-app",
+      "--example",
+      "workflow_performance",
+      "--"
+    ],
+    "expected_exit_code": 2,
+    "exit_code": 2,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "search-debug-refusal",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-core",
+      "--example",
+      "search_performance",
+      "--"
+    ],
+    "expected_exit_code": 2,
+    "exit_code": 2,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "lua-debug-refusal",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-lua-harness",
+      "--example",
+      "callback_performance",
+      "--"
+    ],
+    "expected_exit_code": 2,
+    "exit_code": 2,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "frontend-build",
+    "executable": "node.exe",
+    "arguments": [
+      "D:\\a\\Navzeroth\\Navzeroth\\node_modules\\.pnpm\\vite@8.3.4_@types+node@24.19.0\\node_modules\\vite\\bin\\vite.js",
+      "build"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "coverage-bundle-inputs",
+    "executable": "python",
+    "arguments": [
+      "D:\\a\\Navzeroth\\Navzeroth\\scripts\\hydrate-bundle-inputs.py",
+      "--root",
+      "D:\\a\\Navzeroth\\Navzeroth"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "coverage-bundle-assembly",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-cli",
+      "--",
+      "assemble-bundled-content",
+      "--root",
+      "D:\\a\\Navzeroth\\Navzeroth",
+      "--output",
+      "D:\\a\\_temp\\coverage-rust\\bundled-content",
+      "--identity",
+      "D:\\a\\Navzeroth\\Navzeroth\\release\\v1\\bundled-content-build-identity.json"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "native-build",
+    "executable": "cargo",
+    "arguments": [
+      "build",
+      "--locked",
+      "-p",
+      "azeroth-desktop",
+      "--features",
+      "tauri/custom-protocol",
+      "--message-format=json"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "coverage-bundle-verification",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "-p",
+      "azeroth-cli",
+      "--",
+      "check-bundled-content",
+      "--input",
+      "D:\\a\\_temp\\coverage-rust\\build\\debug\\bundled-content",
+      "--identity",
+      "D:\\a\\Navzeroth\\Navzeroth\\release\\v1\\bundled-content-build-identity.json"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "native-extraction-worker-refusal",
+    "executable": "azeroth-desktop.exe",
+    "arguments": [
+      "--navzeroth-local-data-worker-v1"
+    ],
+    "expected_exit_code": 2,
+    "exit_code": 2,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "native-media-worker-refusal",
+    "executable": "azeroth-desktop.exe",
+    "arguments": [
+      "--navzeroth-media-worker-v1"
+    ],
+    "expected_exit_code": 1,
+    "exit_code": 1,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "native-smoke",
+    "executable": "node.exe",
+    "arguments": [
+      "D:\\a\\Navzeroth\\Navzeroth\\scripts\\windows\\Native-Smoke.mjs",
+      "--mode",
+      "smoke",
+      "--exe",
+      "D:\\a\\_temp\\coverage-rust\\build\\debug\\azeroth-desktop.exe",
+      "--shutdown",
+      "graceful",
+      "--port",
+      "24828",
+      "--out",
+      "D:\\a\\_temp\\coverage-rust\\native-smoke.json"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "debug",
+    "executable": "cargo",
+    "arguments": [
+      "llvm-cov",
+      "report",
+      "--lcov",
+      "--include-build-script",
+      "--no-default-ignore-filename-regex",
+      "--ignore-filename-regex",
+      "(/vendor/|/tests/|/rustc/|/registry/|/target/)",
+      "--output-path",
+      "D:\\a\\_temp\\coverage-rust\\debug.lcov"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "search-release",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "--release",
+      "-p",
+      "azeroth-core",
+      "--example",
+      "search_performance",
+      "--"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "workflow-release",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "--release",
+      "-p",
+      "azeroth-app",
+      "--example",
+      "workflow_performance",
+      "--"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "lua-release",
+    "executable": "cargo",
+    "arguments": [
+      "run",
+      "--locked",
+      "--release",
+      "-p",
+      "azeroth-lua-harness",
+      "--example",
+      "callback_performance",
+      "--"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "release",
+    "executable": "cargo",
+    "arguments": [
+      "llvm-cov",
+      "report",
+      "--release",
+      "--lcov",
+      "--include-build-script",
+      "--no-default-ignore-filename-regex",
+      "--ignore-filename-regex",
+      "(/vendor/|/tests/|/rustc/|/registry/|/target/)",
+      "--output-path",
+      "D:\\a\\_temp\\coverage-rust\\release.lcov"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  }
+]

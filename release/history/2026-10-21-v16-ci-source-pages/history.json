@@ -1,0 +1,47 @@
+{
+  "candidate": "764fcac347f0c75ee628df619e9bd224ebf00b6f",
+  "actual_checkout": "277a6e6ab6160d7e16b00cfe711fbf100103841e",
+  "scope": "Actual CI nine applicable jobs, both-OS whole corpus twice/committed bytes/parity, Pages validation pass. Stability and deployment skipped, not passed. Historical candidate results only.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/ci-linux.log",
+      "bytes": 437230,
+      "sha256": "6d00e0c5d2e2a96b453240920e81fb0d2c830c48517ed72922c2be583b11c5dc"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/ci-windows.log",
+      "bytes": 324534,
+      "sha256": "1883750a661896d015814eb298354b201621760c251173693a3a7d7b93e99531"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/ci-native.log",
+      "bytes": 138070,
+      "sha256": "8de593cd78a428be1416cd079653cc831151698a01e03016420e0e547b9d5a37"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/ci-browser.log",
+      "bytes": 140339,
+      "sha256": "fc42d6e8b33f53bc85b70fe1e61522b409ee18f7f65ac4b251497595e3ebedd7"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/source-linux.log",
+      "bytes": 40400,
+      "sha256": "e8403bd0a854fb04bd8c38c1d4387712ec0194e981b9d832fdca6853521b4065"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/source-windows.log",
+      "bytes": 46496,
+      "sha256": "aa8809fcebf870aeea7dde4de1216ff550d5e1d015041ec0c19871e59b22c9c4"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/source-parity.log",
+      "bytes": 18915,
+      "sha256": "67afd51c19ca9d74163652473b3ef4f2697115bcbc2dc574138bd86e484de143"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-ci-source-pages/pages.log",
+      "bytes": 46479,
+      "sha256": "f0deb7c639e9dcad856e4a7b3138a1d2a5ef8481ebce2365c0cb6dc6e3db84ed"
+    }
+  ]
+}

@@ -1,6 +1,20 @@
 # Project status
 
-Updated: 2026-10-19.
+Updated: 2026-10-24.
+
+**V22 continuation:** Codex independently reviewed PR #286's application-data
+isolation repair and integrated it locally at `2d33c2fd`; the original checkout
+is preserved. Both failed V21 attempts and signed inputs are archived. Actual
+Linux/native PS helper checks, workflow checks and full-pack functional assertions
+pass; the corrected fixed-HEAD 80.568 s functional run is shared-Linux engineering
+evidence only. The initial source-binding mismatch is preserved and superseded.
+Independent review `6131a419`, pre-sign byte reproduction, and signed closure at
+`c5586b6e` pass: 84 resources, 89 evidence files, two packs, exactly nine pending
+observations and no other blockers. Production remains `a947d2f0`; receipt is
+`79686be6`. Both keys are operator-controlled, separate from independent review.
+Next: push one V22 candidate and read fresh protected/coverage/source-parity and
+all eight installed-case outcomes. No main merge, tag or publication. See the
+[V22 handoff](handoffs/2026-10-24-v22-appdata-continuation.md).
 
 Parallel continuation requested 2026-10-19: isolated writers are auditing desktop
 locale restoration, guide objective replay, archive failure dispositions and
@@ -31,6 +45,313 @@ parity. [Handoff](handoffs/2026-10-18-single-active-help.md).
 
 ## Stable release continuation (2026-10-20)
 
+2026-10-23 (V21): candidate V20 2c6fe762's Windows package was cancelled twice,
+280–306 s after HOSTED-OFFLINE disabled every adapter, so the upgrade and
+downgrade cases never ran. ADR 0010 / PR #285 replaces adapter disablement with
+Windows Firewall isolation that keeps only the runner, the hosted VM agents and
+DNS. A hosted probe held it for 1260 s with exact restore. The fix had three
+independent review rounds.
+
+V21 is re-bound and signed:
+- tested source 1f972145, production 7e1bb463;
+- review V21 7542fb89;
+- receipt eccd6b63 with the existing r2 keys;
+- root and independent closure: 84 resources, 89 evidence files, exactly nine
+  pending observations.
+
+Fresh candidate gates are next. No main merge, tag or publication.
+[V21 handoff](handoffs/2026-10-23-v21-offline-firewall-signed-closure.md).
+
+2026-10-23: reviewed PRs271–282 are normally integrated locally. Final V20 signed
+closure49ce3e47 passes root/tooling independent signatures, separate84-resource
+assemblies with default compiled trust, and89-evidence/two-pack source prebuild.
+Desktop final composition review is CLEAR. All nine canonical Windows observations
+remain unverified; build readiness does not permit publication. Prepared identities
+were committed before key use; existing r2 keys matched, no new rotation required.
+Hosted engineering probe39925184911 atb040 succeeded: actual full recovery915.984s
+on Windows2025 using the explicitly historicalV19fixture. Memory was not measured;
+this is not current-installer acceptance. Both failed prior probes are preserved.
+Full-pack functional79.54s is shared-Linux evidence only. Next: one final candidate
+push, fresh protected/source/coverage/eight-case Windows gates, exact resulting-main
+stability, then tag/draft and independently reviewed schema5 exact downloaded UI
+acceptance. No main merge, stable tag or publication at this checkpoint.
+[Signed closure and actual reviews](handoffs/2026-10-23-v20-signed-closure.md).
+[Durable continuation plan](handoffs/2026-10-23-claude-release-continuation.md).
+[Actual engineering probe](handoffs/2026-10-23-recovery-probe-b040-result.md).
+[Current source and checks](handoffs/2026-10-23-cargo-completion-source-v20.md).
+
+2026-10-23: V19 attempt1 cancelled; attempt2 recovery1200s timeout, four hosted
+passes and three later cases unrun. Exact attempt evidence preserved/verified.
+Approved schema5 replaces mandatory owner smoke with independently reviewed
+automated exact downloaded-draft UI/native acceptance. Bounds unchanged. Actual
+recovery path under measurement; proposed populated-plan fix rejected as irrelevant.
+[Current continuation](handoffs/2026-10-23-v19-failures-and-schema5.md).
+
+V19 signed candidate (6cb726d1): the V17 RC1 upgrade failure is addressed by the uninstall-completion repair (PR 268) and the lost signing seeds by an owner-authorized key rotation (PR 269). Independent review, byte reproduction and signed-closure checks passed; build readiness shows exactly nine pending rows. Fresh CI, coverage, source parity and Windows acceptance have not run yet, and the hosted effect of the repair is unverified. No main merge, tag or publication. [Handoff](handoffs/2026-10-21-offline-candidate-v18.md).
+
+V17 result (run 39603870404): CI, coverage, source parity and Pages passed; the Windows package failed. Six hosted acceptance rows passed (including offline), HOSTED-UPGRADE-RC1 failed with the RC1 installer exiting 2 right after the 1.0.0 uninstall, HOSTED-DOWNGRADE-REFUSAL did not run, and owner smoke and the nine canonical rows remain unverified. The likely cause is that the uninstall wait ignored the registry entry; the repair is in PR 268 and unverified on a hosted runner. Evidence is archived under release/history. Next: review and merge PR 268, then a V18 candidate. No main merge, tag or publication. [Handoff](handoffs/2026-10-21-v17-upgrade-failure.md).
+
+V17 signed315cd94b root/tooling independently pass signatures, OWN84resource
+assemblies/defaulttrust and89evidence/twopack prebuild with EXACT9pending only.
+Prepared2ff1d868 committed beforekeys; independent review356paths and reproducible
+identities. Actual tinyhostedprobe passed; full installed acceptance still pending.
+Next exactfinalreview/onecandidatepush and all applicable gates; no tag/publication.
+
+
+V17 local reviewed offline repair/probe integration7ac0b1a5: actual hosted tiny
+probe39602331404 passed all four original adapter restorations. Native mocks and
+independent reviews passed. Full installed-app acceptance remains pending; V16
+failure retained. New source metadata prepared, nine canonical rows unverified.
+Next independent review/receipts and fresh candidate gates; no mainmerge/tag.
+[Current handoff](handoffs/2026-10-21-offline-candidate-v17.md).
+
+V16 final: CI/source/coveragePASS; Windowspackage39586958727FAILoffline adapter
+restoration. FivehostedcasesPASS includingrecovery1187.756s, offlineFAIL, RC1upgrade/
+downgradeUNRUN, ownerunverified. ActualproduceroutcomeFAIL despite continue-on-error
+stepconclusionSUCCESS. Exactsigned/raw/overlay/checks archivedde9fa566/05fa3988 and
+all52Gitrefsverified. Desktopowns narrowofflineGUID/diagnostics repair; toolingowns
+boundedhostedadapterprobe. No mainmerge/tag/publication; ninecanonicalrowsunverified.
+[Failure and next task](handoffs/2026-10-21-v16-offline-failure.md).
+
+V16 signed closure1a43bf1c independently passes root/tooling crypto, separate84-resource
+assembly/defaulttrust and sourceprebuild89evidence/twopacks/EXACT9pending. Prepared
+32e382c8 committed beforekeys; publicreview285unique refs; desktop independently
+reproduced identities. Reviewed265 runtimeac45 actualfullpack functional/recovery
+PASS on Linux; freshWindows/allten/source gates still required. Next finalexacthead
+review/onecandidatepush, then resultingmainstability and verifieddraftownersmoke.
+No tag/publication/mainmerge; historicalV15 failure retained.
+
+V16 local integration ac45a4f4 includes reviewed PR265 storage repairs. Actual full
+recovery287.96s and freshly rebuilt functional75.65s passed on shared Linux; all
+strict assertions retained. Combined475tests and allfivefiles>=90percent PASS.
+Old evidence archived; nine canonical observations remain unverified. Next fresh
+public review/receipts and complete hosted candidate, then exactmain/draft gates.
+[Current handoff](handoffs/2026-10-21-storage-runtime-v16.md).
+
+V15 final: CI/sourceparity/coveragePASS; Windowspackage39500462035FAIL at recovery
+check_database pending under unchanged1200s bound, after restoreIPC completed.
+FourhostedcasesPASS, persistence-recoveryFAIL, three latercasesNEVERRAN/ownerunverified.
+Signed/raw/coverage history preserved30657061/9e93146a before repairs. Toolingowns
+narrow duplicatevalidation/streamedhash investigation; desktopmeasures coldload vs
+warmmetadata before any cachechange; world/root review. No tag/publication/mainmerge.
+[Failure and next task](handoffs/2026-10-21-v15-recovery-timeout.md).
+
+
+V15 signed closure71cdb independently passes root/tooling crypto, own84-resource
+assemblies/default compiled policy and89-evidence/two-pack prebuild; EXACT9pending.
+Reviewed test-only264 fixes synthetic startup assumption, preserving production
+limits. Root actual WindowsPS7/Linux26each and tooling Linux26PASS. Actualruntime
+fullpack remainsd636; corrected publicreview binds204refs/200Gitpaths. Preparedbb938
+committed before keys. V14package failed before ALL8cases; V14CI/coverage cancelled,
+aggregatecoverage failed; all retained explicitly. Next uninterrupted freshcandidate
+allten/source/Windows checks, then exactmainstability and verifieddraftownersmoke.
+No tag/publication; main unchanged/PR239draft/generated243deferred.
+[Current candidate handoff](handoffs/2026-10-20-watchdog-candidate-v15.md).
+
+
+V14 signed closure a84be163 independently passes root/tooling public signatures,
+separate84-resource assemblies/default compiled policy and89-evidence/two-pack
+prebuild checks, with exactly9pending observations only. Reviewed runtime repairs
+261–263 at d636/a3baa avoid unchanged validation and redundant catalog copies while
+preserving strict boundaries. Actual Linux recovery721.43→347.80s, but peakRSS
+increased11.39→11.93GiB; freshly rebuilt full-pack functional scenario78.31s passed.
+Shared-host diagnostics establish no Windows result. Prepared7543 identities were
+committed before keys; publicreviewV14 binds161FileRefs. V13 hosted failure and
+old signed/functional evidence remain archived. Next fresh exact-candidate checks;
+main807ef674/draft239/generated243deferred; no tag/owner/publication.
+[Current handoff](handoffs/2026-10-20-recovery-runtime-v14.md).
+
+
+Latest actual V13 outcome: CI, source parity and coverage passed; package39466044590
+failed after four hosted cases passed and recovery exceeded its20-minute workload
+bound. Standalone restart passed. Offline/RC1 upgrade/downgrade never ran; owner
+remains unverified. Native smoke32/0 and upgrade7/0 passed. Exact raw/overlay/signed
+identities/coverage archived7472db34 before repair integration. Desktop owns bounded
+progress diagnostics; tooling owns a separate full-pack recovery timing benchmark.
+No runtime cause is established yet; no bounds or assertions are waived. Canonical
+nine observations remain unverified; main unchanged, no tag/publication.
+[Current failure and next task](handoffs/2026-10-20-v13-recovery-timeout.md).
+
+
+Latest V13signedclosure1fe3 independently root/tooling owncrypto/84resourceassembly/
+DEFAULTcompiledpolicy/sourceprebuildPASS:395806353B/2packs/89evidence/EXACT9pending.
+DesktopfinalcompositionCLEAR; prepared44f5 beforekeys, review110refs/36c24922.
+Tested716/productiona8c292, all9unverified; finalexactheadreview then freshcandidate
+allten/source/Windowschecks. HistoricalV12packageFAIL/all8skipped preserved.
+No tag/owner/publication; main807ef674 unchanged/generated243deferred.
+
+
+V13 preparation: reviewed260 normally integrated 716af3e8. Root independently
+3dev Chromium/43Node pass; old same-selection React failure reproduced, conditional
+helper repaired. Runtime/content unchanged1dd; V12actualfailure archived before
+canonical reset. All9observations unverified; next independent review/receipts and
+fresh allten/source/Windows gates. No tag/owner/publication.
+
+
+Latest actual V12 outcome: package39454144270 FAILEDnativeupgradegate before
+ALL8stablecases/recorder(SKIPPED). Native32/0, baseline5/0, verify6/1 timeoutafter
+strictprofile/activeIPC; presence diagnostics true. Newdriver redundantsame-option
+selectOption clears ContentScreen inspection without profile-effect refetch.
+Desktop/tooling independently trace source+IPC; actualReact/browser control/repair
+now ownedbydesktop, claim eec12a96, separateworktreebaseline728a. No runtimeUI/
+packchange authorized by thatrepair. SignedV12identities/raw5/actualcoverage7
+bytearchivedb5ee20a8 BEFOREintegration. CI39454144194/source39454144199/
+coverage39454144203 actuallyPASS, Pages39454144258validationnodeploy; all9canonical
+observations remain unverified. Next controlledUItest, reviewedrepair, newexact
+review/receipts and freshallten/source/Windows gates. No tag/owner/publication.
+[Failure handoff](handoffs/2026-10-20-v12-native-selection-failure.md).
+
+
+Latest V12signed closurebc43318b independently passes root/tooling owncrypto,
+assemblies and DEFAULTcompiledpolicy/sourcechecks:84resources395793235B/two packs,
+89evidence files and EXACT9pending only; buildtrue/stablefalse/publicationfalse.
+Corrected publicreview69881B/b22e2dbf binds88Git-pinned references, testedb615/
+productionb378. Actual unsignedpreparation and independent reproduction matched;
+identities committedbc7a1819 BEFORE externalkeys; receipt254c39d2 bound exactly.
+Driver repair259 final7bff/a3ff is independently reviewed with root actual43Node
+at integratedb615; runtime/fullpackproof remain actual1dd/b9. V11actualCI/coverage/
+source successes and native-upgrade failure remain historical; ALL8stablecases
+were SKIPPED. Current9canonical observations unverified. Next exactfinalheadreview,
+onefreshcandidatepush/allten/source/nativegates, exactmainstability beforetag,
+verifieddraft beforeowner smoke. No stabletag/publication; draft243 remainsdeferred.
+
+
+Current V12preparation: independently reviewed native-driver repair259 final7bffde54
+normally integratedb615d6f9. Exact issued synthetic profile/revision/scope must
+survive; completed IPC and matching UI replace the initial-placeholder count.
+Root/tooling blocked initial character/profile-ID confusion before integration;
+corrected real DTO and late-completion regressions pass. Author/tooling each43Node;
+root exact integrated43Node pass. Runtime/functional source remains1dd; only driver/
+helper/tests differ from7379. Newtestedb615/productionb378b341; V11identities/raw
+archived BEFORE integration; canonical outputs cleared only after archival and
+all9observations unverified. Next independent V12 review/preparation/signatures
+and fresh all-ten/source/Windows checks. No tag/owner result/publication.
+
+
+Latest actual V11 outcome: package39441834744 FAILED at blocking native-upgrade
+gate before all eight stable hosted cases. Actual native smoke32/0; upgraded
+verify6/1 reported active-content loss before its IPC result completed. Desktop
+and tooling independently identify a supported600ms/636ms UI timing explanation,
+not proven data loss and not a bundled-default policy exception. CI39441834860
+(nine applicable jobs; stability skipped), coverage39441834710 (276measured files
+>=exact90%), full Linux/Windows source+parity39441834737 passed. Signed identities
+and five raw reports are byte-preserved in archiveb0d9c442. Desktop sole-writer
+repair259 awaits independent review; first proposed repair's character/profile-ID
+confusion was caught before integration and requires correction. All nine canonical
+observations remain unverified. No stable tag, owner smoke or publication.
+[Failure/next-task handoff](handoffs/2026-10-20-v11-native-upgrade-failure.md).
+Earlier entries below retain their status at recording.
+
+
+Latest: V11 signed closure at80ae4f2a is independently verified. Review0b9913ec
+binds tested7379efdb/productionf7515b8c. Actual preparation and independent canonical
+reproduction match84resources395780445B; identities committed before key use. Root
+and tooling own crypto/default-compiled-policy assemblies and source checks pass
+89evidence/2packs/EXACT9pending only. Desktop final composition CLEAR. Fresh actual
+full-pack proofef3c retains1dd/b9 execution134.138s/6402732KiB sharedLinuxWSL2; only
+outer workflow budget differs at7379, with inner limits and all gates unchanged.
+Next final exact-head review/push and allten protected checks/source parity, fresh
+exact resulting-main checks/stability, tag/draft verification and owner smoke.
+All9canonical observations unverified; no stabletag/publication. Earlier continuation
+entries below retain their statuses at recording; V9neverpushed/V10neverissued.
+
+
+Current V11preparation: reviewedouterbudgetPR258 normally merged7379efdb.
+Onlyproductionchange since freshactualfullpack1dd is Windowsjobouter110→170min
+(existingtaglimit); inner20/60, finalguards/readiness/90/trust/permissions unchanged.
+Actualsetup+allowedfullsuite+recording envelope exceeds110; no actualtimeoutclaim.
+Root/desktop/world independentCLEAR/actionlintPASS. V10was onlyunsignedprepared/
+independentlyreproduced84resources, NOkeys/hostedrun; archivedbefore258. Runtime
+freshproofef3c retainsactual1dd/b9scope134.138s/6402732KiB sharedLinuxWSL2.
+Newproductionf7515b8c/tested7379efdb, canonicalabsent/all9unverified. Next V11review/
+preparation/signatures/sourceclosure and freshallten/source/Windowsgates. No tag/
+ownerpass/publication; remotee5ec stillfailedV8.
+
+
+Current V10preparation: independently reviewed255/256/257 normally integrated at
+1ddaa8d6. Fix typedperformanceproducer, require cleanreadyrecovery, and reuse existing
+validatedcatalog cache during travelchoices while retaining transaction/invalidation
+guards. Author167storage/297app tests pass(3ignored), affectedfiles >=90%; desktop/
+tooling each17cachetests pass andreviewsCLEAR. Root actualfreshoptimizedfullpack
+passed134.138s/6402732KiB sharedLinuxWSL2, proofef3c7098, noWindows/ordinaryPCclaim.
+Old106proof archivedbefore replacement. Productionb9d5c293/tested1ddaa8d6; canonical
+outputs cleared0a49d4d9, all9observations unverified. Root33Node/actionlint pass.
+Next V10independentreview/preparation/signing/sourceclosure and freshhostedgates.
+Remotee5ec remainsfailedV8; V9neverpushed. No budgetwaiver, stabletag or publication.
+
+
+Latest actual outcome: V8package39424036854 FAILED finalguard after rawinstall/
+resources/first-startPASS and performanceDTOvalidationFAIL; four latercases never
+ran. RecorderSUCCESS retained4actualrows. Producer usedOrderedDictionary but
+validator expectedJSONobjectmetricmembers. Desktopowns narrowconstructor/real
+producerregression; worldauditsunrunmodes, toolingindependentlyreproducedcause.
+PreparedV9wasNEVERPUSHED; its signatures and actualV8rawcases archived2a09bf55
+before repair. Allcanonical9observations remain unverified. No stabletag/publication.
+
+
+Current continuation: reviewed coverage PR254 normally integrated6c6fda90.
+Actualroot/world12Node+actionlint pass; V8CI/source passed but combinedcoverage
+39424036847 correctlyFAILED missing WindowsCLIentrypoint execution despite0files
+below90%. V8signatures/verdict remain immutablehistory. V9actualpreparation,
+independentreproduction and signedclosure at541b7e09 pass root/tooling owncompiled
+assemblies84resources395764227B,source89evidence/2packs/EXACT9pending only.
+Tested6c6f/production09b66; desktopfinalcompositionCLEAR. Remotee5ec/V8package
+39424036854 still runsactual8case producer; no acceptance inferred or run cancelled.
+Next retain actualoutcome, then freshvalidcandidate alltenchecks/sourceparity,
+exactmainstability, verifieddraftassets and ownerexactinstallersmoke. No stabletag
+or publication.
+
+Latest continuation: actual V6 package39413135905 FAILED with install/resources
+PASS(630files), first-start FAIL and five hosted cases never run. The driver
+mistook the planning-only DTO for a general catalog; recorder ISO timestamp and
+Windows-path handling also required repairs. Separately reviewed PR252 and253
+are normally integrated locally at60ab126b. Root's actual union27Node/32PS7/29nativePS5
+checks and workflow validation passed; author realRustDTO/application regressions
+and independent real-recorder boundary checks passed with their recorded scopes.
+Runtime implementation/UI/content/datagen remainfcf-identical; new Rust tests are
+explicitly test-only. V7 signatures/rawV6failures are archived. V8 independent review/preparation/signatures, two owncompiled-policy assemblies
+and freshsource prebuild passed atf0feaac9:89evidence/two packs,exact9pendingonly,
+tested60ab/production52d00899. Final repairedcandidate hosted checks are next.
+All nine canonical acceptance observations remain unverified. Earlier normalCI/
+source parity passed on V6; coverage failed the diagnosed default-profraw source
+write, repaired by251 but still requiring fresh hosted coverage. No stable tag
+or publication.
+
+
+Foundation PR232 merged as13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a after
+independent final integration review, all ten protected checks and actual Linux/
+Windows source parity. Separate reviewed final content/native delivery PR238
+merged as807ef674ee13c15ece90e64618ccd5f122afcbdb after all ten exact-head
+checks, source parity and independent review passed at83577ceb. Earlier package
+failures remain recorded with their actual outcomes.
+
+Separate draft version/release PR239 prepares six1.0.0declarations, complete
+verified bundles, historical source warnings, estimates and declared exclusions.
+Its fresh full-pack scenario passed atf3917490 on shared Linux/WSL2; this is not
+Windows or ordinary-PC performance evidence. Final repair union273c57d3 adds the reviewed exact-LF contract for14authored
+Markdown resources after preliminary Windows coverage correctly refused CRLF
+changes. Independent V4 review, signed-content assembly and source prebuild passed.
+Separate reviewed PR247 moved static website resources under docs/site so later
+publication updates preserve the existing application fingerprint policy. Root
+metadata/browser/actionlint checks passed atd6ecb213. V5 review, signatures, independent compiled-policy assembly and fresh source
+prebuild passed at130bdcdf for production7db0e201 (89evidence files/two packs;
+exactly9pending observations). Final independent composition review is CLEAR.
+Release PR239 now targets main for exact-candidate checks. V4 signatures remain historical under
+release/history. Preliminary actual Windows package39400861524 built its exact
+40ea installer and passed unsigned rehearsal/silent install; native/full acceptance
+remain pending. V4 coverage39405119048 passed Linux/TypeScript; Windows and
+combined per-file gate remain pending at recording.
+[Version handoff](handoffs/2026-10-20-stable-version-release.md).
+
+Actual weekly run39394989774 completed one bounded network acquisition and one
+cache-only reproducible replay, opening deferred draftPR243. Explicit draft-head
+checks were dispatched; its historical RC readiness summary does not establish
+stable readiness. [Weekly evidence](handoffs/2026-10-20-weekly-network-results.md).
+
+Final exact resulting-main checks, stability, hosted Windows full-bundle acceptance,
+verified draft assets and owner exact-installer smoke remain required. All nine
+Windows/owner observations remain unverified. No stable tag/publication exists.
+
 PRs214–217 merged sequentially, ADR0008 merged as6148ce4c, then repaired
 PR212 merged as3cb74e6a5bf7e0697c63b538599fcee87035fe8a at07:10:52Z.
 Exact212 candidate7de0beea passed all ten protected checks: CI39382048557,
@@ -39,7 +360,7 @@ actual Linux/Windows mapping and parity. Independent final-head reviews and
 original-source/material closure are retained in their review/handoff records.
 Earlier failed/cancelled checks retain those outcomes.
 
-The [foundation handoff](handoffs/2026-10-20-stable-foundations-integration.md) records separately reviewed219–225/228 integration and actual focused checks. Fresh combined protected-main checks remain required.
+The [foundation handoff](handoffs/2026-10-20-stable-foundations-integration.md) records separately reviewed219–225/228 integration and actual focused checks. Its combined protected-main checks passed before PR232 merged; see the current continuation above.
 
 The [foundation integration claim](claims/2026-10-20-stable-foundations-integration.md)
 assembles separate reviewed follow-up PRs on an isolated branch before a fully

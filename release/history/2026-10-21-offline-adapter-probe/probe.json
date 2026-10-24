@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "hosted_offline_adapter_engineering_probe",
+  "acceptance_observations_promoted": false,
+  "passed": true,
+  "source_commit": "7ac0b1a50ce77fc73b76b6614570cb7709e60882",
+  "run_id": "39602331404",
+  "run_attempt": "1",
+  "runner_environment": "github-hosted",
+  "runner_os": "Windows_NT",
+  "powershell_version": "7.6.6",
+  "phase": "complete",
+  "controlled_adapters": [
+    "674f0826-b102-4874-bdf6-780b116a0c33",
+    "50d41afc-024b-4266-8492-3661d2deee2c",
+    "4cd1a455-b6d9-41b5-893d-75738f894f07",
+    "2cc8779d-d4e5-4a63-b4c8-503a60339028"
+  ],
+  "network_disabled": true,
+  "restored": true,
+  "elapsed_ms": 2442.646,
+  "error": null
+}

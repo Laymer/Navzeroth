@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "kind": "hosted_offline_firewall_engineering_probe",
+  "acceptance_observations_promoted": false,
+  "passed": false,
+  "source_commit": "674e1bd679eb9c3177d82e838b410e8b21aea005",
+  "run_id": "39972105651",
+  "run_attempt": "1",
+  "runner_os": "Windows_NT",
+  "powershell_version": "7.6.7",
+  "hold_seconds": 600,
+  "phase": "isolated_hold",
+  "external_connection_owners": [
+    {
+      "process": "hosted-compute-agent",
+      "connections": 3
+    },
+    {
+      "process": "lsass",
+      "connections": 1
+    },
+    {
+      "process": "MpDefenderCoreService",
+      "connections": 1
+    },
+    {
+      "process": "provjobd.exe1181836697",
+      "connections": 1
+    },
+    {
+      "process": "Runner.Listener",
+      "connections": 3
+    },
+    {
+      "process": "Runner.Worker",
+      "connections": 5
+    },
+    {
+      "process": "StartMenuExperienceHost",
+      "connections": 4
+    },
+    {
+      "process": "svchost",
+      "connections": 6
+    },
+    {
+      "process": "WaAppAgent",
+      "connections": 2
+    },
+    {
+      "process": "WindowsAzureGuestAgent",
+      "connections": 2
+    }
+  ],
+  "checks": 0,
+  "isolation": null,
+  "elapsed_ms": 38296.9154,
+  "error": "Hosted offline firewall control failed: {\"primary\":{\"stage\":\"workload\",\"error\":\"Could not compare \\\"0.001277\\\" to \\\"00:00:00.0040366\\\". Error: \\\"Cannot convert the \\\"00:00:00.0041421\\\" value of type \\\"System.Diagnostics.Stopwatch\\\" to type \\\"System.Double\\\".\\\"\"},\"restoration\":{\"rules_removed\":\"ok\",\"rules_enabled\":\"ok\",\"profiles\":\"ok\",\"connectivity\":\"ok\"},\"restore_elapsed_ms\":25634,\"disabled_allow_rules\":180,\"remaining_enabled_allow_rules\":4}"
+}

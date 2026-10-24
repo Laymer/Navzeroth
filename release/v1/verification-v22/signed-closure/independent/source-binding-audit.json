@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "verified_commit": "c5586b6e68668e5b0e55bff232e5da4b420e0dfc",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "production_entries": 3160,
+  "evidence_change": "Only bundled_content added to prebundle evidence; original nine observations unchanged.",
+  "bundled_content": {
+    "manifest": {
+      "bytes": 17185,
+      "path": "release/v1/bundled-content-manifest.json",
+      "sha256": "a912304e5815eb2ae4246b8810f96c91900a136ed514bc7f8dbdc64ddb000935"
+    },
+    "receipt": {
+      "bytes": 1079,
+      "path": "release/v1/bundled-content-receipt.json",
+      "sha256": "79686be6c729e0c694ff9be356b58b8216fc1f5759ddfd79bed62558dd202a91"
+    },
+    "review": {
+      "bytes": 15109,
+      "path": "release/v1/public-content-review-v22.json",
+      "sha256": "6131a419eeaea47e7ab2f7e8d974628dd5991eb9e1637fbbc188f622e06f7190"
+    }
+  },
+  "prepared_manifest_identity_unchanged": true,
+  "expected_payload_equals_committed_identity": true,
+  "crypto_output_equals_committed_receipt": true
+}

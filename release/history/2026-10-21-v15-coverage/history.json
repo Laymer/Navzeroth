@@ -1,0 +1,98 @@
+{
+  "run_id": 39500462107,
+  "candidate": "2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e",
+  "actual_checkout": "6dfe820bc36e4aaffaa30e900b6b80dd207d2c51",
+  "scope": "Coverage all collectors and gate success; 276 measured files exact90percent. Windows84resources/two packs/native32smoke are separate from failed installer recovery acceptance.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v15-coverage/audit.json",
+      "bytes": 5302,
+      "sha256": "e215fcc7e56f8442a2fb75470d9da4eafab037318097fdfd39d764827cd05daf"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/linux/entrypoint-summary.json",
+      "bytes": 315,
+      "sha256": "88597a2cbac413198b7a8da7c7ebc96b7c60f2cfddbfbbb2437bace51f18e7a4"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/linux/inventory.json",
+      "bytes": 202222,
+      "sha256": "afe4e12de858b9beb833321cdbb9ebb5665aabae80c21ebb8122b002971fa73c"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/linux/rust-receipt.json",
+      "bytes": 41617,
+      "sha256": "31e45a2cbd1916e422ab0d741ccdef595ecbb6af495e1ec00c5fa0127f951302"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/typescript/configuration-receipt.json",
+      "bytes": 34411,
+      "sha256": "ba1901895298ad41f39716e701549a97550c1800ce1eea7e5e4e0e7d6eb4d1a2"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/typescript/inventory.json",
+      "bytes": 202222,
+      "sha256": "afe4e12de858b9beb833321cdbb9ebb5665aabae80c21ebb8122b002971fa73c"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/typescript/typescript-receipt.json",
+      "bytes": 34396,
+      "sha256": "fffacaf1782f8655bec427d468da4b258d7fad08ff4fc32975bf9c596d563e63"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/typescript/v8/coverage-summary.json",
+      "bytes": 29559,
+      "sha256": "3f8a7ade54694042b5b1c10e02c9495965ff11de9109213bf3b726f5702da265"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/verdict/per-file-verdict.json",
+      "bytes": 50732,
+      "sha256": "cc35feebc4c26b23997a91d152f1c9ff31df65ab43d9c04cd3d878ee9bb008e5"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/commands.json",
+      "bytes": 9561,
+      "sha256": "fc5ed314cccaf68bc5c6ca47f293e5b650528733fbe8c1d1786e538520ac6a4e"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/entrypoint-summary.json",
+      "bytes": 316,
+      "sha256": "9f97d37b7943f2a7709e3e2c6d33942d58fa774c36e1f50be61198bcdbe19993"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/inventory.json",
+      "bytes": 202222,
+      "sha256": "afe4e12de858b9beb833321cdbb9ebb5665aabae80c21ebb8122b002971fa73c"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/logs/coverage-bundle-assembly.log",
+      "bytes": 434,
+      "sha256": "f689848b5fca1c9652a742467fd5345f7c73be636843d3302404313bea460986"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/logs/coverage-bundle-inputs.log",
+      "bytes": 2233,
+      "sha256": "fe872c4f30a8ca30f42804535ed906be26aa0158d8d6eaf73f4dc62fb040c1f8"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/logs/coverage-bundle-verification.log",
+      "bytes": 405,
+      "sha256": "200b29dc8644ab6aa6eb919bed196df345739aa2c0c4fe24877ca7344dd80e36"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/native-smoke.json",
+      "bytes": 27535,
+      "sha256": "e4172ada89cd4b79883271d10891feef4f430501d340380d5917091a5010a789"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/raw-profile-manifest.json",
+      "bytes": 107785,
+      "sha256": "293aebaf04c1b6a78fecac27bc52d6d7b3b44fc643d1be6d8553e1d686c5ca59"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-coverage/small/windows/rust-receipt.json",
+      "bytes": 44792,
+      "sha256": "38f06ac49e2bac71e586aca26ca5a4427f5af8689ea085a8045b0c894eff7c19"
+    }
+  ]
+}

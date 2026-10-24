@@ -1,4 +1,4 @@
-# Actual schema4 acceptance producers. Only the disposable hosted runner is touched.
+# Actual stable hosted acceptance. Only the disposable hosted runner is touched.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string] $Root,
@@ -34,16 +34,17 @@ $identityDocument = Read-BoundedBundleIdentity $BuildIdentity | ConvertFrom-Json
 $source = & git -C $Root rev-parse HEAD
 if ($LASTEXITCODE -ne 0 -or $source -cnotmatch '^[a-f0-9]{40}$' -or $identityDocument.app_version -cne $Version) { throw 'Hosted source/build identity is unavailable.' }
 $release = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
-if ($release.schema_version -ne 4 -or $release.production_sha256 -cne $identityDocument.production_sha256 -or ($release.target | ConvertTo-Json -Compress) -cne ($identityDocument.target | ConvertTo-Json -Compress)) { throw 'Build identity differs from source-bound release production/target.' }
+if ($release.schema_version -notin 4, 5 -or $release.production_sha256 -cne $identityDocument.production_sha256) { throw 'Build identity differs from source-bound release production/target.' }
+Assert-StableTargetIdentity $release.target $identityDocument.target
 $identity = @{version=$Version;source_commit=$source;production_sha256=$release.production_sha256;installer_sha256=$InstallerSha256;target=$release.target;operator=('GitHub Actions '+$env:GITHUB_RUN_ID+'/'+$env:GITHUB_RUN_ATTEMPT);environment=('GitHub-hosted Windows '+[Environment]::OSVersion.VersionString)}
 $install = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
 if (Test-Path -LiteralPath $install) { throw 'Acceptance requires an initially absent installation.' }
 if (@(Get-Process -Name azeroth-desktop -ErrorAction SilentlyContinue).Count -ne 0) { throw 'Acceptance requires no other native application process.' }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 $reports = Join-Path $OutputDirectory 'raw'; New-Item -ItemType Directory -Path $reports | Out-Null
-$previousAppData = $env:APPDATA
-$env:APPDATA = Join-Path $OutputDirectory 'isolated-appdata'
-New-Item -ItemType Directory -Path $env:APPDATA | Out-Null
+$data = Get-StableAppDataDirectory 'io.github.laymer.azeroth-navigator'
+# FIRST-START and PERFORMANCE claim a fresh database: earlier job data must be gone.
+if (Test-Path -LiteralPath $data) { throw 'Acceptance requires initially absent application data.' }
 $exe = Join-Path $install 'azeroth-desktop.exe'; $manifest = Join-Path $install 'bundled-content/manifest.json'
 $state = Join-Path $reports 'state.json'; $suite = [Diagnostics.Stopwatch]::StartNew()
 function Remaining([int] $Maximum) {
@@ -70,9 +71,9 @@ function Remove-OwnedInstallation {
     if (-not (Test-Path -LiteralPath $uninstaller)) { return }
     $result = Invoke-BoundedProcess $uninstaller @('/S') 300
     if ($result.TimedOut -or $result.ExitCode -ne 0) { throw 'Owned uninstaller did not complete within bounds.' }
-    $timer=[Diagnostics.Stopwatch]::StartNew()
-    while ((Test-Path -LiteralPath $exe) -and $timer.Elapsed.TotalSeconds -lt 120) { Start-Sleep -Milliseconds 250 }
-    if (Test-Path -LiteralPath $exe) { throw 'Owned installation was not removed.' }
+    # Files and the registered version must both be gone, or the next installer sees the old version.
+    $waitedMs = Wait-NativeSmokeUninstalled -InstallDirectory $install -TimeoutSeconds (Remaining 120)
+    [IO.File]::WriteAllText((Join-Path $reports ('uninstall-'+[Guid]::NewGuid().ToString('N')+'.json')),((@{schema_version=1;kind='uninstall_completion';waited_ms=$waitedMs}|ConvertTo-Json)+"`n"),(New-Object Text.UTF8Encoding($false)))
 }
 try {
     $script:installMs = $null; $script:fresh = $null
@@ -93,22 +94,25 @@ try {
     Invoke-StableCase 'HOSTED-PERFORMANCE' $identity $OutputDirectory {
         if ($null -eq $script:fresh -or $null -eq $script:installMs -or $script:fresh.peak_memory_bytes -le 0) { throw 'Actual first-load measurements/peak memory are unavailable.' }
         $machine=Get-CimInstance Win32_ComputerSystem; $cpu=@(Get-CimInstance Win32_Processor)[0]
-        return @{workload=$script:fresh.raw.workload;hardware=($machine.Manufacturer+' '+$machine.Model+'; '+$cpu.Name+'; RAM bytes '+$machine.TotalPhysicalMemory);limitations=('Disposable hosted runner; fresh database after resource verification; OS file cache uncontrolled/possibly warm. '+$script:fresh.memory_scope+' load_ms covers content verify/parse/stage/compose; activation_ms covers defaults only, excluding database open/WebView2. Manual estimates are not gameplay facts or ordinary-PC performance.');measurements=[ordered]@{install_ms=$script:installMs;load_ms=$script:fresh.raw.startup_measurements.load_ms;activation_ms=$script:fresh.raw.startup_measurements.activation_ms;browse_ms=$script:fresh.raw.browse_ms;planning_ms=$script:fresh.raw.planning_ms;peak_memory_bytes=$script:fresh.peak_memory_bytes};raw_report=$script:fresh.raw;memory_observation=$script:fresh.memory_observation}
+        return @{workload=$script:fresh.raw.workload;hardware=($machine.Manufacturer+' '+$machine.Model+'; '+$cpu.Name+'; RAM bytes '+$machine.TotalPhysicalMemory);limitations=('Disposable hosted runner; fresh database after resource verification; OS file cache uncontrolled/possibly warm. '+$script:fresh.memory_scope+' load_ms covers content verify/parse/stage/compose; activation_ms covers defaults only, excluding database open/WebView2. Manual estimates are not gameplay facts or ordinary-PC performance.');measurements=(New-StablePerformanceMeasurements $script:installMs $script:fresh);raw_report=$script:fresh.raw;memory_observation=$script:fresh.memory_observation}
     }
     Invoke-StableCase 'HOSTED-PERSISTENCE-RECOVERY' $identity $OutputDirectory {
         $restart=Workload 'restart'; $recovery=Workload 'recover'
         return @{restart_verified=$restart.raw.restart_verified;recovery_verified=$recovery.raw.recovery_verified;restart=$restart.raw;recovery=$recovery.raw}
     }
     Invoke-StableCase 'HOSTED-OFFLINE' $identity $OutputDirectory {
-        $offline=Invoke-StableOffline { Workload 'offline' }
-        return @{network_disabled=$offline.network_disabled;network_restored=$offline.restored;controlled_adapters=$offline.adapters;raw_report=$offline.workload.raw}
+        # ADR 0010: firewall isolation; disabled adapters cost the runner its job.
+        $offline=Invoke-StableFirewallOffline { Workload 'offline' }
+        return @{network_isolation=$offline.isolation;network_isolated=$offline.network_isolated;external_connection_refused=$offline.external_connection_refused;network_restored=$offline.restored;allowed_programs=$offline.allowed_programs;allowed_infrastructure_programs=$offline.allowed_infrastructure_programs;dns_allowed=$offline.dns_allowed;raw_report=$offline.workload.raw}
     }
     Invoke-StableCase 'HOSTED-UPGRADE-RC1' $identity $OutputDirectory {
         # Baseline needs the same explicit manual scope, supplied by the verified
         # candidate manifest outside the installation while the RC is installed.
         $savedManifest=Join-Path $reports 'candidate-manifest.json'; Copy-Item -LiteralPath $manifest -Destination $savedManifest
         Remove-OwnedInstallation
-        $env:APPDATA=Join-Path $OutputDirectory 'upgrade-appdata';New-Item -ItemType Directory -Path $env:APPDATA | Out-Null
+        # The RC baseline must start without the candidate's newer database.
+        $moved=Move-StableAppDataAside $data (Join-Path $OutputDirectory 'candidate-appdata')
+        [IO.File]::WriteAllText((Join-Path $reports 'appdata-aside.json'),((@{schema_version=1;kind='application_data_isolation';moved_aside=$moved}|ConvertTo-Json)+"`n"),(New-Object Text.UTF8Encoding($false)))
         Install-Owned $BaselineInstaller
         $previousManifest=$manifest; $manifest=$savedManifest
         try { $baseline=Workload 'baseline' '1.0.0-rc.1' } finally { $manifest=$previousManifest }
@@ -125,9 +129,12 @@ try {
         $after=Workload 'restart'
         return @{baseline_version='1.0.0-rc.1';baseline_installer_sha256=$BaselineSha256;attempted=$true;timed_out=$false;installed_version_after=$Version;exit_code=$attempt.ExitCode;raw_report=$after.raw}
     }
+} catch {
+    $suiteFailure = $_
+    throw
 } finally {
-    try { Remove-OwnedInstallation } finally {
-        $env:APPDATA=$previousAppData
+    # A failed cleanup must not replace the case failure that is already propagating.
+    try { Remove-OwnedInstallation } catch { if ($null -eq (Get-Variable suiteFailure -Scope Script -ValueOnly -ErrorAction SilentlyContinue)) { throw }; Write-Warning ('Cleanup also failed: '+$_.Exception.Message) } finally {
         Remove-ItemProperty -LiteralPath $policyPath -Name 'azeroth-desktop.exe' -ErrorAction SilentlyContinue
     }
 }

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "historical_signed_content_before_authored_markdown_checkout_repair",
+  "signed_source_commit": "d8b291d4504902ed565e9226df7e804fdd972a72",
+  "tested_source_commit": "3fea6e4e0d60c8308751e9c7cd666d36d5ba08cf",
+  "production_sha256": "efeabca831619813b518a5eb1fbe315d12f3a59dda70bdc305337edf6e24b841",
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v3/bundled-content-manifest.json",
+      "bytes": 17183,
+      "sha256": "dfb99c0502e87aa9a643372cb33a42e146656247d173263b80c4266844520fbc"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v3/bundled-content-build-identity.json",
+      "bytes": 526,
+      "sha256": "543a7bb66abdb4e5c23cfdfe2e04580c40f3dc6e395240a679fb7ebe2cffa6fb"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v3/bundled-content-receipt.json",
+      "bytes": 1072,
+      "sha256": "e649627946eb82f7b1937f82658e275704e5d55f8277277991cac06edcc781f6"
+    }
+  },
+  "review": {
+    "path": "release/v1/public-content-review-v3.json",
+    "bytes": 22648,
+    "sha256": "2556ab8496d36f10f4ac3b6bf0b1933cde02abdddb11154176d23522974357e9"
+  },
+  "actual_verification": {
+    "signatures": "pass",
+    "assembled_resources": 84,
+    "assembled_packs": 2,
+    "source_prebuild": "pass",
+    "evidence_files": 89,
+    "pending_observations": 9,
+    "publication_allowed": false
+  },
+  "subsequent_coverage": {
+    "run_id": 39400864456,
+    "source_commit": "40eaafaa2fafeb7da68daa8c191eed226b7f9cfb",
+    "status": "failure",
+    "cause": "Windows autocrlf changed authored Markdown; strict HEAD hash check refused before assembly/native app",
+    "linux_tests_passed": 1605,
+    "linux_ignored": 8,
+    "typescript_source_files_at_least_90_percent": 91,
+    "combined_per_file_gate": "unverified; collection failed"
+  },
+  "installer_run_at_recording": {
+    "run_id": 39400861524,
+    "source_commit": "40eaafaa2fafeb7da68daa8c191eed226b7f9cfb",
+    "status": "in_progress"
+  },
+  "limitation": "Retains actual historical scope. Does not supply repaired-candidate or publication readiness."
+}

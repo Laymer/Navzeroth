@@ -8,6 +8,7 @@ mod bundle_test_fixture;
 
 mod bundled;
 mod bundled_stage;
+mod draft_smoke;
 pub mod enumeration;
 pub mod materials;
 use azeroth_core::{
@@ -876,7 +877,7 @@ fn bind_v2_pack(
         )?;
     }
     let mut records = v2_catalog_records(&content)?;
-    if inventory.schema_version == release::SCHEMA_STABLE {
+    if release::is_stable_schema(inventory.schema_version) {
         for source in &sources.sources {
             let id = source.id.as_str().to_owned();
             if non_observational_source(&content, &sources.sources, source, policy)? {
@@ -1167,7 +1168,7 @@ fn inputs(options: &Options) -> Result<Inputs> {
         release::MAX_STABLE_RELEASE_BYTES,
     )?;
     let inventory = release::decode_inventory(&inventory_bytes)?;
-    budget.stable = inventory.schema_version == release::SCHEMA_STABLE;
+    budget.stable = release::is_stable_schema(inventory.schema_version);
     let world = world_inputs(&root, &inventory, &mut budget)?;
     let selected = options
         .evidence
@@ -1326,6 +1327,18 @@ pub fn report(options: &Options) -> Result<Report> {
     for message in verification_errors {
         readiness.block(message);
     }
+    if let Some(evidence) = &evidence
+        && let Err(message) = draft_smoke::verify(
+            &root,
+            evidence,
+            &head,
+            &candidate.fingerprint,
+            &options.version,
+            &mut budget,
+        )
+    {
+        readiness.block(message);
+    }
     let status = production_status(&root)?;
     // Historical repositories without a delivery policy retain their original
     // bundled rules. An explicit policy is strict and production-fingerprinted.
@@ -1376,7 +1389,7 @@ pub fn report(options: &Options) -> Result<Report> {
             catalog,
             &mut budget,
         ) {
-            Ok((materials, _)) if inventory.schema_version == release::SCHEMA_STABLE => {
+            Ok((materials, _)) if release::is_stable_schema(inventory.schema_version) => {
                 if let Err(message) = bundled::verify(
                     &root,
                     &options.version,

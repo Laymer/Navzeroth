@@ -1,0 +1,120 @@
+{
+  "conclusion": "success",
+  "headSha": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "jobs": [
+    {
+      "completedAt": "2026-10-20T21:03:14Z",
+      "conclusion": "success",
+      "databaseId": 118884829137,
+      "name": "Validate Pages",
+      "startedAt": "2026-10-20T21:02:31Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-20T21:02:33Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-20T21:02:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:36Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-10-20T21:02:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:02:40Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "number": 3,
+          "startedAt": "2026-10-20T21:02:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:06Z",
+          "conclusion": "success",
+          "name": "Install locked test dependencies",
+          "number": 4,
+          "startedAt": "2026-10-20T21:02:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:06Z",
+          "conclusion": "success",
+          "name": "Check supported publication metadata contracts",
+          "number": 5,
+          "startedAt": "2026-10-20T21:03:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:12Z",
+          "conclusion": "success",
+          "name": "Check links, project paths, release identity and browser accessibility",
+          "number": 6,
+          "startedAt": "2026-10-20T21:03:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:12Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "number": 11,
+          "startedAt": "2026-10-20T21:03:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:13Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 12,
+          "startedAt": "2026-10-20T21:03:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-20T21:03:13Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "startedAt": "2026-10-20T21:03:13Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088176/job/118884829137"
+    },
+    {
+      "completedAt": "2026-10-20T21:02:29Z",
+      "conclusion": "skipped",
+      "databaseId": 118884831088,
+      "name": "Capture verified public release",
+      "startedAt": "2026-10-20T21:02:30Z",
+      "status": "completed",
+      "steps": [],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088176/job/118884831088"
+    },
+    {
+      "completedAt": "2026-10-20T21:03:14Z",
+      "conclusion": "skipped",
+      "databaseId": 118885189081,
+      "name": "Package site",
+      "startedAt": "2026-10-20T21:03:15Z",
+      "status": "completed",
+      "steps": [],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088176/job/118885189081"
+    },
+    {
+      "completedAt": "2026-10-20T21:03:14Z",
+      "conclusion": "skipped",
+      "databaseId": 118885190644,
+      "name": "Deploy site",
+      "startedAt": "2026-10-20T21:03:15Z",
+      "status": "completed",
+      "steps": [],
+      "url": "https://github.com/Laymer/Navzeroth/actions/runs/39497088176/job/118885190644"
+    }
+  ],
+  "status": "completed"
+}

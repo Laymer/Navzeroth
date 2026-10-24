@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kind": "diagnostic_not_acceptance",
+  "runtime_commit": "419fcaecfcb208867e280140215c6e5e01891e27",
+  "harness_commit": "3447bcbfdeeb771589f6773bad6a70b81bdf0681",
+  "signed_bundle_scope": "Unchanged independently verified OLD V13 signed bundle/resources, not relabelled as current production. Identity and receipt printed verbatim in raw-output.txt.",
+  "optimized_app_build_seconds": 46.9,
+  "phases": [
+    {
+      "elapsed_ms": 41034,
+      "event": "complete",
+      "phase": "initial_signed_bundle_start"
+    },
+    {
+      "elapsed_ms": 24,
+      "event": "complete",
+      "phase": "manual_profile_and_settings"
+    },
+    {
+      "elapsed_ms": 787,
+      "event": "complete",
+      "phase": "select_false_inferred_travel"
+    },
+    {
+      "elapsed_ms": 349,
+      "event": "complete",
+      "phase": "initial_state"
+    },
+    {
+      "elapsed_ms": 310,
+      "event": "complete",
+      "phase": "backup"
+    },
+    {
+      "elapsed_ms": 31348,
+      "event": "complete",
+      "phase": "inspect_backup"
+    },
+    {
+      "elapsed_ms": 77106,
+      "event": "complete",
+      "phase": "restore_and_initializer_reopen"
+    },
+    {
+      "elapsed_ms": 0,
+      "event": "complete",
+      "phase": "restored_ready"
+    },
+    {
+      "elapsed_ms": 358,
+      "event": "complete",
+      "phase": "restored_profiles_settings_content_choice"
+    },
+    {
+      "elapsed_ms": 28603,
+      "event": "complete",
+      "phase": "restored_check_database"
+    },
+    {
+      "elapsed_ms": 41,
+      "event": "complete",
+      "phase": "drop_restored_host"
+    },
+    {
+      "elapsed_ms": 78862,
+      "event": "complete",
+      "phase": "explicit_close_reopen_signed_initializer"
+    },
+    {
+      "elapsed_ms": 358,
+      "event": "complete",
+      "phase": "reopened_profiles_settings_content_choice"
+    },
+    {
+      "elapsed_ms": 28429,
+      "event": "complete",
+      "phase": "reopened_check_database"
+    }
+  ],
+  "comparison": {
+    "prior_runtime": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+    "prior_elapsed_seconds": 347.8049998570059,
+    "prior_maximum_resident_set_kib": 12508668,
+    "current_elapsed_seconds": 287.95965361399976,
+    "current_maximum_resident_set_kib": 12304676,
+    "interpretation": "One shared Linux/WSL run each, uncontrolled cache and host. Not a Windows prediction, ordinary-PC claim, statistical benchmark or proof of fitting hosted20-minute workload."
+  },
+  "assertions": "Same unmodified harness: full signed-content initialization; manual engineering profile/settings125; inferred choice false; backup/inspect/restore receipt pendingfalse retainedtrue nonemptydirectory; ready/errornull; exact profiles/settings/content/scope/defaultmarker/choice; database integrity; explicit close/reopen through signed initializer; exact persistence and final integrity check. No seeded current plan; all four backup plan-guard fields null as prior diagnostic.",
+  "read_only_backup_current_plan": {
+    "slot": 1,
+    "schema_version": 1,
+    "revision": 1,
+    "kind": null,
+    "request_json": null,
+    "guard_json": null,
+    "summary_json": null
+  },
+  "external_backup_identity": {
+    "filename": "/tmp/navzeroth-v16-fullpack-recovery-data/backup.sqlite3",
+    "byte_count": 463335424,
+    "sha256": "f4efd8953593da041cf66e69bee7a57e9d46f3573df840f4f19769fd42837823"
+  }
+}

@@ -1,0 +1,8 @@
+use azeroth_storage::{SqliteStore,content::ContentRevisionKey};
+use std::{path::Path,time::Instant};
+fn main(){
+ let key:ContentRevisionKey=serde_json::from_str(r#"{"scope":{"context":{"build":{"edition":"wow_forever","build":"1.60.1.70450","interface":"16001"},"namespace":"reference"},"fixture":false},"revision":"set-88fc99070bf008b1e07b63bda9bd99f0"}"#).unwrap();
+ let args:Vec<_>=std::env::args().collect();let store=SqliteStore::open(Path::new(&args[1])).unwrap();let start=Instant::now();
+ let loaded=store.catalog_revision(&key).unwrap().unwrap();assert_eq!(loaded.key(),key);assert!(loaded.content_v2().unwrap().identity_count()>200000);
+ println!("{}",serde_json::json!({"kind":"diagnostic_not_acceptance","runtime":args[2],"phase":"fresh_catalog_revision","elapsed_ms":start.elapsed().as_millis(),"identities":loaded.content_v2().unwrap().identity_count(),"revision":key}));
+}

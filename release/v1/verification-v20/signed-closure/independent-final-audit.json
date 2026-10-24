@@ -1,0 +1,24 @@
+{
+  "source": "49ce3e4760cba311c418feb6fd652fd8f3b1e23d",
+  "crypto_verified_against_own_pre_receipt_expected": true,
+  "compiled_default_policy_verified": true,
+  "resource_count": 84,
+  "resource_bytes": 395847866,
+  "exact_tree_files": 86,
+  "evidence_files": 89,
+  "packs": 2,
+  "build_ready": true,
+  "stable_ready": false,
+  "publication_allowed": false,
+  "pending": [
+    "DRAFT-INSTALLER-SMOKE",
+    "HOSTED-DOWNGRADE-REFUSAL",
+    "HOSTED-FIRST-START",
+    "HOSTED-INSTALL",
+    "HOSTED-OFFLINE",
+    "HOSTED-PERFORMANCE",
+    "HOSTED-PERSISTENCE-RECOVERY",
+    "HOSTED-RESOURCES",
+    "HOSTED-UPGRADE-RC1"
+  ]
+}

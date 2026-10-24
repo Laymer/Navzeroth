@@ -1,0 +1,22 @@
+{
+  "candidate": "8b12aec1bb28bdb35a3014c365ec500da8876af0",
+  "actual_checkout": "7361c873a1ba0c3366703917033f7397c74d07c3",
+  "scope": "Actual V17 CI (17 jobs: 16 success, Stability skipped), Independent source knowledge and Pages logs. Stability and deployment skipped, not passed. Historical candidate results only.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v17-ci-source-pages/ci.log",
+      "bytes": 1558686,
+      "sha256": "a49a61c2cebf7f38292f07c2d9a054a14b8590e8dbbcb4072f8b084b65482d06"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-ci-source-pages/pages.log",
+      "bytes": 59768,
+      "sha256": "10aa0585d9ddaae9df6ebe2f7864b75fedb6758638d98e072a5f9f8a385f69ea"
+    },
+    {
+      "path": "release/history/2026-10-21-v17-ci-source-pages/source.log",
+      "bytes": 141099,
+      "sha256": "c3c93e22abf91f3846a767f41f15d864c1ef5000870b43bcb7e66e9d27fabfa8"
+    }
+  ]
+}

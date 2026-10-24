@@ -11,6 +11,7 @@ with the variable set, review the diff, and commit it.
 
 | Variable | Test binary | Files written |
 |---|---|---|
+| `UPDATE_ADDON_FIXTURES=1` | `azeroth-lua-harness` `template_and_fixtures` | Three addon exports and the diagnostic export line in `fixtures/addon/savedvariables-sample.synthetic.lua` |
 | `UPDATE_DESKTOP_FIXTURES=1` | `azeroth-app` `atlas_commands`, `session_analytics_golden` | `fixtures/desktop/atlas/**`, `fixtures/desktop/sessions/analytics.synthetic.json` (only its mock methodology sentence is hand-written) |
 | `UPDATE_GEAR_GOLDENS` | `azeroth-app` `gear_workflow` | `fixtures/desktop/gear/**` |
 | `UPDATE_TODAY_GOLDEN` | `azeroth-app` `today` | `fixtures/desktop/today/**` |
@@ -24,8 +25,9 @@ with the variable set, review the diff, and commit it.
 Determinism: all nine writers were run twice in succession on one checkout and
 the second run changed no bytes, so all nine are in the drift step. A writer
 that cannot reproduce itself must be left out and its reason logged here.
-Not yet written by any test: the three addon goldens under `fixtures/addon/`
-(owned by the addon GUI task).
+The addon writer was added after the original nine-writer drift suite. Run it
+separately with `UPDATE_ADDON_FIXTURES=1 cargo test --locked -p azeroth-lua-harness --test template_and_fixtures`;
+the current drift script does not invoke it.
 
 ## Reading goldens from TypeScript
 

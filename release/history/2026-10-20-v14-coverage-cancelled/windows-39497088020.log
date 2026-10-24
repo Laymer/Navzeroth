@@ -1,0 +1,488 @@
+Rust coverage Windows	Set up job	﻿2026-10-20T21:02:33.5584763Z Current runner version: '2.337.0'
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5632410Z ##[group]Runner Image Provisioner
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5633228Z Hosted Compute Agent
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5633762Z Version: 20261015.610
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5634386Z Commit: 267fdb4e8bbec4ab5ea31367f3a00d5c480c7656
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5635091Z Build Date: 2026-10-14T17:06:54Z
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5636012Z Worker ID: {35125ede-aefc-400f-a31b-7865d21f0b20}
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5636779Z Region: westus
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5637273Z Cloud: Azure
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5637804Z ##[endgroup]
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5639588Z ##[group]Operating System
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5640282Z Microsoft Windows Server 2025
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5640893Z 10.0.26100
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5641376Z Datacenter
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5641879Z ##[endgroup]
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5642380Z ##[group]Runner Image
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5642931Z Image: windows-2025-vs2026
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5643612Z Version: 20261018.275.1
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5644712Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261018.275/images/windows/Windows2025-VS2026-Readme.md
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5646626Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261018.275
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5647580Z ##[endgroup]
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5648641Z ##[group]GITHUB_TOKEN Permissions
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5650879Z Contents: read
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5651477Z Metadata: read
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5651978Z ##[endgroup]
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5653980Z Secret source: Actions
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5654866Z Cache mode: write
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.5655518Z Prepare workflow directory
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.6023693Z Prepare all required actions
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.6072162Z Getting action download info
+Rust coverage Windows	Set up job	2026-10-20T21:02:33.9505574Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+Rust coverage Windows	Set up job	2026-10-20T21:02:34.0842213Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+Rust coverage Windows	Set up job	2026-10-20T21:02:34.2472305Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+Rust coverage Windows	Set up job	2026-10-20T21:02:34.4609829Z Complete job name: Rust coverage Windows
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-20T21:02:34.6037229Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6038524Z with:
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6038981Z   repository: Laymer/Navzeroth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6043246Z   token: ***
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6043681Z   ssh-strict: true
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6044114Z   ssh-user: git
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6044561Z   persist-credentials: true
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6045057Z   clean: true
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6045507Z   sparse-checkout-cone-mode: true
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6046038Z   fetch-depth: 1
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6046474Z   fetch-tags: false
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6046934Z   show-progress: true
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6047376Z   lfs: false
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6047782Z   submodules: false
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6048256Z   set-safe-directory: true
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6048765Z   allow-unsafe-pr-checkout: false
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.6049506Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.7567276Z Syncing repository: Laymer/Navzeroth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.7569155Z ##[group]Getting Git version info
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.7569948Z Working directory is 'D:\a\Navzeroth\Navzeroth'
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:34.8932720Z [command]"C:\Program Files\Git\bin\git.exe" version
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2199446Z git version 2.56.0.windows.2
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2252622Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2268937Z Temporarily overriding HOME='D:\a\_temp\c39a55c7-6d4e-496b-b2ba-929e900eb8fb' before making global git config changes
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2270472Z Adding repository directory to the temporary git global config as a safe directory
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2278611Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2960975Z Deleting the contents of 'D:\a\Navzeroth\Navzeroth'
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2966247Z ##[group]Determining repository object format
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2968112Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2969247Z ##[group]Initializing the repository
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.2976657Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Navzeroth\Navzeroth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.3890974Z Initialized empty Git repository in D:/a/Navzeroth/Navzeroth/.git/
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.3939270Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Laymer/Navzeroth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4601765Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4602970Z ##[group]Disabling automatic garbage collection
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4610900Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4979298Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4981660Z ##[group]Setting up auth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4983291Z Removing SSH command configuration
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.4991287Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:35.5362580Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:36.8916198Z Removing HTTP extra header
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:36.8925697Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:36.9295203Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:37.5216015Z Removing includeIf entries pointing to credentials config files
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:37.5228125Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:37.5737362Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.1380307Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.1766582Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D:\a\_temp\git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.2154280Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D:\a\_temp\git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.2593168Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.2969424Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.3401324Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.3402084Z ##[group]Fetching the repository
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:38.3418581Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8d9fc3922e3433b45755ef68602a62c054faee4e:refs/remotes/pull/239/merge
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5045999Z From https://github.com/Laymer/Navzeroth
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5047411Z  * [new ref]         8d9fc3922e3433b45755ef68602a62c054faee4e -> pull/239/merge
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5090168Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5091277Z ##[group]Determining the checkout info
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5092808Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5102402Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.5645705Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.6014616Z ##[group]Checking out the ref
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:40.6022693Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/239/merge
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.1031468Z Updating files:   8% (335/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.1492714Z Updating files:   9% (371/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.1749220Z Updating files:  10% (412/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.1976007Z Updating files:  11% (453/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.2201562Z Updating files:  12% (495/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.2340659Z Updating files:  13% (536/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.2454497Z Updating files:  14% (577/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.2576528Z Updating files:  15% (618/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.2699925Z Updating files:  16% (659/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.2819126Z Updating files:  17% (700/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3022492Z Updating files:  18% (742/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3141486Z Updating files:  19% (783/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3299855Z Updating files:  20% (824/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3417673Z Updating files:  21% (865/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3535592Z Updating files:  22% (906/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3663977Z Updating files:  23% (947/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3782869Z Updating files:  24% (989/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.3904171Z Updating files:  25% (1030/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4027099Z Updating files:  26% (1071/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4330346Z Updating files:  27% (1112/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4446435Z Updating files:  28% (1153/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4561875Z Updating files:  29% (1194/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4679056Z Updating files:  30% (1236/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4789623Z Updating files:  31% (1277/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.4930305Z Updating files:  32% (1318/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5069054Z Updating files:  33% (1359/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5219610Z Updating files:  34% (1400/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5380092Z Updating files:  35% (1441/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5501168Z Updating files:  36% (1483/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5614662Z Updating files:  37% (1524/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5730251Z Updating files:  38% (1565/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5842778Z Updating files:  39% (1606/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.5954208Z Updating files:  40% (1647/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6061337Z Updating files:  41% (1688/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6171959Z Updating files:  42% (1730/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6276925Z Updating files:  43% (1771/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6384259Z Updating files:  44% (1812/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6492293Z Updating files:  45% (1853/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6519266Z Updating files:  46% (1894/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6598557Z Updating files:  46% (1904/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6706039Z Updating files:  47% (1935/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6816936Z Updating files:  48% (1977/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.6924582Z Updating files:  49% (2018/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7029099Z Updating files:  50% (2059/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7134662Z Updating files:  51% (2100/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7240775Z Updating files:  52% (2141/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7344964Z Updating files:  53% (2183/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7457287Z Updating files:  54% (2224/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7562852Z Updating files:  55% (2265/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7668785Z Updating files:  56% (2306/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7776280Z Updating files:  57% (2347/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.7897375Z Updating files:  58% (2388/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8006685Z Updating files:  59% (2430/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8109910Z Updating files:  60% (2471/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8216781Z Updating files:  61% (2512/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8325862Z Updating files:  62% (2553/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8436817Z Updating files:  63% (2594/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8563425Z Updating files:  64% (2635/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8671844Z Updating files:  65% (2677/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.8929432Z Updating files:  66% (2718/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9144727Z Updating files:  67% (2759/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9242959Z Updating files:  68% (2800/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9337451Z Updating files:  69% (2841/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9431360Z Updating files:  70% (2882/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9514879Z Updating files:  71% (2924/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9599716Z Updating files:  72% (2965/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9683544Z Updating files:  73% (3006/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9806886Z Updating files:  74% (3047/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:42.9914211Z Updating files:  75% (3088/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0026185Z Updating files:  76% (3129/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0128899Z Updating files:  77% (3171/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0245549Z Updating files:  78% (3212/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0349455Z Updating files:  79% (3253/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0462685Z Updating files:  80% (3294/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0570604Z Updating files:  81% (3335/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0673533Z Updating files:  82% (3376/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0775696Z Updating files:  83% (3418/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.0940408Z Updating files:  84% (3459/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1057314Z Updating files:  85% (3500/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1201258Z Updating files:  86% (3541/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1341283Z Updating files:  87% (3582/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1438074Z Updating files:  88% (3623/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1539130Z Updating files:  89% (3665/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1668493Z Updating files:  90% (3706/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1787854Z Updating files:  91% (3747/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.1898593Z Updating files:  92% (3788/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.2000634Z Updating files:  93% (3829/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.2115100Z Updating files:  94% (3870/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.2931544Z Updating files:  95% (3912/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4195396Z Updating files:  96% (3953/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4324091Z Updating files:  97% (3994/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4434658Z Updating files:  98% (4035/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4549795Z Updating files:  99% (4076/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4550494Z Updating files: 100% (4117/4117)
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4550761Z Updating files: 100% (4117/4117), done.
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4693444Z Note: switching to 'refs/remotes/pull/239/merge'.
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4693844Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4694158Z You are in 'detached HEAD' state. You can look around, make experimental
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4695357Z changes and commit them, and you can discard any commits you make in this
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4696124Z state without impacting any branches by switching back to a branch.
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4696596Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4696917Z If you want to create a new branch to retain commits you create, you may
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4697700Z do so (now or later) by using -c with the switch command. Example:
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4698168Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4698363Z   git switch -c <new-branch-name>
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4698673Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4698829Z Or undo this operation with:
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4699095Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4699219Z   git switch -
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4699438Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4699790Z Turn off this advice by setting config variable advice.detachedHead to false
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4700327Z 
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.4700963Z HEAD is now at 8d9fc39 Merge 97a81de9fd8d07270ed86f55ca9bf445b010e60a into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.8585427Z ##[endgroup]
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.9400417Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+Rust coverage Windows	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:02:43.9775847Z 8d9fc3922e3433b45755ef68602a62c054faee4e
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	﻿2026-10-20T21:02:44.0263700Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.0264163Z with:
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.0264371Z   node-version-file: .node-version
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.0264638Z   package-manager-cache: false
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.0264882Z   check-latest: false
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.0267628Z   token: ***
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.0267825Z ##[endgroup]
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.1872873Z Node version file is not JSON file
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.1883050Z Node version file is not TOML file
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.1884037Z Resolved .node-version as 24.15.0
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.1900948Z Attempting to download 24.15.0...
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:44.8261583Z Acquiring 24.15.0 - x64 from https://github.com/actions/node-versions/releases/download/24.15.0-24511264946/node-24.15.0-win32-x64.7z
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:45.2257984Z Extracting ...
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:47.6182186Z Adding to the cache ...
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:51.0254194Z ##[group]Environment details
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:52.2556660Z node: v24.15.0
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:52.2557134Z npm: 11.12.1
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:52.2557627Z yarn: 1.22.22
+Rust coverage Windows	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:02:52.2558373Z ##[endgroup]
+Rust coverage Windows	Install isolated Corepack	﻿2026-10-20T21:02:52.2866960Z ##[group]Run npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+Rust coverage Windows	Install isolated Corepack	2026-10-20T21:02:52.2867918Z ^[[36;1mnpm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0^[[0m
+Rust coverage Windows	Install isolated Corepack	2026-10-20T21:02:52.2868556Z ^[[36;1mecho "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"^[[0m
+Rust coverage Windows	Install isolated Corepack	2026-10-20T21:02:52.2899833Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+Rust coverage Windows	Install isolated Corepack	2026-10-20T21:02:52.2900264Z ##[endgroup]
+Rust coverage Windows	Install isolated Corepack	2026-10-20T21:02:53.5455582Z 
+Rust coverage Windows	Install isolated Corepack	2026-10-20T21:02:53.5464957Z added 1 package in 660ms
+Rust coverage Windows	Run pnpm install --frozen-lockfile	﻿2026-10-20T21:02:54.8074611Z ##[group]Run pnpm install --frozen-lockfile
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:02:54.8075047Z ^[[36;1mpnpm install --frozen-lockfile^[[0m
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:02:54.8524603Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:02:54.8525067Z ##[endgroup]
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:02:55.3926120Z ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-12.11.2.tgz
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:00.0192780Z Downloading the pnpm 12.11.2 binary for win32-x64...
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:01.7874524Z Scope: all 2 workspace projects
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:01.8239754Z ? Verifying lockfile against supply-chain policies (283 entries)...
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:02.1563563Z Packages are hard linked from the content-addressable store to the virtual store.
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:02.1567137Z   Content-addressable store is at: D:\.pnpm-store\v11
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:02.1569309Z   Virtual store is at:             node_modules/.pnpm
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:03.1076305Z Downloading @tauri-apps/cli-win32-x64-msvc@2.12.2: 0.00 B/7.98 MB
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:03.2315045Z Downloading @typescript/typescript-win32-x64@7.0.2: 0.00 B/9.77 MB
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:03.4615076Z Downloading @rolldown/binding-win32-x64-msvc@1.2.13: 0.00 B/8.25 MB
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:04.3948114Z [WARN] Tarball download average speed 48 KiB/s (size 76 KiB) is below 50 KiB/s: https://registry.npmjs.org/json-schema-to-typescript/-/json-schema-to-typescript-16.0.0.tgz (GET)
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:05.3919788Z Progress: resolved 229, reused 0, downloaded 224, added 211
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.0746664Z ✓ Lockfile passes supply-chain policies (283 entries in 4.3s)
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.0747223Z Lockfile is up to date, resolution step is skipped
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.0883595Z Packages: +229
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.0949858Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2229517Z Progress: resolved 229, reused 0, downloaded 229, added 229, done
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2835731Z 
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2836348Z devDependencies:
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2836798Z + @types/node 24.19.0
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2837190Z + ajv 8.20.0
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2837604Z + json-schema-to-typescript 16.0.0
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2838066Z + typescript 7.0.2
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2838291Z 
+Rust coverage Windows	Run pnpm install --frozen-lockfile	2026-10-20T21:03:06.2897439Z Done in 4.5s using pnpm v12.11.2
+Rust coverage Windows	Run rustup component add llvm-tools-preview	﻿2026-10-20T21:03:06.4960534Z ##[group]Run rustup component add llvm-tools-preview
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:06.4961312Z ^[[36;1mrustup component add llvm-tools-preview^[[0m
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:06.5038754Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:06.5039123Z ##[endgroup]
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:08.0760932Z info: syncing channel updates for 1.99.0-x86_64-pc-windows-msvc
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:08.5960558Z info: latest update on 2026-10-01 for version 1.99.0 (b940084d7 2026-09-28)
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:08.6014102Z info: downloading 5 components
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:18.9701363Z warn: the missing active toolchain `1.99.0-x86_64-pc-windows-msvc` has been auto-installed
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:18.9702560Z warn: auto-installation is deprecated for most `rustup` commands
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:18.9704662Z warn: scripts relying on this behavior in `rustup` may stop working in the future
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:18.9706382Z warn: to install the active toolchain, use `rustup install` instead
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:18.9707602Z warn: see <https://github.com/rust-lang/rustup/issues/4836> for more info
+Rust coverage Windows	Run rustup component add llvm-tools-preview	2026-10-20T21:03:19.0540879Z info: downloading component llvm-tools
+Rust coverage Windows	Install pinned native coverage collector	﻿2026-10-20T21:03:22.9424109Z ##[group]Run cargo install cargo-llvm-cov --version 0.9.1 --locked
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:22.9424701Z ^[[36;1mcargo install cargo-llvm-cov --version 0.9.1 --locked^[[0m
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:22.9495220Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:22.9495611Z ##[endgroup]
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:23.8456514Z     Updating crates.io index
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:23.9235620Z  Downloading crates ...
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.1428447Z   Downloaded cargo-llvm-cov v0.9.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.5441128Z   Installing cargo-llvm-cov v0.9.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.5442263Z warning: default toolchain implicitly overridden with `1.99.0-x86_64-pc-windows-msvc` by rustup toolchain file
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.5442802Z   |
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.5443147Z   = help: use `cargo +stable install` if you meant to use the stable toolchain
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.5443886Z   = note: rustup selects the toolchain based on the parent environment and not the environment of the package being installed
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.5464765Z     Updating crates.io index
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.7734265Z     Updating crates.io index
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.7993195Z  Downloading crates ...
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.8079947Z   Downloaded fs-err v3.3.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.8651857Z   Downloaded autocfg v1.5.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.8859959Z   Downloaded memchr v2.8.3
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.9439554Z   Downloaded aho-corasick v1.1.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:24.9874247Z   Downloaded anyhow v1.0.104
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.0348897Z   Downloaded toml_parser v1.1.3+spec-1.1.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.0729741Z   Downloaded camino v1.2.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.0861039Z   Downloaded cargo-config2 v0.1.45
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.1295550Z   Downloaded duct v1.1.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.1515147Z   Downloaded filetime v0.2.29
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.1686938Z   Downloaded itoa v1.0.18
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.1849806Z   Downloaded glob v0.3.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.1984649Z   Downloaded cfg-if v1.0.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.2109040Z   Downloaded same-file v1.0.6
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.2276785Z   Downloaded rustc-demangle v0.1.28
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.2421824Z   Downloaded serde_core v1.0.229
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.2700888Z   Downloaded shared_thread v0.2.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.2790915Z   Downloaded os_pipe v1.2.3
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.2949421Z   Downloaded quote v1.0.47
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.3277990Z   Downloaded shared_child v1.1.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.3426092Z   Downloaded shell-escape v0.1.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.3513027Z   Downloaded normpath v1.5.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.3703644Z   Downloaded termcolor v1.4.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.3809178Z   Downloaded walkdir v2.5.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.3999345Z   Downloaded winapi-util v0.1.11
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4151575Z   Downloaded lexopt v0.3.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4289269Z   Downloaded serde_spanned v1.1.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4396998Z   Downloaded lcov2cobertura v1.0.9
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4519616Z   Downloaded opener v0.8.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4664827Z   Downloaded windows-link v0.2.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4746739Z   Downloaded zmij v1.0.23
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.4926954Z   Downloaded toml_datetime v1.1.1+spec-1.1.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.5024743Z   Downloaded unicode-ident v1.0.24
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.5269732Z   Downloaded proc-macro2 v1.0.107
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.5595528Z   Downloaded tar v0.4.46
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.5856676Z   Downloaded toml v1.1.5+spec-1.1.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.6268675Z   Downloaded serde_derive v1.0.229
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.6618190Z   Downloaded serde v1.0.229
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.6952854Z   Downloaded ruzstd v0.9.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.7648847Z   Downloaded serde_json v1.0.151
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.8492056Z   Downloaded regex v1.13.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.8991094Z   Downloaded winnow v1.0.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:25.9814447Z   Downloaded quick-xml v0.39.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:26.0183943Z   Downloaded syn v3.0.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:26.0993273Z   Downloaded regex-syntax v0.8.11
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:26.1366396Z   Downloaded regex-automata v0.4.18
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:26.2529868Z   Downloaded windows-sys v0.61.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:28.0047047Z    Compiling windows-link v0.2.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:28.0050371Z    Compiling serde_core v1.0.229
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:28.0050855Z    Compiling memchr v2.8.3
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:28.0051320Z    Compiling proc-macro2 v1.0.107
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:28.1069305Z    Compiling windows-sys v0.61.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:29.1917765Z    Compiling quote v1.0.47
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:30.3419242Z    Compiling unicode-ident v1.0.24
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:30.5555445Z    Compiling aho-corasick v1.1.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:31.1496534Z    Compiling winapi-util v0.1.11
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:31.6972898Z    Compiling anyhow v1.0.104
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:31.9314965Z    Compiling serde v1.0.229
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:32.1204240Z    Compiling zmij v1.0.23
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:32.3203688Z    Compiling regex-syntax v0.8.11
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:32.4847935Z    Compiling autocfg v1.5.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:33.0451201Z    Compiling winnow v1.0.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:33.6661327Z    Compiling toml_parser v1.1.3+spec-1.1.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:34.4254996Z    Compiling toml_datetime v1.1.1+spec-1.1.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:34.9320556Z    Compiling serde_spanned v1.1.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:35.0781849Z    Compiling fs-err v3.3.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:35.2044479Z    Compiling regex-automata v0.4.18
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:35.5566987Z    Compiling syn v3.0.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:36.5572585Z    Compiling camino v1.2.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:36.9687733Z    Compiling cfg-if v1.0.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:37.0358646Z    Compiling serde_json v1.0.151
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:37.3335056Z    Compiling filetime v0.2.29
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:39.2652268Z    Compiling regex v1.13.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:39.4783304Z    Compiling serde_derive v1.0.229
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:40.7437021Z    Compiling toml v1.1.5+spec-1.1.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:40.9274361Z    Compiling same-file v1.0.6
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:41.1168576Z    Compiling os_pipe v1.2.3
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:41.3150145Z    Compiling normpath v1.5.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:41.8071388Z    Compiling shared_child v1.1.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:42.0390634Z    Compiling quick-xml v0.39.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:44.2730216Z    Compiling itoa v1.0.18
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:44.2745108Z    Compiling rustc-demangle v0.1.28
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:44.4684196Z    Compiling shared_thread v0.2.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:44.5531668Z    Compiling cargo-config2 v0.1.45
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:44.6010176Z    Compiling duct v1.1.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:45.4187300Z    Compiling lcov2cobertura v1.0.9
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:47.1797191Z    Compiling opener v0.8.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:47.2956004Z    Compiling walkdir v2.5.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:48.1017909Z    Compiling tar v0.4.46
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:48.7572224Z    Compiling termcolor v1.4.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:49.4991152Z    Compiling lexopt v0.3.2
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:49.6854597Z    Compiling shell-escape v0.1.5
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:50.0948448Z    Compiling ruzstd v0.9.0
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:50.1734579Z    Compiling glob v0.3.4
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:03:51.2385629Z    Compiling cargo-llvm-cov v0.9.1
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:04:54.3064223Z     Finished `release` profile [optimized] target(s) in 1m 30s
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:04:54.3120833Z   Installing C:\Users\runneradmin\.cargo\bin\cargo-llvm-cov.exe
+Rust coverage Windows	Install pinned native coverage collector	2026-10-20T21:04:54.3127730Z    Installed package `cargo-llvm-cov v0.9.1` (executable `cargo-llvm-cov.exe`)
+Rust coverage Windows	Owned profile output and clean-source regressions	﻿2026-10-20T21:04:54.6108874Z ##[group]Run node --test scripts/coverage/profile-output.test.mjs scripts/coverage/clean-source.test.mjs scripts/coverage/native-bundle.test.mjs scripts/coverage/bundle-instrumentation.test.mjs
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:54.6110389Z ^[[36;1mnode --test scripts/coverage/profile-output.test.mjs scripts/coverage/clean-source.test.mjs scripts/coverage/native-bundle.test.mjs scripts/coverage/bundle-instrumentation.test.mjs^[[0m
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:54.6182662Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:54.6183036Z ##[endgroup]
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6565473Z ✔ bundle instrumentation preserves command controls and both collector call sites (3.2891ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6571895Z ✔ actual pinned LLVM binary report loses ordinary replaced main and retains instrumented bundle main (3615.8942ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6681338Z ✔ real Git clean passes and tracked/untracked dirt refuses with exact bounded diagnostics (722.1169ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6682762Z ✔ source status reads are bounded and failure never becomes clean (0.8469ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6684206Z ✔ stable native coverage requires explicit trusted assembly and verifies staged resources (26.5093ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6686023Z ✔ actual instrumented Rust default dirties Git; owned output preserves nonempty profile and clean Git (2009.8332ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6687077Z ✔ pinned cargo llvm-cov show-env accepts controlled base profile and preserves its owned target (335.1534ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6687962Z ✔ profile modes retain platform patterns and reject relative or unsupported destinations (0.5428ms)
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6688479Z ℹ tests 8
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6688685Z ℹ suites 0
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6688892Z ℹ pass 8
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6689078Z ℹ fail 0
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6689273Z ℹ cancelled 0
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6689482Z ℹ skipped 0
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6689677Z ℹ todo 0
+Rust coverage Windows	Owned profile output and clean-source regressions	2026-10-20T21:04:58.6689957Z ℹ duration_ms 3721.417
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	﻿2026-10-20T21:04:58.8172175Z ##[group]Run node scripts/coverage/collect-rust.mjs "D:\a\_temp/coverage-rust"
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:04:58.8172822Z ^[[36;1mnode scripts/coverage/collect-rust.mjs "D:\a\_temp/coverage-rust"^[[0m
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:04:58.8241236Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:04:58.8241643Z ##[endgroup]
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:05:01.2044102Z Native coverage: cargo-llvm-cov-version
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:05:01.3735507Z Native coverage: rust-version
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:05:01.5086391Z Native coverage: rust-sysroot
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:05:01.6404783Z Native coverage: llvm-tools-version
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:05:01.7220011Z Native coverage: role-audit-inputs
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:05:06.4295630Z Native coverage: workspace-tests
+Rust coverage Windows	Native tests, build scripts, examples and bounded Windows app smoke	2026-10-20T21:15:04.0310060Z ##[error]The operation was canceled.
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	﻿2026-10-20T21:15:04.2174396Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2175236Z with:
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2175761Z   name: coverage-rust-Windows-8d9fc3922e3433b45755ef68602a62c054faee4e
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2177196Z   path: D:\a\_temp/coverage-rust/logs
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	D:\a\_temp/coverage-rust/*.json
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	D:\a\_temp/coverage-rust/*.lcov
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	D:\a\_temp/coverage-rust/raw-profiles
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	D:\a\_temp/coverage-rust/*.png
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2178292Z   if-no-files-found: error
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2178686Z   retention-days: 14
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2179200Z   compression-level: 6
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2179599Z   overwrite: false
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2181261Z   include-hidden-files: false
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2181785Z   archive: true
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.2182140Z ##[endgroup]
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.6900268Z With the provided path, there will be 8 files uploaded
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.6905952Z Artifact name is valid!
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:04.6907378Z Root directory input is valid!
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:05.0942312Z Uploading artifact: coverage-rust-Windows-8d9fc3922e3433b45755ef68602a62c054faee4e.zip
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:05.0997492Z Beginning upload of artifact content to blob storage
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:05.6361004Z Uploaded bytes 65765
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:05.7202365Z Finished uploading artifact content to blob storage!
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:05.7203534Z SHA256 digest of uploaded artifact is 20f062af844909d86b2f510da0377ab5307490fbba178e307473f1482ed09018
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:05.7204503Z Finalizing artifact upload
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:06.2218128Z Artifact coverage-rust-Windows-8d9fc3922e3433b45755ef68602a62c054faee4e successfully finalized. Artifact ID 12297859579
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:06.2220274Z Artifact coverage-rust-Windows-8d9fc3922e3433b45755ef68602a62c054faee4e has been successfully uploaded! Final size is 65765 bytes. Artifact ID is 12297859579
+Rust coverage Windows	Retain native raw profiles, reports and exact source receipts	2026-10-20T21:15:06.2226554Z Artifact download URL: https://github.com/Laymer/Navzeroth/actions/runs/39497088020/artifacts/12297859579
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-20T21:15:06.4232734Z Post job cleanup.
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.8869389Z [command]"C:\Program Files\Git\bin\git.exe" version
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.9222509Z git version 2.56.0.windows.2
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.9305533Z Temporarily overriding HOME='D:\a\_temp\7d861ed8-c652-4f54-aca3-28c5f10bc05a' before making global git config changes
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.9306769Z Adding repository directory to the temporary git global config as a safe directory
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.9318996Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.9698944Z Removing SSH command configuration
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:06.9709400Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:07.0100750Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:07.6120094Z Removing HTTP extra header
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:07.6130126Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:07.6513264Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2000907Z Removing includeIf entries pointing to credentials config files
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2018637Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2358578Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2359652Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2361035Z includeif.gitdir:/github/workspace/.git.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2361612Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2400628Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2735240Z D:\a\_temp\git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.2782444Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D\:\\a\\_temp\\git\-credentials\-e4f11c8f\-145f\-4fe5\-894d\-3be1fee44fab\.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.3165956Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.3525282Z D:\a\_temp\git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.3571662Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-e4f11c8f\-145f\-4fe5\-894d\-3be1fee44fab\.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.3947466Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.4274839Z /github/runner_temp/git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.4314779Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-e4f11c8f\-145f\-4fe5\-894d\-3be1fee44fab\.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.4680667Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.5005109Z /github/runner_temp/git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.5082286Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-e4f11c8f\-145f\-4fe5\-894d\-3be1fee44fab\.config
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:08.5464216Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Rust coverage Windows	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:09.1044935Z Removing credentials config 'D:\a\_temp\git-credentials-e4f11c8f-145f-4fe5-894d-3be1fee44fab.config'
+Rust coverage Windows	Complete job	﻿2026-10-20T21:15:09.1357335Z Cleaning up orphan processes
+Rust coverage Windows	Complete job	2026-10-20T21:15:09.2004949Z Terminate orphan process: pid (1264) (vctip)
