@@ -1,15 +1,16 @@
 {
   "schema_version": 1,
-  "source_commit": "1f972145f5adba8f253a92d924195563f24329dd",
-  "production_sha256": "7e1bb463d706584b78cd8d3d1b1a5856469eb389be4b1eec75d1ef200ef2ada5",
+  "source_commit": "2d33c2fd935c6b91754170862eda36b2d64561cc",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "production_entries": 3160,
   "returncode": 0,
   "timed_out": false,
-  "seconds": 75.76655352499802,
-  "peak_child_rss_kib": 6206036,
+  "seconds": 76.20902164899962,
+  "peak_child_rss_kib": 6205496,
   "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
   "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
   "platform": "shared Linux/WSL2",
-  "hardware_limits": "32 logical processors; MemTotal:       32675976 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
-  "scope": "Cargo --no-run at the exact tested source confirmed the cached coordinator-built executable from ca94; the V21 change (ADR 0010) touches only Windows acceptance PowerShell, an engineering probe workflow and docs, all outside this executable. Application/desktop/core/storage/ingest/local-data/CLI/content/addon/Cargo bytes are unchanged from b040. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
-  "proof_sha256": "ad963dcb68c54392d1bca98e7f43e9965d25db26968b4ce1d22ff2f179fb9cda"
+  "hardware_limits": "32 logical processors; MemTotal:       32675960 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
+  "scope": "Cargo --no-run confirmed the cached optimized executable at the tested source. Only acceptance workflow/PowerShell and docs changed from V21; runtime/content/test source unchanged. Actual full-pack manual engineering assertions; no new compiler build or installed Windows acceptance claimed.",
+  "proof_sha256": "476a4649178784515e4759493d2ca7bc696f674342cc75729f3ef1fce06831cd"
 }

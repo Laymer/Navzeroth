@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source_commit": "2d33c2fd935c6b91754170862eda36b2d64561cc",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "production_entries": 3160,
+  "operator": "Codex /root (V22 metadata author)",
+  "cli_sha256": "fbbf4571c063766931bea46ded663d4b06073c648589c56713b72d132a2f76c2",
+  "cli_build": "Cargo confirmed existing cached optimized CLI; no new compiler build claimed.",
+  "selected_files": 82,
+  "selected_packs": 2,
+  "unsigned_preparation": {
+    "ready": true,
+    "evidence_sha256": "8b82b8a875733a20b6c0a412728b6c1fb1adae226e15bbe640e8c986ea6390de"
+  },
+  "publication_allowed": false,
+  "scope": "Actual exact-source functional and unsigned material preparation only. Independent V22 metadata/preparation/closure review and all current Windows acceptance remain required.",
+  "files": [
+    {
+      "path": "release/v1/verification-v22/cli-build.log",
+      "bytes": 62,
+      "sha256": "64d0cbd4b7e4c6329fde55978dd3d261407b55f34c21add0feebf7e0575ee531"
+    },
+    {
+      "path": "release/v1/verification-v22/functional-build.log",
+      "bytes": 207,
+      "sha256": "c2fec4c31a1e8844a8d5f7876258614c986e3334c3c876ac417621b1242c2248"
+    },
+    {
+      "path": "release/v1/verification-v22/functional-run.log",
+      "bytes": 953,
+      "sha256": "a0a0d764a150271d0687776f833c106f2ea429fe225e48f189359ce6bb6c38ad"
+    },
+    {
+      "path": "release/v1/verification-v22/helper-linux.log",
+      "bytes": 3925,
+      "sha256": "769d16942a0c8f5d9a979118f9cd2c1bae7c24a02959f05ca335bb81afb6465b"
+    },
+    {
+      "path": "release/v1/verification-v22/helper-native-ps7.log",
+      "bytes": 4028,
+      "sha256": "6414bae6a60fbe90697394042c220ace9bf27f87759027f3ab83f33b2d37629e"
+    },
+    {
+      "path": "release/v1/verification-v22/helper-ps51.log",
+      "bytes": 3864,
+      "sha256": "cbfd310a04ebe6dfad1c4178016cd5227cdf5e3ffb14d2d1eae489085a43a70a"
+    },
+    {
+      "path": "release/v1/verification-v22/inventory-generation.json",
+      "bytes": 444,
+      "sha256": "222d547e9e91149f05fc5be50b886b4b32250017607e888227599346507de134"
+    },
+    {
+      "path": "release/v1/verification-v22/prebundle-evidence.json",
+      "bytes": 27970074,
+      "sha256": "8b82b8a875733a20b6c0a412728b6c1fb1adae226e15bbe640e8c986ea6390de"
+    },
+    {
+      "path": "release/v1/verification-v22/prior-review-audit.json",
+      "bytes": 68629,
+      "sha256": "bf2dbea6c7ceb75f2a45c83baec2d3210c9b62c28c9f2bf62a1b183b9c6591ce"
+    },
+    {
+      "path": "release/v1/verification-v22/unsigned-material-preview.json",
+      "bytes": 55727,
+      "sha256": "a0c02bed1ffe6aa776e46d6dc53bd3d1795eb006537cf27d56b852d89aa7212c"
+    }
+  ]
+}

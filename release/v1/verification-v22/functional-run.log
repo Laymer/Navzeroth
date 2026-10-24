@@ -1,0 +1,12 @@
+
+running 1 test
+verified and staged world-v2
+verified and staged authored-v2
+activated actual content set DatasetRevision("set-88fc99070bf008b1e07b63bda9bd99f0")
+loaded planner page with 200 objectives
+test actual_packs_support_source_backed_plans_roles_and_dungeon_guidance has been running for over 60 seconds
+ACTUAL-BUNDLE-PROOF revision=DatasetRevision("set-88fc99070bf008b1e07b63bda9bd99f0") projected_source_quest=ObjectiveId("quest-stage-00453bf365d8457206db4bb8eaf75fcfedbe3393aa78129be8f5c5dad63dc838") unresolved=ObjectiveId("quest-stage-00011532f88929c4d2190055f5db3a762417b0298293092f8bfef0d55953692e") models=54 classes=9 dungeon_packages=26; character facts are disclosed manual engineering inputs; time/node estimates manual; target-game correctness unverified
+test actual_packs_support_source_backed_plans_roles_and_dungeon_guidance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 76.07s
+
