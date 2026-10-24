@@ -1,6 +1,18 @@
 # Project status
 
-Updated: 2026-10-23.
+Updated: 2026-10-24.
+
+**V22 continuation:** Codex independently reviewed PR #286's application-data
+isolation repair and integrated it locally at `2d33c2fd`; the original checkout
+is preserved. Both failed V21 attempts and signed inputs are archived. Actual
+Linux/native PS helper checks, workflow checks and full-pack functional assertions
+pass; the 76.209 s functional run is shared-Linux engineering evidence only.
+V22 unsigned preparation is ready at `c6cd6749`, production `a947d2f0`, with all
+nine acceptance observations still pending. Independent review of the new metadata
+and prepared/signed closure is required before candidate push. A read-only reviewer
+was requested under the explicit-subagent-request rule. No new candidate push,
+main merge, tag or publication. See the
+[V22 handoff](handoffs/2026-10-24-v22-appdata-continuation.md).
 
 Parallel continuation requested 2026-10-19: isolated writers are auditing desktop
 locale restoration, guide objective replay, archive failure dispositions and
