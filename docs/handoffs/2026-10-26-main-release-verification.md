@@ -147,3 +147,15 @@ Do not reuse maininstaller774282... as finaltagidentity automatically. Download
 actualtagartifact andindependentlyhash/sourceverify; thenexactdraftUI/native
 workflow onref v1.0.0 withthatinstaller hash andtagpackage evidence_run_id.
 Fullschema5reviewedoverlay/publication/publicdownloads/site steps remainrequired.
+
+## Independent main installer signature inspection
+
+Builtin native Windows PowerShell5.1.26100.9711 independently inspected downloaded
+MAIN installer774282ec...: exact26036060bytes/hash, product/fileversion1.0.0,
+AuthenticodeNotSigned. Read-only; no installation/application launch or execution
+policy override/change. First portablePS7 attempt could not load its Security module
+from WSL UNC (AuthorizationManager refusal); it measured no signature. Both scopes
+are retained in independent-native-signature-check.json. This is not finaltag proof.
+
+Tag40302406210 completed installer build; remaining native/eightcase/final gates
+are running. No draft or publication at this observation.

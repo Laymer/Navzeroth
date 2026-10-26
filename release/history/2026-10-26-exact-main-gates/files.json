@@ -271,6 +271,11 @@
       "path": "release/history/2026-10-26-exact-main-gates/stable-tag-object-api.json",
       "bytes": 764,
       "sha256": "43d115f2059466d03398f88d066571e8c0bad1648120eabfd403d9d32f5f318c"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/independent-native-signature-check.json",
+      "bytes": 816,
+      "sha256": "ff9f8615eab0b7bf19a67b1ad5686ca9e3a981cfe124ed9ee76c9b3331df36e5"
     }
   ],
   "coverage_verdict_artifact": {
