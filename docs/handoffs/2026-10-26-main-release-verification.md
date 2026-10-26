@@ -123,3 +123,12 @@ excludesWebView/installer, cacheuncontrolled; these are notfinaltagmeasurements.
 
 The package FINAL workflow gate is stillinprogress. OnlyaftercompletedSUCCESS
 can aaa73b94 be tagged. This documentation is separate fromfixedverifiedmain.
+
+## Exact-main gates complete
+
+Package40290544065 COMPLETED SUCCESS, including the final source/material/draft
+readiness gate. Original completed run/jobs API retained. Root refreshed all four
+required workflow APIs, independently checked exactaaa73b94 and SUCCESS, allTEN
+protected context names, mandatory Stability and both source platforms/parity.
+All applicable main gates passed. Ready to tag ONLYaaa73b94; tagbuild and exact
+downloaded-draft/public acceptance remain unverified. No publication yet.
