@@ -64,3 +64,17 @@ coordinator review/use after real completed draft evidence and independent revie
 It creates no proof until supplied actual artifacts/API/pins/explicit attestation;
 author ran syntax and12 inert refusal checks. It is not itself acceptance or the
 mandatory full Rust gate. Never attest before actually reviewing completed proof.
+
+## Outstanding issues reviewed
+
+Issue284 (owner-authored2026-10-23), empty body/title TODO:Postgres, remains
+open as an unspecified FUTURE idea. On2026-10-26 the owner explicitly chose
+“Keep as an unspecified future idea”; no PostgreSQL replacement, sync service,
+or architecture change is part of1.0.0. Local SQLite remains the agreed contract.
+
+Generated build-watch issue283 reports wow_classic_beta1.60.1.70532/config
+ad1802f4455e427ed8b7769aab25b0c0, regions eu/kr/tw/us. It remains informational
+future compatibility work alongside the separately recorded wowf70532 issue270.
+No local inspection, input admission, target change or current compatibility pass
+is inferred. This newer unrelated notification does not block explicit70450release.
+Neither issue was closed or given fabricated implementation/verification results.
