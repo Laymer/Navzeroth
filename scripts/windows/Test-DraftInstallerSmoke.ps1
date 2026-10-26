@@ -12,6 +12,53 @@ function WriteJson($Path,$Value) { [IO.File]::WriteAllText($Path,(($Value|Conver
 function Clone($Value) { return ($Value|ConvertTo-Json -Depth 30|ConvertFrom-Json) }
 $source='a'*40;$hash='b'*64
 try {
+ $view=Clone @{databaseId=11;tagName='v1.0.0';isDraft=$true;isPrerelease=$false}
+ $script:apiReply=Clone @{id=11;tag_name='v1.0.0';draft=$true;prerelease=$false;assets=@()}
+ $script:apiCalls=@();$script:apiExit=0;$script:malformedApi=$false
+ function gh {
+  param($Command,$Endpoint)
+  $script:apiCalls+= $Endpoint
+  # This models the observed provider boundary: a draft's by-tag request is404.
+  $global:LASTEXITCODE=if($Endpoint -match '/tags/') {1} else {$script:apiExit}
+  if($Command -cne 'api'){throw 'Unexpected GitHub command'}
+  if($script:malformedApi){return 'not JSON'}
+  return ($script:apiReply|ConvertTo-Json -Depth 10)
+ }
+ try {
+  Check 'draft lookup uses issued numeric ID despite unpublished by-tag404' {
+   $actual=Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view
+   if($actual.id -ne 11 -or $script:apiCalls.Count -ne 1 -or $script:apiCalls[0] -cne 'repos/Laymer/Navzeroth/releases/11'){throw 'Draft lookup did not preserve its issued ID'}
+  }
+  Check '64-bit release IDs are preserved without truncation' {
+   $changed=Clone $view;$changed.databaseId=[long]2147483648
+   $saved=Clone $script:apiReply;$script:apiReply.id=[long]2147483648
+   try {
+    $actual=Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $changed
+    if($actual.id -ne [long]2147483648 -or $script:apiCalls[-1] -cne 'repos/Laymer/Navzeroth/releases/2147483648'){throw 'Release ID was truncated'}
+   } finally {$script:apiReply=$saved}
+  }
+  Check 'malformed repository and mismatched release view refuse before network' {
+   $before=$script:apiCalls.Count
+   foreach($repo in @('other/../Navzeroth','https://elsewhere.invalid/repo','Laymer/Navzeroth?x=1')) { Refuse {Get-DraftReleaseApi $repo 'v1.0.0' $view} }
+   foreach($bad in @($null,0,-1,'11',$true,11.5)) { $changed=Clone $view;$changed.databaseId=$bad;Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $changed} }
+   foreach($field in @('tagName','isDraft','isPrerelease')) { $changed=Clone $view;$changed.$field='wrong';Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $changed} }
+   if($script:apiCalls.Count -ne $before){throw 'Invalid view reached the network'}
+  }
+  Check 'REST ID tag and exact draft state must match the initial view' {
+   $saved=Clone $script:apiReply
+   foreach($field in @('id','tag_name','draft','prerelease')) {
+    $script:apiReply=Clone $saved;$script:apiReply.$field='wrong';Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view}
+   }
+   $script:apiReply=Clone $saved;$script:apiReply.id=12;Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view}
+   $script:apiReply=Clone $saved;$script:apiReply.draft=$false;Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view}
+   $script:apiReply=Clone $saved;$script:apiReply.prerelease=$true;Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view}
+   $script:apiReply=$saved
+  }
+  Check 'failed or malformed REST response cannot create draft identity' {
+   $script:apiExit=1;Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view};$script:apiExit=0
+   $script:malformedApi=$true;Refuse {Get-DraftReleaseApi 'Laymer/Navzeroth' 'v1.0.0' $view};$script:malformedApi=$false
+  }
+ } finally {Remove-Item Function:\gh}
  $null=New-Item -ItemType Directory -Path (Join-Path $root 'release/v1'),(Join-Path $root '.github/workflows'),(Join-Path $root 'dist/draft-evidence'),(Join-Path $root 'scripts/windows') -Force
  $receiptDir=Join-Path $root 'dist/draft-evidence'
  $downloadPath=Join-Path $receiptDir 'verification.json';$nativePath=Join-Path $receiptDir 'native-result.json'

@@ -106,7 +106,7 @@ jobs:
           $tag = 'v' + $version
           $resolved = git rev-parse "$tag^{commit}"
           if ($LASTEXITCODE -ne 0 -or $resolved -cne $env:EXPECTED_COMMIT -or (git rev-parse HEAD) -cne $env:EXPECTED_COMMIT) { throw 'Tag, checkout and expected source differ' }
-          $json = gh release view $tag --repo $env:GITHUB_REPOSITORY --json tagName,isDraft,isPrerelease,assets,url,publishedAt
+          $json = gh release view $tag --repo $env:GITHUB_REPOSITORY --json databaseId,tagName,isDraft,isPrerelease,assets,url,publishedAt
           if ($LASTEXITCODE -ne 0) { throw 'Cannot read release metadata' }
           $release = $json | ConvertFrom-Json
           Assert-UnsignedReleaseState $policy $release $version $env:RELEASE_PHASE
@@ -125,9 +125,7 @@ jobs:
           $contract=Read-BoundedReleaseContractText (Join-Path $PWD 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
           if ($env:RELEASE_PHASE -ceq 'draft' -and $contract.schema_version -eq 5) {
             . ./scripts/windows/Draft-Installer-Smoke.ps1
-            $releaseJson=gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$tag"
-            if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain draft release API identity' }
-            $releaseApi=$releaseJson | ConvertFrom-Json
+            $releaseApi=Get-DraftReleaseApi -Repository $env:GITHUB_REPOSITORY -Tag $tag -Release $release
             $jobsJson=gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID/attempts/$env:GITHUB_RUN_ATTEMPT/jobs?per_page=100"
             if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain current workflow job identity' }
             $jobs=$jobsJson | ConvertFrom-Json
