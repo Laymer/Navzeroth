@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "mode": "baseline",
+  "workload": "Synthetic engineering workload: source-backed quest stage and declared travel edge; manual progress and candidate-location/completion/utility estimates; no live-client verification",
+  "started_at": "2026-10-26T10:58:07.557Z",
+  "version": "1.0.0-rc.1",
+  "bundle_target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
+  "passed": true,
+  "pid": 2912,
+  "database_state": "ready",
+  "profile_id": "stored-98716856eb5aee151581a707fc1a15f75fe8e5166b17a4f5e8e3c8f8bb6d52c2",
+  "elapsed_ms": 1771,
+  "finished_at": "2026-10-26T10:58:08.987Z"
+}

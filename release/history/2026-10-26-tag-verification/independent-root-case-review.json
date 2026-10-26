@@ -1,0 +1,40 @@
+{
+  "scope": "Root independent actual tagged installer eight-case semantic/binding review; final workflow/draft acceptance still pending",
+  "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "installer_sha256": "1b32ba37d0527afe211a36d5d1269a9c70bb1295f24cd9e7d6f5c37759d6d68c",
+  "passed_rows": 8,
+  "elapsed_ms": {
+    "fresh": 155885,
+    "restart": 260339,
+    "recover": 657345,
+    "offline": 254679,
+    "baseline": 1771,
+    "upgrade": 157251,
+    "after_downgrade": 256931
+  },
+  "measurements": {
+    "install_ms": 8564.5076,
+    "load_ms": 110084,
+    "activation_ms": 28045,
+    "browse_ms": 10995.698700000008,
+    "planning_ms": 1481.56210000001,
+    "peak_memory_bytes": 5390540800
+  },
+  "hardware": "Microsoft Corporation Virtual Machine; INTEL(R) XEON(R) PLATINUM 8573C; RAM bytes 17174360064",
+  "memory_observation": {
+    "pid": 5852,
+    "target_interval_ms": 200,
+    "sampling_errors": 0,
+    "samples": 763
+  },
+  "limitations": "Disposable hosted runner; fresh database after resource verification; OS file cache uncontrolled/possibly warm. Maximum observed PeakWorkingSet64 of the exact native app PID; WebView2 descendants and installer excluded. Samples target 200 ms; allocations after the last successful sample may be missed. load_ms covers content verify/parse/stage/compose; activation_ms covers defaults only, excluding database open/WebView2. Manual estimates are not gameplay facts or ordinary-PC performance.",
+  "installed_files": 630,
+  "fresh_defaults_and_same_version_preferences_verified": true,
+  "upgrade_profile_and_defaults_verified": true,
+  "recovery_retained_originals_and_closed_marker_verified": true,
+  "firewall_restore_verified": true,
+  "pending": [
+    "DRAFT-INSTALLER-SMOKE"
+  ]
+}

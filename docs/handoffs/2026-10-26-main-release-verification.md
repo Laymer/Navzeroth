@@ -183,3 +183,25 @@ Prepared verification sourceAAA/installer1b32.../application5bca4982fdb35ea1412d
 bothNotSigned;630installedfiles/addon-source/dependencyclosuretrue. These are
 regression/preparedchecks, notreplacementfor8stablecases or exactdraftacceptance.
 OriginalJSON/API bytes archived; actual8stablecasesstillpending.
+
+## Actual eight tag cases passed; final workflow pending
+
+Originaloverlay12645596412/1023708B/SHA62f845e14895a86b866c269f5eba3db7920dd9172e9e2b7705940622c5b925eb
+andcase12645357394/84128B/SHAf78c4898f4bf7c5b9a065983b1ea337d6358ab8630a8d7ca18932da4af0094f5
+were independentlydownloaded/providerhashchecked. Tooling bytebindings and root/
+desktopindependent rawsemanticreviews PASS all8 exactAAA/a947/taginstaller1b32.
+Freshdefaults true/savedfalse/restart; recovery657345ms closedmarker/originals/ready;
+RC1baseline1771ms/sameprofileupgrade157251ms/defaulttrue; downgradeexit2/noTimeout/
+installed1.0.0/healthyrestart256931ms; firewallrefusedexternal/restored;630resources
+verified. ExactFileRefs checked. One embeddedUTCtimestamp differs onlyfractional
+spelling fromstandaloneraw; bothoriginals retained, no byteequalclaim.
+
+TAGmetrics:install8564.5076ms/load110084ms/activation28045ms/browse10995.6987ms/
+planning1481.5621ms/nativepeak5390540800bytes. MicrosoftVM/IntelXeonPlatinum8573C/
+RAM17174360064B. PID5852,763samples/200mstarget/errors0, excludesWebView/installer,
+cacheuncontrolled andpossiblywarm; not ordinaryPC guarantee. Scopeandoriginal
+reports retained. Onlyninthdraftsmoke pending. Fixedsource dist/acceptance-evidence
+nowcontainsACTUALTAGoverlay; priorMAINoverlay retained separately at
+/tmp/navzeroth-main-aaa73b94-results/fixed-source-main-overlay-preserved.
+
+Finalpackage gate is running; no draftpublication or downloaded-draft acceptance.

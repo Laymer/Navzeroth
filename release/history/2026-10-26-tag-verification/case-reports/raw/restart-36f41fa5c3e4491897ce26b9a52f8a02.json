@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "mode": "restart",
+  "workload": "Synthetic engineering workload: source-backed quest stage and declared travel edge; manual progress and candidate-location/completion/utility estimates; no live-client verification",
+  "started_at": "2026-10-26T10:38:17.907Z",
+  "version": "1.0.0",
+  "bundle_target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
+  "passed": true,
+  "pid": 2268,
+  "database_state": "ready",
+  "startup_measurements": {
+    "load_ms": 189539,
+    "activation_ms": 0
+  },
+  "catalog_diagnostics": {
+    "fixture": false,
+    "revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+    "snapshot_id": "stable-engineering-2",
+    "node_count": 200,
+    "objective_count": 200,
+    "pages": [
+      {
+        "collection": "nodes",
+        "revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+        "catalog_sha256": "6de3ff2f052d23711126853e19fc2695f9066f57437c62323e807a8a425d49fb",
+        "total": 8820
+      },
+      {
+        "collection": "objectives",
+        "revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+        "catalog_sha256": "6de3ff2f052d23711126853e19fc2695f9066f57437c62323e807a8a425d49fb",
+        "total": 6039
+      }
+    ]
+  },
+  "initial_content": {
+    "active_revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+    "accepts_inferred_travel": false,
+    "bundle_defaults": {
+      "app_version": "1.0.0",
+      "previous_app_version": null,
+      "revision": "set-88fc99070bf008b1e07b63bda9bd99f0"
+    }
+  },
+  "browse_ms": 11746.549400000018,
+  "catalog_totals": {
+    "nodes": 8820,
+    "objectives": 6039,
+    "quests": 4245,
+    "items": 24359,
+    "edges": 32365
+  },
+  "planning_ms": 1483.9449000000022,
+  "scenario": {
+    "assertions": {
+      "quests": {
+        "quest:3509": {
+          "turned_in": true
+        },
+        "quest:3510": {
+          "accepted": true,
+          "completed": false,
+          "turned_in": false
+        }
+      },
+      "objectives": {
+        "quest:3510:objective:3": false
+      }
+    },
+    "objective": "quest-stage-0040faace4d7b982916ff383c88b81cdb2830728d47e4b3f5ca1a832710db427",
+    "node": "node:npc-spawn:160355",
+    "origin": "node:dungeon-entrance:109",
+    "route_edge": {
+      "consumes_resource": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": false
+      },
+      "context": {
+        "build": {
+          "build": "1.60.1.70450",
+          "edition": "wow_forever",
+          "interface": "16001"
+        },
+        "namespace": "reference"
+      },
+      "cooldown_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      },
+      "evidence": [
+        "ev:navzeroth-world-content:inferred:travel.walk"
+      ],
+      "expected_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": 7641
+      },
+      "from": {
+        "id": "node:dungeon-entrance:109",
+        "map": {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "floor": "0",
+          "instance": null,
+          "map_id": "1435"
+        }
+      },
+      "id": "edge:walk:node:dungeon-entrance:109:node:npc-spawn:160355",
+      "mode": "walking",
+      "requirements": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "known",
+        "value": {
+          "op": "all",
+          "predicates": []
+        }
+      },
+      "status": "unverified",
+      "to": {
+        "id": "node:npc-spawn:160355",
+        "map": {
+          "context": {
+            "build": {
+              "build": "1.60.1.70450",
+              "edition": "wow_forever",
+              "interface": "16001"
+            },
+            "namespace": "reference"
+          },
+          "floor": "0",
+          "instance": null,
+          "map_id": "1435"
+        }
+      },
+      "uncertainty": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "unknown"
+      },
+      "wait_ms": {
+        "clock_trust": "uncertain",
+        "source": "unrecorded",
+        "status": "not_applicable"
+      }
+    },
+    "evidence": [
+      "ev:cmangos-classic-db:vanilla_1_12:quests.quests"
+    ],
+    "quest": "quest:3510",
+    "stage": "quest:3510:objective:3",
+    "disclosure": "Synthetic engineering workload: source-backed quest stage and declared travel edge; manual progress and candidate-location/completion/utility estimates; no live-client verification"
+  },
+  "plan": {
+    "selected": [
+      {
+        "candidate": "quest-stage-0040faace4d7b982916ff383c88b81cdb2830728d47e4b3f5ca1a832710db427",
+        "utility": 10,
+        "incremental_ms": 8641,
+        "completion_ms": 1000,
+        "service_ms": 0,
+        "travel": {
+          "start": {
+            "id": "node:dungeon-entrance:109",
+            "map": {
+              "context": {
+                "build": {
+                  "edition": "wow_forever",
+                  "build": "1.60.1.70450",
+                  "interface": "16001"
+                },
+                "namespace": "reference"
+              },
+              "map_id": "1435",
+              "floor": "0",
+              "instance": null
+            }
+          },
+          "hops": [
+            {
+              "edge": "edge:walk:node:dungeon-entrance:109:node:npc-spawn:160355",
+              "from": {
+                "id": "node:dungeon-entrance:109",
+                "map": {
+                  "context": {
+                    "build": {
+                      "edition": "wow_forever",
+                      "build": "1.60.1.70450",
+                      "interface": "16001"
+                    },
+                    "namespace": "reference"
+                  },
+                  "map_id": "1435",
+                  "floor": "0",
+                  "instance": null
+                }
+              },
+              "to": {
+                "id": "node:npc-spawn:160355",
+                "map": {
+                  "context": {
+                    "build": {
+                      "edition": "wow_forever",
+                      "build": "1.60.1.70450",
+                      "interface": "16001"
+                    },
+                    "namespace": "reference"
+                  },
+                  "map_id": "1435",
+                  "floor": "0",
+                  "instance": null
+                }
+              },
+              "mode": "walking",
+              "status": "unverified",
+              "expected_ms": {
+                "status": "known",
+                "value": 7641,
+                "source": "unrecorded",
+                "clock_trust": "uncertain"
+              },
+              "wait_ms": {
+                "status": "not_applicable",
+                "source": "unrecorded",
+                "clock_trust": "uncertain"
+              },
+              "service_ms": 0,
+              "cost_ms": 7641,
+              "range": {
+                "status": "unknown",
+                "source": "unrecorded",
+                "clock_trust": "uncertain"
+              },
+              "stateful": false,
+              "consumes_resource": {
+                "status": "known",
+                "value": false,
+                "source": "unrecorded",
+                "clock_trust": "uncertain"
+              },
+              "cooldown_ms": {
+                "status": "not_applicable",
+                "source": "unrecorded",
+                "clock_trust": "uncertain"
+              }
+            }
+          ],
+          "total_ms": 7641
+        },
+        "stopping": {
+          "start": {
+            "id": "node:npc-spawn:160355",
+            "map": {
+              "context": {
+                "build": {
+                  "edition": "wow_forever",
+                  "build": "1.60.1.70450",
+                  "interface": "16001"
+                },
+                "namespace": "reference"
+              },
+              "map_id": "1435",
+              "floor": "0",
+              "instance": null
+            }
+          },
+          "hops": [],
+          "total_ms": 0
+        },
+        "expected_session_ms": 8641
+      }
+    ],
+    "filtered": [],
+    "assumptions": [
+      "Utilities, objective node associations and completion/service times are explicit manual inputs",
+      "Expected-time greedy baseline with deterministic same-node clusters and singleton fallbacks; estimates are not guaranteed durations",
+      "No speculative prerequisite unlocks or party fairness; declared quest predicates only; no shared-kill or service savings inferred",
+      "Inferred travel accepted: generated walking and flight times are estimates, and unknown travel requirements (known flight points, faction) are assumed, not checked",
+      "Quest stages come from source records; stage identifiers do not establish objective details or counts, and unavailable requirements remain unresolved"
+    ]
+  },
+  "persisted_content": {
+    "active_revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+    "accepts_inferred_travel": false,
+    "bundle_defaults": {
+      "app_version": "1.0.0",
+      "previous_app_version": null,
+      "revision": "set-88fc99070bf008b1e07b63bda9bd99f0"
+    }
+  },
+  "planning_inferred_travel": true,
+  "preference_disclosure": "Checked saved content choice before work; explicitly enabled inferred travel for engineering planning, then selected false for restart/recovery persistence.",
+  "profile_id": "stored-98716856eb5aee151581a707fc1a15f75fe8e5166b17a4f5e8e3c8f8bb6d52c2",
+  "active_revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+  "restart_verified": true,
+  "elapsed_ms": 260339,
+  "finished_at": "2026-10-26T10:42:37.937Z"
+}

@@ -1,5 +1,5 @@
 {
-  "scope": "Tag assets independently downloaded and checked. Eight-case/final workflow/draft/public results still pending.",
+  "scope": "Actual tag assets and eight case outcomes independently reviewed PASS. Final workflow/draft/public gates remain pending.",
   "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
   "package_run": 40302406210,
   "files": [
@@ -34,14 +34,209 @@
       "sha256": "b85c0740d830063c191714ac2827caa48e06086d015128db74003e9aab564232"
     },
     {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-artifact-api.json",
+      "bytes": 2941,
+      "sha256": "d0eb4a9780d99fb25552fca6e1aaa64e8f4a035e0b1a5082cea9d5cf168df2f9"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/acceptance-evidence.json",
+      "bytes": 27973330,
+      "sha256": "a5e5de1bade6af440e8311497ed5cc56f592bbfc2154da3100ae870b8ec20d44"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "2f77898f1209c9fc7771029e732bad800cec3beae4224700b648c65eced3096c"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-first-start.json",
+      "bytes": 11526,
+      "sha256": "fb7fbffcfb8464b8f3f0497f6793422063e88b391235e4a315abe3c660b887e0"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "0dd91b2546dbf1a409f5c472bb410cbb44d91b60ce92a3518be5a6019f3bdade"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-offline.json",
+      "bytes": 12265,
+      "sha256": "a7dab96e1af8778453a308096154f9583f38b363b4e97238b6ffffb4a1ce7304"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-performance.json",
+      "bytes": 12703,
+      "sha256": "516aa9f9c669653d7ea0377fb8105960620b98ba566a558e718cb15e1bdfcfa8"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 23337,
+      "sha256": "16b7436f09a5dbf79b65180194666f5c38558e7e4e35ada29b1d5f2d82509f73"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "78021fce268a9707008078c0325c236100f2c1f42c4b093917606923b179d295"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/acceptance-overlay/evidence/hosted-upgrade-rc1.json",
+      "bytes": 143842,
+      "sha256": "2a549dc90e39626fa1c7ed79af54e7f67afcc319fc6bf9953b10dee533bee9f5"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "2f77898f1209c9fc7771029e732bad800cec3beae4224700b648c65eced3096c"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-first-start.json",
+      "bytes": 11526,
+      "sha256": "fb7fbffcfb8464b8f3f0497f6793422063e88b391235e4a315abe3c660b887e0"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-install.json",
+      "bytes": 751,
+      "sha256": "0dd91b2546dbf1a409f5c472bb410cbb44d91b60ce92a3518be5a6019f3bdade"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-offline.json",
+      "bytes": 12265,
+      "sha256": "a7dab96e1af8778453a308096154f9583f38b363b4e97238b6ffffb4a1ce7304"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-performance.json",
+      "bytes": 12703,
+      "sha256": "516aa9f9c669653d7ea0377fb8105960620b98ba566a558e718cb15e1bdfcfa8"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-persistence-recovery.json",
+      "bytes": 23337,
+      "sha256": "16b7436f09a5dbf79b65180194666f5c38558e7e4e35ada29b1d5f2d82509f73"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "78021fce268a9707008078c0325c236100f2c1f42c4b093917606923b179d295"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/hosted-upgrade-rc1.json",
+      "bytes": 143842,
+      "sha256": "2a549dc90e39626fa1c7ed79af54e7f67afcc319fc6bf9953b10dee533bee9f5"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/appdata-aside.json",
+      "bytes": 93,
+      "sha256": "c7e58bea13e8717acd9262a482787deea817bba54d6b009b4f6fe999177ab0bc"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/baseline-3661c39356c34234a0949de571c86c3a.json",
+      "bytes": 663,
+      "sha256": "05fbf0af3412c543ca59e4394760deed8f45fd72a356fa7b48505370b0f0908f"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/baseline-3661c39356c34234a0949de571c86c3a.json.progress.json",
+      "bytes": 2688,
+      "sha256": "5b01079ad6513f5a2a58cae937b1d97fc1efb5f8b7a1dbb9045de9fe437a9fe6"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/candidate-manifest.json",
+      "bytes": 17185,
+      "sha256": "a912304e5815eb2ae4246b8810f96c91900a136ed514bc7f8dbdc64ddb000935"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/fresh-6268a70c640f4d5996a0396e2a11e1eb.json",
+      "bytes": 9878,
+      "sha256": "b56cc8cfefe533255c54648b5b9e36f4ec308655d88e6e0d35702db68f7be954"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/fresh-6268a70c640f4d5996a0396e2a11e1eb.json.progress.json",
+      "bytes": 4021,
+      "sha256": "5ef64fd54330b1ea5a590ebcfbacd56c99c5307dd939eda88a22c0914e800741"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/offline-f17a1a8ca1064df5bb48e85792441e39.json",
+      "bytes": 9879,
+      "sha256": "59b40074bad1714871c71ffdb6d4caa54ee30176dccf0e2cd6da15624b741de7"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/offline-f17a1a8ca1064df5bb48e85792441e39.json.progress.json",
+      "bytes": 3924,
+      "sha256": "fc273f170df781419cff9023d5acfc1b9d150cdce7a71c6d63b6eeb1fdf0c2b0"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/recover-c51d8ee40c1a4708ad48958fd28fd359.json",
+      "bytes": 10725,
+      "sha256": "663fadcbd2ea612800917822987f894937f9d99c6f0b25287aafc1ad5a36cf92"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/recover-c51d8ee40c1a4708ad48958fd28fd359.json.progress.json",
+      "bytes": 4372,
+      "sha256": "ab13fb8162ac9dd1c4d681aba854e4662551b4a917433e18c12ff8245b28cd8f"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/restart-36f41fa5c3e4491897ce26b9a52f8a02.json",
+      "bytes": 9878,
+      "sha256": "4028b62f081a7f55ad84b6f34f05cd905286d110b9b82104aeb346b137b437fe"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/restart-36f41fa5c3e4491897ce26b9a52f8a02.json.progress.json",
+      "bytes": 3924,
+      "sha256": "63582419f618d56a0b647c92f87965ab9f3f2dd8fbd0d433f49a94ee8ff88429"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/restart-af409ec962934a61bcbd7455afc373fc.json",
+      "bytes": 9881,
+      "sha256": "b7d9953f730a8a68c90db7a88aab6457d9662a93e2f190c37bbb7d7806b7b47d"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/restart-af409ec962934a61bcbd7455afc373fc.json.progress.json",
+      "bytes": 3906,
+      "sha256": "702e93899f3cd6973ef99f6b02459418fb741f2b74b6624fd27fc3dd509fb4ba"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/restart-b77c5514febe48c7845f4fdafce86bac.json",
+      "bytes": 9878,
+      "sha256": "f666f4cb022b1d2c101f77c8e61f221c1323e399575c9c0265a27d14a1aabace"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/restart-b77c5514febe48c7845f4fdafce86bac.json.progress.json",
+      "bytes": 3924,
+      "sha256": "f938278c0de33a070dce2c40facc47bf1e0f4f6e6d20a9483b0e77f66066eaf7"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/uninstall-8d5c5aeabdff4907890dcb71928d44cf.json",
+      "bytes": 84,
+      "sha256": "1a023d470dc4b5b9b2cd41da54fee88298b93c50aec4fab42a81671521a666c7"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/case-reports/raw/uninstall-ebc39829cd99408796dbcc5dd9dbfda0.json",
+      "bytes": 84,
+      "sha256": "a535894c4ddea09d6c7b2ad8715fd19513ab46240e9a9faaee59358bae99884e"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/cases-artifact-api.json",
+      "bytes": 2941,
+      "sha256": "d0eb4a9780d99fb25552fca6e1aaa64e8f4a035e0b1a5082cea9d5cf168df2f9"
+    },
+    {
       "path": "release/history/2026-10-26-tag-verification/independent-asset-hashes.json",
       "bytes": 1447,
       "sha256": "fa10f044d3247210706bd4c3e25061e391470067c36bf1dc4d6c0dcde54dcb4f"
     },
     {
+      "path": "release/history/2026-10-26-tag-verification/independent-desktop-case-review.json",
+      "bytes": 2135,
+      "sha256": "458de25a6e40a7ef6251b67b5d163726fdd9efb45e911b8040f080a1394d8901"
+    },
+    {
       "path": "release/history/2026-10-26-tag-verification/independent-native-signature-check.json",
       "bytes": 392,
       "sha256": "08c96736a098b6ff86788458fa4024f88cf21d2772e654df1a15ee019ed81165"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/independent-root-case-review.json",
+      "bytes": 1844,
+      "sha256": "02035b8826c445ca37a63e99bf6c94b7d6bdf9b88dced521a28cd047728f78b0"
     },
     {
       "path": "release/history/2026-10-26-tag-verification/independent-world-material-review.json",
@@ -87,6 +282,11 @@
       "path": "release/history/2026-10-26-tag-verification/native-regression-artifact-api.json",
       "bytes": 725,
       "sha256": "5af17e181efddb65c65c560c22fee09c59569c8cb2cd8eef057939cb1f0a37d4"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/tooling-byte-binding-check.json",
+      "bytes": 3502,
+      "sha256": "183033c11dd595cbb9ab6156e5e85946c14520e03f3661183bbf3340b6569f7b"
     },
     {
       "path": "release/history/2026-10-26-tag-verification/windows-artifact-api.json",

@@ -1,0 +1,96 @@
+{
+  "scope_label": "actual-tag-40302406210",
+  "source": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "production": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "installer_sha256": "1b32ba37d0527afe211a36d5d1269a9c70bb1295f24cd9e7d6f5c37759d6d68c",
+  "asset_hashes": {
+    "CANDIDATE_NOTES.md": {
+      "bytes": 4055,
+      "sha256": "8507c27dec675b5f693e7c5b5a878ae3a03342e8249a002fc07e6ac66ea9c91e"
+    },
+    "RELEASE_MATERIALS.json": {
+      "bytes": 55727,
+      "sha256": "a8126e24be91c1de109cc7d6163ddd9e45cadf545f2a9b97a3f92c004d2f7c03"
+    },
+    "AzerothNavigator-1.0.0-x64-setup.exe": {
+      "bytes": 26039435,
+      "sha256": "1b32ba37d0527afe211a36d5d1269a9c70bb1295f24cd9e7d6f5c37759d6d68c"
+    },
+    "SOURCE_COMMIT.txt": {
+      "bytes": 41,
+      "sha256": "b85c0740d830063c191714ac2827caa48e06086d015128db74003e9aab564232"
+    },
+    "SHA256SUMS.txt": {
+      "bytes": 649,
+      "sha256": "0161574cc4a1a3131f956eca446e96466f73562f1518dd4b465cbd2af6e88bc4"
+    },
+    "AzerothNavigator-addon-1.0.0.zip": {
+      "bytes": 75445,
+      "sha256": "63b7bcbe658626eae551522cbaf5e32c259f399d7c80966346b454ce56e8c35f"
+    },
+    "AzerothNavigator-materials-1.0.0.zip": {
+      "bytes": 21364783,
+      "sha256": "2903949b1a0a0b9998e6fb7868f0b94ba578631faa2185202ca49bab250aec19"
+    },
+    "RELEASE_ASSETS.json": {
+      "bytes": 883,
+      "sha256": "56ec539bc254376064265ac2585f245546e1a069bf67d451a15ae64a714473fd"
+    }
+  },
+  "asset_count": 8,
+  "material_files": 82,
+  "material_bytes": 395722450,
+  "hosted_case_refs": [
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "0dd91b2546dbf1a409f5c472bb410cbb44d91b60ce92a3518be5a6019f3bdade"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-first-start.json",
+      "bytes": 11526,
+      "sha256": "fb7fbffcfb8464b8f3f0497f6793422063e88b391235e4a315abe3c660b887e0"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-upgrade-rc1.json",
+      "bytes": 143842,
+      "sha256": "2a549dc90e39626fa1c7ed79af54e7f67afcc319fc6bf9953b10dee533bee9f5"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "2f77898f1209c9fc7771029e732bad800cec3beae4224700b648c65eced3096c"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-persistence-recovery.json",
+      "bytes": 23337,
+      "sha256": "16b7436f09a5dbf79b65180194666f5c38558e7e4e35ada29b1d5f2d82509f73"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "78021fce268a9707008078c0325c236100f2c1f42c4b093917606923b179d295"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-offline.json",
+      "bytes": 12265,
+      "sha256": "a7dab96e1af8778453a308096154f9583f38b363b4e97238b6ffffb4a1ce7304"
+    },
+    {
+      "path": "dist/acceptance-evidence/evidence/hosted-performance.json",
+      "bytes": 12703,
+      "sha256": "516aa9f9c669653d7ea0377fb8105960620b98ba566a558e718cb15e1bdfcfa8"
+    }
+  ],
+  "exact_hosted_pass_rows": 8,
+  "pending": [
+    "DRAFT-INSTALLER-SMOKE"
+  ],
+  "publication_allowed": false,
+  "limitations": [
+    "No Authenticode execution",
+    "No GitHub API authentication",
+    "Case semantics and full Rust readiness require separate independent review",
+    "Working source material bytes checked; caller must verify source checkout/Git-LFS closure"
+  ]
+}

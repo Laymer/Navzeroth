@@ -1,0 +1,46 @@
+{
+  "source": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "production": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "installer_sha256": "1b32ba37d0527afe211a36d5d1269a9c70bb1295f24cd9e7d6f5c37759d6d68c",
+  "case_count": 8,
+  "standalone_raw_count": 7,
+  "embedded_raw_match": "exact JSON except noted timestamp spellings",
+  "timestamp_equivalence": [
+    {
+      "case": "HOSTED-DOWNGRADE-REFUSAL",
+      "field": "raw_report",
+      "difference": "Only ISO8601 started_at/finished_at spelling; same UTC instant"
+    }
+  ],
+  "recovery_ms": 657345,
+  "overlay": "8pass; onlydraftpending",
+  "performance": {
+    "install_ms": 8564.5076,
+    "load_ms": 110084,
+    "activation_ms": 28045,
+    "browse_ms": 10995.698700000008,
+    "planning_ms": 1481.56210000001,
+    "peak_memory_bytes": 5390540800
+  },
+  "limitations": "Disposable hosted runner; fresh database after resource verification; OS file cache uncontrolled/possibly warm. Maximum observed PeakWorkingSet64 of the exact native app PID; WebView2 descendants and installer excluded. Samples target 200 ms; allocations after the last successful sample may be missed. load_ms covers content verify/parse/stage/compose; activation_ms covers defaults only, excluding database open/WebView2. Manual estimates are not gameplay facts or ordinary-PC performance.",
+  "verdict": "clear_exact_tag_packaging_evidence_subject_to_completed_workflow_success",
+  "scope": "Independent read-only exact-tag report/reference/installer hash audit; no installer or workload replay and no downloaded-draft UI/publication acceptance",
+  "installer_bytes": 26039435,
+  "installer_bytes_independently_hashed": true,
+  "installed_resources": {
+    "total": 630,
+    "source_verified": 628,
+    "generated_expected": [
+      {
+        "path": "azeroth-desktop.exe",
+        "sha256": "5bca4982fdb35ea1412d2b324c66741fcea96918ed7d6eded419d2d8ac7b71e2",
+        "source_verified": false
+      },
+      {
+        "path": "uninstall.exe",
+        "sha256": "e28e5d2e6a8907027a912f7de66e253d73d3f15275324bbdb0e351fc45a1a2a3",
+        "source_verified": false
+      }
+    ]
+  }
+}
