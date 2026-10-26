@@ -39,3 +39,8 @@ Independent review and renewed source/review/receipt bindings, fresh candidate/m
 checks and exact downloaded-installer acceptance are required. Existing published
 Git tag v1.0.0 must not be silently moved. Release identity/version decision remains
 open; no tag mutation, release publication or main merge in this repair.
+
+Independent desktop and tooling reviews CLEAR on exactcodecommit
+c2052f47dd2cb8a3991e66027ef8193d915e616e. Both actually reran29Linuxchecks,
+actionlint and diffcheck successfully; neither claimed nativeWindows execution
+or repaired-release acceptance. Desktopreport retained in docs/reviews.
