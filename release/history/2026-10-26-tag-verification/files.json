@@ -292,6 +292,11 @@
       "path": "release/history/2026-10-26-tag-verification/windows-artifact-api.json",
       "bytes": 730,
       "sha256": "f11690ab6d19b83a922d299ccbebd9f4f07ef4635287c95102366f38bccdddf6"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/independent-draft-readiness.json",
+      "bytes": 1013019,
+      "sha256": "906a66502e5acbae007ed405e7832d9f591ece5180e0f4dbb7f89a19fe0072b0"
     }
   ]
 }

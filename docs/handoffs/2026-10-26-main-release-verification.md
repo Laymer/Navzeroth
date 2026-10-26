@@ -205,3 +205,8 @@ nowcontainsACTUALTAGoverlay; priorMAINoverlay retained separately at
 /tmp/navzeroth-main-aaa73b94-results/fixed-source-main-overlay-preserved.
 
 Finalpackage gate is running; no draftpublication or downloaded-draft acceptance.
+
+Rootactual exacttag localrelease-draft-readiness exited0/build_readytrue,
+97evidence/twopacks, ONLYDRAFT-INSTALLER-SMOKE pending andnootherblockers.
+publication_allowed remainsfalse. All58 archivedtagaudit/case Gitblobs were
+independentlybytechecked (seeactualledgercount; nofutureproof implied).
