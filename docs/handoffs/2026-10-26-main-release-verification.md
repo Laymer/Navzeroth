@@ -89,3 +89,37 @@ sourceaaa73b94 has278 measured files/all >=90percent by exact integer
 comparison, noerrors. All four coverage jobs passed. Original artifactZIP hash
 matched providerAPI; actual verdict and completedAPI bytes retained. Windows
 package40290544065 is executing actual stable acceptance; no final result yet.
+
+## Actual main installer results, final workflow still pending
+
+Package40290544065 produced allEIGHT actualpassed cases for EXACTmainaaa73b94,
+productiona947...5537 and installer774282ec42d01ba55bb9c63c4420de06aaa82ca941bdc729aa7b725cdc6148a4
+(26036060bytes). Coordinator independently downloaded8assets, checkedZIPprovider
+hash/source/checksums/exactassetset, streamed82 materialresources395722450bytes
+againstarchive/source, refusedextras(exact83ZIPentries), matchedsixassetpins and
+packagednotes. Independently generated source materialpreview is BYTEIDENTICAL
+to downloadedRELEASE_MATERIALS.json. Main installer is not the futuretagasset.
+
+OriginalcasesZIP12640013343 andoverlayZIP12639589347 hashes matchedproviderAPI.
+Root and independentdesktop reviewer readall8case/raw outcomes and exactbindings;
+all8overlayFileRefs match. Freshdefaultstrue, selectedfalsepersists; restartready;
+recovery666638ms passes withclosedmarker/originalsretained/ready; RC1baseline and
+sameprofileupgrade pass/defaultstrue/resources/notices; downgradeexit2/noTimeout/
+installed1.0.0 andhealthyrestart; firewallisolated/externalrefused/restored. Installed
+resource inventory630uniquepaths. A nested downgradefinished_at .75Z vs original
+standalone .750Z is onlyUTCspellingequivalence, not byte-equality; both rawbyteforms
+remain preserved unchanged. Independent review actualscope/source recorded alongside
+rawfiles; nofuturetag/draft/human/ordinaryPCpromotion.
+
+Root independently executed release-draft-readiness on EXACTmain withdownloaded
+overlay:build_readytrue/publicationfalse, ONLYDRAFT-INSTALLER-SMOKE pending/noother
+blockers. Canonicalsource9rows remainpending; externaloverlayholds8actualpasses.
+
+Main freshmetrics:install7835.9735ms, load112194ms, activation28429ms,
+browse10800.2231ms, planning1511.147ms, nativepeak5392117760bytes. HostedVMreported
+AMD EPYC9V74 80-Core Processor/RAM17174360064bytes; do notinferassignedcorecount
+fromprocessorbrand. FreshPID5480 sampled776times/200mstarget/noerrors; peak
+excludesWebView/installer, cacheuncontrolled; these are notfinaltagmeasurements.
+
+The package FINAL workflow gate is stillinprogress. OnlyaftercompletedSUCCESS
+can aaa73b94 be tagged. This documentation is separate fromfixedverifiedmain.

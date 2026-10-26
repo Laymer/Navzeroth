@@ -1,0 +1,20 @@
+{
+  "scope": "Coordinator independently downloaded and streamed exact-main artifact/source material bytes; not tag/draft/publication or installed acceptance.",
+  "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "artifact_id": 12637952351,
+  "artifact_zip_bytes": 46060158,
+  "artifact_zip_sha256": "2e3384ff1e36f77253ad11747e2d9df8e867f901c0170cd77c665a2bfd3f972c",
+  "checked_at": "2026-10-26T09:30:50.305472+00:00",
+  "exact_asset_count": 8,
+  "checksums_match": true,
+  "six_asset_manifest_pins_match": true,
+  "notes_match_source": true,
+  "material_report_byte_identical_to_independent_source_preview": true,
+  "material_report_sha256": "a8126e24be91c1de109cc7d6163ddd9e45cadf545f2a9b97a3f92c004d2f7c03",
+  "archive_entry_count": 83,
+  "selected_resources": 82,
+  "selected_resource_bytes": 395722450,
+  "all_archive_and_source_resource_bytes_match": true,
+  "undeclared_archive_entries": 0
+}

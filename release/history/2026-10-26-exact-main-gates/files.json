@@ -1,5 +1,5 @@
 {
-  "scope": "Completed successful exact-main CI including stability, coverage, source parity and Pages. Windows package still pending; no tag/publication authority.",
+  "scope": "Exact-main completed CI/stability, coverage, source parity and Pages; independently downloaded eight actual passing installed cases, exact materials and source draft-readiness. Package final workflow gate still pending at recording; future tag/draft/public results absent.",
   "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
   "files": [
     {
@@ -46,11 +46,234 @@
       "path": "release/history/2026-10-26-exact-main-gates/coverage-jobs-api.json",
       "bytes": 13117,
       "sha256": "8a79fdc9ce5a3b686f6eb97a5c81db7eeca708ced56669f91262b88bfb292ff8"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/acceptance-evidence.json",
+      "bytes": 27973330,
+      "sha256": "a98371b5f7181dec711ff937de622a9e07146cfed7c682a07cf9292efe03d7de"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "a66c5cd0f5881f7af2b7552188f4473548c0b194427b3f9899032137dfc45e79"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-first-start.json",
+      "bytes": 11528,
+      "sha256": "fa813e57be3df4b5cae17a81c47ccd24f757c58085ce3649a850d67de097293e"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "9cccaa78f45e0d2332c76ab0d7d8c05fdbd87d1373e5ad7c5aa3f3d39d09642a"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-offline.json",
+      "bytes": 12264,
+      "sha256": "6c0f78ea0af26fa2eb97b42bc58e88d9ce550170546224c4ad1d965a035fd2b2"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-performance.json",
+      "bytes": 12723,
+      "sha256": "762c56ba73352de1284fc1cd6aaa6352caa234b4dee2fdedb015bc6f9bb8fa67"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 23337,
+      "sha256": "f946edee778862919eb042a3b7408cdb0dfc51612bc4a909536140cfa7c0e3c9"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "db17d5da0f83ae11c962e5033e3faa9b4aa31991016a3f7c3aa2f7a02855e610"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/acceptance-overlay/evidence/hosted-upgrade-rc1.json",
+      "bytes": 143842,
+      "sha256": "d8910062798d7d675ea72481f37e25532f005fa0bb2c34f86298a17fd93d5b12"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "a66c5cd0f5881f7af2b7552188f4473548c0b194427b3f9899032137dfc45e79"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-first-start.json",
+      "bytes": 11528,
+      "sha256": "fa813e57be3df4b5cae17a81c47ccd24f757c58085ce3649a850d67de097293e"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-install.json",
+      "bytes": 751,
+      "sha256": "9cccaa78f45e0d2332c76ab0d7d8c05fdbd87d1373e5ad7c5aa3f3d39d09642a"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-offline.json",
+      "bytes": 12264,
+      "sha256": "6c0f78ea0af26fa2eb97b42bc58e88d9ce550170546224c4ad1d965a035fd2b2"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-performance.json",
+      "bytes": 12723,
+      "sha256": "762c56ba73352de1284fc1cd6aaa6352caa234b4dee2fdedb015bc6f9bb8fa67"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-persistence-recovery.json",
+      "bytes": 23337,
+      "sha256": "f946edee778862919eb042a3b7408cdb0dfc51612bc4a909536140cfa7c0e3c9"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "db17d5da0f83ae11c962e5033e3faa9b4aa31991016a3f7c3aa2f7a02855e610"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/hosted-upgrade-rc1.json",
+      "bytes": 143842,
+      "sha256": "d8910062798d7d675ea72481f37e25532f005fa0bb2c34f86298a17fd93d5b12"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/appdata-aside.json",
+      "bytes": 93,
+      "sha256": "5e8b743f1f03b188f7b6b12355d0d61f58f407657d8411bd1635fbd5e661e59c"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/baseline-aaa2c2bc8a014b18b15bc73ee46aa9b4.json",
+      "bytes": 663,
+      "sha256": "81f2194ea56df977531bf04963747461892c707cd38e86231372ed17848e0b0f"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/baseline-aaa2c2bc8a014b18b15bc73ee46aa9b4.json.progress.json",
+      "bytes": 2857,
+      "sha256": "2c7c4e5a680fea6471d1049f9e4a69af3d9c303f819f4914f50effe6a162a6a6"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/candidate-manifest.json",
+      "bytes": 17185,
+      "sha256": "a912304e5815eb2ae4246b8810f96c91900a136ed514bc7f8dbdc64ddb000935"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/fresh-a5dbede1491f476b91390c2e76158866.json",
+      "bytes": 9880,
+      "sha256": "d6ff64a0202d58231f52e57ba1d7ebb549385aa7c57ad3eaf125880a06cf5cbc"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/fresh-a5dbede1491f476b91390c2e76158866.json.progress.json",
+      "bytes": 4022,
+      "sha256": "4d4462a7438ad6e578a29402d439e5e2e7da8eb58212a9fe6e57d410768e5388"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/offline-d542de60f99c4a4b848cd304489396d8.json",
+      "bytes": 9878,
+      "sha256": "f568bd463e13aefb974f20ee6f65268cab1de30ef1cfb824b86d0fb4d9f2c48b"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/offline-d542de60f99c4a4b848cd304489396d8.json.progress.json",
+      "bytes": 3924,
+      "sha256": "3c3307655aab1b687afe57b43797270ff272dd0caa9eefd45a19630f204da37c"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/recover-e5be80cab35b4bbaabc0e4599132c787.json",
+      "bytes": 10726,
+      "sha256": "99a042ff3a7d57b30be778dd9c3f3493793dfdda8e0620851ccb940e98494789"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/recover-e5be80cab35b4bbaabc0e4599132c787.json.progress.json",
+      "bytes": 4373,
+      "sha256": "480767a11b245e02016e096aa83d2e3370b697d9a3f3ff5d2309844a0e4f4da7"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/restart-036d22407ac748f28ab073e529f26fda.json",
+      "bytes": 9877,
+      "sha256": "85ec01f9dcd1b23e27d8914052bc23b9c7aa138b468fd8c1db1dd494f66bd264"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/restart-036d22407ac748f28ab073e529f26fda.json.progress.json",
+      "bytes": 3924,
+      "sha256": "ee4b8bf7d7c4a63f6b593871403c68ae9c52e965384a26d58beb8d83a75ff0e5"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/restart-4a078f4c5a7f43098e2a694364d457f4.json",
+      "bytes": 9878,
+      "sha256": "1068d848190fd4b13113abae1bbe8015881b6c176968785398abdb3bfb345e8a"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/restart-4a078f4c5a7f43098e2a694364d457f4.json.progress.json",
+      "bytes": 3924,
+      "sha256": "bc1392eb6e28ab377e3738f20a76fdc579523e8d6f0a93338837d3732fa366c2"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/restart-aee7cd8e13ca4a579752a4abb3dcf6e7.json",
+      "bytes": 9881,
+      "sha256": "15f70f274ef057acc08f13050d738df352681edba8033de4ff0c3af9d3ba60d1"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/restart-aee7cd8e13ca4a579752a4abb3dcf6e7.json.progress.json",
+      "bytes": 3909,
+      "sha256": "0b47b48ce48c269c2180b80b0c0a2dad12e57ecaba31aa37941a2b5006d65a2e"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/state.json",
+      "bytes": 1347,
+      "sha256": "7601236df7b46daa9555bf15b4a6ba56de4d9fcb7e5fadce15839e1605f346b2"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/uninstall-6f2e899036e241cfb96c35a5537bd824.json",
+      "bytes": 84,
+      "sha256": "4f23ae46276491fefb15f702fd68844af4762f8cd927ba1a8e84bdb5299ecfc2"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/case-reports/raw/uninstall-9a6ae30bc3534a3ab43321fcd6e9c2e6.json",
+      "bytes": 84,
+      "sha256": "6e66091fbf36315b64a6d1469fcf59a29fc22ce19b14f3bde0f90ff6494c82d7"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/independent-asset-hashes.json",
+      "bytes": 1451,
+      "sha256": "5e06afbbe30c49f7153e49109dfaa9b9a6709d429b3281f63896cf9b07fb1a26"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/independent-case-review.json",
+      "bytes": 1553,
+      "sha256": "33997e57f8449ec4c6dd77c017d76c2f70a40f24e143180a80466561d443b9b8"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/independent-draft-readiness.json",
+      "bytes": 1013019,
+      "sha256": "906a66502e5acbae007ed405e7832d9f591ece5180e0f4dbb7f89a19fe0072b0"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/independent-material-verification.json",
+      "bytes": 1003,
+      "sha256": "498049668923239a848fc1d99f9e68a019aac6bef5cf9f2f1dfbe933eb6c316a"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/independent-source-material-preview.json",
+      "bytes": 55727,
+      "sha256": "a8126e24be91c1de109cc7d6163ddd9e45cadf545f2a9b97a3f92c004d2f7c03"
     }
   ],
   "coverage_verdict_artifact": {
     "id": 12637139587,
     "bytes": 4312,
     "sha256": "8e74362ae1071a3495ed09d419bafb10d2060978cda664b366ee986cd5ba1dbe"
-  }
+  },
+  "main_installer_sha256": "774282ec42d01ba55bb9c63c4420de06aaa82ca941bdc729aa7b725cdc6148a4",
+  "package_artifacts": [
+    {
+      "id": 12637952351,
+      "bytes": 46060158,
+      "sha256": "2e3384ff1e36f77253ad11747e2d9df8e867f901c0170cd77c665a2bfd3f972c"
+    },
+    {
+      "id": 12640013343,
+      "bytes": 84155,
+      "sha256": "7accc1ffd68fff49fe8bf6d563a3e10f8f1d208211fe44cc8fd390ee93666c5b"
+    },
+    {
+      "id": 12639589347,
+      "bytes": 1023724,
+      "sha256": "6ea3f0c7c3aa980a5167b2de72ac4b80e46a16d008741abb31d3a7b29c79817d"
+    }
+  ]
 }

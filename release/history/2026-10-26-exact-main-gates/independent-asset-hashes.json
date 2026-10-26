@@ -1,0 +1,46 @@
+{
+  "scope": "Exact-main candidate artifact bytes only; not tag/publication acceptance",
+  "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "assets": [
+    {
+      "name": "AzerothNavigator-1.0.0-x64-setup.exe",
+      "bytes": 26036060,
+      "sha256": "774282ec42d01ba55bb9c63c4420de06aaa82ca941bdc729aa7b725cdc6148a4"
+    },
+    {
+      "name": "AzerothNavigator-materials-1.0.0.zip",
+      "bytes": 21364783,
+      "sha256": "2903949b1a0a0b9998e6fb7868f0b94ba578631faa2185202ca49bab250aec19"
+    },
+    {
+      "name": "AzerothNavigator-addon-1.0.0.zip",
+      "bytes": 75445,
+      "sha256": "63b7bcbe658626eae551522cbaf5e32c259f399d7c80966346b454ce56e8c35f"
+    },
+    {
+      "name": "CANDIDATE_NOTES.md",
+      "bytes": 4055,
+      "sha256": "8507c27dec675b5f693e7c5b5a878ae3a03342e8249a002fc07e6ac66ea9c91e"
+    },
+    {
+      "name": "RELEASE_ASSETS.json",
+      "bytes": 883,
+      "sha256": "c478450a548b1a501acfa0a99a8b65bd1898800b0d45882030f4b5c821bcd8b7"
+    },
+    {
+      "name": "RELEASE_MATERIALS.json",
+      "bytes": 55727,
+      "sha256": "a8126e24be91c1de109cc7d6163ddd9e45cadf545f2a9b97a3f92c004d2f7c03"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 649,
+      "sha256": "2a17d2763d86e77c794530d6788752a30d6a9f0e29b3c01d21048fcba01e0377"
+    },
+    {
+      "name": "SOURCE_COMMIT.txt",
+      "bytes": 41,
+      "sha256": "b85c0740d830063c191714ac2827caa48e06086d015128db74003e9aab564232"
+    }
+  ]
+}
