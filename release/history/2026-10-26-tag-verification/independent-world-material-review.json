@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "reviewer": "Codex /root/world_review",
+  "status": "passed_asset_and_material_audit_only",
+  "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "workflow_run_id": 40302406210,
+  "artifact_id": 12642278068,
+  "provider_zip": {
+    "bytes": 46063538,
+    "sha256": "76a529d886ae2eead69839cfa6a8cc581a9f54eec3396b5d726cce1450ac27a7",
+    "matches_api_digest": true
+  },
+  "assets": {
+    "AzerothNavigator-1.0.0-x64-setup.exe": {
+      "bytes": 26039435,
+      "sha256": "1b32ba37d0527afe211a36d5d1269a9c70bb1295f24cd9e7d6f5c37759d6d68c"
+    },
+    "AzerothNavigator-materials-1.0.0.zip": {
+      "bytes": 21364783,
+      "sha256": "2903949b1a0a0b9998e6fb7868f0b94ba578631faa2185202ca49bab250aec19"
+    },
+    "AzerothNavigator-addon-1.0.0.zip": {
+      "bytes": 75445,
+      "sha256": "63b7bcbe658626eae551522cbaf5e32c259f399d7c80966346b454ce56e8c35f"
+    },
+    "CANDIDATE_NOTES.md": {
+      "bytes": 4055,
+      "sha256": "8507c27dec675b5f693e7c5b5a878ae3a03342e8249a002fc07e6ac66ea9c91e"
+    },
+    "RELEASE_ASSETS.json": {
+      "bytes": 883,
+      "sha256": "56ec539bc254376064265ac2585f245546e1a069bf67d451a15ae64a714473fd"
+    },
+    "RELEASE_MATERIALS.json": {
+      "bytes": 55727,
+      "sha256": "a8126e24be91c1de109cc7d6163ddd9e45cadf545f2a9b97a3f92c004d2f7c03"
+    },
+    "SHA256SUMS.txt": {
+      "bytes": 649,
+      "sha256": "0161574cc4a1a3131f956eca446e96466f73562f1518dd4b465cbd2af6e88bc4"
+    },
+    "SOURCE_COMMIT.txt": {
+      "bytes": 41,
+      "sha256": "b85c0740d830063c191714ac2827caa48e06086d015128db74003e9aab564232"
+    }
+  },
+  "checksums": {
+    "entries": 7,
+    "all_match": true
+  },
+  "release_assets": {
+    "entries": 6,
+    "all_match": true
+  },
+  "source_commit_and_packaged_notes_match_tagged_source": true,
+  "materials": {
+    "files": 82,
+    "packs": 2,
+    "bytes": 395722450,
+    "archive_entries": 83,
+    "all_archive_and_source_file_hashes_match": true,
+    "committed_reviewed_recipe_fields_exact": [
+      "files",
+      "sources",
+      "packs",
+      "corresponding_source_files",
+      "normalization_conflict_files",
+      "catalog_files",
+      "target",
+      "inventory_sha256"
+    ],
+    "catalog_only_max_bytes": 603979776,
+    "generic_max_bytes": 268435456,
+    "aggregate_max_bytes": 2147483648,
+    "source_origins": [
+      {
+        "id": "cmangos-classic-db",
+        "origin_edition": "vanilla_1_12",
+        "origin_build": "1.12.1",
+        "material_categories": {
+          "files": 1,
+          "license_files": 1,
+          "attribution_files": 2
+        }
+      },
+      {
+        "id": "navzeroth-authored-v1",
+        "origin_edition": "wow_forever",
+        "origin_build": null,
+        "material_categories": {
+          "files": 16,
+          "license_files": 1,
+          "attribution_files": 1
+        }
+      },
+      {
+        "id": "navzeroth-world-content",
+        "origin_edition": "wow_forever",
+        "origin_build": null,
+        "material_categories": {
+          "files": 2,
+          "license_files": 1,
+          "attribution_files": 1
+        }
+      },
+      {
+        "id": "wago-tools-wowf",
+        "origin_edition": "wow_forever",
+        "origin_build": "1.60.1.70245",
+        "material_categories": {
+          "files": 18,
+          "license_files": 1,
+          "attribution_files": 1
+        }
+      }
+    ],
+    "corresponding_code_commit": "a9e5e4f35710c05e80283ae318f5a70882702110",
+    "corresponding_code_files_verified": 22,
+    "notices_and_permissions_scope": "Exact source-license/attribution/permission categories retained; source code includes mixed project/TALOD terms, not blanket BSD. No private admission/validation evidence is selected by this manifest.",
+    "declared_exclusions": [
+      "trainer_spell_gameplay",
+      "talents",
+      "professions",
+      "enhancements"
+    ],
+    "logical_records": 260113,
+    "accepted_unknown_fields": 274059,
+    "scope": "Hash-bound source-backed metadata checked; no new semantic game-data or gameplay validation execution claimed."
+  },
+  "addon": {
+    "files_verified": 24,
+    "all_match_tagged_source": true
+  },
+  "signature_scope": "Authenticode inspection is a separate coordinator operation; not independently executed by this reviewer.",
+  "installer_scope": "Installer payload itself hash/size checked only. No installer executed or unpacked; installed-resource/dependency-notice verification remains for actual hosted installer cases. Material notices/source categories were independently checked by archive/tag-source closure.",
+  "acceptance_scope": "Provider build assets only. Tag eight-case outcomes, independently downloaded draft UI/native, completed-API evidence review and public re-download remain separate; none inferred as passed by this audit.",
+  "private_keys_accessed": false,
+  "repository_modified": false
+}

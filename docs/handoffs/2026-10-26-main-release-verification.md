@@ -159,3 +159,19 @@ are retained in independent-native-signature-check.json. This is not finaltag pr
 
 Tag40302406210 completed installer build; remaining native/eightcase/final gates
 are running. No draft or publication at this observation.
+
+## Actual tag artifact audit; acceptance running
+
+Tag40302406210 artifact12642278068 ZIP46063538B/SHA76a529d886ae2eead69839cfa6a8cc581a9f54eec3396b5d726cce1450ac27a7
+was independently downloaded; originalproviderdigest matched. Actualtag installer
+SHA1b32ba37d0527afe211a36d5d1269a9c70bb1295f24cd9e7d6f5c37759d6d68c/26039435bytes
+differsfrommain. RootactualnativePS5 read-only signature check:NotSigned, version1.0.0.
+Rootchecksums/source/notes/manifest checkPASS; materialpreviewbyteidenticalto
+independentlygenerated exact-source recipe. Independentworldreview ownbounded
+streaming:82materials395722450bytes/exact83ZIPmembers, source/Git/LFSclosure,
+24addonfiles,22correspondingcodefiles,origins/exclusions match. Scope/reportoriginal
+bytes retained under release/history/2026-10-26-tag-verification. No installer
+execution byroot/world or inferred installed-resource acceptance.
+
+Native WebView and upgrade regressionsteps passed. Actualeightstablecases started
+10:30:28UTC andstillrunning. No draft/publication; finalgatesremainpending.

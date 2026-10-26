@@ -1,0 +1,57 @@
+{
+  "scope": "Tag assets independently downloaded and checked. Eight-case/final workflow/draft/public results still pending.",
+  "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "package_run": 40302406210,
+  "files": [
+    {
+      "path": "release/history/2026-10-26-tag-verification/.gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/CANDIDATE_NOTES.md",
+      "bytes": 4055,
+      "sha256": "8507c27dec675b5f693e7c5b5a878ae3a03342e8249a002fc07e6ac66ea9c91e"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/RELEASE_ASSETS.json",
+      "bytes": 883,
+      "sha256": "56ec539bc254376064265ac2585f245546e1a069bf67d451a15ae64a714473fd"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/RELEASE_MATERIALS.json",
+      "bytes": 55727,
+      "sha256": "a8126e24be91c1de109cc7d6163ddd9e45cadf545f2a9b97a3f92c004d2f7c03"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/SHA256SUMS.txt",
+      "bytes": 649,
+      "sha256": "0161574cc4a1a3131f956eca446e96466f73562f1518dd4b465cbd2af6e88bc4"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/SOURCE_COMMIT.txt",
+      "bytes": 41,
+      "sha256": "b85c0740d830063c191714ac2827caa48e06086d015128db74003e9aab564232"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/independent-asset-hashes.json",
+      "bytes": 1447,
+      "sha256": "fa10f044d3247210706bd4c3e25061e391470067c36bf1dc4d6c0dcde54dcb4f"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/independent-native-signature-check.json",
+      "bytes": 392,
+      "sha256": "08c96736a098b6ff86788458fa4024f88cf21d2772e654df1a15ee019ed81165"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/independent-world-material-review.json",
+      "bytes": 4939,
+      "sha256": "6fb337c254674b3920527a5db75438a967f1c7b82a6f66b6161d64086e177523"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/windows-artifact-api.json",
+      "bytes": 730,
+      "sha256": "f11690ab6d19b83a922d299ccbebd9f4f07ef4635287c95102366f38bccdddf6"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# Azeroth Navigator 1.0.0
+
+Release preparation is in progress. Publication requires the recorded exact-source
+checks, hosted Windows verification and independently reviewed automated UI/native
+smoke of the exact independently downloaded draft installer (ADR0009/schema5).
+
+These packaged preparation notes record the evidence available at build time.
+Completed installer measurements, acceptance results and publication status are
+recorded separately on the [release page](https://github.com/Laymer/Navzeroth/releases/tag/v1.0.0)
+after those exact assets have been tested; pending statements below are not later
+publication results.
+
+This release is explicitly **unsigned**. Installer checksum and source binding are
+verified separately from Authenticode status; bundled content requires signed
+content receipts. Unsigned installation is the specific ADR0008 exception for 1.0.0.
+
+## Supported content and limitations
+
+The target is Forever 1.60.1.70450 / interface 16001. Bundled historical inputs include
+Forever 1.60.1.70245 and 1.12 sources with their actual origins retained. The admission
+policy also accepts Classic Era origins; no Classic Era source is claimed shipped.
+Historical origin is not a current-build gameplay validation pass. This release
+does not claim live-client acceptance or a frozen launch build. Desktop state is
+an explicitly imported snapshot; the addon operates only inside its permitted
+environment. Unknown, unsupported, restricted, stale, false and zero stay distinct.
+
+The admitted bundled corpus enumerates 260,113 logical records and 274,059 accepted
+unknown fields. These counts describe shipped records and explicit unknowns;
+they do not claim complete Forever data. Quest objectives retain unresolved
+eligibility, prerequisites and source details. Inferred travel and dungeon
+guidance display their derivation and uncertainty. The supported dungeon set has
+26 records: 20 entrance estimates and 6 directly sourced historical entrances. Reward
+and quest associations use the documented one-hop source scope, not a claim of
+all nested rewards. The excluded raw map 169 test entry is recorded explicitly.
+
+The 54 scoring models and 18 reminder rules are authored heuristics across
+9 classes, 18 class-role combinations and level bands 1–20, 21–40 and 41–60. Scores are not measured game
+mechanics. Trainer-spell gameplay, talents, professions and enhancements are
+deferred and excluded from promised coverage. Notices, source materials,
+conflicts and normalization information accompany the verified shipped packs.
+
+## Installation and persistent choices
+
+A new installation or newly configured dataset scope activates bundled content
+and marked travel estimates. Additional profiles sharing an already configured
+scope inherit its saved choices without resetting them. Choices persist within
+an application version. Every application-version upgrade
+restores these defaults and shows the reset; the prior revision remains available
+for rollback. Failed activation preserves the previous valid state transactionally.
+Upgrade from 1.0.0-rc.1, downgrade refusal, restart/persistence, offline operation and
+exact installed resources require their own hosted evidence for the release installer.
+
+## Measurements and release evidence
+
+**UNVERIFIED — final Windows measurements.** Final hosted Windows hardware,
+installation/loading/activation/browsing/planning timings and peak-memory scope will be recorded from the verified installer before
+publication. Existing Linux rehearsals are retained as scoped engineering evidence;
+they establish no ordinary-PC Windows performance claim. Hosted and automated draft
+results remain unverified until their actual exact-installer observations are
+recorded. Human smoke and the supplemental Windows11 upgrade from0.8.1 are
+unperformed; no hosted result is presented as either of those observations.
+
+See [the governing release process](V1_RELEASE_PROCESS.md),
+[schema 5 acceptance](SCHEMA5_ACCEPTANCE.md) and
+[bundled installer content](../data/BUNDLED_INSTALLER_CONTENT.md).
