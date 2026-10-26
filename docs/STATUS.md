@@ -2,6 +2,19 @@
 
 Updated: 2026-10-24.
 
+**2026-10-26 release checkpoint:** PR239 merged normally at `aaa73b94` after
+independent review and protected checks. Fresh exact-main CI/stability, coverage,
+source parity and eight Windows cases passed. Annotated `v1.0.0` points to that
+verified commit. Tag packaging run40302406210 built a distinct installer
+`1b32ba37…` (26,039,435 bytes); independent source/material/checksum and native
+unsigned-status inspections passed. Tag eight-case acceptance is still running;
+no draft smoke, publication or public verification has passed yet. Evidence remains
+on this separate documentary branch; it does not alter the tagged source.
+See [current release handoff](handoffs/2026-10-26-main-release-verification.md)
+and [copy-paste continuation prompt](handoffs/2026-10-26-claude-release-resume.md).
+Older checkpoints below retain their historical meaning.
+
+
 **V22 continuation:** Codex independently reviewed PR #286's application-data
 isolation repair and integrated it locally at `2d33c2fd`; the original checkout
 is preserved. Both failed V21 attempts and signed inputs are archived. Actual
