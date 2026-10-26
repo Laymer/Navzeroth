@@ -189,6 +189,21 @@
       "path": "release/history/2026-10-26-v22-passed-candidate/independent-final-composition.json",
       "bytes": 531,
       "sha256": "1e468f29cd3f35853674f91b362b671d59192e74a58fd00cc0ae15b841c0f457"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/run-api.json",
+      "bytes": 11747,
+      "sha256": "9cde60c9430d090293837f4fee7e6a8fdba2fcf3b099bbe3e2681a0516ee0ead"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/job-api.json",
+      "bytes": 12692,
+      "sha256": "fc40caed19399f080cd98fdec76c268d0f42b6ad74abc257610a88a6f2e28e16"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/pr-api.json",
+      "bytes": 18302,
+      "sha256": "e6dd846d2e590578466a8eebb23b1b781175663765ae3f347353340350d9a433"
     }
   ],
   "original_artifacts": [
