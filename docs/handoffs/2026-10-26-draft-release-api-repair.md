@@ -44,3 +44,13 @@ Independent desktop and tooling reviews CLEAR on exactcodecommit
 c2052f47dd2cb8a3991e66027ef8193d915e616e. Both actually reran29Linuxchecks,
 actionlint and diffcheck successfully; neither claimed nativeWindows execution
 or repaired-release acceptance. Desktopreport retained in docs/reviews.
+
+Actual hosted native validation now PASSED: probe40317144841 executedexact
+c2052f47, nativePS5.1.26100.33648 passed23checks; PS7.6.7 passed29checks.
+SixexistingPS7-only groups are intentionally not executed underPS5. Allfive new
+lookupcheckgroups passed bothshells. Node24.15.0; threeGitblobpins independently
+matchedreviewedcode. OriginalAPI/identity/transcripts+ledger retained under
+release/history/2026-10-26-draft-api-repair-native. Probe workflowSHAf35c726a
+is distinctfromexecutedsource and mustNEVERmerge; it changes onlyprobeharness.
+This is genuine hosted synthetic regression evidence, not installeracceptance.
+LocalRestrictedpolicy remains unchanged andits earlierrefusal remains recorded.

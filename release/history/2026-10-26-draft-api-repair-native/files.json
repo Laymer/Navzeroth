@@ -1,0 +1,41 @@
+{
+  "scope": "Actual hosted synthetic repair tests only; no installer acceptance or final release gates",
+  "run_id": 40317144841,
+  "executed_source": "c2052f47dd2cb8a3991e66027ef8193d915e616e",
+  "workflow_sha": "f35c726ad3a0b6b5bf1c9c1f1cbd6f0647d6e9b8",
+  "powershell5_passed": 23,
+  "powershell7_passed": 29,
+  "powershell5_skipped_existing_ps7_only_groups": 6,
+  "files": [
+    {
+      "path": "release/history/2026-10-26-draft-api-repair-native/run.json",
+      "bytes": 11709,
+      "sha256": "1be0de67600b602a0e447c15dede1624c90a9d1ed2d709b1ba49b20d28e091fc"
+    },
+    {
+      "path": "release/history/2026-10-26-draft-api-repair-native/jobs.json",
+      "bytes": 3232,
+      "sha256": "e2e3d6e7bcf8828ba9558e6af2f16c5268aa7522f257d635bb2adef1eda76d40"
+    },
+    {
+      "path": "release/history/2026-10-26-draft-api-repair-native/artifacts-api.json",
+      "bytes": 753,
+      "sha256": "219ef538b29d8abe57b7b62ab2bb2eee5a3dc086faac4658ea9ba347015a7e65"
+    },
+    {
+      "path": "release/history/2026-10-26-draft-api-repair-native/identity.json",
+      "bytes": 635,
+      "sha256": "16c9932ea918a39d25d8a2c7a75b9268f3e19ab03e0c8b2d2a53a19526419a77"
+    },
+    {
+      "path": "release/history/2026-10-26-draft-api-repair-native/ps5.log",
+      "bytes": 17744,
+      "sha256": "f94c7c1060b604f2e17fa75482f980cd169b5c7bfad036d628734bf428b66b1b"
+    },
+    {
+      "path": "release/history/2026-10-26-draft-api-repair-native/ps7.log",
+      "bytes": 19659,
+      "sha256": "0d34f6fbead8102b576dee7e695c55d40a2cf8ef74b9a7625a088b09c2d5ee9a"
+    }
+  ]
+}
