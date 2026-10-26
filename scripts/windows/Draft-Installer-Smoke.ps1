@@ -1,5 +1,17 @@
 # Exact downloaded installer UI evidence. Dot-source only; never records a final gate.
 Set-StrictMode -Version 3.0
+function Get-DraftReleaseApi([string] $Repository,[string] $Tag,$Release) {
+    # REST's by-tag endpoint only exposes published releases. The release view
+    # supplies the issued database ID even while the release remains a draft.
+    if ($Repository -cnotmatch '^[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*$' -or [string]::IsNullOrWhiteSpace($Tag)) { throw 'Draft release repository or tag is invalid.' }
+    $releaseId=$Release.databaseId
+    if (($releaseId -isnot [int] -and $releaseId -isnot [long]) -or $releaseId -lt 1 -or $Release.tagName -cne $Tag -or $Release.isDraft -isnot [bool] -or -not $Release.isDraft -or $Release.isPrerelease -isnot [bool] -or $Release.isPrerelease) { throw 'Release view does not identify the expected stable draft.' }
+    $json=gh api "repos/$Repository/releases/$releaseId"
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain draft release API identity by ID.' }
+    $api=$json | ConvertFrom-Json
+    if (($api.id -isnot [int] -and $api.id -isnot [long]) -or $api.id -ne $releaseId -or $api.tag_name -cne $Tag -or $api.draft -isnot [bool] -or -not $api.draft -or $api.prerelease -isnot [bool] -or $api.prerelease) { throw 'Release API identity or draft state differs from the release view.' }
+    return $api
+}
 function Get-DraftEvidenceRef([string] $Root,[string] $Path,[long] $MaximumBytes = 8388608) {
     Assert-RegularReleasePath $Path
     $rootPath=[IO.Path]::GetFullPath($Root).TrimEnd([IO.Path]::DirectorySeparatorChar,[IO.Path]::AltDirectorySeparatorChar)+[IO.Path]::DirectorySeparatorChar

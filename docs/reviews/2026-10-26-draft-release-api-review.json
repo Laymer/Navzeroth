@@ -1,0 +1,30 @@
+{
+  "reviewed_commit": "c2052f47dd2cb8a3991e66027ef8193d915e616e",
+  "reviewer": "desktop_review",
+  "verdict": "clear_for_narrow_source_repair",
+  "independent_execution": {
+    "linux_powershell_downloaded_draft_checks": 29,
+    "actionlint": "pass",
+    "git_diff_check": "pass",
+    "log": {
+      "path": "/tmp/navzeroth-desktop-draft-api-c205-tests.log",
+      "bytes": 1844,
+      "sha256": "d0f7665fb5ebea841feb8c27b255263ec269dace851676a19d8ca9a0fff409bd"
+    }
+  },
+  "review_findings": [],
+  "boundaries": [
+    "GraphQL-issued positive integral databaseId drives same-repository REST by-ID lookup",
+    "Exact tag and boolean stable-draft state checked before and after API",
+    "No by-tag fallback or fabricated REST metadata",
+    "Existing asset/native/source/workflow binding code unchanged",
+    "Public-phase path unchanged"
+  ],
+  "not_executed": [
+    "Native Windows runtime tests (author reported local Restricted-policy refusal; syntax parsing is not runtime pass)",
+    "Real network helper lookup (coordinator executed; not repeated independently)",
+    "Current running exact-tag draft UI or completed API provenance",
+    "Installer, main merge, dispatch, publication or tag modification"
+  ],
+  "release_identity_limit": "Workflow changes production fingerprint. Existing AAA tag installer/evidence cannot satisfy repaired-source contract. Existing v1.0.0 tag identity decision remains unresolved; no approval to move it."
+}

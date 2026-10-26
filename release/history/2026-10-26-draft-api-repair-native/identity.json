@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "synthetic_engineering_not_acceptance",
+  "workflow_sha": "f35c726ad3a0b6b5bf1c9c1f1cbd6f0647d6e9b8",
+  "executed_source": "c2052f47dd2cb8a3991e66027ef8193d915e616e",
+  "node": "v24.15.0",
+  "pwsh": "7.6.7",
+  "production_files": [
+    "100644 blob b554abd4dc084ae93e692db67e5de2ce46108f3f\t.github/workflows/verify-release-downloads.yml",
+    "100644 blob dc3f9766af6c6d4699c7410f5499aae11e2eeb47\tscripts/windows/Draft-Installer-Smoke.ps1",
+    "100644 blob c7d676cba79ff45af37178a1e230c6d0afac8cd8\tscripts/windows/Test-DraftInstallerSmoke.ps1"
+  ],
+  "acceptance_promoted": false
+}
