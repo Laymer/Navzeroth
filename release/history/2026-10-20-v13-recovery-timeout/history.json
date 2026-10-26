@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+  "actual_source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+  "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+  "files": {
+    "hosted-first-start.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-first-start.json",
+      "bytes": 11524,
+      "sha256": "e8efd2ead64bcdfb74fb15be3f541c8f92be46ed33345eb551cdee1576979cf9"
+    },
+    "hosted-install.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-install.json",
+      "bytes": 751,
+      "sha256": "092ad5b527f5660548f7499e731cd4d69dbd3ecdecbedbb320497802c8c9d43f"
+    },
+    "hosted-persistence-recovery.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-persistence-recovery.json",
+      "bytes": 768,
+      "sha256": "b6a44eccef2a21d0970e6e2a8d6970ff6f610dde5fbaa378336f7a81e8076fac"
+    },
+    "hosted-resources.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "d0dd0d6c6448ff11e8e45382883c02a8e224a1d1ed6c1140816f8503809a8530"
+    },
+    "hosted-performance.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-performance.json",
+      "bytes": 12716,
+      "sha256": "2477712c4f577cb1f9e6d25350052ebb271a70b7fec7d4c1db1c4b7d8d206247"
+    },
+    "raw/fresh-447be1cb398d4e8c85b3d7794e7ed8a6.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/raw/fresh-447be1cb398d4e8c85b3d7794e7ed8a6.json",
+      "bytes": 9876,
+      "sha256": "d52ebef1de38919ca516726d157a5a9a7786930d439c1d0ed3637661b15a29df"
+    },
+    "raw/restart-f810139b3e1f4a72a1a6cf60d7f29640.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/raw/restart-f810139b3e1f4a72a1a6cf60d7f29640.json",
+      "bytes": 9869,
+      "sha256": "782bcb9a55e92d37a3ca221e07695f923827bdc66c041ec4c96eb827fe81008b"
+    },
+    "raw/state.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/raw/state.json",
+      "bytes": 1311,
+      "sha256": "75c657aeda3617a36d7b090189e78600bde5149ab36aeb08f073add4e0ece00b"
+    },
+    "acceptance-overlay.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/acceptance-overlay.json",
+      "bytes": 27972316,
+      "sha256": "4f2178fb01d25817b95806cd08e498b981c6689da93ca239f2447eb4c0cf0f3d"
+    },
+    "native/smoke/report.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/native/smoke/report.json",
+      "bytes": 27440,
+      "sha256": "3acdc322b3aa6d0dad260159d372b8749ff62b0639e95e98646ceec6557291b8"
+    },
+    "native/upgrade/populate.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/native/upgrade/populate.json",
+      "bytes": 4474,
+      "sha256": "9f1250dff3792e34a64a2c6c20a5acf34634bce8b710a7daf4ebd0961cdb6c50"
+    },
+    "native/upgrade/verify.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/native/upgrade/verify.json",
+      "bytes": 18048,
+      "sha256": "91fc7ab35feb50b1365bb9ee910024aafb8eacaa7a9b8a29c93ee1a85f5afdff"
+    },
+    "native/upgrade/downgrade.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/native/upgrade/downgrade.json",
+      "bytes": 179,
+      "sha256": "da5beee4815a1699230dad0bd96e2e6f02a25ce4d4584b29fda233fe96cf3756"
+    },
+    "native/prepared-release-verification.json": {
+      "path": "release/history/2026-10-20-v13-recovery-timeout/native/prepared-release-verification.json",
+      "bytes": 133649,
+      "sha256": "2544a77e90fe6e37f90c8d37b68853c8c09a10950c439df45b864d7da2468ca9"
+    }
+  },
+  "run_id": 39466044590,
+  "installer_sha256": "56c46d57337374d79087a3f8956c586861e57242116da22509c23ca6368def78",
+  "installer_bytes": 26129327,
+  "status": "failure",
+  "passed_hosted": [
+    "HOSTED-INSTALL",
+    "HOSTED-RESOURCES",
+    "HOSTED-FIRST-START",
+    "HOSTED-PERFORMANCE"
+  ],
+  "failed_hosted": [
+    "HOSTED-PERSISTENCE-RECOVERY"
+  ],
+  "unrun_hosted": [
+    "HOSTED-OFFLINE",
+    "HOSTED-UPGRADE-RC1",
+    "HOSTED-DOWNGRADE-REFUSAL"
+  ],
+  "owner": "unverified",
+  "scope": "Native gate passed32 smoke/7 upgrade; actual fresh and restart workloads passed. Subsequent recover process exceeded its20minute bound and no recovery report survived process-tree kill. Exact operation is unlocated; no proven runtime hang/OOM or successful recovery claim. Recorder retained5actual rows; final guard failed."
+}

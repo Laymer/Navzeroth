@@ -1,0 +1,3 @@
+# Deferred weekly draft exact-run audit
+
+Owner /root/desktop_review, sole docs writer; isolated docs/weekly-draft-243-audit /tmp/navzeroth-weekly-draft-243-audit. Baseline c23dd2b5e1e8566df519ac58f921395c2f2c768e, generated draft PR243 data/world-weekly. Record only explicit CI39398609139/Coverage39398612016/source39398615432/package39398618648 outcomes and scope. Parent requires generated update stay deferred. No production edits, data regeneration, LFS hydration/world acquisition, workflow dispatch/retry, merge, keys, signing or release. Git metadata fetched read-only and checkout used GIT_LFS_SKIP_SMUDGE=1.

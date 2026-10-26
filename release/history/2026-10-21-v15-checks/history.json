@@ -1,0 +1,50 @@
+{
+  "scope": "V15 CI/source/Pages actual successful results; stability and Pagesdeploy SKIPPED, Windows package failure retained separately.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v15-checks/candidate-checks.json",
+      "bytes": 3048,
+      "sha256": "15edfac7e3c041c2f12e629be7beac40c179079c62c2416cefab9a710e01de44"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/ci-browser.log",
+      "bytes": 137407,
+      "sha256": "0f4d5b1ca2916f90edb27b2a6e207b9743681e9bfa5441e6a590afc8f26435f2"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/ci-linux.log",
+      "bytes": 421424,
+      "sha256": "9839d5af35b7d84341e2625b6e6d35eeb55d119746f63fb9821465a4e5545779"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/ci-native.log",
+      "bytes": 138026,
+      "sha256": "3bdc4e357cd5b91c8266e2972ee260a936ccb76e5ce0481806584542ff3b502a"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/ci-windows.log",
+      "bytes": 308368,
+      "sha256": "9c5a22f9c9f90f99f58275ed7de2b8590072857284deb8233505950e059bacb5"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/pages.log",
+      "bytes": 43150,
+      "sha256": "f0cf33a086d29b0d6340fcfb89417ec73cd9ea122f7b7d9328e1adc48e633268"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/source-linux.log",
+      "bytes": 40405,
+      "sha256": "1250273c03eea1d55a2138427a46e7b1b4520b0ca2a86531aef8ca56c701b04d"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/source-parity.log",
+      "bytes": 18913,
+      "sha256": "4c6aae5e11cab8cf4d8b06324aa39185857331dcf8f6ec5ac3762a5ffcba6024"
+    },
+    {
+      "path": "release/history/2026-10-21-v15-checks/source-windows.log",
+      "bytes": 46493,
+      "sha256": "431ba3eca868d850c6b9a5b24e5f97f592123b618da1648b68ac8bb6566972c7"
+    }
+  ]
+}

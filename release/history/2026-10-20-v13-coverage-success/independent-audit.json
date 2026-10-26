@@ -1,0 +1,82 @@
+{
+  "run_id": 39466044635,
+  "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+  "source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+  "workflow_conclusion": "success",
+  "verdict": {
+    "threshold": {
+      "covered_numerator": 90,
+      "executable_denominator": 100,
+      "rounding": false
+    },
+    "passes": true,
+    "errors": []
+  },
+  "inventory_entries": 305,
+  "measured_files": 276,
+  "minimum_percent": 90.0,
+  "artifacts": {
+    "windows": 12286903793,
+    "linux": 12284488912,
+    "verdict": 12286958742,
+    "typescript": 12285565505,
+    "baseline": 12285650288
+  },
+  "native": {
+    "linux": {
+      "clean_source": true,
+      "tests_passed": true,
+      "incomplete_profiles": [],
+      "receipt_sha256": "b70a7af4b402e04991f831bb1fbbd005892698ca58c964cdff34673003c777d4",
+      "lcov_summary": {
+        "lcov_bytes": 9070675,
+        "lcov_sha256": "34753c9cecf6941cdce7545acc496cf99811576bd8791ce5e8b32d19c26d8753",
+        "entrypoints": {
+          "crates/cli/src/main.rs": {
+            "executable": 409,
+            "covered": 371
+          },
+          "apps/desktop/src-tauri/src/main.rs": {
+            "executable": 18,
+            "covered": 3
+          }
+        }
+      }
+    },
+    "windows": {
+      "clean_source": true,
+      "tests_passed": true,
+      "incomplete_profiles": [],
+      "receipt_sha256": "b4bf9ae4c994cdd4f88eb0c2fa2ae3cb089c394e1a826a81274b3341fe14fa60",
+      "lcov_summary": {
+        "lcov_bytes": 10838269,
+        "lcov_sha256": "fa7d69dabe35680dbe5885dbc93188c96e21fbd11cecfde4962e2d364663c787",
+        "entrypoints": {
+          "crates/cli/src/main.rs": {
+            "executable": 409,
+            "covered": 18
+          },
+          "apps/desktop/src-tauri/src/main.rs": {
+            "executable": 18,
+            "covered": 18
+          }
+        }
+      }
+    }
+  },
+  "acceptance_observations_promoted": false,
+  "windows_native_smoke": {
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "ok": true
+  },
+  "signed_bundle": {
+    "files": 84,
+    "bytes": 395806353,
+    "packs": 2,
+    "head_pins_verified": true,
+    "compiled_policy_verified": true
+  },
+  "verdict_sha256": "0b2128bc11d85bfdb009708e220c14f23db75e11b9554242f5058de074e0c959"
+}

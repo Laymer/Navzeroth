@@ -1,0 +1,11 @@
+{
+  "runtime_commit": "419fcaecfcb208867e280140215c6e5e01891e27",
+  "exit_code": 0,
+  "elapsed_seconds": 8.936836334999953,
+  "maximum_resident_set_kib": 5115644,
+  "binary_path": "/tmp/navzeroth-decoded-load-stream-union",
+  "binary_sha256": "b0c3c3d8c37812a728a3c72e8a83be772d68a91cebe77dd5bf91fc20015e9b54",
+  "storage_rlib_path": "/tmp/navzeroth-stable-inventory/target/release/deps/libazeroth_storage-4a3c24e0b5fc7882.rlib",
+  "storage_rlib_sha256": "9428ce4996fb3923f22be1ad65105d9f273d621befca71d2068eb6f9c5b40d66",
+  "scope": "fresh store composed fullpack catalog_revision same copied V13 diagnostic DB; Linux shared host, cache uncontrolled, not acceptance"
+}

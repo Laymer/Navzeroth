@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "run_id": 39424036854,
+  "status": "failed",
+  "candidate_commit": "e5ecdf653ae7e1239b4af8f7e58c5cd2b2f3ee4a",
+  "actual_checkout": "5d9c89522241eff5285494503289c940a9849d1c",
+  "production_sha256": "52d0089987d97f0ade79ce839a06fa2a00da3370a1013ba150fab2c19f50a1f6",
+  "installer_sha256": "d3b1058f07862d7f926cf5517dd993662d32a10122d0127edf8bcee07d787922",
+  "artifact_ids": {
+    "raw": 12270270379,
+    "overlay": 12270385152
+  },
+  "files": {
+    "hosted-install.json": {
+      "path": "release/history/2026-10-20-v8-hosted-failure/hosted-install.json",
+      "bytes": 751,
+      "sha256": "a11fedc38d48ea58c8628dc7829cf2433b30a84bfb7266a9989112e14f747a70"
+    },
+    "hosted-resources.json": {
+      "path": "release/history/2026-10-20-v8-hosted-failure/hosted-resources.json",
+      "bytes": 132136,
+      "sha256": "c1981865e373d07b90d4be54e58a3b50d2ddf6e4bc577d20ad8908ae35e318eb"
+    },
+    "hosted-first-start.json": {
+      "path": "release/history/2026-10-20-v8-hosted-failure/hosted-first-start.json",
+      "bytes": 11524,
+      "sha256": "77cef84334a82df8e07db5fdc7df94c84bcd346a2712991ab060d54158986a41"
+    },
+    "hosted-performance.json": {
+      "path": "release/history/2026-10-20-v8-hosted-failure/hosted-performance.json",
+      "bytes": 12747,
+      "sha256": "72238e3f7c7f346762c1896e3d6adbecbbeea7f718aacf2d58cc8c9d5351feda"
+    },
+    "fresh-a077b2bb5e9e4898ae1f700c6d5dca9b.json": {
+      "path": "release/history/2026-10-20-v8-hosted-failure/fresh-a077b2bb5e9e4898ae1f700c6d5dca9b.json",
+      "bytes": 9876,
+      "sha256": "bf7deaa4826fbba15d92e2c348344ff10638bbbf84217e7bccf4dc54eb743f4c"
+    }
+  },
+  "recorded_overlay_identity": {
+    "bytes": 27971973,
+    "sha256": "51581596e9b69e80c663b48138042b79ca704ade5d3cb1db356c979b4a5d6029"
+  },
+  "actual_cases": {
+    "HOSTED-INSTALL": "pass",
+    "HOSTED-FIRST-START": "pass",
+    "HOSTED-UPGRADE-RC1": "unverified",
+    "HOSTED-DOWNGRADE-REFUSAL": "unverified",
+    "HOSTED-PERSISTENCE-RECOVERY": "unverified",
+    "HOSTED-RESOURCES": "pass",
+    "HOSTED-OFFLINE": "unverified",
+    "HOSTED-PERFORMANCE": "fail",
+    "OWNER-INSTALLER-SMOKE": "unverified"
+  },
+  "actual_case_count": 4,
+  "cause": "Performance metric set differs.",
+  "diagnosis": "Actual producer uses six-key OrderedDictionary measurements; validator inspects seven PowerShell adapter properties rather than six metric keys. Same values as deserialized PSCustomObject pass. Actual first-start workload succeeded; completed performance acceptance did not.",
+  "recording": "success_four_actual_case_rows_no_invented_missing_or_owner_pass",
+  "final_guard": "failed_correctly_rejected_actual_producer_failure",
+  "limitation": "Four later hosted cases never ran; owner unverified. Partial raw first-start timing/memory observations are engineering evidence tied to this installer/source, not a passed complete performance case or current candidate acceptance."
+}

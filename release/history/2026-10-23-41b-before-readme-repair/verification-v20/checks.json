@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "source_commit": "41b52c8faad5af6e3ae2c3441bfca46362ae80ba",
+  "production_sha256": "abde826deab18e4e9b98add5b8a6e226c3f58d786baaf77234e4a39de6abdf07",
+  "production_entries": 3158,
+  "command": "azeroth-cli release-materials --root . --version 1.0.0",
+  "cli_sha256": "fbbf4571c063766931bea46ded663d4b06073c648589c56713b72d132a2f76c2",
+  "cli_build": "Actual Cargo build confirmed the cached optimized CLI at this metadata revision; CLI/dependency/runtime bytes remain unchanged from genuine ca94 build. No new compiler build is claimed.",
+  "selected_files": 82,
+  "selected_packs": 2,
+  "unsigned_preparation": {
+    "ready": true,
+    "evidence_sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9"
+  },
+  "pristine_pending_observations": [
+    "HOSTED-INSTALL",
+    "HOSTED-FIRST-START",
+    "HOSTED-UPGRADE-RC1",
+    "HOSTED-DOWNGRADE-REFUSAL",
+    "HOSTED-PERSISTENCE-RECOVERY",
+    "HOSTED-RESOURCES",
+    "HOSTED-OFFLINE",
+    "HOSTED-PERFORMANCE",
+    "DRAFT-INSTALLER-SMOKE"
+  ],
+  "publication_allowed": false,
+  "scope": "Actual exact-source functional and unsigned material preparation only. Signed content closure, all protected checks, hosted acceptance, resulting-main stability and exact downloaded draft UI/native independent review remain required.",
+  "files": [
+    {
+      "path": "release/v1/verification-v20/functional-run.log",
+      "bytes": 843,
+      "sha256": "0c655fc217ce06e71ed71e800521602129d9418b5c7088d97c1c7f4d809ba32c"
+    },
+    {
+      "path": "release/v1/verification-v20/functional-build.log",
+      "bytes": 62,
+      "sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b"
+    },
+    {
+      "path": "release/v1/verification-v20/cli-build.log",
+      "bytes": 62,
+      "sha256": "92434e198f27984c035c376ec77a7cf9e6ebdde782f8ccb1336ae3329b66ddb7"
+    },
+    {
+      "path": "release/v1/verification-v20/inventory-generation.json",
+      "bytes": 444,
+      "sha256": "222d547e9e91149f05fc5be50b886b4b32250017607e888227599346507de134"
+    },
+    {
+      "path": "release/v1/verification-v20/unsigned-material-preview.json",
+      "bytes": 55727,
+      "sha256": "53460988fb261e8f825b3bab60718c0f8212924c6174b0a2eff3f0c98b459e5d"
+    },
+    {
+      "path": "release/v1/verification-v20/prebundle-evidence.json",
+      "bytes": 27970074,
+      "sha256": "c0a2ce185fde84c72e98d6b1a7818082704d0418b2cf66b2fd97d6efaa3bf8e9"
+    }
+  ]
+}

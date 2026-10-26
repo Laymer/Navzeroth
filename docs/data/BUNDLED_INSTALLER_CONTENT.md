@@ -46,5 +46,7 @@ signers; the optional policy exists for explicit synthetic/tooling verification.
 No receipt selects its own expected identity or trusted keys.
 
 Actual stable bundle assembly, exact production/source bindings, independent final
-review, hosted Windows first start/upgrade/recovery/performance and owner smoke
-remain release prerequisites. This contract alone supplies none of those results.
+review, hosted Windows first start/upgrade/recovery/performance and the applicable
+final installer smoke remain release prerequisites. Schema5 requires independently
+reviewed automated UI/native acceptance of the exact downloaded draft; historical
+schema4 retains owner interactive smoke. This contract alone supplies none of those results.

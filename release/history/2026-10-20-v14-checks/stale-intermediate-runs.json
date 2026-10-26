@@ -1,0 +1,30 @@
+[
+  {
+    "conclusion": "cancelled",
+    "databaseId": 39498793266,
+    "headSha": "7667e18c8e3d0d2c1c5d9d49bcb38410c3a5e0ac",
+    "name": "Independent source knowledge",
+    "status": "completed"
+  },
+  {
+    "conclusion": "cancelled",
+    "databaseId": 39498793271,
+    "headSha": "7667e18c8e3d0d2c1c5d9d49bcb38410c3a5e0ac",
+    "name": "Windows package",
+    "status": "completed"
+  },
+  {
+    "conclusion": "",
+    "databaseId": 39498793347,
+    "headSha": "7667e18c8e3d0d2c1c5d9d49bcb38410c3a5e0ac",
+    "name": "Coverage",
+    "status": "in_progress"
+  },
+  {
+    "conclusion": "",
+    "databaseId": 39498793308,
+    "headSha": "7667e18c8e3d0d2c1c5d9d49bcb38410c3a5e0ac",
+    "name": "CI",
+    "status": "in_progress"
+  }
+]

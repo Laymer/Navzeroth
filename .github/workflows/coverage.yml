@@ -77,6 +77,8 @@ jobs:
       - run: rustup component add llvm-tools-preview
       - name: Install pinned native coverage collector
         run: cargo install cargo-llvm-cov --version 0.9.1 --locked
+      - name: Owned profile output and clean-source regressions
+        run: node --test scripts/coverage/profile-output.test.mjs scripts/coverage/clean-source.test.mjs scripts/coverage/native-bundle.test.mjs scripts/coverage/bundle-instrumentation.test.mjs
       - name: Native tests, build scripts, examples and bounded Windows app smoke
         run: node scripts/coverage/collect-rust.mjs "${{ runner.temp }}/coverage-rust"
       - name: Retain native raw profiles, reports and exact source receipts

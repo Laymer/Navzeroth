@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "kind": "actual_linux_diagnostic_not_acceptance",
+  "runtime_source": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+  "harness_commit": "3447bcbfdeeb771589f6773bad6a70b81bdf0681",
+  "performed_by": "tooling_review",
+  "independent_raw_identity_review": "root",
+  "scope": "Genuinely rebuilt runtime, unchanged explicitly historical V13 signed bundle. All strict assertions passed; elapsed347.805s versus721.434s baseline. Peak RSS increased12508668KiB versus11946608KiB. Shared Linux/WSL host, uncontrolled cache; no Windows or ordinary-PC claim.",
+  "files": [
+    {
+      "path": "release/history/2026-10-20-recovery-linux-rebuilt/diagnostic.log",
+      "bytes": 4224,
+      "sha256": "3f3335d5067ce5e2ffda8c9996ed890485dd3d2386a6294bec610e2498387fe8"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-rebuilt/measurement.json",
+      "bytes": 356,
+      "sha256": "1d62ed64688117ce6e25b2bd0db6a6bea951358f3a6c51642139715c05d3b687"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-rebuilt/audit.json",
+      "bytes": 7602,
+      "sha256": "3776e8788233a8d40e582882c51d30e12e002bea4fd93a52a701093d5659fd82"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-rebuilt/actual-diagnostic-source.rs.txt",
+      "bytes": 5713,
+      "sha256": "6e94b838250f2319e3f61258db3dd11f72d6af9c784d3c12f339bb768eeda10c"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-rebuilt/optimized-build.log",
+      "bytes": 498,
+      "sha256": "b3bf094c1afc4133cc0997439ab64477dc1e3cea256b3f59e514dd921f983913"
+    }
+  ]
+}

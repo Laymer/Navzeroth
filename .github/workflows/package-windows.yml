@@ -31,7 +31,7 @@ jobs:
     name: Windows installer and addon package
     runs-on: windows-2025
     # A release-signing request waits for a manual SignPath approval.
-    timeout-minutes: ${{ github.ref_type == 'tag' && 170 || 110 }}
+    timeout-minutes: 170
     permissions:
       contents: read
       actions: read # the SignPath connector reads this job and downloads the unsigned artifact
@@ -84,12 +84,32 @@ jobs:
       - name: Stable preparation and hosted evidence tests (Windows PowerShell 5.1)
         shell: powershell
         run: ./scripts/windows/Test-StablePreparation.ps1
+      - name: Hosted timestamp parsing tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          ./scripts/windows/Test-HostedTimestampParsing.ps1
+          ./scripts/windows/Test-HostedRecorderBoundary.ps1
+      - name: Hosted timestamp parsing tests (PowerShell 7)
+        shell: pwsh
+        run: |
+          ./scripts/windows/Test-HostedTimestampParsing.ps1
+          ./scripts/windows/Test-HostedRecorderBoundary.ps1
       - name: Hosted producer helper tests (Windows PowerShell 5.1 mocks)
         shell: powershell
         run: ./scripts/windows/Test-StableAcceptanceHelpers.ps1
       - name: Hosted producer helper tests (PowerShell 7 mocks)
         shell: pwsh
         run: ./scripts/windows/Test-StableAcceptanceHelpers.ps1
+      - name: Downloaded draft producer tests (Windows PowerShell 5.1 mocks)
+        shell: powershell
+        run: |
+          ./scripts/windows/Test-DraftInstallerSmoke.ps1
+          ./scripts/windows/Test-SupplementalUpgrade.ps1
+      - name: Downloaded draft producer tests (PowerShell 7 mocks)
+        shell: pwsh
+        run: |
+          ./scripts/windows/Test-DraftInstallerSmoke.ps1
+          ./scripts/windows/Test-SupplementalUpgrade.ps1
       - name: Stable preparation and hosted evidence tests (PowerShell 7)
         shell: pwsh
         run: ./scripts/windows/Test-StablePreparation.ps1
@@ -462,7 +482,7 @@ jobs:
           echo "smoke=${{ steps.native_smoke.outcome }} upgrade=${{ steps.native_upgrade.outcome }}"
           [ "${{ steps.native_smoke.outcome }}" != failure ] && [ "${{ steps.native_upgrade.outcome }}" != failure ]
 
-      - name: Actual schema4 hosted Windows acceptance over the signed full bundle
+      - name: Actual stable hosted Windows acceptance over the signed full bundle
         id: stable_acceptance
         if: steps.build_windows.outputs.stable == 'true'
         continue-on-error: true
@@ -490,14 +510,17 @@ jobs:
           $setup = Get-NativeSmokeSetup dist/windows
           $hash = (Get-FileHash $setup.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
           $baselineSetup = Get-NativeSmokeSetup $baseline
+          # Uninstall keeps user data: drop the native smoke database so the cases start fresh.
+          $data = Join-Path ([Environment]::GetFolderPath('ApplicationData')) 'io.github.laymer.azeroth-navigator'
+          if (Test-Path -LiteralPath $data) { Remove-Item -LiteralPath $data -Recurse -Force }
           ./scripts/windows/Stable-Acceptance.ps1 -Root . -Directory dist/windows -InstallerSha256 $hash -BaselineInstaller $baselineSetup.FullName -BaselineSha256 $pin[0].sha256 -BuildIdentity release/v1/bundled-content-build-identity.json -OutputDirectory (Join-Path $env:RUNNER_TEMP 'native-smoke/stable-cases')
-      - name: Record schema4 hosted observations without inventing missing cases
+      - name: Record stable hosted observations without inventing missing cases
         id: hosted_evidence
         if: always() && steps.build_windows.outputs.stable == 'true' && steps.stable_acceptance.outcome != 'skipped'
         shell: pwsh
         run: |
           ./scripts/windows/Write-HostedAcceptanceEvidence.ps1 -Root . -Version '1.0.0' -InstallerDirectory dist/windows -ResultsDirectory (Join-Path $env:RUNNER_TEMP 'native-smoke/stable-cases') -OutputDirectory dist/acceptance-evidence
-      - name: Retain schema4 acceptance evidence separately from release assets
+      - name: Retain stable acceptance evidence separately from release assets
         if: always() && steps.build_windows.outputs.stable == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -544,7 +567,7 @@ jobs:
         with:
           name: azeroth-navigator-windows-${{ github.sha }}
           path: dist/release-artifacts
-      - name: Download schema4 hosted evidence
+      - name: Download stable hosted evidence
         if: github.ref_name == 'v1.0.0'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

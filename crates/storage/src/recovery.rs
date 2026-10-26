@@ -278,8 +278,10 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
                     [recovered],
                 )
                 .db()?;
+            // The first full validation already checked the untouched store.
+            // Revalidate again only after changing a recovered plan's provenance.
+            validate(&store)?;
         }
-        validate(&store)?;
         Ok(RecoveryInspection {
             source_schema_version: version as u32,
             restored_schema_version: migrations::latest_version(),
@@ -291,13 +293,6 @@ pub fn reconstruct_backup(source: &Path, destination: &Path) -> Result<RecoveryI
     }
     result
 }
-fn ids(conn: &Connection, sql: &str) -> Result<Vec<i64>> {
-    let mut q = conn.prepare(sql).db()?;
-    q.query_map([], |r| r.get(0))
-        .db()?
-        .collect::<rusqlite::Result<Vec<_>>>()
-        .db()
-}
 fn reject(conn: &Connection, sql: &str) -> Result<()> {
     if conn.query_row(sql, [], |r| r.get::<_, bool>(0)).db()? {
         Err(storage(
@@ -307,9 +302,24 @@ fn reject(conn: &Connection, sql: &str) -> Result<()> {
         Ok(())
     }
 }
+#[cfg(test)]
+thread_local! {
+    static VALIDATION_RUNS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 /// Integrity plus semantic validation, including all historical rows, not only
 /// the current selections displayed by the application.
 pub fn validate(store: &SqliteStore) -> Result<()> {
+    #[cfg(test)]
+    VALIDATION_RUNS.with(|count| count.set(count.get() + 1));
+    if store.conn.is_autocommit() {
+        store.with_immediate_read(validate_snapshot)
+    } else {
+        // Existing caller transactions keep strict validation. Cache reuse still
+        // requires the original unchanged managed-read generation stamp.
+        validate_snapshot(store)
+    }
+}
+fn validate_snapshot(store: &SqliteStore) -> Result<()> {
     let conn = &store.conn;
     let trusted = canonical(migrations::MIGRATIONS.len())?;
     if schema(conn)? != schema(&trusted)? {
@@ -468,26 +478,6 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     if orphan_assets {
         return Err(storage("Backup contains unreferenced catalog asset bytes"));
     }
-    for id in ids(conn, "SELECT id FROM dataset_revisions")? {
-        let revision = crate::content::load(conn, id)?;
-        crate::catalog_assets::validate_revision_assets(conn, id, &revision)?;
-        let context = revision.context();
-        let columns:(String,String,String,String,bool,String)=conn.query_row("SELECT edition,build,interface,namespace,is_fixture,revision FROM dataset_revisions WHERE id=?1",[id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).db()?;
-        let namespace =
-            serde_json::to_value(context.namespace).map_err(|_| storage("Invalid namespace"))?;
-        if columns
-            != (
-                context.build.edition.as_str().to_owned(),
-                context.build.build.as_str().to_owned(),
-                context.build.interface.as_str().to_owned(),
-                namespace.as_str().unwrap_or("").to_owned(),
-                revision.fixture(),
-                revision.reference().revision.as_str().to_owned(),
-            )
-        {
-            return Err(storage("Backup content identity disagrees"));
-        }
-    }
     let mut records = conn
         .prepare("SELECT source_id,document FROM source_records")
         .db()?;
@@ -557,9 +547,45 @@ pub fn validate(store: &SqliteStore) -> Result<()> {
     Ok(())
 }
 
+fn validate_catalog_revision(
+    store: &SqliteStore,
+    id: i64,
+    expected: &crate::content::ContentRevisionKey,
+) -> Result<()> {
+    let conn = &store.conn;
+    let revision = match store.existing_validated_catalog(id)? {
+        Some(revision) => revision,
+        None => crate::content::load(conn, id)?,
+    };
+    if revision.key() != *expected {
+        return Err(storage("Content disposition identity disagrees"));
+    }
+    crate::catalog_assets::validate_revision_assets(conn, id, &revision)?;
+    let context = revision.context();
+    let columns:(String,String,String,String,bool,String)=conn.query_row("SELECT edition,build,interface,namespace,is_fixture,revision FROM dataset_revisions WHERE id=?1",[id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).db()?;
+    let namespace =
+        serde_json::to_value(context.namespace).map_err(|_| storage("Invalid namespace"))?;
+    if columns
+        != (
+            context.build.edition.as_str().to_owned(),
+            context.build.build.as_str().to_owned(),
+            context.build.interface.as_str().to_owned(),
+            namespace.as_str().unwrap_or("").to_owned(),
+            revision.fixture(),
+            revision.reference().revision.as_str().to_owned(),
+        )
+    {
+        return Err(storage("Backup content identity disagrees"));
+    }
+    Ok(())
+}
+
 // Validate every populated feature document using its owning typed reader.
 fn validate_local_foundation(store: &SqliteStore) -> Result<()> {
-    crate::content_dispositions::validate_content_dispositions(&store.conn)?;
+    crate::content_dispositions::validate_content_dispositions_with(
+        &store.conn,
+        |id, expected| validate_catalog_revision(store, id, expected),
+    )?;
     reject(&store.conn, "SELECT (SELECT count(*) FROM current_plan)!=1")?;
     store.settings()?;
     store.current_plan()?;
@@ -569,6 +595,38 @@ fn validate_local_foundation(store: &SqliteStore) -> Result<()> {
 
 #[cfg(test)]
 mod catalog_capacity_tests {
+    #[test]
+    fn reconstruction_without_a_saved_plan_runs_full_validation_once() {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let directory = std::env::temp_dir().join(format!(
+            "navzeroth-recovery-validation-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(directory.clone());
+        let source = directory.join("source.sqlite");
+        let destination = directory.join("reconstructed.sqlite");
+        let store = crate::SqliteStore::open(&source).unwrap();
+        assert!(store.current_plan().unwrap().plan.is_none());
+        drop(store);
+        let before = super::VALIDATION_RUNS.with(std::cell::Cell::get);
+        super::reconstruct_backup(&source, &destination).unwrap();
+        assert_eq!(
+            super::VALIDATION_RUNS.with(std::cell::Cell::get),
+            before + 1,
+            "unchanged reconstruction must not scan every historical catalog twice"
+        );
+        let recovered = crate::SqliteStore::open(&destination).unwrap();
+        assert!(recovered.current_plan().unwrap().plan.is_none());
+    }
     #[test]
     fn catalog_rows_have_v2_capacity_without_loosening_snapshot_rows() {
         assert_eq!(
@@ -580,5 +638,325 @@ mod catalog_capacity_tests {
             576 * 1024 * 1024 + 16 * 1024
         );
         assert_eq!(super::row_limit("snapshots"), 32 * 1024 * 1024);
+    }
+}
+
+#[cfg(test)]
+mod validation_cache_tests {
+    use super::*;
+    use crate::content::{ContentRevision, ContentRevisionV2};
+    use serde_json::json;
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, AtomicU64, Ordering},
+    };
+    fn catalog(name: &str) -> ContentRevisionV2 {
+        let old: ContentRevision = serde_json::from_str(include_str!(
+            "../../../fixtures/desktop/planning/synthetic-revision.json"
+        ))
+        .unwrap();
+        let mut reference = serde_json::to_value(old.envelope).unwrap();
+        reference["payload"]["revision"] = json!(name);
+        ContentRevisionV2 { content: azeroth_core::content_v2::decode(&serde_json::to_vec(&json!({"format":"navzeroth-reference-content","schema_version":2,"reference":reference,"models":[],"equipment":[],"quest_facts":[],"acquisition_facts":[],"dungeons":[]})).unwrap()).unwrap(), sources: old.sources, conflicts: vec![] }
+    }
+    fn loads() -> usize {
+        crate::content::FULL_LOADS.with(std::cell::Cell::get)
+    }
+    fn prepared(store: &mut SqliteStore) -> (ContentRevisionV2, ContentRevisionV2) {
+        let active = catalog("validation-active");
+        let historical = catalog("validation-history");
+        store.stage_content_v2_revision(&active).unwrap();
+        store.stage_content_v2_revision(&historical).unwrap();
+        store.activate_content_revision(&active.key()).unwrap();
+        store
+            .active_content_v2_revision(&active.key().scope)
+            .unwrap()
+            .unwrap();
+        (active, historical)
+    }
+    #[test]
+    fn recovery_reuses_only_existing_warm_arc_and_still_checks_every_historical_revision() {
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        let (active, _) = prepared(&mut store);
+        let warm = store
+            .active_content_v2_revision(&active.key().scope)
+            .unwrap()
+            .unwrap();
+        let before = loads();
+        validate(&store).unwrap();
+        assert_eq!(
+            loads(),
+            before + 1,
+            "only cold historical catalog needs a strict decode"
+        );
+        validate(&store).unwrap();
+        assert_eq!(
+            loads(),
+            before + 2,
+            "historical catalog is rechecked, not cached or omitted"
+        );
+        let after = store
+            .active_content_v2_revision(&active.key().scope)
+            .unwrap()
+            .unwrap();
+        assert!(Arc::ptr_eq(&warm, &after));
+        assert!(
+            store
+                .catalog_generation
+                .cache_stamp(&store.conn)
+                .unwrap()
+                .is_none()
+        );
+        store.conn.execute_batch("BEGIN IMMEDIATE").unwrap();
+        let before = loads();
+        validate(&store).unwrap();
+        assert_eq!(
+            loads(),
+            before + 2,
+            "arbitrary caller transaction has no cache admission"
+        );
+        store.conn.execute_batch("ROLLBACK").unwrap();
+        let reopened = SqliteStore::open_in_memory().unwrap();
+        let before = loads();
+        validate(&reopened).unwrap();
+        assert_eq!(loads(), before);
+    }
+    #[test]
+    fn cold_validation_and_public_disposition_registration_remain_strict() {
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        let first = catalog("cold-one");
+        let second = catalog("cold-two");
+        store.stage_content_v2_revision(&first).unwrap();
+        store.stage_content_v2_revision(&second).unwrap();
+        assert!(store.catalog_cache.borrow().is_none());
+        let before = loads();
+        validate(&store).unwrap();
+        assert_eq!(loads(), before + 2);
+        assert!(
+            store.catalog_cache.borrow().is_none(),
+            "typed stage inputs are never cached by validation"
+        );
+        store.catalog_revision(&first.key()).unwrap();
+        let before = loads();
+        crate::content_dispositions::validate_content_dispositions(&store.conn).unwrap();
+        assert_eq!(
+            loads(),
+            before + 2,
+            "public registration callback keeps its original strict loader"
+        );
+    }
+    #[test]
+    fn same_bytes_rewrite_and_rollback_invalidate_prior_sql_validation() {
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        let (active, _) = prepared(&mut store);
+        use rusqlite::config::DbConfig::SQLITE_DBCONFIG_ENABLE_TRIGGER;
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, false)
+            .unwrap();
+        store
+            .conn
+            .execute_batch(
+                "BEGIN IMMEDIATE;UPDATE dataset_revisions SET document=document;ROLLBACK",
+            )
+            .unwrap();
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, true)
+            .unwrap();
+        let before = loads();
+        validate(&store).unwrap();
+        assert_eq!(
+            loads(),
+            before + 2,
+            "rolled-back same-byte writes cannot reuse old stamp"
+        );
+        store
+            .active_content_v2_revision(&active.key().scope)
+            .unwrap();
+        let before = loads();
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, false)
+            .unwrap();
+        store
+            .conn
+            .execute("UPDATE dataset_revisions SET document=document", [])
+            .unwrap();
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, true)
+            .unwrap();
+        validate(&store).unwrap();
+        assert_eq!(
+            loads(),
+            before + 2,
+            "committed same-byte writes still revoke cache trust"
+        );
+    }
+    #[test]
+    fn warm_active_does_not_hide_corrupt_inactive_history_and_error_releases_read_scope() {
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        let (active, historical) = prepared(&mut store);
+        use rusqlite::config::DbConfig::SQLITE_DBCONFIG_ENABLE_TRIGGER;
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, false)
+            .unwrap();
+        store
+            .conn
+            .execute(
+                "UPDATE dataset_revisions SET document='{}' WHERE revision=?1",
+                [historical.key().revision.as_str()],
+            )
+            .unwrap();
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, true)
+            .unwrap();
+        store
+            .active_content_v2_revision(&active.key().scope)
+            .unwrap();
+        assert!(validate(&store).is_err());
+        assert!(store.conn.is_autocommit());
+        assert!(
+            store
+                .catalog_generation
+                .cache_stamp(&store.conn)
+                .unwrap()
+                .is_none()
+        );
+        store
+            .conn
+            .execute_batch("BEGIN IMMEDIATE;ROLLBACK")
+            .unwrap();
+    }
+    #[test]
+    fn warm_arc_does_not_skip_fresh_asset_bytes_validation() {
+        use image::{DynamicImage, ImageFormat, RgbaImage};
+        use sha2::{Digest, Sha256};
+        use std::io::Cursor;
+        let mut c = catalog("validation-assets");
+        let mut reference = serde_json::to_value(&c.content.reference).unwrap();
+        let mut png = Cursor::new(Vec::new());
+        DynamicImage::ImageRgba8(RgbaImage::new(2, 2))
+            .write_to(&mut png, ImageFormat::Png)
+            .unwrap();
+        let bytes = png.into_inner();
+        let hash = format!("{:x}", Sha256::digest(&bytes));
+        let map = reference["payload"]["map_spaces"][0]["key"].clone();
+        reference["payload"]["map_images"] = json!([{"id":"asset-image","map":map,"source":"demo-source-1","evidence":["demo-evidence-1"],"applicable_builds":[{"build":map["context"]["build"],"evidence":[]}],"width_px":2,"height_px":2,"layers":[{"id":"base","kind":"roads_traced","file":"atlas/base.png","sha256":hash,"width_px":2,"height_px":2,"frame_divisor":1,"registration_offset_px":{"x":0,"y":0}}],"pins":[],"calibration":{"status":"unknown"},"calibration_evidence":[],"control_points":[],"gaps":"Synthetic image"}]);
+        let mut value = serde_json::to_value(&c.content).unwrap();
+        value["reference"] = reference;
+        c.content = azeroth_core::content_v2::decode(&serde_json::to_vec(&value).unwrap()).unwrap();
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        store
+            .stage_content_v2_bundle(
+                &c,
+                &[crate::catalog_assets::CatalogAsset {
+                    file: azeroth_core::types::AssetPath::new("atlas/base.png").unwrap(),
+                    bytes,
+                }],
+            )
+            .unwrap();
+        store.activate_content_revision(&c.key()).unwrap();
+        store.active_content_v2_revision(&c.key().scope).unwrap();
+        let before = loads();
+        use rusqlite::config::DbConfig::SQLITE_DBCONFIG_ENABLE_TRIGGER;
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, false)
+            .unwrap();
+        store
+            .conn
+            .execute("UPDATE catalog_asset_blobs SET bytes=x'00'", [])
+            .unwrap();
+        store
+            .conn
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, true)
+            .unwrap();
+        assert!(validate(&store).is_err());
+        assert_eq!(
+            loads(),
+            before,
+            "catalog Arc reused, but changed asset bytes still rejected"
+        );
+    }
+    #[test]
+    fn validation_excludes_external_writes_and_external_commit_revokes_warm_arc() {
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let path = std::env::temp_dir().join(format!(
+            "navzeroth-validation-cache-{}-{}.sqlite",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let mut store = SqliteStore::open(&path).unwrap();
+        let (active, _) = prepared(&mut store);
+        let attempted = Arc::new(AtomicBool::new(false));
+        let observed = attempted.clone();
+        let writer_path = path.clone();
+        store
+            .conn
+            .authorizer(Some(move |ctx: rusqlite::hooks::AuthContext<'_>| {
+                if matches!(
+                    ctx.action,
+                    rusqlite::hooks::AuthAction::Read {
+                        table_name: "dataset_revisions",
+                        ..
+                    }
+                ) && !observed.swap(true, Ordering::Relaxed)
+                {
+                    let writer = Connection::open(&writer_path).unwrap();
+                    writer
+                        .busy_timeout(std::time::Duration::from_millis(5))
+                        .unwrap();
+                    assert_eq!(
+                        writer
+                            .execute("UPDATE current_plan SET revision=revision", [])
+                            .unwrap_err()
+                            .sqlite_error_code(),
+                        Some(rusqlite::ErrorCode::DatabaseBusy)
+                    );
+                }
+                rusqlite::hooks::Authorization::Allow
+            }))
+            .unwrap();
+        validate(&store).unwrap();
+        assert!(attempted.load(Ordering::Relaxed));
+        store
+            .conn
+            .authorizer(
+                None::<fn(rusqlite::hooks::AuthContext<'_>) -> rusqlite::hooks::Authorization>,
+            )
+            .unwrap();
+        let writer = Connection::open(&path).unwrap();
+        use rusqlite::config::DbConfig::SQLITE_DBCONFIG_ENABLE_TRIGGER;
+        writer
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, false)
+            .unwrap();
+        let before_version: i64 = store
+            .conn
+            .pragma_query_value(None, "data_version", |r| r.get(0))
+            .unwrap();
+        // Force a real external page write, then restore exact bytes before
+        // commit. A no-op UPDATE may legitimately cause no SQLite data_version.
+        writer.execute_batch("BEGIN IMMEDIATE;UPDATE dataset_revisions SET document=document||' ';UPDATE dataset_revisions SET document=substr(document,1,length(document)-1);COMMIT").unwrap();
+        let after_version: i64 = store
+            .conn
+            .pragma_query_value(None, "data_version", |r| r.get(0))
+            .unwrap();
+        assert_ne!(before_version, after_version);
+        writer
+            .set_db_config(SQLITE_DBCONFIG_ENABLE_TRIGGER, true)
+            .unwrap();
+        let before = loads();
+        validate(&store).unwrap();
+        assert_eq!(loads(), before + 2);
+        store
+            .active_content_v2_revision(&active.key().scope)
+            .unwrap();
+        drop(writer);
+        drop(store);
+        std::fs::remove_file(path).unwrap();
     }
 }

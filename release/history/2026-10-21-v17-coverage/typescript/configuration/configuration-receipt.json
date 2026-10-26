@@ -1,0 +1,16 @@
+{
+  "format_version": 1,
+  "source_commit": "7361c873a1ba0c3366703917033f7397c74d07c3",
+  "node": "v24.15.0",
+  "collector": "node:inspector precise V8 + pinned Vitest dependency ast-v8-to-istanbul",
+  "files": [
+    {
+      "path": "apps/desktop/vite.config.ts",
+      "source_sha256": "af36994665d62c90df2d539b341c890ad478c66b4a1a11a180fef94ac99016eb"
+    },
+    {
+      "path": "apps/desktop/csp.ts",
+      "source_sha256": "0a0bf0cd6fa1baac0ef83bf0a4907548f8e2bcf9920218d2a9b79c40d9e90810"
+    }
+  ]
+}

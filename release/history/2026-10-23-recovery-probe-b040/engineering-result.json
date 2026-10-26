@@ -1,0 +1,265 @@
+{
+  "kind": "hosted_recovery_engineering_not_acceptance",
+  "source_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+  "fixture": {
+    "schema_version": 1,
+    "kind": "historical_full_pack_engineering_fixture_not_installer_acceptance",
+    "repository": "Laymer/Navzeroth",
+    "artifact_id": 12405859488,
+    "artifact_run_id": 39641767585,
+    "artifact_name": "azeroth-navigator-windows-90e0d4dd3e574b1b0760e8f4a7a77f28933b02cc",
+    "artifact_bytes": 46082416,
+    "artifact_sha256": "be713e2cba0c2446d9c9d36a1918dbdcc4c1eaa9e17ca16cd47b602c3a52d5cd",
+    "api_head_commit": "9cc774e4f2656f26d544071d6bd174367ccca16a",
+    "installer_source_commit": "90e0d4dd3e574b1b0760e8f4a7a77f28933b02cc",
+    "fixture_tree": "9378020ca6dd9d727665d458e7e35af3f43559a1",
+    "fixture_metadata_commit": "9cc774e4f2656f26d544071d6bd174367ccca16a",
+    "installer_name": "AzerothNavigator-1.0.0-x64-setup.exe",
+    "installer_sha256": "ffcb98661a1310458a663aa06451e765b99bdb07dba40a997f1e57aad5fc3225",
+    "fixture_production_sha256": "2aefc67b79569a01a461315648b64b860599cabb2f67de1b52911025e3ef47e6",
+    "metadata_files": [
+      {
+        "bytes": 528,
+        "sha256": "d3a3892a815a677a6007c6ae9ae5d8ca0a60a8d77477a7c6ec83238f628aa6a6",
+        "git_path": "release/v1/bundled-content-build-identity.json"
+      },
+      {
+        "bytes": 610,
+        "sha256": "c4bbc54f59a8fc3fa382a31b1b8c6f5b9b2f47a7fcd420af0db3057e255bf568",
+        "git_path": "content/bundled/signers-v1.json"
+      },
+      {
+        "bytes": 3714,
+        "sha256": "f5ec63545a98ce1a953f78f5e865b73c23ee7c0a9192756b543869a087f16646",
+        "git_path": "crates/app/tests/support/stable_engineering_snapshot.json"
+      }
+    ],
+    "installer_bytes": 26058654
+  },
+  "passed": true,
+  "acceptance_observations_promoted": false,
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "python_version": "3.12.10",
+  "logical_processors": 4,
+  "disk_free_bytes": 157434331136,
+  "peak_memory_bytes": null,
+  "memory_scope": "Not measured by this probe; no ordinary-PC claim.",
+  "binary_sha256": "11d50b73f49fcf7baada7bd195756f9a64ffb7dc45ca92dfdfcc907e953d32da",
+  "manifest_sha256": "199d24945149e1a1291af2ef1cf526b5af8af25654d1d3464955f89cb932a206",
+  "harness_sha256": "3b5c3c1105f2897841dfaec0159fae4e483cd4ca30a8ff7c8b787222d058e4ea",
+  "build_stdout_sha256": "e31e642be64092bddd3a99144285a33582b659ce71e8d631440d952a106a17c4",
+  "workload_elapsed_seconds": 915.9839999999999,
+  "phase_events": [
+    {
+      "bundle": "C:\\Users\\runneradmin\\AppData\\Local\\Azeroth Navigator\\bundled-content",
+      "diagnostic_harness_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+      "diagnostic_runtime_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+      "kind": "diagnostic_not_acceptance",
+      "platform": "windows",
+      "signed_bundle_identity": {
+        "app_version": "1.0.0",
+        "bundle_manifest_sha256": "211bbcdaa0ef80089c2edfb8b5fb4ac2f90df05e044d1b161f26d46bd189ed90",
+        "production_sha256": "2aefc67b79569a01a461315648b64b860599cabb2f67de1b52911025e3ef47e6",
+        "review": {
+          "bytes": 184441,
+          "path": "release/v1/public-content-review-v19.json",
+          "sha256": "8ec52b22f51b1f6166eff10c7a4c9e9031ffa98cc4c063568fb6de8e5b8ec6c6"
+        },
+        "schema_version": 1,
+        "target": {
+          "build": "70450",
+          "edition": "wow_forever",
+          "interface": 16001,
+          "version": "1.60.1"
+        },
+        "tested_source_commit": "619e498c4aab55d653a1b0c5767bc81a9c99b321"
+      },
+      "signed_bundle_receipt": {
+        "format": "navzeroth-bundled-content-receipt",
+        "operator_controls_both_keys": true,
+        "payload": {
+          "app_version": "1.0.0",
+          "bundle_manifest_sha256": "211bbcdaa0ef80089c2edfb8b5fb4ac2f90df05e044d1b161f26d46bd189ed90",
+          "production_sha256": "2aefc67b79569a01a461315648b64b860599cabb2f67de1b52911025e3ef47e6",
+          "review": {
+            "bytes": 184441,
+            "path": "release/v1/public-content-review-v19.json",
+            "sha256": "8ec52b22f51b1f6166eff10c7a4c9e9031ffa98cc4c063568fb6de8e5b8ec6c6"
+          },
+          "schema_version": 1,
+          "target": {
+            "build": "70450",
+            "edition": "wow_forever",
+            "interface": 16001,
+            "version": "1.60.1"
+          },
+          "tested_source_commit": "619e498c4aab55d653a1b0c5767bc81a9c99b321"
+        },
+        "schema_version": 1,
+        "signatures": [
+          {
+            "key_id": "navzeroth-1.0.0-operator-r2",
+            "role": "operator",
+            "signature_hex": "742772289f189fb21a24cd2f7f5cb9fc9b1da5c05943a571566fceffff63d815f3116203c3ff7f70a505739558ef6fb37810af18160387654398505305991502"
+          },
+          {
+            "key_id": "navzeroth-1.0.0-review-evidence-r2",
+            "role": "review_evidence",
+            "signature_hex": "f2330a94123817488924b7c27fae3caa747640dd5d6d09402e48ddce807ad6034e63ab8a30f8b0c7d8ccf58d75505074eaea20e8b0d6b2599af771bef538ce05"
+          }
+        ]
+      }
+    },
+    {
+      "event": "start",
+      "phase": "initial_signed_bundle_start"
+    },
+    {
+      "startup_measurements": {
+        "activation_ms": 30549,
+        "load_ms": 125206
+      }
+    },
+    {
+      "elapsed_ms": 155827,
+      "event": "complete",
+      "phase": "initial_signed_bundle_start"
+    },
+    {
+      "event": "start",
+      "phase": "manual_profile_and_settings"
+    },
+    {
+      "elapsed_ms": 9,
+      "event": "complete",
+      "phase": "manual_profile_and_settings"
+    },
+    {
+      "event": "start",
+      "phase": "select_false_inferred_travel"
+    },
+    {
+      "elapsed_ms": 1962,
+      "event": "complete",
+      "phase": "select_false_inferred_travel"
+    },
+    {
+      "event": "start",
+      "phase": "initial_state"
+    },
+    {
+      "elapsed_ms": 955,
+      "event": "complete",
+      "phase": "initial_state"
+    },
+    {
+      "event": "start",
+      "phase": "backup"
+    },
+    {
+      "elapsed_ms": 1586,
+      "event": "complete",
+      "phase": "backup"
+    },
+    {
+      "backup_bytes": 463335424
+    },
+    {
+      "event": "start",
+      "phase": "inspect_backup"
+    },
+    {
+      "elapsed_ms": 67279,
+      "event": "complete",
+      "phase": "inspect_backup"
+    },
+    {
+      "event": "start",
+      "phase": "restore_and_initializer_reopen"
+    },
+    {
+      "elapsed_ms": 300981,
+      "event": "complete",
+      "phase": "restore_and_initializer_reopen"
+    },
+    {
+      "event": "start",
+      "phase": "restored_ready"
+    },
+    {
+      "startup_measurements": {
+        "activation_ms": 30549,
+        "load_ms": 125206
+      }
+    },
+    {
+      "elapsed_ms": 0,
+      "event": "complete",
+      "phase": "restored_ready"
+    },
+    {
+      "event": "start",
+      "phase": "restored_profiles_settings_content_choice"
+    },
+    {
+      "elapsed_ms": 1003,
+      "event": "complete",
+      "phase": "restored_profiles_settings_content_choice"
+    },
+    {
+      "event": "start",
+      "phase": "restored_check_database"
+    },
+    {
+      "elapsed_ms": 36088,
+      "event": "complete",
+      "phase": "restored_check_database"
+    },
+    {
+      "event": "start",
+      "phase": "drop_restored_host"
+    },
+    {
+      "elapsed_ms": 397,
+      "event": "complete",
+      "phase": "drop_restored_host"
+    },
+    {
+      "event": "start",
+      "phase": "explicit_close_reopen_signed_initializer"
+    },
+    {
+      "startup_measurements": {
+        "activation_ms": 0,
+        "load_ms": 240376
+      }
+    },
+    {
+      "elapsed_ms": 310641,
+      "event": "complete",
+      "phase": "explicit_close_reopen_signed_initializer"
+    },
+    {
+      "event": "start",
+      "phase": "reopened_profiles_settings_content_choice"
+    },
+    {
+      "elapsed_ms": 1015,
+      "event": "complete",
+      "phase": "reopened_profiles_settings_content_choice"
+    },
+    {
+      "event": "start",
+      "phase": "reopened_check_database"
+    },
+    {
+      "elapsed_ms": 37515,
+      "event": "complete",
+      "phase": "reopened_check_database"
+    },
+    {
+      "acceptance_observations_promoted": false,
+      "diagnostic_passed": true
+    }
+  ]
+}

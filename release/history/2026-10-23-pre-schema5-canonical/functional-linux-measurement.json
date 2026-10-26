@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source_commit": "ac45a4f4a3552783242e4785840119db71d9cee7",
+  "production_sha256": "23b4f54dbd7c567c727a5c2431c332a49f8e3b0b79f3423fd27c95d6dbac1535",
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 75.64794263300018,
+  "peak_child_rss_kib": 6205204,
+  "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal32675952KiB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
+  "scope": "Genuinely rebuilt full-pack functional scenario after reviewed strict decoding, validated duplicate cache and canonical streaming hash repairs. This execution does not establish Windows installer acceptance.",
+  "proof_sha256": "f3610610404b9b369bd3b402bc87a5907d497ec94e632eca8d9f9a8e17694764"
+}

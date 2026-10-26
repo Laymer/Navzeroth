@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "kind": "hosted_offline_firewall_engineering_probe",
+  "acceptance_observations_promoted": false,
+  "passed": false,
+  "source_commit": "a949862aa8635c8fc999f6c9e999ec543697ea57",
+  "run_id": "39982387411",
+  "run_attempt": "1",
+  "runner_os": "Windows_NT",
+  "powershell_version": "7.6.7",
+  "hold_seconds": 1260,
+  "phase": "isolated_hold",
+  "external_connection_owners": [
+    {
+      "process": "hosted-compute-agent",
+      "connections": 3
+    },
+    {
+      "process": "lsass",
+      "connections": 1
+    },
+    {
+      "process": "MpDefenderCoreService",
+      "connections": 2
+    },
+    {
+      "process": "provjobd.exe4171335442",
+      "connections": 1
+    },
+    {
+      "process": "Runner.Listener",
+      "connections": 3
+    },
+    {
+      "process": "Runner.Worker",
+      "connections": 5
+    },
+    {
+      "process": "StartMenuExperienceHost",
+      "connections": 2
+    },
+    {
+      "process": "svchost",
+      "connections": 2
+    },
+    {
+      "process": "WaAppAgent",
+      "connections": 1
+    },
+    {
+      "process": "WindowsAzureGuestAgent",
+      "connections": 2
+    }
+  ],
+  "infrastructure_programs": [
+    {
+      "name": "hosted-compute-agent",
+      "path": "C:\\ProgramData\\GitHub\\HostedComputeAgent\\hosted-compute-agent"
+    },
+    {
+      "name": "provjobd.exe4171335442",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\provjobd.exe4171335442"
+    },
+    {
+      "name": "WaAppAgent",
+      "path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WaAppAgent.exe"
+    },
+    {
+      "name": "WindowsAzureGuestAgent",
+      "path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WindowsAzureGuestAgent.exe"
+    }
+  ],
+  "checks": 0,
+  "isolation": null,
+  "elapsed_ms": 2825.201,
+  "error": "Hosted offline firewall control failed: {\"primary\":{\"stage\":\"isolate\",\"error\":\"The parameter is incorrect. \"},\"restoration\":{\"profiles\":\"ok\",\"rules_enabled\":\"ok\",\"rules_removed\":\"ok\",\"verification\":\"ok\",\"connectivity\":\"ok\"},\"verify_elapsed_ms\":248,\"restore_elapsed_ms\":60,\"disabled_allow_rules\":0,\"remaining_enabled_allow_rules\":null,\"effective_outbound_allow\":null}"
+}

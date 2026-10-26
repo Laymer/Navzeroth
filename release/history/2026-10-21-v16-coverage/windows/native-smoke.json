@@ -1,0 +1,748 @@
+{
+  "label": "smoke",
+  "mode": "smoke",
+  "platform": "win32",
+  "node": "v24.15.0",
+  "startedAt": "2026-10-21T11:08:08.440Z",
+  "debug_policy": {
+    "key": "Edge\\WebView2\\AdditionalBrowserArguments",
+    "value_name": "azeroth-desktop.exe",
+    "port": 24828
+  },
+  "cdp": {
+    "browser": "Edg/154.0.4258.62",
+    "protocol": "1.3",
+    "attach": "WebView2 AdditionalBrowserArguments machine policy (remote-debugging-port) + playwright connectOverCDP"
+  },
+  "url": "http://tauri.localhost/",
+  "csp": {
+    "header": "connect-src 'self' ipc: http://ipc.localhost; script-src 'self' 'sha256-DSKctpteizTthxHKx4qpt85gkk/Rlf+nzGHSPZcvP78='; style-src 'self' 'unsafe-inline'; default-src 'self'; img-src 'self' atlas: http://atlas.localhost",
+    "meta": null
+  },
+  "screens": [
+    {
+      "screen": "Today",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Today",
+        "Imported character reference"
+      ]
+    },
+    {
+      "screen": "Settings",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Settings"
+      ]
+    },
+    {
+      "screen": "Compatibility and coverage",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Compatibility and source coverage"
+      ]
+    },
+    {
+      "screen": "Local diagnostics",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin"
+      ]
+    },
+    {
+      "screen": "Backup and recovery",
+      "alerts": [],
+      "headings": [
+        "",
+        "Database backup and recovery",
+        "Choose how to begin"
+      ]
+    },
+    {
+      "screen": "Atlas",
+      "alerts": [
+        "Atlas error INVALID_INPUT: Select an imported profile to view its active atlas"
+      ],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Atlas"
+      ]
+    },
+    {
+      "screen": "Imports",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Snapshot imports"
+      ]
+    },
+    {
+      "screen": "Party",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Party"
+      ]
+    },
+    {
+      "screen": "Dungeons",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Dungeon preparation"
+      ]
+    },
+    {
+      "screen": "Content",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Content"
+      ]
+    },
+    {
+      "screen": "Planner",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Single-character planner"
+      ]
+    },
+    {
+      "screen": "Gear",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Gear comparisons"
+      ]
+    },
+    {
+      "screen": "Sessions",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Sessions"
+      ]
+    },
+    {
+      "screen": "Reminders",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Reminders"
+      ]
+    },
+    {
+      "screen": "World",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "World browser"
+      ]
+    }
+  ],
+  "ipc_tail": [
+    "662216ms -> update_app_settings (POST)",
+    "662220ms <- update_app_settings HTTP 200",
+    "662222ms -> mutate_reminders (POST)",
+    "662225ms <- mutate_reminders HTTP 200",
+    "662229ms -> plan_joint_session (POST)",
+    "662233ms <- plan_joint_session HTTP 200",
+    "662236ms -> propose_party_plan (POST)",
+    "662239ms <- propose_party_plan HTTP 200",
+    "662242ms -> accept_party_plan (POST)",
+    "662246ms <- accept_party_plan HTTP 200",
+    "662248ms -> change_content_disposition (POST)",
+    "662251ms <- change_content_disposition HTTP 200",
+    "662254ms -> export_plan (POST)",
+    "662257ms <- export_plan HTTP 200",
+    "662260ms -> export_agreed_party_plan (POST)",
+    "662264ms <- export_agreed_party_plan HTTP 200",
+    "662267ms -> inspect_plan_route (POST)",
+    "662270ms <- inspect_plan_route HTTP 200",
+    "662273ms -> plan_session (POST)",
+    "662276ms <- plan_session HTTP 200",
+    "662279ms -> get_content_inspection_page (POST)",
+    "662282ms <- get_content_inspection_page HTTP 200",
+    "662285ms -> stage_content (POST)",
+    "662288ms <- stage_content HTTP 200",
+    "662291ms -> get_catalog_page (POST)",
+    "662294ms <- get_catalog_page HTTP 200",
+    "662297ms -> get_world_page (POST)",
+    "662300ms <- get_world_page HTTP 200",
+    "662303ms -> get_record_origins (POST)",
+    "662306ms <- get_record_origins HTTP 200",
+    "662309ms -> get_authored_catalog (POST)",
+    "662312ms <- get_authored_catalog HTTP 200",
+    "662314ms -> get_dungeon_preparation (POST)",
+    "662317ms <- get_dungeon_preparation HTTP 200",
+    "662320ms -> compare_gear (POST)",
+    "662323ms <- compare_gear HTTP 200",
+    "662325ms -> preview_acquisition_route (POST)",
+    "662329ms <- preview_acquisition_route HTTP 200",
+    "662331ms -> assess_route_acquisition (POST)",
+    "662334ms <- assess_route_acquisition HTTP 200",
+    "662337ms -> change_local_submission (POST)",
+    "662341ms <- change_local_submission HTTP 200",
+    "662343ms -> export_local_submission (POST)",
+    "662346ms <- export_local_submission HTTP 200",
+    "662349ms -> preview_local_data (POST)",
+    "662355ms <- preview_local_data HTTP 200",
+    "662357ms -> start_local_data (POST)",
+    "662362ms <- start_local_data HTTP 200",
+    "662364ms -> start_local_data (POST)",
+    "662370ms <- start_local_data HTTP 200",
+    "662373ms -> save_local_workflow_choices (POST)",
+    "662381ms <- save_local_workflow_choices HTTP 200",
+    "662384ms -> acknowledge_local_build_change (POST)",
+    "662388ms <- acknowledge_local_build_change HTTP 200",
+    "662394ms -> stage_selected_local_input (POST)",
+    "662399ms <- stage_selected_local_input HTTP 200",
+    "662402ms -> get_local_input_page (POST)",
+    "662406ms <- get_local_input_page HTTP 200",
+    "662409ms -> discover_local_media (POST)",
+    "662413ms <- discover_local_media HTTP 200",
+    "662416ms -> extract_local_media (POST)",
+    "662421ms <- extract_local_media HTTP 200",
+    "662425ms -> get_local_media_page (POST)",
+    "662428ms <- get_local_media_page HTTP 200",
+    "662433ms -> get_local_media_manifest (POST)",
+    "662436ms <- get_local_media_manifest HTTP 200",
+    "662439ms -> get_local_artifact_page (POST)",
+    "662442ms <- get_local_artifact_page HTTP 200",
+    "662445ms -> get_research_delivery_manifest (POST)",
+    "662450ms <- get_research_delivery_manifest HTTP 200",
+    "662453ms -> build_local_inventory (POST)",
+    "662466ms <- build_local_inventory HTTP 200",
+    "662469ms -> get_local_inventory_summary (POST)",
+    "662472ms <- get_local_inventory_summary HTTP 200",
+    "662475ms -> get_local_inventory_page (POST)",
+    "662479ms <- get_local_inventory_page HTTP 200",
+    "662482ms -> get_local_tooltip (POST)",
+    "662486ms <- get_local_tooltip HTTP 200",
+    "662489ms -> restore_local_installation (POST)",
+    "662495ms <- restore_local_installation HTTP 200",
+    "662498ms -> resume_local_data (POST)",
+    "662503ms <- resume_local_data HTTP 200",
+    "662506ms -> get_local_data_activation (POST)",
+    "662510ms <- get_local_data_activation HTTP 200",
+    "662512ms -> activate_local_data (POST)",
+    "662525ms <- activate_local_data HTTP 200",
+    "662528ms -> get_local_data_inventory (POST)",
+    "662532ms <- get_local_data_inventory HTTP 200",
+    "662534ms -> prepare_research_delivery (POST)",
+    "662538ms <- prepare_research_delivery HTTP 200",
+    "662541ms -> get_research_delivery_page (POST)",
+    "662546ms <- get_research_delivery_page HTTP 200",
+    "662548ms -> get_research_delivery_activation (POST)",
+    "662552ms <- get_research_delivery_activation HTTP 200",
+    "662556ms -> activate_research_delivery (POST)",
+    "662569ms <- activate_research_delivery HTTP 200",
+    "662572ms -> diff_research_delivery (POST)",
+    "662575ms <- diff_research_delivery HTTP 200",
+    "662578ms -> forget_local_material (POST)",
+    "662582ms <- forget_local_material HTTP 200",
+    "662585ms -> forget_local_data_job (POST)",
+    "662590ms <- forget_local_data_job HTTP 200",
+    "662593ms -> reminder_view (POST)",
+    "662596ms <- reminder_view HTTP 200",
+    "662599ms -> get_joint_planning_catalog (POST)",
+    "662602ms <- get_joint_planning_catalog HTTP 200",
+    "662605ms -> review_selected_local_guide (POST)",
+    "662608ms <- review_selected_local_guide HTTP 200",
+    "662611ms -> review_selected_local_guide (POST)",
+    "662615ms <- review_selected_local_guide HTTP 200",
+    "662618ms -> set_session_calibration (POST)",
+    "662622ms <- set_session_calibration HTTP 200",
+    "662625ms -> get_calibration (POST)",
+    "662629ms <- get_calibration HTTP 200",
+    "662632ms -> project_positions (POST)",
+    "662635ms <- project_positions HTTP 200",
+    "662638ms -> pin_current_plan (POST)",
+    "662641ms <- pin_current_plan HTTP 200",
+    "662644ms -> clear_current_plan (POST)",
+    "662647ms <- clear_current_plan HTTP 200",
+    "662650ms -> finish_local_startup (POST)",
+    "662655ms <- finish_local_startup HTTP 200",
+    "662658ms -> get_reference_view (POST)",
+    "662660ms <- get_reference_view HTTP 200",
+    "662667ms -> get_local_workflow (POST)",
+    "662668ms -> list_local_installations (POST)",
+    "662669ms -> list_local_materials (POST)",
+    "662675ms <- list_local_materials HTTP 200",
+    "662678ms <- list_local_installations HTTP 200",
+    "662679ms <- get_local_workflow HTTP 200",
+    "662683ms -> select_local_installation (POST)",
+    "665290ms <- select_local_installation HTTP 200",
+    "665317ms -> get_local_workflow (POST)",
+    "665317ms -> list_local_installations (POST)",
+    "665318ms -> list_local_materials (POST)",
+    "665326ms <- list_local_materials HTTP 200",
+    "665328ms <- list_local_installations HTTP 200",
+    "665332ms <- get_local_workflow HTTP 200",
+    "665337ms -> get_local_workflow (POST)",
+    "665338ms -> list_local_installations (POST)",
+    "665339ms -> list_local_materials (POST)",
+    "665345ms <- list_local_materials HTTP 200",
+    "665347ms <- get_local_workflow HTTP 200",
+    "665350ms <- list_local_installations HTTP 200",
+    "665354ms -> select_local_material (POST)",
+    "666171ms <- select_local_material HTTP 200",
+    "666188ms -> get_local_workflow (POST)",
+    "666188ms -> list_local_installations (POST)",
+    "666189ms -> list_local_materials (POST)",
+    "666195ms <- get_local_workflow HTTP 200",
+    "666199ms <- list_local_installations HTTP 200",
+    "666200ms <- list_local_materials HTTP 200",
+    "666204ms -> get_local_workflow (POST)",
+    "666206ms -> list_local_installations (POST)",
+    "666206ms -> list_local_materials (POST)",
+    "666214ms <- get_local_workflow HTTP 200",
+    "666216ms <- list_local_materials HTTP 200",
+    "666218ms <- list_local_installations HTTP 200",
+    "666221ms -> select_local_material (POST)",
+    "666942ms <- select_local_material HTTP 200",
+    "666954ms -> get_local_workflow (POST)",
+    "666955ms -> list_local_installations (POST)",
+    "666955ms -> list_local_materials (POST)",
+    "666960ms <- list_local_installations HTTP 200",
+    "666966ms <- list_local_materials HTTP 200",
+    "666969ms <- get_local_workflow HTTP 200",
+    "667111ms -> list_profiles (POST)",
+    "667112ms -> get_app_status (POST)",
+    "667121ms <- list_profiles HTTP 200",
+    "667122ms <- get_app_status HTTP 200",
+    "667796ms -> get_today_view (POST)",
+    "667797ms <- get_today_view HTTP 200",
+    "668614ms -> get_app_settings (POST)",
+    "668614ms -> list_profiles (POST)",
+    "668615ms -> list_parties (POST)",
+    "668615ms <- get_app_settings HTTP 200",
+    "668616ms <- list_profiles HTTP 200",
+    "668616ms <- list_parties HTTP 200",
+    "671022ms -> get_database_status (POST)",
+    "671029ms <- get_database_status HTTP 200",
+    "671816ms -> query_atlas (POST)",
+    "671825ms <- query_atlas HTTP 200",
+    "672635ms -> list_profiles (POST)",
+    "672635ms -> get_app_status (POST)",
+    "672639ms <- list_profiles HTTP 200",
+    "672639ms <- get_app_status HTTP 200",
+    "673452ms -> get_app_status (POST)",
+    "673453ms -> list_profiles (POST)",
+    "673453ms -> list_parties (POST)",
+    "673454ms <- get_app_status HTTP 200",
+    "673454ms <- list_profiles HTTP 200",
+    "673455ms <- list_parties HTTP 200",
+    "674359ms -> list_profiles (POST)",
+    "674359ms -> list_parties (POST)",
+    "674360ms <- list_profiles HTTP 200",
+    "674360ms <- list_parties HTTP 200",
+    "675169ms -> list_profiles (POST)",
+    "675177ms -> get_app_status (POST)",
+    "675178ms <- list_profiles HTTP 200",
+    "675184ms <- get_app_status HTTP 200",
+    "675186ms -> list_local_submissions (POST)",
+    "675201ms <- list_local_submissions HTTP 200",
+    "676010ms -> list_profiles (POST)",
+    "676014ms <- list_profiles HTTP 200",
+    "676813ms -> list_profiles (POST)",
+    "676817ms <- list_profiles HTTP 200",
+    "677642ms -> list_profiles (POST)",
+    "677642ms -> get_app_status (POST)",
+    "677643ms <- list_profiles HTTP 200",
+    "677644ms <- get_app_status HTTP 200",
+    "678427ms -> list_profiles (POST)",
+    "678434ms <- list_profiles HTTP 200",
+    "679223ms -> list_profiles (POST)",
+    "679234ms <- list_profiles HTTP 200",
+    "680029ms -> list_profiles (POST)",
+    "680029ms -> get_app_status (POST)",
+    "680030ms <- list_profiles HTTP 200",
+    "680031ms <- get_app_status HTTP 200",
+    "680736ms -> import_snapshot_text (POST)",
+    "680868ms <- import_snapshot_text HTTP 200",
+    "680911ms -> list_profiles (POST)",
+    "680912ms -> get_app_status (POST)",
+    "680912ms <- list_profiles HTTP 200",
+    "680913ms <- get_app_status HTTP 200",
+    "680913ms -> get_stored_snapshot (POST)",
+    "680914ms -> get_snapshot_history (POST)",
+    "680917ms <- get_snapshot_history HTTP 200",
+    "680918ms <- get_stored_snapshot HTTP 200",
+    "680931ms -> get_app_settings (POST)",
+    "680932ms -> get_app_status (POST)",
+    "680936ms <- get_app_status HTTP 200",
+    "680937ms -> get_stored_snapshot (POST)",
+    "680938ms <- get_app_settings HTTP 200",
+    "680939ms <- get_stored_snapshot HTTP 200",
+    "681031ms -> list_profiles (POST)",
+    "681032ms -> get_app_status (POST)",
+    "681032ms <- list_profiles HTTP 200",
+    "681033ms <- get_app_status HTTP 200",
+    "681036ms -> get_content_dispositions (POST)",
+    "681037ms -> list_local_submissions (POST)",
+    "681039ms -> get_active_content (POST)",
+    "681053ms <- get_content_dispositions HTTP 200",
+    "681054ms <- list_local_submissions HTTP 200",
+    "681058ms <- get_active_content HTTP 200",
+    "681801ms -> stage_content (POST)",
+    "681845ms <- stage_content HTTP 200",
+    "682011ms -> activate_content (POST)",
+    "682636ms <- activate_content HTTP 200",
+    "682813ms -> get_content_dispositions (POST)",
+    "682813ms -> list_local_submissions (POST)",
+    "682814ms -> list_profiles (POST)",
+    "682815ms -> get_app_status (POST)",
+    "682815ms -> get_active_content (POST)",
+    "682815ms -> get_app_settings (POST)",
+    "682817ms -> get_app_status (POST)",
+    "682864ms <- get_content_dispositions HTTP 200",
+    "682865ms <- get_active_content HTTP 200",
+    "682867ms <- get_app_settings HTTP 200",
+    "682867ms <- get_app_status HTTP 200",
+    "682869ms <- list_profiles HTTP 200",
+    "682871ms -> get_stored_snapshot (POST)",
+    "682871ms <- list_local_submissions HTTP 200",
+    "682872ms <- get_app_status HTTP 200",
+    "682873ms <- get_stored_snapshot HTTP 200",
+    "683182ms -> get_reference_window_state (POST)",
+    "683204ms -> get_app_settings (POST)",
+    "683205ms -> get_app_status (POST)",
+    "683209ms <- get_reference_window_state HTTP 200",
+    "683210ms <- get_app_settings HTTP 200",
+    "683212ms <- get_app_status HTTP 200",
+    "683214ms -> get_stored_snapshot (POST)",
+    "683214ms <- get_stored_snapshot HTTP 200",
+    "683217ms -> get_local_workflow (POST)",
+    "683236ms -> get_today_view (POST)",
+    "683238ms <- get_today_view HTTP 200",
+    "683240ms <- get_local_workflow HTTP 200",
+    "683902ms -> list_profiles (POST)",
+    "683916ms <- list_profiles HTTP 200",
+    "683922ms -> get_planning_catalog (POST)",
+    "683924ms <- get_planning_catalog HTTP 200",
+    "683927ms -> get_record_origins (POST)",
+    "683942ms <- get_record_origins HTTP 200",
+    "684767ms -> start_planning_job (POST)",
+    "684771ms -> get_planning_job (POST)",
+    "684779ms <- start_planning_job HTTP 200 body={\"job_schema_version\":1,\"job_id\":\"planning-1-1\"}",
+    "684781ms <- get_planning_job HTTP 200 body={\"job_schema_version\":1,\"job_id\":\"planning-1-1\",\"kind\":\"solo\",\"state\":\"running\",\"cancel_requested\":false,\"phase\":\"participant_readiness\",\"work_units\":9,\"result_available\":false,\"error\":null}",
+    "685021ms -> get_planning_job (POST)",
+    "685027ms -> take_planning_job_result (POST)",
+    "685028ms <- get_planning_job HTTP 200 body={\"job_schema_version\":1,\"job_id\":\"planning-1-1\",\"kind\":\"solo\",\"state\":\"succeeded\",\"cancel_requested\":false,\"phase\":\"selection\",\"work_units\":83,\"result_available\":true,\"error\":null}",
+    "685033ms <- take_planning_job_result HTTP 200 body={\"job_schema_version\":1,\"job_id\":\"planning-1-1\",\"kind\":\"solo\",\"report_json\":\"{\\\"request\\\":{\\\"profile_id\\\":\\\"stored-1c4548c618e56428a5468f0d84ecb8d42b0e185461648d11901d567d4a29a3b6\\\",\\\"snapshot_id\\\":\\\"demo-snapshot-001\\\",\\\"revision\\\":\\\"synth",
+    "685131ms -> inspect_plan_route (POST)",
+    "685145ms <- inspect_plan_route HTTP 200",
+    "685213ms -> get_record_origins (POST)",
+    "685222ms <- get_record_origins HTTP 200",
+    "685349ms -> export_plan (POST)",
+    "685367ms <- export_plan HTTP 200",
+    "685430ms -> get_today_view (POST)",
+    "685436ms <- get_today_view HTTP 200",
+    "686127ms -> get_reference_window_state (POST)",
+    "686138ms <- get_reference_window_state HTTP 200"
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "finishedAt": "2026-10-21T11:19:42.257Z",
+  "summary": {
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "ok": true
+  },
+  "steps": [
+    {
+      "name": "attach over CDP (WebView2 remote debugging)",
+      "status": "passed",
+      "browser": "Edg/154.0.4258.62",
+      "protocol": "1.3",
+      "attach": "WebView2 AdditionalBrowserArguments machine policy (remote-debugging-port) + playwright connectOverCDP"
+    },
+    {
+      "name": "native database becomes ready within deadline",
+      "status": "passed",
+      "state": "ready"
+    },
+    {
+      "name": "invalid native requests preserve structured refusals and current snapshot",
+      "status": "passed",
+      "requests": 96,
+      "current_reference_unchanged": true
+    },
+    {
+      "name": "native select_local_installation cancellation preserves selections",
+      "status": "passed",
+      "cancelled": true,
+      "workflow_and_selections_unchanged": true
+    },
+    {
+      "name": "native select_local_material cancellation preserves selections",
+      "status": "passed",
+      "cancelled": true,
+      "workflow_and_selections_unchanged": true
+    },
+    {
+      "name": "native select_local_material cancellation preserves selections",
+      "status": "passed",
+      "cancelled": true,
+      "workflow_and_selections_unchanged": true
+    },
+    {
+      "name": "registered atlas protocol refuses unbound assets in all namespaces",
+      "status": "passed",
+      "observed": [
+        {
+          "path": "/research/missing-owned-fixture",
+          "status": 404
+        },
+        {
+          "path": "/stored/missing-owned-fixture",
+          "status": 404
+        },
+        {
+          "path": "/missing-owned-fixture",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "name": "actual Tauri CSP header is present and has no data: or remote sources",
+      "status": "passed",
+      "directives": [
+        "connect-src",
+        "script-src",
+        "style-src",
+        "default-src",
+        "img-src"
+      ],
+      "observed_in": "response header"
+    },
+    {
+      "name": "real native IPC: the renderer has Tauri internals and shows no demo label",
+      "status": "passed",
+      "tauri_invoke": "function"
+    },
+    {
+      "name": "exactly 15 primary navigation buttons, and no profiles yet on an empty database",
+      "status": "passed",
+      "buttons": 15
+    },
+    {
+      "name": "screen \"Today\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Today",
+        "Imported character reference"
+      ]
+    },
+    {
+      "name": "screen \"Settings\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Settings"
+      ]
+    },
+    {
+      "name": "screen \"Compatibility and coverage\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Compatibility and source coverage"
+      ]
+    },
+    {
+      "name": "screen \"Local diagnostics\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin"
+      ]
+    },
+    {
+      "name": "screen \"Backup and recovery\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Database backup and recovery",
+        "Choose how to begin"
+      ]
+    },
+    {
+      "name": "screen \"Atlas\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [
+        "Atlas error INVALID_INPUT: Select an imported profile to view its active atlas"
+      ],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Atlas"
+      ]
+    },
+    {
+      "name": "screen \"Imports\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Snapshot imports"
+      ]
+    },
+    {
+      "name": "screen \"Party\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Party"
+      ]
+    },
+    {
+      "name": "screen \"Dungeons\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Dungeon preparation"
+      ]
+    },
+    {
+      "name": "screen \"Content\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Content"
+      ]
+    },
+    {
+      "name": "screen \"Planner\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Single-character planner"
+      ]
+    },
+    {
+      "name": "screen \"Gear\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Gear comparisons"
+      ]
+    },
+    {
+      "name": "screen \"Sessions\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Sessions"
+      ]
+    },
+    {
+      "name": "screen \"Reminders\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "Reminders"
+      ]
+    },
+    {
+      "name": "screen \"World\" renders over real IPC (empty database)",
+      "status": "passed",
+      "alerts": [],
+      "headings": [
+        "",
+        "Choose how to begin",
+        "World browser"
+      ]
+    },
+    {
+      "name": "synthetic ANAV1 snapshot (fixtures/transport) imports and becomes current",
+      "status": "passed",
+      "bytes": 2642
+    },
+    {
+      "name": "synthetic planning content stages and activates",
+      "status": "passed"
+    },
+    {
+      "name": "plan session over real IPC plans the re-timed synthetic snapshot",
+      "status": "passed",
+      "activation": "click",
+      "outcome": "planned",
+      "planning_result": "Objectives at the same declared node can share inbound travel. Completion and service times remain additive; shared kills are not assumed.\n\nsynthetic-service: 0.5 minutes inbound travel; minimum participant total utility 10\nExport planInspect route\nEstimated plan\n\nTotal 61000 ms; final travel 30000 "
+    },
+    {
+      "name": "inspect route and export plan produce ANAV1:",
+      "status": "passed",
+      "export_bytes": 4761,
+      "alerts": []
+    },
+    {
+      "name": "reference window state query works and reports the window closed",
+      "status": "passed",
+      "observed": "Last observed window: closed; keep on top: off. Hide turns keep-on-top off."
+    },
+    {
+      "name": "no CSP violations, uncaught page errors or PROVIDER_UNAVAILABLE alerts were observed",
+      "status": "passed",
+      "csp_violations": 0,
+      "page_errors": 0,
+      "non_native_alerts": 0,
+      "console_errors_recorded": 3
+    },
+    {
+      "name": "ordinary application close flushes instrumented profiles",
+      "status": "passed",
+      "pid": 9688,
+      "exit_code": 0,
+      "normal_exit": true,
+      "force_termination": false
+    }
+  ]
+}

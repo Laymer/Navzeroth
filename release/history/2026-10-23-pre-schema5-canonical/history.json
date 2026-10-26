@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "source_commit": "9cc774e4f2656f26d544071d6bd174367ccca16a",
+  "scope": "Exact pre-schema5 canonical and functional evidence; historical statuses and measurements remain unchanged; no new acceptance pass",
+  "files": [
+    {
+      "path": "release/history/2026-10-23-pre-schema5-canonical/coverage-inventory.json",
+      "bytes": 27957511,
+      "sha256": "f7030627acbc61fbbec32deeacc9bfc4dc1f8adc8fb6a183771559c656ce9eac",
+      "original_path": "release/v1/coverage-inventory.json",
+      "git_blob": "da3982f43f369d850b376e2fccecbeadb36b8b16"
+    },
+    {
+      "path": "release/history/2026-10-23-pre-schema5-canonical/acceptance-evidence.json",
+      "bytes": 27970546,
+      "sha256": "c64aa44a8bfa42afee06444a778a0c7dd1823579aa2fe255aaf44ba0704a8c9d",
+      "original_path": "release/v1/acceptance-evidence.json",
+      "git_blob": "2dc383db815cd832145bb58b18bad1bc24e5792d"
+    },
+    {
+      "path": "release/history/2026-10-23-pre-schema5-canonical/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "f3610610404b9b369bd3b402bc87a5907d497ec94e632eca8d9f9a8e17694764",
+      "original_path": "release/v1/functional-scenarios.json",
+      "git_blob": "69d38c7f237e13a4ed51672a99287c04cde03ce8"
+    },
+    {
+      "path": "release/history/2026-10-23-pre-schema5-canonical/functional-linux-measurement.json",
+      "bytes": 892,
+      "sha256": "bd3d8f2185ae17ed9d73152759cc4afe67b546d9682a3541bd00e94346fc96f4",
+      "original_path": "release/v1/functional-linux-measurement.json",
+      "git_blob": "5da4f83a6450e22e6968195b96fd73e125a696c6"
+    },
+    {
+      "path": "release/history/2026-10-23-pre-schema5-canonical/functional-scenarios-linux-measurements.json",
+      "bytes": 2281,
+      "sha256": "3625e9b8c31db4fb8a99cc99d826b5b5bb6262f220d96afdf8b04ef8c6f66e9a",
+      "original_path": "release/v1/functional-scenarios-linux-measurements.json",
+      "git_blob": "f4682484ae53ee2685ea2bb942f2492e32d9bea0"
+    },
+    {
+      "path": "release/history/2026-10-23-pre-schema5-canonical/functional-scenarios-materials-validation.json",
+      "bytes": 741,
+      "sha256": "72727d490b5c126168fc5e00ce7b04e09be312237553be720a090c9367527db2",
+      "original_path": "release/v1/functional-scenarios-materials-validation.json",
+      "git_blob": "6fda886beb453e22b7273edfe43e724d6f74397a"
+    }
+  ]
+}

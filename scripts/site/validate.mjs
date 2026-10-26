@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { validateRelease, validateCaptureCaption } from './release-metadata.mjs';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
@@ -7,7 +8,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { freshenSnapshotText } from '../windows/native-smoke-lib.mjs';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const root = path.join(repo, 'site');
+const root = path.join(repo, 'docs/site');
 const pages = ['index.html', 'features.html', 'installation.html', 'readiness.html', 'code-signing.html'];
 const draft = process.argv.includes('--draft');
 const require = createRequire(path.join(repo, 'apps/desktop/package.json'));
@@ -15,26 +16,20 @@ const { chromium } = require('@playwright/test');
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 let release;
 let capture;
+let captureRelease;
 const displayedCaptures = new Set();
 if (!draft) {
-  release = JSON.parse(fs.readFileSync(path.join(root, 'release.json')));
-  assert.equal(release.tag, 'v1.0.0-rc.1');
-  assert.equal(release.public_verified, true);
-  assert.match(release.source_commit, /^[a-f0-9]{40}$/);
-  assert.deepEqual(release.assets.map(a => a.name).sort(), ['AzerothNavigator-1.0.0-rc.1-x64-setup.exe', 'AzerothNavigator-addon-1.0.0-rc.1.zip', 'CANDIDATE_NOTES.md', 'SHA256SUMS.txt', 'SOURCE_COMMIT.txt'].sort());
-  assert.match(release.public_verification_run_id, /^\d+$/);
-  for (const asset of release.assets) {
-    assert.match(asset.sha256, /^[a-f0-9]{64}$/);
-    assert.equal(asset.url, `https://github.com/Laymer/Navzeroth/releases/download/${release.tag}/${asset.name}`);
-  }
+  const policy = JSON.parse(fs.readFileSync(path.join(repo, 'release/v1/artifact-policy.json')));
+  release = validateRelease(JSON.parse(fs.readFileSync(path.join(root, 'release.json'))), policy);
+  captureRelease = validateRelease(JSON.parse(fs.readFileSync(path.join(root, 'capture-release.json'))), policy);
   capture = JSON.parse(fs.readFileSync(path.join(root, 'assets/screenshots/provenance.json')));
-  assert.equal(capture.release_tag, release.tag);
-  assert.equal(capture.source_commit, release.source_commit);
-  assert.equal(capture.installer_sha256, release.assets.find(a => a.name.endsWith('-setup.exe')).sha256);
+  assert.equal(capture.release_tag, captureRelease.tag);
+  assert.equal(capture.source_commit, captureRelease.source_commit);
+  assert.equal(capture.installer_sha256, captureRelease.assets.find(a => a.name.endsWith('-setup.exe')).sha256);
   assert.equal(capture.synthetic, true);
   assert.match(capture.workflow_run_id, /^\d+$/);
   assert.match(capture.application_sha256, /^[a-f0-9]{64}$/);
-  assert.equal(capture.application_sha256, release.application_sha256);
+  assert.equal(capture.application_sha256, captureRelease.application_sha256);
   assert.equal(capture.fixture_path, 'fixtures/transport/anav1-character-snapshot.txt');
   assert.equal(capture.fixture_sha256, hash(path.join(repo, 'fixtures/transport/anav1-character-snapshot.txt')));
   assert.equal(capture.imported_snapshot_file, 'imported-synthetic-snapshot.txt');
@@ -91,7 +86,8 @@ try {
           const proof = capture.screenshots.find(s => src === `assets/screenshots/${s.file}`);
           assert.ok(proof, `Displayed capture lacks provenance: ${src}`);
           assert.ok(await img.isVisible());
-          assert.match(await figure.locator('figcaption').innerText(), /synthetic/i);
+          const caption = await figure.locator('figcaption').innerText();
+          validateCaptureCaption(caption, release, captureRelease);
           assert.ok((await img.getAttribute('alt'))?.trim(), 'Screenshot needs a useful alternative');
           displayedCaptures.add(proof.file);
         }
@@ -131,7 +127,7 @@ try {
           assert.equal(tag, 'A', 'Remote runtime asset');
           assert.equal(url.protocol, 'https:');
           if (!draft && url.pathname.includes('/releases/')) {
-            assert.ok(release.assets.some(a => a.url === url.href) || url.href === `https://github.com/Laymer/Navzeroth/releases/tag/${release.tag}`, `Unverified release link: ${value}`);
+            assert.ok([release, captureRelease].some(identity => identity.assets.some(a => a.url === url.href) || url.href === `https://github.com/Laymer/Navzeroth/releases/tag/${identity.tag}`), `Unverified release link: ${value}`);
           }
         }
       }

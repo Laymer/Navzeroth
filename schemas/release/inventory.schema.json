@@ -1,0 +1,296 @@
+{
+  "$defs": {
+    "AssetPath": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?(?:/[a-z0-9_-](?:[a-z0-9._-]*[a-z0-9_-])?)*$",
+      "type": "string"
+    },
+    "Boundary": {
+      "additionalProperties": false,
+      "description": "Schema 2: content deliberately outside the declared slice. This is neither\n`unknown` (unassessed) nor `unsupported`; release notes list every boundary.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "Completeness": {
+      "enum": [
+        "unknown",
+        "complete"
+      ],
+      "type": "string"
+    },
+    "DomainInventory": {
+      "additionalProperties": false,
+      "properties": {
+        "completeness": {
+          "$ref": "#/$defs/Completeness"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "enumeration_evidence": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": "array"
+        },
+        "out_of_scope": {
+          "items": {
+            "$ref": "#/$defs/Boundary"
+          },
+          "type": "array"
+        },
+        "units": {
+          "items": {
+            "$ref": "#/$defs/Unit"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "domain",
+        "completeness",
+        "enumeration_evidence",
+        "units"
+      ],
+      "type": "object"
+    },
+    "FileRef": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "$ref": "#/$defs/AssetPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "Sha256Hex": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Slice": {
+      "additionalProperties": false,
+      "description": "Schema 2: the declared release slice (ADR 0006 section 2).",
+      "properties": {
+        "classes": {
+          "description": "None until the launch class list is known.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "dungeons": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "level_max": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "level_min": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "party_sizes": {
+          "items": {
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "races": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "zones": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "races",
+        "zones",
+        "dungeons",
+        "level_min",
+        "level_max",
+        "party_sizes"
+      ],
+      "type": "object"
+    },
+    "SourceRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision"
+      ],
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "interface": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "edition",
+        "version",
+        "build",
+        "interface"
+      ],
+      "type": "object"
+    },
+    "Unit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "required_record_ids": {
+          "description": "None is an unknown inventory; [] is an explicitly enumerated empty unit.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "scope": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scope"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "domains": {
+      "items": {
+        "$ref": "#/$defs/DomainInventory"
+      },
+      "type": "array"
+    },
+    "inventory_id": {
+      "type": "string"
+    },
+    "schema_version": {
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "slice": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Slice"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceRequirement"
+      },
+      "type": "array"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Target"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Always present; null (schema 2 only) means the target is pending."
+    }
+  },
+  "required": [
+    "schema_version",
+    "inventory_id",
+    "domains",
+    "sources"
+  ],
+  "title": "Inventory",
+  "type": "object"
+}

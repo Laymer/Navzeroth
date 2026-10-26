@@ -496,3 +496,57 @@ fn extended_dungeon_associations_persist_reopen_and_rollback_without_truncation(
         old.key()
     );
 }
+
+#[test]
+fn owned_load_preserves_pre_allocation_digest_bytes_and_provenance_golden() {
+    use azeroth_core::sources::{ConflictKind, RecordKey, SourceConflict};
+    use sha2::{Digest, Sha256};
+    // Fixed results obtained by staging this fixture through the independently
+    // retained pre-change release storage binary, not the new canonical helpers.
+    let db = TempDb::new("allocation-historical-golden");
+    let mut sources = v1().sources;
+    let mut other = serde_json::to_value(&sources[0]).unwrap();
+    other["id"] = json!("a-source-0");
+    sources.push(serde_json::from_value(other).unwrap()); // Deliberately unsorted; staging must not mutate caller.
+    let content = decode(include_bytes!(
+        "../../../fixtures/contracts/v2/reference-content.json"
+    ))
+    .unwrap();
+    let conflict = SourceConflict {
+        key: RecordKey::Item(content.reference.payload.items[0].key.clone()),
+        kind: ConflictKind::CrossEditionRelabel,
+        preferred: content.reference.payload.evidence[0].id.clone(),
+        others: vec![],
+    };
+    let revision = ContentRevisionV2 {
+        content,
+        sources,
+        conflicts: vec![conflict.clone()],
+    };
+    let mut store = SqliteStore::open(&db.path).unwrap();
+    store.stage_content_v2_revision(&revision).unwrap();
+    assert_eq!(revision.sources[0].id.as_str(), "demo-source-1");
+    let (document, digest, coverage): (String,String,String) = raw(&db.path).query_row(
+        "SELECT document,content_sha256,coverage_document FROM dataset_revisions JOIN dataset_manifests ON revision_id=id",
+        [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?))).unwrap();
+    assert_eq!(
+        digest,
+        "10d068a2aea2fdad6c31a49e62cf1edd2928fd717e1d572f52b5f760b92db95e"
+    );
+    assert_eq!(document.len(), 13677);
+    assert_eq!(
+        format!("{:x}", Sha256::digest(document.as_bytes())),
+        "223f8539f445e4edb759e87dcd4a17f0e3cf6a26f1b59f0e0fbb7ff29451acf0"
+    );
+    assert_eq!(
+        format!("{:x}", Sha256::digest(coverage.as_bytes())),
+        "8181ce0eddfc80940a44598c13ed713dee1ec7ccb0dc1835065607d52a43647f"
+    );
+    store.activate_content_revision(&revision.key()).unwrap();
+    drop(store);
+    let store = SqliteStore::open(&db.path).unwrap();
+    let loaded = store.catalog_revision(&revision.key()).unwrap().unwrap();
+    assert_eq!(serde_json::to_string(&loaded).unwrap(), document);
+    assert_eq!(loaded.sources()[0].id.as_str(), "a-source-0");
+    assert_eq!(loaded.conflicts(), &[conflict]);
+}

@@ -8,7 +8,7 @@ if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hoste
 . (Join-Path $PSScriptRoot 'Hosted-Acceptance.ps1')
 $Root = [IO.Path]::GetFullPath($Root)
 Assert-StablePhaseReadiness $Root $Version 'prebuild'
-$base = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+$base = ConvertFrom-HostedJsonText (Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json'))
 $source = & git -C $Root rev-parse HEAD
 if ($LASTEXITCODE -ne 0) { throw 'Cannot identify hosted source commit.' }
 $setup = Get-NativeSmokeSetup $InstallerDirectory
@@ -25,7 +25,7 @@ foreach ($id in $script:HostedAcceptanceIds) {
     $destination = Join-Path (Join-Path $output 'evidence') ($id.ToLowerInvariant() + '.json')
     [IO.File]::WriteAllText($destination, $text, (New-Object Text.UTF8Encoding($false)))
     $bytes = (Get-Item -LiteralPath $destination).Length
-    $cases[$id] = @{ Result = ($text | ConvertFrom-Json); Artifact = [ordered]@{path=$destination.Substring($Root.Length+1).Replace('\','/');bytes=$bytes;sha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()} }
+    $cases[$id] = @{ Result = (ConvertFrom-HostedJsonText $text); Artifact = [ordered]@{path=(ConvertTo-HostedArtifactPath ($destination.Substring($Root.Length+1)));bytes=$bytes;sha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()} }
 }
 $evidence = New-HostedAcceptanceEvidence $base $Version $source $base.production_sha256 $hash $cases
 [IO.File]::WriteAllText((Join-Path $output 'acceptance-evidence.json'), (ConvertTo-BoundedReleaseContractText $evidence), (New-Object Text.UTF8Encoding($false)))

@@ -1,0 +1,97 @@
+{
+  "actual_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
+  "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "files": [
+    {
+      "bytes": 2125,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/audit.json",
+      "sha256": "daef3f5560d6b6c8d147d355326df512bdb04548f51ca1c9ed5bbd8a19e5a7c6"
+    },
+    {
+      "bytes": 44318,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/gate-39497088020.log",
+      "sha256": "c1e0091186fbcaddcfb6e38f69a34b34013d3249cdb7de4eebbad1d5a5d5e348"
+    },
+    {
+      "bytes": 13217,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/jobs.json",
+      "sha256": "ce360679f072991db1eb5496927c15c2e95c942d4605470a01a8513f6044ecfa"
+    },
+    {
+      "bytes": 12170,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/run.json",
+      "sha256": "7e3cb65d6931cf1020bef8e6a961a7f529657708e65cc4856f4a93ca97f0b57a"
+    },
+    {
+      "bytes": 315,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/linux/entrypoint-summary.json",
+      "sha256": "40b4a39c6c6b7a906c1b692d7f5f8262544ae1b472650d92cb1ea9a5908d9d82"
+    },
+    {
+      "bytes": 202222,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/linux/inventory.json",
+      "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+    },
+    {
+      "bytes": 41617,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/linux/rust-receipt.json",
+      "sha256": "8a1dc92b669d747c107bfd546921d2d06742f8c85bfae060f97e1f4271bfca0c"
+    },
+    {
+      "bytes": 34411,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/configuration-receipt.json",
+      "sha256": "37309c686c4f50b15d9b2389b0c77845faa0d69ec8ecf3665997ca55782f2baa"
+    },
+    {
+      "bytes": 202222,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/inventory.json",
+      "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+    },
+    {
+      "bytes": 34396,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/typescript-receipt.json",
+      "sha256": "4bcf7f9ed1783b8968d0db8e4916e0afa77b3f5fb75cffceb92efca4f4e0c7ef"
+    },
+    {
+      "bytes": 29559,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/v8/coverage-summary.json",
+      "sha256": "3f8a7ade54694042b5b1c10e02c9495965ff11de9109213bf3b726f5702da265"
+    },
+    {
+      "bytes": 1149,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/windows/commands.json",
+      "sha256": "52261ad07916ee1f64e75abf440dd4178d7167a7cc04eed4227f88ea2663f3da"
+    },
+    {
+      "bytes": 202222,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/windows/inventory.json",
+      "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+    },
+    {
+      "bytes": 122386,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/small/windows/logs/workspace-tests.log",
+      "sha256": "fe62309ccede57dc83b76ecd6f88529d8642949a9e04319b5f21184b075ea89f"
+    },
+    {
+      "bytes": 12240,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/successor-run.json",
+      "sha256": "a3af6e1a48cf6e05ba3210c65600bc8a6c0b9eacc4dd5a95191bd32a1cd69959"
+    },
+    {
+      "bytes": 72883,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/windows-39497088020.log",
+      "sha256": "6f53c786b7c24b89134a9fec3ba89c7200fac582f164a5eccb9a189238e07813"
+    },
+    {
+      "bytes": 2445,
+      "path": "release/history/2026-10-20-v14-coverage-cancelled/FILES.json",
+      "sha256": "a4dc944583b81a0362eae5e18447790300de1ae1cbc88ab05aef6c3d3b98aafc"
+    }
+  ],
+  "independent_retained_file_hash_review": "world_review",
+  "kind": "historical_cancelled_coverage_not_acceptance",
+  "performed_by": "GitHub Actions",
+  "retained_and_bounded_lcov_streamed_by": "tooling_review",
+  "schema_version": 1,
+  "scope": "Linux and TypeScript collectors succeeded; Windows cancelled without receipt. Aggregate gate failed prerequisite RUST_RESULT; no combined verdict or90percent pass. Tooling alone range-streamed selected LinuxLCOV; reviewer verifies retained summary/hash, not rawLCOV stream. No profiles downloaded."
+}

@@ -1,0 +1,123 @@
+{
+  "action_log": {
+    "bytes": 104405,
+    "sha256": "476810311f396f0c81b8aafe76080e9fb2276cc5b9fdd55d76b645ad40b61f86"
+  },
+  "artifact_id": 12253535907,
+  "artifact_name": "world-data-logs-39394989774",
+  "draft_head": "c23dd2b5e1e8566df519ac58f921395c2f2c768e",
+  "draft_pr": 243,
+  "excluded_nonmaterial": [
+    "content/world/1.60.1.70450/release-readiness.json",
+    "pipeline/cache logs outside published paths"
+  ],
+  "logs": [
+    {
+      "bytes": 328,
+      "path": "gen_fishing.log",
+      "sha256": "f5be39e9ba19c7091956c358b43e6b0d70c6c22efe355e5aa7b0eae4bc0b774f"
+    },
+    {
+      "bytes": 1169,
+      "path": "gen_world_cmangos.log",
+      "sha256": "21e819149501d571873b6bb8cbcb1fa763547b58c1c91e07b881f48e31600c2a"
+    },
+    {
+      "bytes": 777,
+      "path": "gen_world_db2.log",
+      "sha256": "740ce355e907202178edebda34e953fb900f9015cd19b656a3301ef9387ad14b"
+    },
+    {
+      "bytes": 338,
+      "path": "offline-replay/gen_fishing.log",
+      "sha256": "6a4732abeb1c15647cdc33c660777324254077856f757c5eeb6c7460bc7e6f0b"
+    },
+    {
+      "bytes": 1179,
+      "path": "offline-replay/gen_world_cmangos.log",
+      "sha256": "5c8344f38b13bb91ff742dd1c39859840c3b7d2b30f8c89423b19f83e59319d3"
+    },
+    {
+      "bytes": 787,
+      "path": "offline-replay/gen_world_db2.log",
+      "sha256": "b2ba3dd009f954eb2ea6d5b4143039f06b4d24238dd2b1303ea1b7b05dc364ef"
+    },
+    {
+      "bytes": 2902,
+      "path": "offline-replay/pipeline-content.log",
+      "sha256": "4379cc05a75dac3426d4ee0f00813b08a56d0cfc9b763e18c2af983c4140a7b7"
+    },
+    {
+      "bytes": 6014,
+      "path": "offline-replay/pipeline-gate.log",
+      "sha256": "f36c4af02494637444e3d860651763652420d92d0ff7d5b95bc55aa808737853"
+    },
+    {
+      "bytes": 1092,
+      "path": "offline-replay/pipeline-generate.log",
+      "sha256": "d41dabff48e1cc9be0383bbb961a9a6f6e1a7f6282d92636e734b85af3fe805f"
+    },
+    {
+      "bytes": 6635,
+      "path": "offline-replay/pipeline-register.log",
+      "sha256": "219e90106104fd3cc55d239f9ff63da24dab358c034a478491bc02cb32fa034a"
+    },
+    {
+      "bytes": 8601,
+      "path": "offline-replay/pipeline-verify.log",
+      "sha256": "ac70e199abb0df09790ca70874a50c51c0b5a2803651b5a9035b58723bcb9754"
+    },
+    {
+      "bytes": 2902,
+      "path": "pipeline-content.log",
+      "sha256": "4379cc05a75dac3426d4ee0f00813b08a56d0cfc9b763e18c2af983c4140a7b7"
+    },
+    {
+      "bytes": 6014,
+      "path": "pipeline-gate.log",
+      "sha256": "f36c4af02494637444e3d860651763652420d92d0ff7d5b95bc55aa808737853"
+    },
+    {
+      "bytes": 1068,
+      "path": "pipeline-generate.log",
+      "sha256": "41bd8b605f83b712b7746f9220b3603d179e0b444f6dbf00b40852c79d76a5c7"
+    },
+    {
+      "bytes": 3115,
+      "path": "pipeline-publish.log",
+      "sha256": "c8653461d7360d8f76248f3e6bace65d6515d4d657154d75f9e6222af96a0611"
+    },
+    {
+      "bytes": 6635,
+      "path": "pipeline-register.log",
+      "sha256": "219e90106104fd3cc55d239f9ff63da24dab358c034a478491bc02cb32fa034a"
+    },
+    {
+      "bytes": 13916,
+      "path": "pipeline-verify.log",
+      "sha256": "6a0153201493fac7c8aa92fa6de6d92454ccfd502750294edfd8dbc33a0ee585"
+    },
+    {
+      "bytes": 88532,
+      "path": "weekly-reproducibility.json",
+      "sha256": "ee1e1c4ebd1516ed2c441d350cbc210260540201ce0b8ff575eb75427420fe84"
+    }
+  ],
+  "network_passes": 1,
+  "offline_passes": 1,
+  "published_material_bytes": 1624318292,
+  "published_material_paths": 280,
+  "reproducibility_verified": true,
+  "required_check_results": "pending_at_recording",
+  "required_check_runs": {
+    "ci": 39398609139,
+    "coverage": 39398612016,
+    "package": 39398618648,
+    "source": 39398615432
+  },
+  "run_id": 39394989774,
+  "schema_version": 1,
+  "source_commit": "13e4ad3df4747459a50ffa8ab2b4c86c84d6d81a",
+  "stable_acceptance": false,
+  "unpublished_build_products": 129
+}

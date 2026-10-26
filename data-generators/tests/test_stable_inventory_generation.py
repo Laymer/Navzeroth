@@ -44,6 +44,18 @@ class StableInventoryGeneration(unittest.TestCase):
             self.assertEqual(inventory['domains'][0]['units'][0]['required_record_ids'],[])
             self.assertIsNone(inventory['domains'][0]['units'][1]['required_record_ids'])
             self.assertEqual(len(evidence['checks']),9);self.assertTrue(all(c['status']=='unverified' for c in evidence['checks']))
+            self.assertEqual(inventory['schema_version'],5)
+            self.assertEqual(evidence['schema_version'],5)
+            expected={'HOSTED-'+name:'hosted_windows' for name in ('INSTALL','FIRST-START','UPGRADE-RC1','DOWNGRADE-REFUSAL','PERSISTENCE-RECOVERY','RESOURCES','OFFLINE','PERFORMANCE')}
+            expected['DRAFT-INSTALLER-SMOKE']='automated_draft_windows'
+            self.assertEqual({row['id']:row['method'] for row in evidence['checks']},expected)
+            self.assertNotIn('OWNER-INSTALLER-SMOKE',expected)
+            self.assertTrue(all(row['operator'] is None and row['recorded_at'] is None and row['environment'] is None and row['artifacts']==[] and 'installer_sha256' not in row for row in evidence['checks']))
+            self.assertNotIn('draft_installer_smoke',evidence)
+            self.assertNotIn('candidate_installer_sha256',evidence)
+            self.assertIsNone(evidence['tested_source_commit'])
+            self.assertIsNone(evidence['production_sha256'])
+            self.assertEqual(json.loads((root/'release/history/2026-10-19-pre-stable-v3/acceptance-evidence.json').read_bytes()),{'optional_deferrals':[]})
             self.assertTrue(all(s['target_validation']=='unverified' for s in evidence['sources']))
             self.assertTrue(all(c['status']=='unverified' for c in evidence['coverage'] if 'functional' in c['unit_id']))
             self.assertEqual(evidence['inventory_sha256'],hashlib.sha256(first['release/v1/coverage-inventory.json']).hexdigest())

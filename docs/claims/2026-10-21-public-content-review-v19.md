@@ -1,0 +1,3 @@
+# Independent public content review V19
+
+Owner world_review, sole writer, isolated worktree. Baseline 56f5fa53bb2c546a7b3efb4d02bb5e5727c62531. Scope: additive review, claim and focused handoff only; no product, canonical, key, receipt or push changes. Tested source 619e498c4aab55d653a1b0c5767bc81a9c99b321 (PR 269 reviewed head; merge d9658560), production 2aefc67b79569a01a461315648b64b860599cabb2f67de1b52911025e3ef47e6. Preserve V1-V18, the actual V17 hosted results (six case passes, HOSTED-UPGRADE-RC1 failed, HOSTED-DOWNGRADE-REFUSAL not run, owner unverified) and the unverified nine canonical observation rows. No signature with the rotated keys exists yet.

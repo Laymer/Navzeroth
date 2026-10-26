@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "ee26d119b8fc63454771e963cfd28ae6cb1b6aab",
+  "actual_pr_merge_checkout": "e3fdd58a9fe969f972d2796c47f4b114e5b0d661",
+  "production_sha256": "f7515b8cf1111828f7fb76c29f77c94439f6f3e372144261f982edc7c7d72b25",
+  "package_run_id": 39441834744,
+  "package_conclusion": "failure",
+  "stable_hosted_suite": "skipped_all_eight_cases",
+  "owner_smoke": "unverified",
+  "publication_allowed": false,
+  "kind": "historical_signed_content_before_native_upgrade_driver_repair",
+  "signed_source_commit": "80ae4f2a2f37cb8c9809673ef0b473efbe490b21",
+  "tested_source_commit": "7379efdbbde943905944955bfdfd736c9d984a1c",
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v11/bundled-content-manifest.json",
+      "bytes": 17185,
+      "sha256": "7ac5512700966742baa6ceec4335d36017dcb680409f999ddd4ec834a829bb87"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v11/bundled-content-build-identity.json",
+      "bytes": 527,
+      "sha256": "15f00d7b332378ec45b3c604093cc581f9409482197752299460e9b84ba5e614"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v11/bundled-content-receipt.json",
+      "bytes": 1073,
+      "sha256": "632c9cd9e390adb51da12247e95b1b30856a127d22683d90f2c7ed46694b3304"
+    }
+  },
+  "review": {
+    "path": "release/v1/public-content-review-v11.json",
+    "bytes": 57091,
+    "sha256": "0b9913ec50ffe9745aac2a3fb42d415e5c96199bc95c7052549221a2f19b0628"
+  },
+  "ci_run_id": 39441834860,
+  "coverage_run_id": 39441834710,
+  "source_run_id": 39441834737,
+  "limitation": "CI, coverage and full source parity passed; package failed actual native upgrade gate. No stable hosted acceptance cases ran; all nine canonical rows remain unverified."
+}

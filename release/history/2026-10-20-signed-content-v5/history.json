@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "kind": "historical_signed_content_before_native_windows_release_repairs",
+  "signed_source_commit": "130bdcdf6208ebd1162f2a8966d7245e1bd3ffb0",
+  "documented_candidate": "aeb7fd8f9fbafbc5d597889d1272f757d84f9bf8",
+  "tested_source_commit": "d6ecb213d18ca3a31f1564b732e3b22d6af5259a",
+  "production_sha256": "7db0e201e270edc117ae08aab24480cb6011292002737454bfcdb31d06a0021d",
+  "review": {
+    "path": "release/v1/public-content-review-v5.json",
+    "bytes": 28044,
+    "sha256": "1076f33c35dbfcdf0ae0c5dd7ff68011fb877b2d54b2934331ca22f714017f9a"
+  },
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v5/bundled-content-manifest.json",
+      "bytes": 17183,
+      "sha256": "5658ccd101dd570154aa5dcee3b51261c7cab3b299221e4d412f6e84732f91b8"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v5/bundled-content-build-identity.json",
+      "bytes": 526,
+      "sha256": "8b38f63104e4f30eb478c764f6f791b4f5d587e597109ad16cb7a1a35d7b4554"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v5/bundled-content-receipt.json",
+      "bytes": 1072,
+      "sha256": "1cdc6091c070dc914c9fc9734083f555b97aa1850f5fc04a65a58a261c2e0d28"
+    }
+  },
+  "actual_verification": {
+    "signatures": "pass",
+    "assembled_resources": 84,
+    "assembled_packs": 2,
+    "source_prebuild": "pass",
+    "evidence_files": 89,
+    "pending_observations": 9,
+    "publication_allowed": false
+  },
+  "subsequent_candidate_coverage": {
+    "run_id": 39408816589,
+    "source_commit": "aeb7fd8f9fbafbc5d597889d1272f757d84f9bf8",
+    "windows": "failure",
+    "cause": "Same-size replacement regression exposed timestamp-only Windows pack identity collision before native collection",
+    "aggregate": "not passed"
+  },
+  "limitation": "Historical source prebuild/crypto only; no owner or current-candidate Windows acceptance."
+}

@@ -1,0 +1,28 @@
+{
+  "runtime_commit": "2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e",
+  "executor": "desktop_review",
+  "root_scope": "Independent source/executable/raw/accounting hash verification; no repeated execution.",
+  "scope": "Shared Linux microharness; baseline storage linked, exact public report/compacthash expressions, NOT app binary or Windows acceptance. Old engineering database unchanged content; no relabelled source. No memoization productchange.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-content-inspection-measurement/dependency-identities.json",
+      "bytes": 21252,
+      "sha256": "cbea4f0c9a3d4b0b2696fe6145aacebb869627ddc64ec5202625673e0149a1d6"
+    },
+    {
+      "path": "release/history/2026-10-21-content-inspection-measurement/harness.rs.txt",
+      "bytes": 1863,
+      "sha256": "7f44751cf44634ca86717fd65833d996377b0c04ffed646166e9ef9a2b91a024"
+    },
+    {
+      "path": "release/history/2026-10-21-content-inspection-measurement/measurement.json",
+      "bytes": 75,
+      "sha256": "15cd29052b9dde0013f5b45808e8a6525fe8fcd1df7e92c3f12fafc552c5d153"
+    },
+    {
+      "path": "release/history/2026-10-21-content-inspection-measurement/results.jsonl",
+      "bytes": 915,
+      "sha256": "ab574b4612d220597eb4c84526e00637a5e389ea25da4d5181aa7c4383cb8e64"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "candidate": "5d62bfe7ec175ae0e4ba6ac3a36c6e841731f26f",
+  "actual_checkout": "5d62bfe7ec175ae0e4ba6ac3a36c6e841731f26f",
+  "scope": "Unsigned V18 identities, independently reproduced byte-for-byte, preserved before the signer rotation (PR 269) superseded them. Never signed; no receipt exists. No acceptance promotion.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-unsigned-content-v18/bundled-content-build-identity.json",
+      "bytes": 528,
+      "sha256": "6347e7f8bb77aac8a48e0148865f097a1e4cb4554b70d0d0c6052e7d0e9690af"
+    },
+    {
+      "path": "release/history/2026-10-21-unsigned-content-v18/bundled-content-manifest.json",
+      "bytes": 17187,
+      "sha256": "c077ba7208df2fc83e1ea2ccc2262cd5d49ed680dd4a3473cfab63a876088a3e"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "mode": "fresh",
+  "workload": "Synthetic engineering workload: source-backed quest stage and declared travel edge; manual progress and candidate-location/completion/utility estimates; no live-client verification",
+  "started_at": "2026-10-20T11:59:27.415Z",
+  "version": "1.0.0",
+  "bundle_target": {
+    "edition": "wow_forever",
+    "version": "1.60.1",
+    "build": "70450",
+    "interface": 16001
+  },
+  "passed": false,
+  "pid": 9832,
+  "database_state": "ready",
+  "startup_measurements": {
+    "load_ms": 223632,
+    "activation_ms": 0
+  },
+  "error": "Actual installed world catalog is empty",
+  "elapsed_ms": 642561,
+  "finished_at": "2026-10-20T12:10:09.708Z"
+}

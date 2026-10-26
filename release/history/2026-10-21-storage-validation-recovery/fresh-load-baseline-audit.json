@@ -1,0 +1,30 @@
+{
+  "runtime_commit": "2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e",
+  "library_build_log": "/tmp/navzeroth-decoded-load-baseline-build.log",
+  "files": [
+    {
+      "path": "/tmp/navzeroth-decoded-load-baseline",
+      "bytes": 13440152,
+      "sha256": "ac1e9ac469129c010544f1f4bdba1e88679530307f133f086a479839058b3709"
+    },
+    {
+      "path": "/tmp/libnavzeroth_decoded_validation_baseline_storage.rlib",
+      "bytes": 19569476,
+      "sha256": "705f860910e1bc337426dfd5480c2ba2852cca905d6e3866321f512b575bc7ee"
+    },
+    {
+      "path": "/tmp/navzeroth-decoded-load-diagnostic.rs",
+      "bytes": 888,
+      "sha256": "5706525e1aa5131a33bd3fe4b5b224f20d9ad6f33d3c56e9d9dc9009eb1de3ca"
+    },
+    {
+      "path": "/tmp/navzeroth-fullpack-recovery-union-diagnostic-data/backup.sqlite3",
+      "bytes": 463335424,
+      "sha256": "f4efd8953593da041cf66e69bee7a57e9d46f3573df840f4f19769fd42837823"
+    }
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 10.189176768000038,
+  "maximum_resident_set_kib": 5115384,
+  "scope": "fresh SqliteStore uncached composed fullpack catalog load; copied prior diagnostic DB/V13 content identity; shared Linux only; no acceptance claim"
+}

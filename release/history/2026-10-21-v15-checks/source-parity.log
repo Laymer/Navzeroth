@@ -1,0 +1,207 @@
+﻿2026-10-20T21:29:19.8308060Z Current runner version: '2.337.0'
+2026-10-20T21:29:19.8333438Z ##[group]Runner Image Provisioner
+2026-10-20T21:29:19.8334315Z Hosted Compute Agent
+2026-10-20T21:29:19.8335021Z Version: 20261015.610
+2026-10-20T21:29:19.8335726Z Commit: 267fdb4e8bbec4ab5ea31367f3a00d5c480c7656
+2026-10-20T21:29:19.8336972Z Build Date: 2026-10-14T17:06:54Z
+2026-10-20T21:29:19.8337732Z Worker ID: {d0f38fea-19cb-4016-8781-10f058661ba7}
+2026-10-20T21:29:19.8338516Z Region: westus
+2026-10-20T21:29:19.8339140Z Cloud: Azure
+2026-10-20T21:29:19.8339758Z ##[endgroup]
+2026-10-20T21:29:19.8341386Z ##[group]Operating System
+2026-10-20T21:29:19.8342069Z Ubuntu
+2026-10-20T21:29:19.8342614Z 24.04.5
+2026-10-20T21:29:19.8343197Z LTS
+2026-10-20T21:29:19.8343773Z ##[endgroup]
+2026-10-20T21:29:19.8344332Z ##[group]Runner Image
+2026-10-20T21:29:19.8345020Z Image: ubuntu-24.04
+2026-10-20T21:29:19.8345614Z Version: 20261018.339.1
+2026-10-20T21:29:19.8347224Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261018.339/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-20T21:29:19.8348830Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261018.339
+2026-10-20T21:29:19.8349939Z ##[endgroup]
+2026-10-20T21:29:19.8351070Z ##[group]GITHUB_TOKEN Permissions
+2026-10-20T21:29:19.8353049Z Contents: read
+2026-10-20T21:29:19.8353678Z Metadata: read
+2026-10-20T21:29:19.8354384Z ##[endgroup]
+2026-10-20T21:29:19.8356700Z Secret source: Actions
+2026-10-20T21:29:19.8357755Z Cache mode: write
+2026-10-20T21:29:19.8358550Z Prepare workflow directory
+2026-10-20T21:29:19.8700761Z Prepare all required actions
+2026-10-20T21:29:19.8751552Z Getting action download info
+2026-10-20T21:29:20.2642085Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-20T21:29:20.3749885Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+2026-10-20T21:29:20.8261152Z Complete job name: Source catalog platform parity
+2026-10-20T21:29:20.9066823Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-20T21:29:20.9067968Z with:
+2026-10-20T21:29:20.9068400Z   lfs: false
+2026-10-20T21:29:20.9068862Z   repository: Laymer/Navzeroth
+2026-10-20T21:29:20.9072913Z   token: ***
+2026-10-20T21:29:20.9073363Z   ssh-strict: true
+2026-10-20T21:29:20.9073818Z   ssh-user: git
+2026-10-20T21:29:20.9074277Z   persist-credentials: true
+2026-10-20T21:29:20.9074779Z   clean: true
+2026-10-20T21:29:20.9075249Z   sparse-checkout-cone-mode: true
+2026-10-20T21:29:20.9075786Z   fetch-depth: 1
+2026-10-20T21:29:20.9076426Z   fetch-tags: false
+2026-10-20T21:29:20.9076897Z   show-progress: true
+2026-10-20T21:29:20.9077373Z   submodules: false
+2026-10-20T21:29:20.9077839Z   set-safe-directory: true
+2026-10-20T21:29:20.9078363Z   allow-unsafe-pr-checkout: false
+2026-10-20T21:29:20.9079153Z ##[endgroup]
+2026-10-20T21:29:21.0143835Z Syncing repository: Laymer/Navzeroth
+2026-10-20T21:29:21.0146340Z ##[group]Getting Git version info
+2026-10-20T21:29:21.0147297Z Working directory is '/home/runner/work/Navzeroth/Navzeroth'
+2026-10-20T21:29:21.0148338Z [command]/usr/bin/git version
+2026-10-20T21:29:21.0246400Z git version 2.55.0
+2026-10-20T21:29:21.0271416Z ##[endgroup]
+2026-10-20T21:29:21.0288848Z Temporarily overriding HOME='/home/runner/work/_temp/e1a05752-78f9-457d-b1ea-324350782f2a' before making global git config changes
+2026-10-20T21:29:21.0291116Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:29:21.0296021Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+2026-10-20T21:29:21.0351729Z Deleting the contents of '/home/runner/work/Navzeroth/Navzeroth'
+2026-10-20T21:29:21.0360370Z ##[group]Determining repository object format
+2026-10-20T21:29:21.0361905Z ##[endgroup]
+2026-10-20T21:29:21.0363367Z ##[group]Initializing the repository
+2026-10-20T21:29:21.0366746Z [command]/usr/bin/git init /home/runner/work/Navzeroth/Navzeroth
+2026-10-20T21:29:21.0476292Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-20T21:29:21.0478112Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-20T21:29:21.0479693Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-20T21:29:21.0480919Z hint: call:
+2026-10-20T21:29:21.0481572Z hint:
+2026-10-20T21:29:21.0482406Z hint: 	git config --global init.defaultBranch <name>
+2026-10-20T21:29:21.0483454Z hint:
+2026-10-20T21:29:21.0484496Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-20T21:29:21.0486271Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-20T21:29:21.0487550Z hint:
+2026-10-20T21:29:21.0488227Z hint: 	git branch -m <name>
+2026-10-20T21:29:21.0489041Z hint:
+2026-10-20T21:29:21.0490134Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-20T21:29:21.0491848Z Initialized empty Git repository in /home/runner/work/Navzeroth/Navzeroth/.git/
+2026-10-20T21:29:21.0494578Z [command]/usr/bin/git remote add origin https://github.com/Laymer/Navzeroth
+2026-10-20T21:29:21.0592195Z ##[endgroup]
+2026-10-20T21:29:21.0593731Z ##[group]Disabling automatic garbage collection
+2026-10-20T21:29:21.0596007Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-20T21:29:21.0639560Z ##[endgroup]
+2026-10-20T21:29:21.0641247Z ##[group]Setting up auth
+2026-10-20T21:29:21.0642167Z Removing SSH command configuration
+2026-10-20T21:29:21.0647201Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:29:21.0697327Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-20T21:29:21.1100377Z Removing HTTP extra header
+2026-10-20T21:29:21.1108797Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:29:21.1161221Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-20T21:29:21.1429217Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:29:21.1435762Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:29:21.1482035Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-20T21:29:21.1738552Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-20T21:29:21.1797151Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path /home/runner/work/_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:21.1842866Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:21.1891170Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:21.1937544Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:21.1978204Z ##[endgroup]
+2026-10-20T21:29:21.1979053Z ##[group]Fetching the repository
+2026-10-20T21:29:21.1987741Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6dfe820bc36e4aaffaa30e900b6b80dd207d2c51:refs/remotes/pull/239/merge
+2026-10-20T21:29:22.7918494Z From https://github.com/Laymer/Navzeroth
+2026-10-20T21:29:22.7920281Z  * [new ref]         6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 -> pull/239/merge
+2026-10-20T21:29:22.7924678Z ##[endgroup]
+2026-10-20T21:29:22.7925809Z ##[group]Determining the checkout info
+2026-10-20T21:29:22.7927602Z ##[endgroup]
+2026-10-20T21:29:22.7932317Z [command]/usr/bin/git sparse-checkout disable
+2026-10-20T21:29:22.7996514Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-20T21:29:22.8039042Z ##[group]Checking out the ref
+2026-10-20T21:29:22.8043447Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/239/merge
+2026-10-20T21:29:23.3390840Z Note: switching to 'refs/remotes/pull/239/merge'.
+2026-10-20T21:29:23.3391700Z 
+2026-10-20T21:29:23.3392173Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-20T21:29:23.3393098Z changes and commit them, and you can discard any commits you make in this
+2026-10-20T21:29:23.3394027Z state without impacting any branches by switching back to a branch.
+2026-10-20T21:29:23.3394695Z 
+2026-10-20T21:29:23.3395088Z If you want to create a new branch to retain commits you create, you may
+2026-10-20T21:29:23.3395981Z do so (now or later) by using -c with the switch command. Example:
+2026-10-20T21:29:23.3396794Z 
+2026-10-20T21:29:23.3397031Z   git switch -c <new-branch-name>
+2026-10-20T21:29:23.3397365Z 
+2026-10-20T21:29:23.3397616Z Or undo this operation with:
+2026-10-20T21:29:23.3397939Z 
+2026-10-20T21:29:23.3398077Z   git switch -
+2026-10-20T21:29:23.3398262Z 
+2026-10-20T21:29:23.3398576Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-20T21:29:23.3398932Z 
+2026-10-20T21:29:23.3399337Z HEAD is now at 6dfe820 Merge 2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+2026-10-20T21:29:23.3946985Z ##[endgroup]
+2026-10-20T21:29:23.4007926Z [command]/usr/bin/git log -1 --format=%H
+2026-10-20T21:29:23.4047018Z 6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:29:23.4330560Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-10-20T21:29:23.4331093Z with:
+2026-10-20T21:29:23.4331443Z   pattern: source-knowledge-*-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:29:23.4331868Z   path: artifacts
+2026-10-20T21:29:23.4332140Z   merge-multiple: false
+2026-10-20T21:29:23.4332422Z   repository: Laymer/Navzeroth
+2026-10-20T21:29:23.4332713Z   run-id: 39500462134
+2026-10-20T21:29:23.4333005Z   skip-decompress: false
+2026-10-20T21:29:23.4333291Z   digest-mismatch: error
+2026-10-20T21:29:23.4333553Z ##[endgroup]
+2026-10-20T21:29:23.8696441Z Found 2 artifact(s)
+2026-10-20T21:29:23.8698998Z Filtering artifacts by pattern 'source-knowledge-*-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51'
+2026-10-20T21:29:23.8721627Z Preparing to download the following artifacts:
+2026-10-20T21:29:23.8723611Z - source-knowledge-Linux-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 (ID: 12300505302, Size: 14547924, Expected Digest: sha256:0c9a1fd07ba10807e2739c46d49ac635b9eb2a1460a46888dd20a20a81e96ae1)
+2026-10-20T21:29:23.8727126Z - source-knowledge-Windows-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 (ID: 12299861647, Size: 14547957, Expected Digest: sha256:424aecc8477889abb855b310b43563b345e5242feff1db0136270fa1d909dbbe)
+2026-10-20T21:29:24.3932917Z Redirecting to blob download url: https://productionresultssa1.blob.core.windows.net/actions-results/8f40ee88-30a1-8527-b971-ba5368672687/workflow-job-run-8d38be3d-d9ac-5263-a1c6-72bb7b62a554/artifacts/b5f92b19a37b40b2cdb4c2cefbebf5fdf740dd3d5fbac310aba3729ef48c3632.zip
+2026-10-20T21:29:24.3935417Z Starting download of artifact to: /home/runner/work/Navzeroth/Navzeroth/artifacts/source-knowledge-Windows-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:29:24.4333513Z Redirecting to blob download url: https://productionresultssa1.blob.core.windows.net/actions-results/8f40ee88-30a1-8527-b971-ba5368672687/workflow-job-run-132b50f5-99ce-5651-bbaa-29209d30b0a4/artifacts/4d2f97f990669bb6a7553d42e9d2e4bc1a439803d923f47ea9aba8c02e5a195f.zip
+2026-10-20T21:29:24.4336646Z Starting download of artifact to: /home/runner/work/Navzeroth/Navzeroth/artifacts/source-knowledge-Linux-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:29:24.7675547Z (node:2364) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-10-20T21:29:24.7677307Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-20T21:29:26.2919297Z SHA256 digest of downloaded artifact is 0c9a1fd07ba10807e2739c46d49ac635b9eb2a1460a46888dd20a20a81e96ae1
+2026-10-20T21:29:26.2920022Z Artifact download completed successfully.
+2026-10-20T21:29:26.3418885Z SHA256 digest of downloaded artifact is 424aecc8477889abb855b310b43563b345e5242feff1db0136270fa1d909dbbe
+2026-10-20T21:29:26.3420713Z Artifact download completed successfully.
+2026-10-20T21:29:26.3421727Z Total of 2 artifact(s) downloaded
+2026-10-20T21:29:26.3426276Z Download artifact has finished successfully
+2026-10-20T21:29:26.3667246Z ##[group]Run set -euo pipefail
+2026-10-20T21:29:26.3667849Z [36;1mset -euo pipefail[0m
+2026-10-20T21:29:26.3668423Z [36;1mlinux="artifacts/source-knowledge-Linux-$SOURCE_REVISION"[0m
+2026-10-20T21:29:26.3669204Z [36;1mwindows="artifacts/source-knowledge-Windows-$SOURCE_REVISION"[0m
+2026-10-20T21:29:26.3670602Z [36;1mpython scripts/verify-world-source-parity.py compare --left "$linux/world-parity.json" --right "$windows/world-parity.json" --expected-commit "$SOURCE_REVISION"[0m
+2026-10-20T21:29:26.3671983Z [36;1mmode=$(python scripts/verify-world-source-parity.py mode)[0m
+2026-10-20T21:29:26.3672588Z [36;1mif [ "$mode" = legacy ]; then[0m
+2026-10-20T21:29:26.3673317Z [36;1m  for file in catalog.json build.json closure.json registry.json plan.json NOTICES.txt; do[0m
+2026-10-20T21:29:26.3674131Z [36;1m    cmp "$linux/$file" "$windows/$file"[0m
+2026-10-20T21:29:26.3674598Z [36;1m  done[0m
+2026-10-20T21:29:26.3674901Z [36;1mfi[0m
+2026-10-20T21:29:26.3864808Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:29:26.3865386Z env:
+2026-10-20T21:29:26.3865799Z   SOURCE_REVISION: 6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:29:26.3866548Z ##[endgroup]
+2026-10-20T21:29:26.4393811Z Actual admitted world outputs and complete selected input hashes match across platforms.
+2026-10-20T21:29:26.5212008Z Post job cleanup.
+2026-10-20T21:29:26.6206947Z [command]/usr/bin/git version
+2026-10-20T21:29:26.6262550Z git version 2.55.0
+2026-10-20T21:29:26.6329565Z Temporarily overriding HOME='/home/runner/work/_temp/66b5b2cb-71b0-44cc-98b2-e91c9c734467' before making global git config changes
+2026-10-20T21:29:26.6353736Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:29:26.6363966Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+2026-10-20T21:29:26.6394960Z Removing SSH command configuration
+2026-10-20T21:29:26.6405110Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:29:26.6467250Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-20T21:29:26.6885607Z Removing HTTP extra header
+2026-10-20T21:29:26.6893387Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:29:26.6942225Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-20T21:29:26.7249470Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:29:26.7256962Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:29:26.7303161Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:29:26.7307262Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:29:26.7309024Z includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:29:26.7310091Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:29:26.7315234Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:29:26.7358385Z /home/runner/work/_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:26.7374693Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-2feafed7\-5a9f\-4ebc\-beb4\-b278bf44e8eb\.config
+2026-10-20T21:29:26.7620064Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:29:26.7672716Z /home/runner/work/_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:26.7685050Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-2feafed7\-5a9f\-4ebc\-beb4\-b278bf44e8eb\.config
+2026-10-20T21:29:26.7735529Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:29:26.7772237Z /github/runner_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:26.7781109Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-2feafed7\-5a9f\-4ebc\-beb4\-b278bf44e8eb\.config
+2026-10-20T21:29:26.7827805Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:29:26.7864261Z /github/runner_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config
+2026-10-20T21:29:26.7873994Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-2feafed7\-5a9f\-4ebc\-beb4\-b278bf44e8eb\.config
+2026-10-20T21:29:26.7925097Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-20T21:29:26.8185978Z Removing credentials config '/home/runner/work/_temp/git-credentials-2feafed7-5a9f-4ebc-beb4-b278bf44e8eb.config'
+2026-10-20T21:29:26.8354762Z Cleaning up orphan processes

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "source_commit": "3609c2b574d5302711a40cc08128b1e9c76f8955",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "production_entries": 3160,
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 80.56773594699916,
+  "peak_child_rss_kib": 6206072,
+  "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
+  "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal:       32675960 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
+  "scope": "Cargo --no-run confirmed the cached optimized executable at the tested source. Only acceptance workflow/PowerShell and docs changed from V21; runtime/content/test source unchanged. Actual full-pack manual engineering assertions; no new compiler build or installed Windows acceptance claimed.",
+  "proof_sha256": "2e601431669d08724669865eaef2e403bfd904b6b996020d67e20adb704eef12"
+}

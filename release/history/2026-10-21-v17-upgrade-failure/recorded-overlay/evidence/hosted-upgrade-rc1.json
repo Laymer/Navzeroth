@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "HOSTED-UPGRADE-RC1",
+  "method": "hosted_windows",
+  "status": "fail",
+  "version": "1.0.0",
+  "source_commit": "7361c873a1ba0c3366703917033f7397c74d07c3",
+  "production_sha256": "77e88f41fca10d12b37beca8eecc305e8f059d3364367ed3a5d076d1b0d51324",
+  "installer_sha256": "837a04f8089d5a45088af217cb3c7c1f42b3d79ccfecf7ddd256d1c1c372d06d",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  },
+  "operator": "GitHub Actions 39603870404/1",
+  "environment": "GitHub-hosted Windows Microsoft Windows NT 10.0.26100.0",
+  "recorded_at": "2026-10-21T14:05:32Z",
+  "error": "Installer D:\\a\\_temp\\stable-rc1\\AzerothNavigator-1.0.0-rc.1-x64-setup.exe exit code 2"
+}

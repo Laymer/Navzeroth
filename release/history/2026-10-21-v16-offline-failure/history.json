@@ -1,0 +1,122 @@
+{
+  "candidate": "764fcac347f0c75ee628df619e9bd224ebf00b6f",
+  "actual_checkout": "277a6e6ab6160d7e16b00cfe711fbf100103841e",
+  "scope": "Actual final package FAILURE. Five hosted passes, offline failure, RC1 upgrade/downgrade never ran; owner unverified. Continue-on-error step conclusion is not actual producer outcome. Recovery pass1187756ms retains narrow1200s margin; no underlying adapter cause established.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/hosted-first-start.json",
+      "bytes": 11524,
+      "sha256": "284eb75d418690b050e287e5a48087f89612e3040bae85914b819b8ba793c9d0"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/hosted-install.json",
+      "bytes": 751,
+      "sha256": "bc8db8187c308b474a3d0df58472409f56a1b6eb7faab6256af4c54324bdf3b9"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/hosted-offline.json",
+      "bytes": 762,
+      "sha256": "8514c8276a7e9e04fd5fadd05d2abcfddf126d9034d394e445fad80af4b9e700"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/hosted-performance.json",
+      "bytes": 12716,
+      "sha256": "c2138224af53f93ba12268bda2cd8d83dace465a54d27ee336e6f0c1ad970e48"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/hosted-persistence-recovery.json",
+      "bytes": 23330,
+      "sha256": "00f449bd67ca34fdc9a91f691391ba22f7e54219ff356626fa6bbcafdecc4ed3"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "eb53446208d6e5a10f0cb2d7ed86ec6483569dd0afbe75c9f0adbaf82071ca68"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/fresh-11978c4d03164b27850d36c1302b29a1.json",
+      "bytes": 9876,
+      "sha256": "b3d9aac9aa5843cadce04d0ac0ddfbf6084ddc68ddede4bf28f930671a0675f3"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/fresh-11978c4d03164b27850d36c1302b29a1.json.progress.json",
+      "bytes": 2690,
+      "sha256": "99d8fabe65dc14eff2b445ad970c8921be4a432bcf582aea341edeff612237b2"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/recover-daafd6f6b7814f71baf1f19e929ca045.json",
+      "bytes": 10726,
+      "sha256": "489671b19758b7114e31b525a45cde996b2ecfa2f4851e69a0f8e3c1e4d10333"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/recover-daafd6f6b7814f71baf1f19e929ca045.json.progress.json",
+      "bytes": 2727,
+      "sha256": "5b8c83b496e1ae30c915e04f437207db78efe90dcc7b8429ad185d33c8ee6175"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/restart-2f376a397e9e4d44bd87aad38fb9e993.json",
+      "bytes": 9870,
+      "sha256": "5d7f58617aa821b5e0487ace58d15d6a5f08d9af49af3448733fbe3a3fe88308"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/restart-2f376a397e9e4d44bd87aad38fb9e993.json.progress.json",
+      "bytes": 2700,
+      "sha256": "71fe6e6448b3f42e5c848862a14dc9125e0b16933a3f72750fe3cae85f5a5ce9"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/cases/raw/state.json",
+      "bytes": 1311,
+      "sha256": "dd139ab154dd6c9b740be498bf9f2501fafec836af108748a95ec8077866677c"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/acceptance-evidence.json",
+      "bytes": 27972648,
+      "sha256": "5ee6b9fa4e064f16c2caee2995afc8a27185550d87f95ba4f9fdf455ae279ca6"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/evidence/hosted-first-start.json",
+      "bytes": 11524,
+      "sha256": "284eb75d418690b050e287e5a48087f89612e3040bae85914b819b8ba793c9d0"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "bc8db8187c308b474a3d0df58472409f56a1b6eb7faab6256af4c54324bdf3b9"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/evidence/hosted-offline.json",
+      "bytes": 762,
+      "sha256": "8514c8276a7e9e04fd5fadd05d2abcfddf126d9034d394e445fad80af4b9e700"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/evidence/hosted-performance.json",
+      "bytes": 12716,
+      "sha256": "c2138224af53f93ba12268bda2cd8d83dace465a54d27ee336e6f0c1ad970e48"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 23330,
+      "sha256": "00f449bd67ca34fdc9a91f691391ba22f7e54219ff356626fa6bbcafdecc4ed3"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/recorded-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "eb53446208d6e5a10f0cb2d7ed86ec6483569dd0afbe75c9f0adbaf82071ca68"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/package-failed.log",
+      "bytes": 3677,
+      "sha256": "24f4e3d3cefdb90724125dc02fbaea9ec2c11a2b029369db50068311a6cd1ad5"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/package-full.log",
+      "bytes": 848123,
+      "sha256": "d776757c1f3290d10e5fc20b8997237496b7eddf93998389f131e4b53598a1d5"
+    },
+    {
+      "path": "release/history/2026-10-21-v16-offline-failure/workflow.json",
+      "bytes": 12081,
+      "sha256": "b0fdad68a8be7625d315cbee142b47e3d52909f79091e42440060d97b4c8a4f3"
+    }
+  ]
+}

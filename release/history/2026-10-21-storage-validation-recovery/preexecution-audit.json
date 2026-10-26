@@ -1,0 +1,26 @@
+{
+  "runtime_commit": "419fcaecfcb208867e280140215c6e5e01891e27",
+  "harness_commit": "3447bcbfdeeb771589f6773bad6a70b81bdf0681",
+  "files": [
+    {
+      "path": "/tmp/navzeroth-v16-fullpack-recovery-harness.rs",
+      "bytes": 5713,
+      "sha256": "6e94b838250f2319e3f61258db3dd11f72d6af9c784d3c12f339bb768eeda10c"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-fullpack-recovery-diagnostic",
+      "bytes": 25841264,
+      "sha256": "6471a04ea17dcbfb1b23e387eace2eea644dd28188ccc1218f722b57e85fad39"
+    },
+    {
+      "path": "/tmp/navzeroth-stable-inventory/target/release/deps/libazeroth_app-56cefb75fabdc75b.rlib",
+      "bytes": 29036194,
+      "sha256": "5a7b1074251d6f2fb6cb9e48ed32f533315f76b4b5278bc61fff5830915494a1"
+    },
+    {
+      "path": "/tmp/navzeroth-stable-inventory/target/release/deps/libazeroth_storage-4a3c24e0b5fc7882.rlib",
+      "bytes": 19570486,
+      "sha256": "9428ce4996fb3923f22be1ad65105d9f273d621befca71d2068eb6f9c5b40d66"
+    }
+  ]
+}

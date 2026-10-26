@@ -1,0 +1,179 @@
+{
+  "run_id": 39586958564,
+  "candidate": "764fcac347f0c75ee628df619e9bd224ebf00b6f",
+  "checkout": "277a6e6ab6160d7e16b00cfe711fbf100103841e",
+  "tree": "8d549949613a2106a379991cdf17234d57bd33f7",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 119178127840,
+      "name": "Rust coverage Linux",
+      "conclusion": "success"
+    },
+    {
+      "id": 119178128120,
+      "name": "Rust coverage Windows",
+      "conclusion": "success"
+    },
+    {
+      "id": 119178128388,
+      "name": "TypeScript coverage",
+      "conclusion": "success"
+    },
+    {
+      "id": 119195563602,
+      "name": "Coverage gate",
+      "conclusion": "success"
+    }
+  ],
+  "threshold": {
+    "covered_numerator": 90,
+    "executable_denominator": 100,
+    "rounding": false
+  },
+  "inventory_files": 305,
+  "measured_files": 276,
+  "minimum_percent": 90.0,
+  "missing_or_below": [],
+  "errors": [],
+  "both_rust_receipts_clean_tests_passed": true,
+  "incomplete_profiles": [],
+  "linux_entrypoints": {
+    "lcov_bytes": 9728212,
+    "lcov_sha256": "5ed2b5ec9cd067306c66accc5736c577128e7100b4c9edad7e5c7e43437ec482",
+    "entrypoints": {
+      "crates/cli/src/main.rs": {
+        "executable": 409,
+        "covered": 371
+      },
+      "apps/desktop/src-tauri/src/main.rs": {
+        "executable": 18,
+        "covered": 3
+      }
+    }
+  },
+  "windows_entrypoints": {
+    "lcov_bytes": 11498242,
+    "lcov_sha256": "d7f88a8050975bca43f9b9c1b3197e3b31477f28b78752ae27f7e85090235d64",
+    "entrypoints": {
+      "crates/cli/src/main.rs": {
+        "executable": 409,
+        "covered": 18
+      },
+      "apps/desktop/src-tauri/src/main.rs": {
+        "executable": 18,
+        "covered": 18
+      }
+    }
+  },
+  "windows_resources": {
+    "files": 84,
+    "bytes": 395873153,
+    "packs": 2,
+    "default_compiled_policy": "verified"
+  },
+  "native_smoke": {
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "ok": true
+  },
+  "windows_raw_profile_manifest_entries": 626,
+  "artifacts": {
+    "verdict": 12342203069,
+    "windows": 12341868421,
+    "linux": 12339857825,
+    "typescript": 12340411100
+  },
+  "retained_files": [
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/linux/entrypoint-summary.json",
+      "bytes": 315,
+      "sha256": "5a60b0cb3e54642a6bf2777691e80cb8e72cf69bfb8d4a87d61c6272e30e98a4"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/linux/inventory.json",
+      "bytes": 202378,
+      "sha256": "03d35aecab9477a18c274c73977f902a0a418b9b6d7d2baef919a11e6de5c140"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/linux/rust-receipt.json",
+      "bytes": 41617,
+      "sha256": "d059c3342aa57fd031bb242bab561298d7ce20dde24483e0a24b113a78f92bf8"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/typescript/configuration-receipt.json",
+      "bytes": 34411,
+      "sha256": "a19db219f1bf0f2a58437a3e7d6493b03706eb09bfc54879165cc6fb5bddc9ec"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/typescript/inventory.json",
+      "bytes": 202378,
+      "sha256": "03d35aecab9477a18c274c73977f902a0a418b9b6d7d2baef919a11e6de5c140"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/typescript/typescript-receipt.json",
+      "bytes": 34396,
+      "sha256": "f32be027ff7f3f960e174d694275ae892eaa7ec5b4fa45861ae6855eeca3a8ab"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/typescript/v8/coverage-summary.json",
+      "bytes": 29559,
+      "sha256": "31fc05143f261280fb3f82eeffcf50ecc9640d5b7f7e6041e4340eb0377ce485"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/verdict/per-file-verdict.json",
+      "bytes": 50732,
+      "sha256": "ae580416661d5343e17c346c2056a9e2c582d1d96ce11e46ee86dcd4015dfe45"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/commands.json",
+      "bytes": 9561,
+      "sha256": "b75c6cc8ef50690434577a917650fe1437953a1105a01c911a4ed5ef734277d3"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/entrypoint-summary.json",
+      "bytes": 316,
+      "sha256": "67c6d23e8adb634b6ddc0c8d7856be6019005e9e06322bbdbbeb8441c1ef87ad"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/inventory.json",
+      "bytes": 202378,
+      "sha256": "03d35aecab9477a18c274c73977f902a0a418b9b6d7d2baef919a11e6de5c140"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/logs/coverage-bundle-assembly.log",
+      "bytes": 434,
+      "sha256": "38adcdfaf99b11e68539be8774252cdfe7469f75577383f1ebbbfb046373b2d9"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/logs/coverage-bundle-inputs.log",
+      "bytes": 2233,
+      "sha256": "6672c2cf972c270f7d509bf9fed114125eae839ebfa74c8f9ef6b77587e3013a"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/logs/coverage-bundle-verification.log",
+      "bytes": 405,
+      "sha256": "200b29dc8644ab6aa6eb919bed196df345739aa2c0c4fe24877ca7344dd80e36"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/native-smoke.json",
+      "bytes": 25958,
+      "sha256": "700bac9435ae9a69e9e38e69dfd37495d7bfc125923173a76bff3363bb53655e"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/raw-profile-manifest.json",
+      "bytes": 109900,
+      "sha256": "1a15f9add3965737bedfe5724320d8b88548b2c6b4b6247e961c24387ef3e621"
+    },
+    {
+      "path": "/tmp/navzeroth-v16-coverage-small/windows/rust-receipt.json",
+      "bytes": 44792,
+      "sha256": "cefb026a1240d2cecd0d246c416e27466321603c38c2e4c87de785364091ac5a"
+    }
+  ],
+  "limitations": [
+    "Bounded ZIP range reads only. Native LCOV streamed and SHA-256 matched to receipts; raw profiles not downloaded or independently rehashed.",
+    "Coverage/native engineering smoke does not promote installer acceptance or owner smoke."
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "scope": "Actual coordinator and separate read-only reviewer closure outputs at c5586b6e. Independent manifest/identity reproduction preceded key use. No private keys, Windows acceptance or publication result.",
+  "files": [
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/assembly.json",
+      "bytes": 46,
+      "sha256": "124665f8e2760b90f9f03abc574e4e75898f24d65d594525cc3d9007754f1103"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/crypto.json",
+      "bytes": 1079,
+      "sha256": "79686be6c729e0c694ff9be356b58b8216fc1f5759ddfd79bed62558dd202a91"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/default-trust.json",
+      "bytes": 111,
+      "sha256": "c1a8adfd4c5f29d4a33bade6f05e68cb295b10ee6838a4f6c0da3eeb941789b1"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/independent-final-audit.json",
+      "bytes": 5632,
+      "sha256": "56c9bc2073d375a7444b1c4fdb34133cd5648cedaa2473144d3625b84ab4fed2"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/negative-control.json",
+      "bytes": 282,
+      "sha256": "3151b27d17430a5d67fd76517214dd2fae2da1c73350582e75d539deeebd0768"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/prebuild.json",
+      "bytes": 1014320,
+      "sha256": "143bdbd4d8f56612c377352a4b6fbcb1c7ad07ac1861a5b67ecfdd14a64169aa"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/source-binding-audit.json",
+      "bytes": 1063,
+      "sha256": "2c707948e1bf9405e1f6f73a2c95622db9d2795314f7fb92c536b2fcc8269d4f"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/independent/tree-audit.json",
+      "bytes": 482,
+      "sha256": "445c6a4aecf74777b2f62db3fd8ba421f9ee7104e738560d215b92c444e82548"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/root-assembly.json",
+      "bytes": 46,
+      "sha256": "124665f8e2760b90f9f03abc574e4e75898f24d65d594525cc3d9007754f1103"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/root-crypto.json",
+      "bytes": 1079,
+      "sha256": "79686be6c729e0c694ff9be356b58b8216fc1f5759ddfd79bed62558dd202a91"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/root-default-trust.json",
+      "bytes": 111,
+      "sha256": "c1a8adfd4c5f29d4a33bade6f05e68cb295b10ee6838a4f6c0da3eeb941789b1"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/root-prebuild.json",
+      "bytes": 1014320,
+      "sha256": "143bdbd4d8f56612c377352a4b6fbcb1c7ad07ac1861a5b67ecfdd14a64169aa"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/root-signing-result.json",
+      "bytes": 362,
+      "sha256": "4a18b3240f5c84e27210a680054ea087b09feaa3ac7d0f8d5f18f31ac5cf1ae0"
+    },
+    {
+      "path": "release/v1/verification-v22/signed-closure/root-tree-audit.json",
+      "bytes": 230,
+      "sha256": "7cec59bb255641746bec192260d37c62758676664d5595e244687fca4c1b3e9b"
+    }
+  ]
+}

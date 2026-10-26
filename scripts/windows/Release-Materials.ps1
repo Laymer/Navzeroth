@@ -66,12 +66,12 @@ function Read-BoundedReleaseText([string] $Path) {
 
 function Get-ReleaseContractByteLimit($Document) {
     $property = $Document.PSObject.Properties['schema_version']
-    if ($null -eq $property -or ($property.Value -isnot [int] -and $property.Value -isnot [long]) -or $property.Value -notin 1, 2, 3, 4) { throw 'Unsupported release contract schema.' }
-    if ($property.Value -eq 4) { return 67108864 }
+    if ($null -eq $property -or ($property.Value -isnot [int] -and $property.Value -isnot [long]) -or $property.Value -notin 1, 2, 3, 4, 5) { throw 'Unsupported release contract schema.' }
+    if ($property.Value -in 4, 5) { return 67108864 }
     return 16777216
 }
 
-# Only inventory/evidence contracts opt into schema 4's reviewed 64 MiB bound.
+# Only stable inventory/evidence schemas 4 and 5 use the reviewed 64 MiB bound.
 function Read-BoundedReleaseContractText([string] $Path) {
     $bytesRead = 0L
     $text = Read-ReleaseTextWithCap $Path 67108864 ([ref]$bytesRead)
@@ -96,7 +96,7 @@ function Test-EmptyMaterialSelection([string] $Root) {
     $i = Read-BoundedReleaseContractText $inventory | ConvertFrom-Json
     $e = Read-BoundedReleaseContractText $evidence | ConvertFrom-Json
     # Schemas 2 (ADR 0006) and 3 (ADR 0007) keep the material fields; both files must share a version.
-    if ($i.schema_version -notin 1, 2, 3, 4 -or $e.schema_version -ne $i.schema_version) { throw 'Unsupported release material schema.' }
+    if ($i.schema_version -notin 1, 2, 3, 4, 5 -or $e.schema_version -ne $i.schema_version) { throw 'Unsupported release material schema.' }
     return @($i.sources).Count -eq 0 -and @($e.sources).Count -eq 0 -and @($e.packs).Count -eq 0
 }
 
@@ -292,8 +292,11 @@ function Assert-StableEvidenceOverlay([string] $Root, [string] $Evidence) {
     if ([IO.Path]::IsPathRooted($Evidence) -or $Evidence -match '(^|[\\/])\.\.([\\/]|$)' -or $Evidence -match '\\') { throw 'Evidence overlay must be a safe repository-relative path.' }
     $baseline = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
     $overlay = Read-BoundedReleaseContractText (Join-Path $Root $Evidence) | ConvertFrom-Json
-    if ($baseline.schema_version -ne 4 -or $overlay.schema_version -ne 4) { throw 'Evidence overlays require schema4.' }
+    if ($baseline.schema_version -notin 4, 5 -or $overlay.schema_version -ne $baseline.schema_version) { throw 'Evidence overlays require matching stable schemas.' }
     $mutable = @('checks', 'candidate_installer_sha256')
+    # Only the separately verified final observation may add this binding. The
+    # CLI validates its exact fields, hashes, provenance and required method.
+    if ($baseline.schema_version -eq 5) { $mutable += 'draft_installer_smoke' }
     $baseNames = @($baseline.PSObject.Properties.Name | Where-Object { $_ -notin $mutable } | Sort-Object)
     $overlayNames = @($overlay.PSObject.Properties.Name | Where-Object { $_ -notin $mutable } | Sort-Object)
     if (($baseNames -join ',') -cne ($overlayNames -join ',')) { throw 'Evidence overlay changes the immutable contract shape.' }
@@ -305,11 +308,11 @@ function Assert-StableEvidenceOverlay([string] $Root, [string] $Evidence) {
 function Assert-StableInstallerBinding([string] $Root, [string] $Version, [string] $Directory, [string] $Evidence = '') {
     $path = if ($Evidence) { Join-Path $Root $Evidence } else { Join-Path $Root 'release/v1/acceptance-evidence.json' }
     $evidenceObject = Read-BoundedReleaseContractText $path | ConvertFrom-Json
-    if ($evidenceObject.schema_version -ne 4) { return }
+    if ($evidenceObject.schema_version -notin 4, 5) { return }
     $installer = Join-Path $Directory "AzerothNavigator-$Version-x64-setup.exe"
     Assert-RegularReleasePath $installer
     $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
-    if ($evidenceObject.candidate_installer_sha256 -cnotmatch '^[a-f0-9]{64}$' -or $evidenceObject.candidate_installer_sha256 -cne $actual) { throw 'Actual installer differs from the accepted schema4 candidate hash.' }
+    if ($evidenceObject.candidate_installer_sha256 -cnotmatch '^[a-f0-9]{64}$' -or $evidenceObject.candidate_installer_sha256 -cne $actual) { throw 'Actual installer differs from the accepted stable candidate hash.' }
 }
 
 function Assert-StablePhaseReadiness([string] $Root, [string] $Version, [ValidateSet('public','prebuild','draft')][string] $Phase = 'public', [string] $Evidence = '') {
@@ -329,7 +332,8 @@ function Assert-StablePhaseReadiness([string] $Root, [string] $Version, [Validat
     if ($Phase -eq 'public') {
         if ($result.stable -isnot [bool] -or -not $result.stable -or $result.stable_ready -isnot [bool] -or -not $result.stable_ready -or $result.publication_allowed -isnot [bool] -or -not $result.publication_allowed) { throw 'Invalid full publication readiness result.' }
     } else {
-        if ($result.phase -cne $(if ($Phase -eq 'prebuild') { 'prebuild' } else { 'draft' }) -or $result.build_ready -isnot [bool] -or -not $result.build_ready -or $result.publication_allowed -isnot [bool] -or $result.publication_allowed -or $result.report.report_version -ne 4 -or $result.report.stable -isnot [bool] -or -not $result.report.stable -or $result.report.publication_allowed -isnot [bool] -or $result.report.publication_allowed) { throw 'Invalid nonpublishing preparation readiness result.' }
+        $contract = Read-BoundedReleaseContractText (Join-Path $Root 'release/v1/coverage-inventory.json') | ConvertFrom-Json
+        if ($contract.schema_version -notin 4, 5 -or $result.phase -cne $(if ($Phase -eq 'prebuild') { 'prebuild' } else { 'draft' }) -or $result.build_ready -isnot [bool] -or -not $result.build_ready -or $result.publication_allowed -isnot [bool] -or $result.publication_allowed -or $result.report.report_version -ne $contract.schema_version -or $result.report.stable -isnot [bool] -or -not $result.report.stable -or $result.report.publication_allowed -isnot [bool] -or $result.report.publication_allowed) { throw 'Invalid nonpublishing preparation readiness result.' }
     }
 }
 

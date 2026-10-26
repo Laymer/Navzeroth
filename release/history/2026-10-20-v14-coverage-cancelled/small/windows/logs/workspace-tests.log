@@ -1,0 +1,2295 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded powerfmt v0.2.1
+  Downloaded potential_utf v0.1.6
+  Downloaded precomputed-hash v0.1.1
+  Downloaded fallible-streaming-iterator v0.1.9
+  Downloaded fallible-iterator v0.3.0
+  Downloaded urlpattern v0.6.0
+  Downloaded option-ext v0.2.0
+  Downloaded percent-encoding v2.3.2
+  Downloaded serialize-to-javascript-impl v0.1.2
+  Downloaded adler2 v2.0.1
+  Downloaded pkcs8 v0.10.2
+  Downloaded rand_core v0.10.1
+  Downloaded ref-cast v1.0.27
+  Downloaded phf v0.13.1
+  Downloaded toml_writer v1.1.3+spec-1.1.0
+  Downloaded fdeflate v0.3.7
+  Downloaded parking_lot_core v0.9.12
+  Downloaded find-msvc-tools v0.1.14
+  Downloaded once_cell v1.21.4
+  Downloaded parking_lot v0.12.5
+  Downloaded serde-untagged v0.1.9
+  Downloaded socket2 v0.6.5
+  Downloaded form_urlencoded v1.2.2
+  Downloaded tracing-core v0.1.36
+  Downloaded rand v0.10.3
+  Downloaded fastrand v2.5.0
+  Downloaded foldhash v0.2.0
+  Downloaded getrandom v0.4.3
+  Downloaded hashbrown v0.12.3
+  Downloaded icu_collections v2.3.0
+  Downloaded png v0.17.16
+  Downloaded png v0.18.1
+  Downloaded base64ct v1.5.3
+  Downloaded icu_properties v2.3.0
+  Downloaded proptest v1.12.0
+  Downloaded quick-xml v0.42.0
+  Downloaded serde_with v3.24.0
+  Downloaded serialize-to-javascript v0.1.2
+  Downloaded softbuffer v0.4.8
+  Downloaded typeid v1.0.3
+  Downloaded cpufeatures v0.3.1
+  Downloaded generic-array v0.14.7
+  Downloaded spki v0.7.3
+  Downloaded synstructure v0.14.0
+  Downloaded serde_derive_internals v0.29.1
+  Downloaded signature v2.1.0
+  Downloaded tauri v2.12.3
+  Downloaded getrandom v0.3.4
+  Downloaded icu_locale_core v2.3.0
+  Downloaded schemars_derive v1.2.2
+  Downloaded hashlink v0.12.2
+  Downloaded scopeguard v1.2.0
+  Downloaded strsim v0.11.1
+  Downloaded subtle v2.6.1
+  Downloaded fnv v1.0.7
+  Downloaded hashbrown v0.17.1
+  Downloaded icu_normalizer_data v2.3.0
+  Downloaded indexmap v2.14.2
+  Downloaded shlex v2.0.1
+  Downloaded tinystr v0.8.4
+  Downloaded unarray v0.1.4
+  Downloaded bit-vec v0.8.0
+  Downloaded serde_with_macros v3.24.0
+  Downloaded darling_core v0.24.1
+  Downloaded phf_generator v0.13.1
+  Downloaded tendril v0.5.1
+  Downloaded time-core v0.1.9
+  Downloaded phf_codegen v0.13.1
+  Downloaded tauri-winres v0.3.6
+  Downloaded thiserror v2.0.21
+  Downloaded toml_parser v1.1.5+spec-1.1.0
+  Downloaded tray-icon v0.25.1
+  Downloaded phf_macros v0.13.1
+  Downloaded tauri-macros v2.7.2
+  Downloaded tauri-runtime v2.12.1
+  Downloaded rand_xorshift v0.5.0
+  Downloaded thiserror-impl v2.0.21
+  Downloaded defmt-macros v1.1.1
+  Downloaded pin-project-lite v0.2.17
+  Downloaded pkg-config v0.3.34
+  Downloaded raw-window-handle v0.6.2
+  Downloaded simd-adler32 v0.3.10
+  Downloaded tauri-build v2.7.2
+  Downloaded semver v1.0.28
+  Downloaded serde_derive_internals v0.30.0
+  Downloaded sha2 v0.10.9
+  Downloaded string_cache_codegen v0.6.1
+  Downloaded tauri-runtime-wry v2.12.1
+  Downloaded toml_datetime v1.1.2+spec-1.1.0
+  Downloaded typenum v1.20.1
+  Downloaded schemars_derive v0.8.22
+  Downloaded tauri-codegen v2.7.2
+  Downloaded time-macros v0.2.32
+  Downloaded unicode-ident v1.0.27
+  Downloaded unicode-segmentation v1.13.3
+  Downloaded schemars v0.8.22
+  Downloaded schemars v1.2.2
+  Downloaded serde_json v1.0.154
+  Downloaded cpufeatures v0.2.17
+  Downloaded displaydoc v0.2.7
+  Downloaded rustc_version v0.4.1
+  Downloaded serde_repr v0.1.21
+  Downloaded tinyvec v1.13.3
+  Downloaded crypto-common v0.1.7
+  Downloaded schemars v0.9.0
+  Downloaded heck v0.5.0
+  Downloaded jiff-tzdb-platform v0.1.3
+  Downloaded utf8_iter v1.0.4
+  Downloaded windows-threading v0.2.1
+  Downloaded windows-version v0.1.7
+  Downloaded curve25519-dalek-derive v0.1.1
+  Downloaded defmt-parser v1.0.0
+  Downloaded plist v1.10.1
+  Downloaded selectors v0.38.0
+  Downloaded serde_spanned v1.1.2
+  Downloaded bytemuck v1.25.2
+  Downloaded defmt v1.1.1
+  Downloaded deranged v0.5.8
+  Downloaded digest v0.10.7
+  Downloaded rfd v0.17.2
+  Downloaded url v2.5.8
+  Downloaded ref-cast-impl v1.0.27
+  Downloaded chacha20 v0.10.2
+  Downloaded idna_adapter v1.2.2
+  Downloaded mime v0.3.17
+  Downloaded tao v0.37.1
+  Downloaded time v0.3.55
+  Downloaded yoke-derive v0.8.4
+  Downloaded cssparser v0.37.0
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded cookie v0.18.2
+  Downloaded smallvec v1.16.3
+  Downloaded siphasher v1.0.4
+  Downloaded block-buffer v0.10.4
+  Downloaded vswhom-sys v0.1.3
+  Downloaded webview2-com-macros v0.8.1
+  Downloaded cssparser-macros v0.7.1
+  Downloaded equivalent v1.0.2
+  Downloaded rustc-hash v2.1.3
+  Downloaded darling_macro v0.24.1
+  Downloaded dirs-sys v0.5.0
+  Downloaded servo_arc v0.4.3
+  Downloaded string_cache v0.9.0
+  Downloaded tauri-utils v2.10.1
+  Downloaded derive_more v2.1.1
+  Downloaded erased-serde v0.4.10
+  Downloaded bs58 v0.5.1
+  Downloaded bstr v1.13.1
+  Downloaded core_detect v1.0.0
+  Downloaded ed25519 v2.2.3
+  Downloaded embed-resource v3.0.12
+  Downloaded bitflags v1.3.2
+  Downloaded bitflags v2.13.2
+  Downloaded phf_shared v0.13.1
+  Downloaded bit-set v0.8.0
+  Downloaded der v0.7.10
+  Downloaded syn v3.0.8
+  Downloaded toml v1.1.8+spec-1.1.0
+  Downloaded crossbeam-utils v0.8.23
+  Downloaded curve25519-dalek v4.1.3
+  Downloaded darling v0.24.1
+  Downloaded rusqlite v0.40.2
+  Downloaded windows-interface v0.59.3
+  Downloaded windows-result v0.4.1
+  Downloaded zerofrom v0.1.8
+  Downloaded alloc-stdlib v0.3.0
+  Downloaded version_check v0.9.5
+  Downloaded const-oid v0.9.6
+  Downloaded syn v2.0.119
+  Downloaded crossbeam-channel v0.5.17
+  Downloaded crc32fast v1.5.2
+  Downloaded pxfm v0.1.30
+  Downloaded cc v1.8.0
+  Downloaded cfb v0.14.0
+  Downloaded derive_more-impl v2.1.1
+  Downloaded ed25519-dalek v2.2.0
+  Downloaded tracing v0.1.44
+  Downloaded byteorder-lite v0.1.0
+  Downloaded ident_case v1.0.1
+  Downloaded windows-implement v0.60.2
+  Downloaded num-conv v0.2.2
+  Downloaded web_atoms v0.2.6
+  Downloaded tokio v1.53.2
+  Downloaded web-time v1.1.0
+  Downloaded lock_api v0.4.14
+  Downloaded windows-collections v0.3.2
+  Downloaded cfg-if v1.0.5
+  Downloaded windows-numerics v0.3.1
+  Downloaded zerofrom-derive v0.1.8
+  Downloaded alloc-no-stdlib v3.0.0
+  Downloaded cargo-platform v0.1.9
+  Downloaded vswhom v0.1.0
+  Downloaded hex v0.4.3
+  Downloaded dunce v1.0.5
+  Downloaded dpi v0.1.2
+  Downloaded markup5ever v0.39.0
+  Downloaded new_debug_unreachable v1.0.6
+  Downloaded cargo_metadata v0.19.2
+  Downloaded dirs v7.0.0
+  Downloaded dtoa-short v0.3.5
+  Downloaded either v1.19.0
+  Downloaded infer v0.22.0
+  Downloaded json-patch v4.2.0
+  Downloaded windows-strings v0.5.1
+  Downloaded winreg v0.56.0
+  Downloaded yoke v0.8.3
+  Downloaded zeroize v1.6.0
+  Downloaded zerovec-derive v0.11.6
+  Downloaded byteorder v1.5.0
+  Downloaded which v8.0.6
+  Downloaded camino v1.2.6
+  Downloaded dyn-clone v1.0.20
+  Downloaded litemap v0.8.3
+  Downloaded mlua-sys v0.13.0
+  Downloaded webview2-com v0.39.1
+  Downloaded windows-core v0.62.2
+  Downloaded windows-future v0.3.2
+  Downloaded writeable v0.6.4
+  Downloaded cargo_toml v1.0.1
+  Downloaded ctor v1.0.13
+  Downloaded dtoa v1.0.11
+  Downloaded icu_provider v2.3.1
+  Downloaded jiff-tzdb v0.1.9
+  Downloaded jsonptr v0.7.1
+  Downloaded miniz_oxide v0.8.9
+  Downloaded miniz_oxide v0.9.1
+  Downloaded num-traits v0.2.19
+  Downloaded uuid v1.28.0
+  Downloaded base64 v0.23.1
+  Downloaded ico v0.5.0
+  Downloaded indexmap v1.9.3
+  Downloaded keyboard-types v0.8.3
+  Downloaded log v0.4.34
+  Downloaded bytes v1.12.1
+  Downloaded flate2 v1.1.10
+  Downloaded html5ever v0.39.0
+  Downloaded http v1.5.0
+  Downloaded mio v1.2.4
+  Downloaded zerotrie v0.2.5
+  Downloaded dom_query v0.28.0
+  Downloaded jiff-core v0.1.1
+  Downloaded muda v0.20.0
+  Downloaded zerovec v0.11.8
+  Downloaded icu_normalizer v2.3.0
+  Downloaded idna v1.1.0
+  Downloaded moxcms v0.8.1
+  Downloaded vcpkg v0.2.15
+  Downloaded icu_properties_data v2.3.0
+  Downloaded wry v0.57.0
+  Downloaded zlib-rs v0.6.8
+  Downloaded brotli-decompressor v6.0.1
+  Downloaded chrono v0.4.45
+  Downloaded mlua v0.12.2
+  Downloaded image v0.25.10
+  Downloaded jiff v0.2.38
+  Downloaded brotli v9.0.0
+  Downloaded lua-src v551.0.2
+  Downloaded libc v0.2.190
+  Downloaded luajit-src v210.7.4+c6ffc14
+  Downloaded window-vibrancy v0.8.1
+  Downloaded libsqlite3-sys v0.38.2
+  Downloaded webview2-com-sys v0.39.1
+  Downloaded windows v0.62.2
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling memchr v2.8.3
+   Compiling serde_core v1.0.229
+   Compiling itoa v1.0.18
+   Compiling zmij v1.0.23
+   Compiling thiserror v2.0.21
+   Compiling serde v1.0.229
+   Compiling syn v3.0.8
+   Compiling dyn-clone v1.0.20
+   Compiling serde_json v1.0.154
+   Compiling ref-cast v1.0.27
+   Compiling cfg-if v1.0.5
+   Compiling windows-link v0.2.1
+   Compiling smallvec v1.16.3
+   Compiling autocfg v1.5.1
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling simd-adler32 v0.3.10
+   Compiling crc32fast v1.5.2
+   Compiling adler2 v2.0.1
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling cc v1.8.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling miniz_oxide v0.9.1
+   Compiling bitflags v2.13.2
+   Compiling digest v0.10.7
+   Compiling miniz_oxide v0.8.9
+   Compiling serde_derive_internals v0.30.0
+   Compiling flate2 v1.1.10
+   Compiling fdeflate v0.3.7
+   Compiling cpufeatures v0.2.17
+   Compiling num-traits v0.2.19
+   Compiling syn v2.0.119
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v2.0.21
+   Compiling ref-cast-impl v1.0.27
+   Compiling schemars_derive v1.2.2
+   Compiling pxfm v0.1.30
+   Compiling png v0.18.1
+   Compiling schemars v1.2.2
+   Compiling bytemuck v1.25.2
+   Compiling moxcms v0.8.1
+   Compiling azeroth-core v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\core)
+   Compiling byteorder-lite v0.1.0
+   Compiling pkg-config v0.3.34
+   Compiling foldhash v0.2.0
+   Compiling hashbrown v0.17.1
+   Compiling windows-sys v0.61.2
+   Compiling vcpkg v0.2.15
+   Compiling libsqlite3-sys v0.38.2
+   Compiling image v0.25.10
+   Compiling hashlink v0.12.2
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fallible-iterator v0.3.0
+   Compiling rusqlite v0.40.2
+   Compiling semver v1.0.28
+   Compiling libc v0.2.190
+   Compiling rustc_version v0.4.1
+   Compiling bitflags v1.3.2
+   Compiling png v0.17.16
+   Compiling curve25519-dalek v4.1.3
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling subtle v2.6.1
+   Compiling signature v2.1.0
+   Compiling zeroize v1.6.0
+   Compiling ed25519 v2.2.3
+   Compiling azeroth-local-data v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\local-data)
+   Compiling wowdbdefs-rs v0.1.0 (D:\a\Navzeroth\Navzeroth\vendor\wowdbdefs-rs)
+   Compiling regex-syntax v0.8.11
+   Compiling ed25519-dalek v2.2.0
+   Compiling parking_lot_core v0.9.12
+   Compiling scopeguard v1.2.0
+   Compiling synstructure v0.14.0
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerofrom v0.1.8
+   Compiling rand_core v0.10.1
+   Compiling getrandom v0.4.3
+   Compiling rustc-hash v2.1.3
+   Compiling cpufeatures v0.3.1
+   Compiling chacha20 v0.10.2
+   Compiling rand v0.10.3
+   Compiling rand_xorshift v0.5.0
+   Compiling zerovec-derive v0.11.6
+   Compiling unarray v0.1.4
+   Compiling core_detect v1.0.0
+   Compiling proptest v1.12.0
+   Compiling displaydoc v0.2.7
+   Compiling lock_api v0.4.14
+   Compiling parking_lot v0.12.5
+   Compiling azeroth-storage v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\storage)
+   Compiling azeroth-ingest v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\ingest)
+   Compiling siphasher v1.0.4
+   Compiling litemap v0.8.3
+   Compiling writeable v0.6.4
+   Compiling phf_shared v0.13.1
+   Compiling which v8.0.6
+   Compiling luajit-src v210.7.4+c6ffc14
+   Compiling lua-src v551.0.2
+   Compiling fastrand v2.5.0
+   Compiling utf8_iter v1.0.4
+   Compiling phf_generator v0.13.1
+   Compiling mlua-sys v0.13.0
+   Compiling azeroth-app v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\app)
+   Compiling stable_deref_trait v1.2.1
+   Compiling icu_properties_data v2.3.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling bstr v1.13.1
+   Compiling either v1.19.0
+   Compiling mlua v0.12.2
+   Compiling azeroth-cli v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\cli)
+   Compiling yoke v0.8.3
+   Compiling azeroth-lua-harness v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\lua-harness)
+   Compiling zerovec v0.11.8
+   Compiling phf_macros v0.13.1
+   Compiling time-core v0.1.9
+   Compiling num-conv v0.2.2
+   Compiling tinystr v0.8.4
+   Compiling phf_codegen v0.13.1
+   Compiling log v0.4.34
+   Compiling ident_case v1.0.1
+   Compiling deranged v0.5.8
+   Compiling typeid v1.0.3
+   Compiling strsim v0.11.1
+   Compiling winnow v1.0.4
+   Compiling powerfmt v0.2.1
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling darling_core v0.24.1
+   Compiling icu_locale_core v2.3.0
+   Compiling potential_utf v0.1.6
+   Compiling zerotrie v0.2.5
+   Compiling erased-serde v0.4.10
+   Compiling toml_writer v1.1.3+spec-1.1.0
+   Compiling icu_provider v2.3.1
+   Compiling icu_collections v2.3.0
+   Compiling darling_macro v0.24.1
+   Compiling aho-corasick v1.1.5
+   Compiling fnv v1.0.7
+   Compiling web-time v1.1.0
+   Compiling new_debug_unreachable v1.0.6
+   Compiling equivalent v1.0.2
+   Compiling darling v0.24.1
+   Compiling phf v0.13.1
+   Compiling string_cache_codegen v0.6.1
+   Compiling regex-automata v0.4.18
+   Compiling alloc-no-stdlib v3.0.0
+   Compiling bytes v1.12.1
+   Compiling precomputed-hash v0.1.1
+   Compiling alloc-stdlib v0.3.0
+   Compiling web_atoms v0.2.6
+   Compiling serde_with_macros v3.24.0
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling regex v1.13.1
+   Compiling quick-xml v0.42.0
+   Compiling base64 v0.23.1
+   Compiling anyhow v1.0.104
+   Compiling dunce v1.0.5
+   Compiling idna_adapter v1.2.2
+   Compiling string_cache v0.9.0
+   Compiling brotli-decompressor v6.0.1
+   Compiling http v1.5.0
+   Compiling serde_spanned v1.1.2
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling percent-encoding v2.3.2
+   Compiling dtoa v1.0.11
+   Compiling form_urlencoded v1.2.2
+   Compiling dtoa-short v0.3.5
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling brotli v9.0.0
+   Compiling uuid v1.28.0
+   Compiling idna v1.1.0
+   Compiling tendril v0.5.1
+   Compiling selectors v0.38.0
+   Compiling windows-interface v0.59.3
+   Compiling derive_more-impl v2.1.1
+   Compiling windows-implement v0.60.2
+   Compiling cssparser-macros v0.7.1
+   Compiling indexmap v1.9.3
+   Compiling windows-result v0.4.1
+   Compiling windows-strings v0.5.1
+   Compiling camino v1.2.6
+   Compiling ctor v1.0.13
+   Compiling glob v0.3.4
+   Compiling windows-core v0.62.2
+   Compiling cssparser v0.37.0
+   Compiling derive_more v2.1.1
+   Compiling markup5ever v0.39.0
+   Compiling url v2.5.8
+   Compiling winapi-util v0.1.11
+   Compiling servo_arc v0.4.3
+   Compiling serde_derive_internals v0.29.1
+   Compiling vswhom-sys v0.1.3
+   Compiling hashbrown v0.12.3
+   Compiling schemars v0.8.22
+   Compiling bit-vec v0.8.0
+   Compiling bit-set v0.8.0
+   Compiling schemars_derive v0.8.22
+   Compiling indexmap v2.14.2
+   Compiling same-file v1.0.6
+   Compiling html5ever v0.39.0
+   Compiling cfb v0.14.0
+   Compiling time v0.3.55
+   Compiling cargo-platform v0.1.9
+   Compiling jsonptr v0.7.1
+   Compiling option-ext v0.2.0
+   Compiling cargo_metadata v0.19.2
+   Compiling dom_query v0.28.0
+   Compiling json-patch v4.2.0
+   Compiling infer v0.22.0
+   Compiling serde-untagged v0.1.9
+   Compiling plist v1.10.1
+   Compiling walkdir v2.5.0
+   Compiling urlpattern v0.6.0
+   Compiling serde_with v3.24.0
+   Compiling windows-threading v0.2.1
+   Compiling windows-future v0.3.2
+   Compiling vswhom v0.1.0
+   Compiling windows-collections v0.3.2
+   Compiling windows-numerics v0.3.1
+   Compiling winreg v0.56.0
+   Compiling time-macros v0.2.32
+   Compiling raw-window-handle v0.6.2
+   Compiling embed-resource v3.0.12
+   Compiling windows v0.62.2
+   Compiling tauri-utils v2.10.1
+   Compiling dirs-sys v0.5.0
+   Compiling webview2-com-sys v0.39.1
+   Compiling heck v0.5.0
+   Compiling crossbeam-utils v0.8.23
+   Compiling dirs v7.0.0
+   Compiling tauri-winres v0.3.6
+   Compiling cargo_toml v1.0.1
+   Compiling dpi v0.1.2
+   Compiling cookie v0.18.2
+   Compiling webview2-com-macros v0.8.1
+   Compiling tauri-build v2.7.2
+   Compiling windows-version v0.1.7
+   Compiling pin-project-lite v0.2.17
+   Compiling crossbeam-channel v0.5.17
+   Compiling wry v0.57.0
+   Compiling tracing-core v0.1.36
+   Compiling tauri-runtime v2.12.1
+   Compiling byteorder v1.5.0
+   Compiling once_cell v1.21.4
+   Compiling ico v0.5.0
+   Compiling tracing v0.1.44
+   Compiling getrandom v0.3.4
+   Compiling tauri-runtime-wry v2.12.1
+   Compiling muda v0.20.0
+   Compiling unicode-segmentation v1.13.3
+   Compiling tauri-codegen v2.7.2
+   Compiling tauri v2.12.3
+   Compiling softbuffer v0.4.8
+   Compiling serialize-to-javascript-impl v0.1.2
+   Compiling keyboard-types v0.8.3
+   Compiling rfd v0.17.2
+   Compiling serialize-to-javascript v0.1.2
+   Compiling tauri-macros v2.7.2
+   Compiling azeroth-desktop v1.0.0 (D:\a\Navzeroth\Navzeroth\apps\desktop\src-tauri)
+   Compiling tokio v1.53.2
+   Compiling window-vibrancy v0.8.1
+   Compiling serde_repr v0.1.21
+   Compiling mime v0.3.17
+   Compiling tao v0.37.1
+   Compiling webview2-com v0.39.1
+    Finished `test` profile [unoptimized] target(s) in 5m 25s
+     Running unittests src\lib.rs (D:\a\_temp\coverage-rust\build\debug\deps\azeroth_app-7e5a7f9865609bf8.exe)
+
+running 68 tests
+test authored_content::tests::missing_quest_restrictions_never_become_unrestricted ... ok
+test authored_content::tests::zero_rewards_and_unavailable_entitlement_remain_distinct ... ok
+test authored_content::tests::missing_item_facts_and_unobservable_costs_remain_unknown ... ok
+test catalog_pages::tests::every_v2_record_collection_refuses_an_unresolved_index ... ok
+test compatibility::tests::source_registry_gaps_remain_separate_from_structural_dataset_validity ... ok
+test content::composition_checks::actual_world_and_authored_dungeons_compose_with_warnings_and_conflicts ... ignored, Requires explicit public full-world and authored catalog directories
+test compatibility::tests::policy_inventory_preserves_permission_false_revision_and_edition_distinctions ... ok
+test diagnostics::tests::numeric_build_input_preserves_zero_but_rejects_text_and_overflow ... ok
+test content::composition_checks::dungeon_category_refuses_missing_conflicting_or_stale_proofs ... ok
+test dungeon_preparation::json::tests::preparation_json_preserves_values_and_refuses_unknown_schema_before_decoding ... ok
+test diagnostics::tests::serialization_enforces_byte_bound_before_file_creation ... ok
+test catalog::tests::travel_policy_view_delegates_and_adds_only_accepted_inferred_edges ... ok
+test dungeon_preparation::tests::check_labels_keep_each_schema_byte_boundary_without_truncation ... ok
+test catalog_pages::tests::legacy_pages_bind_every_collection_and_refuse_stale_or_out_of_range_requests ... ok
+test dungeon_preparation::tests::missing_member_stays_missing_with_independent_fresh_member_assessment ... ok
+test dungeon_preparation::tests::stale_remote_capture_cannot_supply_independently_fresh_fields_to_party_predicates ... ok
+test dungeon_preparation::tests::fresh_member_field_expiry_is_guarded_even_when_other_member_is_stale ... ok
+test dungeon_preparation::tests::changed_snapshot_membership_or_content_refuses_prepared_report_after_unlocked_work ... ok
+test local_submissions::tests::bounded_export_writer_refuses_expansion_before_handoff ... ok
+test local_submissions::tests::malformed_future_or_personal_input_is_refused_without_echo ... ok
+test dungeon_preparation::tests::versioned_reference_limits_preserve_all_ids_and_other_section_limits ... ok
+test local_submissions::tests::declared_and_export_timestamps_preserve_unknown_zero_and_signed_safe_values ... ok
+test local_submissions::tests::export_requires_accepted_exact_guard_and_preserves_zero_without_transport_or_confidence ... ok
+test local_submissions::tests::restricting_then_releasing_and_reactivating_the_identical_base_refuses_export_aba ... ok
+test party::tests::blocked_conditions_and_alternative_catch_up_are_not_relabelled_as_eligible ... ok
+test party::tests::unavailable_and_stale_reasons_keep_phases_without_inventing_eligibility ... ok
+test plan_export::tests::lua_collection_string_node_and_depth_limits_are_not_truncated ... ok
+test planning_job_service::tests::export_deadline_is_earliest_finite_member_bound ... ok
+test local_submissions::tests::mutations_during_compilation_fail_final_cas_or_base_capture ... ok
+test local_submissions::tests::revoked_or_withdrawn_payloads_never_export ... ok
+test planning_job_service::tests::stable_interval_preserves_inclusive_bounds_and_missing_time ... ok
+test planning_jobs::tests::job_deadline_cancellation_and_observed_phases_remain_distinct ... ok
+test planning_job_service::tests::final_clock_after_class_walk_rejects_expiry_and_newly_usable_fields ... ok
+test planning_jobs::tests::poisoned_pin_never_publishes_a_success_or_a_result ... ok
+test planning_jobs::tests::poisoned_registry_and_outcome_refuse_control_and_publication ... ok
+test recipient_export::tests::export_readiness_and_lua_resource_limits_refuse_without_flattening_unknowns ... ok
+test local_submissions::tests::source_policy_unknown_conditional_negative_or_missing_machine_constraints_block_export ... ok
+test recipient_export::tests::independent_field_expiry_after_compilation_refuses_the_prepared_export ... ok
+test recipient_export::tests::withdrawal_after_compilation_refuses_the_prepared_export ... ok
+test recovery::tests::asynchronous_startup_publishes_ready_service_without_dropping_it ... ok
+test recovery::tests::corrupt_startup_can_inspect_and_restore_without_touching_original_until_explicit_action ... ok
+test planning_job_service::tests::publication_reserves_the_validated_content_until_handoff ... ok
+test recovery::tests::explicit_restore_stops_watcher_and_backup_destination_is_never_overwritten ... ok
+test recovery::tests::failed_initializer_never_publishes_ready_application_or_changes_profiles ... ok
+test recovery::tests::failed_candidate_install_rolls_back_files_and_preserves_ready_state ... ok
+test recovery::tests::bounded_empty_or_unreadable_marker_content_does_not_block_explicit_recovery ... ok
+test recovery::tests::interrupted_restore_does_not_silently_create_empty_database ... ok
+test recovery::tests::pending_marker_directory_and_oversized_file_are_not_trusted_as_paths ... ok
+test recovery::tests::initialization_finishes_before_ready_and_repeats_after_restore ... ok
+test recovery::tests::marker_cleanup_failure_is_visible_and_next_startup_remains_guarded ... ok
+test reference::tests::serialized_reference_metadata_refuses_an_oversized_field ... ok
+test reminders::tests::conflicts_never_become_verified_advice ... ok
+test reminders::tests::evidence_and_source_revision_gate_are_explicit ... ok
+test reminders::tests::original_authoring_is_heuristic_and_exact_source_policy_is_required ... ok
+test reminders::tests::original_reminder_provenance_is_separate_from_dungeon_evidence ... ok
+test route_acquisition::tests::report_serialization_is_bounded_without_allocating_an_output_buffer ... ok
+test recovery::tests::oversized_staged_candidate_is_rejected_before_destructive_boundary ... ok
+test stored_atlas::consistency_tests::source_display_retains_recorded_text_and_distinct_absence_states ... ok
+test stored_atlas::tests::stored_uri_serves_verified_bytes_and_refuses_malformed_or_changed_identity ... ok
+test tests::profiles_are_all_labelled_demo ... ok
+test tests::snapshot_is_the_validated_fixture_and_serializes_to_the_contract ... ok
+test tests::status_is_demo_and_capabilities_are_unverified ... ok
+test tests::unknown_profile_is_a_safe_invalid_input_error ... ok
+test world::tests::legacy_catalogs_list_quests_and_have_no_entities ... ok
+test world::tests::marks_and_observation_mapping_keep_status_distinct ... ok
+test stored_atlas::consistency_tests::selected_catalog_handoff_excludes_external_activation_until_complete ... ok
+test recovery::tests::restore_waits_for_in_flight_application_lease ... ok
+test recovery::tests::stale_preview_and_tampered_candidate_refuse_without_changing_healthy_database ... ok
+
+test result: ok. 67 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 22.57s
+
+     Running tests\atlas_commands.rs (D:\a\_temp\coverage-rust\build\debug\deps\atlas_commands-9ab3bbb046f394b8.exe)
+
+running 15 tests
+test a_location_on_another_floor_is_a_gap_not_a_marker ... ok
+test layer_urls_follow_the_platform_scheme_style ... ok
+test project_positions_places_and_explains ... ok
+test project_positions_bounds_the_request_without_echoing_it ... ok
+test query_atlas_narrows_to_one_image_and_rejects_unknown_ones_safely ... ok
+test resolver_decodes_exactly_once ... ok
+test query_atlas_describes_the_labelled_demo_dataset ... ok
+test resolver_refuses_everything_else ... ok
+test resolver_serves_only_declared_hash_verified_layers ... ok
+test resolver_accepts_the_genuine_bytes_through_an_injected_source ... ok
+test scheme_replies_are_get_only_and_empty_on_refusal ... ok
+test resolver_refuses_bytes_that_do_not_match_the_declared_digest ... ok
+test snapshot_markers_carry_age_freshness_and_the_demo_label ... ok
+test golden_dto_json_matches_the_committed_files ... ok
+test unavailable_locations_never_become_a_pixel ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\authored_content.rs (D:\a\_temp\coverage-rust\build\debug\deps\authored_content-9eb773b8410abedf.exe)
+
+running 12 tests
+test authored_dungeon_catalog_uses_exact_declared_identity_title_and_evidence ... ok
+test authored_dungeon_retains_unknown_sections_and_actual_revision ... ok
+test dungeon_estimate_derivation_remains_visible_and_never_passes_readiness ... ok
+test generic_catalog_pages_bind_hash_scope_and_reject_unbounded_requests ... ok
+test no_active_authored_catalog_stays_unbound_for_character_and_party ... ok
+test planning_nodes_pin_binds_other_collections_without_inventing_page_descriptors ... ok
+test selected_model_is_consumed_and_manual_override_cannot_replace_authored_weights ... ok
+test authored_travel_preserves_unavailable_states_and_resolves_known_directed_edges ... ok
+test source_guidance_labels_preserve_full_utf8_text_under_new_schema ... ok
+test strict_staging_preserves_prior_active_revision_on_malformed_or_duplicate_content ... ok
+test catalog_pages_are_bounded_and_revision_bound ... ok
+test full_source_reward_reference_list_survives_preparation_and_keeps_unknown_requirements ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.55s
+
+     Running tests\authored_heuristic_reminders.rs (D:\a\_temp\coverage-rust\build\debug\deps\authored_heuristic_reminders-e6255bfba48ab53f.exe)
+
+running 2 tests
+test authored_advice_is_explicitly_heuristic_and_global_optout_still_applies ... ok
+test heuristic_status_never_resolves_unknown_restricted_stale_false_or_wrong_band_conditions ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.75s
+
+     Running tests\authored_role_coverage.rs (D:\a\_temp\coverage-rust\build\debug\deps\authored_role_coverage-f1a07cc1c1d2078c.exe)
+
+running 5 tests
+test score_only_preserves_unavailable_source_fields_and_incomplete_subtotals ... ok
+test declared_roles_do_not_override_class_level_exclusions_or_strict_equipment_paths ... ok
+test score_only_refuses_unknown_wrong_stale_or_restricted_class_level_and_role_inputs ... ok
+test explicit_declared_role_enables_only_individual_scores_without_changing_imported_role ... ok
+test every_authored_class_role_and_level_band_scores_without_implying_equipment_eligibility ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.34s
+
+     Running tests\bundled_content.rs (D:\a\_temp\coverage-rust\build\debug\deps\bundled_content-fe4238dd0fdf4cdb.exe)
+
+running 7 tests
+test normalization_conflicts_remain_distinct_and_bind_the_catalog_revision_and_precedence ... ok
+test exact_signed_resources_activate_before_import_and_survive_repeated_startup ... ok
+test resource_streams_accept_large_documents_and_refuse_wrong_hash_size_type_and_links ... ok
+test native_startup_requires_build_pins_and_publishes_only_after_verified_activation ... ok
+test signed_content_with_remaining_policy_gaps_and_excessive_tree_depth_is_refused ... ok
+test altered_missing_extra_and_linked_resources_fail_closed ... ok
+test signed_but_incompatible_manifests_cannot_activate ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.15s
+
+     Running tests\calibration_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\calibration_workflow-4de72be0ecfb4839.exe)
+
+running 1 test
+test annotation_revalidates_retained_evidence_and_delete_cascades ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\clustering_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\clustering_workflow-611b265b13d10238.exe)
+
+running 4 tests
+test joint_cluster_uses_minimum_participant_sum_and_preserves_original_utilities ... ok
+test exported_identity_changes_with_recomputed_choices_and_expiry_tracks_typed_fields ... ok
+test solo_cluster_shares_travel_and_exports_original_steps_with_singleton_fallback ... ok
+test restricted_original_stage_never_becomes_ready_through_clustering ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests\compatibility.rs (D:\a\_temp\coverage-rust\build\debug\deps\compatibility-ba618d1194b70b17.exe)
+
+running 6 tests
+test no_selection_is_unavailable_not_zero_and_records_only_narrow_historical_evidence ... ok
+test matching_numeric_build_from_another_edition_does_not_inherit_recorded_evidence ... ok
+test a_selected_profile_without_active_content_has_no_fabricated_zero_counts ... ok
+test shipped_inventory_is_bound_to_dataset_bytes_and_reproduces_the_core_report ... ok
+test source_policy_values_and_unknown_statuses_are_counted_without_forwarding_private_strings ... ok
+test exact_edition_build_interface_only_matches_its_historical_tuple ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests\content_dispositions.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_dispositions-7905ad205658aa5c.exe)
+
+running 2 tests
+test malformed_future_or_cross_context_requests_leave_state_unchanged ... ok
+test explicit_profile_decision_clears_active_then_release_never_autoactivates ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests\content_inspection_pages.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_inspection_pages-cf31b278acad2de1.exe)
+
+running 2 tests
+test verified_pack_import_stages_without_activation_and_rejects_tampered_catalog ... ok
+test staged_inspection_is_bounded_and_hash_bound_before_activation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+     Running tests\content_sets.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_sets-f7def07f6a74a677.exe)
+
+running 11 tests
+test direct_forever_and_ambiguous_authored_overlaps_refuse_without_changing_active_content ... ok
+test content_sets_refuse_overlaps_missing_members_and_bad_counts ... ok
+test bundled_defaults_apply_before_profile_import_and_upgrade_without_repeating_within_version ... ok
+test authored_and_world_revisions_activate_as_one_composed_revision ... ok
+test inferred_travel_is_used_only_after_an_accepting_activation ... ok
+test dungeon_enrichment_activates_one_identity_with_visible_estimates_and_conflicts ... ok
+test immutable_set_identity_changes_with_content_even_if_external_labels_are_reused ... ok
+test members_must_share_one_game_context ... ok
+test unknown_travel_requirements_are_assumed_only_under_the_accepting_activation ... ok
+test legacy_historical_origin_metadata_is_accepted_only_for_unambiguous_admitted_editions ... ok
+test inferred_choice_and_default_marker_survive_application_restart ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
+
+     Running tests\content_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_workflow-202ca8f987175bf9.exe)
+
+running 2 tests
+test activation_is_context_scoped_and_rollback_preserves_character_state ... ok
+test staging_never_activates_and_invalid_updates_preserve_current_content ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.60s
+
+     Running tests\diagnostics.rs (D:\a\_temp\coverage-rust\build\debug\deps\diagnostics-09964a1f4c618481.exe)
+
+running 6 tests
+test capability_false_restricted_and_stale_survive_without_identifiers ... ok
+test context_mismatch_does_not_mix_dataset_coverage ... ok
+test stale_field_age_is_not_replaced_by_fresh_snapshot_age ... ok
+test arbitrary_imported_strings_and_ids_never_enter_report ... ok
+test missing_statistics_remain_unknown_observed_zero_and_false_are_distinct ... ok
+test create_new_export_preserves_existing_file_and_stored_state ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\diagnostics_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\diagnostics_workflow-b203c44a54c89c91.exe)
+
+running 4 tests
+test accepted_job_outcomes_record_success_cancellation_and_failure_after_actual_dispatch ... ok
+test explicit_export_recaptures_and_never_overwrites_and_recovery_keeps_unknown_metadata ... ok
+test selection_changes_snapshot_and_content_together_and_preserves_field_age ... ok
+test actual_foreground_attempts_include_duplicate_and_failure_without_history_or_secrets ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.47s
+
+     Running tests\dungeon_preparation.rs (D:\a\_temp\coverage-rust\build\debug\deps\dungeon_preparation-6fb8db57317ebe70.exe)
+
+running 8 tests
+test no_package_or_content_returns_explicit_gaps_instead_of_default_requirements ... ok
+test local_reference_retains_false_zero_unknown_restricted_and_evidence_categories ... ok
+test exact_context_revision_sources_and_references_are_required ... ok
+test report_wire_fixture_retains_stale_member_and_declared_zero_timing ... ok
+test strict_future_duplicate_unknown_malformed_and_oversize_data_fail_without_echo ... ok
+test stale_and_uncertain_members_return_gaps_without_quest_or_route_recommendations ... ok
+test shared_route_checks_second_member_requirements_and_preserves_false_gate ... ok
+test expanded_actual_evaluation_report_is_refused_before_publication ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+     Running tests\gear_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\gear_workflow-722fd48362d6b4ed.exe)
+
+running 6 tests
+test equipment_eligibility_is_separate_from_acquisition_and_practical_is_conditional ... ok
+test desktop_gear_golden_preserves_actual_rust_serialization ... ok
+test captured_baseline_modifiers_unknown_variants_and_illegal_replacements_block_advice ... ok
+test identity_replacements_duplicates_and_bounds_fail_safely ... ok
+test unknown_scores_false_requirements_zero_probability_and_configuration_gaps_remain_visible ... ok
+test unknown_probability_zero_false_and_stale_are_preserved ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests\joint_planning.rs (D:\a\_temp\coverage-rust\build\debug\deps\joint_planning-f57e1f470c94bfa7.exe)
+
+running 9 tests
+test minimum_member_utility_is_group_score_and_round_trip_inputs_remain_explicit ... ok
+test duplicate_missing_utility_and_over_budget_inputs_are_conservative ... ok
+test hard_exclusions_override_ready_positive_contributions_and_validate_ids ... ok
+test one_members_unknown_or_false_readiness_never_becomes_joint_ready ... ok
+test snapshot_revision_and_membership_changes_reject_requests ... ok
+test stale_or_uncertain_capture_blocks_joint_planning ... ok
+test authored_participants_and_unknown_requirements_remain_explicit_exclusions ... ok
+test travel_requirement_of_second_member_is_required_for_joint_stopping_route ... ok
+test zero_member_contribution_is_excluded_even_when_every_member_is_ready ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.11s
+
+     Running tests\local_data_lifecycle.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_lifecycle-2f7d01f7b6322de4.exe)
+
+running 1 test
+test selected_installation_and_preset_survive_service_recreation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s
+
+     Running tests\local_data_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_workflow-966af61e328341a8.exe)
+
+running 2 tests
+test research_asset_boundary_refuses_paths_queries_methods_and_unknown_revisions ... ok
+test opt_in_stages_metadata_without_activation_and_opt_out_stops_detection ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.21s
+
+     Running tests\local_research_boundaries.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_research_boundaries-fabe50a09820fa26.exe)
+
+running 5 tests
+test parallel_fixture_directories_are_unique_and_owned ... ok
+test direct_research_services_keep_empty_catalog_and_bad_identity_boundaries ... ok
+test partial_delivery_never_converts_missing_counts_into_completeness_or_advice ... ok
+test selected_guide_is_inert_bounded_and_cannot_establish_duo_eligibility ... ok
+test explicit_research_activation_survives_failed_replacement_and_locale_mismatch ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.65s
+
+     Running tests\local_state_recovery.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_state_recovery-6ecdff7a4b866e6b.exe)
+
+running 1 test
+test populated_backup_preserves_intent_queue_tombstones_and_marks_advice_historical ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.21s
+
+     Running tests\party_eligibility.rs (D:\a\_temp\coverage-rust\build\debug\deps\party_eligibility-9ed15e9e7588b869.exe)
+
+running 3 tests
+test absent_content_is_explicit_and_contexts_are_not_relabelled ... ok
+test participants_get_independent_acceptance_and_catch_up_with_exact_inputs ... ok
+test stale_capture_and_deleted_participant_never_become_definite_joint_advice ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.01s
+
+     Running tests\party_proposals.rs (D:\a\_temp\coverage-rust\build\debug\deps\party_proposals-033c793fb7482d1d.exe)
+
+running 10 tests
+test missing_member_capture_and_single_member_party_keep_invalidated_history_visible ... ok
+test new_participant_snapshot_invalidates_agreement_and_exposes_quest_observation_changes ... ok
+test concurrent_acceptances_cannot_overwrite_another_member_declaration ... ok
+test changed_active_content_revision_invalidates_plan_and_party_deletion_cascades_only_agreement ... ok
+test proposal_recalculation_refuses_over_count_before_candidate_evaluation ... ok
+test proposal_requires_every_members_explicit_local_acceptance_and_withdrawal_survives_reopen ... ok
+test same_quest_values_recaptured_at_new_time_do_not_invent_progress ... ok
+test replacement_uses_exact_guard_resets_acceptance_and_rejects_old_plan_acceptance ... ok
+test stale_or_uncertain_clock_invalidates_even_previously_agreed_proposals ... ok
+test wrong_actor_malformed_and_oversized_agreement_requests_preserve_current_record ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.22s
+
+     Running tests\planning_field_freshness.rs (D:\a\_temp\coverage-rust\build\debug\deps\planning_field_freshness-6eb36d6ad362a147.exe)
+
+running 7 tests
+test fresh_capture_cannot_publish_level_eligibility_after_independent_field_expiry ... ok
+test nested_equipped_variant_expiry_rejects_eligible_item_comparison ... ok
+test declared_travel_preference_expiry_rejects_a_previously_usable_route ... ok
+test newly_usable_previously_uncertain_field_requires_recalculation ... ok
+test nested_quest_progress_expiry_cannot_publish_accepted_quest_requirement ... ok
+test unchanged_fresh_classes_preserve_false_zero_and_ignore_extension_metadata ... ok
+test already_stale_or_unavailable_observations_keep_unchanged_filtered_results ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests\planning_job_service.rs (D:\a\_temp\coverage-rust\build\debug\deps\planning_job_service-deedb132c2700f26.exe)
+
+running 5 tests
+test cooperative_cancel_during_application_candidate_preparation_preserves_storage ... ok
+test calculation_releases_store_lock_and_changed_imported_snapshot_rejects_success ... ok
+test joint_publication_rechecks_membership_and_each_participant_snapshot ... ok
+test final_serialized_publication_checks_revision_and_freshness_before_handoff ... ok
+test publication_clock_advances_while_waiting_for_store_lock ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests\planning_jobs.rs (D:\a\_temp\coverage-rust\build\debug\deps\planning_jobs-44e70de99f2405d0.exe)
+
+running 9 tests
+test cancel_before_dispatch_does_not_run_compute_and_has_no_result ... ok
+test foreign_registry_cannot_dispatch_a_ticket ... ok
+test cancellation_is_reachable_during_compute_and_does_not_cancel_another_job ... ok
+test capacity_does_not_evict_active_jobs_and_terminal_retention_is_bounded ... ok
+test progress_is_work_count_and_phase_without_an_invented_percentage ... ok
+test retained_ticket_reports_actual_terminal_outcome_after_result_retrieval ... ok
+test simultaneous_completions_obey_terminal_cap_and_evict_by_completion_age ... ok
+test panic_failure_and_oversized_result_have_no_partial_success ... ok
+test publication_guard_rejects_obsolete_success_and_serialization_precedes_guard ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests\planning_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\planning_workflow-c90eb02696e2eb4d.exe)
+
+running 7 tests
+test changed_stale_or_invalid_inputs_are_rejected ... ok
+test planning_is_deterministic_bounded_and_includes_stopping_costs ... ok
+test export_recomputes_with_stable_identity_and_snapshot_bounded_expiry ... ok
+test route_inspection_orders_selected_then_stopping_and_reports_projection_gaps ... ok
+test route_projection_uses_active_images_and_never_connects_different_floors ... ok
+test export_enforces_compiled_predicate_depth_and_size_without_truncation ... ok
+test quest_stage_planning_and_export_preserve_unknown_false_and_completed_states ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests\quest_objective_projection.rs (D:\a\_temp\coverage-rust\build\debug\deps\quest_objective_projection-f92626bdd5c713c3.exe)
+
+running 5 tests
+test exported_partial_plan_retains_unresolved_stage_readiness ... ok
+test generated_stage_can_be_planned_and_exported_without_fabricating_details ... ok
+test source_free_quests_are_not_promoted_and_declared_objectives_take_precedence ... ok
+test projection_pages_are_complete_revision_bound_and_do_not_fill_missing_details ... ok
+test unavailable_eligibility_prerequisites_and_access_never_become_eligible ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests\recipient_export.rs (D:\a\_temp\coverage-rust\build\debug\deps\recipient_export-0f492ce895be7940.exe)
+
+running 10 tests
+test joint_minimum_member_choice_is_not_replaced_with_recipient_solo_preference ... ok
+test independently_expiring_member_field_bounds_export_and_invalidates_later_advice ... ok
+test exact_recipients_share_joint_choices_but_have_distinct_stable_identities ... ok
+test every_local_acceptance_and_exact_cas_are_required ... ok
+test quest_stage_export_preserves_each_recipient_readiness_predicate ... ok
+test oversized_valid_joint_plan_is_refused_without_mutating_acceptances ... ok
+test recipient_and_request_bounds_are_checked_without_echoing_input ... ok
+test valid_joint_readiness_that_exceeds_addon_rule_depth_is_refused ... ok
+test refreshed_snapshot_cohort_and_content_invalidate_export ... ok
+test stored_proposal_context_fixture_and_result_fingerprint_must_match_recomputed_inputs ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.04s
+
+     Running tests\reference.rs (D:\a\_temp\coverage-rust\build\debug\deps\reference-ff10e6f63f9832de.exe)
+
+running 3 tests
+test native_caller_policy_allows_main_and_exact_reference_read_only ... ok
+test imported_zero_unknown_restricted_and_distinct_field_age_remain_explicit ... ok
+test actual_selected_snapshot_changes_and_missing_clock_remains_uncertain ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\reference_controls.rs (D:\a\_temp\coverage-rust\build\debug\deps\reference_controls-062ffce9180b6d68.exe)
+
+running 6 tests
+test actual_reference_caller_gate_still_denies_all_new_commands ... ok
+test mode_only_never_creates_or_shows_and_unsafe_focus_is_refused ... ok
+test hide_remains_attempted_when_reset_fails_and_observed_state_is_queried ... ok
+test opt_in_creation_applies_mode_before_show_and_hiding_resets_after_visibility ... ok
+test unknown_focus_or_state_keeps_refusal_truth_and_no_window_mutation ... ok
+test partial_setter_failures_never_show_or_invent_interaction_observations ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\reminder_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\reminder_workflow-f8aa675dccefdeff.exe)
+
+running 3 tests
+test manual_checklist_is_opt_in_guarded_and_does_not_invent_observations ... ok
+test guarded_preferences_and_invalid_acknowledgment_are_atomic ... ok
+test explicit_presentation_dismiss_restore_and_refresh_guards ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests\route_acquisition.rs (D:\a\_temp\coverage-rust\build\debug\deps\route_acquisition-3ce0669352a0d7b6.exe)
+
+running 11 tests
+test duplicate_opportunities_missing_sources_and_variant_identity_refuse_or_remain_independent ... ok
+test detour_rejoins_selected_route_and_reserves_baseline_return_once ... ok
+test exact_nodes_variants_schema_counts_and_current_route_are_guarded ... ok
+test directed_rejoin_gap_and_restricted_route_conditions_do_not_become_zero ... ok
+test optional_gear_receives_only_authoritative_derived_effort ... ok
+test quest_reward_deduplication_uses_complete_variant_identity ... ok
+test selected_quest_rewards_prevent_duplicate_full_item_credit_and_missing_coverage_blocks_credit ... ok
+test unknown_formation_zero_probability_and_unqualified_player_model_are_preserved ... ok
+test unsafe_stateful_intermediate_detour_is_refused_and_short_budget_is_not_infinite_trials ... ok
+test verified_reserved_action_is_never_used_outbound_but_can_remain_at_route_ending ... ok
+test zero_on_route_and_missing_binding_are_distinct ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests\session_analytics_golden.rs (D:\a\_temp\coverage-rust\build\debug\deps\session_analytics_golden-1430d6f20c95d896.exe)
+
+running 1 test
+test analytics_fixture_matches_real_analytics_output ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\session_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\session_workflow-20163fabbb9429f5.exe)
+
+running 3 tests
+test invalid_import_or_selected_scope_never_changes_history ... ok
+test manual_import_history_detail_and_delete_preserve_snapshots ... ok
+test selected_text_and_inert_saved_variables_share_idempotent_session_history ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests\snapshot_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\snapshot_workflow-f37efcc9906c2ec5.exe)
+
+running 9 tests
+test file_import_converges_with_text_and_watcher_can_stop_when_file_missing ... ok
+test incomparable_import_stays_in_history ... ok
+test manual_party_keeps_individual_freshness_progress_and_ordering ... ok
+test historical_lookup_and_guarded_promotion_keep_current_until_explicit_success ... ok
+test profile_ids_resolve_full_context_and_never_a_character_only ... ok
+test text_duplicate_older_same_position_and_bad_input_preserve_current ... ok
+test watcher_imports_on_its_worker_and_preserves_a_different_selected_profile ... ok
+test savedvariables_and_anav1_share_storage_and_survive_reopen ... ok
+test manual_party_reports_missing_snapshots_after_reopen_and_profile_deletion ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.49s
+
+     Running tests\stable_bundled_functional.rs (D:\a\_temp\coverage-rust\build\debug\deps\stable_bundled_functional-660c63186b819936.exe)
+
+running 2 tests
+test actual_packs_support_source_backed_plans_roles_and_dungeon_guidance ... ignored, Explicit full shipped packs required; synthetic character facts are disclosed
+test permitted_engineering_profiles_and_quest_updates_keep_exchange_guards ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\stable_catalog_dto.rs (D:\a\_temp\coverage-rust\build\debug\deps\stable_catalog_dto-b7455a1e6613b2e7.exe)
+
+running 1 test
+test hosted_catalog_fixture_is_the_actual_serialized_rust_dto ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\stable_startup_measurements.rs (D:\a\_temp\coverage-rust\build\debug\deps\stable_startup_measurements-448de371fd8e14be.exe)
+
+running 3 tests
+test engineering_snapshot_is_manual_source_compatible_and_cannot_claim_fixture_or_live_capture ... ok
+test expensive_private_initialization_keeps_status_responsive_and_never_exposes_partial_ready_state ... ok
+test successful_explicit_measurement_is_visible_and_failure_or_legacy_startup_has_none ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.84s
+
+     Running tests\stored_atlas.rs (D:\a\_temp\coverage-rust\build\debug\deps\stored_atlas-ef47d7ccabd323ab.exe)
+
+running 2 tests
+test no_profile_has_no_demo_fallback ... ok
+test selected_v2_atlas_is_revision_bound_and_missing_material_unavailable ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.95s
+
+     Running tests\today.rs (D:\a\_temp\coverage-rust\build\debug\deps\today-cab127aec2a23bb1.exe)
+
+running 11 tests
+test canceled_failed_foreign_and_pruned_jobs_cannot_replace_slot ... ok
+test cas_clear_is_monotonic_and_failed_replace_preserves_existing_plan ... ok
+test content_restrict_release_reactivate_aba_refuses_original_publication_and_pin ... ok
+test captures_field_expiry_rollback_future_fields_and_unknown_clock_invalidate_saved_advice ... ok
+test joint_pin_is_local_intent_and_membership_changes_invalidate_it ... ok
+test changed_snapshot_content_and_missing_subject_keep_explanatory_historical_slot ... ok
+test settings_are_bounded_explicit_and_cas_preserves_false_zero_and_unknown_goal ... ok
+test synthetic_today_wire_fixture_has_declared_clock_and_original_steps ... ok
+test explicit_pin_survives_one_shot_result_and_restart_without_watch_or_window ... ok
+test malformed_saved_documents_and_revision_exhaustion_fail_without_mutation ... ok
+test recovered_reference_remains_historical_even_with_identical_current_inputs ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.72s
+
+     Running tests\world_browser.rs (D:\a\_temp\coverage-rust\build\debug\deps\world_browser-0d7f82f524f5a081.exe)
+
+running 8 tests
+test exact_historical_forever_origin_is_exposed_without_relabelling_other_builds ... ok
+test whole_world_pages_are_fast ... ignored, needs the Git LFS whole-world catalog
+test without_active_content_the_world_is_empty_not_an_error ... ok
+test origin_lookups_follow_evidence_sources_and_confidence ... ok
+test stored_packs_serve_the_same_pages_through_the_application ... ok
+test world_views_search_page_and_mark_origins ... ok
+test world_pages_refuse_stale_unbounded_or_invalid_requests ... ok
+test large_packs_page_on_the_server ... ok
+
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running unittests examples\workflow_performance.rs (D:\a\_temp\coverage-rust\build\debug\examples\workflow_performance-d393796a9894ecb9.exe)
+
+running 2 tests
+test tests::statistics_use_nearest_rank_and_preserve_raw_samples ... ok
+test tests::synthetic_workloads_validate_duplicate_and_failed_stage_preservation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.95s
+
+     Running unittests src\lib.rs (D:\a\_temp\coverage-rust\build\debug\deps\azeroth_cli-cf8f3758c02538b5.exe)
+
+running 28 tests
+test release::admission::tests::transformations_require_known_exact_declarations_and_allow_multiple_selected_files ... ok
+test release::bundled::tests::signed_bundle_cannot_substitute_a_demo_namespace_for_reference_content ... ok
+test release::bundled::tests::source_bound_assembly_uses_exact_trusted_materials_and_preserves_existing_output ... ok
+test release::bundled::tests::private_validation_and_admission_bytes_cannot_be_smuggled_as_extra_resources ... ok
+test release::bundled_stage::tests::bounded_stream_copy_never_overwrites_and_removes_only_its_failed_creation ... ok
+test release::bundled::tests::approved_normalization_report_must_match_its_assigned_pack_and_policy ... ok
+test release::enumeration::tests::options_are_explicit_bounded_and_output_is_new ... ok
+test release::bundled_stage::tests::assembler_requires_exact_build_identity_and_rechecks_manifest_before_copying ... ok
+test release::tests::absent_role_party_dungeon_contracts_never_become_automatic_passes ... ok
+test release::tests::canonical_record_mapping_matches_actual_typed_identity_and_source_sets ... ok
+test release::tests::claimed_missing_records_omissions_and_wrong_sources_are_rejected ... ok
+test release::tests::full_v2_requires_node_facts_and_source_less_claims_cannot_borrow_other_records ... ok
+test release::tests::non_observational_materials_require_authored_only_or_wholly_inferred_evidence ... ok
+test release::tests::preparation_wrapper_preserves_source_evidence_but_cannot_publish ... ok
+test release::tests::repeated_material_reads_charge_distinct_closure_bytes_once ... ok
+test release::tests::schema4_catalog_budget_is_role_scoped_and_historical_budgets_stay_fixed ... ok
+test release_inventory::tests::inventory_report_options_are_strict ... ok
+test release_inventory::tests::inventory_report_rejects_traversal_and_oversized_input ... ok
+test release_inventory::tests::inventory_report_verifies_hashes_and_tampering ... ok
+test release_inventory::tests::repeated_evidence_pins_are_deduplicated_but_conflicts_are_refused ... ok
+test replay::tests::output_writer_never_extends_beyond_cap ... ok
+test release::enumeration::tests::real_authored_pack_enumeration_uses_canonical_ids_and_preserves_unknowns ... ok
+test source_pipeline::tests::exhausted_or_smaller_transport_budget_is_refused_before_fetch ... ok
+test source_pipeline::tests::admitted_retrieval_publishes_verified_blobs_and_never_overwrites_on_refusal ... ok
+test source_pipeline::tests::streamed_catalog_is_hashed_and_bounded_at_the_exact_limit ... ok
+test source_pipeline::tests::larger_declared_originals_do_not_expand_legacy_proof_limits ... ok
+test release::bundled_stage::tests::exact_resources_stage_atomically_and_existing_or_failed_outputs_are_preserved ... ok
+test release::bundled::tests::source_bundle_binds_review_materials_production_and_caller_trust ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.87s
+
+     Running unittests src\main.rs (D:\a\_temp\coverage-rust\build\debug\deps\azeroth_cli-a284e669937db551.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\arguments.rs (D:\a\_temp\coverage-rust\build\debug\deps\arguments-06b1938ac335d44a.exe)
+
+running 5 tests
+test no_arguments_reports_current_capabilities ... ok
+test human_doctor_keeps_native_and_live_checks_unverified ... ok
+test schema_write_failure_and_bad_inventory_arguments_have_distinct_exit_codes ... ok
+test export_schemas_writes_the_committed_schema_bytes ... ok
+test unsupported_commands_and_options_fail_without_echoing_input ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests\authored_slice.rs (D:\a\_temp\coverage-rust\build\debug\deps\authored_slice-5aadd638d087f055.exe)
+
+running 4 tests
+test authored_role_inventory_is_bound_to_registered_historical_inputs ... ok
+test edited_procedures_or_catalog_refuse_to_build ... ok
+test authored_rules_refuse_invented_game_facts_in_build_and_verify ... ok
+test authored_slice_builds_and_verifies_with_solo_and_duo_support ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s
+
+     Running tests\bundled_content.rs (D:\a\_temp\coverage-rust\build\debug\deps\bundled_content-00578a8206e34c74.exe)
+
+running 2 tests
+test assembly_rejects_ambiguous_options_and_untrusted_source_without_creating_output ... ok
+test packaging_command_checks_explicit_build_identity_and_exact_signed_resources ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running tests\bundled_receipts.rs (D:\a\_temp\coverage-rust\build\debug\deps\bundled_receipts-23326de142ef1987.exe)
+
+running 2 tests
+test cli_refuses_implicit_duplicate_unknown_oversized_and_malformed_inputs ... ok
+test selected_file_cli_signs_assembles_and_verifies_canonical_bytes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests\capture.rs (D:\a\_temp\coverage-rust\build\debug\deps\capture-a4458315c5318cca.exe)
+
+running 6 tests
+test mismatched_unknown_build_and_missing_exports_remain_explicit ... ok
+test actual_snapshot_contract_is_validated_without_exposing_identities ... ok
+test session_summary_validates_transport_and_retains_zero_without_identities ... ok
+test allowlist_never_echoes_raw_exports_paths_details_or_unknown_fields ... ok
+test oversized_files_directories_and_extra_arguments_refuse ... ok
+test malformed_untrusted_inputs_fail_without_echoing_contents ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests\command_parity.rs (D:\a\_temp\coverage-rust\build\debug\deps\command_parity-7a8cd712c21f1222.exe)
+
+running 2 tests
+test typescript_command_map_equals_the_rust_handler_list ... ok
+test multi_word_arguments_use_snake_case_renaming ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\content_consistency.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_consistency-60f00b981538e47a.exe)
+
+running 1 test
+test datasets_match_generated_records_and_files ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\content_pack_v2.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_pack_v2-cd045dfebdca8d02.exe)
+
+running 10 tests
+test v2_authoring_rejects_nested_unknown_fields_and_duplicate_members ... ok
+test shared_import_returns_verified_catalog_and_refuses_later_tampering ... ok
+test v2_cli_dispatch_and_failed_build_preserve_existing_output ... ok
+test shared_import_retains_exact_verified_png_bytes ... ok
+test v2_declared_coverage_and_rights_cannot_be_overridden ... ok
+test v2_roundtrip_is_deterministic_and_preserves_authored_states ... ok
+test v2_party_requires_concrete_dependencies_matching_hash_and_complete_evidence ... ok
+test v2_party_material_closure_is_exact_and_target_bound ... ok
+test v2_verify_rejects_noncanonical_tampered_extra_unknown_and_future_files ... ok
+test v2_pack_roundtrips_more_than_1024_records_without_widening_v1 ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.50s
+
+     Running tests\doctor.rs (D:\a\_temp\coverage-rust\build\debug\deps\doctor-0f568715574665c6.exe)
+
+running 4 tests
+test default_diagnostics_are_bounded_and_do_not_claim_version_or_live_verification ... ok
+test explicitly_selected_paths_check_only_kind_without_echoing_names_or_contents ... ok
+test selected_missing_or_wrong_kind_returns_nonzero_without_input_echo ... ok
+test malformed_options_fail_without_echoing_inputs ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests\forever_atlas.rs (D:\a\_temp\coverage-rust\build\debug\deps\forever_atlas-2cf61fcf766fef11.exe)
+
+running 1 test
+test forever_atlas_r1_is_honest_about_its_provenance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\forever_sources.rs (D:\a\_temp\coverage-rust\build\debug\deps\forever_sources-84c629619e9274d5.exe)
+
+running 3 tests
+test owner_assertion_and_unknown_third_party_rights_remain_distinct ... ok
+test all_existing_dataset_citations_are_registered_without_relabeling ... ok
+test each_existing_policy_blocks_distribution_in_a_valid_synthetic_pack ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+     Running tests\foreverdb_staging.rs (D:\a\_temp\coverage-rust\build\debug\deps\foreverdb_staging-34f9a549ab312860.exe)
+
+running 3 tests
+test bounded_exact_options_and_safe_paths ... ok
+test malformed_manifest_declarations_are_rejected ... ok
+test selected_manifest_pins_files_but_does_not_admit_or_authenticate_archive ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\guide.rs (D:\a\_temp\coverage-rust\build\debug\deps\guide-1275e3bd17a348f6.exe)
+
+running 6 tests
+test the_synthetic_route_passes_against_its_synthetic_facts ... ok
+test another_character_sees_different_steps_and_fails_class_checks ... ok
+test exit_0_needs_facts_that_claim_evidence ... ok
+test unknown_facts_fail_as_unverified ... ok
+test bad_inputs_are_refused_with_static_messages ... ok
+test usage_errors_exit_2_without_echoing_input ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests\local_data.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data-1b9b6d46fea30c30.exe)
+
+running 10 tests
+test durable_job_commands_recover_cancel_and_forget_without_exposing_requests ... ok
+test isolated_worker_failure_and_cancellation_preserve_previous_active_state ... ok
+test oversized_internal_worker_frame_exits_before_parsing_or_touching_inputs ... ok
+test competing_worker_cannot_fail_an_existing_job_with_the_same_id ... ok
+test inspect_and_plan_exit_codes_preserve_unknown_and_unavailable_capabilities ... ok
+test projection_commands_require_explicit_options_and_refuse_unknown_catalogs ... ok
+test unsupported_duplicate_and_missing_options_fail_as_json_without_echoing_inputs ... ok
+test preparing_progress_is_durable_on_cancellation_and_graceful_failure ... ok
+test project_and_projection_verify_succeed_on_a_synthetic_store ... ok
+test extraction_admits_70450_as_development_input_and_refuses_unknown_builds ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.13s
+
+     Running tests\local_data_inputs.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_inputs-d0dd96b6ac8f2c39.exe)
+
+running 2 tests
+test selected_cache_stage_verify_and_pages_share_the_bounded_research_contract ... ok
+test research_cli_round_trip_preserves_explicit_activation_and_unknown_completeness ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.23s
+
+     Running tests\local_data_receipt.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_receipt-db21d80baa9a8231.exe)
+
+running 1 test
+test owner_signs_assembles_and_verifies_a_hybrid_receipt_explicitly ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+
+     Running tests\pack.rs (D:\a\_temp\coverage-rust\build\debug\deps\pack-85784030c2f8c170.exe)
+
+running 16 tests
+test duplicate_json_members_and_malformed_cli_never_echo_arbitrary_input ... ok
+test builds_deterministically_verifies_exact_bytes_and_preserves_source_facts ... ok
+test bounded_files_and_decoded_png_limits_refuse_oversized_inputs ... ok
+test dataset_collection_bound_is_enforced_before_publishing ... ok
+test existing_output_survives_successful_input_and_malformed_input_failures ... ok
+test exact_contexts_remain_separate_and_duplicate_identities_fail ... ok
+test explicit_empty_embeddings_and_omission_build_identical_canonical_packs_without_input_changes ... ok
+test input_filename_and_registry_order_do_not_change_pack_bytes ... ok
+test hashes_and_exact_file_sets_refuse_tampering_missing_extra_or_empty_directories ... ok
+test source_future_unknown_dataset_extensions_and_nested_unknowns_fail_safely ... ok
+test successful_cli_build_reports_only_allowlisted_counts_and_verifies ... ok
+test unregistered_evidence_and_image_sources_and_duplicate_registry_fail ... ok
+test updating_integrity_metadata_cannot_bypass_future_dataset_validation ... ok
+test empty_default_exception_refuses_malformed_unknown_duplicate_and_future_inputs_and_keeps_prior_pack ... ok
+test manifest_tamper_future_headers_context_coverage_and_policy_fail ... ok
+test unknown_conditional_negative_or_incomplete_policy_is_never_permission ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.99s
+
+     Running tests\prepare_atlas.rs (D:\a\_temp\coverage-rust\build\debug\deps\prepare_atlas-592ef36b3a35598e.exe)
+
+running 12 tests
+test committed_synthetic_poster_matches_the_generator ... ok
+test alignment_measurement_finds_integer_shifts ... ok
+test committed_demo_atlas_matches_the_generator_end_to_end ... ok
+test odd_frames_round_the_overview_up ... ok
+test check_mode_rejects_stale_records_and_mismatched_layer_pointers ... ok
+test output_mode_accepts_relative_and_dot_prefixed_paths ... ok
+test lfs_pointers_are_refused_in_prepare_and_required_in_check_mode ... ok
+test symlinked_assets_are_refused ... ok
+test write_synthetic_poster ... ignored, writes the committed synthetic poster
+test outputs_cannot_overwrite_inputs_and_crlf_manifests_are_refused ... ok
+test rejects_mismatched_sources_and_crops ... ok
+test prepares_layers_deterministically_with_hashes_and_alignment ... ok
+
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+     Running tests\questiedb.rs (D:\a\_temp\coverage-rust\build\debug\deps\questiedb-cf37a887fcfed7a9.exe)
+
+running 8 tests
+test duplicate_selection_aliases_fail_before_parsing ... ok
+test an_empty_raw_table_is_zero_rows_and_still_incomplete ... ok
+test all_four_files_produce_deterministic_metadata_without_source_rows_or_paths ... ok
+test declarations_are_explicit_and_never_authenticate_synthetic_input ... ok
+test malformed_unsafe_and_wrong_entity_data_fail_without_partial_stdout ... ok
+test partial_selection_preserves_unknown_origin_and_does_not_discover_neighbors ... ok
+test invalid_arguments_are_usage_errors_without_echoing_them ... ok
+test missing_nonregular_parent_traversal_and_oversized_inputs_fail ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running tests\release_enumeration.rs (D:\a\_temp\coverage-rust\build\debug\deps\release_enumeration-632f9fd1e93cf46b.exe)
+
+running 1 test
+test command_enumerates_verified_content_and_preserves_existing_output ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s
+
+     Running tests\release_materials.rs (D:\a\_temp\coverage-rust\build\debug\deps\release_materials-3490f8a3c2f7adb1.exe)
+
+running 24 tests
+test admission_registry_remains_private_even_if_relabelled_as_a_public_notice ... ok
+test content_cannot_be_selected_or_bound_while_the_target_is_pending ... ok
+test a_self_chosen_schema_2_target_cannot_bind_content ... ok
+test accepted_origins_and_unknowns_bind_a_world_pack_under_schema_3 ... ok
+test empty_preview_selection_does_not_create_output ... ok
+test corresponding_sources_deduplicate_archive_bytes_while_retaining_both_roles ... ok
+test git_lfs_material_inputs_require_hydrated_exact_bytes ... ignored, requires Git LFS; the Windows package job runs this explicitly
+test historical_evidence_refuses_corresponding_source_field_even_null_or_empty ... ok
+test future_manifest_oversized_source_and_duplicate_pack_are_refused ... ok
+test material_cli_exact_options_and_no_overwrite_are_enforced ... ok
+test declared_public_notices_can_also_support_permission_without_selecting_proof_copies ... ok
+test mixed_inventory_and_evidence_schema_versions_are_refused ... ok
+test owner_accepted_rights_select_materials_only_with_the_adr_citation ... ok
+test powershell_packages_actual_verified_cli_selection_and_preserves_prior_output_on_refusal ... ignored, requires NAVZEROTH_TEST_PWSH; the Windows package job runs this explicitly
+test invalid_rights_source_revision_or_hash_refuses_before_mutation ... ok
+test corresponding_sources_refuse_bad_hash_missing_duplicate_and_unlisted_resources ... ok
+test schema4_corresponding_sources_export_exact_bytes_as_their_real_category ... ok
+test selected_closure_is_deterministic_inert_exact_and_private_proofs_are_excluded ... ok
+test proof_overlap_untracked_ignored_or_changed_material_is_refused ... ok
+test unknowns_block_when_the_policy_does_not_accept_them ... ok
+test v2_catalog_materials_are_verified_delivered_and_do_not_waive_missing_domains ... ok
+test unaccepted_or_mismatched_origins_and_unbound_policies_block ... ok
+test raw_normalization_conflicts_remain_versioned_policy_bound_materials ... ok
+test offline_admission_blocks_unreviewed_noncommercial_mismatched_and_missing_claims ... ok
+
+test result: ok. 22 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 44.30s
+
+     Running tests\release_readiness.rs (D:\a\_temp\coverage-rust\build\debug\deps\release_readiness-44300e0301d0cbd4.exe)
+
+running 16 tests
+test evidence_hashes_are_checked_without_running_or_echoing_contents ... ok
+test candidate_command_defers_initial_binding_without_waiving_content_or_integrity ... ok
+test exact_tested_ancestor_survives_doc_only_commit_but_not_product_changes ... ok
+test future_unknown_duplicate_and_oversized_manifests_fail_even_for_preview ... ok
+test a_valid_receipt_for_the_tested_commit_clears_the_hybrid_blockers ... ok
+test explicit_delivery_policy_is_fingerprinted_and_unknown_modes_never_bypass_gates ... ok
+test oversized_file_refs_refuse_before_allocating_or_opening ... ok
+test missing_or_nonancestor_tested_commit_is_not_accepted ... ok
+test ignored_addon_inputs_are_blocked_even_with_a_clean_git_status ... ok
+test packs_in_evidence_only_paths_cannot_evade_production_fingerprint ... ok
+test selected_evidence_cannot_escape_root_and_malformed_options_are_errors ... ok
+test hybrid_delivery_blocks_until_digests_and_a_valid_receipt_exist ... ok
+test untracked_product_and_staged_product_are_blockers ... ok
+test wrong_target_inventory_hash_and_source_version_are_not_promoted ... ok
+test verified_fixture_pack_still_blocks_stable_content_acceptance ... ok
+test stable_missing_acceptance_fails_and_prereleases_keep_honest_blockers ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.89s
+
+     Running tests\replay.rs (D:\a\_temp\coverage-rust\build\debug\deps\replay-a4f5823d51bb281d.exe)
+
+running 7 tests
+test nested_unknown_duplicate_and_byte_limits_fail_safely ... ok
+test actor_indexes_and_utilities_map_explicitly_without_relabelling ... ok
+test cli_stdout_is_complete_and_errors_do_not_echo_input ... ok
+test solo_and_duo_replay_actual_services_with_deterministic_results ... ok
+test whole_unique_cohort_context_freshness_and_schema_are_enforced ... ok
+test unknown_restricted_false_and_zero_do_not_become_recommendations ... ok
+test forty_participants_are_supported_and_forty_one_are_refused ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+
+     Running tests\source_pipeline.rs (D:\a\_temp\coverage-rust\build\debug\deps\source_pipeline-1bf9ff63e7cddf50.exe)
+
+running 8 tests
+test direct_library_callers_cannot_enable_network_for_an_offline_build ... ok
+test committed_generated_fact_sources_match_the_plan_and_lfs_rule ... ok
+test missing_tampered_and_unlicensed_inputs_never_publish_output_or_fetch_implicitly ... ok
+test strict_options_schema_paths_and_output_preservation ... ok
+test transformation_and_field_allowlists_and_licence_material_are_mandatory ... ok
+test metadata_permissions_are_explicit_bound_and_checked_before_network ... ok
+test offline_build_is_deterministic_including_actual_unchanged_cache_and_false_zero ... ok
+test committed_licensed_materials_build_without_network_on_every_platform ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+
+     Running tests\validate_content.rs (D:\a\_temp\coverage-rust\build\debug\deps\validate_content-9ec8a83139887b83.exe)
+
+running 4 tests
+test validation_errors_fail_without_echoing_content ... ok
+test bad_input_and_options_are_rejected ... ok
+test existing_reference_has_separate_gaps_and_deterministic_json ... ok
+test selected_directory_shape_capacity_and_decode_failures_are_explicit ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests\validate_fixtures.rs (D:\a\_temp\coverage-rust\build\debug\deps\validate_fixtures-9ff64bcb1b817309.exe)
+
+running 6 tests
+test a_missing_fixture_tree_fails_safely ... ok
+test extra_arguments_are_a_usage_error_without_echo ... ok
+test does_not_depend_on_the_working_directory ... ok
+test validates_both_manifests_and_prints_only_counts ... ok
+test a_mismatch_fails_with_the_file_name_but_never_its_content ... ok
+test the_root_can_be_overridden_and_only_the_two_manifests_are_read ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests\worker_boundaries.rs (D:\a\_temp\coverage-rust\build\debug\deps\worker_boundaries-51ccd4ba78398c6e.exe)
+
+running 1 test
+test media_worker_refuses_a_versioned_request_over_the_real_framed_transport ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\world_data.rs (D:\a\_temp\coverage-rust\build\debug\deps\world_data-e09c7960398495a4.exe)
+
+running 10 tests
+test every_shard_set_inconsistency_is_named ... ok
+test a_consistent_tree_with_its_manifest_passes_with_a_deterministic_summary ... ok
+test deep_nesting_and_non_directories_are_refused ... ok
+test invalid_and_oversized_shards_are_reported_without_reading_them_fully ... ok
+test malformed_manifests_are_refused ... ok
+test manifest_files_must_match_disk_exactly ... ok
+test failing_trees_exit_one_and_bad_arguments_exit_two ... ok
+test the_manifest_is_optional_and_can_live_elsewhere ... ok
+test shards_written_by_the_python_envelope_library_verify ... ok
+test reported_errors_are_capped_but_counted ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+     Running unittests src\lib.rs (D:\a\_temp\coverage-rust\build\debug\deps\azeroth_core-bbc016d01efa2a23.exe)
+
+running 24 tests
+test local_data::inventory_disposition_versions::every_legacy_disposition_remains_supported_without_reinterpretation ... ok
+test local_data_projection::tests::facts_serialize_states_distinctly ... ok
+test contract::schema::tests::numeric_format_cleanup_preserves_constraints_data_and_unknown_string_formats ... ok
+test local_data_projection::tests::inventory_types_keep_not_equippable_distinct_from_unsupported ... ok
+test local_data_lifecycle::archive_version_tests::checkpoint_failure_dispositions_require_their_versioned_envelope ... ok
+test release_inventory::tests::all_nine_requirements_remain_explicit ... ok
+test release_inventory::tests::complete_declaration_with_unknown_unit_stays_unknown ... ok
+test release_inventory::tests::deterministic_source_comparison_and_missing_queue ... ok
+test release_inventory::tests::conflicts_corrections_and_unverified_records_block_scenarios ... ok
+test release_inventory::tests::rejects_mixed_target_unpinned_source_and_reused_enumeration_evidence ... ok
+test release_inventory::tests::scenarios_resolve_cross_domain_dependencies_without_domain_substitution ... ok
+test release_inventory::tests::empty_inventory_cannot_expand_unbounded_source_comparisons ... ok
+test release_inventory::tests::strict_versions_fields_and_duplicates ... ok
+test release_inventory::tests::unknown_is_not_zero_and_does_not_authorize_publication ... ok
+test release_inventory::tests::zero_requires_independent_review_not_import_counts ... ok
+test reminders::tests::cooldown_is_conservative_without_a_trusted_forward_clock ... ok
+test reminders::tests::issue_keys_are_sorted_unique_and_stable ... ok
+test selection_path::tests::drive_and_share_prefixes_pass_devices_and_drive_relative_paths_are_refused ... ok
+test selection_path::tests::paths_without_a_prefix_pass ... ok
+test strict_json::tests::generic_deserializer_rejects_nonfinite_numbers_and_unsupported_byte_values ... ok
+test strict_json::tests::owned_strings_preserve_embedded_zero_and_inert_text ... ok
+test release_inventory::tests::moving_source_revisions_refuse_and_unexpected_records_are_indexed ... ok
+test coverage::capacity_tests::long_prerequisite_chains_and_cycles_use_an_explicit_stack ... ok
+test release_inventory::tests::supports_more_than_1024_records_and_refuses_overflow ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.14s
+
+     Running tests\analytics.rs (D:\a\_temp\coverage-rust\build\debug\deps\analytics-4ea2256f90ae36b1.exe)
+
+running 7 tests
+test altered_public_build_fields_are_rejected ... ok
+test reset_replays_keep_progression_context_and_zero_width_gap_reasons ... ok
+test offline_and_clock_uncertainty_are_not_converted_to_active_time ... ok
+test same_labels_keep_separate_quality_totals_and_contexts_stay_separate ... ok
+test timing_preserves_observed_estimated_unclassified_and_gap_evidence ... ok
+test metadata_statuses_and_zero_changes_survive_without_imputation ... ok
+test uncovered_summary_time_remains_distinct_from_unclassified_time ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\atlas_projection.rs (D:\a\_temp\coverage-rust\build\debug\deps\atlas_projection-d5aeab1d24684c0f.exe)
+
+running 8 tests
+test calibrated_image_places_positions_and_reports_confidence ... ok
+test datasets_reject_embedding_cycles_and_deep_chains ... ok
+test listed_foreign_builds_project_with_a_visible_notice ... ok
+test solver_recovers_transforms_and_reports_residuals ... ok
+test every_gap_is_explicit ... ok
+test other_floor_imagery_is_reported_even_when_an_embedding_leads_nowhere ... ok
+test chains_at_the_depth_limit_project_and_deeper_ones_are_a_guarded_gap ... ok
+test zone_positions_fall_back_through_embeddings ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\calibration.rs (D:\a\_temp\coverage-rust\build\debug\deps\calibration-72a1218991f2d479.exe)
+
+running 6 tests
+test declared_level_cannot_override_a_retained_known_level ... ok
+test forged_analytics_or_changed_terminal_event_is_refused ... ok
+test ambiguous_incomplete_and_unclassified_samples_do_not_calibrate ... ok
+test conditions_context_fixture_and_duplicates_are_guarded ... ok
+test unknown_activity_and_other_identity_remain_excluded ... ok
+test sparse_data_blends_baseline_and_preserves_extremes_reproducibly ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\catalog_capacity.rs (D:\a\_temp\coverage-rust\build\debug\deps\catalog_capacity-2c046f16d32f0f81.exe)
+
+running 4 tests
+test catalog_identity_and_evidence_limits_are_independent_and_do_not_truncate ... ok
+test catalog_keeps_cross_region_graph_references_and_refuses_missing_ones ... ok
+test indexed_pages_are_revision_bound_and_at_most_200_rows ... ok
+test v2_supports_large_catalog_and_v1_still_refuses_it ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s
+
+     Running tests\character_entities.rs (D:\a\_temp\coverage-rust\build\debug\deps\character_entities-bb844b4a0f9f527a.exe)
+
+running 1 test
+test profile_snapshot_and_party_preserve_unknowns_and_identity ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\content_record_inventory.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_record_inventory-c21a8c181bd090e2.exe)
+
+running 1 test
+test imagery_inventory_binds_embeddings_pins_and_sources_without_inventing_node_provenance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\content_v2.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_v2-b3e74aa47bba9a36.exe)
+
+running 22 tests
+test dungeon_reference_schema_is_optional_and_nonnullable ... ok
+test borrowed_value_decode_matches_historical_consuming_deserializer_for_optional_forms ... ok
+test acquisition_origins_resolve_quest_vendor_and_dungeon_dependencies ... ok
+test exclusive_choices_require_explicit_trigger_and_conflicts_are_bidirectional ... ok
+test extension_facts_cannot_contradict_known_base_semantics ... ok
+test entities_resolve_nodes_and_evidence ... ok
+test loot_tables_bind_their_own_release_identity ... ok
+test dungeon_reference_versions_preserve_canonical_legacy_and_explicit_one ... ok
+test optional_names_bosses_and_quest_parties_resolve_and_keep_old_bytes ... ok
+test generated_schema_matches_committed_artifact ... ok
+test optional_node_facts_preserve_old_serialization_and_reject_invalid_provenance ... ok
+test regenerate_content_fixture ... ignored, explicit fixture regeneration only
+test recursive_model_predicates_resolve_every_referenced_domain ... ok
+test rejects_missing_conflicted_and_duplicate_extension_provenance ... ok
+test rejects_unresolved_cross_domain_refs_and_mixed_contexts ... ok
+test requires_documented_model_source_and_valid_reset ... ok
+test strict_nested_fields_duplicates_and_known_empty_defaults ... ok
+test synthetic_graph_preserves_false_zero_unknown_restricted ... ok
+test loot_tables_keep_rows_and_references_without_expansion ... ok
+test rejects_versions_unknown_extension_fields_and_byte_overflow ... ok
+test whole_world_limits_have_headroom_and_stay_bounded ... ok
+test dungeon_reference_bounds_are_scoped_and_keep_resolution_and_uniqueness ... ok
+
+test result: ok. 21 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 21.41s
+
+     Running tests\content_v2_authored.rs (D:\a\_temp\coverage-rust\build\debug\deps\content_v2_authored-c90ee7bd901f2212.exe)
+
+running 4 tests
+test committed_catalog_is_authored_only_and_defines_the_expected_records ... ok
+test authored_role_reminders_cover_each_band_without_guessing_unknown_or_stale_roles ... ok
+test invented_game_facts_are_refused ... ok
+test game_fact_fields_stay_unknown_not_only_unclaimed ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running tests\contract_schema.rs (D:\a\_temp\coverage-rust\build\debug\deps\contract_schema-87e19f9c8a0d7200.exe)
+
+running 3 tests
+test schema_encodes_key_contract_constraints ... ok
+test committed_schema_matches_rust_definitions ... ok
+test generation_is_deterministic ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\contracts.rs (D:\a\_temp\coverage-rust\build\debug\deps\contracts-ffaf6d76b97e2e65.exe)
+
+running 10 tests
+test errors_do_not_echo_imported_content ... ok
+test header_is_checked_before_the_payload ... ok
+test extensions_are_retained_but_nested_unknown_members_are_dropped ... ok
+test extensions_cannot_shadow_envelope_members ... ok
+test addon_facing_depth_limit_is_exact ... ok
+test non_fixture_documents_require_non_synthetic_sources ... ok
+test large_copper_and_observation_states_survive_round_trips ... ok
+test typed_decoding_checks_the_declared_kind ... ok
+test manifest_fixtures_have_declared_rust_outcomes ... ok
+test oversized_documents_are_rejected_before_parsing ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests\coverage.rs (D:\a\_temp\coverage-rust\build\debug\deps\coverage-733d870af1b5ac61.exe)
+
+running 17 tests
+test baseline_counts_keep_every_status_and_confidence_visible ... ok
+test cycles_list_sorted_quest_ids_and_leave_dependents_out ... ok
+test decode_failures_keep_only_code_and_static_message ... ok
+test dangling_references_name_the_target_and_the_referrer ... ok
+test empty_dataset_has_zero_counts_everywhere ... ok
+test demo_fixture_is_never_forever_coverage ... ok
+test eligibility_and_objective_stage_dependencies_detect_cycles ... ok
+test error_and_gap_lists_are_sorted ... ok
+test forever_atlas_dataset_passes_as_unverified_reference_content ... ok
+test negation_and_any_do_not_create_definite_cycles ... ok
+test objective_references_resolve_against_stages_and_objective_records ... ok
+test reference_namespace_counts_verified_evidence ... ok
+test manifest_fixtures_have_declared_outcomes ... ok
+test unknown_transform_is_a_gap_not_an_error ... ok
+test reports_carry_identifiers_never_imported_free_text ... ok
+test existing_datasets_decode_and_report_deterministically ... ok
+test adding_unresolved_reference_never_improves_a_report ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\dungeon_composition.rs (D:\a\_temp\coverage-rust\build\debug\deps\dungeon_composition-43f575b990f48c1d.exe)
+
+running 6 tests
+test equal_records_are_idempotent_and_other_identities_or_contexts_refuse ... ok
+test independent_checks_are_additive_and_colliding_checks_preserve_authored_choices ... ok
+test only_the_documented_pending_map_marker_yields_to_historical_geometry ... ok
+test unknown_fields_inherit_whole_observations_and_known_empty_remains_empty ... ok
+test restricted_unsupported_not_applicable_and_false_never_become_known_true ... ok
+test enrichment_propagates_structural_reference_contract_in_both_orders ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\eligibility.rs (D:\a\_temp\coverage-rust\build\debug\deps\eligibility-4903034a6de85ad7.exe)
+
+running 33 tests
+test case_001_unknown_history_is_never_false_blocked_or_complete ... ok
+test case_001_not_of_unknown_history_stays_unknown ... ok
+test case_001_unknown_record_status_is_reported_with_its_status ... ok
+test blocked_outranks_unknown_and_unknown_outranks_catch_up ... ok
+test alternative_prerequisites_follow_three_valued_or ... ok
+test case_002_exclusive_choice_made_by_one_participant_blocks_the_party ... ok
+test case_002_missing_mage_record_is_unknown_not_catch_up ... ok
+test case_002_one_participant_behind_gives_explicit_catch_up ... ok
+test data_context_mismatch_is_an_error_not_a_truth ... ok
+test evaluation_errors_propagate_and_are_never_unknown ... ok
+test case_002_unknown_mage_history_is_unknown_not_catch_up ... ok
+test class_race_and_faction_allow_lists ... ok
+test exclusive_choice_unknown_or_missing_is_unknown_and_accepted_mode_blocks_earlier ... ok
+test missing_participant_facts_are_unknown_and_unrestricted_access_needs_none ... ok
+test minimum_level_known_unknown_and_below ... ok
+test not_catch_up_able_requirements_block ... ok
+test participant_facts_come_from_the_profile_and_the_caller ... ok
+test partial_quest_records_do_not_prove_not_started_or_not_ready ... ok
+test participant_facts_require_exact_context_and_character ... ok
+test party_snapshot_must_match_the_member_snapshot ... ok
+test output_is_deterministic_and_serializes_stably ... ok
+test party_outcomes_cover_all_behind_and_jointly_eligible ... ok
+test local_input_types_are_validated_and_bounded ... ok
+test phases_are_separate ... ok
+test reason_serialization_is_a_closed_snake_case_shape ... ok
+test stage_state_comes_from_the_quest_record ... ok
+test repeatability_semantics ... ok
+test stale_stage_and_access_observations_are_reported ... ok
+test required_chain_unknown_siblings_prevent_definite_catch_up ... ok
+test shared_progress_never_changes_or_implies_party_eligibility ... ok
+test stale_and_clock_uncertain_observations_are_unknown_under_reject ... ok
+test unavailable_requirement_data_is_unknown_with_a_reason ... ok
+test unknown_required_inputs_never_become_a_definite_affirmative ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests\evaluation.rs (D:\a\_temp\coverage-rust\build\debug\deps\evaluation-ecdc274b2c15e7fa.exe)
+
+running 7 tests
+test rule_expiry_is_separate_from_observation_status ... ok
+test execution_limits_and_context_validation_cannot_be_short_circuited ... ok
+test truth_tables_cover_all_three_values ... ok
+test stale_values_require_explicit_opt_in_and_keep_warnings ... ok
+test party_uses_each_participants_observation_and_time ... ok
+test unavailable_inputs_never_become_false_or_zero ... ok
+test every_operator_has_concrete_semantic_cases ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\gear_acquisition.rs (D:\a\_temp\coverage-rust\build\debug\deps\gear_acquisition-86d361ab8697f72d.exe)
+
+running 7 tests
+test finite_attempts_include_route_formation_stop_and_gold ... ok
+test declared_player_guarantee_and_contested_probability_stay_separate ... ok
+test no_double_credit_and_insufficient_budget_never_guaranteed ... ok
+test captured_money_requires_freshness_and_insufficient_funds_are_unavailable ... ok
+test unknown_conditions_and_cost_never_become_guaranteed ... ok
+test one_time_cost_and_known_false_requirements_are_explicit ... ok
+test unknown_status_zero_probability_and_zero_time_are_distinct ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\gear_configuration.rs (D:\a\_temp\coverage-rust\build\debug\deps\gear_configuration-fdccb492d7f6c648.exe)
+
+running 22 tests
+test baseline_refuses_a_stale_slot_and_a_foreign_context ... ok
+test case_006_two_handed_item_occupies_the_off_hand_slot ... ok
+test case_005_contexts_and_variants_stay_distinct ... ok
+test baseline_matches_by_full_key_and_keeps_unknown_variants_unresolved ... ok
+test case_015_demo_candidates_with_a_reference_scenario_are_rejected ... ok
+test case_006_unknown_two_handed_is_never_assumed_one_handed ... ok
+test case_006_two_handed_plus_shield_is_never_enumerated_as_valid ... ok
+test invalid_scenarios_are_errors ... ok
+test generated_output_is_accepted_by_the_gear_recommendation_entity ... ok
+test incomplete_score_breakdowns_are_not_published_as_known ... ok
+test items_listing_only_one_of_the_paired_slots_are_still_placed ... ok
+test known_unique_group_blocks_the_pair_and_is_reported ... ok
+test obtainable_ranking_rejects_a_snapshot_from_another_context ... ok
+test manifest_lists_every_gear_fixture_and_marks_it_synthetic ... ok
+test obtainable_ranking_excludes_future_progression_and_lists_unknowns ... ok
+test obtainable_recommendation_data_requires_and_carries_known_eligibility ... ok
+test every_enumerated_configuration_satisfies_the_constraints ... ok
+test paired_slots_are_filled_without_reusing_a_candidate ... ok
+test unknown_unique_group_lowers_certainty_instead_of_being_non_unique ... ok
+test off_hand_unknown_handedness_never_enters_valid_ranking ... ok
+test rankings_do_not_depend_on_input_order ... ok
+test search_space_and_candidate_limits_return_a_safe_error ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests\gear_eligibility.rs (D:\a\_temp\coverage-rust\build\debug\deps\gear_eligibility-7a270f1967f19ea4.exe)
+
+running 13 tests
+test case_015_demo_candidate_with_a_reference_snapshot_is_rejected ... ok
+test case_005_candidate_from_another_build_is_a_build_mismatch ... ok
+test a_definite_negative_dominates_unknown_findings ... ok
+test a_requirement_that_is_not_only_a_level_gate_is_ineligible_not_future ... ok
+test evaluator_errors_propagate_and_are_not_folded_into_unknown ... ok
+test proficiency_table_rejects_a_category_that_is_both_allowed_and_disallowed ... ok
+test level_requirement_above_the_character_is_future_progression ... ok
+test missing_proficiency_is_ineligible_and_distinct_from_unknown ... ok
+test stale_level_is_unknown_unless_staleness_is_allowed ... ok
+test requirements_that_are_not_known_leave_the_item_unknown ... ok
+test same_item_id_with_different_variants_is_assessed_separately ... ok
+test unknown_snapshot_level_is_unknown_never_eligible ... ok
+test unknown_class_or_category_stays_unknown_and_not_applicable_needs_no_check ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\gear_lua.rs (D:\a\_temp\coverage-rust\build\debug\deps\gear_lua-99b352a308be1f47.exe)
+
+running 3 tests
+test arithmetic_vectors_match_the_established_rust_rule ... ok
+test compiler_rejects_live_mixed_oversized_duplicate_and_out_of_range_inputs ... ok
+test compiled_inputs_components_and_ordering_match_committed_rust_anchors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\gear_score.rs (D:\a\_temp\coverage-rust\build\debug\deps\gear_score-9ebb1256bbef0664.exe)
+
+running 11 tests
+test arithmetic_overflow_is_an_error_not_a_wrap ... ok
+test contributions_sum_exactly_to_the_total ... ok
+test configuration_total_is_the_sum_of_item_contributions_after_rounding ... ok
+test breakdown_is_labelled_as_a_model_score_with_its_version_and_source ... ok
+test fixed_point_rounds_half_away_from_zero ... ok
+test incomplete_scores_are_never_definitively_better ... ok
+test profile_structure_is_validated ... ok
+test scoring_does_not_depend_on_candidate_order ... ok
+test unknown_attributes_are_low_certainty_and_never_complete ... ok
+test unweighted_attributes_are_reported_not_silently_dropped ... ok
+test unknown_or_listed_effects_are_unmodeled_and_reduce_certainty ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\imagery_entities.rs (D:\a\_temp\coverage-rust\build\debug\deps\imagery_entities-cf6d02203acc76ae.exe)
+
+running 4 tests
+test primitives_validate_digests_paths_and_extents ... ok
+test map_embeddings_require_distinct_maps_one_context_and_positive_area ... ok
+test control_point_residuals_cannot_be_negative ... ok
+test map_images_validate_layers_pins_builds_and_calibration ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\joint_travel_policy.rs (D:\a\_temp\coverage-rust\build\debug\deps\joint_travel_policy-2052a92c54f53e08.exe)
+
+running 2 tests
+test strict_policy_leaves_unverified_unknown_edges_unusable ... ok
+test accepted_policy_uses_them_as_estimates ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\json_boundary.rs (D:\a\_temp\coverage-rust\build\debug\deps\json_boundary-438867c70c0444c7.exe)
+
+running 2 tests
+test bounded_decode_checks_schema_without_echoing_input ... ok
+test deep_and_executable_rule_data_is_rejected ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\local_data.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data-525011fee8868ade.exe)
+
+running 6 tests
+test presets_are_whole_worker_and_total_storage_ceilings ... ok
+test metadata_requires_exact_revision_versions_closure_and_compiled_transforms ... ok
+test refuses_ambiguous_missing_truncated_and_invalid_metadata ... ok
+test selected_active_product_preserves_70425_and_does_not_relabel_target ... ok
+test selected_active_product_preserves_70450_exactly_without_nearest_build_mapping ... ok
+test metadata_json_refuses_unknown_fields_duplicate_members_and_oversize ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\local_data_gameplay.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_gameplay-b71ed06adc2ef41e.exe)
+
+running 4 tests
+test budget_buckets_are_explicit_and_wands_need_a_known_subclass ... ok
+test budget_model_is_bounded_and_does_not_invent_missing_socket_or_budget_values ... ok
+test equipment_inventory_types_keep_paired_slots_and_non_equipment_distinct ... ok
+test masks_preserve_zero_signed_bits_unknown_and_unsupported_boundaries ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\local_data_inputs.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_inputs-48576dbf213ffb04.exe)
+
+running 8 tests
+test empty_reviewed_cache_is_justified_but_truncated_extended_header_is_not ... ok
+test duplicate_record_pushes_are_preserved_as_conflicts ... ok
+test malicious_sizes_and_ids_are_bounded ... ok
+test all_truncated_record_prefixes_fail_without_panicking ... ok
+test no_cross_build_or_unknown_header_flags ... ok
+test unsupported_and_ambiguous_formats_are_explicit_not_empty_success ... ok
+test reviewed_envelopes_keep_order_flags_zero_and_payload_ranges ... ok
+test record_capacity_is_enforced_before_an_unbounded_inventory_can_grow ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests\local_data_inventory.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_inventory-fa82fd7e06779d92.exe)
+
+running 2 tests
+test all_nine_domains_preserve_imported_zero_without_claiming_target_completeness ... ok
+test six_classes_have_separate_solo_duo_drafts_and_no_invented_quest_sequence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\local_data_media.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_media-7e183cea254b47d6.exe)
+
+running 3 tests
+test decoded_dimensions_and_lineage_are_bounded_without_promoting_calibration ... ok
+test manifest_identity_order_and_asset_count_refuse_ambiguous_or_excessive_sets ... ok
+test read_refusals_need_distinct_provenance_and_cannot_be_fixture_decodes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\local_data_workflow.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_data_workflow-46fe0c7a9ea76a01.exe)
+
+running 3 tests
+test locale_choices_are_explicit_sorted_installed_and_preserve_legacy_order ... ok
+test change_detection_debounces_deduplicates_and_bounds_retries ... ok
+test explicit_delivery_choices_reject_unknown_versions_duplicates_and_unbounded_inputs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\local_submissions.rs (D:\a\_temp\coverage-rust\build\debug\deps\local_submissions-b54dff906a60ed79.exe)
+
+running 4 tests
+test anomaly_checks_do_not_infer_drop_probability ... ok
+test false_zero_unknown_and_stale_remain_distinct ... ok
+test no_personal_extensions_future_versions_or_input_echo ... ok
+test registered_source_identifiers_keep_the_existing_256_byte_contract ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\objective_clustering.rs (D:\a\_temp\coverage-rust\build\debug\deps\objective_clustering-8c568974c07b5925.exe)
+
+running 14 tests
+test cancellation_in_grouping_participant_sum_routes_and_terminal_selection_propagates ... ok
+test duration_utility_and_shape_bounds_fail_without_partial_report ... ok
+test declared_replay_changes_selection_by_sharing_only_inbound_travel ... ok
+test exclusions_false_unknown_and_zero_keep_original_evidence_and_cannot_group ... ok
+test joint_fairness_is_minimum_of_participant_sums_and_not_sum_of_minima ... ok
+test only_one_final_stateful_return_is_reserved_after_flattening ... ok
+test over_budget_pack_keeps_feasible_singleton_and_exact_stopping_cost ... ok
+test original_step_limit_and_declared_nodes_are_respected ... ok
+test overlapping_rewards_and_empty_rewards_never_repeat_originals ... ok
+test unknown_transport_and_stateful_intermediate_do_not_become_available ... ok
+test maximum_variant_count_is_finite_even_when_every_two_objectives_have_their_own_node ... ok
+test bounded_128_objective_40_participant_workload_preserves_flattened_limit ... ok
+test permutation_and_noop_wrapper_are_deterministic ... ok
+test valid_original_reward_sets_do_not_create_an_oversized_derived_pack ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\observations.rs (D:\a\_temp\coverage-rust\build\debug\deps\observations-56ee1f8e8070b87f.exe)
+
+running 4 tests
+test freshness_obeys_clock_trust_session_and_threshold ... ok
+test elapsed_reversal_and_unrepresentable_age_remain_uncertain ... ok
+test known_false_zero_empty_round_trip_and_additive_fields ... ok
+test unavailable_states_never_accept_a_value_even_null ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\origin_policy.rs (D:\a\_temp\coverage-rust\build\debug\deps\origin_policy-fd5691fed290ee28.exe)
+
+running 15 tests
+test absent_origin_metadata_preserves_historical_bytes ... ok
+test historical_grants_refuse_foreign_empty_duplicate_and_malformed_build_lists ... ok
+test accepted_origin_evidence_is_counted_not_a_gap ... ok
+test disputed_limited_and_conflicting_evidence_still_fail ... ok
+test exact_historical_grant_is_versioned_and_never_a_target_confirmation ... ok
+test inferred_evidence_counts_only_when_the_policy_accepts_inferred ... ok
+test origin_only_sources_are_accepted_too_and_relabels_are_flagged ... ok
+test policy_decoding_is_strict ... ok
+test record_domains_follow_the_release_domains ... ok
+test repository_policy_accepts_both_origins_in_every_domain ... ok
+test structured_origin_retains_accepted_cross_edition_and_exact_build_behavior ... ok
+test structured_origin_build_does_not_grant_historical_target_compatibility ... ok
+test unknowns_are_accepted_only_by_policy_and_stay_distinct ... ok
+test non_accepted_origins_and_relabelled_editions_still_gap ... ok
+test listings_are_bounded_while_counts_stay_complete ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.58s
+
+     Running tests\planner.rs (D:\a\_temp\coverage-rust\build\debug\deps\planner-ca60bda5164fc495.exe)
+
+running 8 tests
+test existing_quest_eligibility_unknown_history_remains_uncertain ... ok
+test exclusions_and_unknown_eligibility_never_recommend_despite_high_utility ... ok
+test exact_ratio_uses_incremental_travel_and_produces_ranked_alternatives ... ok
+test reachable_candidate_with_disconnected_stop_is_never_selected ... ok
+test rewards_count_once_and_zero_utility_does_not_enter_route ... ok
+test replay_is_deterministic_and_reserves_completion_services_and_stop ... ok
+test stateful_inbound_action_is_rejected_but_final_stopping_action_is_reserved ... ok
+test invalid_steps_duplicate_ids_and_oversized_inputs_fail_before_planning ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\planning_entities.rs (D:\a\_temp\coverage-rust\build\debug\deps\planning_entities-0ac02ea03f252ca7.exe)
+
+running 1 test
+test planning_records_validate_inputs_exclusions_and_missing_evidence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\predicate_parity.rs (D:\a\_temp\coverage-rust\build\debug\deps\predicate_parity-133696440f0dc59d.exe)
+
+running 1 test
+test corpus_matches_the_rust_evaluator ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests\predicates.rs (D:\a\_temp\coverage-rust\build\debug\deps\predicates-0ce7bab15034a5ae.exe)
+
+running 2 tests
+test positions_are_map_scoped_and_rectangles_include_boundaries ... ok
+test predicate_json_is_closed_typed_and_bounded ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\primitives.rs (D:\a\_temp\coverage-rust\build\debug\deps\primitives-f727162407346a69.exe)
+
+running 5 tests
+test build_variant_and_namespace_are_part_of_identity ... ok
+test ids_and_currency_preserve_values_beyond_javascript_precision ... ok
+test duplicate_json_keys_do_not_silently_overwrite_observations ... ok
+test units_and_schema_reject_unsafe_inputs ... ok
+test numeric_and_map_limits_reject_excess_before_use ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\record_provenance.rs (D:\a\_temp\coverage-rust\build\debug\deps\record_provenance-e1422a24e5b024f7.exe)
+
+running 4 tests
+test image_provenance_includes_own_facts_but_pins_do_not_inherit_it ... ok
+test records_and_stages_use_only_their_own_evidence_sources ... ok
+test absent_evidence_never_borrows_another_records_source ... ok
+test v2_node_bindings_use_only_the_exact_declared_node_evidence ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\reference_entities.rs (D:\a\_temp\coverage-rust\build\debug\deps\reference_entities-a38855e74a52f142.exe)
+
+running 2 tests
+test nested_requirements_cannot_mix_namespaces ... ok
+test reference_records_round_trip_and_reject_semantic_errors ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\release.rs (D:\a\_temp\coverage-rust\build\debug\deps\release-cff7e36462bffd0d.exe)
+
+running 15 tests
+test absent_evidence_blocks_stable_but_explicit_preview_keeps_blockers ... ok
+test candidate_defers_only_pristine_pending_observations_and_initial_binding ... ok
+test all_empty_inventory_and_duplicate_units_fail ... ok
+test complete_synthetic_acceptance_exercises_the_success_path_only ... ok
+test conflicts_missing_corrections_and_incomplete_records_block_full_content ... ok
+test candidate_never_waives_content_rights_or_claimed_pass_binding ... ok
+test invalid_version_cannot_bypass_stable_gate ... ok
+test evidence_cannot_reuse_another_build_inventory_or_tested_revision ... ok
+test optional_deferrals_cannot_remove_mandatory_checks_or_repeat ... ok
+test future_schema_and_excessive_collections_fail_even_for_prereleases ... ok
+test source_admission_pin_is_mandatory_for_both_candidate_and_publication ... ok
+test source_revision_permissions_and_required_materials_are_enforced ... ok
+test unknown_coverage_differs_from_known_zero_and_missing_domains ... ok
+test every_mandatory_row_rejects_missing_failed_or_automated_live_results ... ok
+test parsing_rejects_unknown_duplicate_oversized_and_executable_inputs ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests\release_party.rs (D:\a\_temp\coverage-rust\build\debug\deps\release_party-62fb410ad4bab106.exe)
+
+running 6 tests
+test local_profiles_and_synthetic_scenario_ids_cannot_replace_content ... ok
+test all_workflows_bind_concrete_content_and_exact_sources ... ok
+test explicit_world_target_is_versioned_without_changing_historical_freeze ... ok
+test every_size_requires_every_workflow_once ... ok
+test stale_catalog_mixed_target_empty_evidence_and_unknown_version_refuse ... ok
+test schema_two_admits_solo_with_code_fixed_workflows_and_a_pending_target ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\release_v2.rs (D:\a\_temp\coverage-rust\build\debug\deps\release_v2-2a5e7782dd97ad1d.exe)
+
+running 18 tests
+test a_manifest_cannot_choose_its_own_target ... ok
+test a_full_passing_matrix_adds_no_blocker ... ok
+test a_boundary_is_not_a_known_unit_and_unknown_units_still_block ... ok
+test boundaries_must_be_unique_and_explained ... ok
+test evidence_upgrade_rebinds_the_inventory_hash ... ok
+test every_schema_2_domain_must_declare_its_boundaries ... ok
+test level_bands_split_the_slice_at_ten_level_boundaries ... ok
+test evidence_must_match_inventory_schema_and_pending_target ... ok
+test pending_target_blocks_an_otherwise_complete_v2_release ... ok
+test every_class_band_zone_and_party_size_must_be_covered ... ok
+test invalid_slices_block ... ok
+test schema_shapes_are_not_mixed ... ok
+test unknown_classes_block_the_matrix_and_schema_1_cannot_carry_one ... ok
+test target_key_is_required_even_when_null ... ok
+test pristine_rows_are_pending_and_partial_or_automated_claims_block ... ok
+test upgrade_keeps_units_and_sources_and_makes_the_target_pending ... ok
+test unknown_slice_classes_block_but_stay_distinct_from_invalid ... ok
+test rows_outside_the_slice_or_duplicated_block ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests\release_v3.rs (D:\a\_temp\coverage-rust\build\debug\deps\release_v3-9ffb91697d8a54a1.exe)
+
+running 19 tests
+test a_complete_v3_release_passes_without_live_checks_or_a_frozen_target ... ok
+test evidence_must_bind_the_applied_policy ... ok
+test explicit_v2_to_v3_migration_drops_live_rows_and_binds_policy ... ok
+test exact_historical_forever_build_can_satisfy_source_target_validation ... ok
+test live_rows_are_no_longer_accepted_in_schema_3_evidence ... ok
+test only_schema4_accepts_checked_non_observational_source_contracts_without_promoting_observations ... ok
+test preparation_phases_allow_only_their_pristine_pending_observations ... ok
+test an_accepted_origin_satisfies_target_validation_and_others_do_not ... ok
+test preparation_never_admits_failed_partial_stale_or_content_blockers ... ok
+test schema4_pending_smoke_is_unverified_and_historical_rows_are_not_promoted ... ok
+test schema4_requires_hosted_windows_and_separate_exact_installer_owner_smoke ... ok
+test schema4_missing_failed_wrong_method_and_mismatched_installer_hold_publication ... ok
+test schema_3_shape_is_strict ... ok
+test the_target_must_equal_the_world_data_target_file ... ok
+test signed_bundle_binding_is_required_and_new_fields_never_promote_historical_evidence ... ok
+test world_data_target_file_supplies_the_release_target ... ok
+test unsigned_preparation_reuses_full_accounting_without_allowing_publication ... ok
+test schema4_manifest_ceiling_and_world_scope_do_not_expand_historical_contracts ... ok
+test record_limit_admits_a_whole_world_inventory_and_refuses_one_more ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.43s
+
+     Running tests\reminders.rs (D:\a\_temp\coverage-rust\build\debug\deps\reminders-b47f809e0c9e756c.exe)
+
+running 27 tests
+test commit_rejects_unknown_or_repeated_presentations_without_changing_state ... ok
+test an_affirmative_rule_beats_an_unknown_one_in_the_same_group ... ok
+test advice_ranks_before_informational_regardless_of_priority ... ok
+test changed_unknown_reasons_change_the_fingerprint ... ok
+test context_mismatch_is_an_error_not_a_silent_exclusion ... ok
+test dismissal_needs_the_scope_its_policy_depends_on_and_prunes_inactive_records ... ok
+test dismissals_are_isolated_by_data_context ... ok
+test cooldown_blocks_until_elapsed_on_a_trusted_clock_and_otherwise_stays_conservative ... ok
+test dismissal_policies_clear_on_exactly_their_own_boundary ... ok
+test expired_rules_drop_and_uncertain_clocks_never_give_strong_advice ... ok
+test hud_budget_is_one_primary_and_one_secondary_with_the_rest_retained ... ok
+test known_session_identity_releases_unverifiable_cooldown_without_elapsed_time ... ok
+test only_true_produces_advice_and_false_produces_nothing ... ok
+test restricted_and_unsupported_inputs_disable_only_dependent_rules ... ok
+test rules_sharing_a_deduplication_key_collapse_to_the_best_ranked ... ok
+test ordering_is_priority_then_rule_id_and_independent_of_input_order ... ok
+test state_round_trips_and_rejects_inconsistent_records ... ok
+test suppression_known_true_holds_reminders_back_without_dropping_them ... ok
+test trigger_filter_skips_unfired_rules_without_evaluating_them ... ok
+test unavailable_utc_uses_session_time_and_rearming_releases_unverifiable_cooldown ... ok
+test unchanged_state_is_not_repeated_but_changed_state_is ... ok
+test unconfirmed_suppression_state_selects_the_non_intrusive_mode ... ok
+test unknown_never_produces_strong_advice ... ok
+test zero_cooldown_does_not_depend_on_the_clock ... ok
+test empty_duplicate_and_oversized_rule_sets_are_handled ... ok
+test shown_history_is_bounded ... ok
+test dismissal_history_is_bounded_and_evicts_oldest_non_permanent_first ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests\search_control.rs (D:\a\_temp\coverage-rust\build\debug\deps\search_control-556b3a83c85dd532.exe)
+
+running 5 tests
+test joint_cancels_during_member_edge_readiness_after_candidates ... ok
+test joint_cancels_participants_and_nested_routes ... ok
+test route_legacy_wrapper_matches_controlled_and_final_checkpoint_can_cancel ... ok
+test solo_cancellation_propagates_from_every_search_phase ... ok
+test noop_preserves_repeatable_results_and_input_order_independence ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\sessions.rs (D:\a\_temp\coverage-rust\build\debug\deps\sessions-978b915167a84390.exe)
+
+running 21 tests
+test a_recorder_restart_with_running_monotonic_time_is_a_reload_gap_of_that_width ... ok
+test clock_changes_are_flagged_and_never_change_durations ... ok
+test conflicting_duplicates_are_rejected_and_identical_ones_are_not ... ok
+test an_observed_activity_over_the_limit_is_demoted_and_estimates_stay_estimates ... ok
+test events_from_metadata_never_default_missing_timing ... ok
+test contexts_and_session_ownership_are_checked ... ok
+test hostile_arithmetic_is_an_error_not_a_panic ... ok
+test gap_reasons_have_stable_codes_and_the_entity_still_rejects_overlaps ... ok
+test level_capture_rejects_future_sequence_and_conflicting_same_capture_time ... ok
+test level_capture_preserves_earlier_missing_and_same_event_metadata ... ok
+test level_observations_keep_their_status ... ok
+test long_spans_are_unclassified_and_pauses_are_gaps ... ok
+test lost_clock_trust_or_missing_later_utc_revokes_mapping ... ok
+test offline_time_is_never_counted ... ok
+test reimporting_the_same_observations_is_idempotent ... ok
+test reload_and_reset_make_gaps_never_negative_or_summed_durations ... ok
+test summaries_are_keyed_by_character_and_session ... ok
+test summary_contexts_do_not_conflict ... ok
+test utc_is_mapped_only_from_trusted_consistent_clocks ... ok
+test manifest_fixtures_have_declared_outcomes ... ok
+test input_bounds_reject_instead_of_truncating ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests\source_admission.rs (D:\a\_temp\coverage-rust\build\debug\deps\source_admission-aee258a5f4004c05.exe)
+
+running 11 tests
+test all_unreviewed_and_excluded_rights_fail_closed ... ok
+test exact_admission_keeps_unknown_origin ... ok
+test canonical_encoded_spaces_only_in_https_path_preserve_authority_guards ... ok
+test permissive_and_unknown_rights_keep_their_rules_beside_owner_acceptance ... ok
+test owner_accepted_rights_require_every_field_and_the_adr_citation ... ok
+test rejects_ambiguous_urls_and_windows_path_aliases ... ok
+test rejects_mutable_revision_traversal_wildcards_and_overflow ... ok
+test schema_two_retains_compressed_originals_without_changing_legacy_limits ... ok
+test schema_two_records_only_exact_wago_product_build_queries ... ok
+test strict_version_size_unknown_fields_and_duplicate_fields ... ok
+test committed_registry_admits_only_reviewed_scopes_and_excludes_unknown_candidates ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+
+     Running tests\source_pipeline.rs (D:\a\_temp\coverage-rust\build\debug\deps\source_pipeline-257c80ab570afbfd.exe)
+
+running 11 tests
+test float_spellings_cannot_bypass_safe_numeric_range ... ok
+test exact_context_does_not_promote_explicitly_unvalidated_facts ... ok
+test different_and_unknown_origins_never_join_or_promote ... ok
+test known_false_zero_and_empty_are_not_unavailable ... ok
+test reliability_precedes_freshness_and_freshness_precedes_lexical_ids ... ok
+test repeated_identities_dedupe_across_input_order_and_other_origins_refuse ... ok
+test stale_values_never_outrank_current_evidence ... ok
+test whole_world_limits_are_recorded_and_bounded_at_the_exact_value ... ok
+test uncertain_dates_cannot_claim_freshness ... ok
+test strict_documents_and_dates_refuse_invalid_claims ... ok
+test source_identity_collision_refuses_and_large_catalogs_are_not_truncated ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\sources.rs (D:\a\_temp\coverage-rust\build\debug\deps\sources-4d1e043e3a7ec470.exe)
+
+running 19 tests
+test candidates_are_validated_for_context_and_citation ... ok
+test conflict_records_round_trip_as_plain_data ... ok
+test demo_and_reference_namespaces_never_merge ... ok
+test case_005_same_item_id_across_editions_stays_isolated ... ok
+test equal_quality_prefers_newer_trusted_evidence_not_ids_or_uncertain_clocks ... ok
+test no_numeric_confidence_in_the_sources_module ... ok
+test disagreement_is_classified_not_last_writer_wins ... ok
+test evidence_can_support_multiple_records_but_cannot_change_its_content ... ok
+test precedence_rank_is_the_documented_total_order ... ok
+test quests_use_the_same_conflict_model ... ok
+test precedence_prefers_verified_and_keeps_every_record ... ok
+test registry_rejects_duplicates_and_unregistered_sources ... ok
+test relabelled_edition_string_alone_never_becomes_verified ... ok
+test reapplying_the_same_input_is_idempotent ... ok
+test source_edition_coverage_is_enforced_when_known ... ok
+test source_record_round_trips_and_keeps_unknown_distinct ... ok
+test tie_break_uses_evidence_id_then_source_id ... ok
+test output_is_deterministic_for_shuffled_input ... ok
+test bounds_are_enforced_not_truncated ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests\spatial_entities.rs (D:\a\_temp\coverage-rust\build\debug\deps\spatial_entities-f2e5cf38fcf805b7.exe)
+
+running 1 test
+test spatial_records_validate_ranges_context_and_relationships ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\strict_json_boundaries.rs (D:\a\_temp\coverage-rust\build\debug\deps\strict_json_boundaries-aa3f149f57d30282.exe)
+
+running 3 tests
+test scalar_states_numbers_and_inert_strings_round_trip_without_collapsing ... ok
+test duplicate_keys_include_escaped_equivalents_and_nested_array_members ... ok
+test quotas_truncation_nonfinite_and_excessive_nesting_fail_without_input_echo ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\tooltip.rs (D:\a\_temp\coverage-rust\build\debug\deps\tooltip-c40bcf31215b3fef.exe)
+
+running 4 tests
+test scalar_substitution_cannot_inject_further_tokens_and_input_is_bounded ... ok
+test closure_references_honor_escaping_and_reject_oversized_text ... ok
+test inert_tokens_preserve_zero_unknown_and_unsupported_expressions ... ok
+test dependency_cycles_missing_targets_and_expansion_are_bounded ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\travel.rs (D:\a\_temp\coverage-rust\build\debug\deps\travel-cbdb40759e0e831a.exe)
+
+running 26 tests
+test accepted_inferred_edges_still_need_known_costs_and_never_relax_stateful_actions ... ok
+test build_mismatch_rejected ... ok
+test complete_route_converts_to_valid_plan_segments_with_ranges ... ok
+test case_004_unknown_flight_path_not_assumed ... ok
+test directed_edge_not_reversed ... ok
+test cost_is_expected_plus_wait_plus_caller_service_time ... ok
+test cost_overflow_rejected ... ok
+test evaluation_errors_propagate_instead_of_becoming_unknown ... ok
+test documented_evidence_with_an_inferred_record_marks_an_edge_inferred ... ok
+test disconnected_graph_returns_incomplete_known_segment ... ok
+test exclusions_are_sorted_and_carry_codes_only ... ok
+test inferred_unverified_edges_are_usable_only_when_the_caller_accepts_them ... ok
+test locked_flight_path_excluded ... ok
+test map_floor_boundary_requires_explicit_edge ... ok
+test origin_equal_to_target_is_an_empty_complete_route ... ok
+test only_conflict_free_all_inferred_evidence_marks_an_edge_inferred ... ok
+test prepared_graph_answers_many_queries_like_single_searches ... ok
+test stale_requirement_inputs_stay_unknown_not_false ... ok
+test return_action_used_at_most_once_at_end ... ok
+test unavailable_and_unverified_transport_excluded ... ok
+test unknown_cost_terms_exclude_the_edge_and_not_applicable_wait_is_zero ... ok
+test unknown_requirements_of_accepted_inferred_edges_are_assumed_never_satisfied ... ok
+test unknown_return_availability_stays_unknown ... ok
+test zero_cost_edges_and_cycles_terminate ... ok
+test deterministic_tie_break_independent_of_input_order ... ok

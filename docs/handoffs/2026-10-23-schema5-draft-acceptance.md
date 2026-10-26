@@ -1,0 +1,135 @@
+# Schema 5 downloaded-draft release contract
+
+Owner tooling_review. Baseline 9cc774e4f2656f26d544071d6bd174367ccca16a;
+claim 71d48438. Isolated worktree /tmp/navzeroth-schema5-contract.
+Production implementation cbf2b70a, hardened by 8bf6317e and 40956118;
+63190bde only strengthens negative tests with type-preserving corruptions.
+No canonical release/v1 manifests, keys, signing, workflow dispatch or release
+publication changed. Root owns PowerShell, producer and download-workflow adapters.
+
+## Contract and interfaces
+
+[Schema 5](../releases/SCHEMA5_ACCEPTANCE.md) defines exactly eight existing
+hosted rows plus DRAFT-INSTALLER-SMOKE / automated_draft_windows. SCHEMA_STABLE
+stays 4, whose OWNER-INSTALLER-SMOKE / interactive_windows semantics remain intact.
+Schemas 1–3, their target/origin rules and 16 MiB limits are unchanged. Stable
+schemas 4 and 5 share existing 64 MiB limits, admitted materials/source rules,
+receipts and source fingerprints. Historical results are not promoted.
+
+Prebuild permits nine pristine pending rows. Draft permits only the final pristine
+pending row after eight exact-installer hosted passes. Full publication readiness
+requires all nine and structured verified evidence. Preparation never authorizes
+publication. Failed/partial/missing/wrong-method/stale-source/hash results block.
+
+Schema 5 alone accepts optional nonnull draft_installer_smoke with raw_result,
+provenance and independent_review FileRefs. All three must bind to the final
+row's artifacts. CLI release-readiness verifies bounded typed payloads, native
+UI/detail pins, existing download receipt, exact source/installer/production,
+trusted production policy and completed run/job/release API snapshots. The API
+native test step must occur once and pass; installer asset ID/name must each be
+unambiguous. Existing download receipt run/attempt strings must exactly match.
+The source dispatch must use the exact tag, not a newer workflow branch.
+
+The policy path is fixed at config/release-draft-smoke-v1.json. Workflow reads
+require .github/workflows/ plus a single traversal-free AssetPath filename.
+Repository, workflow/job, test-step, Windows label and runner group are policy
+pins, not evidence-selected authority. Three JSON documents and nested JSON/API
+refs are each <=1 MiB; native details are 1–16 distinct pins <=8 MiB each. Parsed
+bytes are rehashed after bounded reads, including the verify-cache/reopen boundary.
+No imported code executes. Public/generated structural schemas are regenerated
+from Rust, while runtime assessment remains authoritative for full semantics.
+
+After the draft exists, the coordinator fetches actual completed API results,
+independently reviews the actual downloaded installer/native evidence and builds
+an external overlay. These acceptance files do not enter or mutate signed bundle
+resources or tagged source. Offline JSON checks prove recorded consistency, not
+GitHub authenticity or reviewer independence from a string. Both receipt keys
+remain operator-controlled. Human smoke is explicitly not performed.
+
+## Actual verification
+
+[Compact current-source coverage/checks](../reviews/2026-10-23-schema5-contract-checks.json).
+Linux Rust 1.99.0 / cargo-llvm-cov 0.9.1: 574 passed, zero failed, four ignored
+across 59 test binaries: core 497/2 ignored, CLI 77/2 ignored. Core production
+bytes are unchanged since cbf2b70a; CLI profiles were freshly rerun on 63190bde.
+The eight new I/O tests include many type-preserving mutations, invalid source,
+phase/IDs/attempts/assets/reviews/API states, skipped/duplicate native steps,
+missing/altered/bounded resources, native UI/check/detail failures and malformed
+policy paths. Core tests preserve historical rows and cover all phases, strict
+schema shapes and generated schema artifacts. Python preparation: nine passed.
+Clippy all targets, fmt and diff check passed. Production coverage, excluding
+only existing inventory-defined test ranges and using exact current source paths:
+
+- core release.rs: 932/948 (98.31%).
+- CLI release.rs: 1062/1173 (90.54%).
+- CLI release/bundled.rs: 267/273 (97.80%).
+- CLI release/materials.rs: 476/501 (95.01%).
+- CLI release/draft_smoke.rs: 194/195 (99.49%).
+
+The unchanged gate/inventory modules were byte-compared before extracting these
+counts. No threshold, rounding, inventory or missing-file checks changed.
+Coordinator independently reviewed cbf2/8bf/409 and executed all eight frozen CLI
+unit tests using the author's binary; this is not a separate compiler build.
+
+Recorded development/setup failures: cargo-llvm-cov rejected combining --no-report
+and --no-clean (no tests executed), then the supported --no-report command passed.
+The initial coverage checker import targeted an older checkout without those
+modules; retry used byte-identical current modules and available TypeScript.
+A direct AssetPath policy experiment correctly failed the positive test because
+.github is not an asset path; the prefix-plus-filename validation repaired it,
+after which all tests passed. These are not installer or release acceptance runs.
+
+## Next
+
+Root integrates the independently reviewed schema 5 core/CLI and separate
+PowerShell/workflow/ADR changes, migrates canonical release manifests deliberately,
+and renews source/review/receipts. Fresh protected checks, source parity, stability,
+all eight exact-installer hosted cases and independently reviewed downloaded-draft
+native UI acceptance remain required. Actual Windows execution, human smoke and
+publication were not performed by this task. No time limits, live-client claims,
+content exclusions or ordinary-PC performance claims changed.
+
+## Reproducible inventory followup
+
+Updated scope claim bdf97ced from final a1a33fc5. The coordinator found that
+scripts/generate-stable-inventory.py still emitted schema 4 / OWNER rows.
+Followup c9585caf changes only output schema versions to 5, the final pristine
+DRAFT-INSTALLER-SMOKE / automated_draft_windows row, and matching documentation.
+Existing historical artifacts are read only for their existing deferrals; none
+are rewritten. No canonical generation command was run and release/v1 outputs
+remain untouched. The four synthetic generator tests passed with exact nine-row
+methods, deterministic bytes, absent installer/final-evidence binding, null tested
+source/production, pristine observation fields and unchanged history assertions.
+Python preparation's nine tests passed again. All Rust production/test bytes are
+unchanged from the recorded 63190bde coverage run; no repeated Rust build or
+Windows acceptance is claimed for this Python-only followup. Root owns actual
+canonical regeneration after complete reviewed integration.
+
+## Eligible schema-export executable coverage closure
+
+Claim 360d234b, code d55286a2. The coordinator identified an incomplete changed-file
+closure: the prior five-file claim was true for those five production modules,
+but omitted eligible crates/core/examples/export_release_schema.rs. It was not
+excluded or waived. The existing native collector now executes inventory and
+evidence selectors plus missing/unsupported selectors (both expected exit 101)
+under its instrumented environment before debug reporting, on both OS paths.
+A regression in the already workflow-invoked bundle-instrumentation.test.mjs
+executes those actual call declarations and checks selectors/refusal codes,
+instrumentation and report ordering. Author focused wiring test: one passed.
+Coordinator independently executed the full existing file: three passed.
+
+After desktop's timed run completed, all four real cached instrumented example
+invocations produced expected exits, and both successful outputs matched the
+committed generated schemas byte for byte. Actual example coverage is 8/8 (100%);
+all prior five files retain their reported counts. The revised six-file compact
+report uses the existing collector's include-build-script,
+no-default-ignore-filename-regex and unchanged filename exclusion settings. The
+first local report used default cargo-llvm-cov filtering, omitted the example,
+and correctly failed the six-file closure check; rerunning the report with the
+actual collector settings established coverage. An initial full Node regression
+run lacked cargo on PATH and failed setup before compiling its tiny fixture;
+the coordinator's corrected Cargo-PATH run passed all three. No failed setup or
+missing-source report is called a pass. Local raw evidence:
+/tmp/navzeroth-schema5-export-commands.json, export-*.stdout/stderr,
+/tmp/navzeroth-schema5-export-wiring-tests.log and the updated LCOV/checker.
+No heavy workload ran concurrently with the measured desktop benchmark.

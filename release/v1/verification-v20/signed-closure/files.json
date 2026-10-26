@@ -1,0 +1,50 @@
+{
+  "scope": "Actual public signed closure checks at49ce3e47; no private keys or installer acceptance. Prepared audit precedes receipt issuance. These later records do not mutate frozen content review.",
+  "files": [
+    {
+      "path": "release/v1/verification-v20/signed-closure/root-assembly.json",
+      "bytes": 46,
+      "sha256": "124665f8e2760b90f9f03abc574e4e75898f24d65d594525cc3d9007754f1103"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/root-default-trust.json",
+      "bytes": 111,
+      "sha256": "c1a8adfd4c5f29d4a33bade6f05e68cb295b10ee6838a4f6c0da3eeb941789b1"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/root-prebuild.json",
+      "bytes": 1014320,
+      "sha256": "909aca7d7f315d0961ca0b406fa1c91a0b288505202bfa7c7dedcf880a519ff8"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/independent-prepared-audit.json",
+      "bytes": 566,
+      "sha256": "65666c825d36729b480d57c89f9d94f7b617642c8a0e63ee00b04e43b489f984"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/independent-final-audit.json",
+      "bytes": 623,
+      "sha256": "687d6ee8812f8e370e32922901fcd5b32fea62617ea0db465b9c41c23475f6fc"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/independent-assembly.json",
+      "bytes": 46,
+      "sha256": "124665f8e2760b90f9f03abc574e4e75898f24d65d594525cc3d9007754f1103"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/independent-default-trust.json",
+      "bytes": 111,
+      "sha256": "c1a8adfd4c5f29d4a33bade6f05e68cb295b10ee6838a4f6c0da3eeb941789b1"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/independent-prebuild.json",
+      "bytes": 1014320,
+      "sha256": "909aca7d7f315d0961ca0b406fa1c91a0b288505202bfa7c7dedcf880a519ff8"
+    },
+    {
+      "path": "release/v1/verification-v20/signed-closure/independent-crypto.json",
+      "bytes": 1080,
+      "sha256": "7944bb65f0a197f5e86de2a979916f4e7e7ca91f7ca1524f73388147f1ccf35c"
+    }
+  ]
+}

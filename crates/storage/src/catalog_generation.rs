@@ -188,6 +188,339 @@ mod tests {
         crate::content::activate(&store.conn, id, input.key()).unwrap();
     }
 
+    fn loads() -> usize {
+        crate::content::FULL_LOADS.with(Cell::get)
+    }
+    #[test]
+    fn duplicate_staging_retains_strict_sql_catalog_but_new_insert_stays_cold() {
+        let mut store = SqliteStore::open_in_memory().unwrap();
+        let input = input("retained-duplicate", "original");
+        let before = loads();
+        store.stage_content_v2_revision(&input).unwrap();
+        assert_eq!(loads(), before);
+        assert!(store.catalog_cache.borrow().is_none());
+        store.stage_content_v2_revision(&input).unwrap();
+        assert_eq!(loads(), before + 1);
+        let cached = store.catalog_cache.borrow().as_ref().unwrap().2.clone();
+        store.stage_content_v2_revision(&input).unwrap();
+        store.apply_bundle_default("1.0.0", &input.key()).unwrap();
+        let active = store
+            .active_content_v2_revision(&input.key().scope)
+            .unwrap()
+            .unwrap();
+        assert!(
+            matches!(cached, crate::content::ActiveContentRevision::V2(value) if Arc::ptr_eq(&value, &active))
+        );
+        assert_eq!(
+            loads(),
+            before + 1,
+            "duplicate/default/first-active must reuse strict SQL decode"
+        );
+        store
+            .activate_content_with_travel(&input.key(), false)
+            .unwrap();
+        assert!(!store.apply_bundle_default("1.0.0", &input.key()).unwrap());
+        assert!(!store.content_accepts_inferred(&input.key()).unwrap());
+        assert!(store.apply_bundle_default("1.0.1", &input.key()).unwrap());
+        assert!(store.content_accepts_inferred(&input.key()).unwrap());
+        assert_eq!(loads(), before + 1);
+        assert!(store.catalog_generation.read.get().is_none());
+    }
+
+    #[test]
+    fn duplicate_cache_never_admits_conflicting_input_or_changed_provenance() {
+        for sql in [
+            "UPDATE source_records SET document=document||' '",
+            "INSERT INTO source_conflicts VALUES(1,0,'{}')",
+            "UPDATE dataset_manifests SET coverage_document='{}'",
+            "UPDATE dataset_manifests SET content_sha256=printf('%064d',0)",
+            "UPDATE dataset_revisions SET document='{}'",
+        ] {
+            let (mut store, original) = store();
+            store.conn.execute_batch("DROP TRIGGER source_records_no_update; DROP TRIGGER source_conflicts_sealed; DROP TRIGGER dataset_manifests_no_update; DROP TRIGGER dataset_revisions_no_update").unwrap();
+            store.stage_content_v2_revision(&original).unwrap();
+            assert!(
+                store
+                    .stage_content_v2_revision(&input("cache-base", "different input"))
+                    .is_err()
+            );
+            store.conn.execute_batch(sql).unwrap();
+            assert!(store.stage_content_v2_revision(&original).is_err(), "{sql}");
+            assert!(
+                store
+                    .apply_bundle_default("1.0.0", &original.key())
+                    .is_err(),
+                "{sql}"
+            );
+            assert!(store.catalog_generation.read.get().is_none());
+        }
+    }
+
+    #[test]
+    fn duplicate_default_trigger_rollback_and_historical_corruption_remain_checked() {
+        let (mut store, first) = store();
+        let second = input("retained-next", "second");
+        store.stage_content_v2_revision(&second).unwrap();
+        store.stage_content_v2_revision(&second).unwrap();
+        let original_pointer = crate::content::pointers(&store.conn, &first.key().scope).unwrap();
+        let manifest_guard: String = store
+            .conn
+            .query_row(
+                "SELECT sql FROM sqlite_schema WHERE name='dataset_manifests_no_update'",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        store
+            .conn
+            .execute_batch("DROP TRIGGER dataset_manifests_no_update")
+            .unwrap();
+        store.conn.execute_batch("CREATE TRIGGER reject_default BEFORE INSERT ON bundled_content_defaults BEGIN UPDATE dataset_manifests SET coverage_document='{}'; SELECT RAISE(ABORT,'injected default failure'); END").unwrap();
+        assert!(store.apply_bundle_default("1.0.0", &second.key()).is_err());
+        assert_eq!(
+            crate::content::pointers(&store.conn, &first.key().scope).unwrap(),
+            original_pointer
+        );
+        assert!(
+            store
+                .bundle_default_state(&first.key().scope)
+                .unwrap()
+                .is_none()
+        );
+        assert!(!store.content_accepts_inferred(&second.key()).unwrap());
+        assert!(store.catalog_generation.read.get().is_none());
+        store
+            .conn
+            .execute_batch("DROP TRIGGER reject_default")
+            .unwrap();
+        let before = loads();
+        store.stage_content_v2_revision(&second).unwrap();
+        assert_eq!(
+            loads(),
+            before + 1,
+            "rollback/schema mutation cannot preserve the old cache stamp"
+        );
+        store.conn.execute("UPDATE dataset_manifests SET coverage_document='{}' WHERE revision_id=(SELECT id FROM dataset_revisions WHERE revision=?1)", [first.key().revision.as_str()]).unwrap();
+        store.conn.execute_batch(&manifest_guard).unwrap();
+        store.stage_content_v2_revision(&second).unwrap();
+        assert!(
+            crate::recovery::validate(&store).is_err(),
+            "unrelated duplicate must not exempt corrupt historical rows"
+        );
+    }
+
+    #[test]
+    fn duplicate_staging_rechecks_external_file_changes_before_reusing_arc() {
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let path = std::env::temp_dir().join(format!(
+            "navzeroth-duplicate-file-{}-{}.sqlite",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let mut store = SqliteStore::open(&path).unwrap();
+        let input = input("external-duplicate", "original");
+        store.stage_content_v2_revision(&input).unwrap();
+        store.stage_content_v2_revision(&input).unwrap();
+        let before = store
+            .active_content_v2_revision(&input.key().scope)
+            .unwrap();
+        assert!(before.is_none());
+        let writer = rusqlite::Connection::open(&path).unwrap();
+        writer
+            .execute_batch("DROP TRIGGER source_records_no_update")
+            .unwrap();
+        store.stage_content_v2_revision(&input).unwrap();
+        writer
+            .execute("UPDATE source_records SET document=document||' '", [])
+            .unwrap();
+        assert!(store.stage_content_v2_revision(&input).is_err());
+        assert!(store.apply_bundle_default("1.0.0", &input.key()).is_err());
+        drop(writer);
+        drop(store);
+        std::fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn travel_activation_and_catalog_lookup_reuse_validated_immutable_catalog() {
+        let (mut store, input) = store();
+        let before = pair(&store, &input);
+        let count = loads();
+        for accept in [false, true, false] {
+            let catalog = store.catalog_revision(&input.key()).unwrap().unwrap();
+            assert!(
+                matches!(catalog, crate::content::ActiveContentRevision::V2(ref value) if Arc::ptr_eq(value, &before.0))
+            );
+            store
+                .activate_content_with_travel(&input.key(), accept)
+                .unwrap();
+            assert_eq!(
+                store.content_accepts_inferred(&input.key()).unwrap(),
+                accept
+            );
+            assert!(same(&before, &pair(&store, &input)));
+        }
+        assert_eq!(
+            loads(),
+            count,
+            "warm toggles must not decode discarded copies"
+        );
+        assert!(store.catalog_generation.read.get().is_none());
+    }
+    #[test]
+    fn catalog_lookup_inside_arbitrary_savepoint_cannot_reuse_or_publish_cache() {
+        let (mut store, input) = store();
+        let before = pair(&store, &input);
+        let count = loads();
+        store
+            .conn
+            .execute_batch("BEGIN IMMEDIATE; SAVEPOINT transient")
+            .unwrap();
+        for _ in 0..2 {
+            let catalog = store.catalog_revision(&input.key()).unwrap().unwrap();
+            assert!(
+                matches!(catalog, crate::content::ActiveContentRevision::V2(ref value) if !Arc::ptr_eq(value, &before.0))
+            );
+        }
+        assert_eq!(loads(), count + 2);
+        assert!(
+            store
+                .activate_content_with_travel(&input.key(), true)
+                .is_err()
+        );
+        store
+            .conn
+            .execute_batch("ROLLBACK TO transient; RELEASE transient; ROLLBACK")
+            .unwrap();
+        assert!(same(&before, &pair(&store, &input)));
+        assert!(store.catalog_generation.read.get().is_none());
+    }
+    #[test]
+    fn travel_activation_revalidates_tampered_content_sources_coverage_and_hash() {
+        for (prepare, mutation) in [
+            (
+                "DROP TRIGGER dataset_revisions_no_update",
+                "UPDATE dataset_revisions SET document='{}'",
+            ),
+            (
+                "DROP TRIGGER source_records_no_update",
+                "UPDATE source_records SET document='{}'",
+            ),
+            (
+                "DROP TRIGGER dataset_manifests_no_update",
+                "UPDATE dataset_manifests SET coverage_document='{}'",
+            ),
+            (
+                "DROP TRIGGER dataset_manifests_no_update",
+                "UPDATE dataset_manifests SET content_sha256=printf('%064d',0)",
+            ),
+        ] {
+            let (mut store, input) = store();
+            store.conn.execute_batch(prepare).unwrap();
+            pair(&store, &input);
+            let pointers = crate::content::pointers(&store.conn, &input.key().scope).unwrap();
+            store.conn.execute_batch(mutation).unwrap();
+            assert!(store.catalog_revision(&input.key()).is_err());
+            assert!(
+                store
+                    .activate_content_with_travel(&input.key(), true)
+                    .is_err()
+            );
+            assert_eq!(
+                crate::content::pointers(&store.conn, &input.key().scope).unwrap(),
+                pointers
+            );
+            assert!(!store.content_accepts_inferred(&input.key()).unwrap());
+            assert!(store.catalog_generation.read.get().is_none());
+        }
+    }
+    #[test]
+    fn travel_activation_failure_rolls_back_pointer_and_choice_and_checks_disposition() {
+        let (mut store, first) = store();
+        let second = input("choice-next", "second");
+        store.stage_content_v2_revision(&second).unwrap();
+        store.catalog_revision(&second.key()).unwrap();
+        store.conn.execute_batch("CREATE TRIGGER reject_choice BEFORE INSERT ON content_travel_choices BEGIN SELECT RAISE(ABORT,'injected preference failure'); END").unwrap();
+        let pointers = crate::content::pointers(&store.conn, &first.key().scope).unwrap();
+        assert!(
+            store
+                .activate_content_with_travel(&second.key(), true)
+                .is_err()
+        );
+        assert_eq!(
+            crate::content::pointers(&store.conn, &first.key().scope).unwrap(),
+            pointers
+        );
+        assert!(!store.content_accepts_inferred(&second.key()).unwrap());
+        assert!(store.catalog_generation.read.get().is_none());
+        store.conn.execute_batch("DROP TRIGGER reject_choice; UPDATE content_dispositions SET state='revoked',reason_code='withdrawn_contribution'").unwrap();
+        assert!(
+            store
+                .activate_content_with_travel(&second.key(), true)
+                .is_err()
+        );
+        assert_eq!(
+            crate::content::pointers(&store.conn, &first.key().scope).unwrap(),
+            pointers
+        );
+        assert!(!store.content_accepts_inferred(&second.key()).unwrap());
+    }
+
+    #[test]
+    fn travel_activation_schema_temp_and_rolled_back_content_changes_never_reuse_stale_catalog() {
+        let (mut store, input) = store();
+        let before = pair(&store, &input);
+        store
+            .conn
+            .execute_batch("CREATE TABLE cache_ddl_probe(id INTEGER)")
+            .unwrap();
+        let count = loads();
+        store
+            .activate_content_with_travel(&input.key(), false)
+            .unwrap();
+        assert_eq!(loads(), count + 1);
+        assert!(!Arc::ptr_eq(&before.0, &pair(&store, &input).0));
+        store
+            .conn
+            .execute_batch("CREATE TEMP TABLE source_records AS SELECT * FROM main.source_records")
+            .unwrap();
+        let count = loads();
+        for _ in 0..2 {
+            store
+                .activate_content_with_travel(&input.key(), false)
+                .unwrap();
+        }
+        assert_eq!(loads(), count + 2, "temp shadows must bypass cache");
+        store
+            .conn
+            .execute_batch("UPDATE temp.source_records SET document='{}'")
+            .unwrap();
+        assert!(
+            store
+                .activate_content_with_travel(&input.key(), true)
+                .is_err()
+        );
+        store
+            .conn
+            .execute_batch(
+                "DROP TABLE temp.source_records; DROP TRIGGER dataset_manifests_no_update",
+            )
+            .unwrap();
+        let before = pair(&store, &input);
+        store.conn.execute_batch("BEGIN IMMEDIATE; SAVEPOINT altered; UPDATE dataset_manifests SET coverage_document='{}'").unwrap();
+        assert!(store.catalog_revision(&input.key()).is_err());
+        store
+            .conn
+            .execute_batch("ROLLBACK TO altered; RELEASE altered; COMMIT")
+            .unwrap();
+        let count = loads();
+        store
+            .activate_content_with_travel(&input.key(), false)
+            .unwrap();
+        assert_eq!(loads(), count + 1);
+        assert!(!Arc::ptr_eq(&before.0, &pair(&store, &input).0));
+        assert!(!store.content_accepts_inferred(&input.key()).unwrap());
+    }
+
     #[test]
     fn ordinary_snapshot_reminder_preferences_and_settings_writes_reuse_both_caches() {
         let (mut store, input) = store();
@@ -551,26 +884,57 @@ mod tests {
             .unwrap();
         let after = pair(&store, &input);
         assert!(!same(&before, &after));
-        writer
-            .conn
-            .execute_batch("DROP TRIGGER dataset_revisions_no_update")
-            .unwrap();
-        pair(&store, &input);
-        let generation = store.catalog_generation.local.load(Ordering::Relaxed);
-        writer
-            .conn
-            .execute("UPDATE dataset_revisions SET document='{}'", [])
-            .unwrap();
-        assert_eq!(
-            generation,
-            store.catalog_generation.local.load(Ordering::Relaxed)
-        );
-        assert!(store.active_catalog_revision(&input.key().scope).is_err());
-        assert!(
+        writer.conn.execute_batch("DROP TRIGGER dataset_revisions_no_update; DROP TRIGGER dataset_manifests_no_update; DROP TRIGGER source_records_no_update").unwrap();
+        for (table, column) in [
+            ("dataset_revisions", "document"),
+            ("source_records", "document"),
+            ("dataset_manifests", "coverage_document"),
+            ("dataset_manifests", "content_sha256"),
+        ] {
+            let original: String = writer
+                .conn
+                .query_row(&format!("SELECT {column} FROM {table} LIMIT 1"), [], |r| {
+                    r.get(0)
+                })
+                .unwrap();
+            pair(&store, &input);
+            let generation = store.catalog_generation.local.load(Ordering::Relaxed);
+            writer
+                .conn
+                .execute(
+                    &format!("UPDATE {table} SET {column}=?1"),
+                    [if column == "content_sha256" {
+                        "0".repeat(64)
+                    } else {
+                        "{}".into()
+                    }],
+                )
+                .unwrap();
+            assert_eq!(
+                generation,
+                store.catalog_generation.local.load(Ordering::Relaxed)
+            );
+            assert!(store.active_catalog_revision(&input.key().scope).is_err());
+            assert!(store.catalog_revision(&input.key()).is_err());
+            assert!(
+                store
+                    .activate_content_with_travel(&input.key(), true)
+                    .is_err()
+            );
+            assert!(
+                store
+                    .catalog_first_page(&input.key().scope, Collection::Items, 1)
+                    .is_err()
+            );
+            assert!(!store.content_accepts_inferred(&input.key()).unwrap());
+            writer
+                .conn
+                .execute(&format!("UPDATE {table} SET {column}=?1"), [&original])
+                .unwrap();
             store
-                .catalog_first_page(&input.key().scope, Collection::Items, 1)
-                .is_err()
-        );
+                .activate_content_with_travel(&input.key(), false)
+                .unwrap();
+        }
     }
 
     #[test]

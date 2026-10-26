@@ -93,7 +93,8 @@ exposes these exact pins in `catalog_files` for the Windows archive verifier. Th
 budget is2GiB. Original/corresponding source and other evidence files retain the
 256MiB bound. Schemas1/2/3 retain256MiB per file and1GiB aggregate. Cached reads
 cannot turn a catalog allowance into permission for oversized source resources.
-Release JSON remains bounded to16MiB pending actual inventory measurements.
+The initial contract retained a16MiB release-JSON bound pending measurements;
+the measured schema4-specific allowance below supersedes that initial bound.
 
 Schema4 whole-world inventories may declare `slice:null`: their scope is the exact
 admitted corpus, not a claim of complete Forever races, eligibility or game data.

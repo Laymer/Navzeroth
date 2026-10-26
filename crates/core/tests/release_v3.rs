@@ -478,7 +478,7 @@ fn schema4_requires_hosted_windows_and_separate_exact_installer_owner_smoke() {
             .all(|(_, m)| *m == Method::HostedWindows)
     );
     assert!(is_world_schema(3) && is_world_schema(4));
-    assert!(!is_world_schema(2) && !is_world_schema(5));
+    assert!(!is_world_schema(2) && is_world_schema(5) && !is_world_schema(6));
 }
 
 #[test]
@@ -787,4 +787,133 @@ fn unsigned_preparation_reuses_full_accounting_without_allowing_publication() {
     assert!(
         assess_unsigned_bundle_preparation("1.0.0", &historical, &e, &bindings(), &policy).is_err()
     );
+}
+
+fn automated_values() -> (Value, Value) {
+    let (mut i, mut e) = stable_values();
+    i["schema_version"] = json!(5);
+    e["schema_version"] = json!(5);
+    e["checks"][8]["id"] = json!(DRAFT_INSTALLER_SMOKE);
+    e["checks"][8]["method"] = json!("automated_draft_windows");
+    let reference = |path: &str| json!({"path":path,"bytes":1,"sha256":HASH});
+    let refs = [
+        reference("evidence/raw.json"),
+        reference("evidence/provenance.json"),
+        reference("evidence/review.json"),
+    ];
+    e["draft_installer_smoke"] =
+        json!({"raw_result":refs[0],"provenance":refs[1],"independent_review":refs[2]});
+    e["checks"][8]["artifacts"] = json!(refs);
+    (i, e)
+}
+#[test]
+fn schema5_replaces_only_final_row_and_preserves_all_phase_boundaries() {
+    let (i, e) = automated_values();
+    let (i, e) = decode(&i, &e);
+    let r = check(&i, &e);
+    assert!(r.stable_ready && r.publication_allowed, "{:?}", r.blockers);
+    assert_eq!(r.report_version, 5);
+    assert_eq!(
+        required_checks(5).last(),
+        Some(&(DRAFT_INSTALLER_SMOKE, Method::AutomatedDraftWindows))
+    );
+    assert_eq!(
+        required_checks(4).last(),
+        Some(&(OWNER_INSTALLER_SMOKE, Method::InteractiveWindows))
+    );
+    for version in [4, 5] {
+        assert!(is_stable_schema(version));
+    }
+    assert!(!is_stable_schema(3));
+    let (iv, mut ev) = automated_values();
+    ev.as_object_mut().unwrap().remove("draft_installer_smoke");
+    for row in ev["checks"].as_array_mut().unwrap() {
+        row["status"] = json!("unverified");
+        row["operator"] = Value::Null;
+        row["recorded_at"] = Value::Null;
+        row["environment"] = Value::Null;
+        row["artifacts"] = json!([]);
+        row.as_object_mut().unwrap().remove("installer_sha256");
+    }
+    let (i, e) = decode(&iv, &ev);
+    let r = check(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&r));
+    assert!(!BuildPhase::Draft.ready(&r));
+    assert!(!r.publication_allowed);
+    let (_, passed) = automated_values();
+    ev["checks"] = passed["checks"].clone();
+    ev["checks"][8] = json!({"id":DRAFT_INSTALLER_SMOKE,"method":"automated_draft_windows","status":"unverified","operator":null,"recorded_at":null,"environment":null,"artifacts":[]});
+    let (i, e) = decode(&iv, &ev);
+    let r = check(&i, &e);
+    assert!(BuildPhase::Draft.ready(&r));
+    assert!(!r.stable_ready && !r.publication_allowed);
+}
+#[test]
+fn schema5_refuses_partial_or_foreign_final_results_and_historical_coercion() {
+    let (i, e) = automated_values();
+    for mutation in [
+        "absent",
+        "wrong_ref",
+        "wrong_method",
+        "owner",
+        "failed",
+        "extra",
+    ] {
+        let mut e = e.clone();
+        match mutation {
+            "absent" => {
+                e.as_object_mut().unwrap().remove("draft_installer_smoke");
+            }
+            "wrong_ref" => e["draft_installer_smoke"]["raw_result"]["sha256"] = json!(POLICY_HASH),
+            "wrong_method" => e["checks"][8]["method"] = json!("hosted_windows"),
+            "owner" => e["checks"][8]["id"] = json!(OWNER_INSTALLER_SMOKE),
+            "failed" => e["checks"][8]["status"] = json!("fail"),
+            _ => {
+                let row = e["checks"][8].clone();
+                e["checks"].as_array_mut().unwrap().push(row);
+            }
+        }
+        let (i, e) = decode(&i, &e);
+        let r = check(&i, &e);
+        assert!(
+            !r.stable_ready && !BuildPhase::Draft.ready(&r),
+            "{mutation}"
+        );
+    }
+    for version in 1..=4 {
+        let mut e = e.clone();
+        e["schema_version"] = json!(version);
+        assert!(decode_evidence(&serde_json::to_vec(&e).unwrap()).is_err());
+    }
+    for invalid in [
+        Value::Null,
+        json!({}),
+        json!({"raw_result":file(),"provenance":file(),"independent_review":file()}),
+    ] {
+        let mut e = e.clone();
+        e["draft_installer_smoke"] = invalid;
+        assert!(decode_evidence(&serde_json::to_vec(&e).unwrap()).is_err());
+    }
+}
+
+#[test]
+fn generated_release_structural_schemas_are_current_and_versioned() {
+    for (evidence, path) in [
+        (false, "schemas/release/inventory.schema.json"),
+        (true, "schemas/release/evidence.schema.json"),
+    ] {
+        let text = release_contract_schema_text(evidence);
+        assert_eq!(text.as_bytes(), repository(path));
+        let value: Value = serde_json::from_str(&text).unwrap();
+        assert_eq!(
+            value["properties"]["schema_version"]["enum"],
+            json!([1, 2, 3, 4, 5])
+        );
+        if evidence {
+            assert_eq!(
+                value["allOf"][0]["if"]["properties"]["schema_version"]["const"],
+                5
+            );
+        }
+    }
 }

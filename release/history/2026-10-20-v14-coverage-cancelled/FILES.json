@@ -1,0 +1,82 @@
+[
+  {
+    "path": "audit.json",
+    "bytes": 2125,
+    "sha256": "daef3f5560d6b6c8d147d355326df512bdb04548f51ca1c9ed5bbd8a19e5a7c6"
+  },
+  {
+    "path": "gate-39497088020.log",
+    "bytes": 44318,
+    "sha256": "c1e0091186fbcaddcfb6e38f69a34b34013d3249cdb7de4eebbad1d5a5d5e348"
+  },
+  {
+    "path": "jobs.json",
+    "bytes": 13217,
+    "sha256": "ce360679f072991db1eb5496927c15c2e95c942d4605470a01a8513f6044ecfa"
+  },
+  {
+    "path": "run.json",
+    "bytes": 12170,
+    "sha256": "7e3cb65d6931cf1020bef8e6a961a7f529657708e65cc4856f4a93ca97f0b57a"
+  },
+  {
+    "path": "small/linux/entrypoint-summary.json",
+    "bytes": 315,
+    "sha256": "40b4a39c6c6b7a906c1b692d7f5f8262544ae1b472650d92cb1ea9a5908d9d82"
+  },
+  {
+    "path": "small/linux/inventory.json",
+    "bytes": 202222,
+    "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+  },
+  {
+    "path": "small/linux/rust-receipt.json",
+    "bytes": 41617,
+    "sha256": "8a1dc92b669d747c107bfd546921d2d06742f8c85bfae060f97e1f4271bfca0c"
+  },
+  {
+    "path": "small/typescript/configuration-receipt.json",
+    "bytes": 34411,
+    "sha256": "37309c686c4f50b15d9b2389b0c77845faa0d69ec8ecf3665997ca55782f2baa"
+  },
+  {
+    "path": "small/typescript/inventory.json",
+    "bytes": 202222,
+    "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+  },
+  {
+    "path": "small/typescript/typescript-receipt.json",
+    "bytes": 34396,
+    "sha256": "4bcf7f9ed1783b8968d0db8e4916e0afa77b3f5fb75cffceb92efca4f4e0c7ef"
+  },
+  {
+    "path": "small/typescript/v8/coverage-summary.json",
+    "bytes": 29559,
+    "sha256": "3f8a7ade54694042b5b1c10e02c9495965ff11de9109213bf3b726f5702da265"
+  },
+  {
+    "path": "small/windows/commands.json",
+    "bytes": 1149,
+    "sha256": "52261ad07916ee1f64e75abf440dd4178d7167a7cc04eed4227f88ea2663f3da"
+  },
+  {
+    "path": "small/windows/inventory.json",
+    "bytes": 202222,
+    "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+  },
+  {
+    "path": "small/windows/logs/workspace-tests.log",
+    "bytes": 122386,
+    "sha256": "fe62309ccede57dc83b76ecd6f88529d8642949a9e04319b5f21184b075ea89f"
+  },
+  {
+    "path": "successor-run.json",
+    "bytes": 12240,
+    "sha256": "a3af6e1a48cf6e05ba3210c65600bc8a6c0b9eacc4dd5a95191bd32a1cd69959"
+  },
+  {
+    "path": "windows-39497088020.log",
+    "bytes": 72883,
+    "sha256": "6f53c786b7c24b89134a9fec3ba89c7200fac582f164a5eccb9a189238e07813"
+  }
+]

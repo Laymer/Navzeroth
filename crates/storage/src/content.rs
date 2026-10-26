@@ -4,7 +4,7 @@
 use crate::{
     SqliteStore,
     error::{SqliteResult, invalid, storage},
-    hash::write_canonical,
+    hash::write_canonical_to,
 };
 use azeroth_core::{
     contract::{Envelope, ReferenceDataset, decode_envelope},
@@ -213,9 +213,19 @@ fn canonical_revision(input: &ContentRevision) -> Result<ContentRevision> {
 pub(crate) fn hash<T: Serialize>(revision: &T) -> Result<Sha256Hex> {
     let value =
         serde_json::to_value(revision).map_err(|_| storage("Content cannot be serialized"))?;
-    let mut bytes = Vec::new();
-    write_canonical(&value, &mut bytes)?;
-    let digest = Sha256::digest(bytes);
+    struct DigestWriter(Sha256);
+    impl std::io::Write for DigestWriter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.0.update(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut writer = DigestWriter(Sha256::new());
+    write_canonical_to(&value, &mut writer)?;
+    let digest = writer.0.finalize();
     Sha256Hex::new(
         digest
             .iter()
@@ -263,7 +273,13 @@ pub(crate) fn load_sql_error(e: rusqlite::Error) -> LoadFailure {
         _ => LoadFailure::Database(crate::error::from_sqlite(e)),
     }
 }
+#[cfg(test)]
+thread_local! {
+    pub(crate) static FULL_LOADS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 pub(crate) fn load(conn: &Connection, id: i64) -> Result<ActiveContentRevision> {
+    #[cfg(test)]
+    FULL_LOADS.with(|count| count.set(count.get() + 1));
     load_checked(conn, id).map_err(LoadFailure::error)
 }
 pub(crate) fn load_checked(
@@ -441,15 +457,23 @@ impl SqliteStore {
         &self,
         key: &ContentRevisionKey,
     ) -> Result<Option<ActiveContentRevision>> {
-        let Some(id) = find(&self.conn, key)? else {
-            return Ok(None);
+        let get = |store: &Self| {
+            let Some(id) = find(&store.conn, key)? else {
+                return Ok(None);
+            };
+            let revision = store.cached_catalog(id)?;
+            if revision.key() != *key {
+                return Err(storage("Stored content identity disagrees"));
+            }
+            Ok(Some(revision))
         };
-        let revision = load(&self.conn, id)?;
-        if revision.key() != *key {
-            return Err(storage("Stored content identity disagrees"));
+        if self.conn.is_autocommit() {
+            self.with_immediate_read(get)
+        } else {
+            get(self)
         }
-        Ok(Some(revision))
     }
+
     pub fn content_revision(&self, key: &ContentRevisionKey) -> Result<Option<ContentRevision>> {
         let Some(id) = find(&self.conn, key)? else {
             return Ok(None);

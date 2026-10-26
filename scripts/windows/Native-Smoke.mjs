@@ -19,7 +19,7 @@ import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
   IpcLog, freshenSnapshotText, migrationSummary, gracefulCloseArgs,
-  invokeNative, waitForDatabaseReady,
+  invokeNative, waitForDatabaseReady, verifyPreservedSyntheticContent, waitForSyntheticContentInspection,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -592,8 +592,19 @@ async function verify(page) {
   });
   await rec.run("verify: active content revision survived", async () => {
     await go(page, "Content");
-    if ((await page.getByText("No active content for this profile.").count()) !== 0) throw new Error("Active content was lost");
-    return { alerts: await alertTexts(page) };
+    // Derive expected identity from the exact fixtures used by populate(), not bundled defaults.
+    const fixture = JSON.parse(readFileSync(join(repoRoot, "fixtures/desktop/planning/synthetic-revision.json"), "utf8")).envelope;
+    const snapshot = JSON.parse(snapshotText.slice("ANAV1:".length));
+    const expected = { character: snapshot.payload.character, revision: fixture.payload.revision,
+      scope: { fixture: fixture.fixture, context: { build: {
+        edition: fixture.game.edition, build: fixture.game.build, interface: fixture.game.interface,
+      }, namespace: fixture.namespace } } };
+    const identity = await verifyPreservedSyntheticContent({ expected,
+      readProfiles: () => invokeNative(page, "list_profiles"),
+      readActive: (profile_id) => invokeNative(page, "get_active_content", { profile_id }),
+      waitForInspection: (value) => waitForSyntheticContentInspection(page, value),
+    });
+    return { identity, alerts: await alertTexts(page) };
   });
   await rec.run("verify: Today shows the imported synthetic character", async () => {
     await go(page, "Today");

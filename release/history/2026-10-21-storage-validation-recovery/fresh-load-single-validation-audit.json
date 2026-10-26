@@ -1,0 +1,13 @@
+{
+  "runtime_commit": "fd722928889a84dce6eba59c91cfeab4ba55fa6f",
+  "exit_code": 0,
+  "elapsed_seconds": 9.238312248999932,
+  "maximum_resident_set_kib": 5115640,
+  "binary_sha256": "0f8d4c622b9dfc88ab5d1cff23c42f32c9e54065c300130e9869bda3fe0c9d9b",
+  "storage_rlib_sha256": "34a417ffdf08bf665ae362960bcf53a580a2e948a9a7f8494d47facc62f9bbaf",
+  "scope": "fresh store composed fullpack catalog_revision same copied V13 diagnostic DB; Linux shared host, cache uncontrolled, not acceptance",
+  "binary_path": "/tmp/navzeroth-decoded-load-single-validation",
+  "storage_rlib_path": "/tmp/libnavzeroth_single_validation_storage.rlib",
+  "harness_path": "/tmp/navzeroth-decoded-load-diagnostic.rs",
+  "log_path": "/tmp/navzeroth-decoded-load-single-validation.log"
+}

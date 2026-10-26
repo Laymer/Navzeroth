@@ -346,7 +346,7 @@ fn future_unknown_duplicate_and_oversized_manifests_fail_even_for_preview() {
     let temp = Temp::new("0.8.1");
     let original = fs::read(temp.0.join(EVIDENCE)).unwrap();
     let mut value = temp.json(EVIDENCE);
-    value["schema_version"] = json!(azeroth_core::release::SCHEMA_STABLE + 1);
+    value["schema_version"] = json!(azeroth_core::release::SCHEMA_AUTOMATED_DRAFT + 1);
     temp.json_write(EVIDENCE, &value);
     assert!(report(&temp.options("0.8.1")).is_err());
     value["schema_version"] = json!(3);

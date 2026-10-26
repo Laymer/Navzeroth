@@ -24,7 +24,7 @@ try {
     $overflowError = $null
     try { Read-BoundedReleaseText $large | Out-Null } catch { $overflowError = $_.Exception }
     Check 'generic cap+1 refuses for actual size bound' ($null -ne $overflowError -and $overflowError.Message.Contains('Release JSON exceeds its size limit.'))
-    foreach ($version in 1,2,3,5,'"4"','true','4.0','null') {
+    foreach ($version in 1,2,3,6,'"4"','"5"','true','4.0','5.0','null') {
         $bad = Write-Sized 'bad.json' ('{"schema_version":' + $version + '}') 16777217
         Refuses "unsupported/oversized schema $version" { Read-BoundedReleaseContractText $bad }
     }
@@ -32,6 +32,10 @@ try {
     Check 'schema4 exact 64 MiB' ((Read-BoundedReleaseContractText $maximum).Length -eq 67108864)
     $overflow = Write-Sized 'overflow.json' '{"schema_version":4}' 67108865
     Refuses 'schema4 cap+1' { Read-BoundedReleaseContractText $overflow }
+    $maximum5 = Write-Sized 'maximum5.json' '{"schema_version":5}' 67108864
+    Check 'schema5 retains exact 64 MiB bound' ((Read-BoundedReleaseContractText $maximum5).Length -eq 67108864)
+    $overflow5 = Write-Sized 'overflow5.json' '{"schema_version":5}' 67108865
+    Refuses 'schema5 cap+1' { Read-BoundedReleaseContractText $overflow5 }
     $unicode = [pscustomobject]@{schema_version=3;value=([string][char]233 * 8388608)}
     Refuses 'serialization counts UTF8 bytes' { ConvertTo-BoundedReleaseContractText $unicode }
     $unicode.schema_version=4
@@ -42,7 +46,7 @@ try {
     $original = [IO.File]::ReadAllBytes($bom)
     [IO.File]::WriteAllBytes($bom, ([byte[]]@(239,187,191) + $original))
     Refuses 'historical bound counts UTF8 BOM' { Read-BoundedReleaseContractText $bom }
-    $small = Write-Sized 'future.json' '{"schema_version":5}' 20
+    $small = Write-Sized 'future.json' '{"schema_version":6}' 20
     Refuses 'future schema refuses even small file' { Read-BoundedReleaseContractText $small }
     $invalid = Join-Path $root 'invalid.json' 
     [IO.File]::WriteAllBytes($invalid, [byte[]]@(255))

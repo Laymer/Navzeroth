@@ -1,0 +1,14 @@
+{
+  "head": "b25064b6ed48a5ba7e760b397adc8446aee174bc",
+  "preview_source": "b25064b6ed48a5ba7e760b397adc8446aee174bc",
+  "prepared_byte_equal": true,
+  "resource_count": 84,
+  "resource_bytes": 395847866,
+  "manifest_bytes": 17187,
+  "manifest_sha256": "1513726d97a3af806e16f875fc1346a2a019fdcab57a8ab1f305d52ccde3f597",
+  "identity_bytes": 528,
+  "identity_sha256": "fd85f5c60cab2aee2e3c4ec2686ab1ccef05e6fc43bc059a2b7860a80461dc7d",
+  "all_resource_working_and_git_pins_verified": true,
+  "receipt_present": false,
+  "expected_constructed_before_receipt": true
+}

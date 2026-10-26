@@ -1,0 +1,302 @@
+Offline adapter engineering probe (not acceptance)	Set up job	﻿2026-10-21T12:46:46.1853058Z Current runner version: '2.338.0'
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1915750Z ##[group]Runner Image Provisioner
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1916877Z Hosted Compute Agent
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1917568Z Version: 20261002.596
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1918402Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1919210Z Build Date: 2026-10-02T22:28:27Z
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1920128Z Worker ID: {82cbe4a2-90d6-4399-b3cb-08b75d01cb08}
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1921431Z Region: centralus
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1922213Z Cloud: Azure
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1923189Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1925455Z ##[group]Operating System
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1926213Z Microsoft Windows Server 2025
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1926895Z 10.0.26100
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1927497Z Datacenter
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1928204Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1928842Z ##[group]Runner Image
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1929624Z Image: windows-2025-vs2026
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1930355Z Version: 20261007.264.1
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1931765Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1934810Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1936190Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1937839Z ##[group]GITHUB_TOKEN Permissions
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1940853Z Contents: read
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1941728Z Metadata: read
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1942638Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1945810Z Secret source: Actions
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1946860Z Cache mode: write
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.1947645Z Prepare workflow directory
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.2376331Z Prepare all required actions
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.2435821Z Getting action download info
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.4647798Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:46.5626988Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+Offline adapter engineering probe (not acceptance)	Set up job	2026-10-21T12:46:47.0926570Z Complete job name: Offline adapter engineering probe (not acceptance)
+Offline adapter engineering probe (not acceptance)	Preserve exact source line endings	﻿2026-10-21T12:46:47.5212352Z ##[group]Run git config --global core.autocrlf false
+Offline adapter engineering probe (not acceptance)	Preserve exact source line endings	2026-10-21T12:46:47.5213407Z ^[[36;1mgit config --global core.autocrlf false^[[0m
+Offline adapter engineering probe (not acceptance)	Preserve exact source line endings	2026-10-21T12:46:47.6842299Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Offline adapter engineering probe (not acceptance)	Preserve exact source line endings	2026-10-21T12:46:47.6843306Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-21T12:46:48.8289277Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8290870Z with:
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8291832Z   lfs: false
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8292682Z   persist-credentials: false
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8293573Z   repository: Laymer/Navzeroth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8301112Z   token: ***
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8301821Z   ssh-strict: true
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8302545Z   ssh-user: git
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8303292Z   clean: true
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8304106Z   sparse-checkout-cone-mode: true
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8305031Z   fetch-depth: 1
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8305747Z   fetch-tags: false
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8306484Z   show-progress: true
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8307307Z   submodules: false
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8308059Z   set-safe-directory: true
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8308919Z   allow-unsafe-pr-checkout: false
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.8309793Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.9654147Z Syncing repository: Laymer/Navzeroth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.9656553Z ##[group]Getting Git version info
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:48.9658018Z Working directory is 'D:\a\Navzeroth\Navzeroth'
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0305441Z [command]"C:\Program Files\Git\bin\git.exe" version
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0622841Z git version 2.56.0.windows.2
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0666723Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0675497Z Copying 'C:\Users\runneradmin\.gitconfig' to 'D:\a\_temp\0b949ee2-1ee6-4174-8f1a-1f5b6ba4fb86\.gitconfig'
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0693932Z Temporarily overriding HOME='D:\a\_temp\0b949ee2-1ee6-4174-8f1a-1f5b6ba4fb86' before making global git config changes
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0698619Z Adding repository directory to the temporary git global config as a safe directory
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.0702263Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1027029Z Deleting the contents of 'D:\a\Navzeroth\Navzeroth'
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1032272Z ##[group]Determining repository object format
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1034190Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1035542Z ##[group]Initializing the repository
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1040697Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Navzeroth\Navzeroth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1916545Z Initialized empty Git repository in D:/a/Navzeroth/Navzeroth/.git/
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.1961302Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Laymer/Navzeroth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4420595Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4421827Z ##[group]Disabling automatic garbage collection
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4433517Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4767146Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4767963Z ##[group]Setting up auth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4768553Z Removing SSH command configuration
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.4776221Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:49.5112602Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:52.1038822Z Removing HTTP extra header
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:52.1047416Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:52.1385864Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:52.6361717Z Removing includeIf entries pointing to credentials config files
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:52.6370927Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:52.6695796Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.1567738Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.1905343Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D:\a\_temp\git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.2324558Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D:\a\_temp\git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.2711711Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.3037464Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.3369733Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.3370522Z ##[group]Fetching the repository
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:53.3381157Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7ac0b1a50ce77fc73b76b6614570cb7709e60882:refs/remotes/origin/verify/offline-adapters-7ac0b1a50ce7
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0047073Z From https://github.com/Laymer/Navzeroth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0050644Z  * [new ref]         7ac0b1a50ce77fc73b76b6614570cb7709e60882 -> origin/verify/offline-adapters-7ac0b1a50ce7
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0102413Z [command]"C:\Program Files\Git\bin\git.exe" branch --list --remote origin/verify/offline-adapters-7ac0b1a50ce7
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0519931Z   origin/verify/offline-adapters-7ac0b1a50ce7
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0562522Z [command]"C:\Program Files\Git\bin\git.exe" rev-parse refs/remotes/origin/verify/offline-adapters-7ac0b1a50ce7
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0902061Z 7ac0b1a50ce77fc73b76b6614570cb7709e60882
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0936452Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0937284Z ##[group]Determining the checkout info
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0938348Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.0945935Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.1368999Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.1724258Z ##[group]Checking out the ref
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:56.1734598Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B verify/offline-adapters-7ac0b1a50ce7 refs/remotes/origin/verify/offline-adapters-7ac0b1a50ce7
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.0565677Z Updating files:   7% (336/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.0683983Z Updating files:   8% (346/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1008590Z Updating files:   9% (389/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1157215Z Updating files:  10% (432/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1317542Z Updating files:  11% (476/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1447381Z Updating files:  12% (519/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1523089Z Updating files:  13% (562/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1594420Z Updating files:  14% (605/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1672354Z Updating files:  15% (648/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1743755Z Updating files:  16% (692/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1827561Z Updating files:  17% (735/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1900144Z Updating files:  18% (778/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.1984367Z Updating files:  19% (821/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2076594Z Updating files:  20% (864/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2136435Z Updating files:  21% (908/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2197276Z Updating files:  22% (951/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2257591Z Updating files:  23% (994/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2318338Z Updating files:  24% (1037/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2320260Z Updating files:  25% (1080/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2380275Z Updating files:  25% (1081/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2434451Z Updating files:  26% (1124/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2490394Z Updating files:  27% (1167/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2551650Z Updating files:  28% (1210/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2607001Z Updating files:  29% (1253/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2666628Z Updating files:  30% (1296/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2740113Z Updating files:  31% (1340/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2837691Z Updating files:  32% (1383/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.2919578Z Updating files:  33% (1426/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3019917Z Updating files:  34% (1469/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3084697Z Updating files:  35% (1512/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3151323Z Updating files:  36% (1556/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3220722Z Updating files:  37% (1599/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3289533Z Updating files:  38% (1642/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3342627Z Updating files:  39% (1685/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3404134Z Updating files:  40% (1728/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3462890Z Updating files:  41% (1772/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3523143Z Updating files:  42% (1815/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3581304Z Updating files:  43% (1858/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3641078Z Updating files:  44% (1901/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3701589Z Updating files:  45% (1944/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3759788Z Updating files:  46% (1988/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3821508Z Updating files:  47% (2031/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3877652Z Updating files:  48% (2074/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3934350Z Updating files:  49% (2117/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.3996480Z Updating files:  50% (2160/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4056831Z Updating files:  51% (2204/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4116154Z Updating files:  52% (2247/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4174280Z Updating files:  53% (2290/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4234573Z Updating files:  54% (2333/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4296239Z Updating files:  55% (2376/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4360030Z Updating files:  56% (2420/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4416488Z Updating files:  57% (2463/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4476519Z Updating files:  58% (2506/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4539916Z Updating files:  59% (2549/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4604445Z Updating files:  60% (2592/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4686030Z Updating files:  61% (2636/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4751142Z Updating files:  62% (2679/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.4940323Z Updating files:  63% (2722/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.5131134Z Updating files:  64% (2765/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.5192428Z Updating files:  65% (2808/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7259995Z Updating files:  66% (2852/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7311934Z Updating files:  67% (2895/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7365700Z Updating files:  68% (2938/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7419329Z Updating files:  69% (2981/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7467912Z Updating files:  70% (3024/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7549410Z Updating files:  71% (3068/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7620076Z Updating files:  72% (3111/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7687637Z Updating files:  73% (3154/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7750025Z Updating files:  74% (3197/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7825558Z Updating files:  75% (3240/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7885964Z Updating files:  76% (3284/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.7951368Z Updating files:  77% (3327/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8016888Z Updating files:  78% (3370/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8076703Z Updating files:  79% (3413/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8144521Z Updating files:  80% (3456/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8276861Z Updating files:  81% (3500/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8346670Z Updating files:  82% (3543/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8473070Z Updating files:  83% (3586/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8535558Z Updating files:  84% (3629/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8589636Z Updating files:  85% (3672/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8662952Z Updating files:  86% (3716/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8734397Z Updating files:  87% (3759/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8782230Z Updating files:  88% (3802/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8853806Z Updating files:  89% (3845/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.8913101Z Updating files:  90% (3888/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.9534727Z Updating files:  91% (3932/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.9684135Z Updating files:  92% (3975/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:58.9757242Z Updating files:  93% (4018/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.0412261Z Updating files:  94% (4061/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.0519075Z Updating files:  95% (4104/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1400898Z Updating files:  96% (4148/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1476700Z Updating files:  97% (4191/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1548409Z Updating files:  98% (4234/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1615069Z Updating files:  99% (4277/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1615967Z Updating files: 100% (4320/4320)
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1616476Z Updating files: 100% (4320/4320), done.
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1772858Z Switched to a new branch 'verify/offline-adapters-7ac0b1a50ce7'
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.1832071Z branch 'verify/offline-adapters-7ac0b1a50ce7' set up to track 'origin/verify/offline-adapters-7ac0b1a50ce7'.
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.4998193Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.5441663Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.5763892Z 7ac0b1a50ce77fc73b76b6614570cb7709e60882
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.5809932Z ##[group]Removing auth
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.5810543Z Removing SSH command configuration
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.5820257Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:46:59.6258949Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.1516088Z Removing HTTP extra header
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.1525200Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.1861883Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7052350Z Removing includeIf entries pointing to credentials config files
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7070837Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7376740Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7378261Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7378932Z includeif.gitdir:/github/workspace/.git.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7379405Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7423236Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7722687Z D:\a\_temp\git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.7764309Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D\:\\a\\_temp\\git\-credentials\-251e61cb\-ef43\-40c3\-ad1e\-1ddb694efe1b\.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.8132729Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.8435517Z D:\a\_temp\git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.8482095Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-251e61cb\-ef43\-40c3\-ad1e\-1ddb694efe1b\.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.8822520Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.9164025Z /github/runner_temp/git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.9201546Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-251e61cb\-ef43\-40c3\-ad1e\-1ddb694efe1b\.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.9531385Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.9811059Z /github/runner_temp/git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:00.9850200Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-251e61cb\-ef43\-40c3\-ad1e\-1ddb694efe1b\.config
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:01.0172317Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:01.5071185Z Removing credentials config 'D:\a\_temp\git-credentials-251e61cb-ef43-40c3-ad1e-1ddb694efe1b.config'
+Offline adapter engineering probe (not acceptance)	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:01.5084935Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	﻿2026-10-21T12:47:01.5373968Z ##[group]Run ./scripts/windows/Probe-HostedOfflineAdapters.ps1 -OutputDirectory "$env:RUNNER_TEMP/offline-adapter-probe"
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:01.5374908Z ^[[36;1m./scripts/windows/Probe-HostedOfflineAdapters.ps1 -OutputDirectory "$env:RUNNER_TEMP/offline-adapter-probe"^[[0m
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:01.5440467Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:01.5440976Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9116042Z {
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9116772Z   "schema_version": 1,
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9117348Z   "kind": "hosted_offline_adapter_engineering_probe",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9117916Z   "acceptance_observations_promoted": false,
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9118499Z   "passed": true,
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9119001Z   "source_commit": "7ac0b1a50ce77fc73b76b6614570cb7709e60882",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9120732Z   "run_id": "39602331404",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9121233Z   "run_attempt": "1",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9121629Z   "runner_environment": "github-hosted",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9122095Z   "runner_os": "Windows_NT",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9123162Z   "powershell_version": "7.6.6",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9124097Z   "phase": "complete",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9124527Z   "controlled_adapters": [
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9124896Z     "674f0826-b102-4874-bdf6-780b116a0c33",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9125796Z     "50d41afc-024b-4266-8492-3661d2deee2c",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9126228Z     "4cd1a455-b6d9-41b5-893d-75738f894f07",
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9126661Z     "2cc8779d-d4e5-4a63-b4c8-503a60339028"
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9127015Z   ],
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9127290Z   "network_disabled": true,
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9127587Z   "restored": true,
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9127844Z   "elapsed_ms": 2442.646,
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9128093Z   "error": null
+Offline adapter engineering probe (not acceptance)	Probe real adapter disablement and exact restoration	2026-10-21T12:47:04.9128365Z }
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	﻿2026-10-21T12:47:04.9929132Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9929918Z with:
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9930403Z   name: offline-adapter-engineering-probe-7ac0b1a50ce77fc73b76b6614570cb7709e60882
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9931221Z   path: D:\a\_temp/offline-adapter-probe/
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9931549Z   if-no-files-found: warn
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9931853Z   retention-days: 7
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9932118Z   compression-level: 6
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9932367Z   overwrite: false
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9932642Z   include-hidden-files: false
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9932923Z   archive: true
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:04.9933289Z ##[endgroup]
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.1680890Z With the provided path, there will be 2 files uploaded
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.1685159Z Artifact name is valid!
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.1685846Z Root directory input is valid!
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.4246245Z Uploading artifact: offline-adapter-engineering-probe-7ac0b1a50ce77fc73b76b6614570cb7709e60882.zip
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.4280786Z Beginning upload of artifact content to blob storage
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.5842078Z Uploaded bytes 711
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.6210998Z Finished uploading artifact content to blob storage!
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.6214349Z SHA256 digest of uploaded artifact is fb004499fdec14cc08816e0360500e44831aa6e5a3a4c3a0c2b12389f11632c0
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.6215625Z Finalizing artifact upload
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.9474522Z Artifact offline-adapter-engineering-probe-7ac0b1a50ce77fc73b76b6614570cb7709e60882 successfully finalized. Artifact ID 12346258940
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.9476746Z Artifact offline-adapter-engineering-probe-7ac0b1a50ce77fc73b76b6614570cb7709e60882 has been successfully uploaded! Final size is 711 bytes. Artifact ID is 12346258940
+Offline adapter engineering probe (not acceptance)	Retain bounded engineering diagnostics after restoration	2026-10-21T12:47:05.9483922Z Artifact download URL: https://github.com/Laymer/Navzeroth/actions/runs/39602331404/artifacts/12346258940
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-21T12:47:05.9818928Z Post job cleanup.
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.1354033Z [command]"C:\Program Files\Git\bin\git.exe" version
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.1675956Z git version 2.56.0.windows.2
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.1736316Z Copying 'C:\Users\runneradmin\.gitconfig' to 'D:\a\_temp\659dd558-08e3-4e6e-85ba-9588bd67e48f\.gitconfig'
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.1757877Z Temporarily overriding HOME='D:\a\_temp\659dd558-08e3-4e6e-85ba-9588bd67e48f' before making global git config changes
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.1759183Z Adding repository directory to the temporary git global config as a safe directory
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.1773013Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.2138367Z Removing SSH command configuration
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.2147758Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.2484892Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.7630977Z Removing HTTP extra header
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.7640967Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:06.8163622Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:07.3056623Z Removing includeIf entries pointing to credentials config files
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:07.3067350Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Offline adapter engineering probe (not acceptance)	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-21T12:47:07.3390204Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Offline adapter engineering probe (not acceptance)	Complete job	﻿2026-10-21T12:47:07.9044533Z Cleaning up orphan processes

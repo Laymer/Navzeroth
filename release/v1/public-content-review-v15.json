@@ -1,0 +1,2140 @@
+{
+  "app_version": "1.0.0",
+  "coordinator_recorded_validation": {
+    "attribution": "Coordinator executed the recorded full-pack run; this reviewer independently verifies its committed artifact bindings and semantic comparison, not a second execution.",
+    "current_protected_checks": {
+      "scope": "Other candidate workflow progress/results are not final current-source protected, coverage, source-parity, installer or owner gates.",
+      "status": "unverified"
+    },
+    "current_union_engineering_checks": {
+      "checked_source_commit": "cef17297e3b03e6f2f0470840f3c44ed0ea76310",
+      "handoff": {
+        "bytes": 3812,
+        "path": "docs/handoffs/2026-10-20-watchdog-candidate-v15.md",
+        "sha256": "dd601b810946cf68d1e8706782f34beacb5b25b8ae72e93857bfd82c4316e22c"
+      },
+      "limitations": "Original baseline passed actual local Windows; precise hosted startup cause remains unproven. Deterministic delayed5s startup has distinct2s negative and15s positive finite synthetic watchdog controls; production20/60/170 limits and actual assertions unchanged.",
+      "repair_handoff": {
+        "bytes": 4153,
+        "path": "docs/handoffs/2026-10-20-watchdog-startup.md",
+        "sha256": "1e283b7a3078bce261e5961218a5e4f0297e76704126e70352c64c0a6c5b2b8d"
+      },
+      "scope": "Only Test-StableAcceptanceHelpers.ps1 differs in production tree since d636. Coordinator independently executed actual nativeWindowsPS7.6.7/WindowsNode24.15.0 26checks and LinuxPS7.6.6/Node24.19.0 26checks; tooling independently Linux26. Author nativeWindows26/Linux26/PS5compat25; PS7-only real parent case explicitly unexecuted under PS5.1. Reviewer independently examines exact diff and source/evidence bindings, not another PS execution."
+    },
+    "fresh_full_pack_functional": {
+      "attribution": "Coordinator actually rebuilt optimized scenario in1.35s and CLI in7.77s, then executed this new full-pack run at d636/a3baa. Reviewer independently checks recorded proof/measurement/Git pins, not a second execution.",
+      "limits": "32 logical processors; MemTotal32675952KiB; shared host, uncontrolled cache. No Windows or ordinary-PC claim.",
+      "measurement": {
+        "bytes": 863,
+        "path": "release/v1/functional-linux-measurement.json",
+        "sha256": "36361d5771b012562ff0feb95c5e2034d7323486b198d58326fae012c9750266"
+      },
+      "peak_child_rss_kib": 6206148,
+      "platform": "shared Linux/WSL2",
+      "proof": {
+        "bytes": 15568,
+        "path": "release/v1/functional-scenarios.json",
+        "sha256": "d9c409844872f8369050cd22054aa9a99c498ce6c015f0ab4ca1e0e97bb72070"
+      },
+      "scope": "Actual coordinator rebuilt/run d636/a3baa; unchanged bytes after test-only PR264. No cef172 rerun/restamp. Runtime/UI/addon/content/datagen/Cargo unchanged d636. Shared Linux engineering execution only; no Windows or ordinary-PC claim.",
+      "seconds": 78.30829478700616,
+      "status": "pass",
+      "test_source": {
+        "commit": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+        "path": "crates/app/tests/stable_bundled_functional.rs",
+        "sha256": "924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008"
+      }
+    },
+    "historical_aeb_windows_coverage": {
+      "aggregate_status": "failed",
+      "cause": "Workspace bounded-file Windows replacement test demonstrated creation-time/attributes/mtime/size collision. New file-ID repair needs fresh native Windows execution.",
+      "checked_source_commit": "aeb7fd8f",
+      "evidence": {
+        "bytes": 4956,
+        "path": "docs/handoffs/2026-10-20-windows-pack-file-identity.md",
+        "sha256": "06fda230ea42d5cc32cbe53afb1a6ff70bdfb83eaa4ec7c4efc1c16dd3762057"
+      }
+    },
+    "historical_component_tests": {
+      "checked_source_commit": "f06470dc3af482810c15aef5d721fc4b5c51a17d",
+      "portable_rust": {
+        "ignored": 8,
+        "passed": 1595,
+        "test_binaries": 205
+      },
+      "scope": "Actual historical f064 runs, not rerun or restamped to fcf. New Windows-specific ingest runtime differs and remains subject to fresh protected checks.",
+      "ui": {
+        "measured_files": 91,
+        "passed": 555,
+        "per_file_minimum_line_percent": 90,
+        "suites": 66
+      }
+    },
+    "historical_f391_functional": {
+      "measurement": {
+        "bytes": 747,
+        "path": "release/history/2026-10-20-functional-before-file-identity/functional-linux-measurement.json",
+        "sha256": "8047dae110f32a3c5bbccd17dc677e4573bf7b221f65a0728c5acf601dc18ffc"
+      },
+      "peak_child_rss_kib": 6402156,
+      "proof": {
+        "bytes": 15568,
+        "path": "release/history/2026-10-20-functional-before-file-identity/functional-scenarios.json",
+        "sha256": "ed9d1ad4b64dbd084a7bfae58f8b7498431d4a93b15c9c324b2f36940b738d93"
+      },
+      "scope": "Actual previous Linux run, archived unchanged. No current-production or Windows pass inferred.",
+      "seconds": 149.9102448040012,
+      "test_source_commit": "f3917490f35bad61de2f1b46008596286943635b"
+    },
+    "historical_fcf_archive": {
+      "bytes": 1070,
+      "path": "release/history/2026-10-20-functional-before-travel-cache/history.json",
+      "sha256": "3675907d2f713750e14167bf11557e28742eb2d63a1c88d369b4d7cd791ef303"
+    },
+    "historical_fcf_full_pack_functional": {
+      "hardware_limits": "32 logical processors; MemTotal32675952KiB; concurrent shared host workload. No Windows or ordinary-PC performance claim.",
+      "measurement": {
+        "bytes": 815,
+        "path": "release/history/2026-10-20-functional-before-travel-cache/functional-linux-measurement.json",
+        "sha256": "31d15d02683e751ab462e3717222bbdc3a15ea4a6ab9c54ea1b145c8b64da4ec"
+      },
+      "peak_child_rss_kib": 6402372,
+      "platform": "shared Linux/WSL2",
+      "proof": {
+        "bytes": 15568,
+        "path": "release/history/2026-10-20-functional-before-travel-cache/functional-scenarios.json",
+        "sha256": "106cc6e2143aca3aa7cd188668b73587636687ddb5de84c01df946ab6e2dd8d1"
+      },
+      "scope": "Original fresh fcf/0a execution,138.945234232s/6402372KiB; proof106cc6 and measurement31d now archived unchanged before the runtime repair. Historical success remains attributed to its actual source, not current production.",
+      "seconds": 138.94523423200008,
+      "status": "pass",
+      "test_source": {
+        "commit": "fcf170ad50722d8406f4662e6b2173c3c1c756a2",
+        "path": "crates/app/tests/stable_bundled_functional.rs",
+        "sha256": "924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008"
+      }
+    },
+    "historical_v4_coverage": {
+      "aggregate_status": "failed",
+      "cause": "Commands through hydration, assembly, compiled check, native smoke and reports passed, but final clean-source assertion failed without dirty-path diagnostics. Cause remains unresolved; passing intermediate commands do not establish coverage receipt or aggregate pass.",
+      "evidence": {
+        "bytes": 4120,
+        "path": "docs/handoffs/2026-10-20-native-coverage-source-diagnostics.md",
+        "sha256": "55511c43f49d371c893a76561104d757f1bd3d9ebbda717a3e5724b419bf00cd"
+      },
+      "native_smoke_checks_passed": 32,
+      "workflow_run_id": "39405119048"
+    },
+    "historical_v6_coverage": {
+      "actual_checkout_commit": "ffbf834ce9fca684d9dd3fcc357a240a81dd40e4",
+      "actual_checkout_tree": "43885c504ab8502d8f82e3cab2b3e52dbc79ca45",
+      "aggregate_status": "failed",
+      "cause": "Immediately after successful instrumented coverage-bundle-assembly the mandatory clean-source guard refused ?? default_1146472104454006394_0_5104.profraw. Native build/smoke were not reached; this is not a measured threshold failure or coverage pass.",
+      "head_source_commit": "b689659844eeee8e3a9ee83769e2d9e1a5b50780",
+      "independent_inspection": "This reviewer inspected retained actual job log lines418\u2013420 and exact tree identity; the diagnostic is an observed cause, not a hypothesis.",
+      "workflow_run_id": "39413135940"
+    },
+    "historical_v6_installed_acceptance": {
+      "actual_case_results": {
+        "HOSTED-FIRST-START": "fail",
+        "HOSTED-INSTALL": "pass",
+        "HOSTED-RESOURCES": "pass"
+      },
+      "admission_scope": "Raw pass labels for old exactinstaller remain historical; canonical current eight hosted rows and owner stay unverified. No absent case or owner observation is invented.",
+      "first_start_cause": "Driver required quest/item/edge page descriptors from PlanningCatalog, which actually issues only nodes and projected objectives. This does not establish empty installed world data. Source-global nodes pin legitimately binds generic page requests; flattened DTO shape is preserved.",
+      "head_commit": "b689659844eeee8e3a9ee83769e2d9e1a5b50780",
+      "history": {
+        "bytes": 2380,
+        "path": "release/history/2026-10-20-v6-hosted-failure/history.json",
+        "sha256": "9bc657854d6da8d992ee706e991c0449a38660c053c265fb17e71e40fd022db9"
+      },
+      "installed_files_verified": 630,
+      "installer_sha256": "73fe854cf239b5b70fdcfc01a330bc25bf325f70a94dfdc170c171db3fdf57a4",
+      "missing_hosted_cases": 5,
+      "owner_smoke": "unverified",
+      "partial_measurements": {
+        "activation_ms": 0,
+        "completed_performance_case": false,
+        "failed_elapsed_ms": 642561,
+        "load_ms": 223632,
+        "peak_memory": null,
+        "scope": "Partial failed hosted first-start engineering workload only. No completed performance pass, ordinary-PC assertion or current acceptance inferred."
+      },
+      "production_sha256": "0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a",
+      "raw_reports": [
+        {
+          "bytes": 733,
+          "path": "release/history/2026-10-20-v6-hosted-failure/raw/hosted-first-start.json",
+          "sha256": "9c080cfaa255349e8eee8b31054c77829f1da02e3fc5fd3f4e91aae30fbdb4de"
+        },
+        {
+          "bytes": 750,
+          "path": "release/history/2026-10-20-v6-hosted-failure/raw/hosted-install.json",
+          "sha256": "8d93ecb9f3e580f557f65ad82829c513276915d209555f0af599e06e4588cc3d"
+        },
+        {
+          "bytes": 132136,
+          "path": "release/history/2026-10-20-v6-hosted-failure/raw/hosted-resources.json",
+          "sha256": "f1487761a129708ebfddf51fc347e44a25d5338686ddc7174a6c2d64c12822fa"
+        },
+        {
+          "bytes": 700,
+          "path": "release/history/2026-10-20-v6-hosted-failure/raw/fresh-016fae9c9c3f45cc98356b10eacf95d7.json",
+          "sha256": "8dbca4e4d2f034abe9ca5950f5900f098b687e8c3501291a1d3e6c4d4d291aa7"
+        }
+      ],
+      "recorder_cause": "PS7 converted literal ISO JSON dates to DateTime, failing strict operator/date/environment admission. Single-backslash artifact normalization was an independently proven next blocker, repaired without path/hash/source exemptions.",
+      "source_commit": "ffbf834ce9fca684d9dd3fcc357a240a81dd40e4",
+      "workflow_result": "failure",
+      "workflow_run_id": "39413135905"
+    },
+    "native_windows_file_identity_ci": {
+      "actual_checkout_commit": "ffbf834ce9fca684d9dd3fcc357a240a81dd40e4",
+      "actual_checkout_tree": "43885c504ab8502d8f82e3cab2b3e52dbc79ca45",
+      "checks": [
+        "replacement_and_changes_between_inspection_open_and_read_are_refused",
+        "exact_empty_and_limit_reads_preserve_bytes_and_aggregate_budget",
+        "component_directory_replacement_refuses_but_unrelated_children_do_not",
+        "identical_bytes_and_modified_time_replacement_is_not_the_same_file"
+      ],
+      "head_source_commit": "b689659844eeee8e3a9ee83769e2d9e1a5b50780",
+      "independent_inspection": "This reviewer inspected actual retained CI log lines2087\u20132095, checked completed successful remote CI/job state, and independently provedffbf andb689 exact Git trees equal. Actual native Windows Rust regressions passed; not a hosted installer case or repaired current coverage pass.",
+      "rust_windows_job_status": "success",
+      "workflow_run_id": "39413135882"
+    },
+    "preliminary_installer_acceptance": {
+      "actual_cases_run": 0,
+      "cause": "JSON member-order comparison rejected semantically identical release/build target before cases. All eight hosted rows and owner smoke remain unverified.",
+      "checked_source_commit": "40ea",
+      "evidence": {
+        "bytes": 3047,
+        "path": "docs/handoffs/2026-10-20-stable-target-identity.md",
+        "sha256": "938a219ac2f6ce93f6e0aa37530fdf776ac65452cb3c1fed2f440d79a4debfd0"
+      },
+      "job_conclusion_caveat": "continue-on-error allowed successful job conclusion; not an acceptance pass",
+      "producer_step_outcome": "failure",
+      "workflow_run_id": "39400861524"
+    },
+    "preparation_serialization_correction": {
+      "scope": "Transient pretty JSON preparation was restored to established compact acceptance-evidence serialization in eff60;27970092 bytes remains within schema4 64MiB bound. No product change, accepted observation or gate waiver. Mutable acceptance-evidence hash is deliberately not pinned here."
+    },
+    "prior_1dd_full_pack_functional": {
+      "hardware_limits": "32 logical processors; MemTotal32675952KiB; concurrent shared host workload. No Windows or ordinary-PC performance claim.",
+      "measurement": {
+        "bytes": 928,
+        "path": "release/history/2026-10-20-pre-recovery-runtime-functional/functional-linux-measurement.json",
+        "sha256": "ec335cff3a6c2bed8e0f5643991fa55f70e79156b6fbb8b018b9262accfa73df"
+      },
+      "peak_child_rss_kib": 6402732,
+      "platform": "shared Linux/WSL2",
+      "proof": {
+        "bytes": 15568,
+        "path": "release/history/2026-10-20-pre-recovery-runtime-functional/functional-scenarios.json",
+        "sha256": "ef3c7098a521dbe955eb945ae1f25f0bdddb08ff421f6fff0e39a707948d1fe1"
+      },
+      "scope": "Actual coordinator optimized rebuild and full-pack execution at1dd/b9:134.13806364599805s/6402732KiB sharedLinuxWSL2; ef3c/ec335 unchanged. Reviewer binds proof/measurement/source, not a second execution. Initial missing-root setup failure preceded corrected success. RuntimeRust/UIcomponents/addon/content/datagen/Cargo unchanged1dd; seven production paths differ at716/a8c: outer workflow, native driver/helper/test and three dev E2E harness files. No current716full-pack rerun/restamp, controlled speedup, Windows or ordinary-PC claim.",
+      "seconds": 134.13806364599805,
+      "status": "pass",
+      "test_source": {
+        "commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+        "path": "crates/app/tests/stable_bundled_functional.rs",
+        "sha256": "924dc01ecb9844668323d68afe524a0c4f9641631e548cbe56c60b83bfec3008"
+      }
+    },
+    "prior_v11_union_engineering_checks": {
+      "actionlint": "pass",
+      "attribution": "Coordinator recorded actual33Node/actionlint at production-equivalent metadata head0a49d4d9. Reviewer independently repeated33Node and both workflow actionlint on a978d075.",
+      "checked_source_commit": "0a49d4d9",
+      "node_tests_passed": 33,
+      "scope": "Actual33Node/actionlint belongs to0a49/b9 and reviewer a978/b9; not rerun7379/f751. Only workflow timeout changed; reviewer separately actionlint-validated current workflows. Engineering tests only, no hosted acceptance."
+    },
+    "prior_v12_union_engineering_checks": {
+      "attribution": "Coordinator actually ran43affected Node tests on exact integratedb615; author/tooling each43atfinal7bff. This reviewer independently repeated43 on production-equivalent a09b, plus JS syntax and actionlint.",
+      "checked_source_commit": "b615d6f944748b474dce4e0ebd8f1af2dce66f68",
+      "diff": "pass",
+      "node_tests_passed": 43,
+      "scope": "Driver engineering tests; no repaired native Windows/installer/owner execution inferred.",
+      "syntax": "pass"
+    },
+    "prior_v13_union_engineering_checks": {
+      "attribution": "Coordinator actually ran correct three-file43Node command on exact716 after initial wrong filename yielded only20 and was insufficient. Reviewer independently repeated43 on production-equivalent98b4. Tooling independently cleared final repair with43Node and3devbrowser tests. Coordinator independently ran3actualdevChromium tests at finale75,7.9s; not this reviewer execution.",
+      "checked_source_commit": "716af3e8fca641f896ea322ada66a40425906d41",
+      "diff": "pass",
+      "node_tests_passed": 43,
+      "scope": "Actual unmodified React component in synthetic dev harness; old unconditional same-selection negative control, same-profile preservation/different-profile refetch and invalid/missing checks. Ordinary production build was checked by author/setup; not production-CSP, native WebView2 or installed Windows acceptance.",
+      "syntax": "pass"
+    },
+    "prior_v14_union_engineering_checks": {
+      "checked_source_commit": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+      "record": {
+        "bytes": 3653,
+        "path": "docs/reviews/2026-10-20-recovery-runtime-repairs.md",
+        "sha256": "e71573f08507a38bcdc0439d1cc0dfa01f2fabbd77ea7e9c71e3ac43bd014d20"
+      },
+      "scope": "Exact source review and matched-author-binary execution scopes are individually attributed in the record. Independent execution does not imply independently rebuilt tests; optimized diagnostic/functional rebuilds are separate."
+    },
+    "prior_v6_independent_checks": {
+      "attribution": "Previous desktop V6 reviewer performed these checks; not restamped as this reviewer execution.",
+      "checked_source_commit": "fcf170ad50722d8406f4662e6b2173c3c1c756a2",
+      "clean_source_node_tests_passed": 2,
+      "functional_proof_semantic_comparison": "Only test_source.commit differs from archived f391 proof.",
+      "git_diff_check": "pass",
+      "nested_file_refs": "All nested FileRefs independently streamed and matched exact bytes/hashes; HEAD ordinary blobs or LFS pointers checked to bind same immutable resources.",
+      "production_fingerprint": "independently recomputed exact Git tree",
+      "source_scope": "content/datagen/core/app/storage/defaults/planner/inventory unchanged across repair union; ingest Windows identity and three diagnostic/target repair files explicitly reviewed",
+      "verified_nested_file_ref_occurrences": 25
+    },
+    "prior_v7_reviewer_checks": {
+      "actionlint": "pass",
+      "attribution": "Prior V7 checks executed by this reviewer on e45; not restamped as new current executions.",
+      "checked_source_commit": "e45b302a30b280511e034c701aa6758d3e86c0a3",
+      "git_diff_check": "pass",
+      "nested_file_refs": "Every nested FileRef independently streamed and matched exact bytes/hashes.",
+      "production_fingerprint": "independently recomputed exact Git tree",
+      "source_scope": "Actual Git diff confirms crates/apps/addons/content/datagen/Cargo/lock components byte-identical tofcf. Reviewed changes are coverage base child profile environment, exact owned output helper/test and early regression workflow step; source cleanliness, profiles, resource/hash policy and thresholds are not relaxed.",
+      "targeted_node_tests_passed": 12,
+      "targeted_tests_scope": "Executed locally by this reviewer with pinnedRust1.99/cargo-llvm-cov0.9.1. Actual instrumented Rust default output dirties a synthetic Git checkout and refuses; owned absolute output preserves nonempty profiles and clean source. Actual show-env preserves owned profile/target, and clean-source/native-bundle/environment/process-output tests passed. No native Windows execution of this new profile repair claimed.",
+      "verified_nested_file_ref_occurrences": 27
+    },
+    "prior_v8_union_engineering_checks": {
+      "actionlint": "pass",
+      "attribution": "Coordinator recorded actual checks on the merged60ab union; independent scoped driver/recorder reviews and this reviewer checks are distinct.",
+      "checked_source_commit": "60ab126ba78b51f666e11226669720fdc96b31ed",
+      "native_powershell51_timestamp_checks_passed": 29,
+      "node_tests_passed": 27,
+      "powershell7_timestamp_checks_passed": 32,
+      "scope": "Root exact union checks. Author13 release Rust tests (12authored+1typedserialization) exercise public page API/DTO, with no productRust implementation change. Recorder real boundary3PS7/3PS5 checks were independently executed by desktop, not this reviewer. These are engineering tests, not installed acceptance."
+    },
+    "prior_v9_union_engineering_checks": {
+      "actionlint": "pass",
+      "attribution": "Coordinator recorded actual12 targeted Node tests and actionlint on merged6c6f. This reviewer independently ran12 targeted tests on production-equivalent eff60 checkout before doc-only3c509 refresh.",
+      "checked_source_commit": "6c6fda90c9e22cd7acebca179c5c688699b84354",
+      "node_tests_passed": 12,
+      "scope": "Engineering instrumentation regression only; no native Windows, full-pack, installed acceptance or owner execution claimed here."
+    },
+    "recovery_linux_comparison": {
+      "baseline_peak_rss_kib": 11946608,
+      "baseline_seconds": 721.433693646999,
+      "executed_by": "tooling_review",
+      "independent_raw_identity_review": "root",
+      "rebuilt_peak_rss_kib": 12508668,
+      "rebuilt_seconds": 347.8049998570059,
+      "reviewer_scope": "Independently streamed and Git-bound archival evidence; did not execute diagnostic.",
+      "scope": "Both strict diagnostics passed using unchanged historical V13 signed bundle; new runtime was genuinely rebuilt and parameterized harness independently identifies runtime and harness commits. Shared Linux/WSL, uncontrolled cache. Elapsed decreased, peak RSS increased; no Windows, ordinary-PC or controlled speedup claim. Baseline restored_ready startup fields repeat original startup and are not new restore timing."
+    },
+    "v11_historical_coverage": {
+      "artifacts": {
+        "baseline": 12274157184,
+        "linux": 12274929316,
+        "typescript": 12275171763,
+        "verdict": 12276837697,
+        "windows": 12277287747
+      },
+      "attribution": "Tooling alone range-streamed selected compressed LCOV to derive bounded entrypoint summaries and hashes; no raw profiles were downloaded or streamed. Coordinator independently read and hash-checked retained raw verdict/receipts and derived summaries, not full LCOV or profiles. Entrypoint summaries/audit are derived rather than raw LCOV. This reviewer independently reads retained raw verdict/receipts and derived summaries and binds exact files; no new LCOV execution or download is claimed.",
+      "cli_executable_lines": 409,
+      "files": {
+        "independent-audit.json": {
+          "bytes": 2164,
+          "kind": "independent_derived_summary",
+          "path": "release/history/2026-10-20-v11-coverage-success/independent-audit.json",
+          "sha256": "a4f4b682cf9b2576c22338f36b771766c057594f2b85d7542bf6832bffaa2f37"
+        },
+        "linux-entrypoint-summary.json": {
+          "bytes": 315,
+          "kind": "derived_from_streamed_hash_bound_lcov",
+          "path": "release/history/2026-10-20-v11-coverage-success/linux-entrypoint-summary.json",
+          "sha256": "b85677075394c1b5f1be3173ee398a09077ffa57f069ead808b735b4a1ebef19"
+        },
+        "linux-rust-receipt.json": {
+          "bytes": 41617,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v11-coverage-success/linux-rust-receipt.json",
+          "sha256": "ee3357c1f5e9b80338b73ff17b5eb0cfc166ea06075f11788a4cac11eec09d7d"
+        },
+        "per-file-verdict.json": {
+          "bytes": 50732,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v11-coverage-success/per-file-verdict.json",
+          "sha256": "68911dc316fca5448755b566803c8d21ea8ee826d5c27f9f9c03e9eccd9f2ee4"
+        },
+        "windows-entrypoint-summary.json": {
+          "bytes": 316,
+          "kind": "derived_from_streamed_hash_bound_lcov",
+          "path": "release/history/2026-10-20-v11-coverage-success/windows-entrypoint-summary.json",
+          "sha256": "026b08ecf50f05be13abaffd9fbc84875a8c59515db31ba6c827689bc1ab373e"
+        },
+        "windows-native-smoke.json": {
+          "bytes": 27554,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v11-coverage-success/windows-native-smoke.json",
+          "sha256": "7f6e4b0e913db0e157a2c2a0e01856da3a675bdb577d6c9a7f437868baf657d1"
+        },
+        "windows-rust-receipt.json": {
+          "bytes": 44792,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v11-coverage-success/windows-rust-receipt.json",
+          "sha256": "5a286764fd453661afe06a91cec3ac4a3da36cde4701025cd3872a6fca563285"
+        }
+      },
+      "history": {
+        "bytes": 2727,
+        "path": "release/history/2026-10-20-v11-coverage-success/history.json",
+        "sha256": "71ed087c3a9b7efc9e48cc1dc6e53e2be13b6b392626e2d090ff2ab0d62a3b43"
+      },
+      "linux_cli_positive_lines": 371,
+      "measured_files": 276,
+      "run_id": 39441834710,
+      "scope": "Combined per-file90% requirement and per-platform positive entry evidence both passed at e3f/f751, with clean source and no incomplete profiles. Coverage native smoke32/0 is distinct from failed installer-upgrade and all skipped stable cases. Not current b378 coverage or installer acceptance.",
+      "source_commit": "e3fdd58a9fe969f972d2796c47f4b114e5b0d661",
+      "status": "success",
+      "threshold": {
+        "denominator": 100,
+        "numerator": 90,
+        "rounding": false
+      },
+      "windows_cli_positive_lines": 18,
+      "windows_desktop_executable_lines": 18,
+      "windows_desktop_positive_lines": 18
+    },
+    "v11_historical_hosted_results": {
+      "actual_checkout_commit": "e3fdd58a9fe969f972d2796c47f4b114e5b0d661",
+      "candidate_source_commit": "ee26d119b8fc63454771e963cfd28ae6cb1b6aab",
+      "ci": {
+        "applicable_jobs": 9,
+        "attribution": "This reviewer actually monitored completed run and inspected Linux/Windows logs:17cachetests each, Windows4bounded-file tests and actual Rust DTO regression passed.",
+        "run_id": 39441834860,
+        "stability": "skipped",
+        "status": "success"
+      },
+      "package": {
+        "baseline_populate": {
+          "baseline_tag": "v0.9.2",
+          "failed": 0,
+          "passed": 5
+        },
+        "declared_signature": "unsigned",
+        "diagnosis": "Active-content UI was checked after fixed600ms while issued IPC completed636ms; no response body/pointer retained, so this is a supported race explanation, not proven product data loss. Synthetic UNVERIFIED_DEMO scope must persist; real bundled-default resets cannot excuse its loss. Blocking gate correctly failed.",
+        "history": {
+          "bytes": 2230,
+          "path": "release/history/2026-10-20-v11-native-upgrade-failure/history.json",
+          "sha256": "4d4fcb95da6536be5f9e897859f3a60c68aee9cf0ff39dc2ceba68fefe1b47d3"
+        },
+        "installer_bytes": 26109201,
+        "installer_sha256": "f7369af0a7ec647eadbde627218472d3e0f26bc26d7881beda383a2c0bab742b",
+        "native_smoke": {
+          "failed": 0,
+          "passed": 32
+        },
+        "native_upgrade": {
+          "failed": 1,
+          "passed": 6
+        },
+        "owner": "unverified",
+        "raw_files": {
+          "baseline-populate.json": {
+            "bytes": 4475,
+            "path": "release/history/2026-10-20-v11-native-upgrade-failure/baseline-populate.json",
+            "sha256": "15f1356eb87c76d97c4ea3adf1d2b7f9007834cac3afd06c3dc7a2ad7e0ef9f6"
+          },
+          "candidate-verify.json": {
+            "bytes": 18396,
+            "path": "release/history/2026-10-20-v11-native-upgrade-failure/candidate-verify.json",
+            "sha256": "171f433ff6f0b17058d14babf69c7468efd43295caa13388aca8f050754de736"
+          },
+          "db-before.json": {
+            "bytes": 1859,
+            "path": "release/history/2026-10-20-v11-native-upgrade-failure/db-before.json",
+            "sha256": "055090feb9a5705f00b121482da2c93e6e402c5518e04a09775150a00618e663"
+          },
+          "native-smoke.json": {
+            "bytes": 27455,
+            "path": "release/history/2026-10-20-v11-native-upgrade-failure/native-smoke.json",
+            "sha256": "81877c55f2b86911511d0ca8b356c3a2f5de3f3adefd958d8c6abfb13023c0e3"
+          },
+          "prepared-release-verification.json": {
+            "bytes": 133649,
+            "path": "release/history/2026-10-20-v11-native-upgrade-failure/prepared-release-verification.json",
+            "sha256": "8aa400f2848731f3b6f0c834c9a14c4bb20ad652b53daefe403aee5a42787075"
+          }
+        },
+        "recorder": "skipped",
+        "run_id": 39441834744,
+        "stable_eight_cases": "all_skipped",
+        "status": "failure"
+      },
+      "pages": {
+        "deployment": "skipped",
+        "run_id": 39441834918,
+        "status": "validation_success"
+      },
+      "production_sha256": "f7515b8cf1111828f7fb76c29f77c94439f6f3e372144261f982edc7c7d72b25",
+      "scope": "All outcomes belong only to historical V11 e3f/f751. They do not establish current V12 b615/b378 native/Windows acceptance.",
+      "source_parity": {
+        "run_id": 39441834737,
+        "scope": "This reviewer monitored both actual whole-corpus twice-regenerated/committed-byte paths and final cross-platform parity; absent-corpus fallback skipped.",
+        "status": "success"
+      },
+      "tree_identity": "1c6fa4a38840e6684bb8b6ae57f0cc8bc599c7a2"
+    },
+    "v12_historical_coverage": {
+      "artifacts": {
+        "baseline": 12279309547,
+        "linux": 12280331779,
+        "typescript": 12278764943,
+        "verdict": 12283013163,
+        "windows": 12283621938
+      },
+      "attribution": "Tooling alone range-streamed selected compressed LCOV to derive bounded entrypoint summaries/hashes; no profiles downloaded/streamed. Coordinator independently read/hash-checked retained raw verdict/receipts and derived summaries, not full LCOV or profiles. This reviewer independently reads/binds retained raw verdict/receipts and derived summaries, checks exact276file90% math; no LCOV/profile execution/download claimed.",
+      "cli_executable_lines": 409,
+      "files": {
+        "independent-audit.json": {
+          "bytes": 2252,
+          "kind": "independent_derived_summary",
+          "path": "release/history/2026-10-20-v12-coverage-success/independent-audit.json",
+          "sha256": "87dc96d07fd532d307d2b3df5e223a6c409f1a041135cab0a6bdf7e4fdb1b165"
+        },
+        "linux-entrypoint-summary.json": {
+          "bytes": 315,
+          "kind": "derived_from_streamed_hash_bound_lcov",
+          "path": "release/history/2026-10-20-v12-coverage-success/linux-entrypoint-summary.json",
+          "sha256": "e64219837797baa89d8041d629d4f53d1a9e6d92735fb675bf4c5c4f4b7d9f69"
+        },
+        "linux-rust-receipt.json": {
+          "bytes": 41617,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v12-coverage-success/linux-rust-receipt.json",
+          "sha256": "01b7a307ed7f8ecc593322df7e1b245be1c4e57100c1928da0e9786ae5d6b36a"
+        },
+        "per-file-verdict.json": {
+          "bytes": 50732,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v12-coverage-success/per-file-verdict.json",
+          "sha256": "6c3f96549180c2986753c2cbbb1da81c0debc8e3b97db75826c66950158bc8d5"
+        },
+        "windows-entrypoint-summary.json": {
+          "bytes": 316,
+          "kind": "derived_from_streamed_hash_bound_lcov",
+          "path": "release/history/2026-10-20-v12-coverage-success/windows-entrypoint-summary.json",
+          "sha256": "87a1afb444d632c075ffb6dafc67d31442c223c901e59a85ea7b349742b6d6d4"
+        },
+        "windows-native-smoke.json": {
+          "bytes": 28349,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v12-coverage-success/windows-native-smoke.json",
+          "sha256": "d6a7b03684f4e3639e359f475985b80f31811c31f9a6448abb16731501af6025"
+        },
+        "windows-rust-receipt.json": {
+          "bytes": 44792,
+          "kind": "raw_artifact",
+          "path": "release/history/2026-10-20-v12-coverage-success/windows-rust-receipt.json",
+          "sha256": "a066c11e2e3daf48556d98afb42e49c2f8c3437a18ef969d04a2e6ca92c7d3b1"
+        }
+      },
+      "history": {
+        "bytes": 2727,
+        "path": "release/history/2026-10-20-v12-coverage-success/history.json",
+        "sha256": "89f8ab86b69321f4d6d3e5f0639d05f5fa9e5cc0e8b660f5fa283703034e1248"
+      },
+      "linux_cli_positive_lines": 371,
+      "measured_files": 276,
+      "run_id": 39454144203,
+      "scope": "Combined per-file90% and per-platform positive entry evidence passed atfdf/b378 with clean receipts/no incomplete profiles. Coverage native smoke32/0 differs from failed installed upgrade/all stable cases skipped; not currenta8c coverage/acceptance.",
+      "source_commit": "fdf83a2961eb66ac04021e6de6721cab6a188dba",
+      "status": "success",
+      "threshold": {
+        "denominator": 100,
+        "numerator": 90,
+        "rounding": false
+      },
+      "windows_cli_positive_lines": 18,
+      "windows_desktop_executable_lines": 18,
+      "windows_desktop_positive_lines": 18
+    },
+    "v12_historical_hosted_results": {
+      "actual_checkout_commit": "fdf83a2961eb66ac04021e6de6721cab6a188dba",
+      "candidate_source_commit": "728a9198cb2d72212d39cf06771f807a412967f3",
+      "ci": {
+        "applicable_jobs": 9,
+        "attribution": "Reviewer actually monitored completed run and inspected actual fdf Linux/Windows logs:17cachetests each, five/four bounded-file tests respectively and actual Rust DTO passed. Parsed workspace totalsLinux1602pass/8ignored,Windows1584pass/8ignored; distinct OS scopes.",
+        "run_id": 39454144194,
+        "stability": "skipped",
+        "status": "success"
+      },
+      "package": {
+        "baseline_populate": {
+          "baseline_tag": "v0.9.2",
+          "failed": 0,
+          "passed": 5
+        },
+        "declared_signature": "unsigned",
+        "diagnosis": "Exact strict active IPC completed before UI wait; both presence flags true. Redundant selectOption on already selected profile clears real ContentScreen active state without effect refetch. Source/IPC trace plus later controlled actual React negative reproduces this driver interaction. Not proven product data loss; synthetic scope is not exempted by real bundled defaults.",
+        "history": {
+          "bytes": 2335,
+          "path": "release/history/2026-10-20-v12-native-selection-failure/history.json",
+          "sha256": "782f3babcb91f09eea783ecb8cc801ce17ff455a67c5dd63f7f9d7d436c739ae"
+        },
+        "installer_bytes": 26117754,
+        "installer_sha256": "90866757d5d13154f8e1ad961fe395057dab679f2b1705d292dfe1cd0fc54d11",
+        "native_smoke": {
+          "failed": 0,
+          "passed": 32
+        },
+        "native_upgrade": {
+          "failed": 1,
+          "passed": 6
+        },
+        "owner": "unverified",
+        "raw_files": {
+          "baseline-populate.json": {
+            "bytes": 4482,
+            "path": "release/history/2026-10-20-v12-native-selection-failure/baseline-populate.json",
+            "sha256": "8f422655a7b0483ec36f69c3e97c30a13eb18c6d6fa6f4d458535c116452f094"
+          },
+          "candidate-verify.json": {
+            "bytes": 17651,
+            "path": "release/history/2026-10-20-v12-native-selection-failure/candidate-verify.json",
+            "sha256": "ccd7a3ad3b3422108cadf279d1945a172d6145d641fdd5f9d1f5d96980b6d6dc"
+          },
+          "db-before.json": {
+            "bytes": 1859,
+            "path": "release/history/2026-10-20-v12-native-selection-failure/db-before.json",
+            "sha256": "bf2582b413bb8712ccac393a05eede4cd2fcacf3a852f6abf8effb4481534a34"
+          },
+          "native-smoke.json": {
+            "bytes": 27443,
+            "path": "release/history/2026-10-20-v12-native-selection-failure/native-smoke.json",
+            "sha256": "755f1552eee81cce8645e0e5b8b4bc256bd1dca19683078cae3326bb04e493e5"
+          },
+          "prepared-release-verification.json": {
+            "bytes": 133649,
+            "path": "release/history/2026-10-20-v12-native-selection-failure/prepared-release-verification.json",
+            "sha256": "669aca0895b040fe1022819fe9a2cba67b2afd621d69fc2f41755a4423f0797a"
+          }
+        },
+        "recorder": "skipped",
+        "run_id": 39454144270,
+        "stable_eight_cases": "all_skipped",
+        "status": "failure"
+      },
+      "pages": {
+        "deployment": "skipped",
+        "run_id": 39454144258,
+        "status": "validation_success"
+      },
+      "production_sha256": "b378b34159da86084cb20e4fc11741cd3f6d167656c4532fff50da7727f73266",
+      "scope": "These historical728/fdf/b378 outcomes are not current716/a8c acceptance. All stable-case observations remain unverified.",
+      "source_parity": {
+        "run_id": 39454144199,
+        "scope": "Reviewer monitored actual whole-corpus twice-regenerated/committed-byte paths on each OS and final parity, not absent-corpus fallback.",
+        "status": "success"
+      },
+      "tree_identity": "08e9fffdcadcc9c52cbfb5d666bcb6454ea9e0c2"
+    },
+    "v13_historical_hosted_results": {
+      "actual_checkout": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+      "attribution": "Historical exact-source evidence independently monitored/audited by reviewer; archive retained by coordinator. Actual standalone restart passed, subsequent recovery exceeded20min; failed phase unlocated and not proof of corruption. These successes do not establish repaired d636 acceptance.",
+      "candidate": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+      "ci": {
+        "applicable_jobs": 9,
+        "run_id": 39466044577,
+        "stability": "skipped",
+        "status": "success"
+      },
+      "coverage": {
+        "measured_files": 276,
+        "run_id": 39466044635,
+        "status": "success"
+      },
+      "package": {
+        "first_start": "pass",
+        "install": "pass",
+        "owner": "unverified",
+        "performance": "pass",
+        "persistence_recovery": "failure",
+        "resources": "pass",
+        "run_id": 39466044590,
+        "status": "failure",
+        "unrun": [
+          "offline",
+          "upgrade_rc1",
+          "downgrade_refusal"
+        ]
+      },
+      "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+      "source": {
+        "run_id": 39466044598,
+        "scope": "Both OS actual whole corpus twice, committed-byte checks and final parity; absence fallback skipped.",
+        "status": "success"
+      }
+    },
+    "v14_historical_checks": {
+      "actual_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
+      "attribution": "Reviewer directly monitored CI/source/Pages and retained exact small raw job logs/metadata. Tooling separately retained bounded coverage evidence. Normal PR264 merge preceded cancellation; configured cancel-in-progress and successor timing support automatic supersession as inference, not an explicit log cause. Coordinator acknowledges premature merge. Separate stale-binding intermediate7667 runs explicitly cancelled by coordinator, not conflated with automatic V14 cancellation.",
+      "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+      "ci": {
+        "linux_workspace_failed": 0,
+        "linux_workspace_ignored": 8,
+        "linux_workspace_passed": 1607,
+        "run_id": 39497088081,
+        "stability": "skipped; final-main pending",
+        "status": "cancelled",
+        "successful_jobs": 8,
+        "windows_workspace": "cancelled; zero completed test-result summaries"
+      },
+      "coverage": {
+        "run_id": 39497088020,
+        "scope": "Linux and TypeScript collectors succeeded, Windows collector cancelled; aggregate gate failed prerequisite RUST_RESULT with no verdict/combined90pass.",
+        "status": "cancelled"
+      },
+      "package": {
+        "run_id": 39497088109,
+        "scope": "Early synthetic PS7 helper checkpoint assertion failed after actual2s watchdog; no installer/native/all eight stable cases/recorder executed. Precise hosted startup cause unproven.",
+        "status": "failure"
+      },
+      "pages": {
+        "deploy": "skipped",
+        "run_id": 39497088176,
+        "validation": "success"
+      },
+      "source": {
+        "run_id": 39497088032,
+        "scope": "Actual whole corpus twice on both OS, committed bytes and final parity; missing-corpus fallback skipped.",
+        "status": "success"
+      }
+    },
+    "v8_hosted_results": {
+      "actual_checkout_commit": "5d9c89522241eff5285494503289c940a9849d1c",
+      "attribution": "Historical V8 installer/production52d008 only; does not establish current V15 cef172/6b95 acceptance. Reviewer monitored historical CI/source and inspected entry coverage; coordinator/tooling retained artifacts.",
+      "candidate_source_commit": "e5ecdf653ae7e1239b4af8f7e58c5cd2b2f3ee4a",
+      "ci": {
+        "run_id": 39424037070,
+        "scope": "All9 applicable CI jobs passed; stability skipped.",
+        "status": "success"
+      },
+      "coverage": {
+        "artifact_ids": {
+          "combined_verdict": 12267302615,
+          "linux": 12264644445,
+          "windows": 12266554990
+        },
+        "below_threshold_files": 0,
+        "cause": "Ordinary base-environment bundle assembly/verification cargo invocations overwrote the instrumented Windows CLI before LLVM reporting. The native-entry gate correctly refused; file coverage alone does not waive per-platform entry evidence.",
+        "history": {
+          "bytes": 2386,
+          "path": "release/history/2026-10-20-v8-coverage-failure/history.json",
+          "sha256": "b2e87bb7b9f7eed541945282901ec9ca726fbf21bc3ef0b11471865a5ee62947"
+        },
+        "linux_main_covered_lines": 371,
+        "main_executable_lines": 409,
+        "missing_files": 0,
+        "run_id": 39424036847,
+        "status": "failure",
+        "verdict": {
+          "bytes": 50810,
+          "path": "release/history/2026-10-20-v8-coverage-failure/per-file-verdict.json",
+          "sha256": "880f9658162e415416fcc912a5b86bb166e63eee78d3683d46a079735d652ad6"
+        },
+        "windows_main_covered_lines": 0
+      },
+      "package": {
+        "actual_cases": {
+          "HOSTED-DOWNGRADE-REFUSAL": "unverified",
+          "HOSTED-FIRST-START": "pass",
+          "HOSTED-INSTALL": "pass",
+          "HOSTED-OFFLINE": "unverified",
+          "HOSTED-PERFORMANCE": "fail",
+          "HOSTED-PERSISTENCE-RECOVERY": "unverified",
+          "HOSTED-RESOURCES": "pass",
+          "HOSTED-UPGRADE-RC1": "unverified",
+          "OWNER-INSTALLER-SMOKE": "unverified"
+        },
+        "artifact_ids": {
+          "overlay": 12270385152,
+          "raw": 12270270379
+        },
+        "history": {
+          "bytes": 2937,
+          "path": "release/history/2026-10-20-v8-hosted-failure/history.json",
+          "sha256": "331fd4925c997e0a631a7d4639be8d55e85b59c4fa7ccd8ce9a13526dac7f41b"
+        },
+        "installer_sha256": "d3b1058f07862d7f926cf5517dd993662d32a10122d0127edf8bcee07d787922",
+        "raw_files": {
+          "fresh-a077b2bb5e9e4898ae1f700c6d5dca9b.json": {
+            "bytes": 9876,
+            "path": "release/history/2026-10-20-v8-hosted-failure/fresh-a077b2bb5e9e4898ae1f700c6d5dca9b.json",
+            "sha256": "bf7deaa4826fbba15d92e2c348344ff10638bbbf84217e7bccf4dc54eb743f4c"
+          },
+          "hosted-first-start.json": {
+            "bytes": 11524,
+            "path": "release/history/2026-10-20-v8-hosted-failure/hosted-first-start.json",
+            "sha256": "77cef84334a82df8e07db5fdc7df94c84bcd346a2712991ab060d54158986a41"
+          },
+          "hosted-install.json": {
+            "bytes": 751,
+            "path": "release/history/2026-10-20-v8-hosted-failure/hosted-install.json",
+            "sha256": "a11fedc38d48ea58c8628dc7829cf2433b30a84bfb7266a9989112e14f747a70"
+          },
+          "hosted-performance.json": {
+            "bytes": 12747,
+            "path": "release/history/2026-10-20-v8-hosted-failure/hosted-performance.json",
+            "sha256": "72238e3f7c7f346762c1896e3d6adbecbbeea7f718aacf2d58cc8c9d5351feda"
+          },
+          "hosted-resources.json": {
+            "bytes": 132136,
+            "path": "release/history/2026-10-20-v8-hosted-failure/hosted-resources.json",
+            "sha256": "c1981865e373d07b90d4be54e58a3b50d2ddf6e4bc577d20ad8908ae35e318eb"
+          }
+        },
+        "run_id": 39424036854,
+        "scope": "Actual four recorded cases: install/resources/first-start pass; performance fails metric DTO validation. Four later hosted cases never ran and owner remains unverified. Recorder succeeded but final guard failed. These historical passes are not current acceptance.",
+        "status": "failure"
+      },
+      "source_parity": {
+        "run_id": 39424037090,
+        "scope": "Both OS actual-world regeneration and cross-platform parity passed.",
+        "status": "success"
+      },
+      "tree_identity": "a83e414e29c315ac26414f2ef6f8ad552a0ed5a5"
+    },
+    "v8_partial_performance": {
+      "activation_ms": 3,
+      "browse_ms": 15464.280199999921,
+      "fresh_elapsed_ms": 994553,
+      "load_ms": 340613,
+      "observed_native_peak_memory_bytes": 6366273536,
+      "planning_ms": 1747.5748000000603,
+      "samples": 4884,
+      "sampling_errors": 0,
+      "scope": "Failed V8 performance case, not completed performance acceptance. Exact native PID PeakWorkingSet64 observation excludes WebView2 descendants/installer and may miss allocations after last sample. Resource verification preceded fresh database; OS cache uncontrolled/possibly warm. MicrosoftVM/XeonPlatinum8573C/RAM17174360064B. No current Windows or ordinary-PC claim.",
+      "status": "failed_case_partial_measurements_only",
+      "target_sample_interval_ms": 200
+    }
+  },
+  "format": "navzeroth-independent-public-content-review",
+  "independence": {
+    "compiled_public_policy": {
+      "bytes": 604,
+      "path": "content/bundled/signers-v1.json",
+      "sha256": "aa1b086988baf0d7d131b8dd8a5e260edf97313b5e2622ef0490788b24052573"
+    },
+    "disclosure": "This reviewer authored earlier world provenance, dungeon/composition, storage performance/cache repairs, website preparation PR247 and Windows file-ID PR250. Their independent coordinator/desktop/tooling reviews are separately attributed, never independent self-review. This reviewer independently checks the tooling-authored profile-output repair, exact composition/resource bindings and recorded execution evidence. Previous V6 review was authored by the desktop specialist. Separate agent sessions are not third-party certification or separate key custody. This reviewer authored runtime PR257; its167storage/297app tests and coverage are author self-verification. Independent coordinator/desktop/tooling code approvals and matched-binary test executions are explicitly separate. The fresh full-pack run was executed by coordinator, not this reviewer. This reviewer authored PR262 recovery duplicate-validation repair; its tests and coverage are self-verification, while root/tooling independent approvals and matched-author-binary executions are separately recorded. PR261 progress and PR263 allocation were desktop-authored. Neither root functional execution nor tooling recovery diagnostic is represented as this reviewer execution.",
+    "operator_controls_both_receipt_keys": true,
+    "public_signing_identities": [
+      {
+        "identity": "Navzeroth operator; both release keys controlled by the same operator",
+        "key_id": "navzeroth-1.0.0-operator",
+        "public_key_hex": "3d407b80a7bd6275e69993c179bb08df6837037c94e1a8af57d284151b8007f4",
+        "revoked": false,
+        "role": "operator"
+      },
+      {
+        "identity": "Navzeroth operator; both release keys controlled by the same operator",
+        "key_id": "navzeroth-1.0.0-review-evidence",
+        "public_key_hex": "26119b03b6b8cee1d1f348e06c8c4dd991a104afcec9740926a3e6dda65f5995",
+        "revoked": false,
+        "role": "review_evidence"
+      }
+    ],
+    "review_evidence_signature_meaning": "Binds this independently recorded review artifact; does not establish independent key custody, reviewer authorship by cryptography, Windows acceptance or protected-check completion.",
+    "separate_review_sessions": true
+  },
+  "independent_current_checks": {
+    "checked_source_commit": "cef17297e3b03e6f2f0470840f3c44ed0ea76310",
+    "nested_file_refs": "Every exact FileRef independently streamed from regular files and matched length/hash; every unique path also matches HEAD ordinary Git blob or canonical LFS oid/size.",
+    "production_equivalent_checkout": "b54fdc747825638798b588aa5667c3fb41453120",
+    "production_fingerprint": "Exact3129entry Git tree excluding only docs/ and release/.",
+    "scope": "Independent exact Git fingerprint, single-production-file delta review, streamed FileRefs and exact Git-or-LFS pins, actual V14 CI/source/Pages job logs and integer historical276file verdict retained from V14 audit. No current PS/native/full-pack test execution claimed by this metadata review. Root/tooling nativePS/local executions separately attributed.",
+    "verified_nested_file_ref_occurrences": 204,
+    "verified_unique_file_ref_paths": 200
+  },
+  "installer_signature_policy": "Explicit unsigned stable1.0.0 exception under ADR0008; signed content receipts remain mandatory.",
+  "no_live_client_verification_claim": true,
+  "prior_reviews": [
+    {
+      "bytes": 17484,
+      "path": "docs/releases/1.0.0-independent-public-review.json",
+      "scope": "V1 remains immutable historical evidence for f064/2032200e production. Its archived receipts do not authenticate current production. This v2 review binds the new candidate without reclassifying earlier checks as current executions.",
+      "sha256": "c2fa49b0cb58aa8796e55b175b7febd4f8a732a66286097e6d93419b2d7a895d"
+    },
+    {
+      "bytes": 20379,
+      "path": "docs/releases/1.0.0-independent-public-review-v2.json",
+      "scope": "Immutable historical review for949/2be89786 production. Provisional unsigned manifest and identity were not signed; these are not current readiness.",
+      "sha256": "d1b746c2e1a31ff3326047bab3a38256712ffbde26671b835d681130ce0a5ed7"
+    },
+    {
+      "bytes": 22648,
+      "path": "release/v1/public-content-review-v3.json",
+      "scope": "V3 remains immutable historical review for3fea/efeab production. Its signed manifest, identity and receipt are archived under release/history/2026-10-20-signed-content-v3 and do not authenticate current production.",
+      "sha256": "2556ab8496d36f10f4ac3b6bf0b1933cde02abdddb11154176d23522974357e9"
+    },
+    {
+      "bytes": 25092,
+      "path": "release/v1/public-content-review-v4.json",
+      "scope": "V4 remains immutable for273/ad274 production. Its manifest, identity and receipt are archived under release/history/2026-10-20-signed-content-v4 and do not authenticate current production.",
+      "sha256": "693cb1e65ad75d4d1cc4af657db8150a08e1fe2fd2118085ffff207bd1eb3b07"
+    },
+    {
+      "bytes": 28044,
+      "path": "release/v1/public-content-review-v5.json",
+      "scope": "Immutable V5 review for d6ec/7db0 production; signed artifacts archived under release/history/2026-10-20-signed-content-v5. It does not authenticate the repaired current production. Historical executions retain their original revisions.",
+      "sha256": "1076f33c35dbfcdf0ae0c5dd7ff68011fb877b2d54b2934331ca22f714017f9a"
+    },
+    {
+      "bytes": 21594,
+      "path": "release/v1/public-content-review-v6.json",
+      "scope": "Immutable desktop-specialist V6 review forfcf/0a production. Signed manifest/identity/receipt archived under release/history/2026-10-20-signed-content-v6 do not authenticate current production. Actual functional execution retainsfcf source.",
+      "sha256": "d1d79a495b49f6650e30d9f1dad9ed9ae5b107fc25ff87602814c3cdee0cc0c8"
+    },
+    {
+      "bytes": 26512,
+      "path": "release/v1/public-content-review-v7.json",
+      "scope": "V7 remains immutable for e45/5fb production, signed artifacts archived under release/history/2026-10-20-signed-content-v7. V7 was not pushed as a hosted candidate and does not authenticate the new production.",
+      "sha256": "fc47655fc8a0ecf0b39154e29c87949cdcbdaa6106b9c9f6f59ae14788f8f9a2"
+    },
+    {
+      "bytes": 34034,
+      "path": "release/v1/public-content-review-v8.json",
+      "scope": "Immutable V8 review for60ab/52d008; archived signed artifacts authenticate only that historical production. V8 CI/source passed but coverage failed, and installer rehearsal remains unverified.",
+      "sha256": "de39b925336443421d087eac575cfd71a47ff533873348eaa9500812f8daff9d"
+    },
+    {
+      "bytes": 40873,
+      "path": "release/v1/public-content-review-v9.json",
+      "scope": "Immutable V9 reviewed6c6f/09b production and signed closure archived before repairs. V9 was never pushed or hosted-tested; its signatures do not authenticate current production.",
+      "sha256": "42a4cd3403e73b9de01c510ceb90e3ccd6f2ef4c8279ceaae8c50a121d8034da"
+    },
+    {
+      "bytes": 52715,
+      "path": "release/v1/public-content-review-v10.json",
+      "scope": "Immutable clarified V10 review for1dd/b9. Its unsigned preparation was archived before workflow repair, never pushed, signed or hosted-tested. No receipt or canonical identity commit/source prebuild occurred.",
+      "sha256": "41540385fcdb88c9912fdac19e978fc9ad3f18ddcd53037402d7adaac7482c46"
+    },
+    {
+      "bytes": 57091,
+      "path": "release/v1/public-content-review-v11.json",
+      "scope": "Immutable V11 reviewed7379/f751 with signed closure, actual candidateee26/mergee3f. CI/source/coverage passed but package failed native-upgrade gate; all stable hosted cases skipped. No signatures authenticate newb378 production.",
+      "sha256": "0b9913ec50ffe9745aac2a3fb42d415e5c96199bc95c7052549221a2f19b0628"
+    },
+    {
+      "bytes": 69881,
+      "path": "release/v1/public-content-review-v12.json",
+      "scope": "Immutable corrected V12 reviewb22e for b615/b378, signed artifacts archived before selection repair. Actual candidate728/mergefdf passed CI/source/coverage but package failed native-upgrade, all stable cases skipped. No historical signatures authenticate currenta8c production.",
+      "sha256": "b22e2dbf570eb5968d64e246a9fb4a47d2e7ec3c51262917850ef230226cd98d"
+    },
+    {
+      "bytes": 82999,
+      "path": "release/v1/public-content-review-v13.json",
+      "scope": "Immutable V13 review; its historical source/a8c bindings and all prior gate states remain scoped to that release attempt.",
+      "sha256": "36c24922fe07bd33b903895e1fe9779430bdd0cb6380c68761c59fbc3a711309"
+    },
+    {
+      "bytes": 105398,
+      "path": "release/v1/public-content-review-v14.json",
+      "scope": "Immutable V14 review08d7; actual d636/a3baa engineering executions remain bound to that scope. Historical signed V14 receipt does not authenticate current cef172/6b95 production.",
+      "sha256": "08d7d37b78c8a3b27e35d078106513b7b9208ba7751abedf0d621f1d1899befa"
+    }
+  ],
+  "prior_v10_independent_checks": {
+    "actionlint": "pass for coverage.yml and package-windows.yml",
+    "checked_source_commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+    "functional_proof_semantics": "Independently compared new proof to archived106; exactly equal after normalizing only test_source.commit. Verified new measurement/source/hash and unchanged test source. This establishes identity of recorded scenario results, not a second full-pack execution.",
+    "git_diff_check": "pass",
+    "nested_file_refs": "Every exact FileRef independently streamed from regular files and matched length/hash; every unique path also matches HEAD ordinary Git blob or canonical LFS oid/size.",
+    "production_equivalent_checkout": "a978d0756310c494b64a213c2548fc2a3bd22c98",
+    "production_fingerprint": "Independently recomputed exact Git tree:3125entries.",
+    "targeted_node_tests_passed": 33,
+    "targeted_tests_scope": "Actually executed current bundle-instrumentation/native-bundle/profile-output/clean-source/rust-environment plus21installed-workload tests. Includes real LLVM temp-workspace instrumentation and recovery receipt negatives. Local log /tmp/navzeroth-public-review-v10-node.log; no new reviewer full-pack or Windows execution.",
+    "verified_nested_file_ref_occurrences": 60,
+    "verified_unique_file_ref_paths": 60
+  },
+  "prior_v10_unsigned_preparation": {
+    "build_identity": {
+      "bytes": 527,
+      "path": "release/history/2026-10-20-unsigned-content-v10/bundled-content-build-identity.json",
+      "sha256": "58268b6ac6c4172c79e28b69d527d5cc8612e258fb193230478b9f175edc3ce0"
+    },
+    "history": {
+      "bytes": 1705,
+      "path": "release/history/2026-10-20-unsigned-content-v10/history.json",
+      "sha256": "869a1792392da2169ff5a01a9b896bf4e1bd7cdfb752e5dede71ef4a30ab72ea"
+    },
+    "manifest": {
+      "bytes": 17185,
+      "path": "release/history/2026-10-20-unsigned-content-v10/bundled-content-manifest.json",
+      "sha256": "435e96c68160f946240123e90549bef27a28eecdc4b0353d9354513328949e84"
+    }
+  },
+  "prior_v10_unsigned_preparation_scope": "Coordinator actually prepared and independent desktop reproduced84resources395776069B at f1d83726. Corrected review52715/41540385 was included. Unsigned identities archiveda043 before PR258; no keys, signatures, compiled signed assembly/source prebuild or V10 hosted/owner acceptance. Opaque historical preparation only, not current readiness.",
+  "prior_v11_independent_checks": {
+    "actionlint": "pass for package-windows.yml and coverage.yml",
+    "checked_source_commit": "7379efdbbde943905944955bfdfd736c9d984a1c",
+    "functional_proof_semantics": "Current ef3c/ec335 exact FileRefs unchanged; both retain actual1dd/b9 execution. Prior reviewer semantic comparison to archived106 normalized only test_source.commit.",
+    "git_diff_check": "pass",
+    "nested_file_refs": "Every exact FileRef independently streamed from regular files and matched length/hash; every unique path also matches HEAD ordinary Git blob or canonical LFS oid/size.",
+    "production_equivalent_checkout": "7423851a9ab2556f4c112375b51bb12d7e58bf0b",
+    "production_fingerprint": "Independently recomputed3125entry exact production Git tree.",
+    "source_scope": "Independently compared exact production Git trees1dd\u21927379: only package-windows.yml outer timeout changes. Runtime/UI/addon/content/datagen/scripts/Cargo bytes identical. Existing actual functional proof/measurement remain1dd/b9. No rerun or restamping.",
+    "verified_nested_file_ref_occurrences": 66,
+    "verified_unique_file_ref_paths": 66
+  },
+  "prior_v11_signed_artifacts": {
+    "build_identity": {
+      "bytes": 527,
+      "path": "release/history/2026-10-20-signed-content-v11/bundled-content-build-identity.json",
+      "sha256": "15f00d7b332378ec45b3c604093cc581f9409482197752299460e9b84ba5e614"
+    },
+    "history": {
+      "bytes": 1870,
+      "path": "release/history/2026-10-20-signed-content-v11/history.json",
+      "sha256": "cc5e4c5b6309b0e4d1732f6570549b00018b1516b92bab4549cfe002da9c70c8"
+    },
+    "manifest": {
+      "bytes": 17185,
+      "path": "release/history/2026-10-20-signed-content-v11/bundled-content-manifest.json",
+      "sha256": "7ac5512700966742baa6ceec4335d36017dcb680409f999ddd4ec834a829bb87"
+    },
+    "receipt": {
+      "bytes": 1073,
+      "path": "release/history/2026-10-20-signed-content-v11/bundled-content-receipt.json",
+      "sha256": "632c9cd9e390adb51da12247e95b1b30856a127d22683d90f2c7ed46694b3304"
+    }
+  },
+  "prior_v12_independent_checks": {
+    "actionlint": "pass for package-windows.yml and coverage.yml",
+    "checked_source_commit": "b615d6f944748b474dce4e0ebd8f1af2dce66f68",
+    "git_diff_check": "pass",
+    "nested_file_refs": "Every exact FileRef independently streamed from regular files and matched length/hash; every unique path also matches HEAD ordinary Git blob or canonical LFS oid/size.",
+    "production_equivalent_checkout": "a09b7cba3516ddcdbc3c56c362dcf0679c2ce528",
+    "production_fingerprint": "Independently recomputed3125entry exact Git tree. Functional proofef3c/measurementec335 still actual1dd/b9.",
+    "source_scope": "Independent Git comparison confirms runtimeRust/UI/addon/content/datagen/Cargo unchanged1dd; production differences are package outer timeout plus Native-Smoke.mjs/native-smoke-lib.mjs/native-smoke-lib.test.mjs only.",
+    "syntax": "Native-Smoke.mjs pass",
+    "targeted_node_tests_passed": 43,
+    "targeted_tests_scope": "Actually executed native-smoke-lib/native-command-boundaries/stable-workload-lib tests, including actual Rust DTO golden, delayed issued IPC, late-completion no-followup and missing/wrong/error/timeout negatives. Local log /tmp/navzeroth-public-review-v12-node.log. No repaired native Windows or full-pack run by this reviewer.",
+    "verified_nested_file_ref_occurrences": 88,
+    "verified_unique_file_ref_paths": 88
+  },
+  "prior_v12_signed_artifacts": {
+    "build_identity": {
+      "bytes": 527,
+      "path": "release/history/2026-10-20-signed-content-v12/bundled-content-build-identity.json",
+      "sha256": "dfd0b27e896ad8f5a727bae221cbbd694ef7d179906a54f58e29e07a3d2a5b0c"
+    },
+    "history": {
+      "bytes": 1948,
+      "path": "release/history/2026-10-20-signed-content-v12/history.json",
+      "sha256": "db41bf9c0d10d8425dd16f040b3ea3c88c913ab933b5dfe7e9a8de352c60c5a7"
+    },
+    "manifest": {
+      "bytes": 17185,
+      "path": "release/history/2026-10-20-signed-content-v12/bundled-content-manifest.json",
+      "sha256": "0968db00eb41a0735ea6d13b0d1c133b1ad57582bee008dd34fc10f12ac124a2"
+    },
+    "receipt": {
+      "bytes": 1073,
+      "path": "release/history/2026-10-20-signed-content-v12/bundled-content-receipt.json",
+      "sha256": "254c39d239f2cdd55352f0c0ea022461bfe6a6e8d2d1a1f095c268977bfb9835"
+    }
+  },
+  "prior_v13_independent_checks": {
+    "actionlint": "pass for package-windows.yml and coverage.yml",
+    "checked_source_commit": "716af3e8fca641f896ea322ada66a40425906d41",
+    "git_diff_check": "pass",
+    "nested_file_refs": "Every exact FileRef independently streamed from regular files and matched length/hash; every unique path also matches HEAD ordinary Git blob or canonical LFS oid/size.",
+    "production_equivalent_checkout": "98b4cd2218a76b23ad4a68c2362202e1c1b5358b",
+    "production_fingerprint": "Independently recomputed3128entry exact Git tree; functionalef3c/ec335 retains1dd/b9 execution.",
+    "source_scope": "Independent Git comparison confirms only7production paths differ since1dd: packageworkflow,3native driver/helper/test and3newdevE2Eharness. RuntimeRust/UIcomponents/addon/content/datagen/Cargo unchanged.",
+    "syntax": "Native-Smoke.mjs and native-smoke-lib.mjs pass",
+    "targeted_node_tests_passed": 43,
+    "targeted_tests_scope": "Actually executed correct native-smoke-lib/native-command-boundaries/stable-workload-lib tests,0fail/skip; local log /tmp/navzeroth-public-review-v13-node.log. Actual browser3run is attributed to coordinator/tooling, not this reviewer. No current native Windows or full-pack run.",
+    "verified_nested_file_ref_occurrences": 110,
+    "verified_unique_file_ref_paths": 110
+  },
+  "prior_v14_independent_checks": {
+    "checked_source_commit": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+    "nested_file_refs": "Every exact FileRef independently streamed from regular files and matched length/hash; every unique path also matches HEAD ordinary Git blob or canonical LFS oid/size.",
+    "production_equivalent_checkout": "75272a3760d62336654eb4637a6165f44081962f",
+    "production_fingerprint": "Exact3129entry Git tree, excluding only docs/ and release/.",
+    "scope": "Independent exact Git fingerprint, streamed evidence/regular-file/Git-or-LFS pins, functional semantic comparison and276-file integer coverage verification. No new test execution claimed in this V14 metadata audit. PR261 earlier independent46Node/26PS7 executions remain actual scopes; PR262 self-tests and independent approvals remain separately attributed.",
+    "verified_nested_file_ref_occurrences": 161,
+    "verified_unique_file_ref_paths": 158
+  },
+  "prior_v8_independent_checks": {
+    "actionlint": "pass for coverage.yml and package-windows.yml",
+    "checked_source_commit": "60ab126ba78b51f666e11226669720fdc96b31ed",
+    "git_diff_check": "pass",
+    "nested_file_refs": "All nested exact FileRefs independently streamed from regular files and matched length/hash. All35unique paths also bind exact HEAD ordinaryGit blob bytes or canonical LFS oid/size pointers.",
+    "production_fingerprint": "independently recomputed exact Git tree,3124entries",
+    "source_scope": "Actual Git diff confirms all runtimeRust/UI/content/datagen/Cargo/lock bytes identicalfcf; only three Rusttest/DTO files changed under crates/app/tests. Reviewed hosted driver/recorder changes consume real API identities and preserve acceptance guards.",
+    "targeted_node_tests_passed": 27,
+    "targeted_tests_scope": "This reviewer actually executed current profile-output/clean-source/native-bundle/rust-environment and installed-workload tests on the60ab production-equivalent9981 checkout. Includes real instrumentedRust profile output and actual cargo-llvm-cov0.9.1 show-env. No new full-pack, PS or native installed run claimed.",
+    "verified_nested_file_ref_occurrences": 35
+  },
+  "prior_v8_signed_artifacts": {
+    "build_identity": {
+      "bytes": 526,
+      "path": "release/history/2026-10-20-signed-content-v8/bundled-content-build-identity.json",
+      "sha256": "35c9e8470cb1adbbe0af0ed6fd518e2c5865bdd5188a535e1735fe68308a00f1"
+    },
+    "history": {
+      "bytes": 2691,
+      "path": "release/history/2026-10-20-signed-content-v8/history.json",
+      "sha256": "2e552d7257876af7a6f1ea905f7baa1561b0a885cbafa8d7b4a76b69e2ef8b65"
+    },
+    "manifest": {
+      "bytes": 17183,
+      "path": "release/history/2026-10-20-signed-content-v8/bundled-content-manifest.json",
+      "sha256": "707eba6680cb9441520776b4ccc0c1f3a13aa1a2507e8b8fc51a63f1a2766b11"
+    },
+    "receipt": {
+      "bytes": 1072,
+      "path": "release/history/2026-10-20-signed-content-v8/bundled-content-receipt.json",
+      "sha256": "fb5f4a4caf2115e28b0616c93658a8767f48bf247bdc2d69a077767b5b01eea3"
+    }
+  },
+  "prior_v9_independent_checks": {
+    "actionlint": "pass for coverage.yml",
+    "checked_source_commit": "6c6fda90c9e22cd7acebca179c5c688699b84354",
+    "documentation_only_refresh": "3c50958583bce2cf54d3727f108e60e3847a3c48",
+    "git_diff_check": "pass",
+    "nested_file_refs": "Every nested FileRef independently streamed from regular files and matched length/hash; all unique paths also match exact HEAD ordinary Git blobs or canonical LFS oid/size pointers.",
+    "production_equivalent_checkout": "eff60e2f0dde9d0f4be7c7cd179d6155f2e4f056",
+    "production_fingerprint": "Independently recomputed exact Git tree:3125 entries.",
+    "source_scope": "Both callbacks retain options and force complete instrumented show-env, not identity-only nativeBuildEnv. Compiler/report paths and mandatory entry/90% gates remain. Runtime Rust/UI/content/datagen retain prior functional-run component scope; no rerun or restamping.",
+    "targeted_node_tests_passed": 12,
+    "targeted_tests_scope": "Actually executed bundle-instrumentation/native-bundle/profile-output/clean-source/rust-environment tests, including actual pinned Rust/LLVM temp-workspace regression. Log /tmp/navzeroth-public-review-v9-node.log is local engineering evidence, not a public FileRef.",
+    "verified_nested_file_ref_occurrences": 43
+  },
+  "prior_v9_signed_artifacts": {
+    "build_identity": {
+      "bytes": 526,
+      "path": "release/history/2026-10-20-signed-content-v9/bundled-content-build-identity.json",
+      "sha256": "c417091414becc6b576a533a14231b6a31121518c0267e131fd1514f0eb9f629"
+    },
+    "history": {
+      "bytes": 1861,
+      "path": "release/history/2026-10-20-signed-content-v9/history.json",
+      "sha256": "76017bc39ffd11ede617eaf0241777641b529a31eba2560f8715fc35e2ab13e8"
+    },
+    "manifest": {
+      "bytes": 17183,
+      "path": "release/history/2026-10-20-signed-content-v9/bundled-content-manifest.json",
+      "sha256": "af6e0af572e25de53e081f38c6eab94b2bcbbee54868e173e5b3e88c779c13d3"
+    },
+    "receipt": {
+      "bytes": 1072,
+      "path": "release/history/2026-10-20-signed-content-v9/bundled-content-receipt.json",
+      "sha256": "fb7fbdda97d2da0231ecbf8bc120c4bf7ba4fb277e86bf4197e031296de02501"
+    }
+  },
+  "production_fingerprint_entry_count": 3129,
+  "production_fingerprint_method": "SHA256 of exact git ls-tree -r -z --full-tree entries, each including its terminal NUL, excluding paths under docs/ and release/. Actual resource bytes are separately pinned below.",
+  "production_sha256": "6b95b6ba0ffa57f967e0a855e00fef88646ab349966c7bf828736797ad0d4627",
+  "publication_allowed_by_this_review": false,
+  "receipt_preparation_conditions": [
+    "Keep this public review immutable once its exact FileRef is included in the bundle manifest.",
+    "Manifest/build identity and receipt must bind the reviewed production fingerprint and an actual tested ancestor with identical production bytes; no self-referential commit or signature hash.",
+    "Receipt signatures use the committed caller-owned public policy and separately supplied expected identity. Both keys are operator-controlled; independent review is a recorded process, not independent key custody.",
+    "Do not classify missing Windows/owner/live observations as passed. Relevant production or installer changes invalidate affected bindings and acceptance.",
+    "Private admission/permission/validation evidence and private keys are not reproduced in this public artifact."
+  ],
+  "recorded_on": "2026-10-20",
+  "remaining_release_gates": {
+    "all_ten_final_protected_checks": {
+      "required_count": 10,
+      "scope": "Fresh exact release candidate/resulting-main checks are not established by local tests.",
+      "status": "unverified"
+    },
+    "bounded_weekly_network_replay_and_draft_pr": {
+      "evidence": {
+        "bytes": 9376,
+        "path": "docs/data/weekly-draft-243-check-runs-v1.json",
+        "sha256": "95e0e7d1f7ffe7979407a8507db714d478eedbaf81e934013bd8aef8d0935a1f"
+      },
+      "scope": "Actual bounded run39394989774 and exact deferred draft243 four successful explicitly dispatched workflows are recorded separately; this supplies no current stable updater acceptance or merge authorization.",
+      "status": "historical_bounded_run_recorded_draft_deferred"
+    },
+    "draft_asset_download_and_installed_resource_verification": {
+      "status": "unverified"
+    },
+    "final_native_coverage": {
+      "scope": "Historical V13 coverage passed276 files. V14 overall coverage workflow was cancelled; its aggregate job FAILED prerequisite RUST_RESULT after the Windows collector was cancelled without a receipt. Linux/TS collectors succeeded. Current cef172 requires fresh exact aggregate/native coverage, never restamped from partial runs.",
+      "status": "unverified"
+    },
+    "final_release_stability": {
+      "status": "unverified"
+    },
+    "final_source_platform_parity": {
+      "status": "unverified"
+    },
+    "hosted_windows": [
+      {
+        "id": "HOSTED-INSTALL",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-FIRST-START",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-UPGRADE-RC1",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-DOWNGRADE-REFUSAL",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-PERSISTENCE-RECOVERY",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-RESOURCES",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-OFFLINE",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-PERFORMANCE",
+        "method": "hosted_windows",
+        "status": "unverified"
+      }
+    ],
+    "owner_installer_smoke": {
+      "id": "OWNER-INSTALLER-SMOKE",
+      "method": "interactive_windows",
+      "status": "unverified"
+    },
+    "public_asset_download_verification": {
+      "status": "unverified"
+    },
+    "signed_bundle_and_compiled_identity_assembly": {
+      "scope": "Not issued, signed or assembled by this review.",
+      "status": "unverified"
+    }
+  },
+  "repair_composition_review": [
+    {
+      "author": "Desktop specialist; independent root review separately recorded",
+      "code_commit": "b2e772ad",
+      "final_commit": "336f9723d2c8b43a20ec1ebeb6ec1106a3784b2b",
+      "independent_review": "Coordinator diff review and actual native PowerShell5.1 plus local PowerShell7.6.6 each20 checks passed.",
+      "pr": 248,
+      "scope": "Exact four target fields/types/values compare independent of JSON member order. Existing source/production/installer/prebuild/runner checks remain. Wrong origins/builds, missing/extra fields and malformed types refuse."
+    },
+    {
+      "author": "Tooling specialist",
+      "final_commit": "29e6a2dd330e8ae5d3ca4e0e4a0d15ec8539f745",
+      "independent_review": "Coordinator three targeted tests passed; previous V6 reviewer ran two clean-source tests; current V7 reviewer ran all12 profile/clean-source/native-bundle/environment/process tests.",
+      "pr": 249,
+      "scope": "Fail-closed cleanliness assertions remain mandatory, with bounded escaped dirty paths after successful commands and at snapshots. No ignore/exclusion or failure-to-pass conversion."
+    },
+    {
+      "author": "This reviewer; no independent self-review claimed",
+      "environment_limits": "Author cross-target check/API probe remain separate from now-recorded actual native Windows CI. Installer acceptance and current full/native coverage remain unverified.",
+      "final_commit": "aa846e704c1e399bffb1fca3cc7bda66fc618e72",
+      "independent_review": "Independent tooling/root code review CLEAR; desktop V6 inspected merged checks; actual native Windows CI39413135882 passed all four bounded-file cases.",
+      "pr": 250,
+      "scope": "Windows descriptor identity uses volume serial plus full128-bit file ID and attributes, rejecting reparses. Before/open/after identity and bounded regular-file checks remain; Unix behavior unchanged."
+    },
+    {
+      "author": "Tooling specialist",
+      "code_commit": "b62e5733986c5b251d3405517d45ee327fbab761",
+      "evidence": {
+        "bytes": 4499,
+        "path": "docs/handoffs/2026-10-20-native-coverage-profile-output.md",
+        "sha256": "b57510cbe31cb7fd25678b1745e36023155cc125811cb6b63a12bda27c5e7648"
+      },
+      "independent_review": "Desktop and coordinator CLEAR; coordinator targeted10Node tests/actionlint passed. This reviewer independently inspected exact merged delta and executed all12 related Node tests plus actionlint.",
+      "pr": 251,
+      "scope": "Coverage child base environment owns an absolute LLVM_PROFILE_FILE below the existing external target, preserving Linux/Windows patterns, show-env instrumentation and raw retention. No profile ignore/delete, source reset, cleanliness exclusion or threshold weakening."
+    },
+    {
+      "author": "Desktop specialist",
+      "evidence": {
+        "bytes": 5566,
+        "path": "docs/handoffs/2026-10-20-stable-workload-pages.md",
+        "sha256": "6bdc8693a1f0171153bd7a54997b6420c20abc72cf70590aa62d59a6451c7dba"
+      },
+      "final_commit": "cca69d01a9c1f5420c53012283f43b507dcb4d5b",
+      "independent_review": "Coordinator, world and tooling each ran17Node tests and cleared code. This reviewer inspected actual publicPageIndex globalhash semantics, Rustserdeflatten and final comment-only correction.",
+      "pr": 252,
+      "scope": "Use actually issued nodes revision/cataloghash for quests/items/edges generic requests, retain separately issued projected-objective pin, validate returned collection/revision/hash/offset/exactboundedcount/nextoffset. Real Rust DTO fixture and public API tests prevent fabricated extra descriptor assumptions. Bounded failure diagnostics retain identities/counts, not records. Snapshot_id binding is separate from current contenthash."
+    },
+    {
+      "author": "Tooling specialist",
+      "evidence": {
+        "bytes": 2573,
+        "path": "docs/handoffs/2026-10-20-hosted-evidence-timestamps.md",
+        "sha256": "9a8219b36a0f0157838ced59bbf5fe42325f4f54cd0266fe737173a144ccc026"
+      },
+      "final_commit": "60574ec141a17fe50dc084f587e754b66e91d829",
+      "independent_review": "Coordinator static/32PS7/29nativePS5 checks CLEAR; desktop independent real boundary3checks in each shell CLEAR. This reviewer independently inspected final parsing/path delta and retained strict identity/admission guards; did not rerun nativePS suites.",
+      "pr": 253,
+      "scope": "Preserve literal recorded_at strings via DateKindString when supported or raw token restoration on olderPS7. Base evidence roundtrips remain strings. Normalize one Windows path separator to portableFileRef path; traversal/root/source/bytes/hash and exactcase identity checks remain. Missing cases and owner remain pending."
+    },
+    {
+      "author": "Tooling specialist",
+      "code_commit": "a6a48ea0092c1411044359b5ded7f19c5d7d7e5d",
+      "evidence": {
+        "bytes": 4989,
+        "path": "docs/handoffs/2026-10-20-coverage-bundle-instrumentation.md",
+        "sha256": "8932baf3d977d72b8b847785c8d52138324887000c9d577793816da2d7c1ce25"
+      },
+      "independent_review": "This reviewer and coordinator independently cleared both callback changes and actual targeted Node tests. This reviewer executed12 tests and actionlint on the production-equivalent writer checkout.",
+      "pr": 254,
+      "scope": "Both prepareNativeBundle and stageNativeBundle receive full cargo-llvm-cov show-env instrumentation via an options-preserving callback. Native build identity environment remains separate. No threshold, per-platform native-entry requirement, profile deletion, source binding or signature policy change. Real pinned LLVM temp-workspace regression forces ordinary rebuild to demonstrate lost metadata, then instrumented rebuild restores actual positive entry evidence; Linux cached ordinary build alone did not reproduce Windows behavior."
+    },
+    {
+      "author": "Desktop specialist",
+      "code_commit": "ec8bc5ee703a9dd55beabd7e485eefff8fa4797c",
+      "evidence": {
+        "bytes": 5391,
+        "path": "docs/handoffs/2026-10-20-performance-measurement-contract.md",
+        "sha256": "5060ae081b08790f14f0d3a670c0f5b78ed44ae77afea5ffe52bcc829aa4bec0"
+      },
+      "independent_review": "Coordinator and tooling separately cleared; root25helper checks eachPS7/nativePS5 plus42PS7preparation; tooling25+42 in each shell. This reviewer attributes those executions, without claiming to rerun PowerShell.",
+      "merged_commit": "f3ee076c",
+      "pr": 255,
+      "scope": "Shared live producer emits exact six-key PSCustomObject without coercion; strict exact-case metric names reject LOAD_MS alias. Existing numeric/type/range/source/installer/status/time constraints remain. Original OrderedDictionary fail retained."
+    },
+    {
+      "author": "Desktop specialist",
+      "code_commit": "aa2e78f051cf3fef754bef2c99d43d20c015d49a",
+      "evidence": {
+        "bytes": 4098,
+        "path": "docs/handoffs/2026-10-20-stable-recovery-receipt.md",
+        "sha256": "8e57c143e90a6bb869c8b6b1a4d07bc0fa5bab649bfa05c38123246394c92cf4"
+      },
+      "independent_review": "Coordinator/tooling each21Node pass and clear; this reviewer independently executed current21workload Node tests as part33test union.",
+      "merged_commit": "0062aa72",
+      "pr": 256,
+      "scope": "Recovery requires actual pending_marker_cleanup_required false, original_files_retained true, nonempty recovery directory and ready/error-null status before prior content/settings/profile checks. Bounded diagnostics retain actual receipt/status. Existing next offline startup would have caught pending marker; no prior whole-release false pass asserted."
+    },
+    {
+      "author": "This reviewer; no independent self-review claimed",
+      "author_validation": {
+        "affected_file_line_coverage": {
+          "catalog_generation": {
+            "covered": 663,
+            "executable": 665
+          },
+          "content": {
+            "covered": 390,
+            "executable": 432
+          },
+          "content_preferences": {
+            "covered": 95,
+            "executable": 100
+          }
+        },
+        "app_ignored": 3,
+        "app_passed": 297,
+        "app_test_binaries": 44,
+        "clippy": "pass",
+        "format": "pass",
+        "storage_passed": 167,
+        "storage_test_binaries": 20
+      },
+      "code_commit": "121a2a82f1382bef1e5d5f64e6125192a4317c89",
+      "evidence": {
+        "bytes": 4027,
+        "path": "docs/handoffs/2026-10-20-travel-activation-cache.md",
+        "sha256": "270881e05f5e2301d0315a14f6ebb149a4ef4a0f62bede9818fb07ead49ec155"
+      },
+      "final_commit": "6c12ad7a6e06d71c8a3de937d415dbd5a3c2d57d",
+      "independent_review": "Coordinator production/test review CLEAR and independently read coverage; desktop/tooling each independently cleared code and executed17cache tests using matched author binary, not independent rebuilds.",
+      "merged_commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+      "pr": 257,
+      "scope": "Existing cache only: key lookup uses managed IMMEDIATE read; travel activation owns IMMEDIATE reservation and ends generation read before pointer/preference writes. Warm repeated toggles/key reads perform zero full decodes. Strict misses/local+external content/source/coverage/hash/schema/TEMP/rollback/disposition/atomicity guards retained. No new trust/schema/budget changes; report/hash and native startup work remain."
+    },
+    {
+      "author": "Tooling specialist",
+      "claim": {
+        "bytes": 381,
+        "path": "docs/claims/2026-10-20-packaging-outer-budget.md",
+        "sha256": "c1fd6f1e8049d15a22814390cb1c18ca76c86a10ba201c5716f15e4adc060bed"
+      },
+      "code_commit": "ad61fc25e57358b23b914e52991bc332a9a13ea6",
+      "evidence": {
+        "bytes": 2952,
+        "path": "docs/handoffs/2026-10-20-packaging-outer-budget.md",
+        "sha256": "b86627b9a7064b1b9add98578abfc0af0d593794fc054d62d8b1b268454cbb21"
+      },
+      "final_commit": "088a3f629a41be04b0fc16322c0a4949a78696cb",
+      "independent_review": "Coordinator, desktop and this reviewer independently cleared exact one-line production delta and actionlint/diff checks.",
+      "merged_commit": "7379efdbbde943905944955bfdfd736c9d984a1c",
+      "pr": 258,
+      "scope": "Packaging outer limit becomes finite170minutes uniformly, reusing existing tag limit instead of110on other runs. Existing20minute workload/60minute suite, steps, final guards,90% coverage/native-entry/source/material/signature/trust gates and permissions remain. Observedsetup51+pre-suite6+ALLOWEDsuite60+recorder3+estimatedfinalverification6 gives126minutes before overhead; this is not an observed126minute run or actual timeout. V8 failed metric DTO, not timeout. No quota expansion, purchase, speedup or ordinary-PC claim. Bound does not prove every possible synchronous worst case fits."
+    },
+    {
+      "author": "Desktop specialist",
+      "claim": {
+        "bytes": 942,
+        "path": "docs/claims/2026-10-20-native-upgrade-active-readiness.md",
+        "sha256": "2dd3ed1d297d27b4b068e71209a5c6e9e1eef1bd00b42f0c3a28b04ded112358"
+      },
+      "code_commit": "a3ff4bfbe3fc9fe3dc70c47ededdee5f3ac82dc8",
+      "evidence": {
+        "bytes": 4769,
+        "path": "docs/handoffs/2026-10-20-native-upgrade-active-readiness.md",
+        "sha256": "44b4ab6ac862f7e57d3d7e31e3988c3d0dba8889c46cc470876124b200fcc891"
+      },
+      "final_commit": "7bffde54f7414497ee560e906719637da417ea6f",
+      "independent_review": "Coordinator/tooling CLEAR final corrected code; actual43Node each author/tooling and root exactb615. This reviewer independently reviews actual DTO/driver identity/deadline path and executes43 affected Node tests on a09b.",
+      "independent_review_record": {
+        "bytes": 2817,
+        "path": "docs/reviews/2026-10-20-native-upgrade-active-final.md",
+        "sha256": "fa079f812b96ce9b75a9cdbe07b0f06c53f04c85e237cf8aa1fec2c2a12c0cc8"
+      },
+      "merged_commit": "b615d6f944748b474dce4e0ebd8f1af2dce66f68",
+      "pr": 259,
+      "scope": "Resolve exactly one issued profile by character display_name/full context/fixture, require opaque stored-64hex ID, then exact active synthetic revision/scope and matching rendered inspection. Single30s deadline plus late-completion guards stops subsequent IPC/UI after failure; already-issued browser wait remains bounded, not claimed cancellable. Wrong/missing/duplicate/malformed/error/deadline still fail. Initial9a817 character-as-ID defect was independently caught before integration, corrected54258821; real Rust-written governance golden and late-completion regressions prevent mock-only false confidence. No runtime UI/product/data or trust/gate change."
+    },
+    {
+      "author": "Desktop specialist",
+      "claim": {
+        "bytes": 922,
+        "path": "docs/claims/2026-10-20-native-upgrade-selection.md",
+        "sha256": "42b7bc295f5448dd630aaa1d78b7e14deb3bfdf3f58981318f06aa626de53d50"
+      },
+      "code_commit": "377f9de7",
+      "evidence": {
+        "bytes": 3242,
+        "path": "docs/handoffs/2026-10-20-native-upgrade-selection.md",
+        "sha256": "50cf736bbad0d7889dfbc78f35a655d02cfdf512b37a0cc9c0376c85223ffee1"
+      },
+      "final_commit": "e75fa663",
+      "independent_review": "Tooling final codeCLEAR with actual43Node+3devbrowser; coordinator actual3devbrowser7.9s at e75 and43Node exact716; this reviewer independently checks conditional shared helper/actual component source and executes43Node at98b4. No self-authorship claimed for repair.",
+      "independent_review_record": {
+        "bytes": 1865,
+        "path": "docs/reviews/2026-10-20-native-upgrade-selection-final.md",
+        "sha256": "858c911ba3e16963a68af3d86c59f4b133852345e94cdc0a3b9bcb6dfbb09ba4"
+      },
+      "merged_commit": "716af3e8fca641f896ea322ada66a40425906d41",
+      "pr": 260,
+      "scope": "Shared helper reads selected issued ID and changes selection ONLY if different, then retains exact revision/full-scope rendered wait and absent-state refusal. Strict completed profile/active IPC and existing bounded deadline/late guards remain. Actual unmodified React component synthetic dev harness reproduces old same-selection clearing/no refetch, proves same selection preserved and different selection refetch, rejects wrong/missing inspection. New harness is dev-only, not production-CSP/native/Windows evidence; no component/runtimeRust/data change."
+    },
+    {
+      "author_handoffs": [
+        {
+          "bytes": 4051,
+          "path": "docs/handoffs/2026-10-20-stable-workload-progress.md",
+          "sha256": "bf8395b0c1142f405b79e9911a3693dcb7be811cdef250864c96bd5fa4feac28"
+        },
+        {
+          "bytes": 4074,
+          "path": "docs/handoffs/2026-10-20-recovery-empty-plan-validation.md",
+          "sha256": "cfb6cac475cc00709d8a0a2ea81e3e49c1b331af32f7281e088cc57391429084"
+        },
+        {
+          "bytes": 4480,
+          "path": "docs/handoffs/2026-10-20-content-allocation.md",
+          "sha256": "474cb8e1a878950a332d69ccba5c0c2c60da71cc6a3b3d2e7ef7b2609a6478d9"
+        }
+      ],
+      "handoff": {
+        "bytes": 3624,
+        "path": "docs/handoffs/2026-10-20-recovery-runtime-v14.md",
+        "sha256": "8efb5cfbbf47bd98f506e83aa98081ccc5d66b010cea7a3496d01169196e887a"
+      },
+      "prs": [
+        261,
+        262,
+        263
+      ],
+      "record": {
+        "bytes": 3653,
+        "path": "docs/reviews/2026-10-20-recovery-runtime-repairs.md",
+        "sha256": "e71573f08507a38bcdc0439d1cc0dfa01f2fabbd77ea7e9c71e3ac43bd014d20"
+      },
+      "scope": "Progress preserves20/60 bounds and failure; empty-plan skips only second unchanged scan, guarded plans revalidate; borrowed JSON/owned canonicalization retain strict decoding, bounds and hashes. No gate waiver or current Windows pass."
+    },
+    {
+      "claim": {
+        "bytes": 687,
+        "path": "docs/claims/2026-10-20-watchdog-startup.md",
+        "sha256": "db34d1efcc106f02270f215ef2db69fd83bb4ae1a2ee552abee917a750587169"
+      },
+      "code": "21eebc3e",
+      "final_head": "6aaa46398183736f20cc850110088814645a08a2",
+      "handoff": {
+        "bytes": 4153,
+        "path": "docs/handoffs/2026-10-20-watchdog-startup.md",
+        "sha256": "1e283b7a3078bce261e5961218a5e4f0297e76704126e70352c64c0a6c5b2b8d"
+      },
+      "integration": "cef17297e3b03e6f2f0470840f3c44ed0ea76310",
+      "normal_merge": "7667e18c8e3d0d2c1c5d9d49bcb38410c3a5e0ac",
+      "pr": 264,
+      "scope": "Test-only synthetic startup allowance15s with distinct former2s negative control, fixed5s startup and preserved exact timeout/nonpassing/no-finally assertions. No production helper/driver/runtime/schema/content or20/60/170budget changes. Desktop authored; root/tooling independently approved with actual attributed tests; reviewer independently checked narrow delta for this public artifact."
+    }
+  ],
+  "review_owner": "Codex world-data and release-gate specialist (/root/world_review)",
+  "review_revision": 15,
+  "review_status": "completed_with_release_gates_pending",
+  "reviewed_content": {
+    "accepted_unknown_fields": 274059,
+    "corresponding_code_commit": "a9e5e4f35710c05e80283ae318f5a70882702110",
+    "corresponding_code_files": 22,
+    "corresponding_source_index": {
+      "bytes": 9050,
+      "path": "content/source-materials/corresponding-source-index.json",
+      "sha256": "67de5051b5051068313272a36a47dc912b7f3733ebaa5aeced6b1fa3b72c5a20"
+    },
+    "coverage_scope": {
+      "classes": 9,
+      "dungeon_packages": 26,
+      "dungeon_quest_references": 438,
+      "dungeon_reward_references": 16390,
+      "excluded_test_maps": [
+        169
+      ],
+      "models": 54,
+      "raw_dungeons": 27,
+      "reminder_boundary_cases": 24,
+      "restored_affected_reward_references": 8107,
+      "score_boundary_cases": 108
+    },
+    "declared_exclusions": [
+      "trainer-spell gameplay",
+      "talent recommendations",
+      "profession recommendations",
+      "enhancement recommendations"
+    ],
+    "entrance_scope": {
+      "direct_historical_entrances": 6,
+      "estimated_entrances": 20,
+      "excluded_raw_test_map": 169,
+      "limits": "Planar estimates preserve unknown elevation, access, derivation and uncertainty; historical declarations are not promoted to live verified entrances.",
+      "supported_records": 26
+    },
+    "historical_origin_disclosure": "Actual bundled historical sources are CMaNGOS 1.12.1 and Forever 1.60.1.70245, plus original authored and inferred sources. Policy acceptance of Classic Era is not a claim that a Classic Era source ships. Neither historical origin nor policy acceptance is target-build gameplay verification.",
+    "inventory": {
+      "bytes": 27957511,
+      "path": "release/v1/coverage-inventory.json",
+      "sha256": "f7030627acbc61fbbec32deeacc9bfc4dc1f8adc8fb6a183771559c656ce9eac"
+    },
+    "logical_records": 260113,
+    "mixed_terms_disclosure": "Corresponding generator source includes project and TALOD-permitted material, not a blanket BSD relicensing. Exact notices, source originals and original permissions retain their own categories and obligations.",
+    "normalization_conflicts": {
+      "bytes": 2212410,
+      "path": "content/world/1.60.1.70450/conflicts.json",
+      "sha256": "a56df26dd8359810b9809a625df3569190a504930f9c4bec0492cda11f4022f2"
+    },
+    "normalization_scope": "7933 retained raw normalization records represent reported precedence/conflict information, not independently observed game truth; raw reports stay distinct from typed SourceConflict records.",
+    "packs": [
+      {
+        "catalog": {
+          "bytes": 368258075,
+          "path": "content/release-packs/world-v2/catalog.json",
+          "sha256": "0e41ec752aa4e0e9abecb1b2a2f04f708d415db654bda34ccb58452b288eaffe"
+        },
+        "dataset_revision": "navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11",
+        "manifest": {
+          "bytes": 523,
+          "path": "content/release-packs/world-v2/manifest.json",
+          "sha256": "3c1613de6bb5585180c275dfb892d2c32176ed273275c6b607b4d48722a9c831"
+        }
+      },
+      {
+        "catalog": {
+          "bytes": 121103,
+          "path": "content/release-packs/authored-v2/catalog.json",
+          "sha256": "67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea"
+        },
+        "dataset_revision": "navzeroth-authored-slice-r4-heuristic-reminders",
+        "manifest": {
+          "bytes": 2951,
+          "path": "content/release-packs/authored-v2/manifest.json",
+          "sha256": "8af2189fa04d5e228cdb65204bc54c22be3371247acb5bb9b8aec1fa19ba62b9"
+        }
+      }
+    ],
+    "remaining_classification_gaps": 0,
+    "retained_upstream_originals": 19,
+    "source_attribution": [
+      {
+        "id": "cmangos-classic-db",
+        "origin_build": "1.12.1",
+        "origin_edition": "vanilla_1_12",
+        "revision": "f04d71d384e18f8857ad7e8de9a39cf7819bac99",
+        "target_validation": "unverified"
+      },
+      {
+        "id": "navzeroth-authored-v1",
+        "origin_build": null,
+        "origin_edition": "wow_forever",
+        "revision": "3efa71309317196a48ce0704d3d0f80603a71586",
+        "target_validation": "unverified"
+      },
+      {
+        "id": "navzeroth-world-content",
+        "origin_build": null,
+        "origin_edition": "wow_forever",
+        "revision": "38163495c86db1dceafd90512195202693a466a3",
+        "target_validation": "unverified"
+      },
+      {
+        "id": "wago-tools-wowf",
+        "origin_build": "1.60.1.70245",
+        "origin_edition": "wow_forever",
+        "revision": "a682d2c67d4ade40f0205634244a8ae3ea307834",
+        "target_validation": "unverified"
+      }
+    ],
+    "source_closure": {
+      "bytes": 24985,
+      "path": "content/world/1.60.1.70450/source-closure.json",
+      "sha256": "ea7a6c15998e870282b2734287ff0dc926ae87df809e6e941cafba1cd8e87538"
+    },
+    "source_oracles": [
+      {
+        "bytes": 13518,
+        "path": "docs/data/dungeon-associations-v1.json",
+        "sha256": "15ba356f748e33adc1eec39503bb9909eb4782a245d48740dde6d7a6f58fbd1c"
+      },
+      {
+        "bytes": 8239,
+        "path": "scripts/validate-dungeon-associations.py",
+        "sha256": "6dbea943eb7bc6eb6b9900e810808fde3e22794bedb0b3d092f33610da6468c4"
+      },
+      {
+        "bytes": 3671,
+        "path": "docs/data/role-coverage-v1.json",
+        "sha256": "d4599c1cbf9df545b31b5bac3a2a6fce188087406dafc5cb1f7cbc5549db1712"
+      }
+    ],
+    "transformation": "world_to_content_v4",
+    "unknowns_are_not_missing_records": true,
+    "unresolved_association_references": 0
+  },
+  "reviewed_source_commit": "cef17297e3b03e6f2f0470840f3c44ed0ea76310",
+  "schema_version": 1,
+  "scope": "Additive exact production/content review after test-only synthetic watchdog startup regression repair PR264. Runtime functional execution remains actual d636/a3baa, not restamped. Historical V14 source/Pages succeeded, CI and coverage were cancelled after normal merge, package failed helper test before installer/native/all eight stable cases. Current Windows/owner acceptance and all final gates remain unverified; no publication authorization.",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  },
+  "v14_archival_evidence": {
+    "pre-recovery-runtime-functional": {
+      "history": {
+        "bytes": 765,
+        "path": "release/history/2026-10-20-pre-recovery-runtime-functional/history.json",
+        "sha256": "dd9151363ebdbd926934c8e6f66cf5308e2a044cd3cb2be5472e553a1236fc8f"
+      },
+      "record": {
+        "files": [
+          {
+            "bytes": 15568,
+            "path": "release/history/2026-10-20-pre-recovery-runtime-functional/functional-scenarios.json",
+            "sha256": "ef3c7098a521dbe955eb945ae1f25f0bdddb08ff421f6fff0e39a707948d1fe1"
+          },
+          {
+            "bytes": 928,
+            "path": "release/history/2026-10-20-pre-recovery-runtime-functional/functional-linux-measurement.json",
+            "sha256": "ec335cff3a6c2bed8e0f5643991fa55f70e79156b6fbb8b018b9262accfa73df"
+          }
+        ],
+        "kind": "historical_actual_functional_evidence",
+        "reason": "Preserve actual earlier runtime execution before recovery optimization and fresh rebuilt functional proof. Not current Windows acceptance.",
+        "schema_version": 1,
+        "tested_runtime_commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611"
+      }
+    },
+    "recovery-linux-baseline": {
+      "history": {
+        "bytes": 1753,
+        "path": "release/history/2026-10-20-recovery-linux-baseline/history.json",
+        "sha256": "c76974e61da6d7eb7330add957a6ea855b6bc73eb0c6ac0c602d94215d22b91c"
+      },
+      "record": {
+        "files": [
+          {
+            "bytes": 2500,
+            "path": "release/history/2026-10-20-recovery-linux-baseline/diagnostic.log",
+            "sha256": "9e4dbba2f355dd6879c29bae761faef17ab1fe8e08f9eb3a201601e6dd272a39"
+          },
+          {
+            "bytes": 298,
+            "path": "release/history/2026-10-20-recovery-linux-baseline/measurement.json",
+            "sha256": "279425e2e9e3ff205019d4393e812d04a82e7af04055ca9426bd7d02456d3e87"
+          },
+          {
+            "bytes": 4378,
+            "path": "release/history/2026-10-20-recovery-linux-baseline/audit.json",
+            "sha256": "f205f24d46274b14cb4e857a33a0ede76195f6f7b2f2f9fb7e412c28aca42134"
+          },
+          {
+            "bytes": 48,
+            "path": "release/history/2026-10-20-recovery-linux-baseline/initial-setup-failure.log",
+            "sha256": "a4e3b1f5b313280fa0ecd696f5b03c7e6f97fd4f56f45edeb07588cf9d81de4d"
+          },
+          {
+            "bytes": 4595,
+            "path": "release/history/2026-10-20-recovery-linux-baseline/actual-diagnostic-source.rs.txt",
+            "sha256": "b6a07a33721a2d1a0ab39087d5abe90f29e9cfd151cca6d32b822d119644a884"
+          }
+        ],
+        "harness_commit": "41f013c6c2ba1135c939f7c93d2554e112819c99",
+        "independent_raw_identity_review": "root",
+        "kind": "actual_linux_diagnostic_not_acceptance",
+        "performed_by": "tooling_review",
+        "runtime_byte_equivalent_baseline": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+        "runtime_source": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+        "schema_version": 1,
+        "scope": "Existing optimized dependencies; actual full signed V13 bundle, manual engineering profile, no current plan. Shared Linux/WSL host, uncontrolled OS cache and concurrent small engineering checks. Not a Windows acceptance or ordinary-PC performance claim. Prior setup failure retained; subsequent bounded execution actually passed."
+      }
+    },
+    "recovery-linux-rebuilt": {
+      "history": {
+        "bytes": 1605,
+        "path": "release/history/2026-10-20-recovery-linux-rebuilt/history.json",
+        "sha256": "0552f29c3967afdda1d91e0fd9d9a694dd9864ffe73219f89647376668500020"
+      },
+      "record": {
+        "files": [
+          {
+            "bytes": 4224,
+            "path": "release/history/2026-10-20-recovery-linux-rebuilt/diagnostic.log",
+            "sha256": "3f3335d5067ce5e2ffda8c9996ed890485dd3d2386a6294bec610e2498387fe8"
+          },
+          {
+            "bytes": 356,
+            "path": "release/history/2026-10-20-recovery-linux-rebuilt/measurement.json",
+            "sha256": "1d62ed64688117ce6e25b2bd0db6a6bea951358f3a6c51642139715c05d3b687"
+          },
+          {
+            "bytes": 7602,
+            "path": "release/history/2026-10-20-recovery-linux-rebuilt/audit.json",
+            "sha256": "3776e8788233a8d40e582882c51d30e12e002bea4fd93a52a701093d5659fd82"
+          },
+          {
+            "bytes": 5713,
+            "path": "release/history/2026-10-20-recovery-linux-rebuilt/actual-diagnostic-source.rs.txt",
+            "sha256": "6e94b838250f2319e3f61258db3dd11f72d6af9c784d3c12f339bb768eeda10c"
+          },
+          {
+            "bytes": 498,
+            "path": "release/history/2026-10-20-recovery-linux-rebuilt/optimized-build.log",
+            "sha256": "b3bf094c1afc4133cc0997439ab64477dc1e3cea256b3f59e514dd921f983913"
+          }
+        ],
+        "harness_commit": "3447bcbfdeeb771589f6773bad6a70b81bdf0681",
+        "independent_raw_identity_review": "root",
+        "kind": "actual_linux_diagnostic_not_acceptance",
+        "performed_by": "tooling_review",
+        "runtime_source": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+        "schema_version": 1,
+        "scope": "Genuinely rebuilt runtime, unchanged explicitly historical V13 signed bundle. All strict assertions passed; elapsed347.805s versus721.434s baseline. Peak RSS increased12508668KiB versus11946608KiB. Shared Linux/WSL host, uncontrolled cache; no Windows or ordinary-PC claim."
+      }
+    },
+    "signed-content-v13": {
+      "history": {
+        "bytes": 1163,
+        "path": "release/history/2026-10-20-signed-content-v13/history.json",
+        "sha256": "ea16ffd04387f941db32943b184ecd0d9723a68315e6cf16c6409be7ead07edd"
+      },
+      "record": {
+        "actual_source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+        "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+        "files": {
+          "bundled-content-build-identity.json": {
+            "bytes": 527,
+            "path": "release/history/2026-10-20-signed-content-v13/bundled-content-build-identity.json",
+            "sha256": "6914c2f105cbb852a003dbb6d03935615b29852847d4e34aeaa84fdecd92804d"
+          },
+          "bundled-content-manifest.json": {
+            "bytes": 17185,
+            "path": "release/history/2026-10-20-signed-content-v13/bundled-content-manifest.json",
+            "sha256": "577b641649345316a3540791c8d7d6c6f1cb705ef5d441cedb4578415f03ef83"
+          },
+          "bundled-content-receipt.json": {
+            "bytes": 1073,
+            "path": "release/history/2026-10-20-signed-content-v13/bundled-content-receipt.json",
+            "sha256": "0e3e426b0b78f7178586710defe06e5a30a040103cd21091f7ea074217819afb"
+          }
+        },
+        "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+        "schema_version": 1,
+        "scope": "Exact signed historical V13 identities before any next repair integration. Both keys operator controlled. Current acceptance is not promoted."
+      }
+    },
+    "v13-coverage-success": {
+      "history": {
+        "bytes": 2300,
+        "path": "release/history/2026-10-20-v13-coverage-success/history.json",
+        "sha256": "41a718f3f7bbea3554dda779c6d558e1f40a8e247724e9686dc944650813d72b"
+      },
+      "record": {
+        "actual_source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+        "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+        "files": {
+          "independent-audit.json": {
+            "bytes": 2252,
+            "path": "release/history/2026-10-20-v13-coverage-success/independent-audit.json",
+            "sha256": "c6ffa19e0d4b5fa7ac810ea9ba19282254604f2a47b43b54a9fcf0154794a1fd"
+          },
+          "linux-entrypoint-summary.json": {
+            "bytes": 315,
+            "path": "release/history/2026-10-20-v13-coverage-success/linux-entrypoint-summary.json",
+            "sha256": "f9d2d6a7b9a858de3f33e1ddc60e28b97a1f7dcbcc4726d75f30c222443a78f5"
+          },
+          "linux-rust-receipt.json": {
+            "bytes": 41617,
+            "path": "release/history/2026-10-20-v13-coverage-success/linux-rust-receipt.json",
+            "sha256": "b70a7af4b402e04991f831bb1fbbd005892698ca58c964cdff34673003c777d4"
+          },
+          "per-file-verdict.json": {
+            "bytes": 50732,
+            "path": "release/history/2026-10-20-v13-coverage-success/per-file-verdict.json",
+            "sha256": "0b2128bc11d85bfdb009708e220c14f23db75e11b9554242f5058de074e0c959"
+          },
+          "windows-entrypoint-summary.json": {
+            "bytes": 316,
+            "path": "release/history/2026-10-20-v13-coverage-success/windows-entrypoint-summary.json",
+            "sha256": "8e8748fe76fc3aa33b21a1d98788973e573ade4da4d6ed5e89b528ceee4d2760"
+          },
+          "windows-native-smoke.json": {
+            "bytes": 26716,
+            "path": "release/history/2026-10-20-v13-coverage-success/windows-native-smoke.json",
+            "sha256": "26b051ff8837c5b8572609e7e73c06b595a0175af41993e270293def153435d5"
+          },
+          "windows-rust-receipt.json": {
+            "bytes": 44792,
+            "path": "release/history/2026-10-20-v13-coverage-success/windows-rust-receipt.json",
+            "sha256": "b4bf9ae4c994cdd4f88eb0c2fa2ae3cb089c394e1a826a81274b3341fe14fa60"
+          }
+        },
+        "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+        "run_id": 39466044635,
+        "schema_version": 1,
+        "scope": "Raw verdict/native receipts/native smoke; entrypoint summaries and audit are explicitly derived. Tooling alone range-streamed selected compressed LCOV; no profiles or full LCOV copied. Root independently checked raw verdict integer276threshold and receipt hashes/clean flags. No installer acceptance claim.",
+        "status": "success"
+      }
+    },
+    "v13-recovery-timeout": {
+      "history": {
+        "bytes": 4512,
+        "path": "release/history/2026-10-20-v13-recovery-timeout/history.json",
+        "sha256": "31c0e8789e6b9f003de263ff1ccede6d05222892d704635e700328c96e1e869c"
+      },
+      "record": {
+        "actual_source_commit": "1ac633145e3f1bc39cee342c4f39a404b3adcc9f",
+        "candidate_head": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+        "failed_hosted": [
+          "HOSTED-PERSISTENCE-RECOVERY"
+        ],
+        "files": {
+          "acceptance-overlay.json": {
+            "bytes": 27972316,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/acceptance-overlay.json",
+            "sha256": "4f2178fb01d25817b95806cd08e498b981c6689da93ca239f2447eb4c0cf0f3d"
+          },
+          "hosted-first-start.json": {
+            "bytes": 11524,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-first-start.json",
+            "sha256": "e8efd2ead64bcdfb74fb15be3f541c8f92be46ed33345eb551cdee1576979cf9"
+          },
+          "hosted-install.json": {
+            "bytes": 751,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-install.json",
+            "sha256": "092ad5b527f5660548f7499e731cd4d69dbd3ecdecbedbb320497802c8c9d43f"
+          },
+          "hosted-performance.json": {
+            "bytes": 12716,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-performance.json",
+            "sha256": "2477712c4f577cb1f9e6d25350052ebb271a70b7fec7d4c1db1c4b7d8d206247"
+          },
+          "hosted-persistence-recovery.json": {
+            "bytes": 768,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-persistence-recovery.json",
+            "sha256": "b6a44eccef2a21d0970e6e2a8d6970ff6f610dde5fbaa378336f7a81e8076fac"
+          },
+          "hosted-resources.json": {
+            "bytes": 132137,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/hosted-resources.json",
+            "sha256": "d0dd0d6c6448ff11e8e45382883c02a8e224a1d1ed6c1140816f8503809a8530"
+          },
+          "native/prepared-release-verification.json": {
+            "bytes": 133649,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/native/prepared-release-verification.json",
+            "sha256": "2544a77e90fe6e37f90c8d37b68853c8c09a10950c439df45b864d7da2468ca9"
+          },
+          "native/smoke/report.json": {
+            "bytes": 27440,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/native/smoke/report.json",
+            "sha256": "3acdc322b3aa6d0dad260159d372b8749ff62b0639e95e98646ceec6557291b8"
+          },
+          "native/upgrade/downgrade.json": {
+            "bytes": 179,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/native/upgrade/downgrade.json",
+            "sha256": "da5beee4815a1699230dad0bd96e2e6f02a25ce4d4584b29fda233fe96cf3756"
+          },
+          "native/upgrade/populate.json": {
+            "bytes": 4474,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/native/upgrade/populate.json",
+            "sha256": "9f1250dff3792e34a64a2c6c20a5acf34634bce8b710a7daf4ebd0961cdb6c50"
+          },
+          "native/upgrade/verify.json": {
+            "bytes": 18048,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/native/upgrade/verify.json",
+            "sha256": "91fc7ab35feb50b1365bb9ee910024aafb8eacaa7a9b8a29c93ee1a85f5afdff"
+          },
+          "raw/fresh-447be1cb398d4e8c85b3d7794e7ed8a6.json": {
+            "bytes": 9876,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/raw/fresh-447be1cb398d4e8c85b3d7794e7ed8a6.json",
+            "sha256": "d52ebef1de38919ca516726d157a5a9a7786930d439c1d0ed3637661b15a29df"
+          },
+          "raw/restart-f810139b3e1f4a72a1a6cf60d7f29640.json": {
+            "bytes": 9869,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/raw/restart-f810139b3e1f4a72a1a6cf60d7f29640.json",
+            "sha256": "782bcb9a55e92d37a3ca221e07695f923827bdc66c041ec4c96eb827fe81008b"
+          },
+          "raw/state.json": {
+            "bytes": 1311,
+            "path": "release/history/2026-10-20-v13-recovery-timeout/raw/state.json",
+            "sha256": "75c657aeda3617a36d7b090189e78600bde5149ab36aeb08f073add4e0ece00b"
+          }
+        },
+        "installer_bytes": 26129327,
+        "installer_sha256": "56c46d57337374d79087a3f8956c586861e57242116da22509c23ca6368def78",
+        "owner": "unverified",
+        "passed_hosted": [
+          "HOSTED-INSTALL",
+          "HOSTED-RESOURCES",
+          "HOSTED-FIRST-START",
+          "HOSTED-PERFORMANCE"
+        ],
+        "production_sha256": "a8c292b751899d17e2942dbf708cb08d9eedc629ee2debe84fcff58a71521620",
+        "run_id": 39466044590,
+        "schema_version": 1,
+        "scope": "Native gate passed32 smoke/7 upgrade; actual fresh and restart workloads passed. Subsequent recover process exceeded its20minute bound and no recovery report survived process-tree kill. Exact operation is unlocated; no proven runtime hang/OOM or successful recovery claim. Recorder retained5actual rows; final guard failed.",
+        "status": "failure",
+        "unrun_hosted": [
+          "HOSTED-OFFLINE",
+          "HOSTED-UPGRADE-RC1",
+          "HOSTED-DOWNGRADE-REFUSAL"
+        ]
+      }
+    }
+  },
+  "v15_archival_evidence": {
+    "signed-content-v14": {
+      "files": [
+        {
+          "bytes": 17187,
+          "path": "release/history/2026-10-20-signed-content-v14/bundled-content-manifest.json",
+          "sha256": "0eb36d978a196ca38ee9feaa8aed17571f6dda72c4dc430b752ea6724013639b"
+        },
+        {
+          "bytes": 528,
+          "path": "release/history/2026-10-20-signed-content-v14/bundled-content-build-identity.json",
+          "sha256": "3489e818be7a29560347a9a23a8ef58f62aede1895e05a77f72bf05cecbadd8b"
+        },
+        {
+          "bytes": 1074,
+          "path": "release/history/2026-10-20-signed-content-v14/bundled-content-receipt.json",
+          "sha256": "a8d4c71f4f0f209fec7444980aab3401af82ec8e2229b1489087d050ae6c2806"
+        }
+      ],
+      "history": {
+        "bytes": 1008,
+        "path": "release/history/2026-10-20-signed-content-v14/history.json",
+        "sha256": "2145a2fcc312765b3ba54f4e082f6c4307cd65d7c1fb96f6fc2a805a5425b8bf"
+      }
+    },
+    "v14-checks": {
+      "files": [
+        {
+          "bytes": 427221,
+          "path": "release/history/2026-10-20-v14-checks/ci-linux.log",
+          "sha256": "27344bf88cfa092500350519ccfaae524012e3b342b3e31ad7c946abcda6a0d2"
+        },
+        {
+          "bytes": 30984,
+          "path": "release/history/2026-10-20-v14-checks/ci-windows.log",
+          "sha256": "c49586a7c5d75fdbb4c23ce0298b11d4f61a38ba8c5b1ae2dd65fd114386d1a2"
+        },
+        {
+          "bytes": 135982,
+          "path": "release/history/2026-10-20-v14-checks/ci-browser.log",
+          "sha256": "c5581cb73a237bb56f27f800fb4e2e89b7fff3c5b5c3b066e16f25a39359e5e4"
+        },
+        {
+          "bytes": 130374,
+          "path": "release/history/2026-10-20-v14-checks/ci-native.log",
+          "sha256": "05dcea63810471e3a16d9d5745b5923ac28b179b3a6372b341cf022645146bf7"
+        },
+        {
+          "bytes": 43628,
+          "path": "release/history/2026-10-20-v14-checks/source-linux.log",
+          "sha256": "a819882b98d7c09f837f27d7544b4c703c91d5fb50dc0309c516957ef77630ca"
+        },
+        {
+          "bytes": 46430,
+          "path": "release/history/2026-10-20-v14-checks/source-windows.log",
+          "sha256": "238f504274954f3eb7ecf8ca0001f965b27334559bdf458b3c9eaf32c226ebea"
+        },
+        {
+          "bytes": 19362,
+          "path": "release/history/2026-10-20-v14-checks/source-parity.log",
+          "sha256": "4b96ff5c447fbd48b5945cdb0a417671b0c724acd19a2b8d8cd7647e42888f41"
+        },
+        {
+          "bytes": 42536,
+          "path": "release/history/2026-10-20-v14-checks/pages.log",
+          "sha256": "49100891b5b8c0f80e18892485a91e633919895fed899aa282f0efab1135807f"
+        },
+        {
+          "bytes": 37694,
+          "path": "release/history/2026-10-20-v14-checks/ci-workflow.json",
+          "sha256": "7c79b3bd1dbc98af30024d792bd0a12490d72b0723cc93a88760db4558f8433d"
+        },
+        {
+          "bytes": 13321,
+          "path": "release/history/2026-10-20-v14-checks/source-workflow.json",
+          "sha256": "4244a025c65de18807e5b37c81b9f45480f8b429e87bbb2834584b62c5b01304"
+        },
+        {
+          "bytes": 3994,
+          "path": "release/history/2026-10-20-v14-checks/pages-workflow.json",
+          "sha256": "fb8de82a072552fbd56b699b1c4d17dd4de050ef400b35b048098926700cf8a4"
+        },
+        {
+          "bytes": 730,
+          "path": "release/history/2026-10-20-v14-checks/stale-intermediate-runs.json",
+          "sha256": "5c48722b38e20f41e3ff5fe6f2b008484de93339b3228150c7c4c6bd5be06b81"
+        }
+      ],
+      "history": {
+        "bytes": 4203,
+        "path": "release/history/2026-10-20-v14-checks/history.json",
+        "sha256": "073b9b4c9b84cb8b1bd6b7e92280f4821b89ec53bee2347fda417838ffeadc63"
+      }
+    },
+    "v14-coverage-cancelled": {
+      "files": [
+        {
+          "bytes": 2125,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/audit.json",
+          "sha256": "daef3f5560d6b6c8d147d355326df512bdb04548f51ca1c9ed5bbd8a19e5a7c6"
+        },
+        {
+          "bytes": 44318,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/gate-39497088020.log",
+          "sha256": "c1e0091186fbcaddcfb6e38f69a34b34013d3249cdb7de4eebbad1d5a5d5e348"
+        },
+        {
+          "bytes": 13217,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/jobs.json",
+          "sha256": "ce360679f072991db1eb5496927c15c2e95c942d4605470a01a8513f6044ecfa"
+        },
+        {
+          "bytes": 12170,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/run.json",
+          "sha256": "7e3cb65d6931cf1020bef8e6a961a7f529657708e65cc4856f4a93ca97f0b57a"
+        },
+        {
+          "bytes": 315,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/linux/entrypoint-summary.json",
+          "sha256": "40b4a39c6c6b7a906c1b692d7f5f8262544ae1b472650d92cb1ea9a5908d9d82"
+        },
+        {
+          "bytes": 202222,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/linux/inventory.json",
+          "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+        },
+        {
+          "bytes": 41617,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/linux/rust-receipt.json",
+          "sha256": "8a1dc92b669d747c107bfd546921d2d06742f8c85bfae060f97e1f4271bfca0c"
+        },
+        {
+          "bytes": 34411,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/configuration-receipt.json",
+          "sha256": "37309c686c4f50b15d9b2389b0c77845faa0d69ec8ecf3665997ca55782f2baa"
+        },
+        {
+          "bytes": 202222,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/inventory.json",
+          "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+        },
+        {
+          "bytes": 34396,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/typescript-receipt.json",
+          "sha256": "4bcf7f9ed1783b8968d0db8e4916e0afa77b3f5fb75cffceb92efca4f4e0c7ef"
+        },
+        {
+          "bytes": 29559,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/typescript/v8/coverage-summary.json",
+          "sha256": "3f8a7ade54694042b5b1c10e02c9495965ff11de9109213bf3b726f5702da265"
+        },
+        {
+          "bytes": 1149,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/windows/commands.json",
+          "sha256": "52261ad07916ee1f64e75abf440dd4178d7167a7cc04eed4227f88ea2663f3da"
+        },
+        {
+          "bytes": 202222,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/windows/inventory.json",
+          "sha256": "ebf5fc8d5891d2ba8eb1bc939c1107f8b64c14accd82a1145305c0d5436255ad"
+        },
+        {
+          "bytes": 122386,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/small/windows/logs/workspace-tests.log",
+          "sha256": "fe62309ccede57dc83b76ecd6f88529d8642949a9e04319b5f21184b075ea89f"
+        },
+        {
+          "bytes": 12240,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/successor-run.json",
+          "sha256": "a3af6e1a48cf6e05ba3210c65600bc8a6c0b9eacc4dd5a95191bd32a1cd69959"
+        },
+        {
+          "bytes": 72883,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/windows-39497088020.log",
+          "sha256": "6f53c786b7c24b89134a9fec3ba89c7200fac582f164a5eccb9a189238e07813"
+        },
+        {
+          "bytes": 2445,
+          "path": "release/history/2026-10-20-v14-coverage-cancelled/FILES.json",
+          "sha256": "a4dc944583b81a0362eae5e18447790300de1ae1cbc88ab05aef6c3d3b98aafc"
+        }
+      ],
+      "history": {
+        "bytes": 4290,
+        "path": "release/history/2026-10-20-v14-coverage-cancelled/history.json",
+        "sha256": "b6aac5a716bf9bdfe78e18579f28e177fa629a8f5cd9acb86cc82aa8e7a651c9"
+      }
+    },
+    "v14-helper-timeout": {
+      "files": [
+        {
+          "bytes": 11529,
+          "path": "release/history/2026-10-20-v14-helper-timeout/workflow.json",
+          "sha256": "015690e812ddd015a38a491cb5666241a077f0dac6c852871830469782b9e31c"
+        },
+        {
+          "bytes": 6652,
+          "path": "release/history/2026-10-20-v14-helper-timeout/actual-helper-step.log",
+          "sha256": "3d963ab4e7de123dc75d2c0eeef44068b7b7abc9bc7e400b650dff3a2929ecd7"
+        }
+      ],
+      "history": {
+        "bytes": 1156,
+        "path": "release/history/2026-10-20-v14-helper-timeout/history.json",
+        "sha256": "2c6aa49a9b9105390e90c822ec16f3d3d828d5be0fc43c8a47828749213f7de8"
+      }
+    }
+  }
+}

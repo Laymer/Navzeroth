@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "historical_signed_content_before_coverage_profile_destination_repair",
+  "signed_source_commit": "b8d05a1d840e1fa8b2339c7011410d35702b68bb",
+  "documented_candidate": "b689659844eeee8e3a9ee83769e2d9e1a5b50780",
+  "actual_pr_merge_checkout": "ffbf834ce9fca684d9dd3fcc357a240a81dd40e4",
+  "tested_source_commit": "fcf170ad50722d8406f4662e6b2173c3c1c756a2",
+  "production_sha256": "0a359151d582b66d613f2feea6d59352cf48315bc419cd895eba37534675d62a",
+  "review": {
+    "path": "release/v1/public-content-review-v6.json",
+    "bytes": 21594,
+    "sha256": "d1d79a495b49f6650e30d9f1dad9ed9ae5b107fc25ff87602814c3cdee0cc0c8"
+  },
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v6/bundled-content-manifest.json",
+      "bytes": 17183,
+      "sha256": "8f019ab5f35ce591ac624d9ebae9c410c3098cedf061fa491dc3cd201169a68c"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v6/bundled-content-build-identity.json",
+      "bytes": 526,
+      "sha256": "06a53076ffe6448e293e3009aff1bb3b3ac1256517fb0abfdbe03b898437a79c"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v6/bundled-content-receipt.json",
+      "bytes": 1072,
+      "sha256": "4c53c449130b394a787288c24c41df7817f5aca52192ae2f34942712b5c40dd9"
+    }
+  },
+  "actual_source_prebuild": {
+    "build_ready": true,
+    "verified_evidence_files": 89,
+    "verified_content_packs": 2,
+    "pending_observations": 9,
+    "publication_allowed": false
+  },
+  "candidate_checks": {
+    "ci": {
+      "run_id": 39413135882,
+      "result": "success",
+      "native_windows_replacement_regressions": "pass"
+    },
+    "source_parity": {
+      "run_id": 39413135914,
+      "result": "success"
+    },
+    "coverage": {
+      "run_id": 39413135940,
+      "result": "failure",
+      "cause": "Instrumented assembly CLI emitted default_1146472104454006394_0_5104.profraw into checkout; strict guard rejected after coverage-bundle-assembly",
+      "linux_passed": 1607,
+      "linux_ignored": 8,
+      "typescript_files_at_least_90_percent": 91
+    },
+    "package": {
+      "run_id": 39413135905,
+      "result": "in_progress_at_recording"
+    }
+  },
+  "limitation": "Actual historical scope. No Windows full acceptance/owner/stable publication is inferred."
+}
