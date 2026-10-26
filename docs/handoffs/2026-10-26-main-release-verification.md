@@ -44,3 +44,23 @@ applies; human/supplemental Windows11 smoke remains unperformed and nonmandatory
 This documentary branch is separate from verifiedmain and must not advance main
 during its source/tag verification. Preserve the original checkout and old V19
 untracked claim. No private keys, personal exports or SQLite databases retained.
+
+## Verification continuation
+
+Root actual exact-main local prebuild passed ataaa73b94:89 evidence/two packs,
+productiona947...5537, build_readytrue, EXACT9pending/nootherblockers, publication
+false. Actual public report retained as main-prebuild.json in the history ledger.
+Source workflow40290544009 and Pages40290543953 completed success. The redundant
+CI push run40290543992 was administratively cancelled so already-dispatched full
+CI+mandatory stability40290572308 can start sooner. Cancelled push is not a pass;
+the explicit full run must supply ALL required CI successes. Coverage and Windows
+package remain in progress. No tag/publication.
+
+Read-only world review checked final website requirements; existing historicalRC
+images/capture-release stay unchanged. Final public copy must use actual TAG-bound
+metrics/hashes and ADR0010 firewall scope, not candidate numbers or an airgap claim.
+An outside-Git helper /tmp/navzeroth-complete-draft-overlay.py is prepared for later
+coordinator review/use after real completed draft evidence and independent review.
+It creates no proof until supplied actual artifacts/API/pins/explicit attestation;
+author ran syntax and12 inert refusal checks. It is not itself acceptance or the
+mandatory full Rust gate. Never attest before actually reviewing completed proof.

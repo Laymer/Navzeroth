@@ -204,6 +204,11 @@
       "path": "release/history/2026-10-26-v22-passed-candidate/pr-api.json",
       "bytes": 18302,
       "sha256": "e6dd846d2e590578466a8eebb23b1b781175663765ae3f347353340350d9a433"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/main-prebuild.json",
+      "bytes": 1014320,
+      "sha256": "d696374fc250854413865ac1a909364686a19779fa9f1bea56490eec2ba1181f"
     }
   ],
   "original_artifacts": [
