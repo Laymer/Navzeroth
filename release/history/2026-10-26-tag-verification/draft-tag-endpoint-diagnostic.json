@@ -1,0 +1,10 @@
+{
+  "release_id": 424161437,
+  "by_id_status": "success",
+  "by_id_draft": true,
+  "by_tag_exit_code": 1,
+  "by_tag_stderr": "gh: Not Found (HTTP 404)\n",
+  "by_tag_stdout": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/releases/releases#get-a-release-by-tag-name\",\"status\":\"404\"}",
+  "dispatch_run": 40314686467,
+  "scope": "Actual owner-authenticated API observation; no hosted workflow outcome inferred"
+}

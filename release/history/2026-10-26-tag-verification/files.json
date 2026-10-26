@@ -1,5 +1,5 @@
 {
-  "scope": "Actual tag assets and eight case outcomes independently reviewed PASS. Final workflow/draft/public gates remain pending.",
+  "scope": "Tag workflow completedSUCCESS and all8cases passed; actualdraft exists. By-tagREST draft404 diagnosed; currentdraftverifier outcome pending. Repaired source needs new signed closure/checks and explicit tag/version decision.",
   "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
   "package_run": 40302406210,
   "files": [
@@ -219,6 +219,26 @@
       "sha256": "d0eb4a9780d99fb25552fca6e1aaa64e8f4a035e0b1a5082cea9d5cf168df2f9"
     },
     {
+      "path": "release/history/2026-10-26-tag-verification/completed-attempt-jobs-api.json",
+      "bytes": 15415,
+      "sha256": "a5ec439a7ec443d15435220fcdaa9ddc1546dbf0be8dfd55721efdfe5581896a"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/completed-jobs-api.json",
+      "bytes": 15415,
+      "sha256": "a5ec439a7ec443d15435220fcdaa9ddc1546dbf0be8dfd55721efdfe5581896a"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/completed-run-api.json",
+      "bytes": 11781,
+      "sha256": "4f6e3ecf4105e56553a8d6ea5a70f4dab6132d31dacf1cfb469153c4ec78d6c4"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/draft-tag-endpoint-diagnostic.json",
+      "bytes": 449,
+      "sha256": "d166380a7856828a98b599432f7e4f4db4fca883c95e4befd1bbfb14c34ebf36"
+    },
+    {
       "path": "release/history/2026-10-26-tag-verification/independent-asset-hashes.json",
       "bytes": 1447,
       "sha256": "fa10f044d3247210706bd4c3e25061e391470067c36bf1dc4d6c0dcde54dcb4f"
@@ -227,6 +247,11 @@
       "path": "release/history/2026-10-26-tag-verification/independent-desktop-case-review.json",
       "bytes": 2135,
       "sha256": "458de25a6e40a7ef6251b67b5d163726fdd9efb45e911b8040f080a1394d8901"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/independent-draft-readiness.json",
+      "bytes": 1013019,
+      "sha256": "906a66502e5acbae007ed405e7832d9f591ece5180e0f4dbb7f89a19fe0072b0"
     },
     {
       "path": "release/history/2026-10-26-tag-verification/independent-native-signature-check.json",
@@ -242,6 +267,11 @@
       "path": "release/history/2026-10-26-tag-verification/independent-world-material-review.json",
       "bytes": 4939,
       "sha256": "6fb337c254674b3920527a5db75438a967f1c7b82a6f66b6161d64086e177523"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/initial-draft-release-api.json",
+      "bytes": 19250,
+      "sha256": "6ffd72510a80afbd54eb42146cd45bba20a96091bf9c8df9b32caf1aa89804f9"
     },
     {
       "path": "release/history/2026-10-26-tag-verification/native-regression/prepared-release-verification.json",
@@ -284,6 +314,11 @@
       "sha256": "5af17e181efddb65c65c560c22fee09c59569c8cb2cd8eef057939cb1f0a37d4"
     },
     {
+      "path": "release/history/2026-10-26-tag-verification/package-job-api.json",
+      "bytes": 12670,
+      "sha256": "b8d30f5762adbaebec8c2038c53b603e8a1920eab1133874ad2ccfc2db39b80e"
+    },
+    {
       "path": "release/history/2026-10-26-tag-verification/tooling-byte-binding-check.json",
       "bytes": 3502,
       "sha256": "183033c11dd595cbb9ab6156e5e85946c14520e03f3661183bbf3340b6569f7b"
@@ -292,11 +327,6 @@
       "path": "release/history/2026-10-26-tag-verification/windows-artifact-api.json",
       "bytes": 730,
       "sha256": "f11690ab6d19b83a922d299ccbebd9f4f07ef4635287c95102366f38bccdddf6"
-    },
-    {
-      "path": "release/history/2026-10-26-tag-verification/independent-draft-readiness.json",
-      "bytes": 1013019,
-      "sha256": "906a66502e5acbae007ed405e7832d9f591ece5180e0f4dbb7f89a19fe0072b0"
     }
   ]
 }

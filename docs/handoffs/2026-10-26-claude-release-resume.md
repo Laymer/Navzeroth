@@ -1,5 +1,39 @@
 # Copy-paste continuation prompt for Claude Code
 
+## Latest: draft API blocker and reviewed repair
+
+Tag40302406210 completedSUCCESS (package and draft jobs), creating unpublished
+stable draft424161437. All8tag cases and root/independent reviews pass. Draft
+verifier40314686467 is running on exactAAA/taginstaller1b32; no completed outcome
+or downloaded-UI pass is claimed yet.
+
+Actual owner-authenticated REST /releases/tags/v1.0.0 returned404 twice, while
+release view(databaseId424161437) and REST /releases/424161437 succeed. GitHub's
+by-tag endpoint is for PUBLISHED releases. Current tagged workflow uses it after
+native verification, so a successful native smoke alone cannot satisfy the required
+completed-success run. No fake API, premature publication or tag rewrite workaround.
+
+Narrow repair code c2052f47dd2cb8a3991e66027ef8193d915e616e is independently reviewed
+CLEAR by desktop/tooling and pushed on fix/draft-release-api-id (docshead9b1b9fe1).
+Worktree /tmp/navzeroth-draft-release-api-id. Uses issued databaseId/by-ID REST,
+strict numeric/tag/draft checks;29LinuxPSchecks/actionlint/diff PASS, real read-only
+lookup PASS. NativePS5 syntax PASS; local runtime refused by existing scriptpolicy,
+not changed/overridden. Native runtime remains unverified locally.
+
+User decision PENDING: preserve old tag under archive reference and replace the
+UNPUBLISHED1.0.0 tag/draft only after repaired fresh gates, or keepv1.0.0 andprepare
+1.0.1. Asked because plan/AGENTS require preserving published history. No tag
+mutation permitted by a timeout/no reply. Version-dependent metadata renewal awaits
+answer; continue preserving actual oldattempt outcome meanwhile. New production,
+review, receipts and installer/fullgates required; AAA evidence never relabelled.
+
+Coordinator's first by-tag API precheck failed, but the shell continued to the
+already authorized verifier dispatch. Recorded as such; subsequent by-ID/view/API
+checks confirmed all8draftasset identities/digests, not a passed original precheck.
+
+
+The original pre-blocker checkpoint follows as historical context; latest section above governs.
+
 Continue the authorized Navzeroth unsigned stable1.0.0 release through public
 verification and existing GitHub Pages deployment. Do not restart earlier repairs.
 Read AGENTS.md, docs/STATUS.md, the latest relevant handoff and release-plan sections.

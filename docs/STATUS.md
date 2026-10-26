@@ -2,6 +2,15 @@
 
 Updated: 2026-10-24.
 
+**Current blocker (2026-10-26):** tag packaging and all8cases PASSED and draft
+424161437 exists. Draft verifier uses REST by-tag, which returns404 for drafts;
+reviewed repair c2052f47 uses issued databaseId/by-ID. The owner is being asked
+whether to archive/replace the unpublished1.0.0 tag after fresh gates or preserve
+it andprepare1.0.1. No tag mutation/publication. Old verifier40314686467 stillrunning.
+See current handoff and fix/draft-release-api-id branch; source receipts/checks
+must be renewed for the chosen identity. Earlier checkpoints below are historical.
+
+
 **2026-10-26 release checkpoint:** PR239 merged normally at `aaa73b94` after
 independent review and protected checks. Fresh exact-main CI/stability, coverage,
 source parity and eight Windows cases passed. Annotated `v1.0.0` points to that
