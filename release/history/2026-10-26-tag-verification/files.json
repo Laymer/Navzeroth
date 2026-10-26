@@ -49,6 +49,46 @@
       "sha256": "6fb337c254674b3920527a5db75438a967f1c7b82a6f66b6161d64086e177523"
     },
     {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/prepared-release-verification.json",
+      "bytes": 133649,
+      "sha256": "9001e61ced927e19d68d48df4c343d4985a49fe54b2a4d9c594ecaba9b20570b"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/smoke/report.json",
+      "bytes": 27241,
+      "sha256": "6595365972ff7abec4901bb56a1fe43253db97f29db1b175a57c4a325166fbfc"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/upgrade/baseline-download.json",
+      "bytes": 513,
+      "sha256": "7509a16cce3cf22a50b806c9e8265dbf1cbe3be60bc1dc15c4a9e4377648b0f4"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/upgrade/db-before.json",
+      "bytes": 1859,
+      "sha256": "8e2f1ca439c095ac7d4040618c7d65527674a7234f8e308d5420d7e8577c4931"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/upgrade/downgrade.json",
+      "bytes": 184,
+      "sha256": "048c9dbdae4da9407dd87f5f49885668f53f81043f6f8c297cee3fc9a8fccf9d"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/upgrade/populate.json",
+      "bytes": 4563,
+      "sha256": "ddfb7ce85848dcee67769cc2e6215b4c1dd43bde5f97b8d984bda3d6f0376989"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression/upgrade/verify.json",
+      "bytes": 18064,
+      "sha256": "0e124075ad713ba661f69b143880db62ae3480878908526e1eefd4440b0b50eb"
+    },
+    {
+      "path": "release/history/2026-10-26-tag-verification/native-regression-artifact-api.json",
+      "bytes": 725,
+      "sha256": "5af17e181efddb65c65c560c22fee09c59569c8cb2cd8eef057939cb1f0a37d4"
+    },
+    {
       "path": "release/history/2026-10-26-tag-verification/windows-artifact-api.json",
       "bytes": 730,
       "sha256": "f11690ab6d19b83a922d299ccbebd9f4f07ef4635287c95102366f38bccdddf6"

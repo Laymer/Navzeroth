@@ -175,3 +175,11 @@ execution byroot/world or inferred installed-resource acceptance.
 
 Native WebView and upgrade regressionsteps passed. Actualeightstablecases started
 10:30:28UTC andstillrunning. No draft/publication; finalgatesremainpending.
+
+Tagnative regressionartifact12643362789 ZIP2603687bytes/SHA497862ed85feab3f0c1e7310b9aa7ea7f5ec2e3f91ab64d1f8e6d22b8e2d30f3
+was independentlydownloaded/providerhashchecked. Raw32/0 native smoke and7/0
+upgradeverify (5/0 baselinepopulate), downgradeexit2/noTimeout/installed1.0.0.
+Prepared verification sourceAAA/installer1b32.../application5bca4982fdb35ea1412d2b324c66741fcea96918ed7d6eded419d2d8ac7b71e2,
+bothNotSigned;630installedfiles/addon-source/dependencyclosuretrue. These are
+regression/preparedchecks, notreplacementfor8stablecases or exactdraftacceptance.
+OriginalJSON/API bytes archived; actual8stablecasesstillpending.

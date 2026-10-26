@@ -1,0 +1,21 @@
+{
+  "label": "baseline-download",
+  "mode": "check-download",
+  "platform": "win32",
+  "node": "v24.15.0",
+  "startedAt": "2026-10-26T10:27:44.134Z",
+  "finishedAt": "2026-10-26T10:27:44.145Z",
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "ok": true
+  },
+  "steps": [
+    {
+      "name": "sha256 of AzerothNavigator-1.0.0-rc.1-x64-setup.exe matches SHA256SUMS.txt",
+      "status": "passed",
+      "sha256": "0f87be628dbe7a979a4433cbc6c26faeb980b08e43307f2ef412141da0d7d3a0"
+    }
+  ]
+}
