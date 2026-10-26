@@ -132,3 +132,18 @@ required workflow APIs, independently checked exactaaa73b94 and SUCCESS, allTEN
 protected context names, mandatory Stability and both source platforms/parity.
 All applicable main gates passed. Ready to tag ONLYaaa73b94; tagbuild and exact
 downloaded-draft/public acceptance remain unverified. No publication yet.
+
+## Stable tag created after all main gates
+
+Annotated v1.0.0 tagobject7d811e0f912de9bf39a1c27b096fb73688deeae0 was
+created/pushed normally ONLY after allmain gates completedSUCCESS; it dereferences
+to aaa73b94794f5a32162b430b2314f53bca4e1a7b. Remote main remainedexactaaa;
+local/remote stabletag wereabsent beforecreation, nohistoryrewritten. Original
+tagref/object API bytesretained.
+
+Fresh tagpackage40302406210 queued at exactaaa. Draft release doesnotexistyet;
+its creation requires package/eightcases and finalmaterial/draft gates success.
+Do not reuse maininstaller774282... as finaltagidentity automatically. Download
+actualtagartifact andindependentlyhash/sourceverify; thenexactdraftUI/native
+workflow onref v1.0.0 withthatinstaller hash andtagpackage evidence_run_id.
+Fullschema5reviewedoverlay/publication/publicdownloads/site steps remainrequired.

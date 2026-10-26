@@ -261,6 +261,16 @@
       "path": "release/history/2026-10-26-exact-main-gates/windows-package-jobs-api.json",
       "bytes": 13546,
       "sha256": "f23cc173b7810b5cb43e32c9954bd84887d9199316bf0658766b5e4cd7ecb9ed"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/stable-tag-ref-api.json",
+      "bytes": 327,
+      "sha256": "f28b498f5cb7e54f92eca1880a0bdc24066f0987f5ace5cb19946708eb7d7550"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/stable-tag-object-api.json",
+      "bytes": 764,
+      "sha256": "43d115f2059466d03398f88d066571e8c0bad1648120eabfd403d9d32f5f318c"
     }
   ],
   "coverage_verdict_artifact": {
@@ -285,5 +295,12 @@
       "bytes": 1023724,
       "sha256": "6ea3f0c7c3aa980a5167b2de72ac4b80e46a16d008741abb31d3a7b29c79817d"
     }
-  ]
+  ],
+  "tag": {
+    "name": "v1.0.0",
+    "object": "7d811e0f912de9bf39a1c27b096fb73688deeae0",
+    "commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+    "package_run_id": 40302406210,
+    "publication_verified": false
+  }
 }
