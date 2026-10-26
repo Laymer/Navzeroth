@@ -83,3 +83,9 @@ Exact-main CI dispatch40290572308 completedSUCCESS, including allTEN jobs and
 mandatory stability. Source40290544009/Pages40290543953 also completedSUCCESS.
 Original completed run/jobs API bytes retained in2026-10-26-exact-main-gates.
 Coverage40290543945 and package40290544065 still pending; no tagging yet.
+
+Coverage40290543945 completedSUCCESS; actual downloaded per-file verdict
+sourceaaa73b94 has278 measured files/all >=90percent by exact integer
+comparison, noerrors. All four coverage jobs passed. Original artifactZIP hash
+matched providerAPI; actual verdict and completedAPI bytes retained. Windows
+package40290544065 is executing actual stable acceptance; no final result yet.

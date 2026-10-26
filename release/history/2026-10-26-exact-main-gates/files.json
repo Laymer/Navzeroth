@@ -1,5 +1,5 @@
 {
-  "scope": "Only completed successful exact-main CI with stability, source parity and Pages. Coverage and Windows package still pending; no tag/publication authority.",
+  "scope": "Completed successful exact-main CI including stability, coverage, source parity and Pages. Windows package still pending; no tag/publication authority.",
   "source_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
   "files": [
     {
@@ -31,6 +31,26 @@
       "path": "release/history/2026-10-26-exact-main-gates/pages-jobs-api.json",
       "bytes": 6836,
       "sha256": "ebbe8d366408177f902923802a2832b142311155e4e022fcd76f35b7208c7858"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/per-file-verdict.json",
+      "bytes": 51074,
+      "sha256": "bd10d5e929f1a776d174a58028d8abd23c57dcd828a25469b344fdf3b8929b18"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/coverage-run-api.json",
+      "bytes": 11765,
+      "sha256": "7fdfe57a139034abc0e2af0cf08ae11203fe278e7d7686b5f6ab80b8ac5173a9"
+    },
+    {
+      "path": "release/history/2026-10-26-exact-main-gates/coverage-jobs-api.json",
+      "bytes": 13117,
+      "sha256": "8a79fdc9ce5a3b686f6eb97a5c81db7eeca708ced56669f91262b88bfb292ff8"
     }
-  ]
+  ],
+  "coverage_verdict_artifact": {
+    "id": 12637139587,
+    "bytes": 4312,
+    "sha256": "8e74362ae1071a3495ed09d419bafb10d2060978cda664b366ee986cd5ba1dbe"
+  }
 }
