@@ -1,0 +1,11 @@
+{
+  "head": "9be789e95a89cffb6463ea12994eb8be40cbf59a",
+  "tested": "3609c2b574d5302711a40cc08128b1e9c76f8955",
+  "production": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "reference_occurrences_verified": 35,
+  "canonical_observations": "9pristine_pending",
+  "manifest_resources": 84,
+  "resource_bytes": 395738463,
+  "verdict": "clear_for_merge_subject_to_actual8case_audit",
+  "scope": "Independent read-only composition/FP/reference-byte audit. No crypto/assembly/hosted replay or compiler build."
+}

@@ -1,0 +1,206 @@
+{
+  "scope": "Actual V22 candidate eight-case PASS, not exact-main/tag/draft/public acceptance. Original downloaded artifact ZIP digests matched provider API. Source73cc testmerge tree equals9be candidate and resultingmainaaa tree df024c579ca2c3daef705ec6ecb5d845fe56e02b.",
+  "source_commit": "73cc81e0af500f3026a0c15b07963787941e880e",
+  "candidate_commit": "9be789e95a89cffb6463ea12994eb8be40cbf59a",
+  "merged_main_commit": "aaa73b94794f5a32162b430b2314f53bca4e1a7b",
+  "run_id": 40085604234,
+  "files": [
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/acceptance-evidence.json",
+      "bytes": 27973330,
+      "sha256": "6eaabf565961021861b38c231ccea9380a74db758deae14912689f72cb76da9b"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "d19badddb7aa75225b0cd6b1a536d79ced9c9f85208acd17b2c06e2a5cf20874"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-first-start.json",
+      "bytes": 11526,
+      "sha256": "5c2bc631267ec0929c7cabfb903d19ad1284ba290bf0025ead6c1d11ddf95163"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-install.json",
+      "bytes": 751,
+      "sha256": "5054033323f4eeb87b67e260794e8ec5562c2bf544685a1646ea29e49c4513e5"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-offline.json",
+      "bytes": 12264,
+      "sha256": "77d3fc1a5963fb82b645af12fe1c2f6372c353e8a431be3a2a09c5e887888ffb"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-performance.json",
+      "bytes": 12719,
+      "sha256": "eab852a2036c4f3f467c3426c5495db3bc654050c854f1fd503bd5696f6c55f1"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-persistence-recovery.json",
+      "bytes": 23336,
+      "sha256": "06fc976a4e91684792365009042282df3ac32551193e8c74a74895d1496d1b94"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "9e17c3ab081a6fe88e2d5e2ef1a8ce8927fb76b05edcfd86144453bb7a433ec0"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/acceptance-overlay/evidence/hosted-upgrade-rc1.json",
+      "bytes": 143838,
+      "sha256": "e4a371c02ad6154a63b15622a1b8439f1ecfdeeb2dff4d030a1cffc273489c9b"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-downgrade-refusal.json",
+      "bytes": 11771,
+      "sha256": "d19badddb7aa75225b0cd6b1a536d79ced9c9f85208acd17b2c06e2a5cf20874"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-first-start.json",
+      "bytes": 11526,
+      "sha256": "5c2bc631267ec0929c7cabfb903d19ad1284ba290bf0025ead6c1d11ddf95163"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-install.json",
+      "bytes": 751,
+      "sha256": "5054033323f4eeb87b67e260794e8ec5562c2bf544685a1646ea29e49c4513e5"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-offline.json",
+      "bytes": 12264,
+      "sha256": "77d3fc1a5963fb82b645af12fe1c2f6372c353e8a431be3a2a09c5e887888ffb"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-performance.json",
+      "bytes": 12719,
+      "sha256": "eab852a2036c4f3f467c3426c5495db3bc654050c854f1fd503bd5696f6c55f1"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-persistence-recovery.json",
+      "bytes": 23336,
+      "sha256": "06fc976a4e91684792365009042282df3ac32551193e8c74a74895d1496d1b94"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "9e17c3ab081a6fe88e2d5e2ef1a8ce8927fb76b05edcfd86144453bb7a433ec0"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/hosted-upgrade-rc1.json",
+      "bytes": 143838,
+      "sha256": "e4a371c02ad6154a63b15622a1b8439f1ecfdeeb2dff4d030a1cffc273489c9b"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/appdata-aside.json",
+      "bytes": 93,
+      "sha256": "a59f59cd29f7b5a515e99490bfe6932cd3936f18c07c2b4065f398bc01801130"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/baseline-bba0d1c7257542428f9a062bf6b7bfeb.json",
+      "bytes": 663,
+      "sha256": "356781778724de882d9ac0a5b6902182460a1cc223f0dccbaf2ae77dcaeef6c3"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/baseline-bba0d1c7257542428f9a062bf6b7bfeb.json.progress.json",
+      "bytes": 2857,
+      "sha256": "2756e358ab05dadeef5bd805463b62785b7a9f09ba5b835b0056833eb80dc961"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/candidate-manifest.json",
+      "bytes": 17185,
+      "sha256": "a912304e5815eb2ae4246b8810f96c91900a136ed514bc7f8dbdc64ddb000935"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/fresh-90637cb0e36146bc9f5131aef1544f93.json",
+      "bytes": 9878,
+      "sha256": "c5303d518d4d5543f4ebe138cb402719acc63b76fd413ea85703822e41a3537a"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/fresh-90637cb0e36146bc9f5131aef1544f93.json.progress.json",
+      "bytes": 4016,
+      "sha256": "1580057847152c479dd30cda0a042c8a04bd69bcbc7ad81ca9c8872e5019472b"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/offline-d30e7191562d4e51afd8272b2d3db8ed.json",
+      "bytes": 9878,
+      "sha256": "3df95ee2be956dc17f41ea8e8b5ae2ef948fd85cc61fb372a9fb24abea1fb6cb"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/offline-d30e7191562d4e51afd8272b2d3db8ed.json.progress.json",
+      "bytes": 3922,
+      "sha256": "065d562ad7afe43ed92de3834a6d307674074a3aec79b1724d8a72d79bf09c77"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/recover-92738f5a80da4e05a739ad0064ca725d.json",
+      "bytes": 10725,
+      "sha256": "065595281924f381d73e601044b8b88124638b9fc1892f07caa2266a410e2f95"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/recover-92738f5a80da4e05a739ad0064ca725d.json.progress.json",
+      "bytes": 4369,
+      "sha256": "9c6c44b4caf4da082e27c48be97d99712f405dbff672eef0f6d449bfc087ac51"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/restart-1adc4df0f43a450fbb4010035da443b2.json",
+      "bytes": 9877,
+      "sha256": "7c5bbb9ef5ab5ac31cf25fa4fdd9d00b25ce4e5979885226dca133168d659000"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/restart-1adc4df0f43a450fbb4010035da443b2.json.progress.json",
+      "bytes": 3924,
+      "sha256": "59f1f891ec6b874e382af1b93a6bf4852a4c77813a20570014db3908e0fa58ca"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/restart-50d4d025c33d484e9314af168ec9118f.json",
+      "bytes": 9877,
+      "sha256": "bdbd579a2546d225421cce0abae6106a14cee98e2ee49605bd835e28cb50e552"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/restart-50d4d025c33d484e9314af168ec9118f.json.progress.json",
+      "bytes": 3902,
+      "sha256": "fedd70a598c32a813c5a12a76cfdeeea9c35bb6256c3515f6e463b1f09941e53"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/restart-c8f40564d18d47cd999f8f395b255212.json",
+      "bytes": 9877,
+      "sha256": "a5de56a11b5f73109948da8d059a2893242b15bcb64ee9e0bf69d5481db9daed"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/restart-c8f40564d18d47cd999f8f395b255212.json.progress.json",
+      "bytes": 3923,
+      "sha256": "2c5363c4e3c6fe341e5504ef0b46d20c331fa9dd61868f50774f7f4efd262492"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/state.json",
+      "bytes": 1347,
+      "sha256": "7601236df7b46daa9555bf15b4a6ba56de4d9fcb7e5fadce15839e1605f346b2"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/uninstall-0bdbbc39641e40f9b9ed5bc5f692e481.json",
+      "bytes": 84,
+      "sha256": "1a58c6cf5b67fa2dfe704f043b7b2e0c1f24185e8ecfcfba53a928bb69309916"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/case-reports/raw/uninstall-8a356ca4503140c6adb1575b7affb057.json",
+      "bytes": 84,
+      "sha256": "8c0dff0107069330c44570a4f511fd71e0bd207a09db7c5f7ddc23b45c1faf81"
+    },
+    {
+      "path": "release/history/2026-10-26-v22-passed-candidate/independent-final-composition.json",
+      "bytes": 531,
+      "sha256": "1e468f29cd3f35853674f91b362b671d59192e74a58fd00cc0ae15b841c0f457"
+    }
+  ],
+  "original_artifacts": [
+    {
+      "id": 12558274303,
+      "bytes": 84124,
+      "sha256": "792ebb711c86ac680088159681cbd7b7372d18c182fb978303c5ec866fb48a74"
+    },
+    {
+      "id": 12558478000,
+      "bytes": 1023702,
+      "sha256": "e74244414972c751034a61228ef25c83565596155744fbb5e0097eefd919e736"
+    }
+  ]
+}

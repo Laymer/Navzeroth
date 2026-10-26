@@ -1,0 +1,46 @@
+# V22 merged; fresh exact-main verification
+
+Owner Codex/root, claim2026-10-26-v22-release-completion.
+
+PR239 head9be789e95a89cffb6463ea12994eb8be40cbf59a merged normally on
+2026-10-26 ataaa73b94794f5a32162b430b2314f53bca4e1a7b. Candidate, tested
+PR merge73cc81e0 and resulting main have identical tree df024c57. All ten protected
+checks, source platform regeneration/parity and per-file coverage passed candidate.
+Independent desktop final composition review is CLEAR with scopes retained in
+release/history/2026-10-26-v22-passed-candidate. It recomputed production a947...5537,
+verified35 current review/closure FileRefs and signed/source identity consistency.
+Actual crypto/assembly/full functional results remain attributed to their original
+root and independent V22 executors, not this composition-only review.
+
+Coordinator independently downloaded original casesZIP12558274303 and overlayZIP
+12558478000 from package40085604234/1, checked original ZIP hashes against API,
+and read all eight actual passed rows/native reports. Fresh defaults true; selected
+false persists; recovery512307ms and restart214046ms pass; RC1 baseline1671ms and
+upgrade131862ms pass; downgrade attempt exit2/no timeout/installed1.0.0 plus healthy
+restart passes. Firewall isolated/external refused/exact restored. Exact resources
+verified. Overlay has eight passes and only automated draft smoke pending.
+These are candidate-installer results, never final tag acceptance. Actual raw
+bytes/overlay and provider ZIP ledger retained under the history path above.
+
+Candidate measured install6728.8488ms, content load96894ms, activation22705ms,
+browse8223.0355ms, planning1295.1808ms, native peak5393469440bytes. Hosted VM
+AMD EPYC9V45/RAM17174360064bytes; sampled exact native PID646times/200ms target,
+no sampling errors. WebView/installer memory excluded, OS cache uncontrolled.
+Do not promote these to ordinary-PC results or final installer measurements.
+
+Fresh resulting-main workflows launched: CI push40290543992, CI dispatch with
+mandatory stability40290572308, coverage40290543945, source40290544009,
+Windows40290544065, Pages40290543953. All still pending at this checkpoint.
+No tag, draft, publication or public verification. Gate failures hold publication.
+
+Next: inspect exact-main actual results; only after all applicable pass tag EXACT
+aaa73b94 (unless a necessary reviewed source repair requires a new verifiedmain).
+Then fresh tagpackaging/eightcases, exact draft download/native UI and independent
+completed API/evidence review under schema5. Follow2026-10-23-schema5-draft-public-
+recipe.md for full readiness/archival/publictransport. Publish only full readiness,
+verify publicdownloads, then website merge/deployment. Existing user authorization
+applies; human/supplemental Windows11 smoke remains unperformed and nonmandatory.
+
+This documentary branch is separate from verifiedmain and must not advance main
+during its source/tag verification. Preserve the original checkout and old V19
+untracked claim. No private keys, personal exports or SQLite databases retained.
