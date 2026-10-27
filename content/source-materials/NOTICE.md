@@ -102,12 +102,12 @@ Access evidence for every generated source: `docs/decisions/0007-world-data-auto
 
 ### gen-world-cmangos-vanilla-1-12-1.12.1
 
-Publisher: Navzeroth data generators (gen_world_cmangos); https://github.com/Laymer/Navzeroth. Origin: `vanilla_1_12`, build `1.12.1`. Revision `533c4352afd8849555baa23c50e746b02017b4599460c5b25a02eea4db181e01`.
+Publisher: Navzeroth data generators (gen_world_cmangos); https://github.com/Laymer/Navzeroth. Origin: `vanilla_1_12`, build `1.12.1`. Revision `081e9ce65b6cf1a96b76bd2b24ff62fc836e145a2be1da31c1ca5333951e50c0`.
 
 Licence: GPL-3.0-only AND LicenseRef-Blizzard-client-data-via-wago-tools.
 Attribution: CMaNGOS Classic-DB contributors; https://github.com/cmangos/classic-db; World of Warcraft Forever 1.60.1 client data (Blizzard Entertainment) via wago.tools DB2 exports; https://wago.tools.
 
-76 documents, 626032419 bytes:
+76 documents, 626047127 bytes:
 
 - `gen_world_cmangos/vanilla_1_12/1.12.1/part-0000.json` → [`a0035caf691caf3aae7a6d6c4bea90029faf6c2a0c25b5b49b4de23cf71564c5`](objects/a0035caf691caf3aae7a6d6c4bea90029faf6c2a0c25b5b49b4de23cf71564c5) (8322940 bytes)
 - `gen_world_cmangos/vanilla_1_12/1.12.1/part-0001.json` → [`9a705ee41baca1e32718f01c3f31dd9e5a59326ba328224102f13a60ece73532`](objects/9a705ee41baca1e32718f01c3f31dd9e5a59326ba328224102f13a60ece73532) (8323073 bytes)
@@ -153,55 +153,55 @@ Attribution: CMaNGOS Classic-DB contributors; https://github.com/cmangos/classic
 - `gen_world_cmangos/vanilla_1_12/1.12.1/part-0041.json` → [`f16f1d229ade8c31162ed41eb508d09b2e21a3b4e45d92296841afe30f4070d3`](objects/f16f1d229ade8c31162ed41eb508d09b2e21a3b4e45d92296841afe30f4070d3) (8323096 bytes)
 - `gen_world_cmangos/vanilla_1_12/1.12.1/part-0042.json` → [`c8af76fc2ca1cc80c646b6506286d598a33709d9318532468d191d82f65fdac6`](objects/c8af76fc2ca1cc80c646b6506286d598a33709d9318532468d191d82f65fdac6) (8322953 bytes)
 - `gen_world_cmangos/vanilla_1_12/1.12.1/part-0043.json` → [`6e3310ab5c97e3b514ebd09dd92ab8521d0c1860ded9842ef7fda80d484d0bb7`](objects/6e3310ab5c97e3b514ebd09dd92ab8521d0c1860ded9842ef7fda80d484d0bb7) (8323083 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0044.json` → [`d736df2b8da983944397ef78f4567265680f177343082944fef8d65c6c89273a`](objects/d736df2b8da983944397ef78f4567265680f177343082944fef8d65c6c89273a) (8322957 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0045.json` → [`c127465b5505fcbb9db14e491d618617613dd3c8ef260959f2bd7f7b8b7ee123`](objects/c127465b5505fcbb9db14e491d618617613dd3c8ef260959f2bd7f7b8b7ee123) (8323056 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0046.json` → [`a26cbafaaff701a820025247a76f7792edc537a45702aec54748c37f6e51f0ea`](objects/a26cbafaaff701a820025247a76f7792edc537a45702aec54748c37f6e51f0ea) (8323037 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0047.json` → [`f00b524481fdab0a9443b9139aacb582de9dd6cb07ac22e0123f85c46e43a189`](objects/f00b524481fdab0a9443b9139aacb582de9dd6cb07ac22e0123f85c46e43a189) (8323023 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0048.json` → [`f46c60024d360d755769e8906b880598847c4a349855cac1aee3d04a53379b09`](objects/f46c60024d360d755769e8906b880598847c4a349855cac1aee3d04a53379b09) (8322994 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0049.json` → [`7ebec740cad2bb1aa6f601b3f4773c314a661889b7926ed5eeb6d276713df196`](objects/7ebec740cad2bb1aa6f601b3f4773c314a661889b7926ed5eeb6d276713df196) (8323074 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0050.json` → [`c05b0979d9edc31b5fb824f531b8f152a34234f05eb5439d1a6ab922e85dffa4`](objects/c05b0979d9edc31b5fb824f531b8f152a34234f05eb5439d1a6ab922e85dffa4) (8323034 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0051.json` → [`151758a3cd997d1fb64846a1a6472f79b6eadd85d383b876c112e16699a71eaf`](objects/151758a3cd997d1fb64846a1a6472f79b6eadd85d383b876c112e16699a71eaf) (8322960 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0052.json` → [`d630cb738d388837a84e9b346a0b235797302adca108537a8a3c842e773245ae`](objects/d630cb738d388837a84e9b346a0b235797302adca108537a8a3c842e773245ae) (8323104 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0053.json` → [`112b968d3cfe03bf01db4648221f99a1db8842898b0461ddc8c5a0169fefd8a3`](objects/112b968d3cfe03bf01db4648221f99a1db8842898b0461ddc8c5a0169fefd8a3) (8323077 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0054.json` → [`8b35d7724c727f72f41c1daa0b2f042d0edef98ea2ec5f5d956c98e582be13de`](objects/8b35d7724c727f72f41c1daa0b2f042d0edef98ea2ec5f5d956c98e582be13de) (8323043 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0055.json` → [`aea15bf81975a9628b69a8c1ff65f09a0f3813dbc7050abf2d25ca4e565f8d55`](objects/aea15bf81975a9628b69a8c1ff65f09a0f3813dbc7050abf2d25ca4e565f8d55) (8322932 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0056.json` → [`050dd343bab87a653773d3f992bbda19c48abf2b2aaaab861422e0abb2c0d694`](objects/050dd343bab87a653773d3f992bbda19c48abf2b2aaaab861422e0abb2c0d694) (8323041 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0057.json` → [`2a1f9012de9957db1fb63fc86dcec780f98cbfad3cd8178e060cc2cc98d02838`](objects/2a1f9012de9957db1fb63fc86dcec780f98cbfad3cd8178e060cc2cc98d02838) (8322952 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0058.json` → [`bd56c942c8fb73be97c1ee6979e3db8706509b0a6804d28683bb1c847218f368`](objects/bd56c942c8fb73be97c1ee6979e3db8706509b0a6804d28683bb1c847218f368) (8322966 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0059.json` → [`157589f18b5c9c093489dee2dbaab875a1b2c4d194a985454a26376240e7b682`](objects/157589f18b5c9c093489dee2dbaab875a1b2c4d194a985454a26376240e7b682) (8323064 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0060.json` → [`350960549f6170b01394a2f42ccbc24b50488ddaf5ab7be2bf503d7a99db0134`](objects/350960549f6170b01394a2f42ccbc24b50488ddaf5ab7be2bf503d7a99db0134) (8322904 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0061.json` → [`8be2e0d97552808090de31cf54eb1ae67e1d07b5378c5f7eb279231437933fee`](objects/8be2e0d97552808090de31cf54eb1ae67e1d07b5378c5f7eb279231437933fee) (8323092 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0062.json` → [`83843fc4575398ca3f8b38dda287cde223f8d388b34105c0aa03d10cc803181e`](objects/83843fc4575398ca3f8b38dda287cde223f8d388b34105c0aa03d10cc803181e) (8322980 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0063.json` → [`17fd5d18887476860eaa4302d33a9323b36df3a4f9bd079fb96e971f2c33386f`](objects/17fd5d18887476860eaa4302d33a9323b36df3a4f9bd079fb96e971f2c33386f) (8323034 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0064.json` → [`d213cf3683cb200477f2d8ddbfc12cee47613b9d817f1109681259a448144531`](objects/d213cf3683cb200477f2d8ddbfc12cee47613b9d817f1109681259a448144531) (8323089 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0065.json` → [`5bd1774ba4313d07e8905ab6bb8c00751b9a3716289c29293b7ad4177031d055`](objects/5bd1774ba4313d07e8905ab6bb8c00751b9a3716289c29293b7ad4177031d055) (8323099 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0066.json` → [`2154dee6bf0fcd53acc6cb067caf5a3a8cd604b034ce6f4b40f979bbe4f5bb83`](objects/2154dee6bf0fcd53acc6cb067caf5a3a8cd604b034ce6f4b40f979bbe4f5bb83) (8323074 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0067.json` → [`d90a313c3ff875451b1f258454261c4bb25d7f041580f03a649e24e20cda403c`](objects/d90a313c3ff875451b1f258454261c4bb25d7f041580f03a649e24e20cda403c) (8323099 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0068.json` → [`912d7930b3280e35def7d7594c4fe91e747fc6e012495c9d7d7b82803683ca54`](objects/912d7930b3280e35def7d7594c4fe91e747fc6e012495c9d7d7b82803683ca54) (8322997 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0069.json` → [`ca493e46de4b33cf63ba38ca4326c3440970ca74c01d35053fdf0f1516ee7c41`](objects/ca493e46de4b33cf63ba38ca4326c3440970ca74c01d35053fdf0f1516ee7c41) (8322983 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0070.json` → [`ae989c926e5dfb970f765e574874942fd0d36abc24c1f6f38d08fcf666206878`](objects/ae989c926e5dfb970f765e574874942fd0d36abc24c1f6f38d08fcf666206878) (8323073 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0071.json` → [`2bb52a4a862118a86fffac6494b58d59754bd5bb912d7a3e6a192fcc71bfb68a`](objects/2bb52a4a862118a86fffac6494b58d59754bd5bb912d7a3e6a192fcc71bfb68a) (8323004 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0072.json` → [`cf6ce38bd27cd72425ec5a7e500c9f40b894a21eb5ddc4330173cdbd22f6f51f`](objects/cf6ce38bd27cd72425ec5a7e500c9f40b894a21eb5ddc4330173cdbd22f6f51f) (8322984 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0073.json` → [`7d5ec4efe5c77e5c49173e07492c100b4052b0f3cd71ed276738561b2412c6c3`](objects/7d5ec4efe5c77e5c49173e07492c100b4052b0f3cd71ed276738561b2412c6c3) (8323029 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0074.json` → [`dd66d129e5669418a6bb29a03c15603881aa0c143c93556b0c44faa1ce97aae1`](objects/dd66d129e5669418a6bb29a03c15603881aa0c143c93556b0c44faa1ce97aae1) (8323020 bytes)
-- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0075.json` → [`6d746aca3473670363fbd1e64406d36cfe68112d9e7a94892572cdace24993a7`](objects/6d746aca3473670363fbd1e64406d36cfe68112d9e7a94892572cdace24993a7) (1806938 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0044.json` → [`7be46872aab10ea4b30dafbb174f8e50c3df25baec5d8b5307c7217109978177`](objects/7be46872aab10ea4b30dafbb174f8e50c3df25baec5d8b5307c7217109978177) (8322978 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0045.json` → [`16391a5b67c12e9d3c1a0cec15f253acdf809619a693ca4e9521d4adf052e8ac`](objects/16391a5b67c12e9d3c1a0cec15f253acdf809619a693ca4e9521d4adf052e8ac) (8322973 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0046.json` → [`2ebe5164a07aded1e90b78a9e5ec93718f522cadb28e00f1a9f5c6efcd789bc2`](objects/2ebe5164a07aded1e90b78a9e5ec93718f522cadb28e00f1a9f5c6efcd789bc2) (8322943 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0047.json` → [`ff2e3b77087d6d5da59438785047f2b34cf8b0cafda080f4c97dbe2da46b346d`](objects/ff2e3b77087d6d5da59438785047f2b34cf8b0cafda080f4c97dbe2da46b346d) (8323052 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0048.json` → [`28ee664103675096a2d2fe25a5777d83c8f098ebf5b80d408c2083a262e4f059`](objects/28ee664103675096a2d2fe25a5777d83c8f098ebf5b80d408c2083a262e4f059) (8323064 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0049.json` → [`36cf915b915c36a5271de04500f640afb5a5754bbd1b68aef1b90e4e504e21d9`](objects/36cf915b915c36a5271de04500f640afb5a5754bbd1b68aef1b90e4e504e21d9) (8322926 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0050.json` → [`c30a4dd4a662ceed355f9687eeff5d007e0c6e2bc1482a96a97b8000d64236f0`](objects/c30a4dd4a662ceed355f9687eeff5d007e0c6e2bc1482a96a97b8000d64236f0) (8323099 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0051.json` → [`023766adc0524c6d379058d50c8e25e5da54de2ae3f78c83acb7bb7a84e1f290`](objects/023766adc0524c6d379058d50c8e25e5da54de2ae3f78c83acb7bb7a84e1f290) (8322993 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0052.json` → [`187e2f701986dfcd9f21f2b3dc57af913012fba17f114e9a560ff9bcf1aa668c`](objects/187e2f701986dfcd9f21f2b3dc57af913012fba17f114e9a560ff9bcf1aa668c) (8323093 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0053.json` → [`b3958519ab15f3e1c269889d9226ca8216d3d3f58e312c3c1fa844124e03115e`](objects/b3958519ab15f3e1c269889d9226ca8216d3d3f58e312c3c1fa844124e03115e) (8322890 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0054.json` → [`7016dc90bb723b3ffef0272264d9f4693bed6179021c786399a86a4505144608`](objects/7016dc90bb723b3ffef0272264d9f4693bed6179021c786399a86a4505144608) (8323070 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0055.json` → [`a1117047c53a44248c6049209e5072a3f5bf18bb4042b79c8f219800cf3c117f`](objects/a1117047c53a44248c6049209e5072a3f5bf18bb4042b79c8f219800cf3c117f) (8322896 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0056.json` → [`e3928c95f7dec9a2732dfaff725db0c7cee001c5a1f3f0864ab2d265086425e2`](objects/e3928c95f7dec9a2732dfaff725db0c7cee001c5a1f3f0864ab2d265086425e2) (8323060 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0057.json` → [`6b17c26cc97c0bf9e87243ca1d2aa70178779e093b3de9986962a524dc3f72c8`](objects/6b17c26cc97c0bf9e87243ca1d2aa70178779e093b3de9986962a524dc3f72c8) (8322894 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0058.json` → [`d2aa0547d4f1cf8743997b09bce39f56ed4a268739bd924b9a9d281e8b94a79f`](objects/d2aa0547d4f1cf8743997b09bce39f56ed4a268739bd924b9a9d281e8b94a79f) (8323061 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0059.json` → [`6b10db1ba0bcf79e1cfffe812c82da8722a535d0280ac962fcfafd36260da233`](objects/6b10db1ba0bcf79e1cfffe812c82da8722a535d0280ac962fcfafd36260da233) (8322852 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0060.json` → [`d28bded5ee6839ad97a330b860e324d1e91ae577f8c4cf544b89f614681641e8`](objects/d28bded5ee6839ad97a330b860e324d1e91ae577f8c4cf544b89f614681641e8) (8323003 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0061.json` → [`8428b1f1d153f9620f80c3aee2a522312a69e7d711d01e247af5c51771c5a49b`](objects/8428b1f1d153f9620f80c3aee2a522312a69e7d711d01e247af5c51771c5a49b) (8322931 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0062.json` → [`ce6eaa76c6cc25ef18bd102c18e16013bf8ae2d29dfc75ab755cccab60825028`](objects/ce6eaa76c6cc25ef18bd102c18e16013bf8ae2d29dfc75ab755cccab60825028) (8322990 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0063.json` → [`07a7f8e422120005d6d89877b394f292a2b3d01ffefa4eb6022e46a051dea8bb`](objects/07a7f8e422120005d6d89877b394f292a2b3d01ffefa4eb6022e46a051dea8bb) (8323032 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0064.json` → [`cbe1f173cc1cff9d6b879083284c9ae93b60abee6c738725de021adb1587a303`](objects/cbe1f173cc1cff9d6b879083284c9ae93b60abee6c738725de021adb1587a303) (8322957 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0065.json` → [`b2ecfad18c4ebc960f9db5ee2c3ea62605477016486b286a16eab57020fef37a`](objects/b2ecfad18c4ebc960f9db5ee2c3ea62605477016486b286a16eab57020fef37a) (8323022 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0066.json` → [`8b98f450a1457e1927b79ac236a9cfbdffd59e9497352adb15a4a9cd0b345993`](objects/8b98f450a1457e1927b79ac236a9cfbdffd59e9497352adb15a4a9cd0b345993) (8322906 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0067.json` → [`029f28ba59de2fb01ad8811c8b995bb5dfae06e961483ce9200a7d8d39d5b384`](objects/029f28ba59de2fb01ad8811c8b995bb5dfae06e961483ce9200a7d8d39d5b384) (8323067 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0068.json` → [`1a138b851a22e460e77afec0b50b8d5207e641c8326f97d24b98f22fbbd1e96f`](objects/1a138b851a22e460e77afec0b50b8d5207e641c8326f97d24b98f22fbbd1e96f) (8322969 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0069.json` → [`32c761b35f8756b480be1204ad334b333b6a2ddd02b699e77ca60e78451ee2d4`](objects/32c761b35f8756b480be1204ad334b333b6a2ddd02b699e77ca60e78451ee2d4) (8322968 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0070.json` → [`45b02151d40a3470481ade607fd00b1014df7fc216cc958a094e47ca30c1685c`](objects/45b02151d40a3470481ade607fd00b1014df7fc216cc958a094e47ca30c1685c) (8323072 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0071.json` → [`c592c2ddfa6395b2fe9cbdcf5b66dd5264d71b1762a5fc385a049437707efab4`](objects/c592c2ddfa6395b2fe9cbdcf5b66dd5264d71b1762a5fc385a049437707efab4) (8323068 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0072.json` → [`79e4159a09bd68ac1e266ba6ac2d6c1a66efd0f3287c17e8931d7387a06790a8`](objects/79e4159a09bd68ac1e266ba6ac2d6c1a66efd0f3287c17e8931d7387a06790a8) (8322927 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0073.json` → [`483f4f5c3e309e466c6d11e06ab55a74374592d46edcfef225ba84567f07b659`](objects/483f4f5c3e309e466c6d11e06ab55a74374592d46edcfef225ba84567f07b659) (8323075 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0074.json` → [`33eaa770aba29a6e0be8683f274b82beef461e4ba513b03eb4f15e4f5d3f7abb`](objects/33eaa770aba29a6e0be8683f274b82beef461e4ba513b03eb4f15e4f5d3f7abb) (8322965 bytes)
+- `gen_world_cmangos/vanilla_1_12/1.12.1/part-0075.json` → [`997cf8c55dc862f20688fd629e7c36181d5f8c9236632db37716fc55dd25c1e3`](objects/997cf8c55dc862f20688fd629e7c36181d5f8c9236632db37716fc55dd25c1e3) (1822625 bytes)
 
 ### gen-world-db2-wow-forever-1.60.1.70245
 
-Publisher: Navzeroth data generators (gen_world_db2); https://github.com/Laymer/Navzeroth. Origin: `wow_forever`, build `1.60.1.70245`. Revision `ee636c59ff1587115d165f36739541f3516d6d326f379b52eb313b75f1d8efdb`.
+Publisher: Navzeroth data generators (gen_world_db2); https://github.com/Laymer/Navzeroth. Origin: `wow_forever`, build `1.60.1.70245`. Revision `b7aca0cd91444ae3ac68ce48fa508beea80c57ec171b67a68e424c044b99e89c`.
 
 Licence: LicenseRef-Blizzard-client-data-via-wago-tools.
 Attribution: World of Warcraft Forever 1.60.1 client data (Blizzard Entertainment) via wago.tools DB2 exports; https://wago.tools.
 
-8 documents, 59060015 bytes:
+8 documents, 59175351 bytes:
 
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0000.json` → [`6812357ad4948fc5db05c054b4b9e42fc5dedb37df16280baba25031e3f9762a`](objects/6812357ad4948fc5db05c054b4b9e42fc5dedb37df16280baba25031e3f9762a) (8323047 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0001.json` → [`dbcc115e271c971246bc29d622c35ea291580667d458cc8d8cac16ff0bcc82cf`](objects/dbcc115e271c971246bc29d622c35ea291580667d458cc8d8cac16ff0bcc82cf) (8322953 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0002.json` → [`0d1d6a0eaf7a6a268f6f10a1a1661cee025fe34687d0477ace7ef5f289507140`](objects/0d1d6a0eaf7a6a268f6f10a1a1661cee025fe34687d0477ace7ef5f289507140) (8323060 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0003.json` → [`a70119c087662e69c85249ac795d45c4b9314c2df2ee4cf0d23f9fd81b062bfb`](objects/a70119c087662e69c85249ac795d45c4b9314c2df2ee4cf0d23f9fd81b062bfb) (8323101 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0004.json` → [`f901cf2f2c2120f3266a6fd0db90922e93579d6a818dbe781c4fb3ba13475d65`](objects/f901cf2f2c2120f3266a6fd0db90922e93579d6a818dbe781c4fb3ba13475d65) (8323053 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0005.json` → [`8a5f31b067bff5e3be243b5952f0813b13d2b34efeabff5780809306c3f0063e`](objects/8a5f31b067bff5e3be243b5952f0813b13d2b34efeabff5780809306c3f0063e) (8322980 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0006.json` → [`e44aabbc92347e6d30da4c2714baf928c3fbf4eef44dada89e566042341c245b`](objects/e44aabbc92347e6d30da4c2714baf928c3fbf4eef44dada89e566042341c245b) (8322772 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0007.json` → [`19a58849164422184bbabf912006d0267573a1225562dc41a279f606d1e2c807`](objects/19a58849164422184bbabf912006d0267573a1225562dc41a279f606d1e2c807) (799049 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0000.json` → [`50f9365281e023836b097022aaa8ec46c307feffbde04a5204e7560c76f43046`](objects/50f9365281e023836b097022aaa8ec46c307feffbde04a5204e7560c76f43046) (8322977 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0001.json` → [`dbf1a2b03f5ddad98bc72f97ba83f1b7f8f435d1b85cfdf3be123454ca0a34db`](objects/dbf1a2b03f5ddad98bc72f97ba83f1b7f8f435d1b85cfdf3be123454ca0a34db) (8322963 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0002.json` → [`f62447d93970d3dfaa63ca82778921d4b85f7438d1b507f82e243db7963b87bc`](objects/f62447d93970d3dfaa63ca82778921d4b85f7438d1b507f82e243db7963b87bc) (8323010 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0003.json` → [`66ec2a8f1ffde30e702e3bfeb0969a1b6335b8978f1b425de152e12a85aefd2c`](objects/66ec2a8f1ffde30e702e3bfeb0969a1b6335b8978f1b425de152e12a85aefd2c) (8322987 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0004.json` → [`e6bbd70695a91f163b4013aadf3a0bce8c8726884d46fc7f0e7d8dec183f5234`](objects/e6bbd70695a91f163b4013aadf3a0bce8c8726884d46fc7f0e7d8dec183f5234) (8323046 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0005.json` → [`d349259fe58820cd2bde3d30d54fc018a2f5b03727156717b765eafbf57d520c`](objects/d349259fe58820cd2bde3d30d54fc018a2f5b03727156717b765eafbf57d520c) (8323020 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0006.json` → [`466e614a6dffa9597b180896e90db6c1bcecb1afffcd1e5693c09e950578e1de`](objects/466e614a6dffa9597b180896e90db6c1bcecb1afffcd1e5693c09e950578e1de) (8323075 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0007.json` → [`a099ab263f5c59e9ba03f6582e8242e7f21135b3e540abc2bdc7b759a7322c99`](objects/a099ab263f5c59e9ba03f6582e8242e7f21135b3e540abc2bdc7b759a7322c99) (914273 bytes)
 
 <!-- END generated fact sources -->
